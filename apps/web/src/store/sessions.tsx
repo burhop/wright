@@ -7,7 +7,7 @@ export interface ChatState {
   sessions: ChatSession[];
   activeSessionId: string | null;
   isStreaming: boolean;
-  activeTool: { name: string; preview: string } | null;
+  activeTool: { name: string; preview: string; percentage?: number } | null;
   streamedText: string;
 }
 
@@ -20,7 +20,8 @@ type ChatAction =
   | { type: 'UPDATE_SESSION_TITLE'; sessionId: string; title: string }
   | { type: 'START_STREAMING' }
   | { type: 'APPEND_STREAM_TOKEN'; text: string }
-  | { type: 'SET_ACTIVE_TOOL'; name: string; preview: string }
+  | { type: 'SET_ACTIVE_TOOL'; name: string; preview: string; percentage?: number }
+  | { type: 'SET_TOOL_PROGRESS'; percentage: number; message: string }
   | { type: 'CLEAR_ACTIVE_TOOL' }
   | { type: 'END_STREAMING'; finalSession: ChatSession };
 
@@ -126,7 +127,16 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case 'SET_ACTIVE_TOOL':
       newState = {
         ...state,
-        activeTool: { name: action.name, preview: action.preview },
+        activeTool: { name: action.name, preview: action.preview, percentage: action.percentage },
+      };
+      break;
+
+    case 'SET_TOOL_PROGRESS':
+      newState = {
+        ...state,
+        activeTool: state.activeTool
+          ? { ...state.activeTool, percentage: action.percentage, preview: action.message }
+          : null,
       };
       break;
 
@@ -249,7 +259,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           accumulatedText += event.text;
           dispatch({ type: 'APPEND_STREAM_TOKEN', text: event.text });
         } else if (event.type === 'tool') {
-          dispatch({ type: 'SET_ACTIVE_TOOL', name: event.name, preview: event.preview });
+          dispatch({ type: 'SET_ACTIVE_TOOL', name: event.name, preview: event.preview, percentage: event.percentage });
+        } else if (event.type === 'progress') {
+          dispatch({ type: 'SET_TOOL_PROGRESS', percentage: event.percentage, message: event.message });
         } else if (event.type === 'done') {
           // Construct the final session with assistant's reply message
           // Load the latest sessions to find current state (which has the userMsg added above)

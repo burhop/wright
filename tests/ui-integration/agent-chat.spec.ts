@@ -89,6 +89,13 @@ test.describe('Agent Chat Page', () => {
           }, 100);
 
           setTimeout(() => {
+            const event = new MessageEvent('progress', {
+              data: JSON.stringify({ percentage: 50, message: 'Solving stiffness equations (50% done)...' })
+            });
+            this.dispatchEvent(event);
+          }, 150);
+
+          setTimeout(() => {
             const event = new MessageEvent('token', {
               data: JSON.stringify({ text: 'I have received your request: **Run stiffness analysis**. As a local offline assistant in v1, I am processing your mechanical designs.' })
             });
@@ -128,6 +135,11 @@ test.describe('Agent Chat Page', () => {
 
     await expect(page.getByTestId('chat-transcript').getByText('Run stiffness analysis')).toBeVisible();
     await expect(page.getByTestId('active-tool')).toBeVisible();
+    
+    // Check tool progress displays correctly
+    await expect(page.getByTestId('progress-percentage')).toHaveText('50%');
+    await expect(page.getByTestId('progress-bar')).toBeVisible();
+
     await expect(page.getByText(/processing your mechanical designs/i)).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chat-transcript').locator('strong')).toHaveText('Run stiffness analysis');
 

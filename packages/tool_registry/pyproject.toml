@@ -1,12 +1,14 @@
 [project]
 name = "wright-tool-registry"
 version = "0.1.0"
-description = "Dynamic loading of engineering tools via BaseTool pattern with offline fallback"
+description = "Model Context Protocol (MCP) server integration, stdio runners, and tool schemas"
 requires-python = ">=3.11"
 
 dependencies = [
     "pydantic>=2.7",
     "wright-core",
+    "httpx>=0.28",
+    "httpx-sse>=0.4",
 ]
 
 [tool.uv.sources]

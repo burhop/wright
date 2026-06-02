@@ -6,7 +6,8 @@ const agentLogger = logger.child('HermesAgentService');
 
 export type AgentEvent =
   | { type: 'token'; text: string }
-  | { type: 'tool'; name: string; preview: string }
+  | { type: 'tool'; name: string; preview: string; percentage?: number }
+  | { type: 'progress'; percentage: number; message: string }
   | { type: 'done'; session: ChatSession }
   | { type: 'error'; message: string };
 
@@ -139,7 +140,17 @@ export class HermesAgentService {
       try {
         const data = JSON.parse(e.data);
         agentLogger.info('Stream tool invoke received', { sessionId, toolName: data.name, preview: data.preview });
-        pushEvent({ type: 'tool', name: data.name, preview: data.preview || '' });
+        pushEvent({ type: 'tool', name: data.name, preview: data.preview || '', percentage: data.percentage });
+      } catch (err) {
+        // ignore
+      }
+    });
+
+    eventSource.addEventListener('progress', (e: MessageEvent) => {
+      try {
+        const data = JSON.parse(e.data);
+        agentLogger.info('Stream tool progress received', { sessionId, percentage: data.percentage, message: data.message });
+        pushEvent({ type: 'progress', percentage: data.percentage, message: data.message || '' });
       } catch (err) {
         // ignore
       }

@@ -1668,12 +1668,16 @@ name = "wright-tool-registry"
 version = "0.1.0"
 source = { editable = "packages/tool_registry" }
 dependencies = [
+    { name = "httpx" },
+    { name = "httpx-sse" },
     { name = "pydantic" },
     { name = "wright-core" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28" },
+    { name = "httpx-sse", specifier = ">=0.4" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "wright-core", editable = "packages/core" },
 ]

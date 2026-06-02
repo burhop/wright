@@ -6,7 +6,7 @@ interface ChatTranscriptProps {
   session: ChatSession | null;
   isStreaming?: boolean;
   streamedText?: string;
-  activeTool?: { name: string; preview: string } | null;
+  activeTool?: { name: string; preview: string; percentage?: number } | null;
 }
 
 export function ChatTranscript({
@@ -96,8 +96,7 @@ export function ChatTranscript({
           data-testid="active-tool"
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-md)',
+            flexDirection: 'column',
             alignSelf: 'flex-start',
             padding: 'var(--space-md)',
             backgroundColor: 'var(--color-surface-subtle)',
@@ -108,17 +107,48 @@ export function ChatTranscript({
             fontSize: '0.85rem',
             width: '100%',
             maxWidth: '80%',
+            gap: 'var(--space-sm)',
           }}
         >
-          <span style={{ display: 'inline-block' }}>⚙</span>
-          <div>
-            <span style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
-              Tool: {activeTool.name}
-            </span>
-            <div style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '2px' }}>
-              {activeTool.preview}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+            <span style={{ display: 'inline-block' }}>⚙</span>
+            <div>
+              <span style={{ fontWeight: '600', color: 'var(--color-primary)' }}>
+                Tool: {activeTool.name}
+              </span>
+              <div style={{ fontSize: '0.75rem', opacity: 0.8, marginTop: '2px' }}>
+                {activeTool.preview}
+              </div>
             </div>
           </div>
+          {activeTool.percentage !== undefined && (
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                <span>Processing...</span>
+                <span data-testid="progress-percentage">{activeTool.percentage}%</span>
+              </div>
+              <div
+                style={{
+                  height: '6px',
+                  width: '100%',
+                  backgroundColor: 'var(--color-neutral)',
+                  borderRadius: '3px',
+                  overflow: 'hidden',
+                  border: '1px solid var(--color-border)',
+                }}
+              >
+                <div
+                  data-testid="progress-bar"
+                  style={{
+                    height: '100%',
+                    width: `${activeTool.percentage}%`,
+                    backgroundColor: 'var(--color-success)',
+                    transition: 'width 0.3s ease',
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
 

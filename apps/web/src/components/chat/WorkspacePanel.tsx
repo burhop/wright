@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import FileTree from '../common/FileTree';
 import type { WorkspaceFile } from '../../store/types';
 
@@ -33,6 +34,34 @@ const PLACEHOLDER_WORKSPACE: WorkspaceFile = {
 };
 
 export function WorkspacePanel() {
+  useEffect(() => {
+    const handleWebMcpRequest = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { callId, method } = customEvent.detail || {};
+      
+      if (!callId) return;
+
+      if (method === 'get_selected_part') {
+        // Dispatch response
+        const responseEvent = new CustomEvent('webmcp:response', {
+          detail: {
+            callId,
+            result: {
+              partId: 'part-aba8973b-31a8',
+              dimensions: [12.0, 5.5, 2.3],
+            },
+          },
+        });
+        window.dispatchEvent(responseEvent);
+      }
+    };
+
+    window.addEventListener('webmcp:request', handleWebMcpRequest);
+    return () => {
+      window.removeEventListener('webmcp:request', handleWebMcpRequest);
+    };
+  }, []);
+
   return (
     <div
       data-testid="workspace-panel"

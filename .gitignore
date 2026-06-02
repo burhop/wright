@@ -241,6 +241,10 @@ vault/
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
 
 # LanceDB vector database runtime data
 *.lance/

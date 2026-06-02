@@ -150,6 +150,8 @@ class HermesAdapter(BaseAgentEngine):
                         yield AgentStreamEvent(type="token", data=event_data)
                     elif event_type in ("tool", "tool_complete"):
                         yield AgentStreamEvent(type="tool", data=event_data)
+                    elif event_type == "progress":
+                        yield AgentStreamEvent(type="progress", data=event_data)
                     elif event_type in ("done", "stream_end"):
                         yield AgentStreamEvent(type="stream_end", data=event_data)
                     elif event_type in ("error", "apperror"):

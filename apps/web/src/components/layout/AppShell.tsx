@@ -1,12 +1,20 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import { webMcpService } from '../../services/webmcp-service';
 
 interface AppShellProps {
   children: ReactNode;
 }
 
 export function AppShell({ children }: AppShellProps) {
+  useEffect(() => {
+    webMcpService.connect();
+    return () => {
+      webMcpService.disconnect();
+    };
+  }, []);
+
   return (
     <div
       data-testid="app-shell"

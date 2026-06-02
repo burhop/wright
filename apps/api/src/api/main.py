@@ -1,14 +1,32 @@
 import time
 import httpx
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from agent_adapters import HermesAdapter
-from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL
+from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL, DATABASE_PATH
 from api.routers.agent import router as agent_router
+from api.routers.mcp import router as mcp_router
+from tool_registry import McpEngine
 
-app = FastAPI(title="Wright API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Initialize McpEngine and sync servers configured as active in DB
+    app.state.mcp_engine = McpEngine(DATABASE_PATH)
+    try:
+        await app.state.mcp_engine.sync_active_servers()
+    except Exception as e:
+        print(f"Error syncing active MCP servers on startup: {e}")
+    yield
+    # Shutdown: Stop active subprocesses/runners
+    try:
+        await app.state.mcp_engine.shutdown()
+    except Exception as e:
+        print(f"Error shutting down MCP engine: {e}")
+
+app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
 
 # Enable CORS for frontend development
 app.add_middleware(
@@ -24,6 +42,9 @@ app.state.agent_engine = HermesAdapter(HERMES_WEBUI_BASE_URL)
 
 # Mount the agent router
 app.include_router(agent_router, prefix="/api/agent")
+
+# Mount the MCP router
+app.include_router(mcp_router, prefix="/api/mcp")
 
 class HealthResponse(BaseModel):
     state: str
