@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 class BaseRunner(ABC):
     """Abstract base class for all Model Context Protocol (MCP) server runners (stdio, sse)."""

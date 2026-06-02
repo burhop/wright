@@ -100,7 +100,7 @@ class HermesAdapter(BaseAgentEngine):
                 if response.status_code == 200:
                     data = response.json()
                     return data.get("ok", False)
-        except Exception as e:
+        except Exception:
             logger.exception("Failed to delete session %s", session_id)
         return False
 
@@ -158,3 +158,21 @@ class HermesAdapter(BaseAgentEngine):
                         yield AgentStreamEvent(type="error", data={"message": event_data.get("message", "Unknown error")})
                     elif event_type == "cancel":
                         yield AgentStreamEvent(type="error", data={"message": "Cancelled by user"})
+
+    async def get_session_workspace(self, session_id: str) -> str | None:
+        """Retrieve the workspace path for a given session ID by querying Hermes API."""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/api/sessions?all_profiles=0",
+                    headers=self.headers,
+                    timeout=10.0,
+                )
+                response.raise_for_status()
+                data = response.json()
+                for s in data.get("sessions", []):
+                    if s.get("session_id") == session_id:
+                        return s.get("workspace")
+        except Exception as e:
+            logger.error("Failed to query workspace for session %s: %s", session_id, e)
+        return None

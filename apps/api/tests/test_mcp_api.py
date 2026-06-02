@@ -4,7 +4,6 @@ import pytest
 import sqlite3
 from fastapi.testclient import TestClient
 from api.main import app
-from api.config import DATABASE_PATH
 from tool_registry import McpEngine, McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
 

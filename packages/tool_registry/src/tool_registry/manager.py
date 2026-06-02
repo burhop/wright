@@ -1,14 +1,13 @@
 import time
 import logging
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any, Optional
 from .models import McpServer, McpTool
 from .db import (
     get_server,
     get_servers,
     update_server,
     insert_tools,
-    clear_server_tools,
-    get_tools
+    clear_server_tools
 )
 from .runners.base import BaseRunner
 from .runners.stdio import StdioRunner

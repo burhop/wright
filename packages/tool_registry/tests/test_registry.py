@@ -4,7 +4,6 @@ import uuid
 import time
 import pytest
 import sqlite3
-from typing import Generator
 from tool_registry.models import McpServer, McpTool
 from tool_registry.db import (
     get_servers,
@@ -13,7 +12,6 @@ from tool_registry.db import (
     update_server,
     delete_server,
     get_tools,
-    update_tool_enabled,
 )
 from tool_registry.runners.stdio import StdioRunner
 from tool_registry.manager import McpEngine

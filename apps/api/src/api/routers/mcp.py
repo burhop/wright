@@ -1,10 +1,13 @@
 import uuid
 import time
 import structlog
-from typing import List, Optional, Dict, Any
+import os
+import shlex
+import subprocess
+import yaml
+from typing import List, Optional
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Response
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel
 from tool_registry import (
     McpServer,
     McpServerCreate,
@@ -18,6 +21,76 @@ from tool_registry import (
     update_tool_enabled,
     McpEngine,
 )
+
+def sync_mcp_server_to_hermes(server: McpServer):
+    """Sync an MCP server's active/inactive state to Hermes config.yaml files."""
+    import sys
+    if "pytest" in sys.modules:
+        return
+        
+    key_name = "".join(c.lower() for c in server.name if c.isalnum())
+    if not key_name:
+        key_name = server.server_id
+        
+    paths = [
+        os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
+        os.path.expanduser("~/.hermes/config.yaml")
+    ]
+    
+    for path in paths:
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, "r") as f:
+                config = yaml.safe_load(f) or {}
+                
+            if "mcp_servers" not in config:
+                config["mcp_servers"] = {}
+                
+            if server.is_active:
+                if server.type == "stdio":
+                    if not server.command:
+                        continue
+                    args = []
+                    if isinstance(server.command, list):
+                        cmd = server.command[0]
+                        if len(server.command) > 1:
+                            args = server.command[1:]
+                    else:
+                        parsed = shlex.split(server.command)
+                        cmd = parsed[0] if parsed else "echo"
+                        args = parsed[1:] if len(parsed) > 1 else []
+                        
+                    srv_config = {
+                        "command": cmd,
+                        "args": args
+                    }
+                    
+                    if key_name == "openscadgeometry" or "openscad" in key_name:
+                        srv_config["env"] = {
+                            "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
+                        }
+                    config["mcp_servers"][key_name] = srv_config
+                    
+                elif server.type == "sse":
+                    if not server.command or not isinstance(server.command, str):
+                        continue
+                    config["mcp_servers"][key_name] = {
+                        "url": server.command,
+                        "transport": "sse"
+                    }
+            else:
+                for k in list(config["mcp_servers"].keys()):
+                    if k == key_name or (key_name == "openscadgeometry" and k == "openscad"):
+                        del config["mcp_servers"][k]
+                        
+            with open(path, "w") as f:
+                yaml.safe_dump(config, f, default_flow_style=False)
+                
+        except Exception as e:
+            print(f"Failed to sync MCP server {server.name} to Hermes config {path}: {e}")
+
+# Imports moved to top
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -137,6 +210,17 @@ async def toggle_server_activation(
         else:
             updated = await engine.stop_server(server_id)
             
+        # Sync with Hermes config
+        sync_mcp_server_to_hermes(updated)
+        
+        # Restart Hermes WebUI in background to reload config
+        subprocess.Popen(
+            "export HERMES_HOME=\"$HOME/.hermes/profiles/wright\" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788",
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+            
         return ServerToggleResponse(
             server_id=updated.server_id,
             is_active=updated.is_active,
@@ -166,6 +250,19 @@ async def delete_server_endpoint(server_id: str, engine: McpEngine = Depends(get
         await engine.stop_server(server_id)
         # Delete server from database
         delete_server(engine.db_path, server_id)
+        
+        # Sync removal with Hermes config
+        server.is_active = False
+        sync_mcp_server_to_hermes(server)
+        
+        # Restart Hermes WebUI in background to reload config
+        subprocess.Popen(
+            "export HERMES_HOME=\"$HOME/.hermes/profiles/wright\" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788",
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as e:
         logger.exception("delete_server_failed", server_id=server_id, error=str(e))

@@ -9,6 +9,7 @@ from agent_adapters import HermesAdapter
 from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL, DATABASE_PATH
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
+from api.routers.workspace import router as workspace_router
 from tool_registry import McpEngine
 
 @asynccontextmanager
@@ -17,6 +18,10 @@ async def lifespan(app: FastAPI):
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
     try:
         await app.state.mcp_engine.sync_active_servers()
+        # Sync database server states into Hermes configs on startup
+        from api.routers.mcp import sync_mcp_server_to_hermes, get_servers
+        for s in get_servers(DATABASE_PATH):
+            sync_mcp_server_to_hermes(s)
     except Exception as e:
         print(f"Error syncing active MCP servers on startup: {e}")
     yield
@@ -45,6 +50,9 @@ app.include_router(agent_router, prefix="/api/agent")
 
 # Mount the MCP router
 app.include_router(mcp_router, prefix="/api/mcp")
+
+# Mount the workspace router
+app.include_router(workspace_router, prefix="/api/workspace")
 
 class HealthResponse(BaseModel):
     state: str

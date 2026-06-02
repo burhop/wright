@@ -65,6 +65,25 @@ def run_migrations():
                 int(time.time())
             ))
             
+        # 4. Seed default OpenSCAD Geometry tool if not already present
+        cursor.execute("SELECT COUNT(*) FROM mcp_servers WHERE name = 'OpenSCAD Geometry'")
+        if cursor.fetchone()[0] == 0:
+            import time
+            conn.execute("""
+            INSERT INTO mcp_servers (server_id, name, type, command, is_active, status, category, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                "openscad-mcp-server",
+                "OpenSCAD Geometry",
+                "stdio",
+                '["uv", "run", "--with", "git+https://github.com/quellant/openscad-mcp.git", "openscad-mcp"]',
+                0,
+                "inactive",
+                "cad",
+                int(time.time()),
+                int(time.time())
+            ))
+            
         conn.commit()
         print("Database migrations applied successfully.")
     finally:

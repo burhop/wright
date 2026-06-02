@@ -62,3 +62,8 @@ class BaseAgentEngine(ABC):
     async def stream_response(self, stream_id: str) -> AsyncIterator[AgentStreamEvent]:
         """Yield SSE events from the agent's response stream."""
         pass
+
+    @abstractmethod
+    async def get_session_workspace(self, session_id: str) -> str | None:
+        """Retrieve the workspace path for a given session ID."""
+        pass

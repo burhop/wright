@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
-from agent_adapters import HermesAdapter, AgentChatRequest, AgentSessionInfo
+from agent_adapters import HermesAdapter, AgentChatRequest
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_check_health_success():

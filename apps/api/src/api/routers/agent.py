@@ -3,16 +3,13 @@ import secrets
 from typing import Optional, List, AsyncIterator
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import structlog
 from opentelemetry import trace
 
 from agent_adapters import (
     BaseAgentEngine,
     AgentChatRequest,
-    AgentChatStartResponse,
-    AgentSessionInfo,
-    AgentStreamEvent,
 )
 
 logger = structlog.get_logger(__name__)
