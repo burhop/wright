@@ -1,0 +1,20 @@
+[project]
+name = "wright-tool-registry"
+version = "0.1.0"
+description = "Dynamic loading of engineering tools via BaseTool pattern with offline fallback"
+requires-python = ">=3.11"
+
+dependencies = [
+    "pydantic>=2.7",
+    "wright-core",
+]
+
+[tool.uv.sources]
+wright-core = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tool_registry"]

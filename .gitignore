@@ -216,3 +216,34 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# =============================================================================
+# Wright — Project-specific ignores
+# =============================================================================
+
+# Artifact vault (STEP, STL, G-code files — large binary artifacts)
+vault/
+
+# SQLite runtime databases (state & agent memory)
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+
+# LanceDB vector database runtime data
+*.lance/
+lance_db/
+
+# Agent credentials & tokens (spec-kit security warning)
+.agents/**/credentials/
+.agents/**/tokens/
+
+# Docker runtime volumes
+docker-volumes/
+
+# Environment secrets
+.env.local
+.env.production
+jwt_secret.txt
+
+# uv lock (workspace — keep commented; uncomment to track)
+# uv.lock

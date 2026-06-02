@@ -1,0 +1,3 @@
+# Tier 3 — System E2E Tests
+# Happy-path smoke tests verifying FastAPI backend + LLM response parsing
+# See constitution.md § 6 for requirements

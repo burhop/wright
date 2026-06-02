@@ -1,0 +1,38 @@
+# =============================================================================
+# Wright — Docker Compose (Thick Base / Thin Code)
+# =============================================================================
+# Strategy: Heavy dependencies are baked into the base image. Application code
+# (apps/ and packages/) is mounted as live volumes so coding agents can modify
+# Python wrappers and see changes execute instantly without container rebuilds.
+#
+# Security: All ports bound to 127.0.0.1 (localhost only) per constitution § 4.
+# =============================================================================
+
+services:
+  # --- Wright API ---
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    volumes:
+      - ./apps:/workspace/apps              # Live-mount application code
+      - ./packages:/workspace/packages      # Live-mount internal packages
+      - ./vault:/workspace/vault            # Persistent artifact storage (STEP, STL, G-code)
+    ports:
+      - "127.0.0.1:8000:8000"              # FastAPI — localhost only
+    environment:
+      - WRIGHT_ENV=development
+      - WRIGHT_VAULT_PATH=/workspace/vault
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      - jaeger
+
+  # --- Jaeger (OpenTelemetry trace collector) ---
+  # Constitution § 7: Local OpenTelemetry via Jaeger all-in-one
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "127.0.0.1:16686:16686"            # Jaeger UI — localhost only
+      - "127.0.0.1:4317:4317"              # OTLP gRPC — localhost only
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
