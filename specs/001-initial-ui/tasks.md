@@ -26,12 +26,12 @@
 
 **Purpose**: Initialize the React + Vite + TypeScript project in `apps/web/`
 
-- [ ] T001 Initialize Vite + React + TypeScript project in `apps/web/` via `npx create-vite`
-- [ ] T002 Install core dependencies: `react-router-dom`, `@opentelemetry/sdk-trace-web`, `@opentelemetry/api` in `apps/web/package.json`
-- [ ] T003 [P] Install dev dependencies: `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `playwright`, `@playwright/test` in `apps/web/package.json`
-- [ ] T004 [P] Configure TypeScript with strict mode in `apps/web/tsconfig.json`
-- [ ] T005 [P] Configure Vitest for component testing in `apps/web/vite.config.ts`
-- [ ] T006 Configure Playwright for UI integration tests in `playwright.config.ts` at repo root, with `webServer` pointing to `apps/web/`
+- [x] T001 Initialize Vite + React + TypeScript project in `apps/web/` via `npx create-vite`
+- [x] T002 Install core dependencies: `react-router-dom`, `@opentelemetry/sdk-trace-web`, `@opentelemetry/api` in `apps/web/package.json`
+- [x] T003 [P] Install dev dependencies: `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `playwright`, `@playwright/test` in `apps/web/package.json`
+- [x] T004 [P] Configure TypeScript with strict mode in `apps/web/tsconfig.json`
+- [x] T005 [P] Configure Vitest for component testing in `apps/web/vite.config.ts`
+- [x] T006 Configure Playwright for UI integration tests in `playwright.config.ts` at repo root, with `webServer` pointing to `apps/web/`
 
 ---
 
@@ -41,14 +41,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Create design tokens CSS file with Hermes calm-console palette in `apps/web/src/tokens/design-tokens.css` (colors, typography, spacing, radii per contracts/ui-contracts.md § 4)
-- [ ] T008 [P] Create shared TypeScript types for all entities in `apps/web/src/store/types.ts` (NavigationSection, ChatSession, ChatMessage, ServiceStatus, WorkspaceFile, TraceContext, LogEntry per data-model.md)
-- [ ] T009 [P] Implement structured JSON logger service in `apps/web/src/services/logger.ts` (Logger interface per contracts/ui-contracts.md § 1)
-- [ ] T010 [P] Implement OpenTelemetry telemetry service with ConsoleSpanExporter in `apps/web/src/services/telemetry.ts` (TelemetryService interface per contracts/ui-contracts.md § 1)
-- [ ] T011 [P] Create `useLogger` React hook in `apps/web/src/hooks/useLogger.ts` (component-scoped structured logging)
-- [ ] T012 [P] Create `useTrace` React hook in `apps/web/src/hooks/useTrace.ts` (action-scoped OpenTelemetry spans)
-- [ ] T013 Initialize logger and telemetry in React entry point `apps/web/src/main.tsx`
-- [ ] T014 Create global CSS reset and app-level styles importing design tokens in `apps/web/src/index.css`
+- [x] T007 Create design tokens CSS file with Hermes calm-console palette in `apps/web/src/tokens/design-tokens.css` (colors, typography, spacing, radii per contracts/ui-contracts.md § 4)
+- [x] T008 [P] Create shared TypeScript types for all entities in `apps/web/src/store/types.ts` (NavigationSection, ChatSession, ChatMessage, ServiceStatus, WorkspaceFile, TraceContext, LogEntry per data-model.md)
+- [x] T009 [P] Implement structured JSON logger service in `apps/web/src/services/logger.ts` (Logger interface per contracts/ui-contracts.md § 1)
+- [x] T010 [P] Implement OpenTelemetry telemetry service with ConsoleSpanExporter in `apps/web/src/services/telemetry.ts` (TelemetryService interface per contracts/ui-contracts.md § 1)
+- [x] T011 [P] Create `useLogger` React hook in `apps/web/src/hooks/useLogger.ts` (component-scoped structured logging)
+- [x] T012 [P] Create `useTrace` React hook in `apps/web/src/hooks/useTrace.ts` (action-scoped OpenTelemetry spans)
+- [x] T013 Initialize logger and telemetry in React entry point `apps/web/src/main.tsx`
+- [x] T014 Create global CSS reset and app-level styles importing design tokens in `apps/web/src/index.css`
 
 **Checkpoint**: Foundation ready — design tokens, logging, telemetry, and types in place. User story implementation can begin.
 
@@ -62,24 +62,24 @@
 
 ### Tests for User Story 1
 
-- [ ] T015 [P] [US1] Vitest component test: AppShell renders header, sidebar, and content in `apps/web/tests/AppShell.spec.tsx`
-- [ ] T016 [P] [US1] Vitest component test: Sidebar renders all navigation items in `apps/web/tests/Sidebar.spec.tsx`
-- [ ] T017 [P] [US1] Playwright integration test: dashboard loads and renders all layout regions in `tests/ui-integration/dashboard.spec.ts`
+- [x] T015 [P] [US1] Vitest component test: AppShell renders header, sidebar, and content in `apps/web/tests/AppShell.spec.tsx`
+- [x] T016 [P] [US1] Vitest component test: Sidebar renders all navigation items in `apps/web/tests/Sidebar.spec.tsx`
+- [x] T017 [P] [US1] Playwright integration test: dashboard loads and renders all layout regions in `tests/ui-integration/dashboard.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T018 [P] [US1] Create `StatusDot` primitive component in `apps/web/src/components/common/StatusDot.tsx` (colored indicator dot for connection states)
-- [ ] T019 [P] [US1] Create `NavItem` primitive component in `apps/web/src/components/common/NavItem.tsx` (sidebar navigation link)
-- [ ] T020 [P] [US1] Create `Placeholder` component in `apps/web/src/components/common/Placeholder.tsx` (empty state placeholder for sections)
-- [ ] T021 [US1] Create `Sidebar` layout component in `apps/web/src/components/layout/Sidebar.tsx` (renders NavigationSection list using NavItem)
-- [ ] T022 [US1] Create `StatusBar` layout component in `apps/web/src/components/layout/StatusBar.tsx` (service health indicators using StatusDot)
-- [ ] T023 [US1] Create `Header` layout component in `apps/web/src/components/layout/Header.tsx` (app title + StatusBar)
-- [ ] T024 [US1] Create `AppShell` layout component in `apps/web/src/components/layout/AppShell.tsx` (Header + Sidebar + main content area)
-- [ ] T025 [US1] Create `DashboardPage` in `apps/web/src/components/pages/DashboardPage.tsx` (welcome content with placeholder panels)
-- [ ] T026 [US1] Wire AppShell and DashboardPage into `apps/web/src/App.tsx` with React Router (route `/` → Dashboard)
-- [ ] T027 [US1] Update `apps/web/index.html` with meta tags, title "Wright", and `<noscript>` fallback message
-- [ ] T028 [US1] Add `data-testid` attributes to all interactive elements in US1 components (per constitution § 6)
-- [ ] T029 [US1] Add structured logging for page load and component mount events in US1 components via `useLogger` hook
+- [x] T018 [P] [US1] Create `StatusDot` primitive component in `apps/web/src/components/common/StatusDot.tsx` (colored indicator dot for connection states)
+- [x] T019 [P] [US1] Create `NavItem` primitive component in `apps/web/src/components/common/NavItem.tsx` (sidebar navigation link)
+- [x] T020 [P] [US1] Create `Placeholder` component in `apps/web/src/components/common/Placeholder.tsx` (empty state placeholder for sections)
+- [x] T021 [US1] Create `Sidebar` layout component in `apps/web/src/components/layout/Sidebar.tsx` (renders NavigationSection list using NavItem)
+- [x] T022 [US1] Create `StatusBar` layout component in `apps/web/src/components/layout/StatusBar.tsx` (service health indicators using StatusDot)
+- [x] T023 [US1] Create `Header` layout component in `apps/web/src/components/layout/Header.tsx` (app title + StatusBar)
+- [x] T024 [US1] Create `AppShell` layout component in `apps/web/src/components/layout/AppShell.tsx` (Header + Sidebar + main content area)
+- [x] T025 [US1] Create `DashboardPage` in `apps/web/src/components/pages/DashboardPage.tsx` (welcome content with placeholder panels)
+- [x] T026 [US1] Wire AppShell and DashboardPage into `apps/web/src/App.tsx` with React Router (route `/` → Dashboard)
+- [x] T027 [US1] Update `apps/web/index.html` with meta tags, title "Wright", and `<noscript>` fallback message
+- [x] T028 [US1] Add `data-testid` attributes to all interactive elements in US1 components (per constitution § 6)
+- [x] T029 [US1] Add structured logging for page load and component mount events in US1 components via `useLogger` hook
 
 **Checkpoint**: Dashboard renders with header, sidebar, and content area. Logging emits structured JSON. Playwright test passes. MVP complete.
 
@@ -93,27 +93,27 @@
 
 ### Tests for User Story 2
 
-- [ ] T030 [P] [US2] Vitest component test: ChatLayout renders three panels in `apps/web/tests/ChatLayout.spec.tsx`
-- [ ] T031 [P] [US2] Vitest component test: MessageComposer sends messages on submit in `apps/web/tests/MessageComposer.spec.tsx`
-- [ ] T032 [P] [US2] Vitest component test: SessionsSidebar lists sessions, handles selection, and renders 50 sessions without layout degradation (SC-011) in `apps/web/tests/SessionsSidebar.spec.tsx`
-- [ ] T033 [P] [US2] Playwright integration test: Agent Chat three-panel layout and message flow in `tests/ui-integration/agent-chat.spec.ts`
+- [x] T030 [P] [US2] Vitest component test: ChatLayout renders three panels in `apps/web/tests/ChatLayout.spec.tsx`
+- [x] T031 [P] [US2] Vitest component test: MessageComposer sends messages on submit in `apps/web/tests/MessageComposer.spec.tsx`
+- [x] T032 [P] [US2] Vitest component test: SessionsSidebar lists sessions, handles selection, and renders 50 sessions without layout degradation (SC-011) in `apps/web/tests/SessionsSidebar.spec.tsx`
+- [x] T033 [P] [US2] Playwright integration test: Agent Chat three-panel layout and message flow in `tests/ui-integration/agent-chat.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T034 [US2] Implement stub `AgentService` in `apps/web/src/services/agent-service.ts` (returns echo responses for v1, per contracts/ui-contracts.md § 1)
-- [ ] T035 [US2] Implement chat session state management with React Context + useReducer in `apps/web/src/store/sessions.ts` (ChatSession, ChatMessage CRUD, localStorage persistence)
-- [ ] T036 [P] [US2] Create `MessageBubble` component in `apps/web/src/components/chat/MessageBubble.tsx` (user/assistant message rendering with role styling)
-- [ ] T037 [P] [US2] Create `FileTree` recursive component in `apps/web/src/components/common/FileTree.tsx` (expandable file/directory tree)
-- [ ] T038 [US2] Create `MessageComposer` component in `apps/web/src/components/chat/MessageComposer.tsx` (textarea + send button, auto-resize)
-- [ ] T039 [US2] Create `ChatTranscript` component in `apps/web/src/components/chat/ChatTranscript.tsx` (scrollable message list using MessageBubble, auto-scroll on new messages)
-- [ ] T040 [US2] Create `SessionsSidebar` component in `apps/web/src/components/chat/SessionsSidebar.tsx` (session list, create/select/delete actions)
-- [ ] T041 [US2] Create `WorkspacePanel` component in `apps/web/src/components/chat/WorkspacePanel.tsx` (file tree browser with placeholder data)
-- [ ] T042 [US2] Create `ChatLayout` component in `apps/web/src/components/chat/ChatLayout.tsx` (CSS Grid three-panel layout: 260px | 1fr | 280px, right panel collapsible)
-- [ ] T043 [US2] Create `AgentChatPage` in `apps/web/src/components/pages/AgentChatPage.tsx` (wraps ChatLayout with session context provider)
-- [ ] T044 [US2] Add route `/agent-chat` → AgentChatPage in `apps/web/src/App.tsx`
-- [ ] T045 [US2] Add `data-testid` attributes to all interactive elements in US2 components
-- [ ] T046 [US2] Add structured logging for chat events (message sent, session created/switched) via `useLogger` hook
-- [ ] T047 [US2] Add telemetry spans for send-message action via `useTrace` hook (trace ID visible in message metadata)
+- [x] T034 [US2] Implement stub `AgentService` in `apps/web/src/services/agent-service.ts` (returns echo responses for v1, per contracts/ui-contracts.md § 1)
+- [x] T035 [US2] Implement chat session state management with React Context + useReducer in `apps/web/src/store/sessions.ts` (ChatSession, ChatMessage CRUD, localStorage persistence)
+- [x] T036 [P] [US2] Create `MessageBubble` component in `apps/web/src/components/chat/MessageBubble.tsx` (user/assistant message rendering with role styling)
+- [x] T037 [P] [US2] Create `FileTree` recursive component in `apps/web/src/components/common/FileTree.tsx` (expandable file/directory tree)
+- [x] T038 [US2] Create `MessageComposer` component in `apps/web/src/components/chat/MessageComposer.tsx` (textarea + send button, auto-resize)
+- [x] T039 [US2] Create `ChatTranscript` component in `apps/web/src/components/chat/ChatTranscript.tsx` (scrollable message list using MessageBubble, auto-scroll on new messages)
+- [x] T040 [US2] Create `SessionsSidebar` component in `apps/web/src/components/chat/SessionsSidebar.tsx` (session list, create/select/delete actions)
+- [x] T041 [US2] Create `WorkspacePanel` component in `apps/web/src/components/chat/WorkspacePanel.tsx` (file tree browser with placeholder data)
+- [x] T042 [US2] Create `ChatLayout` component in `apps/web/src/components/chat/ChatLayout.tsx` (CSS Grid three-panel layout: 260px | 1fr | 280px, right panel collapsible)
+- [x] T043 [US2] Create `AgentChatPage` in `apps/web/src/components/pages/AgentChatPage.tsx` (wraps ChatLayout with session context provider)
+- [x] T044 [US2] Add route `/agent-chat` → AgentChatPage in `apps/web/src/App.tsx`
+- [x] T045 [US2] Add `data-testid` attributes to all interactive elements in US2 components
+- [x] T046 [US2] Add structured logging for chat events (message sent, session created/switched) via `useLogger` hook
+- [x] T047 [US2] Add telemetry spans for send-message action via `useTrace` hook (trace ID visible in message metadata)
 
 **Checkpoint**: Agent Chat section fully functional with three-panel layout, session CRUD, message compose/send, and workspace panel. All works offline with stub data.
 
@@ -127,17 +127,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T048 [P] [US3] Playwright integration test: navigation between all sections and URL persistence in `tests/ui-integration/navigation.spec.ts`
+- [x] T048 [P] [US3] Playwright integration test: navigation between all sections and URL persistence in `tests/ui-integration/navigation.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T049 [P] [US3] Create `ToolRegistryPage` placeholder in `apps/web/src/components/pages/ToolRegistryPage.tsx`
-- [ ] T050 [P] [US3] Create `FileVaultPage` placeholder in `apps/web/src/components/pages/FileVaultPage.tsx`
-- [ ] T051 [P] [US3] Create `NotFoundPage` in `apps/web/src/components/pages/NotFoundPage.tsx` (404 with link back to dashboard)
-- [ ] T052 [US3] Add routes `/tool-registry`, `/file-vault`, and `*` (catch-all) in `apps/web/src/App.tsx`
-- [ ] T053 [US3] Wire Sidebar active state to current route via React Router's `useLocation` in `apps/web/src/components/layout/Sidebar.tsx`
-- [ ] T054 [US3] Add `data-testid` attributes to all interactive elements in US3 components
-- [ ] T055 [US3] Add structured logging for navigation events (route changes) via `useLogger` hook
+- [x] T049 [P] [US3] Create `ToolRegistryPage` placeholder in `apps/web/src/components/pages/ToolRegistryPage.tsx`
+- [x] T050 [P] [US3] Create `FileVaultPage` placeholder in `apps/web/src/components/pages/FileVaultPage.tsx`
+- [x] T051 [P] [US3] Create `NotFoundPage` in `apps/web/src/components/pages/NotFoundPage.tsx` (404 with link back to dashboard)
+- [x] T052 [US3] Add routes `/tool-registry`, `/file-vault`, and `*` (catch-all) in `apps/web/src/App.tsx`
+- [x] T053 [US3] Wire Sidebar active state to current route via React Router's `useLocation` in `apps/web/src/components/layout/Sidebar.tsx`
+- [x] T054 [US3] Add `data-testid` attributes to all interactive elements in US3 components
+- [x] T055 [US3] Add structured logging for navigation events (route changes) via `useLogger` hook
 
 **Checkpoint**: All 4 sections + 404 page routable. Browser back/forward works. URLs are shareable/bookmarkable.
 
@@ -151,16 +151,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T056 [P] [US4] Vitest component test: StatusBar renders service statuses and trace info in `apps/web/tests/StatusBar.spec.tsx`
+- [x] T056 [P] [US4] Vitest component test: StatusBar renders service statuses and trace info in `apps/web/tests/StatusBar.spec.tsx`
 
 ### Implementation for User Story 4
 
-- [ ] T057 [US4] Implement `HealthService` in `apps/web/src/services/health-service.ts` (polling with 15s interval, status change callbacks per contracts/ui-contracts.md § 1)
-- [ ] T058 [US4] Create `useHealthStatus` hook in `apps/web/src/hooks/useHealthStatus.ts` (wraps HealthService, provides React state)
-- [ ] T059 [US4] Wire `StatusBar` to live health polling via `useHealthStatus` in `apps/web/src/components/layout/StatusBar.tsx`
-- [ ] T060 [US4] Wire `StatusBar` to display latest trace ID from telemetry service in `apps/web/src/components/layout/Header.tsx`
-- [ ] T061 [US4] Add `data-testid` attributes to all interactive elements in US4 components
-- [ ] T062 [US4] Add structured logging for health status changes via `useLogger` hook
+- [x] T057 [US4] Implement `HealthService` in `apps/web/src/services/health-service.ts` (polling with 15s interval, status change callbacks per contracts/ui-contracts.md § 1)
+- [x] T058 [US4] Create `useHealthStatus` hook in `apps/web/src/hooks/useHealthStatus.ts` (wraps HealthService, provides React state)
+- [x] T059 [US4] Wire `StatusBar` to live health polling via `useHealthStatus` in `apps/web/src/components/layout/StatusBar.tsx`
+- [x] T060 [US4] Wire `StatusBar` to display latest trace ID from telemetry service in `apps/web/src/components/layout/Header.tsx`
+- [x] T061 [US4] Add `data-testid` attributes to all interactive elements in US4 components
+- [x] T062 [US4] Add structured logging for health status changes via `useLogger` hook
 
 **Checkpoint**: Status bar shows live service connectivity. Trace IDs visible. Health polls every 15 seconds.
 
@@ -170,13 +170,13 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T063 [P] Responsive layout CSS adjustments for tablet screen widths in `apps/web/src/tokens/design-tokens.css` and component CSS
-- [ ] T064 [P] Add CSS transitions/animations for sidebar hover, page transitions, and status dot state changes
-- [ ] T065 [P] Browser compatibility check — verify no console errors on Chrome, Firefox, Edge
-- [ ] T066 Run quickstart.md validation — follow quickstart steps and verify all instructions work
-- [ ] T067 Final `data-testid` audit — confirm 100% coverage of interactive elements (SC-003) and verify zero hardcoded color/spacing values in component CSS (FR-009 token enforcement)
-- [ ] T068 Run full Playwright test suite and fix any failures
-- [ ] T069 Run full Vitest suite and fix any failures
+- [x] T063 [P] Responsive layout CSS adjustments for tablet screen widths in `apps/web/src/tokens/design-tokens.css` and component CSS
+- [x] T064 [P] Add CSS transitions/animations for sidebar hover, page transitions, and status dot state changes
+- [x] T065 [P] Browser compatibility check — verify no console errors on Chrome, Firefox, Edge
+- [x] T066 Run quickstart.md validation — follow quickstart steps and verify all instructions work
+- [x] T067 Final `data-testid` audit — confirm 100% coverage of interactive elements (SC-003) and verify zero hardcoded color/spacing values in component CSS (FR-009 token enforcement)
+- [x] T068 Run full Playwright test suite and fix any failures
+- [x] T069 Run full Vitest suite and fix any failures
 
 ---
 

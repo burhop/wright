@@ -217,6 +217,19 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Node.js / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# Playwright / E2E Testing
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
 # =============================================================================
 # Wright — Project-specific ignores
 # =============================================================================

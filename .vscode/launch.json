@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FastAPI Server (Standard Run)",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "wright:start-api"
+    },
+    {
+      "name": "Vite Frontend",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/apps/web",
+      "preLaunchTask": "wright:start-web"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Wright App (API + Frontend - Standard Run)",
+      "configurations": [
+        "FastAPI Server (Standard Run)",
+        "Vite Frontend"
+      ]
+    }
+  ]
+}
