@@ -9,6 +9,9 @@
         "cwd": "${workspaceFolder}/apps/api"
       },
       "isBackground": true,
+      "dependsOn": [
+        "wright:setup-profile"
+      ],
       "problemMatcher": {
         "owner": "custom",
         "pattern": {
@@ -48,6 +51,15 @@
         "wright:start-web"
       ],
       "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "wright:setup-profile",
+      "type": "shell",
+      "command": "bash scripts/setup-wright-profile.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": []
     }
   ]

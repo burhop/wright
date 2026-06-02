@@ -1,4 +1,6 @@
 import type { ChatMessage } from '../../store/types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -31,8 +33,37 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           transition: 'all 0.2s ease',
         }}
       >
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', whiteSpace: 'pre-wrap' }}>
-          {message.content}
+        <div className="message-content" style={{ fontFamily: 'var(--font-body)', fontSize: '1rem' }}>
+          {isUser ? (
+            <div style={{ whiteSpace: 'pre-wrap' }}>{message.content}</div>
+          ) : (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ href, children, ...props }) => {
+                  // Explicitly validate protocol to prevent javascript: or vbscript: XSS vectors
+                  const isSafe = href && (
+                    href.startsWith('http://') || 
+                    href.startsWith('https://') || 
+                    href.startsWith('mailto:') || 
+                    href.startsWith('tel:')
+                  );
+                  return (
+                    <a
+                      href={isSafe ? href : '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...props}
+                    >
+                      {children}
+                    </a>
+                  );
+                }
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          )}
         </div>
         
         <div

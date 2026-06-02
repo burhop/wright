@@ -168,20 +168,50 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
 
   useEffect(() => {
-    const stored = localStorage.getItem('wright-chat-sessions');
-    if (stored) {
+    const hydrateSessions = async () => {
       try {
-        const sessions: ChatSession[] = JSON.parse(stored);
+        const compactSessions = await agentService.listSessions();
+        const stored = localStorage.getItem('wright-chat-sessions');
+        let localSessions: ChatSession[] = [];
+        if (stored) {
+          try {
+            localSessions = JSON.parse(stored);
+          } catch (e) {}
+        }
+        
+        const sessions: ChatSession[] = compactSessions.map((cs) => {
+          const matched = localSessions.find(ls => ls.sessionId === cs.sessionId);
+          return {
+            sessionId: cs.sessionId,
+            title: cs.title,
+            createdAt: cs.createdAt,
+            updatedAt: cs.updatedAt,
+            messages: matched ? matched.messages : [],
+            isActive: matched ? matched.isActive : false,
+          };
+        });
+
         dispatch({ type: 'SET_SESSIONS', sessions });
       } catch (err) {
-        console.error('Failed to parse sessions from localStorage', err);
+        console.error('Failed to sync sessions with backend, falling back to localStorage', err);
+        const stored = localStorage.getItem('wright-chat-sessions');
+        if (stored) {
+          try {
+            dispatch({ type: 'SET_SESSIONS', sessions: JSON.parse(stored) });
+          } catch (e) {}
+        }
       }
-    }
+    };
+    hydrateSessions();
   }, []);
 
   const createSession = async () => {
-    const session = await agentService.createSession();
-    dispatch({ type: 'CREATE_SESSION', session });
+    try {
+      const session = await agentService.createSession();
+      dispatch({ type: 'CREATE_SESSION', session });
+    } catch (err) {
+      console.error('Failed to create session on backend', err);
+    }
   };
 
   const selectSession = (sessionId: string) => {
@@ -189,8 +219,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteSession = async (sessionId: string) => {
-    await agentService.deleteSession(sessionId);
-    dispatch({ type: 'DELETE_SESSION', sessionId });
+    try {
+      await agentService.deleteSession(sessionId);
+      dispatch({ type: 'DELETE_SESSION', sessionId });
+    } catch (err) {
+      console.error('Failed to delete session on backend', err);
+    }
   };
 
   const sendMessage = async (content: string) => {
@@ -207,15 +241,43 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'ADD_MESSAGE', sessionId, message: userMsg });
     dispatch({ type: 'START_STREAMING' });
     
+    let accumulatedText = '';
     try {
       const stream = agentService.sendMessage(sessionId, content);
       for await (const event of stream) {
         if (event.type === 'token') {
+          accumulatedText += event.text;
           dispatch({ type: 'APPEND_STREAM_TOKEN', text: event.text });
         } else if (event.type === 'tool') {
           dispatch({ type: 'SET_ACTIVE_TOOL', name: event.name, preview: event.preview });
         } else if (event.type === 'done') {
-          dispatch({ type: 'END_STREAMING', finalSession: event.session });
+          // Construct the final session with assistant's reply message
+          // Load the latest sessions to find current state (which has the userMsg added above)
+          const currentSessions = JSON.parse(localStorage.getItem('wright-chat-sessions') || '[]');
+          const existingSession = currentSessions.find((s: ChatSession) => s.sessionId === sessionId);
+          
+          const assistantMsg: ChatMessage = {
+            id: Math.random().toString(36).substring(7),
+            role: 'assistant',
+            content: accumulatedText.trim(),
+            timestamp: Date.now(),
+            traceId: 'tr-' + Math.random().toString(36).substring(7),
+          };
+          
+          const finalSession: ChatSession = existingSession ? {
+            ...existingSession,
+            messages: [...existingSession.messages, assistantMsg],
+            updatedAt: Date.now(),
+            title: existingSession.title === 'New Engineering Session' || existingSession.title === 'Untitled'
+              ? (content.length > 30 ? `${content.substring(0, 27)}...` : content)
+              : existingSession.title,
+          } : {
+            ...event.session,
+            messages: [assistantMsg],
+            title: content.length > 30 ? `${content.substring(0, 27)}...` : content,
+          };
+          
+          dispatch({ type: 'END_STREAMING', finalSession });
         } else if (event.type === 'error') {
           console.error(event.message);
           dispatch({ type: 'CLEAR_ACTIVE_TOOL' });

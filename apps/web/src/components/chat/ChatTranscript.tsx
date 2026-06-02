@@ -123,6 +123,36 @@ export function ChatTranscript({
       )}
 
       {mockStreamingMessage && <MessageBubble message={mockStreamingMessage} />}
+      
+      {isStreaming && !streamedText.trim() && (
+        <div
+          data-testid="thinking-indicator"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 'var(--space-xs)',
+            width: '100%',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '80%',
+              padding: 'var(--space-md) var(--space-lg)',
+              borderRadius: 'var(--radius-lg)',
+              backgroundColor: 'var(--color-surface-subtle)',
+              border: '1px solid var(--color-border)',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', height: '1.5rem' }}>
+              <span className="thinking-dot"></span>
+              <span className="thinking-dot"></span>
+              <span className="thinking-dot"></span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

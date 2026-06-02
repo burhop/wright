@@ -17,6 +17,8 @@ dependencies = [
     "wright-agent-adapters",
     "wright-tool-registry",
     "wright-data-vault",
+    "httpx>=0.28",
+    "httpx-sse>=0.4",
 ]
 
 [tool.uv.sources]

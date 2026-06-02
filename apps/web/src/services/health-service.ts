@@ -1,5 +1,7 @@
 import type { ServiceStatus } from '../store/types';
 
+const API_BASE = 'http://127.0.0.1:8000';
+
 export class LiveHealthService {
   private statuses: ServiceStatus[] = [
     { serviceId: 'wright-api', name: 'Wright API', endpoint: '/api/health', state: 'unknown', lastChecked: null },
@@ -16,9 +18,16 @@ export class LiveHealthService {
     const runChecks = async () => {
       const checks = this.statuses.map(async (svc) => {
         try {
-          // Since we are offline in v1, mock a successful connected state for local operations
-          const state = 'connected' as const;
-          return { ...svc, state, lastChecked: Date.now() };
+          const response = await fetch(`${API_BASE}${svc.endpoint}`);
+          if (response.ok) {
+            const data = await response.json();
+            return {
+              ...svc,
+              state: data.state as 'connected' | 'disconnected',
+              lastChecked: Date.now(),
+            };
+          }
+          return { ...svc, state: 'disconnected' as const, lastChecked: Date.now() };
         } catch {
           return { ...svc, state: 'disconnected' as const, lastChecked: Date.now() };
         }

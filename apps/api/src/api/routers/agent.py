@@ -1,0 +1,208 @@
+import json
+import secrets
+from typing import Optional, List, AsyncIterator
+from fastapi import APIRouter, Depends, Request, HTTPException, status
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
+import structlog
+from opentelemetry import trace
+
+from agent_adapters import (
+    BaseAgentEngine,
+    AgentChatRequest,
+    AgentChatStartResponse,
+    AgentSessionInfo,
+    AgentStreamEvent,
+)
+
+logger = structlog.get_logger(__name__)
+router = APIRouter()
+
+# ── Dependency injection helper ──────────────────────────────────────────────
+def get_agent_engine(request: Request) -> BaseAgentEngine:
+    """Extract BaseAgentEngine from app state."""
+    engine = getattr(request.app.state, "agent_engine", None)
+    if not engine:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Agent engine not initialized in app state"
+        )
+    return engine
+
+def get_current_trace_id() -> str:
+    """Retrieve trace_id from OpenTelemetry active span or generate ephemeral fallback."""
+    span = trace.get_current_span()
+    if span and span.get_span_context().is_valid:
+        return f"{span.get_span_context().trace_id:032x}"
+    return secrets.token_hex(16)
+
+# ── Pydantic Request/Response Schemas ─────────────────────────────────────────
+class NewSessionRequest(BaseModel):
+    workspace: Optional[str] = None
+
+class NewSessionResponse(BaseModel):
+    session_id: str
+    title: str
+    created_at: int
+
+class SessionInfoModel(BaseModel):
+    session_id: str
+    title: str
+    created_at: int
+    updated_at: int
+    message_count: int
+
+class SessionsListResponse(BaseModel):
+    sessions: List[SessionInfoModel]
+
+class DeleteSessionResponse(BaseModel):
+    ok: bool
+
+class ChatStartRequest(BaseModel):
+    session_id: str
+    message: str
+
+class ChatStartResponse(BaseModel):
+    stream_id: str
+    session_id: str
+    trace_id: str
+
+# ── Route Handlers ───────────────────────────────────────────────────────────
+@router.post("/sessions/new", response_model=NewSessionResponse)
+async def create_new_session(
+    body: NewSessionRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    trace_id = get_current_trace_id()
+    log = logger.bind(trace_id=trace_id, workspace=body.workspace)
+    log.info("create_session_requested")
+    
+    try:
+        session_info = await engine.create_session(body.workspace)
+        log.info("create_session_success", session_id=session_info.session_id)
+        return NewSessionResponse(
+            session_id=session_info.session_id,
+            title=session_info.title,
+            created_at=session_info.created_at,
+        )
+    except Exception as exc:
+        log.exception("create_session_failed", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Hermes agent failed to create session: {str(exc)}"
+        )
+
+@router.get("/sessions", response_model=SessionsListResponse)
+async def list_agent_sessions(
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    trace_id = get_current_trace_id()
+    log = logger.bind(trace_id=trace_id)
+    log.info("list_sessions_requested")
+    
+    try:
+        sessions = await engine.list_sessions()
+        log.info("list_sessions_success", count=len(sessions))
+        return SessionsListResponse(
+            sessions=[
+                SessionInfoModel(
+                    session_id=s.session_id,
+                    title=s.title,
+                    created_at=s.created_at,
+                    updated_at=s.updated_at,
+                    message_count=s.message_count,
+                )
+                for s in sessions
+            ]
+        )
+    except Exception as exc:
+        log.exception("list_sessions_failed", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Hermes agent failed to list sessions: {str(exc)}"
+        )
+
+@router.delete("/sessions/{session_id}", response_model=DeleteSessionResponse)
+async def delete_agent_session(
+    session_id: str,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    trace_id = get_current_trace_id()
+    log = logger.bind(trace_id=trace_id, session_id=session_id)
+    log.info("delete_session_requested")
+    
+    try:
+        ok = await engine.delete_session(session_id)
+        log.info("delete_session_result", success=ok)
+        if not ok:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Session not found or delete failed"
+            )
+        return DeleteSessionResponse(ok=ok)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        log.exception("delete_session_failed", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Hermes agent failed to delete session: {str(exc)}"
+        )
+
+@router.post("/chat/start", response_model=ChatStartResponse)
+async def start_chat_turn(
+    body: ChatStartRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    trace_id = get_current_trace_id()
+    log = logger.bind(trace_id=trace_id, session_id=body.session_id)
+    log.info("chat_start_requested")
+    
+    try:
+        chat_request = AgentChatRequest(
+            session_id=body.session_id,
+            message=body.message,
+            trace_id=trace_id,
+        )
+        chat_response = await engine.start_chat(chat_request)
+        log.info("chat_start_success", stream_id=chat_response.stream_id)
+        return ChatStartResponse(
+            stream_id=chat_response.stream_id,
+            session_id=chat_response.session_id,
+            trace_id=trace_id,
+        )
+    except Exception as exc:
+        log.exception("chat_start_failed", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Hermes agent unavailable: {str(exc)}"
+        )
+
+@router.get("/chat/stream")
+async def chat_response_stream(
+    stream_id: str,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    trace_id = get_current_trace_id()
+    log = logger.bind(trace_id=trace_id, stream_id=stream_id)
+    log.info("chat_stream_connected")
+
+    async def sse_generator() -> AsyncIterator[str]:
+        try:
+            async for event in engine.stream_response(stream_id):
+                log.info("chat_stream_yield_event", type=event.type)
+                yield f"event: {event.type}\ndata: {json.dumps(event.data)}\n\n"
+        except Exception as exc:
+            log.exception("chat_stream_yield_failed", error=str(exc))
+            # Yield error event and exit
+            yield f"event: error\ndata: {json.dumps({'message': str(exc)})}\n\n"
+
+    return StreamingResponse(
+        sse_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        }
+    )

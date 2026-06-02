@@ -4,13 +4,18 @@ import ChatTranscript from './ChatTranscript';
 import MessageComposer from './MessageComposer';
 import WorkspacePanel from './WorkspacePanel';
 import { useChat } from '../../store/sessions';
+import useHealthStatus from '../../hooks/useHealthStatus';
 
 export function ChatLayout() {
   const { state, createSession, selectSession, deleteSession, sendMessage } = useChat();
   const [showWorkspace, setShowWorkspace] = useState(true);
+  const statuses = useHealthStatus();
 
   const activeSession =
     state.sessions.find((s) => s.sessionId === state.activeSessionId) || null;
+
+  const agentStatus = statuses.find((s) => s.serviceId === 'hermes-agent')?.state;
+  const isAgentDisconnected = agentStatus === 'disconnected';
 
   return (
     <div
@@ -33,6 +38,26 @@ export function ChatLayout() {
       />
 
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        {isAgentDisconnected && (
+          <div
+            data-testid="health-banner-hermes"
+            style={{
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              borderBottom: '1px solid rgba(239, 68, 68, 0.2)',
+              color: '#ef4444',
+              padding: 'var(--space-md) var(--space-lg)',
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 'var(--space-md)',
+              fontFamily: 'var(--font-ui)',
+            }}
+          >
+              <span style={{ fontWeight: 'bold' }}>⚠️</span>
+              <span>Hermes agent is not available. Check that the wright profile WebUI is running.</span>
+          </div>
+        )}
         <div
           style={{
             height: '40px',

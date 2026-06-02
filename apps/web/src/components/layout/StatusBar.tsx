@@ -27,12 +27,16 @@ export function StatusBar({ statuses = DEFAULT_STATUSES, latestTrace = null }: S
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
         {statuses.map((svc) => (
-          <StatusDot
+          <span
             key={svc.serviceId}
-            state={svc.state}
-            label={svc.name}
-            data-testid={`status-${svc.serviceId}`}
-          />
+            data-testid={svc.serviceId === 'hermes-agent' && svc.state === 'disconnected' ? 'health-error-hermes' : undefined}
+          >
+            <StatusDot
+              state={svc.state}
+              label={svc.name}
+              data-testid={`status-${svc.serviceId}`}
+            />
+          </span>
         ))}
       </div>
 
