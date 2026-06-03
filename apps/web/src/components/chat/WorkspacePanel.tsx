@@ -9,6 +9,7 @@ import ToolsMarketplace from '../common/ToolsMarketplace';
 import ImagePreviewer from '../common/ImagePreviewer';
 import { useChat } from '../../store/sessions';
 import { workspaceService, type WorkspaceNode, MergeConflictError } from '../../services/workspace-service';
+import { agentService } from '../../services/agent-service';
 import useHealthStatus from '../../hooks/useHealthStatus';
 import ChatTranscript from './ChatTranscript';
 import MessageComposer from './MessageComposer';
@@ -47,6 +48,32 @@ export function WorkspacePanel() {
 
   const activeSession =
     state.sessions.find((s) => s.sessionId === state.activeSessionId) || null;
+
+  // Load active agent on mount
+  useEffect(() => {
+    const fetchActiveAgent = async () => {
+      try {
+        const active = await agentService.getActiveAgent();
+        if (active === 'hermes') setSelectedModel('Hermes');
+        else if (active === 'openclaw') setSelectedModel('openclaw');
+        else if (active === 'pi') setSelectedModel('PI');
+        else if (active === 'qwen') setSelectedModel('Qwen');
+        else setSelectedModel(active);
+      } catch (err) {
+        console.error('Failed to fetch active agent from backend', err);
+      }
+    };
+    fetchActiveAgent();
+  }, []);
+
+  const handleModelChange = async (newModel: string) => {
+    setSelectedModel(newModel);
+    try {
+      await agentService.setActiveAgent(newModel.toLowerCase(), activeSessionId);
+    } catch (err) {
+      console.error('Failed to change active agent on backend', err);
+    }
+  };
 
   // Layout states
   const [activeSidebar, setActiveSidebar] = useState<'marketplace' | 'files' | 'git' | 'settings'>('files');
@@ -1195,7 +1222,7 @@ export function WorkspacePanel() {
             <select
               data-testid="llm-model-select"
               value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
+              onChange={(e) => handleModelChange(e.target.value)}
               style={{
                 flex: 1,
                 backgroundColor: 'var(--color-surface-subtle)',

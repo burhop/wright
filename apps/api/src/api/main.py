@@ -44,6 +44,8 @@ app.add_middleware(
 
 # Instantiate and store the Hermes adapter engine in the app state
 app.state.agent_engine = HermesAdapter(HERMES_WEBUI_BASE_URL)
+from core import AgentSyncManager
+app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the agent router
 app.include_router(agent_router, prefix="/api/agent")

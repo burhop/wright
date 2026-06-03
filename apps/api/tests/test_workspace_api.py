@@ -483,3 +483,65 @@ def test_workspace_tools_endpoints(client):
     assert response_get.status_code == 200
     tools = response_get.json()["enabled_tools"]
     assert "OpenSCAD Geometry" not in tools
+
+def test_workspace_recent_and_list(client):
+    # Ensure test-session exists by listing files first
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    # Test GET /api/workspace/recent
+    response = client.get("/api/workspace/recent")
+    assert response.status_code == 200
+    data = response.json()
+    assert "workspaces" in data
+    assert len(data["workspaces"]) >= 1
+    assert any(w["session_id"] == "test-session" for w in data["workspaces"])
+
+    # Test GET /api/workspace/list
+    response_list = client.get("/api/workspace/list")
+    assert response_list.status_code == 200
+    data_list = response_list.json()
+    assert "workspaces" in data_list
+    assert len(data_list["workspaces"]) >= 1
+    assert any(w["session_id"] == "test-session" for w in data_list["workspaces"])
+
+def test_workspace_activate(client):
+    # Ensure test-session exists
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    # Test POST /api/workspace/activate
+    response = client.post(
+        "/api/workspace/activate",
+        json={"session_id": "test-session"}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["session_id"] == "test-session"
+    assert "workspace_path" in data
+
+def test_active_agent_endpoints(client):
+    # Test GET /api/agent/active (should default to hermes or whatever the active agent is)
+    response = client.get("/api/agent/active")
+    assert response.status_code == 200
+    assert "agent" in response.json()
+
+    # Test POST /api/agent/active to update the agent to openclaw
+    response_post = client.post(
+        "/api/agent/active",
+        json={"agent": "openclaw"},
+        params={"session_id": "test-session"}
+    )
+    assert response_post.status_code == 200
+    assert response_post.json()["agent"] == "openclaw"
+
+    # Verify the updated agent via GET
+    response_get = client.get("/api/agent/active")
+    assert response_get.status_code == 200
+    assert response_get.json()["agent"] == "openclaw"
+
+    # Reset back to hermes
+    client.post(
+        "/api/agent/active",
+        json={"agent": "hermes"}
+    )
+

@@ -83,6 +83,35 @@ def update_workspace_enabled_tools(db_path: str, session_id: str, enabled_tools:
         )
         conn.commit()
 
+def get_recent_workspaces(db_path: str, limit: int = 5) -> list[Dict[str, Any]]:
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM engineering_workspaces ORDER BY updated_at DESC LIMIT ?",
+            (limit,)
+        )
+        return [dict(row) for row in cursor.fetchall()]
+
+def get_all_workspaces(db_path: str) -> list[Dict[str, Any]]:
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM engineering_workspaces ORDER BY local_path ASC")
+        return [dict(row) for row in cursor.fetchall()]
+
+def touch_workspace(db_path: str, session_id: str) -> None:
+    import time
+    now = int(time.time())
+    with _get_db_conn(db_path) as conn:
+        conn.execute(
+            """
+            UPDATE engineering_workspaces
+            SET updated_at = ?
+            WHERE session_id = ?
+            """,
+            (now, session_id)
+        )
+        conn.commit()
+
 class MergeConflictError(Exception):
     """Exception raised when a git pull results in merge conflicts."""
     def __init__(self, conflicted_files: list[str]):

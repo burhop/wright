@@ -1,33 +1,60 @@
 import { useState } from 'react';
 import type { McpServer, McpTool } from '../../services/mcp-service';
+import { workspaceService, type WorkspaceInfo } from '../../services/workspace-service';
 
 interface ToolCardProps {
   server: McpServer;
   tools: McpTool[];
-  onToggleActive: (serverId: string, active: boolean) => Promise<void>;
+  onInstall: (serverId: string, sessionId?: string | null) => Promise<void>;
+  onUninstall: (serverId: string, sessionId?: string | null) => Promise<void>;
   onDelete: (serverId: string) => Promise<void>;
   onToggleTool: (toolId: string, enabled: boolean) => Promise<void>;
+  workspaces: WorkspaceInfo[];
+  activeSessionId: string | null;
+  onRefreshWorkspaces: () => Promise<void>;
 }
 
 export function ToolCard({
   server,
   tools,
-  onToggleActive,
+  onInstall,
+  onUninstall,
   onDelete,
   onToggleTool,
+  workspaces,
+  activeSessionId,
+  onRefreshWorkspaces,
 }: ToolCardProps) {
-  const [isToggling, setIsToggling] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [isUninstalling, setIsUninstalling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showTools, setShowTools] = useState(false);
+  const [togglingWorkspaceId, setTogglingWorkspaceId] = useState<string | null>(null);
 
-  const handleActiveToggle = async () => {
-    setIsToggling(true);
+  const handleInstall = async () => {
+    setIsInstalling(true);
     try {
-      await onToggleActive(server.server_id, !server.is_active);
+      await onInstall(server.server_id, activeSessionId);
+      await onRefreshWorkspaces();
     } catch (err) {
       console.error(err);
     } finally {
-      setIsToggling(false);
+      setIsInstalling(false);
+    }
+  };
+
+  const handleUninstall = async () => {
+    if (!window.confirm(`Are you sure you want to uninstall "${server.name}"?`)) {
+      return;
+    }
+    setIsUninstalling(true);
+    try {
+      await onUninstall(server.server_id, activeSessionId);
+      await onRefreshWorkspaces();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsUninstalling(false);
     }
   };
 
@@ -44,7 +71,25 @@ export function ToolCard({
     }
   };
 
+  const handleToggleWorkspace = async (w: WorkspaceInfo, isEnabled: boolean) => {
+    setTogglingWorkspaceId(w.workspace_id);
+    try {
+      await workspaceService.toggleWorkspaceTool(w.session_id, server.server_id, isEnabled);
+      await onRefreshWorkspaces();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTogglingWorkspaceId(null);
+    }
+  };
+
+  const getWorkspaceName = (path: string) => {
+    const parts = path.split('/');
+    return parts[parts.length - 1] || path;
+  };
+
   const getStatusColor = () => {
+    if (!server.is_installed) return 'rgba(255, 255, 255, 0.3)';
     if (server.status === 'active') return 'var(--color-success)';
     if (server.status === 'error') return 'var(--color-error)';
     return 'var(--color-secondary)';
@@ -64,7 +109,7 @@ export function ToolCard({
         transition: 'all var(--transition-smooth)',
         boxShadow: 'var(--shadow-md)',
         position: 'relative',
-        opacity: isDeleting ? 0.5 : 1,
+        opacity: isDeleting || isUninstalling ? 0.5 : 1,
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'var(--color-secondary)';
@@ -100,41 +145,52 @@ export function ToolCard({
           </span>
         </div>
 
-        {/* Server Toggle Button */}
-        <button
-          onClick={handleActiveToggle}
-          disabled={isToggling || isDeleting}
-          style={{
-            padding: 'var(--space-sm) var(--space-lg)',
-            borderRadius: 'var(--radius-lg)',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            border: server.is_active ? '1px solid var(--color-border)' : 'none',
-            backgroundColor: server.is_active ? 'transparent' : 'var(--color-secondary)',
-            color: server.is_active ? 'var(--color-primary)' : 'var(--color-surface-subtle)',
-            cursor: isToggling ? 'not-allowed' : 'pointer',
-            transition: 'all var(--transition-smooth)',
-            boxShadow: server.is_active ? 'none' : 'var(--shadow-glow)',
-          }}
-          onMouseEnter={(e) => {
-            if (!server.is_active) {
-              e.currentTarget.style.boxShadow = 'var(--shadow-glow-active)';
-            } else {
-              e.currentTarget.style.borderColor = 'var(--color-secondary)';
-              e.currentTarget.style.color = 'var(--color-secondary)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!server.is_active) {
-              e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
-            } else {
-              e.currentTarget.style.borderColor = 'var(--color-border)';
-              e.currentTarget.style.color = 'var(--color-primary)';
-            }
-          }}
-        >
-          {isToggling ? 'Connecting...' : server.is_active ? 'Disable' : 'Enable'}
-        </button>
+        {/* Global Install Button / Status Badge */}
+        <div>
+          {!server.is_installed ? (
+            <button
+              onClick={handleInstall}
+              disabled={isInstalling || isDeleting}
+              style={{
+                padding: 'var(--space-sm) var(--space-lg)',
+                borderRadius: 'var(--radius-lg)',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                border: 'none',
+                backgroundColor: 'var(--color-secondary)',
+                color: 'var(--color-surface-subtle)',
+                cursor: isInstalling ? 'not-allowed' : 'pointer',
+                transition: 'all var(--transition-smooth)',
+                boxShadow: 'var(--shadow-glow)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow-active)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+              }}
+            >
+              {isInstalling ? 'Installing...' : 'Install'}
+            </button>
+          ) : (
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: 'var(--color-success)',
+                backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                border: '1px solid rgba(34, 197, 94, 0.2)',
+                padding: '4px 10px',
+                borderRadius: '20px',
+              }}
+            >
+              ✓ Installed
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Connection Info / Code Command */}
@@ -167,11 +223,73 @@ export function ToolCard({
         )}
       </div>
 
-      {/* Status Indicators */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+      {/* Workspace Enablement List (Only if installed) */}
+      {server.is_installed && (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-sm)',
+            borderTop: '1px solid var(--color-border)',
+            paddingTop: 'var(--space-md)',
+            marginTop: 'var(--space-xs)',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            Enable in Workspaces
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)', maxHeight: '150px', overflowY: 'auto', paddingRight: '4px' }}>
+            {workspaces.length === 0 ? (
+              <span style={{ fontSize: '0.8rem', color: 'var(--color-secondary)', fontStyle: 'italic' }}>
+                No workspaces available.
+              </span>
+            ) : (
+              workspaces.map((w) => {
+                const isEnabled = w.enabled_tools?.includes(server.server_id) || w.enabled_tools?.includes(server.name) || false;
+                const isTogglingW = togglingWorkspaceId === w.workspace_id;
+                return (
+                  <label
+                    key={w.workspace_id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '6px var(--space-md)',
+                      backgroundColor: isEnabled ? 'rgba(56, 189, 248, 0.04)' : 'rgba(255,255,255,0.01)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-md)',
+                      fontSize: '0.8rem',
+                      cursor: isTogglingW ? 'not-allowed' : 'pointer',
+                      transition: 'all var(--transition-fast)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', overflow: 'hidden' }}>
+                      <input
+                        type="checkbox"
+                        checked={isEnabled}
+                        disabled={isTogglingW}
+                        onChange={(e) => handleToggleWorkspace(w, e.target.checked)}
+                        style={{ accentColor: 'var(--color-secondary)', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontWeight: 500, color: isEnabled ? 'var(--color-primary)' : 'var(--color-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {getWorkspaceName(w.local_path)}
+                      </span>
+                    </div>
+                    {isTogglingW && <span style={{ fontSize: '0.7rem', color: 'var(--color-secondary)' }}>Updating...</span>}
+                  </label>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Status Indicators & Control Buttons */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-md)', marginTop: 'var(--space-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
           <span
-            className={server.status === 'active' ? 'pulse-success-glow' : undefined}
+            className={server.is_installed && server.status === 'active' ? 'pulse-success-glow' : undefined}
             style={{
               width: '8px',
               height: '8px',
@@ -182,30 +300,53 @@ export function ToolCard({
             }}
           />
           <span style={{ color: 'var(--color-primary)', textTransform: 'capitalize', fontWeight: 500 }}>
-            {server.status}
+            {server.is_installed ? server.status : 'Not Installed'}
           </span>
         </div>
 
-        {/* Delete Custom Server Button */}
-        {server.name !== 'CalculiX Simulation' && (
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting || isToggling}
-            style={{
-              color: 'var(--color-error)',
-              fontSize: '0.85rem',
-              fontWeight: 500,
-              cursor: 'pointer',
-              border: 'none',
-              background: 'none',
-              transition: 'color var(--transition-fast)',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#ef4444'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-error)'}
-          >
-            Remove
-          </button>
-        )}
+        {/* Action Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+          {server.is_installed && (
+            <button
+              onClick={handleUninstall}
+              disabled={isUninstalling}
+              style={{
+                color: 'var(--color-error)',
+                fontSize: '0.85rem',
+                fontWeight: 500,
+                cursor: 'pointer',
+                border: 'none',
+                background: 'none',
+                opacity: 0.8,
+                transition: 'opacity var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
+            >
+              {isUninstalling ? 'Uninstalling...' : 'Uninstall'}
+            </button>
+          )}
+
+          {server.name !== 'CalculiX Simulation' && server.name !== 'OpenSCAD Geometry' && (
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting || isInstalling || isUninstalling}
+              style={{
+                color: 'rgba(255, 255, 255, 0.4)',
+                fontSize: '0.85rem',
+                fontWeight: 500,
+                cursor: 'pointer',
+                border: 'none',
+                background: 'none',
+                transition: 'color var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#ef4444'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)'}
+            >
+              Remove
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Error block if any */}
@@ -219,6 +360,7 @@ export function ToolCard({
             fontSize: '0.8rem',
             color: 'var(--color-error)',
             wordBreak: 'break-word',
+            textAlign: 'left',
           }}
         >
           <strong>Connection Error:</strong> {server.error_message}
@@ -226,7 +368,7 @@ export function ToolCard({
       )}
 
       {/* Discovered Tools Dropdown */}
-      {tools.length > 0 && (
+      {server.is_installed && tools.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-md)', marginTop: 'var(--space-xs)' }}>
           <button
             onClick={() => setShowTools(!showTools)}
@@ -261,6 +403,7 @@ export function ToolCard({
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 'var(--space-xs)',
+                    textAlign: 'left',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

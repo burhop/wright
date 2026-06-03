@@ -124,6 +124,12 @@ class ServerToggleResponse(BaseModel):
     status: str
     error_message: Optional[str] = None
 
+class ServerInstallResponse(BaseModel):
+    server_id: str
+    is_installed: bool
+    status: str
+    error_message: Optional[str] = None
+
 class ToolsListResponse(BaseModel):
     tools: List[McpTool]
 
@@ -232,6 +238,115 @@ async def toggle_server_activation(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to toggle MCP server activation: {e}"
+        )
+
+@router.post("/servers/{server_id}/install", response_model=ServerInstallResponse)
+async def install_server_endpoint(
+    server_id: str,
+    request: Request,
+    session_id: Optional[str] = None,
+    engine: McpEngine = Depends(get_mcp_engine)
+):
+    logger.info("installing_server", server_id=server_id, session_id=session_id)
+    
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found."
+        )
+
+    try:
+        # Mark as installed in database
+        from tool_registry.db import update_server
+        update_server(engine.db_path, server_id, {"is_installed": True, "updated_at": int(time.time())})
+        
+        # Start server once to discover tools
+        updated = await engine.start_server(server_id)
+        
+        # If a session_id is provided, check if enabled in that workspace.
+        # If not, stop the runner.
+        should_stop = True
+        if session_id:
+            from core.workspace import get_workspace_enabled_tools
+            enabled_tools = get_workspace_enabled_tools(engine.db_path, session_id)
+            if enabled_tools is not None:
+                if (updated.name in enabled_tools) or (updated.server_id in enabled_tools):
+                    should_stop = False
+        else:
+            should_stop = True
+
+        if should_stop:
+            updated = await engine.stop_server(server_id)
+            # Retain is_installed state
+            update_server(engine.db_path, server_id, {"is_installed": True})
+            updated.is_installed = True
+            
+        # Sync with the active agent if session is active
+        if session_id:
+            sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+            if sync_manager:
+                sync_manager.sync_workspace_tools(session_id)
+            
+        return ServerInstallResponse(
+            server_id=updated.server_id,
+            is_installed=updated.is_installed,
+            status=updated.status,
+            error_message=updated.error_message
+        )
+    except Exception as e:
+        logger.exception("install_server_failed", server_id=server_id, error=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to install MCP server: {e}"
+        )
+
+@router.post("/servers/{server_id}/uninstall", response_model=ServerInstallResponse)
+async def uninstall_server_endpoint(
+    server_id: str,
+    request: Request,
+    session_id: Optional[str] = None,
+    engine: McpEngine = Depends(get_mcp_engine)
+):
+    logger.info("uninstalling_server", server_id=server_id, session_id=session_id)
+    
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found."
+        )
+
+    try:
+        # Stop the server runner
+        updated = await engine.stop_server(server_id)
+        
+        # Mark as not installed in database
+        from tool_registry.db import update_server
+        updated = update_server(engine.db_path, server_id, {
+            "is_installed": False, 
+            "is_active": False,
+            "status": "inactive",
+            "updated_at": int(time.time())
+        })
+        
+        # Sync tools removal to the agent if session is active
+        if session_id:
+            sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+            if sync_manager:
+                sync_manager.sync_workspace_tools(session_id)
+                
+        return ServerInstallResponse(
+            server_id=updated.server_id,
+            is_installed=updated.is_installed,
+            status=updated.status,
+            error_message=updated.error_message
+        )
+    except Exception as e:
+        logger.exception("uninstall_server_failed", server_id=server_id, error=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to uninstall MCP server: {e}"
         )
 
 @router.delete("/servers/{server_id}", status_code=status.HTTP_204_NO_CONTENT)

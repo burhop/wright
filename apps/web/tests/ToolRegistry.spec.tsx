@@ -10,6 +10,31 @@ vi.mock('../src/store/tools', () => ({
   ToolsProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
+// Mock useChat to control store states
+const mockUseChat = vi.fn();
+vi.mock('../src/store/sessions', () => ({
+  useChat: () => mockUseChat(),
+  ChatProvider: ({ children }: any) => <div>{children}</div>,
+}));
+
+// Mock workspace-service
+vi.mock('../src/services/workspace-service', () => ({
+  workspaceService: {
+    getAllWorkspaces: vi.fn().mockResolvedValue([
+      {
+        workspace_id: 'ws-1',
+        session_id: 'session-1',
+        local_path: '/path/to/ws-1',
+        git_remote_url: null,
+        git_username: null,
+        enabled_tools: ['Simulation Solver'],
+        updated_at: 1000,
+      }
+    ]),
+    toggleWorkspaceTool: vi.fn().mockResolvedValue(true),
+  },
+}));
+
 // Mock logger hook to avoid logging output clutter
 vi.mock('../src/hooks/useLogger', () => ({
   default: () => ({
@@ -27,6 +52,7 @@ describe('ToolRegistryPage', () => {
       type: 'stdio',
       command: ['uv', 'run', 'sim'],
       is_active: false,
+      is_installed: false,
       status: 'inactive',
       category: 'simulation',
       created_at: 1000,
@@ -38,6 +64,7 @@ describe('ToolRegistryPage', () => {
       type: 'sse',
       command: 'http://127.0.0.1:9090/sse',
       is_active: true,
+      is_installed: true,
       status: 'active',
       category: 'cad',
       created_at: 1000,
@@ -58,6 +85,8 @@ describe('ToolRegistryPage', () => {
   ];
 
   const mockToggleServerState = vi.fn();
+  const mockInstallServerState = vi.fn();
+  const mockUninstallServerState = vi.fn();
   const mockDeleteServerState = vi.fn();
   const mockToggleToolState = vi.fn();
   const mockRegisterCustomServer = vi.fn();
@@ -65,6 +94,11 @@ describe('ToolRegistryPage', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseChat.mockReturnValue({
+      state: {
+        activeSessionId: 'session-1',
+      },
+    });
     (useTools as any).mockReturnValue({
       servers: mockServers,
       tools: mockTools,
@@ -73,6 +107,8 @@ describe('ToolRegistryPage', () => {
       fetchServersAndTools: mockFetch,
       registerCustomServer: mockRegisterCustomServer,
       toggleServerState: mockToggleServerState,
+      installServerState: mockInstallServerState,
+      uninstallServerState: mockUninstallServerState,
       deleteServerState: mockDeleteServerState,
       toggleToolState: mockToggleToolState,
     });
@@ -110,14 +146,14 @@ describe('ToolRegistryPage', () => {
     expect(screen.getByText('CAD Extractor')).toBeInTheDocument();
   });
 
-  it('toggles server status and tools sub-checkboxes', async () => {
+  it('installs a server when install button is clicked', async () => {
     render(<ToolRegistryPage />);
 
-    // Click to enable server 1
-    const enableBtn = screen.getAllByRole('button', { name: /Enable|Disable/ })[0]; // Simulation is Enable
-    expect(enableBtn.textContent).toBe('Enable');
+    // Click to install server 1 (which is not installed)
+    const installBtn = screen.getByRole('button', { name: 'Install' });
+    expect(installBtn).toBeInTheDocument();
     
-    fireEvent.click(enableBtn);
-    expect(mockToggleServerState).toHaveBeenCalledWith('server-1', true);
+    fireEvent.click(installBtn);
+    expect(mockInstallServerState).toHaveBeenCalledWith('server-1', 'session-1');
   });
 });

@@ -7,6 +7,7 @@ class McpServer(BaseModel):
     type: Literal["stdio", "sse", "webmcp"]
     command: Optional[Union[List[str], str]] = None
     is_active: bool
+    is_installed: bool = False
     status: Literal["active", "inactive", "error"]
     error_message: Optional[str] = None
     category: str = "utilities"

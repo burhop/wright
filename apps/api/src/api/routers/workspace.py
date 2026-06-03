@@ -1,16 +1,18 @@
 import os
 import uuid
-from fastapi import APIRouter, Depends, Query, HTTPException, status, Response
+import logging
+from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 
 from agent_adapters import BaseAgentEngine
 from core import WorkspaceManager
-from core.workspace import get_workspace_by_session, create_workspace
+from core.workspace import get_workspace_by_session, create_workspace, get_workspace_enabled_tools, update_workspace_enabled_tools, get_recent_workspaces, get_all_workspaces, touch_workspace
 from api.routers.agent import get_agent_engine
 from api.config import DATABASE_PATH
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 class WorkspaceNodeResponse(BaseModel):
@@ -103,6 +105,26 @@ class WorkspaceToolToggleResponse(BaseModel):
     session_id: str
     server_id: str
     is_enabled: bool
+
+class WorkspaceListEntry(BaseModel):
+    workspace_id: str
+    session_id: str
+    local_path: str
+    git_remote_url: Optional[str] = None
+    git_username: Optional[str] = None
+    enabled_tools: Optional[List[str]] = None
+    updated_at: int
+
+class WorkspaceListResponse(BaseModel):
+    workspaces: List[WorkspaceListEntry]
+
+class WorkspaceActivateRequest(BaseModel):
+    session_id: str
+
+class WorkspaceActivateResponse(BaseModel):
+    success: bool
+    session_id: str
+    workspace_path: str
 
 async def get_workspace_dir(
     session_id: str,
@@ -575,10 +597,10 @@ async def get_workspace_tools_endpoint(
 
 @router.post("/tools/toggle", response_model=WorkspaceToolToggleResponse)
 async def toggle_workspace_tool_endpoint(
-    body: WorkspaceToolToggleRequest
+    body: WorkspaceToolToggleRequest,
+    request: Request
 ):
     try:
-        from core.workspace import get_workspace_enabled_tools, update_workspace_enabled_tools
         enabled = get_workspace_enabled_tools(DATABASE_PATH, body.session_id)
         if enabled is None:
             from tool_registry.db import get_servers
@@ -594,8 +616,10 @@ async def toggle_workspace_tool_endpoint(
                 
         update_workspace_enabled_tools(DATABASE_PATH, body.session_id, enabled)
         
-        # Sync the new tool selection list to Hermes config.yaml
-        sync_workspace_tools_to_hermes(body.session_id)
+        # Sync the new tool selection list to the active agent configuration
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager:
+            sync_manager.sync_workspace_tools(body.session_id)
         
         return WorkspaceToolToggleResponse(
             success=True,
@@ -709,3 +733,120 @@ def sync_workspace_tools_to_hermes(session_id: str):
         )
     except Exception:
         pass
+
+def _parse_enabled_tools(tools_str: Optional[str]) -> Optional[List[str]]:
+    if not tools_str:
+        return None
+    import json
+    try:
+        return json.loads(tools_str)
+    except Exception:
+        return None
+
+@router.get("/recent", response_model=WorkspaceListResponse)
+async def list_recent_workspaces_endpoint():
+    try:
+        workspaces = get_recent_workspaces(DATABASE_PATH, limit=5)
+        return WorkspaceListResponse(
+            workspaces=[
+                WorkspaceListEntry(
+                    workspace_id=w["workspace_id"],
+                    session_id=w["session_id"],
+                    local_path=w["local_path"],
+                    git_remote_url=w["git_remote_url"],
+                    git_username=w["git_username"],
+                    enabled_tools=_parse_enabled_tools(w.get("enabled_tools")),
+                    updated_at=w["updated_at"]
+                )
+                for w in workspaces
+            ]
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch recent workspaces: {e}"
+        )
+
+@router.get("/list", response_model=WorkspaceListResponse)
+async def list_all_workspaces_endpoint():
+    try:
+        workspaces = get_all_workspaces(DATABASE_PATH)
+        return WorkspaceListResponse(
+            workspaces=[
+                WorkspaceListEntry(
+                    workspace_id=w["workspace_id"],
+                    session_id=w["session_id"],
+                    local_path=w["local_path"],
+                    git_remote_url=w["git_remote_url"],
+                    git_username=w["git_username"],
+                    enabled_tools=_parse_enabled_tools(w.get("enabled_tools")),
+                    updated_at=w["updated_at"]
+                )
+                for w in workspaces
+            ]
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch workspaces: {e}"
+        )
+
+@router.post("/activate", response_model=WorkspaceActivateResponse)
+async def activate_workspace_endpoint(
+    body: WorkspaceActivateRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    session_id = body.session_id
+    logger.info("activating_workspace", session_id=session_id)
+    
+    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    if not workspace:
+        local_path = await get_workspace_dir(session_id, engine)
+    else:
+        local_path = workspace["local_path"]
+        
+    touch_workspace(DATABASE_PATH, session_id)
+    
+    try:
+        mcp_engine = getattr(request.app.state, "mcp_engine", None)
+        if mcp_engine:
+            enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
+            
+            import sqlite3
+            conn = sqlite3.connect(DATABASE_PATH)
+            conn.row_factory = sqlite3.Row
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM mcp_servers WHERE is_installed = 1")
+                installed_servers = [dict(row) for row in cursor.fetchall()]
+            finally:
+                conn.close()
+                
+            for server in installed_servers:
+                server_id = server["server_id"]
+                server_name = server["name"]
+                
+                is_enabled = True
+                if enabled_tools is not None:
+                    is_enabled = (server_name in enabled_tools) or (server_id in enabled_tools)
+                
+                if is_enabled:
+                    await mcp_engine.start_server(server_id)
+                else:
+                    await mcp_engine.stop_server(server_id)
+    except Exception as e:
+        logger.error("Failed to synchronize MCP runners on workspace activation: %s", e)
+        
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    if sync_manager:
+        try:
+            sync_manager.sync_workspace_tools(session_id)
+        except Exception as e:
+            logger.error("Failed to sync workspace tools to active agent on activation: %s", e)
+            
+    return WorkspaceActivateResponse(
+        success=True,
+        session_id=session_id,
+        workspace_path=local_path
+    )

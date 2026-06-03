@@ -8,6 +8,7 @@ export interface McpServer {
   type: 'stdio' | 'sse' | 'webmcp';
   command?: string[] | string;
   is_active: boolean;
+  is_installed: boolean;
   status: 'active' | 'inactive' | 'error';
   error_message?: string;
   category: string;
@@ -91,6 +92,7 @@ export class McpService {
       name: '', // backend patch returns server_id, is_active, status, error_message
       type: 'stdio',
       is_active: data.is_active,
+      is_installed: data.is_installed || false,
       status: data.status,
       error_message: data.error_message,
       category: '',
@@ -138,6 +140,60 @@ export class McpService {
     }
 
     return response.json();
+  }
+
+  async installServer(serverId: string, sessionId?: string | null): Promise<McpServer> {
+    mcpLogger.info('Installing MCP server', { serverId, sessionId });
+    const url = sessionId 
+      ? `${API_BASE}/api/mcp/servers/${serverId}/install?session_id=${sessionId}`
+      : `${API_BASE}/api/mcp/servers/${serverId}/install`;
+    const response = await fetch(url, { method: 'POST' });
+
+    if (!response.ok) {
+      mcpLogger.error('Failed to install MCP server', { status: response.status });
+      throw new Error(`Failed to install MCP server: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {
+      server_id: data.server_id,
+      name: '',
+      type: 'stdio',
+      is_active: false,
+      is_installed: data.is_installed,
+      status: data.status,
+      error_message: data.error_message,
+      category: '',
+      created_at: 0,
+      updated_at: 0
+    };
+  }
+
+  async uninstallServer(serverId: string, sessionId?: string | null): Promise<McpServer> {
+    mcpLogger.info('Uninstalling MCP server', { serverId, sessionId });
+    const url = sessionId 
+      ? `${API_BASE}/api/mcp/servers/${serverId}/uninstall?session_id=${sessionId}`
+      : `${API_BASE}/api/mcp/servers/${serverId}/uninstall`;
+    const response = await fetch(url, { method: 'POST' });
+
+    if (!response.ok) {
+      mcpLogger.error('Failed to uninstall MCP server', { status: response.status });
+      throw new Error(`Failed to uninstall MCP server: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return {
+      server_id: data.server_id,
+      name: '',
+      type: 'stdio',
+      is_active: false,
+      is_installed: data.is_installed,
+      status: data.status,
+      error_message: data.error_message,
+      category: '',
+      created_at: 0,
+      updated_at: 0
+    };
   }
 }
 

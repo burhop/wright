@@ -72,6 +72,8 @@ interface ToolsContextProps extends ToolsState {
     category: string
   ) => Promise<void>;
   toggleServerState: (serverId: string, isActive: boolean) => Promise<void>;
+  installServerState: (serverId: string, sessionId?: string | null) => Promise<void>;
+  uninstallServerState: (serverId: string, sessionId?: string | null) => Promise<void>;
   deleteServerState: (serverId: string) => Promise<void>;
   toggleToolState: (toolId: string, isEnabled: boolean) => Promise<void>;
 }
@@ -116,6 +118,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         type,
         command,
         is_active: false,
+        is_installed: false,
         status: 'inactive',
         category,
         created_at: now,
@@ -164,6 +167,55 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         });
       }
       throw err;
+    }
+  };
+
+  const installServerState = async (serverId: string, sessionId?: string | null) => {
+    dispatch({ type: 'SET_LOADING', isLoading: true });
+    dispatch({ type: 'SET_ERROR', error: null });
+    try {
+      const result = await mcpService.installServer(serverId, sessionId);
+      dispatch({
+        type: 'UPDATE_SERVER',
+        serverId,
+        updates: {
+          is_installed: result.is_installed,
+          status: result.status,
+          error_message: result.error_message || undefined,
+        },
+      });
+      const tools = await mcpService.getTools();
+      dispatch({ type: 'SET_TOOLS', tools });
+    } catch (err: any) {
+      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to install server' });
+      throw err;
+    } finally {
+      dispatch({ type: 'SET_LOADING', isLoading: false });
+    }
+  };
+
+  const uninstallServerState = async (serverId: string, sessionId?: string | null) => {
+    dispatch({ type: 'SET_LOADING', isLoading: true });
+    dispatch({ type: 'SET_ERROR', error: null });
+    try {
+      const result = await mcpService.uninstallServer(serverId, sessionId);
+      dispatch({
+        type: 'UPDATE_SERVER',
+        serverId,
+        updates: {
+          is_installed: result.is_installed,
+          is_active: false,
+          status: result.status,
+          error_message: result.error_message || undefined,
+        },
+      });
+      const tools = await mcpService.getTools();
+      dispatch({ type: 'SET_TOOLS', tools });
+    } catch (err: any) {
+      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to uninstall server' });
+      throw err;
+    } finally {
+      dispatch({ type: 'SET_LOADING', isLoading: false });
     }
   };
 
@@ -216,6 +268,8 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         fetchServersAndTools,
         registerCustomServer,
         toggleServerState,
+        installServerState,
+        uninstallServerState,
         deleteServerState,
         toggleToolState,
       }}

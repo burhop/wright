@@ -302,6 +302,55 @@ export class WorkspaceService {
     const data = await response.json();
     return data.success;
   }
+
+  async getRecentWorkspaces(): Promise<WorkspaceInfo[]> {
+    workspaceLogger.info('Fetching recent workspaces');
+    const response = await fetch(`${API_BASE}/api/workspace/recent`);
+    if (!response.ok) {
+      workspaceLogger.error('Failed to fetch recent workspaces', { status: response.status });
+      throw new Error(`Failed to fetch recent workspaces: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.workspaces;
+  }
+
+  async getAllWorkspaces(): Promise<WorkspaceInfo[]> {
+    workspaceLogger.info('Fetching all workspaces');
+    const response = await fetch(`${API_BASE}/api/workspace/list`);
+    if (!response.ok) {
+      workspaceLogger.error('Failed to fetch all workspaces', { status: response.status });
+      throw new Error(`Failed to fetch all workspaces: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.workspaces;
+  }
+
+  async activateWorkspace(sessionId: string): Promise<boolean> {
+    workspaceLogger.info('Activating workspace', { sessionId });
+    const response = await fetch(`${API_BASE}/api/workspace/activate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ session_id: sessionId }),
+    });
+    if (!response.ok) {
+      workspaceLogger.error('Failed to activate workspace', { status: response.status });
+      throw new Error(`Failed to activate workspace: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.success;
+  }
+}
+
+export interface WorkspaceInfo {
+  workspace_id: string;
+  session_id: string;
+  local_path: string;
+  git_remote_url: string | null;
+  git_username: string | null;
+  enabled_tools?: string[] | null;
+  updated_at: number;
 }
 
 export class MergeConflictError extends Error {

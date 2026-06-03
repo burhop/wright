@@ -21,6 +21,7 @@ def test_db_path() -> str:
         type TEXT NOT NULL CHECK(type IN ('stdio', 'sse', 'webmcp')),
         command TEXT,
         is_active INTEGER NOT NULL DEFAULT 0 CHECK(is_active IN (0, 1)),
+        is_installed INTEGER NOT NULL DEFAULT 0 CHECK(is_installed IN (0, 1)),
         status TEXT NOT NULL DEFAULT 'inactive' CHECK(status IN ('active', 'inactive', 'error')),
         error_message TEXT,
         category TEXT NOT NULL DEFAULT 'utilities',

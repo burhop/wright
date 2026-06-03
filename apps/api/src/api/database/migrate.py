@@ -22,6 +22,7 @@ def run_migrations():
             type TEXT NOT NULL CHECK(type IN ('stdio', 'sse', 'webmcp')),
             command TEXT,
             is_active INTEGER NOT NULL DEFAULT 0 CHECK(is_active IN (0, 1)),
+            is_installed INTEGER NOT NULL DEFAULT 0 CHECK(is_installed IN (0, 1)),
             status TEXT NOT NULL DEFAULT 'inactive' CHECK(status IN ('active', 'inactive', 'error')),
             error_message TEXT,
             category TEXT NOT NULL DEFAULT 'utilities',
@@ -51,13 +52,14 @@ def run_migrations():
             import time
             import uuid
             conn.execute("""
-            INSERT INTO mcp_servers (server_id, name, type, command, is_active, status, category, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO mcp_servers (server_id, name, type, command, is_active, is_installed, status, category, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 str(uuid.uuid4()),
                 "CalculiX Simulation",
                 "stdio",
                 '["uv", "run", "calculix-mcp"]',
+                0,
                 0,
                 "inactive",
                 "simulation",
@@ -70,13 +72,14 @@ def run_migrations():
         if cursor.fetchone()[0] == 0:
             import time
             conn.execute("""
-            INSERT INTO mcp_servers (server_id, name, type, command, is_active, status, category, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO mcp_servers (server_id, name, type, command, is_active, is_installed, status, category, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 "openscad-mcp-server",
                 "OpenSCAD Geometry",
                 "stdio",
                 '["uv", "run", "--with", "git+https://github.com/quellant/openscad-mcp.git", "openscad-mcp"]',
+                0,
                 0,
                 "inactive",
                 "cad",
@@ -105,6 +108,13 @@ def run_migrations():
         if columns and "enabled_tools" not in columns:
             conn.execute("ALTER TABLE engineering_workspaces ADD COLUMN enabled_tools TEXT;")
             print("Added enabled_tools column to engineering_workspaces table.")
+            
+        # Check if is_installed column exists in mcp_servers, add it if not (for existing databases)
+        cursor.execute("PRAGMA table_info(mcp_servers)")
+        mcp_columns = [col[1] for col in cursor.fetchall()]
+        if mcp_columns and "is_installed" not in mcp_columns:
+            conn.execute("ALTER TABLE mcp_servers ADD COLUMN is_installed INTEGER NOT NULL DEFAULT 0 CHECK(is_installed IN (0, 1));")
+            print("Added is_installed column to mcp_servers table.")
             
         conn.commit()
         print("Database migrations applied successfully.")

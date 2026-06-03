@@ -1,21 +1,41 @@
 import { useState, useEffect } from 'react';
 import { useTools } from '../../store/tools';
+import { useChat } from '../../store/sessions';
 import { ToolCard } from '../tools/ToolCard';
 import { AddToolModal } from '../tools/AddToolModal';
 import useLogger from '../../hooks/useLogger';
+import { workspaceService, type WorkspaceInfo } from '../../services/workspace-service';
 
 export function ToolRegistryPage() {
   const logger = useLogger('ToolRegistryPage');
+  const { state: chatState } = useChat();
+  const activeSessionId = chatState.activeSessionId;
+
   const {
     servers,
     tools,
     isLoading,
     error,
     registerCustomServer,
-    toggleServerState,
+    installServerState,
+    uninstallServerState,
     deleteServerState,
     toggleToolState,
   } = useTools();
+
+  const [workspaces, setWorkspaces] = useState<WorkspaceInfo[]>([]);
+
+  useEffect(() => {
+    const fetchWorkspaces = async () => {
+      try {
+        const list = await workspaceService.getAllWorkspaces();
+        setWorkspaces(list);
+      } catch (err) {
+        console.error('Failed to load workspaces in ToolRegistryPage', err);
+      }
+    };
+    fetchWorkspaces();
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -222,9 +242,20 @@ export function ToolRegistryPage() {
                       key={server.server_id}
                       server={server}
                       tools={tools.filter((t) => t.server_id === server.server_id)}
-                      onToggleActive={toggleServerState}
+                      onInstall={installServerState}
+                      onUninstall={uninstallServerState}
                       onDelete={deleteServerState}
                       onToggleTool={toggleToolState}
+                      workspaces={workspaces}
+                      activeSessionId={activeSessionId}
+                      onRefreshWorkspaces={async () => {
+                        try {
+                          const list = await workspaceService.getAllWorkspaces();
+                          setWorkspaces(list);
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }}
                     />
                   ))}
                 </div>

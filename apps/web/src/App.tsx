@@ -7,21 +7,24 @@ import FileVaultPage from './components/pages/FileVaultPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 
 import { ToolsProvider } from './store/tools';
+import { ChatProvider } from './store/sessions';
 
 function App() {
   return (
     <BrowserRouter>
-      <ToolsProvider>
-        <AppShell>
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/agent-chat" element={<AgentChatPage />} />
-            <Route path="/tool-registry" element={<ToolRegistryPage />} />
-            <Route path="/file-vault" element={<FileVaultPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </AppShell>
-      </ToolsProvider>
+      <ChatProvider>
+        <ToolsProvider>
+          <AppShell>
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/agent-chat" element={<AgentChatPage />} />
+              <Route path="/tool-registry" element={<ToolRegistryPage />} />
+              <Route path="/file-vault" element={<FileVaultPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </AppShell>
+        </ToolsProvider>
+      </ChatProvider>
     </BrowserRouter>
   );
 }

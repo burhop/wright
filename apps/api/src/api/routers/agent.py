@@ -34,6 +34,12 @@ def get_current_trace_id() -> str:
     return secrets.token_hex(16)
 
 # ── Pydantic Request/Response Schemas ─────────────────────────────────────────
+class ActiveAgentResponse(BaseModel):
+    agent: str
+
+class SetActiveAgentRequest(BaseModel):
+    agent: str
+
 class NewSessionRequest(BaseModel):
     workspace: Optional[str] = None
 
@@ -169,6 +175,7 @@ async def delete_agent_session(
 @router.post("/chat/start", response_model=ChatStartResponse)
 async def start_chat_turn(
     body: ChatStartRequest,
+    request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
     trace_id = get_current_trace_id()
@@ -176,11 +183,12 @@ async def start_chat_turn(
     log.info("chat_start_requested")
     
     try:
-        from api.routers.workspace import sync_workspace_tools_to_hermes
-        try:
-            sync_workspace_tools_to_hermes(body.session_id)
-        except Exception as e:
-            log.warn("Failed to sync workspace tools to Hermes before chat turn", error=str(e))
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager:
+            try:
+                sync_manager.sync_workspace_tools(body.session_id)
+            except Exception as e:
+                log.warn("Failed to sync workspace tools to active agent before chat turn", error=str(e))
 
         chat_request = AgentChatRequest(
             session_id=body.session_id,
@@ -229,3 +237,27 @@ async def chat_response_stream(
             "Connection": "keep-alive",
         }
     )
+
+@router.get("/active", response_model=ActiveAgentResponse)
+async def get_active_agent_endpoint(request: Request):
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    agent_name = sync_manager.active_agent if sync_manager else "hermes"
+    return ActiveAgentResponse(agent=agent_name)
+
+@router.post("/active", response_model=ActiveAgentResponse)
+async def set_active_agent_endpoint(
+    body: SetActiveAgentRequest,
+    request: Request,
+    session_id: Optional[str] = None
+):
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    if sync_manager:
+        sync_manager.active_agent = body.agent
+        if session_id:
+            # Sync tools immediately for the active workspace session
+            try:
+                sync_manager.sync_workspace_tools(session_id)
+            except Exception as e:
+                logger.error("Failed to sync tools on agent switch: %s", e)
+        return ActiveAgentResponse(agent=sync_manager.active_agent)
+    return ActiveAgentResponse(agent="hermes")

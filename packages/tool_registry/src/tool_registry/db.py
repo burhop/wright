@@ -40,6 +40,7 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         type=row["type"],
         command=_parse_command(row["command"]),
         is_active=bool(row["is_active"]),
+        is_installed=bool(row["is_installed"]) if "is_installed" in row.keys() else False,
         status=row["status"],
         error_message=row["error_message"],
         category=row["category"],
@@ -89,8 +90,8 @@ def insert_server(db_path: str, server: McpServer) -> None:
         conn.execute(
             """
             INSERT INTO mcp_servers (
-                server_id, name, type, command, is_active, status, error_message, category, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -98,6 +99,7 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.type,
                 _serialize_command(server.command),
                 1 if server.is_active else 0,
+                1 if server.is_installed else 0,
                 server.status,
                 server.error_message,
                 server.category,
@@ -116,6 +118,9 @@ def update_server(db_path: str, server_id: str, updates: Dict[str, Any]) -> Opti
     for key, value in updates.items():
         if key == "is_active":
             set_clauses.append("is_active = ?")
+            params.append(1 if value else 0)
+        elif key == "is_installed":
+            set_clauses.append("is_installed = ?")
             params.append(1 if value else 0)
         elif key in ("status", "error_message", "category", "updated_at"):
             set_clauses.append(f"{key} = ?")

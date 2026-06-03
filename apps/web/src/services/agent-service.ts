@@ -205,6 +205,33 @@ export class HermesAgentService {
       }
     }
   }
+
+  async getActiveAgent(): Promise<string> {
+    const response = await fetch(`${API_BASE}/api/agent/active`);
+    if (!response.ok) {
+      throw new Error(`Failed to get active agent: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.agent;
+  }
+
+  async setActiveAgent(agentName: string, sessionId?: string | null): Promise<string> {
+    const url = sessionId 
+      ? `${API_BASE}/api/agent/active?session_id=${sessionId}`
+      : `${API_BASE}/api/agent/active`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ agent: agentName }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to set active agent: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.agent;
+  }
 }
 
 export const agentService = new HermesAgentService();
