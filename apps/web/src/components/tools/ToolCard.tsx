@@ -44,7 +44,6 @@ export function ToolCard({
     }
   };
 
-  // Determine status color dot
   const getStatusColor = () => {
     if (server.status === 'active') return 'var(--color-success)';
     if (server.status === 'error') return 'var(--color-error)';
@@ -57,34 +56,44 @@ export function ToolCard({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'var(--color-surface-subtle)',
+        backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-lg)',
-        padding: 'var(--space-lg)',
+        padding: 'var(--space-xl)',
         gap: 'var(--space-md)',
-        transition: 'all 0.2s ease',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        transition: 'all var(--transition-smooth)',
+        boxShadow: 'var(--shadow-md)',
         position: 'relative',
         opacity: isDeleting ? 0.5 : 1,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'var(--color-secondary)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'var(--color-border)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
       }}
     >
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-md)' }}>
         <div>
-          <h3 style={{ fontSize: '1.2rem', fontFamily: 'var(--font-ui)', color: 'var(--color-primary)', fontWeight: 600 }}>
+          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-ui)', color: 'var(--color-primary)', fontWeight: 600 }}>
             {server.name}
           </h3>
           <span
             style={{
               display: 'inline-block',
-              fontSize: '0.75rem',
+              fontSize: '0.7rem',
               textTransform: 'uppercase',
-              backgroundColor: 'var(--color-surface)',
+              backgroundColor: 'var(--color-surface-subtle)',
               color: 'var(--color-secondary)',
-              padding: '2px 6px',
-              borderRadius: 'var(--radius-sm)',
+              padding: '2px 8px',
+              borderRadius: '20px',
               marginTop: 'var(--space-xs)',
-              border: '1px solid var(--color-border)',
+              border: '1px solid rgba(56, 189, 248, 0.2)',
+              fontWeight: 600,
+              letterSpacing: '0.5px',
             }}
           >
             {server.category}
@@ -96,15 +105,32 @@ export function ToolCard({
           onClick={handleActiveToggle}
           disabled={isToggling || isDeleting}
           style={{
-            padding: 'var(--space-sm) var(--space-md)',
-            borderRadius: 'var(--radius-md)',
+            padding: 'var(--space-sm) var(--space-lg)',
+            borderRadius: 'var(--radius-lg)',
             fontSize: '0.85rem',
-            fontWeight: 500,
-            border: '1px solid var(--color-border)',
-            backgroundColor: server.is_active ? 'var(--color-surface)' : 'var(--color-primary)',
-            color: server.is_active ? 'var(--color-primary)' : 'var(--color-neutral)',
+            fontWeight: 600,
+            border: server.is_active ? '1px solid var(--color-border)' : 'none',
+            backgroundColor: server.is_active ? 'transparent' : 'var(--color-secondary)',
+            color: server.is_active ? 'var(--color-primary)' : 'var(--color-surface-subtle)',
             cursor: isToggling ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s ease',
+            transition: 'all var(--transition-smooth)',
+            boxShadow: server.is_active ? 'none' : 'var(--shadow-glow)',
+          }}
+          onMouseEnter={(e) => {
+            if (!server.is_active) {
+              e.currentTarget.style.boxShadow = 'var(--shadow-glow-active)';
+            } else {
+              e.currentTarget.style.borderColor = 'var(--color-secondary)';
+              e.currentTarget.style.color = 'var(--color-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!server.is_active) {
+              e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+            } else {
+              e.currentTarget.style.borderColor = 'var(--color-border)';
+              e.currentTarget.style.color = 'var(--color-primary)';
+            }
           }}
         >
           {isToggling ? 'Connecting...' : server.is_active ? 'Disable' : 'Enable'}
@@ -116,25 +142,25 @@ export function ToolCard({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: 'var(--color-neutral)',
+          backgroundColor: 'var(--color-surface-subtle)',
           padding: 'var(--space-md)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--color-border)',
           fontFamily: 'var(--font-mono)',
           fontSize: '0.8rem',
-          color: 'var(--color-secondary)',
+          color: 'rgba(255, 255, 255, 0.7)',
           wordBreak: 'break-all',
           gap: 'var(--space-xs)',
         }}
       >
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-          <span style={{ color: 'var(--color-primary)' }}>Transport:</span>
-          <span>{server.type}</span>
+          <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Transport:</span>
+          <span style={{ color: 'var(--color-secondary)' }}>{server.type}</span>
         </div>
         {server.command && (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ color: 'var(--color-primary)' }}>Endpoint/Command:</span>
-            <span style={{ whiteSpace: 'pre-wrap', marginTop: '2px' }}>
+            <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Endpoint/Command:</span>
+            <span style={{ whiteSpace: 'pre-wrap', marginTop: '2px', color: 'var(--color-secondary)', fontSize: '0.75rem' }}>
               {Array.isArray(server.command) ? server.command.join(' ') : server.command}
             </span>
           </div>
@@ -145,15 +171,17 @@ export function ToolCard({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
           <span
+            className={server.status === 'active' ? 'pulse-success-glow' : undefined}
             style={{
-              width: '10px',
-              height: '10px',
+              width: '8px',
+              height: '8px',
               borderRadius: '50%',
               backgroundColor: getStatusColor(),
+              boxShadow: `0 0 8px ${getStatusColor()}`,
               display: 'inline-block',
             }}
           />
-          <span style={{ color: 'var(--color-primary)', textTransform: 'capitalize' }}>
+          <span style={{ color: 'var(--color-primary)', textTransform: 'capitalize', fontWeight: 500 }}>
             {server.status}
           </span>
         </div>
@@ -168,9 +196,12 @@ export function ToolCard({
               fontSize: '0.85rem',
               fontWeight: 500,
               cursor: 'pointer',
-              textDecoration: 'underline',
-              padding: '2px 6px',
+              border: 'none',
+              background: 'none',
+              transition: 'color var(--transition-fast)',
             }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#ef4444'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-error)'}
           >
             Remove
           </button>
@@ -181,9 +212,9 @@ export function ToolCard({
       {server.error_message && (
         <div
           style={{
-            backgroundColor: 'rgba(248, 113, 113, 0.1)',
+            backgroundColor: 'rgba(239, 68, 68, 0.08)',
             border: '1px solid var(--color-error)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--radius-lg)',
             padding: 'var(--space-md)',
             fontSize: '0.8rem',
             color: 'var(--color-error)',
@@ -204,11 +235,13 @@ export function ToolCard({
               justifyContent: 'space-between',
               alignItems: 'center',
               width: '100%',
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               color: 'var(--color-secondary)',
               cursor: 'pointer',
               textAlign: 'left',
-              fontWeight: 500,
+              fontWeight: 600,
+              border: 'none',
+              background: 'none',
             }}
           >
             <span>Exposed Tools ({tools.length})</span>
@@ -221,9 +254,9 @@ export function ToolCard({
                 <div
                   key={tool.tool_id}
                   style={{
-                    backgroundColor: 'var(--color-surface)',
+                    backgroundColor: 'var(--color-surface-subtle)',
                     border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-md)',
+                    borderRadius: 'var(--radius-lg)',
                     padding: 'var(--space-md)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -231,28 +264,28 @@ export function ToolCard({
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--color-primary)', fontWeight: 600 }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--color-primary)', fontWeight: 600 }}>
                       {tool.name}
                     </span>
                     
                     {/* Tool Toggle Checkbox */}
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--color-secondary)', cursor: 'pointer' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.6)', cursor: 'pointer' }}>
                       <input
                         type="checkbox"
                         checked={tool.is_enabled}
                         onChange={(e) => onToggleTool(tool.tool_id, e.target.checked)}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer', accentColor: 'var(--color-secondary)' }}
                       />
                       {tool.is_enabled ? 'Enabled' : 'Disabled'}
                     </label>
                   </div>
                   {tool.description && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-secondary)', fontStyle: 'italic' }}>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--color-secondary)', fontStyle: 'italic', lineHeight: 1.4 }}>
                       {tool.description}
                     </p>
                   )}
                   {tool.input_schema && Object.keys(tool.input_schema).length > 0 && (
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', marginTop: '4px' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.4)', marginTop: '4px' }}>
                       <span style={{ fontWeight: 600 }}>Schema keys:</span>{' '}
                       {Object.keys(tool.input_schema.properties || {}).join(', ') || 'none'}
                     </div>

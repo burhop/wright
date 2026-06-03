@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import MessageBubble from '../src/components/chat/MessageBubble';
 import type { ChatMessage } from '../src/store/types';
 
@@ -70,5 +70,50 @@ describe('MessageBubble', () => {
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute('href', '#');
     expect(links[1]).toHaveAttribute('href', '#');
+  });
+
+  it('makes URLs and workspace paths clickable and calls onOpenFile', () => {
+    const message: ChatMessage = {
+      id: 'msg4',
+      role: 'assistant',
+      content: 'File: /home/burhop/workspace/session-123/designs/bracket.stl and http://google.com and designs/gearbox.stl and `/home/burhop/workspace/session-123/ignore.stl`',
+      timestamp: Date.now(),
+      traceId: 'tr-4',
+    };
+
+    const handleOpenFile = vi.fn();
+
+    render(
+      <MessageBubble
+        message={message}
+        onOpenFile={handleOpenFile}
+        activeSessionId="session-123"
+        workspacePath="/home/burhop/workspace/session-123"
+      />
+    );
+
+    // Assert that the http URL is rendered as a normal link
+    const link = screen.getByRole('link', { name: 'http://google.com' });
+    expect(link).toHaveAttribute('href', 'http://google.com');
+
+    // Assert that absolute path is rendered as a button and is clickable
+    const absPathBtn = screen.getByRole('button', { name: '/home/burhop/workspace/session-123/designs/bracket.stl' });
+    expect(absPathBtn).toBeInTheDocument();
+    
+    // Click absolute path button
+    fireEvent.click(absPathBtn);
+    expect(handleOpenFile).toHaveBeenCalledWith('/designs/bracket.stl');
+
+    // Assert that relative path is rendered as a button and is clickable
+    const relPathBtn = screen.getByRole('button', { name: 'designs/gearbox.stl' });
+    expect(relPathBtn).toBeInTheDocument();
+    
+    // Click relative path button
+    fireEvent.click(relPathBtn);
+    expect(handleOpenFile).toHaveBeenCalledWith('/designs/gearbox.stl');
+
+    // Assert that path inside inline code block is NOT rendered as a button or link
+    const codeBtn = screen.queryByRole('button', { name: '/home/burhop/workspace/session-123/ignore.stl' });
+    expect(codeBtn).toBeNull();
   });
 });

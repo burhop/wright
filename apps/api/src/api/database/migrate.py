@@ -84,6 +84,28 @@ def run_migrations():
                 int(time.time())
             ))
             
+        # 5. Create engineering_workspaces table
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS engineering_workspaces (
+            workspace_id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            local_path TEXT NOT NULL,
+            git_remote_url TEXT,
+            git_username TEXT,
+            git_token TEXT,
+            enabled_tools TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        );
+        """)
+        
+        # Check if enabled_tools column exists, add it if not (for existing databases)
+        cursor.execute("PRAGMA table_info(engineering_workspaces)")
+        columns = [col[1] for col in cursor.fetchall()]
+        if columns and "enabled_tools" not in columns:
+            conn.execute("ALTER TABLE engineering_workspaces ADD COLUMN enabled_tools TEXT;")
+            print("Added enabled_tools column to engineering_workspaces table.")
+            
         conn.commit()
         print("Database migrations applied successfully.")
     finally:

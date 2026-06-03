@@ -7,6 +7,9 @@ interface ChatTranscriptProps {
   isStreaming?: boolean;
   streamedText?: string;
   activeTool?: { name: string; preview: string; percentage?: number } | null;
+  onOpenFile?: (path: string) => void;
+  activeSessionId?: string;
+  workspacePath?: string;
 }
 
 export function ChatTranscript({
@@ -14,6 +17,9 @@ export function ChatTranscript({
   isStreaming = false,
   streamedText = '',
   activeTool = null,
+  onOpenFile,
+  activeSessionId,
+  workspacePath,
 }: ChatTranscriptProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +45,7 @@ export function ChatTranscript({
           height: '100%',
           color: 'var(--color-secondary)',
           fontFamily: 'var(--font-ui)',
+          fontSize: '0.8rem',
         }}
       >
         <span>Select or create a session to start chatting.</span>
@@ -80,15 +87,21 @@ export function ChatTranscript({
             fontFamily: 'var(--font-body)',
           }}
         >
-          <p style={{ fontSize: '1.1rem' }}>No messages yet.</p>
-          <p style={{ fontSize: '0.9rem', marginTop: '4px' }}>
+          <p style={{ fontSize: '0.9rem' }}>No messages yet.</p>
+          <p style={{ fontSize: '0.78rem', marginTop: '4px' }}>
             Send a message to start conversing with the Hermes Agent.
           </p>
         </div>
       )}
 
       {session.messages.map((msg) => (
-        <MessageBubble key={msg.id} message={msg} />
+        <MessageBubble
+          key={msg.id}
+          message={msg}
+          onOpenFile={onOpenFile}
+          activeSessionId={activeSessionId}
+          workspacePath={workspacePath}
+        />
       ))}
 
       {activeTool && (
@@ -152,7 +165,14 @@ export function ChatTranscript({
         </div>
       )}
 
-      {mockStreamingMessage && <MessageBubble message={mockStreamingMessage} />}
+      {mockStreamingMessage && (
+        <MessageBubble
+          message={mockStreamingMessage}
+          onOpenFile={onOpenFile}
+          activeSessionId={activeSessionId}
+          workspacePath={workspacePath}
+        />
+      )}
       
       {isStreaming && !streamedText.trim() && (
         <div

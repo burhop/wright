@@ -1,4 +1,3 @@
-
 interface StatusDotProps {
   state: 'connected' | 'disconnected' | 'unknown';
   label?: string;
@@ -12,6 +11,8 @@ export function StatusDot({ state, label, 'data-testid': testId }: StatusDotProp
     unknown: 'var(--color-warning)',
   };
 
+  const isConnected = state === 'connected';
+
   return (
     <span
       data-testid={testId || `status-dot-${state}`}
@@ -24,6 +25,7 @@ export function StatusDot({ state, label, 'data-testid': testId }: StatusDotProp
       }}
     >
       <span
+        className={isConnected ? 'pulse-success-glow' : undefined}
         style={{
           width: '8px',
           height: '8px',
@@ -33,7 +35,7 @@ export function StatusDot({ state, label, 'data-testid': testId }: StatusDotProp
           transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
         }}
       />
-      {label && <span>{label}</span>}
+      {label && <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>{label}</span>}
     </span>
   );
 }

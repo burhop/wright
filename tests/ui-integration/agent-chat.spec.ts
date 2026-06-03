@@ -143,11 +143,11 @@ test.describe('Agent Chat Page', () => {
     await expect(page.getByText(/processing your mechanical designs/i)).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('chat-transcript').locator('strong')).toHaveText('Run stiffness analysis');
 
-    const toggleBtn = page.getByTestId('toggle-workspace-btn');
-    await toggleBtn.click();
-    await expect(page.getByTestId('workspace-panel')).not.toBeVisible();
+    const explorerBtn = page.getByTestId('activity-bar-explorer-btn');
+    await explorerBtn.click();
+    await expect(page.getByTestId('workspace-sidebar')).not.toBeVisible();
 
-    await toggleBtn.click();
-    await expect(page.getByTestId('workspace-panel')).toBeVisible();
+    await explorerBtn.click();
+    await expect(page.getByTestId('workspace-sidebar')).toBeVisible();
   });
 });

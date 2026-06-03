@@ -1,7 +1,7 @@
 import time
 import httpx
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -53,6 +53,23 @@ app.include_router(mcp_router, prefix="/api/mcp")
 
 # Mount the workspace router
 app.include_router(workspace_router, prefix="/api/workspace")
+
+@app.websocket("/api/webmcp/ws")
+async def webmcp_websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    mcp_engine = app.state.mcp_engine
+    await mcp_engine.register_webmcp_connection(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await mcp_engine.handle_webmcp_message(data)
+    except WebSocketDisconnect:
+        pass
+    except Exception as e:
+        import logging
+        logging.getLogger("api.main").error("WebMCP WebSocket connection error: %s", e)
+    finally:
+        await mcp_engine.unregister_webmcp_connection(websocket)
 
 class HealthResponse(BaseModel):
     state: str

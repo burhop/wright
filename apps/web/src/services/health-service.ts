@@ -1,6 +1,10 @@
 import type { ServiceStatus } from '../store/types';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const getApiBase = () => {
+  const host = typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
+  return `http://${host}:8000`;
+};
+const API_BASE = getApiBase();
 
 export class LiveHealthService {
   private statuses: ServiceStatus[] = [

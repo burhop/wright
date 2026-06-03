@@ -4,7 +4,10 @@ const webMcpLogger = logger.child('WebMcpService');
 
 export class WebMcpService {
   private socket: WebSocket | null = null;
-  private wsUrl = 'ws://127.0.0.1:8000/api/webmcp/ws';
+  private get wsUrl() {
+    const host = typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
+    return `ws://${host}:8000/api/webmcp/ws`;
+  }
   private reconnectTimer: any = null;
 
   constructor() {

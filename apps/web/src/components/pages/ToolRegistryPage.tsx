@@ -25,10 +25,8 @@ export function ToolRegistryPage() {
     logger.info('Tool Registry Page loaded');
   }, [logger]);
 
-  // Categories present in servers
   const categories = ['all', 'simulation', 'cad', 'analysis', 'utilities'];
 
-  // Filtering servers
   const filteredServers = servers.filter((server) => {
     const matchesSearch = server.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory =
@@ -47,6 +45,7 @@ export function ToolRegistryPage() {
         color: 'var(--color-primary)',
         overflow: 'hidden',
       }}
+      className="animate-fade-in-up"
     >
       {/* Top Title Section */}
       <div
@@ -72,13 +71,22 @@ export function ToolRegistryPage() {
           onClick={() => setIsModalOpen(true)}
           style={{
             padding: 'var(--space-md) var(--space-lg)',
-            backgroundColor: 'var(--color-primary)',
-            color: 'var(--color-neutral)',
+            backgroundColor: 'var(--color-secondary)',
+            color: 'var(--color-surface-subtle)',
             fontWeight: 600,
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--radius-lg)',
             border: 'none',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
+            transition: 'all var(--transition-smooth)',
+            boxShadow: 'var(--shadow-glow)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = 'var(--shadow-glow-active)';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           + Register Custom Tool
@@ -99,7 +107,7 @@ export function ToolRegistryPage() {
             gap: 'var(--space-md)',
           }}
         >
-          <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, color: 'var(--color-secondary)' }}>
+          <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, color: 'var(--color-secondary)', letterSpacing: '1px', paddingLeft: 'var(--space-md)' }}>
             Categories
           </span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
@@ -110,14 +118,27 @@ export function ToolRegistryPage() {
                 style={{
                   textAlign: 'left',
                   padding: 'var(--space-md)',
-                  borderRadius: 'var(--radius-md)',
+                  borderRadius: 'var(--radius-lg)',
                   fontSize: '0.9rem',
                   textTransform: 'capitalize',
-                  fontWeight: selectedCategory === cat ? 600 : 400,
-                  backgroundColor: selectedCategory === cat ? 'var(--color-surface)' : 'transparent',
-                  color: selectedCategory === cat ? 'var(--color-primary)' : 'var(--color-secondary)',
+                  fontWeight: selectedCategory === cat ? 600 : 500,
+                  backgroundColor: selectedCategory === cat ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
+                  color: selectedCategory === cat ? 'var(--color-secondary)' : 'rgba(255, 255, 255, 0.6)',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  borderLeft: selectedCategory === cat ? '3px solid var(--color-secondary)' : '3px solid transparent',
+                  transition: 'all var(--transition-smooth)',
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== cat) {
+                    e.currentTarget.style.color = 'var(--color-primary)';
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== cat) {
+                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
                 }}
               >
                 {cat}
@@ -140,9 +161,19 @@ export function ToolRegistryPage() {
                 padding: 'var(--space-md) var(--space-lg)',
                 backgroundColor: 'var(--color-surface-subtle)',
                 border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
+                borderRadius: 'var(--radius-lg)',
                 color: 'var(--color-primary)',
                 fontSize: '0.95rem',
+                outline: 'none',
+                transition: 'border-color var(--transition-fast), box-shadow var(--transition-fast)',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-secondary)';
+                e.currentTarget.style.boxShadow = '0 0 10px rgba(56, 189, 248, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-border)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             />
           </div>
@@ -159,9 +190,9 @@ export function ToolRegistryPage() {
           {!isLoading && error && (
             <div
               style={{
-                backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 border: '1px solid var(--color-error)',
-                borderRadius: 'var(--radius-md)',
+                borderRadius: 'var(--radius-lg)',
                 padding: 'var(--space-lg)',
                 color: 'var(--color-error)',
                 marginBottom: 'var(--space-xl)',

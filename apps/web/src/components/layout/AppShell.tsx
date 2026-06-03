@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import { webMcpService } from '../../services/webmcp-service';
@@ -8,6 +9,9 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
+  const location = useLocation();
+  const isAgentChat = location.pathname === '/agent-chat';
+
   useEffect(() => {
     webMcpService.connect();
     return () => {
@@ -31,13 +35,13 @@ export function AppShell({ children }: AppShellProps) {
       <Header />
       
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Sidebar />
+        {!isAgentChat && <Sidebar />}
         
         <main
           style={{
             flex: 1,
             overflowY: 'auto',
-            padding: 'var(--space-xl)',
+            padding: isAgentChat ? '0' : 'var(--space-xl)',
             backgroundColor: 'var(--color-neutral)',
           }}
         >

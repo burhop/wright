@@ -1,6 +1,9 @@
 import time
 import logging
-from typing import Dict, Any, Optional
+import json
+import uuid
+import asyncio
+from typing import Dict, Any, Optional, Set
 from .models import McpServer, McpTool
 from .db import (
     get_server,
@@ -21,6 +24,33 @@ class McpEngine:
     def __init__(self, db_path: str):
         self.db_path = db_path
         self._active_runners: Dict[str, BaseRunner] = {}
+        self._webmcp_connections: Set[Any] = set()
+        self._pending_webmcp_calls: Dict[str, asyncio.Future] = {}
+
+    async def register_webmcp_connection(self, websocket: Any) -> None:
+        """Register a new WebMCP WebSocket connection from the client browser."""
+        self._webmcp_connections.add(websocket)
+        logger.info("Registered WebMCP WebSocket connection. Total: %d", len(self._webmcp_connections))
+
+    async def unregister_webmcp_connection(self, websocket: Any) -> None:
+        """Unregister a WebMCP WebSocket connection on disconnect."""
+        self._webmcp_connections.discard(websocket)
+        logger.info("Unregistered WebMCP WebSocket connection. Total: %d", len(self._webmcp_connections))
+
+    async def handle_webmcp_message(self, message_str: str) -> None:
+        """Process incoming WebSocket JSON-RPC messages and resolve pending tool call futures."""
+        try:
+            payload = json.loads(message_str)
+            if not isinstance(payload, dict):
+                return
+            call_id = payload.get("id")
+            if call_id and call_id in self._pending_webmcp_calls:
+                future = self._pending_webmcp_calls[call_id]
+                if not future.done():
+                    future.set_result(payload)
+        except Exception as e:
+            logger.error("Failed to process WebMCP WebSocket message: %s", e)
+
 
     async def start_server(self, server_id: str) -> McpServer:
         """Start an MCP server subprocess or remote SSE connection, query its tools, and sync with database."""
@@ -161,7 +191,36 @@ class McpEngine:
             raise ValueError(f"Server with ID {server_id} does not exist.")
 
         if server.type == "webmcp":
-            raise NotImplementedError("WebMCP tool invocations are managed via WebSocket/Event dispatch on the client side.")
+            if not self._webmcp_connections:
+                raise RuntimeError("No active browser WebSocket connection found for WebMCP tool invocation.")
+            
+            call_id = f"webmcp-call-{uuid.uuid4()}"
+            future = asyncio.get_running_loop().create_future()
+            self._pending_webmcp_calls[call_id] = future
+            
+            payload = {
+                "jsonrpc": "2.0",
+                "id": call_id,
+                "method": tool_name,
+                "params": arguments
+            }
+            
+            send_payload = json.dumps(payload)
+            # Broadcast the tool call to all connected client WebMCP sockets
+            for conn in list(self._webmcp_connections):
+                try:
+                    await conn.send_text(send_payload)
+                except Exception as e:
+                    logger.warning("Failed to send WebMCP payload to connection: %s", e)
+                    
+            try:
+                # Wait for client response over WebSocket with a 30-second timeout
+                response = await asyncio.wait_for(future, timeout=30.0)
+                if "error" in response:
+                    raise RuntimeError(f"WebMCP tool invocation failed: {response['error']}")
+                return response.get("result", {})
+            finally:
+                self._pending_webmcp_calls.pop(call_id, None)
 
         runner = self._active_runners.get(server_id)
         if not runner or not runner.is_running():

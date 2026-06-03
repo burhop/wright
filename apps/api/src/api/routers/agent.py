@@ -70,13 +70,33 @@ async def create_new_session(
     body: NewSessionRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
+    import os
+    import uuid
+    from core import WorkspaceManager
+    from core.workspace import create_workspace
+    from api.config import DATABASE_PATH
+
     trace_id = get_current_trace_id()
     log = logger.bind(trace_id=trace_id, workspace=body.workspace)
     log.info("create_session_requested")
     
     try:
-        session_info = await engine.create_session(body.workspace)
+        workspace_path = body.workspace
+        if not workspace_path:
+            # Generate a unique workspace directory name
+            workspace_uuid = str(uuid.uuid4())
+            workspace_path = f"/home/burhop/workspace/{workspace_uuid}"
+            
+        os.makedirs(workspace_path, exist_ok=True)
+        # Instantiate WorkspaceManager to automatically run git init
+        WorkspaceManager(workspace_path)
+        
+        session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
+        
+        # Save mapping to local SQLite
+        create_workspace(DATABASE_PATH, str(uuid.uuid4()), session_info.session_id, workspace_path)
+        
         return NewSessionResponse(
             session_id=session_info.session_id,
             title=session_info.title,
@@ -156,6 +176,12 @@ async def start_chat_turn(
     log.info("chat_start_requested")
     
     try:
+        from api.routers.workspace import sync_workspace_tools_to_hermes
+        try:
+            sync_workspace_tools_to_hermes(body.session_id)
+        except Exception as e:
+            log.warn("Failed to sync workspace tools to Hermes before chat turn", error=str(e))
+
         chat_request = AgentChatRequest(
             session_id=body.session_id,
             message=body.message,

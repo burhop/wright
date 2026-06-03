@@ -4,10 +4,81 @@ import remarkGfm from 'remark-gfm';
 
 interface MessageBubbleProps {
   message: ChatMessage;
+  onOpenFile?: (path: string) => void;
+  activeSessionId?: string;
+  workspacePath?: string;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+/**
+ * Preprocesses message content by isolating code blocks and wrapping URLs
+ * and file paths in the non-code segments with markdown link syntax.
+ */
+function preprocessContent(content: string, activeSessionId?: string, workspacePath?: string): string {
+  if (!content) return '';
+
+  // 1. Split content by markdown code blocks (fenced and inline) to preserve literal code
+  const parts = content.split(/(```[\s\S]*?```|`[^`\n]+`)/g);
+
+  const processedParts = parts.map((part, index) => {
+    if (index % 2 !== 0) {
+      // Odd index is a code block. Keep it exactly as-is.
+      return part;
+    }
+
+    // Combined regex:
+    // Group 1: Existing markdown link: \[([^\]]+)\]\(([^)]+)\)
+    // Group 2: URL (http/https): (https?:\/\/[^\s\)\],<]+)
+    // Group 3: Absolute path starting with /home/: (\/home\/[^\s\)\],<]+)
+    // Group 4: Relative path starting with /: (\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))
+    // Group 5: Relative path not starting with /: (\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)
+    const regex = /(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/home\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
+
+    return part.replace(regex, (match, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
+      if (markdownLink) {
+        return match;
+      }
+
+      if (url) {
+        return `[${url}](${url})`;
+      }
+
+      if (absPath) {
+        let cleanPath = absPath;
+        if (workspacePath && absPath.startsWith(workspacePath)) {
+          cleanPath = absPath.slice(workspacePath.length);
+        } else if (activeSessionId) {
+          const idx = absPath.indexOf(activeSessionId);
+          if (idx !== -1) {
+            cleanPath = absPath.slice(idx + activeSessionId.length);
+          }
+        }
+        
+        // Ensure path starts with a single slash
+        if (!cleanPath.startsWith('/')) {
+          cleanPath = '/' + cleanPath;
+        }
+        return `[${absPath}](file://${cleanPath})`;
+      }
+
+      if (relPathWithSlash) {
+        return `[${relPathWithSlash}](file://${relPathWithSlash})`;
+      }
+
+      if (relPathNoSlash) {
+        // Prepend leading slash to match tree path format
+        return `[${relPathNoSlash}](file:///${relPathNoSlash})`;
+      }
+
+      return match;
+    });
+  });
+
+  return processedParts.join('');
+}
+
+export function MessageBubble({ message, onOpenFile, activeSessionId, workspacePath }: MessageBubbleProps) {
   const isUser = message.role === 'user';
+  const processedContent = isUser ? message.content : preprocessContent(message.content, activeSessionId, workspacePath);
   
   return (
     <div
@@ -33,14 +104,55 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           transition: 'all 0.2s ease',
         }}
       >
-        <div className="message-content" style={{ fontFamily: 'var(--font-body)', fontSize: '1rem' }}>
+        <div className="message-content" style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', lineHeight: '1.4' }}>
           {isUser ? (
-            <div style={{ whiteSpace: 'pre-wrap' }}>{message.content}</div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{processedContent}</div>
           ) : (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
+              urlTransform={(url) => {
+                // Allow file:// URLs to pass through so we can capture and render them as click buttons
+                if (url.startsWith('file://')) {
+                  return url;
+                }
+                const isSafe = url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:') || url.startsWith('tel:');
+                return isSafe ? url : '#';
+              }}
               components={{
                 a: ({ href, children, ...props }) => {
+                  if (href && href.startsWith('file://')) {
+                    let filePath = href.substring(7);
+                    if (filePath.startsWith('//')) {
+                      filePath = filePath.substring(1);
+                    }
+                    if (!filePath.startsWith('/')) {
+                      filePath = '/' + filePath;
+                    }
+                    return (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (onOpenFile) {
+                            onOpenFile(filePath);
+                          }
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#58a6ff',
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0,
+                          font: 'inherit',
+                          display: 'inline',
+                        }}
+                        title={`Open ${filePath}`}
+                      >
+                        {children}
+                      </button>
+                    );
+                  }
+
                   // Explicitly validate protocol to prevent javascript: or vbscript: XSS vectors
                   const isSafe = href && (
                     href.startsWith('http://') || 
@@ -61,7 +173,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 }
               }}
             >
-              {message.content}
+              {processedContent}
             </ReactMarkdown>
           )}
         </div>

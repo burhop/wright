@@ -67,6 +67,10 @@ describe('ChatLayout', () => {
     expect(screen.getByTestId('sessions-sidebar')).toBeInTheDocument();
     expect(screen.getByTestId('chat-transcript')).toBeInTheDocument();
     expect(screen.getByTestId('workspace-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('left-resize-handle')).toBeInTheDocument();
+    expect(screen.getByTestId('right-resize-handle')).toBeInTheDocument();
+    expect(screen.getByTestId('agent-tools-window')).toBeInTheDocument();
+    expect(screen.getByTestId('llm-model-select')).toBeInTheDocument();
     expect(screen.queryByTestId('health-banner-hermes')).not.toBeInTheDocument();
   });
 
