@@ -12,6 +12,7 @@ test.describe('Dashboard Page', () => {
             {
               workspace_id: 'ws-1',
               session_id: 'session-1',
+              workspace_name: 'Test Project',
               local_path: '/home/burhop/repos/wright',
               git_remote_url: null,
               git_username: null,
@@ -33,6 +34,7 @@ test.describe('Dashboard Page', () => {
             {
               workspace_id: 'ws-1',
               session_id: 'session-1',
+              workspace_name: 'Test Project',
               local_path: '/home/burhop/repos/wright',
               git_remote_url: null,
               git_username: null,
@@ -56,55 +58,191 @@ test.describe('Dashboard Page', () => {
         }),
       });
     });
+
+    // Mock default directory path
+    await page.route('**/api/workspace/default-dir', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ default_dir: '/home/burhop/wright' }),
+      });
+    });
+
+    // Mock workspace creation
+    await page.route('**/api/workspace/create', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'ws-new',
+          session_id: 'session-new',
+          workspace_name: 'New Project',
+          local_path: '/home/burhop/wright/new-project',
+          git_remote_url: null,
+          git_username: null,
+          updated_at: Math.floor(Date.now() / 1000)
+        }),
+      });
+    });
+
+    // Mock get workspace by ID
+    await page.route('**/api/workspace/by-id/*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'ws-1',
+          session_id: 'session-1',
+          workspace_name: 'Test Project',
+          local_path: '/home/burhop/repos/wright',
+          git_remote_url: null,
+          git_username: null,
+          updated_at: Math.floor(Date.now() / 1000)
+        }),
+      });
+    });
+
+    // Mock workspace files tree
+    await page.route('**/api/workspace/files?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace: {
+            name: 'wright',
+            path: '/',
+            type: 'directory',
+            size: null,
+            last_modified: 1000,
+            git_status: 'Clean',
+            children: []
+          }
+        }),
+      });
+    });
+
+    // Mock workspace git status
+    await page.route('**/api/workspace/git/status?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          branch_name: 'main',
+          is_clean: true,
+          changes: []
+        }),
+      });
+    });
+
+    // Mock active agent
+    await page.route('**/api/agent/active', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ agent: 'hermes' }),
+      });
+    });
+
+    // Mock agent health
+    await page.route('**/api/agent/health', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ state: 'connected', latencyMs: 5.0 }),
+      });
+    });
+
+    // Mock inference health
+    await page.route('**/api/inference/health', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ state: 'connected', latencyMs: 5.0 }),
+      });
+    });
+
+    // Mock agent sessions
+    await page.route('**/api/agent/sessions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ sessions: [] }),
+      });
+    });
+
+    // Mock tool list
+    await page.route('**/api/mcp/servers', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ servers: [] }),
+      });
+    });
+    await page.route('**/api/mcp/tools', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ tools: [] }),
+      });
+    });
   });
 
-  test('should load the dashboard and verify all layout regions render', async ({ page }) => {
+  test('should load the dashboard layout and select an existing workspace', async ({ page }) => {
     await page.goto('/');
 
     // Check title
     await expect(page).toHaveTitle('Wright');
 
-    // Check layout shell regions
+    // Verify main regions render
     await expect(page.getByTestId('app-shell')).toBeVisible();
-    await expect(page.getByTestId('header')).toBeVisible();
-    await expect(page.getByTestId('sidebar')).toBeVisible();
-    await expect(page.getByTestId('status-bar')).toBeVisible();
-    
-    // Check main page content area
     await expect(page.getByTestId('page-dashboard')).toBeVisible();
-    await expect(page.getByText(/Welcome to Wright/i)).toBeVisible();
+    await expect(page.getByText('Welcome to Wright')).toBeVisible();
+
+    // Verify workspace card is present
+    const workspaceCard = page.getByText('Test Project', { exact: false });
+    await expect(workspaceCard).toBeVisible();
+
+    // Clicking workspace card should navigate to workspace page
+    await workspaceCard.click();
+    await expect(page).toHaveURL(/\/workspace\/ws-1/);
+    await expect(page.getByTestId('page-workspace')).toBeVisible();
   });
 
-  test('should allow searching and selecting a workspace from the dropdown', async ({ page }) => {
+  test('should open Create Workspace modal, autocomplete project path, and submit', async ({ page }) => {
     await page.goto('/');
 
-    // Verify workspace switcher is visible
-    await expect(page.getByRole('heading', { name: 'Engineering Workspaces' })).toBeVisible();
+    // Open Modal
+    const createBtn = page.locator('#create-workspace-btn');
+    await expect(createBtn).toBeVisible();
+    await createBtn.click();
 
-    // Click on the VS Code-style dropdown trigger
-    const dropdownTrigger = page.getByText('Open Workspace...');
-    await expect(dropdownTrigger).toBeVisible();
-    await dropdownTrigger.click();
+    // Verify Modal container is visible
+    const modal = page.getByTestId('create-workspace-modal');
+    await expect(modal).toBeVisible();
 
-    // Wait for the dropdown container search input to appear and focus
-    const searchInput = page.getByPlaceholder('Search workspaces by folder or path...');
-    await expect(searchInput).toBeVisible();
+    const nameInput = page.locator('#workspace-name-input');
+    const pathInput = page.locator('#workspace-path-input');
+    const submitBtn = page.locator('#workspace-create-submit');
 
-    // Type a query (e.g., 'wright' or any part of the path)
-    await searchInput.fill('wright');
+    await expect(nameInput).toBeVisible();
+    await expect(pathInput).toBeVisible();
+    await expect(submitBtn).toBeVisible();
 
-    // Wait for filtered workspaces and click the first option
-    const firstOption = page.locator('.dropdown-item').first();
-    await expect(firstOption).toBeVisible();
-    
-    const optionText = await firstOption.innerText();
-    console.log(`Selecting workspace option: ${optionText.replace('\n', ' - ')}`);
+    // Initially, path should be default directory plus a slash
+    await expect(pathInput).toHaveValue('/home/burhop/wright/');
 
-    await firstOption.click();
+    // Type name: 'FEA Simulation'
+    await nameInput.fill('FEA Simulation');
 
-    // Selecting a workspace should trigger navigation to agent chat page
-    await expect(page).toHaveURL('/agent-chat');
-    await expect(page.getByTestId('page-agent-chat')).toBeVisible();
+    // Path should autocomplete to: '/home/burhop/wright/fea-simulation'
+    await expect(pathInput).toHaveValue('/home/burhop/wright/fea-simulation');
+
+    // Click submit
+    await submitBtn.click();
+
+    // Modal should close and navigate to the new workspace page
+    await expect(modal).not.toBeVisible();
+    await expect(page).toHaveURL(/\/workspace\/ws-new/);
+    await expect(page.getByTestId('page-workspace')).toBeVisible();
   });
 });
-

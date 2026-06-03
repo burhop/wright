@@ -112,6 +112,78 @@ def touch_workspace(db_path: str, session_id: str) -> None:
         )
         conn.commit()
 
+def create_workspace_from_dashboard(db_path: str, name: str, local_path: str, session_id: Optional[str] = None) -> Dict[str, Any]:
+    """Create a workspace from the dashboard with a user-provided name and path.
+    
+    Validates that local_path exists on disk and is an absolute path.
+    Returns the full workspace dict.
+    """
+    import time
+    import uuid
+
+    # Validate path is absolute
+    if not os.path.isabs(local_path):
+        raise ValueError("local_path must be an absolute path")
+    # Validate path exists on disk
+    if not os.path.isdir(local_path):
+        raise ValueError(f"Directory does not exist: {local_path}")
+    # Validate name length
+    if not name or len(name.strip()) == 0:
+        raise ValueError("Workspace name must not be empty")
+    if len(name) > 100:
+        raise ValueError("Workspace name must be 100 characters or fewer")
+
+    workspace_id = str(uuid.uuid4())
+    if not session_id:
+        session_id = str(uuid.uuid4())
+    now = int(time.time())
+
+    with _get_db_conn(db_path) as conn:
+        conn.execute(
+            """
+            INSERT INTO engineering_workspaces (
+                workspace_id, session_id, workspace_name, local_path, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (workspace_id, session_id, name.strip(), local_path, now, now)
+        )
+        conn.commit()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM engineering_workspaces WHERE workspace_id = ?", (workspace_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else {}
+
+def get_workspace_by_id(db_path: str, workspace_id: str) -> Optional[Dict[str, Any]]:
+    """Fetch a single workspace by its workspace_id."""
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM engineering_workspaces WHERE workspace_id = ?", (workspace_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+def save_agent_context(db_path: str, workspace_id: str, context_data: str) -> None:
+    """Save agent conversation context for a workspace."""
+    import time
+    now = int(time.time())
+    with _get_db_conn(db_path) as conn:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO agent_contexts (workspace_id, context_data, updated_at)
+            VALUES (?, ?, ?)
+            """,
+            (workspace_id, context_data, now)
+        )
+        conn.commit()
+
+def load_agent_context(db_path: str, workspace_id: str) -> Optional[Dict[str, Any]]:
+    """Load agent conversation context for a workspace."""
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM agent_contexts WHERE workspace_id = ?", (workspace_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
 class MergeConflictError(Exception):
     """Exception raised when a git pull results in merge conflicts."""
     def __init__(self, conflicted_files: list[str]):

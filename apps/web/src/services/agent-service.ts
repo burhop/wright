@@ -232,6 +232,34 @@ export class HermesAgentService {
     const data = await response.json();
     return data.agent;
   }
+
+  async saveContext(workspaceId: string, contextData: Record<string, unknown>): Promise<boolean> {
+    agentLogger.info('Saving workspace context', { workspaceId });
+    const response = await fetch(`${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/context/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ context_data: contextData }),
+    });
+    if (!response.ok) {
+      agentLogger.warn('Failed to save context', { status: response.status });
+      return false;
+    }
+    return true;
+  }
+
+  async loadContext(workspaceId: string): Promise<Record<string, unknown> | null> {
+    agentLogger.info('Loading workspace context', { workspaceId });
+    const response = await fetch(`${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/context/load`);
+    if (response.status === 404) {
+      return null;
+    }
+    if (!response.ok) {
+      agentLogger.warn('Failed to load context', { status: response.status });
+      return null;
+    }
+    const data = await response.json();
+    return data.context_data ?? null;
+  }
 }
 
 export const agentService = new HermesAgentService();

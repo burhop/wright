@@ -38,16 +38,31 @@ function findFileInTree(node: WorkspaceNode, targetPath: string): WorkspaceNode 
   return null;
 }
 
-export function WorkspacePanel() {
+interface WorkspacePanelProps {
+  workspaceId?: string;
+  sessionId?: string;
+}
+
+export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessionId }: WorkspacePanelProps) {
   const { state, createSession, selectSession, sendMessage } = useChat();
   const navigate = useNavigate();
-  const activeSessionId = state.activeSessionId;
+
+  // Sync the prop sessionId into global chat state on mount or when the prop changes.
+  // Only depend on propSessionId to avoid loops from context-value churn.
+  useEffect(() => {
+    if (propSessionId) {
+      selectSession(propSessionId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [propSessionId]);
+
+  const activeSessionId = state.activeSessionId || propSessionId;
   const statuses = useHealthStatus();
   const agentStatus = statuses.find((s) => s.serviceId === 'hermes-agent')?.state;
   const isAgentDisconnected = agentStatus === 'disconnected';
 
   const activeSession =
-    state.sessions.find((s) => s.sessionId === state.activeSessionId) || null;
+    state.sessions.find((s) => s.sessionId === activeSessionId) || null;
 
   // Load active agent on mount
   useEffect(() => {
@@ -1279,7 +1294,7 @@ export function WorkspacePanel() {
             {/* New Session Button */}
             <button
               data-testid="create-session-btn"
-              onClick={createSession}
+              onClick={() => createSession(workspacePath)}
               style={{
                 backgroundColor: 'var(--color-secondary)',
                 color: 'var(--color-surface-subtle)',

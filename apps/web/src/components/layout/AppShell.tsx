@@ -10,7 +10,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
-  const isAgentChat = location.pathname === '/agent-chat';
+  const isWorkspaceView = location.pathname.startsWith('/workspace/');
 
   useEffect(() => {
     webMcpService.connect();
@@ -35,13 +35,13 @@ export function AppShell({ children }: AppShellProps) {
       <Header />
       
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {!isAgentChat && <Sidebar />}
+        {!isWorkspaceView && <Sidebar />}
         
         <main
           style={{
             flex: 1,
             overflowY: 'auto',
-            padding: isAgentChat ? '0' : 'var(--space-xl)',
+            padding: isWorkspaceView ? '0' : 'var(--space-xl)',
             backgroundColor: 'var(--color-neutral)',
           }}
         >

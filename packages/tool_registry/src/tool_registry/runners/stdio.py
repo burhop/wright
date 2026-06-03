@@ -44,13 +44,13 @@ class StdioRunner(BaseRunner):
             self._read_task = asyncio.create_task(self._read_stdout())
             self._stderr_task = asyncio.create_task(self._read_stderr())
 
-            # Enforce handshake within 10 seconds
-            try:
-                await asyncio.wait_for(self._handshake(), timeout=10.0)
-            except Exception as e:
-                logger.error("mcp_server_handshake_failed", command=self.command, error=str(e))
-                await self.stop()
-                raise RuntimeError(f"MCP handshake failed: {e}") from e
+        # Enforce handshake within 10 seconds (done outside lock to prevent deadlock)
+        try:
+            await asyncio.wait_for(self._handshake(), timeout=10.0)
+        except Exception as e:
+            logger.error("mcp_server_handshake_failed", command=self.command, error=str(e))
+            await self.stop()
+            raise RuntimeError(f"MCP handshake failed: {e}") from e
 
     async def stop(self) -> None:
         async with self._lock:

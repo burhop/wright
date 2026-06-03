@@ -100,8 +100,31 @@ async def create_new_session(
         session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
         
-        # Save mapping to local SQLite
-        create_workspace(DATABASE_PATH, str(uuid.uuid4()), session_info.session_id, workspace_path)
+        # Save mapping to local SQLite (reusing existing workspace if the path matches)
+        import sqlite3
+        conn = sqlite3.connect(DATABASE_PATH)
+        conn.row_factory = sqlite3.Row
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM engineering_workspaces WHERE local_path = ?", (workspace_path,))
+            existing = cursor.fetchone()
+        finally:
+            conn.close()
+
+        if existing:
+            import time
+            conn = sqlite3.connect(DATABASE_PATH)
+            try:
+                conn.execute(
+                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE workspace_id = ?",
+                    (session_info.session_id, int(time.time()), existing["workspace_id"])
+                )
+                conn.commit()
+            finally:
+                conn.close()
+            log.info("create_session_updated_existing_workspace", workspace_id=existing["workspace_id"], session_id=session_info.session_id)
+        else:
+            create_workspace(DATABASE_PATH, str(uuid.uuid4()), session_info.session_id, workspace_path)
         
         return NewSessionResponse(
             session_id=session_info.session_id,

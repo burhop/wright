@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { ChatSession, ChatMessage } from './types';
 import agentService from '../services/agent-service';
@@ -166,7 +166,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 
 interface ChatContextProps {
   state: ChatState;
-  createSession: () => Promise<void>;
+  createSession: (workspace?: string) => Promise<void>;
   selectSession: (sessionId: string) => void;
   deleteSession: (sessionId: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
@@ -185,12 +185,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         let localSessions: ChatSession[] = [];
         if (stored) {
           try {
-            localSessions = JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) {
+              localSessions = parsed;
+            }
           } catch (e) {}
         }
         
         const sessions: ChatSession[] = compactSessions.map((cs) => {
-          const matched = localSessions.find(ls => ls.sessionId === cs.sessionId);
+          const matched = Array.isArray(localSessions) ? localSessions.find(ls => ls?.sessionId === cs.sessionId) : undefined;
           return {
             sessionId: cs.sessionId,
             title: cs.title,
@@ -205,39 +208,44 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         console.error('Failed to sync sessions with backend, falling back to localStorage', err);
         const stored = localStorage.getItem('wright-chat-sessions');
+        let fallbackSessions: ChatSession[] = [];
         if (stored) {
           try {
-            dispatch({ type: 'SET_SESSIONS', sessions: JSON.parse(stored) });
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) {
+              fallbackSessions = parsed;
+            }
           } catch (e) {}
         }
+        dispatch({ type: 'SET_SESSIONS', sessions: fallbackSessions });
       }
     };
     hydrateSessions();
   }, []);
 
-  const createSession = async () => {
+  const createSession = useCallback(async (workspace?: string) => {
     try {
-      const session = await agentService.createSession();
+      const session = await agentService.createSession(workspace);
       dispatch({ type: 'CREATE_SESSION', session });
     } catch (err) {
       console.error('Failed to create session on backend', err);
     }
-  };
+  }, []);
 
-  const selectSession = (sessionId: string) => {
+  const selectSession = useCallback((sessionId: string) => {
     dispatch({ type: 'SELECT_SESSION', sessionId });
-  };
+  }, []);
 
-  const deleteSession = async (sessionId: string) => {
+  const deleteSession = useCallback(async (sessionId: string) => {
     try {
       await agentService.deleteSession(sessionId);
       dispatch({ type: 'DELETE_SESSION', sessionId });
     } catch (err) {
       console.error('Failed to delete session on backend', err);
     }
-  };
+  }, []);
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = useCallback(async (content: string) => {
     if (!state.activeSessionId) return;
     const sessionId = state.activeSessionId;
 
@@ -299,7 +307,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       console.error('Failed to send message', err);
       dispatch({ type: 'CLEAR_ACTIVE_TOOL' });
     }
-  };
+  }, [state.activeSessionId]);
 
   return (
     <ChatContext.Provider value={{ state, createSession, selectSession, deleteSession, sendMessage }}>

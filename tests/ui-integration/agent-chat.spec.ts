@@ -73,6 +73,71 @@ test.describe('Agent Chat Page', () => {
       });
     });
 
+    // Mock get workspace by ID
+    await page.route('**/api/workspace/by-id/*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'ws-1',
+          session_id: 'session123',
+          workspace_name: 'Test Project',
+          local_path: '/home/burhop/repos/wright',
+          git_remote_url: null,
+          git_username: null,
+          updated_at: Math.floor(Date.now() / 1000)
+        }),
+      });
+    });
+
+    // Mock workspace files tree
+    await page.route('**/api/workspace/files?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace: {
+            name: 'wright',
+            path: '/',
+            type: 'directory',
+            size: null,
+            last_modified: 1000,
+            git_status: 'Clean',
+            children: []
+          }
+        }),
+      });
+    });
+
+    // Mock workspace git status
+    await page.route('**/api/workspace/git/status?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          branch_name: 'main',
+          is_clean: true,
+          changes: []
+        }),
+      });
+    });
+
+    // Mock tool lists
+    await page.route('**/api/mcp/servers', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ servers: [] }),
+      });
+    });
+    await page.route('**/api/mcp/tools', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ tools: [] }),
+      });
+    });
+
     // Mock EventSource to simulate streaming over time with delays
     await page.addInitScript(() => {
       class MockEventSource extends EventTarget {
@@ -114,7 +179,7 @@ test.describe('Agent Chat Page', () => {
       (window as any).EventSource = MockEventSource;
     });
 
-    await page.goto('/agent-chat');
+    await page.goto('/workspace/ws-1');
 
     await expect(page.getByTestId('chat-layout')).toBeVisible();
     await expect(page.getByTestId('sessions-sidebar')).toBeVisible();

@@ -8,7 +8,7 @@ from typing import List, Optional, Dict, Any
 
 from agent_adapters import BaseAgentEngine
 from core import WorkspaceManager
-from core.workspace import get_workspace_by_session, create_workspace, get_workspace_enabled_tools, update_workspace_enabled_tools, get_recent_workspaces, get_all_workspaces, touch_workspace
+from core.workspace import get_workspace_by_session, create_workspace, get_workspace_enabled_tools, update_workspace_enabled_tools, get_recent_workspaces, get_all_workspaces, touch_workspace, create_workspace_from_dashboard, get_workspace_by_id, save_agent_context, load_agent_context
 from api.routers.agent import get_agent_engine
 from api.config import DATABASE_PATH
 
@@ -109,6 +109,7 @@ class WorkspaceToolToggleResponse(BaseModel):
 class WorkspaceListEntry(BaseModel):
     workspace_id: str
     session_id: str
+    workspace_name: Optional[str] = None
     local_path: str
     git_remote_url: Optional[str] = None
     git_username: Optional[str] = None
@@ -118,6 +119,10 @@ class WorkspaceListEntry(BaseModel):
 class WorkspaceListResponse(BaseModel):
     workspaces: List[WorkspaceListEntry]
 
+class WorkspaceCreateRequest(BaseModel):
+    name: str
+    local_path: str
+
 class WorkspaceActivateRequest(BaseModel):
     session_id: str
 
@@ -125,6 +130,9 @@ class WorkspaceActivateResponse(BaseModel):
     success: bool
     session_id: str
     workspace_path: str
+
+class ContextSaveRequest(BaseModel):
+    context_data: dict
 
 async def get_workspace_dir(
     session_id: str,
@@ -743,24 +751,101 @@ def _parse_enabled_tools(tools_str: Optional[str]) -> Optional[List[str]]:
     except Exception:
         return None
 
+@router.post("/create", response_model=WorkspaceListEntry, status_code=status.HTTP_201_CREATED)
+async def create_workspace_endpoint(
+    body: WorkspaceCreateRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    """Create a new workspace from the dashboard."""
+    logger.info("create_workspace_from_dashboard", extra={"name": body.name, "local_path": body.local_path})
+    try:
+        # Create directory and initialize git if not exists
+        os.makedirs(body.local_path, exist_ok=True)
+        WorkspaceManager(body.local_path)
+        
+        session_id = None
+        try:
+            session_info = await engine.create_session(body.local_path)
+            session_id = session_info.session_id
+        except Exception as e:
+            logger.warning("Failed to create agent session for new workspace: %s", e)
+            
+        workspace = create_workspace_from_dashboard(DATABASE_PATH, body.name, body.local_path, session_id=session_id)
+        return WorkspaceListEntry(
+            workspace_id=workspace["workspace_id"],
+            session_id=workspace["session_id"],
+            workspace_name=workspace.get("workspace_name"),
+            local_path=workspace["local_path"],
+            git_remote_url=workspace.get("git_remote_url"),
+            git_username=workspace.get("git_username"),
+            enabled_tools=_parse_enabled_tools(workspace.get("enabled_tools")),
+            updated_at=workspace["updated_at"]
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        logger.error("Failed to create workspace: %s", e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to create workspace: {e}")
+
+@router.get("/by-id/{workspace_id}", response_model=WorkspaceListEntry)
+async def get_workspace_by_id_endpoint(workspace_id: str):
+    """Fetch a single workspace by its ID."""
+    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+    if not workspace:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    return WorkspaceListEntry(
+        workspace_id=workspace["workspace_id"],
+        session_id=workspace["session_id"],
+        workspace_name=workspace.get("workspace_name"),
+        local_path=workspace["local_path"],
+        git_remote_url=workspace.get("git_remote_url"),
+        git_username=workspace.get("git_username"),
+        enabled_tools=_parse_enabled_tools(workspace.get("enabled_tools")),
+        updated_at=workspace["updated_at"]
+    )
+
+@router.post("/by-id/{workspace_id}/context/save")
+async def save_workspace_context_endpoint(workspace_id: str, body: ContextSaveRequest):
+    """Save agent conversation context for a workspace."""
+    import json
+    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+    if not workspace:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    save_agent_context(DATABASE_PATH, workspace_id, json.dumps(body.context_data))
+    return {"success": True, "workspace_id": workspace_id}
+
+@router.get("/by-id/{workspace_id}/context/load")
+async def load_workspace_context_endpoint(workspace_id: str):
+    """Load agent conversation context for a workspace."""
+    import json
+    ctx = load_agent_context(DATABASE_PATH, workspace_id)
+    if not ctx:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No saved context for this workspace")
+    context_data = {}
+    if ctx.get("context_data"):
+        try:
+            context_data = json.loads(ctx["context_data"])
+        except Exception:
+            context_data = {}
+    return {"workspace_id": workspace_id, "context_data": context_data, "updated_at": ctx["updated_at"]}
+
+def _serialize_workspace(w: dict) -> WorkspaceListEntry:
+    return WorkspaceListEntry(
+        workspace_id=w["workspace_id"],
+        session_id=w["session_id"],
+        workspace_name=w.get("workspace_name"),
+        local_path=w["local_path"],
+        git_remote_url=w.get("git_remote_url"),
+        git_username=w.get("git_username"),
+        enabled_tools=_parse_enabled_tools(w.get("enabled_tools")),
+        updated_at=w["updated_at"]
+    )
+
 @router.get("/recent", response_model=WorkspaceListResponse)
 async def list_recent_workspaces_endpoint():
     try:
         workspaces = get_recent_workspaces(DATABASE_PATH, limit=5)
-        return WorkspaceListResponse(
-            workspaces=[
-                WorkspaceListEntry(
-                    workspace_id=w["workspace_id"],
-                    session_id=w["session_id"],
-                    local_path=w["local_path"],
-                    git_remote_url=w["git_remote_url"],
-                    git_username=w["git_username"],
-                    enabled_tools=_parse_enabled_tools(w.get("enabled_tools")),
-                    updated_at=w["updated_at"]
-                )
-                for w in workspaces
-            ]
-        )
+        return WorkspaceListResponse(workspaces=[_serialize_workspace(w) for w in workspaces])
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -771,20 +856,7 @@ async def list_recent_workspaces_endpoint():
 async def list_all_workspaces_endpoint():
     try:
         workspaces = get_all_workspaces(DATABASE_PATH)
-        return WorkspaceListResponse(
-            workspaces=[
-                WorkspaceListEntry(
-                    workspace_id=w["workspace_id"],
-                    session_id=w["session_id"],
-                    local_path=w["local_path"],
-                    git_remote_url=w["git_remote_url"],
-                    git_username=w["git_username"],
-                    enabled_tools=_parse_enabled_tools(w.get("enabled_tools")),
-                    updated_at=w["updated_at"]
-                )
-                for w in workspaces
-            ]
-        )
+        return WorkspaceListResponse(workspaces=[_serialize_workspace(w) for w in workspaces])
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -805,6 +877,29 @@ async def activate_workspace_endpoint(
         local_path = await get_workspace_dir(session_id, engine)
     else:
         local_path = workspace["local_path"]
+
+    # Verify/create agent session if missing from agent engine
+    try:
+        sessions = await engine.list_sessions()
+        session_ids = {s.session_id for s in sessions}
+        if session_id not in session_ids:
+            logger.info("Session %s not found in agent engine, creating new one for path %s", session_id, local_path)
+            session_info = await engine.create_session(local_path)
+            import sqlite3
+            import time
+            conn = sqlite3.connect(DATABASE_PATH)
+            try:
+                conn.execute(
+                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE session_id = ?",
+                    (session_info.session_id, int(time.time()), session_id)
+                )
+                conn.commit()
+                logger.info("Updated workspace session_id from %s to %s", session_id, session_info.session_id)
+                session_id = session_info.session_id
+            finally:
+                conn.close()
+    except Exception as e:
+        logger.warning("Failed to verify/create agent session on activation: %s", e)
         
     touch_workspace(DATABASE_PATH, session_id)
     
@@ -823,18 +918,25 @@ async def activate_workspace_endpoint(
             finally:
                 conn.close()
                 
-            for server in installed_servers:
-                server_id = server["server_id"]
-                server_name = server["name"]
-                
-                is_enabled = True
-                if enabled_tools is not None:
-                    is_enabled = (server_name in enabled_tools) or (server_id in enabled_tools)
-                
-                if is_enabled:
-                    await mcp_engine.start_server(server_id)
-                else:
-                    await mcp_engine.stop_server(server_id)
+            async def sync_runners_background():
+                for srv in installed_servers:
+                    srv_id = srv["server_id"]
+                    srv_name = srv["name"]
+                    
+                    is_enabled = True
+                    if enabled_tools is not None:
+                        is_enabled = (srv_name in enabled_tools) or (srv_id in enabled_tools)
+                    
+                    try:
+                        if is_enabled:
+                            await mcp_engine.start_server(srv_id)
+                        else:
+                            await mcp_engine.stop_server(srv_id)
+                    except Exception as err:
+                        logger.error("Failed to synchronize MCP runner in background for %s: %s", srv_name, err)
+
+            import asyncio
+            asyncio.create_task(sync_runners_background())
     except Exception as e:
         logger.error("Failed to synchronize MCP runners on workspace activation: %s", e)
         
@@ -850,3 +952,13 @@ async def activate_workspace_endpoint(
         session_id=session_id,
         workspace_path=local_path
     )
+
+class DefaultWorkspaceDirResponse(BaseModel):
+    default_dir: str
+
+@router.get("/default-dir", response_model=DefaultWorkspaceDirResponse)
+async def get_default_workspace_dir_endpoint():
+    """Retrieve the default workspace directory parent path (e.g. ~/wright)."""
+    default_path = os.path.join(os.path.expanduser("~"), "wright")
+    return DefaultWorkspaceDirResponse(default_dir=default_path)
+

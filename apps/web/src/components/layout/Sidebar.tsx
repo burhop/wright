@@ -3,9 +3,8 @@ import type { NavigationSection } from '../../store/types';
 
 const SECTIONS: NavigationSection[] = [
   { id: 'dashboard', label: 'Dashboard', path: '/', icon: 'layout-dashboard', order: 1 },
-  { id: 'agent-chat', label: 'Agent Chat', path: '/agent-chat', icon: 'message-square', order: 2 },
-  { id: 'tool-registry', label: 'Tool Registry', path: '/tool-registry', icon: 'wrench', order: 3 },
-  { id: 'file-vault', label: 'File Vault', path: '/file-vault', icon: 'folder', order: 4 },
+  { id: 'tool-registry', label: 'Tool Registry', path: '/tool-registry', icon: 'wrench', order: 2 },
+  { id: 'file-vault', label: 'File Vault', path: '/file-vault', icon: 'folder', order: 3 },
 ];
 
 export function Sidebar() {

@@ -341,11 +341,50 @@ export class WorkspaceService {
     const data = await response.json();
     return data.success;
   }
+
+  async createWorkspace(name: string, localPath: string): Promise<WorkspaceInfo> {
+    workspaceLogger.info('Creating workspace', { name, localPath });
+    const response = await fetch(`${API_BASE}/api/workspace/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, local_path: localPath }),
+    });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      workspaceLogger.error('Failed to create workspace', { status: response.status });
+      throw new Error(errData.detail || `Failed to create workspace: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async getWorkspace(workspaceId: string): Promise<WorkspaceInfo> {
+    workspaceLogger.info('Fetching workspace by ID', { workspaceId });
+    const response = await fetch(`${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}`);
+    if (!response.ok) {
+      workspaceLogger.error('Failed to fetch workspace', { status: response.status });
+      throw new Error(`Failed to fetch workspace: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async getDefaultWorkspaceDir(): Promise<string> {
+    workspaceLogger.info('Fetching default workspace dir');
+    const response = await fetch(`${API_BASE}/api/workspace/default-dir`);
+    if (!response.ok) {
+      workspaceLogger.error('Failed to fetch default workspace dir', { status: response.status });
+      throw new Error(`Failed to fetch default workspace dir: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.default_dir;
+  }
 }
 
 export interface WorkspaceInfo {
   workspace_id: string;
   session_id: string;
+  workspace_name?: string | null;
   local_path: string;
   git_remote_url: string | null;
   git_username: string | null;

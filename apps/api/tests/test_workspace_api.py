@@ -24,7 +24,22 @@ class MockAgentEngine(BaseAgentEngine):
         )
 
     async def list_sessions(self) -> list[AgentSessionInfo]:
-        return []
+        return [
+            AgentSessionInfo(
+                session_id="test-session",
+                title="Test Session",
+                created_at=1000,
+                updated_at=1000,
+                message_count=0
+            ),
+            AgentSessionInfo(
+                session_id="mock-session",
+                title="Mock Session",
+                created_at=1000,
+                updated_at=1000,
+                message_count=0
+            )
+        ]
 
     async def delete_session(self, session_id: str) -> bool:
         return True
@@ -37,6 +52,12 @@ class MockAgentEngine(BaseAgentEngine):
 
     async def get_session_workspace(self, session_id: str) -> str | None:
         return self.workspace_path
+
+    async def save_context(self, session_id: str, workspace_id: str) -> bool:
+        return True
+
+    async def load_context(self, session_id: str, workspace_id: str) -> dict | None:
+        return None
 
 @pytest.fixture
 def workspace_setup():

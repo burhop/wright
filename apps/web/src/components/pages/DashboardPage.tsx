@@ -1,29 +1,25 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useLogger from '../../hooks/useLogger';
-import { AgentChatIcon, ToolRegistryIcon, FileVaultIcon } from '../common/Icons';
+import { ToolRegistryIcon, FileVaultIcon } from '../common/Icons';
 import { workspaceService, type WorkspaceInfo } from '../../services/workspace-service';
-import { useChat } from '../../store/sessions';
+import { CreateWorkspaceModal } from '../common/CreateWorkspaceModal';
 
 export function DashboardPage() {
   const logger = useLogger('DashboardPage');
   const navigate = useNavigate();
-  const { selectSession } = useChat();
 
   const [recentWorkspaces, setRecentWorkspaces] = useState<WorkspaceInfo[]>([]);
+  const [showAllWorkspaces, setShowAllWorkspaces] = useState(false);
   const [allWorkspaces, setAllWorkspaces] = useState<WorkspaceInfo[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     logger.info('Dashboard Page loaded');
     const fetchWorkspaces = async () => {
       try {
         const recent = await workspaceService.getRecentWorkspaces();
-        const all = await workspaceService.getAllWorkspaces();
         setRecentWorkspaces(recent);
-        setAllWorkspaces(all);
       } catch (err) {
         logger.error('Failed to load workspaces', { err });
       }
@@ -31,20 +27,10 @@ export function DashboardPage() {
     fetchWorkspaces();
   }, [logger]);
 
-  // Handle clicking outside of dropdown to close it
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const getWorkspaceName = (path: string) => {
-    const parts = path.split('/');
-    return parts[parts.length - 1] || path;
+  const getWorkspaceName = (w: WorkspaceInfo) => {
+    if (w.workspace_name) return w.workspace_name;
+    const parts = w.local_path.split('/');
+    return parts[parts.length - 1] || w.local_path;
   };
 
   const formatTimeAgo = (ts: number) => {
@@ -59,21 +45,40 @@ export function DashboardPage() {
   };
 
   const handleSelectWorkspace = async (w: WorkspaceInfo) => {
+    console.log('[DEBUG] handleSelectWorkspace clicked:', w);
     try {
+      console.log('[DEBUG] calling workspaceService.activateWorkspace for session:', w.session_id);
       await workspaceService.activateWorkspace(w.session_id);
-      selectSession(w.session_id);
-      navigate('/agent-chat');
+      console.log('[DEBUG] activateWorkspace returned. Navigating to:', `/workspace/${w.workspace_id}`);
+      navigate(`/workspace/${w.workspace_id}`);
     } catch (err) {
-      console.error('Failed to switch workspace', err);
+      console.error('[DEBUG] Failed to switch workspace:', err);
+      logger.error('Failed to switch workspace', { err });
     }
   };
 
-  const filteredWorkspaces = allWorkspaces.filter((w) => {
-    const name = getWorkspaceName(w.local_path).toLowerCase();
-    const path = w.local_path.toLowerCase();
-    const query = searchQuery.toLowerCase();
-    return name.includes(query) || path.includes(query);
-  });
+  const handleViewAllWorkspaces = async () => {
+    if (!showAllWorkspaces) {
+      try {
+        const all = await workspaceService.getAllWorkspaces();
+        setAllWorkspaces(all);
+      } catch (err) {
+        logger.error('Failed to load all workspaces', { err });
+      }
+    }
+    setShowAllWorkspaces(!showAllWorkspaces);
+  };
+
+  const handleWorkspaceCreated = async (workspace: WorkspaceInfo) => {
+    setIsCreateModalOpen(false);
+    try {
+      await workspaceService.activateWorkspace(workspace.session_id);
+      navigate(`/workspace/${workspace.workspace_id}`);
+    } catch (err) {
+      logger.error('Failed to activate new workspace', { err });
+      navigate(`/workspace/${workspace.workspace_id}`);
+    }
+  };
 
   return (
     <div
@@ -97,7 +102,7 @@ export function DashboardPage() {
         </p>
       </div>
 
-      {/* Workspace Switcher Panel */}
+      {/* Workspace Panel */}
       <div
         className="glow-card"
         style={{
@@ -118,126 +123,53 @@ export function DashboardPage() {
               Engineering Workspaces
             </h2>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--color-secondary)', marginTop: '2px' }}>
-              Select a workspace repository to activate its tools and load files.
+              Your project directories. Each workspace scopes tools, files, and agent conversations.
             </p>
           </div>
 
-          {/* Search Dropdown Selector (VS Code Style) */}
-          <div ref={dropdownRef} style={{ position: 'relative', width: '320px' }}>
-            <div
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: 'var(--space-md) var(--space-lg)',
-                backgroundColor: 'var(--color-surface-subtle)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-lg)',
-                color: 'var(--color-primary)',
-                fontSize: '0.9rem',
-                cursor: 'pointer',
-                userSelect: 'none',
-              }}
-            >
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                Open Workspace...
-              </span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-secondary)' }}>▼</span>
-            </div>
-
-            {isDropdownOpen && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  right: 0,
-                  width: '100%',
-                  marginTop: 'var(--space-xs)',
-                  backgroundColor: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: 'var(--shadow-xl)',
-                  zIndex: 100,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  maxHeight: '300px',
-                  overflow: 'hidden',
-                }}
-              >
-                <div style={{ padding: 'var(--space-sm)', borderBottom: '1px solid var(--color-border)' }}>
-                  <input
-                    type="text"
-                    placeholder="Search workspaces by folder or path..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoFocus
-                    style={{
-                      width: '100%',
-                      padding: 'var(--space-md)',
-                      backgroundColor: 'var(--color-surface-subtle)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-md)',
-                      color: 'var(--color-primary)',
-                      fontSize: '0.85rem',
-                      outline: 'none',
-                    }}
-                  />
-                </div>
-                <div style={{ overflowY: 'auto', flex: 1 }}>
-                  {filteredWorkspaces.length === 0 ? (
-                    <div style={{ padding: 'var(--space-lg)', fontSize: '0.85rem', color: 'var(--color-secondary)', textAlign: 'center' }}>
-                      No workspaces found
-                    </div>
-                  ) : (
-                    filteredWorkspaces.map((w) => (
-                      <div
-                        key={w.workspace_id}
-                        onClick={() => {
-                          handleSelectWorkspace(w);
-                          setIsDropdownOpen(false);
-                        }}
-                        style={{
-                          padding: 'var(--space-md) var(--space-lg)',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '2px',
-                          borderBottom: '1px solid rgba(255, 255, 255, 0.02)',
-                        }}
-                        className="dropdown-item"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.08)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                        }}
-                      >
-                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-primary)' }}>
-                          {getWorkspaceName(w.local_path)}
-                        </span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {w.local_path}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Create Workspace Button */}
+          <button
+            id="create-workspace-btn"
+            onClick={() => {
+              console.log('[DEBUG] Create Workspace button clicked, setting isCreateModalOpen to true');
+              setIsCreateModalOpen(true);
+            }}
+            style={{
+              padding: 'var(--space-md) var(--space-xl)',
+              backgroundColor: 'var(--color-secondary)',
+              color: 'var(--color-surface-subtle)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              borderRadius: 'var(--radius-lg)',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all var(--transition-smooth)',
+              boxShadow: 'var(--shadow-glow)',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = 'var(--shadow-glow-active)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            + Create Workspace
+          </button>
         </div>
 
         {/* Recent Workspaces List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginTop: 'var(--space-xs)' }}>
           <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 600, color: 'var(--color-secondary)', letterSpacing: '1px' }}>
-            Recently Opened Workspaces
+            Recently Opened
           </span>
 
           {recentWorkspaces.length === 0 ? (
             <div style={{ padding: 'var(--space-xl)', backgroundColor: 'var(--color-surface-subtle)', borderRadius: 'var(--radius-lg)', textAlign: 'center', border: '1px dashed var(--color-border)' }}>
-              <span style={{ fontSize: '0.9rem', color: 'var(--color-secondary)' }}>
-                No engineering workspaces opened yet. Try launching the Hermes Agent to start a session.
+              <span style={{ fontSize: '0.95rem', color: 'var(--color-secondary)' }}>
+                No workspaces yet. Click <strong style={{ color: 'var(--color-primary)' }}>+ Create Workspace</strong> above to get started.
               </span>
             </div>
           ) : (
@@ -276,7 +208,7 @@ export function DashboardPage() {
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
                       <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-primary)' }}>
-                        {getWorkspaceName(w.local_path)}
+                        {getWorkspaceName(w)}
                       </span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--color-secondary)' }}>
                         {w.local_path}
@@ -294,8 +226,82 @@ export function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* View All Workspaces */}
+        {recentWorkspaces.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+            <button
+              id="view-all-workspaces-btn"
+              onClick={handleViewAllWorkspaces}
+              style={{
+                alignSelf: 'flex-start',
+                padding: 'var(--space-sm) var(--space-lg)',
+                backgroundColor: 'transparent',
+                color: 'var(--color-secondary)',
+                fontWeight: 500,
+                fontSize: '0.85rem',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-secondary)';
+                e.currentTarget.style.color = 'var(--color-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--color-border)';
+                e.currentTarget.style.color = 'var(--color-secondary)';
+              }}
+            >
+              {showAllWorkspaces ? '▲ Hide all workspaces' : '▼ View all workspaces'}
+            </button>
+
+            {showAllWorkspaces && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)', paddingLeft: 'var(--space-md)' }}>
+                {allWorkspaces.length === 0 ? (
+                  <span style={{ fontSize: '0.85rem', color: 'var(--color-secondary)', fontStyle: 'italic' }}>No workspaces found.</span>
+                ) : (
+                  allWorkspaces.map((w) => (
+                    <div
+                      key={w.workspace_id}
+                      onClick={() => handleSelectWorkspace(w)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: 'var(--space-md) var(--space-lg)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.01)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-md)',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        transition: 'all var(--transition-fast)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--color-secondary)';
+                        e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.04)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--color-border)';
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.01)';
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--color-primary)' }}>{getWorkspaceName(w)}</span>
+                        <span style={{ color: 'var(--color-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '400px' }}>{w.local_path}</span>
+                      </div>
+                      <span style={{ color: 'var(--color-secondary)', fontSize: '0.75rem' }}>{formatTimeAgo(w.updated_at)}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
+      {/* Feature Cards Grid — Tool Registry & File Vault only */}
       <div
         style={{
           display: 'grid',
@@ -303,39 +309,6 @@ export function DashboardPage() {
           gap: 'var(--space-xl)',
         }}
       >
-        <Link
-          to="/agent-chat"
-          className="glow-card"
-          style={{
-            padding: 'var(--space-2xl)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-md)',
-            textAlign: 'left',
-            cursor: 'pointer',
-          }}
-        >
-          <div style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: 'var(--radius-lg)',
-            backgroundColor: 'rgba(56, 189, 248, 0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-secondary)',
-            boxShadow: 'var(--shadow-glow)',
-          }}>
-            <AgentChatIcon size={24} />
-          </div>
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-primary)' }}>
-            Hermes Agent
-          </h2>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--color-secondary)', lineHeight: 1.5 }}>
-            Interact with the local engineering agent using natural language. Execute workspace scripts, generate calculations, and inspect designs transparently.
-          </p>
-        </Link>
-
         <Link
           to="/tool-registry"
           className="glow-card"
@@ -402,6 +375,13 @@ export function DashboardPage() {
           </p>
         </Link>
       </div>
+
+      {/* Create Workspace Modal */}
+      <CreateWorkspaceModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreated={handleWorkspaceCreated}
+      />
     </div>
   );
 }

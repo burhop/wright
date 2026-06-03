@@ -67,3 +67,13 @@ class BaseAgentEngine(ABC):
     async def get_session_workspace(self, session_id: str) -> str | None:
         """Retrieve the workspace path for a given session ID."""
         pass
+
+    @abstractmethod
+    async def save_context(self, session_id: str, workspace_id: str) -> bool:
+        """Save agent context for a workspace. Returns True on success."""
+        pass
+
+    @abstractmethod
+    async def load_context(self, session_id: str, workspace_id: str) -> dict | None:
+        """Load agent context for a workspace. Returns context dict or None."""
+        pass

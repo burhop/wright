@@ -176,3 +176,13 @@ class HermesAdapter(BaseAgentEngine):
         except Exception as e:
             logger.error("Failed to query workspace for session %s: %s", session_id, e)
         return None
+
+    async def save_context(self, session_id: str, workspace_id: str) -> bool:
+        """No-op for Hermes — context is persisted server-side automatically."""
+        logger.debug("save_context is a no-op for Hermes (session=%s, workspace=%s)", session_id, workspace_id)
+        return True
+
+    async def load_context(self, session_id: str, workspace_id: str) -> dict | None:
+        """No-op for Hermes — context is persisted server-side automatically."""
+        logger.debug("load_context is a no-op for Hermes (session=%s, workspace=%s)", session_id, workspace_id)
+        return None
