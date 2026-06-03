@@ -28,10 +28,10 @@ function preprocessContent(content: string, activeSessionId?: string, workspaceP
     // Combined regex:
     // Group 1: Existing markdown link: \[([^\]]+)\]\(([^)]+)\)
     // Group 2: URL (http/https): (https?:\/\/[^\s\)\],<]+)
-    // Group 3: Absolute path starting with /home/: (\/home\/[^\s\)\],<]+)
+    // Group 3: Absolute path starting with /home/ or /tmp/: (\/(?:home|tmp)\/[^\s\)\],<]+)
     // Group 4: Relative path starting with /: (\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))
     // Group 5: Relative path not starting with /: (\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)
-    const regex = /(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/home\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
+    const regex = /(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/(?:home|tmp)\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
 
     return part.replace(regex, (match, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
       if (markdownLink) {

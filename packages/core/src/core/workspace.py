@@ -193,7 +193,18 @@ class WorkspaceManager:
         return False
 
     def sanitize_path(self, relative_path: str) -> str:
-        """Sanitize relative path and resolve to absolute path under base_dir to prevent path traversal."""
+        """Sanitize relative path and resolve to absolute path under base_dir or allow /tmp/ to prevent path traversal."""
+        # Support paths inside /tmp/ (e.g. for geometry/exports scratchpads)
+        if relative_path.startswith("/tmp/") or relative_path.startswith("tmp/"):
+            if relative_path.startswith("tmp/"):
+                resolved = os.path.abspath("/" + relative_path)
+            else:
+                resolved = os.path.abspath(relative_path)
+            if resolved.startswith("/tmp/"):
+                return resolved
+            else:
+                raise ValueError("Access denied: path traversal attempt detected.")
+
         # Clean relative_path of leading/trailing slashes
         clean_rel = relative_path.strip("/")
         # Resolve path
