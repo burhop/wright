@@ -17,6 +17,7 @@ type ChatAction =
   | { type: 'CREATE_SESSION'; session: ChatSession }
   | { type: 'DELETE_SESSION'; sessionId: string }
   | { type: 'ADD_MESSAGE'; sessionId: string; message: ChatMessage }
+  | { type: 'LOAD_SESSION_HISTORY'; sessionId: string; messages: ChatMessage[] }
   | { type: 'UPDATE_SESSION_TITLE'; sessionId: string; title: string }
   | { type: 'START_STREAMING' }
   | { type: 'APPEND_STREAM_TOKEN'; text: string }
@@ -147,6 +148,15 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       };
       break;
 
+    case 'LOAD_SESSION_HISTORY':
+      newState = {
+        ...state,
+        sessions: state.sessions.map((s) =>
+          s.sessionId === action.sessionId ? { ...s, messages: action.messages } : s
+        ),
+      };
+      break;
+
     case 'END_STREAMING':
       newState = {
         ...state,
@@ -167,7 +177,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 interface ChatContextProps {
   state: ChatState;
   createSession: (workspace?: string) => Promise<void>;
-  selectSession: (sessionId: string) => void;
+  selectSession: (sessionId: string) => Promise<void>;
   deleteSession: (sessionId: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
 }
@@ -205,6 +215,17 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         });
 
         dispatch({ type: 'SET_SESSIONS', sessions });
+
+        // Fetch history for the active session (if any)
+        const activeId = sessions.find(s => s.isActive)?.sessionId || sessions[0]?.sessionId || null;
+        if (activeId) {
+          try {
+            const history = await agentService.getSessionHistory(activeId);
+            dispatch({ type: 'LOAD_SESSION_HISTORY', sessionId: activeId, messages: history });
+          } catch (e) {
+            console.error('Failed to hydrate active session history', e);
+          }
+        }
       } catch (err) {
         console.error('Failed to sync sessions with backend, falling back to localStorage', err);
         const stored = localStorage.getItem('wright-chat-sessions');
@@ -232,8 +253,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const selectSession = useCallback((sessionId: string) => {
+  const selectSession = useCallback(async (sessionId: string) => {
     dispatch({ type: 'SELECT_SESSION', sessionId });
+    try {
+      const history = await agentService.getSessionHistory(sessionId);
+      dispatch({ type: 'LOAD_SESSION_HISTORY', sessionId, messages: history });
+    } catch (err) {
+      console.error('Failed to load session history', err);
+    }
   }, []);
 
   const deleteSession = useCallback(async (sessionId: string) => {

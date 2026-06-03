@@ -2,9 +2,6 @@ import uuid
 import time
 import structlog
 import os
-import shlex
-import subprocess
-import yaml
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Response
 from pydantic import BaseModel
@@ -21,76 +18,8 @@ from tool_registry import (
     update_tool_enabled,
     McpEngine,
 )
-
-def sync_mcp_server_to_hermes(server: McpServer):
-    """Sync an MCP server's active/inactive state to Hermes config.yaml files."""
-    import sys
-    if "pytest" in sys.modules:
-        return
-        
-    key_name = "".join(c.lower() for c in server.name if c.isalnum())
-    if not key_name:
-        key_name = server.server_id
-        
-    paths = [
-        os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
-        os.path.expanduser("~/.hermes/config.yaml")
-    ]
-    
-    for path in paths:
-        if not os.path.exists(path):
-            continue
-        try:
-            with open(path, "r") as f:
-                config = yaml.safe_load(f) or {}
-                
-            if "mcp_servers" not in config:
-                config["mcp_servers"] = {}
-                
-            if server.is_active:
-                if server.type == "stdio":
-                    if not server.command:
-                        continue
-                    args = []
-                    if isinstance(server.command, list):
-                        cmd = server.command[0]
-                        if len(server.command) > 1:
-                            args = server.command[1:]
-                    else:
-                        parsed = shlex.split(server.command)
-                        cmd = parsed[0] if parsed else "echo"
-                        args = parsed[1:] if len(parsed) > 1 else []
-                        
-                    srv_config = {
-                        "command": cmd,
-                        "args": args
-                    }
-                    
-                    if key_name == "openscadgeometry" or "openscad" in key_name:
-                        srv_config["env"] = {
-                            "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
-                        }
-                    config["mcp_servers"][key_name] = srv_config
-                    
-                elif server.type == "sse":
-                    if not server.command or not isinstance(server.command, str):
-                        continue
-                    config["mcp_servers"][key_name] = {
-                        "url": server.command,
-                        "transport": "sse"
-                    }
-            else:
-                for k in list(config["mcp_servers"].keys()):
-                    if k == key_name or (key_name == "openscadgeometry" and k == "openscad"):
-                        del config["mcp_servers"][k]
-                        
-            with open(path, "w") as f:
-                yaml.safe_dump(config, f, default_flow_style=False)
-                
-        except Exception as e:
-            print(f"Failed to sync MCP server {server.name} to Hermes config {path}: {e}")
-
-# Imports moved to top
+from core.tracing import traced
+from api.services.hermes_sync import sync_mcp_server_to_hermes, restart_hermes_background
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -143,6 +72,7 @@ class ToolToggleResponse(BaseModel):
 # ── Route Handlers ───────────────────────────────────────────────────────────
 
 @router.get("/servers", response_model=ServersListResponse)
+@traced("mcp.server.list")
 async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
     try:
         servers = get_servers(engine.db_path)
@@ -155,6 +85,7 @@ async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
         )
 
 @router.post("/servers", response_model=RegisterServerResponse, status_code=status.HTTP_201_CREATED)
+@traced("mcp.server.register")
 async def register_server(body: McpServerCreate, engine: McpEngine = Depends(get_mcp_engine)):
     server_id = str(uuid.uuid4())
     logger.info("registering_server", name=body.name, type=body.type)
@@ -196,6 +127,7 @@ async def register_server(body: McpServerCreate, engine: McpEngine = Depends(get
         )
 
 @router.patch("/servers/{server_id}", response_model=ServerToggleResponse)
+@traced("mcp.server.toggle")
 async def toggle_server_activation(
     server_id: str,
     body: ServerToggleRequest,
@@ -220,12 +152,7 @@ async def toggle_server_activation(
         sync_mcp_server_to_hermes(updated)
         
         # Restart Hermes WebUI in background to reload config
-        subprocess.Popen(
-            "export HERMES_HOME=\"$HOME/.hermes/profiles/wright\" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788",
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
+        restart_hermes_background()
             
         return ServerToggleResponse(
             server_id=updated.server_id,
@@ -241,6 +168,7 @@ async def toggle_server_activation(
         )
 
 @router.post("/servers/{server_id}/install", response_model=ServerInstallResponse)
+@traced("mcp.server.install")
 async def install_server_endpoint(
     server_id: str,
     request: Request,
@@ -302,6 +230,7 @@ async def install_server_endpoint(
         )
 
 @router.post("/servers/{server_id}/uninstall", response_model=ServerInstallResponse)
+@traced("mcp.server.uninstall")
 async def uninstall_server_endpoint(
     server_id: str,
     request: Request,
@@ -350,6 +279,7 @@ async def uninstall_server_endpoint(
         )
 
 @router.delete("/servers/{server_id}", status_code=status.HTTP_204_NO_CONTENT)
+@traced("mcp.server.delete")
 async def delete_server_endpoint(server_id: str, engine: McpEngine = Depends(get_mcp_engine)):
     logger.info("deleting_server", server_id=server_id)
     
@@ -371,12 +301,7 @@ async def delete_server_endpoint(server_id: str, engine: McpEngine = Depends(get
         sync_mcp_server_to_hermes(server)
         
         # Restart Hermes WebUI in background to reload config
-        subprocess.Popen(
-            "export HERMES_HOME=\"$HOME/.hermes/profiles/wright\" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788",
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
+        restart_hermes_background()
         
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as e:
@@ -387,6 +312,7 @@ async def delete_server_endpoint(server_id: str, engine: McpEngine = Depends(get
         )
 
 @router.get("/tools", response_model=ToolsListResponse)
+@traced("mcp.tool.list")
 async def list_tools_endpoint(engine: McpEngine = Depends(get_mcp_engine)):
     try:
         tools = get_tools(engine.db_path)
@@ -399,6 +325,7 @@ async def list_tools_endpoint(engine: McpEngine = Depends(get_mcp_engine)):
         )
 
 @router.patch("/tools/{tool_id}", response_model=ToolToggleResponse)
+@traced("mcp.tool.toggle")
 async def toggle_tool_enabled(
     tool_id: str,
     body: ToolToggleRequest,

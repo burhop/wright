@@ -119,12 +119,14 @@ def test_register_duplicate_server_fails(client):
     }
     response = client.post("/api/mcp/servers", json=payload)
     assert response.status_code == 400
-    assert "already registered" in response.json()["detail"]
+    data = response.json()
+    assert "already registered" in data.get("message", data.get("detail", ""))
 
 def test_toggle_server_not_found(client):
     response = client.patch("/api/mcp/servers/nonexistent-id", json={"is_active": True})
     assert response.status_code == 404
-    assert "not found" in response.json()["detail"]
+    data = response.json()
+    assert "not found" in data.get("message", data.get("detail", "")).lower()
 
 def test_delete_server(client):
     response = client.delete("/api/mcp/servers/calc-id-123")

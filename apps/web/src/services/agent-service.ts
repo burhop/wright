@@ -1,4 +1,4 @@
-import type { ChatSession, ChatSessionCompact } from '../store/types';
+import type { ChatSession, ChatSessionCompact, ChatMessage } from '../store/types';
 import { logger } from './logger';
 
 const agentLogger = logger.child('HermesAgentService');
@@ -11,7 +11,7 @@ export type AgentEvent =
   | { type: 'done'; session: ChatSession }
   | { type: 'error'; message: string };
 
-export interface ServiceHealthResult {
+interface ServiceHealthResult {
   state: 'connected' | 'disconnected' | 'unknown';
   latencyMs?: number;
 }
@@ -259,6 +259,23 @@ export class HermesAgentService {
     }
     const data = await response.json();
     return data.context_data ?? null;
+  }
+
+  async getSessionHistory(sessionId: string): Promise<ChatMessage[]> {
+    agentLogger.info('Fetching session history', { sessionId });
+    const response = await fetch(`${API_BASE}/api/agent/sessions/${sessionId}/history`);
+    if (!response.ok) {
+      agentLogger.error('Failed to fetch session history', { sessionId, statusText: response.statusText });
+      throw new Error(`Failed to fetch session history: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.messages.map((m: any) => ({
+      id: m.id,
+      role: m.role as 'user' | 'assistant',
+      content: m.content,
+      timestamp: m.timestamp,
+      traceId: m.trace_id ?? null,
+    }));
   }
 }
 

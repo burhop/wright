@@ -6,6 +6,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import structlog
 from opentelemetry import trace
+from core.tracing import traced
 
 from agent_adapters import (
     BaseAgentEngine,
@@ -70,8 +71,59 @@ class ChatStartResponse(BaseModel):
     session_id: str
     trace_id: str
 
+class ChatHistoryMessage(BaseModel):
+    id: str
+    role: str
+    content: str
+    timestamp: int
+    trace_id: Optional[str] = None
+
+class ChatHistoryResponse(BaseModel):
+    session_id: str
+    messages: List[ChatHistoryMessage]
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
+@router.get("/sessions/{session_id}/history", response_model=ChatHistoryResponse)
+@traced("agent.session.history")
+async def get_session_history(
+    session_id: str,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    """Retrieve chat history for a session from the agent backend.
+
+    Each agent adapter (Hermes, OpenClaw, etc.) is responsible for
+    persisting and returning its own chat history.
+    """
+    trace_id = get_current_trace_id()
+    log = logger.bind(trace_id=trace_id, session_id=session_id)
+    log.info("chat_history_requested")
+
+    try:
+        messages = await engine.get_chat_history(session_id)
+        log.info("chat_history_success", message_count=len(messages))
+        return ChatHistoryResponse(
+            session_id=session_id,
+            messages=[
+                ChatHistoryMessage(
+                    id=m.id,
+                    role=m.role,
+                    content=m.content,
+                    timestamp=m.timestamp,
+                    trace_id=m.trace_id,
+                )
+                for m in messages
+            ],
+        )
+    except Exception as exc:
+        log.exception("chat_history_failed", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Failed to retrieve chat history: {str(exc)}"
+        )
+
+
 @router.post("/sessions/new", response_model=NewSessionResponse)
+@traced("agent.session.create")
 async def create_new_session(
     body: NewSessionRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine)
@@ -139,6 +191,7 @@ async def create_new_session(
         )
 
 @router.get("/sessions", response_model=SessionsListResponse)
+@traced("agent.session.list")
 async def list_agent_sessions(
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
@@ -169,6 +222,7 @@ async def list_agent_sessions(
         )
 
 @router.delete("/sessions/{session_id}", response_model=DeleteSessionResponse)
+@traced("agent.session.delete")
 async def delete_agent_session(
     session_id: str,
     engine: BaseAgentEngine = Depends(get_agent_engine)
@@ -196,6 +250,7 @@ async def delete_agent_session(
         )
 
 @router.post("/chat/start", response_model=ChatStartResponse)
+@traced("agent.chat.start")
 async def start_chat_turn(
     body: ChatStartRequest,
     request: Request,
@@ -233,6 +288,7 @@ async def start_chat_turn(
         )
 
 @router.get("/chat/stream")
+@traced("agent.chat.stream")
 async def chat_response_stream(
     stream_id: str,
     engine: BaseAgentEngine = Depends(get_agent_engine)
@@ -262,12 +318,14 @@ async def chat_response_stream(
     )
 
 @router.get("/active", response_model=ActiveAgentResponse)
+@traced("agent.active.get")
 async def get_active_agent_endpoint(request: Request):
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     agent_name = sync_manager.active_agent if sync_manager else "hermes"
     return ActiveAgentResponse(agent=agent_name)
 
 @router.post("/active", response_model=ActiveAgentResponse)
+@traced("agent.active.set")
 async def set_active_agent_endpoint(
     body: SetActiveAgentRequest,
     request: Request,

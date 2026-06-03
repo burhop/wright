@@ -1,10 +1,10 @@
 import os
 import sqlite3
 import subprocess
-import logging
+import structlog
 from typing import Dict, Any, Optional
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 def _get_db_conn(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
@@ -182,6 +182,82 @@ def load_agent_context(db_path: str, workspace_id: str) -> Optional[Dict[str, An
         cursor.execute("SELECT * FROM agent_contexts WHERE workspace_id = ?", (workspace_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
+
+
+async def activate_workspace(
+    db_path: str,
+    session_id: str,
+    local_path: str,
+    engine,
+) -> str:
+    """Activate a workspace: verify/create agent session, update session_id if needed.
+
+    Extracted from workspace router to keep route handlers thin.
+    Returns the (possibly updated) session_id.
+    """
+    import time
+
+    try:
+        sessions = await engine.list_sessions()
+        session_ids = {s.session_id for s in sessions}
+        if session_id not in session_ids:
+            logger.info("agent_session_missing", session_id=session_id, local_path=local_path)
+            session_info = await engine.create_session(local_path)
+            conn = sqlite3.connect(db_path)
+            try:
+                conn.execute(
+                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE session_id = ?",
+                    (session_info.session_id, int(time.time()), session_id)
+                )
+                conn.commit()
+                logger.info("workspace_session_updated", old_session_id=session_id, new_session_id=session_info.session_id)
+                session_id = session_info.session_id
+            finally:
+                conn.close()
+    except Exception as e:
+        logger.warning("agent_session_verify_failed", session_id=session_id, error=str(e))
+
+    touch_workspace(db_path, session_id)
+    return session_id
+
+
+async def sync_workspace_runners(db_path: str, session_id: str, mcp_engine) -> None:
+    """Synchronize MCP runners based on workspace-scoped tool enablement.
+
+    Starts enabled servers and stops disabled ones. Runs in background.
+    Extracted from workspace router to keep route handlers thin.
+    """
+    import asyncio
+
+    enabled_tools = get_workspace_enabled_tools(db_path, session_id)
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM mcp_servers WHERE is_installed = 1")
+        installed_servers = [dict(row) for row in cursor.fetchall()]
+    finally:
+        conn.close()
+
+    async def sync_runners_background():
+        for srv in installed_servers:
+            srv_id = srv["server_id"]
+            srv_name = srv["name"]
+
+            is_enabled = True
+            if enabled_tools is not None:
+                is_enabled = (srv_name in enabled_tools) or (srv_id in enabled_tools)
+
+            try:
+                if is_enabled:
+                    await mcp_engine.start_server(srv_id)
+                else:
+                    await mcp_engine.stop_server(srv_id)
+            except Exception as err:
+                logger.error("mcp_runner_sync_failed", server=srv_name, error=str(err))
+
+    asyncio.create_task(sync_runners_background())
 
 
 class MergeConflictError(Exception):

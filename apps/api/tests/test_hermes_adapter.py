@@ -181,3 +181,52 @@ async def test_hermes_adapter_stream_response():
         assert events[0].data == {"text": "Hello"}
         assert events[1].type == "stream_end"
         assert events[1].data == {"session_id": "session123"}
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_get_chat_history():
+    adapter = HermesAdapter("http://127.0.0.1:8788")
+    
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "session": {
+            "session_id": "session123",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "Hello",
+                    "timestamp": 1780423800.0,
+                    "trace_id": "trace1"
+                },
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": "Hi there!"}],
+                    "timestamp": 1780423805000,
+                    "trace_id": "trace2"
+                }
+            ]
+        }
+    }
+    
+    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = mock_response
+        history = await adapter.get_chat_history("session123")
+        
+        assert len(history) == 2
+        assert history[0].role == "user"
+        assert history[0].content == "Hello"
+        assert history[0].timestamp == 1780423800000
+        assert history[0].trace_id == "trace1"
+        
+        assert history[1].role == "assistant"
+        assert history[1].content == "Hi there!"
+        assert history[1].timestamp == 1780423805000
+        assert history[1].trace_id == "trace2"
+        
+        mock_get.assert_called_once_with(
+            "http://127.0.0.1:8788/api/session?session_id=session123&messages=1",
+            headers=adapter.headers,
+            timeout=10.0
+        )
+

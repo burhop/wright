@@ -1,964 +1,465 @@
+"""
+Workspace router — thin HTTP handlers only.
+
+All Pydantic models are in api.schemas.workspace.
+All business logic is in core.workspace and api.services.hermes_sync.
+All handlers are decorated with @traced for OTel span creation.
+"""
 import os
 import uuid
-import logging
+import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
 
 from agent_adapters import BaseAgentEngine
 from core import WorkspaceManager
-from core.workspace import get_workspace_by_session, create_workspace, get_workspace_enabled_tools, update_workspace_enabled_tools, get_recent_workspaces, get_all_workspaces, touch_workspace, create_workspace_from_dashboard, get_workspace_by_id, save_agent_context, load_agent_context
+from core.workspace import (
+    get_workspace_by_session, create_workspace, get_workspace_enabled_tools,
+    update_workspace_enabled_tools, get_recent_workspaces, get_all_workspaces,
+    touch_workspace, create_workspace_from_dashboard, get_workspace_by_id,
+    save_agent_context, load_agent_context, update_workspace_remote,
+    activate_workspace, sync_workspace_runners,
+)
+from core.tracing import traced
 from api.routers.agent import get_agent_engine
 from api.config import DATABASE_PATH
+from api.schemas.workspace import (
+    WorkspaceNodeResponse, WorkspaceTreeResponse, FileCreateRequest,
+    FileMoveRequest, FileMoveResponse, FileContentSaveRequest,
+    FileContentSaveResponse, GitStatusItem, GitStatusResponse,
+    GitDiffResponse, GitRevertRequest, GitRevertResponse,
+    GitCommitRequest, GitCommitResponse, GitCommitInfo,
+    GitHistoryResponse, WorkspaceConfigRequest, WorkspaceConfigResponse,
+    WorkspaceConfigGetResponse, GitPushPullRequest, GitPushPullResponse,
+    WorkspaceToolsGetResponse, WorkspaceToolToggleRequest,
+    WorkspaceToolToggleResponse, WorkspaceListEntry, WorkspaceListResponse,
+    WorkspaceCreateRequest, WorkspaceActivateRequest,
+    WorkspaceActivateResponse, ContextSaveRequest,
+    DefaultWorkspaceDirResponse, serialize_workspace,
+)
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 router = APIRouter()
 
-class WorkspaceNodeResponse(BaseModel):
-    name: str
-    path: str
-    type: str
-    size: Optional[int] = None
-    last_modified: int
-    git_status: str = "Clean"
-    children: Optional[List[Dict[str, Any]]] = None
-
-class FileCreateRequest(BaseModel):
-    session_id: str
-    path: str
-    type: str  # 'file' | 'directory'
-
-class FileMoveRequest(BaseModel):
-    session_id: str
-    source_path: str
-    destination_path: str
-
-class FileMoveResponse(BaseModel):
-    success: bool
-    source_path: str
-    destination_path: str
-
-class GitStatusItem(BaseModel):
-    path: str
-    git_status: str
-    staged: bool
-
-class GitStatusResponse(BaseModel):
-    branch_name: str
-    is_clean: bool
-    changes: List[GitStatusItem]
-
-class GitDiffResponse(BaseModel):
-    path: str
-    diff: str
-
-class GitRevertRequest(BaseModel):
-    session_id: str
-    path: str
-
-class GitRevertResponse(BaseModel):
-    success: bool
-    path: str
-
-class GitCommitRequest(BaseModel):
-    session_id: str
-    message: str
-
-class GitCommitResponse(BaseModel):
-    success: bool
-    commit_hash: str
-    message: str
-    timestamp: int
-
-class GitCommitInfo(BaseModel):
-    commit_hash: str
-    message: str
-    author: str
-    timestamp: int
-
-class GitHistoryResponse(BaseModel):
-    commits: List[GitCommitInfo]
-
-class WorkspaceTreeResponse(BaseModel):
-    workspace: WorkspaceNodeResponse
-
-class FileContentSaveRequest(BaseModel):
-    session_id: str
-    path: str
-    content: str
-
-class FileContentSaveResponse(BaseModel):
-    success: bool
-
-class WorkspaceToolsGetResponse(BaseModel):
-    session_id: str
-    enabled_tools: List[str]
-
-class WorkspaceToolToggleRequest(BaseModel):
-    session_id: str
-    server_id: str
-    is_enabled: bool
-
-class WorkspaceToolToggleResponse(BaseModel):
-    success: bool
-    session_id: str
-    server_id: str
-    is_enabled: bool
-
-class WorkspaceListEntry(BaseModel):
-    workspace_id: str
-    session_id: str
-    workspace_name: Optional[str] = None
-    local_path: str
-    git_remote_url: Optional[str] = None
-    git_username: Optional[str] = None
-    enabled_tools: Optional[List[str]] = None
-    updated_at: int
-
-class WorkspaceListResponse(BaseModel):
-    workspaces: List[WorkspaceListEntry]
-
-class WorkspaceCreateRequest(BaseModel):
-    name: str
-    local_path: str
-
-class WorkspaceActivateRequest(BaseModel):
-    session_id: str
-
-class WorkspaceActivateResponse(BaseModel):
-    success: bool
-    session_id: str
-    workspace_path: str
-
-class ContextSaveRequest(BaseModel):
-    context_data: dict
 
 async def get_workspace_dir(
     session_id: str,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ) -> str:
-    """Retrieve the workspace path for the given session ID, with fallback to default, backed by SQLite."""
-    # 1. Query database first
+    """Retrieve the workspace path for the given session ID, with fallback."""
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if workspace:
         return workspace["local_path"]
-
-    # 2. If not found, retrieve from the engine
     workspace_path = await engine.get_session_workspace(session_id)
     if not workspace_path:
-        # Fallback to isolated session directory
         workspace_path = f"/home/burhop/workspace/{session_id}"
-        
-    # 3. Create directory
     os.makedirs(workspace_path, exist_ok=True)
-    
-    # 4. Save to database
     workspace_id = str(uuid.uuid4())
     create_workspace(DATABASE_PATH, workspace_id, session_id, workspace_path)
-    
     return workspace_path
 
+
+# ── File Operations ──────────────────────────────────────────────────────
+
 @router.get("/files", response_model=WorkspaceTreeResponse)
+@traced("workspace.files.list")
 async def list_workspace_files(
-    session_id: str = Query(..., description="The session ID representing the active workspace context"),
+    session_id: str = Query(...),
     workspace_dir: str = Depends(get_workspace_dir)
 ):
-    try:
-        manager = WorkspaceManager(workspace_dir)
-        tree = manager.get_workspace_tree()
-        return WorkspaceTreeResponse(workspace=tree)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list workspace files: {e}"
-        )
+    mgr = WorkspaceManager(workspace_dir)
+    tree = mgr.get_workspace_tree()
+    # Override root node name with the human-readable workspace name
+    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    if workspace:
+        display_name = workspace.get("workspace_name") or os.path.basename(workspace["local_path"])
+        tree["name"] = display_name
+    return WorkspaceTreeResponse(workspace=WorkspaceNodeResponse(**tree))
+
 
 @router.get("/files/content")
+@traced("workspace.files.read")
 async def get_file_content(
-    session_id: str = Query(..., description="The session ID representing the active workspace context"),
-    path: str = Query(..., description="Workspace-relative path to the file"),
+    session_id: str = Query(...),
+    path: str = Query(...),
     workspace_dir: str = Depends(get_workspace_dir)
 ):
+    mgr = WorkspaceManager(workspace_dir)
     try:
-        manager = WorkspaceManager(workspace_dir)
-        abs_path = manager.sanitize_path(path)
-        
-        # Verify file existence
-        if not os.path.exists(abs_path):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"File not found: {path}"
-            )
-            
-        if not os.path.isfile(abs_path):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Path is not a file: {path}"
-            )
-            
-        # Determine media type based on extension
-        media_type = "application/octet-stream"
-        if path.endswith(".scad"):
-            media_type = "text/plain"
-        elif path.endswith(".stl"):
-            media_type = "application/octet-stream"
-        elif path.endswith(".json"):
-            media_type = "application/json"
-            
-        return FileResponse(abs_path, media_type=media_type, filename=os.path.basename(abs_path))
-    except HTTPException:
-        raise
+        abs_path = mgr.sanitize_path(path)
     except ValueError as e:
-        # Prevent traversal
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to read file content: {e}"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    if not os.path.isfile(abs_path):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}")
+    ext = os.path.splitext(abs_path)[1].lower()
+    binary_extensions = {".stl", ".obj", ".step", ".stp", ".iges", ".igs", ".3mf", ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".pdf"}
+    if ext in binary_extensions:
+        return FileResponse(abs_path, filename=os.path.basename(abs_path))
+    try:
+        content = mgr.read_file_content(path)
+        try:
+            text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            return FileResponse(abs_path, filename=os.path.basename(abs_path))
+        return JSONResponse(content={"content": text, "path": path, "encoding": "utf-8"})
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}")
+
 
 @router.post("/files", response_model=WorkspaceNodeResponse, status_code=status.HTTP_201_CREATED)
+@traced("workspace.files.create")
 async def create_file_endpoint(
     body: FileCreateRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
     try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        node = manager.create_file_node(body.path, body.type)
-        return node
-    except FileExistsError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create file/folder: {e}"
-        )
+        node = mgr.create_file_node(body.path, body.type)
+        return WorkspaceNodeResponse(**node)
+    except (FileExistsError, ValueError) as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.delete("/files", status_code=status.HTTP_204_NO_CONTENT)
+@traced("workspace.files.delete")
 async def delete_file_endpoint(
-    path: str = Query(..., description="Workspace-relative path to the file/folder"),
+    session_id: str = Query(...),
+    path: str = Query(...),
     workspace_dir: str = Depends(get_workspace_dir)
 ):
+    mgr = WorkspaceManager(workspace_dir)
     try:
-        manager = WorkspaceManager(workspace_dir)
-        manager.delete_file_node(path)
+        mgr.delete_file_node(path)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
-    except FileNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete file/folder: {e}"
-        )
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}")
+    except PermissionError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
 
 @router.put("/files/move", response_model=FileMoveResponse)
+@traced("workspace.files.move")
 async def move_file_endpoint(
     body: FileMoveRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
     try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        manager.move_file_node(body.source_path, body.destination_path)
-        return FileMoveResponse(
-            success=True,
-            source_path=body.source_path,
-            destination_path=body.destination_path
-        )
-    except FileNotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
-        )
-    except FileExistsError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to move file/folder: {e}"
-        )
+        mgr.move_file_node(body.source_path, body.destination_path)
+        return FileMoveResponse(success=True, source_path=body.source_path, destination_path=body.destination_path)
+    except (FileNotFoundError, FileExistsError, PermissionError) as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-@router.get("/git/status", response_model=GitStatusResponse)
-async def git_status_endpoint(
-    session_id: str = Query(..., description="The session ID representing the active workspace"),
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        status_info = manager.get_git_status()
-        return GitStatusResponse(**status_info)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to get git status: {e}"
-        )
-
-@router.get("/git/diff", response_model=GitDiffResponse)
-async def git_diff_endpoint(
-    session_id: str = Query(..., description="The session ID"),
-    path: str = Query(..., description="Workspace-relative path to diff"),
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        diff_text = manager.get_git_diff(path)
-        return GitDiffResponse(path=path, diff=diff_text)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch git diff: {e}"
-        )
-
-@router.post("/git/revert", response_model=GitRevertResponse)
-async def git_revert_endpoint(
-    body: GitRevertRequest,
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        manager.revert_file(body.path)
-        return GitRevertResponse(success=True, path=body.path)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to revert file changes: {e}"
-        )
-
-@router.post("/git/commit", response_model=GitCommitResponse)
-async def git_commit_endpoint(
-    body: GitCommitRequest,
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        commit_info = manager.commit_changes(body.message)
-        return GitCommitResponse(success=True, **commit_info)
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to commit changes: {e}"
-        )
-
-@router.get("/git/history", response_model=GitHistoryResponse)
-async def git_history_endpoint(
-    session_id: str = Query(..., description="The session ID"),
-    limit: int = Query(50, description="Max commits to fetch"),
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        history = manager.get_git_history(limit)
-        return GitHistoryResponse(commits=history)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch git commit logs: {e}"
-        )
-
-# Remote Syncing & Options Models
-class WorkspaceConfigRequest(BaseModel):
-    session_id: str
-    git_remote_url: Optional[str] = None
-    git_username: Optional[str] = None
-    git_token: Optional[str] = None
-
-class WorkspaceConfigResponse(BaseModel):
-    success: bool
-    workspace_id: str
-
-class WorkspaceConfigGetResponse(BaseModel):
-    workspace_id: str
-    git_remote_url: Optional[str] = None
-    git_username: Optional[str] = None
-    has_token: bool
-    workspace_path: Optional[str] = None
-
-class GitPushPullRequest(BaseModel):
-    session_id: str
-
-class GitPushPullResponse(BaseModel):
-    success: bool
-    message: str
-
-@router.get("/config", response_model=WorkspaceConfigGetResponse)
-async def get_workspace_config(
-    session_id: str = Query(..., description="The session ID representing the active workspace"),
-    workspace_dir: str = Depends(get_workspace_dir)
-):
-    try:
-        workspace = get_workspace_by_session(DATABASE_PATH, session_id)
-        if not workspace:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Workspace configuration not found for session: {session_id}"
-            )
-        return WorkspaceConfigGetResponse(
-            workspace_id=workspace["workspace_id"],
-            git_remote_url=workspace.get("git_remote_url"),
-            git_username=workspace.get("git_username"),
-            has_token=bool(workspace.get("git_token")),
-            workspace_path=workspace.get("local_path")
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to retrieve workspace configuration: {e}"
-        )
-
-@router.post("/config", response_model=WorkspaceConfigResponse)
-async def update_workspace_config(
-    body: WorkspaceConfigRequest,
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        _ = await get_workspace_dir(body.session_id, engine)
-        workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
-        if not workspace:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Workspace not found for session: {body.session_id}"
-            )
-        
-        git_token = body.git_token
-        # If token not provided but we have it, retain it
-        if git_token is None and workspace.get("git_token"):
-            git_token = workspace.get("git_token")
-            
-        from core.workspace import update_workspace_remote
-        update_workspace_remote(
-            DATABASE_PATH,
-            body.session_id,
-            body.git_remote_url,
-            body.git_username,
-            git_token
-        )
-        return WorkspaceConfigResponse(success=True, workspace_id=workspace["workspace_id"])
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update workspace configuration: {e}"
-        )
-
-@router.post("/git/push", response_model=GitPushPullResponse)
-async def git_push_endpoint(
-    body: GitPushPullRequest,
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
-        if not workspace or not workspace.get("git_remote_url"):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Git remote URL is not configured."
-            )
-            
-        manager = WorkspaceManager(workspace_dir)
-        manager.push_remote(
-            remote_url=workspace["git_remote_url"],
-            username=workspace.get("git_username"),
-            token=workspace.get("git_token")
-        )
-        return GitPushPullResponse(success=True, message="Push completed successfully")
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Push failed: {e}"
-        )
-
-@router.post("/git/pull")
-async def git_pull_endpoint(
-    body: GitPushPullRequest,
-    engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
-        if not workspace or not workspace.get("git_remote_url"):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Git remote URL is not configured."
-            )
-            
-        manager = WorkspaceManager(workspace_dir)
-        from core.workspace import MergeConflictError
-        try:
-            manager.pull_remote(
-                remote_url=workspace["git_remote_url"],
-                username=workspace.get("git_username"),
-                token=workspace.get("git_token")
-            )
-        except MergeConflictError as mce:
-            return JSONResponse(
-                status_code=status.HTTP_409_CONFLICT,
-                content={
-                    "error": "MergeConflict",
-                    "message": "Pull resulted in merge conflicts",
-                    "conflicted_files": mce.conflicted_files
-                }
-            )
-        return GitPushPullResponse(success=True, message="Pull completed successfully")
-    except HTTPException:
-        raise
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Pull failed: {e}"
-        )
 
 @router.put("/files/content", response_model=FileContentSaveResponse)
+@traced("workspace.files.save")
 async def save_file_content_endpoint(
     body: FileContentSaveRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
     try:
-        workspace_dir = await get_workspace_dir(body.session_id, engine)
-        manager = WorkspaceManager(workspace_dir)
-        manager.write_file_content(body.path, body.content.encode("utf-8"))
+        mgr.write_file_content(body.path, body.content.encode("utf-8"))
         return FileContentSaveResponse(success=True)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except PermissionError as e:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=str(e)
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to save file content: {e}"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
-@router.get("/tools", response_model=WorkspaceToolsGetResponse)
-async def get_workspace_tools_endpoint(
-    session_id: str = Query(..., description="The session ID representing the active workspace")
+
+# ── Git Operations ───────────────────────────────────────────────────────
+
+@router.get("/git/status", response_model=GitStatusResponse)
+@traced("workspace.git.status")
+async def git_status_endpoint(
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir)
 ):
-    try:
-        from core.workspace import get_workspace_enabled_tools
-        enabled = get_workspace_enabled_tools(DATABASE_PATH, session_id)
-        if enabled is None:
-            from tool_registry.db import get_servers
-            servers = get_servers(DATABASE_PATH)
-            enabled = [s.name for s in servers if s.is_active]
-        return WorkspaceToolsGetResponse(session_id=session_id, enabled_tools=enabled)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to get workspace tools: {e}"
-        )
+    mgr = WorkspaceManager(workspace_dir)
+    s = mgr.get_git_status()
+    return GitStatusResponse(branch_name=s["branch_name"], is_clean=s["is_clean"],
+                             changes=[GitStatusItem(**c) for c in s["changes"]])
 
-@router.post("/tools/toggle", response_model=WorkspaceToolToggleResponse)
-async def toggle_workspace_tool_endpoint(
-    body: WorkspaceToolToggleRequest,
-    request: Request
+
+@router.get("/git/diff", response_model=GitDiffResponse)
+@traced("workspace.git.diff")
+async def git_diff_endpoint(
+    session_id: str = Query(...),
+    path: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir)
 ):
+    mgr = WorkspaceManager(workspace_dir)
+    return GitDiffResponse(path=path, diff=mgr.get_git_diff(path))
+
+
+@router.post("/git/revert", response_model=GitRevertResponse)
+@traced("workspace.git.revert")
+async def git_revert_endpoint(
+    body: GitRevertRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
+    mgr.revert_file(body.path)
+    return GitRevertResponse(success=True, path=body.path)
+
+
+@router.post("/git/commit", response_model=GitCommitResponse)
+@traced("workspace.git.commit")
+async def git_commit_endpoint(
+    body: GitCommitRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
     try:
-        enabled = get_workspace_enabled_tools(DATABASE_PATH, body.session_id)
-        if enabled is None:
-            from tool_registry.db import get_servers
-            servers = get_servers(DATABASE_PATH)
-            enabled = [s.name for s in servers if s.is_active]
-            
-        if body.is_enabled:
-            if body.server_id not in enabled:
-                enabled.append(body.server_id)
-        else:
-            if body.server_id in enabled:
-                enabled.remove(body.server_id)
-                
-        update_workspace_enabled_tools(DATABASE_PATH, body.session_id, enabled)
-        
-        # Sync the new tool selection list to the active agent configuration
-        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-        if sync_manager:
-            sync_manager.sync_workspace_tools(body.session_id)
-        
-        return WorkspaceToolToggleResponse(
-            success=True,
-            session_id=body.session_id,
-            server_id=body.server_id,
-            is_enabled=body.is_enabled
+        result = mgr.commit_changes(body.message)
+        return GitCommitResponse(success=True, **result)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.get("/git/history", response_model=GitHistoryResponse)
+@traced("workspace.git.history")
+async def git_history_endpoint(
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir)
+):
+    mgr = WorkspaceManager(workspace_dir)
+    commits = mgr.get_git_history()
+    return GitHistoryResponse(commits=[GitCommitInfo(**c) for c in commits])
+
+
+@router.post("/git/push", response_model=GitPushPullResponse)
+@traced("workspace.git.push")
+async def git_push_endpoint(
+    body: GitPushPullRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    remote_url = workspace.get("git_remote_url")
+    if not remote_url:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Git remote URL not configured")
+    mgr = WorkspaceManager(workspace_dir)
+    try:
+        mgr.push_remote(remote_url, workspace.get("git_username"), workspace.get("git_token"))
+        return GitPushPullResponse(success=True, message="Push successful")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@router.post("/git/pull")
+@traced("workspace.git.pull")
+async def git_pull_endpoint(
+    body: GitPushPullRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    from core.workspace import MergeConflictError
+    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    remote_url = workspace.get("git_remote_url")
+    if not remote_url:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Git remote URL not configured")
+    mgr = WorkspaceManager(workspace_dir)
+    try:
+        mgr.pull_remote(remote_url, workspace.get("git_username"), workspace.get("git_token"))
+        return JSONResponse(content={"success": True, "message": "Pull successful"})
+    except MergeConflictError as e:
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"success": False, "message": "Merge conflicts detected", "conflicted_files": e.conflicted_files}
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to toggle workspace tool: {e}"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-def sync_workspace_tools_to_hermes(session_id: str):
-    """Sync the workspace's enabled tools to Hermes config.yaml (filtering out disabled ones)."""
-    import sys
-    import yaml
-    import subprocess
-    if "pytest" in sys.modules:
-        return
 
+# ── Workspace Config ─────────────────────────────────────────────────────
+
+@router.get("/config", response_model=WorkspaceConfigGetResponse)
+@traced("workspace.config.get")
+async def get_workspace_config(
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir)
+):
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if not workspace:
-        return
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    return WorkspaceConfigGetResponse(
+        workspace_id=workspace["workspace_id"],
+        git_remote_url=workspace.get("git_remote_url"),
+        git_username=workspace.get("git_username"),
+        has_token=bool(workspace.get("git_token")),
+        workspace_path=workspace.get("local_path"),
+    )
 
-    from core.workspace import get_workspace_enabled_tools
-    enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
-    
-    from tool_registry.db import get_servers
-    all_servers = get_servers(DATABASE_PATH)
-    
-    paths = [
-        os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
-        os.path.expanduser("~/.hermes/config.yaml")
-    ]
-    
-    for path in paths:
-        if not os.path.exists(path):
-            continue
-        try:
-            with open(path, "r") as f:
-                config = yaml.safe_load(f) or {}
-                
-            if "mcp_servers" not in config:
-                config["mcp_servers"] = {}
-            
-            # Rebuild the mcp_servers section
-            new_mcp_servers = {}
-            for server in all_servers:
-                key_name = "".join(c.lower() for c in server.name if c.isalnum())
-                if not key_name:
-                    key_name = server.server_id
-                
-                # Check if this server is globally active
-                if not server.is_active:
-                    continue
-                
-                # Check if this server is enabled in the workspace session
-                is_enabled = True
-                if enabled_tools is not None:
-                    is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
-                
-                if is_enabled:
-                    # Construct stdio or sse settings
-                    if server.type == "stdio":
-                        if not server.command:
-                            continue
-                        import shlex
-                        args = []
-                        if isinstance(server.command, list):
-                            cmd = server.command[0]
-                            if len(server.command) > 1:
-                                args = server.command[1:]
-                        else:
-                            parsed = shlex.split(server.command)
-                            cmd = parsed[0] if parsed else "echo"
-                            args = parsed[1:] if len(parsed) > 1 else []
-                            
-                        srv_config = {
-                            "command": cmd,
-                            "args": args
-                        }
-                        if key_name == "openscadgeometry" or "openscad" in key_name:
-                            srv_config["env"] = {
-                                "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
-                            }
-                        new_mcp_servers[key_name] = srv_config
-                    elif server.type == "sse":
-                        if not server.command or not isinstance(server.command, str):
-                            continue
-                        new_mcp_servers[key_name] = {
-                            "url": server.command,
-                            "transport": "sse"
-                        }
-            
-            config["mcp_servers"] = new_mcp_servers
-            with open(path, "w") as f:
-                yaml.safe_dump(config, f, default_flow_style=False)
-                
-        except Exception as e:
-            # Log error or pass
-            pass
-            
-    # Restart Hermes WebUI in background to reload config
-    try:
-        subprocess.Popen(
-            "export HERMES_HOME=\"$HOME/.hermes/profiles/wright\" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788",
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-    except Exception:
-        pass
 
-def _parse_enabled_tools(tools_str: Optional[str]) -> Optional[List[str]]:
-    if not tools_str:
-        return None
-    import json
-    try:
-        return json.loads(tools_str)
-    except Exception:
-        return None
+@router.post("/config", response_model=WorkspaceConfigResponse)
+@traced("workspace.config.update")
+async def update_workspace_config(
+    body: WorkspaceConfigRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    update_workspace_remote(DATABASE_PATH, body.session_id, body.git_remote_url, body.git_username, body.git_token)
+    return WorkspaceConfigResponse(success=True, workspace_id=workspace["workspace_id"])
+
+
+# ── Workspace Tools ──────────────────────────────────────────────────────
+
+@router.get("/tools", response_model=WorkspaceToolsGetResponse)
+@traced("workspace.tools.list")
+async def get_workspace_tools_endpoint(
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir)
+):
+    enabled = get_workspace_enabled_tools(DATABASE_PATH, session_id) or []
+    return WorkspaceToolsGetResponse(session_id=session_id, enabled_tools=enabled)
+
+
+@router.post("/tools/toggle", response_model=WorkspaceToolToggleResponse)
+@traced("workspace.tools.toggle")
+async def toggle_workspace_tool_endpoint(
+    body: WorkspaceToolToggleRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    current = get_workspace_enabled_tools(DATABASE_PATH, body.session_id) or []
+    if body.is_enabled and body.server_id not in current:
+        current.append(body.server_id)
+    elif not body.is_enabled and body.server_id in current:
+        current.remove(body.server_id)
+    update_workspace_enabled_tools(DATABASE_PATH, body.session_id, current)
+
+    from api.services.hermes_sync import sync_workspace_tools_to_hermes, restart_hermes_background
+    sync_workspace_tools_to_hermes(body.session_id, DATABASE_PATH)
+    restart_hermes_background()
+
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    if sync_manager:
+        sync_manager.sync_workspace_tools(body.session_id)
+
+    return WorkspaceToolToggleResponse(
+        success=True, session_id=body.session_id,
+        server_id=body.server_id, is_enabled=body.is_enabled
+    )
+
+
+# ── Workspace CRUD ───────────────────────────────────────────────────────
 
 @router.post("/create", response_model=WorkspaceListEntry, status_code=status.HTTP_201_CREATED)
+@traced("workspace.create")
 async def create_workspace_endpoint(
     body: WorkspaceCreateRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
-    """Create a new workspace from the dashboard."""
-    logger.info("create_workspace_from_dashboard", extra={"name": body.name, "local_path": body.local_path})
+    logger.info("workspace_create", name=body.name, local_path=body.local_path)
     try:
-        # Create directory and initialize git if not exists
-        os.makedirs(body.local_path, exist_ok=True)
-        WorkspaceManager(body.local_path)
-        
-        session_id = None
-        try:
-            session_info = await engine.create_session(body.local_path)
-            session_id = session_info.session_id
-        except Exception as e:
-            logger.warning("Failed to create agent session for new workspace: %s", e)
-            
-        workspace = create_workspace_from_dashboard(DATABASE_PATH, body.name, body.local_path, session_id=session_id)
-        return WorkspaceListEntry(
-            workspace_id=workspace["workspace_id"],
-            session_id=workspace["session_id"],
-            workspace_name=workspace.get("workspace_name"),
-            local_path=workspace["local_path"],
-            git_remote_url=workspace.get("git_remote_url"),
-            git_username=workspace.get("git_username"),
-            enabled_tools=_parse_enabled_tools(workspace.get("enabled_tools")),
-            updated_at=workspace["updated_at"]
-        )
+        session_info = await engine.create_session(body.local_path)
+        ws = create_workspace_from_dashboard(DATABASE_PATH, body.name, body.local_path, session_info.session_id)
+        return serialize_workspace(ws)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
-        logger.error("Failed to create workspace: %s", e)
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to create workspace: {e}")
+        logger.exception("workspace_create_failed", error=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
 
 @router.get("/by-id/{workspace_id}", response_model=WorkspaceListEntry)
+@traced("workspace.get")
 async def get_workspace_by_id_endpoint(workspace_id: str):
-    """Fetch a single workspace by its ID."""
-    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
-    if not workspace:
+    ws = get_workspace_by_id(DATABASE_PATH, workspace_id)
+    if not ws:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
-    return WorkspaceListEntry(
-        workspace_id=workspace["workspace_id"],
-        session_id=workspace["session_id"],
-        workspace_name=workspace.get("workspace_name"),
-        local_path=workspace["local_path"],
-        git_remote_url=workspace.get("git_remote_url"),
-        git_username=workspace.get("git_username"),
-        enabled_tools=_parse_enabled_tools(workspace.get("enabled_tools")),
-        updated_at=workspace["updated_at"]
-    )
+    return serialize_workspace(ws)
+
 
 @router.post("/by-id/{workspace_id}/context/save")
+@traced("workspace.context.save")
 async def save_workspace_context_endpoint(workspace_id: str, body: ContextSaveRequest):
-    """Save agent conversation context for a workspace."""
     import json
-    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
-    if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
     save_agent_context(DATABASE_PATH, workspace_id, json.dumps(body.context_data))
-    return {"success": True, "workspace_id": workspace_id}
+    return {"success": True}
+
 
 @router.get("/by-id/{workspace_id}/context/load")
+@traced("workspace.context.load")
 async def load_workspace_context_endpoint(workspace_id: str):
-    """Load agent conversation context for a workspace."""
     import json
     ctx = load_agent_context(DATABASE_PATH, workspace_id)
     if not ctx:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No saved context for this workspace")
-    context_data = {}
-    if ctx.get("context_data"):
-        try:
-            context_data = json.loads(ctx["context_data"])
-        except Exception:
-            context_data = {}
-    return {"workspace_id": workspace_id, "context_data": context_data, "updated_at": ctx["updated_at"]}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No saved context found")
+    try:
+        parsed = json.loads(ctx["context_data"])
+    except Exception:
+        parsed = ctx["context_data"]
+    return {"workspace_id": workspace_id, "context_data": parsed, "updated_at": ctx.get("updated_at")}
 
-def _serialize_workspace(w: dict) -> WorkspaceListEntry:
-    return WorkspaceListEntry(
-        workspace_id=w["workspace_id"],
-        session_id=w["session_id"],
-        workspace_name=w.get("workspace_name"),
-        local_path=w["local_path"],
-        git_remote_url=w.get("git_remote_url"),
-        git_username=w.get("git_username"),
-        enabled_tools=_parse_enabled_tools(w.get("enabled_tools")),
-        updated_at=w["updated_at"]
-    )
 
 @router.get("/recent", response_model=WorkspaceListResponse)
+@traced("workspace.list")
 async def list_recent_workspaces_endpoint():
-    try:
-        workspaces = get_recent_workspaces(DATABASE_PATH, limit=5)
-        return WorkspaceListResponse(workspaces=[_serialize_workspace(w) for w in workspaces])
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch recent workspaces: {e}"
-        )
+    workspaces = get_recent_workspaces(DATABASE_PATH, limit=5)
+    return WorkspaceListResponse(workspaces=[serialize_workspace(w) for w in workspaces])
+
 
 @router.get("/list", response_model=WorkspaceListResponse)
+@traced("workspace.list")
 async def list_all_workspaces_endpoint():
-    try:
-        workspaces = get_all_workspaces(DATABASE_PATH)
-        return WorkspaceListResponse(workspaces=[_serialize_workspace(w) for w in workspaces])
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch workspaces: {e}"
-        )
+    workspaces = get_all_workspaces(DATABASE_PATH)
+    return WorkspaceListResponse(workspaces=[serialize_workspace(w) for w in workspaces])
+
 
 @router.post("/activate", response_model=WorkspaceActivateResponse)
+@traced("workspace.activate")
 async def activate_workspace_endpoint(
     body: WorkspaceActivateRequest,
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
     session_id = body.session_id
-    logger.info("activating_workspace", session_id=session_id)
-    
+    logger.info("workspace_activate", session_id=session_id)
+
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if not workspace:
         local_path = await get_workspace_dir(session_id, engine)
     else:
         local_path = workspace["local_path"]
 
-    # Verify/create agent session if missing from agent engine
-    try:
-        sessions = await engine.list_sessions()
-        session_ids = {s.session_id for s in sessions}
-        if session_id not in session_ids:
-            logger.info("Session %s not found in agent engine, creating new one for path %s", session_id, local_path)
-            session_info = await engine.create_session(local_path)
-            import sqlite3
-            import time
-            conn = sqlite3.connect(DATABASE_PATH)
-            try:
-                conn.execute(
-                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE session_id = ?",
-                    (session_info.session_id, int(time.time()), session_id)
-                )
-                conn.commit()
-                logger.info("Updated workspace session_id from %s to %s", session_id, session_info.session_id)
-                session_id = session_info.session_id
-            finally:
-                conn.close()
-    except Exception as e:
-        logger.warning("Failed to verify/create agent session on activation: %s", e)
-        
-    touch_workspace(DATABASE_PATH, session_id)
-    
-    try:
-        mcp_engine = getattr(request.app.state, "mcp_engine", None)
-        if mcp_engine:
-            enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
-            
-            import sqlite3
-            conn = sqlite3.connect(DATABASE_PATH)
-            conn.row_factory = sqlite3.Row
-            try:
-                cursor = conn.cursor()
-                cursor.execute("SELECT * FROM mcp_servers WHERE is_installed = 1")
-                installed_servers = [dict(row) for row in cursor.fetchall()]
-            finally:
-                conn.close()
-                
-            async def sync_runners_background():
-                for srv in installed_servers:
-                    srv_id = srv["server_id"]
-                    srv_name = srv["name"]
-                    
-                    is_enabled = True
-                    if enabled_tools is not None:
-                        is_enabled = (srv_name in enabled_tools) or (srv_id in enabled_tools)
-                    
-                    try:
-                        if is_enabled:
-                            await mcp_engine.start_server(srv_id)
-                        else:
-                            await mcp_engine.stop_server(srv_id)
-                    except Exception as err:
-                        logger.error("Failed to synchronize MCP runner in background for %s: %s", srv_name, err)
+    session_id = await activate_workspace(DATABASE_PATH, session_id, local_path, engine)
 
-            import asyncio
-            asyncio.create_task(sync_runners_background())
-    except Exception as e:
-        logger.error("Failed to synchronize MCP runners on workspace activation: %s", e)
-        
+    mcp_engine = getattr(request.app.state, "mcp_engine", None)
+    if mcp_engine:
+        try:
+            await sync_workspace_runners(DATABASE_PATH, session_id, mcp_engine)
+        except Exception as e:
+            logger.error("mcp_runner_sync_failed_on_activate", error=str(e))
+
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:
         try:
             sync_manager.sync_workspace_tools(session_id)
         except Exception as e:
-            logger.error("Failed to sync workspace tools to active agent on activation: %s", e)
-            
-    return WorkspaceActivateResponse(
-        success=True,
-        session_id=session_id,
-        workspace_path=local_path
-    )
+            logger.error("agent_tool_sync_failed_on_activate", error=str(e))
 
-class DefaultWorkspaceDirResponse(BaseModel):
-    default_dir: str
+    return WorkspaceActivateResponse(success=True, session_id=session_id, workspace_path=local_path)
+
 
 @router.get("/default-dir", response_model=DefaultWorkspaceDirResponse)
+@traced("workspace.get")
 async def get_default_workspace_dir_endpoint():
-    """Retrieve the default workspace directory parent path (e.g. ~/wright)."""
     default_path = os.path.join(os.path.expanduser("~"), "wright")
     return DefaultWorkspaceDirResponse(default_dir=default_path)
-

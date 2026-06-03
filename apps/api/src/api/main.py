@@ -1,8 +1,9 @@
 import time
 import httpx
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from agent_adapters import HermesAdapter
@@ -10,7 +11,14 @@ from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL, DATABASE_PATH
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
 from api.routers.workspace import router as workspace_router
+from api.middleware.tracing import TracingMiddleware
+from api.schemas.common import ErrorResponse, ErrorCodes
+from core.logging import configure_logging, get_logger
 from tool_registry import McpEngine
+
+# Configure structured JSON logging globally (Constitution §7)
+configure_logging()
+logger = get_logger("api.main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,17 +27,18 @@ async def lifespan(app: FastAPI):
     try:
         await app.state.mcp_engine.sync_active_servers()
         # Sync database server states into Hermes configs on startup
-        from api.routers.mcp import sync_mcp_server_to_hermes, get_servers
+        from api.services.hermes_sync import sync_mcp_server_to_hermes
+        from tool_registry import get_servers
         for s in get_servers(DATABASE_PATH):
             sync_mcp_server_to_hermes(s)
     except Exception as e:
-        print(f"Error syncing active MCP servers on startup: {e}")
+        logger.exception("mcp_startup_sync_failed", error=str(e))
     yield
     # Shutdown: Stop active subprocesses/runners
     try:
         await app.state.mcp_engine.shutdown()
     except Exception as e:
-        print(f"Error shutting down MCP engine: {e}")
+        logger.exception("mcp_shutdown_failed", error=str(e))
 
 app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
 
@@ -41,6 +50,55 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add OpenTelemetry tracing middleware (Constitution §7)
+app.add_middleware(TracingMiddleware)
+
+
+# ── Custom exception handlers for standardized ErrorResponse ──────────────
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+
+def _get_trace_id(request: Request) -> str:
+    return getattr(request.state, "trace_id", "unknown")
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    trace_id = _get_trace_id(request)
+    status_map = {
+        400: ErrorCodes.VALIDATION_ERROR,
+        404: ErrorCodes.WORKSPACE_NOT_FOUND,
+        500: ErrorCodes.INTERNAL_ERROR,
+        502: ErrorCodes.AGENT_UNAVAILABLE,
+    }
+    error_code = status_map.get(exc.status_code, ErrorCodes.INTERNAL_ERROR)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=ErrorResponse(
+            error_code=error_code,
+            message=str(exc.detail),
+            trace_id=trace_id,
+        ).model_dump(),
+        headers={"X-Trace-Id": trace_id},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    trace_id = _get_trace_id(request)
+    return JSONResponse(
+        status_code=422,
+        content=ErrorResponse(
+            error_code=ErrorCodes.VALIDATION_ERROR,
+            message="Request validation failed",
+            trace_id=trace_id,
+            details={"errors": exc.errors()},
+        ).model_dump(),
+        headers={"X-Trace-Id": trace_id},
+    )
+
 
 # Instantiate and store the Hermes adapter engine in the app state
 app.state.agent_engine = HermesAdapter(HERMES_WEBUI_BASE_URL)
@@ -68,8 +126,7 @@ async def webmcp_websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         pass
     except Exception as e:
-        import logging
-        logging.getLogger("api.main").error("WebMCP WebSocket connection error: %s", e)
+        logger.exception("webmcp_websocket_error", error=str(e))
     finally:
         await mcp_engine.unregister_webmcp_connection(websocket)
 

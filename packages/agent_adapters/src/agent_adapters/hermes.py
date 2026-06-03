@@ -11,6 +11,7 @@ from .base import (
     AgentChatRequest,
     AgentChatStartResponse,
     AgentSessionInfo,
+    AgentChatMessage,
 )
 
 logger = logging.getLogger(__name__)
@@ -186,3 +187,70 @@ class HermesAdapter(BaseAgentEngine):
         """No-op for Hermes — context is persisted server-side automatically."""
         logger.debug("load_context is a no-op for Hermes (session=%s, workspace=%s)", session_id, workspace_id)
         return None
+
+    async def get_chat_history(self, session_id: str) -> list[AgentChatMessage]:
+        """Retrieve chat history from Hermes WebUI.
+
+        Hermes stores all messages server-side. We query the session endpoint
+        with messages=1 and map to AgentChatMessage dataclass.
+        """
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/api/session?session_id={session_id}&messages=1",
+                    headers=self.headers,
+                    timeout=10.0,
+                )
+                if response.status_code == 404:
+                    logger.debug("No session/history found for session %s", session_id)
+                    return []
+                response.raise_for_status()
+                data = response.json()
+                session_data = data.get("session", {})
+                messages = session_data.get("messages", [])
+                result = []
+                for idx, msg in enumerate(messages):
+                    role = msg.get("role", "assistant")
+                    # Skip system messages from the UI display
+                    if role == "system":
+                        continue
+                    
+                    msg_id = msg.get("id", msg.get("message_id", ""))
+                    if not msg_id:
+                        msg_id = f"msg-{session_id}-{idx}"
+
+                    content = msg.get("content", "")
+                    if isinstance(content, list):
+                        parts = []
+                        for item in content:
+                            if isinstance(item, str):
+                                parts.append(item)
+                            elif isinstance(item, dict) and isinstance(item.get("text"), str):
+                                parts.append(item["text"])
+                        content = "".join(parts)
+                    elif not isinstance(content, str):
+                        content = str(content) if content is not None else ""
+
+                    timestamp_val = msg.get("timestamp", msg.get("created_at", 0))
+                    # Convert to epoch ms
+                    if isinstance(timestamp_val, (int, float)):
+                        if timestamp_val < 10000000000:  # Seconds to milliseconds
+                            timestamp = int(timestamp_val * 1000)
+                        else:
+                            timestamp = int(timestamp_val)
+                    else:
+                        timestamp = 0
+
+                    result.append(
+                        AgentChatMessage(
+                            id=msg_id,
+                            role=role,
+                            content=content,
+                            timestamp=timestamp,
+                            trace_id=msg.get("trace_id"),
+                        )
+                    )
+                return result
+        except Exception as e:
+            logger.error("Failed to fetch chat history for session %s: %s", session_id, e)
+            return []

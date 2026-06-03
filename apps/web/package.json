@@ -13,6 +13,8 @@
   "dependencies": {
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/sdk-trace-web": "^2.7.1",
+    "@testing-library/user-event": "^14.6.1",
+    "idb": "^8.0.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-markdown": "^10.1.0",

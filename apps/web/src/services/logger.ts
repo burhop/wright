@@ -1,4 +1,5 @@
 import type { LogEntry } from '../store/types';
+import { logStore, type LogEntry as StoreLogEntry } from './log-store';
 
 export interface Logger {
   debug(message: string, metadata?: Record<string, unknown>): void;
@@ -9,9 +10,14 @@ export interface Logger {
 }
 
 let activeTraceIdProvider: () => string | null = () => null;
+let activeSessionId: string | null = null;
 
 export function registerTraceIdProvider(provider: () => string | null) {
   activeTraceIdProvider = provider;
+}
+
+export function setActiveSessionId(sessionId: string | null) {
+  activeSessionId = sessionId;
 }
 
 export class ConsoleLogger implements Logger {
@@ -46,6 +52,20 @@ export class ConsoleLogger implements Logger {
         console.error(formatted);
         break;
     }
+
+    // Persist to IndexedDB for future Log Viewer
+    const storeEntry: StoreLogEntry = {
+      timestamp: entry.timestamp,
+      level: entry.level,
+      message: entry.message,
+      component: entry.component,
+      traceId: entry.traceId,
+      sessionId: activeSessionId,
+      metadata: entry.metadata,
+    };
+    logStore.addEntry(storeEntry).catch(() => {
+      // Silently ignore persistence failures
+    });
   }
 
   debug(message: string, metadata?: Record<string, unknown>): void {
@@ -71,3 +91,4 @@ export class ConsoleLogger implements Logger {
 
 export const logger = new ConsoleLogger();
 export default logger;
+

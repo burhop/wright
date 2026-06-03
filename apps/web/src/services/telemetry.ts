@@ -84,4 +84,34 @@ class OpenTelemetryService implements TelemetryService {
 }
 
 export const telemetry = new OpenTelemetryService();
+
+/**
+ * Start a UI-level OTel span for component or user interaction tracing.
+ * Convenience wrapper that prefixes span names with "ui." for semantic hierarchy.
+ *
+ * Usage:
+ *   const span = startUISpan('dashboard.load');
+ *   try { ... span.end(); } catch (err) { span.error(err); }
+ */
+export function startUISpan(name: string): SpanHandle {
+  return telemetry.startSpan(`ui.${name}`);
+}
+
+/**
+ * Record a UI error boundary exception as an OTel span.
+ * Used by React error boundaries to create ui.error.boundary spans.
+ */
+export function recordUIError(error: Error, componentStack?: string): void {
+  const span = telemetry.startSpan('ui.error.boundary');
+  if (componentStack) {
+    // We can't set attributes directly on SpanHandle, but we log the context
+    console.error('[telemetry] Error boundary triggered', {
+      error: error.message,
+      componentStack,
+      traceId: span.traceId,
+    });
+  }
+  span.error(error);
+}
+
 export default telemetry;

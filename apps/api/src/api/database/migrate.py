@@ -133,6 +133,23 @@ def run_migrations():
         );
         """)
 
+        # 8b. Create chat_messages table (008-quality-testing-observability)
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS chat_messages (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            role TEXT NOT NULL CHECK(role IN ('user', 'assistant')),
+            content TEXT NOT NULL,
+            timestamp INTEGER NOT NULL,
+            trace_id TEXT,
+            created_at INTEGER NOT NULL
+        );
+        """)
+        conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_chat_messages_session
+            ON chat_messages(session_id, timestamp);
+        """)
+
         # 8. Auto-detect installed tools based on binary availability on $PATH
         import shutil
         import shlex

@@ -30,6 +30,15 @@ class AgentSessionInfo:
     updated_at: int
     message_count: int
 
+@dataclass
+class AgentChatMessage:
+    """A single chat message from an agent session's history."""
+    id: str
+    role: str           # "user" | "assistant" | "system"
+    content: str
+    timestamp: int      # epoch ms
+    trace_id: str | None = None
+
 class BaseAgentEngine(ABC):
     """Abstract base for all agent adapters (Constitution §2)."""
 
@@ -76,4 +85,13 @@ class BaseAgentEngine(ABC):
     @abstractmethod
     async def load_context(self, session_id: str, workspace_id: str) -> dict | None:
         """Load agent context for a workspace. Returns context dict or None."""
+        pass
+
+    @abstractmethod
+    async def get_chat_history(self, session_id: str) -> list['AgentChatMessage']:
+        """Retrieve the full chat message history for a session.
+
+        Each agent backend is responsible for persisting its own chat history.
+        Returns a list of AgentChatMessage ordered by timestamp.
+        """
         pass

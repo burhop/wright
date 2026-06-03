@@ -10,6 +10,7 @@ from .base import (
     AgentChatRequest,
     AgentChatStartResponse,
     AgentSessionInfo,
+    AgentChatMessage,
 )
 from .hermes import HermesAdapter
 
@@ -19,5 +20,6 @@ __all__ = [
     "AgentChatRequest",
     "AgentChatStartResponse",
     "AgentSessionInfo",
+    "AgentChatMessage",
     "HermesAdapter",
 ]
