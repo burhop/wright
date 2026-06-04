@@ -24,8 +24,12 @@ export function WorkspacePage() {
       setError(null);
       try {
         const ws = await workspaceService.getWorkspace(workspaceId);
-        setWorkspace(ws);
-        logger.info('Workspace loaded', { workspaceId, path: ws.local_path });
+        // Activate the workspace session to ensure it is registered on the backend
+        await workspaceService.activateWorkspace(ws.session_id);
+        // Re-load the workspace in case activation updated the session_id in the DB
+        const activeWs = await workspaceService.getWorkspace(workspaceId);
+        setWorkspace(activeWs);
+        logger.info('Workspace loaded and activated', { workspaceId, path: activeWs.local_path });
       } catch (err) {
         logger.error('Failed to load workspace', { workspaceId, err });
         setError('Workspace not found');
@@ -106,12 +110,17 @@ export function WorkspacePage() {
     );
   }
 
+  const handleSessionChange = (newSessionId: string) => {
+    setWorkspace((prev) => (prev ? { ...prev, session_id: newSessionId } : null));
+  };
+
   return (
     <div data-testid="chat-layout" style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
       <div data-testid="page-workspace" style={{ height: '100%' }}>
         <WorkspacePanel
           workspaceId={workspace.workspace_id}
           sessionId={workspace.session_id}
+          onSessionChange={handleSessionChange}
         />
       </div>
     </div>

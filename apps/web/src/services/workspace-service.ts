@@ -379,6 +379,23 @@ export class WorkspaceService {
     const data = await response.json();
     return data.default_dir;
   }
+
+  async updateWorkspaceSession(workspaceId: string, sessionId: string): Promise<boolean> {
+    workspaceLogger.info('Updating workspace session ID', { workspaceId, sessionId });
+    const response = await fetch(`${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ session_id: sessionId }),
+    });
+    if (!response.ok) {
+      workspaceLogger.error('Failed to update workspace session', { status: response.status });
+      throw new Error(`Failed to update workspace session: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.success;
+  }
 }
 
 export interface WorkspaceInfo {

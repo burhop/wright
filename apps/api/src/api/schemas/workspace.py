@@ -191,6 +191,10 @@ class DefaultWorkspaceDirResponse(BaseModel):
     default_dir: str
 
 
+class WorkspaceSessionUpdateRequest(BaseModel):
+    session_id: str
+
+
 # ── Utility functions ────────────────────────────────────────────────────
 def parse_enabled_tools(tools_str: Optional[str]) -> Optional[List[str]]:
     """Parse a JSON-encoded list of enabled tool names/IDs from the database."""

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FileTree from '../common/FileTree';
 import ThreeDViewer from '../common/ThreeDViewer';
@@ -41,9 +41,10 @@ function findFileInTree(node: WorkspaceNode, targetPath: string): WorkspaceNode 
 interface WorkspacePanelProps {
   workspaceId?: string;
   sessionId?: string;
+  onSessionChange?: (sessionId: string) => void;
 }
 
-export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessionId }: WorkspacePanelProps) {
+export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessionId, onSessionChange }: WorkspacePanelProps) {
   const { state, createSession, selectSession, sendMessage } = useChat();
   const navigate = useNavigate();
 
@@ -56,7 +57,9 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propSessionId]);
 
-  const activeSessionId = state.activeSessionId || propSessionId;
+  // Always prefer the workspace-specific session from the route over the
+  // ChatProvider's globally-active session (which may belong to a different workspace).
+  const activeSessionId = propSessionId || state.activeSessionId;
   const statuses = useHealthStatus();
   const agentStatus = statuses.find((s) => s.serviceId === 'hermes-agent')?.state;
   const isAgentDisconnected = agentStatus === 'disconnected';
@@ -90,19 +93,101 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     }
   };
 
-  // Layout states
-  const [activeSidebar, setActiveSidebar] = useState<'marketplace' | 'files' | 'git' | 'settings'>('files');
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
-  const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(false);
-  const [openTabs, setOpenTabs] = useState<EditorTab[]>([]);
-  const [activeTabPath, setActiveTabPath] = useState<string | null>(null);
+  // --- Layout state persistence via localStorage ---
+  const layoutKey = useMemo(
+    () => (propSessionId ? `wright-workspace-layout-${propSessionId}` : null),
+    [propSessionId]
+  );
+
+  // Read saved layout once on mount
+  const savedLayout = useMemo(() => {
+    if (!layoutKey) return null;
+    try {
+      const raw = localStorage.getItem(layoutKey);
+      if (raw) return JSON.parse(raw);
+    } catch { /* ignore corrupt data */ }
+    return null;
+  }, [layoutKey]);
+
+  // Layout states — initialised from localStorage when available
+  const [activeSidebar, setActiveSidebar] = useState<'marketplace' | 'files' | 'git' | 'settings'>(
+    savedLayout?.activeSidebar ?? 'files'
+  );
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
+    savedLayout?.isSidebarCollapsed ?? false
+  );
+  const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
+    savedLayout?.isAgentCollapsed ?? false
+  );
+  const [openTabs, setOpenTabs] = useState<EditorTab[]>(
+    savedLayout?.openTabs ?? []
+  );
+  const [activeTabPath, setActiveTabPath] = useState<string | null>(
+    savedLayout?.activeTabPath ?? null
+  );
 
   // Resize and model states
-  const [leftSidebarWidth, setLeftSidebarWidth] = useState<number>(260);
-  const [rightSidebarWidth, setRightSidebarWidth] = useState<number>(360);
+  const [leftSidebarWidth, setLeftSidebarWidth] = useState<number>(
+    savedLayout?.leftSidebarWidth ?? 260
+  );
+  const [rightSidebarWidth, setRightSidebarWidth] = useState<number>(
+    savedLayout?.rightSidebarWidth ?? 360
+  );
   const [isLeftDragging, setIsLeftDragging] = useState<boolean>(false);
   const [isRightDragging, setIsRightDragging] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<string>('Hermes');
+
+  // File tree expanded directories — persisted so the tree stays open across refresh
+  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
+    () => new Set<string>(savedLayout?.expandedPaths ?? [])
+  );
+
+  const handleToggleExpand = useCallback((path: string) => {
+    setExpandedPaths((prev) => {
+      const next = new Set(prev);
+      if (next.has(path)) {
+        next.delete(path);
+      } else {
+        next.add(path);
+      }
+      return next;
+    });
+  }, []);
+
+  // Persist layout state to localStorage on changes (debounced via microtask)
+  const layoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!layoutKey) return;
+    if (layoutTimerRef.current) clearTimeout(layoutTimerRef.current);
+    layoutTimerRef.current = setTimeout(() => {
+      const state = {
+        activeSidebar,
+        isSidebarCollapsed,
+        isAgentCollapsed,
+        openTabs,
+        activeTabPath,
+        leftSidebarWidth,
+        rightSidebarWidth,
+        expandedPaths: Array.from(expandedPaths),
+      };
+      try {
+        localStorage.setItem(layoutKey, JSON.stringify(state));
+      } catch { /* quota exceeded — not critical */ }
+    }, 300);
+    return () => {
+      if (layoutTimerRef.current) clearTimeout(layoutTimerRef.current);
+    };
+  }, [
+    layoutKey,
+    activeSidebar,
+    isSidebarCollapsed,
+    isAgentCollapsed,
+    openTabs,
+    activeTabPath,
+    leftSidebarWidth,
+    rightSidebarWidth,
+    expandedPaths,
+  ]);
 
   // File loading states
   const [loadedContents, setLoadedContents] = useState<Record<string, any>>({});
@@ -844,6 +929,8 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
                   onDelete={handleDelete}
                   onRename={handleRename}
                   onMove={handleMove}
+                  expandedPaths={expandedPaths}
+                  onToggleExpand={handleToggleExpand}
                 />
               ) : (
                 <div style={{ color: 'var(--color-secondary)', fontSize: '0.75rem', padding: 'var(--space-sm)' }}>
@@ -1258,12 +1345,24 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
               <option value="PI">PI</option>
             </select>
 
-            {/* Session Select (Context Switcher) */}
             <select
               data-testid="sessions-sidebar"
               value={state.activeSessionId || ''}
-              onChange={(e) => {
-                if (e.target.value) selectSession(e.target.value);
+              onChange={async (e) => {
+                const newSessId = e.target.value;
+                if (newSessId) {
+                  selectSession(newSessId);
+                  if (onSessionChange) {
+                    onSessionChange(newSessId);
+                  }
+                  if (_workspaceId) {
+                    try {
+                      await workspaceService.updateWorkspaceSession(_workspaceId, newSessId);
+                    } catch (err) {
+                      console.error('Failed to update workspace session association', err);
+                    }
+                  }
+                }
               }}
               style={{
                 flex: 1.5,

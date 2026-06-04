@@ -575,3 +575,24 @@ def test_active_agent_endpoints(client):
         json={"agent": "hermes"}
     )
 
+
+def test_workspace_session_update(client):
+    # Ensure test-session exists
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    # Get the workspace ID
+    response = client.get("/api/workspace/config", params={"session_id": "test-session"})
+    workspace_id = response.json()["workspace_id"]
+
+    # Test POST /api/workspace/by-id/{workspace_id}/session
+    response_update = client.post(
+        f"/api/workspace/by-id/{workspace_id}/session",
+        json={"session_id": "new-test-session"}
+    )
+    assert response_update.status_code == 200
+    assert response_update.json()["success"] is True
+
+    # Verify the updated session ID in config
+    response_config = client.get("/api/workspace/by-id/" + workspace_id)
+    assert response_config.json()["session_id"] == "new-test-session"
+

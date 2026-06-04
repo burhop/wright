@@ -26,17 +26,17 @@ def get_workspace(db_path: str, workspace_id: str) -> Optional[Dict[str, Any]]:
         row = cursor.fetchone()
         return dict(row) if row else None
 
-def create_workspace(db_path: str, workspace_id: str, session_id: str, local_path: str, git_remote_url: Optional[str] = None, git_username: Optional[str] = None, git_token: Optional[str] = None) -> None:
+def create_workspace(db_path: str, workspace_id: str, session_id: str, local_path: str, workspace_name: Optional[str] = None, git_remote_url: Optional[str] = None, git_username: Optional[str] = None, git_token: Optional[str] = None) -> None:
     import time
     now = int(time.time())
     with _get_db_conn(db_path) as conn:
         conn.execute(
             """
             INSERT OR REPLACE INTO engineering_workspaces (
-                workspace_id, session_id, local_path, git_remote_url, git_username, git_token, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                workspace_id, session_id, workspace_name, local_path, git_remote_url, git_username, git_token, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (workspace_id, session_id, local_path, git_remote_url, git_username, git_token, now, now)
+            (workspace_id, session_id, workspace_name, local_path, git_remote_url, git_username, git_token, now, now)
         )
         conn.commit()
 
@@ -160,6 +160,21 @@ def get_workspace_by_id(db_path: str, workspace_id: str) -> Optional[Dict[str, A
         cursor.execute("SELECT * FROM engineering_workspaces WHERE workspace_id = ?", (workspace_id,))
         row = cursor.fetchone()
         return dict(row) if row else None
+
+def update_workspace_session(db_path: str, workspace_id: str, session_id: str) -> None:
+    """Update the associated session_id of a workspace."""
+    import time
+    now = int(time.time())
+    with _get_db_conn(db_path) as conn:
+        conn.execute(
+            """
+            UPDATE engineering_workspaces
+            SET session_id = ?, updated_at = ?
+            WHERE workspace_id = ?
+            """,
+            (session_id, now, workspace_id)
+        )
+        conn.commit()
 
 def save_agent_context(db_path: str, workspace_id: str, context_data: str) -> None:
     """Save agent conversation context for a workspace."""

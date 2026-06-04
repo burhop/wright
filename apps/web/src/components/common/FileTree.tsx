@@ -8,6 +8,10 @@ interface FileTreeProps {
   onDelete?: (path: string) => Promise<void>;
   onRename?: (path: string, newPath: string) => Promise<void>;
   onMove?: (sourcePath: string, destPath: string) => Promise<void>;
+  /** Set of expanded directory paths — when provided, tree expansion is controlled by parent */
+  expandedPaths?: Set<string>;
+  /** Called when a directory is toggled — required when expandedPaths is provided */
+  onToggleExpand?: (path: string) => void;
 }
 
 export function FileTree({
@@ -17,8 +21,13 @@ export function FileTree({
   onDelete,
   onRename,
   onMove,
+  expandedPaths,
+  onToggleExpand,
 }: FileTreeProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  // If expandedPaths is provided, use controlled expansion; otherwise use local state
+  const isControlled = expandedPaths !== undefined;
+  const [localIsOpen, setLocalIsOpen] = useState(false);
+  const isOpen = isControlled ? expandedPaths.has(node.path) : localIsOpen;
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState<'file' | 'directory' | null>(null);
@@ -29,7 +38,11 @@ export function FileTree({
 
   const handleClick = () => {
     if (isDir) {
-      setIsOpen(!isOpen);
+      if (isControlled && onToggleExpand) {
+        onToggleExpand(node.path);
+      } else {
+        setLocalIsOpen(!isOpen);
+      }
     } else if (onFileClick) {
       onFileClick(node.path);
     }
@@ -45,7 +58,11 @@ export function FileTree({
     try {
       if (onCreate && isCreating) {
         await onCreate(node.path, inputValue.trim(), isCreating);
-        setIsOpen(true);
+        if (isControlled && onToggleExpand && !isOpen) {
+          onToggleExpand(node.path);
+        } else {
+          setLocalIsOpen(true);
+        }
       }
       setInputValue('');
       setIsCreating(null);
@@ -343,6 +360,8 @@ export function FileTree({
               onDelete={onDelete}
               onRename={onRename}
               onMove={onMove}
+              expandedPaths={expandedPaths}
+              onToggleExpand={onToggleExpand}
             />
           ))}
         </div>

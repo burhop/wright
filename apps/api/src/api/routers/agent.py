@@ -176,7 +176,7 @@ async def create_new_session(
                 conn.close()
             log.info("create_session_updated_existing_workspace", workspace_id=existing["workspace_id"], session_id=session_info.session_id)
         else:
-            create_workspace(DATABASE_PATH, str(uuid.uuid4()), session_info.session_id, workspace_path)
+            create_workspace(DATABASE_PATH, str(uuid.uuid4()), session_info.session_id, workspace_path, workspace_name=os.path.basename(workspace_path))
         
         return NewSessionResponse(
             session_id=session_info.session_id,

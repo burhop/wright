@@ -18,7 +18,7 @@ from core.workspace import (
     update_workspace_enabled_tools, get_recent_workspaces, get_all_workspaces,
     touch_workspace, create_workspace_from_dashboard, get_workspace_by_id,
     save_agent_context, load_agent_context, update_workspace_remote,
-    activate_workspace, sync_workspace_runners,
+    activate_workspace, sync_workspace_runners, update_workspace_session,
 )
 from core.tracing import traced
 from api.routers.agent import get_agent_engine
@@ -36,6 +36,7 @@ from api.schemas.workspace import (
     WorkspaceCreateRequest, WorkspaceActivateRequest,
     WorkspaceActivateResponse, ContextSaveRequest,
     DefaultWorkspaceDirResponse, serialize_workspace,
+    WorkspaceSessionUpdateRequest,
 )
 
 logger = structlog.get_logger(__name__)
@@ -55,7 +56,7 @@ async def get_workspace_dir(
         workspace_path = f"/home/burhop/workspace/{session_id}"
     os.makedirs(workspace_path, exist_ok=True)
     workspace_id = str(uuid.uuid4())
-    create_workspace(DATABASE_PATH, workspace_id, session_id, workspace_path)
+    create_workspace(DATABASE_PATH, workspace_id, session_id, workspace_path, workspace_name=os.path.basename(workspace_path))
     return workspace_path
 
 
@@ -463,3 +464,10 @@ async def activate_workspace_endpoint(
 async def get_default_workspace_dir_endpoint():
     default_path = os.path.join(os.path.expanduser("~"), "wright")
     return DefaultWorkspaceDirResponse(default_dir=default_path)
+
+
+@router.post("/by-id/{workspace_id}/session")
+@traced("workspace.session.update")
+async def update_workspace_session_endpoint(workspace_id: str, body: WorkspaceSessionUpdateRequest):
+    update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
+    return {"success": True}

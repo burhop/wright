@@ -215,4 +215,122 @@ test.describe('Agent Chat Page', () => {
     await explorerBtn.click();
     await expect(page.getByTestId('workspace-sidebar')).toBeVisible();
   });
+
+  test('should support toggling between different sessions in a workspace', async ({ page }) => {
+    // Mock health endpoints
+    await page.route('**/api/agent/health', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ state: 'connected', latencyMs: 5.0 }),
+      });
+    });
+
+    await page.route('**/api/inference/health', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ state: 'connected', latencyMs: 12.0 }),
+      });
+    });
+
+    // Mock session list with multiple sessions
+    await page.route('**/api/agent/sessions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          sessions: [
+            { session_id: 'session-1', title: 'Session One', created_at: Date.now(), updated_at: Date.now() },
+            { session_id: 'session-2', title: 'Session Two', created_at: Date.now(), updated_at: Date.now() }
+          ]
+        }),
+      });
+    });
+
+    // Mock workspace by ID
+    await page.route('**/api/workspace/by-id/*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'ws-1',
+          session_id: 'session-1',
+          workspace_name: 'Test Project',
+          local_path: '/home/burhop/repos/wright',
+          git_remote_url: null,
+          git_username: null,
+          updated_at: Math.floor(Date.now() / 1000)
+        }),
+      });
+    });
+
+    // Mock workspace activate
+    await page.route('**/api/workspace/activate', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, session_id: 'session-1', workspace_path: '/home/burhop/repos/wright' }),
+      });
+    });
+
+    // Mock workspace files tree
+    await page.route('**/api/workspace/files?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace: {
+            name: 'wright',
+            path: '/',
+            type: 'directory',
+            size: null,
+            last_modified: 1000,
+            git_status: 'Clean',
+            children: []
+          }
+        }),
+      });
+    });
+
+    // Mock workspace git status
+    await page.route('**/api/workspace/git/status?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ branch_name: 'main', is_clean: true, changes: [] }),
+      });
+    });
+
+    // Mock tool/server lists
+    await page.route('**/api/mcp/servers', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ servers: [] }) });
+    });
+    await page.route('**/api/mcp/tools', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ tools: [] }) });
+    });
+
+    // Capture the session update POST request
+    let updateRequestPayload: any = null;
+    await page.route('**/api/workspace/by-id/ws-1/session', async (route) => {
+      updateRequestPayload = route.request().postDataJSON();
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true }),
+      });
+    });
+
+    await page.goto('/workspace/ws-1');
+
+    // Get the selector and select Session Two
+    const selectDropdown = page.locator('[data-testid="agent-tools-window"] select').nth(1);
+    await expect(selectDropdown).toBeVisible();
+    
+    // Switch to session-2
+    await selectDropdown.selectOption('session-2');
+
+    // Verify the update request was sent with the correct session ID
+    await expect.poll(() => updateRequestPayload).toEqual({ session_id: 'session-2' });
+  });
 });
