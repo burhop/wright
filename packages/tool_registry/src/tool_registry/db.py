@@ -1,16 +1,31 @@
 import json
 import sqlite3
 from typing import List, Optional, Union, Dict, Any
-import logging
+import structlog
 from .models import McpServer, McpTool
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
+
+def ensure_migrations(conn: sqlite3.Connection) -> None:
+    columns = [
+        ("image_url", "TEXT DEFAULT NULL"),
+        ("description", "TEXT DEFAULT NULL"),
+        ("source_url", "TEXT DEFAULT NULL"),
+        ("installed_version", "TEXT DEFAULT NULL")
+    ]
+    for col_name, col_type in columns:
+        try:
+            conn.execute(f"ALTER TABLE mcp_servers ADD COLUMN {col_name} {col_type};")
+        except sqlite3.OperationalError:
+            # Column already exists
+            pass
 
 def _get_conn(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.row_factory = sqlite3.Row
+    ensure_migrations(conn)
     return conn
 
 def _parse_command(cmd_str: Optional[str]) -> Optional[Union[List[str], str]]:
@@ -45,7 +60,11 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         error_message=row["error_message"],
         category=row["category"],
         created_at=row["created_at"],
-        updated_at=row["updated_at"]
+        updated_at=row["updated_at"],
+        image_url=row["image_url"] if "image_url" in row.keys() else None,
+        description=row["description"] if "description" in row.keys() else None,
+        source_url=row["source_url"] if "source_url" in row.keys() else None,
+        installed_version=row["installed_version"] if "installed_version" in row.keys() else None
     )
 
 def _row_to_tool(row: sqlite3.Row) -> McpTool:
@@ -90,8 +109,9 @@ def insert_server(db_path: str, server: McpServer) -> None:
         conn.execute(
             """
             INSERT INTO mcp_servers (
-                server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at,
+                image_url, description, source_url, installed_version
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -104,7 +124,11 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.error_message,
                 server.category,
                 server.created_at,
-                server.updated_at
+                server.updated_at,
+                server.image_url,
+                server.description,
+                server.source_url,
+                server.installed_version
             )
         )
         conn.commit()
@@ -122,7 +146,7 @@ def update_server(db_path: str, server_id: str, updates: Dict[str, Any]) -> Opti
         elif key == "is_installed":
             set_clauses.append("is_installed = ?")
             params.append(1 if value else 0)
-        elif key in ("status", "error_message", "category", "updated_at"):
+        elif key in ("status", "error_message", "category", "updated_at", "image_url", "description", "source_url", "installed_version"):
             set_clauses.append(f"{key} = ?")
             params.append(value)
         elif key == "command":

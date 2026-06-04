@@ -14,6 +14,10 @@ export interface McpServer {
   category: string;
   created_at: number;
   updated_at: number;
+  image_url?: string;
+  description?: string;
+  source_url?: string;
+  installed_version?: string;
 }
 
 export interface McpTool {
@@ -31,6 +35,16 @@ export interface RegisterServerPayload {
   type: 'stdio' | 'sse' | 'webmcp';
   command?: string[] | string;
   category: string;
+  image_url?: string;
+  description?: string;
+  source_url?: string;
+}
+export interface VersionCheckResult {
+  server_id: string;
+  installed: string | null;
+  latest: string | null;
+  update_available: boolean;
+  error: string | null;
 }
 
 const getApiBase = () => {
@@ -150,8 +164,10 @@ export class McpService {
     const response = await fetch(url, { method: 'POST' });
 
     if (!response.ok) {
-      mcpLogger.error('Failed to install MCP server', { status: response.status });
-      throw new Error(`Failed to install MCP server: ${response.statusText}`);
+      const errData = await response.json().catch(() => ({}));
+      const msg = errData.detail || response.statusText;
+      mcpLogger.error('Failed to install MCP server', { msg });
+      throw new Error(msg);
     }
 
     const data = await response.json();
@@ -177,8 +193,10 @@ export class McpService {
     const response = await fetch(url, { method: 'POST' });
 
     if (!response.ok) {
-      mcpLogger.error('Failed to uninstall MCP server', { status: response.status });
-      throw new Error(`Failed to uninstall MCP server: ${response.statusText}`);
+      const errData = await response.json().catch(() => ({}));
+      const msg = errData.detail || response.statusText;
+      mcpLogger.error('Failed to uninstall MCP server', { msg });
+      throw new Error(msg);
     }
 
     const data = await response.json();
@@ -194,6 +212,28 @@ export class McpService {
       created_at: 0,
       updated_at: 0
     };
+  }
+
+  async checkServerVersion(serverId: string): Promise<VersionCheckResult> {
+    mcpLogger.info('Checking server version', { serverId });
+    const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}/version-check`);
+    if (!response.ok) {
+      mcpLogger.error('Failed to check server version', { status: response.status });
+      throw new Error(`Failed to check server version: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async updateServer(serverId: string): Promise<{ installed_version: string }> {
+    mcpLogger.info('Updating server', { serverId });
+    const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}/update`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      mcpLogger.error('Failed to update server', { status: response.status });
+      throw new Error(`Failed to update server: ${response.statusText}`);
+    }
+    return response.json();
   }
 }
 

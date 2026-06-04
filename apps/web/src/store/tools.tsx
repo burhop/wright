@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
 import { mcpService } from '../services/mcp-service';
-import type { McpServer, McpTool } from '../services/mcp-service';
+import type { McpServer, McpTool, VersionCheckResult } from '../services/mcp-service';
 
 export interface ToolsState {
   servers: McpServer[];
@@ -69,13 +69,18 @@ interface ToolsContextProps extends ToolsState {
     name: string,
     type: 'stdio' | 'sse' | 'webmcp',
     command: string[] | string,
-    category: string
+    category: string,
+    imageUrl?: string,
+    description?: string,
+    sourceUrl?: string
   ) => Promise<void>;
   toggleServerState: (serverId: string, isActive: boolean) => Promise<void>;
   installServerState: (serverId: string, sessionId?: string | null) => Promise<void>;
   uninstallServerState: (serverId: string, sessionId?: string | null) => Promise<void>;
   deleteServerState: (serverId: string) => Promise<void>;
   toggleToolState: (toolId: string, isEnabled: boolean) => Promise<void>;
+  checkServerVersion: (serverId: string) => Promise<VersionCheckResult>;
+  updateServerState: (serverId: string) => Promise<void>;
 }
 
 const ToolsContext = createContext<ToolsContextProps | undefined>(undefined);
@@ -104,12 +109,23 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
     name: string,
     type: 'stdio' | 'sse' | 'webmcp',
     command: string[] | string,
-    category: string
+    category: string,
+    imageUrl?: string,
+    description?: string,
+    sourceUrl?: string
   ) => {
     dispatch({ type: 'SET_LOADING', isLoading: true });
     dispatch({ type: 'SET_ERROR', error: null });
     try {
-      const res = await mcpService.registerServer({ name, type, command, category });
+      const res = await mcpService.registerServer({
+        name,
+        type,
+        command,
+        category,
+        image_url: imageUrl,
+        description,
+        source_url: sourceUrl,
+      });
       // Create local server state
       const now = Math.floor(Date.now() / 1000);
       const newServer: McpServer = {
@@ -123,6 +139,9 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         category,
         created_at: now,
         updated_at: now,
+        image_url: imageUrl,
+        description,
+        source_url: sourceUrl,
       };
       dispatch({ type: 'ADD_SERVER', server: newServer });
     } catch (err: any) {
@@ -171,8 +190,6 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
   };
 
   const installServerState = async (serverId: string, sessionId?: string | null) => {
-    dispatch({ type: 'SET_LOADING', isLoading: true });
-    dispatch({ type: 'SET_ERROR', error: null });
     try {
       const result = await mcpService.installServer(serverId, sessionId);
       dispatch({
@@ -187,16 +204,11 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
       const tools = await mcpService.getTools();
       dispatch({ type: 'SET_TOOLS', tools });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to install server' });
       throw err;
-    } finally {
-      dispatch({ type: 'SET_LOADING', isLoading: false });
     }
   };
 
   const uninstallServerState = async (serverId: string, sessionId?: string | null) => {
-    dispatch({ type: 'SET_LOADING', isLoading: true });
-    dispatch({ type: 'SET_ERROR', error: null });
     try {
       const result = await mcpService.uninstallServer(serverId, sessionId);
       dispatch({
@@ -212,10 +224,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
       const tools = await mcpService.getTools();
       dispatch({ type: 'SET_TOOLS', tools });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to uninstall server' });
       throw err;
-    } finally {
-      dispatch({ type: 'SET_LOADING', isLoading: false });
     }
   };
 
@@ -257,6 +266,28 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const checkServerVersion = async (serverId: string): Promise<VersionCheckResult> => {
+    return await mcpService.checkServerVersion(serverId);
+  };
+
+  const updateServerState = async (serverId: string) => {
+    dispatch({ type: 'SET_LOADING', isLoading: true });
+    dispatch({ type: 'SET_ERROR', error: null });
+    try {
+      const res = await mcpService.updateServer(serverId);
+      dispatch({
+        type: 'UPDATE_SERVER',
+        serverId,
+        updates: { installed_version: res.installed_version },
+      });
+    } catch (err: any) {
+      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to update server' });
+      throw err;
+    } finally {
+      dispatch({ type: 'SET_LOADING', isLoading: false });
+    }
+  };
+
   useEffect(() => {
     fetchServersAndTools();
   }, []);
@@ -272,6 +303,8 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         uninstallServerState,
         deleteServerState,
         toggleToolState,
+        checkServerVersion,
+        updateServerState,
       }}
     >
       {children}

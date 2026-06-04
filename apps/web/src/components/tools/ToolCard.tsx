@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { McpServer, McpTool } from '../../services/mcp-service';
 import { workspaceService, type WorkspaceInfo } from '../../services/workspace-service';
+import { ServerTypeBadge } from './ServerTypeBadge';
+import { useTools } from '../../store/tools';
 
 interface ToolCardProps {
   server: McpServer;
@@ -29,15 +31,28 @@ export function ToolCard({
   const [isUninstalling, setIsUninstalling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showTools, setShowTools] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [togglingWorkspaceId, setTogglingWorkspaceId] = useState<string | null>(null);
+
+  const [imgError, setImgError] = useState(false);
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState<{ installed: string; latest: string } | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [upToDateMessage, setUpToDateMessage] = useState(false);
+
+  const { checkServerVersion, updateServerState } = useTools();
+  const isLocalServer = server.type === 'stdio';
 
   const handleInstall = async () => {
     setIsInstalling(true);
+    setCardError(null);
     try {
       await onInstall(server.server_id, activeSessionId);
       await onRefreshWorkspaces();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setCardError(err.message || 'Failed to install server');
     } finally {
       setIsInstalling(false);
     }
@@ -48,11 +63,13 @@ export function ToolCard({
       return;
     }
     setIsUninstalling(true);
+    setCardError(null);
     try {
       await onUninstall(server.server_id, activeSessionId);
       await onRefreshWorkspaces();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setCardError(err.message || 'Failed to uninstall server');
     } finally {
       setIsUninstalling(false);
     }
@@ -63,11 +80,50 @@ export function ToolCard({
       return;
     }
     setIsDeleting(true);
+    setCardError(null);
     try {
       await onDelete(server.server_id);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setCardError(err.message || 'Failed to delete server');
       setIsDeleting(false);
+    }
+  };
+
+  const handleCheckForUpdates = async () => {
+    setIsCheckingUpdate(true);
+    setCardError(null);
+    setUpToDateMessage(false);
+    try {
+      const result = await checkServerVersion(server.server_id);
+      if (result.error) {
+        setCardError(result.error);
+      } else if (result.update_available) {
+        setUpdateAvailable({
+          installed: result.installed || server.installed_version || 'unknown',
+          latest: result.latest || 'unknown',
+        });
+      } else {
+        setUpToDateMessage(true);
+        setTimeout(() => setUpToDateMessage(false), 3000);
+      }
+    } catch (err: any) {
+      setCardError(err.message || 'Failed to check for updates');
+    } finally {
+      setIsCheckingUpdate(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    setIsUpdating(true);
+    setCardError(null);
+    try {
+      await updateServerState(server.server_id);
+      setUpdateAvailable(null);
+    } catch (err: any) {
+      setCardError(err.message || 'Failed to update server');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -93,6 +149,41 @@ export function ToolCard({
     if (server.status === 'active') return 'var(--color-success)';
     if (server.status === 'error') return 'var(--color-error)';
     return 'var(--color-secondary)';
+  };
+
+  const renderLogo = () => {
+    if (server.image_url && !imgError) {
+      return (
+        <img
+          src={server.image_url}
+          onError={() => setImgError(true)}
+          style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--color-border)' }}
+          data-testid={`server-card-logo-${server.server_id}`}
+          alt={server.name}
+        />
+      );
+    }
+    const firstLetter = server.name.charAt(0).toUpperCase();
+    return (
+      <div
+        style={{
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, var(--color-surface-hover), var(--color-border))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1.25rem',
+          fontWeight: 700,
+          color: 'var(--color-secondary)',
+          border: '1px solid var(--color-border)',
+        }}
+        data-testid={`server-card-logo-${server.server_id}`}
+      >
+        {firstLetter}
+      </div>
+    );
   };
 
   return (
@@ -122,27 +213,32 @@ export function ToolCard({
     >
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-md)' }}>
-        <div>
-          <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-ui)', color: 'var(--color-primary)', fontWeight: 600 }}>
-            {server.name}
-          </h3>
-          <span
-            style={{
-              display: 'inline-block',
-              fontSize: '0.7rem',
-              textTransform: 'uppercase',
-              backgroundColor: 'var(--color-surface-subtle)',
-              color: 'var(--color-secondary)',
-              padding: '2px 8px',
-              borderRadius: '20px',
-              marginTop: 'var(--space-xs)',
-              border: '1px solid rgba(56, 189, 248, 0.2)',
-              fontWeight: 600,
-              letterSpacing: '0.5px',
-            }}
-          >
-            {server.category}
-          </span>
+        <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center' }}>
+          {renderLogo()}
+          <div style={{ textAlign: 'left' }}>
+            <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-ui)', color: 'var(--color-primary)', fontWeight: 600, margin: 0 }}>
+              {server.name}
+            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', marginTop: 'var(--space-xs)', flexWrap: 'wrap' }}>
+              <ServerTypeBadge type={server.type} />
+              <span
+                style={{
+                  display: 'inline-block',
+                  fontSize: '0.7rem',
+                  textTransform: 'uppercase',
+                  backgroundColor: 'var(--color-surface-subtle)',
+                  color: 'var(--color-secondary)',
+                  padding: '2px 8px',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(56, 189, 248, 0.2)',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                }}
+              >
+                {server.category}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Global Install Button / Status Badge */}
@@ -151,6 +247,7 @@ export function ToolCard({
             <button
               onClick={handleInstall}
               disabled={isInstalling || isDeleting}
+              data-testid={isLocalServer ? `server-card-install-btn-${server.server_id}` : `server-card-connect-btn-${server.server_id}`}
               style={{
                 padding: 'var(--space-sm) var(--space-lg)',
                 borderRadius: 'var(--radius-lg)',
@@ -170,58 +267,210 @@ export function ToolCard({
                 e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
               }}
             >
-              {isInstalling ? 'Installing...' : 'Install'}
+              {isInstalling ? (isLocalServer ? 'Installing...' : 'Connecting...') : (isLocalServer ? 'Install' : 'Connect')}
             </button>
           ) : (
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                color: 'var(--color-success)',
-                backgroundColor: 'rgba(34, 197, 94, 0.08)',
-                border: '1px solid rgba(34, 197, 94, 0.2)',
-                padding: '4px 10px',
-                borderRadius: '20px',
-              }}
-            >
-              ✓ Installed
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: 'var(--color-success)',
+                  backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                  border: '1px solid rgba(34, 197, 94, 0.2)',
+                  padding: '4px 10px',
+                  borderRadius: '20px',
+                }}
+              >
+                {isLocalServer 
+                  ? `✓ Installed${server.installed_version ? ` v${server.installed_version}` : ''}`
+                  : '✓ Connected'
+                }
+              </span>
+              {isLocalServer && (
+                <button
+                  onClick={handleCheckForUpdates}
+                  disabled={isCheckingUpdate || isUpdating}
+                  data-testid={`server-card-check-update-btn-${server.server_id}`}
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: 'var(--color-secondary)',
+                    backgroundColor: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    cursor: isCheckingUpdate ? 'not-allowed' : 'pointer',
+                    transition: 'all var(--transition-fast)',
+                  }}
+                >
+                  {isCheckingUpdate ? 'Checking...' : '↻ Check for Updates'}
+                </button>
+              )}
+              {upToDateMessage && (
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-success)', fontWeight: 500 }}>
+                  ✓ Up to date
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>
 
-      {/* Connection Info / Code Command */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--color-surface-subtle)',
-          padding: 'var(--space-md)',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--color-border)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.8rem',
-          color: 'rgba(255, 255, 255, 0.7)',
-          wordBreak: 'break-all',
-          gap: 'var(--space-xs)',
-        }}
-      >
-        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-          <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Transport:</span>
-          <span style={{ color: 'var(--color-secondary)' }}>{server.type}</span>
-        </div>
-        {server.command && (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Endpoint/Command:</span>
-            <span style={{ whiteSpace: 'pre-wrap', marginTop: '2px', color: 'var(--color-secondary)', fontSize: '0.75rem' }}>
-              {Array.isArray(server.command) ? server.command.join(' ') : server.command}
+      {/* Description Block */}
+      {server.description && (
+        <div data-testid={`server-card-description-${server.server_id}`} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
+          <p
+            style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.6)',
+              lineHeight: 1.5,
+              margin: '0',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              textAlign: 'left',
+            }}
+          >
+            {server.description.split('⚠️')[0].trim()}
+          </p>
+          {server.description.includes('⚠️') && (
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              color: 'var(--color-warning)',
+              backgroundColor: 'rgba(245, 158, 11, 0.08)',
+              border: '1px solid rgba(245, 158, 11, 0.2)',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              width: 'fit-content',
+            }}>
+              ⚠️ {server.description.split('⚠️')[1].trim()}
             </span>
+          )}
+          {server.source_url && (
+            <a
+              href={server.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--color-secondary)',
+                opacity: 0.7,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                width: 'fit-content',
+                transition: 'opacity var(--transition-fast)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.7'}
+            >
+              ↗ View Source
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* Update Available Banner */}
+      {updateAvailable && (
+        <div
+          data-testid={`server-card-update-banner-${server.server_id}`}
+          style={{
+            backgroundColor: 'rgba(245, 158, 11, 0.08)',
+            border: '1px solid var(--color-warning)',
+            borderRadius: 'var(--radius-lg)',
+            padding: 'var(--space-md)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '0.85rem',
+            color: 'var(--color-warning)',
+            textAlign: 'left',
+          }}
+        >
+          <span>
+            <strong>Update available:</strong> v{updateAvailable.installed} → v{updateAvailable.latest}
+          </span>
+          <button
+            onClick={handleUpdate}
+            disabled={isUpdating}
+            data-testid={`server-card-update-btn-${server.server_id}`}
+            style={{
+              backgroundColor: 'var(--color-warning)',
+              color: 'var(--color-surface)',
+              border: 'none',
+              padding: 'var(--space-xs) var(--space-md)',
+              borderRadius: 'var(--radius-md)',
+              fontWeight: 600,
+              cursor: isUpdating ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {isUpdating ? 'Updating...' : 'Update Now'}
+          </button>
+        </div>
+      )}
+
+      {/* Connection Info / Code Command — collapsible for non-installed */}
+      {(server.is_installed || showDetails) && (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: 'var(--color-surface-subtle)',
+            padding: 'var(--space-md)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--color-border)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.8rem',
+            color: 'rgba(255, 255, 255, 0.7)',
+            wordBreak: 'break-all',
+            gap: 'var(--space-xs)',
+            textAlign: 'left',
+          }}
+        >
+          <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+            <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Transport:</span>
+            <span style={{ color: 'var(--color-secondary)' }}>{server.type}</span>
           </div>
-        )}
-      </div>
+          {server.command && (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Endpoint/Command:</span>
+              <span style={{ whiteSpace: 'pre-wrap', marginTop: '2px', color: 'var(--color-secondary)', fontSize: '0.75rem' }}>
+                {Array.isArray(server.command) ? server.command.join(' ') : server.command}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+      {!server.is_installed && !showDetails && (
+        <button
+          onClick={() => setShowDetails(true)}
+          style={{
+            fontSize: '0.75rem',
+            color: 'rgba(255, 255, 255, 0.4)',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'none',
+            textAlign: 'left',
+            padding: '0',
+            transition: 'color var(--transition-fast)',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-secondary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)'}
+        >
+          ▸ Show connection details
+        </button>
+      )}
 
       {/* Workspace Enablement List (Only if installed) */}
       {server.is_installed && (
@@ -310,6 +559,7 @@ export function ToolCard({
             <button
               onClick={handleUninstall}
               disabled={isUninstalling}
+              data-testid={isLocalServer ? `server-card-uninstall-btn-${server.server_id}` : `server-card-disconnect-btn-${server.server_id}`}
               style={{
                 color: 'var(--color-error)',
                 fontSize: '0.85rem',
@@ -323,14 +573,18 @@ export function ToolCard({
               onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
               onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
             >
-              {isUninstalling ? 'Uninstalling...' : 'Uninstall'}
+              {isUninstalling 
+                ? (isLocalServer ? 'Uninstalling...' : 'Disconnecting...') 
+                : (isLocalServer ? 'Uninstall' : 'Disconnect')
+              }
             </button>
           )}
 
-          {server.name !== 'CalculiX Simulation' && server.name !== 'OpenSCAD Geometry' && (
+          {!server.source_url && (
             <button
               onClick={handleDelete}
               disabled={isDeleting || isInstalling || isUninstalling}
+              data-testid={`server-card-remove-btn-${server.server_id}`}
               style={{
                 color: 'rgba(255, 255, 255, 0.4)',
                 fontSize: '0.85rem',
@@ -349,7 +603,36 @@ export function ToolCard({
         </div>
       </div>
 
-      {/* Error block if any */}
+      {/* Card-local dismissible error block */}
+      {cardError && (
+        <div
+          data-testid={`server-card-error-${server.server_id}`}
+          style={{
+            backgroundColor: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid var(--color-error)',
+            borderRadius: 'var(--radius-lg)',
+            padding: 'var(--space-md)',
+            fontSize: '0.8rem',
+            color: 'var(--color-error)',
+            wordBreak: 'break-word',
+            textAlign: 'left',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 'var(--space-sm)',
+          }}
+        >
+          <span><strong>Error:</strong> {cardError}</span>
+          <button 
+            onClick={() => setCardError(null)}
+            style={{ color: 'var(--color-error)', cursor: 'pointer', fontWeight: 'bold', padding: '0 4px', background: 'none', border: 'none' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Backend connection error message */}
       {server.error_message && (
         <div
           style={{
