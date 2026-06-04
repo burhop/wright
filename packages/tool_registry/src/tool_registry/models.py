@@ -13,12 +13,20 @@ class McpServer(BaseModel):
     category: str = "utilities"
     created_at: int
     updated_at: int
+    image_url: Optional[str] = None
+    description: Optional[str] = None
+    source_url: Optional[str] = None
+    installed_version: Optional[str] = None
 
 class McpServerCreate(BaseModel):
     name: str
     type: Literal["stdio", "sse", "webmcp"]
     command: Optional[Union[List[str], str]] = None
     category: str = "utilities"
+    image_url: Optional[str] = None
+    description: Optional[str] = None
+    source_url: Optional[str] = None
+    installed_version: Optional[str] = None
 
 class McpServerUpdate(BaseModel):
     is_active: Optional[bool] = None

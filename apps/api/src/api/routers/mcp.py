@@ -110,7 +110,11 @@ async def register_server(body: McpServerCreate, engine: McpEngine = Depends(get
         error_message=None,
         category=body.category,
         created_at=now,
-        updated_at=now
+        updated_at=now,
+        image_url=body.image_url,
+        description=body.description,
+        source_url=body.source_url,
+        installed_version=body.installed_version
     )
     try:
         insert_server(engine.db_path, new_server)
@@ -359,3 +363,71 @@ async def toggle_tool_enabled(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to toggle tool enabled state: {e}"
         )
+
+@router.get("/servers/{server_id}/version-check")
+@traced("mcp.server.version_check")
+async def version_check_endpoint(server_id: str, engine: McpEngine = Depends(get_mcp_engine)):
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found."
+        )
+    if server.type in ("sse", "webmcp"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Version check not applicable for network-type servers."
+        )
+    
+    from tool_registry.version_check import check_server_version
+    result = await check_server_version(server)
+    if "error" in result and result["error"] is not None:
+        if result["error"] == "unsupported_package_manager":
+            return {
+                "server_id": server_id,
+                "installed": None,
+                "latest": None,
+                "update_available": False,
+                "error": result["error"]
+            }
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Version check failed: {result['error']}"
+        )
+    return result
+
+@router.post("/servers/{server_id}/update")
+@traced("mcp.server.update")
+async def update_server_endpoint(server_id: str, engine: McpEngine = Depends(get_mcp_engine)):
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found."
+        )
+    if server.type != "stdio":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Update not applicable for network-type servers."
+        )
+        
+    from tool_registry.version_check import update_server
+    result = await update_server(server)
+    if result.get("error"):
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Update failed: {result['error']}"
+        )
+        
+    from tool_registry.db import update_server as db_update_server
+    db_update_server(engine.db_path, server_id, {
+        "installed_version": result["installed_version"],
+        "updated_at": int(time.time())
+    })
+    
+    return {
+        "server_id": server_id,
+        "installed_version": result["installed_version"],
+        "success": True,
+        "error": None
+    }

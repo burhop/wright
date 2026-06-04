@@ -90,6 +90,15 @@ test.describe('Agent Chat Page', () => {
       });
     });
 
+    // Mock workspace activate
+    await page.route('**/api/workspace/activate', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, session_id: 'session123', workspace_path: '/home/burhop/repos/wright' }),
+      });
+    });
+
     // Mock workspace files tree
     await page.route('**/api/workspace/files?*', async (route) => {
       await route.fulfill({

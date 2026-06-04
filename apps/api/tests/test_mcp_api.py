@@ -26,7 +26,11 @@ def test_db_path() -> str:
         error_message TEXT,
         category TEXT NOT NULL DEFAULT 'utilities',
         created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
+        updated_at INTEGER NOT NULL,
+        image_url TEXT,
+        description TEXT,
+        source_url TEXT,
+        installed_version TEXT
     );
     """)
     conn.execute("""
@@ -155,3 +159,76 @@ def test_toggle_tool_enabled(client):
     tools_res = client.get("/api/mcp/tools")
     tools = tools_res.json()["tools"]
     assert tools[0]["is_enabled"] is False
+
+def test_version_check_success(client):
+    from tool_registry.db import update_server
+    engine = client.app.state.mcp_engine
+    update_server(engine.db_path, "calc-id-123", {"is_installed": True, "installed_version": "1.2.3"})
+    
+    response = client.get("/api/mcp/servers/calc-id-123/version-check")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["server_id"] == "calc-id-123"
+    assert data["installed"] == "1.2.3"
+    assert data["latest"] == "1.4.0"
+    assert data["update_available"] is True
+
+def test_version_check_not_found(client):
+    response = client.get("/api/mcp/servers/nonexistent-id/version-check")
+    assert response.status_code == 404
+
+def test_version_check_network_server_returns_400(client):
+    payload = {
+        "name": "Custom SSE Link",
+        "type": "sse",
+        "command": "http://127.0.0.1:9000/sse",
+        "category": "simulation"
+    }
+    reg_response = client.post("/api/mcp/servers", json=payload)
+    server_id = reg_response.json()["server_id"]
+    
+    response = client.get(f"/api/mcp/servers/{server_id}/version-check")
+    assert response.status_code == 400
+    data = response.json()
+    assert "network-type servers" in data.get("message", data.get("detail", ""))
+
+def test_update_server_success(client):
+    from tool_registry.db import update_server, get_server
+    engine = client.app.state.mcp_engine
+    update_server(engine.db_path, "calc-id-123", {"is_installed": True, "installed_version": "1.2.3"})
+    
+    response = client.post("/api/mcp/servers/calc-id-123/update")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["server_id"] == "calc-id-123"
+    assert data["installed_version"] == "1.4.0"
+    assert data["success"] is True
+    
+    server = get_server(engine.db_path, "calc-id-123")
+    assert server.installed_version == "1.4.0"
+
+def test_update_server_not_found(client):
+    response = client.post("/api/mcp/servers/nonexistent-id/update")
+    assert response.status_code == 404
+
+def test_register_server_with_image_and_description(client):
+    payload = {
+        "name": "CalculiX Simulation 2",
+        "type": "stdio",
+        "command": ["uv", "run", "calculix-mcp"],
+        "category": "simulation",
+        "image_url": "https://github.com/CalculiX.png?size=64",
+        "description": "Finite element analysis solver.",
+        "source_url": "https://github.com/calculix/calculix-mcp",
+        "installed_version": "2.21.0"
+    }
+    response = client.post("/api/mcp/servers", json=payload)
+    assert response.status_code == 201
+    
+    servers_res = client.get("/api/mcp/servers")
+    servers = servers_res.json()["servers"]
+    new_server = next(s for s in servers if s["name"] == "CalculiX Simulation 2")
+    assert new_server["image_url"] == "https://github.com/CalculiX.png?size=64"
+    assert new_server["description"] == "Finite element analysis solver."
+    assert new_server["source_url"] == "https://github.com/calculix/calculix-mcp"
+    assert new_server["installed_version"] == "2.21.0"
