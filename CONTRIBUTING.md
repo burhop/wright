@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to Wright! We welcome all contributions — from bug reports and documentation fixes to new features and major architectural enhancements. 
 
-As a project focused on local-first AI mechanical engineering, we maintain a highly structured, design-first development methodology to ensure robust local execution, clean architecture, and project quality.
+As a project focused on design and engineering agent orchestration, we maintain a highly structured, design-first development methodology to ensure robust local execution, clean architecture, and project quality.
 
 ---
 
