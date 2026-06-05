@@ -8,6 +8,7 @@ Span naming follows the semantic hierarchy defined in spec.md:
   - workspace.create, workspace.files.list, agent.chat.start
   - db.sqlite.query, db.sqlite.execute (child spans of operations)
 """
+
 import functools
 import sqlite3
 from contextlib import contextmanager
@@ -35,6 +36,7 @@ def traced(span_name: str, attributes: dict[str, Any] | None = None):
 
     On exception, the span records the exception and sets status to ERROR.
     """
+
     def decorator(func):
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -67,6 +69,7 @@ def traced(span_name: str, attributes: dict[str, Any] | None = None):
                     raise
 
         import asyncio
+
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper

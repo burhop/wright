@@ -7,12 +7,13 @@ from api.main import app
 from tool_registry import McpEngine, McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
 
+
 @pytest.fixture
 def test_db_path() -> str:
     # Use a temporary file for the SQLite DB
     fd, path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(path)
     conn.execute("""
     CREATE TABLE mcp_servers (
@@ -47,11 +48,12 @@ def test_db_path() -> str:
     """)
     conn.commit()
     conn.close()
-    
+
     yield path
-    
+
     if os.path.exists(path):
         os.unlink(path)
+
 
 @pytest.fixture
 def client(test_db_path) -> TestClient:
@@ -64,10 +66,10 @@ def client(test_db_path) -> TestClient:
         is_active=False,
         status="inactive",
         created_at=1000,
-        updated_at=1000
+        updated_at=1000,
     )
     insert_server(test_db_path, server)
-    
+
     # Pre-seed a tool
     tool = McpTool(
         tool_id="calc-id-123:mesh_calc",
@@ -76,7 +78,7 @@ def client(test_db_path) -> TestClient:
         description="Calculate mesh",
         input_schema={"type": "object"},
         is_enabled=True,
-        created_at=1000
+        created_at=1000,
     )
     insert_tools(test_db_path, [tool])
 
@@ -84,6 +86,7 @@ def client(test_db_path) -> TestClient:
         engine = McpEngine(test_db_path)
         c.app.state.mcp_engine = engine
         yield c
+
 
 def test_list_servers(client):
     response = client.get("/api/mcp/servers")
@@ -94,12 +97,13 @@ def test_list_servers(client):
     assert data["servers"][0]["server_id"] == "calc-id-123"
     assert data["servers"][0]["name"] == "Calcul mesh"
 
+
 def test_register_server(client):
     payload = {
         "name": "Custom SSE Link",
         "type": "sse",
         "command": "http://127.0.0.1:9000/sse",
-        "category": "simulation"
+        "category": "simulation",
     }
     response = client.post("/api/mcp/servers", json=payload)
     assert response.status_code == 201
@@ -107,24 +111,26 @@ def test_register_server(client):
     assert "server_id" in data
     assert data["name"] == "Custom SSE Link"
     assert data["status"] == "inactive"
-    
+
     # Verify it was added to database
     servers_res = client.get("/api/mcp/servers")
     servers = servers_res.json()["servers"]
     assert len(servers) == 2
     assert any(s["name"] == "Custom SSE Link" for s in servers)
 
+
 def test_register_duplicate_server_fails(client):
     payload = {
         "name": "Calcul mesh",
         "type": "stdio",
         "command": ["python", "foo.py"],
-        "category": "utilities"
+        "category": "utilities",
     }
     response = client.post("/api/mcp/servers", json=payload)
     assert response.status_code == 400
     data = response.json()
     assert "already registered" in data.get("message", data.get("detail", ""))
+
 
 def test_toggle_server_not_found(client):
     response = client.patch("/api/mcp/servers/nonexistent-id", json={"is_active": True})
@@ -132,14 +138,16 @@ def test_toggle_server_not_found(client):
     data = response.json()
     assert "not found" in data.get("message", data.get("detail", "")).lower()
 
+
 def test_delete_server(client):
     response = client.delete("/api/mcp/servers/calc-id-123")
     assert response.status_code == 204
-    
+
     # Verify it was deleted
     servers_res = client.get("/api/mcp/servers")
     servers = servers_res.json()["servers"]
     assert len(servers) == 0
+
 
 def test_list_tools(client):
     response = client.get("/api/mcp/tools")
@@ -150,8 +158,11 @@ def test_list_tools(client):
     assert data["tools"][0]["name"] == "mesh_calc"
     assert data["tools"][0]["is_enabled"] is True
 
+
 def test_toggle_tool_enabled(client):
-    response = client.patch("/api/mcp/tools/calc-id-123:mesh_calc", json={"is_enabled": False})
+    response = client.patch(
+        "/api/mcp/tools/calc-id-123:mesh_calc", json={"is_enabled": False}
+    )
     assert response.status_code == 200
     assert response.json()["is_enabled"] is False
 
@@ -160,11 +171,17 @@ def test_toggle_tool_enabled(client):
     tools = tools_res.json()["tools"]
     assert tools[0]["is_enabled"] is False
 
+
 def test_version_check_success(client):
     from tool_registry.db import update_server
+
     engine = client.app.state.mcp_engine
-    update_server(engine.db_path, "calc-id-123", {"is_installed": True, "installed_version": "1.2.3"})
-    
+    update_server(
+        engine.db_path,
+        "calc-id-123",
+        {"is_installed": True, "installed_version": "1.2.3"},
+    )
+
     response = client.get("/api/mcp/servers/calc-id-123/version-check")
     assert response.status_code == 200
     data = response.json()
@@ -173,43 +190,53 @@ def test_version_check_success(client):
     assert data["latest"] == "1.4.0"
     assert data["update_available"] is True
 
+
 def test_version_check_not_found(client):
     response = client.get("/api/mcp/servers/nonexistent-id/version-check")
     assert response.status_code == 404
+
 
 def test_version_check_network_server_returns_400(client):
     payload = {
         "name": "Custom SSE Link",
         "type": "sse",
         "command": "http://127.0.0.1:9000/sse",
-        "category": "simulation"
+        "category": "simulation",
     }
     reg_response = client.post("/api/mcp/servers", json=payload)
     server_id = reg_response.json()["server_id"]
-    
+
     response = client.get(f"/api/mcp/servers/{server_id}/version-check")
     assert response.status_code == 400
     data = response.json()
     assert "network-type servers" in data.get("message", data.get("detail", ""))
 
+
 def test_update_server_success(client):
     from tool_registry.db import update_server, get_server
+
     engine = client.app.state.mcp_engine
-    update_server(engine.db_path, "calc-id-123", {"is_installed": True, "installed_version": "1.2.3"})
-    
+    update_server(
+        engine.db_path,
+        "calc-id-123",
+        {"is_installed": True, "installed_version": "1.2.3"},
+    )
+
     response = client.post("/api/mcp/servers/calc-id-123/update")
     assert response.status_code == 200
     data = response.json()
     assert data["server_id"] == "calc-id-123"
     assert data["installed_version"] == "1.4.0"
     assert data["success"] is True
-    
+
     server = get_server(engine.db_path, "calc-id-123")
     assert server.installed_version == "1.4.0"
+
 
 def test_update_server_not_found(client):
     response = client.post("/api/mcp/servers/nonexistent-id/update")
     assert response.status_code == 404
+
 
 def test_register_server_with_image_and_description(client):
     payload = {
@@ -220,11 +247,11 @@ def test_register_server_with_image_and_description(client):
         "image_url": "https://github.com/CalculiX.png?size=64",
         "description": "Finite element analysis solver.",
         "source_url": "https://github.com/calculix/calculix-mcp",
-        "installed_version": "2.21.0"
+        "installed_version": "2.21.0",
     }
     response = client.post("/api/mcp/servers", json=payload)
     assert response.status_code == 201
-    
+
     servers_res = client.get("/api/mcp/servers")
     servers = servers_res.json()["servers"]
     new_server = next(s for s in servers if s["name"] == "CalculiX Simulation 2")

@@ -6,12 +6,13 @@ from .models import McpServer, McpTool
 
 logger = structlog.get_logger(__name__)
 
+
 def ensure_migrations(conn: sqlite3.Connection) -> None:
     columns = [
         ("image_url", "TEXT DEFAULT NULL"),
         ("description", "TEXT DEFAULT NULL"),
         ("source_url", "TEXT DEFAULT NULL"),
-        ("installed_version", "TEXT DEFAULT NULL")
+        ("installed_version", "TEXT DEFAULT NULL"),
     ]
     for col_name, col_type in columns:
         try:
@@ -20,6 +21,7 @@ def ensure_migrations(conn: sqlite3.Connection) -> None:
             # Column already exists
             pass
 
+
 def _get_conn(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
@@ -27,6 +29,7 @@ def _get_conn(db_path: str) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     ensure_migrations(conn)
     return conn
+
 
 def _parse_command(cmd_str: Optional[str]) -> Optional[Union[List[str], str]]:
     if cmd_str is None:
@@ -41,12 +44,14 @@ def _parse_command(cmd_str: Optional[str]) -> Optional[Union[List[str], str]]:
             pass
     return cmd_str
 
+
 def _serialize_command(cmd: Optional[Union[List[str], str]]) -> Optional[str]:
     if cmd is None:
         return None
     if isinstance(cmd, list):
         return json.dumps(cmd)
     return cmd
+
 
 def _row_to_server(row: sqlite3.Row) -> McpServer:
     return McpServer(
@@ -55,7 +60,9 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         type=row["type"],
         command=_parse_command(row["command"]),
         is_active=bool(row["is_active"]),
-        is_installed=bool(row["is_installed"]) if "is_installed" in row.keys() else False,
+        is_installed=bool(row["is_installed"])
+        if "is_installed" in row.keys()
+        else False,
         status=row["status"],
         error_message=row["error_message"],
         category=row["category"],
@@ -64,8 +71,11 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         image_url=row["image_url"] if "image_url" in row.keys() else None,
         description=row["description"] if "description" in row.keys() else None,
         source_url=row["source_url"] if "source_url" in row.keys() else None,
-        installed_version=row["installed_version"] if "installed_version" in row.keys() else None
+        installed_version=row["installed_version"]
+        if "installed_version" in row.keys()
+        else None,
     )
+
 
 def _row_to_tool(row: sqlite3.Row) -> McpTool:
     input_schema = {}
@@ -81,14 +91,16 @@ def _row_to_tool(row: sqlite3.Row) -> McpTool:
         description=row["description"],
         input_schema=input_schema,
         is_enabled=bool(row["is_enabled"]),
-        created_at=row["created_at"]
+        created_at=row["created_at"],
     )
+
 
 def get_servers(db_path: str) -> List[McpServer]:
     with _get_conn(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM mcp_servers ORDER BY created_at DESC")
         return [_row_to_server(row) for row in cursor.fetchall()]
+
 
 def get_server(db_path: str, server_id: str) -> Optional[McpServer]:
     with _get_conn(db_path) as conn:
@@ -97,12 +109,14 @@ def get_server(db_path: str, server_id: str) -> Optional[McpServer]:
         row = cursor.fetchone()
         return _row_to_server(row) if row else None
 
+
 def get_server_by_name(db_path: str, name: str) -> Optional[McpServer]:
     with _get_conn(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM mcp_servers WHERE name = ?", (name,))
         row = cursor.fetchone()
         return _row_to_server(row) if row else None
+
 
 def insert_server(db_path: str, server: McpServer) -> None:
     with _get_conn(db_path) as conn:
@@ -128,15 +142,18 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.image_url,
                 server.description,
                 server.source_url,
-                server.installed_version
-            )
+                server.installed_version,
+            ),
         )
         conn.commit()
 
-def update_server(db_path: str, server_id: str, updates: Dict[str, Any]) -> Optional[McpServer]:
+
+def update_server(
+    db_path: str, server_id: str, updates: Dict[str, Any]
+) -> Optional[McpServer]:
     if not updates:
         return get_server(db_path, server_id)
-        
+
     set_clauses = []
     params = []
     for key, value in updates.items():
@@ -146,7 +163,16 @@ def update_server(db_path: str, server_id: str, updates: Dict[str, Any]) -> Opti
         elif key == "is_installed":
             set_clauses.append("is_installed = ?")
             params.append(1 if value else 0)
-        elif key in ("status", "error_message", "category", "updated_at", "image_url", "description", "source_url", "installed_version"):
+        elif key in (
+            "status",
+            "error_message",
+            "category",
+            "updated_at",
+            "image_url",
+            "description",
+            "source_url",
+            "installed_version",
+        ):
             set_clauses.append(f"{key} = ?")
             params.append(value)
         elif key == "command":
@@ -161,13 +187,14 @@ def update_server(db_path: str, server_id: str, updates: Dict[str, Any]) -> Opti
 
     params.append(server_id)
     query = f"UPDATE mcp_servers SET {', '.join(set_clauses)} WHERE server_id = ?"
-    
+
     with _get_conn(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute(query, tuple(params))
         conn.commit()
-        
+
     return get_server(db_path, server_id)
+
 
 def delete_server(db_path: str, server_id: str) -> bool:
     with _get_conn(db_path) as conn:
@@ -176,14 +203,19 @@ def delete_server(db_path: str, server_id: str) -> bool:
         conn.commit()
         return cursor.rowcount > 0
 
+
 def get_tools(db_path: str, server_id: Optional[str] = None) -> List[McpTool]:
     with _get_conn(db_path) as conn:
         cursor = conn.cursor()
         if server_id:
-            cursor.execute("SELECT * FROM mcp_tools WHERE server_id = ? ORDER BY name ASC", (server_id,))
+            cursor.execute(
+                "SELECT * FROM mcp_tools WHERE server_id = ? ORDER BY name ASC",
+                (server_id,),
+            )
         else:
             cursor.execute("SELECT * FROM mcp_tools ORDER BY name ASC")
         return [_row_to_tool(row) for row in cursor.fetchall()]
+
 
 def get_tool(db_path: str, tool_id: str) -> Optional[McpTool]:
     with _get_conn(db_path) as conn:
@@ -191,6 +223,7 @@ def get_tool(db_path: str, tool_id: str) -> Optional[McpTool]:
         cursor.execute("SELECT * FROM mcp_tools WHERE tool_id = ?", (tool_id,))
         row = cursor.fetchone()
         return _row_to_tool(row) if row else None
+
 
 def insert_tools(db_path: str, tools: List[McpTool]) -> None:
     with _get_conn(db_path) as conn:
@@ -208,19 +241,24 @@ def insert_tools(db_path: str, tools: List[McpTool]) -> None:
                     tool.description,
                     json.dumps(tool.input_schema),
                     1 if tool.is_enabled else 0,
-                    tool.created_at
-                )
+                    tool.created_at,
+                ),
             )
         conn.commit()
+
 
 def clear_server_tools(db_path: str, server_id: str) -> None:
     with _get_conn(db_path) as conn:
         conn.execute("DELETE FROM mcp_tools WHERE server_id = ?", (server_id,))
         conn.commit()
 
+
 def update_tool_enabled(db_path: str, tool_id: str, is_enabled: bool) -> bool:
     with _get_conn(db_path) as conn:
         cursor = conn.cursor()
-        cursor.execute("UPDATE mcp_tools SET is_enabled = ? WHERE tool_id = ?", (1 if is_enabled else 0, tool_id))
+        cursor.execute(
+            "UPDATE mcp_tools SET is_enabled = ? WHERE tool_id = ?",
+            (1 if is_enabled else 0, tool_id),
+        )
         conn.commit()
         return cursor.rowcount > 0

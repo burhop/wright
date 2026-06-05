@@ -2,19 +2,25 @@ import os
 
 # Hermes WebUI port and base URL configuration for the 'wright' profile
 HERMES_WEBUI_PORT = int(os.getenv("HERMES_WEBUI_PORT", "8788"))
-HERMES_WEBUI_BASE_URL = os.getenv("HERMES_WEBUI_BASE_URL", f"http://127.0.0.1:{HERMES_WEBUI_PORT}")
+HERMES_WEBUI_BASE_URL = os.getenv(
+    "HERMES_WEBUI_BASE_URL", f"http://127.0.0.1:{HERMES_WEBUI_PORT}"
+)
 
 # LLM inference host and health check endpoint
 LLM_HEALTH_URL = os.getenv("LLM_HEALTH_URL", "http://promaxgb10-5c88:8000/health")
 
+
 def get_llm_health_url() -> str:
     """Dynamically get LLM health URL from the database system_settings or env var."""
     import sqlite3
+
     try:
         if os.path.exists(DATABASE_PATH):
             conn = sqlite3.connect(DATABASE_PATH)
             cursor = conn.cursor()
-            cursor.execute("SELECT value FROM system_settings WHERE key = 'llm_api_url'")
+            cursor.execute(
+                "SELECT value FROM system_settings WHERE key = 'llm_api_url'"
+            )
             row = cursor.fetchone()
             conn.close()
             if row and row[0]:
@@ -29,14 +35,18 @@ def get_llm_health_url() -> str:
         pass
     return os.getenv("LLM_HEALTH_URL", "http://promaxgb10-5c88:8000/health")
 
+
 def get_llm_api_url() -> str:
     """Dynamically get the base LLM API URL."""
     import sqlite3
+
     try:
         if os.path.exists(DATABASE_PATH):
             conn = sqlite3.connect(DATABASE_PATH)
             cursor = conn.cursor()
-            cursor.execute("SELECT value FROM system_settings WHERE key = 'llm_api_url'")
+            cursor.execute(
+                "SELECT value FROM system_settings WHERE key = 'llm_api_url'"
+            )
             row = cursor.fetchone()
             conn.close()
             if row and row[0]:
@@ -51,14 +61,22 @@ def get_llm_api_url() -> str:
         return health_url[:-7]
     return health_url
 
+
 # Local SQLite database path for state and config persistence
-DATABASE_PATH = os.getenv("DATABASE_PATH", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "state.db"))
+DATABASE_PATH = os.getenv(
+    "DATABASE_PATH",
+    os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "state.db",
+    ),
+)
 
 # Dynamically resolve and set default OPENSCAD_PATH for headless execution
 API_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(API_DIR)))
-DEFAULT_OPENSCAD_HEADLESS_PATH = os.path.join(WORKSPACE_ROOT, "scripts", "openscad-headless.sh")
+DEFAULT_OPENSCAD_HEADLESS_PATH = os.path.join(
+    WORKSPACE_ROOT, "scripts", "openscad-headless.sh"
+)
 
 if "OPENSCAD_PATH" not in os.environ:
     os.environ["OPENSCAD_PATH"] = DEFAULT_OPENSCAD_HEADLESS_PATH
-

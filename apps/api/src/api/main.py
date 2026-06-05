@@ -1,13 +1,18 @@
 import time
 import httpx
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from agent_adapters import HermesAdapter
-from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL, DATABASE_PATH, get_llm_health_url
+from api.config import HERMES_WEBUI_BASE_URL, DATABASE_PATH, get_llm_health_url
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
 from api.routers.workspace import router as workspace_router
@@ -16,10 +21,12 @@ from api.middleware.tracing import TracingMiddleware
 from api.schemas.common import ErrorResponse, ErrorCodes
 from core.logging import configure_logging, get_logger
 from tool_registry import McpEngine
+from core import AgentSyncManager
 
 # Configure structured JSON logging globally (Constitution §7)
 configure_logging()
 logger = get_logger("api.main")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,6 +37,7 @@ async def lifespan(app: FastAPI):
         # Sync database server states into Hermes configs on startup
         from api.services.hermes_sync import sync_mcp_server_to_hermes
         from tool_registry import get_servers
+
         for s in get_servers(DATABASE_PATH):
             sync_mcp_server_to_hermes(s)
     except Exception as e:
@@ -40,6 +48,7 @@ async def lifespan(app: FastAPI):
         await app.state.mcp_engine.shutdown()
     except Exception as e:
         logger.exception("mcp_shutdown_failed", error=str(e))
+
 
 app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
 
@@ -57,8 +66,6 @@ app.add_middleware(TracingMiddleware)
 
 
 # ── Custom exception handlers for standardized ErrorResponse ──────────────
-from fastapi.exceptions import RequestValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 def _get_trace_id(request: Request) -> str:
@@ -103,7 +110,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 # Instantiate and store the Hermes adapter engine in the app state
 app.state.agent_engine = HermesAdapter(HERMES_WEBUI_BASE_URL)
-from core import AgentSyncManager
 app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the agent router
@@ -117,6 +123,7 @@ app.include_router(workspace_router, prefix="/api/workspace")
 
 # Mount the setup router
 app.include_router(setup_router, prefix="/api/setup")
+
 
 @app.websocket("/api/webmcp/ws")
 async def webmcp_websocket_endpoint(websocket: WebSocket):
@@ -134,18 +141,22 @@ async def webmcp_websocket_endpoint(websocket: WebSocket):
     finally:
         await mcp_engine.unregister_webmcp_connection(websocket)
 
+
 class HealthResponse(BaseModel):
     state: str
     latencyMs: float
+
 
 @app.get("/api/health", response_model=HealthResponse)
 async def check_api_health():
     return HealthResponse(state="connected", latencyMs=1.5)
 
+
 @app.get("/api/agent/health", response_model=HealthResponse)
 async def check_agent_health():
     res = await app.state.agent_engine.check_health()
     return HealthResponse(state=res["state"], latencyMs=res["latencyMs"])
+
 
 @app.get("/api/inference/health", response_model=HealthResponse)
 async def check_inference_health():
@@ -162,10 +173,8 @@ async def check_inference_health():
         pass
     return HealthResponse(state="disconnected", latencyMs=0.0)
 
+
 # Serve frontend static files in production if the dist directory exists
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import os
 
 dist_dir = os.environ.get("FRONTEND_DIST_DIR", "/workspace/apps/web/dist")
 if os.path.exists(dist_dir):
@@ -184,12 +193,16 @@ if os.path.exists(dist_dir):
         # Guard against path traversal (CWE-22)
         file_path = os.path.realpath(os.path.join(dist_dir, full_path))
         real_dist = os.path.realpath(dist_dir)
-        if full_path and os.path.isfile(file_path) and file_path.startswith(real_dist + os.sep):
+        if (
+            full_path
+            and os.path.isfile(file_path)
+            and file_path.startswith(real_dist + os.sep)
+        ):
             return FileResponse(file_path)
         # Otherwise serve the SPA entry point
         return FileResponse(index_html)
 else:
+
     @app.get("/")
     async def root():
         return {"message": "Wright API is running"}
-

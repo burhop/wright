@@ -1,6 +1,16 @@
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
-import { mcpService } from '../services/mcp-service';
-import type { McpServer, McpTool, VersionCheckResult } from '../services/mcp-service';
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  type ReactNode,
+} from "react";
+import { mcpService } from "../services/mcp-service";
+import type {
+  McpServer,
+  McpTool,
+  VersionCheckResult,
+} from "../services/mcp-service";
 
 export interface ToolsState {
   servers: McpServer[];
@@ -10,14 +20,14 @@ export interface ToolsState {
 }
 
 type ToolsAction =
-  | { type: 'SET_LOADING'; isLoading: boolean }
-  | { type: 'SET_ERROR'; error: string | null }
-  | { type: 'SET_SERVERS'; servers: McpServer[] }
-  | { type: 'SET_TOOLS'; tools: McpTool[] }
-  | { type: 'ADD_SERVER'; server: McpServer }
-  | { type: 'UPDATE_SERVER'; serverId: string; updates: Partial<McpServer> }
-  | { type: 'DELETE_SERVER'; serverId: string }
-  | { type: 'UPDATE_TOOL'; toolId: string; updates: Partial<McpTool> };
+  | { type: "SET_LOADING"; isLoading: boolean }
+  | { type: "SET_ERROR"; error: string | null }
+  | { type: "SET_SERVERS"; servers: McpServer[] }
+  | { type: "SET_TOOLS"; tools: McpTool[] }
+  | { type: "ADD_SERVER"; server: McpServer }
+  | { type: "UPDATE_SERVER"; serverId: string; updates: Partial<McpServer> }
+  | { type: "DELETE_SERVER"; serverId: string }
+  | { type: "UPDATE_TOOL"; toolId: string; updates: Partial<McpTool> };
 
 const initialState: ToolsState = {
   servers: [],
@@ -28,34 +38,34 @@ const initialState: ToolsState = {
 
 function toolsReducer(state: ToolsState, action: ToolsAction): ToolsState {
   switch (action.type) {
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, isLoading: action.isLoading };
-    case 'SET_ERROR':
+    case "SET_ERROR":
       return { ...state, error: action.error };
-    case 'SET_SERVERS':
+    case "SET_SERVERS":
       return { ...state, servers: action.servers };
-    case 'SET_TOOLS':
+    case "SET_TOOLS":
       return { ...state, tools: action.tools };
-    case 'ADD_SERVER':
+    case "ADD_SERVER":
       return { ...state, servers: [...state.servers, action.server] };
-    case 'UPDATE_SERVER':
+    case "UPDATE_SERVER":
       return {
         ...state,
         servers: state.servers.map((s) =>
-          s.server_id === action.serverId ? { ...s, ...action.updates } : s
+          s.server_id === action.serverId ? { ...s, ...action.updates } : s,
         ),
       };
-    case 'DELETE_SERVER':
+    case "DELETE_SERVER":
       return {
         ...state,
         servers: state.servers.filter((s) => s.server_id !== action.serverId),
         tools: state.tools.filter((t) => t.server_id !== action.serverId),
       };
-    case 'UPDATE_TOOL':
+    case "UPDATE_TOOL":
       return {
         ...state,
         tools: state.tools.map((t) =>
-          t.tool_id === action.toolId ? { ...t, ...action.updates } : t
+          t.tool_id === action.toolId ? { ...t, ...action.updates } : t,
         ),
       };
     default:
@@ -67,16 +77,22 @@ interface ToolsContextProps extends ToolsState {
   fetchServersAndTools: () => Promise<void>;
   registerCustomServer: (
     name: string,
-    type: 'stdio' | 'sse' | 'webmcp',
+    type: "stdio" | "sse" | "webmcp",
     command: string[] | string,
     category: string,
     imageUrl?: string,
     description?: string,
-    sourceUrl?: string
+    sourceUrl?: string,
   ) => Promise<void>;
   toggleServerState: (serverId: string, isActive: boolean) => Promise<void>;
-  installServerState: (serverId: string, sessionId?: string | null) => Promise<void>;
-  uninstallServerState: (serverId: string, sessionId?: string | null) => Promise<void>;
+  installServerState: (
+    serverId: string,
+    sessionId?: string | null,
+  ) => Promise<void>;
+  uninstallServerState: (
+    serverId: string,
+    sessionId?: string | null,
+  ) => Promise<void>;
   deleteServerState: (serverId: string) => Promise<void>;
   toggleToolState: (toolId: string, isEnabled: boolean) => Promise<void>;
   checkServerVersion: (serverId: string) => Promise<VersionCheckResult>;
@@ -89,33 +105,36 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(toolsReducer, initialState);
 
   const fetchServersAndTools = async () => {
-    dispatch({ type: 'SET_LOADING', isLoading: true });
-    dispatch({ type: 'SET_ERROR', error: null });
+    dispatch({ type: "SET_LOADING", isLoading: true });
+    dispatch({ type: "SET_ERROR", error: null });
     try {
       const [servers, tools] = await Promise.all([
         mcpService.getServers(),
         mcpService.getTools(),
       ]);
-      dispatch({ type: 'SET_SERVERS', servers });
-      dispatch({ type: 'SET_TOOLS', tools });
+      dispatch({ type: "SET_SERVERS", servers });
+      dispatch({ type: "SET_TOOLS", tools });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to fetch registry data' });
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to fetch registry data",
+      });
     } finally {
-      dispatch({ type: 'SET_LOADING', isLoading: false });
+      dispatch({ type: "SET_LOADING", isLoading: false });
     }
   };
 
   const registerCustomServer = async (
     name: string,
-    type: 'stdio' | 'sse' | 'webmcp',
+    type: "stdio" | "sse" | "webmcp",
     command: string[] | string,
     category: string,
     imageUrl?: string,
     description?: string,
-    sourceUrl?: string
+    sourceUrl?: string,
   ) => {
-    dispatch({ type: 'SET_LOADING', isLoading: true });
-    dispatch({ type: 'SET_ERROR', error: null });
+    dispatch({ type: "SET_LOADING", isLoading: true });
+    dispatch({ type: "SET_ERROR", error: null });
     try {
       const res = await mcpService.registerServer({
         name,
@@ -135,7 +154,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         command,
         is_active: false,
         is_installed: false,
-        status: 'inactive',
+        status: "inactive",
         category,
         created_at: now,
         updated_at: now,
@@ -143,28 +162,34 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         description,
         source_url: sourceUrl,
       };
-      dispatch({ type: 'ADD_SERVER', server: newServer });
+      dispatch({ type: "ADD_SERVER", server: newServer });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to register custom server' });
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to register custom server",
+      });
       throw err;
     } finally {
-      dispatch({ type: 'SET_LOADING', isLoading: false });
+      dispatch({ type: "SET_LOADING", isLoading: false });
     }
   };
 
   const toggleServerState = async (serverId: string, isActive: boolean) => {
     // Optimistic toggle update
-    const previousServer = state.servers.find(s => s.server_id === serverId);
+    const previousServer = state.servers.find((s) => s.server_id === serverId);
     dispatch({
-      type: 'UPDATE_SERVER',
+      type: "UPDATE_SERVER",
       serverId,
-      updates: { is_active: isActive, status: isActive ? 'active' : 'inactive' },
+      updates: {
+        is_active: isActive,
+        status: isActive ? "active" : "inactive",
+      },
     });
 
     try {
       const result = await mcpService.toggleServer(serverId, isActive);
       dispatch({
-        type: 'UPDATE_SERVER',
+        type: "UPDATE_SERVER",
         serverId,
         updates: {
           is_active: result.is_active,
@@ -174,26 +199,35 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
       });
       // Fetch tools list again since active server changes discovered tools in database
       const tools = await mcpService.getTools();
-      dispatch({ type: 'SET_TOOLS', tools });
+      dispatch({ type: "SET_TOOLS", tools });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to toggle server activation' });
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to toggle server activation",
+      });
       // Revert optimistic update
       if (previousServer) {
         dispatch({
-          type: 'UPDATE_SERVER',
+          type: "UPDATE_SERVER",
           serverId,
-          updates: { is_active: previousServer.is_active, status: previousServer.status },
+          updates: {
+            is_active: previousServer.is_active,
+            status: previousServer.status,
+          },
         });
       }
       throw err;
     }
   };
 
-  const installServerState = async (serverId: string, sessionId?: string | null) => {
+  const installServerState = async (
+    serverId: string,
+    sessionId?: string | null,
+  ) => {
     try {
       const result = await mcpService.installServer(serverId, sessionId);
       dispatch({
-        type: 'UPDATE_SERVER',
+        type: "UPDATE_SERVER",
         serverId,
         updates: {
           is_installed: result.is_installed,
@@ -202,17 +236,20 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         },
       });
       const tools = await mcpService.getTools();
-      dispatch({ type: 'SET_TOOLS', tools });
+      dispatch({ type: "SET_TOOLS", tools });
     } catch (err: any) {
       throw err;
     }
   };
 
-  const uninstallServerState = async (serverId: string, sessionId?: string | null) => {
+  const uninstallServerState = async (
+    serverId: string,
+    sessionId?: string | null,
+  ) => {
     try {
       const result = await mcpService.uninstallServer(serverId, sessionId);
       dispatch({
-        type: 'UPDATE_SERVER',
+        type: "UPDATE_SERVER",
         serverId,
         updates: {
           is_installed: result.is_installed,
@@ -222,30 +259,33 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         },
       });
       const tools = await mcpService.getTools();
-      dispatch({ type: 'SET_TOOLS', tools });
+      dispatch({ type: "SET_TOOLS", tools });
     } catch (err: any) {
       throw err;
     }
   };
 
   const deleteServerState = async (serverId: string) => {
-    dispatch({ type: 'SET_LOADING', isLoading: true });
-    dispatch({ type: 'SET_ERROR', error: null });
+    dispatch({ type: "SET_LOADING", isLoading: true });
+    dispatch({ type: "SET_ERROR", error: null });
     try {
       await mcpService.deleteServer(serverId);
-      dispatch({ type: 'DELETE_SERVER', serverId });
+      dispatch({ type: "DELETE_SERVER", serverId });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to delete server' });
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to delete server",
+      });
       throw err;
     } finally {
-      dispatch({ type: 'SET_LOADING', isLoading: false });
+      dispatch({ type: "SET_LOADING", isLoading: false });
     }
   };
 
   const toggleToolState = async (toolId: string, isEnabled: boolean) => {
-    const previousTool = state.tools.find(t => t.tool_id === toolId);
+    const previousTool = state.tools.find((t) => t.tool_id === toolId);
     dispatch({
-      type: 'UPDATE_TOOL',
+      type: "UPDATE_TOOL",
       toolId,
       updates: { is_enabled: isEnabled },
     });
@@ -253,11 +293,14 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
     try {
       await mcpService.toggleTool(toolId, isEnabled);
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to toggle tool enabled state' });
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to toggle tool enabled state",
+      });
       // Revert optimistic update
       if (previousTool) {
         dispatch({
-          type: 'UPDATE_TOOL',
+          type: "UPDATE_TOOL",
           toolId,
           updates: { is_enabled: previousTool.is_enabled },
         });
@@ -266,25 +309,30 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const checkServerVersion = async (serverId: string): Promise<VersionCheckResult> => {
+  const checkServerVersion = async (
+    serverId: string,
+  ): Promise<VersionCheckResult> => {
     return await mcpService.checkServerVersion(serverId);
   };
 
   const updateServerState = async (serverId: string) => {
-    dispatch({ type: 'SET_LOADING', isLoading: true });
-    dispatch({ type: 'SET_ERROR', error: null });
+    dispatch({ type: "SET_LOADING", isLoading: true });
+    dispatch({ type: "SET_ERROR", error: null });
     try {
       const res = await mcpService.updateServer(serverId);
       dispatch({
-        type: 'UPDATE_SERVER',
+        type: "UPDATE_SERVER",
         serverId,
         updates: { installed_version: res.installed_version },
       });
     } catch (err: any) {
-      dispatch({ type: 'SET_ERROR', error: err.message || 'Failed to update server' });
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to update server",
+      });
       throw err;
     } finally {
-      dispatch({ type: 'SET_LOADING', isLoading: false });
+      dispatch({ type: "SET_LOADING", isLoading: false });
     }
   };
 
@@ -315,7 +363,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
 export function useTools() {
   const context = useContext(ToolsContext);
   if (!context) {
-    throw new Error('useTools must be used within a ToolsProvider');
+    throw new Error("useTools must be used within a ToolsProvider");
   }
   return context;
 }

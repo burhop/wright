@@ -4,11 +4,11 @@ Hermes config.yaml synchronization service.
 Extracted from workspace.py and mcp.py routers to eliminate duplicate sync logic.
 Handles syncing MCP server state and workspace tool enablement to Hermes config files.
 """
+
 import os
 import sys
 import shlex
 import subprocess
-from typing import Optional, List
 
 import structlog
 import yaml
@@ -34,7 +34,7 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
 
     paths = [
         os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
-        os.path.expanduser("~/.hermes/config.yaml")
+        os.path.expanduser("~/.hermes/config.yaml"),
     ]
 
     for path in paths:
@@ -61,10 +61,7 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
                         cmd = parsed[0] if parsed else "echo"
                         args = parsed[1:] if len(parsed) > 1 else []
 
-                    srv_config = {
-                        "command": cmd,
-                        "args": args
-                    }
+                    srv_config = {"command": cmd, "args": args}
 
                     if key_name == "openscadgeometry" or "openscad" in key_name:
                         srv_config["env"] = {
@@ -77,18 +74,22 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
                         continue
                     config["mcp_servers"][key_name] = {
                         "url": server.command,
-                        "transport": "sse"
+                        "transport": "sse",
                     }
             else:
                 for k in list(config["mcp_servers"].keys()):
-                    if k == key_name or (key_name == "openscadgeometry" and k == "openscad"):
+                    if k == key_name or (
+                        key_name == "openscadgeometry" and k == "openscad"
+                    ):
                         del config["mcp_servers"][k]
 
             with open(path, "w") as f:
                 yaml.safe_dump(config, f, default_flow_style=False)
 
         except Exception as e:
-            logger.error("hermes_config_sync_failed", path=path, server=server.name, error=str(e))
+            logger.error(
+                "hermes_config_sync_failed", path=path, server=server.name, error=str(e)
+            )
 
 
 def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
@@ -107,11 +108,12 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
     enabled_tools = get_workspace_enabled_tools(db_path, session_id)
 
     from tool_registry.db import get_servers
+
     all_servers = get_servers(db_path)
 
     paths = [
         os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
-        os.path.expanduser("~/.hermes/config.yaml")
+        os.path.expanduser("~/.hermes/config.yaml"),
     ]
 
     for path in paths:
@@ -138,7 +140,9 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                 # Check if this server is enabled in the workspace session
                 is_enabled = True
                 if enabled_tools is not None:
-                    is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
+                    is_enabled = (server.name in enabled_tools) or (
+                        server.server_id in enabled_tools
+                    )
 
                 if is_enabled:
                     if server.type == "stdio":
@@ -154,10 +158,7 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                             cmd = parsed[0] if parsed else "echo"
                             args = parsed[1:] if len(parsed) > 1 else []
 
-                        srv_config = {
-                            "command": cmd,
-                            "args": args
-                        }
+                        srv_config = {"command": cmd, "args": args}
                         if key_name == "openscadgeometry" or "openscad" in key_name:
                             srv_config["env"] = {
                                 "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
@@ -168,7 +169,7 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                             continue
                         new_mcp_servers[key_name] = {
                             "url": server.command,
-                            "transport": "sse"
+                            "transport": "sse",
                         }
 
             config["mcp_servers"] = new_mcp_servers
@@ -176,7 +177,12 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                 yaml.safe_dump(config, f, default_flow_style=False)
 
         except Exception as e:
-            logger.error("hermes_workspace_sync_failed", path=path, session_id=session_id, error=str(e))
+            logger.error(
+                "hermes_workspace_sync_failed",
+                path=path,
+                session_id=session_id,
+                error=str(e),
+            )
 
 
 def restart_hermes_background() -> None:
@@ -188,10 +194,10 @@ def restart_hermes_background() -> None:
         return
     try:
         subprocess.Popen(
-            "export HERMES_HOME=\"$HOME/.hermes/profiles/wright\" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788",
+            'export HERMES_HOME="$HOME/.hermes/profiles/wright" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788',
             shell=True,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            stderr=subprocess.DEVNULL,
         )
     except Exception:
         pass

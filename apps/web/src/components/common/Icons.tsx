@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number | string;
@@ -46,7 +46,10 @@ export const AgentChatIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
-export const ToolRegistryIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
+export const ToolRegistryIcon: React.FC<IconProps> = ({
+  size = 18,
+  ...props
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -193,7 +196,10 @@ export const FolderIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
   </svg>
 );
 
-export const ChevronRightIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
+export const ChevronRightIcon: React.FC<IconProps> = ({
+  size = 16,
+  ...props
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -210,7 +216,10 @@ export const ChevronRightIcon: React.FC<IconProps> = ({ size = 16, ...props }) =
   </svg>
 );
 
-export const ChevronDownIcon: React.FC<IconProps> = ({ size = 16, ...props }) => (
+export const ChevronDownIcon: React.FC<IconProps> = ({
+  size = 16,
+  ...props
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -336,4 +345,3 @@ export const GitIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
     <line x1="6" y1="9" x2="6" y2="15" />
   </svg>
 );
-
