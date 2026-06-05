@@ -5,7 +5,7 @@
 <h1 align="center">Wright</h1>
 
 <p align="center">
-  <strong>An open-source design and engineering agent orchestrator — bringing software developer-level AI productivity gains to all traditional engineering roles.</strong>
+  <strong>An open-source design and engineering agent orchestrator — unlocking software developer-level AI productivity for designers, engineers, and product managers.</strong>
 </p>
 
 <p align="center">
@@ -22,9 +22,9 @@
 ## Why Wright?
 
 ### The Vision
-AI coding assistants have sparked massive productivity leaps for software developers. However, traditional physical design and engineering roles—such as mechanical, structural, thermal, and manufacturing engineers—have largely been left out of this revolution. 
+The rise of generative AI has brought unprecedented, compound productivity gains to software developers. Wright is built to bring this same AI-driven engineering velocity to traditional physical engineering roles. 
 
-Wright is built to change that. We bring software developer-level AI productivity gains to all types of traditional engineering roles. By serving as a powerful design and engineering agent orchestrator, Wright enables AI agents to automate, iterate, and optimize complex workflows using the latest computational design, simulation, and manufacturing tools.
+Our vision is to unlock new, order-of-magnitude levels of productivity for **product designers**, **engineers** (mechanical, structural, thermal, electrical), and **engineering product managers**. By orchestrating specialized, agentic workflows, Wright bridges the gap between high-level engineering design intent and low-level computational execution, enabling teams to model, simulate, and manufacture faster than ever before.
 
 ### The Agent Orchestrator
 At its core, Wright is tool- and model-agnostic. Rather than locking you into a single proprietary ecosystem or a specific LLM vendor, Wright allows you to harness the latest agentic tools from across the entire engineering and AI landscape:

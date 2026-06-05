@@ -10,7 +10,7 @@ Configure the **About** section on the main repository page with the following:
 
 * **Description**: 
   ```text
-  🔧 Design & engineering agent orchestrator — bringing AI productivity gains to traditional engineering roles.
+  🔧 Design & engineering agent orchestrator — unlocking AI productivity for designers, engineers & PMs.
   ```
   *(Note: This is under the 120-character limit to ensure it displays fully in search results and social previews without truncation).*
 
