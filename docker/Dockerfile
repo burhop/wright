@@ -6,7 +6,7 @@
 # =============================================================================
 
 # Stage 1: Build the Vite frontend
-FROM node:22-slim AS web-builder
+FROM node:26-slim AS web-builder
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
