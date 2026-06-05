@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import * as THREE from 'three';
-import ThreeDViewer from '../src/components/common/ThreeDViewer';
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import * as THREE from "three";
+import ThreeDViewer from "../src/components/common/ThreeDViewer";
 
 // Mock ResizeObserver for JSDOM environment
 class MockResizeObserver {
@@ -13,10 +13,10 @@ class MockResizeObserver {
 globalThis.ResizeObserver = MockResizeObserver;
 
 // Mock WebGLRenderer to bypass jsdom WebGL limitations
-vi.mock('three', async () => {
-  const original = await vi.importActual('three') as typeof import('three');
+vi.mock("three", async () => {
+  const original = (await vi.importActual("three")) as typeof import("three");
   class MockWebGLRenderer {
-    domElement = document.createElement('canvas');
+    domElement = document.createElement("canvas");
     setSize() {}
     setPixelRatio() {}
     render() {}
@@ -29,7 +29,7 @@ vi.mock('three', async () => {
 });
 
 // Mock OrbitControls
-vi.mock('three/examples/jsm/controls/OrbitControls.js', () => {
+vi.mock("three/examples/jsm/controls/OrbitControls.js", () => {
   class MockOrbitControls {
     update() {}
     dispose() {}
@@ -44,7 +44,7 @@ vi.mock('three/examples/jsm/controls/OrbitControls.js', () => {
 });
 
 // Mock STLLoader
-vi.mock('three/examples/jsm/loaders/STLLoader.js', () => {
+vi.mock("three/examples/jsm/loaders/STLLoader.js", () => {
   class MockSTLLoader {
     parse() {
       return new THREE.BufferGeometry();
@@ -55,17 +55,17 @@ vi.mock('three/examples/jsm/loaders/STLLoader.js', () => {
   };
 });
 
-describe('ThreeDViewer', () => {
+describe("ThreeDViewer", () => {
   const mockBuffer = new ArrayBuffer(8);
 
-  it('renders the canvas element and displays the file name', () => {
+  it("renders the canvas element and displays the file name", () => {
     render(<ThreeDViewer arrayBuffer={mockBuffer} fileName="gearbox.stl" />);
 
     // Assert the WebGL canvas mounts in the DOM
-    const canvas = screen.getByTestId('3d-canvas');
+    const canvas = screen.getByTestId("3d-canvas");
     expect(canvas).toBeInTheDocument();
 
     // Assert the filename label displays correct text
-    expect(screen.getByText('gearbox.stl')).toBeInTheDocument();
+    expect(screen.getByText("gearbox.stl")).toBeInTheDocument();
   });
 });

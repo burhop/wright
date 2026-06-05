@@ -3,7 +3,6 @@ import sqlite3
 import sys
 import json
 import time
-import uuid
 
 # Ensure api package is importable when run directly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
@@ -23,7 +22,15 @@ ENGINEERING_CATALOG = [
         "server_id": "openscad-mcp-server",
         "name": "OpenSCAD Geometry",
         "type": "stdio",
-        "command": json.dumps(["uv", "run", "--with", "git+https://github.com/quellant/openscad-mcp.git", "openscad-mcp"]),
+        "command": json.dumps(
+            [
+                "uv",
+                "run",
+                "--with",
+                "git+https://github.com/quellant/openscad-mcp.git",
+                "openscad-mcp",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/37583508?s=64",
         "description": "Renders and validates OpenSCAD models. Generates high-fidelity PNG previews and animations from .scad scripts, closing the AI design loop without a GUI.",
@@ -99,7 +106,6 @@ ENGINEERING_CATALOG = [
         "description": "Direct OpenCASCADE (OCCT) kernel interface via CAiD. Strict ForgeResult validation layer tracks volume, surface area, and manifold diagnostics.",
         "source_url": "https://github.com/dreliq9/caid-mcp",
     },
-
     # ── CAD · Cloud / Network Services ────────────────────────────────────────
     {
         "server_id": "zoo-dev-cloud-cad",
@@ -121,7 +127,6 @@ ENGINEERING_CATALOG = [
         "description": "Cloud-native Onshape REST API access. Navigate workspaces, manage Part Studios, create parametric sketches, and read/write variable tables.",
         "source_url": "https://github.com/hedless/onshape-mcp",
     },
-
     # ── Simulation / FEA ──────────────────────────────────────────────────────
     {
         "server_id": "calculix-simulation",
@@ -133,7 +138,6 @@ ENGINEERING_CATALOG = [
         "description": "Open-source finite element analysis (FEA) solver. Performs structural stress, strain, and thermal analysis on 3D meshes via the CalculiX MCP bridge.",
         "source_url": "https://github.com/calculix/calculix-mcp",
     },
-
     # ── PLM / Enterprise Cloud APIs ───────────────────────────────────────────
     {
         "server_id": "autodesk-aps-official",
@@ -185,7 +189,6 @@ ENGINEERING_CATALOG = [
         "description": "PTC ThingWorx IoT platform integration. Tools for machine KPIs, resources for sensor data, prompts for interaction templates. OAuth 2.0 secured.",
         "source_url": "https://support.ptc.com/help/thingworx/platform/r10.1/",
     },
-
     # ── CAD · Desktop / Windows Required ──────────────────────────────────────
     {
         "server_id": "fusion360-mcp-faust",
@@ -277,7 +280,6 @@ ENGINEERING_CATALOG = [
         "description": "AI-powered BIM modeling for Autodesk Revit. CRUD operations on architectural elements, structural analysis integration. ⚠️ Requires Revit desktop.",
         "source_url": "https://github.com/mcp-servers-for-revit/revit-mcp",
     },
-
     # ── 2D CAD / Drafting ─────────────────────────────────────────────────────
     {
         "server_id": "autocad-mcp-hvkshetry",
@@ -319,7 +321,6 @@ ENGINEERING_CATALOG = [
         "description": "Universal 2D CAD automation via COM. Compatible with AutoCAD-like APIs. Draw, plot, and manipulate 2D geometry. ⚠️ Requires Windows + CAD software.",
         "source_url": "https://github.com/daobataotie/CAD-MCP",
     },
-
     # ── Web / Experimental ────────────────────────────────────────────────────
     {
         "server_id": "webmcp-standard",
@@ -361,7 +362,6 @@ ENGINEERING_CATALOG = [
         "description": "Web-based 3D modeling interface built with TanStack Start. Integrates AI support directly into browser-based OpenSCAD workflows.",
         "source_url": "https://github.com/jherr/webmcp-openscad",
     },
-
     # ── Manufacturing / CAM ───────────────────────────────────────────────────
     {
         "server_id": "creopyson-creoson",
@@ -382,7 +382,7 @@ def run_migrations():
     conn = sqlite3.connect(DATABASE_PATH)
     try:
         conn.execute("PRAGMA journal_mode=WAL;")
-        
+
         # 1. Create mcp_servers table
         conn.execute("""
         CREATE TABLE IF NOT EXISTS mcp_servers (
@@ -403,7 +403,7 @@ def run_migrations():
             installed_version TEXT
         );
         """)
-        
+
         # 2. Create mcp_tools table
         conn.execute("""
         CREATE TABLE IF NOT EXISTS mcp_tools (
@@ -417,7 +417,7 @@ def run_migrations():
             FOREIGN KEY (server_id) REFERENCES mcp_servers(server_id) ON DELETE CASCADE
         );
         """)
-        
+
         # 3. ── One-time cleanup: remove junk / test entries ──────────────────
         conn.execute("DELETE FROM mcp_servers WHERE name LIKE 'Playwright Test%'")
         conn.execute("DELETE FROM mcp_servers WHERE name = 'Calcul mesh'")
@@ -436,43 +436,49 @@ def run_migrations():
           AND status = 'error'
           AND server_id != 'openscad-mcp-server'
         """)
-        
+
         # 5. Seed the full engineering catalog
         now = int(time.time())
         for entry in ENGINEERING_CATALOG:
-            conn.execute("""
+            conn.execute(
+                """
             INSERT OR IGNORE INTO mcp_servers 
                 (server_id, name, type, command, is_active, is_installed, status,
                  category, created_at, updated_at, image_url, description,
                  source_url, installed_version)
             VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, NULL)
-            """, (
-                entry["server_id"],
-                entry["name"],
-                entry["type"],
-                entry["command"],
-                entry["category"],
-                now,
-                now,
-                entry.get("image_url"),
-                entry["description"],
-                entry.get("source_url"),
-            ))
+            """,
+                (
+                    entry["server_id"],
+                    entry["name"],
+                    entry["type"],
+                    entry["command"],
+                    entry["category"],
+                    now,
+                    now,
+                    entry.get("image_url"),
+                    entry["description"],
+                    entry.get("source_url"),
+                ),
+            )
 
         # 6. Update existing catalog entries that may be missing metadata
         for entry in ENGINEERING_CATALOG:
-            conn.execute("""
+            conn.execute(
+                """
             UPDATE mcp_servers
             SET image_url = COALESCE(image_url, ?),
                 description = COALESCE(description, ?),
                 source_url = COALESCE(source_url, ?)
             WHERE server_id = ?
-            """, (
-                entry.get("image_url"),
-                entry["description"],
-                entry.get("source_url"),
-                entry["server_id"],
-            ))
+            """,
+                (
+                    entry.get("image_url"),
+                    entry["description"],
+                    entry.get("source_url"),
+                    entry["server_id"],
+                ),
+            )
 
         # 7. Create engineering_workspaces table
         conn.execute("""
@@ -488,38 +494,46 @@ def run_migrations():
             updated_at INTEGER NOT NULL
         );
         """)
-        
+
         # Check if enabled_tools column exists, add it if not (for existing databases)
         cursor = conn.cursor()
         cursor.execute("PRAGMA table_info(engineering_workspaces)")
         columns = [col[1] for col in cursor.fetchall()]
         if columns and "enabled_tools" not in columns:
-            conn.execute("ALTER TABLE engineering_workspaces ADD COLUMN enabled_tools TEXT;")
+            conn.execute(
+                "ALTER TABLE engineering_workspaces ADD COLUMN enabled_tools TEXT;"
+            )
             print("Added enabled_tools column to engineering_workspaces table.")
-            
+
         # Check if is_installed column exists in mcp_servers, add it if not (for existing databases)
         cursor.execute("PRAGMA table_info(mcp_servers)")
         mcp_columns = [col[1] for col in cursor.fetchall()]
         if mcp_columns and "is_installed" not in mcp_columns:
-            conn.execute("ALTER TABLE mcp_servers ADD COLUMN is_installed INTEGER NOT NULL DEFAULT 0 CHECK(is_installed IN (0, 1));")
+            conn.execute(
+                "ALTER TABLE mcp_servers ADD COLUMN is_installed INTEGER NOT NULL DEFAULT 0 CHECK(is_installed IN (0, 1));"
+            )
             print("Added is_installed column to mcp_servers table.")
-            
+
         new_cols = [
             ("image_url", "TEXT"),
             ("description", "TEXT"),
             ("source_url", "TEXT"),
-            ("installed_version", "TEXT")
+            ("installed_version", "TEXT"),
         ]
         for col_name, col_def in new_cols:
             if mcp_columns and col_name not in mcp_columns:
-                conn.execute(f"ALTER TABLE mcp_servers ADD COLUMN {col_name} {col_def};")
+                conn.execute(
+                    f"ALTER TABLE mcp_servers ADD COLUMN {col_name} {col_def};"
+                )
                 print(f"Added {col_name} column to mcp_servers table.")
 
         # 8. Add workspace_name column if missing (007-workspace-dashboard-ux)
         cursor.execute("PRAGMA table_info(engineering_workspaces)")
         ws_columns = [col[1] for col in cursor.fetchall()]
         if ws_columns and "workspace_name" not in ws_columns:
-            conn.execute("ALTER TABLE engineering_workspaces ADD COLUMN workspace_name TEXT;")
+            conn.execute(
+                "ALTER TABLE engineering_workspaces ADD COLUMN workspace_name TEXT;"
+            )
             print("Added workspace_name column to engineering_workspaces table.")
 
         # 9. Create agent_contexts table (007-workspace-dashboard-ux)
@@ -558,9 +572,12 @@ def run_migrations():
         """)
 
         conn.commit()
-        print(f"Database migrations applied successfully. Seeded {len(ENGINEERING_CATALOG)} engineering MCP servers.")
+        print(
+            f"Database migrations applied successfully. Seeded {len(ENGINEERING_CATALOG)} engineering MCP servers."
+        )
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     run_migrations()

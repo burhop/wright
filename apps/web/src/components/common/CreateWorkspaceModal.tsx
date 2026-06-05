@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { workspaceService, type WorkspaceInfo } from '../../services/workspace-service';
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import {
+  workspaceService,
+  type WorkspaceInfo,
+} from "../../services/workspace-service";
 
 interface CreateWorkspaceModalProps {
   isOpen: boolean;
@@ -8,32 +11,36 @@ interface CreateWorkspaceModalProps {
   onCreated: (workspace: WorkspaceInfo) => void;
 }
 
-export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorkspaceModalProps) {
-  const [name, setName] = useState('');
-  const [localPath, setLocalPath] = useState('');
+export function CreateWorkspaceModal({
+  isOpen,
+  onClose,
+  onCreated,
+}: CreateWorkspaceModalProps) {
+  const [name, setName] = useState("");
+  const [localPath, setLocalPath] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [defaultDir, setDefaultDir] = useState('/home/burhop/wright');
+  const [defaultDir, setDefaultDir] = useState("/home/burhop/wright");
   const [isPathManuallyEdited, setIsPathManuallyEdited] = useState(false);
 
   useEffect(() => {
-    console.log('[DEBUG] CreateWorkspaceModal useEffect, isOpen:', isOpen);
+    console.log("[DEBUG] CreateWorkspaceModal useEffect, isOpen:", isOpen);
     if (isOpen) {
       const fetchDefaultDir = async () => {
         try {
-          console.log('[DEBUG] fetching default workspace dir...');
+          console.log("[DEBUG] fetching default workspace dir...");
           const dir = await workspaceService.getDefaultWorkspaceDir();
-          console.log('[DEBUG] default workspace dir resolved:', dir);
+          console.log("[DEBUG] default workspace dir resolved:", dir);
           setDefaultDir(dir);
-          setLocalPath(dir + '/');
+          setLocalPath(dir + "/");
         } catch (err) {
-          console.error('[DEBUG] Failed to load default workspace dir:', err);
-          setLocalPath('/home/burhop/wright/');
+          console.error("[DEBUG] Failed to load default workspace dir:", err);
+          setLocalPath("/home/burhop/wright/");
         }
       };
       fetchDefaultDir();
-      setName('');
+      setName("");
       setIsPathManuallyEdited(false);
       setError(null);
     }
@@ -44,10 +51,10 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
     if (!isPathManuallyEdited) {
       const folderName = val
         .toLowerCase()
-        .replace(/[^a-z0-9-_]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-      setLocalPath(defaultDir + '/' + folderName);
+        .replace(/[^a-z0-9-_]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+      setLocalPath(defaultDir + "/" + folderName);
     }
   };
 
@@ -62,26 +69,30 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
     setError(null);
 
     if (!name.trim()) {
-      setError('Workspace name is required.');
+      setError("Workspace name is required.");
       return;
     }
     if (!localPath.trim()) {
-      setError('Project directory path is required.');
+      setError("Project directory path is required.");
       return;
     }
-    if (!localPath.startsWith('/')) {
-      setError('Path must be an absolute path (starts with /).');
+    if (!localPath.startsWith("/")) {
+      setError("Path must be an absolute path (starts with /).");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const workspace = await workspaceService.createWorkspace(name.trim(), localPath.trim());
-      setName('');
-      setLocalPath('');
+      const workspace = await workspaceService.createWorkspace(
+        name.trim(),
+        localPath.trim(),
+      );
+      setName("");
+      setLocalPath("");
       onCreated(workspace);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create workspace';
+      const message =
+        err instanceof Error ? err.message : "Failed to create workspace";
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -89,8 +100,8 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
   };
 
   const handleClose = () => {
-    setName('');
-    setLocalPath('');
+    setName("");
+    setLocalPath("");
     setError(null);
     onClose();
   };
@@ -99,47 +110,60 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
     <div
       data-testid="create-workspace-modal"
       style={{
-        position: 'fixed',
+        position: "fixed",
         inset: 0,
         zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        backdropFilter: 'blur(4px)',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        backdropFilter: "blur(4px)",
       }}
       onClick={handleClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: '500px',
-          maxWidth: '90vw',
-          backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-xl)',
-          padding: 'var(--space-2xl)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-xl)',
+          width: "500px",
+          maxWidth: "90vw",
+          backgroundColor: "var(--color-surface)",
+          border: "1px solid var(--color-border)",
+          borderRadius: "var(--radius-lg)",
+          boxShadow: "var(--shadow-xl)",
+          padding: "var(--space-2xl)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--space-xl)",
         }}
         className="animate-fade-in-up"
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: '1.4rem', fontWeight: 600, color: 'var(--color-primary)' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "1.4rem",
+              fontWeight: 600,
+              color: "var(--color-primary)",
+            }}
+          >
             Create Workspace
           </h2>
           <button
             onClick={handleClose}
             style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--color-secondary)',
-              fontSize: '1.2rem',
-              cursor: 'pointer',
-              padding: 'var(--space-xs)',
+              background: "none",
+              border: "none",
+              color: "var(--color-secondary)",
+              fontSize: "1.2rem",
+              cursor: "pointer",
+              padding: "var(--space-xs)",
               lineHeight: 1,
             }}
           >
@@ -148,9 +172,27 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
         </div>
 
         {/* Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-primary)' }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-lg)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               Workspace Name
             </label>
             <input
@@ -162,23 +204,39 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
               autoFocus
               maxLength={100}
               style={{
-                width: '100%',
-                padding: 'var(--space-md) var(--space-lg)',
-                backgroundColor: 'var(--color-surface-subtle)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-primary)',
-                fontSize: '0.95rem',
-                outline: 'none',
-                transition: 'border-color var(--transition-fast)',
+                width: "100%",
+                padding: "var(--space-md) var(--space-lg)",
+                backgroundColor: "var(--color-surface-subtle)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-primary)",
+                fontSize: "0.95rem",
+                outline: "none",
+                transition: "border-color var(--transition-fast)",
               }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-secondary)'; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)'; }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-secondary)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-border)";
+              }}
             />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-primary)' }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               Project Directory
             </label>
             <input
@@ -188,22 +246,30 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
               value={localPath}
               onChange={(e) => handlePathChange(e.target.value)}
               style={{
-                width: '100%',
-                padding: 'var(--space-md) var(--space-lg)',
-                backgroundColor: 'var(--color-surface-subtle)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-primary)',
-                fontSize: '0.95rem',
-                fontFamily: 'var(--font-mono)',
-                outline: 'none',
-                transition: 'border-color var(--transition-fast)',
+                width: "100%",
+                padding: "var(--space-md) var(--space-lg)",
+                backgroundColor: "var(--color-surface-subtle)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-primary)",
+                fontSize: "0.95rem",
+                fontFamily: "var(--font-mono)",
+                outline: "none",
+                transition: "border-color var(--transition-fast)",
               }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-secondary)'; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)'; }}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-secondary)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-border)";
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSubmit();
+              }}
             />
-            <span style={{ fontSize: '0.75rem', color: 'var(--color-secondary)' }}>
+            <span
+              style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
+            >
               Absolute path to the project directory on this machine.
             </span>
           </div>
@@ -211,32 +277,40 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
 
         {/* Error */}
         {error && (
-          <div style={{
-            padding: 'var(--space-md) var(--space-lg)',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--color-error)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--color-error)',
-            fontSize: '0.85rem',
-          }}>
+          <div
+            style={{
+              padding: "var(--space-md) var(--space-lg)",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid var(--color-error)",
+              borderRadius: "var(--radius-md)",
+              color: "var(--color-error)",
+              fontSize: "0.85rem",
+            }}
+          >
             {error}
           </div>
         )}
 
         {/* Actions */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-md)' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "var(--space-md)",
+          }}
+        >
           <button
             onClick={handleClose}
             style={{
-              padding: 'var(--space-md) var(--space-xl)',
-              backgroundColor: 'transparent',
-              color: 'var(--color-secondary)',
+              padding: "var(--space-md) var(--space-xl)",
+              backgroundColor: "transparent",
+              color: "var(--color-secondary)",
               fontWeight: 500,
-              fontSize: '0.9rem',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
-              cursor: 'pointer',
-              transition: 'all var(--transition-fast)',
+              fontSize: "0.9rem",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--color-border)",
+              cursor: "pointer",
+              transition: "all var(--transition-fast)",
             }}
           >
             Cancel
@@ -246,30 +320,31 @@ export function CreateWorkspaceModal({ isOpen, onClose, onCreated }: CreateWorks
             onClick={handleSubmit}
             disabled={isSubmitting}
             style={{
-              padding: 'var(--space-md) var(--space-xl)',
-              backgroundColor: 'var(--color-secondary)',
-              color: 'var(--color-surface-subtle)',
+              padding: "var(--space-md) var(--space-xl)",
+              backgroundColor: "var(--color-secondary)",
+              color: "var(--color-surface-subtle)",
               fontWeight: 600,
-              fontSize: '0.9rem',
-              borderRadius: 'var(--radius-md)',
-              border: 'none',
-              cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              transition: 'all var(--transition-smooth)',
-              boxShadow: 'var(--shadow-glow)',
+              fontSize: "0.9rem",
+              borderRadius: "var(--radius-md)",
+              border: "none",
+              cursor: isSubmitting ? "not-allowed" : "pointer",
+              transition: "all var(--transition-smooth)",
+              boxShadow: "var(--shadow-glow)",
               opacity: isSubmitting ? 0.7 : 1,
             }}
             onMouseEnter={(e) => {
-              if (!isSubmitting) e.currentTarget.style.boxShadow = 'var(--shadow-glow-active)';
+              if (!isSubmitting)
+                e.currentTarget.style.boxShadow = "var(--shadow-glow-active)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+              e.currentTarget.style.boxShadow = "var(--shadow-glow)";
             }}
           >
-            {isSubmitting ? 'Creating...' : 'Create'}
+            {isSubmitting ? "Creating..." : "Create"}
           </button>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
