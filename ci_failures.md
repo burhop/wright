@@ -3,7 +3,137 @@ Generated automatically for local triage and AI code patching.
 
 ---
 
-## 1. python-quality (Run #27025470042)
+## 1. Docker Build CI (Run #27025715246)
+- **Branch**: `dev`
+- **Commit SHA**: `94c524c9c5e20eb699c4ba883394bb02ceeee50e`
+- **Time**: 2026-06-05T16:03:09Z
+- **URL**: [View run on GitHub](https://github.com/burhop/wright/actions/runs/27025715246)
+
+### Failed Log Output
+```text
+build-and-push	Run Smoke Test	﻿2026-06-05T16:09:53.6136157Z ##[group]Run set -euo pipefail
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6136507Z [36;1mset -euo pipefail[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6136741Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6137048Z [36;1mIMAGE="wright-agent:2653d6f38aedd398ba129b2c5266519913828e18"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6137438Z [36;1mCONTAINER="wright-ci-smoke"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6137693Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6138348Z [36;1m# Start the container with a dummy LLM URL (no real LLM needed for smoke)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6138809Z [36;1mdocker run --rm -d --name "$CONTAINER" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6139122Z [36;1m  -p 127.0.0.1:8090:8000 \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6139474Z [36;1m  -e LLM_API_URL="https://ci-placeholder.example.com/v1" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6139863Z [36;1m  -e LLM_API_KEY="ci-test" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6140150Z [36;1m  -e LLM_API_MODEL="ci-model" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6140423Z [36;1m  "$IMAGE"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6140627Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6140899Z [36;1mcleanup() { docker rm -f "$CONTAINER" 2>/dev/null || true; }[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6141299Z [36;1mtrap cleanup EXIT[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6141536Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6141937Z [36;1m# Wait for Wright API health endpoint (up to 60s)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6142292Z [36;1mecho "⏳ Waiting for Wright API..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6142583Z [36;1mfor i in $(seq 1 30); do[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6142946Z [36;1m  if curl -sf http://127.0.0.1:8090/api/health > /dev/null 2>&1; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6143333Z [36;1m    echo "✅ Wright API healthy"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6143599Z [36;1m    break[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6143803Z [36;1m  fi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6144001Z [36;1m  if [ "$i" -eq 30 ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6144321Z [36;1m    echo "❌ Wright API did not become healthy in 60s"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6144703Z [36;1m    docker logs "$CONTAINER" 2>&1 | tail -50[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145008Z [36;1m    exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145207Z [36;1m  fi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145400Z [36;1m  sleep 2[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145613Z [36;1mdone[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145691Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145865Z [36;1m# Verify Hermes WebUI is reachable via the agent health proxy[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6145997Z [36;1mecho "⏳ Checking Hermes Agent proxy..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146225Z [36;1mAGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{}')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146409Z [36;1mAGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146517Z [36;1mecho "   Agent state: $AGENT_STATE"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146637Z [36;1mif [ "$AGENT_STATE" != "connected" ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146796Z [36;1m  echo "❌ Hermes Agent not connected (state=$AGENT_STATE)"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146918Z [36;1m  docker logs "$CONTAINER" 2>&1 | tail -50[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6146999Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147071Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147173Z [36;1mecho "✅ Hermes Agent connected"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147246Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147360Z [36;1m# Verify workspace creation works[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147480Z [36;1mecho "⏳ Testing workspace creation..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147703Z [36;1mWS_RESPONSE=$(curl -sf -X POST http://127.0.0.1:8090/api/workspace/create \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6147827Z [36;1m  -H "Content-Type: application/json" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6148346Z [36;1m  -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace"}')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6148530Z [36;1mWS_ID=$(echo "$WS_RESPONSE" | jq -r '.workspace_id // empty')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6148623Z [36;1mif [ -z "$WS_ID" ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6148775Z [36;1m  echo "❌ Workspace creation failed: $WS_RESPONSE"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6148854Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6148931Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6149037Z [36;1mecho "✅ Workspace created: $WS_ID"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6149114Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6149258Z [36;1m# Verify supervisord has both processes running[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6149576Z [36;1mecho "⏳ Checking supervisord processes..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6149891Z [36;1mPROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6149989Z [36;1mecho "$PROCS"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150145Z [36;1mif ! echo "$PROCS" | grep -q "wright-api.*RUNNING"; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150253Z [36;1m  echo "❌ wright-api not RUNNING"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150328Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150408Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150566Z [36;1mif ! echo "$PROCS" | grep -q "hermes-webui.*RUNNING"; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150674Z [36;1m  echo "❌ hermes-webui not RUNNING"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150753Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150830Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6150928Z [36;1mecho "✅ All processes running"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6151006Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6151082Z [36;1mecho ""[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6151181Z [36;1mecho "🎉 Smoke test passed!"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6174235Z shell: /usr/bin/bash -e {0}
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6174314Z env:
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6174548Z   DOCKER_METADATA_OUTPUT_VERSION: sha-2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6174941Z   DOCKER_METADATA_OUTPUT_TAGS: /wright-agent:sha-2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6175152Z   DOCKER_METADATA_OUTPUT_TAG_NAMES: sha-2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6177029Z   DOCKER_METADATA_OUTPUT_LABELS: org.opencontainers.image.created=2026-06-05T16:03:28.349Z
+build-and-push	Run Smoke Test	org.opencontainers.image.description=A digital engineer, designer, and mechanical analyst
+build-and-push	Run Smoke Test	org.opencontainers.image.licenses=MIT
+build-and-push	Run Smoke Test	org.opencontainers.image.revision=2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	org.opencontainers.image.source=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	org.opencontainers.image.title=wright
+build-and-push	Run Smoke Test	org.opencontainers.image.url=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	org.opencontainers.image.version=sha-2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6179454Z   DOCKER_METADATA_OUTPUT_ANNOTATIONS: manifest:org.opencontainers.image.created=2026-06-05T16:03:28.349Z
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.description=A digital engineer, designer, and mechanical analyst
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.licenses=MIT
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.revision=2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.source=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.title=wright
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.url=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.version=sha-2653d6f38aedd398ba129b2c5266519913828e18
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6184045Z   DOCKER_METADATA_OUTPUT_JSON: {"tags":["/wright-agent:sha-2653d6f38aedd398ba129b2c5266519913828e18"],"tag-names":["sha-2653d6f38aedd398ba129b2c5266519913828e18"],"labels":{"org.opencontainers.image.created":"2026-06-05T16:03:28.349Z","org.opencontainers.image.description":"A digital engineer, designer, and mechanical analyst","org.opencontainers.image.licenses":"MIT","org.opencontainers.image.revision":"2653d6f38aedd398ba129b2c5266519913828e18","org.opencontainers.image.source":"https://github.com/burhop/wright","org.opencontainers.image.title":"wright","org.opencontainers.image.url":"https://github.com/burhop/wright","org.opencontainers.image.version":"sha-2653d6f38aedd398ba129b2c5266519913828e18"},"annotations":["manifest:org.opencontainers.image.created=2026-06-05T16:03:28.349Z","manifest:org.opencontainers.image.description=A digital engineer, designer, and mechanical analyst","manifest:org.opencontainers.image.licenses=MIT","manifest:org.opencontainers.image.revision=2653d6f38aedd398ba129b2c5266519913828e18","manifest:org.opencontainers.image.source=https://github.com/burhop/wright","manifest:org.opencontainers.image.title=wright","manifest:org.opencontainers.image.url=https://github.com/burhop/wright","manifest:org.opencontainers.image.version=sha-2653d6f38aedd398ba129b2c5266519913828e18"]}
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6184490Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_TAGS: /home/runner/work/_temp/docker-actions-toolkit-d3qNX3/docker-metadata-action-bake-tags.json
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6185064Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_LABELS: /home/runner/work/_temp/docker-actions-toolkit-d3qNX3/docker-metadata-action-bake-labels.json
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6185543Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_ANNOTATIONS: /home/runner/work/_temp/docker-actions-toolkit-d3qNX3/docker-metadata-action-bake-annotations.json
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6185918Z   DOCKER_METADATA_OUTPUT_BAKE_FILE: /home/runner/work/_temp/docker-actions-toolkit-d3qNX3/docker-metadata-action-bake.json
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6185996Z ##[endgroup]
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.6665976Z 71e0a9b46da025000d6f9d7f23144d53e5290a978c02a25ddd47c41e6cc8f294
+build-and-push	Run Smoke Test	2026-06-05T16:09:53.8571865Z ⏳ Waiting for Wright API...
+build-and-push	Run Smoke Test	2026-06-05T16:09:57.9310146Z ✅ Wright API healthy
+build-and-push	Run Smoke Test	2026-06-05T16:09:57.9329198Z ⏳ Checking Hermes Agent proxy...
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0488469Z    Agent state: disconnected
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0498623Z ❌ Hermes Agent not connected (state=disconnected)
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0632916Z === Agent Container Starting ===
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0637694Z   LLM_API_URL : https://ci-placeholder.example.com/v1
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0639265Z   Timestamp   : Fri Jun  5 16:09:53 UTC 2026
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0640068Z First boot: initializing Hermes Agent...
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0640996Z Hermes bootstrapped with LLM endpoint: https://ci-placeholder.example.com/v1
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0641963Z === Starting services ===
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0642801Z 2026-06-05 16:09:54,089 INFO RPC interface 'supervisor' initialized
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0643967Z 2026-06-05 16:09:54,089 CRIT Server 'unix_http_server' running without any HTTP authentication checking
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0645139Z 2026-06-05 16:09:54,089 INFO supervisord started with pid 1
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0646162Z 2026-06-05 16:09:55,092 INFO spawned: 'hermes-webui' with pid 18
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.0647179Z 2026-06-05 16:09:55,096 INFO spawned: 'wright-api' with pid 19
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.3140250Z wright-ci-smoke
+build-and-push	Run Smoke Test	2026-06-05T16:09:58.3185810Z ##[error]Process completed with exit code 1.
+```
+
+---
+
+## 2. python-quality (Run #27025470042)
 - **Branch**: `dev`
 - **Commit SHA**: `2ceded12d1146c23d62b4b8c7c6aeb3d831bb82f`
 - **Time**: 2026-06-05T15:58:30Z
@@ -487,7 +617,7 @@ python-quality	Run Tests with pytest	2026-06-05T15:58:57.7564728Z ##[error]Proce
 
 ---
 
-## 2. Docker Build CI (Run #27025470026)
+## 3. Docker Build CI (Run #27025470026)
 - **Branch**: `dev`
 - **Commit SHA**: `2ceded12d1146c23d62b4b8c7c6aeb3d831bb82f`
 - **Time**: 2026-06-05T15:58:30Z
@@ -2342,7 +2472,7 @@ build-and-push	Build and Load (Local Test)	2026-06-05T15:59:22.6882204Z ##[error
 
 ---
 
-## 3. python-quality (Run #27025468181)
+## 4. python-quality (Run #27025468181)
 - **Branch**: `dev`
 - **Commit SHA**: `2ceded12d1146c23d62b4b8c7c6aeb3d831bb82f`
 - **Time**: 2026-06-05T15:58:28Z
@@ -2826,7 +2956,7 @@ python-quality	Run Tests with pytest	2026-06-05T15:58:56.0750339Z ##[error]Proce
 
 ---
 
-## 4. Docker Build CI (Run #27024916913)
+## 5. Docker Build CI (Run #27024916913)
 - **Branch**: `dev`
 - **Commit SHA**: `7c1464c8b505ca32bd3d7f1336b6f04c5fee24d2`
 - **Time**: 2026-06-05T15:47:20Z
@@ -2871,98 +3001,6 @@ build-and-push	Set up job	2026-06-05T15:47:26.2717475Z Download action repositor
 build-and-push	Set up job	2026-06-05T15:47:26.8212437Z Download action repository 'aquasecurity/trivy-action@v0.28.0' (SHA:915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2)
 build-and-push	Set up job	2026-06-05T15:47:27.0668317Z Getting action download info
 build-and-push	Set up job	2026-06-05T15:47:27.3127760Z ##[error]Unable to resolve action `aquasecurity/setup-trivy@v0.2.1`, unable to find version `v0.2.1`
-```
-
----
-
-## 5. python-quality (Run #27024916944)
-- **Branch**: `dev`
-- **Commit SHA**: `7c1464c8b505ca32bd3d7f1336b6f04c5fee24d2`
-- **Time**: 2026-06-05T15:47:20Z
-- **URL**: [View run on GitHub](https://github.com/burhop/wright/actions/runs/27024916944)
-
-### Failed Log Output
-```text
-python-quality	Run Tests with pytest	﻿2026-06-05T15:47:47.6464766Z ##[group]Run uv run pytest
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6465058Z [36;1muv run pytest[0m
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6490871Z shell: /usr/bin/bash -e {0}
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6491121Z env:
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6491363Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6491756Z   pythonLocation: /opt/hostedtoolcache/Python/3.13.13/x64
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6492179Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.13/x64/lib/pkgconfig
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6492608Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.13/x64
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6493004Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.13/x64
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6493406Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.13/x64
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6493797Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.13/x64/lib
-python-quality	Run Tests with pytest	2026-06-05T15:47:47.6494113Z ##[endgroup]
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3120735Z ============================= test session starts ==============================
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3121838Z platform linux -- Python 3.13.13, pytest-9.0.3, pluggy-1.6.0
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3127031Z rootdir: /home/runner/work/wright/wright
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3127855Z configfile: pyproject.toml
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3128629Z plugins: asyncio-1.4.0
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3129708Z asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3131104Z collected 0 items / 5 errors
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3131558Z 
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3131969Z ==================================== ERRORS ====================================
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3132916Z ____________ ERROR collecting apps/api/tests/test_hermes_adapter.py ____________
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3134221Z ImportError while importing test module '/home/runner/work/wright/wright/apps/api/tests/test_hermes_adapter.py'.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3135483Z Hint: make sure your test modules/packages have valid Python names.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3136260Z Traceback:
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3137103Z /opt/hostedtoolcache/Python/3.13.13/x64/lib/python3.13/importlib/__init__.py:88: in import_module
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3138249Z     return _bootstrap._gcd_import(name[level:], package, level)
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3139066Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3139821Z apps/api/tests/test_hermes_adapter.py:3: in <module>
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3140849Z     from agent_adapters import HermesAdapter, AgentChatRequest
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3141735Z E   ModuleNotFoundError: No module named 'agent_adapters'
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3142681Z _______________ ERROR collecting apps/api/tests/test_mcp_api.py ________________
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3143932Z ImportError while importing test module '/home/runner/work/wright/wright/apps/api/tests/test_mcp_api.py'.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3145141Z Hint: make sure your test modules/packages have valid Python names.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3145926Z Traceback:
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3146772Z /opt/hostedtoolcache/Python/3.13.13/x64/lib/python3.13/importlib/__init__.py:88: in import_module
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3147901Z     return _bootstrap._gcd_import(name[level:], package, level)
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3149181Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3149914Z apps/api/tests/test_mcp_api.py:5: in <module>
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3150862Z     from fastapi.testclient import TestClient
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3151627Z E   ModuleNotFoundError: No module named 'fastapi'
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3152693Z ________________ ERROR collecting apps/api/tests/test_webmcp.py ________________
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3154204Z ImportError while importing test module '/home/runner/work/wright/wright/apps/api/tests/test_webmcp.py'.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3155412Z Hint: make sure your test modules/packages have valid Python names.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3156202Z Traceback:
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3157052Z /opt/hostedtoolcache/Python/3.13.13/x64/lib/python3.13/importlib/__init__.py:88: in import_module
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3158171Z     return _bootstrap._gcd_import(name[level:], package, level)
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3158957Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3160026Z apps/api/tests/test_webmcp.py:7: in <module>
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3161061Z     from fastapi.testclient import TestClient
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3168970Z E   ModuleNotFoundError: No module named 'fastapi'
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3169801Z ____________ ERROR collecting apps/api/tests/test_workspace_api.py _____________
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3171071Z ImportError while importing test module '/home/runner/work/wright/wright/apps/api/tests/test_workspace_api.py'.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3172118Z Hint: make sure your test modules/packages have valid Python names.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3172823Z Traceback:
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3173626Z /opt/hostedtoolcache/Python/3.13.13/x64/lib/python3.13/importlib/__init__.py:88: in import_module
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3174714Z     return _bootstrap._gcd_import(name[level:], package, level)
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3175513Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3176370Z apps/api/tests/test_workspace_api.py:4: in <module>
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3179891Z     from fastapi.testclient import TestClient
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3181657Z E   ModuleNotFoundError: No module named 'fastapi'
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3182675Z ________ ERROR collecting packages/tool_registry/tests/test_registry.py ________
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3184085Z ImportError while importing test module '/home/runner/work/wright/wright/packages/tool_registry/tests/test_registry.py'.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3185404Z Hint: make sure your test modules/packages have valid Python names.
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3186216Z Traceback:
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3187078Z /opt/hostedtoolcache/Python/3.13.13/x64/lib/python3.13/importlib/__init__.py:88: in import_module
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3188231Z     return _bootstrap._gcd_import(name[level:], package, level)
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3189055Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3189886Z packages/tool_registry/tests/test_registry.py:7: in <module>
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3191028Z     from tool_registry.models import McpServer, McpTool
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3192339Z E   ModuleNotFoundError: No module named 'tool_registry'
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3193242Z =========================== short test summary info ============================
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3194079Z ERROR apps/api/tests/test_hermes_adapter.py
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3194799Z ERROR apps/api/tests/test_mcp_api.py
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3195478Z ERROR apps/api/tests/test_webmcp.py
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3196151Z ERROR apps/api/tests/test_workspace_api.py
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3196906Z ERROR packages/tool_registry/tests/test_registry.py
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3197966Z !!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!!
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3198946Z ============================== 5 errors in 0.37s ===============================
-python-quality	Run Tests with pytest	2026-06-05T15:47:49.3463124Z ##[error]Process completed with exit code 2.
 ```
 
 ---
