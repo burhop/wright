@@ -4,6 +4,7 @@ Workspace request/response Pydantic models.
 Extracted from apps/api/src/api/routers/workspace.py to keep the router thin.
 All models used by workspace endpoints are defined here.
 """
+
 import json
 from pydantic import BaseModel
 from typing import Any, Dict, List, Optional
@@ -216,5 +217,5 @@ def serialize_workspace(w: dict) -> WorkspaceListEntry:
         git_remote_url=w.get("git_remote_url"),
         git_username=w.get("git_username"),
         enabled_tools=parse_enabled_tools(w.get("enabled_tools")),
-        updated_at=w["updated_at"]
+        updated_at=w["updated_at"],
     )

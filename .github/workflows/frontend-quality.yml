@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Lint with ESLint
-        run: npx eslint apps/web/
+        run: npx -w apps/web eslint .
 
       - name: Check Formatting with Prettier
         run: npx prettier --check apps/web/

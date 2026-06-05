@@ -5,12 +5,12 @@ Creates a root span named by the route's semantic domain (e.g., workspace.files.
 Extracts X-Trace-Id header from frontend for cross-service correlation.
 Injects trace_id into request.state for downstream handler access.
 """
+
 import secrets
 import time
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import Response
 from opentelemetry import trace
 from opentelemetry.trace import StatusCode
 

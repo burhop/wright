@@ -12,6 +12,7 @@ logger = structlog.get_logger(__name__)
 
 VERSION_REGEX = re.compile(r"(\d+\.\d+\.\d+(?:\.\d+)?[a-zA-Z0-9\-\.]*)")
 
+
 def parse_command(command: Optional[Union[List[str], str]]) -> List[str]:
     if not command:
         return []
@@ -22,20 +23,21 @@ def parse_command(command: Optional[Union[List[str], str]]) -> List[str]:
     except Exception:
         return []
 
+
 def get_package_info(cmd: List[str]) -> Tuple[Optional[str], Optional[str]]:
     """
     Returns (package_manager, package_name)
     """
     if not cmd:
         return None, None
-        
+
     first = cmd[0]
-    
+
     # 1. uvx
     if first == "uvx":
         if len(cmd) > 1:
             return "uvx", cmd[1]
-            
+
     # 2. uv run
     if first == "uv" and len(cmd) > 1 and cmd[1] == "run":
         # Find package name
@@ -92,6 +94,7 @@ def get_package_info(cmd: List[str]) -> Tuple[Optional[str], Optional[str]]:
 
     return "unknown", None
 
+
 def fetch_pypi_latest(package: str) -> Optional[str]:
     try:
         url = f"https://pypi.org/pypi/{package}/json"
@@ -100,8 +103,11 @@ def fetch_pypi_latest(package: str) -> Optional[str]:
             data = json.loads(response.read().decode())
             return data["info"]["version"]
     except Exception as e:
-        logger.warning("Failed to fetch latest version from PyPI", package=package, error=str(e))
+        logger.warning(
+            "Failed to fetch latest version from PyPI", package=package, error=str(e)
+        )
     return None
+
 
 def fetch_npm_latest(package: str) -> Optional[str]:
     try:
@@ -111,15 +117,22 @@ def fetch_npm_latest(package: str) -> Optional[str]:
             data = json.loads(response.read().decode())
             return data["version"]
     except Exception as e:
-        logger.warning("Failed to fetch latest version from npm registry", package=package, error=str(e))
+        logger.warning(
+            "Failed to fetch latest version from npm registry",
+            package=package,
+            error=str(e),
+        )
     return None
+
 
 async def get_pip_installed(package: str) -> Optional[str]:
     try:
         proc = await asyncio.create_subprocess_exec(
-            "pip", "show", package,
+            "pip",
+            "show",
+            package,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip()
@@ -130,23 +143,31 @@ async def get_pip_installed(package: str) -> Optional[str]:
         pass
     return None
 
+
 async def get_npm_installed(package: str) -> Optional[str]:
     try:
         proc = await asyncio.create_subprocess_exec(
-            "npm", "list", package, "--depth=0",
+            "npm",
+            "list",
+            package,
+            "--depth=0",
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip()
         match = VERSION_REGEX.search(output)
         if match:
             return match.group(1)
-            
+
         proc = await asyncio.create_subprocess_exec(
-            "npm", "list", "-g", package, "--depth=0",
+            "npm",
+            "list",
+            "-g",
+            package,
+            "--depth=0",
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip()
@@ -157,12 +178,13 @@ async def get_npm_installed(package: str) -> Optional[str]:
         pass
     return None
 
+
 async def get_version_from_cmd_version(cmd: List[str]) -> Optional[str]:
     try:
         proc = await asyncio.create_subprocess_exec(
             *(cmd + ["--version"]),
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip() or stderr.decode().strip()
@@ -173,16 +195,17 @@ async def get_version_from_cmd_version(cmd: List[str]) -> Optional[str]:
         pass
     return None
 
+
 async def check_server_version(server: McpServer) -> dict:
     if server.type != "stdio":
         return {"error": "not_applicable"}
-        
+
     cmd = parse_command(server.command)
     pm, package = get_package_info(cmd)
-    
+
     if not pm or pm == "unknown":
         return {"error": "unsupported_package_manager"}
-        
+
     # Mocking for testing
     if package in ("calculix-mcp", "calc", "dummy-pkg", "openscad-mcp"):
         installed = server.installed_version or "1.2.3"
@@ -192,9 +215,9 @@ async def check_server_version(server: McpServer) -> dict:
             "installed": installed,
             "latest": latest,
             "update_available": installed != latest,
-            "error": None
+            "error": None,
         }
-        
+
     # Get installed version
     installed = None
     if pm in ("uv", "uvx", "pip", "python"):
@@ -207,10 +230,10 @@ async def check_server_version(server: McpServer) -> dict:
             installed = await get_npm_installed(package)
         if not installed:
             installed = await get_version_from_cmd_version(cmd)
-            
+
     if not installed:
         installed = server.installed_version
-        
+
     # Get latest version
     latest = None
     if pm in ("uv", "uvx", "pip", "python"):
@@ -219,7 +242,7 @@ async def check_server_version(server: McpServer) -> dict:
     elif pm == "npm":
         if package:
             latest = await asyncio.to_thread(fetch_npm_latest, package)
-            
+
     update_available = False
     if installed and latest:
         try:
@@ -234,31 +257,32 @@ async def check_server_version(server: McpServer) -> dict:
         "installed": installed,
         "latest": latest,
         "update_available": update_available,
-        "error": None
+        "error": None,
     }
+
 
 async def update_server(server: McpServer) -> dict:
     if server.type != "stdio":
         return {"error": "not_applicable"}
-        
+
     cmd = parse_command(server.command)
     pm, package = get_package_info(cmd)
-    
+
     if not pm or pm == "unknown":
         return {"error": "unsupported_package_manager"}
-        
+
     if not package:
         return {"error": "package_name_not_found"}
-        
+
     # Mocking for testing
     if package in ("calculix-mcp", "calc", "dummy-pkg", "openscad-mcp"):
         return {
             "server_id": server.server_id,
             "installed_version": "1.4.0",
             "success": True,
-            "error": None
+            "error": None,
         }
-        
+
     # Determine the upgrade command
     upgrade_cmd = None
     if pm in ("uv", "uvx"):
@@ -267,15 +291,13 @@ async def update_server(server: McpServer) -> dict:
         upgrade_cmd = ["pip", "install", "--upgrade", package]
     elif pm == "npm":
         upgrade_cmd = ["npm", "install", "-g", package]
-        
+
     if not upgrade_cmd:
         return {"error": "unsupported_upgrade_path"}
-        
+
     try:
         proc = await asyncio.create_subprocess_exec(
-            *upgrade_cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
+            *upgrade_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=15.0)
         if proc.returncode != 0:
@@ -283,11 +305,17 @@ async def update_server(server: McpServer) -> dict:
             if pm in ("uv", "uvx") and "is not installed" in err_msg:
                 # Fallback to installing/upgrading via uv tool install
                 proc2 = await asyncio.create_subprocess_exec(
-                    "uv", "tool", "install", "--upgrade", package,
+                    "uv",
+                    "tool",
+                    "install",
+                    "--upgrade",
+                    package,
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
-                stdout2, stderr2 = await asyncio.wait_for(proc2.communicate(), timeout=15.0)
+                stdout2, stderr2 = await asyncio.wait_for(
+                    proc2.communicate(), timeout=15.0
+                )
                 if proc2.returncode != 0:
                     err_msg2 = stderr2.decode().strip() or stdout2.decode().strip()
                     return {"error": f"Upgrade failed: {err_msg2}"}
@@ -295,13 +323,13 @@ async def update_server(server: McpServer) -> dict:
                 return {"error": f"Upgrade failed: {err_msg}"}
     except Exception as e:
         return {"error": f"Upgrade failed: {str(e)}"}
-        
+
     check_result = await check_server_version(server)
     new_version = check_result.get("installed") or "1.4.0"
-    
+
     return {
         "server_id": server.server_id,
         "installed_version": new_version,
         "success": True,
-        "error": None
+        "error": None,
     }
