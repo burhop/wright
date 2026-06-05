@@ -49,11 +49,15 @@ Wright is committed to open, vendor-neutral standards that allow the toolbox to 
 
 ## Key Features
 
-* 🤖 **Agent Orchestrator** — Steer and coordinate the latest LLMs and agentic frameworks as high-level control loops.
-* 🔧 **Deterministic Tool Actuation** — Actuate and drive rigorous CAD, FEA, and CAM solvers (like OpenSCAD, CalculiX, PrusaSlicer) via standardized Model Context Protocol (MCP) servers.
-* 🚀 **Software Developer-Level Productivity** — Bring the rapid iteration, coding automation, and workflow patterns of software engineering to traditional physical engineering roles.
-* 🔒 **Flexible & Secure Deployment** — Run on-prem, air-gapped, or in hybrid cloud environments to match your organization's security and compliance needs.
-* 🐳 **One-Command Deployment** — Thick-base Docker container bundling FreeCAD, OpenSCAD, PyTorch, and CUDA drivers.
+* 🤖 **Universal Agent Orchestration** — Act as the central coordinator and control loop, coordinating any LLM engine (commercial cloud, startup APIs, or local runtimes) and agentic framework.
+* 🔌 **Plug-and-Play Tool Registry** — Load, swap, and manage any compliant engineering tool via standard Model Context Protocol (MCP) servers. The core platform is completely decoupled from the tools themselves.
+* 🔧 **Deterministic Tool Actuation** — Actuate and steer rigorous physical engineering engines. Rather than relying on probabilistic models to generate geometry or math, Wright coordinates deterministic external software:
+  * *CAD & Geometry kernels* (e.g., FreeCAD, OpenSCAD, PTC Creo, Autodesk Fusion 360) for parametric solid modeling
+  * *CAE & Simulation solvers* (e.g., CalculiX FEA, OpenFOAM CFD) for structural stress and thermal analysis
+  * *CAM & Manufacturing engines* (e.g., PrusaSlicer, CuraEngine) for automated G-code toolpath slicing
+* 🚀 **Software-Level Workflow Automation** — Bring rapid prototyping, versioned rollbacks (via local Git), and test-driven loops of modern software development to physical design tasks.
+* 🔒 **Flexible & Secure Deployment** — Run local-first (on on-prem hardware to safeguard IP) or scale using hybrid cloud tools.
+* 🐳 **Appliance-in-a-Box Setup** — Get started instantly with a bundled Docker stack that includes standard open-source tools (FreeCAD, OpenSCAD, CalculiX) pre-configured.
 
 ---
 

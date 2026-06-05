@@ -83,7 +83,7 @@ A technical user wants to understand the internals of Wright and get it running 
 * **FR-003**: The repository MUST include a social preview image (1280x640px) saved at `docs/images/social-preview.png`, containing the tagline, logo, and core feature icons.
 * **FR-004**: The `README.md` MUST include a Hero section with a centered logo, tagline, and shields.io badge row (Build, License, Docker Pulls, Python, Node, Stars).
 * **FR-005**: The `README.md` MUST include a "Why Wright?" section presenting how Wright orchestrates agentic tools to bring software developer productivity gains to traditional engineering roles.
-* **FR-006**: The `README.md` MUST include emoji-prefixed feature highlight cards for Agent Orchestration, Modular Tool Integration, Software Developer-Level Productivity, Flexible Deployment, and Docker Deployment.
+* **FR-006**: The `README.md` MUST include emoji-prefixed feature highlight cards for Universal Agent Orchestration, Plug-and-Play Tool Registry, Deterministic Tool Actuation, Software-Level Workflow Automation, Flexible & Secure Deployment, and Appliance-in-a-Box Setup.
 * **FR-007**: The `README.md` MUST embed the 4 UI screenshots (`screenshot_initial.png`, `screenshot_agent_chat.png`, `screenshot_tool_registry.png`, `screenshot_file_vault.png`) relocated to `docs/images/` with clear captions.
 * **FR-008**: The `README.md` MUST contain a simplified Quick Start block specifying the absolute minimum steps to clone, configure, build, and run via Docker compose.
 * **FR-009**: The `README.md` MUST include a Mermaid architecture diagram showing the component hierarchy and request flows.

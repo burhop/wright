@@ -69,7 +69,7 @@
 
 ### Implementation for User Story 3
 
-- [x] T008 [US3] Update README.md to add emojified cards highlighting Agent Orchestration, Modular Tools, Productivity, Flexible Deployment, and Docker Deployment
+- [x] T008 [US3] Update README.md to add emojified cards highlighting Universal Agent Orchestration, Plug-and-Play Tool Registry, Deterministic Tool Actuation, Software-Level Workflow Automation, Flexible & Secure Deployment, and Appliance-in-a-Box Setup
 - [x] T009 [US3] Update README.md to embed screenshots from docs/images/ with captions (Chat, Tool Registry, File Vault)
 
 **Checkpoint**: Feature cards and screenshots are embedded.
