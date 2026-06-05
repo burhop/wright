@@ -1,7 +1,11 @@
-import { trace } from '@opentelemetry/api';
-import type { Tracer } from '@opentelemetry/api';
-import { WebTracerProvider, SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-web';
-import type { TraceContext } from '../store/types';
+import { trace } from "@opentelemetry/api";
+import type { Tracer } from "@opentelemetry/api";
+import {
+  WebTracerProvider,
+  SimpleSpanProcessor,
+  ConsoleSpanExporter,
+} from "@opentelemetry/sdk-trace-web";
+import type { TraceContext } from "../store/types";
 
 export interface SpanHandle {
   end(): void;
@@ -23,10 +27,10 @@ class OpenTelemetryService implements TelemetryService {
 
   constructor() {
     this.provider = new WebTracerProvider({
-      spanProcessors: [new SimpleSpanProcessor(new ConsoleSpanExporter())]
+      spanProcessors: [new SimpleSpanProcessor(new ConsoleSpanExporter())],
     });
     this.provider.register();
-    this.tracer = trace.getTracer('wright-frontend', '1.0.0');
+    this.tracer = trace.getTracer("wright-frontend", "1.0.0");
   }
 
   startSpan(actionName: string): SpanHandle {
@@ -34,18 +38,18 @@ class OpenTelemetryService implements TelemetryService {
     const spanContext = span.spanContext();
     const traceId = spanContext.traceId;
     const spanId = spanContext.spanId;
-    
+
     this.activeTraceId = traceId;
-    
+
     const traceCtx: TraceContext = {
       traceId,
       spanId,
       actionName,
       startTime: Date.now(),
       duration: null,
-      status: 'in-progress',
+      status: "in-progress",
     };
-    
+
     this.recentTraces.unshift(traceCtx);
     if (this.recentTraces.length > 50) {
       this.recentTraces.pop();
@@ -56,7 +60,7 @@ class OpenTelemetryService implements TelemetryService {
       end: () => {
         span.end();
         traceCtx.duration = Date.now() - traceCtx.startTime;
-        traceCtx.status = 'ok';
+        traceCtx.status = "ok";
         if (this.activeTraceId === traceId) {
           this.activeTraceId = null;
         }
@@ -66,11 +70,11 @@ class OpenTelemetryService implements TelemetryService {
         span.setStatus({ code: 2, message: err.message }); // SpanStatusCode.ERROR is 2
         span.end();
         traceCtx.duration = Date.now() - traceCtx.startTime;
-        traceCtx.status = 'error';
+        traceCtx.status = "error";
         if (this.activeTraceId === traceId) {
           this.activeTraceId = null;
         }
-      }
+      },
     };
   }
 
@@ -102,10 +106,10 @@ export function startUISpan(name: string): SpanHandle {
  * Used by React error boundaries to create ui.error.boundary spans.
  */
 export function recordUIError(error: Error, componentStack?: string): void {
-  const span = telemetry.startSpan('ui.error.boundary');
+  const span = telemetry.startSpan("ui.error.boundary");
   if (componentStack) {
     // We can't set attributes directly on SpanHandle, but we log the context
-    console.error('[telemetry] Error boundary triggered', {
+    console.error("[telemetry] Error boundary triggered", {
       error: error.message,
       componentStack,
       traceId: span.traceId,

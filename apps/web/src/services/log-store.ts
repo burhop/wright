@@ -7,12 +7,12 @@
  *
  * Graceful fallback to no-op if IndexedDB is unavailable (incognito mode).
  */
-import { openDB, type IDBPDatabase } from 'idb';
+import { openDB, type IDBPDatabase } from "idb";
 
 export interface LogEntry {
   id?: number;
   timestamp: string;
-  level: 'debug' | 'info' | 'warn' | 'error';
+  level: "debug" | "info" | "warn" | "error";
   message: string;
   component: string;
   traceId: string | null;
@@ -21,16 +21,16 @@ export interface LogEntry {
 }
 
 export interface LogFilter {
-  level?: LogEntry['level'];
+  level?: LogEntry["level"];
   component?: string;
   traceId?: string;
   startTime?: string;
   endTime?: string;
 }
 
-const DB_NAME = 'wright-logs';
+const DB_NAME = "wright-logs";
 const DB_VERSION = 1;
-const STORE_NAME = 'entries';
+const STORE_NAME = "entries";
 const DEFAULT_MAX_ENTRIES = 10_000;
 const PRUNE_CHECK_INTERVAL = 100; // Check prune every N writes
 
@@ -70,21 +70,24 @@ class LogStore {
         upgrade(db) {
           if (!db.objectStoreNames.contains(STORE_NAME)) {
             const store = db.createObjectStore(STORE_NAME, {
-              keyPath: 'id',
+              keyPath: "id",
               autoIncrement: true,
             });
-            store.createIndex('level', 'level', { unique: false });
-            store.createIndex('component', 'component', { unique: false });
-            store.createIndex('traceId', 'traceId', { unique: false });
-            store.createIndex('timestamp', 'timestamp', { unique: false });
-            store.createIndex('sessionId', 'sessionId', { unique: false });
+            store.createIndex("level", "level", { unique: false });
+            store.createIndex("component", "component", { unique: false });
+            store.createIndex("traceId", "traceId", { unique: false });
+            store.createIndex("timestamp", "timestamp", { unique: false });
+            store.createIndex("sessionId", "sessionId", { unique: false });
           }
         },
       });
       this.db = db;
       return db;
     } catch (err) {
-      console.warn('[log-store] IndexedDB unavailable, falling back to console-only:', err);
+      console.warn(
+        "[log-store] IndexedDB unavailable, falling back to console-only:",
+        err,
+      );
       this.available = false;
       return null;
     }
@@ -123,7 +126,7 @@ class LogStore {
     if (!db) return;
 
     try {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const tx = db.transaction(STORE_NAME, "readwrite");
       for (const entry of entries) {
         await tx.store.add(entry);
       }
@@ -136,7 +139,7 @@ class LogStore {
         this.prune().catch(() => {});
       }
     } catch (err) {
-      console.warn('[log-store] Failed to write log entries:', err);
+      console.warn("[log-store] Failed to write log entries:", err);
     }
   }
 
@@ -152,11 +155,19 @@ class LogStore {
 
       // Use index-based query if a single filter matches an index
       if (filters.traceId) {
-        results = await db.getAllFromIndex(STORE_NAME, 'traceId', filters.traceId);
+        results = await db.getAllFromIndex(
+          STORE_NAME,
+          "traceId",
+          filters.traceId,
+        );
       } else if (filters.level) {
-        results = await db.getAllFromIndex(STORE_NAME, 'level', filters.level);
+        results = await db.getAllFromIndex(STORE_NAME, "level", filters.level);
       } else if (filters.component) {
-        results = await db.getAllFromIndex(STORE_NAME, 'component', filters.component);
+        results = await db.getAllFromIndex(
+          STORE_NAME,
+          "component",
+          filters.component,
+        );
       } else {
         results = await db.getAll(STORE_NAME);
       }
@@ -164,14 +175,16 @@ class LogStore {
       // Apply remaining filters in memory
       return results.filter((entry) => {
         if (filters.level && entry.level !== filters.level) return false;
-        if (filters.component && entry.component !== filters.component) return false;
+        if (filters.component && entry.component !== filters.component)
+          return false;
         if (filters.traceId && entry.traceId !== filters.traceId) return false;
-        if (filters.startTime && entry.timestamp < filters.startTime) return false;
+        if (filters.startTime && entry.timestamp < filters.startTime)
+          return false;
         if (filters.endTime && entry.timestamp > filters.endTime) return false;
         return true;
       });
     } catch (err) {
-      console.warn('[log-store] Query failed:', err);
+      console.warn("[log-store] Query failed:", err);
       return [];
     }
   }
@@ -189,7 +202,7 @@ class LogStore {
       if (count <= limit) return;
 
       const deleteCount = count - limit;
-      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const tx = db.transaction(STORE_NAME, "readwrite");
       let cursor = await tx.store.openCursor();
       let deleted = 0;
 
@@ -201,7 +214,7 @@ class LogStore {
 
       await tx.done;
     } catch (err) {
-      console.warn('[log-store] Prune failed:', err);
+      console.warn("[log-store] Prune failed:", err);
     }
   }
 
@@ -216,7 +229,7 @@ class LogStore {
       const all = await db.getAll(STORE_NAME);
       return all.slice(-limit).reverse();
     } catch (err) {
-      console.warn('[log-store] getRecentEntries failed:', err);
+      console.warn("[log-store] getRecentEntries failed:", err);
       return [];
     }
   }

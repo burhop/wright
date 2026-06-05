@@ -1,6 +1,7 @@
 import sys
 import json
 
+
 def main():
     for line in sys.stdin:
         line = line.strip()
@@ -24,8 +25,8 @@ def main():
                     "result": {
                         "protocolVersion": "2024-11-05",
                         "capabilities": {},
-                        "serverInfo": {"name": "mock-server", "version": "1.0"}
-                    }
+                        "serverInfo": {"name": "mock-server", "version": "1.0"},
+                    },
                 }
             elif method == "tools/list":
                 res = {
@@ -39,11 +40,11 @@ def main():
                                 "inputSchema": {
                                     "type": "object",
                                     "properties": {"val": {"type": "string"}},
-                                    "required": ["val"]
-                                }
+                                    "required": ["val"],
+                                },
                             }
                         ]
-                    }
+                    },
                 }
             elif method == "tools/call":
                 args = params.get("arguments", {})
@@ -54,22 +55,23 @@ def main():
                         "content": [
                             {
                                 "type": "text",
-                                "text": f"Called test_tool with: {json.dumps(args)}"
+                                "text": f"Called test_tool with: {json.dumps(args)}",
                             }
                         ]
-                    }
+                    },
                 }
             else:
                 res = {
                     "jsonrpc": "2.0",
                     "id": req_id,
-                    "error": {"code": -32601, "message": "Method not found"}
+                    "error": {"code": -32601, "message": "Method not found"},
                 }
             sys.stdout.write(json.dumps(res) + "\n")
             sys.stdout.flush()
         else:
             # Handle notifications (e.g. notifications/initialized)
             pass
+
 
 if __name__ == "__main__":
     main()

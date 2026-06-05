@@ -2,42 +2,53 @@ from abc import ABC, abstractmethod
 from typing import AsyncIterator
 from dataclasses import dataclass
 
+
 @dataclass
 class AgentStreamEvent:
     """A single event from an agent response stream."""
-    type: str          # "token" | "tool" | "stream_end" | "error"
-    data: dict         # Event-specific payload
+
+    type: str  # "token" | "tool" | "stream_end" | "error"
+    data: dict  # Event-specific payload
+
 
 @dataclass
 class AgentChatRequest:
     """Request to send a message to an agent."""
+
     session_id: str
     message: str
     trace_id: str | None = None
 
+
 @dataclass
 class AgentChatStartResponse:
     """Response from starting a chat turn."""
+
     stream_id: str
     session_id: str
+
 
 @dataclass
 class AgentSessionInfo:
     """Summary of an agent session."""
+
     session_id: str
     title: str
     created_at: int
     updated_at: int
     message_count: int
 
+
 @dataclass
 class AgentChatMessage:
     """A single chat message from an agent session's history."""
+
     id: str
-    role: str           # "user" | "assistant" | "system"
+    role: str  # "user" | "assistant" | "system"
     content: str
-    timestamp: int      # epoch ms
+    timestamp: int  # epoch ms
     trace_id: str | None = None
+
 
 class BaseAgentEngine(ABC):
     """Abstract base for all agent adapters (Constitution §2)."""
@@ -88,7 +99,7 @@ class BaseAgentEngine(ABC):
         pass
 
     @abstractmethod
-    async def get_chat_history(self, session_id: str) -> list['AgentChatMessage']:
+    async def get_chat_history(self, session_id: str) -> list["AgentChatMessage"]:
         """Retrieve the full chat message history for a session.
 
         Each agent backend is responsible for persisting its own chat history.

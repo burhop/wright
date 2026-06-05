@@ -1,18 +1,22 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import FileTree from '../common/FileTree';
-import ThreeDViewer from '../common/ThreeDViewer';
-import DiffViewer from '../common/DiffViewer';
-import EditorTabs from '../common/EditorTabs';
-import FileEditor from '../common/FileEditor';
-import ToolsMarketplace from '../common/ToolsMarketplace';
-import ImagePreviewer from '../common/ImagePreviewer';
-import { useChat } from '../../store/sessions';
-import { workspaceService, type WorkspaceNode, MergeConflictError } from '../../services/workspace-service';
-import { agentService } from '../../services/agent-service';
-import useHealthStatus from '../../hooks/useHealthStatus';
-import ChatTranscript from './ChatTranscript';
-import MessageComposer from './MessageComposer';
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import FileTree from "../common/FileTree";
+import ThreeDViewer from "../common/ThreeDViewer";
+import DiffViewer from "../common/DiffViewer";
+import EditorTabs from "../common/EditorTabs";
+import FileEditor from "../common/FileEditor";
+import ToolsMarketplace from "../common/ToolsMarketplace";
+import ImagePreviewer from "../common/ImagePreviewer";
+import { useChat } from "../../store/sessions";
+import {
+  workspaceService,
+  type WorkspaceNode,
+  MergeConflictError,
+} from "../../services/workspace-service";
+import { agentService } from "../../services/agent-service";
+import useHealthStatus from "../../hooks/useHealthStatus";
+import ChatTranscript from "./ChatTranscript";
+import MessageComposer from "./MessageComposer";
 import {
   ServerIcon,
   FolderIcon,
@@ -21,11 +25,14 @@ import {
   DashboardIcon,
   ToolRegistryIcon,
   FileVaultIcon,
-} from '../common/Icons';
+} from "../common/Icons";
 
-import type { EditorTab } from '../../store/types';
+import type { EditorTab } from "../../store/types";
 
-function findFileInTree(node: WorkspaceNode, targetPath: string): WorkspaceNode | null {
+function findFileInTree(
+  node: WorkspaceNode,
+  targetPath: string,
+): WorkspaceNode | null {
   if (node.path === targetPath) {
     return node;
   }
@@ -44,7 +51,11 @@ interface WorkspacePanelProps {
   onSessionChange?: (sessionId: string) => void;
 }
 
-export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessionId, onSessionChange }: WorkspacePanelProps) {
+export function WorkspacePanel({
+  workspaceId: _workspaceId,
+  sessionId: propSessionId,
+  onSessionChange,
+}: WorkspacePanelProps) {
   const { state, createSession, selectSession, sendMessage } = useChat();
   const navigate = useNavigate();
 
@@ -61,8 +72,10 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
   // ChatProvider's globally-active session (which may belong to a different workspace).
   const activeSessionId = propSessionId || state.activeSessionId;
   const statuses = useHealthStatus();
-  const agentStatus = statuses.find((s) => s.serviceId === 'hermes-agent')?.state;
-  const isAgentDisconnected = agentStatus === 'disconnected';
+  const agentStatus = statuses.find(
+    (s) => s.serviceId === "hermes-agent",
+  )?.state;
+  const isAgentDisconnected = agentStatus === "disconnected";
 
   const activeSession =
     state.sessions.find((s) => s.sessionId === activeSessionId) || null;
@@ -72,13 +85,13 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     const fetchActiveAgent = async () => {
       try {
         const active = await agentService.getActiveAgent();
-        if (active === 'hermes') setSelectedModel('Hermes');
-        else if (active === 'openclaw') setSelectedModel('openclaw');
-        else if (active === 'pi') setSelectedModel('PI');
-        else if (active === 'qwen') setSelectedModel('Qwen');
+        if (active === "hermes") setSelectedModel("Hermes");
+        else if (active === "openclaw") setSelectedModel("openclaw");
+        else if (active === "pi") setSelectedModel("PI");
+        else if (active === "qwen") setSelectedModel("Qwen");
         else setSelectedModel(active);
       } catch (err) {
-        console.error('Failed to fetch active agent from backend', err);
+        console.error("Failed to fetch active agent from backend", err);
       }
     };
     fetchActiveAgent();
@@ -87,16 +100,19 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
   const handleModelChange = async (newModel: string) => {
     setSelectedModel(newModel);
     try {
-      await agentService.setActiveAgent(newModel.toLowerCase(), activeSessionId);
+      await agentService.setActiveAgent(
+        newModel.toLowerCase(),
+        activeSessionId,
+      );
     } catch (err) {
-      console.error('Failed to change active agent on backend', err);
+      console.error("Failed to change active agent on backend", err);
     }
   };
 
   // --- Layout state persistence via localStorage ---
   const layoutKey = useMemo(
     () => (propSessionId ? `wright-workspace-layout-${propSessionId}` : null),
-    [propSessionId]
+    [propSessionId],
   );
 
   // Read saved layout once on mount
@@ -105,41 +121,43 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     try {
       const raw = localStorage.getItem(layoutKey);
       if (raw) return JSON.parse(raw);
-    } catch { /* ignore corrupt data */ }
+    } catch {
+      /* ignore corrupt data */
+    }
     return null;
   }, [layoutKey]);
 
   // Layout states — initialised from localStorage when available
-  const [activeSidebar, setActiveSidebar] = useState<'marketplace' | 'files' | 'git' | 'settings'>(
-    savedLayout?.activeSidebar ?? 'files'
-  );
+  const [activeSidebar, setActiveSidebar] = useState<
+    "marketplace" | "files" | "git" | "settings"
+  >(savedLayout?.activeSidebar ?? "files");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
-    savedLayout?.isSidebarCollapsed ?? false
+    savedLayout?.isSidebarCollapsed ?? false,
   );
   const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
-    savedLayout?.isAgentCollapsed ?? false
+    savedLayout?.isAgentCollapsed ?? false,
   );
   const [openTabs, setOpenTabs] = useState<EditorTab[]>(
-    savedLayout?.openTabs ?? []
+    savedLayout?.openTabs ?? [],
   );
   const [activeTabPath, setActiveTabPath] = useState<string | null>(
-    savedLayout?.activeTabPath ?? null
+    savedLayout?.activeTabPath ?? null,
   );
 
   // Resize and model states
   const [leftSidebarWidth, setLeftSidebarWidth] = useState<number>(
-    savedLayout?.leftSidebarWidth ?? 260
+    savedLayout?.leftSidebarWidth ?? 260,
   );
   const [rightSidebarWidth, setRightSidebarWidth] = useState<number>(
-    savedLayout?.rightSidebarWidth ?? 360
+    savedLayout?.rightSidebarWidth ?? 360,
   );
   const [isLeftDragging, setIsLeftDragging] = useState<boolean>(false);
   const [isRightDragging, setIsRightDragging] = useState<boolean>(false);
-  const [selectedModel, setSelectedModel] = useState<string>('Hermes');
+  const [selectedModel, setSelectedModel] = useState<string>("Hermes");
 
   // File tree expanded directories — persisted so the tree stays open across refresh
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
-    () => new Set<string>(savedLayout?.expandedPaths ?? [])
+    () => new Set<string>(savedLayout?.expandedPaths ?? []),
   );
 
   const handleToggleExpand = useCallback((path: string) => {
@@ -172,7 +190,9 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       };
       try {
         localStorage.setItem(layoutKey, JSON.stringify(state));
-      } catch { /* quota exceeded — not critical */ }
+      } catch {
+        /* quota exceeded — not critical */
+      }
     }, 300);
     return () => {
       if (layoutTimerRef.current) clearTimeout(layoutTimerRef.current);
@@ -191,26 +211,42 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
 
   // File loading states
   const [loadedContents, setLoadedContents] = useState<Record<string, any>>({});
-  const [loadingContentPath, setLoadingContentPath] = useState<string | null>(null);
+  const [loadingContentPath, setLoadingContentPath] = useState<string | null>(
+    null,
+  );
 
-  const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(null);
-  const [workspacePath, setWorkspacePath] = useState<string>('');
+  const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
+    null,
+  );
+  const [workspacePath, setWorkspacePath] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Git state
-  const [gitBranch, setGitBranch] = useState<string>('main');
-  const [gitChanges, setGitChanges] = useState<{ path: string; git_status: string; staged: boolean }[]>([]);
-  const [gitHistory, setGitHistory] = useState<{ commit_hash: string; message: string; author: string; timestamp: number }[]>([]);
-  const [commitMessage, setCommitMessage] = useState('');
+  const [gitBranch, setGitBranch] = useState<string>("main");
+  const [gitChanges, setGitChanges] = useState<
+    { path: string; git_status: string; staged: boolean }[]
+  >([]);
+  const [gitHistory, setGitHistory] = useState<
+    {
+      commit_hash: string;
+      message: string;
+      author: string;
+      timestamp: number;
+    }[]
+  >([]);
+  const [commitMessage, setCommitMessage] = useState("");
   const [gitLoading, setGitLoading] = useState(false);
   const [gitError, setGitError] = useState<string | null>(null);
-  const [activeDiffFile, setActiveDiffFile] = useState<{ path: string; diffText: string } | null>(null);
+  const [activeDiffFile, setActiveDiffFile] = useState<{
+    path: string;
+    diffText: string;
+  } | null>(null);
 
   // Remote Options state
-  const [remoteUrl, setRemoteUrl] = useState('');
-  const [gitUsername, setGitUsername] = useState('');
-  const [gitToken, setGitToken] = useState('');
+  const [remoteUrl, setRemoteUrl] = useState("");
+  const [gitUsername, setGitUsername] = useState("");
+  const [gitToken, setGitToken] = useState("");
   const [optionsSaved, setOptionsSaved] = useState(false);
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [optionsError, setOptionsError] = useState<string | null>(null);
@@ -232,15 +268,15 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     const handleWebMcpRequest = (e: Event) => {
       const customEvent = e as CustomEvent;
       const { callId, method } = customEvent.detail || {};
-      
+
       if (!callId) return;
 
-      if (method === 'get_selected_part') {
-        const responseEvent = new CustomEvent('webmcp:response', {
+      if (method === "get_selected_part") {
+        const responseEvent = new CustomEvent("webmcp:response", {
           detail: {
             callId,
             result: {
-              partId: 'part-aba8973b-31a8',
+              partId: "part-aba8973b-31a8",
               dimensions: [12.0, 5.5, 2.3],
             },
           },
@@ -249,9 +285,9 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       }
     };
 
-    window.addEventListener('webmcp:request', handleWebMcpRequest);
+    window.addEventListener("webmcp:request", handleWebMcpRequest);
     return () => {
-      window.removeEventListener('webmcp:request', handleWebMcpRequest);
+      window.removeEventListener("webmcp:request", handleWebMcpRequest);
     };
   }, []);
 
@@ -264,11 +300,11 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       const statusRes = await workspaceService.getGitStatus(activeSessionId);
       setGitBranch(statusRes.branch_name);
       setGitChanges(statusRes.changes);
-      
+
       const historyRes = await workspaceService.getGitHistory(activeSessionId);
       setGitHistory(historyRes.commits);
     } catch (err: unknown) {
-      console.error('Failed to fetch Git data:', err);
+      console.error("Failed to fetch Git data:", err);
     } finally {
       setGitLoading(false);
     }
@@ -281,15 +317,15 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     setOptionsError(null);
     try {
       const config = await workspaceService.getWorkspaceConfig(activeSessionId);
-      setRemoteUrl(config.git_remote_url || '');
-      setGitUsername(config.git_username || '');
-      setGitToken(config.has_token ? '••••••••' : '');
+      setRemoteUrl(config.git_remote_url || "");
+      setGitUsername(config.git_username || "");
+      setGitToken(config.has_token ? "••••••••" : "");
       if (config.workspace_path) {
         setWorkspacePath(config.workspace_path);
       }
     } catch (err: unknown) {
-      console.error('Failed to fetch workspace config:', err);
-      setOptionsError('Failed to load workspace settings.');
+      console.error("Failed to fetch workspace config:", err);
+      setOptionsError("Failed to load workspace settings.");
     } finally {
       setOptionsLoading(false);
     }
@@ -304,20 +340,29 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     const fetchTabContent = async () => {
       setLoadingContentPath(activeTabPath);
       try {
-        const ext = activeTabPath.split('.').pop()?.toLowerCase() || '';
-        if (ext === 'stl' || ['png', 'jpg', 'jpeg', 'svg', 'gif'].includes(ext)) {
-          const buffer = await workspaceService.getFileContentArrayBuffer(activeSessionId, activeTabPath);
+        const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
+        if (
+          ext === "stl" ||
+          ["png", "jpg", "jpeg", "svg", "gif"].includes(ext)
+        ) {
+          const buffer = await workspaceService.getFileContentArrayBuffer(
+            activeSessionId,
+            activeTabPath,
+          );
           if (isMounted) {
             setLoadedContents((prev) => ({ ...prev, [activeTabPath]: buffer }));
           }
         } else {
-          const text = await workspaceService.getFileContentText(activeSessionId, activeTabPath);
+          const text = await workspaceService.getFileContentText(
+            activeSessionId,
+            activeTabPath,
+          );
           if (isMounted) {
             setLoadedContents((prev) => ({ ...prev, [activeTabPath]: text }));
           }
         }
       } catch (err) {
-        console.error('Failed to fetch tab content:', err);
+        console.error("Failed to fetch tab content:", err);
       } finally {
         if (isMounted) setLoadingContentPath(null);
       }
@@ -352,34 +397,61 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         if (currentPath) {
           const fileNode = findFileInTree(tree, currentPath);
           if (fileNode) {
-            const activeTabObj = openTabsRef.current.find((t) => t.path === currentPath);
-            if (activeTabObj && fileNode.last_modified > activeTabObj.last_modified) {
-              console.log(`Hot-reloading disk modifications for: ${currentPath}`);
+            const activeTabObj = openTabsRef.current.find(
+              (t) => t.path === currentPath,
+            );
+            if (
+              activeTabObj &&
+              fileNode.last_modified > activeTabObj.last_modified
+            ) {
+              console.log(
+                `Hot-reloading disk modifications for: ${currentPath}`,
+              );
               try {
-                const ext = currentPath.split('.').pop()?.toLowerCase() || '';
-                if (ext === 'stl' || ['png', 'jpg', 'jpeg', 'svg', 'gif'].includes(ext)) {
-                  const updatedBuffer = await workspaceService.getFileContentArrayBuffer(activeSessionId, currentPath);
+                const ext = currentPath.split(".").pop()?.toLowerCase() || "";
+                if (
+                  ext === "stl" ||
+                  ["png", "jpg", "jpeg", "svg", "gif"].includes(ext)
+                ) {
+                  const updatedBuffer =
+                    await workspaceService.getFileContentArrayBuffer(
+                      activeSessionId,
+                      currentPath,
+                    );
                   if (!isMounted) return;
-                  setLoadedContents((prev) => ({ ...prev, [currentPath]: updatedBuffer }));
+                  setLoadedContents((prev) => ({
+                    ...prev,
+                    [currentPath]: updatedBuffer,
+                  }));
                 } else {
-                  const updatedText = await workspaceService.getFileContentText(activeSessionId, currentPath);
+                  const updatedText = await workspaceService.getFileContentText(
+                    activeSessionId,
+                    currentPath,
+                  );
                   if (!isMounted) return;
-                  setLoadedContents((prev) => ({ ...prev, [currentPath]: updatedText }));
+                  setLoadedContents((prev) => ({
+                    ...prev,
+                    [currentPath]: updatedText,
+                  }));
                 }
                 // Update tab's timestamp record
                 setOpenTabs((prev) =>
-                  prev.map((t) => (t.path === currentPath ? { ...t, last_modified: fileNode.last_modified } : t))
+                  prev.map((t) =>
+                    t.path === currentPath
+                      ? { ...t, last_modified: fileNode.last_modified }
+                      : t,
+                  ),
                 );
               } catch (err) {
-                console.error('Failed to hot-reload modified file:', err);
+                console.error("Failed to hot-reload modified file:", err);
               }
             }
           }
         }
       } catch (err: unknown) {
         if (!isMounted) return;
-        console.error('Error fetching workspace files:', err);
-        setError('Failed to fetch workspace files');
+        console.error("Error fetching workspace files:", err);
+        setError("Failed to fetch workspace files");
       } finally {
         if (isMounted && isInitial) setLoading(false);
       }
@@ -399,9 +471,9 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
 
   // Load settings and git data on sidebar tab activation
   useEffect(() => {
-    if (activeSidebar === 'git') {
+    if (activeSidebar === "git") {
       fetchGitData();
-    } else if (activeSidebar === 'settings') {
+    } else if (activeSidebar === "settings") {
       fetchConfig();
     }
   }, [activeSidebar, fetchGitData, fetchConfig]);
@@ -414,18 +486,20 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     setOptionsError(null);
     setOptionsSaved(false);
     try {
-      const tokenToSend = gitToken === '••••••••' ? null : gitToken;
+      const tokenToSend = gitToken === "••••••••" ? null : gitToken;
       await workspaceService.updateWorkspaceConfig(
         activeSessionId,
         remoteUrl.trim() || null,
         gitUsername.trim() || null,
-        tokenToSend
+        tokenToSend,
       );
       setOptionsSaved(true);
       setTimeout(() => setOptionsSaved(false), 3000);
       await fetchConfig();
     } catch (err: unknown) {
-      setOptionsError(err instanceof Error ? err.message : 'Save settings failed');
+      setOptionsError(
+        err instanceof Error ? err.message : "Save settings failed",
+      );
     } finally {
       setOptionsLoading(false);
     }
@@ -437,9 +511,9 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     setOptionsError(null);
     try {
       await workspaceService.pushCommits(activeSessionId);
-      alert('Push completed successfully!');
+      alert("Push completed successfully!");
     } catch (err: unknown) {
-      setOptionsError(err instanceof Error ? err.message : 'Push failed');
+      setOptionsError(err instanceof Error ? err.message : "Push failed");
     } finally {
       setOptionsLoading(false);
     }
@@ -451,15 +525,17 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     setOptionsError(null);
     try {
       await workspaceService.pullCommits(activeSessionId);
-      alert('Pull completed successfully!');
+      alert("Pull completed successfully!");
       const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
       setWorkspaceRoot(tree);
       await fetchGitData();
     } catch (err: unknown) {
       if (err instanceof MergeConflictError) {
-        setOptionsError(`Merge conflict in files: ${err.conflictedFiles.join(', ')}`);
+        setOptionsError(
+          `Merge conflict in files: ${err.conflictedFiles.join(", ")}`,
+        );
       } else {
-        setOptionsError(err instanceof Error ? err.message : 'Pull failed');
+        setOptionsError(err instanceof Error ? err.message : "Pull failed");
       }
     } finally {
       setOptionsLoading(false);
@@ -473,13 +549,16 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     setGitLoading(true);
     setGitError(null);
     try {
-      await workspaceService.commitChanges(activeSessionId, commitMessage.trim());
-      setCommitMessage('');
+      await workspaceService.commitChanges(
+        activeSessionId,
+        commitMessage.trim(),
+      );
+      setCommitMessage("");
       const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
       setWorkspaceRoot(tree);
       await fetchGitData();
     } catch (err: unknown) {
-      setGitError(err instanceof Error ? err.message : 'Commit failed');
+      setGitError(err instanceof Error ? err.message : "Commit failed");
     } finally {
       setGitLoading(false);
     }
@@ -490,10 +569,13 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     setGitLoading(true);
     setGitError(null);
     try {
-      const diffText = await workspaceService.getGitDiff(activeSessionId, filePath);
+      const diffText = await workspaceService.getGitDiff(
+        activeSessionId,
+        filePath,
+      );
       setActiveDiffFile({ path: filePath, diffText });
     } catch (err: unknown) {
-      setGitError(err instanceof Error ? err.message : 'Failed to view diff');
+      setGitError(err instanceof Error ? err.message : "Failed to view diff");
     } finally {
       setGitLoading(false);
     }
@@ -501,7 +583,8 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
 
   const handleRevert = async (filePath: string) => {
     if (!activeSessionId) return;
-    if (!confirm(`Are you sure you want to revert changes in ${filePath}?`)) return;
+    if (!confirm(`Are you sure you want to revert changes in ${filePath}?`))
+      return;
     setGitLoading(true);
     setGitError(null);
     try {
@@ -513,7 +596,7 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         setActiveDiffFile(null);
       }
     } catch (err: unknown) {
-      setGitError(err instanceof Error ? err.message : 'Revert failed');
+      setGitError(err instanceof Error ? err.message : "Revert failed");
     } finally {
       setGitLoading(false);
     }
@@ -523,17 +606,17 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
 
-    const ext = path.split('.').pop()?.toLowerCase() || '';
-    let tabType: 'stl' | 'image' | 'code' | 'text' = 'text';
-    if (ext === 'stl') {
-      tabType = 'stl';
-    } else if (['png', 'jpg', 'jpeg', 'svg', 'gif'].includes(ext)) {
-      tabType = 'image';
-    } else if (['py', 'scad', 'json', 'md', 'txt'].includes(ext)) {
-      tabType = 'code';
+    const ext = path.split(".").pop()?.toLowerCase() || "";
+    let tabType: "stl" | "image" | "code" | "text" = "text";
+    if (ext === "stl") {
+      tabType = "stl";
+    } else if (["png", "jpg", "jpeg", "svg", "gif"].includes(ext)) {
+      tabType = "image";
+    } else if (["py", "scad", "json", "md", "txt"].includes(ext)) {
+      tabType = "code";
     }
 
-    const fileName = path.split('/').pop() || path;
+    const fileName = path.split("/").pop() || path;
 
     const existingTab = openTabs.find((t) => t.path === path);
     if (!existingTab) {
@@ -554,16 +637,21 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
   };
 
   // File tree operations
-  const handleCreate = async (parentPath: string, name: string, type: 'file' | 'directory') => {
+  const handleCreate = async (
+    parentPath: string,
+    name: string,
+    type: "file" | "directory",
+  ) => {
     if (!activeSessionId) return;
     try {
-      const fullPath = parentPath === '/' ? `/${name}` : `${parentPath}/${name}`;
+      const fullPath =
+        parentPath === "/" ? `/${name}` : `${parentPath}/${name}`;
       await workspaceService.createFileNode(activeSessionId, fullPath, type);
       const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
       setWorkspaceRoot(tree);
       await fetchGitData();
     } catch (err: unknown) {
-      console.error('Failed to create file node:', err);
+      console.error("Failed to create file node:", err);
       throw err;
     }
   };
@@ -577,7 +665,7 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       await fetchGitData();
       handleCloseTab(filePath);
     } catch (err: unknown) {
-      console.error('Failed to delete file node:', err);
+      console.error("Failed to delete file node:", err);
       throw err;
     }
   };
@@ -589,14 +677,14 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
       setWorkspaceRoot(tree);
       await fetchGitData();
-      
+
       // Update tabs if opened
       setOpenTabs((prev) =>
         prev.map((t) =>
           t.path === oldPath
-            ? { ...t, path: newPath, name: newPath.split('/').pop() || newPath }
-            : t
-        )
+            ? { ...t, path: newPath, name: newPath.split("/").pop() || newPath }
+            : t,
+        ),
       );
       if (activeTabPath === oldPath) {
         setActiveTabPath(newPath);
@@ -610,7 +698,7 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         });
       }
     } catch (err: unknown) {
-      console.error('Failed to rename file node:', err);
+      console.error("Failed to rename file node:", err);
       throw err;
     }
   };
@@ -618,16 +706,20 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
   const handleMove = async (sourcePath: string, destPath: string) => {
     if (!activeSessionId) return;
     try {
-      await workspaceService.moveFileNode(activeSessionId, sourcePath, destPath);
+      await workspaceService.moveFileNode(
+        activeSessionId,
+        sourcePath,
+        destPath,
+      );
       const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
       setWorkspaceRoot(tree);
       await fetchGitData();
-      
+
       if (activeTabPath === sourcePath) {
         setActiveTabPath(destPath);
       }
     } catch (err: unknown) {
-      console.error('Failed to move file node:', err);
+      console.error("Failed to move file node:", err);
       throw err;
     }
   };
@@ -635,7 +727,7 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
   const handleCloseTab = (path: string) => {
     const remaining = openTabs.filter((t) => t.path !== path);
     setOpenTabs(remaining);
-    
+
     // Clear content cache to free memory
     setLoadedContents((prev) => {
       const updated = { ...prev };
@@ -644,7 +736,9 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     });
 
     if (activeTabPath === path) {
-      setActiveTabPath(remaining.length > 0 ? remaining[remaining.length - 1].path : null);
+      setActiveTabPath(
+        remaining.length > 0 ? remaining[remaining.length - 1].path : null,
+      );
     }
   };
 
@@ -654,7 +748,7 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
 
   const handleSaveStatusChange = (path: string, isDirty: boolean) => {
     setOpenTabs((prev) =>
-      prev.map((t) => (t.path === path ? { ...t, isDirty } : t))
+      prev.map((t) => (t.path === path ? { ...t, isDirty } : t)),
     );
   };
 
@@ -680,11 +774,11 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     const handleMouseUp = () => {
       setIsLeftDragging(false);
     };
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isLeftDragging]);
 
@@ -699,16 +793,18 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     const handleMouseUp = () => {
       setIsRightDragging(false);
     };
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isRightDragging]);
 
   // Toggle activity bar sidebar
-  const handleActivityBarClick = (sidebar: 'marketplace' | 'files' | 'git' | 'settings') => {
+  const handleActivityBarClick = (
+    sidebar: "marketplace" | "files" | "git" | "settings",
+  ) => {
     if (activeSidebar === sidebar) {
       setIsSidebarCollapsed(!isSidebarCollapsed);
     } else {
@@ -723,39 +819,46 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
     <div
       data-testid="workspace-panel"
       style={{
-        display: 'grid',
-        gridTemplateColumns: `48px ${isSidebarCollapsed ? '0px' : `${leftSidebarWidth}px`} ${isSidebarCollapsed ? '0px' : '4px'} 1fr ${isAgentCollapsed ? '0px' : '4px'} ${isAgentCollapsed ? '0px' : `${rightSidebarWidth}px`}`,
-        height: '100%',
-        width: '100%',
-        backgroundColor: 'var(--color-neutral)',
-        color: 'var(--color-primary)',
-        overflow: 'hidden',
-        transition: (isLeftDragging || isRightDragging) ? 'none' : 'grid-template-columns 0.15s ease-out',
+        display: "grid",
+        gridTemplateColumns: `48px ${isSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${isSidebarCollapsed ? "0px" : "4px"} 1fr ${isAgentCollapsed ? "0px" : "4px"} ${isAgentCollapsed ? "0px" : `${rightSidebarWidth}px`}`,
+        height: "100%",
+        width: "100%",
+        backgroundColor: "var(--color-neutral)",
+        color: "var(--color-primary)",
+        overflow: "hidden",
+        transition:
+          isLeftDragging || isRightDragging
+            ? "none"
+            : "grid-template-columns 0.15s ease-out",
       }}
     >
       {/* 1. Activity Bar (far left) */}
       <div
         style={{
-          backgroundColor: 'var(--color-surface-subtle)',
-          borderRight: '1px solid var(--color-border)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          paddingTop: 'var(--space-md)',
-          gap: 'var(--space-md)',
+          backgroundColor: "var(--color-surface-subtle)",
+          borderRight: "1px solid var(--color-border)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          paddingTop: "var(--space-md)",
+          gap: "var(--space-md)",
           zIndex: 5,
         }}
       >
         <button
           data-testid="activity-bar-tools-btn"
-          onClick={() => handleActivityBarClick('marketplace')}
+          onClick={() => handleActivityBarClick("marketplace")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
-            opacity: (!isSidebarCollapsed && activeSidebar === 'marketplace') ? 1 : 0.45,
-            color: (!isSidebarCollapsed && activeSidebar === 'marketplace') ? 'var(--color-secondary)' : 'var(--color-primary)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
+            opacity:
+              !isSidebarCollapsed && activeSidebar === "marketplace" ? 1 : 0.45,
+            color:
+              !isSidebarCollapsed && activeSidebar === "marketplace"
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
           }}
           title="Tools Marketplace"
           className="activity-bar-icon"
@@ -764,14 +867,18 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         </button>
         <button
           data-testid="activity-bar-explorer-btn"
-          onClick={() => handleActivityBarClick('files')}
+          onClick={() => handleActivityBarClick("files")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
-            opacity: (!isSidebarCollapsed && activeSidebar === 'files') ? 1 : 0.45,
-            color: (!isSidebarCollapsed && activeSidebar === 'files') ? 'var(--color-secondary)' : 'var(--color-primary)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
+            opacity:
+              !isSidebarCollapsed && activeSidebar === "files" ? 1 : 0.45,
+            color:
+              !isSidebarCollapsed && activeSidebar === "files"
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
           }}
           title="Workspace Files"
           className="activity-bar-icon"
@@ -780,14 +887,17 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         </button>
         <button
           data-testid="activity-bar-git-btn"
-          onClick={() => handleActivityBarClick('git')}
+          onClick={() => handleActivityBarClick("git")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
-            opacity: (!isSidebarCollapsed && activeSidebar === 'git') ? 1 : 0.45,
-            color: (!isSidebarCollapsed && activeSidebar === 'git') ? 'var(--color-secondary)' : 'var(--color-primary)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
+            opacity: !isSidebarCollapsed && activeSidebar === "git" ? 1 : 0.45,
+            color:
+              !isSidebarCollapsed && activeSidebar === "git"
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
           }}
           title="Version Control"
           className="activity-bar-icon"
@@ -796,14 +906,18 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         </button>
         <button
           data-testid="activity-bar-settings-btn"
-          onClick={() => handleActivityBarClick('settings')}
+          onClick={() => handleActivityBarClick("settings")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
-            opacity: (!isSidebarCollapsed && activeSidebar === 'settings') ? 1 : 0.45,
-            color: (!isSidebarCollapsed && activeSidebar === 'settings') ? 'var(--color-secondary)' : 'var(--color-primary)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
+            opacity:
+              !isSidebarCollapsed && activeSidebar === "settings" ? 1 : 0.45,
+            color:
+              !isSidebarCollapsed && activeSidebar === "settings"
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
           }}
           title="Workspace Settings"
           className="activity-bar-icon"
@@ -812,19 +926,26 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         </button>
 
         {/* Divider */}
-        <div style={{ width: '60%', height: '1px', backgroundColor: 'var(--color-border)', margin: 'var(--space-xs) 0' }} />
+        <div
+          style={{
+            width: "60%",
+            height: "1px",
+            backgroundColor: "var(--color-border)",
+            margin: "var(--space-xs) 0",
+          }}
+        />
 
         {/* Global Page Navigation */}
         <button
           data-testid="nav-dashboard"
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
             opacity: 0.45,
-            color: 'var(--color-primary)',
+            color: "var(--color-primary)",
           }}
           title="Dashboard"
           className="activity-bar-icon"
@@ -833,14 +954,14 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         </button>
         <button
           data-testid="nav-tool-registry"
-          onClick={() => navigate('/tool-registry')}
+          onClick={() => navigate("/tool-registry")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
             opacity: 0.45,
-            color: 'var(--color-primary)',
+            color: "var(--color-primary)",
           }}
           title="Tool Registry"
           className="activity-bar-icon"
@@ -849,14 +970,14 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         </button>
         <button
           data-testid="nav-file-vault"
-          onClick={() => navigate('/file-vault')}
+          onClick={() => navigate("/file-vault")}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 'var(--space-xs)',
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
             opacity: 0.45,
-            color: 'var(--color-primary)',
+            color: "var(--color-primary)",
           }}
           title="File Vault"
           className="activity-bar-icon"
@@ -869,56 +990,74 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       <div
         data-testid="workspace-sidebar"
         style={{
-          backgroundColor: 'var(--color-surface)',
-          borderRight: '1px solid var(--color-border)',
-          display: isSidebarCollapsed ? 'none' : 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
+          backgroundColor: "var(--color-surface)",
+          borderRight: "1px solid var(--color-border)",
+          display: isSidebarCollapsed ? "none" : "flex",
+          flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        {activeSidebar === 'marketplace' && (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {activeSidebar === "marketplace" && (
+          <div
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             <div
               style={{
-                padding: 'var(--space-md)',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                borderBottom: '1px solid var(--color-border)',
-                color: 'var(--color-primary)',
+                padding: "var(--space-md)",
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                borderBottom: "1px solid var(--color-border)",
+                color: "var(--color-primary)",
               }}
             >
               Tools Marketplace
             </div>
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              <ToolsMarketplace sessionId={activeSessionId || ''} />
+            <div style={{ flex: 1, overflowY: "auto" }}>
+              <ToolsMarketplace sessionId={activeSessionId || ""} />
             </div>
           </div>
         )}
 
-        {activeSidebar === 'files' && (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {activeSidebar === "files" && (
+          <div
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             <div
               style={{
-                padding: 'var(--space-md)',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                borderBottom: '1px solid var(--color-border)',
-                color: 'var(--color-primary)',
+                padding: "var(--space-md)",
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                borderBottom: "1px solid var(--color-border)",
+                color: "var(--color-primary)",
               }}
             >
               Workspace Files
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-sm)' }}>
+            <div
+              style={{ flex: 1, overflowY: "auto", padding: "var(--space-sm)" }}
+            >
               {loading && !workspaceRoot ? (
-                <div style={{ color: 'var(--color-secondary)', fontSize: '0.75rem', padding: 'var(--space-sm)' }}>
+                <div
+                  style={{
+                    color: "var(--color-secondary)",
+                    fontSize: "0.75rem",
+                    padding: "var(--space-sm)",
+                  }}
+                >
                   Loading workspace...
                 </div>
               ) : error ? (
-                <div style={{ color: 'var(--color-error)', fontSize: '0.75rem', padding: 'var(--space-sm)' }}>
+                <div
+                  style={{
+                    color: "var(--color-error)",
+                    fontSize: "0.75rem",
+                    padding: "var(--space-sm)",
+                  }}
+                >
                   {error}
                 </div>
               ) : workspaceRoot ? (
@@ -933,7 +1072,13 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
                   onToggleExpand={handleToggleExpand}
                 />
               ) : (
-                <div style={{ color: 'var(--color-secondary)', fontSize: '0.75rem', padding: 'var(--space-sm)' }}>
+                <div
+                  style={{
+                    color: "var(--color-secondary)",
+                    fontSize: "0.75rem",
+                    padding: "var(--space-sm)",
+                  }}
+                >
                   No active workspace.
                 </div>
               )}
@@ -941,64 +1086,110 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           </div>
         )}
 
-        {activeSidebar === 'git' && (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {activeSidebar === "git" && (
+          <div
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             <div
               style={{
-                padding: 'var(--space-md)',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                borderBottom: '1px solid #2d2d2d',
-                color: 'var(--color-primary)',
+                padding: "var(--space-md)",
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                borderBottom: "1px solid #2d2d2d",
+                color: "var(--color-primary)",
               }}
             >
               Git Version Control
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-md)', fontSize: '0.75rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-sm)', borderBottom: '1px solid #3c3c3c', paddingBottom: '2px' }}>
-                <span style={{ fontWeight: 'bold' }}>Git Panel</span>
-                <span style={{ fontSize: '0.7rem', backgroundColor: '#3c3c3c', padding: '1px 5px', borderRadius: '3px' }}>
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                padding: "var(--space-md)",
+                fontSize: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "var(--space-sm)",
+                  borderBottom: "1px solid #3c3c3c",
+                  paddingBottom: "2px",
+                }}
+              >
+                <span style={{ fontWeight: "bold" }}>Git Panel</span>
+                <span
+                  style={{
+                    fontSize: "0.7rem",
+                    backgroundColor: "#3c3c3c",
+                    padding: "1px 5px",
+                    borderRadius: "3px",
+                  }}
+                >
                   🌿 {gitBranch}
                 </span>
               </div>
 
               {gitError && (
-                <div style={{ color: 'var(--color-error)', fontSize: '0.7rem', marginBottom: 'var(--space-sm)' }}>
+                <div
+                  style={{
+                    color: "var(--color-error)",
+                    fontSize: "0.7rem",
+                    marginBottom: "var(--space-sm)",
+                  }}
+                >
                   ⚠️ {gitError}
                 </div>
               )}
 
-              <form onSubmit={handleCommit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)', marginBottom: 'var(--space-md)' }}>
+              <form
+                onSubmit={handleCommit}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-xs)",
+                  marginBottom: "var(--space-md)",
+                }}
+              >
                 <input
                   type="text"
                   placeholder="Commit message..."
                   value={commitMessage}
                   onChange={(e) => setCommitMessage(e.target.value)}
                   style={{
-                    backgroundColor: '#3c3c3c',
-                    color: '#d4d4d4',
-                    border: '1px solid #555',
-                    borderRadius: 'var(--radius-sm)',
-                    padding: '4px var(--space-sm)',
-                    fontSize: '0.75rem',
-                    outline: 'none',
+                    backgroundColor: "#3c3c3c",
+                    color: "#d4d4d4",
+                    border: "1px solid #555",
+                    borderRadius: "var(--radius-sm)",
+                    padding: "4px var(--space-sm)",
+                    fontSize: "0.75rem",
+                    outline: "none",
                   }}
                 />
                 <button
                   type="submit"
-                  disabled={gitLoading || gitChanges.length === 0 || !commitMessage.trim()}
+                  disabled={
+                    gitLoading ||
+                    gitChanges.length === 0 ||
+                    !commitMessage.trim()
+                  }
                   style={{
-                    backgroundColor: 'var(--color-accent, #4f46e5)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--radius-sm)',
-                    padding: '4px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    fontSize: '0.7rem',
-                    opacity: (gitChanges.length === 0 || !commitMessage.trim()) ? 0.6 : 1,
+                    backgroundColor: "var(--color-accent, #4f46e5)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "var(--radius-sm)",
+                    padding: "4px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "0.7rem",
+                    opacity:
+                      gitChanges.length === 0 || !commitMessage.trim()
+                        ? 0.6
+                        : 1,
                   }}
                 >
                   Commit Changes
@@ -1006,32 +1197,72 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
               </form>
 
               {/* Git Changes List */}
-              <div style={{ marginBottom: 'var(--space-md)' }}>
-                <div style={{ fontWeight: '600', marginBottom: '4px' }}>Changes ({gitChanges.length})</div>
+              <div style={{ marginBottom: "var(--space-md)" }}>
+                <div style={{ fontWeight: "600", marginBottom: "4px" }}>
+                  Changes ({gitChanges.length})
+                </div>
                 {gitChanges.length === 0 ? (
-                  <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>No unstaged changes.</div>
+                  <div style={{ fontSize: "0.7rem", opacity: 0.7 }}>
+                    No unstaged changes.
+                  </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
                     {gitChanges.slice(0, 10).map((c) => (
                       <div
                         key={c.path}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '2px 4px',
-                          backgroundColor: '#2d2d2d',
-                          borderRadius: 'var(--radius-xs)',
-                          fontSize: '0.7rem',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "2px 4px",
+                          backgroundColor: "#2d2d2d",
+                          borderRadius: "var(--radius-xs)",
+                          fontSize: "0.7rem",
                         }}
                       >
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px' }} title={c.path}>
-                          <strong style={{ marginRight: '6px' }}>{c.git_status}</strong>
+                        <span
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "140px",
+                          }}
+                          title={c.path}
+                        >
+                          <strong style={{ marginRight: "6px" }}>
+                            {c.git_status}
+                          </strong>
                           {c.path}
                         </span>
-                        <div style={{ display: 'flex', gap: '2px' }}>
-                          <button onClick={() => handleViewDiff(c.path)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#858585' }}>🔍</button>
-                          <button onClick={() => handleRevert(c.path)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-error)' }}>⎌</button>
+                        <div style={{ display: "flex", gap: "2px" }}>
+                          <button
+                            onClick={() => handleViewDiff(c.path)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              color: "#858585",
+                            }}
+                          >
+                            🔍
+                          </button>
+                          <button
+                            onClick={() => handleRevert(c.path)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              color: "var(--color-error)",
+                            }}
+                          >
+                            ⎌
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -1040,37 +1271,58 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
               </div>
 
               {/* Git History List */}
-              <div style={{ marginTop: 'var(--space-md)' }}>
-                <div style={{ fontWeight: '600', marginBottom: '4px' }}>History ({gitHistory.length})</div>
+              <div style={{ marginTop: "var(--space-md)" }}>
+                <div style={{ fontWeight: "600", marginBottom: "4px" }}>
+                  History ({gitHistory.length})
+                </div>
                 {gitHistory.length === 0 ? (
-                  <div style={{ fontSize: '0.7rem', opacity: 0.7 }}>No commits found.</div>
+                  <div style={{ fontSize: "0.7rem", opacity: 0.7 }}>
+                    No commits found.
+                  </div>
                 ) : (
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px',
-                      maxHeight: '150px',
-                      overflowY: 'auto',
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                      maxHeight: "150px",
+                      overflowY: "auto",
                     }}
                   >
                     {gitHistory.map((h) => (
                       <div
                         key={h.commit_hash}
                         style={{
-                          padding: '4px',
-                          backgroundColor: '#2d2d2d',
-                          borderRadius: 'var(--radius-xs)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '2px',
+                          padding: "4px",
+                          backgroundColor: "#2d2d2d",
+                          borderRadius: "var(--radius-xs)",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "2px",
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6rem', opacity: 0.7 }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            fontSize: "0.6rem",
+                            opacity: 0.7,
+                          }}
+                        >
                           <span>👤 {h.author}</span>
-                          <span style={{ fontFamily: 'monospace' }}>{h.commit_hash.substring(0, 7)}</span>
+                          <span style={{ fontFamily: "monospace" }}>
+                            {h.commit_hash.substring(0, 7)}
+                          </span>
                         </div>
-                        <span style={{ fontWeight: '500', color: 'var(--color-primary)', fontSize: '0.7rem' }}>{h.message}</span>
+                        <span
+                          style={{
+                            fontWeight: "500",
+                            color: "var(--color-primary)",
+                            fontSize: "0.7rem",
+                          }}
+                        >
+                          {h.message}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -1080,65 +1332,183 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           </div>
         )}
 
-        {activeSidebar === 'settings' && (
-          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {activeSidebar === "settings" && (
+          <div
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
             <div
               style={{
-                padding: 'var(--space-md)',
-                fontSize: '0.7rem',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                borderBottom: '1px solid #2d2d2d',
-                color: 'var(--color-primary)',
+                padding: "var(--space-md)",
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                borderBottom: "1px solid #2d2d2d",
+                color: "var(--color-primary)",
               }}
             >
               Workspace Options
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-md)', fontSize: '0.75rem' }}>
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                padding: "var(--space-md)",
+                fontSize: "0.75rem",
+              }}
+            >
               {optionsError && (
-                <div style={{ color: 'var(--color-error)', fontSize: '0.7rem', marginBottom: 'var(--space-xs)' }}>
+                <div
+                  style={{
+                    color: "var(--color-error)",
+                    fontSize: "0.7rem",
+                    marginBottom: "var(--space-xs)",
+                  }}
+                >
                   ⚠️ {optionsError}
                 </div>
               )}
 
-              <form onSubmit={handleSaveOptions} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <form
+                onSubmit={handleSaveOptions}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-sm)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
                   <label>Git Remote URL</label>
                   <input
                     type="text"
                     value={remoteUrl}
                     onChange={(e) => setRemoteUrl(e.target.value)}
-                    style={{ backgroundColor: '#3c3c3c', color: '#d4d4d4', border: '1px solid #555', padding: '3px var(--space-xs)', fontSize: '0.75rem', outline: 'none' }}
+                    style={{
+                      backgroundColor: "#3c3c3c",
+                      color: "#d4d4d4",
+                      border: "1px solid #555",
+                      padding: "3px var(--space-xs)",
+                      fontSize: "0.75rem",
+                      outline: "none",
+                    }}
                   />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
                   <label>Git Username</label>
                   <input
                     type="text"
                     value={gitUsername}
                     onChange={(e) => setGitUsername(e.target.value)}
-                    style={{ backgroundColor: '#3c3c3c', color: '#d4d4d4', border: '1px solid #555', padding: '3px var(--space-xs)', fontSize: '0.75rem', outline: 'none' }}
+                    style={{
+                      backgroundColor: "#3c3c3c",
+                      color: "#d4d4d4",
+                      border: "1px solid #555",
+                      padding: "3px var(--space-xs)",
+                      fontSize: "0.75rem",
+                      outline: "none",
+                    }}
                   />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
                   <label>Personal Access Token</label>
                   <input
                     type="password"
                     value={gitToken}
                     onChange={(e) => setGitToken(e.target.value)}
-                    style={{ backgroundColor: '#3c3c3c', color: '#d4d4d4', border: '1px solid #555', padding: '3px var(--space-xs)', fontSize: '0.75rem', outline: 'none' }}
+                    style={{
+                      backgroundColor: "#3c3c3c",
+                      color: "#d4d4d4",
+                      border: "1px solid #555",
+                      padding: "3px var(--space-xs)",
+                      fontSize: "0.75rem",
+                      outline: "none",
+                    }}
                   />
                 </div>
-                <button type="submit" disabled={optionsLoading} style={{ backgroundColor: 'var(--color-accent, #4f46e5)', color: 'white', border: 'none', padding: '4px', cursor: 'pointer', fontWeight: '600', fontSize: '0.7rem', marginTop: 'var(--space-xs)' }}>
+                <button
+                  type="submit"
+                  disabled={optionsLoading}
+                  style={{
+                    backgroundColor: "var(--color-accent, #4f46e5)",
+                    color: "white",
+                    border: "none",
+                    padding: "4px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "0.7rem",
+                    marginTop: "var(--space-xs)",
+                  }}
+                >
                   Save Settings
                 </button>
-                {optionsSaved && <div style={{ color: 'var(--color-success)', fontSize: '0.65rem', textAlign: 'center' }}>✓ Saved!</div>}
+                {optionsSaved && (
+                  <div
+                    style={{
+                      color: "var(--color-success)",
+                      fontSize: "0.65rem",
+                      textAlign: "center",
+                    }}
+                  >
+                    ✓ Saved!
+                  </div>
+                )}
               </form>
 
-              <div style={{ display: 'flex', gap: 'var(--space-xs)', marginTop: 'var(--space-md)' }}>
-                <button onClick={handlePull} disabled={optionsLoading || !remoteUrl} style={{ flex: 1, backgroundColor: '#3c3c3c', color: '#ffffff', border: '1px solid #555', cursor: 'pointer', padding: '3px', fontSize: '0.7rem' }}>Pull</button>
-                <button onClick={handlePush} disabled={optionsLoading || !remoteUrl} style={{ flex: 1, backgroundColor: '#3c3c3c', color: '#ffffff', border: '1px solid #555', cursor: 'pointer', padding: '3px', fontSize: '0.7rem' }}>Push</button>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "var(--space-xs)",
+                  marginTop: "var(--space-md)",
+                }}
+              >
+                <button
+                  onClick={handlePull}
+                  disabled={optionsLoading || !remoteUrl}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#3c3c3c",
+                    color: "#ffffff",
+                    border: "1px solid #555",
+                    cursor: "pointer",
+                    padding: "3px",
+                    fontSize: "0.7rem",
+                  }}
+                >
+                  Pull
+                </button>
+                <button
+                  onClick={handlePush}
+                  disabled={optionsLoading || !remoteUrl}
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#3c3c3c",
+                    color: "#ffffff",
+                    border: "1px solid #555",
+                    cursor: "pointer",
+                    padding: "3px",
+                    fontSize: "0.7rem",
+                  }}
+                >
+                  Push
+                </button>
               </div>
             </div>
           </div>
@@ -1150,26 +1520,33 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         <div
           data-testid="left-resize-handle"
           style={{
-            width: '4px',
-            cursor: 'col-resize',
-            backgroundColor: isLeftDragging ? 'var(--color-secondary)' : 'transparent',
+            width: "4px",
+            cursor: "col-resize",
+            backgroundColor: isLeftDragging
+              ? "var(--color-secondary)"
+              : "transparent",
             zIndex: 10,
-            transition: 'background-color 0.2s',
+            transition: "background-color 0.2s",
           }}
           onMouseDown={handleLeftMouseDown}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-secondary)'; }}
-          onMouseLeave={(e) => { if (!isLeftDragging) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--color-secondary)";
+          }}
+          onMouseLeave={(e) => {
+            if (!isLeftDragging)
+              e.currentTarget.style.backgroundColor = "transparent";
+          }}
         />
       )}
 
       {/* 3. Central Tabbed Editor View */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--color-neutral)',
-          overflow: 'hidden',
-          position: 'relative',
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "var(--color-neutral)",
+          overflow: "hidden",
+          position: "relative",
         }}
       >
         <EditorTabs
@@ -1179,25 +1556,57 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           onCloseTab={handleCloseTab}
         />
 
-        <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+        <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
           {activeTabPath ? (
             loadingContentPath === activeTabPath ? (
-              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--color-secondary)', fontFamily: 'var(--font-ui)', fontSize: '0.8rem' }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--color-secondary)",
+                  fontFamily: "var(--font-ui)",
+                  fontSize: "0.8rem",
+                }}
+              >
                 Loading file content...
               </div>
-            ) : activeTabObj?.type === 'stl' && loadedContents[activeTabPath] ? (
-              <ThreeDViewer arrayBuffer={loadedContents[activeTabPath]} fileName={activeTabObj.name} />
-            ) : activeTabObj?.type === 'image' && loadedContents[activeTabPath] ? (
-              <ImagePreviewer arrayBuffer={loadedContents[activeTabPath]} fileName={activeTabObj.name} />
-            ) : (activeTabObj?.type === 'code' || activeTabObj?.type === 'text') && loadedContents[activeTabPath] !== undefined ? (
+            ) : activeTabObj?.type === "stl" &&
+              loadedContents[activeTabPath] ? (
+              <ThreeDViewer
+                arrayBuffer={loadedContents[activeTabPath]}
+                fileName={activeTabObj.name}
+              />
+            ) : activeTabObj?.type === "image" &&
+              loadedContents[activeTabPath] ? (
+              <ImagePreviewer
+                arrayBuffer={loadedContents[activeTabPath]}
+                fileName={activeTabObj.name}
+              />
+            ) : (activeTabObj?.type === "code" ||
+                activeTabObj?.type === "text") &&
+              loadedContents[activeTabPath] !== undefined ? (
               <FileEditor
-                sessionId={activeSessionId || ''}
+                sessionId={activeSessionId || ""}
                 filePath={activeTabPath}
                 initialContent={loadedContents[activeTabPath]}
-                onSaveStatusChange={(isDirty) => handleSaveStatusChange(activeTabPath, isDirty)}
+                onSaveStatusChange={(isDirty) =>
+                  handleSaveStatusChange(activeTabPath, isDirty)
+                }
               />
             ) : (
-              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--color-secondary)', fontFamily: 'var(--font-ui)', fontSize: '0.8rem' }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--color-secondary)",
+                  fontFamily: "var(--font-ui)",
+                  fontSize: "0.8rem",
+                }}
+              >
                 Failed to render file or file is empty.
               </div>
             )
@@ -1205,22 +1614,37 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
             /* Welcome / landing screen when no tabs are open */
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                color: 'var(--color-secondary)',
-                fontFamily: 'var(--font-ui)',
-                gap: 'var(--space-md)',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                color: "var(--color-secondary)",
+                fontFamily: "var(--font-ui)",
+                gap: "var(--space-md)",
               }}
             >
-              <div style={{ fontSize: '3rem', opacity: 0.4 }}>💻</div>
-              <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--color-primary)' }}>
+              <div style={{ fontSize: "3rem", opacity: 0.4 }}>💻</div>
+              <div
+                style={{
+                  fontSize: "0.9rem",
+                  fontWeight: "600",
+                  color: "var(--color-primary)",
+                }}
+              >
                 Wright Engineering Workspace
               </div>
-              <div style={{ fontSize: '0.75rem', opacity: 0.6, maxWidth: '280px', textAlign: 'center', lineHeight: '1.4' }}>
-                Double-click any file in the left sidebar explorer to open a viewer or code editor tab.
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  opacity: 0.6,
+                  maxWidth: "280px",
+                  textAlign: "center",
+                  lineHeight: "1.4",
+                }}
+              >
+                Double-click any file in the left sidebar explorer to open a
+                viewer or code editor tab.
               </div>
             </div>
           )}
@@ -1230,27 +1654,68 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         {activeDiffFile && (
           <div
             style={{
-              position: 'absolute',
-              top: '35px',
+              position: "absolute",
+              top: "35px",
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'var(--color-surface)',
+              backgroundColor: "var(--color-surface)",
               zIndex: 10,
-              display: 'flex',
-              flexDirection: 'column',
-              padding: 'var(--space-md)',
-              borderTop: '1px solid var(--color-border)',
+              display: "flex",
+              flexDirection: "column",
+              padding: "var(--space-md)",
+              borderTop: "1px solid var(--color-border)",
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-sm)', fontSize: '0.8rem' }}>
-              <span style={{ fontWeight: 'bold' }}>Diff: {activeDiffFile.path}</span>
-              <div style={{ display: 'flex', gap: 'var(--space-xs)' }}>
-                <button onClick={() => handleRevert(activeDiffFile.path)} style={{ backgroundColor: 'var(--color-error)', color: 'white', border: 'none', borderRadius: 'var(--radius-xs)', padding: '2px var(--space-sm)', cursor: 'pointer', fontSize: '0.7rem' }}>Revert</button>
-                <button onClick={() => setActiveDiffFile(null)} style={{ background: 'none', border: 'none', color: '#ffffff', cursor: 'pointer', fontSize: '0.9rem' }}>✕</button>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "var(--space-sm)",
+                fontSize: "0.8rem",
+              }}
+            >
+              <span style={{ fontWeight: "bold" }}>
+                Diff: {activeDiffFile.path}
+              </span>
+              <div style={{ display: "flex", gap: "var(--space-xs)" }}>
+                <button
+                  onClick={() => handleRevert(activeDiffFile.path)}
+                  style={{
+                    backgroundColor: "var(--color-error)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "var(--radius-xs)",
+                    padding: "2px var(--space-sm)",
+                    cursor: "pointer",
+                    fontSize: "0.7rem",
+                  }}
+                >
+                  Revert
+                </button>
+                <button
+                  onClick={() => setActiveDiffFile(null)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#ffffff",
+                    cursor: "pointer",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  ✕
+                </button>
               </div>
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
               <DiffViewer diffText={activeDiffFile.diffText} />
             </div>
           </div>
@@ -1262,15 +1727,22 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
         <div
           data-testid="right-resize-handle"
           style={{
-            width: '4px',
-            cursor: 'col-resize',
-            backgroundColor: isRightDragging ? 'var(--color-secondary)' : 'transparent',
+            width: "4px",
+            cursor: "col-resize",
+            backgroundColor: isRightDragging
+              ? "var(--color-secondary)"
+              : "transparent",
             zIndex: 10,
-            transition: 'background-color 0.2s',
+            transition: "background-color 0.2s",
           }}
           onMouseDown={handleRightMouseDown}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--color-secondary)'; }}
-          onMouseLeave={(e) => { if (!isRightDragging) e.currentTarget.style.backgroundColor = 'transparent'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--color-secondary)";
+          }}
+          onMouseLeave={(e) => {
+            if (!isRightDragging)
+              e.currentTarget.style.backgroundColor = "transparent";
+          }}
         />
       )}
 
@@ -1278,39 +1750,53 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
       <div
         data-testid="agent-sidebar"
         style={{
-          backgroundColor: 'var(--color-surface)',
-          borderLeft: '1px solid var(--color-border)',
-          display: isAgentCollapsed ? 'none' : 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          position: 'relative',
+          backgroundColor: "var(--color-surface)",
+          borderLeft: "1px solid var(--color-border)",
+          display: isAgentCollapsed ? "none" : "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          position: "relative",
         }}
       >
         {/* Agent Tools Window Header */}
         <div
           data-testid="agent-tools-window"
           style={{
-            padding: 'var(--space-sm) var(--space-md)',
-            borderBottom: '1px solid var(--color-border)',
-            backgroundColor: 'var(--color-surface-subtle)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-xs)',
+            padding: "var(--space-sm) var(--space-md)",
+            borderBottom: "1px solid var(--color-border)",
+            backgroundColor: "var(--color-surface-subtle)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-xs)",
           }}
         >
           {/* Row 1: Title and Collapse */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#969696' }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                color: "#969696",
+              }}
+            >
               Agent Control Pane
             </span>
             <button
               onClick={() => setIsAgentCollapsed(true)}
               style={{
-                background: 'none',
-                border: 'none',
-                color: '#858585',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
+                background: "none",
+                border: "none",
+                color: "#858585",
+                cursor: "pointer",
+                fontSize: "0.8rem",
               }}
               title="Collapse Agent Console"
             >
@@ -1319,7 +1805,14 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           </div>
 
           {/* Row 2: Model and Session Selector + New Session Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)', width: '100%' }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-xs)",
+              width: "100%",
+            }}
+          >
             {/* Model Select */}
             <select
               data-testid="llm-model-select"
@@ -1327,15 +1820,15 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
               onChange={(e) => handleModelChange(e.target.value)}
               style={{
                 flex: 1,
-                backgroundColor: 'var(--color-surface-subtle)',
-                color: 'var(--color-primary)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                padding: '6px',
-                fontSize: '0.75rem',
-                outline: 'none',
-                cursor: 'pointer',
-                transition: 'border-color var(--transition-fast)',
+                backgroundColor: "var(--color-surface-subtle)",
+                color: "var(--color-primary)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                padding: "6px",
+                fontSize: "0.75rem",
+                outline: "none",
+                cursor: "pointer",
+                transition: "border-color var(--transition-fast)",
               }}
               title="Select LLM Model"
             >
@@ -1347,7 +1840,7 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
 
             <select
               data-testid="sessions-sidebar"
-              value={state.activeSessionId || ''}
+              value={state.activeSessionId || ""}
               onChange={async (e) => {
                 const newSessId = e.target.value;
                 if (newSessId) {
@@ -1357,34 +1850,48 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
                   }
                   if (_workspaceId) {
                     try {
-                      await workspaceService.updateWorkspaceSession(_workspaceId, newSessId);
+                      await workspaceService.updateWorkspaceSession(
+                        _workspaceId,
+                        newSessId,
+                      );
                     } catch (err) {
-                      console.error('Failed to update workspace session association', err);
+                      console.error(
+                        "Failed to update workspace session association",
+                        err,
+                      );
                     }
                   }
                 }
               }}
               style={{
                 flex: 1.5,
-                backgroundColor: 'var(--color-surface-subtle)',
-                color: 'var(--color-primary)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                padding: '6px',
-                fontSize: '0.75rem',
-                outline: 'none',
-                cursor: 'pointer',
-                textOverflow: 'ellipsis',
-                transition: 'border-color var(--transition-fast)',
+                backgroundColor: "var(--color-surface-subtle)",
+                color: "var(--color-primary)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                padding: "6px",
+                fontSize: "0.75rem",
+                outline: "none",
+                cursor: "pointer",
+                textOverflow: "ellipsis",
+                transition: "border-color var(--transition-fast)",
               }}
               title="Select Session Context"
             >
               {state.sessions.length === 0 ? (
-                <option value="" data-testid="session-none">No sessions</option>
+                <option value="" data-testid="session-none">
+                  No sessions
+                </option>
               ) : (
                 state.sessions.map((session) => (
-                   <option key={session.sessionId} value={session.sessionId} data-testid={`session-${session.sessionId}`}>
-                    {session.title.length > 20 ? `${session.title.slice(0, 18)}...` : session.title}
+                  <option
+                    key={session.sessionId}
+                    value={session.sessionId}
+                    data-testid={`session-${session.sessionId}`}
+                  >
+                    {session.title.length > 20
+                      ? `${session.title.slice(0, 18)}...`
+                      : session.title}
                   </option>
                 ))
               )}
@@ -1395,20 +1902,21 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
               data-testid="create-session-btn"
               onClick={() => createSession(workspacePath)}
               style={{
-                backgroundColor: 'var(--color-secondary)',
-                color: 'var(--color-surface-subtle)',
-                border: 'none',
-                borderRadius: 'var(--radius-md)',
-                width: '28px',
-                height: '28px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                transition: 'background-color var(--transition-fast), box-shadow var(--transition-fast)',
-                boxShadow: 'var(--shadow-glow)',
+                backgroundColor: "var(--color-secondary)",
+                color: "var(--color-surface-subtle)",
+                border: "none",
+                borderRadius: "var(--radius-md)",
+                width: "28px",
+                height: "28px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                transition:
+                  "background-color var(--transition-fast), box-shadow var(--transition-fast)",
+                boxShadow: "var(--shadow-glow)",
               }}
               title="Create New Session"
             >
@@ -1421,23 +1929,33 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           <div
             data-testid="health-banner-hermes"
             style={{
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              borderBottom: '1px solid rgba(239, 68, 68, 0.2)',
-              color: '#ef4444',
-              padding: 'var(--space-sm) var(--space-md)',
-              fontSize: '0.75rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-xs)',
-              fontFamily: 'var(--font-ui)',
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              borderBottom: "1px solid rgba(239, 68, 68, 0.2)",
+              color: "#ef4444",
+              padding: "var(--space-sm) var(--space-md)",
+              fontSize: "0.75rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--space-xs)",
+              fontFamily: "var(--font-ui)",
             }}
           >
-            <span>⚠️ Hermes agent is not available. Check that the wright profile WebUI is running.</span>
+            <span>
+              ⚠️ Hermes agent is not available. Check that the wright profile
+              WebUI is running.
+            </span>
           </div>
         )}
 
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ flex: 1, overflowY: "auto" }}>
             <ChatTranscript
               session={activeSession}
               isStreaming={state.isStreaming}
@@ -1450,8 +1968,17 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           </div>
 
           {activeSession && (
-            <div style={{ padding: 'var(--space-md)', borderTop: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface-subtle)' }}>
-              <MessageComposer onSend={sendMessage} disabled={state.isStreaming} />
+            <div
+              style={{
+                padding: "var(--space-md)",
+                borderTop: "1px solid var(--color-border)",
+                backgroundColor: "var(--color-surface-subtle)",
+              }}
+            >
+              <MessageComposer
+                onSend={sendMessage}
+                disabled={state.isStreaming}
+              />
             </div>
           )}
         </div>
@@ -1463,24 +1990,25 @@ export function WorkspacePanel({ workspaceId: _workspaceId, sessionId: propSessi
           data-testid="agent-sidebar-toggle"
           onClick={() => setIsAgentCollapsed(false)}
           style={{
-            position: 'absolute',
-            right: 'var(--space-md)',
-            top: 'var(--space-md)',
-            backgroundColor: 'var(--color-secondary)',
-            color: 'var(--color-surface-subtle)',
-            border: 'none',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            cursor: 'pointer',
-            boxShadow: 'var(--shadow-glow-active)',
+            position: "absolute",
+            right: "var(--space-md)",
+            top: "var(--space-md)",
+            backgroundColor: "var(--color-secondary)",
+            color: "var(--color-surface-subtle)",
+            border: "none",
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
+            cursor: "pointer",
+            boxShadow: "var(--shadow-glow-active)",
             zIndex: 10,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '0.8rem',
-            fontWeight: 'bold',
-            transition: 'background-color var(--transition-fast), box-shadow var(--transition-fast)',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "0.8rem",
+            fontWeight: "bold",
+            transition:
+              "background-color var(--transition-fast), box-shadow var(--transition-fast)",
           }}
           title="Open Agent Console"
         >

@@ -26,7 +26,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-packages --all-groups
 
       - name: Lint with Ruff
         run: uv run ruff check apps/api/ packages/
@@ -38,6 +38,11 @@ jobs:
         run: |
           uv pip install mypy
           uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
+
+      - name: Configure Git for tests
+        run: |
+          git config --global user.email "test-ci@example.com"
+          git config --global user.name "CI Test Runner"
 
       - name: Run Tests with pytest
         run: uv run pytest
