@@ -94,6 +94,6 @@ We are just beginning to scratch the surface of AI-driven physical design. Our u
 
 Wright is fully open-source under the MIT license, and we welcome developers, mechanical engineers, and designers to join us in shaping the future of physical engineering.
 
-*   Join our **[Discord Server](https://discord.gg/wright)** to chat, ask questions, and showcase your designs.
+*   Join our **[Discord Server](https://discord.gg/2JsdMRxq)** to chat, ask questions, and showcase your designs.
 *   Visit **[GitHub Discussions](https://github.com/burhop/wright/discussions)** to share RFC ideas and collaborate on architecture.
 *   Check out our **[Contributing Guide](CONTRIBUTING.md)** and look for the `good first issue` label to make your first contribution!

@@ -82,7 +82,8 @@ async def get_workspace_dir(
         return workspace["local_path"]
     workspace_path = await engine.get_session_workspace(session_id)
     if not workspace_path:
-        workspace_path = f"/home/burhop/workspace/{session_id}"
+        home_dir = os.environ.get("HOME", os.path.expanduser("~"))
+        workspace_path = os.path.join(home_dir, "workspace", session_id)
     os.makedirs(workspace_path, exist_ok=True)
     workspace_id = str(uuid.uuid4())
     create_workspace(

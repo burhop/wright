@@ -18,6 +18,11 @@ from tool_registry import McpServer
 
 logger = structlog.get_logger(__name__)
 
+# Resolve repository root and default OpenSCAD path dynamically
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+_REPO_ROOT = os.path.abspath(os.path.join(_CURRENT_DIR, *[".."]*5))
+_DEFAULT_OPENSCAD_PATH = os.path.join(_REPO_ROOT, "scripts", "openscad-headless.sh")
+
 
 def sync_mcp_server_to_hermes(server: McpServer) -> None:
     """Sync an MCP server's active/inactive state to Hermes config.yaml files.
@@ -65,7 +70,7 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
 
                     if key_name == "openscadgeometry" or "openscad" in key_name:
                         srv_config["env"] = {
-                            "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
+                            "OPENSCAD_PATH": os.environ.get("OPENSCAD_PATH", _DEFAULT_OPENSCAD_PATH)
                         }
                     config["mcp_servers"][key_name] = srv_config
 
@@ -161,7 +166,7 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                         srv_config = {"command": cmd, "args": args}
                         if key_name == "openscadgeometry" or "openscad" in key_name:
                             srv_config["env"] = {
-                                "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
+                                "OPENSCAD_PATH": os.environ.get("OPENSCAD_PATH", _DEFAULT_OPENSCAD_PATH)
                             }
                         new_mcp_servers[key_name] = srv_config
                     elif server.type == "sse":
@@ -194,7 +199,7 @@ def restart_hermes_background() -> None:
         return
     try:
         subprocess.Popen(
-            'export HERMES_HOME="$HOME/.hermes/profiles/wright" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788',
+            'export HERMES_HOME="$HOME/.hermes/profiles/wright" && $HOME/hermes-webui/ctl.sh stop && $HOME/hermes-webui/ctl.sh start 8788',
             shell=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,

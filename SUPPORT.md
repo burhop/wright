@@ -17,7 +17,7 @@ For guides, architectural diagrams, and technical details:
 ## 2. Real-Time Support (Discord)
 
 For quick questions, setup help, or chat with other engineers:
-*   **Channel**: Join our official [Discord Server](https://discord.gg/wright).
+*   **Channel**: Join our official [Discord Server](https://discord.gg/2JsdMRxq).
 *   **Support Channel**: Post your questions in `#support` for quick, peer-to-peer assistance.
 *   **Guidelines**: For complex troubleshooting or long-running Q&A, you may be redirected to GitHub Discussions.
 

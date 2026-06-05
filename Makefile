@@ -51,8 +51,10 @@ docker-test-e2e:
 	@sed -i 's/^LLM_API_URL=.*/LLM_API_URL=/' docker/.env
 	@echo "Starting container stack..."
 	docker compose -f docker-compose.test.yml up -d --build
-	@echo "Waiting for containers to be ready..."
+	@echo "Waiting for backend API to be ready..."
 	@for i in {1..30}; do curl -s http://localhost:8080/api/health >/dev/null && break || sleep 1; done
+	@echo "Waiting for Hermes agent service to be ready..."
+	@for i in {1..30}; do curl -s http://localhost:8080/api/agent/health | grep -q '"state":"connected"' && break || sleep 1; done
 	@echo "Running Playwright Setup Flow test..."
 	@PLAYWRIGHT_BASE_URL=http://localhost:8080 npx playwright test tests/ui-integration/setup.spec.ts || (EXIT_VAL=$$?; make docker-clean; if [ -f docker/.env.bak ]; then mv docker/.env.bak docker/.env; fi; exit $$EXIT_VAL)
 	@echo "=== PHASE 2: All other tests (configured) ==="
@@ -60,8 +62,10 @@ docker-test-e2e:
 	@sed -i 's/^LLM_API_URL=.*/LLM_API_URL=http:\/\/127.0.0.1:8080\/api\/health/' docker/.env
 	@echo "Starting container stack with LLM_API_URL..."
 	docker compose -f docker-compose.test.yml up -d --build
-	@echo "Waiting for containers to be ready..."
+	@echo "Waiting for backend API to be ready..."
 	@for i in {1..30}; do curl -s http://localhost:8080/api/health >/dev/null && break || sleep 1; done
+	@echo "Waiting for Hermes agent service to be ready..."
+	@for i in {1..30}; do curl -s http://localhost:8080/api/agent/health | grep -q '"state":"connected"' && break || sleep 1; done
 	@echo "Running remaining Playwright integration tests..."
 	@PLAYWRIGHT_BASE_URL=http://localhost:8080 npx playwright test --grep-invert "LLM Setup Flow" || (EXIT_VAL=$$?; make docker-clean; if [ -f docker/.env.bak ]; then mv docker/.env.bak docker/.env; fi; exit $$EXIT_VAL)
 	@echo "Restoring original .env..."

@@ -12,7 +12,7 @@
   <a href="https://github.com/burhop/wright/actions"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg" alt="Build Status"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://hub.docker.com/r/burhop/wright"><img src="https://img.shields.io/docker/pulls/burhop/wright.svg" alt="Docker Pulls"></a>
-  <a href="https://discord.gg/wright"><img src="https://img.shields.io/badge/Discord-Join%20Chat-blue?logo=discord" alt="Discord"></a>
+  <a href="https://discord.gg/2JsdMRxq"><img src="https://img.shields.io/badge/Discord-Join%20Chat-blue?logo=discord" alt="Discord"></a>
   <a href="https://github.com/burhop/wright/discussions"><img src="https://img.shields.io/badge/Discussions-GitHub-orange?logo=github" alt="Discussions"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-22+-green.svg" alt="Node 22+"></a>
@@ -168,7 +168,7 @@ Looking for a place to start? Look for the **Good First Issue** label on our iss
 ## Community & Support
 
 Join the Wright community to discuss ideas, ask for help, or collaborate:
-*   💬 **Discord Server**: Join our [Discord Server](https://discord.gg/wright) for real-time chat, general discussions, support, and showcased designs.
+*   💬 **Discord Server**: Join our [Discord Server](https://discord.gg/2JsdMRxq) for real-time chat, general discussions, support, and showcased designs.
 *   🗣️ **GitHub Discussions**: Visit our [GitHub Discussions](https://github.com/burhop/wright/discussions) to ask complex questions, suggest new features, and review RFCs.
 
 ---

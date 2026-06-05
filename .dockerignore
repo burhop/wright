@@ -1,5 +1,11 @@
 # Docker Ignore Rules
 node_modules/
+**/node_modules/
+.vscode/
+site/
+mkdocs.yml
+ci_failures.md
+tests/screenshots/
 .git/
 .venv/
 venv/

@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     curl \
     git \
-    build-essential \
+    bzip2 \
     ca-certificates \
     sudo \
     vim \
@@ -51,6 +51,8 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
 # ── Node.js 22 ────────────────────────────────────────────────────────────
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
+    apt-get purge -y --auto-remove software-properties-common gnupg && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # ── uv (Python package manager) ───────────────────────────────────────────
@@ -69,42 +71,51 @@ RUN userdel -r ubuntu && \
 # Uses uv tool install for an isolated venv with CLI on PATH
 ENV UV_TOOL_DIR=/opt/uv-tools
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
-RUN uv tool install hermes-agent==0.15.2 --python 3.13
+RUN uv tool install hermes-agent==0.15.2 --python 3.13 && \
+    rm -rf /root/.cache/uv
 
 # ── Install Hermes WebUI from GitHub (pinned tag) ─────────────────────────
 # The WebUI imports hermes-agent at runtime, so it must be in the same venv.
 RUN git clone --branch v0.51.135 --depth 1 \
     https://github.com/nesquena/hermes-webui.git /opt/hermes-webui && \
+    rm -rf /opt/hermes-webui/.git && \
     uv venv /opt/hermes-webui/.venv --python 3.13 && \
     uv pip install --python /opt/hermes-webui/.venv/bin/python \
         -r /opt/hermes-webui/requirements.txt \
         hermes-agent==0.15.2 && \
+    rm -rf /root/.cache/uv && \
     chown -R agent:agent /opt/hermes-webui
 
 # ── Wright workspace setup ────────────────────────────────────────────────
 WORKDIR /workspace
 RUN chown agent:agent /workspace
 
+USER agent
+
 # Copy dependency configs first for better layer caching
-COPY pyproject.toml uv.lock ./
-COPY apps/api/pyproject.toml apps/api/pyproject.toml
-COPY packages/core/pyproject.toml packages/core/pyproject.toml
-COPY packages/agent_adapters/pyproject.toml packages/agent_adapters/pyproject.toml
-COPY packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
-COPY packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
+COPY --chown=agent:agent pyproject.toml uv.lock ./
+COPY --chown=agent:agent apps/api/pyproject.toml apps/api/pyproject.toml
+COPY --chown=agent:agent packages/core/pyproject.toml packages/core/pyproject.toml
+COPY --chown=agent:agent packages/agent_adapters/pyproject.toml packages/agent_adapters/pyproject.toml
+COPY --chown=agent:agent packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
+COPY --chown=agent:agent packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
 
 # Sync dependencies using Python 3.13 (no dev packages)
-RUN uv sync --python 3.13 --all-packages --no-install-workspace --no-dev
+RUN uv sync --python 3.13 --all-packages --no-install-workspace --no-dev && \
+    rm -rf /home/agent/.cache/uv
 
 # Copy python codebases
-COPY packages/ packages/
-COPY apps/api/ apps/api/
+COPY --chown=agent:agent packages/ packages/
+COPY --chown=agent:agent apps/api/ apps/api/
 
 # Re-run uv sync to install the workspace itself
-RUN uv sync --python 3.13 --all-packages --no-dev
+RUN uv sync --python 3.13 --all-packages --no-dev && \
+    rm -rf /home/agent/.cache/uv
 
 # ── Copy built frontend from Stage 1 ──────────────────────────────────────
-COPY --from=web-builder /workspace/apps/web/dist /workspace/apps/web/dist
+COPY --chown=agent:agent --from=web-builder /workspace/apps/web/dist /workspace/apps/web/dist
+
+USER root
 
 # ── Container manifest (read-only, baked into image) ──────────────────────
 COPY docker/container-manifest.md /container-manifest.md
@@ -120,9 +131,6 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/wright.conf
 # ── Entrypoint script ─────────────────────────────────────────────────────
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# ── Fix ownership ─────────────────────────────────────────────────────────
-RUN chown -R agent:agent /workspace
 
 # ── Log directories ───────────────────────────────────────────────────────
 RUN touch /var/log/agent-startup.log /var/log/agent-changes.log && \
