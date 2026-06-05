@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / Help
+    url: https://github.com/burhop/wright/discussions/new?category=q-a
+    about: Please ask questions or request usage help in our GitHub Discussions Q&A section.
+  - name: Security Vulnerability
+    url: https://github.com/burhop/wright/blob/main/SECURITY.md
+    about: Please report security vulnerabilities privately following our security policy.
