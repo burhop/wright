@@ -14,16 +14,25 @@ For guides, architectural diagrams, and technical details:
 
 ---
 
-## 2. Questions & Discussions (GitHub Discussions)
+## 2. Real-Time Support (Discord)
 
-If you have usage questions, configuration issues, or want to discuss design ideas:
-* **Channel**: GitHub Discussions Q&A (or open a thread in the Discussions tab of this repository).
-* **When to use**: "How do I do X?", "Is it possible to configure Y?", "What LLMs are supported for FEA?".
-* **Why**: This keeps our bug tracker clean and allows other community members to search for and find answers to common questions.
+For quick questions, setup help, or chat with other engineers:
+*   **Channel**: Join our official [Discord Server](https://discord.gg/wright).
+*   **Support Channel**: Post your questions in `#support` for quick, peer-to-peer assistance.
+*   **Guidelines**: For complex troubleshooting or long-running Q&A, you may be redirected to GitHub Discussions.
 
 ---
 
-## 3. Bug Reports & Feature Requests (GitHub Issues)
+## 3. Questions & Discussions (GitHub Discussions)
+
+If you have usage questions, configuration issues, or want to discuss design ideas:
+*   **Channel**: Visit [GitHub Discussions](https://github.com/burhop/wright/discussions).
+*   **When to use**: "How do I do X?", "Is it possible to configure Y?", "What LLMs are supported for FEA?".
+*   **Why**: This keeps our bug tracker clean and allows other community members to search for and find answers to common questions.
+
+---
+
+## 4. Bug Reports & Feature Requests (GitHub Issues)
 
 If you have confirmed a bug in the code or want to propose a new feature:
 * **Channel**: GitHub Issues.

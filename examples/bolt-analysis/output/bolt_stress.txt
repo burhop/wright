@@ -1,0 +1,22 @@
+=========================================
+BOLT SHEAR STRESS ANALYSIS (Fallback Mock)
+=========================================
+Bolt Specification: M10 (Metric Coarse)
+Material: Grade 8.8 Steel
+Yield Strength (Sy): 640 MPa
+Tensile Stress Area (At): 58.0 mm^2
+
+Shear Load (V): 5000 N
+
+Calculations:
+1. Nominal Shear Stress (tau):
+   tau = V / At = 5000 N / 58.0 mm^2 = 86.2 MPa
+
+2. Allowable Shear Strength (Ssy):
+   Ssy = 0.577 * Sy = 0.577 * 640 MPa = 369.3 MPa
+
+3. Safety Factor (FoS):
+   FoS = Ssy / tau = 369.3 MPa / 86.2 MPa = 4.28
+
+Result: Safety Factor (4.28) is greater than 1.5. Design is SAFE.
+=========================================
