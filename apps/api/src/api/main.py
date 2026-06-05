@@ -7,10 +7,11 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from agent_adapters import HermesAdapter
-from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL, DATABASE_PATH
+from api.config import HERMES_WEBUI_BASE_URL, LLM_HEALTH_URL, DATABASE_PATH, get_llm_health_url
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
 from api.routers.workspace import router as workspace_router
+from api.routers.setup import router as setup_router
 from api.middleware.tracing import TracingMiddleware
 from api.schemas.common import ErrorResponse, ErrorCodes
 from core.logging import configure_logging, get_logger
@@ -114,6 +115,9 @@ app.include_router(mcp_router, prefix="/api/mcp")
 # Mount the workspace router
 app.include_router(workspace_router, prefix="/api/workspace")
 
+# Mount the setup router
+app.include_router(setup_router, prefix="/api/setup")
+
 @app.websocket("/api/webmcp/ws")
 async def webmcp_websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -148,7 +152,8 @@ async def check_inference_health():
     start_time = time.perf_counter()
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(LLM_HEALTH_URL, timeout=5.0)
+            health_url = get_llm_health_url()
+            response = await client.get(health_url, timeout=5.0)
             latency = (time.perf_counter() - start_time) * 1000.0
             if response.status_code == 200:
                 # Also accept json status if available
@@ -157,6 +162,34 @@ async def check_inference_health():
         pass
     return HealthResponse(state="disconnected", latencyMs=0.0)
 
-@app.get("/")
-async def root():
-    return {"message": "Wright API is running"}
+# Serve frontend static files in production if the dist directory exists
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
+dist_dir = os.environ.get("FRONTEND_DIST_DIR", "/workspace/apps/web/dist")
+if os.path.exists(dist_dir):
+    # Mount static assets (js, css, images) under /assets
+    assets_dir = os.path.join(dist_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="static-assets")
+
+    # SPA catch-all: serve index.html for any non-API route so client-side
+    # routing works for paths like /tool-registry, /workspace/*, etc.
+    index_html = os.path.join(dist_dir, "index.html")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # If the requested file exists in dist, serve it directly
+        # Guard against path traversal (CWE-22)
+        file_path = os.path.realpath(os.path.join(dist_dir, full_path))
+        real_dist = os.path.realpath(dist_dir)
+        if full_path and os.path.isfile(file_path) and file_path.startswith(real_dist + os.sep):
+            return FileResponse(file_path)
+        # Otherwise serve the SPA entry point
+        return FileResponse(index_html)
+else:
+    @app.get("/")
+    async def root():
+        return {"message": "Wright API is running"}
+

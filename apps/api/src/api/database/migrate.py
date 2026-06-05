@@ -549,6 +549,14 @@ def run_migrations():
             ON chat_messages(session_id, timestamp);
         """)
 
+        # 11. Create system_settings table
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS system_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        );
+        """)
+
         conn.commit()
         print(f"Database migrations applied successfully. Seeded {len(ENGINEERING_CATALOG)} engineering MCP servers.")
     finally:

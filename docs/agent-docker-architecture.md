@@ -637,4 +637,37 @@ No instruction set will make Hermes, OpenClaw, or Pi perfectly safe. They are ca
 
 ---
 
+## 9. Implementation Notes & Deviations
+
+During the actual implementation on the `010-agent-docker-setup` branch, the following deviations and design decisions were made to ensure a production-ready, clash-free, and robust deployment:
+
+### 9.1 Multi-Stage Production Build
+The production `Dockerfile` was upgraded to a multi-stage build:
+1. **Stage 1 (web-builder)**: Uses `node:22-slim` to build the Vite frontend monorepo app (`apps/web`). This avoids polluting the final runtime image with web build-time tools.
+2. **Stage 2 (Runtime)**: Sets up the lean `ubuntu:24.04` base, installs Python 3.13 via the deadsnakes PPA, Node.js 22, astral `uv`, and micromamba. The built static files from Stage 1 are copied into `/workspace/apps/web/dist` where the FastAPI backend serves them.
+
+### 9.2 Resolving Ubuntu UID 1000 Clash
+The official `ubuntu:24.04` Docker base image has a pre-created user named `ubuntu` with UID 1000. In order to create our `agent` user with UID 1000 (which is required to match the typical host user's UID and prevent SQLite/file write permission errors on bind-mounted/named volumes), the Dockerfile explicitly deletes the default user first:
+```dockerfile
+RUN userdel -r ubuntu && \
+    useradd -m -u 1000 -s /bin/bash agent && \
+    echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+```
+
+### 9.3 Development Port & Host Isolation
+To allow testing and debugging the Docker stack without stopping the active host development servers (running on ports `8000` and `5173`), the test container stack (`docker-compose.test.yml`) remaps host ports as follows:
+- **API Server / Static Web**: Mapped to host port `8080` (container port `8000`)
+- **Vite Dev Server (if run)**: Mapped to host port `5174` (container port `5173`)
+This fully isolates development and test environments.
+
+### 9.4 Named Volume Globals
+All 7 named volumes are explicitly named globally to prevent Docker Compose from prefixing them with the folder/project name, ensuring clean host backup and restore scripting:
+`wright_home`, `wright_local`, `wright_opt`, `wright_varlib`, `wright_varcache`, `wright_etc`, and `wright_logs`.
+
+### 9.5 Scripts Directory Mounting
+The recovery scripts directory on the host is named `scripts/` (not `recovery/`). Thus, in `docker-compose.test.yml`, the scripts are mounted to `/recovery` read-only via:
+`- ./scripts:/recovery:ro`
+
+---
+
 *End of Document*

@@ -72,6 +72,83 @@ Antigravity (`agy`) integration. Available skills:
 | `$speckit-clarify` | Clarify ambiguous areas |
 | `$speckit-analyze` | Cross-artifact consistency check |
 
+## Docker Production Deployment
+
+Wright provides a production-ready Docker image that packages the entire stack into a single deployable container:
+
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| Wright API | — | FastAPI backend on port 8000 (external) |
+| Wright Web | — | Vite frontend served as static files |
+| Hermes Agent | 0.15.2 | AI agent framework (PyPI) |
+| Hermes WebUI | 0.51.135 | Agent session manager on port 8788 (internal) |
+| OpenSCAD + Xvfb | — | Headless CAD for MCP geometry tools |
+| supervisord | — | Process manager (keeps both services running) |
+
+### Quick Start
+
+```bash
+# 1. Configure your LLM endpoint
+cp docker/.env.example docker/.env
+# Edit docker/.env — set LLM_API_URL, LLM_API_KEY, LLM_API_MODEL
+
+# 2. Build and run
+make docker-build
+docker compose up
+# Open http://localhost:8080
+```
+
+### Makefile Targets
+
+| Target | Description |
+|--------|-------------|
+| `make docker-build` | Build the production Docker image |
+| `make docker-test` | Start in test/dev mode with bind mounts for live iteration |
+| `make docker-clean` | Tear down test containers and delete volumes |
+| `make docker-logs` | Follow logs from the running containers |
+| `make docker-shell` | Open an interactive shell as the `agent` user |
+| `make docker-test-e2e` | Run Playwright UI tests against the built image |
+
+### Process Management
+
+The container runs [supervisord](docker/supervisord.conf) to manage two services:
+- **wright-api** — FastAPI + uvicorn on `0.0.0.0:8000`
+- **hermes-webui** — Agent session API on `127.0.0.1:8788` (internal only, proxied by Wright API)
+
+Both auto-restart on crash. Check status with:
+```bash
+make docker-shell
+supervisorctl -c /etc/supervisor/conf.d/wright.conf status
+```
+
+### First Boot
+
+On first start, [entrypoint.sh](docker/entrypoint.sh) automatically:
+1. Creates the Hermes `wright` profile at `~/.hermes/`
+2. Generates `config.yaml` from `LLM_API_URL`, `LLM_API_KEY`, `LLM_API_MODEL` env vars
+3. Starts supervisord (which launches both services)
+
+Subsequent boots reuse the existing profile (updates LLM config if env vars changed).
+
+### CI/CD
+
+The [GitHub Actions workflow](.github/workflows/docker-build.yml) runs on every push to `main`/`dev`:
+1. **Build** — Multi-stage Docker build with GitHub Actions cache
+2. **Smoke Test** — Starts the container and verifies:
+   - Wright API health endpoint responds
+   - Hermes Agent proxy is connected
+   - Workspace creation works
+   - Both supervisord processes are running
+3. **Push** — Tags and pushes to Docker Hub (`latest` on main, `dev` on dev)
+
+### Persistence & Backups
+
+The container uses a 7-volume model to persist all mutable state across restarts.
+See [scripts/backup-volumes.sh](scripts/backup-volumes.sh) and [scripts/restore-volume.sh](scripts/restore-volume.sh).
+
+### Agent Awareness
+The image contains a read-only manifest at [/container-manifest.md](docker/container-manifest.md) specifying persistent and ephemeral directories, allowing agents to self-adjust tool installation behaviors to prevent data loss.
+
 ## Governance
 
 All development is governed by [constitution.md](constitution.md) (v1.0.0).

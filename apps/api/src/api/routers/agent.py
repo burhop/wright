@@ -143,7 +143,8 @@ async def create_new_session(
         if not workspace_path:
             # Generate a unique workspace directory name
             workspace_uuid = str(uuid.uuid4())
-            workspace_path = f"/home/burhop/workspace/{workspace_uuid}"
+            home_dir = os.environ.get("HOME", "/home/agent")
+            workspace_path = os.path.join(home_dir, "workspace", workspace_uuid)
             
         os.makedirs(workspace_path, exist_ok=True)
         # Instantiate WorkspaceManager to automatically run git init

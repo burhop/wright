@@ -133,6 +133,9 @@ test.describe('Tool Registry Enhanced UI', () => {
 
     await page.goto('/tool-registry');
 
+    // Wait for initial render before overriding mock for post-install refresh
+    await expect(page.getByTestId('server-card-install-btn-calc-mcp-id')).toBeVisible();
+
     await page.route('**/api/mcp/servers', async (route) => {
       const updatedServers = [...MOCK_SERVERS] as any[];
       updatedServers[0] = { ...updatedServers[0], is_installed: true, installed_version: "2.21.0" };
@@ -290,6 +293,9 @@ test.describe('Tool Registry Enhanced UI', () => {
     });
 
     await page.goto('/tool-registry');
+
+    // Wait for initial render before overriding mock for post-uninstall refresh
+    await expect(page.getByTestId('server-card-uninstall-btn-openscad-mcp-id')).toBeVisible();
 
     page.once('dialog', async (dialog) => {
       expect(dialog.message()).toContain('Are you sure you want to uninstall');

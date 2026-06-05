@@ -7,8 +7,8 @@ test.describe('Dashboard Page - Real Backend Integration', () => {
     page.on('pageerror', err => console.log(`[BROWSER UNHANDLED ERROR] ${err.message}\n${err.stack}`));
 
     // Navigate to the real local frontend
-    console.log('Navigating to http://localhost:5173/...');
-    await page.goto('http://localhost:5173/');
+    console.log('Navigating to /...');
+    await page.goto('/');
 
     // Verify page loads
     await expect(page.getByTestId('page-dashboard')).toBeVisible();
@@ -35,7 +35,7 @@ test.describe('Dashboard Page - Real Backend Integration', () => {
     console.log('Looking for existing workspaces in the list...');
     // We wait for the list to load. If there are no workspaces, we skip the card click test.
     const hasWorkspaces = await page.evaluate(async () => {
-      const res = await fetch('http://localhost:8000/api/workspace/recent');
+      const res = await fetch('/api/workspace/recent');
       if (res.ok) {
         const data = await res.json();
         return data.workspaces && data.workspaces.length > 0;
@@ -53,7 +53,7 @@ test.describe('Dashboard Page - Real Backend Integration', () => {
         await expect(page).toHaveURL(/\/workspace\//);
         await expect(page.getByTestId('page-workspace')).toBeVisible();
       } else {
-        console.log('No workspace cards matched filter, skipping card click.');
+         console.log('No workspace cards matched filter, skipping card click.');
       }
     } else {
       console.log('No workspaces exist, skipping card click test.');

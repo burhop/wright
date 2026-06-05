@@ -13,6 +13,18 @@ class AgentSyncManager:
     def __init__(self, db_path: str):
         self.db_path = db_path
         self._active_agent = "hermes"
+        try:
+            import sqlite3
+            if os.path.exists(self.db_path):
+                conn = sqlite3.connect(self.db_path)
+                cursor = conn.cursor()
+                cursor.execute("SELECT value FROM system_settings WHERE key = 'active_agent'")
+                row = cursor.fetchone()
+                conn.close()
+                if row:
+                    self._active_agent = row[0]
+        except Exception:
+            pass
 
     @property
     def active_agent(self) -> str:
@@ -22,6 +34,18 @@ class AgentSyncManager:
     def active_agent(self, agent_name: str) -> None:
         self._active_agent = agent_name.lower().strip()
         logger.info("Active agent toggled to: %s", self._active_agent)
+        try:
+            import sqlite3
+            if os.path.exists(self.db_path):
+                conn = sqlite3.connect(self.db_path)
+                conn.execute(
+                    "INSERT OR REPLACE INTO system_settings (key, value) VALUES ('active_agent', ?)",
+                    (self._active_agent,)
+                )
+                conn.commit()
+                conn.close()
+        except Exception as e:
+            logger.error("Failed to save active_agent to system_settings: %s", e)
 
     def sync_workspace_tools(self, session_id: str) -> None:
         """Sync enabled tools for the given session to the currently active agent."""

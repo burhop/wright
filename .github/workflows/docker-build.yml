@@ -1,0 +1,136 @@
+name: Docker Build CI
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'docker/**'
+      - 'apps/**'
+      - 'packages/**'
+      - 'pyproject.toml'
+      - 'docker-compose.yml'
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/wright-agent
+          tags: |
+            type=sha,format=long
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+
+      - name: Build and Load (Local Test)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: wright-agent:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run Smoke Test
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+
+          IMAGE="wright-agent:${{ github.sha }}"
+          CONTAINER="wright-ci-smoke"
+
+          # Start the container with a dummy LLM URL (no real LLM needed for smoke)
+          docker run --rm -d --name "$CONTAINER" \
+            -p 127.0.0.1:8090:8000 \
+            -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
+            -e LLM_API_KEY="ci-test" \
+            -e LLM_API_MODEL="ci-model" \
+            "$IMAGE"
+
+          cleanup() { docker rm -f "$CONTAINER" 2>/dev/null || true; }
+          trap cleanup EXIT
+
+          # Wait for Wright API health endpoint (up to 60s)
+          echo "⏳ Waiting for Wright API..."
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8090/api/health > /dev/null 2>&1; then
+              echo "✅ Wright API healthy"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "❌ Wright API did not become healthy in 60s"
+              docker logs "$CONTAINER" 2>&1 | tail -50
+              exit 1
+            fi
+            sleep 2
+          done
+
+          # Verify Hermes WebUI is reachable via the agent health proxy
+          echo "⏳ Checking Hermes Agent proxy..."
+          AGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{}')
+          AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
+          echo "   Agent state: $AGENT_STATE"
+          if [ "$AGENT_STATE" != "connected" ]; then
+            echo "❌ Hermes Agent not connected (state=$AGENT_STATE)"
+            docker logs "$CONTAINER" 2>&1 | tail -50
+            exit 1
+          fi
+          echo "✅ Hermes Agent connected"
+
+          # Verify workspace creation works
+          echo "⏳ Testing workspace creation..."
+          WS_RESPONSE=$(curl -sf -X POST http://127.0.0.1:8090/api/workspace/create \
+            -H "Content-Type: application/json" \
+            -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace"}')
+          WS_ID=$(echo "$WS_RESPONSE" | jq -r '.workspace_id // empty')
+          if [ -z "$WS_ID" ]; then
+            echo "❌ Workspace creation failed: $WS_RESPONSE"
+            exit 1
+          fi
+          echo "✅ Workspace created: $WS_ID"
+
+          # Verify supervisord has both processes running
+          echo "⏳ Checking supervisord processes..."
+          PROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)
+          echo "$PROCS"
+          if ! echo "$PROCS" | grep -q "wright-api.*RUNNING"; then
+            echo "❌ wright-api not RUNNING"
+            exit 1
+          fi
+          if ! echo "$PROCS" | grep -q "hermes-webui.*RUNNING"; then
+            echo "❌ hermes-webui not RUNNING"
+            exit 1
+          fi
+          echo "✅ All processes running"
+
+          echo ""
+          echo "🎉 Smoke test passed!"
+
+      - name: Build and Push (Production)
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

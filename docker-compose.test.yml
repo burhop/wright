@@ -1,23 +1,21 @@
 # =============================================================================
-# Wright — Production Docker Compose
+# Wright — Testing/Debugging Docker Compose
 # =============================================================================
-# Strategy: Production containerization of the full Wright stack (API, web
-# frontend, and agents).
-# Security: All ports bound to 127.0.0.1 (localhost only) per constitution § 4.
+# Strategy: Mount host-side apps/ and packages/ into the running container
+# for code iteration, while keeping the production Dockerfile base and named volumes.
 # =============================================================================
 
 services:
-  # --- Wright Full-Stack Agent Appliance ---
   agent:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    container_name: wright_agent
+    container_name: wright_agent_test
     env_file:
       - docker/.env
     ports:
-      - "127.0.0.1:8000:8000"              # FastAPI (API + static frontend) — localhost only
-      - "127.0.0.1:5173:5173"              # Vite Dev server (if used in test/debug) — localhost only
+      - "127.0.0.1:8080:8000"              # FastAPI (API + static frontend) — localhost only
+      - "127.0.0.1:5174:5173"              # Vite Dev server — localhost only
     volumes:
       - wright_home:/home/
       - wright_local:/usr/local/
@@ -26,10 +24,13 @@ services:
       - wright_varcache:/var/cache/
       - wright_etc:/etc/
       - wright_logs:/var/log/
+      # Live-mount application code and packages for testing/iteration
+      - ./apps:/workspace/apps
+      - ./packages:/workspace/packages
       # Recovery tools mounted read-only
       - ./scripts:/recovery:ro
     environment:
-      - WRIGHT_ENV=production
+      - WRIGHT_ENV=development
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     restart: unless-stopped
     healthcheck:
@@ -41,11 +42,9 @@ services:
     depends_on:
       - jaeger
 
-  # --- Jaeger (OpenTelemetry trace collector) ---
-  # Constitution § 7: Local OpenTelemetry via Jaeger all-in-one
   jaeger:
     image: jaegertracing/all-in-one:latest
-    container_name: wright_jaeger
+    container_name: wright_jaeger_test
     ports:
       - "127.0.0.1:16686:16686"            # Jaeger UI — localhost only
       - "127.0.0.1:4317:4317"              # OTLP gRPC — localhost only

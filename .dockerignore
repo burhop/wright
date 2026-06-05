@@ -28,3 +28,7 @@ lance_db/
 .agents/**/tokens/
 docker-volumes/
 jwt_secret.txt
+state.db
+apps/state.db
+.specify/
+specs/

@@ -13,8 +13,15 @@ export interface WorkspaceNode {
 }
 
 const getApiBase = () => {
-  const host = typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-  return `http://${host}:8000`;
+  if (typeof window === 'undefined') {
+    return 'http://127.0.0.1:8000';
+  }
+  const host = window.location.hostname;
+  const port = window.location.port;
+  if (port === '5173' || port === '5174') {
+    return `http://${host}:8000`;
+  }
+  return `${window.location.protocol}//${host}${port ? `:${port}` : ''}`;
 };
 const API_BASE = getApiBase();
 
