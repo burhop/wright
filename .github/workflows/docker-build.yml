@@ -153,19 +153,21 @@ jobs:
           fi
           echo "✅ Workspace created: $WS_ID"
 
-          # Verify supervisord has both processes running
+          # Verify supervisord has both processes running (up to 10s)
           echo "⏳ Checking supervisord processes..."
-          PROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)
-          echo "$PROCS"
-          if ! echo "$PROCS" | grep -q "wright-api.*RUNNING"; then
-            echo "❌ wright-api not RUNNING"
-            exit 1
-          fi
-          if ! echo "$PROCS" | grep -q "hermes-webui.*RUNNING"; then
-            echo "❌ hermes-webui not RUNNING"
-            exit 1
-          fi
-          echo "✅ All processes running"
+          for i in $(seq 1 5); do
+            PROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)
+            echo "$PROCS"
+            if echo "$PROCS" | grep -q "wright-api.*RUNNING" && echo "$PROCS" | grep -q "hermes-webui.*RUNNING"; then
+              echo "✅ All processes running"
+              break
+            fi
+            if [ "$i" -eq 5 ]; then
+              echo "❌ Processes did not enter RUNNING state"
+              exit 1
+            fi
+            sleep 2
+          done
 
           echo ""
           echo "🎉 Smoke test passed!"
