@@ -1,5 +1,5 @@
-import type { LogEntry } from '../store/types';
-import { logStore, type LogEntry as StoreLogEntry } from './log-store';
+import type { LogEntry } from "../store/types";
+import { logStore, type LogEntry as StoreLogEntry } from "./log-store";
 
 export interface Logger {
   debug(message: string, metadata?: Record<string, unknown>): void;
@@ -23,11 +23,15 @@ export function setActiveSessionId(sessionId: string | null) {
 export class ConsoleLogger implements Logger {
   private component: string;
 
-  constructor(component: string = 'App') {
+  constructor(component: string = "App") {
     this.component = component;
   }
 
-  private log(level: LogEntry['level'], message: string, metadata: Record<string, unknown> = {}) {
+  private log(
+    level: LogEntry["level"],
+    message: string,
+    metadata: Record<string, unknown> = {},
+  ) {
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
@@ -36,19 +40,19 @@ export class ConsoleLogger implements Logger {
       traceId: activeTraceIdProvider(),
       metadata,
     };
-    
+
     const formatted = JSON.stringify(entry);
     switch (level) {
-      case 'debug':
+      case "debug":
         console.debug(formatted);
         break;
-      case 'info':
+      case "info":
         console.info(formatted);
         break;
-      case 'warn':
+      case "warn":
         console.warn(formatted);
         break;
-      case 'error':
+      case "error":
         console.error(formatted);
         break;
     }
@@ -69,19 +73,19 @@ export class ConsoleLogger implements Logger {
   }
 
   debug(message: string, metadata?: Record<string, unknown>): void {
-    this.log('debug', message, metadata);
+    this.log("debug", message, metadata);
   }
 
   info(message: string, metadata?: Record<string, unknown>): void {
-    this.log('info', message, metadata);
+    this.log("info", message, metadata);
   }
 
   warn(message: string, metadata?: Record<string, unknown>): void {
-    this.log('warn', message, metadata);
+    this.log("warn", message, metadata);
   }
 
   error(message: string, metadata?: Record<string, unknown>): void {
-    this.log('error', message, metadata);
+    this.log("error", message, metadata);
   }
 
   child(component: string): Logger {
@@ -91,4 +95,3 @@ export class ConsoleLogger implements Logger {
 
 export const logger = new ConsoleLogger();
 export default logger;
-
