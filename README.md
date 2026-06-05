@@ -40,6 +40,11 @@ Wright bridges this gap. It positions AI agents not as direct geometry creators,
 * **Modular Integrations**: Actuate professional CAD, FEA, and CAM software via extensible, standardized MCP servers.
 * **Local or Hybrid Cloud**: Wright's architecture is fully open. While capable of running completely local and air-gapped on enterprise hardware (like the Dell GB10 / NVIDIA DGX Spark) to safeguard proprietary designs, it is equally ready to scale with cloud-based hybrid tools.
 
+### Built on Open Industry Standards
+Wright is committed to open, vendor-neutral standards that allow the toolbox to grow alongside the AI and engineering ecosystems:
+* **Model Context Protocol (MCP)**: Leveraging MCP (hosted by the Linux Foundation) as our core translation layer, Wright ensures that any compliant tool, database, or API can be actuated by any agent runtime without tight coupling.
+* **Future-Proof Design**: We actively track emerging specifications to expand the user experience. Plans are in place to adopt incoming standards like **MCP-UI**, enabling agents to render rich interactive parameter sliders, 3D viewport modifications, and custom GUI controls natively within the chat stream.
+
 ---
 
 ## Key Features
