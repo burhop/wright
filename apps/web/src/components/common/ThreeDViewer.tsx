@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 
 interface ThreeDViewerProps {
   arrayBuffer: ArrayBuffer;
@@ -82,7 +82,7 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
         gridHelper.position.y = -radius * 1.1;
       }
     } catch (err) {
-      console.error('Failed to parse STL geometry buffer', err);
+      console.error("Failed to parse STL geometry buffer", err);
     }
 
     // 7. Add Orbit Controls
@@ -130,29 +130,33 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     <div
       ref={containerRef}
       style={{
-        width: '100%',
-        height: '100%',
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#151515',
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#151515",
       }}
     >
-      <canvas ref={canvasRef} data-testid="3d-canvas" style={{ display: 'block', flex: 1 }} />
+      <canvas
+        ref={canvasRef}
+        data-testid="3d-canvas"
+        style={{ display: "block", flex: 1 }}
+      />
       {fileName && (
         <div
           style={{
-            position: 'absolute',
-            bottom: 'var(--space-sm)',
-            left: 'var(--space-sm)',
-            backgroundColor: 'rgba(21, 21, 21, 0.8)',
-            padding: '2px 8px',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--color-secondary)',
-            fontFamily: 'var(--font-ui)',
-            fontSize: '0.75rem',
-            border: '1px solid var(--color-border)',
-            pointerEvents: 'none',
+            position: "absolute",
+            bottom: "var(--space-sm)",
+            left: "var(--space-sm)",
+            backgroundColor: "rgba(21, 21, 21, 0.8)",
+            padding: "2px 8px",
+            borderRadius: "var(--radius-sm)",
+            color: "var(--color-secondary)",
+            fontFamily: "var(--font-ui)",
+            fontSize: "0.75rem",
+            border: "1px solid var(--color-border)",
+            pointerEvents: "none",
           }}
         >
           {fileName}

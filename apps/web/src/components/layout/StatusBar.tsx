@@ -1,5 +1,5 @@
-import StatusDot from '../common/StatusDot';
-import type { ServiceStatus, TraceContext } from '../../store/types';
+import StatusDot from "../common/StatusDot";
+import type { ServiceStatus, TraceContext } from "../../store/types";
 
 interface StatusBarProps {
   statuses?: ServiceStatus[];
@@ -7,29 +7,60 @@ interface StatusBarProps {
 }
 
 const DEFAULT_STATUSES: ServiceStatus[] = [
-  { serviceId: 'wright-api', name: 'Wright API', endpoint: '/api/health', state: 'unknown', lastChecked: null },
-  { serviceId: 'hermes-agent', name: 'Hermes Agent', endpoint: '/api/agent/health', state: 'unknown', lastChecked: null },
-  { serviceId: 'inference', name: 'LLM Inference', endpoint: '/api/inference/health', state: 'unknown', lastChecked: null },
+  {
+    serviceId: "wright-api",
+    name: "Wright API",
+    endpoint: "/api/health",
+    state: "unknown",
+    lastChecked: null,
+  },
+  {
+    serviceId: "hermes-agent",
+    name: "Hermes Agent",
+    endpoint: "/api/agent/health",
+    state: "unknown",
+    lastChecked: null,
+  },
+  {
+    serviceId: "inference",
+    name: "LLM Inference",
+    endpoint: "/api/inference/health",
+    state: "unknown",
+    lastChecked: null,
+  },
 ];
 
-export function StatusBar({ statuses = DEFAULT_STATUSES, latestTrace = null }: StatusBarProps) {
+export function StatusBar({
+  statuses = DEFAULT_STATUSES,
+  latestTrace = null,
+}: StatusBarProps) {
   return (
     <div
       data-testid="status-bar"
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--space-lg)',
-        padding: '0 var(--space-md)',
-        fontFamily: 'var(--font-ui)',
-        fontSize: '0.85rem',
+        display: "flex",
+        alignItems: "center",
+        gap: "var(--space-lg)",
+        padding: "0 var(--space-md)",
+        fontFamily: "var(--font-ui)",
+        fontSize: "0.85rem",
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "var(--space-md)",
+        }}
+      >
         {statuses.map((svc) => (
           <span
             key={svc.serviceId}
-            data-testid={svc.serviceId === 'hermes-agent' && svc.state === 'disconnected' ? 'health-error-hermes' : undefined}
+            data-testid={
+              svc.serviceId === "hermes-agent" && svc.state === "disconnected"
+                ? "health-error-hermes"
+                : undefined
+            }
           >
             <StatusDot
               state={svc.state}
@@ -44,11 +75,11 @@ export function StatusBar({ statuses = DEFAULT_STATUSES, latestTrace = null }: S
         <div
           data-testid="latest-trace"
           style={{
-            borderLeft: '1px solid var(--color-border)',
-            paddingLeft: 'var(--space-md)',
-            color: 'var(--color-secondary)',
-            fontSize: '0.8rem',
-            fontFamily: 'var(--font-mono)',
+            borderLeft: "1px solid var(--color-border)",
+            paddingLeft: "var(--space-md)",
+            color: "var(--color-secondary)",
+            fontSize: "0.8rem",
+            fontFamily: "var(--font-mono)",
           }}
         >
           <span>TRACE: {latestTrace.traceId.slice(0, 8)}...</span>

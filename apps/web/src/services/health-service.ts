@@ -1,23 +1,41 @@
-import type { ServiceStatus } from '../store/types';
+import type { ServiceStatus } from "../store/types";
 
 const getApiBase = () => {
-  if (typeof window === 'undefined') {
-    return 'http://127.0.0.1:8000';
+  if (typeof window === "undefined") {
+    return "http://127.0.0.1:8000";
   }
   const host = window.location.hostname;
   const port = window.location.port;
-  if (port === '5173' || port === '5174') {
+  if (port === "5173" || port === "5174") {
     return `http://${host}:8000`;
   }
-  return `${window.location.protocol}//${host}${port ? `:${port}` : ''}`;
+  return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
 };
 const API_BASE = getApiBase();
 
 export class LiveHealthService {
   private statuses: ServiceStatus[] = [
-    { serviceId: 'wright-api', name: 'Wright API', endpoint: '/api/health', state: 'unknown', lastChecked: null },
-    { serviceId: 'hermes-agent', name: 'Hermes Agent', endpoint: '/api/agent/health', state: 'unknown', lastChecked: null },
-    { serviceId: 'inference', name: 'LLM Inference', endpoint: '/api/inference/health', state: 'unknown', lastChecked: null },
+    {
+      serviceId: "wright-api",
+      name: "Wright API",
+      endpoint: "/api/health",
+      state: "unknown",
+      lastChecked: null,
+    },
+    {
+      serviceId: "hermes-agent",
+      name: "Hermes Agent",
+      endpoint: "/api/agent/health",
+      state: "unknown",
+      lastChecked: null,
+    },
+    {
+      serviceId: "inference",
+      name: "LLM Inference",
+      endpoint: "/api/inference/health",
+      state: "unknown",
+      lastChecked: null,
+    },
   ];
 
   private callbacks: Set<(statuses: ServiceStatus[]) => void> = new Set();
@@ -34,13 +52,21 @@ export class LiveHealthService {
             const data = await response.json();
             return {
               ...svc,
-              state: data.state as 'connected' | 'disconnected',
+              state: data.state as "connected" | "disconnected",
               lastChecked: Date.now(),
             };
           }
-          return { ...svc, state: 'disconnected' as const, lastChecked: Date.now() };
+          return {
+            ...svc,
+            state: "disconnected" as const,
+            lastChecked: Date.now(),
+          };
         } catch {
-          return { ...svc, state: 'disconnected' as const, lastChecked: Date.now() };
+          return {
+            ...svc,
+            state: "disconnected" as const,
+            lastChecked: Date.now(),
+          };
         }
       });
 

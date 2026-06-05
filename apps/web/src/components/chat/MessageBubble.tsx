@@ -1,6 +1,6 @@
-import type { ChatMessage } from '../../store/types';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import type { ChatMessage } from "../../store/types";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -13,8 +13,12 @@ interface MessageBubbleProps {
  * Preprocesses message content by isolating code blocks and wrapping URLs
  * and file paths in the non-code segments with markdown link syntax.
  */
-function preprocessContent(content: string, activeSessionId?: string, workspacePath?: string): string {
-  if (!content) return '';
+function preprocessContent(
+  content: string,
+  activeSessionId?: string,
+  workspacePath?: string,
+): string {
+  if (!content) return "";
 
   // 1. Split content by markdown code blocks (fenced and inline) to preserve literal code
   const parts = content.split(/(```[\s\S]*?```|`[^`\n]+`)/g);
@@ -31,102 +35,127 @@ function preprocessContent(content: string, activeSessionId?: string, workspaceP
     // Group 3: Absolute path starting with /home/ or /tmp/: (\/(?:home|tmp)\/[^\s\)\],<]+)
     // Group 4: Relative path starting with /: (\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))
     // Group 5: Relative path not starting with /: (\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)
-    const regex = /(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/(?:home|tmp)\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
+    const regex =
+      /(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/(?:home|tmp)\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
 
-    return part.replace(regex, (match, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
-      if (markdownLink) {
-        return match;
-      }
+    return part.replace(
+      regex,
+      (match, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
+        if (markdownLink) {
+          return match;
+        }
 
-      if (url) {
-        return `[${url}](${url})`;
-      }
+        if (url) {
+          return `[${url}](${url})`;
+        }
 
-      if (absPath) {
-        let cleanPath = absPath;
-        if (workspacePath && absPath.startsWith(workspacePath)) {
-          cleanPath = absPath.slice(workspacePath.length);
-        } else if (activeSessionId) {
-          const idx = absPath.indexOf(activeSessionId);
-          if (idx !== -1) {
-            cleanPath = absPath.slice(idx + activeSessionId.length);
+        if (absPath) {
+          let cleanPath = absPath;
+          if (workspacePath && absPath.startsWith(workspacePath)) {
+            cleanPath = absPath.slice(workspacePath.length);
+          } else if (activeSessionId) {
+            const idx = absPath.indexOf(activeSessionId);
+            if (idx !== -1) {
+              cleanPath = absPath.slice(idx + activeSessionId.length);
+            }
           }
+
+          // Ensure path starts with a single slash
+          if (!cleanPath.startsWith("/")) {
+            cleanPath = "/" + cleanPath;
+          }
+          return `[${absPath}](file://${cleanPath})`;
         }
-        
-        // Ensure path starts with a single slash
-        if (!cleanPath.startsWith('/')) {
-          cleanPath = '/' + cleanPath;
+
+        if (relPathWithSlash) {
+          return `[${relPathWithSlash}](file://${relPathWithSlash})`;
         }
-        return `[${absPath}](file://${cleanPath})`;
-      }
 
-      if (relPathWithSlash) {
-        return `[${relPathWithSlash}](file://${relPathWithSlash})`;
-      }
+        if (relPathNoSlash) {
+          // Prepend leading slash to match tree path format
+          return `[${relPathNoSlash}](file:///${relPathNoSlash})`;
+        }
 
-      if (relPathNoSlash) {
-        // Prepend leading slash to match tree path format
-        return `[${relPathNoSlash}](file:///${relPathNoSlash})`;
-      }
-
-      return match;
-    });
+        return match;
+      },
+    );
   });
 
-  return processedParts.join('');
+  return processedParts.join("");
 }
 
-export function MessageBubble({ message, onOpenFile, activeSessionId, workspacePath }: MessageBubbleProps) {
-  const isUser = message.role === 'user';
-  const processedContent = isUser ? message.content : preprocessContent(message.content, activeSessionId, workspacePath);
-  
+export function MessageBubble({
+  message,
+  onOpenFile,
+  activeSessionId,
+  workspacePath,
+}: MessageBubbleProps) {
+  const isUser = message.role === "user";
+  const processedContent = isUser
+    ? message.content
+    : preprocessContent(message.content, activeSessionId, workspacePath);
+
   return (
     <div
       data-testid={`message-${message.id}`}
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: isUser ? 'flex-end' : 'flex-start',
-        gap: 'var(--space-xs)',
-        width: '100%',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: isUser ? "flex-end" : "flex-start",
+        gap: "var(--space-xs)",
+        width: "100%",
       }}
     >
       <div
         style={{
-          maxWidth: '80%',
-          padding: 'var(--space-md) var(--space-lg)',
-          borderRadius: 'var(--radius-lg)',
-          backgroundColor: isUser ? 'var(--color-surface)' : 'var(--color-surface-subtle)',
-          border: '1px solid var(--color-border)',
-          color: 'var(--color-primary)',
-          textAlign: 'left',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          transition: 'all 0.2s ease',
+          maxWidth: "80%",
+          padding: "var(--space-md) var(--space-lg)",
+          borderRadius: "var(--radius-lg)",
+          backgroundColor: isUser
+            ? "var(--color-surface)"
+            : "var(--color-surface-subtle)",
+          border: "1px solid var(--color-border)",
+          color: "var(--color-primary)",
+          textAlign: "left",
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          transition: "all 0.2s ease",
         }}
       >
-        <div className="message-content" style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', lineHeight: '1.4' }}>
+        <div
+          className="message-content"
+          style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "0.8rem",
+            lineHeight: "1.4",
+          }}
+        >
           {isUser ? (
-            <div style={{ whiteSpace: 'pre-wrap' }}>{processedContent}</div>
+            <div style={{ whiteSpace: "pre-wrap" }}>{processedContent}</div>
           ) : (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               urlTransform={(url) => {
                 // Allow file:// URLs to pass through so we can capture and render them as click buttons
-                if (url.startsWith('file://')) {
+                if (url.startsWith("file://")) {
                   return url;
                 }
-                const isSafe = url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:') || url.startsWith('tel:');
-                return isSafe ? url : '#';
+                const isSafe =
+                  url.startsWith("http://") ||
+                  url.startsWith("https://") ||
+                  url.startsWith("mailto:") ||
+                  url.startsWith("tel:");
+                return isSafe ? url : "#";
               }}
               components={{
                 a: ({ href, children, ...props }) => {
-                  if (href && href.startsWith('file://')) {
+                  if (href && href.startsWith("file://")) {
                     let filePath = href.substring(7);
-                    if (filePath.startsWith('//')) {
+                    if (filePath.startsWith("//")) {
                       filePath = filePath.substring(1);
                     }
-                    if (!filePath.startsWith('/')) {
-                      filePath = '/' + filePath;
+                    if (!filePath.startsWith("/")) {
+                      filePath = "/" + filePath;
                     }
                     return (
                       <button
@@ -137,14 +166,14 @@ export function MessageBubble({ message, onOpenFile, activeSessionId, workspaceP
                           }
                         }}
                         style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#58a6ff',
-                          textDecoration: 'underline',
-                          cursor: 'pointer',
+                          background: "none",
+                          border: "none",
+                          color: "#58a6ff",
+                          textDecoration: "underline",
+                          cursor: "pointer",
                           padding: 0,
-                          font: 'inherit',
-                          display: 'inline',
+                          font: "inherit",
+                          display: "inline",
                         }}
                         title={`Open ${filePath}`}
                       >
@@ -154,15 +183,15 @@ export function MessageBubble({ message, onOpenFile, activeSessionId, workspaceP
                   }
 
                   // Explicitly validate protocol to prevent javascript: or vbscript: XSS vectors
-                  const isSafe = href && (
-                    href.startsWith('http://') || 
-                    href.startsWith('https://') || 
-                    href.startsWith('mailto:') || 
-                    href.startsWith('tel:')
-                  );
+                  const isSafe =
+                    href &&
+                    (href.startsWith("http://") ||
+                      href.startsWith("https://") ||
+                      href.startsWith("mailto:") ||
+                      href.startsWith("tel:"));
                   return (
                     <a
-                      href={isSafe ? href : '#'}
+                      href={isSafe ? href : "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       {...props}
@@ -170,28 +199,30 @@ export function MessageBubble({ message, onOpenFile, activeSessionId, workspaceP
                       {children}
                     </a>
                   );
-                }
+                },
               }}
             >
               {processedContent}
             </ReactMarkdown>
           )}
         </div>
-        
+
         <div
           style={{
-            marginTop: 'var(--space-xs)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-md)',
-            fontSize: '0.75rem',
-            color: 'var(--color-secondary)',
-            fontFamily: 'var(--font-mono)',
+            marginTop: "var(--space-xs)",
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-md)",
+            fontSize: "0.75rem",
+            color: "var(--color-secondary)",
+            fontFamily: "var(--font-mono)",
           }}
         >
           <span>{new Date(message.timestamp).toLocaleTimeString()}</span>
           {message.traceId && (
-            <span style={{ opacity: 0.7 }}>ID: {message.traceId.slice(0, 8)}</span>
+            <span style={{ opacity: 0.7 }}>
+              ID: {message.traceId.slice(0, 8)}
+            </span>
           )}
         </div>
       </div>
