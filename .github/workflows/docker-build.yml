@@ -3,6 +3,8 @@ name: Docker Build CI
 on:
   push:
     branches: [main, dev]
+    tags:
+      - 'v*'
     paths:
       - 'docker/**'
       - 'apps/**'
@@ -36,8 +38,9 @@ jobs:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/wright-agent
           tags: |
             type=sha,format=long
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+            type=raw,value=${{ github.ref_name }},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Build and Load (Local Test)
         uses: docker/build-push-action@v6
