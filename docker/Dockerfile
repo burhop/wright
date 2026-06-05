@@ -133,6 +133,22 @@ RUN touch /var/log/agent-startup.log /var/log/agent-changes.log && \
 RUN mkdir -p /var/log/supervisor && \
     chown -R agent:agent /var/log/supervisor
 
+# ── OCI Image Metadata Labels ─────────────────────────────────────────────
+ARG VERSION=unknown
+ARG REVISION=unknown
+ARG CREATED=unknown
+
+LABEL org.opencontainers.image.title="Wright" \
+      org.opencontainers.image.description="Local-first AI mechanical engineer — CAD generation, FEA, and manufacturing automation powered by multi-agent LLMs" \
+      org.opencontainers.image.url="https://github.com/burhop/wright" \
+      org.opencontainers.image.source="https://github.com/burhop/wright" \
+      org.opencontainers.image.documentation="https://burhop.github.io/wright/" \
+      org.opencontainers.image.vendor="burhop" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${REVISION}" \
+      org.opencontainers.image.created="${CREATED}"
+
 # ── Runtime user and working directory ────────────────────────────────────
 USER agent
 WORKDIR /home/agent
