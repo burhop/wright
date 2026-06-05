@@ -22,7 +22,7 @@ A developer or user visits the Wright GitHub repository. They are immediately st
 
 **Acceptance Scenarios**:
 1. **Given** the visual assets, **When** they are loaded in a browser, **Then** `wright-logo.svg` displays sharp vector curves, and `social-preview.png` has exact dimensions of 1280×640px.
-2. **Given** the social preview image, **When** it is displayed on sharing platforms, **Then** it clearly shows the tagline "Unlocking software developer-level AI productivity for designers, engineers, and product managers" alongside key feature icons.
+2. **Given** the social preview image, **When** it is displayed on sharing platforms, **Then** it clearly shows the tagline "Actuating deterministic tools for designers, engineers, and product managers" alongside key feature icons.
 
 ---
 

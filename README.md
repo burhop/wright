@@ -5,7 +5,7 @@
 <h1 align="center">Wright</h1>
 
 <p align="center">
-  <strong>An open-source design and engineering agent orchestrator — unlocking software developer-level AI productivity for designers, engineers, and product managers.</strong>
+  <strong>An open-source agent orchestrator for physical engineering — actuating deterministic tools for designers, engineers, and product managers.</strong>
 </p>
 
 <p align="center">
@@ -26,11 +26,13 @@ The rise of generative AI has brought unprecedented, compound productivity gains
 
 Our vision is to unlock new, order-of-magnitude levels of productivity for **product designers**, **engineers** (mechanical, structural, thermal, electrical), and **engineering product managers**. By orchestrating specialized, agentic workflows, Wright bridges the gap between high-level engineering design intent and low-level computational execution, enabling teams to model, simulate, and manufacture faster than ever before.
 
-### The Agent Orchestrator
-At its core, Wright is tool- and model-agnostic. Rather than locking you into a single proprietary ecosystem or a specific LLM vendor, Wright allows you to harness the latest agentic tools from across the entire engineering and AI landscape:
-* **Commercial Vendors**: Drive enterprise CAD/CAM suites and proprietary simulation APIs.
-* **Startups**: Connect cutting-edge generative design and neural geometry engines.
-* **Universities & Researchers**: Tap into specialized academic solvers, finite element analyses (FEA), and custom solvers.
+### Orchestrating Deterministic Tools
+Physical engineering demands absolute mathematical rigor. While LLMs excel at planning, reasoning, and translating natural language into design parameters, they are probabilistic and cannot directly compute physical load vectors or compile error-free CAD geometry. 
+
+Wright bridges this gap. It positions AI agents not as direct geometry creators, but as orchestrators that **actuate, coordinate, and steer deterministic engineering tools**. The AI manages the high-level workflow loops, parameter optimization, and feedback cycles, while industry-standard deterministic kernels guarantee physical validity and mathematical precision:
+* **Commercial Vendors**: Coordinate enterprise CAD/CAM suites (like SolidWorks, Creo, Fusion 360) and proprietary cloud simulation APIs.
+* **Startups**: Actuate cutting-edge generative design, neural topology optimization, and programmatic geometry platforms (like Zoo/KittyCAD).
+* **Universities & Researchers**: Hook into specialized academic solvers, finite element analyses (FEA), and custom engineering calculators.
 * **Open Source Developers**: Actuate community-driven tools like FreeCAD, OpenSCAD, CalculiX, and PrusaSlicer via the standardized Model Context Protocol (MCP).
 
 ### Secure and Flexible Execution
@@ -42,8 +44,8 @@ At its core, Wright is tool- and model-agnostic. Rather than locking you into a 
 
 ## Key Features
 
-* 🤖 **Agent Orchestrator** — Harness and coordinate the latest agentic tools and LLMs from commercial vendors, startups, universities, and open-source developers.
-* 🔧 **Modular Tool Integration** — Drive CAD, FEA, and manufacturing pipelines (like OpenSCAD, CalculiX, STEP/STL/G-code) via standardized Model Context Protocol (MCP) servers.
+* 🤖 **Agent Orchestrator** — Steer and coordinate the latest LLMs and agentic frameworks as high-level control loops.
+* 🔧 **Deterministic Tool Actuation** — Actuate and drive rigorous CAD, FEA, and CAM solvers (like OpenSCAD, CalculiX, PrusaSlicer) via standardized Model Context Protocol (MCP) servers.
 * 🚀 **Software Developer-Level Productivity** — Bring the rapid iteration, coding automation, and workflow patterns of software engineering to traditional physical engineering roles.
 * 🔒 **Flexible & Secure Deployment** — Run on-prem, air-gapped, or in hybrid cloud environments to match your organization's security and compliance needs.
 * 🐳 **One-Command Deployment** — Thick-base Docker container bundling FreeCAD, OpenSCAD, PyTorch, and CUDA drivers.
