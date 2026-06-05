@@ -39,5 +39,10 @@ jobs:
           uv pip install mypy
           uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
 
+      - name: Configure Git for tests
+        run: |
+          git config --global user.email "test-ci@example.com"
+          git config --global user.name "CI Test Runner"
+
       - name: Run Tests with pytest
         run: uv run pytest
