@@ -1,0 +1,74 @@
+site_name: Wright
+site_url: https://burhop.github.io/wright/
+site_author: Burhop
+site_description: A digital engineer, designer, and mechanical analyst — local-first multi-agent mechanical engineering appliance
+
+theme:
+  name: material
+  logo: docs/images/wright-logo.png
+  favicon: docs/images/favicon.ico
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode (default)
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Overview: getting-started/overview.md
+      - Prerequisites: getting-started/prerequisites.md
+      - Quick Start (Docker): getting-started/quickstart-docker.md
+      - Quick Start (Local): getting-started/quickstart-local.md
+  - User Guide:
+      - Docker Deployment: user-guide/docker.md
+      - Environment Variables: user-guide/env-vars.md
+      - Makefile Targets: user-guide/makefile.md
+      - Maintenance & Updates: user-guide/maintenance.md
+      - Recovery Runbook: user-guide/recovery.md
+  - Architecture:
+      - System Overview: architecture/system-overview.md
+      - Project Structure: architecture/project-structure.md
+      - Agent Adapters: architecture/agent-adapters.md
+      - Tool Registry: architecture/tool-registry.md
+      - Data Storage: architecture/data-storage.md
+      - Observability: architecture/observability.md
+  - Contributing:
+      - Development Setup: contributing/dev-setup.md
+      - Spec-Kit Workflow: contributing/spec-kit.md
+      - Code Style: contributing/code-style.md
+      - Testing Guidelines: contributing/testing.md
+      - Pull Requests: contributing/pull-requests.md
+  - API Reference: api/api-reference.md
+  - MCP Tools Catalog:
+      - Tool Directory: mcp-catalog/tools-list.md
+      - Custom MCP Tools: mcp-catalog/custom-tools.md
+      - Offline Caching: mcp-catalog/offline-cache.md

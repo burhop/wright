@@ -2,7 +2,7 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test check
 
 # Default target displays help
 help:
@@ -13,6 +13,13 @@ help:
 	@echo "  docker-logs     - Follow the logs from the test container"
 	@echo "  docker-shell    - Open an interactive shell inside the running container"
 	@echo "  docker-test-e2e - Run Playwright UI tests against the built Docker image"
+	@echo ""
+	@echo "Local Developer Targets (Non-Docker):"
+	@echo "  lint            - Run Ruff and ESLint checkers"
+	@echo "  format          - Apply Ruff and Prettier code formatting"
+	@echo "  typecheck       - Run Mypy and TSC type check validation"
+	@echo "  test            - Run pytest and frontend vitest suites"
+	@echo "  check           - Execute all local quality gates (lint + format + typecheck + test)"
 
 docker-build:
 	docker build -t wright-agent:latest -f docker/Dockerfile .
@@ -79,3 +86,33 @@ docker-test-live:
 	@make docker-clean
 	@if [ -f docker/.env.bak ]; then mv docker/.env.bak docker/.env; fi
 	@echo "Live E2E tests passed!"
+
+# Local Developer Targets (Non-Docker)
+lint:
+	uv run ruff check apps/api/ packages/
+	npx eslint apps/web/
+
+format:
+	uv run ruff format apps/api/ packages/
+	npx prettier --write apps/web/
+
+typecheck:
+	uv run pip install mypy --quiet
+	uv run mypy apps/api/ packages/ --ignore-missing-imports
+	npx tsc --noEmit -p apps/web/tsconfig.app.json
+
+test:
+	uv run pytest
+	npm run test --workspace=apps/web
+
+check:
+	uv run ruff check apps/api/ packages/
+	npx eslint apps/web/
+	uv run ruff format --check apps/api/ packages/
+	npx prettier --check apps/web/
+	uv run pip install mypy --quiet
+	uv run mypy apps/api/ packages/ --ignore-missing-imports
+	npx tsc --noEmit -p apps/web/tsconfig.app.json
+	uv run pytest
+	npm run test --workspace=apps/web
+

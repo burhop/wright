@@ -1,0 +1,124 @@
+# Contributing to Wright
+
+Thank you for your interest in contributing to Wright! We welcome all contributions — from bug reports and documentation fixes to new features and major architectural enhancements. 
+
+As a project focused on design and engineering agent orchestration, we maintain a highly structured, design-first development methodology to ensure robust local execution, clean architecture, and project quality.
+
+---
+
+## Prerequisites
+
+To contribute to the codebase, make sure your development machine has the following tools installed:
+
+1. **Python 3.11+**: The core backend API and tool registries are written in Python.
+2. **uv**: We recommend using `uv` for ultra-fast Python package and workspace management (though `poetry` or standard virtual environments are also supported).
+3. **Node.js 22+**: The frontend web application is written in TypeScript and React.
+4. **Docker (Optional but recommended)**: For testing running container structures and running local OpenTelemetry tracing with Jaeger.
+
+---
+
+## Spec-Kit Development Workflow
+
+Wright uses the **spec-kit** workflow to ensure all feature development is design-driven. All code modifications must follow this lifecycle before code is written:
+
+1. **Specify** (`/speckit-specify`): Write a feature brief and generate a detailed feature specification under `specs/<feature-name>/spec.md` documenting user stories and requirements.
+2. **Clarify** (`/speckit-clarify`): Identify and resolve any ambiguous requirements with the operator.
+3. **Plan** (`/speckit-plan`): Build a technical plan (`specs/<feature-name>/plan.md`), defining architecture, data models, and checking compliance with the project constitution.
+4. **Tasks** (`/speckit-tasks`): Generate a checklist of structured tasks in `specs/<feature-name>/tasks.md`.
+5. **Implement** (`/speckit-implement`): Execute the checklist of tasks, checking them off as they are completed.
+
+### Branch Discipline
+All feature development must take place on dedicated feature branches.
+* Use a sequential branch numbering scheme: `###-feature-name` (e.g., `011-repo-hygiene`).
+* Switch to the branch before drafting specifications.
+* **Direct commits to the `main` or `dev` branches are forbidden.**
+
+---
+
+## Code Style & Quality Gates
+
+We enforce strict linting, formatting, and type-checking rules on all submitted code. You can run these checks locally using our non-Docker developer targets in the `Makefile`:
+
+* **Run all quality checks** (linting, formatting verification, type checking, and tests):
+  ```bash
+  make check
+  ```
+* **Format all files automatically**:
+  ```bash
+  make format
+  ```
+* **Run linters only** (Ruff + ESLint):
+  ```bash
+  make lint
+  ```
+* **Run type checks only** (Mypy + TypeScript compiler):
+  ```bash
+  make typecheck
+  ```
+* **Run tests only** (pytest + frontend vitest):
+  ```bash
+  make test
+  ```
+
+### Local Pre-commit Hooks
+
+To catch linting and formatting errors automatically before they are committed to Git, you can set up pre-commit hooks:
+
+1. Install the `pre-commit` utility on your machine:
+   ```bash
+   pip install pre-commit
+   ```
+2. Activate the hooks in the repository root:
+   ```bash
+   pre-commit install
+   ```
+
+Once installed, Git will automatically run the quality checks on staged files every time you run `git commit`, preventing broken or unformatted code from entering the repository history.
+
+---
+
+## Project Constitution Compliance
+
+Every contribution must align with the **Virtual Mechanical Engineer Constitution** (`constitution.md`). Critical mandates include:
+1. **Offline-First Mandate**: The entire system must be capable of running fully air-gapped without relying on external cloud APIs for core operations.
+2. **FastAPI Backend**: The API must utilize FastAPI with strict Pydantic validation. Business logic must live inside isolated packages.
+3. **Embedded Databases**: No external DB servers. Relational data must use embedded **SQLite** (WAL mode) and semantic RAG must use embedded **LanceDB**.
+4. **Local Auth**: JWT tokens via `OAuth2PasswordBearer` hashed locally with bcrypt in SQLite.
+5. **3-Tier Testing Pyramid**: Component/story tests, mock Playwright UI integration tests, and E2E backend smoke tests.
+
+---
+
+## Pull Request Submission Checklist
+
+When opening a Pull Request (PR), ensure your submission meets these requirements:
+
+- [ ] The branch name follows the sequential format (`###-feature-name`).
+- [ ] All specs and plans are located under `specs/###-feature-name/` and are fully completed.
+- [ ] All unit, integration, and E2E tests pass locally.
+- [ ] Code has been linted and formatted using the configured tools (`ruff`, `eslint`, `prettier`).
+- [ ] The PR does not violate any rules defined in `constitution.md`.
+- [ ] All interactive UI elements have a `data-testid` attribute.
+
+---
+
+## Finding Beginner Tasks
+
+If you are new to the codebase and looking for a place to start, search the GitHub repository's issues page for the **"Good First Issue"** label. These issues represent self-contained tasks scoped specifically for new contributors.
+
+---
+
+## Contributor Recognition Policy
+
+We utilize the **All Contributors** standard to acknowledge all types of contributions—including code, documentation, design, bug reports, and community support.
+
+To add or update a contributor, use the following commands:
+```bash
+# Add a contributor for their contribution type (e.g. code, doc, design)
+npx all-contributors-cli add <github_username> <contribution_type>
+
+# Regenerate the contributor table in the README.md file
+npx all-contributors-cli generate
+```
+
+Contributors will be visually credited in our root `README.md` and tracked in `.all-contributorsrc`.
+

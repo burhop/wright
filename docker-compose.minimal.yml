@@ -1,0 +1,55 @@
+# =============================================================================
+# Wright — Minimal Docker Compose (Lightweight Deployment)
+# =============================================================================
+# Strategy: Minimal containerization of the Wright stack (excluding Jaeger/OTEL).
+# Resource Saving: Conserves RAM/CPU by running only the core agent appliance.
+# Security: All ports bound to 127.0.0.1 (localhost only) per constitution § 4.
+# =============================================================================
+
+services:
+  # --- Wright Core Agent Appliance ---
+  agent:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: wright_agent_minimal
+    env_file:
+      - docker/.env
+    ports:
+      - "127.0.0.1:8080:8000"              # FastAPI (API + static frontend) — localhost only on port 8080
+    volumes:
+      - wright_home:/home/
+      - wright_local:/usr/local/
+      - wright_opt:/opt/
+      - wright_varlib:/var/lib/
+      - wright_varcache:/var/cache/
+      - wright_etc:/etc/
+      - wright_logs:/var/log/
+      # Recovery tools mounted read-only
+      - ./scripts:/recovery:ro
+    environment:
+      - WRIGHT_ENV=production
+      - OTEL_EXPORTER_OTLP_ENDPOINT=        # Explicitly empty to disable remote OTLP export
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  wright_home:
+    name: wright_home
+  wright_local:
+    name: wright_local
+  wright_opt:
+    name: wright_opt
+  wright_varlib:
+    name: wright_varlib
+  wright_varcache:
+    name: wright_varcache
+  wright_etc:
+    name: wright_etc
+  wright_logs:
+    name: wright_logs

@@ -31,7 +31,7 @@ The global product development lifecycle—spanning initial product concept, CAD
 ```
 
 ### The Core Value Proposition for Investors
-- **Agent Orchestration Platform**: Wright empowers product teams to deploy and manage task-specific agents tailored to different phases of the design cycle, from initial concept to physical production.
+- **Agent Orchestration Platform**: Wright empowers the engineer to deploy and manage task-specific agents tailored to different phases of the design cycle, from initial concept to physical production.
 - **Universal Tool Actuation**: Wright leverages the open Model Context Protocol (MCP) as a universal interface layer. If an MCP server is configured for a tool, database, or API in any engineering domain, Wright's orchestrator enables the appropriate agent to utilize it programmatically. This extends from open-source tools to commercial enterprise suites from Autodesk, Siemens, PTC, and Dassault Systèmes.
 - **Standalone Engineering AI-in-a-Box**: Coupled with hardware like the Dell GB10, Wright provides a self-contained, powerful engineering sandbox. This is critical for defense, aerospace, and advanced R&D sectors where data cannot leave physical premises due to security compliance or lack of cloud connectivity.
 - **Model Agnostic**: Fully decoupled from underlying LLMs, the orchestrator connects to either local on-premise models or remote cloud endpoints.

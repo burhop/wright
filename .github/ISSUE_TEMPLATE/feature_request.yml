@@ -1,0 +1,67 @@
+name: Feature Request
+description: Suggest an idea or enhancement for the Wright toolbox
+title: "[FEATURE]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature! Please fill out the form below to propose changes or additions to the Wright toolbox.
+  - type: input
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A brief one-line summary of the feature you are proposing.
+      placeholder: e.g. Support WebMCP browser-native tool actuation
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Use Case / Problem Description
+      description: What problem are you trying to solve? Please describe the use case clearly.
+      placeholder: I want to be able to... because...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: A detailed description of the changes or feature you want to add.
+      placeholder: Describe the behavior, UI changes, or tool registry options.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What alternative solutions or workarounds did you consider, and why were they rejected?
+      placeholder: I tried doing X but...
+    validations:
+      required: false
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Wright Component
+      description: Which part of the toolbox is affected by this feature?
+      options:
+        - API
+        - Web UI
+        - Agent Adapters
+        - Tool Registry
+        - Docker
+        - MCP Tools
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: willingness
+    attributes:
+      label: Willingness to Contribute
+      description: Would you be willing to contribute code or test this feature?
+      options:
+        - Yes, I'd like to implement this
+        - I'd like help implementing
+        - I'm requesting this as a user
+    validations:
+      required: true
