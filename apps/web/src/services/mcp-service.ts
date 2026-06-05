@@ -1,15 +1,15 @@
-import { logger } from './logger';
+import { logger } from "./logger";
 
-const mcpLogger = logger.child('McpService');
+const mcpLogger = logger.child("McpService");
 
 export interface McpServer {
   server_id: string;
   name: string;
-  type: 'stdio' | 'sse' | 'webmcp';
+  type: "stdio" | "sse" | "webmcp";
   command?: string[] | string;
   is_active: boolean;
   is_installed: boolean;
-  status: 'active' | 'inactive' | 'error';
+  status: "active" | "inactive" | "error";
   error_message?: string;
   category: string;
   created_at: number;
@@ -32,7 +32,7 @@ export interface McpTool {
 
 export interface RegisterServerPayload {
   name: string;
-  type: 'stdio' | 'sse' | 'webmcp';
+  type: "stdio" | "sse" | "webmcp";
   command?: string[] | string;
   category: string;
   image_url?: string;
@@ -48,36 +48,43 @@ export interface VersionCheckResult {
 }
 
 const getApiBase = () => {
-  if (typeof window === 'undefined') {
-    return 'http://127.0.0.1:8000';
+  if (typeof window === "undefined") {
+    return "http://127.0.0.1:8000";
   }
   const host = window.location.hostname;
   const port = window.location.port;
-  if (port === '5173' || port === '5174') {
+  if (port === "5173" || port === "5174") {
     return `http://${host}:8000`;
   }
-  return `${window.location.protocol}//${host}${port ? `:${port}` : ''}`;
+  return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
 };
 const API_BASE = getApiBase();
 
 export class McpService {
   async getServers(): Promise<McpServer[]> {
-    mcpLogger.info('Fetching MCP servers');
+    mcpLogger.info("Fetching MCP servers");
     const response = await fetch(`${API_BASE}/api/mcp/servers`);
     if (!response.ok) {
-      mcpLogger.error('Failed to fetch MCP servers', { status: response.status });
+      mcpLogger.error("Failed to fetch MCP servers", {
+        status: response.status,
+      });
       throw new Error(`Failed to fetch MCP servers: ${response.statusText}`);
     }
     const data = await response.json();
     return data.servers;
   }
 
-  async registerServer(payload: RegisterServerPayload): Promise<{ server_id: string; name: string; status: string }> {
-    mcpLogger.info('Registering custom MCP server', { ...payload } as Record<string, unknown>);
+  async registerServer(
+    payload: RegisterServerPayload,
+  ): Promise<{ server_id: string; name: string; status: string }> {
+    mcpLogger.info("Registering custom MCP server", { ...payload } as Record<
+      string,
+      unknown
+    >);
     const response = await fetch(`${API_BASE}/api/mcp/servers`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
@@ -85,7 +92,7 @@ export class McpService {
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
       const msg = errData.detail || response.statusText;
-      mcpLogger.error('Failed to register MCP server', { msg });
+      mcpLogger.error("Failed to register MCP server", { msg });
       throw new Error(msg);
     }
 
@@ -93,52 +100,56 @@ export class McpService {
   }
 
   async toggleServer(serverId: string, isActive: boolean): Promise<McpServer> {
-    mcpLogger.info('Toggling server active state', { serverId, isActive });
+    mcpLogger.info("Toggling server active state", { serverId, isActive });
     const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ is_active: isActive }),
     });
 
     if (!response.ok) {
-      mcpLogger.error('Failed to toggle MCP server state', { status: response.status });
+      mcpLogger.error("Failed to toggle MCP server state", {
+        status: response.status,
+      });
       throw new Error(`Failed to toggle MCP server: ${response.statusText}`);
     }
 
     const data = await response.json();
     return {
       server_id: data.server_id,
-      name: '', // backend patch returns server_id, is_active, status, error_message
-      type: 'stdio',
+      name: "", // backend patch returns server_id, is_active, status, error_message
+      type: "stdio",
       is_active: data.is_active,
       is_installed: data.is_installed || false,
       status: data.status,
       error_message: data.error_message,
-      category: '',
+      category: "",
       created_at: 0,
-      updated_at: 0
+      updated_at: 0,
     };
   }
 
   async deleteServer(serverId: string): Promise<void> {
-    mcpLogger.info('Deleting MCP server', { serverId });
+    mcpLogger.info("Deleting MCP server", { serverId });
     const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
-      mcpLogger.error('Failed to delete MCP server', { status: response.status });
+      mcpLogger.error("Failed to delete MCP server", {
+        status: response.status,
+      });
       throw new Error(`Failed to delete MCP server: ${response.statusText}`);
     }
   }
 
   async getTools(): Promise<McpTool[]> {
-    mcpLogger.info('Fetching MCP tools');
+    mcpLogger.info("Fetching MCP tools");
     const response = await fetch(`${API_BASE}/api/mcp/tools`);
     if (!response.ok) {
-      mcpLogger.error('Failed to fetch MCP tools', { status: response.status });
+      mcpLogger.error("Failed to fetch MCP tools", { status: response.status });
       throw new Error(`Failed to fetch MCP tools: ${response.statusText}`);
     }
     const data = await response.json();
@@ -146,98 +157,113 @@ export class McpService {
   }
 
   async toggleTool(toolId: string, isEnabled: boolean): Promise<McpTool> {
-    mcpLogger.info('Toggling tool enabled state', { toolId, isEnabled });
+    mcpLogger.info("Toggling tool enabled state", { toolId, isEnabled });
     const response = await fetch(`${API_BASE}/api/mcp/tools/${toolId}`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ is_enabled: isEnabled }),
     });
 
     if (!response.ok) {
-      mcpLogger.error('Failed to toggle tool state', { status: response.status });
+      mcpLogger.error("Failed to toggle tool state", {
+        status: response.status,
+      });
       throw new Error(`Failed to toggle MCP tool: ${response.statusText}`);
     }
 
     return response.json();
   }
 
-  async installServer(serverId: string, sessionId?: string | null): Promise<McpServer> {
-    mcpLogger.info('Installing MCP server', { serverId, sessionId });
-    const url = sessionId 
+  async installServer(
+    serverId: string,
+    sessionId?: string | null,
+  ): Promise<McpServer> {
+    mcpLogger.info("Installing MCP server", { serverId, sessionId });
+    const url = sessionId
       ? `${API_BASE}/api/mcp/servers/${serverId}/install?session_id=${sessionId}`
       : `${API_BASE}/api/mcp/servers/${serverId}/install`;
-    const response = await fetch(url, { method: 'POST' });
+    const response = await fetch(url, { method: "POST" });
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
       const msg = errData.detail || response.statusText;
-      mcpLogger.error('Failed to install MCP server', { msg });
+      mcpLogger.error("Failed to install MCP server", { msg });
       throw new Error(msg);
     }
 
     const data = await response.json();
     return {
       server_id: data.server_id,
-      name: '',
-      type: 'stdio',
+      name: "",
+      type: "stdio",
       is_active: false,
       is_installed: data.is_installed,
       status: data.status,
       error_message: data.error_message,
-      category: '',
+      category: "",
       created_at: 0,
-      updated_at: 0
+      updated_at: 0,
     };
   }
 
-  async uninstallServer(serverId: string, sessionId?: string | null): Promise<McpServer> {
-    mcpLogger.info('Uninstalling MCP server', { serverId, sessionId });
-    const url = sessionId 
+  async uninstallServer(
+    serverId: string,
+    sessionId?: string | null,
+  ): Promise<McpServer> {
+    mcpLogger.info("Uninstalling MCP server", { serverId, sessionId });
+    const url = sessionId
       ? `${API_BASE}/api/mcp/servers/${serverId}/uninstall?session_id=${sessionId}`
       : `${API_BASE}/api/mcp/servers/${serverId}/uninstall`;
-    const response = await fetch(url, { method: 'POST' });
+    const response = await fetch(url, { method: "POST" });
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
       const msg = errData.detail || response.statusText;
-      mcpLogger.error('Failed to uninstall MCP server', { msg });
+      mcpLogger.error("Failed to uninstall MCP server", { msg });
       throw new Error(msg);
     }
 
     const data = await response.json();
     return {
       server_id: data.server_id,
-      name: '',
-      type: 'stdio',
+      name: "",
+      type: "stdio",
       is_active: false,
       is_installed: data.is_installed,
       status: data.status,
       error_message: data.error_message,
-      category: '',
+      category: "",
       created_at: 0,
-      updated_at: 0
+      updated_at: 0,
     };
   }
 
   async checkServerVersion(serverId: string): Promise<VersionCheckResult> {
-    mcpLogger.info('Checking server version', { serverId });
-    const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}/version-check`);
+    mcpLogger.info("Checking server version", { serverId });
+    const response = await fetch(
+      `${API_BASE}/api/mcp/servers/${serverId}/version-check`,
+    );
     if (!response.ok) {
-      mcpLogger.error('Failed to check server version', { status: response.status });
+      mcpLogger.error("Failed to check server version", {
+        status: response.status,
+      });
       throw new Error(`Failed to check server version: ${response.statusText}`);
     }
     return response.json();
   }
 
   async updateServer(serverId: string): Promise<{ installed_version: string }> {
-    mcpLogger.info('Updating server', { serverId });
-    const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}/update`, {
-      method: 'POST',
-    });
+    mcpLogger.info("Updating server", { serverId });
+    const response = await fetch(
+      `${API_BASE}/api/mcp/servers/${serverId}/update`,
+      {
+        method: "POST",
+      },
+    );
     if (!response.ok) {
-      mcpLogger.error('Failed to update server', { status: response.status });
+      mcpLogger.error("Failed to update server", { status: response.status });
       throw new Error(`Failed to update server: ${response.statusText}`);
     }
     return response.json();

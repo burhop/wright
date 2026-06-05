@@ -7,6 +7,7 @@ Provides:
   - httpx TestClient fixture with traced request support
   - ErrorResponse assertion helper
 """
+
 import os
 import tempfile
 import time
@@ -30,6 +31,7 @@ def set_testing_env(monkeypatch):
 @pytest.fixture(scope="session", autouse=True)
 def run_api_migrations():
     from api.database.migrate import run_migrations
+
     run_migrations()
 
     yield
@@ -59,7 +61,9 @@ class MockAgentEngine:
         self._active_chat: dict[str, str] = {}
         self._chat_responses: dict[str, list[str]] = {}
 
-    async def create_session(self, workspace: str = "/tmp/test-workspace") -> _MockSession:
+    async def create_session(
+        self, workspace: str = "/tmp/test-workspace"
+    ) -> _MockSession:
         sid = str(uuid.uuid4())
         session = _MockSession(sid, workspace)
         self._sessions[sid] = session
@@ -105,10 +109,12 @@ class MockAgentEngine:
         """Test helper to make create_session raise errors."""
         if should_fail:
             self._original_create = self.create_session
+
             async def failing_create(*args, **kwargs):
                 raise Exception("Agent backend unavailable")
+
             self.create_session = failing_create
-        elif hasattr(self, '_original_create'):
+        elif hasattr(self, "_original_create"):
             self.create_session = self._original_create
 
 
@@ -140,7 +146,9 @@ def sync_client(mock_agent_engine):
 
 
 # ── Error Response Helper ─────────────────────────────────────────────────
-def assert_error_response(response, expected_status: int, expected_error_code: str | None = None):
+def assert_error_response(
+    response, expected_status: int, expected_error_code: str | None = None
+):
     """Assert an API response matches the ErrorResponse contract.
 
     Verifies:

@@ -7,7 +7,7 @@
  *   2. Propagates trace_id to the backend via X-Trace-Id header
  *   3. Logs structured error entries on failure (status, url, duration_ms, trace_id)
  */
-import telemetry from './telemetry';
+import telemetry from "./telemetry";
 
 export interface ApiError {
   error_code: string;
@@ -24,7 +24,7 @@ export class ApiClientError extends Error {
 
   constructor(status: number, apiError: ApiError) {
     super(apiError.message);
-    this.name = 'ApiClientError';
+    this.name = "ApiClientError";
     this.status = status;
     this.errorCode = apiError.error_code;
     this.traceId = apiError.trace_id;
@@ -32,7 +32,7 @@ export class ApiClientError extends Error {
   }
 }
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface RequestOptions {
   headers?: Record<string, string>;
@@ -44,7 +44,7 @@ async function apiRequest<T>(
   method: HttpMethod,
   url: string,
   body?: unknown,
-  options: RequestOptions = {}
+  options: RequestOptions = {},
 ): Promise<T> {
   const spanHandle = telemetry.startSpan(`api.fetch ${method} ${url}`);
   const startTime = performance.now();
@@ -55,12 +55,12 @@ async function apiRequest<T>(
 
   // Propagate trace_id to backend
   if (spanHandle.traceId) {
-    headers['X-Trace-Id'] = spanHandle.traceId;
+    headers["X-Trace-Id"] = spanHandle.traceId;
   }
 
   // Only set Content-Type for requests with body
   if (body !== undefined && body !== null) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
   }
 
   try {
@@ -83,16 +83,16 @@ async function apiRequest<T>(
         apiError = await response.json();
       } catch {
         apiError = {
-          error_code: 'UNKNOWN_ERROR',
+          error_code: "UNKNOWN_ERROR",
           message: `HTTP ${response.status}: ${response.statusText}`,
-          trace_id: spanHandle.traceId || 'unknown',
+          trace_id: spanHandle.traceId || "unknown",
         };
       }
 
       const clientError = new ApiClientError(response.status, apiError);
       spanHandle.error(clientError);
 
-      console.error('[api-client] Request failed', {
+      console.error("[api-client] Request failed", {
         method,
         url,
         status: response.status,
@@ -120,10 +120,11 @@ async function apiRequest<T>(
 
     // Network errors, timeouts, etc.
     const durationMs = Math.round(performance.now() - startTime);
-    const networkError = error instanceof Error ? error : new Error(String(error));
+    const networkError =
+      error instanceof Error ? error : new Error(String(error));
     spanHandle.error(networkError);
 
-    console.error('[api-client] Network error', {
+    console.error("[api-client] Network error", {
       method,
       url,
       error: networkError.message,
@@ -144,23 +145,23 @@ async function apiRequest<T>(
  */
 export const apiClient = {
   get<T>(url: string, options?: RequestOptions): Promise<T> {
-    return apiRequest<T>('GET', url, undefined, options);
+    return apiRequest<T>("GET", url, undefined, options);
   },
 
   post<T>(url: string, body?: unknown, options?: RequestOptions): Promise<T> {
-    return apiRequest<T>('POST', url, body, options);
+    return apiRequest<T>("POST", url, body, options);
   },
 
   put<T>(url: string, body?: unknown, options?: RequestOptions): Promise<T> {
-    return apiRequest<T>('PUT', url, body, options);
+    return apiRequest<T>("PUT", url, body, options);
   },
 
   patch<T>(url: string, body?: unknown, options?: RequestOptions): Promise<T> {
-    return apiRequest<T>('PATCH', url, body, options);
+    return apiRequest<T>("PATCH", url, body, options);
   },
 
   delete<T>(url: string, options?: RequestOptions): Promise<T> {
-    return apiRequest<T>('DELETE', url, undefined, options);
+    return apiRequest<T>("DELETE", url, undefined, options);
   },
 };
 

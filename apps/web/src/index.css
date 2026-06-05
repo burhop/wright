@@ -1,14 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap");
 @import "./tokens/design-tokens.css";
 
 /* Global Reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   background-color: var(--color-neutral);
   color: var(--color-primary);
@@ -52,7 +55,10 @@ body {
 }
 
 /* Common interactive elements reset */
-button, input, textarea, select {
+button,
+input,
+textarea,
+select {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
@@ -92,7 +98,10 @@ a {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth), transform var(--transition-smooth);
+  transition:
+    border-color var(--transition-smooth),
+    box-shadow var(--transition-smooth),
+    transform var(--transition-smooth);
 }
 
 .glow-card:hover {
@@ -118,7 +127,8 @@ a {
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     box-shadow: 0 0 4px var(--color-success);
   }
@@ -134,8 +144,15 @@ a {
 
 /* Thinking Indicator Animations */
 @keyframes thinking-pulse {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1); }
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .thinking-dot {
@@ -165,7 +182,8 @@ a {
   margin-bottom: 0;
 }
 
-.message-content ul, .message-content ol {
+.message-content ul,
+.message-content ol {
   margin-bottom: var(--space-md);
   padding-left: var(--space-xl);
 }
@@ -205,7 +223,9 @@ a {
   color: var(--color-secondary);
   text-decoration: none;
   border-bottom: 1px dashed var(--color-secondary);
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .message-content a:hover {
@@ -213,7 +233,10 @@ a {
   border-bottom-color: var(--color-accent);
 }
 
-.message-content h1, .message-content h2, .message-content h3, .message-content h4 {
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4 {
   font-family: var(--font-ui);
   margin-top: var(--space-lg);
   margin-bottom: var(--space-sm);
@@ -221,9 +244,15 @@ a {
   font-weight: 600;
 }
 
-.message-content h1 { font-size: 1.4rem; }
-.message-content h2 { font-size: 1.25rem; }
-.message-content h3 { font-size: 1.1rem; }
+.message-content h1 {
+  font-size: 1.4rem;
+}
+.message-content h2 {
+  font-size: 1.25rem;
+}
+.message-content h3 {
+  font-size: 1.1rem;
+}
 
 .message-content blockquote {
   border-left: 3px solid var(--color-secondary);
@@ -244,7 +273,8 @@ a {
   font-size: 0.9rem;
 }
 
-.message-content th, .message-content td {
+.message-content th,
+.message-content td {
   border: 1px solid var(--color-border);
   padding: var(--space-sm) var(--space-md);
   text-align: left;
@@ -262,7 +292,10 @@ a {
 
 /* Activity Bar Icon Effects */
 .activity-bar-icon {
-  transition: opacity var(--transition-fast), color var(--transition-fast), transform var(--transition-fast) !important;
+  transition:
+    opacity var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast) !important;
 }
 
 .activity-bar-icon:hover {
@@ -270,4 +303,3 @@ a {
   color: var(--color-secondary) !important;
   transform: scale(1.08);
 }
-

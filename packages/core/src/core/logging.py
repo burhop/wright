@@ -4,6 +4,7 @@ Shared structured logging configuration for all Wright backend packages.
 Constitution §7: All packages MUST implement structured JSON logging (structlog).
 Traditional text logs are forbidden.
 """
+
 import structlog
 from opentelemetry import trace
 
