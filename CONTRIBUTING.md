@@ -37,18 +37,43 @@ All feature development must take place on dedicated feature branches.
 
 ## Code Style & Quality Gates
 
-We enforce strict linting and formatting rules on all submitted code:
+We enforce strict linting, formatting, and type-checking rules on all submitted code. You can run these checks locally using our non-Docker developer targets in the `Makefile`:
 
-* **Python**: We use `ruff` for linting and formatting. Run the following checks locally before submitting code:
+* **Run all quality checks** (linting, formatting verification, type checking, and tests):
   ```bash
-  ruff check .
-  ruff format --check .
+  make check
   ```
-* **TypeScript / React**: We use ESLint and Prettier. Run the linting commands:
+* **Format all files automatically**:
   ```bash
-  npm run lint
-  npm run format:check
+  make format
   ```
+* **Run linters only** (Ruff + ESLint):
+  ```bash
+  make lint
+  ```
+* **Run type checks only** (Mypy + TypeScript compiler):
+  ```bash
+  make typecheck
+  ```
+* **Run tests only** (pytest + frontend vitest):
+  ```bash
+  make test
+  ```
+
+### Local Pre-commit Hooks
+
+To catch linting and formatting errors automatically before they are committed to Git, you can set up pre-commit hooks:
+
+1. Install the `pre-commit` utility on your machine:
+   ```bash
+   pip install pre-commit
+   ```
+2. Activate the hooks in the repository root:
+   ```bash
+   pre-commit install
+   ```
+
+Once installed, Git will automatically run the quality checks on staged files every time you run `git commit`, preventing broken or unformatted code from entering the repository history.
 
 ---
 
