@@ -24,7 +24,7 @@
 ### The Vision
 The rise of generative AI has brought unprecedented, compound productivity gains to software developers. Wright is built to bring this same AI-driven engineering velocity to traditional physical engineering roles. 
 
-Our vision is to unlock new, order-of-magnitude levels of productivity for **product designers**, **engineers** (mechanical, structural, thermal, electrical), and **engineering product managers**. By orchestrating specialized, agentic workflows, Wright bridges the gap between high-level engineering design intent and low-level computational execution, enabling teams to model, simulate, and manufacture faster than ever before.
+Our vision is to unlock new, order-of-magnitude levels of productivity for **product designers**, **engineers** (mechanical, structural, thermal, electrical), and **engineering product managers**. By orchestrating specialized, agentic workflows, Wright bridges the gap between high-level engineering design intent and low-level computational execution, enabling the engineer to model, simulate, and manufacture faster than ever before.
 
 ### Orchestrating Deterministic Tools
 Physical engineering demands absolute mathematical rigor. While LLMs excel at planning, reasoning, and translating natural language into design parameters, they are probabilistic and cannot directly compute physical load vectors or compile error-free CAD geometry. 
