@@ -94,8 +94,16 @@ jobs:
             -e LLM_API_MODEL="ci-model" \
             "$IMAGE"
 
-          cleanup() { docker rm -f "$CONTAINER" 2>/dev/null || true; }
+          cleanup() {
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -ne 0 ]; then
+              echo "=== Docker Logs on Failure (Exit Code $EXIT_CODE) ==="
+              docker logs "$CONTAINER" 2>&1
+            fi
+            docker rm -f "$CONTAINER" 2>/dev/null || true
+          }
           trap cleanup EXIT
+
 
           # Wait for Wright API health endpoint (up to 60s)
           echo "⏳ Waiting for Wright API..."

@@ -30,6 +30,14 @@ logger = get_logger("api.main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Run database migrations to initialize the schema and seed the catalog
+    try:
+        from api.database.migrate import run_migrations
+
+        run_migrations()
+    except Exception as e:
+        logger.exception("database_migration_failed", error=str(e))
+
     # Startup: Initialize McpEngine and sync servers configured as active in DB
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
     try:

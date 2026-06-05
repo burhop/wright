@@ -3,7 +3,134 @@ Generated automatically for local triage and AI code patching.
 
 ---
 
-## 1. Docker Build CI (Run #27025715246)
+## 1. Docker Build CI (Run #27026177877)
+- **Branch**: `dev`
+- **Commit SHA**: `f61e79281e8cf68518308534a19e274d2e5fecb4`
+- **Time**: 2026-06-05T16:12:16Z
+- **URL**: [View run on GitHub](https://github.com/burhop/wright/actions/runs/27026177877)
+
+### Failed Log Output
+```text
+build-and-push	Run Smoke Test	﻿2026-06-05T16:14:35.0752095Z ##[group]Run set -euo pipefail
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0752454Z [36;1mset -euo pipefail[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0752696Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0753013Z [36;1mIMAGE="wright-agent:6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0753418Z [36;1mCONTAINER="wright-ci-smoke"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0753681Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0754169Z [36;1m# Start the container with a dummy LLM URL (no real LLM needed for smoke)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0754615Z [36;1mdocker run --rm -d --name "$CONTAINER" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0754947Z [36;1m  -p 127.0.0.1:8090:8000 \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0755376Z [36;1m  -e LLM_API_URL="https://ci-placeholder.example.com/v1" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0755753Z [36;1m  -e LLM_API_KEY="ci-test" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0756035Z [36;1m  -e LLM_API_MODEL="ci-model" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0756308Z [36;1m  "$IMAGE"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0756901Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0757183Z [36;1mcleanup() { docker rm -f "$CONTAINER" 2>/dev/null || true; }[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0757575Z [36;1mtrap cleanup EXIT[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0757812Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0758053Z [36;1m# Wait for Wright API health endpoint (up to 60s)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0758410Z [36;1mecho "⏳ Waiting for Wright API..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0758713Z [36;1mfor i in $(seq 1 30); do[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0759110Z [36;1m  if curl -sf http://127.0.0.1:8090/api/health > /dev/null 2>&1; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0759508Z [36;1m    echo "✅ Wright API healthy"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0759776Z [36;1m    break[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0759991Z [36;1m  fi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0760206Z [36;1m  if [ "$i" -eq 30 ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0760524Z [36;1m    echo "❌ Wright API did not become healthy in 60s"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0760917Z [36;1m    docker logs "$CONTAINER" 2>&1 | tail -50[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0761221Z [36;1m    exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0761431Z [36;1m  fi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0761631Z [36;1m  sleep 2[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0761724Z [36;1mdone[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0761804Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0762024Z [36;1m# Verify Hermes WebUI is reachable via the agent health proxy (up to 30s)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0762150Z [36;1mecho "⏳ Checking Hermes Agent proxy..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0762248Z [36;1mfor i in $(seq 1 15); do[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0762548Z [36;1m  AGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{"state":"disconnected"}')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0762742Z [36;1m  AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0762881Z [36;1m  echo "   Agent state attempt $i: $AGENT_STATE"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763006Z [36;1m  if [ "$AGENT_STATE" = "connected" ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763116Z [36;1m    echo "✅ Hermes Agent connected"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763206Z [36;1m    break[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763288Z [36;1m  fi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763380Z [36;1m  if [ "$i" -eq 15 ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763548Z [36;1m    echo "❌ Hermes Agent not connected (state=$AGENT_STATE)"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763675Z [36;1m    docker logs "$CONTAINER" 2>&1 | tail -50[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763763Z [36;1m    exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763847Z [36;1m  fi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0763928Z [36;1m  sleep 2[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764015Z [36;1mdone[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764104Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764183Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764298Z [36;1m# Verify workspace creation works[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764419Z [36;1mecho "⏳ Testing workspace creation..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764638Z [36;1mWS_RESPONSE=$(curl -sf -X POST http://127.0.0.1:8090/api/workspace/create \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764765Z [36;1m  -H "Content-Type: application/json" \[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0764946Z [36;1m  -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace"}')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765118Z [36;1mWS_ID=$(echo "$WS_RESPONSE" | jq -r '.workspace_id // empty')[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765216Z [36;1mif [ -z "$WS_ID" ]; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765564Z [36;1m  echo "❌ Workspace creation failed: $WS_RESPONSE"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765654Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765740Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765854Z [36;1mecho "✅ Workspace created: $WS_ID"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0765938Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0766075Z [36;1m# Verify supervisord has both processes running[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0766326Z [36;1mecho "⏳ Checking supervisord processes..."[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0766908Z [36;1mPROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767006Z [36;1mecho "$PROCS"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767169Z [36;1mif ! echo "$PROCS" | grep -q "wright-api.*RUNNING"; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767283Z [36;1m  echo "❌ wright-api not RUNNING"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767365Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767448Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767604Z [36;1mif ! echo "$PROCS" | grep -q "hermes-webui.*RUNNING"; then[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767730Z [36;1m  echo "❌ hermes-webui not RUNNING"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767817Z [36;1m  exit 1[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0767894Z [36;1mfi[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0768004Z [36;1mecho "✅ All processes running"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0768088Z [36;1m[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0768174Z [36;1mecho ""[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0768287Z [36;1mecho "🎉 Smoke test passed!"[0m
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0792681Z shell: /usr/bin/bash -e {0}
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0792766Z env:
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0793011Z   DOCKER_METADATA_OUTPUT_VERSION: sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0793277Z   DOCKER_METADATA_OUTPUT_TAGS: /wright-agent:sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0793491Z   DOCKER_METADATA_OUTPUT_TAG_NAMES: sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0795285Z   DOCKER_METADATA_OUTPUT_LABELS: org.opencontainers.image.created=2026-06-05T16:12:32.749Z
+build-and-push	Run Smoke Test	org.opencontainers.image.description=A digital engineer, designer, and mechanical analyst
+build-and-push	Run Smoke Test	org.opencontainers.image.licenses=MIT
+build-and-push	Run Smoke Test	org.opencontainers.image.revision=6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	org.opencontainers.image.source=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	org.opencontainers.image.title=wright
+build-and-push	Run Smoke Test	org.opencontainers.image.url=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	org.opencontainers.image.version=sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0797606Z   DOCKER_METADATA_OUTPUT_ANNOTATIONS: manifest:org.opencontainers.image.created=2026-06-05T16:12:32.749Z
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.description=A digital engineer, designer, and mechanical analyst
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.licenses=MIT
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.revision=6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.source=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.title=wright
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.url=https://github.com/burhop/wright
+build-and-push	Run Smoke Test	manifest:org.opencontainers.image.version=sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0802010Z   DOCKER_METADATA_OUTPUT_JSON: {"tags":["/wright-agent:sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482"],"tag-names":["sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482"],"labels":{"org.opencontainers.image.created":"2026-06-05T16:12:32.749Z","org.opencontainers.image.description":"A digital engineer, designer, and mechanical analyst","org.opencontainers.image.licenses":"MIT","org.opencontainers.image.revision":"6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482","org.opencontainers.image.source":"https://github.com/burhop/wright","org.opencontainers.image.title":"wright","org.opencontainers.image.url":"https://github.com/burhop/wright","org.opencontainers.image.version":"sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482"},"annotations":["manifest:org.opencontainers.image.created=2026-06-05T16:12:32.749Z","manifest:org.opencontainers.image.description=A digital engineer, designer, and mechanical analyst","manifest:org.opencontainers.image.licenses=MIT","manifest:org.opencontainers.image.revision=6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482","manifest:org.opencontainers.image.source=https://github.com/burhop/wright","manifest:org.opencontainers.image.title=wright","manifest:org.opencontainers.image.url=https://github.com/burhop/wright","manifest:org.opencontainers.image.version=sha-6ba785a0f52f9046bca5ac7ad4d6e2c3f6962482"]}
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0802611Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_TAGS: /home/runner/work/_temp/docker-actions-toolkit-uCsdXu/docker-metadata-action-bake-tags.json
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0803138Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_LABELS: /home/runner/work/_temp/docker-actions-toolkit-uCsdXu/docker-metadata-action-bake-labels.json
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0803596Z   DOCKER_METADATA_OUTPUT_BAKE_FILE_ANNOTATIONS: /home/runner/work/_temp/docker-actions-toolkit-uCsdXu/docker-metadata-action-bake-annotations.json
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0803958Z   DOCKER_METADATA_OUTPUT_BAKE_FILE: /home/runner/work/_temp/docker-actions-toolkit-uCsdXu/docker-metadata-action-bake.json
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.0804044Z ##[endgroup]
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.1212013Z 19b428d79503e4e14c065fef6c19362a788c86195f7118cbf05f4f61dae991f1
+build-and-push	Run Smoke Test	2026-06-05T16:14:35.2992368Z ⏳ Waiting for Wright API...
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.3691733Z ✅ Wright API healthy
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.3692884Z ⏳ Checking Hermes Agent proxy...
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.4767746Z    Agent state attempt 1: connected
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.4769043Z ✅ Hermes Agent connected
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.4769776Z ⏳ Testing workspace creation...
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.7941753Z wright-ci-smoke
+build-and-push	Run Smoke Test	2026-06-05T16:14:39.7975597Z ##[error]Process completed with exit code 22.
+```
+
+---
+
+## 2. Docker Build CI (Run #27025715246)
 - **Branch**: `dev`
 - **Commit SHA**: `94c524c9c5e20eb699c4ba883394bb02ceeee50e`
 - **Time**: 2026-06-05T16:03:09Z
@@ -133,7 +260,7 @@ build-and-push	Run Smoke Test	2026-06-05T16:09:58.3185810Z ##[error]Process comp
 
 ---
 
-## 2. python-quality (Run #27025470042)
+## 3. python-quality (Run #27025470042)
 - **Branch**: `dev`
 - **Commit SHA**: `2ceded12d1146c23d62b4b8c7c6aeb3d831bb82f`
 - **Time**: 2026-06-05T15:58:30Z
@@ -617,7 +744,7 @@ python-quality	Run Tests with pytest	2026-06-05T15:58:57.7564728Z ##[error]Proce
 
 ---
 
-## 3. Docker Build CI (Run #27025470026)
+## 4. Docker Build CI (Run #27025470026)
 - **Branch**: `dev`
 - **Commit SHA**: `2ceded12d1146c23d62b4b8c7c6aeb3d831bb82f`
 - **Time**: 2026-06-05T15:58:30Z
@@ -2472,7 +2599,7 @@ build-and-push	Build and Load (Local Test)	2026-06-05T15:59:22.6882204Z ##[error
 
 ---
 
-## 4. python-quality (Run #27025468181)
+## 5. python-quality (Run #27025468181)
 - **Branch**: `dev`
 - **Commit SHA**: `2ceded12d1146c23d62b4b8c7c6aeb3d831bb82f`
 - **Time**: 2026-06-05T15:58:28Z
@@ -2952,55 +3079,6 @@ python-quality	Run Tests with pytest	2026-06-05T15:58:55.8758659Z FAILED apps/ap
 python-quality	Run Tests with pytest	2026-06-05T15:58:55.8759627Z  +  where 500 = <Response [500 Internal Server Error]>.status_code
 python-quality	Run Tests with pytest	2026-06-05T15:58:55.8760343Z =================== 3 failed, 42 passed, 1 warning in 2.93s ====================
 python-quality	Run Tests with pytest	2026-06-05T15:58:56.0750339Z ##[error]Process completed with exit code 1.
-```
-
----
-
-## 5. Docker Build CI (Run #27024916913)
-- **Branch**: `dev`
-- **Commit SHA**: `7c1464c8b505ca32bd3d7f1336b6f04c5fee24d2`
-- **Time**: 2026-06-05T15:47:20Z
-- **URL**: [View run on GitHub](https://github.com/burhop/wright/actions/runs/27024916913)
-
-### Failed Log Output
-```text
-build-and-push	Set up job	﻿2026-06-05T15:47:24.8814145Z Current runner version: '2.334.0'
-build-and-push	Set up job	2026-06-05T15:47:24.8870846Z ##[group]Runner Image Provisioner
-build-and-push	Set up job	2026-06-05T15:47:24.8872233Z Hosted Compute Agent
-build-and-push	Set up job	2026-06-05T15:47:24.8873261Z Version: 20260520.533
-build-and-push	Set up job	2026-06-05T15:47:24.8874261Z Commit: 189110e25284a9812c124fd27b339e2fb4f2f9db
-build-and-push	Set up job	2026-06-05T15:47:24.8875521Z Build Date: 2026-05-20T17:44:04Z
-build-and-push	Set up job	2026-06-05T15:47:24.8876950Z Worker ID: {0be7b04d-4000-4627-b366-8ba6bcf84971}
-build-and-push	Set up job	2026-06-05T15:47:24.8878152Z Azure Region: eastus
-build-and-push	Set up job	2026-06-05T15:47:24.8879178Z ##[endgroup]
-build-and-push	Set up job	2026-06-05T15:47:24.8881849Z ##[group]Operating System
-build-and-push	Set up job	2026-06-05T15:47:24.8882966Z Ubuntu
-build-and-push	Set up job	2026-06-05T15:47:24.8883865Z 24.04.4
-build-and-push	Set up job	2026-06-05T15:47:24.8884706Z LTS
-build-and-push	Set up job	2026-06-05T15:47:24.8885616Z ##[endgroup]
-build-and-push	Set up job	2026-06-05T15:47:24.8886870Z ##[group]Runner Image
-build-and-push	Set up job	2026-06-05T15:47:24.8887946Z Image: ubuntu-24.04
-build-and-push	Set up job	2026-06-05T15:47:24.8888934Z Version: 20260525.161.1
-build-and-push	Set up job	2026-06-05T15:47:24.8890676Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260525.161/images/ubuntu/Ubuntu2404-Readme.md
-build-and-push	Set up job	2026-06-05T15:47:24.8893594Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260525.161
-build-and-push	Set up job	2026-06-05T15:47:24.8895246Z ##[endgroup]
-build-and-push	Set up job	2026-06-05T15:47:24.8897513Z ##[group]GITHUB_TOKEN Permissions
-build-and-push	Set up job	2026-06-05T15:47:24.8900668Z Contents: read
-build-and-push	Set up job	2026-06-05T15:47:24.8901629Z Metadata: read
-build-and-push	Set up job	2026-06-05T15:47:24.8902503Z Packages: read
-build-and-push	Set up job	2026-06-05T15:47:24.8903526Z ##[endgroup]
-build-and-push	Set up job	2026-06-05T15:47:24.8906977Z Secret source: Actions
-build-and-push	Set up job	2026-06-05T15:47:24.8908730Z Prepare workflow directory
-build-and-push	Set up job	2026-06-05T15:47:24.9379591Z Prepare all required actions
-build-and-push	Set up job	2026-06-05T15:47:24.9433234Z Getting action download info
-build-and-push	Set up job	2026-06-05T15:47:25.3743902Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
-build-and-push	Set up job	2026-06-05T15:47:25.4947229Z Download action repository 'docker/setup-buildx-action@v3' (SHA:8d2750c68a42422c14e847fe6c8ac0403b4cbd6f)
-build-and-push	Set up job	2026-06-05T15:47:25.7242910Z Download action repository 'docker/login-action@v3' (SHA:c94ce9fb468520275223c153574b00df6fe4bcc9)
-build-and-push	Set up job	2026-06-05T15:47:25.9807636Z Download action repository 'docker/metadata-action@v5' (SHA:c299e40c65443455700f0fdfc63efafe5b349051)
-build-and-push	Set up job	2026-06-05T15:47:26.2717475Z Download action repository 'docker/build-push-action@v6' (SHA:10e90e3645eae34f1e60eeb005ba3a3d33f178e8)
-build-and-push	Set up job	2026-06-05T15:47:26.8212437Z Download action repository 'aquasecurity/trivy-action@v0.28.0' (SHA:915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2)
-build-and-push	Set up job	2026-06-05T15:47:27.0668317Z Getting action download info
-build-and-push	Set up job	2026-06-05T15:47:27.3127760Z ##[error]Unable to resolve action `aquasecurity/setup-trivy@v0.2.1`, unable to find version `v0.2.1`
 ```
 
 ---
