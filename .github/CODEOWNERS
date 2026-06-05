@@ -1,0 +1,18 @@
+# CODEOWNERS review routing rules
+# Syntax details: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-codeowners
+
+# Backend components and package utilities
+/apps/api/              @burhop
+/packages/              @burhop
+
+# Frontend web application
+/apps/web/              @burhop
+
+# Infrastructure and CI/CD pipelines
+/docker/                @burhop
+/.github/workflows/     @burhop
+
+# Feature specifications and spec-kit configuration
+/specs/                 @burhop
+/.specify/              @burhop
+/constitution.md        @burhop

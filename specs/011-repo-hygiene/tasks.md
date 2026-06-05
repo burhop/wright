@@ -16,7 +16,7 @@
 
 **Purpose**: Project verification and clean environment checks
 
-- [ ] T001 Verify active git branch is `011-repo-hygiene` and workspace is clean
+- [x] T001 Verify active git branch is `011-repo-hygiene` and workspace is clean
 
 ---
 
@@ -24,7 +24,7 @@
 
 **Purpose**: Core directories that MUST exist before user stories are executed
 
-- [ ] T002 Create `docs/images/` directory if it does not exist
+- [x] T002 Create `docs/images/` directory if it does not exist
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -38,7 +38,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T003 [P] [US1] Create LICENSE file in repository root with MIT License text
+- [x] T003 [P] [US1] Create LICENSE file in repository root with MIT License text
 
 **Checkpoint**: At this point, User Story 1 is fully functional and legally compliant.
 
@@ -52,7 +52,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T004 [P] [US2] Create CONTRIBUTING.md file in repository root with contributor guidelines
+- [x] T004 [P] [US2] Create CONTRIBUTING.md file in repository root with contributor guidelines
 
 **Checkpoint**: User Story 2 is ready to guide external contributors.
 
@@ -66,8 +66,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T005 [P] [US3] Create CODE_OF_CONDUCT.md file in repository root with Contributor Covenant v2.1
-- [ ] T006 [P] [US3] Create SECURITY.md file in repository root with security reporting guidelines
+- [x] T005 [P] [US3] Create CODE_OF_CONDUCT.md file in repository root with Contributor Covenant v2.1
+- [x] T006 [P] [US3] Create SECURITY.md file in repository root with security reporting guidelines
 
 **Checkpoint**: Safety guidelines and security response procedures are fully established.
 
@@ -81,7 +81,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T007 [P] [US4] Create SUPPORT.md file in repository root with support channels guide
+- [x] T007 [P] [US4] Create SUPPORT.md file in repository root with support channels guide
 
 **Checkpoint**: Support routing is functional.
 
@@ -95,7 +95,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T008 [P] [US5] Create .github/CODEOWNERS file mapping path patterns to @burhop
+- [x] T008 [P] [US5] Create .github/CODEOWNERS file mapping path patterns to @burhop
 
 **Checkpoint**: Automated review assignment is active.
 
@@ -109,10 +109,10 @@
 
 ### Implementation for User Story 6
 
-- [ ] T009 [US6] Move screenshot_*.png files from repository root to docs/images/
-- [ ] T010 [US6] Update references to screenshots in docs/community-features/012-readme-branding.md
-- [ ] T011 [US6] Update .gitignore file in repository root to ignore state.db, tests_output/, screenshot_*.png, and *.log files
-- [ ] T012 [US6] Remove untracked stale logs, db, and txt files from the local repository root (e.g. phase1.log, phase2.log, ps_debug.log, test-*.log, tests_output*.txt)
+- [x] T009 [US6] Move screenshot_*.png files from repository root to docs/images/
+- [x] T010 [US6] Update references to screenshots in docs/community-features/012-readme-branding.md
+- [x] T011 [US6] Update .gitignore file in repository root to ignore state.db, tests_output/, screenshot_*.png, and *.log files
+- [x] T012 [US6] Remove untracked stale logs, db, and txt files from the local repository root (e.g. phase1.log, phase2.log, ps_debug.log, test-*.log, tests_output*.txt)
 
 **Checkpoint**: The repository root is clean and free of build/debug noise.
 
@@ -126,7 +126,7 @@
 
 ### Implementation for User Story 7
 
-- [ ] T013 [P] [US7] Create docs/metadata-guide.md documenting GitHub About description and 20 topic tags
+- [x] T013 [P] [US7] Create docs/metadata-guide.md documenting GitHub About description and 20 topic tags
 
 **Checkpoint**: Metadata configuration is documented and ready for deployment.
 
@@ -136,8 +136,8 @@
 
 **Purpose**: General validation and project integrity checks.
 
-- [ ] T014 Run quickstart.md validation checklist
-- [ ] T015 Verify that no source code, Docker files, or README.md files have been modified
+- [x] T014 Run quickstart.md validation checklist
+- [x] T015 Verify that no source code, Docker files, or README.md files have been modified
 
 ---
 
