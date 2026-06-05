@@ -41,9 +41,10 @@ Wright bridges this gap. It positions AI agents not as direct geometry creators,
 * **Local or Hybrid Cloud**: Wright's architecture is fully open. While capable of running completely local and air-gapped on enterprise hardware (like the Dell GB10 / NVIDIA DGX Spark) to safeguard proprietary designs, it is equally ready to scale with cloud-based hybrid tools.
 
 ### Built on Open Industry Standards
-Wright is committed to open, vendor-neutral standards that allow the toolbox to grow alongside the AI and engineering ecosystems:
-* **Model Context Protocol (MCP)**: Leveraging MCP (hosted by the Linux Foundation) as our core translation layer, Wright ensures that any compliant tool, database, or API can be actuated by any agent runtime without tight coupling.
-* **Future-Proof Design**: We actively track emerging specifications to expand the user experience. Plans are in place to adopt incoming standards like **MCP-UI**, enabling agents to render rich interactive parameter sliders, 3D viewport modifications, and custom GUI controls natively within the chat stream.
+Wright is committed to open, vendor-neutral standards that allow the toolbox to grow alongside the AI and engineering ecosystems. We actively support and plan compatibility with key emerging specs:
+* **[Model Context Protocol (MCP)](https://github.com/modelcontextprotocol)**: Developed under the Linux Foundation, MCP serves as our core translation layer, enabling loose coupling so any compliant tool, database, or API can be actuated by any agent runtime.
+* **[MCP Apps](https://github.com/modelcontextprotocol/ext-apps)** (the official standardization of the experimental *MCP-UI* proposal): Allows MCP servers to deliver rich, dynamic web interfaces (such as parameter sliders and data visualizations) that render directly in the agent session.
+* **[WebMCP](https://github.com/webmachinelearning/webmcp)**: A browser-native standard incubated by the W3C Web Machine Learning Community Group that exposes web forms and imperative JavaScript APIs to agents via `navigator.modelContext`, letting Wright actuate browser-based tooling natively.
 
 ---
 
