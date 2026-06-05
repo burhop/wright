@@ -104,3 +104,21 @@ When opening a Pull Request (PR), ensure your submission meets these requirement
 ## Finding Beginner Tasks
 
 If you are new to the codebase and looking for a place to start, search the GitHub repository's issues page for the **"Good First Issue"** label. These issues represent self-contained tasks scoped specifically for new contributors.
+
+---
+
+## Contributor Recognition Policy
+
+We utilize the **All Contributors** standard to acknowledge all types of contributions—including code, documentation, design, bug reports, and community support.
+
+To add or update a contributor, use the following commands:
+```bash
+# Add a contributor for their contribution type (e.g. code, doc, design)
+npx all-contributors-cli add <github_username> <contribution_type>
+
+# Regenerate the contributor table in the README.md file
+npx all-contributors-cli generate
+```
+
+Contributors will be visually credited in our root `README.md` and tracked in `.all-contributorsrc`.
+
