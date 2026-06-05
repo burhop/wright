@@ -16,6 +16,7 @@ from .base import (
 
 logger = logging.getLogger(__name__)
 
+
 class HermesAdapter(BaseAgentEngine):
     """Concrete implementation of BaseAgentEngine that proxies to Hermes WebUI API (Constitution §2)."""
 
@@ -74,7 +75,7 @@ class HermesAdapter(BaseAgentEngine):
             response.raise_for_status()
             data = response.json()
             sessions = data.get("sessions", [])
-            
+
             result = []
             for s in sessions:
                 result.append(
@@ -140,7 +141,7 @@ class HermesAdapter(BaseAgentEngine):
                     event_type = sse.event
                     if not event_type or event_type == "heartbeat":
                         continue
-                    
+
                     try:
                         event_data = json.loads(sse.data)
                     except Exception:
@@ -156,9 +157,16 @@ class HermesAdapter(BaseAgentEngine):
                     elif event_type in ("done", "stream_end"):
                         yield AgentStreamEvent(type="stream_end", data=event_data)
                     elif event_type in ("error", "apperror"):
-                        yield AgentStreamEvent(type="error", data={"message": event_data.get("message", "Unknown error")})
+                        yield AgentStreamEvent(
+                            type="error",
+                            data={
+                                "message": event_data.get("message", "Unknown error")
+                            },
+                        )
                     elif event_type == "cancel":
-                        yield AgentStreamEvent(type="error", data={"message": "Cancelled by user"})
+                        yield AgentStreamEvent(
+                            type="error", data={"message": "Cancelled by user"}
+                        )
 
     async def get_session_workspace(self, session_id: str) -> str | None:
         """Retrieve the workspace path for a given session ID by querying Hermes API."""
@@ -180,12 +188,20 @@ class HermesAdapter(BaseAgentEngine):
 
     async def save_context(self, session_id: str, workspace_id: str) -> bool:
         """No-op for Hermes — context is persisted server-side automatically."""
-        logger.debug("save_context is a no-op for Hermes (session=%s, workspace=%s)", session_id, workspace_id)
+        logger.debug(
+            "save_context is a no-op for Hermes (session=%s, workspace=%s)",
+            session_id,
+            workspace_id,
+        )
         return True
 
     async def load_context(self, session_id: str, workspace_id: str) -> dict | None:
         """No-op for Hermes — context is persisted server-side automatically."""
-        logger.debug("load_context is a no-op for Hermes (session=%s, workspace=%s)", session_id, workspace_id)
+        logger.debug(
+            "load_context is a no-op for Hermes (session=%s, workspace=%s)",
+            session_id,
+            workspace_id,
+        )
         return None
 
     async def get_chat_history(self, session_id: str) -> list[AgentChatMessage]:
@@ -214,7 +230,7 @@ class HermesAdapter(BaseAgentEngine):
                     # Skip system messages from the UI display
                     if role == "system":
                         continue
-                    
+
                     msg_id = msg.get("id", msg.get("message_id", ""))
                     if not msg_id:
                         msg_id = f"msg-{session_id}-{idx}"
@@ -225,7 +241,9 @@ class HermesAdapter(BaseAgentEngine):
                         for item in content:
                             if isinstance(item, str):
                                 parts.append(item)
-                            elif isinstance(item, dict) and isinstance(item.get("text"), str):
+                            elif isinstance(item, dict) and isinstance(
+                                item.get("text"), str
+                            ):
                                 parts.append(item["text"])
                         content = "".join(parts)
                     elif not isinstance(content, str):
@@ -252,5 +270,7 @@ class HermesAdapter(BaseAgentEngine):
                     )
                 return result
         except Exception as e:
-            logger.error("Failed to fetch chat history for session %s: %s", session_id, e)
+            logger.error(
+                "Failed to fetch chat history for session %s: %s", session_id, e
+            )
             return []
