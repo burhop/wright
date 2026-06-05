@@ -16,6 +16,7 @@ from tool_registry.db import (
 from tool_registry.runners.stdio import StdioRunner
 from tool_registry.manager import McpEngine
 
+
 @pytest.fixture
 def temp_db_path(tmp_path) -> str:
     db_file = tmp_path / "test_state.db"
@@ -52,6 +53,7 @@ def temp_db_path(tmp_path) -> str:
     conn.close()
     return db_path
 
+
 def test_pydantic_models():
     server = McpServer(
         server_id="test-id",
@@ -62,7 +64,7 @@ def test_pydantic_models():
         status="active",
         category="simulation",
         created_at=123,
-        updated_at=456
+        updated_at=456,
     )
     assert server.name == "Test CLI"
     assert server.command == ["uv", "run", "cli"]
@@ -75,10 +77,11 @@ def test_pydantic_models():
         description="test desc",
         input_schema={"type": "object"},
         is_enabled=True,
-        created_at=123
+        created_at=123,
     )
     assert tool.name == "tool"
     assert tool.input_schema == {"type": "object"}
+
 
 def test_database_crud(temp_db_path):
     # Insert Server
@@ -91,7 +94,7 @@ def test_database_crud(temp_db_path):
         is_active=False,
         status="inactive",
         created_at=int(time.time()),
-        updated_at=int(time.time())
+        updated_at=int(time.time()),
     )
     insert_server(temp_db_path, server)
 
@@ -107,13 +110,16 @@ def test_database_crud(temp_db_path):
     assert len(servers) == 1
 
     # Update Server
-    updated = update_server(temp_db_path, server_id, {"is_active": True, "status": "active"})
+    updated = update_server(
+        temp_db_path, server_id, {"is_active": True, "status": "active"}
+    )
     assert updated.is_active is True
     assert updated.status == "active"
 
     # Delete Server
     assert delete_server(temp_db_path, server_id) is True
     assert get_server(temp_db_path, server_id) is None
+
 
 @pytest.mark.asyncio
 async def test_stdio_runner_mock():
@@ -132,10 +138,11 @@ async def test_stdio_runner_mock():
     # Call Tool
     res = await runner.call_tool("test_tool", {"val": "hello"})
     assert "content" in res
-    assert "Called test_tool with: {\"val\": \"hello\"}" in res["content"][0]["text"]
+    assert 'Called test_tool with: {"val": "hello"}' in res["content"][0]["text"]
 
     await runner.stop()
     assert runner.is_running() is False
+
 
 @pytest.mark.asyncio
 async def test_mcp_engine(temp_db_path):
@@ -149,7 +156,7 @@ async def test_mcp_engine(temp_db_path):
         is_active=False,
         status="inactive",
         created_at=int(time.time()),
-        updated_at=int(time.time())
+        updated_at=int(time.time()),
     )
     insert_server(temp_db_path, server)
 
@@ -167,13 +174,13 @@ async def test_mcp_engine(temp_db_path):
     assert tools[0].input_schema == {
         "type": "object",
         "properties": {"val": {"type": "string"}},
-        "required": ["val"]
+        "required": ["val"],
     }
 
     # Call tool through Engine
     res = await engine.call_tool(server_id, "test_tool", {"val": "engine_test"})
     assert "content" in res
-    assert "Called test_tool with: {\"val\": \"engine_test\"}" in res["content"][0]["text"]
+    assert 'Called test_tool with: {"val": "engine_test"}' in res["content"][0]["text"]
 
     # Stop Server
     stopped_server = await engine.stop_server(server_id)

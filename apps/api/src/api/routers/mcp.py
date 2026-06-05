@@ -1,7 +1,6 @@
 import uuid
 import time
 import structlog
-import os
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Response
 from pydantic import BaseModel
@@ -19,10 +18,14 @@ from tool_registry import (
     McpEngine,
 )
 from core.tracing import traced
-from api.services.hermes_sync import sync_mcp_server_to_hermes, restart_hermes_background
+from api.services.hermes_sync import (
+    sync_mcp_server_to_hermes,
+    restart_hermes_background,
+)
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+
 
 # ── Dependency injection helper ──────────────────────────────────────────────
 def get_mcp_engine(request: Request) -> McpEngine:
@@ -31,21 +34,25 @@ def get_mcp_engine(request: Request) -> McpEngine:
     if not engine:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="MCP engine not initialized in app state"
+            detail="MCP engine not initialized in app state",
         )
     return engine
+
 
 # ── REST Models ──────────────────────────────────────────────────────────────
 class ServersListResponse(BaseModel):
     servers: List[McpServer]
+
 
 class RegisterServerResponse(BaseModel):
     server_id: str
     name: str
     status: str
 
+
 class ServerToggleRequest(BaseModel):
     is_active: bool
+
 
 class ServerToggleResponse(BaseModel):
     server_id: str
@@ -53,23 +60,29 @@ class ServerToggleResponse(BaseModel):
     status: str
     error_message: Optional[str] = None
 
+
 class ServerInstallResponse(BaseModel):
     server_id: str
     is_installed: bool
     status: str
     error_message: Optional[str] = None
 
+
 class ToolsListResponse(BaseModel):
     tools: List[McpTool]
 
+
 class ToolToggleRequest(BaseModel):
     is_enabled: bool
+
 
 class ToolToggleResponse(BaseModel):
     tool_id: str
     is_enabled: bool
 
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
+
 
 @router.get("/servers", response_model=ServersListResponse)
 @traced("mcp.server.list")
@@ -81,22 +94,30 @@ async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
         logger.exception("list_servers_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list MCP servers: {e}"
+            detail=f"Failed to list MCP servers: {e}",
         )
 
-@router.post("/servers", response_model=RegisterServerResponse, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/servers",
+    response_model=RegisterServerResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 @traced("mcp.server.register")
-async def register_server(body: McpServerCreate, engine: McpEngine = Depends(get_mcp_engine)):
+async def register_server(
+    body: McpServerCreate, engine: McpEngine = Depends(get_mcp_engine)
+):
     server_id = str(uuid.uuid4())
     logger.info("registering_server", name=body.name, type=body.type)
-    
+
     # Check if a server with this name already exists to avoid unique constraint error
     from tool_registry.db import get_server_by_name
+
     existing = get_server_by_name(engine.db_path, body.name)
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"An MCP server with the name '{body.name}' is already registered."
+            detail=f"An MCP server with the name '{body.name}' is already registered.",
         )
 
     now = int(time.time())
@@ -114,36 +135,39 @@ async def register_server(body: McpServerCreate, engine: McpEngine = Depends(get
         image_url=body.image_url,
         description=body.description,
         source_url=body.source_url,
-        installed_version=body.installed_version
+        installed_version=body.installed_version,
     )
     try:
         insert_server(engine.db_path, new_server)
         return RegisterServerResponse(
-            server_id=server_id,
-            name=body.name,
-            status="inactive"
+            server_id=server_id, name=body.name, status="inactive"
         )
     except Exception as e:
         logger.exception("register_server_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to register MCP server: {e}"
+            detail=f"Failed to register MCP server: {e}",
         )
+
 
 @router.patch("/servers/{server_id}", response_model=ServerToggleResponse)
 @traced("mcp.server.toggle")
 async def toggle_server_activation(
     server_id: str,
     body: ServerToggleRequest,
-    engine: McpEngine = Depends(get_mcp_engine)
+    engine: McpEngine = Depends(get_mcp_engine),
 ):
-    logger.info("toggling_server_activation", server_id=server_id, target_is_active=body.is_active)
-    
+    logger.info(
+        "toggling_server_activation",
+        server_id=server_id,
+        target_is_active=body.is_active,
+    )
+
     server = get_server(engine.db_path, server_id)
     if not server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server '{server_id}' not found."
+            detail=f"MCP Server '{server_id}' not found.",
         )
 
     try:
@@ -151,25 +175,26 @@ async def toggle_server_activation(
             updated = await engine.start_server(server_id)
         else:
             updated = await engine.stop_server(server_id)
-            
+
         # Sync with Hermes config
         sync_mcp_server_to_hermes(updated)
-        
+
         # Restart Hermes WebUI in background to reload config
         restart_hermes_background()
-            
+
         return ServerToggleResponse(
             server_id=updated.server_id,
             is_active=updated.is_active,
             status=updated.status,
-            error_message=updated.error_message
+            error_message=updated.error_message,
         )
     except Exception as e:
         logger.exception("toggle_server_failed", server_id=server_id, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to toggle MCP server activation: {e}"
+            detail=f"Failed to toggle MCP server activation: {e}",
         )
+
 
 @router.post("/servers/{server_id}/install", response_model=ServerInstallResponse)
 @traced("mcp.server.install")
@@ -177,33 +202,41 @@ async def install_server_endpoint(
     server_id: str,
     request: Request,
     session_id: Optional[str] = None,
-    engine: McpEngine = Depends(get_mcp_engine)
+    engine: McpEngine = Depends(get_mcp_engine),
 ):
     logger.info("installing_server", server_id=server_id, session_id=session_id)
-    
+
     server = get_server(engine.db_path, server_id)
     if not server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server '{server_id}' not found."
+            detail=f"MCP Server '{server_id}' not found.",
         )
 
     try:
         # Mark as installed in database
         from tool_registry.db import update_server
-        update_server(engine.db_path, server_id, {"is_installed": True, "updated_at": int(time.time())})
-        
+
+        update_server(
+            engine.db_path,
+            server_id,
+            {"is_installed": True, "updated_at": int(time.time())},
+        )
+
         # Start server once to discover tools
         updated = await engine.start_server(server_id)
-        
+
         # If a session_id is provided, check if enabled in that workspace.
         # If not, stop the runner.
         should_stop = True
         if session_id:
             from core.workspace import get_workspace_enabled_tools
+
             enabled_tools = get_workspace_enabled_tools(engine.db_path, session_id)
             if enabled_tools is not None:
-                if (updated.name in enabled_tools) or (updated.server_id in enabled_tools):
+                if (updated.name in enabled_tools) or (
+                    updated.server_id in enabled_tools
+                ):
                     should_stop = False
         else:
             should_stop = True
@@ -213,25 +246,26 @@ async def install_server_endpoint(
             # Retain is_installed state
             update_server(engine.db_path, server_id, {"is_installed": True})
             updated.is_installed = True
-            
+
         # Sync with the active agent if session is active
         if session_id:
             sync_manager = getattr(request.app.state, "agent_sync_manager", None)
             if sync_manager:
                 sync_manager.sync_workspace_tools(session_id)
-            
+
         return ServerInstallResponse(
             server_id=updated.server_id,
             is_installed=updated.is_installed,
             status=updated.status,
-            error_message=updated.error_message
+            error_message=updated.error_message,
         )
     except Exception as e:
         logger.exception("install_server_failed", server_id=server_id, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to install MCP server: {e}"
+            detail=f"Failed to install MCP server: {e}",
         )
+
 
 @router.post("/servers/{server_id}/uninstall", response_model=ServerInstallResponse)
 @traced("mcp.server.uninstall")
@@ -239,59 +273,67 @@ async def uninstall_server_endpoint(
     server_id: str,
     request: Request,
     session_id: Optional[str] = None,
-    engine: McpEngine = Depends(get_mcp_engine)
+    engine: McpEngine = Depends(get_mcp_engine),
 ):
     logger.info("uninstalling_server", server_id=server_id, session_id=session_id)
-    
+
     server = get_server(engine.db_path, server_id)
     if not server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server '{server_id}' not found."
+            detail=f"MCP Server '{server_id}' not found.",
         )
 
     try:
         # Stop the server runner
         updated = await engine.stop_server(server_id)
-        
+
         # Mark as not installed in database
         from tool_registry.db import update_server
-        updated = update_server(engine.db_path, server_id, {
-            "is_installed": False, 
-            "is_active": False,
-            "status": "inactive",
-            "updated_at": int(time.time())
-        })
-        
+
+        updated = update_server(
+            engine.db_path,
+            server_id,
+            {
+                "is_installed": False,
+                "is_active": False,
+                "status": "inactive",
+                "updated_at": int(time.time()),
+            },
+        )
+
         # Sync tools removal to the agent if session is active
         if session_id:
             sync_manager = getattr(request.app.state, "agent_sync_manager", None)
             if sync_manager:
                 sync_manager.sync_workspace_tools(session_id)
-                
+
         return ServerInstallResponse(
             server_id=updated.server_id,
             is_installed=updated.is_installed,
             status=updated.status,
-            error_message=updated.error_message
+            error_message=updated.error_message,
         )
     except Exception as e:
         logger.exception("uninstall_server_failed", server_id=server_id, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to uninstall MCP server: {e}"
+            detail=f"Failed to uninstall MCP server: {e}",
         )
+
 
 @router.delete("/servers/{server_id}", status_code=status.HTTP_204_NO_CONTENT)
 @traced("mcp.server.delete")
-async def delete_server_endpoint(server_id: str, engine: McpEngine = Depends(get_mcp_engine)):
+async def delete_server_endpoint(
+    server_id: str, engine: McpEngine = Depends(get_mcp_engine)
+):
     logger.info("deleting_server", server_id=server_id)
-    
+
     server = get_server(engine.db_path, server_id)
     if not server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server '{server_id}' not found."
+            detail=f"MCP Server '{server_id}' not found.",
         )
 
     try:
@@ -299,21 +341,22 @@ async def delete_server_endpoint(server_id: str, engine: McpEngine = Depends(get
         await engine.stop_server(server_id)
         # Delete server from database
         delete_server(engine.db_path, server_id)
-        
+
         # Sync removal with Hermes config
         server.is_active = False
         sync_mcp_server_to_hermes(server)
-        
+
         # Restart Hermes WebUI in background to reload config
         restart_hermes_background()
-        
+
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as e:
         logger.exception("delete_server_failed", server_id=server_id, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete MCP server: {e}"
+            detail=f"Failed to delete MCP server: {e}",
         )
+
 
 @router.get("/tools", response_model=ToolsListResponse)
 @traced("mcp.tool.list")
@@ -325,23 +368,22 @@ async def list_tools_endpoint(engine: McpEngine = Depends(get_mcp_engine)):
         logger.exception("list_tools_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to list MCP tools: {e}"
+            detail=f"Failed to list MCP tools: {e}",
         )
+
 
 @router.patch("/tools/{tool_id}", response_model=ToolToggleResponse)
 @traced("mcp.tool.toggle")
 async def toggle_tool_enabled(
-    tool_id: str,
-    body: ToolToggleRequest,
-    engine: McpEngine = Depends(get_mcp_engine)
+    tool_id: str, body: ToolToggleRequest, engine: McpEngine = Depends(get_mcp_engine)
 ):
     logger.info("toggling_tool_enabled", tool_id=tool_id, is_enabled=body.is_enabled)
-    
+
     tool = get_tool(engine.db_path, tool_id)
     if not tool:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Tool '{tool_id}' not found."
+            detail=f"MCP Tool '{tool_id}' not found.",
         )
 
     try:
@@ -349,37 +391,38 @@ async def toggle_tool_enabled(
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to update tool state in database."
+                detail="Failed to update tool state in database.",
             )
-        return ToolToggleResponse(
-            tool_id=tool_id,
-            is_enabled=body.is_enabled
-        )
+        return ToolToggleResponse(tool_id=tool_id, is_enabled=body.is_enabled)
     except HTTPException:
         raise
     except Exception as e:
         logger.exception("toggle_tool_failed", tool_id=tool_id, error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to toggle tool enabled state: {e}"
+            detail=f"Failed to toggle tool enabled state: {e}",
         )
+
 
 @router.get("/servers/{server_id}/version-check")
 @traced("mcp.server.version_check")
-async def version_check_endpoint(server_id: str, engine: McpEngine = Depends(get_mcp_engine)):
+async def version_check_endpoint(
+    server_id: str, engine: McpEngine = Depends(get_mcp_engine)
+):
     server = get_server(engine.db_path, server_id)
     if not server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server '{server_id}' not found."
+            detail=f"MCP Server '{server_id}' not found.",
         )
     if server.type in ("sse", "webmcp"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Version check not applicable for network-type servers."
+            detail="Version check not applicable for network-type servers.",
         )
-    
+
     from tool_registry.version_check import check_server_version
+
     result = await check_server_version(server)
     if "error" in result and result["error"] is not None:
         if result["error"] == "unsupported_package_manager":
@@ -388,46 +431,55 @@ async def version_check_endpoint(server_id: str, engine: McpEngine = Depends(get
                 "installed": None,
                 "latest": None,
                 "update_available": False,
-                "error": result["error"]
+                "error": result["error"],
             }
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Version check failed: {result['error']}"
+            detail=f"Version check failed: {result['error']}",
         )
     return result
 
+
 @router.post("/servers/{server_id}/update")
 @traced("mcp.server.update")
-async def update_server_endpoint(server_id: str, engine: McpEngine = Depends(get_mcp_engine)):
+async def update_server_endpoint(
+    server_id: str, engine: McpEngine = Depends(get_mcp_engine)
+):
     server = get_server(engine.db_path, server_id)
     if not server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server '{server_id}' not found."
+            detail=f"MCP Server '{server_id}' not found.",
         )
     if server.type != "stdio":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Update not applicable for network-type servers."
+            detail="Update not applicable for network-type servers.",
         )
-        
+
     from tool_registry.version_check import update_server
+
     result = await update_server(server)
     if result.get("error"):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Update failed: {result['error']}"
+            detail=f"Update failed: {result['error']}",
         )
-        
+
     from tool_registry.db import update_server as db_update_server
-    db_update_server(engine.db_path, server_id, {
-        "installed_version": result["installed_version"],
-        "updated_at": int(time.time())
-    })
-    
+
+    db_update_server(
+        engine.db_path,
+        server_id,
+        {
+            "installed_version": result["installed_version"],
+            "updated_at": int(time.time()),
+        },
+    )
+
     return {
         "server_id": server_id,
         "installed_version": result["installed_version"],
         "success": True,
-        "error": None
+        "error": None,
     }

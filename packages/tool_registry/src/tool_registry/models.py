@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Union, Literal
 
+
 class McpServer(BaseModel):
     server_id: str
     name: str
@@ -18,6 +19,7 @@ class McpServer(BaseModel):
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
 
+
 class McpServerCreate(BaseModel):
     name: str
     type: Literal["stdio", "sse", "webmcp"]
@@ -28,10 +30,12 @@ class McpServerCreate(BaseModel):
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
 
+
 class McpServerUpdate(BaseModel):
     is_active: Optional[bool] = None
     status: Optional[Literal["active", "inactive", "error"]] = None
     error_message: Optional[str] = None
+
 
 class McpTool(BaseModel):
     tool_id: str

@@ -1,5 +1,5 @@
 /// <reference types="vitest/globals" />
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Mock IntersectionObserver for components that use it
 class MockIntersectionObserver {
@@ -8,13 +8,13 @@ class MockIntersectionObserver {
   disconnect = vi.fn();
 }
 
-Object.defineProperty(window, 'IntersectionObserver', {
+Object.defineProperty(window, "IntersectionObserver", {
   writable: true,
   value: MockIntersectionObserver,
 });
 
 // Mock matchMedia for responsive components
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -36,7 +36,7 @@ const originalError = console.error;
 beforeAll(() => {
   console.error = (...args: unknown[]) => {
     // Allow React act() warnings through
-    if (typeof args[0] === 'string' && args[0].includes('act(')) {
+    if (typeof args[0] === "string" && args[0].includes("act(")) {
       originalError(...args);
     }
   };

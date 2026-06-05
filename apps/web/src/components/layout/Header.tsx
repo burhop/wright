@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import StatusBar from './StatusBar';
-import useHealthStatus from '../../hooks/useHealthStatus';
-import telemetry from '../../services/telemetry';
-import type { TraceContext } from '../../store/types';
+import { useState, useEffect } from "react";
+import StatusBar from "./StatusBar";
+import useHealthStatus from "../../hooks/useHealthStatus";
+import telemetry from "../../services/telemetry";
+import type { TraceContext } from "../../store/types";
 
 export function Header() {
   const statuses = useHealthStatus();
@@ -24,43 +24,53 @@ export function Header() {
       data-testid="header"
       className="glass-panel"
       style={{
-        height: '48px',
-        borderBottom: '1px solid var(--color-border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 var(--space-xl)',
+        height: "48px",
+        borderBottom: "1px solid var(--color-border)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 var(--space-xl)",
         zIndex: 10,
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
-        <span style={{
-          fontSize: '1rem',
-          fontWeight: '700',
-          letterSpacing: '1.5px',
-          fontFamily: 'var(--font-ui)',
-          color: 'var(--color-primary)',
-          textShadow: '0 0 10px rgba(255, 255, 255, 0.1)',
-        }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "var(--space-md)",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "1rem",
+            fontWeight: "700",
+            letterSpacing: "1.5px",
+            fontFamily: "var(--font-ui)",
+            color: "var(--color-primary)",
+            textShadow: "0 0 10px rgba(255, 255, 255, 0.1)",
+          }}
+        >
           WRIGHT
         </span>
-        <span style={{
-          fontSize: '0.65rem',
-          fontWeight: '600',
-          color: 'var(--color-secondary)',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
-          backgroundColor: 'rgba(56, 189, 248, 0.05)',
-          padding: '2px 8px',
-          borderRadius: '20px',
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-          boxShadow: 'var(--shadow-glow)',
-        }}>
+        <span
+          style={{
+            fontSize: "0.65rem",
+            fontWeight: "600",
+            color: "var(--color-secondary)",
+            border: "1px solid rgba(56, 189, 248, 0.3)",
+            backgroundColor: "rgba(56, 189, 248, 0.05)",
+            padding: "2px 8px",
+            borderRadius: "20px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            boxShadow: "var(--shadow-glow)",
+          }}
+        >
           LOCAL-FIRST
         </span>
       </div>
-      
+
       <StatusBar statuses={statuses} latestTrace={latestTrace} />
     </header>
   );

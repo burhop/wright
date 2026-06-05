@@ -4,18 +4,18 @@ import pytest
 import sqlite3
 import asyncio
 import json
-from typing import Any
 from fastapi.testclient import TestClient
 from api.main import app
-from tool_registry import McpEngine, McpServer, McpTool
-from tool_registry.db import insert_server, insert_tools
+from tool_registry import McpEngine, McpServer
+from tool_registry.db import insert_server
+
 
 @pytest.fixture
 def test_db_path() -> str:
     # Use a temporary file for the SQLite DB
     fd, path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(path)
     conn.execute("""
     CREATE TABLE mcp_servers (
@@ -34,11 +34,12 @@ def test_db_path() -> str:
     """)
     conn.commit()
     conn.close()
-    
+
     yield path
-    
+
     if os.path.exists(path):
         os.unlink(path)
+
 
 @pytest.fixture
 def client(test_db_path) -> TestClient:
@@ -50,7 +51,7 @@ def client(test_db_path) -> TestClient:
         is_active=True,
         status="active",
         created_at=1000,
-        updated_at=1000
+        updated_at=1000,
     )
     insert_server(test_db_path, server)
 
@@ -58,6 +59,7 @@ def client(test_db_path) -> TestClient:
         engine = McpEngine(test_db_path)
         c.app.state.mcp_engine = engine
         yield c
+
 
 class MockWebSocket:
     def __init__(self):
@@ -69,10 +71,12 @@ class MockWebSocket:
     async def send_text(self, text: str):
         self.sent_messages.append(text)
 
+
 def test_webmcp_websocket_connection(client):
-    with client.websocket_connect("/api/webmcp/ws") as websocket:
+    with client.websocket_connect("/api/webmcp/ws"):
         # Check connection is active and we can close it
         pass
+
 
 @pytest.mark.asyncio
 async def test_webmcp_tool_call_bridging(test_db_path):
@@ -84,17 +88,19 @@ async def test_webmcp_tool_call_bridging(test_db_path):
         is_active=True,
         status="active",
         created_at=1000,
-        updated_at=1000
+        updated_at=1000,
     )
     insert_server(test_db_path, server)
-    
+
     mcp_engine = McpEngine(test_db_path)
     mock_ws = MockWebSocket()
     await mcp_engine.register_webmcp_connection(mock_ws)
-    
+
     # Run call_tool concurrently
     async def call_tool_task():
-        return await mcp_engine.call_tool("webmcp-id-123", "get_selected_part", {"mock_arg": "val"})
+        return await mcp_engine.call_tool(
+            "webmcp-id-123", "get_selected_part", {"mock_arg": "val"}
+        )
 
     task = asyncio.create_task(call_tool_task())
 
@@ -112,7 +118,7 @@ async def test_webmcp_tool_call_bridging(test_db_path):
     response_payload = {
         "jsonrpc": "2.0",
         "id": call_id,
-        "result": {"part_id": "part-123"}
+        "result": {"part_id": "part-123"},
     }
     await mcp_engine.handle_webmcp_message(json.dumps(response_payload))
 
