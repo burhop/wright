@@ -1,31 +1,34 @@
-import type { ChatSession, ChatSessionCompact, ChatMessage } from '../store/types';
-import { logger } from './logger';
+import type {
+  ChatSession,
+  ChatSessionCompact,
+  ChatMessage,
+} from "../store/types";
+import { logger } from "./logger";
 
-const agentLogger = logger.child('HermesAgentService');
-
+const agentLogger = logger.child("HermesAgentService");
 
 export type AgentEvent =
-  | { type: 'token'; text: string }
-  | { type: 'tool'; name: string; preview: string; percentage?: number }
-  | { type: 'progress'; percentage: number; message: string }
-  | { type: 'done'; session: ChatSession }
-  | { type: 'error'; message: string };
+  | { type: "token"; text: string }
+  | { type: "tool"; name: string; preview: string; percentage?: number }
+  | { type: "progress"; percentage: number; message: string }
+  | { type: "done"; session: ChatSession }
+  | { type: "error"; message: string };
 
 interface ServiceHealthResult {
-  state: 'connected' | 'disconnected' | 'unknown';
+  state: "connected" | "disconnected" | "unknown";
   latencyMs?: number;
 }
 
 const getApiBase = () => {
-  if (typeof window === 'undefined') {
-    return 'http://127.0.0.1:8000';
+  if (typeof window === "undefined") {
+    return "http://127.0.0.1:8000";
   }
   const host = window.location.hostname;
   const port = window.location.port;
-  if (port === '5173' || port === '5174') {
+  if (port === "5173" || port === "5174") {
     return `http://${host}:8000`;
   }
-  return `${window.location.protocol}//${host}${port ? `:${port}` : ''}`;
+  return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
 };
 const API_BASE = getApiBase();
 
@@ -36,28 +39,31 @@ export class HermesAgentService {
       if (response.ok) {
         const data = await response.json();
         return {
-          state: data.state as 'connected' | 'disconnected',
+          state: data.state as "connected" | "disconnected",
           latencyMs: data.latencyMs,
         };
       }
     } catch (err) {
-      console.error('Agent health check failed', err);
+      console.error("Agent health check failed", err);
     }
-    return { state: 'disconnected', latencyMs: 0 };
+    return { state: "disconnected", latencyMs: 0 };
   }
 
   async createSession(workspace?: string): Promise<ChatSession> {
-    agentLogger.info('Creating session', { workspace });
+    agentLogger.info("Creating session", { workspace });
     const response = await fetch(`${API_BASE}/api/agent/sessions/new`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ workspace }),
     });
 
     if (!response.ok) {
-      agentLogger.error('Failed to create session', { statusText: response.statusText, status: response.status });
+      agentLogger.error("Failed to create session", {
+        statusText: response.statusText,
+        status: response.status,
+      });
       throw new Error(`Failed to create session: ${response.statusText}`);
     }
 
@@ -88,45 +94,65 @@ export class HermesAgentService {
   }
 
   async deleteSession(sessionId: string): Promise<void> {
-    agentLogger.info('Deleting session', { sessionId });
-    const response = await fetch(`${API_BASE}/api/agent/sessions/${sessionId}`, {
-      method: 'DELETE',
-    });
+    agentLogger.info("Deleting session", { sessionId });
+    const response = await fetch(
+      `${API_BASE}/api/agent/sessions/${sessionId}`,
+      {
+        method: "DELETE",
+      },
+    );
 
     if (!response.ok) {
-      agentLogger.error('Failed to delete session', { sessionId, statusText: response.statusText });
+      agentLogger.error("Failed to delete session", {
+        sessionId,
+        statusText: response.statusText,
+      });
       throw new Error(`Failed to delete session: ${response.statusText}`);
     }
-    agentLogger.info('Session deleted successfully', { sessionId });
+    agentLogger.info("Session deleted successfully", { sessionId });
   }
 
-  async *sendMessage(sessionId: string, message: string): AsyncIterable<AgentEvent> {
-    agentLogger.info('Sending message', { sessionId, messageLength: message.length });
+  async *sendMessage(
+    sessionId: string,
+    message: string,
+  ): AsyncIterable<AgentEvent> {
+    agentLogger.info("Sending message", {
+      sessionId,
+      messageLength: message.length,
+    });
     // 1. Initiate chat start
     const response = await fetch(`${API_BASE}/api/agent/chat/start`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ session_id: sessionId, message }),
     });
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      agentLogger.error('Failed to initiate chat', { sessionId, error: errData.detail });
-      yield { type: 'error', message: errData.detail || 'Hermes agent is not available.' };
+      agentLogger.error("Failed to initiate chat", {
+        sessionId,
+        error: errData.detail,
+      });
+      yield {
+        type: "error",
+        message: errData.detail || "Hermes agent is not available.",
+      };
       return;
     }
 
     const { stream_id } = await response.json();
-    agentLogger.info('Chat stream started', { sessionId, streamId: stream_id });
+    agentLogger.info("Chat stream started", { sessionId, streamId: stream_id });
 
     // 2. Consume SSE stream via browser Native EventSource
     const eventQueue: AgentEvent[] = [];
     let isDone = false;
     let resolveQueue: (() => void) | null = null;
 
-    const eventSource = new EventSource(`${API_BASE}/api/agent/chat/stream?stream_id=${stream_id}`);
+    const eventSource = new EventSource(
+      `${API_BASE}/api/agent/chat/stream?stream_id=${stream_id}`,
+    );
 
     const pushEvent = (evt: AgentEvent) => {
       eventQueue.push(evt);
@@ -136,45 +162,68 @@ export class HermesAgentService {
       }
     };
 
-    eventSource.addEventListener('token', (e: MessageEvent) => {
+    eventSource.addEventListener("token", (e: MessageEvent) => {
       try {
         const data = JSON.parse(e.data);
-        agentLogger.debug('Stream token received', { sessionId, tokenLength: data.text?.length });
-        pushEvent({ type: 'token', text: data.text });
+        agentLogger.debug("Stream token received", {
+          sessionId,
+          tokenLength: data.text?.length,
+        });
+        pushEvent({ type: "token", text: data.text });
       } catch (err) {
-        agentLogger.debug('Stream token received (raw)', { sessionId, tokenLength: e.data?.length });
-        pushEvent({ type: 'token', text: e.data });
+        agentLogger.debug("Stream token received (raw)", {
+          sessionId,
+          tokenLength: e.data?.length,
+        });
+        pushEvent({ type: "token", text: e.data });
       }
     });
 
-    eventSource.addEventListener('tool', (e: MessageEvent) => {
+    eventSource.addEventListener("tool", (e: MessageEvent) => {
       try {
         const data = JSON.parse(e.data);
-        agentLogger.info('Stream tool invoke received', { sessionId, toolName: data.name, preview: data.preview });
-        pushEvent({ type: 'tool', name: data.name, preview: data.preview || '', percentage: data.percentage });
+        agentLogger.info("Stream tool invoke received", {
+          sessionId,
+          toolName: data.name,
+          preview: data.preview,
+        });
+        pushEvent({
+          type: "tool",
+          name: data.name,
+          preview: data.preview || "",
+          percentage: data.percentage,
+        });
       } catch (err) {
         // ignore
       }
     });
 
-    eventSource.addEventListener('progress', (e: MessageEvent) => {
+    eventSource.addEventListener("progress", (e: MessageEvent) => {
       try {
         const data = JSON.parse(e.data);
-        agentLogger.info('Stream tool progress received', { sessionId, percentage: data.percentage, message: data.message });
-        pushEvent({ type: 'progress', percentage: data.percentage, message: data.message || '' });
+        agentLogger.info("Stream tool progress received", {
+          sessionId,
+          percentage: data.percentage,
+          message: data.message,
+        });
+        pushEvent({
+          type: "progress",
+          percentage: data.percentage,
+          message: data.message || "",
+        });
       } catch (err) {
         // ignore
       }
     });
 
-    eventSource.addEventListener('stream_end', (_e: MessageEvent) => {
-      agentLogger.info('Stream completed', { sessionId });
+    eventSource.addEventListener("stream_end", (_e: MessageEvent) => {
+      agentLogger.info("Stream completed", { sessionId });
       eventSource.close();
       pushEvent({
-        type: 'done',
+        type: "done",
         session: {
           sessionId,
-          title: '', // filled dynamically in reducer
+          title: "", // filled dynamically in reducer
           messages: [],
           createdAt: Date.now(),
           updatedAt: Date.now(),
@@ -187,11 +236,23 @@ export class HermesAgentService {
       }
     });
 
-    eventSource.addEventListener('error', (e: any) => {
-      const errMsg = e.data ? (typeof e.data === 'string' ? e.data : JSON.stringify(e.data)) : 'Hermes response stream failed.';
-      agentLogger.error('Stream error encountered', { sessionId, error: errMsg });
+    eventSource.addEventListener("error", (e: any) => {
+      const errMsg = e.data
+        ? typeof e.data === "string"
+          ? e.data
+          : JSON.stringify(e.data)
+        : "Hermes response stream failed.";
+      agentLogger.error("Stream error encountered", {
+        sessionId,
+        error: errMsg,
+      });
       eventSource.close();
-      pushEvent({ type: 'error', message: e.data ? JSON.parse(e.data).message : 'Hermes response stream failed.' });
+      pushEvent({
+        type: "error",
+        message: e.data
+          ? JSON.parse(e.data).message
+          : "Hermes response stream failed.",
+      });
       isDone = true;
       if (resolveQueue) {
         resolveQueue();
@@ -222,14 +283,17 @@ export class HermesAgentService {
     return data.agent;
   }
 
-  async setActiveAgent(agentName: string, sessionId?: string | null): Promise<string> {
-    const url = sessionId 
+  async setActiveAgent(
+    agentName: string,
+    sessionId?: string | null,
+  ): Promise<string> {
+    const url = sessionId
       ? `${API_BASE}/api/agent/active?session_id=${sessionId}`
       : `${API_BASE}/api/agent/active`;
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ agent: agentName }),
     });
@@ -240,28 +304,38 @@ export class HermesAgentService {
     return data.agent;
   }
 
-  async saveContext(workspaceId: string, contextData: Record<string, unknown>): Promise<boolean> {
-    agentLogger.info('Saving workspace context', { workspaceId });
-    const response = await fetch(`${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/context/save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ context_data: contextData }),
-    });
+  async saveContext(
+    workspaceId: string,
+    contextData: Record<string, unknown>,
+  ): Promise<boolean> {
+    agentLogger.info("Saving workspace context", { workspaceId });
+    const response = await fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/context/save`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ context_data: contextData }),
+      },
+    );
     if (!response.ok) {
-      agentLogger.warn('Failed to save context', { status: response.status });
+      agentLogger.warn("Failed to save context", { status: response.status });
       return false;
     }
     return true;
   }
 
-  async loadContext(workspaceId: string): Promise<Record<string, unknown> | null> {
-    agentLogger.info('Loading workspace context', { workspaceId });
-    const response = await fetch(`${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/context/load`);
+  async loadContext(
+    workspaceId: string,
+  ): Promise<Record<string, unknown> | null> {
+    agentLogger.info("Loading workspace context", { workspaceId });
+    const response = await fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/context/load`,
+    );
     if (response.status === 404) {
       return null;
     }
     if (!response.ok) {
-      agentLogger.warn('Failed to load context', { status: response.status });
+      agentLogger.warn("Failed to load context", { status: response.status });
       return null;
     }
     const data = await response.json();
@@ -269,16 +343,23 @@ export class HermesAgentService {
   }
 
   async getSessionHistory(sessionId: string): Promise<ChatMessage[]> {
-    agentLogger.info('Fetching session history', { sessionId });
-    const response = await fetch(`${API_BASE}/api/agent/sessions/${sessionId}/history`);
+    agentLogger.info("Fetching session history", { sessionId });
+    const response = await fetch(
+      `${API_BASE}/api/agent/sessions/${sessionId}/history`,
+    );
     if (!response.ok) {
-      agentLogger.error('Failed to fetch session history', { sessionId, statusText: response.statusText });
-      throw new Error(`Failed to fetch session history: ${response.statusText}`);
+      agentLogger.error("Failed to fetch session history", {
+        sessionId,
+        statusText: response.statusText,
+      });
+      throw new Error(
+        `Failed to fetch session history: ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return data.messages.map((m: any) => ({
       id: m.id,
-      role: m.role as 'user' | 'assistant',
+      role: m.role as "user" | "assistant",
       content: m.content,
       timestamp: m.timestamp,
       traceId: m.trace_id ?? null,

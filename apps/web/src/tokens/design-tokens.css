@@ -1,24 +1,26 @@
 /* Premium space-slate theme design tokens */
 :root {
   /* Color Palette */
-  --color-neutral:         #090D16;  /* deep rich dark space-black background */
-  --color-surface:         #131B2E;  /* card and panel surfaces */
-  --color-surface-subtle:  #0D1220;  /* secondary darker cards and input fields */
-  --color-surface-hover:   #1D2942;  /* hover states for cards and list items */
-  --color-primary:         #F1F5F9;  /* bright text */
-  --color-secondary:       #38BDF8;  /* vibrant neon sky blue for active elements and glow */
-  --color-accent:          #0EA5E9;  /* secondary cyan accent */
-  --color-border:          #1E293B;  /* subtle boundary borders */
-  --color-border-hover:    #334155;  /* hover state for borders */
-  --color-border-glow:     rgba(56, 189, 248, 0.2); /* glowing border color */
-  --color-success:         #10B981;  /* emerald green */
-  --color-warning:         #F59E0B;  /* amber orange */
-  --color-error:           #EF4444;  /* rose red */
+  --color-neutral: #090d16; /* deep rich dark space-black background */
+  --color-surface: #131b2e; /* card and panel surfaces */
+  --color-surface-subtle: #0d1220; /* secondary darker cards and input fields */
+  --color-surface-hover: #1d2942; /* hover states for cards and list items */
+  --color-primary: #f1f5f9; /* bright text */
+  --color-secondary: #38bdf8; /* vibrant neon sky blue for active elements and glow */
+  --color-accent: #0ea5e9; /* secondary cyan accent */
+  --color-border: #1e293b; /* subtle boundary borders */
+  --color-border-hover: #334155; /* hover state for borders */
+  --color-border-glow: rgba(56, 189, 248, 0.2); /* glowing border color */
+  --color-success: #10b981; /* emerald green */
+  --color-warning: #f59e0b; /* amber orange */
+  --color-error: #ef4444; /* rose red */
 
   /* Typography */
-  --font-body:    'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-ui:      'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono:    'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-body:
+    "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-ui:
+    "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Courier New", monospace;
 
   /* Spacing */
   --space-xs: 4px;
@@ -41,9 +43,12 @@
 
   /* Shadows & Glows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-glow: 0 0 15px rgba(56, 189, 248, 0.15);
   --shadow-glow-active: 0 0 25px rgba(56, 189, 248, 0.35);
 }

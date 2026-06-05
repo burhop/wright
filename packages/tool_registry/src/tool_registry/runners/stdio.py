@@ -9,6 +9,7 @@ from .base import BaseRunner
 logger = structlog.get_logger(__name__)
 tracer = trace.get_tracer(__name__)
 
+
 class StdioRunner(BaseRunner):
     """MCP Runner implementing stdio-based JSON-RPC communication with local subprocesses."""
 
@@ -35,10 +36,12 @@ class StdioRunner(BaseRunner):
                     *self.command,
                     stdin=asyncio.subprocess.PIPE,
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
             except Exception as e:
-                logger.error("mcp_server_spawn_failed", command=self.command, error=str(e))
+                logger.error(
+                    "mcp_server_spawn_failed", command=self.command, error=str(e)
+                )
                 raise RuntimeError(f"Failed to spawn subprocess: {e}") from e
 
             self._read_task = asyncio.create_task(self._read_stdout())
@@ -48,7 +51,9 @@ class StdioRunner(BaseRunner):
         try:
             await asyncio.wait_for(self._handshake(), timeout=10.0)
         except Exception as e:
-            logger.error("mcp_server_handshake_failed", command=self.command, error=str(e))
+            logger.error(
+                "mcp_server_handshake_failed", command=self.command, error=str(e)
+            )
             await self.stop()
             raise RuntimeError(f"MCP handshake failed: {e}") from e
 
@@ -94,7 +99,9 @@ class StdioRunner(BaseRunner):
         with tracer.start_as_current_span("mcp.list_tools") as span:
             span.set_attribute("mcp.command", " ".join(self.command))
             try:
-                response = await asyncio.wait_for(self._send_request("tools/list"), timeout=60.0)
+                response = await asyncio.wait_for(
+                    self._send_request("tools/list"), timeout=60.0
+                )
                 tools = response.get("tools", [])
                 span.set_attribute("mcp.tools_count", len(tools))
                 return tools
@@ -105,17 +112,23 @@ class StdioRunner(BaseRunner):
                 span.record_exception(e)
                 raise
 
-    async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def call_tool(
+        self, tool_name: str, arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
         with tracer.start_as_current_span("mcp.call_tool") as span:
             span.set_attribute("mcp.tool_name", tool_name)
             span.set_attribute("mcp.command", " ".join(self.command))
             try:
                 payload = {"name": tool_name, "arguments": arguments}
-                response = await asyncio.wait_for(self._send_request("tools/call", payload), timeout=60.0)
+                response = await asyncio.wait_for(
+                    self._send_request("tools/call", payload), timeout=60.0
+                )
                 return response
             except asyncio.TimeoutError as e:
                 span.record_exception(e)
-                raise TimeoutError(f"Call to tool '{tool_name}' timed out after 60 seconds.")
+                raise TimeoutError(
+                    f"Call to tool '{tool_name}' timed out after 60 seconds."
+                )
             except Exception as e:
                 span.record_exception(e)
                 raise
@@ -125,18 +138,17 @@ class StdioRunner(BaseRunner):
         init_params = {
             "protocolVersion": "2024-11-05",
             "capabilities": {},
-            "clientInfo": {
-                "name": "wright",
-                "version": "0.1.0"
-            }
+            "clientInfo": {"name": "wright", "version": "0.1.0"},
         }
         init_res = await self._send_request("initialize", init_params)
         logger.debug("Received initialize response: %s", init_res)
-        
+
         # 2. Send initialized notification (no ID)
         await self._send_notification("notifications/initialized")
 
-    async def _send_request(self, method: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def _send_request(
+        self, method: str, params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         if not self.is_running():
             raise RuntimeError("Subprocess is not running.")
 
@@ -146,11 +158,7 @@ class StdioRunner(BaseRunner):
         fut = asyncio.get_running_loop().create_future()
         self._pending_requests[req_id] = fut
 
-        payload = {
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "method": method
-        }
+        payload = {"jsonrpc": "2.0", "id": req_id, "method": method}
         if params is not None:
             payload["params"] = params
 
@@ -164,14 +172,13 @@ class StdioRunner(BaseRunner):
 
         return await fut
 
-    async def _send_notification(self, method: str, params: Optional[Dict[str, Any]] = None) -> None:
+    async def _send_notification(
+        self, method: str, params: Optional[Dict[str, Any]] = None
+    ) -> None:
         if not self.is_running():
             raise RuntimeError("Subprocess is not running.")
 
-        payload = {
-            "jsonrpc": "2.0",
-            "method": method
-        }
+        payload = {"jsonrpc": "2.0", "method": method}
         if params is not None:
             payload["params"] = params
 
@@ -188,7 +195,7 @@ class StdioRunner(BaseRunner):
                 line = await self.process.stdout.readline()
                 if not line:
                     break
-                
+
                 line_str = line.decode("utf-8").strip()
                 if not line_str:
                     continue
@@ -205,9 +212,15 @@ class StdioRunner(BaseRunner):
                     fut = self._pending_requests.pop(msg_id, None)
                     if fut and not fut.done():
                         if "error" in message:
-                            fut.set_exception(RuntimeError(f"RPC Error: {message['error']}"))
+                            fut.set_exception(
+                                RuntimeError(f"RPC Error: {message['error']}")
+                            )
                         else:
-                            fut.set_exception(RuntimeError("RPC Error: Result missing in response")) if "result" not in message else fut.set_result(message["result"])
+                            fut.set_exception(
+                                RuntimeError("RPC Error: Result missing in response")
+                            ) if "result" not in message else fut.set_result(
+                                message["result"]
+                            )
                 else:
                     # Handle notifications or requests initiated by the server if any (e.g. logMessage)
                     if message.get("method") == "notifications/message":
