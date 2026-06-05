@@ -9,6 +9,7 @@ import os
 import sys
 import shlex
 import subprocess
+from typing import Any
 
 import structlog
 import yaml
@@ -20,7 +21,7 @@ logger = structlog.get_logger(__name__)
 
 # Resolve repository root and default OpenSCAD path dynamically
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-_REPO_ROOT = os.path.abspath(os.path.join(_CURRENT_DIR, *[".."]*5))
+_REPO_ROOT = os.path.abspath(os.path.join(_CURRENT_DIR, *[".."] * 5))
 _DEFAULT_OPENSCAD_PATH = os.path.join(_REPO_ROOT, "scripts", "openscad-headless.sh")
 
 
@@ -66,11 +67,13 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
                         cmd = parsed[0] if parsed else "echo"
                         args = parsed[1:] if len(parsed) > 1 else []
 
-                    srv_config = {"command": cmd, "args": args}
+                    srv_config: dict[str, Any] = {"command": cmd, "args": args}
 
                     if key_name == "openscadgeometry" or "openscad" in key_name:
                         srv_config["env"] = {
-                            "OPENSCAD_PATH": os.environ.get("OPENSCAD_PATH", _DEFAULT_OPENSCAD_PATH)
+                            "OPENSCAD_PATH": os.environ.get(
+                                "OPENSCAD_PATH", _DEFAULT_OPENSCAD_PATH
+                            )
                         }
                     config["mcp_servers"][key_name] = srv_config
 
@@ -163,10 +166,12 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                             cmd = parsed[0] if parsed else "echo"
                             args = parsed[1:] if len(parsed) > 1 else []
 
-                        srv_config = {"command": cmd, "args": args}
+                        srv_config: dict[str, Any] = {"command": cmd, "args": args}
                         if key_name == "openscadgeometry" or "openscad" in key_name:
                             srv_config["env"] = {
-                                "OPENSCAD_PATH": os.environ.get("OPENSCAD_PATH", _DEFAULT_OPENSCAD_PATH)
+                                "OPENSCAD_PATH": os.environ.get(
+                                    "OPENSCAD_PATH", _DEFAULT_OPENSCAD_PATH
+                                )
                             }
                         new_mcp_servers[key_name] = srv_config
                     elif server.type == "sse":
