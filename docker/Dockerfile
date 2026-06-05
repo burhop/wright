@@ -6,7 +6,7 @@
 # =============================================================================
 
 # Stage 1: Build the Vite frontend
-FROM node:22-slim AS web-builder
+FROM node:26-slim AS web-builder
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
@@ -15,7 +15,7 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Production runtime image
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Prevent interactive prompts during apt commands
 ENV DEBIAN_FRONTEND=noninteractive
