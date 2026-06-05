@@ -3,6 +3,7 @@ Standardized error response schema for all Wright API error responses.
 
 Per contracts/error-response.md: All 4xx/5xx responses MUST conform to this schema.
 """
+
 from pydantic import BaseModel
 
 
@@ -12,6 +13,7 @@ class ErrorResponse(BaseModel):
     Every error response includes a trace_id for end-to-end correlation
     between frontend and backend.
     """
+
     error_code: str
     message: str
     trace_id: str

@@ -1,21 +1,21 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AppShell from './components/layout/AppShell';
-import DashboardPage from './components/pages/DashboardPage';
-import WorkspacePage from './components/pages/WorkspacePage';
-import ToolRegistryPage from './components/pages/ToolRegistryPage';
-import FileVaultPage from './components/pages/FileVaultPage';
-import NotFoundPage from './components/pages/NotFoundPage';
-import SetupPage from './components/pages/SetupPage';
+import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import AppShell from "./components/layout/AppShell";
+import DashboardPage from "./components/pages/DashboardPage";
+import WorkspacePage from "./components/pages/WorkspacePage";
+import ToolRegistryPage from "./components/pages/ToolRegistryPage";
+import FileVaultPage from "./components/pages/FileVaultPage";
+import NotFoundPage from "./components/pages/NotFoundPage";
+import SetupPage from "./components/pages/SetupPage";
 
-import { ToolsProvider } from './store/tools';
-import { ChatProvider } from './store/sessions';
+import { ToolsProvider } from "./store/tools";
+import { ChatProvider } from "./store/sessions";
 
 function App() {
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch('/api/setup/status')
+    fetch("/api/setup/status")
       .then((res) => res.json())
       .then((data) => {
         setIsConfigured(data.is_configured);
@@ -28,16 +28,18 @@ function App() {
 
   if (isConfigured === null) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: 'var(--color-neutral)',
-        color: 'var(--color-primary)',
-        fontFamily: 'var(--font-ui)'
-      }}>
-        <div style={{ display: 'flex', gap: '4px' }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          backgroundColor: "var(--color-neutral)",
+          color: "var(--color-primary)",
+          fontFamily: "var(--font-ui)",
+        }}
+      >
+        <div style={{ display: "flex", gap: "4px" }}>
           <span className="thinking-dot" />
           <span className="thinking-dot" />
           <span className="thinking-dot" />
@@ -57,7 +59,10 @@ function App() {
           <AppShell>
             <Routes>
               <Route path="/" element={<DashboardPage />} />
-              <Route path="/workspace/:workspaceId" element={<WorkspacePage />} />
+              <Route
+                path="/workspace/:workspaceId"
+                element={<WorkspacePage />}
+              />
               <Route path="/tool-registry" element={<ToolRegistryPage />} />
               <Route path="/file-vault" element={<FileVaultPage />} />
               {/* Backward compatibility: redirect old /agent-chat route to dashboard */}

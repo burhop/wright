@@ -5,18 +5,13 @@ import uuid
 import asyncio
 from typing import Dict, Any, Optional, Set
 from .models import McpServer, McpTool
-from .db import (
-    get_server,
-    get_servers,
-    update_server,
-    insert_tools,
-    clear_server_tools
-)
+from .db import get_server, get_servers, update_server, insert_tools, clear_server_tools
 from .runners.base import BaseRunner
 from .runners.stdio import StdioRunner
 from .runners.sse import SseRunner
 
 logger = logging.getLogger(__name__)
+
 
 class McpEngine:
     """Manager class coordinating the lifecycle, database status, and JSON-RPC dispatch of active MCP servers."""
@@ -30,12 +25,18 @@ class McpEngine:
     async def register_webmcp_connection(self, websocket: Any) -> None:
         """Register a new WebMCP WebSocket connection from the client browser."""
         self._webmcp_connections.add(websocket)
-        logger.info("Registered WebMCP WebSocket connection. Total: %d", len(self._webmcp_connections))
+        logger.info(
+            "Registered WebMCP WebSocket connection. Total: %d",
+            len(self._webmcp_connections),
+        )
 
     async def unregister_webmcp_connection(self, websocket: Any) -> None:
         """Unregister a WebMCP WebSocket connection on disconnect."""
         self._webmcp_connections.discard(websocket)
-        logger.info("Unregistered WebMCP WebSocket connection. Total: %d", len(self._webmcp_connections))
+        logger.info(
+            "Unregistered WebMCP WebSocket connection. Total: %d",
+            len(self._webmcp_connections),
+        )
 
     async def handle_webmcp_message(self, message_str: str) -> None:
         """Process incoming WebSocket JSON-RPC messages and resolve pending tool call futures."""
@@ -51,7 +52,6 @@ class McpEngine:
         except Exception as e:
             logger.error("Failed to process WebMCP WebSocket message: %s", e)
 
-
     async def start_server(self, server_id: str) -> McpServer:
         """Start an MCP server subprocess or remote SSE connection, query its tools, and sync with database."""
         server = get_server(self.db_path, server_id)
@@ -64,21 +64,31 @@ class McpEngine:
 
         runner: Optional[BaseRunner] = None
         import os
+
         if os.getenv("WRIGHT_TESTING") == "1":
+
             class MockRunner(BaseRunner):
                 def __init__(self, command=None):
                     self.command = command
                     self._running = False
+
                 async def start(self) -> None:
                     self._running = True
+
                 async def stop(self) -> None:
                     self._running = False
+
                 async def list_tools(self) -> list:
                     return []
-                async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+
+                async def call_tool(
+                    self, tool_name: str, arguments: Dict[str, Any]
+                ) -> Dict[str, Any]:
                     return {}
+
                 def is_running(self) -> bool:
                     return self._running
+
             runner = MockRunner(server.command)
         elif server.type == "stdio":
             if not server.command:
@@ -91,7 +101,9 @@ class McpEngine:
         elif server.type == "webmcp":
             # webmcp servers represent client-side DOM connections managed via websockets in apps/web.
             # They do not use a backend subprocess runner, but we update status to active.
-            logger.info("Initializing WebMCP server placeholder state for %s", server.name)
+            logger.info(
+                "Initializing WebMCP server placeholder state for %s", server.name
+            )
             updated = update_server(
                 self.db_path,
                 server_id,
@@ -99,8 +111,8 @@ class McpEngine:
                     "is_active": True,
                     "status": "active",
                     "error_message": None,
-                    "updated_at": int(time.time())
-                }
+                    "updated_at": int(time.time()),
+                },
             )
             return updated
         else:
@@ -114,7 +126,7 @@ class McpEngine:
             # Retrieve tools list
             logger.info("Querying tools list from MCP server: %s", server.name)
             tools_list = await runner.list_tools()
-            
+
             # Format and insert tools into DB
             mcp_tools = []
             now = int(time.time())
@@ -130,7 +142,7 @@ class McpEngine:
                         description=t.get("description"),
                         input_schema=t.get("inputSchema", {}),
                         is_enabled=True,
-                        created_at=now
+                        created_at=now,
                     )
                 )
 
@@ -147,8 +159,8 @@ class McpEngine:
                     "is_active": True,
                     "status": "active",
                     "error_message": None,
-                    "updated_at": int(time.time())
-                }
+                    "updated_at": int(time.time()),
+                },
             )
             return updated
 
@@ -172,8 +184,8 @@ class McpEngine:
                     "is_active": False,
                     "status": "error",
                     "error_message": str(e),
-                    "updated_at": int(time.time())
-                }
+                    "updated_at": int(time.time()),
+                },
             )
             return updated
 
@@ -196,12 +208,14 @@ class McpEngine:
                 "is_active": False,
                 "status": "inactive",
                 "error_message": None,
-                "updated_at": int(time.time())
-            }
+                "updated_at": int(time.time()),
+            },
         )
         return updated
 
-    async def call_tool(self, server_id: str, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def call_tool(
+        self, server_id: str, tool_name: str, arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Invoke a tool on an active MCP server."""
         server = get_server(self.db_path, server_id)
         if not server:
@@ -209,19 +223,21 @@ class McpEngine:
 
         if server.type == "webmcp":
             if not self._webmcp_connections:
-                raise RuntimeError("No active browser WebSocket connection found for WebMCP tool invocation.")
-            
+                raise RuntimeError(
+                    "No active browser WebSocket connection found for WebMCP tool invocation."
+                )
+
             call_id = f"webmcp-call-{uuid.uuid4()}"
             future = asyncio.get_running_loop().create_future()
             self._pending_webmcp_calls[call_id] = future
-            
+
             payload = {
                 "jsonrpc": "2.0",
                 "id": call_id,
                 "method": tool_name,
-                "params": arguments
+                "params": arguments,
             }
-            
+
             send_payload = json.dumps(payload)
             # Broadcast the tool call to all connected client WebMCP sockets
             for conn in list(self._webmcp_connections):
@@ -229,12 +245,14 @@ class McpEngine:
                     await conn.send_text(send_payload)
                 except Exception as e:
                     logger.warning("Failed to send WebMCP payload to connection: %s", e)
-                    
+
             try:
                 # Wait for client response over WebSocket with a 30-second timeout
                 response = await asyncio.wait_for(future, timeout=30.0)
                 if "error" in response:
-                    raise RuntimeError(f"WebMCP tool invocation failed: {response['error']}")
+                    raise RuntimeError(
+                        f"WebMCP tool invocation failed: {response['error']}"
+                    )
                 return response.get("result", {})
             finally:
                 self._pending_webmcp_calls.pop(call_id, None)
@@ -254,7 +272,11 @@ class McpEngine:
                 try:
                     await self.start_server(server.server_id)
                 except Exception as e:
-                    logger.error("Failed to automatically start server %s on sync: %s", server.name, e)
+                    logger.error(
+                        "Failed to automatically start server %s on sync: %s",
+                        server.name,
+                        e,
+                    )
 
     async def shutdown(self) -> None:
         """Shutdown all active runners on cleanup."""
