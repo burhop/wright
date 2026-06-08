@@ -147,7 +147,8 @@ test.describe('Tool Registry Enhanced UI', () => {
     await expect(installBtn).toHaveText('Install');
     
     await installBtn.click();
-    await expect(page.getByText('✓ Installed v2.21.0')).toBeVisible();
+    await expect(page.getByText('v2.21.0')).toBeVisible();
+    await expect(page.getByTestId('server-card-uninstall-btn-calc-mcp-id')).toBeVisible();
   });
 
   test('should show error banner when install fails @US2', async ({ page }) => {
@@ -231,7 +232,8 @@ test.describe('Tool Registry Enhanced UI', () => {
     await updateBtn.click();
 
     await expect(updateBanner).not.toBeVisible();
-    await expect(page.getByText('✓ Installed v1.2.0')).toBeVisible();
+    await expect(page.getByText('v1.2.0')).toBeVisible();
+    await expect(page.getByTestId('server-card-uninstall-btn-openscad-mcp-id')).toBeVisible();
   });
 
   test('should display Connect button for network servers and support connect/disconnect @US4', async ({ page }) => {
@@ -268,9 +270,9 @@ test.describe('Tool Registry Enhanced UI', () => {
 
     await connectBtn.click();
 
-    await expect(page.getByText('✓ Connected')).toBeVisible();
     const disconnectBtn = page.getByTestId('server-card-disconnect-btn-network-mcp-id');
     await expect(disconnectBtn).toBeVisible();
+    await expect(disconnectBtn).toHaveText('Disconnect');
   });
 
   test('should prompt and uninstall local server, reverting to install state @US5', async ({ page }) => {

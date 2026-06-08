@@ -35,7 +35,7 @@ test.describe('Dashboard Page - Real Backend Integration', () => {
     console.log('Looking for existing workspaces in the list...');
     // We wait for the list to load. If there are no workspaces, we skip the card click test.
     const hasWorkspaces = await page.evaluate(async () => {
-      const res = await fetch('/api/workspace/recent');
+      const res = await fetch('http://127.0.0.1:8000/api/workspace/recent');
       if (res.ok) {
         const data = await res.json();
         return data.workspaces && data.workspaces.length > 0;

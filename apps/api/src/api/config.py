@@ -10,6 +10,11 @@ HERMES_WEBUI_BASE_URL = os.getenv(
 LLM_HEALTH_URL = os.getenv("LLM_HEALTH_URL", "http://promaxgb10-5c88:8000/health")
 
 
+# UI theme configuration (defaulting to "dark")
+def get_ui_theme() -> str:
+    return os.getenv("UI_THEME", "dark")
+
+
 def get_llm_health_url() -> str:
     """Dynamically get LLM health URL from the database system_settings or env var."""
     import sqlite3

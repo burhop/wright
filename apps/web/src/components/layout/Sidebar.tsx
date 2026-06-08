@@ -1,36 +1,45 @@
 import NavItem from "../common/NavItem";
 import type { NavigationSection } from "../../store/types";
-
-const SECTIONS: NavigationSection[] = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    path: "/",
-    icon: "layout-dashboard",
-    order: 1,
-  },
-  {
-    id: "tool-registry",
-    label: "Tool Registry",
-    path: "/tool-registry",
-    icon: "wrench",
-    order: 2,
-  },
-  {
-    id: "file-vault",
-    label: "File Vault",
-    path: "/file-vault",
-    icon: "folder",
-    order: 3,
-  },
-];
+import { useTools } from "../../store/tools";
 
 export function Sidebar() {
+  let servers = [];
+  try {
+    const toolsContext = useTools();
+    servers = toolsContext.servers || [];
+  } catch (e) {
+    // Fallback when rendered outside ToolsProvider (e.g. in isolated tests)
+  }
+
+  const sections: NavigationSection[] = [
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      path: "/",
+      icon: "layout-dashboard",
+      order: 1,
+    },
+    {
+      id: "tool-registry",
+      label: "Tool Registry",
+      path: "/tool-registry",
+      icon: "wrench",
+      order: 2,
+    },
+    {
+      id: "file-vault",
+      label: "File Vault",
+      path: "/file-vault",
+      icon: "folder",
+      order: 3,
+    },
+  ];
+
   return (
     <aside
       data-testid="sidebar"
       style={{
-        width: "240px",
+        width: "180px",
         backgroundColor: "var(--color-surface-subtle)",
         borderRight: "1px solid var(--color-border)",
         display: "flex",
@@ -48,13 +57,14 @@ export function Sidebar() {
           gap: "var(--space-xs)",
         }}
       >
-        {SECTIONS.map((sec) => (
+        {sections.map((sec) => (
           <NavItem
             key={sec.id}
             id={sec.id}
             label={sec.label}
             path={sec.path}
             icon={sec.icon}
+            badge={sec.id === "tool-registry" ? servers.length : undefined}
           />
         ))}
       </div>

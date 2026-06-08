@@ -14,6 +14,7 @@ class SetupStatusResponse(BaseModel):
     is_configured: bool
     llm_api_url: Optional[str]
     active_agent: str
+    theme: str
 
 
 class ConfigureRequest(BaseModel):
@@ -65,9 +66,15 @@ async def get_setup_status(request: Request):
             sync_manager.active_agent = active_agent
 
     is_configured = bool(llm_api_url and llm_api_url.strip())
+    from api.config import get_ui_theme
+
+    theme = get_ui_theme()
 
     return SetupStatusResponse(
-        is_configured=is_configured, llm_api_url=llm_api_url, active_agent=active_agent
+        is_configured=is_configured,
+        llm_api_url=llm_api_url,
+        active_agent=active_agent,
+        theme=theme,
     )
 
 

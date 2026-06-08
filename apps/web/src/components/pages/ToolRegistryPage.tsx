@@ -264,7 +264,7 @@ export function ToolRegistryPage() {
                     color:
                       selectedCategory === cat
                         ? "var(--color-secondary)"
-                        : "rgba(255, 255, 255, 0.6)",
+                        : "var(--color-text-muted)",
                     cursor: "pointer",
                     borderLeft:
                       selectedCategory === cat
@@ -278,12 +278,12 @@ export function ToolRegistryPage() {
                     if (selectedCategory !== cat) {
                       e.currentTarget.style.color = "var(--color-primary)";
                       e.currentTarget.style.backgroundColor =
-                        "rgba(255, 255, 255, 0.03)";
+                        "var(--color-surface-hover)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (selectedCategory !== cat) {
-                      e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
+                      e.currentTarget.style.color = "var(--color-text-muted)";
                       e.currentTarget.style.backgroundColor = "transparent";
                     }
                   }}
@@ -309,11 +309,11 @@ export function ToolRegistryPage() {
                       backgroundColor:
                         selectedCategory === cat
                           ? "rgba(56, 189, 248, 0.15)"
-                          : "rgba(255, 255, 255, 0.05)",
+                          : "var(--color-surface-hover)",
                       color:
                         selectedCategory === cat
                           ? "var(--color-secondary)"
-                          : "rgba(255, 255, 255, 0.4)",
+                          : "var(--color-text-dim)",
                     }}
                   >
                     {count}
@@ -334,7 +334,7 @@ export function ToolRegistryPage() {
             <div
               style={{
                 fontSize: "0.75rem",
-                color: "rgba(255, 255, 255, 0.4)",
+                color: "var(--color-text-dim)",
                 lineHeight: 1.8,
               }}
             >
@@ -378,7 +378,11 @@ export function ToolRegistryPage() {
         >
           {/* Search bar */}
           <div
-            style={{ marginBottom: "var(--space-xl)", position: "relative" }}
+            style={{
+              marginBottom: "var(--space-xl)",
+              position: "relative",
+              maxWidth: "600px",
+            }}
           >
             <span
               style={{
@@ -387,7 +391,7 @@ export function ToolRegistryPage() {
                 top: "50%",
                 transform: "translateY(-50%)",
                 fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.3)",
+                color: "var(--color-text-dim)",
                 pointerEvents: "none",
               }}
             >
@@ -415,7 +419,7 @@ export function ToolRegistryPage() {
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = "var(--color-secondary)";
                 e.currentTarget.style.boxShadow =
-                  "0 0 10px rgba(56, 189, 248, 0.15)";
+                  "0 0 10px var(--color-border-glow)";
               }}
               onBlur={(e) => {
                 e.currentTarget.style.borderColor = "var(--color-border)";
@@ -433,7 +437,7 @@ export function ToolRegistryPage() {
                 alignItems: "center",
                 marginBottom: "var(--space-lg)",
                 fontSize: "0.8rem",
-                color: "rgba(255, 255, 255, 0.4)",
+                color: "var(--color-text-dim)",
               }}
             >
               <span>
@@ -530,8 +534,8 @@ export function ToolRegistryPage() {
                   style={{
                     display: "grid",
                     gridTemplateColumns:
-                      "repeat(auto-fill, minmax(320px, 1fr))",
-                    gap: "var(--space-xl)",
+                      "repeat(auto-fill, minmax(340px, 1fr))",
+                    gap: "var(--space-lg)",
                   }}
                 >
                   {sortedServers.map((server) => (

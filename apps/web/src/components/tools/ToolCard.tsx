@@ -35,6 +35,7 @@ export function ToolCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showTools, setShowTools] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [showWorkspaces, setShowWorkspaces] = useState(false);
   const [togglingWorkspaceId, setTogglingWorkspaceId] = useState<string | null>(
     null,
   );
@@ -166,7 +167,7 @@ export function ToolCard({
   };
 
   const getStatusColor = () => {
-    if (!server.is_installed) return "rgba(255, 255, 255, 0.3)";
+    if (!server.is_installed) return "var(--color-text-dim)";
     if (server.status === "active") return "var(--color-success)";
     if (server.status === "error") return "var(--color-error)";
     return "var(--color-secondary)";
@@ -179,8 +180,8 @@ export function ToolCard({
           src={server.image_url}
           onError={() => setImgError(true)}
           style={{
-            width: "48px",
-            height: "48px",
+            width: "36px",
+            height: "36px",
             borderRadius: "50%",
             objectFit: "cover",
             border: "1px solid var(--color-border)",
@@ -194,15 +195,15 @@ export function ToolCard({
     return (
       <div
         style={{
-          width: "48px",
-          height: "48px",
+          width: "36px",
+          height: "36px",
           borderRadius: "50%",
           background:
             "linear-gradient(135deg, var(--color-surface-hover), var(--color-border))",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "1.25rem",
+          fontSize: "1.05rem",
           fontWeight: 700,
           color: "var(--color-secondary)",
           border: "1px solid var(--color-border)",
@@ -223,8 +224,8 @@ export function ToolCard({
         backgroundColor: "var(--color-surface)",
         border: "1px solid var(--color-border)",
         borderRadius: "var(--radius-lg)",
-        padding: "var(--space-xl)",
-        gap: "var(--space-md)",
+        padding: "var(--space-lg)",
+        gap: "var(--space-sm)",
         transition: "all var(--transition-smooth)",
         boxShadow: "var(--shadow-md)",
         position: "relative",
@@ -245,13 +246,13 @@ export function ToolCard({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-start",
-          gap: "var(--space-md)",
+          gap: "var(--space-sm)",
         }}
       >
         <div
           style={{
             display: "flex",
-            gap: "var(--space-md)",
+            gap: "var(--space-sm)",
             alignItems: "center",
           }}
         >
@@ -259,21 +260,36 @@ export function ToolCard({
           <div style={{ textAlign: "left" }}>
             <h3
               style={{
-                fontSize: "1.25rem",
+                fontSize: "0.95rem",
                 fontFamily: "var(--font-ui)",
                 color: "var(--color-primary)",
                 fontWeight: 600,
                 margin: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-xs)",
               }}
             >
               {server.name}
+              {server.installed_version && (
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 500,
+                    color: "var(--color-success)",
+                    marginLeft: "4px",
+                  }}
+                >
+                  v{server.installed_version}
+                </span>
+              )}
             </h3>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "var(--space-sm)",
-                marginTop: "var(--space-xs)",
+                gap: "var(--space-xs)",
+                marginTop: "2px",
                 flexWrap: "wrap",
               }}
             >
@@ -281,11 +297,11 @@ export function ToolCard({
               <span
                 style={{
                   display: "inline-block",
-                  fontSize: "0.7rem",
+                  fontSize: "0.65rem",
                   textTransform: "uppercase",
                   backgroundColor: "var(--color-surface-subtle)",
                   color: "var(--color-secondary)",
-                  padding: "2px 8px",
+                  padding: "2px 6px",
                   borderRadius: "20px",
                   border: "1px solid rgba(56, 189, 248, 0.2)",
                   fontWeight: 600,
@@ -310,13 +326,13 @@ export function ToolCard({
                   : `server-card-connect-btn-${server.server_id}`
               }
               style={{
-                padding: "var(--space-sm) var(--space-lg)",
-                borderRadius: "var(--radius-lg)",
-                fontSize: "0.85rem",
+                padding: "var(--space-xs) var(--space-md)",
+                borderRadius: "var(--radius-md)",
+                fontSize: "0.8rem",
                 fontWeight: 600,
                 border: "none",
                 backgroundColor: "var(--color-secondary)",
-                color: "var(--color-surface-subtle)",
+                color: "#ffffff",
                 cursor: isInstalling ? "not-allowed" : "pointer",
                 transition: "all var(--transition-smooth)",
                 boxShadow: "var(--shadow-glow)",
@@ -337,63 +353,41 @@ export function ToolCard({
                   : "Connect"}
             </button>
           ) : (
-            <div
+            <button
+              onClick={handleUninstall}
+              disabled={isUninstalling}
+              data-testid={
+                isLocalServer
+                  ? `server-card-uninstall-btn-${server.server_id}`
+                  : `server-card-disconnect-btn-${server.server_id}`
+              }
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "var(--space-sm)",
+                padding: "var(--space-xs) var(--space-md)",
+                borderRadius: "var(--radius-md)",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                border: "none",
+                backgroundColor: "var(--color-error)",
+                color: "#ffffff",
+                cursor: isUninstalling ? "not-allowed" : "pointer",
+                transition: "all var(--transition-smooth)",
+                boxShadow: "0 0 10px rgba(239, 68, 68, 0.15)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 0 15px rgba(239, 68, 68, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 0 10px rgba(239, 68, 68, 0.15)";
               }}
             >
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-success)",
-                  backgroundColor: "rgba(34, 197, 94, 0.08)",
-                  border: "1px solid rgba(34, 197, 94, 0.2)",
-                  padding: "4px 10px",
-                  borderRadius: "20px",
-                }}
-              >
-                {isLocalServer
-                  ? `✓ Installed${server.installed_version ? ` v${server.installed_version}` : ""}`
-                  : "✓ Connected"}
-              </span>
-              {isLocalServer && (
-                <button
-                  onClick={handleCheckForUpdates}
-                  disabled={isCheckingUpdate || isUpdating}
-                  data-testid={`server-card-check-update-btn-${server.server_id}`}
-                  style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "var(--color-secondary)",
-                    backgroundColor: "rgba(56, 189, 248, 0.08)",
-                    border: "1px solid rgba(56, 189, 248, 0.2)",
-                    padding: "4px 10px",
-                    borderRadius: "20px",
-                    cursor: isCheckingUpdate ? "not-allowed" : "pointer",
-                    transition: "all var(--transition-fast)",
-                  }}
-                >
-                  {isCheckingUpdate ? "Checking..." : "↻ Check for Updates"}
-                </button>
-              )}
-              {upToDateMessage && (
-                <span
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "var(--color-success)",
-                    fontWeight: 500,
-                  }}
-                >
-                  ✓ Up to date
-                </span>
-              )}
-            </div>
+              {isUninstalling
+                ? isLocalServer
+                  ? "Uninstalling..."
+                  : "Disconnecting..."
+                : isLocalServer
+                  ? "Uninstall"
+                  : "Disconnect"}
+            </button>
           )}
         </div>
       </div>
@@ -410,12 +404,12 @@ export function ToolCard({
         >
           <p
             style={{
-              fontSize: "0.85rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              fontSize: "0.8rem",
+              color: "var(--color-text-muted)",
               lineHeight: 1.5,
               margin: "0",
               display: "-webkit-box",
-              WebkitLineClamp: 3,
+              WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -430,12 +424,12 @@ export function ToolCard({
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "4px",
-                fontSize: "0.72rem",
+                fontSize: "0.7rem",
                 fontWeight: 600,
                 color: "var(--color-warning)",
                 backgroundColor: "rgba(245, 158, 11, 0.08)",
                 border: "1px solid rgba(245, 158, 11, 0.2)",
-                padding: "3px 8px",
+                padding: "2px 6px",
                 borderRadius: "6px",
                 width: "fit-content",
               }}
@@ -449,7 +443,7 @@ export function ToolCard({
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontSize: "0.75rem",
+                fontSize: "0.7rem",
                 color: "var(--color-secondary)",
                 opacity: 0.7,
                 textDecoration: "none",
@@ -520,7 +514,7 @@ export function ToolCard({
             border: "1px solid var(--color-border)",
             fontFamily: "var(--font-mono)",
             fontSize: "0.8rem",
-            color: "rgba(255, 255, 255, 0.7)",
+            color: "var(--color-text-muted)",
             wordBreak: "break-all",
             gap: "var(--space-xs)",
             textAlign: "left",
@@ -560,7 +554,7 @@ export function ToolCard({
           onClick={() => setShowDetails(true)}
           style={{
             fontSize: "0.75rem",
-            color: "rgba(255, 255, 255, 0.4)",
+            color: "var(--color-text-dim)",
             cursor: "pointer",
             border: "none",
             background: "none",
@@ -572,243 +566,282 @@ export function ToolCard({
             (e.currentTarget.style.color = "var(--color-secondary)")
           }
           onMouseLeave={(e) =>
-            (e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)")
+            (e.currentTarget.style.color = "var(--color-text-dim)")
           }
         >
           ▸ Show connection details
         </button>
       )}
 
-      {/* Workspace Enablement List (Only if installed) */}
-      {server.is_installed && (
+      {/* Workspace Enablement Collapsible (Only if installed) */}
+      {(() => {
+        const enabledCount = workspaces.filter(
+          (w) =>
+            w.enabled_tools?.includes(server.server_id) ||
+            w.enabled_tools?.includes(server.name) ||
+            false
+        ).length;
+
+        return (
+          server.is_installed && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-xs)",
+                borderTop: "1px solid var(--color-border)",
+                paddingTop: "var(--space-sm)",
+                marginTop: "var(--space-xs)",
+                textAlign: "left",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setShowWorkspaces(!showWorkspaces)}
+                data-testid={`server-card-workspaces-toggle-${server.server_id}`}
+                style={{
+                  fontSize: "0.72rem",
+                  color: "var(--color-secondary)",
+                  cursor: "pointer",
+                  border: "none",
+                  background: "none",
+                  textAlign: "left",
+                  padding: "0",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  transition: "color var(--transition-fast)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = "var(--color-primary)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = "var(--color-secondary)")
+                }
+              >
+                <span>
+                  {showWorkspaces ? "▼ Hide Workspaces" : `▶ Configure Workspaces (${enabledCount}/${workspaces.length})`}
+                </span>
+              </button>
+
+              {showWorkspaces && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--space-xs)",
+                    maxHeight: "120px",
+                    overflowY: "auto",
+                    paddingRight: "4px",
+                    marginTop: "var(--space-xs)",
+                  }}
+                >
+                  {workspaces.length === 0 ? (
+                    <span
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "var(--color-secondary)",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      No workspaces available.
+                    </span>
+                  ) : (
+                    workspaces.map((w) => {
+                      const isEnabled =
+                        w.enabled_tools?.includes(server.server_id) ||
+                        w.enabled_tools?.includes(server.name) ||
+                        false;
+                      const isTogglingW = togglingWorkspaceId === w.workspace_id;
+                      return (
+                        <label
+                          key={w.workspace_id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "4px var(--space-md)",
+                            backgroundColor: isEnabled
+                              ? "rgba(56, 189, 248, 0.04)"
+                              : "var(--color-surface-card-subtle)",
+                            border: "1px solid var(--color-border)",
+                            borderRadius: "var(--radius-md)",
+                            fontSize: "0.78rem",
+                            cursor: isTogglingW ? "not-allowed" : "pointer",
+                            transition: "all var(--transition-fast)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "var(--space-sm)",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isEnabled}
+                              disabled={isTogglingW}
+                              onChange={(e) =>
+                                handleToggleWorkspace(w, e.target.checked)
+                              }
+                              style={{
+                                accentColor: "var(--color-secondary)",
+                                cursor: "pointer",
+                              }}
+                            />
+                            <span
+                              style={{
+                                fontWeight: 500,
+                                color: isEnabled
+                                  ? "var(--color-primary)"
+                                  : "var(--color-secondary)",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {getWorkspaceName(w.local_path)}
+                            </span>
+                          </div>
+                          {isTogglingW && (
+                            <span
+                              style={{
+                                fontSize: "0.7rem",
+                                color: "var(--color-secondary)",
+                              }}
+                            >
+                              Updating...
+                            </span>
+                          )}
+                        </label>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        );
+      })()}
+
+      {/* Status Indicators & Control Buttons */}
+      {(server.is_installed || (!server.is_installed && !server.source_url)) && (
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-sm)",
+            justifyContent: "space-between",
+            alignItems: "center",
+            fontSize: "0.8rem",
             borderTop: "1px solid var(--color-border)",
-            paddingTop: "var(--space-md)",
+            paddingTop: "var(--space-sm)",
             marginTop: "var(--space-xs)",
-            textAlign: "left",
           }}
         >
-          <span
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              color: "var(--color-secondary)",
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
-            }}
-          >
-            Enable in Workspaces
-          </span>
+          {server.is_installed ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-sm)",
+              }}
+            >
+              <span
+                className={
+                  server.status === "active" ? "pulse-success-glow" : undefined
+                }
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  backgroundColor: getStatusColor(),
+                  boxShadow: `0 0 8px ${getStatusColor()}`,
+                  display: "inline-block",
+                }}
+              />
+              <span
+                style={{
+                  color: "var(--color-primary)",
+                  textTransform: "capitalize",
+                  fontWeight: 500,
+                }}
+              >
+                {server.status}
+              </span>
+            </div>
+          ) : (
+            <div />
+          )}
+
+          {/* Action Controls */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              gap: "var(--space-xs)",
-              maxHeight: "150px",
-              overflowY: "auto",
-              paddingRight: "4px",
+              alignItems: "center",
+              gap: "var(--space-md)",
             }}
           >
-            {workspaces.length === 0 ? (
+            {server.is_installed && isLocalServer && (
+              <button
+                onClick={handleCheckForUpdates}
+                disabled={isCheckingUpdate || isUpdating}
+                data-testid={`server-card-check-update-btn-${server.server_id}`}
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  color: "var(--color-secondary)",
+                  backgroundColor: "transparent",
+                  border: "none",
+                  cursor: isCheckingUpdate ? "not-allowed" : "pointer",
+                  transition: "all var(--transition-fast)",
+                  padding: "0",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-secondary)")}
+              >
+                {isCheckingUpdate ? "Checking..." : "↻ Check for Updates"}
+              </button>
+            )}
+            {upToDateMessage && (
               <span
                 style={{
-                  fontSize: "0.8rem",
-                  color: "var(--color-secondary)",
-                  fontStyle: "italic",
+                  fontSize: "0.75rem",
+                  color: "var(--color-success)",
+                  fontWeight: 500,
                 }}
               >
-                No workspaces available.
+                ✓ Up to date
               </span>
-            ) : (
-              workspaces.map((w) => {
-                const isEnabled =
-                  w.enabled_tools?.includes(server.server_id) ||
-                  w.enabled_tools?.includes(server.name) ||
-                  false;
-                const isTogglingW = togglingWorkspaceId === w.workspace_id;
-                return (
-                  <label
-                    key={w.workspace_id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "6px var(--space-md)",
-                      backgroundColor: isEnabled
-                        ? "rgba(56, 189, 248, 0.04)"
-                        : "rgba(255,255,255,0.01)",
-                      border: "1px solid var(--color-border)",
-                      borderRadius: "var(--radius-md)",
-                      fontSize: "0.8rem",
-                      cursor: isTogglingW ? "not-allowed" : "pointer",
-                      transition: "all var(--transition-fast)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--space-sm)",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isEnabled}
-                        disabled={isTogglingW}
-                        onChange={(e) =>
-                          handleToggleWorkspace(w, e.target.checked)
-                        }
-                        style={{
-                          accentColor: "var(--color-secondary)",
-                          cursor: "pointer",
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontWeight: 500,
-                          color: isEnabled
-                            ? "var(--color-primary)"
-                            : "var(--color-secondary)",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {getWorkspaceName(w.local_path)}
-                      </span>
-                    </div>
-                    {isTogglingW && (
-                      <span
-                        style={{
-                          fontSize: "0.7rem",
-                          color: "var(--color-secondary)",
-                        }}
-                      >
-                        Updating...
-                      </span>
-                    )}
-                  </label>
-                );
-              })
+            )}
+            {!server.is_installed && !server.source_url && (
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting || isInstalling}
+                data-testid={`server-card-remove-btn-${server.server_id}`}
+                style={{
+                  color: "var(--color-text-dim)",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  border: "none",
+                  background: "none",
+                  transition: "color var(--transition-fast)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = "var(--color-text-dim)")
+                }
+              >
+                Remove
+              </button>
             )}
           </div>
         </div>
       )}
-
-      {/* Status Indicators & Control Buttons */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "0.85rem",
-          borderTop: "1px solid var(--color-border)",
-          paddingTop: "var(--space-md)",
-          marginTop: "var(--space-xs)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "var(--space-sm)",
-          }}
-        >
-          <span
-            className={
-              server.is_installed && server.status === "active"
-                ? "pulse-success-glow"
-                : undefined
-            }
-            style={{
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              backgroundColor: getStatusColor(),
-              boxShadow: `0 0 8px ${getStatusColor()}`,
-              display: "inline-block",
-            }}
-          />
-          <span
-            style={{
-              color: "var(--color-primary)",
-              textTransform: "capitalize",
-              fontWeight: 500,
-            }}
-          >
-            {server.is_installed ? server.status : "Not Installed"}
-          </span>
-        </div>
-
-        {/* Action Controls */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "var(--space-md)",
-          }}
-        >
-          {server.is_installed && (
-            <button
-              onClick={handleUninstall}
-              disabled={isUninstalling}
-              data-testid={
-                isLocalServer
-                  ? `server-card-uninstall-btn-${server.server_id}`
-                  : `server-card-disconnect-btn-${server.server_id}`
-              }
-              style={{
-                color: "var(--color-error)",
-                fontSize: "0.85rem",
-                fontWeight: 500,
-                cursor: "pointer",
-                border: "none",
-                background: "none",
-                opacity: 0.8,
-                transition: "opacity var(--transition-fast)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.8")}
-            >
-              {isUninstalling
-                ? isLocalServer
-                  ? "Uninstalling..."
-                  : "Disconnecting..."
-                : isLocalServer
-                  ? "Uninstall"
-                  : "Disconnect"}
-            </button>
-          )}
-
-          {!server.source_url && (
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting || isInstalling || isUninstalling}
-              data-testid={`server-card-remove-btn-${server.server_id}`}
-              style={{
-                color: "rgba(255, 255, 255, 0.4)",
-                fontSize: "0.85rem",
-                fontWeight: 500,
-                cursor: "pointer",
-                border: "none",
-                background: "none",
-                transition: "color var(--transition-fast)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)")
-              }
-            >
-              Remove
-            </button>
-          )}
-        </div>
-      </div>
 
       {/* Card-local dismissible error block */}
       {cardError && (
@@ -945,7 +978,7 @@ export function ToolCard({
                         alignItems: "center",
                         gap: "8px",
                         fontSize: "0.8rem",
-                        color: "rgba(255, 255, 255, 0.6)",
+                        color: "var(--color-text-muted)",
                         cursor: "pointer",
                       }}
                     >
@@ -980,7 +1013,7 @@ export function ToolCard({
                       <div
                         style={{
                           fontSize: "0.75rem",
-                          color: "rgba(255, 255, 255, 0.4)",
+                          color: "var(--color-text-dim)",
                           marginTop: "4px",
                         }}
                       >

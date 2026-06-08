@@ -11,7 +11,7 @@ test('capture all screenshots', async ({ page }) => {
   let workspaceId = 'ws-screenshot';
   try {
     const response = await page.evaluate(async () => {
-      const res = await fetch('/api/workspace/recent');
+      const res = await fetch('http://127.0.0.1:8000/api/workspace/recent');
       if (res.ok) {
         const data = await res.json();
         if (data.workspaces && data.workspaces.length > 0) {
@@ -27,7 +27,7 @@ test('capture all screenshots', async ({ page }) => {
     } else {
       console.log('No existing workspaces found. Creating a temporary workspace...');
       const newWs = await page.evaluate(async () => {
-        const res = await fetch('/api/workspace/create', {
+        const res = await fetch('http://127.0.0.1:8000/api/workspace/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: 'Screenshot Project', local_path: '/home/burhop/repos/wright' })

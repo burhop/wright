@@ -1900,7 +1900,25 @@ export function WorkspacePanel({
             {/* New Session Button */}
             <button
               data-testid="create-session-btn"
-              onClick={() => createSession(workspacePath)}
+              onClick={async () => {
+                const newId = await createSession(workspacePath);
+                if (newId) {
+                  selectSession(newId);
+                  if (onSessionChange) {
+                    onSessionChange(newId);
+                  }
+                  if (_workspaceId) {
+                    try {
+                      await workspaceService.updateWorkspaceSession(
+                        _workspaceId,
+                        newId,
+                      );
+                    } catch (err) {
+                      console.error("Failed to update workspace session association", err);
+                    }
+                  }
+                }
+              }}
               style={{
                 backgroundColor: "var(--color-secondary)",
                 color: "var(--color-surface-subtle)",

@@ -3,8 +3,18 @@ import { test, expect } from '@playwright/test';
 test.describe('LLM Setup Flow', () => {
   test.beforeEach(async ({ page, baseURL }) => {
     // Reset setup configuration so the wizard appears
-    const apiBase = baseURL || 'http://localhost:8080';
-    await page.request.delete(`${apiBase}/api/setup/reset`);
+    const apiBase = baseURL && !baseURL.includes('5173') ? baseURL : 'http://127.0.0.1:8000';
+    let retries = 5;
+    while (retries > 0) {
+      try {
+        await page.request.delete(`${apiBase}/api/setup/reset`, { timeout: 3000 });
+        break;
+      } catch (err) {
+        retries--;
+        if (retries === 0) throw err;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
   });
 
   test('should display setup page when unconfigured, test health status, and complete configuration to unlock dashboard', async ({ page }) => {

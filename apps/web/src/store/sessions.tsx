@@ -215,7 +215,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 
 interface ChatContextProps {
   state: ChatState;
-  createSession: (workspace?: string) => Promise<void>;
+  createSession: (workspace?: string) => Promise<string | undefined>;
   selectSession: (sessionId: string) => Promise<void>;
   deleteSession: (sessionId: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
@@ -298,11 +298,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const createSession = useCallback(async (workspace?: string) => {
     try {
       const session = await agentService.createSession(workspace);
+      
+      if (!session.title || session.title === "Untitled" || session.title === "Undefined") {
+          const workspaceName = workspace ? workspace.split('/').pop() : 'Workspace';
+          const baseName = workspaceName!.charAt(0).toUpperCase() + workspaceName!.slice(1);
+          const count = state.sessions.length + 1;
+          session.title = `${baseName} Session ${count}`;
+      }
+
       dispatch({ type: "CREATE_SESSION", session });
+      return session.sessionId;
     } catch (err) {
       console.error("Failed to create session on backend", err);
+      return undefined;
     }
-  }, []);
+  }, [state.sessions]);
 
   const selectSession = useCallback(async (sessionId: string) => {
     dispatch({ type: "SELECT_SESSION", sessionId });

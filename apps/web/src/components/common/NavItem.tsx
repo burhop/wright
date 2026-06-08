@@ -11,6 +11,7 @@ interface NavItemProps {
   path: string;
   id: string;
   icon: string;
+  badge?: number | string;
 }
 
 const renderIcon = (iconName: string) => {
@@ -28,7 +29,7 @@ const renderIcon = (iconName: string) => {
   }
 };
 
-export function NavItem({ label, path, id, icon }: NavItemProps) {
+export function NavItem({ label, path, id, icon, badge }: NavItemProps) {
   return (
     <NavLink
       to={path}
@@ -59,6 +60,21 @@ export function NavItem({ label, path, id, icon }: NavItemProps) {
       >
         {renderIcon(icon)}
         <span>{label}</span>
+        {badge !== undefined && (
+          <span
+            style={{
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              backgroundColor: "rgba(56, 189, 248, 0.15)",
+              color: "var(--color-secondary)",
+              padding: "2px 8px",
+              borderRadius: "12px",
+              marginLeft: "auto",
+            }}
+          >
+            {badge}
+          </span>
+        )}
       </div>
     </NavLink>
   );

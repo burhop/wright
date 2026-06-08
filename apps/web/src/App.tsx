@@ -19,10 +19,13 @@ function App() {
       .then((res) => res.json())
       .then((data) => {
         setIsConfigured(data.is_configured);
+        const activeTheme = data.theme || "dark";
+        document.documentElement.setAttribute("data-theme", activeTheme);
       })
       .catch(() => {
         // Fallback to true on errors to avoid blocking in purely static/offline environments
         setIsConfigured(true);
+        document.documentElement.setAttribute("data-theme", "dark");
       });
   }, []);
 

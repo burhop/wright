@@ -1,6 +1,7 @@
-/* Premium space-slate theme design tokens */
+/* Premium Space Slate & Glassmorphism Light Design Tokens */
+
 :root {
-  /* Color Palette */
+  /* Default Theme: Space Slate Dark */
   --color-neutral: #090d16; /* deep rich dark space-black background */
   --color-surface: #131b2e; /* card and panel surfaces */
   --color-surface-subtle: #0d1220; /* secondary darker cards and input fields */
@@ -15,12 +16,25 @@
   --color-warning: #f59e0b; /* amber orange */
   --color-error: #ef4444; /* rose red */
 
+  /* Theme-aware Text States */
+  --color-text-muted: rgba(241, 245, 249, 0.6);
+  --color-text-dim: rgba(241, 245, 249, 0.4);
+  --color-surface-card-subtle: rgba(255, 255, 255, 0.01);
+
   /* Typography */
   --font-body:
     "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-ui:
     "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-md: 14px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
 
   /* Spacing */
   --space-xs: 4px;
@@ -51,4 +65,51 @@
     0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-glow: 0 0 15px rgba(56, 189, 248, 0.15);
   --shadow-glow-active: 0 0 25px rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="dark"] {
+  --color-neutral: #090d16;
+  --color-surface: #131b2e;
+  --color-surface-subtle: #0d1220;
+  --color-surface-hover: #1d2942;
+  --color-primary: #f1f5f9;
+  --color-secondary: #38bdf8;
+  --color-accent: #0ea5e9;
+  --color-border: #1e293b;
+  --color-border-hover: #334155;
+  --color-border-glow: rgba(56, 189, 248, 0.2);
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-text-muted: rgba(241, 245, 249, 0.6);
+  --color-text-dim: rgba(241, 245, 249, 0.4);
+  --color-surface-card-subtle: rgba(255, 255, 255, 0.01);
+  --shadow-glow: 0 0 15px rgba(56, 189, 248, 0.15);
+  --shadow-glow-active: 0 0 25px rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="light"] {
+  /* Premium Glassmorphism Light Theme */
+  --color-neutral: #e8edf5; /* light slate-blue background */
+  --color-surface: #f1f5f9; /* card surface background */
+  --color-surface-subtle: #f8fafc; /* inset/input background */
+  --color-surface-hover: #e2e8f0; /* card hover background */
+  --color-primary: #0f172a; /* dark slate main text */
+  --color-secondary: #0284c7; /* ocean blue highlight */
+  --color-accent: #0369a1; /* secondary accent */
+  --color-border: #cbd5e1; /* soft grey boundaries */
+  --color-border-hover: #94a3b8; /* active/hover boundaries */
+  --color-border-glow: rgba(2, 132, 199, 0.1);
+  --color-success: #059669; /* forest green status */
+  --color-warning: #d97706; /* warm orange status */
+  --color-error: #dc2626; /* crimson red status */
+  --color-text-muted: rgba(15, 23, 42, 0.6);
+  --color-text-dim: rgba(15, 23, 42, 0.4);
+  --color-surface-card-subtle: rgba(0, 0, 0, 0.02);
+  --shadow-glow: 0 0 15px rgba(2, 132, 199, 0.08);
+  --shadow-glow-active: 0 0 25px rgba(2, 132, 199, 0.18);
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  --shadow-xl: 0 20px 35px -5px rgba(15, 23, 42, 0.12), 0 10px 20px -5px rgba(15, 23, 42, 0.06);
 }
