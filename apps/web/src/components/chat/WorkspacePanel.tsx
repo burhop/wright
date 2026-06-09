@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import FileTree from "../common/FileTree";
-import ThreeDViewer from "../common/ThreeDViewer";
 import DiffViewer from "../common/DiffViewer";
-import EditorTabs from "../common/EditorTabs";
-import FileEditor from "../common/FileEditor";
-import ImagePreviewer from "../common/ImagePreviewer";
+import EditorTabs from "./EditorTabs";
+import ViewerInspector from "./ViewerInspector";
 import { useChat } from "../../store/sessions";
+import { useViewerPanel } from "../../store/viewer";
+import { viewerRegistry } from "../../services/viewer-panel/registry";
+import { PanelHostImpl } from "../../services/viewer-panel/panel-host";
+import type { FileDescriptor } from "../../services/viewer-panel/types";
 import {
   workspaceService,
   type WorkspaceNode,
@@ -26,7 +28,7 @@ import {
   BookOpenIcon,
 } from "../common/Icons";
 
-import type { EditorTab } from "../../store/types";
+import type { EditorTab } from "../../store/viewer";
 
 function findFileInTree(
   node: WorkspaceNode,
@@ -164,12 +166,17 @@ export function WorkspacePanel({
   const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
     savedLayout?.isAgentCollapsed ?? false,
   );
-  const [openTabs, setOpenTabs] = useState<EditorTab[]>(
-    savedLayout?.openTabs ?? [],
-  );
-  const [activeTabPath, setActiveTabPath] = useState<string | null>(
-    savedLayout?.activeTabPath ?? null,
-  );
+  const {
+    openTabs,
+    activeTabPath,
+    openTab,
+    closeTab,
+    setActiveTabPath,
+    getDocument,
+    getProvider,
+    updateTabPath,
+    reloadDocument,
+  } = useViewerPanel();
 
   // Resize and model states
   const [leftSidebarWidth, setLeftSidebarWidth] = useState<number>(
@@ -197,6 +204,8 @@ export function WorkspacePanel({
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
     () => new Set<string>(savedLayout?.expandedPaths ?? []),
   );
+  const [isUnresponsive, setIsUnresponsive] = useState<boolean>(false);
+  const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(false);
 
   const handleToggleExpand = useCallback((path: string) => {
     setExpandedPaths((prev) => {
@@ -247,15 +256,15 @@ export function WorkspacePanel({
     expandedPaths,
   ]);
 
-  // File loading states
-  const [loadedContents, setLoadedContents] = useState<Record<string, any>>({});
-  const [loadingContentPath, setLoadingContentPath] = useState<string | null>(
-    null,
-  );
+
 
   const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
     null,
   );
+  const workspaceRootRef = useRef<WorkspaceNode | null>(null);
+  useEffect(() => {
+    workspaceRootRef.current = workspaceRoot;
+  }, [workspaceRoot]);
   const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(null);
   const [workspacePath, setWorkspacePath] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -301,6 +310,144 @@ export function WorkspacePanel({
   useEffect(() => {
     openTabsRef.current = openTabs;
   }, [openTabs]);
+
+  const viewerContainerRef = useRef<HTMLDivElement>(null);
+
+  // Synchronise stored tabs from savedLayout on mount/initialisation
+  const tabsInitialized = useRef(false);
+  useEffect(() => {
+    if (!tabsInitialized.current && savedLayout?.openTabs && activeSessionId) {
+      tabsInitialized.current = true;
+      const syncTabs = async () => {
+        for (const tab of savedLayout.openTabs) {
+          const fileNode = workspaceRootRef.current ? findFileInTree(workspaceRootRef.current, tab.path) : null;
+          const ext = tab.path.split(".").pop()?.toLowerCase() || "";
+          const name = tab.path.split("/").pop() || tab.path;
+          let mimeType = "text/plain";
+          if (ext === "pdf") mimeType = "application/pdf";
+          else if (ext === "png") mimeType = "image/png";
+          else if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
+          else if (ext === "webp") mimeType = "image/webp";
+          else if (ext === "gif") mimeType = "image/gif";
+          else if (ext === "bmp") mimeType = "image/bmp";
+          else if (ext === "svg") mimeType = "image/svg+xml";
+          else if (ext === "stl") mimeType = "application/sla";
+          else if (ext === "step") mimeType = "application/step";
+          const file: FileDescriptor = {
+            id: tab.path,
+            uri: tab.path,
+            name,
+            extension: ext,
+            mimeType,
+            size: fileNode?.size || undefined,
+            metadata: { last_modified: fileNode?.last_modified },
+          };
+          await openTab(file, "preview");
+        }
+        if (savedLayout.activeTabPath) {
+          setActiveTabPath(savedLayout.activeTabPath);
+        }
+      };
+      syncTabs();
+    }
+  }, [savedLayout, activeSessionId, openTab, setActiveTabPath]);
+
+  // Pluggable resolution of active tab viewer
+  useEffect(() => {
+    if (!activeTabPath || !viewerContainerRef.current) return;
+
+    const fileNode = workspaceRootRef.current ? findFileInTree(workspaceRootRef.current, activeTabPath) : null;
+    const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
+    const name = activeTabPath.split("/").pop() || activeTabPath;
+
+    let mimeType = "text/plain";
+    if (ext === "pdf") mimeType = "application/pdf";
+    else if (ext === "png") mimeType = "image/png";
+    else if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
+    else if (ext === "webp") mimeType = "image/webp";
+    else if (ext === "gif") mimeType = "image/gif";
+    else if (ext === "bmp") mimeType = "image/bmp";
+    else if (ext === "svg") mimeType = "image/svg+xml";
+    else if (ext === "stl") mimeType = "application/sla";
+    else if (ext === "step") mimeType = "application/step";
+    else if (ext === "json") mimeType = "application/json";
+
+    const file: FileDescriptor = {
+      id: activeTabPath,
+      uri: activeTabPath,
+      name,
+      extension: ext,
+      mimeType,
+      size: fileNode?.size || undefined,
+      metadata: { last_modified: fileNode?.last_modified },
+    };
+
+    const mode = "preview";
+    const contribution = viewerRegistry.getDefaultViewer(file, mode);
+    if (!contribution) return;
+
+    const provider = getProvider(activeTabPath) || contribution.providerFactory();
+    
+    let activeDocument = getDocument(activeTabPath);
+    let cancelled = false;
+
+    const token = {
+      isCancellationRequested: cancelled,
+      onCancellationRequested: () => {
+        return { dispose: () => {} };
+      },
+    };
+
+    const host = new PanelHostImpl(
+      `panel-${activeTabPath}`,
+      name,
+      viewerContainerRef.current,
+      true,
+      true
+    );
+
+    const subUnresponsive = host.onDidBecomeUnresponsive?.(() => {
+      setIsUnresponsive(true);
+    });
+
+    const subResponsive = host.onDidBecomeResponsive?.(() => {
+      setIsUnresponsive(false);
+    });
+
+    const loadViewer = async () => {
+      try {
+        if (!activeDocument) {
+          activeDocument = await provider.openDocument(file, { sessionId: activeSessionId || undefined });
+        }
+        if (!cancelled && viewerContainerRef.current) {
+          await provider.resolveViewer(activeDocument, host, mode, token);
+        }
+      } catch (err) {
+        console.error("Failed to load pluggable viewer:", err);
+      }
+    };
+
+    const container = viewerContainerRef.current;
+    const handleViewerMessage = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { type, content } = customEvent.detail || {};
+      if (type === "create-prompt" && content) {
+        sendMessage(content);
+      }
+    };
+    container?.addEventListener("viewer-message", handleViewerMessage);
+
+    loadViewer();
+
+    return () => {
+      cancelled = true;
+      subUnresponsive?.dispose();
+      subResponsive?.dispose();
+      host.dispose();
+      setIsUnresponsive(false);
+      container?.removeEventListener("viewer-message", handleViewerMessage);
+    };
+  }, [activeTabPath, activeSessionId, getDocument, getProvider, sendMessage]);
 
   // Keep compatibility with webmcp event integration
   useEffect(() => {
@@ -389,48 +536,7 @@ export function WorkspacePanel({
     setWorkspacePath,
   ]);
 
-  // Load active tab content dynamically
-  useEffect(() => {
-    if (!activeTabPath || !activeSessionId) return;
-    if (loadedContents[activeTabPath] !== undefined) return;
 
-    let isMounted = true;
-    const fetchTabContent = async () => {
-      setLoadingContentPath(activeTabPath);
-      try {
-        const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
-        if (
-          ext === "stl" ||
-          ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)
-        ) {
-          const buffer = await workspaceService.getFileContentArrayBuffer(
-            activeSessionId,
-            activeTabPath,
-          );
-          if (isMounted) {
-            setLoadedContents((prev) => ({ ...prev, [activeTabPath]: buffer }));
-          }
-        } else {
-          const text = await workspaceService.getFileContentText(
-            activeSessionId,
-            activeTabPath,
-          );
-          if (isMounted) {
-            setLoadedContents((prev) => ({ ...prev, [activeTabPath]: text }));
-          }
-        }
-      } catch (err) {
-        console.error("Failed to fetch tab content:", err);
-      } finally {
-        if (isMounted) setLoadingContentPath(null);
-      }
-    };
-
-    fetchTabContent();
-    return () => {
-      isMounted = false;
-    };
-  }, [activeTabPath, activeSessionId, loadedContents]);
 
   // Workspace Polling Loop for disk changes
   useEffect(() => {
@@ -460,6 +566,7 @@ export function WorkspacePanel({
             );
             if (
               activeTabObj &&
+              activeTabObj.last_modified !== undefined &&
               fileNode.last_modified > activeTabObj.last_modified
             ) {
               console.log(
@@ -467,39 +574,16 @@ export function WorkspacePanel({
               );
               try {
                 const ext = currentPath.split(".").pop()?.toLowerCase() || "";
-                if (
-                  ext === "stl" ||
-                  ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)
-                ) {
-                  const updatedBuffer =
-                    await workspaceService.getFileContentArrayBuffer(
-                      activeSessionId,
-                      currentPath,
-                    );
-                  if (!isMounted) return;
-                  setLoadedContents((prev) => ({
-                    ...prev,
-                    [currentPath]: updatedBuffer,
-                  }));
-                } else {
-                  const updatedText = await workspaceService.getFileContentText(
-                    activeSessionId,
-                    currentPath,
-                  );
-                  if (!isMounted) return;
-                  setLoadedContents((prev) => ({
-                    ...prev,
-                    [currentPath]: updatedText,
-                  }));
-                }
-                // Update tab's timestamp record
-                setOpenTabs((prev) =>
-                  prev.map((t) =>
-                    t.path === currentPath
-                      ? { ...t, last_modified: fileNode.last_modified }
-                      : t,
-                  ),
-                );
+                const name = currentPath.split("/").pop() || currentPath;
+                const file: FileDescriptor = {
+                  id: currentPath,
+                  uri: currentPath,
+                  name,
+                  extension: ext,
+                  mimeType: "text/plain",
+                  metadata: { last_modified: fileNode.last_modified },
+                };
+                await reloadDocument(file);
               } catch (err) {
                 console.error("Failed to hot-reload modified file:", err);
               }
@@ -525,7 +609,7 @@ export function WorkspacePanel({
       isMounted = false;
       clearInterval(intervalId);
     };
-  }, [activeSessionId]);
+  }, [activeSessionId, reloadDocument]);
 
   // Load settings and git data on sidebar tab activation
   useEffect(() => {
@@ -667,33 +751,32 @@ export function WorkspacePanel({
     if (!activeSessionId) return;
 
     const ext = path.split(".").pop()?.toLowerCase() || "";
-    let tabType: "stl" | "image" | "code" | "text" = "text";
-    if (ext === "stl") {
-      tabType = "stl";
-    } else if (["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)) {
-      tabType = "image";
-    } else if (["py", "scad", "json", "md", "txt"].includes(ext)) {
-      tabType = "code";
-    }
+    const name = path.split("/").pop() || path;
+    const fileNode = workspaceRoot ? findFileInTree(workspaceRoot, path) : null;
+    
+    let mimeType = "text/plain";
+    if (ext === "pdf") mimeType = "application/pdf";
+    else if (ext === "png") mimeType = "image/png";
+    else if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
+    else if (ext === "webp") mimeType = "image/webp";
+    else if (ext === "gif") mimeType = "image/gif";
+    else if (ext === "bmp") mimeType = "image/bmp";
+    else if (ext === "svg") mimeType = "image/svg+xml";
+    else if (ext === "stl") mimeType = "application/sla";
+    else if (ext === "step") mimeType = "application/step";
+    else if (ext === "json") mimeType = "application/json";
 
-    const fileName = path.split("/").pop() || path;
+    const file: FileDescriptor = {
+      id: path,
+      uri: path,
+      name,
+      extension: ext,
+      mimeType,
+      size: fileNode?.size || undefined,
+      metadata: { last_modified: fileNode?.last_modified },
+    };
 
-    const existingTab = openTabs.find((t) => t.path === path);
-    if (!existingTab) {
-      let fileNode: WorkspaceNode | null = null;
-      if (workspaceRoot) {
-        fileNode = findFileInTree(workspaceRoot, path);
-      }
-      const newTab: EditorTab = {
-        path,
-        name: fileName,
-        type: tabType,
-        isDirty: false,
-        last_modified: fileNode ? fileNode.last_modified : Date.now(),
-      };
-      setOpenTabs([...openTabs, newTab]);
-    }
-    setActiveTabPath(path);
+    await openTab(file, "preview");
   };
 
   // File tree operations
@@ -739,24 +822,10 @@ export function WorkspacePanel({
       await fetchGitData();
 
       // Update tabs if opened
-      setOpenTabs((prev) =>
-        prev.map((t) =>
-          t.path === oldPath
-            ? { ...t, path: newPath, name: newPath.split("/").pop() || newPath }
-            : t,
-        ),
-      );
-      if (activeTabPath === oldPath) {
-        setActiveTabPath(newPath);
-      }
-      // Migrate contents cache
-      if (loadedContents[oldPath] !== undefined) {
-        setLoadedContents((prev) => {
-          const updated = { ...prev, [newPath]: prev[oldPath] };
-          delete updated[oldPath];
-          return updated;
-        });
-      }
+      const newName = newPath.split("/").pop() || newPath;
+      updateTabPath(oldPath, newPath, newName);
+
+
     } catch (err: unknown) {
       console.error("Failed to rename file node:", err);
       throw err;
@@ -775,9 +844,8 @@ export function WorkspacePanel({
       setWorkspaceRoot(tree);
       await fetchGitData();
 
-      if (activeTabPath === sourcePath) {
-        setActiveTabPath(destPath);
-      }
+      const newName = destPath.split("/").pop() || destPath;
+      updateTabPath(sourcePath, destPath, newName);
     } catch (err: unknown) {
       console.error("Failed to move file node:", err);
       throw err;
@@ -785,31 +853,13 @@ export function WorkspacePanel({
   };
 
   const handleCloseTab = (path: string) => {
-    const remaining = openTabs.filter((t) => t.path !== path);
-    setOpenTabs(remaining);
+    closeTab(path);
 
-    // Clear content cache to free memory
-    setLoadedContents((prev) => {
-      const updated = { ...prev };
-      delete updated[path];
-      return updated;
-    });
 
-    if (activeTabPath === path) {
-      setActiveTabPath(
-        remaining.length > 0 ? remaining[remaining.length - 1].path : null,
-      );
-    }
   };
 
   const handleSelectTab = (path: string) => {
     setActiveTabPath(path);
-  };
-
-  const handleSaveStatusChange = (path: string, isDirty: boolean) => {
-    setOpenTabs((prev) =>
-      prev.map((t) => (t.path === path ? { ...t, isDirty } : t)),
-    );
   };
 
   // Resize listeners
@@ -918,8 +968,6 @@ export function WorkspacePanel({
       console.error("Failed to toggle MCP tool", err);
     }
   };
-
-  const activeTabObj = openTabs.find((t) => t.path === activeTabPath);
 
   return (
     <div
@@ -1940,67 +1988,152 @@ export function WorkspacePanel({
           position: "relative",
         }}
       >
-        <EditorTabs
-          tabs={openTabs}
-          activeTabPath={activeTabPath}
-          onSelectTab={handleSelectTab}
-          onCloseTab={handleCloseTab}
-        />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "var(--color-neutral-dark, #121212)", paddingRight: "var(--space-md, 12px)" }}>
+          <div style={{ flex: 1, overflow: "hidden" }}>
+            <EditorTabs
+              tabs={openTabs}
+              activeTabPath={activeTabPath}
+              onSelectTab={handleSelectTab}
+              onCloseTab={handleCloseTab}
+            />
+          </div>
+          {activeTabPath && (
+            <button
+              data-testid="viewer-inspector-toggle"
+              onClick={() => setIsInspectorOpen(!isInspectorOpen)}
+              style={{
+                background: "none",
+                border: "none",
+                color: isInspectorOpen ? "var(--color-secondary, #aaaaaa)" : "var(--color-primary, #ffffff)",
+                opacity: 0.7,
+                cursor: "pointer",
+                padding: "8px",
+                fontSize: "0.9rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              title="Inspect Viewer Details"
+            >
+              🔍
+            </button>
+          )}
+        </div>
 
-        <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+        <div style={{ flex: 1, display: "flex", overflow: "hidden", position: "relative" }}>
           {activeTabPath ? (
-            loadingContentPath === activeTabPath ? (
+            <>
               <div
-                style={{
-                  display: "flex",
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--color-secondary)",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "0.8rem",
-                }}
-              >
-                Loading file content...
-              </div>
-            ) : activeTabObj?.type === "stl" &&
-              loadedContents[activeTabPath] ? (
-              <ThreeDViewer
-                arrayBuffer={loadedContents[activeTabPath]}
-                fileName={activeTabObj.name}
+                ref={viewerContainerRef}
+                data-testid="viewer-container"
+                style={{ flex: 1, height: "100%", overflow: "hidden" }}
               />
-            ) : activeTabObj?.type === "image" &&
-              loadedContents[activeTabPath] ? (
-              <ImagePreviewer
-                arrayBuffer={loadedContents[activeTabPath]}
-                fileName={activeTabObj.name}
-              />
-            ) : (activeTabObj?.type === "code" ||
-                activeTabObj?.type === "text") &&
-              loadedContents[activeTabPath] !== undefined ? (
-              <FileEditor
-                sessionId={activeSessionId || ""}
-                filePath={activeTabPath}
-                initialContent={loadedContents[activeTabPath]}
-                onSaveStatusChange={(isDirty) =>
-                  handleSaveStatusChange(activeTabPath, isDirty)
-                }
-              />
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--color-secondary)",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "0.8rem",
-                }}
-              >
-                Failed to render file or file is empty.
-              </div>
-            )
+              {isInspectorOpen && (
+                <ViewerInspector
+                  onClose={() => setIsInspectorOpen(false)}
+                  isResponsive={!isUnresponsive}
+                />
+              )}
+              {isUnresponsive && (
+                <div
+                  data-testid="watchdog-overlay"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.75)",
+                    backdropFilter: "blur(4px)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 1000,
+                    color: "white",
+                    fontFamily: "var(--font-ui)",
+                    padding: "var(--space-lg)",
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "var(--color-surface, #202020)",
+                      border: "1px solid var(--color-error, #ef4444)",
+                      borderRadius: "var(--radius-md, 8px)",
+                      padding: "var(--space-lg)",
+                      maxWidth: "400px",
+                      textAlign: "center",
+                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    <div style={{ fontSize: "2rem", marginBottom: "var(--space-sm)" }}>⚠️</div>
+                    <h4 style={{ margin: "0 0 var(--space-sm)", color: "var(--color-error, #ef4444)" }}>
+                      Viewer Unresponsive
+                    </h4>
+                    <p style={{ margin: "0 0 var(--space-lg)", fontSize: "0.85rem", opacity: 0.8, lineHeight: 1.5 }}>
+                      The viewer panel is not responding. You can try reloading it, or close it to release resources.
+                    </p>
+                    <div style={{ display: "flex", gap: "var(--space-md)", justifyContent: "center" }}>
+                      <button
+                        data-testid="watchdog-reload"
+                        onClick={async () => {
+                          if (activeTabPath) {
+                            const fileNode = workspaceRoot ? findFileInTree(workspaceRoot, activeTabPath) : null;
+                            if (fileNode) {
+                              const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
+                              const name = activeTabPath.split("/").pop() || activeTabPath;
+                              const file: FileDescriptor = {
+                                id: activeTabPath,
+                                uri: activeTabPath,
+                                name,
+                                extension: ext,
+                                mimeType: ext === "pdf" ? "application/pdf" : "text/plain",
+                                size: fileNode?.size || undefined,
+                                metadata: { last_modified: fileNode?.last_modified },
+                              };
+                              await reloadDocument(file);
+                            }
+                          }
+                          setIsUnresponsive(false);
+                        }}
+                        style={{
+                          backgroundColor: "var(--color-accent, #4f46e5)",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "var(--radius-sm, 4px)",
+                          padding: "var(--space-xs) var(--space-md)",
+                          cursor: "pointer",
+                          fontSize: "0.85rem",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Reload
+                      </button>
+                      <button
+                        data-testid="watchdog-close"
+                        onClick={() => {
+                          if (activeTabPath) {
+                            closeTab(activeTabPath);
+                          }
+                        }}
+                        style={{
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          color: "var(--color-primary, #ffffff)",
+                          border: "1px solid var(--color-border, #333333)",
+                          borderRadius: "var(--radius-sm, 4px)",
+                          padding: "var(--space-xs) var(--space-md)",
+                          cursor: "pointer",
+                          fontSize: "0.85rem",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Close Tab
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             /* Welcome / landing screen when no tabs are open */
             <div

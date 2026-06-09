@@ -327,7 +327,7 @@ export class HermesAgentService {
         return data.success;
       }
     } catch (err) {
-      agentLogger.error("Failed to cancel stream on backend", err);
+      agentLogger.error("Failed to cancel stream on backend", err instanceof Error ? { error: err.message } : { error: String(err) });
     }
     return false;
   }

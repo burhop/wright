@@ -241,3 +241,31 @@ class WorkspaceMcpStatusResponse(BaseModel):
     status: str
     message: str
 
+
+class FileBackupRequest(BaseModel):
+    session_id: str
+    path: str
+    content: str
+
+
+class FileBackupResponse(BaseModel):
+    success: bool
+    backup_id: str
+
+
+class FileBackupDeleteRequest(BaseModel):
+    session_id: str
+    backup_id: str
+
+
+class FileRunRequest(BaseModel):
+    session_id: str
+    path: str
+
+
+class FileRunResponse(BaseModel):
+    success: bool
+    stdout: str
+    stderr: str
+    exit_code: int
+

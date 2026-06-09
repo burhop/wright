@@ -223,7 +223,7 @@ export function FileTree({
           </form>
         ) : (
           <div
-            data-testid={`file-${node.name}`}
+            data-testid={`file-node-${node.path}`}
             onClick={handleClick}
             style={{
               display: "flex",

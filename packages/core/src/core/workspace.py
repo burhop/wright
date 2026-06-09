@@ -561,6 +561,27 @@ class WorkspaceManager:
             raise ValueError("Access denied: path traversal attempt detected.")
         return resolved
 
+    def write_backup(self, rel_path: str, content: bytes) -> str:
+        """Write temporary backup file for unsaved edits under .git/backups/."""
+        import hashlib
+        hash_val = hashlib.sha256(rel_path.encode()).hexdigest()
+        backups_dir = os.path.join(self.base_dir, ".git", "backups")
+        os.makedirs(backups_dir, exist_ok=True)
+        backup_path = os.path.join(backups_dir, hash_val)
+        with open(backup_path, "wb") as f:
+            f.write(content)
+        return hash_val
+
+    def delete_backup(self, backup_id: str) -> None:
+        """Delete temporary backup file."""
+        backups_dir = os.path.join(self.base_dir, ".git", "backups")
+        backup_path = os.path.join(backups_dir, backup_id)
+        if os.path.exists(backup_path):
+            try:
+                os.remove(backup_path)
+            except Exception:
+                pass
+
     def _get_git_statuses(self) -> Dict[str, str]:
         """Run git status --porcelain and return a mapping of workspace-relative paths to status characters."""
         statuses = {}

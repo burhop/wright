@@ -23,7 +23,7 @@ const getApiBase = () => {
   }
   return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
 };
-const API_BASE = getApiBase();
+export const API_BASE = getApiBase();
 
 export class WorkspaceService {
   async getWorkspaceFiles(sessionId: string): Promise<WorkspaceNode> {
@@ -46,15 +46,19 @@ export class WorkspaceService {
   async getFileContentArrayBuffer(
     sessionId: string,
     filePath: string,
+    backupId?: string,
   ): Promise<ArrayBuffer> {
     workspaceLogger.info("Fetching file content as ArrayBuffer", {
       sessionId,
       filePath,
+      backupId,
     });
     const encodedPath = encodeURIComponent(filePath);
-    const response = await fetch(
-      `${API_BASE}/api/workspace/files/content?session_id=${sessionId}&path=${encodedPath}`,
-    );
+    let url = `${API_BASE}/api/workspace/files/content?session_id=${sessionId}&path=${encodedPath}`;
+    if (backupId) {
+      url += `&backup_id=${encodeURIComponent(backupId)}`;
+    }
+    const response = await fetch(url);
     if (!response.ok) {
       workspaceLogger.error("Failed to fetch file content", {
         status: response.status,
@@ -67,20 +71,29 @@ export class WorkspaceService {
   async getFileContentText(
     sessionId: string,
     filePath: string,
+    backupId?: string,
   ): Promise<string> {
     workspaceLogger.info("Fetching file content as text", {
       sessionId,
       filePath,
+      backupId,
     });
     const encodedPath = encodeURIComponent(filePath);
-    const response = await fetch(
-      `${API_BASE}/api/workspace/files/content?session_id=${sessionId}&path=${encodedPath}`,
-    );
+    let url = `${API_BASE}/api/workspace/files/content?session_id=${sessionId}&path=${encodedPath}`;
+    if (backupId) {
+      url += `&backup_id=${encodeURIComponent(backupId)}`;
+    }
+    const response = await fetch(url);
     if (!response.ok) {
       workspaceLogger.error("Failed to fetch file content", {
         status: response.status,
       });
       throw new Error(`Failed to fetch file content: ${response.statusText}`);
+    }
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      return data.content;
     }
     return response.text();
   }
@@ -457,6 +470,58 @@ export class WorkspaceService {
     return data.success;
   }
 
+  async backupFileContent(
+    sessionId: string,
+    filePath: string,
+    content: string,
+  ): Promise<string> {
+    workspaceLogger.info("Backing up file content", { sessionId, filePath });
+    const response = await fetch(`${API_BASE}/api/workspace/files/backup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        path: filePath,
+        content,
+      }),
+    });
+    if (!response.ok) {
+      workspaceLogger.error("Failed to backup file content", {
+        status: response.status,
+      });
+      throw new Error(`Failed to backup file: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.backup_id;
+  }
+
+  async deleteBackup(
+    sessionId: string,
+    backupId: string,
+  ): Promise<boolean> {
+    workspaceLogger.info("Deleting file backup", { sessionId, backupId });
+    const response = await fetch(`${API_BASE}/api/workspace/files/backup`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        backup_id: backupId,
+      }),
+    });
+    if (!response.ok) {
+      workspaceLogger.error("Failed to delete backup", {
+        status: response.status,
+      });
+      throw new Error(`Failed to delete backup: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.success;
+  }
+
   async getWorkspaceTools(sessionId: string): Promise<string[]> {
     workspaceLogger.info("Fetching workspace tools", { sessionId });
     const response = await fetch(
@@ -647,6 +712,31 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       throw new Error(`Failed to get MCP status: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async runFile(
+    sessionId: string,
+    filePath: string,
+  ): Promise<{ success: boolean; stdout: string; stderr: string; exit_code: number }> {
+    workspaceLogger.info("Running file in workspace", { sessionId, filePath });
+    const response = await fetch(`${API_BASE}/api/workspace/files/run`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        path: filePath,
+      }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      workspaceLogger.error("Failed to run file", {
+        status: response.status,
+      });
+      throw new Error(data.detail || `Failed to run file: ${response.statusText}`);
     }
     return response.json();
   }

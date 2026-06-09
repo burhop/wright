@@ -12,6 +12,7 @@ import SettingsPage from "./components/pages/SettingsPage";
 
 import { ToolsProvider } from "./store/tools";
 import { ChatProvider } from "./store/sessions";
+import { ViewerPanelProvider } from "./store/viewer";
 
 const getApiUrl = (path: string) => {
   if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
@@ -69,8 +70,9 @@ function App() {
   return (
     <BrowserRouter>
       <ChatProvider>
-        <ToolsProvider>
-          <AppShell>
+        <ViewerPanelProvider>
+          <ToolsProvider>
+            <AppShell>
             <Routes>
               <Route path="/" element={<DashboardPage />} />
               <Route
@@ -85,8 +87,9 @@ function App() {
               <Route path="/agent-chat" element={<Navigate to="/" replace />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
-          </AppShell>
-        </ToolsProvider>
+            </AppShell>
+          </ToolsProvider>
+        </ViewerPanelProvider>
       </ChatProvider>
     </BrowserRouter>
   );

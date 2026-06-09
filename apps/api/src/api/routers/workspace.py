@@ -11,6 +11,7 @@ import uuid
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
+from typing import Optional
 
 from agent_adapters import BaseAgentEngine
 from core import WorkspaceManager
@@ -68,9 +69,14 @@ from api.schemas.workspace import (
     WorkspaceActivateRequest,
     WorkspaceActivateResponse,
     ContextSaveRequest,
+    FileBackupRequest,
+    FileBackupResponse,
+    FileBackupDeleteRequest,
     DefaultWorkspaceDirResponse,
     serialize_workspace,
     WorkspaceSessionUpdateRequest,
+    FileRunRequest,
+    FileRunResponse,
 )
 
 logger = structlog.get_logger(__name__)
@@ -131,17 +137,26 @@ async def list_workspace_files(
 async def get_file_content(
     session_id: str = Query(...),
     path: str = Query(...),
+    backup_id: Optional[str] = Query(None),
     workspace_dir: str = Depends(get_workspace_dir),
 ):
     mgr = WorkspaceManager(workspace_dir)
-    try:
-        abs_path = mgr.sanitize_path(path)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    if not os.path.isfile(abs_path):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}"
-        )
+    if backup_id:
+        backups_dir = os.path.join(workspace_dir, ".git", "backups")
+        abs_path = os.path.join(backups_dir, backup_id)
+        if not os.path.exists(abs_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Backup not found: {backup_id}"
+            )
+    else:
+        try:
+            abs_path = mgr.sanitize_path(path)
+        except ValueError as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        if not os.path.isfile(abs_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}"
+            )
     ext = os.path.splitext(abs_path)[1].lower()
     binary_extensions = {
         ".stl",
@@ -163,7 +178,17 @@ async def get_file_content(
     if ext in binary_extensions:
         return FileResponse(abs_path, filename=os.path.basename(abs_path))
     try:
-        content = mgr.read_file_content(path)
+        if backup_id:
+            try:
+                with open(abs_path, "rb") as f:
+                    content = f.read()
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to read backup: {e}",
+                )
+        else:
+            content = mgr.read_file_content(path)
         try:
             text = content.decode("utf-8")
         except UnicodeDecodeError:
@@ -244,6 +269,61 @@ async def save_file_content_endpoint(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except PermissionError as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.post("/files/run", response_model=FileRunResponse)
+@traced("workspace.files.run")
+async def run_file_endpoint(
+    body: FileRunRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    
+    # Secure path norm
+    safe_path = os.path.normpath(body.path)
+    if safe_path.startswith("..") or os.path.isabs(safe_path) or safe_path.startswith("/"):
+        safe_path = safe_path.lstrip("/").replace("../", "")
+        
+    full_path = os.path.normpath(os.path.join(workspace_dir, safe_path))
+    
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"File not found: {body.path}"
+        )
+        
+    if not full_path.endswith(".py"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only Python files (.py) are supported for running."
+        )
+
+    import subprocess
+    try:
+        res = subprocess.run(
+            ["python", full_path],
+            cwd=workspace_dir,
+            capture_output=True,
+            text=True,
+            timeout=10.0
+        )
+        return FileRunResponse(
+            success=res.returncode == 0,
+            stdout=res.stdout,
+            stderr=res.stderr,
+            exit_code=res.returncode
+        )
+    except subprocess.TimeoutExpired as e:
+        return FileRunResponse(
+            success=False,
+            stdout=e.stdout or "",
+            stderr=e.stderr or "Process timed out after 10.0 seconds.",
+            exit_code=-9
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 
 
 # ── Git Operations ───────────────────────────────────────────────────────
@@ -821,3 +901,33 @@ async def update_workspace_session_endpoint(
 ):
     update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
     return {"success": True}
+
+
+@router.post("/files/backup", response_model=FileBackupResponse)
+@traced("workspace.files.backup")
+async def backup_file_content_endpoint(
+    body: FileBackupRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
+    try:
+        backup_id = mgr.write_backup(body.path, body.content.encode("utf-8"))
+        return FileBackupResponse(success=True, backup_id=backup_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except PermissionError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.delete("/files/backup", response_model=FileContentSaveResponse)
+@traced("workspace.files.backup.delete")
+async def delete_file_backup_endpoint(
+    body: FileBackupDeleteRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    mgr = WorkspaceManager(workspace_dir)
+    try:
+        mgr.delete_backup(body.backup_id)
+        return FileContentSaveResponse(success=True)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
