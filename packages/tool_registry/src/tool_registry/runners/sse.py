@@ -40,7 +40,7 @@ class SseRunner(BaseRunner):
                     self.sse_url,
                     e,
                 )
-                await self.stop()
+                await self._stop_locked()
                 raise RuntimeError(f"SSE handshake failed: {e}") from e
 
             # Perform MCP Handshake
@@ -50,27 +50,30 @@ class SseRunner(BaseRunner):
                 logger.error(
                     "Handshake failed with SSE MCP server %s: %s", self.sse_url, e
                 )
-                await self.stop()
+                await self._stop_locked()
                 raise RuntimeError(f"MCP handshake failed: {e}") from e
+
+    async def _stop_locked(self) -> None:
+        if self._read_task:
+            self._read_task.cancel()
+            self._read_task = None
+
+        # Resolve pending requests with an exception
+        for fut in self._pending_requests.values():
+            if not fut.done():
+                fut.set_exception(RuntimeError("Runner stopped."))
+        self._pending_requests.clear()
+
+        if self.client:
+            await self.client.aclose()
+            self.client = None
+
+        self._message_endpoint = None
+        self._endpoint_ready.clear()
 
     async def stop(self) -> None:
         async with self._lock:
-            if self._read_task:
-                self._read_task.cancel()
-                self._read_task = None
-
-            # Resolve pending requests with an exception
-            for fut in self._pending_requests.values():
-                if not fut.done():
-                    fut.set_exception(RuntimeError("Runner stopped."))
-            self._pending_requests.clear()
-
-            if self.client:
-                await self.client.aclose()
-                self.client = None
-
-            self._message_endpoint = None
-            self._endpoint_ready.clear()
+            await self._stop_locked()
 
     def is_running(self) -> bool:
         return self.client is not None and self._message_endpoint is not None

@@ -218,7 +218,7 @@ interface ChatContextProps {
   createSession: (workspace?: string) => Promise<string | undefined>;
   selectSession: (sessionId: string) => Promise<void>;
   deleteSession: (sessionId: string) => Promise<void>;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, attachments?: string[]) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -295,24 +295,34 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     hydrateSessions();
   }, []);
 
-  const createSession = useCallback(async (workspace?: string) => {
-    try {
-      const session = await agentService.createSession(workspace);
-      
-      if (!session.title || session.title === "Untitled" || session.title === "Undefined") {
-          const workspaceName = workspace ? workspace.split('/').pop() : 'Workspace';
-          const baseName = workspaceName!.charAt(0).toUpperCase() + workspaceName!.slice(1);
+  const createSession = useCallback(
+    async (workspace?: string) => {
+      try {
+        const session = await agentService.createSession(workspace);
+
+        if (
+          !session.title ||
+          session.title === "Untitled" ||
+          session.title === "Undefined"
+        ) {
+          const workspaceName = workspace
+            ? workspace.split("/").pop()
+            : "Workspace";
+          const baseName =
+            workspaceName!.charAt(0).toUpperCase() + workspaceName!.slice(1);
           const count = state.sessions.length + 1;
           session.title = `${baseName} Session ${count}`;
-      }
+        }
 
-      dispatch({ type: "CREATE_SESSION", session });
-      return session.sessionId;
-    } catch (err) {
-      console.error("Failed to create session on backend", err);
-      return undefined;
-    }
-  }, [state.sessions]);
+        dispatch({ type: "CREATE_SESSION", session });
+        return session.sessionId;
+      } catch (err) {
+        console.error("Failed to create session on backend", err);
+        return undefined;
+      }
+    },
+    [state.sessions],
+  );
 
   const selectSession = useCallback(async (sessionId: string) => {
     dispatch({ type: "SELECT_SESSION", sessionId });
@@ -334,7 +344,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string, attachments?: string[]) => {
       if (!state.activeSessionId) return;
       const sessionId = state.activeSessionId;
 
@@ -350,7 +360,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       let accumulatedText = "";
       try {
-        const stream = agentService.sendMessage(sessionId, content);
+        const stream = agentService.sendMessage(
+          sessionId,
+          content,
+          attachments,
+        );
         for await (const event of stream) {
           if (event.type === "token") {
             accumulatedText += event.text;

@@ -12,6 +12,7 @@ from .base import (
     AgentChatStartResponse,
     AgentSessionInfo,
     AgentChatMessage,
+    AgentCommand,
 )
 
 logger = logging.getLogger(__name__)
@@ -273,4 +274,24 @@ class HermesAdapter(BaseAgentEngine):
             logger.error(
                 "Failed to fetch chat history for session %s: %s", session_id, e
             )
+            return []
+
+    async def get_commands(self) -> list[AgentCommand]:
+        """Retrieve the available slash commands from Hermes WebUI."""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/api/commands",
+                    headers=self.headers,
+                    timeout=5.0,
+                )
+                response.raise_for_status()
+                data = response.json()
+                cmds = data.get("commands", [])
+                return [
+                    AgentCommand(name=c["name"], description=c.get("description", ""))
+                    for c in cmds
+                ]
+        except Exception as e:
+            logger.error("Failed to fetch commands from Hermes: %s", e)
             return []

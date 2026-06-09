@@ -75,6 +75,7 @@ class DeleteSessionResponse(BaseModel):
 class ChatStartRequest(BaseModel):
     session_id: str
     message: str
+    attachments: Optional[List[str]] = None
 
 
 class ChatStartResponse(BaseModel):
@@ -96,7 +97,52 @@ class ChatHistoryResponse(BaseModel):
     messages: List[ChatHistoryMessage]
 
 
+class CommandModel(BaseModel):
+    name: str
+    description: str
+    prefix: str
+
+
+class CommandsResponse(BaseModel):
+    commands: List[CommandModel]
+
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
+
+
+@router.get("/commands", response_model=CommandsResponse)
+@traced("agent.get_commands")
+async def get_commands(engine: BaseAgentEngine = Depends(get_agent_engine)):
+    try:
+        agent_cmds = await engine.get_commands()
+    except Exception as e:
+        logger.error("Failed to get commands from engine", error=str(e))
+        agent_cmds = []
+
+    # Map engine slash commands
+    commands = [
+        CommandModel(name=c.name, description=c.description, prefix="/")
+        for c in agent_cmds
+    ]
+
+    # Static @ mentions for the IDE's WebUI
+    webui_mentions = [
+        CommandModel(
+            name="file", description="Mention a file in the workspace", prefix="@"
+        ),
+        CommandModel(name="task", description="Mention a background task", prefix="@"),
+        CommandModel(
+            name="conversation", description="Mention a past conversation", prefix="@"
+        ),
+        CommandModel(
+            name="agent", description="Mention another agent profile", prefix="@"
+        ),
+    ]
+
+    commands.extend(webui_mentions)
+    return CommandsResponse(commands=commands)
+
+
 @router.get("/sessions/{session_id}/history", response_model=ChatHistoryResponse)
 @traced("agent.session.history")
 async def get_session_history(
@@ -307,6 +353,7 @@ async def start_chat_turn(
             session_id=body.session_id,
             message=body.message,
             trace_id=trace_id,
+            attachments=body.attachments,
         )
         chat_response = await engine.start_chat(chat_request)
         log.info("chat_start_success", stream_id=chat_response.stream_id)

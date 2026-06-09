@@ -8,6 +8,13 @@
 
 **Input**: User description: "We need a small + button to be able to upload files, list and run @ commands or / commands. Also, when typing @ or / we should get a pop up menu of the commands. What the commands are depends on the underlying agent system (Hermes, OpenClaw, Pi) so we need to be able to get this from the agent system to populate. We also have to be able to paste or drop images in the panel."
 
+## Clarifications
+
+### Session 2026-06-08
+- Q: When a user pastes or drops an image into the composer, how should the image payload be transmitted to the backend? → A: Upload the image to a local FastAPI `/upload` endpoint immediately upon drop/paste, and send the returned file ID/URL with the chat message.
+- Q: When a user selects a command from the popup menu (via autocomplete or the "+" button), what should happen? → A: Insert it as a prefix at the start of the message (e.g. `/plan`), keeping the input focused so the user can type additional arguments before sending.
+- Q: To populate the commands menu, when should the frontend query the active agent for its supported capabilities? → A: Fetch once when the session loads or the active agent changes, caching the list in the frontend.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Add Context via Action Menu (Priority: P1)
@@ -67,11 +74,13 @@ Users need a seamless way to add image context to their prompts by dragging imag
 - **FR-001**: The system MUST render a "+" button adjacent to the chat input.
 - **FR-002**: Clicking the "+" button MUST open a context menu with options for Media, Mentions, and Actions.
 - **FR-003**: The chat composer MUST detect when the user types `/` or `@` at the start of a word.
-- **FR-004**: The system MUST query the active agent backend (Hermes, OpenClaw, Pi) to fetch the list of supported slash commands and mentionable entities.
+- **FR-004**: The system MUST query the active agent backend (Hermes, OpenClaw, Pi) once when the session loads or the active agent changes to fetch and cache the list of supported slash commands and mentionable entities.
 - **FR-005**: The system MUST render a dynamic popup menu filtered by the user's input following the `/` or `@` trigger.
 - **FR-006**: The chat composer MUST intercept paste events and handle image data from the clipboard.
 - **FR-007**: The chat panel MUST support HTML5 drag-and-drop events for image files.
 - **FR-008**: Attachments MUST be visually represented in the composer before sending.
+- **FR-009**: The system MUST upload images to a local FastAPI `/upload` endpoint immediately upon drop/paste, replacing the payload with a file ID/URL.
+- **FR-010**: Selecting a command from the menu MUST insert it as a prefix at the start of the message input, keeping the input focused.
 
 ### Key Entities
 
@@ -90,5 +99,4 @@ Users need a seamless way to add image context to their prompts by dragging imag
 ## Assumptions
 
 - The backend APIs for retrieving agent capabilities (`/api/agent/commands` or similar) will be implemented as part of this feature if they do not exist.
-- Image uploads will be temporarily stored in the frontend state until the message is sent.
 - We are only supporting image media for drag-and-drop/paste initially, not general files like PDFs or videos, unless explicitly supported by the backend.

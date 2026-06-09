@@ -14,7 +14,7 @@ describe("MessageComposer", () => {
     expect(sendBtn).not.toBeDisabled();
 
     fireEvent.click(sendBtn);
-    expect(handleSend).toHaveBeenCalledWith("Test calculations");
+    expect(handleSend).toHaveBeenCalledWith("Test calculations", []);
     expect(input).toHaveValue("");
   });
 });

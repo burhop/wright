@@ -19,6 +19,20 @@ interface ServiceHealthResult {
   latencyMs?: number;
 }
 
+export interface AgentCommand {
+  name: string;
+  description: string;
+  prefix: string;
+}
+
+export interface VaultFile {
+  file_id: string;
+  filename: string;
+  mime_type: string;
+  size_bytes: number;
+  url: string;
+}
+
 const getApiBase = () => {
   if (typeof window === "undefined") {
     return "http://127.0.0.1:8000";
@@ -115,10 +129,12 @@ export class HermesAgentService {
   async *sendMessage(
     sessionId: string,
     message: string,
+    attachments?: string[],
   ): AsyncIterable<AgentEvent> {
     agentLogger.info("Sending message", {
       sessionId,
       messageLength: message.length,
+      attachmentsCount: attachments?.length || 0,
     });
     // 1. Initiate chat start
     const response = await fetch(`${API_BASE}/api/agent/chat/start`, {
@@ -126,7 +142,7 @@ export class HermesAgentService {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ session_id: sessionId, message }),
+      body: JSON.stringify({ session_id: sessionId, message, attachments }),
     });
 
     if (!response.ok) {
@@ -364,6 +380,38 @@ export class HermesAgentService {
       timestamp: m.timestamp,
       traceId: m.trace_id ?? null,
     }));
+  }
+
+  async getCommands(): Promise<AgentCommand[]> {
+    agentLogger.info("Fetching commands");
+    const response = await fetch(`${API_BASE}/api/agent/commands`);
+    if (!response.ok) {
+      agentLogger.error("Failed to fetch commands", {
+        statusText: response.statusText,
+      });
+      throw new Error(`Failed to fetch commands: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.commands;
+  }
+
+  async uploadFile(file: File): Promise<VaultFile> {
+    agentLogger.info("Uploading file", { name: file.name, size: file.size });
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`${API_BASE}/api/vault/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      agentLogger.error("Failed to upload file", {
+        statusText: response.statusText,
+      });
+      throw new Error(`Failed to upload file: ${response.statusText}`);
+    }
+    return await response.json();
   }
 }
 

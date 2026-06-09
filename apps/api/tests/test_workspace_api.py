@@ -71,6 +71,9 @@ class MockAgentEngine(BaseAgentEngine):
     async def get_chat_history(self, session_id: str) -> list:
         return []
 
+    async def get_commands(self) -> list:
+        return []
+
 
 @pytest.fixture
 def workspace_setup():

@@ -374,10 +374,12 @@ export function ToolCard({
                 boxShadow: "0 0 10px rgba(239, 68, 68, 0.15)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 15px rgba(239, 68, 68, 0.3)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 15px rgba(239, 68, 68, 0.3)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 10px rgba(239, 68, 68, 0.15)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 10px rgba(239, 68, 68, 0.15)";
               }}
             >
               {isUninstalling
@@ -579,7 +581,7 @@ export function ToolCard({
           (w) =>
             w.enabled_tools?.includes(server.server_id) ||
             w.enabled_tools?.includes(server.name) ||
-            false
+            false,
         ).length;
 
         return (
@@ -623,7 +625,9 @@ export function ToolCard({
                 }
               >
                 <span>
-                  {showWorkspaces ? "▼ Hide Workspaces" : `▶ Configure Workspaces (${enabledCount}/${workspaces.length})`}
+                  {showWorkspaces
+                    ? "▼ Hide Workspaces"
+                    : `▶ Configure Workspaces (${enabledCount}/${workspaces.length})`}
                 </span>
               </button>
 
@@ -655,7 +659,8 @@ export function ToolCard({
                         w.enabled_tools?.includes(server.server_id) ||
                         w.enabled_tools?.includes(server.name) ||
                         false;
-                      const isTogglingW = togglingWorkspaceId === w.workspace_id;
+                      const isTogglingW =
+                        togglingWorkspaceId === w.workspace_id;
                       return (
                         <label
                           key={w.workspace_id}
@@ -730,7 +735,8 @@ export function ToolCard({
       })()}
 
       {/* Status Indicators & Control Buttons */}
-      {(server.is_installed || (!server.is_installed && !server.source_url)) && (
+      {(server.is_installed ||
+        (!server.is_installed && !server.source_url)) && (
         <div
           style={{
             display: "flex",
@@ -800,8 +806,12 @@ export function ToolCard({
                   transition: "all var(--transition-fast)",
                   padding: "0",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-primary)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-secondary)")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = "var(--color-primary)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = "var(--color-secondary)")
+                }
               >
                 {isCheckingUpdate ? "Checking..." : "↻ Check for Updates"}
               </button>

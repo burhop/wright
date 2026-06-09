@@ -18,6 +18,15 @@ class AgentChatRequest:
     session_id: str
     message: str
     trace_id: str | None = None
+    attachments: list[str] | None = None
+
+
+@dataclass
+class AgentCommand:
+    """A command provided by the agent engine."""
+
+    name: str
+    description: str
 
 
 @dataclass
@@ -105,4 +114,9 @@ class BaseAgentEngine(ABC):
         Each agent backend is responsible for persisting its own chat history.
         Returns a list of AgentChatMessage ordered by timestamp.
         """
+        pass
+
+    @abstractmethod
+    async def get_commands(self) -> list[AgentCommand]:
+        """Retrieve the available slash commands from the agent engine."""
         pass

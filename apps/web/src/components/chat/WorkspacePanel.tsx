@@ -1914,7 +1914,10 @@ export function WorkspacePanel({
                         newId,
                       );
                     } catch (err) {
-                      console.error("Failed to update workspace session association", err);
+                      console.error(
+                        "Failed to update workspace session association",
+                        err,
+                      );
                     }
                   }
                 }

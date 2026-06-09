@@ -15,6 +15,7 @@ from agent_adapters import HermesAdapter
 from api.config import HERMES_WEBUI_BASE_URL, DATABASE_PATH, get_llm_health_url
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
+from api.routers.vault import router as vault_router
 from api.routers.workspace import router as workspace_router
 from api.routers.setup import router as setup_router
 from api.middleware.tracing import TracingMiddleware
@@ -120,16 +121,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 app.state.agent_engine = HermesAdapter(HERMES_WEBUI_BASE_URL)
 app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
-# Mount the agent router
-app.include_router(agent_router, prefix="/api/agent")
-
-# Mount the MCP router
-app.include_router(mcp_router, prefix="/api/mcp")
-
-# Mount the workspace router
-app.include_router(workspace_router, prefix="/api/workspace")
-
-# Mount the setup router
+# Mount the routers
+app.include_router(workspace_router, prefix="/api/workspace", tags=["Workspace"])
+app.include_router(agent_router, prefix="/api/agent", tags=["Agent"])
+app.include_router(mcp_router, prefix="/api/mcp", tags=["MCP"])
+app.include_router(vault_router, prefix="/api/vault", tags=["Vault"])
 app.include_router(setup_router, prefix="/api/setup")
 
 

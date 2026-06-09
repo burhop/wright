@@ -19,6 +19,7 @@ dependencies = [
     "wright-data-vault",
     "httpx>=0.28",
     "httpx-sse>=0.4",
+    "python-multipart>=0.0.32",
 ]
 
 [tool.uv.sources]
