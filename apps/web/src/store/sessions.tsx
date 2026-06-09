@@ -290,23 +290,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       dispatch({ type: "SET_SESSIONS", sessions });
 
-      // Fetch history for the active session (if any)
-      const activeId =
-        sessions.find((s) => s.isActive)?.sessionId ||
-        sessions[0]?.sessionId ||
-        null;
-      if (activeId) {
-        try {
-          const history = await agentService.getSessionHistory(activeId);
-          dispatch({
-            type: "LOAD_SESSION_HISTORY",
-            sessionId: activeId,
-            messages: history,
-          });
-        } catch (e) {
-          console.error("Failed to hydrate active session history", e);
-        }
-      }
+
     } catch (err) {
       console.error(
         "Failed to sync sessions with backend, falling back to localStorage",

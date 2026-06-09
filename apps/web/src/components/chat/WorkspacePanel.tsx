@@ -95,9 +95,9 @@ export function WorkspacePanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propSessionId]);
 
-  // Always prefer the workspace-specific session from the route over the
-  // ChatProvider's globally-active session (which may belong to a different workspace).
-  const activeSessionId = propSessionId || state.activeSessionId;
+  // Always prefer the ChatProvider's globally-active session (which updates synchronously on creation/switch)
+  // falling back to the workspace-specific session prop if the global active state is not initialized.
+  const activeSessionId = state.activeSessionId || propSessionId;
   const statuses = useHealthStatus();
   const agentStatus = statuses.find(
     (s) => s.serviceId === "hermes-agent",
@@ -138,8 +138,8 @@ export function WorkspacePanel({
 
   // --- Layout state persistence via localStorage ---
   const layoutKey = useMemo(
-    () => (propSessionId ? `wright-workspace-layout-${propSessionId}` : null),
-    [propSessionId],
+    () => (activeSessionId ? `wright-workspace-layout-${activeSessionId}` : null),
+    [activeSessionId],
   );
 
   // Read saved layout once on mount
