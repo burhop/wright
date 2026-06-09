@@ -27,11 +27,18 @@ export function Sidebar() {
       order: 2,
     },
     {
-      id: "file-vault",
-      label: "File Vault",
-      path: "/file-vault",
-      icon: "folder",
+      id: "logs",
+      label: "Logs",
+      path: "/logs",
+      icon: "logs",
       order: 3,
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      path: "/settings",
+      icon: "settings",
+      order: 4,
     },
   ];
 

@@ -18,6 +18,8 @@ from api.routers.mcp import router as mcp_router
 from api.routers.vault import router as vault_router
 from api.routers.workspace import router as workspace_router
 from api.routers.setup import router as setup_router
+from api.routers.logs import router as logs_router
+from api.routers.settings import router as settings_router
 from api.middleware.tracing import TracingMiddleware
 from api.schemas.common import ErrorResponse, ErrorCodes
 from core.logging import configure_logging, get_logger
@@ -127,6 +129,8 @@ app.include_router(agent_router, prefix="/api/agent", tags=["Agent"])
 app.include_router(mcp_router, prefix="/api/mcp", tags=["MCP"])
 app.include_router(vault_router, prefix="/api/vault", tags=["Vault"])
 app.include_router(setup_router, prefix="/api/setup")
+app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
+app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 
 
 @app.websocket("/api/webmcp/ws")

@@ -5,7 +5,6 @@ import ThreeDViewer from "../common/ThreeDViewer";
 import DiffViewer from "../common/DiffViewer";
 import EditorTabs from "../common/EditorTabs";
 import FileEditor from "../common/FileEditor";
-import ToolsMarketplace from "../common/ToolsMarketplace";
 import ImagePreviewer from "../common/ImagePreviewer";
 import { useChat } from "../../store/sessions";
 import {
@@ -19,13 +18,12 @@ import useHealthStatus from "../../hooks/useHealthStatus";
 import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import {
-  ServerIcon,
   FolderIcon,
   GitIcon,
   SettingsIcon,
-  DashboardIcon,
-  ToolRegistryIcon,
-  FileVaultIcon,
+  BackIcon,
+  MCPIcon,
+  BookOpenIcon,
 } from "../common/Icons";
 
 import type { EditorTab } from "../../store/types";
@@ -158,7 +156,7 @@ export function WorkspacePanel({
 
   // Layout states — initialised from localStorage when available
   const [activeSidebar, setActiveSidebar] = useState<
-    "marketplace" | "files" | "git" | "settings"
+    "marketplace" | "files" | "git" | "settings" | "docs"
   >(savedLayout?.activeSidebar ?? "files");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
@@ -183,6 +181,15 @@ export function WorkspacePanel({
   const [isLeftDragging, setIsLeftDragging] = useState<boolean>(false);
   const [isRightDragging, setIsRightDragging] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<string>("Hermes");
+
+  // Workspace Config state
+  const [workspacePrompt, setWorkspacePrompt] = useState("");
+  const [gitLargeFileThreshold, setGitLargeFileThreshold] = useState<number>(10);
+
+  // Compact MCP tools state
+  const [mcpServers, setMcpServers] = useState<any[]>([]);
+  const [enabledTools, setEnabledTools] = useState<string[]>([]);
+  const [mcpLoading, setMcpLoading] = useState(false);
 
   // File tree expanded directories — persisted so the tree stays open across refresh
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
@@ -255,7 +262,7 @@ export function WorkspacePanel({
   // Git state
   const [gitBranch, setGitBranch] = useState<string>("main");
   const [gitChanges, setGitChanges] = useState<
-    { path: string; git_status: string; staged: boolean }[]
+    { path: string; git_status: string; staged: boolean; file_size?: number }[]
   >([]);
   const [gitHistory, setGitHistory] = useState<
     {
@@ -350,6 +357,8 @@ export function WorkspacePanel({
       setRemoteUrl(config.git_remote_url || "");
       setGitUsername(config.git_username || "");
       setGitToken(config.has_token ? "••••••••" : "");
+      setWorkspacePrompt(config.workspace_prompt || "");
+      setGitLargeFileThreshold(config.git_large_file_threshold ?? 10);
       if (config.workspace_path) {
         setWorkspacePath(config.workspace_path);
       }
@@ -522,6 +531,8 @@ export function WorkspacePanel({
         remoteUrl.trim() || null,
         gitUsername.trim() || null,
         tokenToSend,
+        workspacePrompt.trim() || null,
+        gitLargeFileThreshold,
       );
       setOptionsSaved(true);
       setTimeout(() => setOptionsSaved(false), 3000);
@@ -833,13 +844,59 @@ export function WorkspacePanel({
 
   // Toggle activity bar sidebar
   const handleActivityBarClick = (
-    sidebar: "marketplace" | "files" | "git" | "settings",
+    sidebar: "marketplace" | "files" | "git" | "settings" | "docs",
   ) => {
     if (activeSidebar === sidebar) {
       setIsSidebarCollapsed(!isSidebarCollapsed);
     } else {
       setActiveSidebar(sidebar);
       setIsSidebarCollapsed(false);
+    }
+  };
+
+  // Helper to construct API URL
+  const getApiUrl = (path: string) => {
+    const host = window.location.hostname;
+    const port = window.location.port;
+    const base =
+      port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+    return `${base}${path}`;
+  };
+
+  const fetchMcpData = useCallback(async () => {
+    if (!activeSessionId) return;
+    setMcpLoading(true);
+    try {
+      const serversRes = await fetch(getApiUrl("/api/mcp/servers"));
+      if (serversRes.ok) {
+        const data = await serversRes.json();
+        setMcpServers(data.servers || []);
+      }
+      
+      const enabledList = await workspaceService.getWorkspaceTools(activeSessionId);
+      setEnabledTools(enabledList || []);
+    } catch (err) {
+      console.error("Failed to load compact MCP list", err);
+    } finally {
+      setMcpLoading(false);
+    }
+  }, [activeSessionId]);
+
+  useEffect(() => {
+    if (activeSidebar === "marketplace") {
+      fetchMcpData();
+    }
+  }, [activeSidebar, fetchMcpData]);
+
+  const handleToggleMcpTool = async (serverName: string, currentlyEnabled: boolean) => {
+    if (!activeSessionId) return;
+    try {
+      await workspaceService.toggleWorkspaceTool(activeSessionId, serverName, !currentlyEnabled);
+      // Re-fetch enabled tools list
+      const enabledList = await workspaceService.getWorkspaceTools(activeSessionId);
+      setEnabledTools(enabledList || []);
+    } catch (err) {
+      console.error("Failed to toggle MCP tool", err);
     }
   };
 
@@ -876,24 +933,20 @@ export function WorkspacePanel({
         }}
       >
         <button
-          data-testid="activity-bar-tools-btn"
-          onClick={() => handleActivityBarClick("marketplace")}
+          data-testid="activity-bar-back-btn"
+          onClick={() => navigate("/")}
           style={{
             background: "none",
             border: "none",
             cursor: "pointer",
             padding: "var(--space-xs)",
-            opacity:
-              !isSidebarCollapsed && activeSidebar === "marketplace" ? 1 : 0.45,
-            color:
-              !isSidebarCollapsed && activeSidebar === "marketplace"
-                ? "var(--color-secondary)"
-                : "var(--color-primary)",
+            opacity: 0.45,
+            color: "var(--color-primary)",
           }}
-          title="Tools Marketplace"
+          title="Back to Dashboard"
           className="activity-bar-icon"
         >
-          <ServerIcon size={20} />
+          <BackIcon size={20} />
         </button>
         <button
           data-testid="activity-bar-explorer-btn"
@@ -916,6 +969,26 @@ export function WorkspacePanel({
           <FolderIcon size={20} />
         </button>
         <button
+          data-testid="activity-bar-mcp-btn"
+          onClick={() => handleActivityBarClick("marketplace")}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "var(--space-xs)",
+            opacity:
+              !isSidebarCollapsed && activeSidebar === "marketplace" ? 1 : 0.45,
+            color:
+              !isSidebarCollapsed && activeSidebar === "marketplace"
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
+          }}
+          title="MCP Tools"
+          className="activity-bar-icon"
+        >
+          <MCPIcon size={20} />
+        </button>
+        <button
           data-testid="activity-bar-git-btn"
           onClick={() => handleActivityBarClick("git")}
           style={{
@@ -929,7 +1002,7 @@ export function WorkspacePanel({
                 ? "var(--color-secondary)"
                 : "var(--color-primary)",
           }}
-          title="Version Control"
+          title="Git Version Control"
           className="activity-bar-icon"
         >
           <GitIcon size={20} />
@@ -954,65 +1027,25 @@ export function WorkspacePanel({
         >
           <SettingsIcon size={20} />
         </button>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: "60%",
-            height: "1px",
-            backgroundColor: "var(--color-border)",
-            margin: "var(--space-xs) 0",
-          }}
-        />
-
-        {/* Global Page Navigation */}
         <button
-          data-testid="nav-dashboard"
-          onClick={() => navigate("/")}
+          data-testid="activity-bar-docs-btn"
+          onClick={() => handleActivityBarClick("docs")}
           style={{
             background: "none",
             border: "none",
             cursor: "pointer",
             padding: "var(--space-xs)",
-            opacity: 0.45,
-            color: "var(--color-primary)",
+            opacity:
+              !isSidebarCollapsed && activeSidebar === "docs" ? 1 : 0.45,
+            color:
+              !isSidebarCollapsed && activeSidebar === "docs"
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
           }}
-          title="Dashboard"
+          title="Docs & Tutorials"
           className="activity-bar-icon"
         >
-          <DashboardIcon size={20} />
-        </button>
-        <button
-          data-testid="nav-tool-registry"
-          onClick={() => navigate("/tool-registry")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity: 0.45,
-            color: "var(--color-primary)",
-          }}
-          title="Tool Registry"
-          className="activity-bar-icon"
-        >
-          <ToolRegistryIcon size={20} />
-        </button>
-        <button
-          data-testid="nav-file-vault"
-          onClick={() => navigate("/file-vault")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity: 0.45,
-            color: "var(--color-primary)",
-          }}
-          title="File Vault"
-          className="activity-bar-icon"
-        >
-          <FileVaultIcon size={20} />
+          <BookOpenIcon size={20} />
         </button>
       </div>
 
@@ -1042,10 +1075,68 @@ export function WorkspacePanel({
                 color: "var(--color-primary)",
               }}
             >
-              Tools Marketplace
+              MCP Tools Selector
             </div>
-            <div style={{ flex: 1, overflowY: "auto" }}>
-              <ToolsMarketplace sessionId={activeSessionId || ""} />
+            <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}>
+              {mcpLoading ? (
+                <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem" }}>Loading workspace tools...</div>
+              ) : mcpServers.length === 0 ? (
+                <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem" }}>No MCP servers configured.</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
+                  {mcpServers.map((server) => {
+                    const isEnabled = enabledTools.includes(server.name);
+                    const isGloballyActive = server.is_active;
+
+                    return (
+                      <div
+                        key={server.server_id}
+                        data-testid={`mcp-server-item-${server.name.toLowerCase()}`}
+                        style={{
+                          backgroundColor: "var(--color-surface-subtle)",
+                          border: "1px solid var(--color-border)",
+                          borderRadius: "var(--radius-md)",
+                          padding: "var(--space-sm)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: "var(--space-sm)",
+                        }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", gap: "2px", textAlign: "left", flex: 1 }}>
+                          <span style={{ fontWeight: "600", fontSize: "0.8rem", color: "var(--color-primary)" }}>
+                            {server.name}
+                          </span>
+                          <span style={{ fontSize: "0.65rem", color: "var(--color-secondary)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "180px" }}>
+                            {server.description || `MCP type: ${server.type}`}
+                          </span>
+                          <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
+                            <span
+                              style={{
+                                width: "5px",
+                                height: "5px",
+                                borderRadius: "50%",
+                                backgroundColor: isGloballyActive ? "var(--color-success)" : "#858585",
+                              }}
+                            />
+                            <span style={{ fontSize: "0.6rem", color: "var(--color-secondary)" }}>
+                              {isGloballyActive ? "active" : "inactive"}
+                            </span>
+                          </div>
+                        </div>
+                        <input
+                          data-testid={`mcp-toggle-${server.name.toLowerCase()}`}
+                          type="checkbox"
+                          disabled={!isGloballyActive}
+                          checked={isGloballyActive && isEnabled}
+                          onChange={() => handleToggleMcpTool(server.name, isEnabled)}
+                          style={{ cursor: isGloballyActive ? "pointer" : "not-allowed" }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1127,7 +1218,7 @@ export function WorkspacePanel({
                 fontWeight: "bold",
                 textTransform: "uppercase",
                 letterSpacing: "1px",
-                borderBottom: "1px solid #2d2d2d",
+                borderBottom: "1px solid var(--color-border)",
                 color: "var(--color-primary)",
               }}
             >
@@ -1139,29 +1230,143 @@ export function WorkspacePanel({
                 overflowY: "auto",
                 padding: "var(--space-md)",
                 fontSize: "0.75rem",
+                textAlign: "left",
               }}
             >
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "var(--space-sm)",
-                  borderBottom: "1px solid #3c3c3c",
-                  paddingBottom: "2px",
+                  flexDirection: "column",
+                  gap: "var(--space-xs)",
+                  marginBottom: "var(--space-md)",
+                  backgroundColor: "var(--color-surface-subtle)",
+                  padding: "var(--space-sm)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
                 }}
               >
-                <span style={{ fontWeight: "bold" }}>Git Panel</span>
-                <span
-                  style={{
-                    fontSize: "0.7rem",
-                    backgroundColor: "#3c3c3c",
-                    padding: "1px 5px",
-                    borderRadius: "3px",
-                  }}
-                >
-                  🌿 {gitBranch}
-                </span>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontWeight: "600" }}>Branch: 🌿 {gitBranch}</span>
+                </div>
+                <div style={{ display: "flex", gap: "var(--space-xs)", marginTop: "2px" }}>
+                  <button
+                    data-testid="git-new-branch-btn"
+                    onClick={async () => {
+                      const name = prompt("Enter new branch name:");
+                      if (!name || !name.trim()) return;
+                      if (!activeSessionId) return;
+                      setGitLoading(true);
+                      try {
+                        await workspaceService.checkoutBranch(activeSessionId, name.trim(), true);
+                        alert(`Created and switched to branch: ${name}`);
+                        await fetchGitData();
+                      } catch (err: any) {
+                        alert(err.message || "Failed to create branch");
+                      } finally {
+                        setGitLoading(false);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      padding: "3px",
+                      cursor: "pointer",
+                      fontSize: "0.65rem",
+                      borderRadius: "var(--radius-sm)",
+                      fontWeight: "600",
+                      color: "var(--color-primary)",
+                    }}
+                  >
+                    New Branch
+                  </button>
+                  <button
+                    data-testid="git-merge-btn"
+                    onClick={async () => {
+                      const name = prompt("Enter branch name to merge into current branch:");
+                      if (!name || !name.trim()) return;
+                      if (!activeSessionId) return;
+                      setGitLoading(true);
+                      try {
+                        const res = await workspaceService.mergeBranch(activeSessionId, name.trim());
+                        alert(res.message || "Branch merged successfully");
+                        await fetchGitData();
+                      } catch (err: any) {
+                        alert(err.message || "Failed to merge branch");
+                      } finally {
+                        setGitLoading(false);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      padding: "3px",
+                      cursor: "pointer",
+                      fontSize: "0.65rem",
+                      borderRadius: "var(--radius-sm)",
+                      fontWeight: "600",
+                      color: "var(--color-primary)",
+                    }}
+                  >
+                    Merge
+                  </button>
+                </div>
+
+                <div style={{ display: "flex", gap: "var(--space-xs)", marginTop: "2px" }}>
+                  <button
+                    data-testid="git-pull-btn"
+                    onClick={async () => {
+                      setGitLoading(true);
+                      try {
+                        await handlePull();
+                      } catch (err) {
+                        // Handled inside handlePull
+                      } finally {
+                        setGitLoading(false);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      padding: "3px",
+                      cursor: "pointer",
+                      fontSize: "0.65rem",
+                      borderRadius: "var(--radius-sm)",
+                      fontWeight: "600",
+                      color: "var(--color-primary)",
+                    }}
+                  >
+                    Pull
+                  </button>
+                  <button
+                    data-testid="git-push-btn"
+                    onClick={async () => {
+                      setGitLoading(true);
+                      try {
+                        await handlePush();
+                      } catch (err) {
+                        // Handled inside handlePush
+                      } finally {
+                        setGitLoading(false);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      backgroundColor: "var(--color-surface)",
+                      border: "1px solid var(--color-border)",
+                      padding: "3px",
+                      cursor: "pointer",
+                      fontSize: "0.65rem",
+                      borderRadius: "var(--radius-sm)",
+                      fontWeight: "600",
+                      color: "var(--color-primary)",
+                    }}
+                  >
+                    Push
+                  </button>
+                </div>
               </div>
 
               {gitError && (
@@ -1191,9 +1396,9 @@ export function WorkspacePanel({
                   value={commitMessage}
                   onChange={(e) => setCommitMessage(e.target.value)}
                   style={{
-                    backgroundColor: "#3c3c3c",
-                    color: "#d4d4d4",
-                    border: "1px solid #555",
+                    backgroundColor: "var(--color-surface-subtle)",
+                    color: "var(--color-primary)",
+                    border: "1px solid var(--color-border)",
                     borderRadius: "var(--radius-sm)",
                     padding: "4px var(--space-sm)",
                     fontSize: "0.75rem",
@@ -1208,11 +1413,11 @@ export function WorkspacePanel({
                     !commitMessage.trim()
                   }
                   style={{
-                    backgroundColor: "var(--color-accent, #4f46e5)",
-                    color: "white",
+                    backgroundColor: "var(--color-secondary)",
+                    color: "var(--color-surface-subtle)",
                     border: "none",
                     borderRadius: "var(--radius-sm)",
-                    padding: "4px",
+                    padding: "5px",
                     cursor: "pointer",
                     fontWeight: "600",
                     fontSize: "0.7rem",
@@ -1243,59 +1448,89 @@ export function WorkspacePanel({
                       gap: "4px",
                     }}
                   >
-                    {gitChanges.slice(0, 10).map((c) => (
-                      <div
-                        key={c.path}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "2px 4px",
-                          backgroundColor: "#2d2d2d",
-                          borderRadius: "var(--radius-xs)",
-                          fontSize: "0.7rem",
-                        }}
-                      >
-                        <span
+                    {gitChanges.map((c) => {
+                      const isOversized = c.file_size && c.file_size > (gitLargeFileThreshold * 1024 * 1024);
+                      return (
+                        <div
+                          key={c.path}
                           style={{
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            maxWidth: "140px",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "2px",
+                            padding: "6px",
+                            backgroundColor: "var(--color-surface-subtle)",
+                            border: `1px solid ${isOversized ? "var(--color-error)" : "var(--color-border)"}`,
+                            borderRadius: "var(--radius-xs)",
+                            fontSize: "0.7rem",
                           }}
-                          title={c.path}
                         >
-                          <strong style={{ marginRight: "6px" }}>
-                            {c.git_status}
-                          </strong>
-                          {c.path}
-                        </span>
-                        <div style={{ display: "flex", gap: "2px" }}>
-                          <button
-                            onClick={() => handleViewDiff(c.path)}
-                            style={{
-                              background: "none",
-                              border: "none",
-                              cursor: "pointer",
-                              color: "#858585",
-                            }}
-                          >
-                            🔍
-                          </button>
-                          <button
-                            onClick={() => handleRevert(c.path)}
-                            style={{
-                              background: "none",
-                              border: "none",
-                              cursor: "pointer",
-                              color: "var(--color-error)",
-                            }}
-                          >
-                            ⎌
-                          </button>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <span
+                              style={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                maxWidth: "150px",
+                              }}
+                              title={c.path}
+                            >
+                              <strong style={{ marginRight: "6px" }}>
+                                {c.git_status}
+                              </strong>
+                              {c.path}
+                            </span>
+                            <div style={{ display: "flex", gap: "2px" }}>
+                              <button
+                                onClick={() => handleViewDiff(c.path)}
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  fontSize: "0.75rem",
+                                  color: "var(--color-primary)",
+                                }}
+                                title="View Diff"
+                              >
+                                🔍
+                              </button>
+                              <button
+                                onClick={() => handleRevert(c.path)}
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  fontSize: "0.75rem",
+                                  color: "var(--color-error)",
+                                }}
+                                title="Revert File"
+                              >
+                                ⎌
+                              </button>
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2px" }}>
+                            <span style={{ fontSize: "0.6rem", color: "var(--color-secondary)" }}>
+                              {c.file_size ? `${(c.file_size / (1024 * 1024)).toFixed(2)} MB` : "unknown size"}
+                            </span>
+                            {isOversized && (
+                              <span
+                                style={{
+                                  backgroundColor: "rgba(239, 68, 68, 0.15)",
+                                  color: "var(--color-error)",
+                                  padding: "1px 4px",
+                                  borderRadius: "2px",
+                                  fontSize: "0.55rem",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                ⚠️ OVERSIZED (&gt;{gitLargeFileThreshold}MB)
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -1324,7 +1559,7 @@ export function WorkspacePanel({
                         key={h.commit_hash}
                         style={{
                           padding: "4px",
-                          backgroundColor: "#2d2d2d",
+                          backgroundColor: "var(--color-surface-subtle)",
                           borderRadius: "var(--radius-xs)",
                           display: "flex",
                           flexDirection: "column",
@@ -1373,11 +1608,11 @@ export function WorkspacePanel({
                 fontWeight: "bold",
                 textTransform: "uppercase",
                 letterSpacing: "1px",
-                borderBottom: "1px solid #2d2d2d",
+                borderBottom: "1px solid var(--color-border)",
                 color: "var(--color-primary)",
               }}
             >
-              Workspace Options
+              Workspace Settings
             </div>
             <div
               style={{
@@ -1385,6 +1620,7 @@ export function WorkspacePanel({
                 overflowY: "auto",
                 padding: "var(--space-md)",
                 fontSize: "0.75rem",
+                textAlign: "left",
               }}
             >
               {optionsError && (
@@ -1404,87 +1640,131 @@ export function WorkspacePanel({
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: "var(--space-sm)",
+                  gap: "var(--space-md)",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "2px",
-                  }}
-                >
-                  <label>Git Remote URL</label>
-                  <input
-                    type="text"
-                    value={remoteUrl}
-                    onChange={(e) => setRemoteUrl(e.target.value)}
-                    style={{
-                      backgroundColor: "#3c3c3c",
-                      color: "#d4d4d4",
-                      border: "1px solid #555",
-                      padding: "3px var(--space-xs)",
-                      fontSize: "0.75rem",
-                      outline: "none",
-                    }}
-                  />
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-md)", marginBottom: "var(--space-xs)" }}>
+                  <span style={{ fontWeight: "bold", marginBottom: "var(--space-xs)", color: "var(--color-secondary)" }}>Git Credentials</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                    <label>Git Remote URL</label>
+                    <input
+                      data-testid="workspace-settings-remote-url"
+                      type="text"
+                      value={remoteUrl}
+                      onChange={(e) => setRemoteUrl(e.target.value)}
+                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        color: "var(--color-primary)",
+                        border: "1px solid var(--color-border)",
+                        padding: "4px var(--space-xs)",
+                        fontSize: "0.75rem",
+                        outline: "none",
+                        borderRadius: "var(--radius-sm)",
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px", marginTop: "var(--space-xs)" }}>
+                    <label>Git Username</label>
+                    <input
+                      data-testid="workspace-settings-username"
+                      type="text"
+                      value={gitUsername}
+                      onChange={(e) => setGitUsername(e.target.value)}
+                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        color: "var(--color-primary)",
+                        border: "1px solid var(--color-border)",
+                        padding: "4px var(--space-xs)",
+                        fontSize: "0.75rem",
+                        outline: "none",
+                        borderRadius: "var(--radius-sm)",
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px", marginTop: "var(--space-xs)" }}>
+                    <label>Personal Access Token</label>
+                    <input
+                      data-testid="workspace-settings-token"
+                      type="password"
+                      value={gitToken}
+                      onChange={(e) => setGitToken(e.target.value)}
+                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        color: "var(--color-primary)",
+                        border: "1px solid var(--color-border)",
+                        padding: "4px var(--space-xs)",
+                        fontSize: "0.75rem",
+                        outline: "none",
+                        borderRadius: "var(--radius-sm)",
+                      }}
+                    />
+                  </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "2px",
-                  }}
-                >
-                  <label>Git Username</label>
-                  <input
-                    type="text"
-                    value={gitUsername}
-                    onChange={(e) => setGitUsername(e.target.value)}
-                    style={{
-                      backgroundColor: "#3c3c3c",
-                      color: "#d4d4d4",
-                      border: "1px solid #555",
-                      padding: "3px var(--space-xs)",
-                      fontSize: "0.75rem",
-                      outline: "none",
-                    }}
-                  />
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-md)", marginBottom: "var(--space-xs)" }}>
+                  <span style={{ fontWeight: "bold", marginBottom: "var(--space-xs)", color: "var(--color-secondary)" }}>Hermes Prompt Context</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                    <label>System Prompt Overlay</label>
+                    <textarea
+                      data-testid="workspace-prompt-input"
+                      rows={5}
+                      placeholder="Add custom system instructions for Hermes in this workspace..."
+                      value={workspacePrompt}
+                      onChange={(e) => setWorkspacePrompt(e.target.value)}
+                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        color: "var(--color-primary)",
+                        border: "1px solid var(--color-border)",
+                        padding: "var(--space-xs)",
+                        fontSize: "0.75rem",
+                        outline: "none",
+                        borderRadius: "var(--radius-sm)",
+                        fontFamily: "var(--font-mono)",
+                        resize: "vertical",
+                      }}
+                    />
+                  </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "2px",
-                  }}
-                >
-                  <label>Personal Access Token</label>
-                  <input
-                    type="password"
-                    value={gitToken}
-                    onChange={(e) => setGitToken(e.target.value)}
-                    style={{
-                      backgroundColor: "#3c3c3c",
-                      color: "#d4d4d4",
-                      border: "1px solid #555",
-                      padding: "3px var(--space-xs)",
-                      fontSize: "0.75rem",
-                      outline: "none",
-                    }}
-                  />
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
+                  <span style={{ fontWeight: "bold", marginBottom: "var(--space-xs)", color: "var(--color-secondary)" }}>File Exclusions & Limits</span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                    <label>Oversized Warning Threshold (MB)</label>
+                    <input
+                      data-testid="workspace-settings-git-threshold"
+                      type="number"
+                      min={1}
+                      max={100}
+                      value={gitLargeFileThreshold}
+                      onChange={(e) => setGitLargeFileThreshold(parseInt(e.target.value) || 10)}
+                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        color: "var(--color-primary)",
+                        border: "1px solid var(--color-border)",
+                        padding: "4px var(--space-xs)",
+                        fontSize: "0.75rem",
+                        outline: "none",
+                        borderRadius: "var(--radius-sm)",
+                        width: "80px",
+                      }}
+                    />
+                  </div>
                 </div>
+
                 <button
+                  data-testid="workspace-settings-save-btn"
                   type="submit"
                   disabled={optionsLoading}
                   style={{
-                    backgroundColor: "var(--color-accent, #4f46e5)",
-                    color: "white",
+                    backgroundColor: "var(--color-secondary)",
+                    color: "var(--color-surface-subtle)",
                     border: "none",
-                    padding: "4px",
+                    padding: "6px var(--space-md)",
                     cursor: "pointer",
                     fontWeight: "600",
-                    fontSize: "0.7rem",
-                    marginTop: "var(--space-xs)",
+                    fontSize: "0.75rem",
+                    borderRadius: "var(--radius-sm)",
+                    marginTop: "var(--space-sm)",
                   }}
                 >
                   Save Settings
@@ -1510,35 +1790,98 @@ export function WorkspacePanel({
                 }}
               >
                 <button
+                  data-testid="workspace-pull-btn"
                   onClick={handlePull}
                   disabled={optionsLoading || !remoteUrl}
                   style={{
                     flex: 1,
-                    backgroundColor: "#3c3c3c",
-                    color: "#ffffff",
-                    border: "1px solid #555",
+                    backgroundColor: "var(--color-surface-subtle)",
+                    color: "var(--color-primary)",
+                    border: "1px solid var(--color-border)",
                     cursor: "pointer",
-                    padding: "3px",
+                    padding: "4px",
                     fontSize: "0.7rem",
+                    borderRadius: "var(--radius-sm)",
                   }}
                 >
                   Pull
                 </button>
                 <button
+                  data-testid="workspace-push-btn"
                   onClick={handlePush}
                   disabled={optionsLoading || !remoteUrl}
                   style={{
                     flex: 1,
-                    backgroundColor: "#3c3c3c",
-                    color: "#ffffff",
-                    border: "1px solid #555",
+                    backgroundColor: "var(--color-surface-subtle)",
+                    color: "var(--color-primary)",
+                    border: "1px solid var(--color-border)",
                     cursor: "pointer",
-                    padding: "3px",
+                    padding: "4px",
                     fontSize: "0.7rem",
+                    borderRadius: "var(--radius-sm)",
                   }}
                 >
                   Push
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSidebar === "docs" && (
+          <div
+            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <div
+              style={{
+                padding: "var(--space-md)",
+                fontSize: "0.7rem",
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                borderBottom: "1px solid var(--color-border)",
+                color: "var(--color-primary)",
+              }}
+            >
+              Docs & Learning
+            </div>
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                padding: "var(--space-md)",
+                fontSize: "0.75rem",
+                textAlign: "left",
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-md)",
+              }}
+            >
+              <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)" }}>
+                <h4 style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-secondary)" }}>
+                  💡 Customizing Hermes Prompt
+                </h4>
+                <p style={{ marginTop: "4px", fontSize: "0.7rem", color: "var(--color-secondary)", lineHeight: "1.4" }}>
+                  Use the <strong>Workspace Settings</strong> tab to supply custom context prompt overlays. This context is synced immediately with the local `.hermes.md` file and injected into Hermes's environment for specialized code generations.
+                </p>
+              </div>
+
+              <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)" }}>
+                <h4 style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-secondary)" }}>
+                  🌿 Managing Branches & Merges
+                </h4>
+                <p style={{ marginTop: "4px", fontSize: "0.7rem", color: "var(--color-secondary)", lineHeight: "1.4" }}>
+                  To create a new workspace task branch, use the <strong>New Branch</strong> button. Check out or switch branches seamlessly. Use the <strong>Merge</strong> tool to consolidate branch features into your active branch context.
+                </p>
+              </div>
+
+              <div>
+                <h4 style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-secondary)" }}>
+                  🛠 Active MCP Tools integration
+                </h4>
+                <p style={{ marginTop: "4px", fontSize: "0.7rem", color: "var(--color-secondary)", lineHeight: "1.4" }}>
+                  Ensure you enable required MCP tools under the <strong>MCP Tools Selector</strong> tab. Toggled tools are dynamically exposed to the Hermes session prompt for real-time model interactions.
+                </p>
               </div>
             </div>
           </div>

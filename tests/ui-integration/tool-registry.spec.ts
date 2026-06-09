@@ -67,6 +67,21 @@ const MOCK_TOOLS = [
 ];
 
 test.describe('Tool Registry Enhanced UI', () => {
+  test.beforeEach(async ({ page }) => {
+    // Mock setup status
+    await page.route('**/api/setup/status', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          is_configured: true,
+          llm_api_url: 'http://localhost:8000',
+          active_agent: 'hermes',
+          theme: 'dark'
+        }),
+      });
+    });
+  });
 
   test('should display server cards with logo, badge, description @US1', async ({ page }) => {
     await page.route('**/api/mcp/servers', async (route) => {

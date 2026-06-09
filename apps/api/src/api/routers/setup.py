@@ -58,6 +58,11 @@ async def get_setup_status(request: Request):
     if not llm_api_url:
         llm_api_url = os.getenv("LLM_API_URL")
 
+    # 3. Fallback to default configuration if database/env config is not set
+    if not llm_api_url:
+        from api.config import get_llm_api_url
+        llm_api_url = get_llm_api_url()
+
     # If active_agent in app state is different, sync it
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:

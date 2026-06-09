@@ -57,6 +57,8 @@ from api.schemas.workspace import (
     WorkspaceConfigGetResponse,
     GitPushPullRequest,
     GitPushPullResponse,
+    GitBranchRequest,
+    GitMergeRequest,
     WorkspaceToolsGetResponse,
     WorkspaceToolToggleRequest,
     WorkspaceToolToggleResponse,
@@ -252,10 +254,27 @@ async def git_status_endpoint(
 ):
     mgr = WorkspaceManager(workspace_dir)
     s = mgr.get_git_status()
+    changes = []
+    for c in s["changes"]:
+        file_path = os.path.join(workspace_dir, c["path"])
+        file_size = None
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            try:
+                file_size = os.path.getsize(file_path)
+            except Exception:
+                pass
+        changes.append(
+            GitStatusItem(
+                path=c["path"],
+                git_status=c["git_status"],
+                staged=c["staged"],
+                file_size=file_size,
+            )
+        )
     return GitStatusResponse(
         branch_name=s["branch_name"],
         is_clean=s["is_clean"],
-        changes=[GitStatusItem(**c) for c in s["changes"]],
+        changes=changes,
     )
 
 
@@ -378,6 +397,75 @@ async def git_pull_endpoint(
         )
 
 
+@router.post("/git/branch")
+@traced("workspace.git.branch")
+async def git_branch_endpoint(
+    body: GitBranchRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    import subprocess
+
+    cmd = ["git", "checkout"]
+    if body.create:
+        cmd.extend(["-b", body.branch_name])
+    else:
+        cmd.append(body.branch_name)
+
+    try:
+        res = subprocess.run(
+            cmd, cwd=workspace_dir, capture_output=True, text=True, check=True
+        )
+        return {
+            "success": True,
+            "message": res.stdout or res.stderr or "Branch checked out successfully",
+        }
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Git operation failed: {e.stderr or str(e)}",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.post("/git/merge")
+@traced("workspace.git.merge")
+async def git_merge_endpoint(
+    body: GitMergeRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+):
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    import subprocess
+
+    try:
+        res = subprocess.run(
+            ["git", "merge", body.branch_name],
+            cwd=workspace_dir,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return {
+            "success": True,
+            "message": res.stdout or res.stderr or "Branch merged successfully",
+        }
+    except subprocess.CalledProcessError as e:
+        if "CONFLICT" in e.stdout or "CONFLICT" in e.stderr:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Merge conflicts detected: {e.stdout or e.stderr}",
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Git merge failed: {e.stderr or str(e)}",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
 # ── Workspace Config ─────────────────────────────────────────────────────
 
 
@@ -397,6 +485,8 @@ async def get_workspace_config(
         git_username=workspace.get("git_username"),
         has_token=bool(workspace.get("git_token")),
         workspace_path=workspace.get("local_path"),
+        workspace_prompt=workspace.get("workspace_prompt"),
+        git_large_file_threshold=workspace.get("git_large_file_threshold"),
     )
 
 
@@ -417,7 +507,12 @@ async def update_workspace_config(
         body.git_remote_url,
         body.git_username,
         body.git_token,
+        body.workspace_prompt,
+        body.git_large_file_threshold,
     )
+    # Write updated prompt context immediately to .hermes.md
+    from core.workspace import write_workspace_hermes_md
+    write_workspace_hermes_md(DATABASE_PATH, workspace_dir)
     return WorkspaceConfigResponse(success=True, workspace_id=workspace["workspace_id"])
 
 

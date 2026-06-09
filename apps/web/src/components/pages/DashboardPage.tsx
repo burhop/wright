@@ -1,21 +1,38 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useLogger from "../../hooks/useLogger";
-import { ToolRegistryIcon, FileVaultIcon } from "../common/Icons";
+import useHealthStatus from "../../hooks/useHealthStatus";
 import {
   workspaceService,
   type WorkspaceInfo,
 } from "../../services/workspace-service";
 import { CreateWorkspaceModal } from "../common/CreateWorkspaceModal";
 
+const getApiUrl = (path: string) => {
+  if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
+  const host = window.location.hostname;
+  const port = window.location.port;
+  const base =
+    port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+  return `${base}${path}`;
+};
+
 export function DashboardPage() {
   const logger = useLogger("DashboardPage");
   const navigate = useNavigate();
+
+  // Health and Agent Connection state
+  const statuses = useHealthStatus(10000); // Poll health status every 10s
+  const apiState = statuses.find((s) => s.serviceId === "wright-api")?.state || "unknown";
+  const hermesState = statuses.find((s) => s.serviceId === "hermes-agent")?.state || "unknown";
+  const inferenceState = statuses.find((s) => s.serviceId === "inference")?.state || "unknown";
 
   const [recentWorkspaces, setRecentWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [showAllWorkspaces, setShowAllWorkspaces] = useState(false);
   const [allWorkspaces, setAllWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [recentErrors, setRecentErrors] = useState<any[]>([]);
+  const [activeSessionsCount, setActiveSessionsCount] = useState<number>(0);
 
   useEffect(() => {
     logger.info("Dashboard Page loaded");
@@ -27,7 +44,34 @@ export function DashboardPage() {
         logger.error("Failed to load workspaces", { err });
       }
     };
+
+    const fetchErrors = async () => {
+      try {
+        const res = await fetch(getApiUrl("/api/logs?level=error&limit=3"));
+        if (res.ok) {
+          const data = await res.json();
+          setRecentErrors(data.logs || []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch recent errors", err);
+      }
+    };
+
+    const fetchSessions = async () => {
+      try {
+        const res = await fetch(getApiUrl("/api/agent/sessions"));
+        if (res.ok) {
+          const data = await res.json();
+          setActiveSessionsCount(data.sessions?.length || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch sessions count", err);
+      }
+    };
+
     fetchWorkspaces();
+    fetchErrors();
+    fetchSessions();
   }, [logger]);
 
   const getWorkspaceName = (w: WorkspaceInfo) => {
@@ -48,20 +92,10 @@ export function DashboardPage() {
   };
 
   const handleSelectWorkspace = async (w: WorkspaceInfo) => {
-    console.log("[DEBUG] handleSelectWorkspace clicked:", w);
     try {
-      console.log(
-        "[DEBUG] calling workspaceService.activateWorkspace for session:",
-        w.session_id,
-      );
       await workspaceService.activateWorkspace(w.session_id);
-      console.log(
-        "[DEBUG] activateWorkspace returned. Navigating to:",
-        `/workspace/${w.workspace_id}`,
-      );
       navigate(`/workspace/${w.workspace_id}`);
     } catch (err) {
-      console.error("[DEBUG] Failed to switch workspace:", err);
       logger.error("Failed to switch workspace", { err });
     }
   };
@@ -95,202 +129,163 @@ export function DashboardPage() {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "var(--space-2xl)",
-        maxWidth: "1200px",
+        gap: "var(--space-md)",
+        maxWidth: "1280px",
         margin: "0 auto",
-        padding: "var(--space-2xl) var(--space-xl)",
+        padding: "var(--space-md) var(--space-lg)",
       }}
       className="animate-fade-in-up"
     >
+      {/* Title section (compact) */}
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-sm)",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid var(--color-border)",
+          paddingBottom: "var(--space-sm)",
         }}
       >
-        <h1
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+          <h1
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "1.8rem",
+              fontWeight: 700,
+              color: "var(--color-primary)",
+              letterSpacing: "-0.5px",
+            }}
+          >
+            Wright Design Hub
+          </h1>
+          <p
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "0.85rem",
+              color: "var(--color-secondary)",
+            }}
+          >
+            Local-first multi-agent engineering workspace orchestrator.
+          </p>
+        </div>
+
+        <button
+          data-testid="create-workspace-btn"
+          id="create-workspace-btn"
+          onClick={() => setIsCreateModalOpen(true)}
           style={{
-            fontFamily: "var(--font-ui)",
-            fontSize: "2.8rem",
-            fontWeight: 700,
-            color: "var(--color-primary)",
-            textAlign: "left",
-            letterSpacing: "-0.75px",
+            padding: "var(--space-sm) var(--space-md)",
+            backgroundColor: "var(--color-secondary)",
+            color: "var(--color-surface-subtle)",
+            fontWeight: 600,
+            fontSize: "0.85rem",
+            borderRadius: "var(--radius-md)",
+            border: "none",
+            cursor: "pointer",
+            transition: "all var(--transition-smooth)",
+            boxShadow: "var(--shadow-glow)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = "var(--shadow-glow-active)";
+            e.currentTarget.style.transform = "translateY(-1px)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = "var(--shadow-glow)";
+            e.currentTarget.style.transform = "translateY(0)";
           }}
         >
-          Welcome to Wright
-        </h1>
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "1.2rem",
-            color: "var(--color-secondary)",
-            textAlign: "left",
-            maxWidth: "800px",
-            lineHeight: 1.7,
-          }}
-        >
-          A local-first multi-agent mechanical engineering appliance. Wright
-          runs locally to orchestrate, analyze, and document your mechanical
-          designs under complete privacy.
-        </p>
+          + Create Workspace
+        </button>
       </div>
 
-      {/* Workspace Panel */}
+      {/* Grid Layout (Condensed margin & padding, fits on 1080p screen) */}
       <div
-        className="glow-card"
         style={{
-          padding: "var(--space-2xl)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-lg)",
-          textAlign: "left",
-          border: "1px solid var(--color-border)",
-          borderRadius: "var(--radius-lg)",
-          backgroundColor: "var(--color-surface)",
-          boxShadow: "var(--shadow-lg)",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "var(--space-md)",
+          width: "100%",
         }}
       >
+        {/* Box 1: Engineering Workspaces (1/2 Width) */}
         <div
+          data-testid="card-workspaces"
+          className="glow-card"
           style={{
+            padding: "var(--space-md)",
+            backgroundColor: "var(--color-surface)",
+            borderRadius: "var(--radius-lg)",
+            border: "1px solid var(--color-border)",
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: "column",
+            gap: "var(--space-sm)",
           }}
         >
-          <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <h2
               style={{
                 fontFamily: "var(--font-ui)",
-                fontSize: "1.5rem",
+                fontSize: "1.1rem",
                 fontWeight: 600,
                 color: "var(--color-primary)",
               }}
             >
-              Engineering Workspaces
+              🛠️ Engineering Workspaces
             </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "0.9rem",
-                color: "var(--color-secondary)",
-                marginTop: "2px",
-              }}
-            >
-              Your project directories. Each workspace scopes tools, files, and
-              agent conversations.
-            </p>
           </div>
 
-          {/* Create Workspace Button */}
-          <button
-            id="create-workspace-btn"
-            onClick={() => {
-              console.log(
-                "[DEBUG] Create Workspace button clicked, setting isCreateModalOpen to true",
-              );
-              setIsCreateModalOpen(true);
-            }}
+          <div
             style={{
-              padding: "var(--space-md) var(--space-xl)",
-              backgroundColor: "var(--color-secondary)",
-              color: "var(--color-surface-subtle)",
-              fontWeight: 600,
-              fontSize: "0.9rem",
-              borderRadius: "var(--radius-lg)",
-              border: "none",
-              cursor: "pointer",
-              transition: "all var(--transition-smooth)",
-              boxShadow: "var(--shadow-glow)",
-              whiteSpace: "nowrap",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = "var(--shadow-glow-active)";
-              e.currentTarget.style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = "var(--shadow-glow)";
-              e.currentTarget.style.transform = "translateY(0)";
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              maxHeight: "240px",
+              overflowY: "auto",
             }}
           >
-            + Create Workspace
-          </button>
-        </div>
-
-        {/* Recent Workspaces List */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-sm)",
-            marginTop: "var(--space-xs)",
-          }}
-        >
-          <span
-            style={{
-              fontSize: "0.75rem",
-              textTransform: "uppercase",
-              fontWeight: 600,
-              color: "var(--color-secondary)",
-              letterSpacing: "1px",
-            }}
-          >
-            Recently Opened
-          </span>
-
-          {recentWorkspaces.length === 0 ? (
-            <div
-              style={{
-                padding: "var(--space-xl)",
-                backgroundColor: "var(--color-surface-subtle)",
-                borderRadius: "var(--radius-lg)",
-                textAlign: "center",
-                border: "1px dashed var(--color-border)",
-              }}
-            >
-              <span
-                style={{ fontSize: "0.95rem", color: "var(--color-secondary)" }}
+            {recentWorkspaces.length === 0 ? (
+              <div
+                style={{
+                  padding: "var(--space-md)",
+                  backgroundColor: "var(--color-surface-subtle)",
+                  borderRadius: "var(--radius-md)",
+                  textAlign: "center",
+                  border: "1px dashed var(--color-border)",
+                  fontSize: "0.8rem",
+                  color: "var(--color-secondary)",
+                }}
               >
-                No workspaces yet. Click{" "}
-                <strong style={{ color: "var(--color-primary)" }}>
-                  + Create Workspace
-                </strong>{" "}
-                above to get started.
-              </span>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "var(--space-xs)",
-              }}
-            >
-              {recentWorkspaces.map((w) => (
+                No active workspaces yet. Create one above to begin.
+              </div>
+            ) : (
+              recentWorkspaces.map((w) => (
                 <div
                   key={w.workspace_id}
+                  data-testid={`card-workspace-${w.workspace_id}`}
                   onClick={() => handleSelectWorkspace(w)}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "var(--space-lg) var(--space-xl)",
+                    padding: "6px var(--space-sm)",
                     backgroundColor: "var(--color-surface-subtle)",
                     border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-lg)",
+                    borderRadius: "var(--radius-md)",
                     cursor: "pointer",
                     transition: "all var(--transition-smooth)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor =
-                      "var(--color-secondary)";
-                    e.currentTarget.style.boxShadow = "var(--shadow-glow)";
+                    e.currentTarget.style.borderColor = "var(--color-secondary)";
                     e.currentTarget.style.transform = "translateX(2px)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = "var(--color-border)";
-                    e.currentTarget.style.boxShadow = "none";
                     e.currentTarget.style.transform = "translateX(0)";
                   }}
                 >
@@ -298,44 +293,41 @@ export function DashboardPage() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "var(--space-md)",
+                      gap: "var(--space-sm)",
+                      overflow: "hidden",
                     }}
                   >
-                    <div style={{ color: "var(--color-secondary)" }}>
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                      </svg>
+                    <div style={{ color: "var(--color-secondary)", flexShrink: 0 }}>
+                      📁
                     </div>
                     <div
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        gap: "2px",
                         textAlign: "left",
+                        overflow: "hidden",
                       }}
                     >
                       <span
                         style={{
-                          fontSize: "1rem",
+                          fontSize: "0.85rem",
                           fontWeight: 600,
                           color: "var(--color-primary)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                         }}
                       >
                         {getWorkspaceName(w)}
                       </span>
                       <span
                         style={{
-                          fontSize: "0.8rem",
+                          fontSize: "0.7rem",
                           color: "var(--color-secondary)",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "340px",
                         }}
                       >
                         {w.local_path}
@@ -346,91 +338,62 @@ export function DashboardPage() {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "var(--space-md)",
+                      gap: "var(--space-sm)",
+                      flexShrink: 0,
                     }}
                   >
                     <span
                       style={{
-                        fontSize: "0.8rem",
+                        fontSize: "0.7rem",
                         color: "var(--color-secondary)",
                       }}
                     >
                       {formatTimeAgo(w.updated_at)}
                     </span>
-                    <span
-                      style={{
-                        color: "var(--color-secondary)",
-                        fontSize: "0.9rem",
-                      }}
-                    >
+                    <span style={{ color: "var(--color-secondary)", fontSize: "0.8rem" }}>
                       →
                     </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              ))
+            )}
+          </div>
 
-        {/* View All Workspaces */}
-        {recentWorkspaces.length > 0 && (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "var(--space-md)",
-            }}
-          >
-            <button
-              id="view-all-workspaces-btn"
-              onClick={handleViewAllWorkspaces}
-              style={{
-                alignSelf: "flex-start",
-                padding: "var(--space-sm) var(--space-lg)",
-                backgroundColor: "transparent",
-                color: "var(--color-secondary)",
-                fontWeight: 500,
-                fontSize: "0.85rem",
-                borderRadius: "var(--radius-md)",
-                border: "1px solid var(--color-border)",
-                cursor: "pointer",
-                transition: "all var(--transition-fast)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
-                e.currentTarget.style.color = "var(--color-primary)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-border)";
-                e.currentTarget.style.color = "var(--color-secondary)";
-              }}
-            >
-              {showAllWorkspaces
-                ? "▲ Hide all workspaces"
-                : "▼ View all workspaces"}
-            </button>
-
-            {showAllWorkspaces && (
-              <div
+          {recentWorkspaces.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <button
+                data-testid="view-all-workspaces-btn"
+                id="view-all-workspaces-btn"
+                onClick={handleViewAllWorkspaces}
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "var(--space-xs)",
-                  paddingLeft: "var(--space-md)",
+                  alignSelf: "flex-start",
+                  padding: "4px var(--space-sm)",
+                  backgroundColor: "transparent",
+                  color: "var(--color-secondary)",
+                  fontWeight: 500,
+                  fontSize: "0.75rem",
+                  borderRadius: "var(--radius-sm)",
+                  border: "1px solid var(--color-border)",
+                  cursor: "pointer",
+                  transition: "all var(--transition-fast)",
                 }}
               >
-                {allWorkspaces.length === 0 ? (
-                  <span
-                    style={{
-                      fontSize: "0.85rem",
-                      color: "var(--color-secondary)",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    No workspaces found.
-                  </span>
-                ) : (
-                  allWorkspaces.map((w) => (
+                {showAllWorkspaces ? "▲ Hide all workspaces" : "▼ View all workspaces"}
+              </button>
+
+              {showAllWorkspaces && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                    maxHeight: "100px",
+                    overflowY: "auto",
+                    paddingLeft: "var(--space-xs)",
+                    borderLeft: "2px solid var(--color-border)",
+                  }}
+                >
+                  {allWorkspaces.map((w) => (
                     <div
                       key={w.workspace_id}
                       onClick={() => handleSelectWorkspace(w)}
@@ -438,180 +401,303 @@ export function DashboardPage() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        padding: "var(--space-md) var(--space-lg)",
-                        backgroundColor: "rgba(255, 255, 255, 0.01)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "var(--radius-md)",
+                        padding: "4px var(--space-xs)",
                         cursor: "pointer",
-                        fontSize: "0.85rem",
-                        transition: "all var(--transition-fast)",
+                        fontSize: "0.75rem",
+                        borderRadius: "var(--radius-sm)",
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "var(--color-secondary)";
-                        e.currentTarget.style.backgroundColor =
-                          "rgba(56, 189, 248, 0.04)";
+                        e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.04)";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "var(--color-border)";
-                        e.currentTarget.style.backgroundColor =
-                          "rgba(255, 255, 255, 0.01)";
+                        e.currentTarget.style.backgroundColor = "transparent";
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "var(--space-sm)",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontWeight: 600,
-                            color: "var(--color-primary)",
-                          }}
-                        >
-                          {getWorkspaceName(w)}
-                        </span>
-                        <span
-                          style={{
-                            color: "var(--color-secondary)",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            maxWidth: "400px",
-                          }}
-                        >
-                          {w.local_path}
-                        </span>
-                      </div>
-                      <span
-                        style={{
-                          color: "var(--color-secondary)",
-                          fontSize: "0.75rem",
-                        }}
-                      >
+                      <span style={{ fontWeight: 600, color: "var(--color-primary)" }}>
+                        {getWorkspaceName(w)}
+                      </span>
+                      <span style={{ color: "var(--color-secondary)", fontSize: "0.7rem" }}>
                         {formatTimeAgo(w.updated_at)}
                       </span>
                     </div>
-                  ))
-                )}
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Box 2: Agent Status (1/2 Width) */}
+        <div
+          data-testid="card-agent-status"
+          className="glow-card"
+          style={{
+            padding: "var(--space-md)",
+            backgroundColor: "var(--color-surface)",
+            borderRadius: "var(--radius-lg)",
+            border: "1px solid var(--color-border)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-sm)",
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              color: "var(--color-primary)",
+            }}
+          >
+            🤖 Agent Status (Hermes)
+          </h2>
+
+          {/* Connection Indicators */}
+          <div style={{ display: "flex", gap: "var(--space-md)", flexWrap: "wrap", fontSize: "0.8rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  backgroundColor: apiState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                }}
+              />
+              <span>Wright API: <strong>{apiState}</strong></span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  backgroundColor: hermesState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                }}
+              />
+              <span>Hermes: <strong>{hermesState}</strong></span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  backgroundColor: inferenceState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                }}
+              />
+              <span>Inference Engine: <strong>{inferenceState}</strong></span>
+            </div>
+          </div>
+
+          {/* Running Tasks status */}
+          <div
+            style={{
+              padding: "var(--space-xs) var(--space-sm)",
+              backgroundColor: "var(--color-surface-subtle)",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--color-border)",
+              fontSize: "0.8rem",
+              textAlign: "left",
+            }}
+          >
+            <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem", fontWeight: "bold" }}>
+              CURRENT AGENT RUNNING STATE
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+              <span className="thinking-dot" />
+              <span>Idle (Awaiting task request)</span>
+            </div>
+          </div>
+
+          {/* Recent System Errors list */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px", textAlign: "left" }}>
+            <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem", fontWeight: "bold" }}>
+              RECENT SYSTEM HEALTH LOGS
+            </div>
+            {recentErrors.length === 0 ? (
+              <div style={{ fontSize: "0.75rem", color: "var(--color-success, #22c55e)", fontStyle: "italic" }}>
+                ✓ No system errors detected. Health check passed.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px", maxHeight: "100px", overflowY: "auto" }}>
+                {recentErrors.map((err, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      fontSize: "0.7rem",
+                      backgroundColor: "rgba(239, 68, 68, 0.05)",
+                      border: "1px solid rgba(239, 68, 68, 0.15)",
+                      borderRadius: "var(--radius-xs)",
+                      padding: "4px var(--space-xs)",
+                      color: "var(--color-error, #ef4444)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    title={err.message}
+                  >
+                    [{err.timestamp.substring(11, 19)}] {err.logger}: {err.message}
+                  </div>
+                ))}
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Feature Cards Grid — Tool Registry & File Vault only */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "var(--space-xl)",
-        }}
-      >
-        <Link
-          to="/tool-registry"
+        {/* Box 3: Wright News & MCP Directory (1/2 Width) */}
+        <div
+          data-testid="card-news"
           className="glow-card"
           style={{
-            padding: "var(--space-2xl)",
+            padding: "var(--space-md)",
+            backgroundColor: "var(--color-surface)",
+            borderRadius: "var(--radius-lg)",
+            border: "1px solid var(--color-border)",
             display: "flex",
             flexDirection: "column",
-            gap: "var(--space-md)",
-            textAlign: "left",
-            cursor: "pointer",
+            gap: "var(--space-sm)",
           }}
         >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "var(--radius-lg)",
-              backgroundColor: "rgba(56, 189, 248, 0.08)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-secondary)",
-              boxShadow: "var(--shadow-glow)",
-            }}
-          >
-            <ToolRegistryIcon size={24} />
-          </div>
           <h2
             style={{
               fontFamily: "var(--font-ui)",
-              fontSize: "1.4rem",
+              fontSize: "1.1rem",
               fontWeight: 600,
               color: "var(--color-primary)",
             }}
           >
-            Tool Registry
+            📰 Updates & MCP Releases
           </h2>
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "0.95rem",
-              color: "var(--color-secondary)",
-              lineHeight: 1.5,
-            }}
-          >
-            Explore available system tools, solvers, and analytical adapters.
-            Wright exposes CAD parsers, finite element solvers, and data
-            formatters to agents.
-          </p>
-        </Link>
 
-        <Link
-          to="/file-vault"
-          className="glow-card"
-          style={{
-            padding: "var(--space-2xl)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-md)",
-            textAlign: "left",
-            cursor: "pointer",
-          }}
-        >
           <div
             style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "var(--radius-lg)",
-              backgroundColor: "rgba(56, 189, 248, 0.08)",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--color-secondary)",
-              boxShadow: "var(--shadow-glow)",
+              flexDirection: "column",
+              gap: "6px",
+              textAlign: "left",
+              fontSize: "0.8rem",
             }}
           >
-            <FileVaultIcon size={24} />
+            <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "4px" }}>
+              <div style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
+                v0.22.0 Release — Modernized Navigation
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
+                Custom workspace prompts context, floating debugger drawer, and file-size detection are live.
+              </div>
+            </div>
+
+            <div>
+              <div style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
+                New MCP Servers Integrated
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
+                OpenSCAD rendering, CalculiX simulation, FreeCAD Copilot, and Autodesk APS community links added to catalog.
+              </div>
+            </div>
           </div>
+
+          {/* Navigation Links */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "var(--space-sm)",
+              borderTop: "1px solid var(--color-border)",
+              paddingTop: "var(--space-xs)",
+            }}
+          >
+            <a
+              href="https://burhop.substack.com"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--color-secondary)",
+                textDecoration: "underline",
+              }}
+            >
+              substack.com
+            </a>
+            <a
+              href="https://github.com/burhop/wright"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--color-secondary)",
+                textDecoration: "underline",
+              }}
+            >
+              github.com/burhop/wright
+            </a>
+            <a
+              href="https://element.siemens.io/get-started/element-mcp/"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--color-secondary)",
+                textDecoration: "underline",
+              }}
+            >
+              Siemens Blog
+            </a>
+          </div>
+        </div>
+
+        {/* Box 4: System Activity & Telemetry (1/2 Width) */}
+        <div
+          data-testid="card-telemetry"
+          className="glow-card"
+          style={{
+            padding: "var(--space-md)",
+            backgroundColor: "var(--color-surface)",
+            borderRadius: "var(--radius-lg)",
+            border: "1px solid var(--color-border)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-sm)",
+          }}
+        >
           <h2
             style={{
               fontFamily: "var(--font-ui)",
-              fontSize: "1.4rem",
+              fontSize: "1.1rem",
               fontWeight: 600,
               color: "var(--color-primary)",
             }}
           >
-            File Vault
+            📊 System Telemetry
           </h2>
-          <p
+
+          <div
             style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "0.95rem",
-              color: "var(--color-secondary)",
-              lineHeight: 1.5,
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              textAlign: "left",
+              fontSize: "0.8rem",
             }}
           >
-            Manage engineering artifacts, design specs, and simulation outputs.
-            The vault operates entirely offline, keeping your raw files secure
-            in your workspace.
-          </p>
-        </Link>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "var(--color-secondary)" }}>SQLite DB Location:</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>state.db</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "var(--color-secondary)" }}>Total Workspaces Indexed:</span>
+              <span><strong>{recentWorkspaces.length}</strong></span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "var(--color-secondary)" }}>Active Agent Chat Sessions:</span>
+              <span><strong>{activeSessionsCount}</strong></span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "var(--color-secondary)" }}>Offline-First Mode:</span>
+              <span style={{ color: "var(--color-success, #22c55e)" }}>Enabled (100% Local)</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Create Workspace Modal */}

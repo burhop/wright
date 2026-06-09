@@ -261,6 +261,8 @@ def update_workspace_remote_by_id(
     git_remote_url: Optional[str],
     git_username: Optional[str],
     git_token: Optional[str],
+    workspace_prompt: Optional[str] = None,
+    git_large_file_threshold: Optional[int] = None,
 ) -> None:
     """Update workspace Git remote credentials using workspace_id."""
     import time
@@ -270,10 +272,18 @@ def update_workspace_remote_by_id(
         conn.execute(
             """
             UPDATE engineering_workspaces
-            SET git_remote_url = ?, git_username = ?, git_token = ?, updated_at = ?
+            SET git_remote_url = ?, git_username = ?, git_token = ?, workspace_prompt = ?, git_large_file_threshold = ?, updated_at = ?
             WHERE workspace_id = ?
             """,
-            (git_remote_url, git_username, git_token, now, workspace_id),
+            (
+                git_remote_url,
+                git_username,
+                git_token,
+                workspace_prompt,
+                git_large_file_threshold,
+                now,
+                workspace_id,
+            ),
         )
         conn.commit()
 
@@ -1081,7 +1091,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
     """Compile workspace MCP instructions and write them to .hermes.md in the workspace directory.
 
     If the .hermes.md file already exists, preserves user's custom instructions outside of
-    the Wright MCP instructions block.
+    the Wright MCP instructions and Workspace Context blocks.
     """
     import os
     import re
@@ -1102,6 +1112,19 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         # If there are no instructions, clear the block
         generated_block = f"{start_marker}\n{end_marker}"
 
+    # Retrieve workspace context prompt
+    workspace = get_workspace_by_path(db_path, local_path)
+    workspace_prompt = workspace.get("workspace_prompt") if workspace else None
+
+    start_prompt_marker = "<!-- WRIGHT WORKSPACE PROMPT START -->"
+    end_prompt_marker = "<!-- WRIGHT WORKSPACE PROMPT END -->"
+
+    generated_prompt_block = ""
+    if workspace_prompt:
+        generated_prompt_block = f"{start_prompt_marker}\n## Workspace Context Prompt\n\n{workspace_prompt}\n{end_prompt_marker}"
+    else:
+        generated_prompt_block = f"{start_prompt_marker}\n{end_prompt_marker}"
+
     existing_content = ""
     if os.path.exists(hermes_md_path):
         try:
@@ -1110,6 +1133,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         except Exception:
             pass
 
+    # 1. Update MCP instructions block
     if start_marker in existing_content and end_marker in existing_content:
         # Replace the existing block
         pattern = re.compile(
@@ -1127,10 +1151,109 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         else:
             new_content = generated_block
 
+    # 2. Update Workspace Context Prompt block
+    if start_prompt_marker in new_content and end_prompt_marker in new_content:
+        # Replace the existing block
+        pattern = re.compile(
+            rf"{re.escape(start_prompt_marker)}.*?{re.escape(end_prompt_marker)}",
+            re.DOTALL
+        )
+        new_content = pattern.sub(generated_prompt_block, new_content)
+    elif start_prompt_marker in new_content or end_prompt_marker in new_content:
+        new_content = new_content.rstrip() + "\n\n" + generated_prompt_block
+    else:
+        if new_content.strip():
+            new_content = new_content.rstrip() + "\n\n" + generated_prompt_block
+        else:
+            new_content = generated_prompt_block
+
     try:
         with open(hermes_md_path, "w", encoding="utf-8") as f:
             f.write(new_content.strip() + "\n")
     except Exception as e:
         logger.error("Failed to write .hermes.md: %s", e)
+
+
+def read_application_logs(
+    workspace_id: Optional[str] = None,
+    level: Optional[str] = None,
+    search: Optional[str] = None,
+    limit: int = 100,
+    offset: int = 0
+) -> dict:
+    """Read and parse application logs from apps/api/wright.log."""
+    import os
+    import json
+
+    _lib_dir = os.path.dirname(os.path.abspath(__file__))
+    _repo_root = os.path.abspath(os.path.join(_lib_dir, "..", "..", "..", ".."))
+    log_path = os.path.join(_repo_root, "apps", "api", "wright.log")
+
+    if not os.path.exists(log_path):
+        return {"logs": [], "total": 0}
+
+    parsed_logs = []
+
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+
+                    # Filter by level (case insensitive)
+                    if level:
+                        entry_level = entry.get("level", "").lower()
+                        if entry_level != level.lower():
+                            continue
+
+                    # Filter by workspace_id
+                    if workspace_id:
+                        ws_id_val = entry.get("workspace_id") or entry.get("extra", {}).get("workspaceId") or entry.get("workspaceId")
+                        if ws_id_val != workspace_id:
+                            continue
+
+                    # Filter by search string
+                    if search:
+                        search_lower = search.lower()
+                        message = entry.get("message", "").lower()
+                        event = entry.get("event", "").lower()
+                        if search_lower not in message and search_lower not in event:
+                            # Check keys and values in entry
+                            found = False
+                            for k, v in entry.items():
+                                if k != "timestamp" and search_lower in str(v).lower():
+                                    found = True
+                                    break
+                            if not found:
+                                continue
+
+                    # Normalize structlog keys to expected schema
+                    if "message" not in entry and "event" in entry:
+                        entry["message"] = entry["event"]
+                    if "logger" not in entry and "logger_name" in entry:
+                        entry["logger"] = entry["logger_name"]
+                    elif "logger" not in entry:
+                        entry["logger"] = "unknown"
+                    if "timestamp" not in entry and "time" in entry:
+                        entry["timestamp"] = entry["time"]
+
+                    parsed_logs.append(entry)
+                except Exception:
+                    continue
+    except Exception as e:
+        logger.error("Failed to read log file: %s", e)
+        return {"logs": [], "total": 0}
+
+    # Reverse logs to get newest first
+    parsed_logs.reverse()
+
+    total = len(parsed_logs)
+    paginated = parsed_logs[offset : offset + limit]
+
+    return {"logs": paginated, "total": total}
+
 
 

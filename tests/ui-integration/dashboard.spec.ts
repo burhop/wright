@@ -185,6 +185,20 @@ test.describe('Dashboard Page', () => {
         body: JSON.stringify({ tools: [] }),
       });
     });
+
+    // Mock setup status
+    await page.route('**/api/setup/status', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          is_configured: true,
+          llm_api_url: 'http://localhost:8000',
+          active_agent: 'hermes',
+          theme: 'dark'
+        }),
+      });
+    });
   });
 
   test('should load the dashboard layout and select an existing workspace', async ({ page }) => {
@@ -196,7 +210,7 @@ test.describe('Dashboard Page', () => {
     // Verify main regions render
     await expect(page.getByTestId('app-shell')).toBeVisible();
     await expect(page.getByTestId('page-dashboard')).toBeVisible();
-    await expect(page.getByText('Welcome to Wright')).toBeVisible();
+    await expect(page.getByText('Wright Design Hub')).toBeVisible();
 
     // Verify workspace card is present
     const workspaceCard = page.getByText('Test Project', { exact: false });
@@ -208,7 +222,7 @@ test.describe('Dashboard Page', () => {
     await expect(page.getByTestId('page-workspace')).toBeVisible();
   });
 
-  test('should open Create Workspace modal, autocomplete project path, and submit', async ({ page }) => {
+  test('should open Create Workspace modal and submit', async ({ page }) => {
     await page.goto('/');
 
     // Open Modal
@@ -221,21 +235,13 @@ test.describe('Dashboard Page', () => {
     await expect(modal).toBeVisible();
 
     const nameInput = page.locator('#workspace-name-input');
-    const pathInput = page.locator('#workspace-path-input');
     const submitBtn = page.locator('#workspace-create-submit');
 
     await expect(nameInput).toBeVisible();
-    await expect(pathInput).toBeVisible();
     await expect(submitBtn).toBeVisible();
-
-    // Initially, path should be default directory plus a slash
-    await expect(pathInput).toHaveValue('/home/burhop/wright/');
 
     // Type name: 'FEA Simulation'
     await nameInput.fill('FEA Simulation');
-
-    // Path should autocomplete to: '/home/burhop/wright/fea-simulation'
-    await expect(pathInput).toHaveValue('/home/burhop/wright/fea-simulation');
 
     // Click submit
     await submitBtn.click();

@@ -509,7 +509,10 @@ def run_migrations():
             git_token TEXT,
             enabled_tools TEXT,
             created_at INTEGER NOT NULL,
-            updated_at INTEGER NOT NULL
+            updated_at INTEGER NOT NULL,
+            workspace_name TEXT,
+            workspace_prompt TEXT,
+            git_large_file_threshold INTEGER DEFAULT 10485760
         );
         """)
 
@@ -555,6 +558,18 @@ def run_migrations():
                 "ALTER TABLE engineering_workspaces ADD COLUMN workspace_name TEXT;"
             )
             print("Added workspace_name column to engineering_workspaces table.")
+
+        if ws_columns and "workspace_prompt" not in ws_columns:
+            conn.execute(
+                "ALTER TABLE engineering_workspaces ADD COLUMN workspace_prompt TEXT;"
+            )
+            print("Added workspace_prompt column to engineering_workspaces table.")
+
+        if ws_columns and "git_large_file_threshold" not in ws_columns:
+            conn.execute(
+                "ALTER TABLE engineering_workspaces ADD COLUMN git_large_file_threshold INTEGER DEFAULT 10485760;"
+            )
+            print("Added git_large_file_threshold column to engineering_workspaces table.")
 
         # 9. Create agent_contexts table (007-workspace-dashboard-ux)
         conn.execute("""

@@ -58,6 +58,7 @@ class GitStatusItem(BaseModel):
     path: str
     git_status: str
     staged: bool
+    file_size: Optional[int] = None
 
 
 class GitStatusResponse(BaseModel):
@@ -119,6 +120,8 @@ class WorkspaceConfigRequest(BaseModel):
     git_remote_url: Optional[str] = None
     git_username: Optional[str] = None
     git_token: Optional[str] = None
+    workspace_prompt: Optional[str] = None
+    git_large_file_threshold: Optional[int] = None
 
 
 class WorkspaceConfigResponse(BaseModel):
@@ -132,6 +135,8 @@ class WorkspaceConfigGetResponse(BaseModel):
     git_username: Optional[str] = None
     has_token: bool
     workspace_path: Optional[str] = None
+    workspace_prompt: Optional[str] = None
+    git_large_file_threshold: Optional[int] = None
 
 
 # ── Workspace Tools ──────────────────────────────────────────────────────
@@ -194,6 +199,17 @@ class DefaultWorkspaceDirResponse(BaseModel):
 
 class WorkspaceSessionUpdateRequest(BaseModel):
     session_id: str
+
+
+class GitBranchRequest(BaseModel):
+    session_id: str
+    branch_name: str
+    create: bool = False
+
+
+class GitMergeRequest(BaseModel):
+    session_id: str
+    branch_name: str
 
 
 # ── Utility functions ────────────────────────────────────────────────────

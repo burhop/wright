@@ -4,6 +4,8 @@ import {
   AgentChatIcon,
   ToolRegistryIcon,
   FileVaultIcon,
+  SettingsIcon,
+  LogsIcon,
 } from "./Icons";
 
 interface NavItemProps {
@@ -24,6 +26,10 @@ const renderIcon = (iconName: string) => {
       return <ToolRegistryIcon size={18} />;
     case "folder":
       return <FileVaultIcon size={18} />;
+    case "logs":
+      return <LogsIcon size={18} />;
+    case "settings":
+      return <SettingsIcon size={18} />;
     default:
       return null;
   }

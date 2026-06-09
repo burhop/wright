@@ -5,8 +5,57 @@ Constitution §7: All packages MUST implement structured JSON logging (structlog
 Traditional text logs are forbidden.
 """
 
+import os
+import sys
+import logging
+from logging.handlers import RotatingFileHandler
 import structlog
 from opentelemetry import trace
+
+# Resolve the absolute path to apps/api/wright.log
+_lib_dir = os.path.dirname(os.path.abspath(__file__))
+_repo_root = os.path.abspath(os.path.join(_lib_dir, "..", "..", "..", ".."))
+LOG_FILE_PATH = os.path.join(_repo_root, "apps", "api", "wright.log")
+
+# Setup standard rotating file handler (10MB limit per file, 5 backups)
+os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
+_file_handler = RotatingFileHandler(LOG_FILE_PATH, maxBytes=10*1024*1024, backupCount=5, encoding="utf-8")
+_file_handler.setFormatter(logging.Formatter("%(message)s"))
+
+class WrightPrintLogger:
+    def msg(self, message):
+        # Write to stdout for developer console (uvicorn output)
+        sys.stdout.write(message + "\n")
+        sys.stdout.flush()
+        
+        # Emit to rotating file handler
+        try:
+            record = logging.LogRecord(
+                name="wright",
+                level=logging.INFO,
+                pathname="",
+                lineno=0,
+                msg=message,
+                args=(),
+                exc_info=None
+            )
+            _file_handler.emit(record)
+        except Exception:
+            pass
+
+    log = msg
+    debug = msg
+    info = msg
+    warning = msg
+    warn = msg
+    error = msg
+    critical = msg
+    exception = msg
+    fatal = msg
+
+class WrightLoggerFactory:
+    def __call__(self, *args, **kwargs):
+        return WrightPrintLogger()
 
 
 def _add_trace_id(logger, method_name, event_dict):
@@ -38,7 +87,7 @@ def configure_logging():
         ],
         wrapper_class=structlog.make_filtering_bound_logger(0),
         context_class=dict,
-        logger_factory=structlog.PrintLoggerFactory(),
+        logger_factory=WrightLoggerFactory(),
         cache_logger_on_first_use=True,
     )
 

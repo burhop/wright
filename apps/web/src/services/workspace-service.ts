@@ -169,7 +169,7 @@ export class WorkspaceService {
   async getGitStatus(sessionId: string): Promise<{
     branch_name: string;
     is_clean: boolean;
-    changes: { path: string; git_status: string; staged: boolean }[];
+    changes: { path: string; git_status: string; staged: boolean; file_size?: number }[];
   }> {
     workspaceLogger.info("Fetching git status", { sessionId });
     const response = await fetch(
@@ -279,6 +279,8 @@ export class WorkspaceService {
     git_username: string | null;
     has_token: boolean;
     workspace_path?: string;
+    workspace_prompt?: string | null;
+    git_large_file_threshold?: number | null;
   }> {
     workspaceLogger.info("Fetching workspace config", { sessionId });
     const response = await fetch(
@@ -300,6 +302,8 @@ export class WorkspaceService {
     remoteUrl: string | null,
     username: string | null,
     token: string | null,
+    workspacePrompt?: string | null,
+    gitLargeFileThreshold?: number | null,
   ): Promise<{ success: boolean; workspace_id: string }> {
     workspaceLogger.info("Updating workspace config", {
       sessionId,
@@ -316,6 +320,8 @@ export class WorkspaceService {
         git_remote_url: remoteUrl,
         git_username: username,
         git_token: token,
+        workspace_prompt: workspacePrompt,
+        git_large_file_threshold: gitLargeFileThreshold,
       }),
     });
     if (!response.ok) {
@@ -376,6 +382,50 @@ export class WorkspaceService {
         status: response.status,
       });
       throw new Error(`Failed to pull changes: ${response.statusText}`);
+    }
+    return response.json();
+  }  async checkoutBranch(
+    sessionId: string,
+    branchName: string,
+    create = false,
+  ): Promise<{ success: boolean; message: string }> {
+    workspaceLogger.info("Checking out branch", { sessionId, branchName, create });
+    const response = await fetch(`${API_BASE}/api/workspace/git/branch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        branch_name: branchName,
+        create,
+      }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.detail || `Failed to checkout branch: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async mergeBranch(
+    sessionId: string,
+    branchName: string,
+  ): Promise<{ success: boolean; message: string }> {
+    workspaceLogger.info("Merging branch", { sessionId, branchName });
+    const response = await fetch(`${API_BASE}/api/workspace/git/merge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        branch_name: branchName,
+      }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.detail || `Failed to merge branch: ${response.statusText}`);
     }
     return response.json();
   }

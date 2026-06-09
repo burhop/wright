@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
 
+const getApiUrl = (path: string) => {
+  if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
+  const host = window.location.hostname;
+  const port = window.location.port;
+  const base =
+    port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+  return `${base}${path}`;
+};
+
 interface SetupPageProps {
   onConfigured: () => void;
 }
@@ -17,7 +26,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
 
   // Load initial settings if present
   useEffect(() => {
-    fetch("/api/setup/status")
+    fetch(getApiUrl("/api/setup/status"))
       .then((res) => res.json())
       .then((data) => {
         if (data.llm_api_url) {
@@ -45,7 +54,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
     const timer = setTimeout(async () => {
       try {
         const response = await fetch(
-          `/api/setup/health?url=${encodeURIComponent(llmUrl)}`,
+          getApiUrl(`/api/setup/health?url=${encodeURIComponent(llmUrl)}`),
         );
         if (!response.ok) {
           throw new Error(`Server returned HTTP ${response.status}`);
@@ -80,7 +89,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
     setSubmitError(null);
 
     try {
-      const response = await fetch("/api/setup/configure", {
+      const response = await fetch(getApiUrl("/api/setup/configure"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

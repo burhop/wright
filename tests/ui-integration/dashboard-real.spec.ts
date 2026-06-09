@@ -46,7 +46,7 @@ test.describe('Dashboard Page - Real Backend Integration', () => {
     if (hasWorkspaces) {
       console.log('Workspaces found. Clicking the first workspace card...');
       // Click the first card
-      const workspaceCard = page.locator('.glow-card').filter({ hasText: 'home/burhop' }).first();
+      const workspaceCard = page.locator('[data-testid^="card-workspace-"]').first();
       if (await workspaceCard.count() > 0) {
         await workspaceCard.click();
         console.log('Checking navigation to /workspace/:workspaceId...');
