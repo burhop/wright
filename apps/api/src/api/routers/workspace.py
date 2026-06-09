@@ -524,7 +524,10 @@ async def update_workspace_config(
 async def get_workspace_tools_endpoint(
     session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
 ):
-    enabled = get_workspace_enabled_tools(DATABASE_PATH, session_id) or []
+    enabled = get_workspace_enabled_tools(DATABASE_PATH, session_id)
+    if enabled is None:
+        from tool_registry.db import get_servers
+        enabled = [s.name for s in get_servers(DATABASE_PATH) if s.is_installed]
     return WorkspaceToolsGetResponse(session_id=session_id, enabled_tools=enabled)
 
 
@@ -536,7 +539,11 @@ async def toggle_workspace_tool_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     await get_workspace_dir(body.session_id, engine)
-    current = get_workspace_enabled_tools(DATABASE_PATH, body.session_id) or []
+    current = get_workspace_enabled_tools(DATABASE_PATH, body.session_id)
+    if current is None:
+        from tool_registry.db import get_servers
+        current = [s.name for s in get_servers(DATABASE_PATH) if s.is_installed]
+
     if body.is_enabled and body.server_id not in current:
         current.append(body.server_id)
     elif not body.is_enabled and body.server_id in current:

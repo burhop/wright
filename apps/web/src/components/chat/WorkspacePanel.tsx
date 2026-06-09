@@ -1087,7 +1087,7 @@ export function WorkspacePanel({
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
                   {installedServers.map((server) => {
-                    const isEnabled = enabledTools.includes(server.name);
+                    const isEnabled = enabledTools.includes(server.name) || enabledTools.includes(server.server_id);
                     const isGloballyActive = server.is_active;
 
                     return (
@@ -1129,10 +1129,9 @@ export function WorkspacePanel({
                         <input
                           data-testid={`mcp-toggle-${server.name.toLowerCase()}`}
                           type="checkbox"
-                          disabled={!isGloballyActive}
-                          checked={isGloballyActive && isEnabled}
+                          checked={isEnabled}
                           onChange={() => handleToggleMcpTool(server.name, isEnabled)}
-                          style={{ cursor: isGloballyActive ? "pointer" : "not-allowed" }}
+                          style={{ cursor: "pointer" }}
                         />
                       </div>
                     );

@@ -243,8 +243,8 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
                 if not key_name:
                     key_name = server.server_id
 
-                # Check if this server is globally active
-                if not server.is_active:
+                # Check if this server is installed
+                if not server.is_installed:
                     continue
 
                 # Check if this server is enabled in the workspace session

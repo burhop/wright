@@ -20,7 +20,7 @@ test.describe('Agent Chat Page', () => {
     });
 
     // Mock session list
-    await page.route('**/api/agent/sessions', async (route) => {
+    await page.route('**/api/agent/sessions*', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -244,7 +244,7 @@ test.describe('Agent Chat Page', () => {
     });
 
     // Mock session list with multiple sessions
-    await page.route('**/api/agent/sessions', async (route) => {
+    await page.route('**/api/agent/sessions*', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
