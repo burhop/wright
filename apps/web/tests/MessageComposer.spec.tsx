@@ -17,4 +17,25 @@ describe("MessageComposer", () => {
     expect(handleSend).toHaveBeenCalledWith("Test calculations", []);
     expect(input).toHaveValue("");
   });
+
+  it("renders cancel button and triggers onCancel when isStreaming is true", () => {
+    const handleSend = vi.fn();
+    const handleCancel = vi.fn();
+    render(
+      <MessageComposer
+        onSend={handleSend}
+        isStreaming={true}
+        onCancel={handleCancel}
+      />
+    );
+
+    const input = screen.getByTestId("composer-input");
+    expect(input).not.toBeDisabled();
+
+    const cancelBtn = screen.getByTestId("composer-cancel");
+    expect(cancelBtn).toBeInTheDocument();
+
+    fireEvent.click(cancelBtn);
+    expect(handleCancel).toHaveBeenCalledTimes(1);
+  });
 });

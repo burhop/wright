@@ -504,15 +504,19 @@ export class WorkspaceService {
 
   async createWorkspace(
     name: string,
-    localPath: string,
+    localPath?: string,
   ): Promise<WorkspaceInfo> {
     workspaceLogger.info("Creating workspace", { name, localPath });
+    const payload: { name: string; local_path?: string } = { name };
+    if (localPath) {
+      payload.local_path = localPath;
+    }
     const response = await fetch(`${API_BASE}/api/workspace/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, local_path: localPath }),
+      body: JSON.stringify(payload),
     });
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));

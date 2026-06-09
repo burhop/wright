@@ -9,6 +9,18 @@ interface MessageBubbleProps {
   workspacePath?: string;
 }
 
+const getApiBase = () => {
+  if (typeof window === "undefined") {
+    return "http://127.0.0.1:8000";
+  }
+  const host = window.location.hostname;
+  const port = window.location.port;
+  if (port === "5173" || port === "5174") {
+    return `http://${host}:8000`;
+  }
+  return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
+};
+
 /**
  * Preprocesses message content by isolating code blocks and wrapping URLs
  * and file paths in the non-code segments with markdown link syntax.
@@ -30,17 +42,38 @@ function preprocessContent(
     }
 
     // Combined regex:
-    // Group 1: Existing markdown link: \[([^\]]+)\]\(([^)]+)\)
-    // Group 2: URL (http/https): (https?:\/\/[^\s\)\],<]+)
-    // Group 3: Absolute path starting with /home/ or /tmp/: (\/(?:home|tmp)\/[^\s\)\],<]+)
-    // Group 4: Relative path starting with /: (\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))
-    // Group 5: Relative path not starting with /: (\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)
+    // Group 1: MEDIA:path token: (MEDIA:[^\s\)\],<]+)
+    // Group 2: Existing markdown link: (\[.*?\]\(.*?\))
+    // Group 3: URL (http/https): (https?:\/\/[^\s\)\],<]+)
+    // Group 4: Absolute path starting with /home/ or /tmp/: (\/(?:home|tmp)\/[^\s\)\],<]+)
+    // Group 5: Relative path starting with /: (\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))
+    // Group 6: Relative path not starting with /: (\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)
     const regex =
-      /(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/(?:home|tmp)\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
+      /(MEDIA:[^\s\)\],<]+)|(\[.*?\]\(.*?\))|(https?:\/\/[^\s\)\],<]+)|(\/(?:home|tmp)\/[^\s\)\],<]+)|(\/[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg))|(\b[a-zA-Z0-9_\-\.\/]+\.(?:stl|py|scad|json|md|txt|png|jpg|jpeg|gif|svg)\b)/g;
 
     return part.replace(
       regex,
-      (match, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
+      (match, mediaToken, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
+        if (mediaToken) {
+          const mediaPath = mediaToken.substring(6); // Strip "MEDIA:"
+          let cleanPath = mediaPath;
+          if (workspacePath && mediaPath.startsWith(workspacePath)) {
+            cleanPath = mediaPath.slice(workspacePath.length);
+          } else if (activeSessionId) {
+            const idx = mediaPath.indexOf(activeSessionId);
+            if (idx !== -1) {
+              cleanPath = mediaPath.slice(idx + activeSessionId.length);
+            }
+          }
+          if (!cleanPath.startsWith("/")) {
+            cleanPath = "/" + cleanPath;
+          }
+          const apiBase = getApiBase();
+          const encodedPath = encodeURIComponent(cleanPath);
+          const imageUrl = `${apiBase}/api/workspace/files/content?session_id=${activeSessionId || ""}&path=${encodedPath}`;
+          return `![Rendered Image](${imageUrl})`;
+        }
+
         if (markdownLink) {
           return match;
         }

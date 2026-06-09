@@ -31,7 +31,8 @@ def test_db_path() -> str:
         image_url TEXT,
         description TEXT,
         source_url TEXT,
-        installed_version TEXT
+        installed_version TEXT,
+        env_vars TEXT
     );
     """)
     conn.execute("""
@@ -259,3 +260,20 @@ def test_register_server_with_image_and_description(client):
     assert new_server["description"] == "Finite element analysis solver."
     assert new_server["source_url"] == "https://github.com/calculix/calculix-mcp"
     assert new_server["installed_version"] == "2.21.0"
+
+
+def test_register_server_with_env_vars(client):
+    payload = {
+        "name": "Env Test Server",
+        "type": "stdio",
+        "command": ["python", "env_test.py"],
+        "category": "utilities",
+        "env_vars": {"CUSTOM_KEY": "CUSTOM_VAL"},
+    }
+    response = client.post("/api/mcp/servers", json=payload)
+    assert response.status_code == 201
+
+    servers_res = client.get("/api/mcp/servers")
+    servers = servers_res.json()["servers"]
+    new_server = next(s for s in servers if s["name"] == "Env Test Server")
+    assert new_server["env_vars"] == {"CUSTOM_KEY": "CUSTOM_VAL"}

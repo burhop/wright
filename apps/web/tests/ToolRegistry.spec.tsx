@@ -100,6 +100,7 @@ describe("ToolRegistryPage", () => {
       state: {
         activeSessionId: "session-1",
       },
+      refreshSessions: vi.fn(),
     });
     (useTools as any).mockReturnValue({
       servers: mockServers,

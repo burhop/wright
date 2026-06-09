@@ -23,6 +23,8 @@ from core.workspace import (
     get_all_workspaces,
     create_workspace_from_dashboard,
     get_workspace_by_id,
+    get_workspace_by_path,
+    update_workspace_remote_by_id,
     save_agent_context,
     load_agent_context,
     update_workspace_remote,
@@ -85,14 +87,20 @@ async def get_workspace_dir(
         home_dir = os.environ.get("HOME", os.path.expanduser("~"))
         workspace_path = os.path.join(home_dir, "workspace", session_id)
     os.makedirs(workspace_path, exist_ok=True)
-    workspace_id = str(uuid.uuid4())
-    create_workspace(
-        DATABASE_PATH,
-        workspace_id,
-        session_id,
-        workspace_path,
-        workspace_name=os.path.basename(workspace_path),
-    )
+    
+    # Check if there is an existing workspace with this local_path
+    existing = get_workspace_by_path(DATABASE_PATH, workspace_path)
+    if existing:
+        update_workspace_session(DATABASE_PATH, existing["workspace_id"], session_id)
+    else:
+        workspace_id = str(uuid.uuid4())
+        create_workspace(
+            DATABASE_PATH,
+            workspace_id,
+            session_id,
+            workspace_path,
+            workspace_name=os.path.basename(workspace_path),
+        )
     return workspace_path
 
 
@@ -107,7 +115,7 @@ async def list_workspace_files(
     mgr = WorkspaceManager(workspace_dir)
     tree = mgr.get_workspace_tree()
     # Override root node name with the human-readable workspace name
-    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
     if workspace:
         display_name = workspace.get("workspace_name") or os.path.basename(
             workspace["local_path"]
@@ -307,7 +315,7 @@ async def git_push_endpoint(
     body: GitPushPullRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
     workspace_dir = await get_workspace_dir(body.session_id, engine)
-    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
@@ -338,7 +346,7 @@ async def git_pull_endpoint(
     workspace_dir = await get_workspace_dir(body.session_id, engine)
     from core.workspace import MergeConflictError
 
-    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
@@ -378,7 +386,7 @@ async def git_pull_endpoint(
 async def get_workspace_config(
     session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
 ):
-    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
@@ -397,15 +405,15 @@ async def get_workspace_config(
 async def update_workspace_config(
     body: WorkspaceConfigRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
 ):
-    await get_workspace_dir(body.session_id, engine)
-    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    workspace_dir = await get_workspace_dir(body.session_id, engine)
+    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
         )
-    update_workspace_remote(
+    update_workspace_remote_by_id(
         DATABASE_PATH,
-        body.session_id,
+        workspace["workspace_id"],
         body.git_remote_url,
         body.git_username,
         body.git_token,
@@ -445,8 +453,11 @@ async def toggle_workspace_tool_endpoint(
         restart_hermes_background,
     )
 
+    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
+    workspace_path = workspace["local_path"] if workspace else None
+
     sync_workspace_tools_to_hermes(body.session_id, DATABASE_PATH)
-    restart_hermes_background()
+    restart_hermes_background(workspace_path)
 
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:
@@ -472,9 +483,52 @@ async def create_workspace_endpoint(
 ):
     logger.info("workspace_create", name=body.name, local_path=body.local_path)
     try:
-        session_info = await engine.create_session(body.local_path)
+        local_path = body.local_path
+        if not local_path:
+            from core.workspace import sanitize_workspace_name
+            sanitized = sanitize_workspace_name(body.name)
+            if not sanitized:
+                raise ValueError("Workspace name cannot be empty or invalid.")
+            home_dir = os.environ.get("HOME", os.path.expanduser("~"))
+            parent_dir = os.path.join(home_dir, "wright")
+            local_path = os.path.join(parent_dir, sanitized)
+
+        # Check DB for duplicate name or path
+        import sqlite3
+        conn = sqlite3.connect(DATABASE_PATH)
+        conn.row_factory = sqlite3.Row
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM engineering_workspaces WHERE local_path = ?",
+                (local_path,),
+            )
+            if cursor.fetchone():
+                raise ValueError(f"Workspace directory path already exists: {local_path}")
+
+            cursor.execute(
+                "SELECT * FROM engineering_workspaces WHERE workspace_name = ?",
+                (body.name.strip(),),
+            )
+            if cursor.fetchone():
+                raise ValueError(f"Workspace with name '{body.name}' already exists.")
+        finally:
+            conn.close()
+
+        # Check disk for existing folder
+        if os.path.exists(local_path):
+            raise ValueError(f"Workspace directory already exists on disk: {local_path}")
+
+        # Create folder and init git
+        os.makedirs(local_path, exist_ok=True)
+        WorkspaceManager(local_path)
+
+        # Create session in engine and save
+        from core.workspace import write_workspace_hermes_md
+        write_workspace_hermes_md(DATABASE_PATH, local_path)
+        session_info = await engine.create_session(local_path)
         ws = create_workspace_from_dashboard(
-            DATABASE_PATH, body.name, body.local_path, session_info.session_id
+            DATABASE_PATH, body.name, local_path, session_info.session_id
         )
         return serialize_workspace(ws)
     except ValueError as e:

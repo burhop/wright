@@ -1,7 +1,7 @@
 import json
 import secrets
 from typing import Optional, List, AsyncIterator
-from fastapi import APIRouter, Depends, Request, HTTPException, status
+from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import structlog
@@ -208,6 +208,9 @@ async def create_new_session(
         # Instantiate WorkspaceManager to automatically run git init
         WorkspaceManager(workspace_path)
 
+        from core.workspace import write_workspace_hermes_md
+        write_workspace_hermes_md(DATABASE_PATH, workspace_path)
+
         session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
 
@@ -271,13 +274,26 @@ async def create_new_session(
 
 @router.get("/sessions", response_model=SessionsListResponse)
 @traced("agent.session.list")
-async def list_agent_sessions(engine: BaseAgentEngine = Depends(get_agent_engine)):
+async def list_agent_sessions(
+    workspace_id: Optional[str] = None,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+):
     trace_id = get_current_trace_id()
-    log = logger.bind(trace_id=trace_id)
+    log = logger.bind(trace_id=trace_id, workspace_id=workspace_id)
     log.info("list_sessions_requested")
 
     try:
         sessions = await engine.list_sessions()
+        if workspace_id:
+            from core.workspace import get_workspace_by_id
+            from api.config import DATABASE_PATH
+            workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+            if workspace:
+                local_path = workspace["local_path"]
+                # Filter sessions where the workspace matches local_path
+                sessions = [s for s in sessions if s.workspace == local_path]
+            else:
+                sessions = []
         log.info("list_sessions_success", count=len(sessions))
         return SessionsListResponse(
             sessions=[
@@ -424,3 +440,22 @@ async def set_active_agent_endpoint(
                 logger.error("Failed to sync tools on agent switch: %s", e)
         return ActiveAgentResponse(agent=sync_manager.active_agent)
     return ActiveAgentResponse(agent="hermes")
+
+
+@router.post("/chat/cancel")
+@traced("agent.chat.cancel")
+async def cancel_chat_turn(
+    session_id: str = Query(...),
+    stream_id: str = Query(...),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+):
+    """Cancel a running chat turn stream."""
+    try:
+        ok = await engine.cancel_chat(session_id, stream_id)
+        return {"success": ok}
+    except Exception as exc:
+        logger.exception("chat_cancel_failed", error=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Failed to cancel chat turn: {str(exc)}",
+        )

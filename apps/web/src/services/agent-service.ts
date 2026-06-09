@@ -8,6 +8,7 @@ import { logger } from "./logger";
 const agentLogger = logger.child("HermesAgentService");
 
 export type AgentEvent =
+  | { type: "stream_start"; streamId: string }
   | { type: "token"; text: string }
   | { type: "tool"; name: string; preview: string; percentage?: number }
   | { type: "progress"; percentage: number; message: string }
@@ -47,6 +48,11 @@ const getApiBase = () => {
 const API_BASE = getApiBase();
 
 export class HermesAgentService {
+  private activeStreams = new Map<
+    string,
+    { eventSource: EventSource; abort: () => void }
+  >();
+
   async checkHealth(): Promise<ServiceHealthResult> {
     try {
       const response = await fetch(`${API_BASE}/api/agent/health`);
@@ -92,8 +98,11 @@ export class HermesAgentService {
     };
   }
 
-  async listSessions(): Promise<ChatSessionCompact[]> {
-    const response = await fetch(`${API_BASE}/api/agent/sessions`);
+  async listSessions(workspaceId?: string): Promise<ChatSessionCompact[]> {
+    const url = workspaceId
+      ? `${API_BASE}/api/agent/sessions?workspace_id=${encodeURIComponent(workspaceId)}`
+      : `${API_BASE}/api/agent/sessions`;
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to list sessions: ${response.statusText}`);
     }
@@ -149,17 +158,18 @@ export class HermesAgentService {
       const errData = await response.json().catch(() => ({}));
       agentLogger.error("Failed to initiate chat", {
         sessionId,
-        error: errData.detail,
+        error: errData.message || errData.detail,
       });
       yield {
         type: "error",
-        message: errData.detail || "Hermes agent is not available.",
+        message: errData.message || errData.detail || "Hermes agent is not available.",
       };
       return;
     }
 
     const { stream_id } = await response.json();
     agentLogger.info("Chat stream started", { sessionId, streamId: stream_id });
+    yield { type: "stream_start", streamId: stream_id };
 
     // 2. Consume SSE stream via browser Native EventSource
     const eventQueue: AgentEvent[] = [];
@@ -177,6 +187,13 @@ export class HermesAgentService {
         resolveQueue = null;
       }
     };
+
+    const abort = () => {
+      eventSource.close();
+      isDone = true;
+      pushEvent({ type: "error", message: "Stream cancelled by user." });
+    };
+    this.activeStreams.set(stream_id, { eventSource, abort });
 
     eventSource.addEventListener("token", (e: MessageEvent) => {
       try {
@@ -235,6 +252,7 @@ export class HermesAgentService {
     eventSource.addEventListener("stream_end", (_e: MessageEvent) => {
       agentLogger.info("Stream completed", { sessionId });
       eventSource.close();
+      this.activeStreams.delete(stream_id);
       pushEvent({
         type: "done",
         session: {
@@ -263,6 +281,7 @@ export class HermesAgentService {
         error: errMsg,
       });
       eventSource.close();
+      this.activeStreams.delete(stream_id);
       pushEvent({
         type: "error",
         message: e.data
@@ -288,6 +307,29 @@ export class HermesAgentService {
         }
       }
     }
+  }
+
+  async cancelStream(sessionId: string, streamId: string): Promise<boolean> {
+    const active = this.activeStreams.get(streamId);
+    if (active) {
+      active.abort();
+      this.activeStreams.delete(streamId);
+    }
+    try {
+      const response = await fetch(
+        `${API_BASE}/api/agent/chat/cancel?session_id=${encodeURIComponent(sessionId)}&stream_id=${encodeURIComponent(streamId)}`,
+        {
+          method: "POST",
+        },
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return data.success;
+      }
+    } catch (err) {
+      agentLogger.error("Failed to cancel stream on backend", err);
+    }
+    return false;
   }
 
   async getActiveAgent(): Promise<string> {

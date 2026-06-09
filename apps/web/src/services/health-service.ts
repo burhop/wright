@@ -40,34 +40,39 @@ export class LiveHealthService {
 
   private callbacks: Set<(statuses: ServiceStatus[]) => void> = new Set();
   private intervalId: ReturnType<typeof setInterval> | null = null;
+  private subscriberCount = 0;
 
   startPolling(intervalMs: number = 15000): void {
+    this.subscriberCount++;
     if (this.intervalId) return;
 
     const runChecks = async () => {
       const checks = this.statuses.map(async (svc) => {
-        try {
-          const response = await fetch(`${API_BASE}${svc.endpoint}`);
-          if (response.ok) {
-            const data = await response.json();
-            return {
-              ...svc,
-              state: data.state as "connected" | "disconnected",
-              lastChecked: Date.now(),
-            };
+        const fetchWithRetry = async (retries = 1): Promise<"connected" | "disconnected"> => {
+          try {
+            const response = await fetch(`${API_BASE}${svc.endpoint}`);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.state === "connected" || data.state === "disconnected") {
+                return data.state as "connected" | "disconnected";
+              }
+            }
+          } catch (err) {
+            // ignore and retry/fallback
           }
-          return {
-            ...svc,
-            state: "disconnected" as const,
-            lastChecked: Date.now(),
-          };
-        } catch {
-          return {
-            ...svc,
-            state: "disconnected" as const,
-            lastChecked: Date.now(),
-          };
-        }
+          if (retries > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            return fetchWithRetry(retries - 1);
+          }
+          return "disconnected";
+        };
+
+        const state = await fetchWithRetry();
+        return {
+          ...svc,
+          state,
+          lastChecked: Date.now(),
+        };
       });
 
       const updated = await Promise.all(checks);
@@ -80,7 +85,10 @@ export class LiveHealthService {
   }
 
   stopPolling(): void {
-    if (this.intervalId) {
+    if (this.subscriberCount > 0) {
+      this.subscriberCount--;
+    }
+    if (this.subscriberCount === 0 && this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }

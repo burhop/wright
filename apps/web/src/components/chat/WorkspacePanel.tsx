@@ -11,6 +11,7 @@ import { useChat } from "../../store/sessions";
 import {
   workspaceService,
   type WorkspaceNode,
+  type WorkspaceInfo,
   MergeConflictError,
 } from "../../services/workspace-service";
 import { agentService } from "../../services/agent-service";
@@ -56,8 +57,36 @@ export function WorkspacePanel({
   sessionId: propSessionId,
   onSessionChange,
 }: WorkspacePanelProps) {
-  const { state, createSession, selectSession, sendMessage } = useChat();
+  const { state, createSession, selectSession, sendMessage, refreshSessions, cancelActiveStream } = useChat();
   const navigate = useNavigate();
+
+  // Refresh sessions when workspace changes
+  useEffect(() => {
+    refreshSessions(_workspaceId);
+  }, [_workspaceId, refreshSessions]);
+
+  // Fetch workspace details when workspace changes
+  useEffect(() => {
+    if (!_workspaceId) return;
+    let isMounted = true;
+    const fetchWorkspaceInfo = async () => {
+      try {
+        const info = await workspaceService.getWorkspace(_workspaceId);
+        if (isMounted) {
+          setWorkspaceInfo(info);
+          if (info.local_path) {
+            setWorkspacePath(info.local_path);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch workspace info:", err);
+      }
+    };
+    fetchWorkspaceInfo();
+    return () => {
+      isMounted = false;
+    };
+  }, [_workspaceId]);
 
   // Sync the prop sessionId into global chat state on mount or when the prop changes.
   // Only depend on propSessionId to avoid loops from context-value churn.
@@ -218,6 +247,7 @@ export function WorkspacePanel({
   const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
     null,
   );
+  const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(null);
   const [workspacePath, setWorkspacePath] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -1035,7 +1065,7 @@ export function WorkspacePanel({
                 color: "var(--color-primary)",
               }}
             >
-              Workspace Files
+              {workspaceInfo?.workspace_name || "Workspace"} Files
             </div>
             <div
               style={{ flex: 1, overflowY: "auto", padding: "var(--space-sm)" }}
@@ -1998,7 +2028,8 @@ export function WorkspacePanel({
             >
               <MessageComposer
                 onSend={sendMessage}
-                disabled={state.isStreaming}
+                isStreaming={state.isStreaming}
+                onCancel={cancelActiveStream}
               />
             </div>
           )}

@@ -171,7 +171,7 @@ class WorkspaceListResponse(BaseModel):
 
 class WorkspaceCreateRequest(BaseModel):
     name: str
-    local_path: str
+    local_path: Optional[str] = None
 
 
 class WorkspaceActivateRequest(BaseModel):

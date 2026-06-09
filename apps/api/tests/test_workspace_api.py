@@ -28,6 +28,7 @@ class MockAgentEngine(BaseAgentEngine):
             created_at=1000,
             updated_at=1000,
             message_count=0,
+            workspace=workspace or self.workspace_path,
         )
 
     async def list_sessions(self) -> list[AgentSessionInfo]:
@@ -38,6 +39,7 @@ class MockAgentEngine(BaseAgentEngine):
                 created_at=1000,
                 updated_at=1000,
                 message_count=0,
+                workspace=self.workspace_path,
             ),
             AgentSessionInfo(
                 session_id="mock-session",
@@ -45,6 +47,7 @@ class MockAgentEngine(BaseAgentEngine):
                 created_at=1000,
                 updated_at=1000,
                 message_count=0,
+                workspace=self.workspace_path,
             ),
         ]
 
@@ -679,3 +682,412 @@ def test_workspace_session_update(client):
     # Verify the updated session ID in config
     response_config = client.get("/api/workspace/by-id/" + workspace_id)
     assert response_config.json()["session_id"] == "new-test-session"
+
+
+def test_agent_sessions_filtering_by_workspace(client):
+    # Ensure test-session exists
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    # Get the workspace config to get workspace_id
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    # Retrieve sessions with workspace_id query parameter
+    response_sessions = client.get("/api/agent/sessions", params={"workspace_id": workspace_id})
+    assert response_sessions.status_code == 200
+    sessions = response_sessions.json()["sessions"]
+    # Our MockAgentEngine lists test-session and mock-session under workspace_setup, so both should match
+    assert len(sessions) == 2
+    assert {s["session_id"] for s in sessions} == {"test-session", "mock-session"}
+
+    # Query with a non-existent workspace_id, should return empty sessions
+    response_empty = client.get("/api/agent/sessions", params={"workspace_id": "non-existent-workspace-uuid"})
+    assert response_empty.status_code == 200
+    assert len(response_empty.json()["sessions"]) == 0
+
+
+def test_workspace_activate_session_fallback(client):
+    from api.config import DATABASE_PATH
+    from core.workspace import create_workspace
+    import os
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Create a workspace record in the DB with a session that is missing from the active sessions
+        workspace_id = "test-fallback-workspace-uuid"
+        missing_session_id = "missing-session-id"
+        create_workspace(
+            DATABASE_PATH,
+            workspace_id,
+            missing_session_id,
+            temp_dir,
+            workspace_name="Fallback Test",
+        )
+
+        # Override mock engine's list_sessions to return an active session matching temp_dir
+        original_list_sessions = app.state.agent_engine.list_sessions
+        async def mock_list_sessions():
+            return [
+                AgentSessionInfo(
+                    session_id="matching-active-session",
+                    title="Active Session",
+                    created_at=1000,
+                    updated_at=1000,
+                    message_count=0,
+                    workspace=temp_dir,
+                )
+            ]
+        app.state.agent_engine.list_sessions = mock_list_sessions
+
+        try:
+            # Activate workspace using the missing session ID
+            response = client.post(
+                "/api/workspace/activate", json={"session_id": missing_session_id}
+            )
+            assert response.status_code == 200
+            data = response.json()
+            assert data["success"] is True
+            # It should have successfully fallen back to the active matching-active-session
+            assert data["session_id"] == "matching-active-session"
+            assert data["workspace_path"] == temp_dir
+        finally:
+            app.state.agent_engine.list_sessions = original_list_sessions
+
+
+def test_workspace_gitignore_setup(tmp_path):
+    from core.workspace import WorkspaceManager
+    import os
+    
+    # Initialize WorkspaceManager with a fresh directory
+    workspace_dir = str(tmp_path / "new_workspace")
+    manager = WorkspaceManager(workspace_dir)
+    
+    # Check if .gitignore was created
+    gitignore_path = os.path.join(workspace_dir, ".gitignore")
+    assert os.path.exists(gitignore_path)
+    
+    # Read gitignore content
+    with open(gitignore_path, "r") as f:
+        content = f.read()
+        
+    assert "tmp/\n" in content
+    assert "/tmp/\n" in content
+
+
+def test_compile_workspace_mcp_instructions(tmp_path):
+    from core.workspace import compile_workspace_mcp_instructions, create_workspace
+    import sqlite3
+    import json
+
+    db_path = str(tmp_path / "test.db")
+    # Initialize minimal schema
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS engineering_workspaces (
+            workspace_id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            workspace_name TEXT,
+            local_path TEXT NOT NULL,
+            git_remote_url TEXT,
+            git_username TEXT,
+            git_token TEXT,
+            enabled_tools TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+        """)
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS mcp_servers (
+            server_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL,
+            command TEXT,
+            is_active INTEGER NOT NULL DEFAULT 0,
+            is_installed INTEGER NOT NULL DEFAULT 0,
+            status TEXT NOT NULL DEFAULT 'inactive',
+            category TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            image_url TEXT,
+            description TEXT,
+            source_url TEXT,
+            installed_version TEXT,
+            env_vars TEXT,
+            instructions TEXT
+        )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+    # Seed an installed mcp server
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+        INSERT INTO mcp_servers (server_id, name, type, is_installed, instructions, created_at, updated_at)
+        VALUES ('mcp1', 'Test MCP', 'stdio', 1, 'Test instructions', 1000, 1000)
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+    # 1. Test compile when no workspace exists
+    assert compile_workspace_mcp_instructions(db_path, "/path/doesnt/exist") is None
+
+    # 2. Test compile when workspace exists with enabled_tools=None (defaults to all installed)
+    create_workspace(db_path, "ws1", "sess1", "/my/workspace", "My Workspace")
+    instructions = compile_workspace_mcp_instructions(db_path, "/my/workspace")
+    assert instructions is not None
+    assert "## Test MCP Instructions" in instructions
+    assert "Test instructions" in instructions
+
+    # 3. Test compile when workspace exists with empty enabled_tools (no tools enabled)
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("UPDATE engineering_workspaces SET enabled_tools = '[]'")
+        conn.commit()
+    finally:
+        conn.close()
+    assert compile_workspace_mcp_instructions(db_path, "/my/workspace") is None
+
+
+def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
+    from core.workspace import WorkspaceManager
+    import os
+    import tempfile
+
+    # Set up local workspace directory
+    workspace_dir = str(tmp_path / "local_workspace")
+    os.makedirs(workspace_dir, exist_ok=True)
+    manager = WorkspaceManager(workspace_dir)
+
+    # 1. Create a file in local workspace's tmp folder
+    local_tmp_dir = os.path.join(workspace_dir, "tmp", "openscad-mcp")
+    os.makedirs(local_tmp_dir, exist_ok=True)
+    local_file_path = os.path.join(local_tmp_dir, "test.scad")
+    with open(local_file_path, "w") as f:
+        f.write("local content")
+
+    # Verify that requesting "tmp/openscad-mcp/test.scad" resolves to the local path
+    resolved_local = manager.sanitize_path("tmp/openscad-mcp/test.scad")
+    assert resolved_local == local_file_path
+
+    # Verify that requesting "/tmp/openscad-mcp/test.scad" resolves to the local path
+    resolved_local_slash = manager.sanitize_path("/tmp/openscad-mcp/test.scad")
+    assert resolved_local_slash == local_file_path
+
+    # 2. Check system-wide fallback. We will use a tempfile in the real /tmp directory.
+    with tempfile.NamedTemporaryFile(dir="/tmp", prefix="global_test_", suffix=".scad", delete=False) as temp_global:
+        temp_global.write(b"global content")
+        global_path = temp_global.name
+
+    try:
+        # Requesting the global absolute path should resolve to the global path
+        resolved_global = manager.sanitize_path(global_path)
+        assert resolved_global == global_path
+    finally:
+        os.unlink(global_path)
+
+    # 3. For a file that does not exist anywhere, requesting it should default to local
+    nonexistent_path = "tmp/openscad-mcp/nonexistent.scad"
+    resolved_nonexistent = manager.sanitize_path(nonexistent_path)
+    expected_local = os.path.abspath(os.path.join(workspace_dir, nonexistent_path))
+    assert resolved_nonexistent == expected_local
+
+
+def test_activate_workspace_fallback_passes_instructions(tmp_path):
+    from core.workspace import activate_workspace, create_workspace
+    import sqlite3
+    import asyncio
+    import os
+
+    db_path = str(tmp_path / "test.db")
+    local_path = str(tmp_path / "my_workspace")
+    os.makedirs(local_path, exist_ok=True)
+
+    # Initialize minimal schema
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS engineering_workspaces (
+            workspace_id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            workspace_name TEXT,
+            local_path TEXT NOT NULL,
+            git_remote_url TEXT,
+            git_username TEXT,
+            git_token TEXT,
+            enabled_tools TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+        """)
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS mcp_servers (
+            server_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL,
+            command TEXT,
+            is_active INTEGER NOT NULL DEFAULT 0,
+            is_installed INTEGER NOT NULL DEFAULT 0,
+            status TEXT NOT NULL DEFAULT 'inactive',
+            category TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            image_url TEXT,
+            description TEXT,
+            source_url TEXT,
+            installed_version TEXT,
+            env_vars TEXT,
+            instructions TEXT
+        )
+        """)
+        # Seed workspace and an installed mcp server
+        create_workspace(db_path, "ws1", "missing-session", local_path, "My Workspace")
+        conn.execute("""
+        INSERT INTO mcp_servers (server_id, name, type, is_installed, instructions, created_at, updated_at)
+        VALUES ('mcp1', 'Test MCP', 'stdio', 1, 'My test instructions', 1000, 1000)
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+    # Define a mock engine
+    class MockEngine:
+        def __init__(self):
+            self.created_sessions = []
+
+        async def list_sessions(self):
+            # Return empty list to force fallback creation of a session
+            return []
+
+        async def create_session(self, workspace, instructions=None):
+            from agent_adapters import AgentSessionInfo
+            info = AgentSessionInfo(
+                session_id="new-fallback-session",
+                title="New Session",
+                created_at=1000,
+                updated_at=1000,
+                message_count=0,
+                workspace=workspace,
+            )
+            self.created_sessions.append((workspace, instructions))
+            return info
+
+    engine = MockEngine()
+    
+    # Activate workspace - this should trigger creating a fallback session and writing .hermes.md
+    session_id = asyncio.run(
+        activate_workspace(db_path, "missing-session", local_path, engine)
+    )
+
+    assert session_id == "new-fallback-session"
+    assert len(engine.created_sessions) == 1
+    workspace_path, instructions = engine.created_sessions[0]
+    assert workspace_path == local_path
+    assert instructions is None  # Handled via file instead
+
+    # Verify .hermes.md was written
+    hermes_md_path = os.path.join(local_path, ".hermes.md")
+    assert os.path.exists(hermes_md_path)
+    with open(hermes_md_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "<!-- WRIGHT MCP INSTRUCTIONS START -->" in content
+    assert "My test instructions" in content
+    assert "<!-- WRIGHT MCP INSTRUCTIONS END -->" in content
+
+
+def test_write_workspace_hermes_md(tmp_path):
+    from core.workspace import write_workspace_hermes_md, create_workspace
+    import sqlite3
+    import os
+
+    db_path = str(tmp_path / "test.db")
+    local_path = str(tmp_path / "my_workspace")
+    os.makedirs(local_path, exist_ok=True)
+
+    # Setup database
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS engineering_workspaces (
+            workspace_id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            workspace_name TEXT,
+            local_path TEXT NOT NULL,
+            git_remote_url TEXT,
+            git_username TEXT,
+            git_token TEXT,
+            enabled_tools TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+        """)
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS mcp_servers (
+            server_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL,
+            command TEXT,
+            is_active INTEGER NOT NULL DEFAULT 0,
+            is_installed INTEGER NOT NULL DEFAULT 0,
+            status TEXT NOT NULL DEFAULT 'inactive',
+            category TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            image_url TEXT,
+            description TEXT,
+            source_url TEXT,
+            installed_version TEXT,
+            env_vars TEXT,
+            instructions TEXT
+        )
+        """)
+        create_workspace(db_path, "ws1", "missing-session", local_path, "My Workspace")
+        conn.execute("""
+        INSERT INTO mcp_servers (server_id, name, type, is_installed, instructions, created_at, updated_at)
+        VALUES ('mcp1', 'Test MCP', 'stdio', 1, 'My test instructions', 1000, 1000)
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+    hermes_md_path = os.path.join(local_path, ".hermes.md")
+
+    # 1. Test first write (file doesn't exist)
+    write_workspace_hermes_md(db_path, local_path)
+    assert os.path.exists(hermes_md_path)
+    with open(hermes_md_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert "<!-- WRIGHT MCP INSTRUCTIONS START -->" in content
+    assert "My test instructions" in content
+    assert "<!-- WRIGHT MCP INSTRUCTIONS END -->" in content
+
+    # 2. Test preserving user content
+    user_rules = "# User Project Rules\n\nRule 1: Always do X.\n"
+    with open(hermes_md_path, "w", encoding="utf-8") as f:
+        f.write(user_rules + content)
+
+    # Modify instructions in DB
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("UPDATE mcp_servers SET instructions = 'Updated instructions' WHERE server_id = 'mcp1'")
+        conn.commit()
+    finally:
+        conn.close()
+
+    write_workspace_hermes_md(db_path, local_path)
+    with open(hermes_md_path, "r", encoding="utf-8") as f:
+        new_content = f.read()
+
+    assert "Rule 1: Always do X." in new_content
+    assert "Updated instructions" in new_content
+    assert "My test instructions" not in new_content
+
+
+
+
+

@@ -31,25 +31,42 @@ class HermesAdapter(BaseAgentEngine):
 
     async def check_health(self) -> dict:
         """Return {"state": "connected"|"disconnected", "latencyMs": float}."""
+        import asyncio
         start_time = time.perf_counter()
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(f"{self.base_url}/health", timeout=5.0)
-                latency = (time.perf_counter() - start_time) * 1000.0
-                if response.status_code == 200:
-                    return {"state": "connected", "latencyMs": latency}
-        except Exception as e:
-            logger.debug("Hermes health check failed: %s", e)
+        for attempt in range(2):
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(f"{self.base_url}/health", timeout=5.0)
+                    latency = (time.perf_counter() - start_time) * 1000.0
+                    if response.status_code == 200:
+                        return {"state": "connected", "latencyMs": latency}
+            except Exception as e:
+                logger.debug("Hermes health check attempt %d failed: %s", attempt + 1, e)
+            if attempt == 0:
+                await asyncio.sleep(0.5)
         return {"state": "disconnected", "latencyMs": 0.0}
 
-    async def create_session(self, workspace: str | None = None) -> AgentSessionInfo:
+    async def create_session(
+        self, workspace: str | None = None, instructions: str | None = None
+    ) -> AgentSessionInfo:
         """Create a new agent session."""
         async with httpx.AsyncClient() as client:
-            payload = {}
-            if workspace:
-                payload["workspace"] = workspace
+            if instructions:
+                messages = [{"role": "system", "content": instructions}]
+                payload = {
+                    "title": "Untitled",
+                    "workspace": workspace,
+                    "messages": messages,
+                }
+                url = f"{self.base_url}/api/session/import"
+            else:
+                payload = {}
+                if workspace:
+                    payload["workspace"] = workspace
+                url = f"{self.base_url}/api/session/new"
+
             response = await client.post(
-                f"{self.base_url}/api/session/new",
+                url,
                 json=payload,
                 headers=self.headers,
                 timeout=10.0,
@@ -63,32 +80,43 @@ class HermesAdapter(BaseAgentEngine):
                 created_at=int(session.get("created_at", 0) * 1000),
                 updated_at=int(session.get("updated_at", 0) * 1000),
                 message_count=session.get("message_count", 0),
+                workspace=session.get("workspace"),
             )
 
     async def list_sessions(self) -> list[AgentSessionInfo]:
         """List all sessions for this adapter's profile."""
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{self.base_url}/api/sessions?all_profiles=0",
-                headers=self.headers,
-                timeout=10.0,
-            )
-            response.raise_for_status()
-            data = response.json()
-            sessions = data.get("sessions", [])
-
-            result = []
-            for s in sessions:
-                result.append(
-                    AgentSessionInfo(
-                        session_id=s["session_id"],
-                        title=s.get("title", "Untitled"),
-                        created_at=int(s.get("created_at", 0) * 1000),
-                        updated_at=int(s.get("updated_at", 0) * 1000),
-                        message_count=s.get("message_count", 0),
+        import asyncio
+        for attempt in range(2):
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        f"{self.base_url}/api/sessions?all_profiles=0",
+                        headers=self.headers,
+                        timeout=10.0,
                     )
-                )
-            return result
+                    response.raise_for_status()
+                    data = response.json()
+                    sessions = data.get("sessions", [])
+
+                    result = []
+                    for s in sessions:
+                        result.append(
+                            AgentSessionInfo(
+                                session_id=s["session_id"],
+                                title=s.get("title", "Untitled"),
+                                created_at=int(s.get("created_at", 0) * 1000),
+                                updated_at=int(s.get("updated_at", 0) * 1000),
+                                message_count=s.get("message_count", 0),
+                                workspace=s.get("workspace"),
+                            )
+                        )
+                    return result
+            except Exception as e:
+                logger.debug("Hermes list_sessions attempt %d failed: %s", attempt + 1, e)
+                if attempt == 0:
+                    await asyncio.sleep(0.5)
+                else:
+                    raise
 
     async def delete_session(self, session_id: str) -> bool:
         """Delete a session. Returns True if deleted."""
@@ -295,3 +323,19 @@ class HermesAdapter(BaseAgentEngine):
         except Exception as e:
             logger.error("Failed to fetch commands from Hermes: %s", e)
             return []
+
+    async def cancel_chat(self, session_id: str, stream_id: str) -> bool:
+        """Cancel an active response stream by calling Hermes WebUI cancel endpoint."""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/api/chat/cancel?stream_id={stream_id}",
+                    headers=self.headers,
+                    timeout=5.0,
+                )
+                if response.status_code == 200:
+                    data = response.json()
+                    return data.get("ok", False)
+        except Exception as e:
+            logger.error("Failed to cancel chat stream %s: %s", stream_id, e)
+        return False

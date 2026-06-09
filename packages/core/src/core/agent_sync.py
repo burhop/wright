@@ -73,6 +73,38 @@ class AgentSyncManager:
         if not workspace:
             return
 
+        workspace_path = workspace["local_path"]
+        tmp_dir = os.path.join(workspace_path, "tmp")
+        os.makedirs(tmp_dir, exist_ok=True)
+
+        # Ensure tmp/ and /tmp/ are in .gitignore
+        gitignore_path = os.path.join(workspace_path, ".gitignore")
+        try:
+            if os.path.exists(gitignore_path):
+                with open(gitignore_path, "r") as f:
+                    lines = f.readlines()
+                cleaned_lines = [line.strip() for line in lines]
+                to_append = []
+                if "tmp/" not in cleaned_lines and "/tmp/" not in cleaned_lines:
+                    to_append.append("tmp/")
+                    to_append.append("/tmp/")
+                elif "tmp/" not in cleaned_lines:
+                    to_append.append("tmp/")
+                elif "/tmp/" not in cleaned_lines:
+                    to_append.append("/tmp/")
+                
+                if to_append:
+                    with open(gitignore_path, "a") as f:
+                        if lines and not lines[-1].endswith("\n"):
+                            f.write("\n")
+                        for item in to_append:
+                            f.write(f"{item}\n")
+            else:
+                with open(gitignore_path, "w") as f:
+                    f.write("tmp/\n/tmp/\n")
+        except Exception as e:
+            logger.warning("Failed to update .gitignore in _sync_to_hermes: %s", e)
+
         enabled_tools = get_workspace_enabled_tools(self.db_path, session_id)
 
         # We query all installed servers in the database
@@ -87,6 +119,81 @@ class AgentSyncManager:
         finally:
             conn.close()
 
+        # Rebuild the mcp_servers section first
+        new_mcp_servers = {}
+        for server in installed_servers:
+            key_name = "".join(c.lower() for c in server["name"] if c.isalnum())
+            if not key_name:
+                key_name = server["server_id"]
+
+            # Check if this server is enabled in the workspace session
+            is_enabled = True
+            if enabled_tools is not None:
+                is_enabled = (server["name"] in enabled_tools) or (
+                    server["server_id"] in enabled_tools
+                )
+
+            if is_enabled:
+                # Construct command and args
+                cmd_val = server["command"]
+                if not cmd_val:
+                    continue
+
+                import json
+                import shlex
+
+                # Parse command if stored as JSON list
+                if cmd_val.startswith("[") and cmd_val.endswith("]"):
+                    try:
+                        parsed_cmd = json.loads(cmd_val)
+                    except Exception:
+                        parsed_cmd = cmd_val
+                else:
+                    parsed_cmd = cmd_val
+
+                if isinstance(parsed_cmd, list):
+                    cmd = parsed_cmd[0]
+                    args = parsed_cmd[1:] if len(parsed_cmd) > 1 else []
+                else:
+                    parsed = shlex.split(parsed_cmd)
+                    cmd = parsed[0] if parsed else "echo"
+                    args = parsed[1:] if len(parsed) > 1 else []
+
+                srv_config = {"command": cmd, "args": args}
+                
+                # Parse custom_env from DB env_vars column
+                custom_env = {}
+                env_vars_raw = server.get("env_vars")
+                if env_vars_raw:
+                    try:
+                        import json
+                        parsed_env = json.loads(env_vars_raw)
+                        if isinstance(parsed_env, dict):
+                            custom_env = parsed_env
+                    except Exception:
+                        pass
+
+                # Set standard temp directory environment variables for all stdio servers
+                srv_config["env"] = {
+                    "TMPDIR": tmp_dir,
+                    "TEMP": tmp_dir,
+                    "TMP": tmp_dir,
+                }
+
+                if key_name == "openscadgeometry" or "openscad" in key_name:
+                    if "OPENSCAD_PATH" not in custom_env:
+                        srv_config["env"]["OPENSCAD_PATH"] = "/home/burhop/repos/wright/scripts/openscad-headless.sh"
+                    if "MCP_TEMP_DIR" not in custom_env:
+                        scad_temp_dir = os.path.join(tmp_dir, "openscad-mcp")
+                        os.makedirs(scad_temp_dir, exist_ok=True)
+                        srv_config["env"]["MCP_TEMP_DIR"] = scad_temp_dir
+
+                # Merge user-configured environment variables
+                srv_config["env"].update(custom_env)
+
+                new_mcp_servers[key_name] = srv_config
+
+        config_changed = False
         paths = [
             os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
             os.path.expanduser("~/.hermes/config.yaml"),
@@ -94,78 +201,78 @@ class AgentSyncManager:
 
         for path in paths:
             if not os.path.exists(path):
+                config_changed = True
+                try:
+                    os.makedirs(os.path.dirname(path), exist_ok=True)
+                    with open(path, "w") as f:
+                        yaml.safe_dump({"mcp_servers": new_mcp_servers}, f, default_flow_style=False)
+                except Exception as e:
+                    logger.error("Failed to write initial config to %s: %s", path, e)
                 continue
+
             try:
                 with open(path, "r") as f:
-                    config = yaml.safe_load(f) or {}
+                    old_config = yaml.safe_load(f) or {}
 
-                if "mcp_servers" not in config:
-                    config["mcp_servers"] = {}
+                import copy
+                new_config = copy.deepcopy(old_config)
+                new_config["mcp_servers"] = new_mcp_servers
 
-                # Rebuild the mcp_servers section
-                new_mcp_servers = {}
-                for server in installed_servers:
-                    key_name = "".join(c.lower() for c in server["name"] if c.isalnum())
-                    if not key_name:
-                        key_name = server["server_id"]
-
-                    # Check if this server is enabled in the workspace session
-                    is_enabled = True
-                    if enabled_tools is not None:
-                        is_enabled = (server["name"] in enabled_tools) or (
-                            server["server_id"] in enabled_tools
-                        )
-
-                    if is_enabled:
-                        # Construct command and args
-                        cmd_val = server["command"]
-                        if not cmd_val:
-                            continue
-
-                        import json
-                        import shlex
-
-                        # Parse command if stored as JSON list
-                        if cmd_val.startswith("[") and cmd_val.endswith("]"):
-                            try:
-                                parsed_cmd = json.loads(cmd_val)
-                            except Exception:
-                                parsed_cmd = cmd_val
-                        else:
-                            parsed_cmd = cmd_val
-
-                        if isinstance(parsed_cmd, list):
-                            cmd = parsed_cmd[0]
-                            args = parsed_cmd[1:] if len(parsed_cmd) > 1 else []
-                        else:
-                            parsed = shlex.split(parsed_cmd)
-                            cmd = parsed[0] if parsed else "echo"
-                            args = parsed[1:] if len(parsed) > 1 else []
-
-                        srv_config = {"command": cmd, "args": args}
-                        if key_name == "openscadgeometry" or "openscad" in key_name:
-                            srv_config["env"] = {
-                                "OPENSCAD_PATH": "/home/burhop/repos/wright/scripts/openscad-headless.sh"
-                            }
-                        new_mcp_servers[key_name] = srv_config
-
-                config["mcp_servers"] = new_mcp_servers
-                with open(path, "w") as f:
-                    yaml.safe_dump(config, f, default_flow_style=False)
-
+                if old_config != new_config:
+                    config_changed = True
+                    with open(path, "w") as f:
+                        yaml.safe_dump(new_config, f, default_flow_style=False)
             except Exception as e:
-                logger.error("Failed to sync workspace tools to Hermes: %s", e)
+                logger.error("Failed to sync workspace tools to Hermes path %s: %s", path, e)
+                config_changed = True
+
+        if not config_changed:
+            logger.info("Hermes configuration has not changed. Skipping restart.")
+            return
 
         # Restart Hermes WebUI in background to reload config
         try:
+            # Preemptively terminate any running process bound to port 8788
+            # and wait a short duration to ensure the socket is fully released.
+            kill_cmd = "fuser -k -n tcp 8788 || true"
+            subprocess.run(kill_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=2.0)
+            import time
+            time.sleep(0.5)
+        except Exception as e:
+            logger.error("Failed to run fuser to kill port 8788: %s", e)
+
+        try:
             subprocess.Popen(
-                'export HERMES_HOME="$HOME/.hermes/profiles/wright" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788',
+                f'export HERMES_HOME="$HOME/.hermes/profiles/wright" && export TMPDIR="{tmp_dir}" && export TEMP="{tmp_dir}" && export TMP="{tmp_dir}" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788',
                 shell=True,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
+            # Wait for Hermes WebUI to be healthy before returning
+            import urllib.request
+            import json
+            import time
+
+            port = int(os.environ.get("HERMES_WEBUI_PORT", "8788"))
+            health_url = f"http://127.0.0.1:{port}/health"
+            logger.info("Waiting for Hermes WebUI to start up on port %d...", port)
+
+            for attempt in range(20):
+                try:
+                    with urllib.request.urlopen(health_url, timeout=1.0) as response:
+                        if response.status == 200:
+                            data = json.loads(response.read().decode())
+                            if data.get("status") == "ok":
+                                logger.info("Hermes WebUI successfully restarted and is healthy.")
+                                break
+                except Exception:
+                    pass
+                time.sleep(0.5)
+            else:
+                logger.warning("Hermes WebUI did not respond with 'ok' status in time after restart.")
         except Exception as e:
             logger.error("Failed to restart Hermes WebUI: %s", e)
+
 
     def _sync_to_stub_agent(self, session_id: str, agent_name: str) -> None:
         """Simulate syncing workspace tools to a generalized agent (e.g. openclaw or PI)."""

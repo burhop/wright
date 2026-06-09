@@ -7,6 +7,27 @@ from typing import Dict, Any, Optional
 logger = structlog.get_logger(__name__)
 
 
+def sanitize_workspace_name(name: str) -> str:
+    """Sanitize a workspace name to construct a safe directory name.
+
+    Converts to lowercase, replaces non-alphanumeric (excluding hyphens/underscores)
+    with hyphens, merges consecutive hyphens, and strips leading/trailing hyphens.
+    """
+    import re
+
+    if not name:
+        return ""
+    # Lowercase
+    clean = name.lower()
+    # Replace non-alphanumeric and non-underscores/hyphens with a hyphen
+    clean = re.sub(r"[^a-z0-9_-]", "-", clean)
+    # Replace consecutive hyphens with a single hyphen
+    clean = re.sub(r"-+", "-", clean)
+    # Strip leading/trailing hyphens/underscores
+    clean = clean.strip("-_")
+    return clean
+
+
 def _get_db_conn(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
@@ -222,6 +243,41 @@ def get_workspace_by_id(db_path: str, workspace_id: str) -> Optional[Dict[str, A
         return dict(row) if row else None
 
 
+def get_workspace_by_path(db_path: str, local_path: str) -> Optional[Dict[str, Any]]:
+    """Fetch a single workspace by its local_path."""
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM engineering_workspaces WHERE local_path = ?",
+            (local_path,),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def update_workspace_remote_by_id(
+    db_path: str,
+    workspace_id: str,
+    git_remote_url: Optional[str],
+    git_username: Optional[str],
+    git_token: Optional[str],
+) -> None:
+    """Update workspace Git remote credentials using workspace_id."""
+    import time
+
+    now = int(time.time())
+    with _get_db_conn(db_path) as conn:
+        conn.execute(
+            """
+            UPDATE engineering_workspaces
+            SET git_remote_url = ?, git_username = ?, git_token = ?, updated_at = ?
+            WHERE workspace_id = ?
+            """,
+            (git_remote_url, git_username, git_token, now, workspace_id),
+        )
+        conn.commit()
+
+
 def update_workspace_session(db_path: str, workspace_id: str, session_id: str) -> None:
     """Update the associated session_id of a workspace."""
     import time
@@ -278,6 +334,7 @@ async def activate_workspace(
     Returns the (possibly updated) session_id.
     """
     import time
+    import sqlite3
 
     try:
         sessions = await engine.list_sessions()
@@ -286,12 +343,32 @@ async def activate_workspace(
             logger.info(
                 "agent_session_missing", session_id=session_id, local_path=local_path
             )
-            session_info = await engine.create_session(local_path)
+            # Find an existing session belonging to this local_path
+            fallback_session = None
+            workspace_sessions = sorted(
+                [s for s in sessions if s.workspace == local_path],
+                key=lambda s: s.updated_at,
+                reverse=True,
+            )
+            if workspace_sessions:
+                fallback_session = workspace_sessions[0]
+                logger.info(
+                    "agent_session_fallback_found",
+                    session_id=fallback_session.session_id,
+                    local_path=local_path,
+                )
+                session_info = fallback_session
+            else:
+                # None found, create a new one
+                logger.info("creating_new_session_for_fallback", local_path=local_path)
+                write_workspace_hermes_md(db_path, local_path)
+                session_info = await engine.create_session(local_path)
+
             conn = sqlite3.connect(db_path)
             try:
                 conn.execute(
-                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE session_id = ?",
-                    (session_info.session_id, int(time.time()), session_id),
+                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE local_path = ?",
+                    (session_info.session_id, int(time.time()), local_path),
                 )
                 conn.commit()
                 logger.info(
@@ -391,6 +468,8 @@ class WorkspaceManager:
                     f.write("# Auto-generated .gitignore for Engineering Workspace\n")
                     f.write("*.log\n")
                     f.write("*.tmp\n")
+                    f.write("tmp/\n")
+                    f.write("/tmp/\n")
                 logger.info("Created default .gitignore in %s", gitignore_path)
             except Exception as e:
                 logger.error("Failed to create .gitignore in %s: %s", gitignore_path, e)
@@ -447,12 +526,19 @@ class WorkspaceManager:
         """Sanitize relative path and resolve to absolute path under base_dir or allow /tmp/ to prevent path traversal."""
         # Support paths inside /tmp/ (e.g. for geometry/exports scratchpads)
         if relative_path.startswith("/tmp/") or relative_path.startswith("tmp/"):
+            # Try to resolve relative to workspace base_dir first (workspace-local tmp)
+            local_resolved = os.path.abspath(os.path.join(self.base_dir, relative_path.lstrip("/")))
+            if os.path.exists(local_resolved):
+                return local_resolved
+
             if relative_path.startswith("tmp/"):
                 resolved = os.path.abspath("/" + relative_path)
             else:
                 resolved = os.path.abspath(relative_path)
             if resolved.startswith("/tmp/"):
-                return resolved
+                if os.path.exists(resolved):
+                    return resolved
+                return local_resolved
             else:
                 raise ValueError("Access denied: path traversal attempt detected.")
 
@@ -922,3 +1008,129 @@ class WorkspaceManager:
 
             logger.error("Failed to pull changes: %s\nStderr: %s", e, e.stderr)
             raise RuntimeError(f"Failed to pull changes: {e.stderr.strip() or str(e)}")
+
+
+def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optional[str]:
+    """Compile instructions of enabled MCP servers for a given workspace path."""
+    import os
+    import json
+    import sqlite3
+
+    if not os.path.exists(db_path):
+        return None
+
+    enabled_tools = None
+    workspace_exists = False
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT enabled_tools FROM engineering_workspaces WHERE local_path = ?",
+            (local_path,),
+        )
+        row = cursor.fetchone()
+        if row:
+            workspace_exists = True
+            if row["enabled_tools"]:
+                try:
+                    enabled_tools = json.loads(row["enabled_tools"])
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    finally:
+        conn.close()
+
+    if not workspace_exists:
+        return None
+
+    installed_servers = []
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    try:
+        cursor = conn.cursor()
+        # Ensure we have instructions column
+        cursor.execute("PRAGMA table_info(mcp_servers)")
+        columns = [col[1] for col in cursor.fetchall()]
+        if "instructions" in columns:
+            cursor.execute("SELECT name, server_id, instructions FROM mcp_servers WHERE is_installed = 1")
+            installed_servers = [dict(row) for row in cursor.fetchall()]
+    except Exception:
+        pass
+    finally:
+        conn.close()
+
+    active_instructions = []
+    for srv in installed_servers:
+        is_enabled = True
+        if enabled_tools is not None:
+            is_enabled = (srv["name"] in enabled_tools) or (srv["server_id"] in enabled_tools)
+        if is_enabled and srv.get("instructions"):
+            active_instructions.append(f"## {srv['name']} Instructions\n{srv['instructions']}")
+
+    if active_instructions:
+        return (
+            "Here are the instructions on how to use the loaded MCP tools within the Wright platform:\n\n"
+            + "\n\n".join(active_instructions)
+        )
+    return None
+
+
+def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
+    """Compile workspace MCP instructions and write them to .hermes.md in the workspace directory.
+
+    If the .hermes.md file already exists, preserves user's custom instructions outside of
+    the Wright MCP instructions block.
+    """
+    import os
+    import re
+
+    if not os.path.exists(local_path):
+        return
+
+    instructions = compile_workspace_mcp_instructions(db_path, local_path)
+    hermes_md_path = os.path.join(local_path, ".hermes.md")
+
+    start_marker = "<!-- WRIGHT MCP INSTRUCTIONS START -->"
+    end_marker = "<!-- WRIGHT MCP INSTRUCTIONS END -->"
+
+    generated_block = ""
+    if instructions:
+        generated_block = f"{start_marker}\n{instructions}\n{end_marker}"
+    else:
+        # If there are no instructions, clear the block
+        generated_block = f"{start_marker}\n{end_marker}"
+
+    existing_content = ""
+    if os.path.exists(hermes_md_path):
+        try:
+            with open(hermes_md_path, "r", encoding="utf-8") as f:
+                existing_content = f.read()
+        except Exception:
+            pass
+
+    if start_marker in existing_content and end_marker in existing_content:
+        # Replace the existing block
+        pattern = re.compile(
+            rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}",
+            re.DOTALL
+        )
+        new_content = pattern.sub(generated_block, existing_content)
+    elif start_marker in existing_content or end_marker in existing_content:
+        # Markers are mismatched or incomplete, append to the end
+        new_content = existing_content.rstrip() + "\n\n" + generated_block
+    else:
+        # Markers not found
+        if existing_content.strip():
+            new_content = existing_content.rstrip() + "\n\n" + generated_block
+        else:
+            new_content = generated_block
+
+    try:
+        with open(hermes_md_path, "w", encoding="utf-8") as f:
+            f.write(new_content.strip() + "\n")
+    except Exception as e:
+        logger.error("Failed to write .hermes.md: %s", e)
+
+

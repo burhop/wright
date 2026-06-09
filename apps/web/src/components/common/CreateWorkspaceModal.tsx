@@ -17,50 +17,19 @@ export function CreateWorkspaceModal({
   onCreated,
 }: CreateWorkspaceModalProps) {
   const [name, setName] = useState("");
-  const [localPath, setLocalPath] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const [defaultDir, setDefaultDir] = useState("/home/burhop/wright");
-  const [isPathManuallyEdited, setIsPathManuallyEdited] = useState(false);
 
   useEffect(() => {
     console.log("[DEBUG] CreateWorkspaceModal useEffect, isOpen:", isOpen);
     if (isOpen) {
-      const fetchDefaultDir = async () => {
-        try {
-          console.log("[DEBUG] fetching default workspace dir...");
-          const dir = await workspaceService.getDefaultWorkspaceDir();
-          console.log("[DEBUG] default workspace dir resolved:", dir);
-          setDefaultDir(dir);
-          setLocalPath(dir + "/");
-        } catch (err) {
-          console.error("[DEBUG] Failed to load default workspace dir:", err);
-          setLocalPath("/home/burhop/wright/");
-        }
-      };
-      fetchDefaultDir();
       setName("");
-      setIsPathManuallyEdited(false);
       setError(null);
     }
   }, [isOpen]);
 
   const handleNameChange = (val: string) => {
     setName(val);
-    if (!isPathManuallyEdited) {
-      const folderName = val
-        .toLowerCase()
-        .replace(/[^a-z0-9-_]/g, "-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
-      setLocalPath(defaultDir + "/" + folderName);
-    }
-  };
-
-  const handlePathChange = (val: string) => {
-    setLocalPath(val);
-    setIsPathManuallyEdited(true);
   };
 
   if (!isOpen) return null;
@@ -72,23 +41,13 @@ export function CreateWorkspaceModal({
       setError("Workspace name is required.");
       return;
     }
-    if (!localPath.trim()) {
-      setError("Project directory path is required.");
-      return;
-    }
-    if (!localPath.startsWith("/")) {
-      setError("Path must be an absolute path (starts with /).");
-      return;
-    }
 
     setIsSubmitting(true);
     try {
       const workspace = await workspaceService.createWorkspace(
         name.trim(),
-        localPath.trim(),
       );
       setName("");
-      setLocalPath("");
       onCreated(workspace);
     } catch (err) {
       const message =
@@ -101,7 +60,6 @@ export function CreateWorkspaceModal({
 
   const handleClose = () => {
     setName("");
-    setLocalPath("");
     setError(null);
     onClose();
   };
@@ -221,57 +179,6 @@ export function CreateWorkspaceModal({
                 e.currentTarget.style.borderColor = "var(--color-border)";
               }}
             />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "var(--space-xs)",
-            }}
-          >
-            <label
-              style={{
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                color: "var(--color-primary)",
-              }}
-            >
-              Project Directory
-            </label>
-            <input
-              id="workspace-path-input"
-              type="text"
-              placeholder="/home/user/projects/my-project"
-              value={localPath}
-              onChange={(e) => handlePathChange(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "var(--space-md) var(--space-lg)",
-                backgroundColor: "var(--color-surface-subtle)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                color: "var(--color-primary)",
-                fontSize: "0.95rem",
-                fontFamily: "var(--font-mono)",
-                outline: "none",
-                transition: "border-color var(--transition-fast)",
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-border)";
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSubmit();
-              }}
-            />
-            <span
-              style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
-            >
-              Absolute path to the project directory on this machine.
-            </span>
           </div>
         </div>
 

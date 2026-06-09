@@ -35,6 +35,19 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/37583508?s=64",
         "description": "Renders and validates OpenSCAD models. Generates high-fidelity PNG previews and animations from .scad scripts, closing the AI design loop without a GUI.",
         "source_url": "https://github.com/quellant/openscad-mcp",
+        "instructions": (
+            "1. Deliverables & Final Assets: When creating, modifying, or exporting final files requested by the user "
+            "(such as .scad OpenSCAD source files, .stl/.3mf 3D print exports, or final .png/.jpg rendering images), "
+            "always place them directly in the main workspace root directory (which is the current working directory, e.g. './'), "
+            "or inside user-visible folders there (e.g. './models/', './exports/', or './renders/').\n"
+            "   - For OpenSCAD model tools (create_model, update_model etc.), specify the workspace parameter pointing "
+            "to the workspace root directory (the current working directory '.' or the absolute path).\n"
+            "   - For OpenSCAD export tools (export_model), specify the output_path parameter pointing to the workspace "
+            "root or a subfolder (e.g. './cube.stl') so they do not default to temporary directories.\n"
+            "   - For any image render output files, write/save them directly to a user-accessible path in the workspace root or './renders/' instead of storing them in the tmp/ directory.\n"
+            "2. Intermediate & Working Files: Only use the tmp/ folder (which maps to the workspace's local tmp/ folder) "
+            "for transient internal renders, scratch files, build outputs, cache files, and logs. Do NOT put final files, exports, or requested images in tmp/."
+        ),
     },
     {
         "server_id": "openscad-linter-trikos529",
@@ -400,7 +413,9 @@ def run_migrations():
             image_url TEXT,
             description TEXT,
             source_url TEXT,
-            installed_version TEXT
+            installed_version TEXT,
+            env_vars TEXT,
+            instructions TEXT
         );
         """)
 
@@ -445,8 +460,8 @@ def run_migrations():
             INSERT OR IGNORE INTO mcp_servers 
                 (server_id, name, type, command, is_active, is_installed, status,
                  category, created_at, updated_at, image_url, description,
-                 source_url, installed_version)
-            VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, NULL)
+                 source_url, instructions, installed_version)
+            VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, ?, NULL)
             """,
                 (
                     entry["server_id"],
@@ -459,6 +474,7 @@ def run_migrations():
                     entry.get("image_url"),
                     entry["description"],
                     entry.get("source_url"),
+                    entry.get("instructions"),
                 ),
             )
 
@@ -469,13 +485,15 @@ def run_migrations():
             UPDATE mcp_servers
             SET image_url = COALESCE(image_url, ?),
                 description = COALESCE(description, ?),
-                source_url = COALESCE(source_url, ?)
+                source_url = COALESCE(source_url, ?),
+                instructions = COALESCE(instructions, ?)
             WHERE server_id = ?
             """,
                 (
                     entry.get("image_url"),
                     entry["description"],
                     entry.get("source_url"),
+                    entry.get("instructions"),
                     entry["server_id"],
                 ),
             )
@@ -519,6 +537,8 @@ def run_migrations():
             ("description", "TEXT"),
             ("source_url", "TEXT"),
             ("installed_version", "TEXT"),
+            ("env_vars", "TEXT"),
+            ("instructions", "TEXT"),
         ]
         for col_name, col_def in new_cols:
             if mcp_columns and col_name not in mcp_columns:

@@ -46,6 +46,7 @@ class AgentSessionInfo:
     created_at: int
     updated_at: int
     message_count: int
+    workspace: str | None = None
 
 
 @dataclass
@@ -68,7 +69,9 @@ class BaseAgentEngine(ABC):
         pass
 
     @abstractmethod
-    async def create_session(self, workspace: str | None = None) -> AgentSessionInfo:
+    async def create_session(
+        self, workspace: str | None = None, instructions: str | None = None
+    ) -> AgentSessionInfo:
         """Create a new agent session."""
         pass
 
@@ -120,3 +123,7 @@ class BaseAgentEngine(ABC):
     async def get_commands(self) -> list[AgentCommand]:
         """Retrieve the available slash commands from the agent engine."""
         pass
+
+    async def cancel_chat(self, session_id: str, stream_id: str) -> bool:
+        """Cancel an active response stream. Returns True if successfully accepted."""
+        return False

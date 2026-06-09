@@ -13,6 +13,8 @@ def ensure_migrations(conn: sqlite3.Connection) -> None:
         ("description", "TEXT DEFAULT NULL"),
         ("source_url", "TEXT DEFAULT NULL"),
         ("installed_version", "TEXT DEFAULT NULL"),
+        ("env_vars", "TEXT DEFAULT NULL"),
+        ("instructions", "TEXT DEFAULT NULL"),
     ]
     for col_name, col_type in columns:
         try:
@@ -54,6 +56,14 @@ def _serialize_command(cmd: Optional[Union[List[str], str]]) -> Optional[str]:
 
 
 def _row_to_server(row: sqlite3.Row) -> McpServer:
+    env_vars_raw = row["env_vars"] if "env_vars" in row.keys() else None
+    env_vars = None
+    if env_vars_raw:
+        try:
+            env_vars = json.loads(env_vars_raw)
+        except Exception:
+            pass
+
     return McpServer(
         server_id=row["server_id"],
         name=row["name"],
@@ -74,6 +84,8 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         installed_version=row["installed_version"]
         if "installed_version" in row.keys()
         else None,
+        env_vars=env_vars,
+        instructions=row["instructions"] if "instructions" in row.keys() else None,
     )
 
 
@@ -124,8 +136,8 @@ def insert_server(db_path: str, server: McpServer) -> None:
             """
             INSERT INTO mcp_servers (
                 server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at,
-                image_url, description, source_url, installed_version
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                image_url, description, source_url, installed_version, env_vars, instructions
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -143,6 +155,8 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.description,
                 server.source_url,
                 server.installed_version,
+                json.dumps(server.env_vars) if server.env_vars else None,
+                server.instructions,
             ),
         )
         conn.commit()
@@ -172,9 +186,13 @@ def update_server(
             "description",
             "source_url",
             "installed_version",
+            "instructions",
         ):
             set_clauses.append(f"{key} = ?")
             params.append(value)
+        elif key == "env_vars":
+            set_clauses.append("env_vars = ?")
+            params.append(json.dumps(value) if value else None)
         elif key == "command":
             set_clauses.append("command = ?")
             params.append(_serialize_command(value))

@@ -136,6 +136,7 @@ async def register_server(
         description=body.description,
         source_url=body.source_url,
         installed_version=body.installed_version,
+        env_vars=body.env_vars,
     )
     try:
         insert_server(engine.db_path, new_server)

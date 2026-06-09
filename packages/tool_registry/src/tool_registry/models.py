@@ -18,6 +18,8 @@ class McpServer(BaseModel):
     description: Optional[str] = None
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
+    env_vars: Optional[dict[str, str]] = None
+    instructions: Optional[str] = None
 
 
 class McpServerCreate(BaseModel):
@@ -29,12 +31,16 @@ class McpServerCreate(BaseModel):
     description: Optional[str] = None
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
+    env_vars: Optional[dict[str, str]] = None
+    instructions: Optional[str] = None
 
 
 class McpServerUpdate(BaseModel):
     is_active: Optional[bool] = None
     status: Optional[Literal["active", "inactive", "error"]] = None
     error_message: Optional[str] = None
+    env_vars: Optional[dict[str, str]] = None
+    instructions: Optional[str] = None
 
 
 class McpTool(BaseModel):

@@ -13,11 +13,15 @@ import { AttachmentPill } from "./AttachmentPill";
 interface MessageComposerProps {
   onSend: (message: string, attachments?: string[]) => void;
   disabled?: boolean;
+  isStreaming?: boolean;
+  onCancel?: () => void;
 }
 
 export function MessageComposer({
   onSend,
   disabled = false,
+  isStreaming = false,
+  onCancel,
 }: MessageComposerProps) {
   const [text, setText] = useState("");
   const [attachments, setAttachments] = useState<VaultFile[]>([]);
@@ -228,12 +232,7 @@ export function MessageComposer({
         onChange={handleTextChange}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
-        placeholder={
-          disabled
-            ? "Streaming response..."
-            : "Type your engineering query... (or paste an image)"
-        }
-        disabled={disabled}
+        placeholder="Type your engineering query... (or paste an image)"
         style={{
           width: "100%",
           boxSizing: "border-box",
@@ -380,49 +379,86 @@ export function MessageComposer({
           )}
         </div>
 
-        <button
-          data-testid="composer-send"
-          onClick={handleSend}
-          disabled={(!text.trim() && attachments.length === 0) || disabled}
-          style={{
-            width: "28px",
-            height: "28px",
-            flexShrink: 0,
-            borderRadius: "50%",
-            backgroundColor:
-              (text.trim() || attachments.length > 0) && !disabled
-                ? "var(--color-secondary)"
-                : "var(--color-surface)",
-            color:
-              (text.trim() || attachments.length > 0) && !disabled
-                ? "var(--color-neutral)"
-                : "var(--color-secondary)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all 0.2s ease",
-            cursor:
-              (text.trim() || attachments.length > 0) && !disabled
-                ? "pointer"
-                : "default",
-            border: "1px solid var(--color-border)",
-          }}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginLeft: "-2px" }}
+        <div style={{ display: "flex", gap: "var(--space-xs)", alignItems: "center" }}>
+          {isStreaming && onCancel && (
+            <button
+              data-testid="composer-cancel"
+              onClick={onCancel}
+              title="Cancel execution"
+              style={{
+                width: "28px",
+                height: "28px",
+                flexShrink: 0,
+                borderRadius: "50%",
+                backgroundColor: "var(--color-surface)",
+                color: "#ef4444",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s ease",
+                cursor: "pointer",
+                border: "1px solid var(--color-border)",
+              }}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              </svg>
+            </button>
+          )}
+
+          <button
+            data-testid="composer-send"
+            onClick={handleSend}
+            disabled={!text.trim() && attachments.length === 0}
+            style={{
+              width: "28px",
+              height: "28px",
+              flexShrink: 0,
+              borderRadius: "50%",
+              backgroundColor:
+                (text.trim() || attachments.length > 0)
+                  ? "var(--color-secondary)"
+                  : "var(--color-surface)",
+              color:
+                (text.trim() || attachments.length > 0)
+                  ? "var(--color-neutral)"
+                  : "var(--color-secondary)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s ease",
+              cursor:
+                (text.trim() || attachments.length > 0)
+                  ? "pointer"
+                  : "default",
+              border: "1px solid var(--color-border)",
+            }}
           >
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-        </button>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ marginLeft: "-2px" }}
+            >
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );

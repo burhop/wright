@@ -238,3 +238,62 @@ async def test_hermes_adapter_get_chat_history():
             headers=adapter.headers,
             timeout=10.0,
         )
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_cancel_chat():
+    adapter = HermesAdapter("http://127.0.0.1:8788")
+
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"ok": True}
+
+    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = mock_response
+        result = await adapter.cancel_chat("session123", "stream123")
+
+        assert result is True
+        mock_get.assert_called_once_with(
+            "http://127.0.0.1:8788/api/chat/cancel?stream_id=stream123",
+            headers=adapter.headers,
+            timeout=5.0,
+        )
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_create_session_with_instructions():
+    adapter = HermesAdapter("http://127.0.0.1:8788")
+
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "session": {
+            "session_id": "imported_session_123",
+            "title": "Untitled",
+            "created_at": 1780423855.15,
+            "updated_at": 1780423855.15,
+            "message_count": 1,
+            "workspace": "/home/workspace",
+        }
+    }
+
+    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+        mock_post.return_value = mock_response
+        session_info = await adapter.create_session("/home/workspace", instructions="Please place files in root")
+
+        assert session_info.session_id == "imported_session_123"
+        assert session_info.workspace == "/home/workspace"
+
+        mock_post.assert_called_once_with(
+            "http://127.0.0.1:8788/api/session/import",
+            json={
+                "title": "Untitled",
+                "workspace": "/home/workspace",
+                "messages": [
+                    {"role": "system", "content": "Please place files in root"}
+                ],
+            },
+            headers=adapter.headers,
+            timeout=10.0,
+        )
+

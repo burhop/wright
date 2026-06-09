@@ -65,10 +65,12 @@ def test_pydantic_models():
         category="simulation",
         created_at=123,
         updated_at=456,
+        env_vars={"KEY": "VAL"},
     )
     assert server.name == "Test CLI"
     assert server.command == ["uv", "run", "cli"]
     assert server.is_active is True
+    assert server.env_vars == {"KEY": "VAL"}
 
     tool = McpTool(
         tool_id="test-id:tool",
@@ -95,6 +97,7 @@ def test_database_crud(temp_db_path):
         status="inactive",
         created_at=int(time.time()),
         updated_at=int(time.time()),
+        env_vars={"MY_ENV_VAR": "my_val"},
     )
     insert_server(temp_db_path, server)
 
@@ -104,6 +107,7 @@ def test_database_crud(temp_db_path):
     assert fetched.name == "Test SQLite Server"
     assert fetched.command == ["python", "test.py"]
     assert fetched.is_active is False
+    assert fetched.env_vars == {"MY_ENV_VAR": "my_val"}
 
     # Get Servers list
     servers = get_servers(temp_db_path)
@@ -111,10 +115,11 @@ def test_database_crud(temp_db_path):
 
     # Update Server
     updated = update_server(
-        temp_db_path, server_id, {"is_active": True, "status": "active"}
+        temp_db_path, server_id, {"is_active": True, "status": "active", "env_vars": {"NEW_VAR": "new_val"}}
     )
     assert updated.is_active is True
     assert updated.status == "active"
+    assert updated.env_vars == {"NEW_VAR": "new_val"}
 
     # Delete Server
     assert delete_server(temp_db_path, server_id) is True

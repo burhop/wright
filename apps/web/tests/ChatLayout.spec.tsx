@@ -46,6 +46,7 @@ describe("ChatLayout", () => {
       selectSession: vi.fn(),
       deleteSession: vi.fn(),
       sendMessage: vi.fn(),
+      refreshSessions: vi.fn(),
     });
 
     // Default mock implementation for useHealthStatus (all connected)
@@ -153,6 +154,7 @@ describe("ChatLayout", () => {
       selectSession: vi.fn(),
       deleteSession: vi.fn(),
       sendMessage: vi.fn(),
+      refreshSessions: vi.fn(),
     });
 
     render(
