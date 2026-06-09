@@ -191,6 +191,8 @@ export function WorkspacePanel({
   const [enabledTools, setEnabledTools] = useState<string[]>([]);
   const [mcpLoading, setMcpLoading] = useState(false);
 
+  const installedServers = mcpServers.filter((s) => s.is_installed);
+
   // File tree expanded directories — persisted so the tree stays open across refresh
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
     () => new Set<string>(savedLayout?.expandedPaths ?? []),
@@ -1080,11 +1082,11 @@ export function WorkspacePanel({
             <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}>
               {mcpLoading ? (
                 <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem" }}>Loading workspace tools...</div>
-              ) : mcpServers.length === 0 ? (
+              ) : installedServers.length === 0 ? (
                 <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem" }}>No MCP servers configured.</div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-                  {mcpServers.map((server) => {
+                  {installedServers.map((server) => {
                     const isEnabled = enabledTools.includes(server.name);
                     const isGloballyActive = server.is_active;
 
