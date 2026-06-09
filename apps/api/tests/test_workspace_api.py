@@ -711,7 +711,6 @@ def test_agent_sessions_filtering_by_workspace(client):
 def test_workspace_activate_session_fallback(client):
     from api.config import DATABASE_PATH
     from core.workspace import create_workspace
-    import os
     import tempfile
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -762,7 +761,7 @@ def test_workspace_gitignore_setup(tmp_path):
     
     # Initialize WorkspaceManager with a fresh directory
     workspace_dir = str(tmp_path / "new_workspace")
-    manager = WorkspaceManager(workspace_dir)
+    WorkspaceManager(workspace_dir)
     
     # Check if .gitignore was created
     gitignore_path = os.path.join(workspace_dir, ".gitignore")
@@ -779,7 +778,6 @@ def test_workspace_gitignore_setup(tmp_path):
 def test_compile_workspace_mcp_instructions(tmp_path):
     from core.workspace import compile_workspace_mcp_instructions, create_workspace
     import sqlite3
-    import json
 
     db_path = str(tmp_path / "test.db")
     # Initialize minimal schema
@@ -1086,6 +1084,16 @@ def test_write_workspace_hermes_md(tmp_path):
     assert "Rule 1: Always do X." in new_content
     assert "Updated instructions" in new_content
     assert "My test instructions" not in new_content
+
+
+def test_workspace_mcp_status_endpoint(client):
+    # Retrieve mcp status for a session
+    response = client.get("/api/workspace/mcp-status", params={"session_id": "test-session"})
+    assert response.status_code == 200
+    data = response.json()
+    assert "status" in data
+    assert "message" in data
+
 
 
 

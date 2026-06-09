@@ -347,7 +347,14 @@ export function WorkspacePanel({
     } finally {
       setGitLoading(false);
     }
-  }, [activeSessionId]);
+  }, [
+    activeSessionId,
+    setGitLoading,
+    setGitError,
+    setGitBranch,
+    setGitChanges,
+    setGitHistory,
+  ]);
 
   // Fetch workspace config helper
   const fetchConfig = useCallback(async () => {
@@ -370,7 +377,17 @@ export function WorkspacePanel({
     } finally {
       setOptionsLoading(false);
     }
-  }, [activeSessionId]);
+  }, [
+    activeSessionId,
+    setOptionsLoading,
+    setOptionsError,
+    setRemoteUrl,
+    setGitUsername,
+    setGitToken,
+    setWorkspacePrompt,
+    setGitLargeFileThreshold,
+    setWorkspacePath,
+  ]);
 
   // Load active tab content dynamically
   useEffect(() => {
@@ -384,7 +401,7 @@ export function WorkspacePanel({
         const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
         if (
           ext === "stl" ||
-          ["png", "jpg", "jpeg", "svg", "gif"].includes(ext)
+          ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)
         ) {
           const buffer = await workspaceService.getFileContentArrayBuffer(
             activeSessionId,
@@ -452,7 +469,7 @@ export function WorkspacePanel({
                 const ext = currentPath.split(".").pop()?.toLowerCase() || "";
                 if (
                   ext === "stl" ||
-                  ["png", "jpg", "jpeg", "svg", "gif"].includes(ext)
+                  ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)
                 ) {
                   const updatedBuffer =
                     await workspaceService.getFileContentArrayBuffer(
@@ -653,7 +670,7 @@ export function WorkspacePanel({
     let tabType: "stl" | "image" | "code" | "text" = "text";
     if (ext === "stl") {
       tabType = "stl";
-    } else if (["png", "jpg", "jpeg", "svg", "gif"].includes(ext)) {
+    } else if (["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)) {
       tabType = "image";
     } else if (["py", "scad", "json", "md", "txt"].includes(ext)) {
       tabType = "code";
@@ -2374,6 +2391,7 @@ export function WorkspacePanel({
                 onSend={sendMessage}
                 isStreaming={state.isStreaming}
                 onCancel={cancelActiveStream}
+                sessionId={activeSessionId || undefined}
               />
             </div>
           )}

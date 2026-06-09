@@ -17,6 +17,8 @@ export const ImagePreviewer: React.FC<ImagePreviewerProps> = ({
     if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
     else if (ext === "svg") mimeType = "image/svg+xml";
     else if (ext === "gif") mimeType = "image/gif";
+    else if (ext === "webp") mimeType = "image/webp";
+    else if (ext === "bmp") mimeType = "image/bmp";
 
     const blob = new Blob([arrayBuffer], { type: mimeType });
     const url = URL.createObjectURL(blob);

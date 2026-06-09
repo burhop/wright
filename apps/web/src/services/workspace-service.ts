@@ -638,6 +638,18 @@ export class WorkspaceService {
     const data = await response.json();
     return data.success;
   }
+
+  async getMcpStatus(
+    sessionId: string,
+  ): Promise<{ status: string; message: string }> {
+    const response = await fetch(
+      `${API_BASE}/api/workspace/mcp-status?session_id=${sessionId}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to get MCP status: ${response.statusText}`);
+    }
+    return response.json();
+  }
 }
 
 export interface WorkspaceInfo {

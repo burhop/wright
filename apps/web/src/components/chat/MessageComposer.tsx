@@ -9,12 +9,14 @@ import { agentService } from "../../services/agent-service";
 import type { AgentCommand, VaultFile } from "../../services/agent-service";
 import { CommandMenu } from "./CommandMenu";
 import { AttachmentPill } from "./AttachmentPill";
+import { workspaceService } from "../../services/workspace-service";
 
 interface MessageComposerProps {
   onSend: (message: string, attachments?: string[]) => void;
   disabled?: boolean;
   isStreaming?: boolean;
   onCancel?: () => void;
+  sessionId?: string;
 }
 
 export function MessageComposer({
@@ -22,6 +24,7 @@ export function MessageComposer({
   disabled = false,
   isStreaming = false,
   onCancel,
+  sessionId,
 }: MessageComposerProps) {
   const [text, setText] = useState("");
   const [attachments, setAttachments] = useState<VaultFile[]>([]);
@@ -34,6 +37,8 @@ export function MessageComposer({
   const [menuPrefix, setMenuPrefix] = useState("/");
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [showPlusMenu, setShowPlusMenu] = useState(false);
+  const [mcpStatus, setMcpStatus] = useState<{ status: string; message: string } | null>(null);
+  const [showStatusPopup, setShowStatusPopup] = useState(false);
 
   useEffect(() => {
     // Fetch available commands on mount
@@ -65,6 +70,48 @@ export function MessageComposer({
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showPlusMenu]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setShowStatusPopup(false);
+      }
+    };
+    if (showStatusPopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showStatusPopup]);
+
+  useEffect(() => {
+    if (!sessionId) {
+      setMcpStatus(null);
+      return;
+    }
+
+    let isMounted = true;
+    const fetchStatus = async () => {
+      try {
+        const status = await workspaceService.getMcpStatus(sessionId);
+        if (isMounted) {
+          setMcpStatus(status);
+        }
+      } catch (err) {
+        console.error("Failed to fetch MCP status in composer", err);
+      }
+    };
+
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 3000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [sessionId]);
 
   const handleSend = () => {
     if ((text.trim() || attachments.length > 0) && !disabled) {
@@ -259,45 +306,46 @@ export function MessageComposer({
           padding: "0 2px 2px 2px",
         }}
       >
-        <div style={{ position: "relative" }}>
-          <button
-            onClick={() => setShowPlusMenu(!showPlusMenu)}
-            title="Add Context or Media"
-            style={{
-              width: "28px",
-              height: "28px",
-              borderRadius: "50%",
-              border: "1px solid var(--color-border)",
-              backgroundColor: "var(--color-surface)",
-              color: "var(--color-secondary)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontSize: "1rem",
-            }}
-          >
-            +
-          </button>
-
-          {showPlusMenu && (
-            <div
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowPlusMenu(!showPlusMenu)}
+              title="Add Context or Media"
               style={{
-                position: "absolute",
-                bottom: "36px",
-                left: "0",
-                backgroundColor: "var(--color-surface)",
+                width: "28px",
+                height: "28px",
+                borderRadius: "50%",
                 border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                padding: "var(--space-xs)",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-                zIndex: 1000,
-                minWidth: "150px",
+                backgroundColor: "var(--color-surface)",
+                color: "var(--color-secondary)",
                 display: "flex",
-                flexDirection: "column",
-                gap: "2px",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontSize: "1rem",
               }}
             >
+              +
+            </button>
+
+            {showPlusMenu && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "36px",
+                  left: "0",
+                  backgroundColor: "var(--color-surface)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "var(--space-xs)",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                  zIndex: 1000,
+                  minWidth: "150px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "2px",
+                }}
+              >
               <button
                 onClick={() => {
                   setMenuPrefix("/");
@@ -378,6 +426,79 @@ export function MessageComposer({
             </div>
           )}
         </div>
+
+        {mcpStatus && (
+          <div style={{ position: "relative" }}>
+            <button
+              data-testid="mcp-status-indicator"
+              onClick={() => setShowStatusPopup(!showStatusPopup)}
+              style={{
+                height: "20px",
+                padding: "0 8px",
+                borderRadius: "10px",
+                border: "none",
+                backgroundColor: mcpStatus.status === "ok" ? "#22c55e" : "#ef4444",
+                color: "#ffffff",
+                fontSize: "0.65rem",
+                fontWeight: "bold",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                transition: "background-color 0.2s",
+              }}
+              title={mcpStatus.message}
+            >
+              MCP
+            </button>
+
+            {showStatusPopup && (
+              <div
+                data-testid="mcp-status-popup"
+                style={{
+                  position: "absolute",
+                  bottom: "28px",
+                  left: "0",
+                  backgroundColor: "var(--color-surface)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "var(--space-sm)",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                  zIndex: 1001,
+                  minWidth: "200px",
+                  maxWidth: "300px",
+                  fontSize: "0.75rem",
+                  color: "var(--color-primary)",
+                  textAlign: "left",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                  <strong style={{ color: mcpStatus.status === "ok" ? "#22c55e" : "#ef4444" }}>
+                    MCP Status: {mcpStatus.status === "ok" ? "Active" : mcpStatus.status === "mismatch" ? "Mismatch" : "Error"}
+                  </strong>
+                  <button
+                    onClick={() => setShowStatusPopup(false)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--color-text-dim)",
+                      cursor: "pointer",
+                      fontSize: "0.8rem",
+                      padding: 0,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div style={{ lineHeight: "1.4", color: "var(--color-secondary)" }}>
+                  {mcpStatus.message}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
         <div style={{ display: "flex", gap: "var(--space-xs)", alignItems: "center" }}>
           {isStreaming && onCancel && (

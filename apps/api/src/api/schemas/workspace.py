@@ -235,3 +235,9 @@ def serialize_workspace(w: dict) -> WorkspaceListEntry:
         enabled_tools=parse_enabled_tools(w.get("enabled_tools")),
         updated_at=w["updated_at"],
     )
+
+
+class WorkspaceMcpStatusResponse(BaseModel):
+    status: str
+    message: str
+

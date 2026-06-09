@@ -342,4 +342,130 @@ test.describe('Agent Chat Page', () => {
     // Verify the update request was sent with the correct session ID
     await expect.poll(() => updateRequestPayload).toEqual({ session_id: 'session-2' });
   });
+
+  test('should display MCP status button and show status details on click', async ({ page }) => {
+    // Mock health endpoints
+    await page.route('**/api/agent/health', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ state: 'connected', latencyMs: 5.0 }),
+      });
+    });
+
+    await page.route('**/api/inference/health', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ state: 'connected', latencyMs: 12.0 }),
+      });
+    });
+
+    // Mock session list
+    await page.route('**/api/agent/sessions*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          sessions: [
+            { session_id: 'session-1', title: 'Session One', created_at: Date.now(), updated_at: Date.now() }
+          ]
+        }),
+      });
+    });
+
+    // Mock workspace by ID
+    await page.route('**/api/workspace/by-id/*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'ws-1',
+          session_id: 'session-1',
+          workspace_name: 'Test Project',
+          local_path: '/home/burhop/repos/wright',
+          git_remote_url: null,
+          git_username: null,
+          updated_at: Math.floor(Date.now() / 1000)
+        }),
+      });
+    });
+
+    // Mock workspace activate
+    await page.route('**/api/workspace/activate', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, session_id: 'session-1', workspace_path: '/home/burhop/repos/wright' }),
+      });
+    });
+
+    // Mock workspace files tree
+    await page.route('**/api/workspace/files?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace: {
+            name: 'wright',
+            path: '/',
+            type: 'directory',
+            size: null,
+            last_modified: 1000,
+            git_status: 'Clean',
+            children: []
+          }
+        }),
+      });
+    });
+
+    // Mock workspace git status
+    await page.route('**/api/workspace/git/status?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ branch_name: 'main', is_clean: true, changes: [] }),
+      });
+    });
+
+    // Mock tool/server lists
+    await page.route('**/api/mcp/servers', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ servers: [] }) });
+    });
+    await page.route('**/api/mcp/tools', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ tools: [] }) });
+    });
+
+    // Mock MCP status endpoint returning healthy status initially
+    let mcpStatusPayload = { status: 'ok', message: 'MCP configuration is active and healthy.' };
+    await page.route('**/api/workspace/mcp-status?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mcpStatusPayload),
+      });
+    });
+
+    await page.goto('/workspace/ws-1');
+
+    // Verify MCP button is visible and green
+    const mcpBtn = page.getByTestId('mcp-status-indicator');
+    await expect(mcpBtn).toBeVisible();
+    await expect(mcpBtn).toHaveCSS('background-color', 'rgb(34, 197, 94)'); // #22c55e
+
+    // Click to show popup
+    await mcpBtn.click();
+    const popup = page.getByTestId('mcp-status-popup');
+    await expect(popup).toBeVisible();
+    await expect(popup).toContainText('MCP configuration is active and healthy.');
+
+    // Update payload to mismatch error state
+    mcpStatusPayload = { status: 'mismatch', message: 'Tool change during session. Start a new session to apply changes.' };
+
+    // Wait for the next poll (3 seconds interval in composer) and verify color turns red
+    await expect(mcpBtn).toHaveCSS('background-color', 'rgb(239, 68, 68)', { timeout: 5000 }); // #ef4444
+
+    // Verify updated message in the open popup
+    await expect(popup).toContainText('Tool change during session. Start a new session to apply changes.');
+  });
 });

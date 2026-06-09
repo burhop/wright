@@ -27,7 +27,6 @@ from core.workspace import (
     update_workspace_remote_by_id,
     save_agent_context,
     load_agent_context,
-    update_workspace_remote,
     activate_workspace,
     sync_workspace_runners,
     update_workspace_session,
@@ -62,6 +61,7 @@ from api.schemas.workspace import (
     WorkspaceToolsGetResponse,
     WorkspaceToolToggleRequest,
     WorkspaceToolToggleResponse,
+    WorkspaceMcpStatusResponse,
     WorkspaceListEntry,
     WorkspaceListResponse,
     WorkspaceCreateRequest,
@@ -157,6 +157,8 @@ async def get_file_content(
         ".gif",
         ".bmp",
         ".pdf",
+        ".svg",
+        ".webp",
     }
     if ext in binary_extensions:
         return FileResponse(abs_path, filename=os.path.basename(abs_path))
@@ -550,27 +552,94 @@ async def toggle_workspace_tool_endpoint(
         current.remove(body.server_id)
     update_workspace_enabled_tools(DATABASE_PATH, body.session_id, current)
 
-    from api.services.hermes_sync import (
-        sync_workspace_tools_to_hermes,
-        restart_hermes_background,
-    )
-
-    workspace = get_workspace_by_session(DATABASE_PATH, body.session_id)
-    workspace_path = workspace["local_path"] if workspace else None
-
-    sync_workspace_tools_to_hermes(body.session_id, DATABASE_PATH)
-    restart_hermes_background(workspace_path)
-
-    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    if sync_manager:
-        sync_manager.sync_workspace_tools(body.session_id)
-
     return WorkspaceToolToggleResponse(
         success=True,
         session_id=body.session_id,
         server_id=body.server_id,
         is_enabled=body.is_enabled,
     )
+
+
+@router.get("/mcp-status", response_model=WorkspaceMcpStatusResponse)
+@traced("workspace.mcp-status")
+async def get_workspace_mcp_status_endpoint(
+    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+):
+    import yaml
+
+    # 1. Get current workspace by session_id
+    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    if not workspace:
+        return WorkspaceMcpStatusResponse(status="ok", message="No active workspace.")
+
+    # 2. Get currently enabled tools in the database
+    enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
+    from tool_registry.db import get_servers
+    all_servers = get_servers(DATABASE_PATH)
+
+    # Active servers expected to be configured
+    expected_servers = []
+    for s in all_servers:
+        if s.is_installed:
+            is_enabled = True
+            if enabled_tools is not None:
+                is_enabled = (s.name in enabled_tools) or (s.server_id in enabled_tools)
+            if is_enabled:
+                expected_servers.append(s)
+
+    # Sanitize expected server names to match config.yaml keys
+    expected_keys = set()
+    for s in expected_servers:
+        key_name = "".join(c.lower() for c in s.name if c.isalnum())
+        if not key_name:
+            key_name = s.server_id
+        expected_keys.add(key_name)
+
+    # 3. Read current configured mcp_servers from config.yaml
+    configured_keys = set()
+    paths = [
+        os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
+        os.path.expanduser("~/.hermes/config.yaml"),
+    ]
+    config_loaded = False
+    for path in paths:
+        if os.path.exists(path):
+            try:
+                with open(path, "r") as f:
+                    config = yaml.safe_load(f) or {}
+                mcp_servers = config.get("mcp_servers", {})
+                configured_keys = set(mcp_servers.keys())
+                config_loaded = True
+                break
+            except Exception:
+                pass
+
+    if not config_loaded:
+        # If no config file exists, but we expect tools, it's a mismatch
+        if expected_keys:
+            return WorkspaceMcpStatusResponse(
+                status="mismatch",
+                message="Tool change during session. Start a new session to apply changes."
+            )
+        return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.")
+
+    # 4. Check for mismatches
+    if expected_keys != configured_keys:
+        return WorkspaceMcpStatusResponse(
+            status="mismatch",
+            message="Tool change during session. Start a new session to apply changes."
+        )
+
+    # 5. Check for broken servers
+    for s in expected_servers:
+        if s.status == "error":
+            err_msg = s.error_message or "Unknown error"
+            return WorkspaceMcpStatusResponse(
+                status="error",
+                message=f"Cannot connect to MCP Server: {s.name} ({err_msg})"
+            )
+
+    return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.")
 
 
 # ── Workspace CRUD ───────────────────────────────────────────────────────
