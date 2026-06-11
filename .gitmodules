@@ -1,0 +1,4 @@
+[submodule "packages/freecad_mcp"]
+	path = packages/freecad_mcp
+	url = https://github.com/sandraschi/freecad-mcp.git
+	ignore = dirty

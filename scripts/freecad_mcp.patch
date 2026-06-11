@@ -1,0 +1,144 @@
+diff --git a/src/freecad_mcp/fc_bridge.py b/src/freecad_mcp/fc_bridge.py
+index b94e81e..ea30e63 100644
+--- a/src/freecad_mcp/fc_bridge.py
++++ b/src/freecad_mcp/fc_bridge.py
+@@ -30,13 +30,13 @@ PORT = int(os.environ.get("FC_BRIDGE_PORT", "10946"))
+ FreeCAD.Console.PrintMessage(f"FreeCAD Bridge starting on port {PORT}...\n")
+ 
+ # Ensure GUI is ready
+-try:
+-    FreeCADGui.showMainWindow()
+-except Exception:
+-    try:
+-        FreeCADGui.showMainWindow(True)
+-    except Exception:
+-        FreeCAD.Console.PrintMessage("GUI showMainWindow not available, continuing anyway\n")
++# try:
++#     FreeCADGui.showMainWindow()
++# except Exception:
++#     try:
++#         FreeCADGui.showMainWindow(True)
++#     except Exception:
++#         FreeCAD.Console.PrintMessage("GUI showMainWindow not available, continuing anyway\n")
+ 
+ 
+ class BridgeHandler(socketserver.StreamRequestHandler):
+@@ -151,7 +151,10 @@ class BridgeHandler(socketserver.StreamRequestHandler):
+                         s = Part.makeCone(p.get("radius", 5), 0, p.get("height", 15))
+                     else:
+                         raise ValueError(f"Unknown shape: {st}")
+-                    m = Mesh.Mesh(s)
++                    # MeshPart.meshFromShape is required for FreeCAD ≥1.1
++                    # (Mesh.Mesh(shape) throws TypeError on Part.Solid)
++                    import MeshPart as _MeshPart
++                    m = _MeshPart.meshFromShape(Shape=s, LinearDeflection=0.1, AngularDeflection=0.5)
+                     m.write(stl_path)
+                     sz = os.path.getsize(stl_path)
+                     result["data"] = {"size_bytes": sz, "size_kb": round(sz / 1024, 1)}
+@@ -420,7 +423,6 @@ class ThreadedServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+     daemon_threads = True
+ 
+ 
+-if __name__ == "__main__":
+-    server = ThreadedServer(("127.0.0.1", PORT), BridgeHandler)
+-    FreeCAD.Console.PrintMessage(f"Bridge listening on 127.0.0.1:{PORT}\n")
+-    server.serve_forever()
++server = ThreadedServer(("127.0.0.1", PORT), BridgeHandler)
++FreeCAD.Console.PrintMessage(f"Bridge listening on 127.0.0.1:{PORT}\n")
++server.serve_forever()
+diff --git a/src/freecad_mcp/server.py b/src/freecad_mcp/server.py
+index 0528402..b5e464e 100644
+--- a/src/freecad_mcp/server.py
++++ b/src/freecad_mcp/server.py
+@@ -235,15 +235,37 @@ async def lifespan(app: FastAPI):
+ # ── Subprocess Fallback ───────────────────────────────────────────────────────
+ 
+ 
++def _resolve_freecad_cmd() -> str:
++    """Resolve the FreeCAD command-line executable path (cross-platform)."""
++    # On Linux snap, freecad.cmd is the headless entry point
++    if FREECAD_PATH.endswith(".cmd") or FREECAD_PATH.endswith("freecadcmd"):
++        return FREECAD_PATH
++    # Windows: FreeCAD.exe -> FreeCADCmd.exe
++    if FREECAD_PATH.endswith("FreeCAD.exe"):
++        return FREECAD_PATH.replace("FreeCAD.exe", "FreeCADCmd.exe")
++    # Fallback: use FREECAD_PATH as-is
++    return FREECAD_PATH
++
++
+ async def _run_freecad(script: str, timeout: int = 120) -> tuple[str, str, int]:
+-    """Run a Python script via FreeCADCmd subprocess (fallback when bridge unavailable)."""
+-    fd, sp = tempfile.mkstemp(suffix=".py", prefix="fc_", text=True)
++    """Run a Python script via FreeCADCmd subprocess (fallback when bridge unavailable).
++
++    NOTE: Snap-sandboxed FreeCAD cannot access /tmp, so temp scripts are
++    written inside WORK_DIR which is part of the user's home directory.
++    """
++    import shutil
++
++    fd, sp = tempfile.mkstemp(suffix=".py", prefix="fc_", dir=WORK_DIR, text=True)
+     try:
+         with os.fdopen(fd, "w") as f:
+             f.write(script)
++        cmd_path = _resolve_freecad_cmd()
++        cmd = [cmd_path, sp]
++        # Wrap with xvfb-run on headless Linux so FreeCAD can initialise its internal GUI
++        if not os.environ.get("DISPLAY") and shutil.which("xvfb-run"):
++            cmd = ["xvfb-run", "-a"] + cmd
+         proc = await asyncio.create_subprocess_exec(
+-            FREECAD_PATH.replace("FreeCAD.exe", "FreeCADCmd.exe"),
+-            sp,
++            *cmd,
+             stdout=subprocess.PIPE,
+             stderr=subprocess.PIPE,
+         )
+@@ -561,26 +583,34 @@ async def create_shape(
+             return {"success": True, "output": output_name, "data": resp.get("data")}
+         logger.warning("Bridge create_shape failed, trying subprocess: %s", resp.get("error"))
+ 
++    # Build shape creation expression
+     if shape_type == "box":
+         w = p.get("width", 10)
+         h = p.get("height", 10)
+         d = p.get("depth", 10)
+-        script = f"import Part, Mesh; s = Part.makeBox({w}, {h}, {d}); m = Mesh.Mesh(s); m.write(r'{stl_path}')"
++        shape_expr = f"Part.makeBox({w}, {h}, {d})"
+     elif shape_type == "cylinder":
+         r = p.get("radius", 5)
+         h = p.get("height", 20)
+-        script = f"import Part, Mesh; s = Part.makeCylinder({r}, {h}); m = Mesh.Mesh(s); m.write(r'{stl_path}')"
++        shape_expr = f"Part.makeCylinder({r}, {h})"
+     elif shape_type == "sphere":
+         r = p.get("radius", 10)
+-        script = f"import Part, Mesh; s = Part.makeSphere({r}); m = Mesh.Mesh(s); m.write(r'{stl_path}')"
++        shape_expr = f"Part.makeSphere({r})"
+     elif shape_type == "cone":
+         r = p.get("radius", 5)
+         h = p.get("height", 15)
+-        script = f"import Part, Mesh; s = Part.makeCone({r}, 0, {h}); m = Mesh.Mesh(s); m.write(r'{stl_path}')"
++        shape_expr = f"Part.makeCone({r}, 0, {h})"
+     else:
+         return {"success": False, "error": f"Unknown shape: {shape_type}. Use: box, cylinder, sphere, cone."}
+ 
+-    script += f"\nimport os; print(os.path.getsize(r'{stl_path}'))"
++    # Use MeshPart.meshFromShape — Mesh.Mesh(shape) is broken in FreeCAD ≥1.1
++    script = (
++        f"import Part, MeshPart\n"
++        f"shape = {shape_expr}\n"
++        f"mesh = MeshPart.meshFromShape(Shape=shape, LinearDeflection=0.1, AngularDeflection=0.5)\n"
++        f"mesh.write(r'{stl_path}')\n"
++        f"import os, json; print(json.dumps({{'size_bytes': os.path.getsize(r'{stl_path}')}}))\n"
++    )
+     out, err, code = await _run_freecad(script, timeout=30)
+     return _build_result("create_shape", out, err, code, extra={"output": output_name})
+ 
+@@ -1474,7 +1504,8 @@ async def chat_completion(req: ChatRequest):
+ 
+ async def _run_stdio():
+     """Serve MCP over stdio (for CLI MCP clients)."""
+-    await mcp.run_stdio_async()
++    async with lifespan(app):
++        await mcp.run_stdio_async()
+ 
+ 
+ def main():
