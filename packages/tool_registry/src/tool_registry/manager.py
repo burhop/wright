@@ -93,7 +93,21 @@ class McpEngine:
         elif server.type == "stdio":
             if not server.command:
                 raise ValueError("Command configuration is required for stdio server.")
-            runner = StdioRunner(server.command)
+            env_vars = server.env_vars or {}
+            key_name = "".join(c.lower() for c in server.name if c.isalnum())
+            if not key_name:
+                key_name = server.server_id
+            if key_name == "freecadengineering" or "freecad" in key_name:
+                if "FREECAD_PATH" not in env_vars:
+                    default_fc = os.environ.get("FREECAD_PATH")
+                    if not default_fc:
+                        if os.path.exists("/snap/bin/freecad.cmd"):
+                            default_fc = "/snap/bin/freecad.cmd"
+                        else:
+                            default_fc = "/usr/local/bin/freecadcmd"
+                    env_vars = env_vars.copy()
+                    env_vars["FREECAD_PATH"] = default_fc
+            runner = StdioRunner(server.command, env=env_vars)
         elif server.type == "sse":
             if not server.command or not isinstance(server.command, str):
                 raise ValueError("Valid SSE URL string is required for sse server.")

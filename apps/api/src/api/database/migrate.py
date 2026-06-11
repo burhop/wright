@@ -63,7 +63,19 @@ ENGINEERING_CATALOG = [
         "server_id": "freecad-engineering-sandraschi",
         "name": "FreeCAD Engineering",
         "type": "stdio",
-        "command": json.dumps(["uvx", "freecad-mcp"]),
+        "command": json.dumps(
+            [
+                "uv",
+                "run",
+                "--with",
+                "git+https://github.com/sandraschi/freecad-mcp.git",
+                "python",
+                "-m",
+                "freecad_mcp.server",
+                "--mode",
+                "stdio",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1413352?s=64",
         "description": "End-to-end engineering pipeline: FreeCAD geometric kernel connected to OpenFOAM CFD, CalculiX FEA, and PrusaSlicer for automated 3D-print G-code generation.",
@@ -93,7 +105,7 @@ ENGINEERING_CATALOG = [
         "server_id": "freecad-core-nekanat",
         "name": "FreeCAD Core",
         "type": "stdio",
-        "command": json.dumps(["uvx", "freecad-mcp-core"]),
+        "command": json.dumps(["uvx", "freecad-mcp"]),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1413352?s=64",
         "description": "Lightweight FreeCAD MCP integration focused on core parametric modeling operations via the native Python API.",
@@ -478,18 +490,26 @@ def run_migrations():
                 ),
             )
 
-        # 6. Update existing catalog entries that may be missing metadata
+        # 6. Update existing catalog entries to the latest metadata from the catalog
         for entry in ENGINEERING_CATALOG:
             conn.execute(
                 """
             UPDATE mcp_servers
-            SET image_url = COALESCE(image_url, ?),
-                description = COALESCE(description, ?),
-                source_url = COALESCE(source_url, ?),
-                instructions = COALESCE(instructions, ?)
+            SET name = ?,
+                type = ?,
+                command = ?,
+                category = ?,
+                image_url = ?,
+                description = ?,
+                source_url = ?,
+                instructions = ?
             WHERE server_id = ?
             """,
                 (
+                    entry["name"],
+                    entry["type"],
+                    entry["command"],
+                    entry["category"],
                     entry.get("image_url"),
                     entry["description"],
                     entry.get("source_url"),

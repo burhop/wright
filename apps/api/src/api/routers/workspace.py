@@ -632,6 +632,13 @@ async def toggle_workspace_tool_endpoint(
         current.remove(body.server_id)
     update_workspace_enabled_tools(DATABASE_PATH, body.session_id, current)
 
+    # Notify gateway of tool list change so Hermes updates dynamically
+    try:
+        from api.routers.gateway import notify_gateway_tool_change
+        notify_gateway_tool_change()
+    except Exception as e:
+        logger.warning("failed_to_notify_gateway_tool_change", error=str(e))
+
     return WorkspaceToolToggleResponse(
         success=True,
         session_id=body.session_id,
@@ -881,6 +888,13 @@ async def activate_workspace_endpoint(
             sync_manager.sync_workspace_tools(session_id)
         except Exception as e:
             logger.error("agent_tool_sync_failed_on_activate", error=str(e))
+
+    # Notify gateway that workspace tools have changed
+    try:
+        from api.routers.gateway import notify_gateway_tool_change
+        notify_gateway_tool_change()
+    except Exception as e:
+        logger.warning("failed_to_notify_gateway_workspace_activation", error=str(e))
 
     return WorkspaceActivateResponse(
         success=True, session_id=session_id, workspace_path=local_path

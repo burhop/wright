@@ -105,93 +105,21 @@ class AgentSyncManager:
         except Exception as e:
             logger.warning("Failed to update .gitignore in _sync_to_hermes: %s", e)
 
-        enabled_tools = get_workspace_enabled_tools(self.db_path, session_id)
-
-        # We query all installed servers in the database
-        import sqlite3
-
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        try:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM mcp_servers WHERE is_installed = 1")
-            installed_servers = [dict(row) for row in cursor.fetchall()]
-        finally:
-            conn.close()
-
-        # Rebuild the mcp_servers section first
-        new_mcp_servers = {}
-        for server in installed_servers:
-            key_name = "".join(c.lower() for c in server["name"] if c.isalnum())
-            if not key_name:
-                key_name = server["server_id"]
-
-            # Check if this server is enabled in the workspace session
-            is_enabled = True
-            if enabled_tools is not None:
-                is_enabled = (server["name"] in enabled_tools) or (
-                    server["server_id"] in enabled_tools
-                )
-
-            if is_enabled:
-                # Construct command and args
-                cmd_val = server["command"]
-                if not cmd_val:
-                    continue
-
-                import json
-                import shlex
-
-                # Parse command if stored as JSON list
-                if cmd_val.startswith("[") and cmd_val.endswith("]"):
-                    try:
-                        parsed_cmd = json.loads(cmd_val)
-                    except Exception:
-                        parsed_cmd = cmd_val
-                else:
-                    parsed_cmd = cmd_val
-
-                if isinstance(parsed_cmd, list):
-                    cmd = parsed_cmd[0]
-                    args = parsed_cmd[1:] if len(parsed_cmd) > 1 else []
-                else:
-                    parsed = shlex.split(parsed_cmd)
-                    cmd = parsed[0] if parsed else "echo"
-                    args = parsed[1:] if len(parsed) > 1 else []
-
-                srv_config = {"command": cmd, "args": args}
-                
-                # Parse custom_env from DB env_vars column
-                custom_env = {}
-                env_vars_raw = server.get("env_vars")
-                if env_vars_raw:
-                    try:
-                        import json
-                        parsed_env = json.loads(env_vars_raw)
-                        if isinstance(parsed_env, dict):
-                            custom_env = parsed_env
-                    except Exception:
-                        pass
-
-                # Set standard temp directory environment variables for all stdio servers
-                srv_config["env"] = {
-                    "TMPDIR": tmp_dir,
-                    "TEMP": tmp_dir,
-                    "TMP": tmp_dir,
-                }
-
-                if key_name == "openscadgeometry" or "openscad" in key_name:
-                    if "OPENSCAD_PATH" not in custom_env:
-                        srv_config["env"]["OPENSCAD_PATH"] = "/home/burhop/repos/wright/scripts/openscad-headless.sh"
-                    if "MCP_TEMP_DIR" not in custom_env:
-                        scad_temp_dir = os.path.join(tmp_dir, "openscad-mcp")
-                        os.makedirs(scad_temp_dir, exist_ok=True)
-                        srv_config["env"]["MCP_TEMP_DIR"] = scad_temp_dir
-
-                # Merge user-configured environment variables
-                srv_config["env"].update(custom_env)
-
-                new_mcp_servers[key_name] = srv_config
+        # Configure static wright-gateway server config instead of dynamic list
+        repo_dir = "/home/burhop/repos/wright"
+        new_mcp_servers = {
+            "wrightgateway": {
+                "command": "uv",
+                "args": [
+                    "run",
+                    "--project",
+                    repo_dir,
+                    "python",
+                    "-m",
+                    "tool_registry.gateway"
+                ]
+            }
+        }
 
         config_changed = False
         paths = [

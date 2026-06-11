@@ -62,6 +62,16 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest \
     | tar -xvj -C /usr/local bin/micromamba
 
+# ── FreeCAD (AppImage extraction) ──────────────────────────────────────────
+RUN curl -L -o /tmp/FreeCAD.AppImage https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-aarch64-py311.AppImage && \
+    chmod +x /tmp/FreeCAD.AppImage && \
+    /tmp/FreeCAD.AppImage --appimage-extract && \
+    mv squashfs-root /opt/freecad && \
+    rm /tmp/FreeCAD.AppImage && \
+    ln -s /opt/freecad/usr/bin/freecadcmd /usr/local/bin/freecadcmd && \
+    ln -s /opt/freecad/usr/bin/freecad /usr/local/bin/freecad
+ENV FREECAD_PATH=/usr/local/bin/freecadcmd
+
 # ── Create agent user (UID 1000) ──────────────────────────────────────────
 RUN userdel -r ubuntu && \
     useradd -m -u 1000 -s /bin/bash agent && \

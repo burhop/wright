@@ -20,6 +20,7 @@ from api.routers.workspace import router as workspace_router
 from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
+from api.routers.gateway import router as gateway_router
 from api.middleware.tracing import TracingMiddleware
 from api.schemas.common import ErrorResponse, ErrorCodes
 from core.logging import configure_logging, get_logger
@@ -131,6 +132,7 @@ app.include_router(vault_router, prefix="/api/vault", tags=["Vault"])
 app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
+app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
 
 
 @app.websocket("/api/webmcp/ws")
