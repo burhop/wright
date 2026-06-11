@@ -67,8 +67,8 @@ ENGINEERING_CATALOG = [
             [
                 "uv",
                 "run",
-                "--with",
-                "git+https://github.com/sandraschi/freecad-mcp.git",
+                "--project",
+                "/home/burhop/repos/wright/packages/freecad_mcp",
                 "python",
                 "-m",
                 "freecad_mcp.server",
@@ -80,6 +80,17 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/1413352?s=64",
         "description": "End-to-end engineering pipeline: FreeCAD geometric kernel connected to OpenFOAM CFD, CalculiX FEA, and PrusaSlicer for automated 3D-print G-code generation.",
         "source_url": "https://github.com/sandraschi/freecad-mcp",
+        "instructions": (
+            "1. Output Delivery: The FreeCAD MCP server automatically runs inside the workspace and saves all "
+            "created geometric primitives, converted mesh STL files, and slice G-code to its local outputs directory: "
+            "`./freecad_mcp_work/output/`.\n"
+            "2. User Visibility / Moving Files: Because this outputs directory is not displayed in the files explorer, "
+            "files saved there are NOT immediately visible in the user's files list or layout view. Whenever you invoke "
+            "a shape creation/conversion tool (such as create_shape, step_to_stl, or slice_stl), you MUST immediately "
+            "copy or move the resulting file from the outputs folder (e.g. `./freecad_mcp_work/output/{output_name}`) "
+            "directly into the main workspace root directory (e.g. `./{output_name}`) using standard file-system operations "
+            "or terminal commands. This ensures the file is exposed to the user-facing files explorer tree and 3D preview tabs."
+        ),
     },
     {
         "server_id": "freecad-copilot-contextform",

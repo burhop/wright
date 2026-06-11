@@ -399,6 +399,11 @@ async def activate_workspace(
             "agent_session_verify_failed", session_id=session_id, error=str(e)
         )
 
+    try:
+        write_workspace_hermes_md(db_path, local_path)
+    except Exception as e:
+        logger.warning("failed_to_write_hermes_md_on_activate", error=str(e))
+
     touch_workspace(db_path, session_id)
     return session_id
 
@@ -649,8 +654,8 @@ class WorkspaceManager:
             children = []
             try:
                 for entry in sorted(os.listdir(abs_path)):
-                    # Skip hidden files
-                    if entry.startswith("."):
+                    # Skip hidden files and special ignored directories
+                    if entry.startswith(".") or entry == "freecad_mcp_work":
                         continue
                     child_abs = os.path.join(abs_path, entry)
                     children.append(self._build_node(child_abs, statuses))
@@ -1112,13 +1117,11 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
         "3. **Explicit MCP Target Arguments**: When calling MCP tools (such as OpenSCAD, FreeCAD, CalculiX, etc.) to create models, save files, run simulations, or export files (e.g., STL, 3MF, PNG, etc.), you must explicitly specify target directory and output path parameters (e.g. `workspace`, `output_path`, `path`, `directory`, `cwd`) pointing to this active workspace or a subfolder inside it (e.g. `./`), instead of relying on the tools' default parameters which often fall back to temporary system directories.\n\n"
     )
 
-    if active_instructions:
-        return (
-            "Here are the instructions on how to use the loaded MCP tools within the Wright platform:\n\n"
-            + global_rules
-            + "\n\n".join(active_instructions)
-        )
-    return None
+    return (
+        "Here are the instructions on how to use the loaded MCP tools within the Wright platform:\n\n"
+        + global_rules
+        + ("\n\n".join(active_instructions) if active_instructions else "")
+    )
 
 
 def write_workspace_hermes_md(db_path: str, local_path: str) -> None:

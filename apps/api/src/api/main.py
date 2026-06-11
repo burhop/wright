@@ -121,7 +121,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # Instantiate and store the Hermes adapter engine in the app state
-app.state.agent_engine = HermesAdapter(HERMES_API_BASE_URL, HERMES_API_KEY)
+app.state.agent_engine = HermesAdapter(HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH)
 app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the routers

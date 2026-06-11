@@ -59,7 +59,19 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "SET_SESSIONS":
       newState = {
         ...state,
-        sessions: action.sessions,
+        sessions: action.sessions.map((newSess) => {
+          const existingSess = state.sessions.find(
+            (s) => s.sessionId === newSess.sessionId,
+          );
+          return {
+            ...newSess,
+            messages:
+              existingSess && existingSess.messages.length > 0
+                ? existingSess.messages
+                : newSess.messages,
+            isActive: newSess.isActive || (existingSess?.isActive ?? false),
+          };
+        }),
         activeSessionId:
           action.sessions.find((s) => s.isActive)?.sessionId ||
           action.sessions[0]?.sessionId ||
@@ -191,11 +203,27 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "LOAD_SESSION_HISTORY":
       newState = {
         ...state,
-        sessions: state.sessions.map((s) =>
-          s.sessionId === action.sessionId
-            ? { ...s, messages: action.messages }
-            : s,
-        ),
+        sessions: state.sessions.map((s) => {
+          if (s.sessionId === action.sessionId) {
+            let title = s.title;
+            if (
+              (!title || title === "Untitled" || title === "Undefined") &&
+              action.messages.length > 0
+            ) {
+              const firstMsg = action.messages[0].content;
+              title =
+                firstMsg.length > 30
+                  ? `${firstMsg.substring(0, 27)}...`
+                  : firstMsg;
+            }
+            return {
+              ...s,
+              messages: action.messages,
+              title,
+            };
+          }
+          return s;
+        }),
       };
       break;
 
@@ -278,9 +306,33 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         const matched = Array.isArray(localSessions)
           ? localSessions.find((ls) => ls?.sessionId === cs.sessionId)
           : undefined;
+
+        let title = cs.title;
+        if (
+          (!title || title === "Untitled" || title === "Undefined") &&
+          matched &&
+          matched.title &&
+          matched.title !== "Untitled" &&
+          matched.title !== "Undefined"
+        ) {
+          title = matched.title;
+        }
+        if (
+          (!title || title === "Untitled" || title === "Undefined") &&
+          matched &&
+          matched.messages &&
+          matched.messages.length > 0
+        ) {
+          const firstMsg = matched.messages[0].content;
+          title =
+            firstMsg.length > 30
+              ? `${firstMsg.substring(0, 27)}...`
+              : firstMsg;
+        }
+
         return {
           sessionId: cs.sessionId,
-          title: cs.title,
+          title,
           createdAt: cs.createdAt,
           updatedAt: cs.updatedAt,
           messages: matched ? matched.messages : [],
@@ -314,6 +366,34 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     refreshSessions();
   }, [refreshSessions]);
 
+  useEffect(() => {
+    if (!state.activeSessionId) return;
+
+    let isMounted = true;
+    const fetchHistory = async () => {
+      try {
+        const history = await agentService.getSessionHistory(
+          state.activeSessionId!,
+        );
+        if (isMounted) {
+          dispatch({
+            type: "LOAD_SESSION_HISTORY",
+            sessionId: state.activeSessionId!,
+            messages: history,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load history for active session", err);
+      }
+    };
+
+    fetchHistory();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [state.activeSessionId]);
+
   const createSession = useCallback(
     async (workspace?: string) => {
       try {
@@ -345,12 +425,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const selectSession = useCallback(async (sessionId: string) => {
     dispatch({ type: "SELECT_SESSION", sessionId });
-    try {
-      const history = await agentService.getSessionHistory(sessionId);
-      dispatch({ type: "LOAD_SESSION_HISTORY", sessionId, messages: history });
-    } catch (err) {
-      console.error("Failed to load session history", err);
-    }
   }, []);
 
   const deleteSession = useCallback(async (sessionId: string) => {
@@ -503,10 +577,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   );
 
   const cancelActiveStream = useCallback(async () => {
-    if (!state.activeStreamId || !state.activeSessionId) return;
-    await agentService.cancelStream(state.activeSessionId, state.activeStreamId);
+    if (!state.activeSessionId) return;
+    await agentService.cancelStream(state.activeSessionId);
     dispatch({ type: "CLEAR_STREAM_ID" });
-  }, [state.activeStreamId, state.activeSessionId]);
+  }, [state.activeSessionId]);
 
   useEffect(() => {
     if (!state.isStreaming && state.promptQueue.length > 0 && state.activeSessionId) {

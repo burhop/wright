@@ -13,12 +13,13 @@ tracer = trace.get_tracer(__name__)
 class StdioRunner(BaseRunner):
     """MCP Runner implementing stdio-based JSON-RPC communication with local subprocesses."""
 
-    def __init__(self, command: Union[List[str], str], env: Optional[Dict[str, str]] = None):
+    def __init__(self, command: Union[List[str], str], env: Optional[Dict[str, str]] = None, cwd: Optional[str] = None):
         if isinstance(command, str):
             self.command = shlex.split(command)
         else:
             self.command = [str(c) for c in command]
         self.env = env
+        self.cwd = cwd
         self.process: Optional[asyncio.subprocess.Process] = None
         self._read_task: Optional[asyncio.Task] = None
         self._stderr_task: Optional[asyncio.Task] = None
@@ -36,7 +37,7 @@ class StdioRunner(BaseRunner):
             if self.env:
                 run_env.update(self.env)
 
-            logger.info("mcp_server_spawning", command=self.command)
+            logger.info("mcp_server_spawning", command=self.command, cwd=self.cwd)
             try:
                 self.process = await asyncio.create_subprocess_exec(
                     *self.command,
@@ -44,6 +45,7 @@ class StdioRunner(BaseRunner):
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
                     env=run_env,
+                    cwd=self.cwd,
                 )
             except Exception as e:
                 logger.error(

@@ -843,7 +843,10 @@ def test_compile_workspace_mcp_instructions(tmp_path):
         conn.commit()
     finally:
         conn.close()
-    assert compile_workspace_mcp_instructions(db_path, "/my/workspace") is None
+    instructions_empty = compile_workspace_mcp_instructions(db_path, "/my/workspace")
+    assert instructions_empty is not None
+    assert "## Global Workspace Rules" in instructions_empty
+    assert "## Test MCP Instructions" not in instructions_empty
 
 
 def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):

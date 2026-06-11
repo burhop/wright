@@ -172,9 +172,16 @@ class HermesAdapter(BaseAgentEngine):
                 "role": msg.role,
                 "content": msg.content
             })
+
+        # Determine the workspace path for the session and prefix the user message
+        workspace_path = await self.get_session_workspace(request.session_id)
+        message_content = request.message
+        if workspace_path:
+            message_content = f"[Workspace::v1: {workspace_path}] {message_content}"
+
         messages.append({
             "role": "user",
-            "content": request.message
+            "content": message_content
         })
         return messages
 
@@ -362,7 +369,19 @@ class HermesAdapter(BaseAgentEngine):
                     for c in cmds
                 ]
         except Exception as e:
-            logger.error("Failed to fetch commands from Hermes: %s", e)
+            logger.debug("Failed to fetch commands from Hermes API, falling back to local registry file: %s", e)
+            try:
+                commands_path = os.path.join(os.path.dirname(__file__), "hermes-slash-commands.json")
+                if os.path.exists(commands_path):
+                    with open(commands_path, "r") as f:
+                        data = json.load(f)
+                        cmds = data.get("flat", []) if isinstance(data, dict) else data
+                        return [
+                            AgentCommand(name=c["name"], description=c.get("description", ""))
+                            for c in cmds
+                        ]
+            except Exception as le:
+                logger.error("Failed to load local commands fallback: %s", le)
             return []
 
     async def cancel_chat(self, session_id: str) -> bool:

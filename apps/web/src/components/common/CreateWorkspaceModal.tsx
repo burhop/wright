@@ -159,6 +159,11 @@ export function CreateWorkspaceModal({
               placeholder="e.g., Turbine Blade FEA"
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubmit();
+                }
+              }}
               autoFocus
               maxLength={100}
               style={{

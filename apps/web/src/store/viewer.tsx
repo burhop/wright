@@ -79,6 +79,44 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
   const subscriptionsRef = React.useRef<Map<string, Disposable>>(new Map());
   const backupHandlesRef = React.useRef<Map<string, BackupHandle>>(new Map());
 
+  React.useEffect(() => {
+    // Clear all open tabs and resource references when active session changes
+    for (const sub of subscriptionsRef.current.values()) {
+      try {
+        sub.dispose();
+      } catch (e) {
+        console.error("Failed to dispose subscription on session switch:", e);
+      }
+    }
+    subscriptionsRef.current.clear();
+
+    for (const backupHandle of backupHandlesRef.current.values()) {
+      try {
+        backupHandle.delete().catch(() => {});
+      } catch (e) {
+        console.error("Failed to delete backup on session switch:", e);
+      }
+    }
+    backupHandlesRef.current.clear();
+
+    setDocuments((prev) => {
+      for (const doc of prev.values()) {
+        try {
+          doc.dispose();
+        } catch (e) {
+          console.error("Failed to dispose document on session switch:", e);
+        }
+      }
+      return new Map();
+    });
+
+    setProviders(new Map());
+    setUndoStacks(new Map());
+    setRedoStacks(new Map());
+    setOpenTabs([]);
+    setActiveTabPath(null);
+  }, [chatState.activeSessionId]);
+
   const setTabDirty = useCallback((path: string, isDirty: boolean) => {
     setOpenTabs((prev) =>
       prev.map((t) => (t.path === path ? { ...t, isDirty } : t)),

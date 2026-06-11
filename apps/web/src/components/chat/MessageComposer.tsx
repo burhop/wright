@@ -39,6 +39,29 @@ export function MessageComposer({
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [mcpStatus, setMcpStatus] = useState<{ status: string; message: string } | null>(null);
   const [showStatusPopup, setShowStatusPopup] = useState(false);
+  const [workspaceFiles, setWorkspaceFiles] = useState<{ name: string; path: string }[]>([]);
+
+  const fetchWorkspaceFiles = async () => {
+    if (!sessionId) return;
+    try {
+      const tree = await workspaceService.getWorkspaceFiles(sessionId);
+      const getFilesFromTree = (node: any): { name: string; path: string }[] => {
+        let list: { name: string; path: string }[] = [];
+        if (node.type === "file") {
+          list.push({ name: node.name, path: node.path });
+        }
+        if (node.children) {
+          for (const child of node.children) {
+            list = list.concat(getFilesFromTree(child));
+          }
+        }
+        return list;
+      };
+      setWorkspaceFiles(getFilesFromTree(tree));
+    } catch (err) {
+      console.error("Failed to fetch workspace files for autocomplete", err);
+    }
+  };
 
   useEffect(() => {
     // Fetch available commands on mount
@@ -150,6 +173,25 @@ export function MessageComposer({
     const cursorPosition = e.target.selectionStart;
     const textBeforeCursor = val.slice(0, cursorPosition);
 
+    // Check for "@file " followed by search filter
+    const fileMatch = textBeforeCursor.match(/(?:^|\s)(@file\s)(\S*)$/);
+    if (fileMatch) {
+      setMenuPrefix(fileMatch[1]); // "@file "
+      setMenuFilter(fileMatch[2]);
+      if (workspaceFiles.length === 0) {
+        fetchWorkspaceFiles();
+      }
+      if (textareaRef.current) {
+        const rect = textareaRef.current.getBoundingClientRect();
+        setMenuPosition({
+          top: rect.top - 10,
+          left: rect.left + 20,
+        });
+      }
+      setShowMenu(true);
+      return;
+    }
+
     // Check for "/" or "@" typed at the beginning of a word
     const match = textBeforeCursor.match(/(?:^|\s)([@\/])(\w*)$/);
     if (match) {
@@ -177,11 +219,20 @@ export function MessageComposer({
     const textAfterCursor = text.slice(cursorPosition);
 
     const newTextBeforeCursor = textBeforeCursor.replace(
-      /(?:^|\s)([@\/])(\w*)$/,
-      ` $1${cmd.name} `,
+      /(?:^|\s)([@\/]|@file\s)(\S*)$/,
+      `$1${cmd.name} `,
     );
-    setText(newTextBeforeCursor.trimStart() + textAfterCursor);
-    setShowMenu(false);
+    const updatedText = newTextBeforeCursor.trimStart() + textAfterCursor;
+    setText(updatedText);
+
+    if (cmd.name === "file" && cmd.prefix === "@") {
+      setMenuPrefix("@file ");
+      setMenuFilter("");
+      fetchWorkspaceFiles();
+      setShowMenu(true);
+    } else {
+      setShowMenu(false);
+    }
     textareaRef.current?.focus();
   };
 
@@ -247,7 +298,15 @@ export function MessageComposer({
     >
       {showMenu && (
         <CommandMenu
-          commands={commands}
+          commands={
+            menuPrefix === "@file "
+              ? workspaceFiles.map((f) => ({
+                  name: f.path,
+                  description: `File: ${f.name}`,
+                  prefix: "@file ",
+                }))
+              : commands
+          }
           filter={menuFilter}
           prefix={menuPrefix}
           onSelect={handleCommandSelect}

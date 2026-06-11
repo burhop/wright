@@ -131,7 +131,21 @@ async def call_gateway_tool(
     try:
         runner = engine._active_runners.get(target_server.server_id)
         if not runner or not runner.is_running():
-            await engine.start_server(target_server.server_id)
+            workspace_dir = None
+            try:
+                conn = sqlite3.connect(db_path)
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute(
+                    "SELECT local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
+                )
+                row = cursor.fetchone()
+                if row:
+                    workspace_dir = row["local_path"]
+                conn.close()
+            except Exception:
+                pass
+            await engine.start_server(target_server.server_id, workspace_dir=workspace_dir)
     except Exception as e:
         logger.exception("gateway_start_server_failed", server=target_server.name, error=str(e))
         return {

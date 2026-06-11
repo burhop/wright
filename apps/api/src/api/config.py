@@ -87,3 +87,6 @@ DEFAULT_OPENSCAD_HEADLESS_PATH = os.path.join(
 
 if "OPENSCAD_PATH" not in os.environ:
     os.environ["OPENSCAD_PATH"] = DEFAULT_OPENSCAD_HEADLESS_PATH
+
+# Reload trigger to pick up core package modifications
+# Reload trigger version 3

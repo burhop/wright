@@ -283,3 +283,5 @@ test-live-*.log
 *.log
 state.db
 tests_output/
+tmp/
+/tmp/
