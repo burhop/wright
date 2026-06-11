@@ -198,6 +198,14 @@ Join the Wright community to discuss ideas, ask for help, or collaborate:
 
 ---
 
+## Support & Sponsorship
+
+Wright is an open-source project supported by our community and backers. If you find Wright valuable for your product development, manufacturing, or engineering workflows, please consider sponsoring our work. Your support helps accelerate development, maintain our open-source tools, and sustain our infrastructure.
+
+💖 **[Sponsor Wright on GitHub](https://github.com/sponsors/burhop)**
+
+---
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
