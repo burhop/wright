@@ -63,6 +63,11 @@ YAML
   # Copy config to wright profile as well
   cp "${HERMES_HOME}/config.yaml" "${HERMES_HOME}/profiles/wright/config.yaml"
 
+  # Enable API server in the wright profile
+  hermes -p wright config set API_SERVER_ENABLED true
+  hermes -p wright config set API_SERVER_KEY "${HERMES_API_KEY:-wright-dev-key}"
+  hermes -p wright config set API_SERVER_PORT 8642
+
   # Write SOUL.md with Wright agent instructions
   cat > "${HERMES_HOME}/profiles/wright/SOUL.md" <<'EOF'
 # Hermes Agent Persona

@@ -386,22 +386,22 @@ test.describe('Pluggable Viewer Panel Lifecycle E2E', () => {
 
   test('should show fix button on error output and trigger agent chat on click', async ({ page }) => {
     let lastSentMessage = '';
-    await page.route('**/api/agent/chat/start', async (route) => {
-      const body = JSON.parse(route.request().postData() || '{}');
-      lastSentMessage = body.message;
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ stream_id: 'mock-stream-123' }),
-      });
-    });
-
-    await page.route('**/api/agent/chat/stream?*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'text/event-stream',
-        body: 'event: done\ndata: {"session": {"sessionId": "session-1", "messages": []}}\n\n',
-      });
+    await page.route('**/api/agent/chat', async (route) => {
+      if (route.request().method() === 'POST') {
+        const body = JSON.parse(route.request().postData() || '{}');
+        lastSentMessage = body.message;
+        await route.fulfill({
+          status: 200,
+          contentType: 'text/event-stream; charset=utf-8',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+          body: 'event: done\ndata: {"session": {"sessionId": "session-1", "messages": []}}\n\n',
+        });
+      } else {
+        await route.fallback();
+      }
     });
 
     await page.goto('/workspace/ws-1');

@@ -54,7 +54,7 @@ test.describe('Agent Chat Page', () => {
     });
 
     // Mock SSE chat response stream
-    await page.route('**/api/agent/chat/stream*', async (route) => {
+    await page.route('**/api/agent/chat', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'text/event-stream; charset=utf-8',
@@ -147,45 +147,44 @@ test.describe('Agent Chat Page', () => {
       });
     });
 
-    // Mock EventSource to simulate streaming over time with delays
+    // Mock window.fetch to simulate SSE streaming for POST /api/agent/chat
     await page.addInitScript(() => {
-      class MockEventSource extends EventTarget {
-        url: string;
-        constructor(url: string) {
-          super();
-          this.url = url;
-          // Simulate streaming events with delay so the UI stays in intermediate states long enough for assertions
-          setTimeout(() => {
-            const event = new MessageEvent('tool', {
-              data: JSON.stringify({ name: 'calculate_stress', preview: 'Analyzing stress fields...' })
-            });
-            this.dispatchEvent(event);
-          }, 100);
+      const originalFetch = window.fetch;
+      window.fetch = async function (input: any, init?: RequestInit) {
+        const url = typeof input === 'string' ? input : (input && (input as any).url) || String(input);
+        if (url.includes('/api/agent/chat') && init?.method === 'POST') {
+          const stream = new ReadableStream({
+            start(controller) {
+              const encoder = new TextEncoder();
+              
+              const sendChunk = (text: string, delay: number) => {
+                setTimeout(() => {
+                  controller.enqueue(encoder.encode(text));
+                }, delay);
+              };
 
-          setTimeout(() => {
-            const event = new MessageEvent('progress', {
-              data: JSON.stringify({ percentage: 50, message: 'Solving stiffness equations (50% done)...' })
-            });
-            this.dispatchEvent(event);
-          }, 150);
+              sendChunk('event: tool\ndata: {"name": "calculate_stress", "preview": "Analyzing stress fields..."}\n\n', 500);
+              sendChunk('event: progress\ndata: {"percentage": 50, "message": "Solving stiffness equations (50% done)..."}\n\n', 1000);
+              sendChunk('event: token\ndata: {"text": "I have received your request: **Run stiffness analysis**. As a local offline assistant in v1, I am processing your mechanical designs."}\n\n', 1500);
+              sendChunk('event: stream_end\ndata: {"session_id": "session123"}\n\n', 4000);
+              
+              setTimeout(() => {
+                controller.close();
+              }, 4200);
+            }
+          });
 
-          setTimeout(() => {
-            const event = new MessageEvent('token', {
-              data: JSON.stringify({ text: 'I have received your request: **Run stiffness analysis**. As a local offline assistant in v1, I am processing your mechanical designs.' })
-            });
-            this.dispatchEvent(event);
-          }, 200);
-
-          setTimeout(() => {
-            const event = new MessageEvent('stream_end', {
-              data: JSON.stringify({ session_id: 'session123' })
-            });
-            this.dispatchEvent(event);
-          }, 400);
+          return new Response(stream, {
+            headers: {
+              'Content-Type': 'text/event-stream; charset=utf-8',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive',
+            },
+            status: 200,
+          });
         }
-        close() {}
-      }
-      (window as any).EventSource = MockEventSource;
+        return originalFetch.call(this, input, init);
+      };
     });
 
     await page.goto('/workspace/ws-1');
@@ -207,7 +206,7 @@ test.describe('Agent Chat Page', () => {
     const sendBtn = page.getByTestId('composer-send');
     await sendBtn.click();
 
-    await expect(page.getByTestId('chat-transcript').getByText('Run stiffness analysis')).toBeVisible();
+    await expect(page.getByTestId('chat-transcript').getByText('Run stiffness analysis').first()).toBeVisible();
     await expect(page.getByTestId('active-tool')).toBeVisible();
     
     // Check tool progress displays correctly

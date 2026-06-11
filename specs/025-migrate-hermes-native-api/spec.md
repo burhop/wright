@@ -115,7 +115,7 @@ A DevOps engineer builds and deploys the Wright Docker container. The container 
 - **FR-011**: System MUST eliminate all references to hermes-webui from the production container image, including the git clone, separate virtual environment, and process supervision entry.
 - **FR-012**: System MUST preserve the wright profile isolation — all agent operations must be scoped to the dedicated "wright" profile, not the user's personal Hermes profile.
 - **FR-013**: System MUST log all agent interactions using structured JSON logging with trace IDs, consistent with the project's observability mandate.
-- **FR-014**: System MUST require zero changes to the React frontend service layer — all migration work is contained within the backend adapter and infrastructure layers.
+- **FR-014**: System MUST limit frontend changes to the agent-service transport layer (`agent-service.ts`) only — no UI component, layout, or design changes. The transport layer is updated to use a unified POST-based streaming endpoint aligned with the OpenAI-compatible API used by both Hermes and OpenClaw. The FastAPI router is also updated to merge the two-step chat/start + chat/stream flow into a single `POST /chat` streaming endpoint.
 
 ### Key Entities
 
@@ -144,7 +144,7 @@ A DevOps engineer builds and deploys the Wright Docker container. The container 
 - The native Hermes gateway supports dynamic MCP server registration and deregistration without requiring process restarts — this is a key architectural assumption that must be validated during the planning/research phase.
 - The wright profile isolation mechanism (`HERMES_HOME=~/.hermes/profiles/wright`) is supported by the native gateway, providing equivalent isolation to the `hermes_profile` cookie used by hermes-webui.
 - The native API provides session management capabilities (create, list, delete sessions with workspace context) equivalent to what hermes-webui exposed via its custom REST endpoints.
-- The React frontend (`agent-service.ts`) and FastAPI router layer (`agent.py`) require zero or minimal changes because they communicate with Wright's own API, not directly with the agent backend.
+- The React frontend transport layer (`agent-service.ts`) and the FastAPI router (`agent.py`) require minimal, targeted changes to adopt the unified POST-based streaming endpoint. UI components, layouts, and event handling logic remain unchanged — only the HTTP transport mechanism is updated.
 - The wright-gateway MCP stdio bridge (`tool_registry/gateway.py`) continues to function as the intermediary between the Hermes gateway and Wright's tool registry — only the process that spawns it changes.
 - Existing session data stored in Wright's SQLite database is unaffected by this migration. Hermes-side session state (if any) may need a one-time migration or can be treated as a clean start.
 - The `hermes-webui` community server and its `ctl.sh` lifecycle scripts are fully removed from both the local development workflow and the Docker container after migration.

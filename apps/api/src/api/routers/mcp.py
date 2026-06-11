@@ -20,7 +20,6 @@ from tool_registry import (
 from core.tracing import traced
 from api.services.hermes_sync import (
     sync_mcp_server_to_hermes,
-    restart_hermes_background,
 )
 
 logger = structlog.get_logger(__name__)
@@ -180,8 +179,7 @@ async def toggle_server_activation(
         # Sync with Hermes config
         sync_mcp_server_to_hermes(updated)
 
-        # Restart Hermes WebUI in background to reload config
-        restart_hermes_background()
+
 
         return ServerToggleResponse(
             server_id=updated.server_id,
@@ -347,8 +345,7 @@ async def delete_server_endpoint(
         server.is_active = False
         sync_mcp_server_to_hermes(server)
 
-        # Restart Hermes WebUI in background to reload config
-        restart_hermes_background()
+
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as e:

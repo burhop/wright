@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import ChatLayout from "../src/components/chat/ChatLayout";
+import { ViewerPanelProvider } from "../src/store/viewer";
 
 // Mock useHealthStatus hook
 const mockUseHealthStatus = vi.fn();
@@ -78,7 +79,9 @@ describe("ChatLayout", () => {
   it("renders three-panel layout and no banner when connected", () => {
     render(
       <MemoryRouter>
-        <ChatLayout />
+        <ViewerPanelProvider>
+          <ChatLayout />
+        </ViewerPanelProvider>
       </MemoryRouter>,
     );
 
@@ -122,7 +125,9 @@ describe("ChatLayout", () => {
 
     render(
       <MemoryRouter>
-        <ChatLayout />
+        <ViewerPanelProvider>
+          <ChatLayout />
+        </ViewerPanelProvider>
       </MemoryRouter>,
     );
 
@@ -159,10 +164,54 @@ describe("ChatLayout", () => {
 
     render(
       <MemoryRouter>
-        <ChatLayout />
+        <ViewerPanelProvider>
+          <ChatLayout />
+        </ViewerPanelProvider>
       </MemoryRouter>,
     );
 
     expect(screen.getByTestId("thinking-indicator")).toBeInTheDocument();
+  });
+
+  it("verifies that clicking the '+' button triggers createSession", async () => {
+    const mockCreateSession = vi.fn().mockResolvedValue("new-session-id");
+    const mockSelectSession = vi.fn();
+    mockUseChat.mockReturnValue({
+      state: {
+        sessions: [
+          {
+            sessionId: "session1",
+            title: "Test Session",
+            messages: [],
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            isActive: true,
+          },
+        ],
+        activeSessionId: "session1",
+        isStreaming: false,
+        activeTool: null,
+        streamedText: "",
+      },
+      createSession: mockCreateSession,
+      selectSession: mockSelectSession,
+      deleteSession: vi.fn(),
+      sendMessage: vi.fn(),
+      refreshSessions: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <ChatLayout />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    const plusBtn = screen.getByTestId("create-session-btn");
+    expect(plusBtn).toBeInTheDocument();
+    plusBtn.click();
+
+    expect(mockCreateSession).toHaveBeenCalled();
   });
 });

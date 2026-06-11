@@ -7,7 +7,6 @@ from agent_adapters import (
     BaseAgentEngine,
     AgentSessionInfo,
     AgentChatRequest,
-    AgentChatStartResponse,
     AgentStreamEvent,
 )
 from typing import AsyncIterator
@@ -54,12 +53,7 @@ class MockAgentEngine(BaseAgentEngine):
     async def delete_session(self, session_id: str) -> bool:
         return True
 
-    async def start_chat(self, request: AgentChatRequest) -> AgentChatStartResponse:
-        return AgentChatStartResponse(
-            stream_id="stream-1", session_id=request.session_id
-        )
-
-    async def stream_response(self, stream_id: str) -> AsyncIterator[AgentStreamEvent]:
+    async def stream_chat(self, request: AgentChatRequest) -> AsyncIterator[AgentStreamEvent]:
         yield AgentStreamEvent(type="token", data={"text": "hello"})
 
     async def get_session_workspace(self, session_id: str) -> str | None:

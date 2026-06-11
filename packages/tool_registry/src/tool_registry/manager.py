@@ -52,7 +52,7 @@ class McpEngine:
         except Exception as e:
             logger.error("Failed to process WebMCP WebSocket message: %s", e)
 
-    async def start_server(self, server_id: str) -> McpServer:
+    async def start_server(self, server_id: str, workspace_dir: Optional[str] = None) -> McpServer:
         """Start an MCP server subprocess or remote SSE connection, query its tools, and sync with database."""
         server = get_server(self.db_path, server_id)
         if not server:
@@ -94,6 +94,8 @@ class McpEngine:
             if not server.command:
                 raise ValueError("Command configuration is required for stdio server.")
             env_vars = server.env_vars or {}
+            env_vars = env_vars.copy()
+
             key_name = "".join(c.lower() for c in server.name if c.isalnum())
             if not key_name:
                 key_name = server.server_id
@@ -105,7 +107,6 @@ class McpEngine:
                             default_fc = "/snap/bin/freecad.cmd"
                         else:
                             default_fc = "/usr/local/bin/freecadcmd"
-                    env_vars = env_vars.copy()
                     env_vars["FREECAD_PATH"] = default_fc
             runner = StdioRunner(server.command, env=env_vars)
         elif server.type == "sse":

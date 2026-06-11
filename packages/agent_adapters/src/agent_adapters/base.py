@@ -29,12 +29,6 @@ class AgentCommand:
     description: str
 
 
-@dataclass
-class AgentChatStartResponse:
-    """Response from starting a chat turn."""
-
-    stream_id: str
-    session_id: str
 
 
 @dataclass
@@ -86,13 +80,22 @@ class BaseAgentEngine(ABC):
         pass
 
     @abstractmethod
-    async def start_chat(self, request: AgentChatRequest) -> AgentChatStartResponse:
-        """Initiate a chat turn. Returns stream_id for SSE consumption."""
-        pass
+    async def stream_chat(
+        self, request: AgentChatRequest
+    ) -> AsyncIterator[AgentStreamEvent]:
+        """Send a message and stream back the agent's response.
 
-    @abstractmethod
-    async def stream_response(self, stream_id: str) -> AsyncIterator[AgentStreamEvent]:
-        """Yield SSE events from the agent's response stream."""
+        This is a unified operation: it sends the user message to the
+        agent backend and yields SSE events as they arrive. There is
+        no separate start/stream handoff.
+
+        Adapters map their backend's streaming format to AgentStreamEvent:
+        - "token": text content delta
+        - "tool": tool invocation (name, args, call_id)
+        - "progress": tool execution progress (tool name, status, label)
+        - "stream_end": response complete
+        - "error": error occurred
+        """
         pass
 
     @abstractmethod
@@ -124,6 +127,6 @@ class BaseAgentEngine(ABC):
         """Retrieve the available slash commands from the agent engine."""
         pass
 
-    async def cancel_chat(self, session_id: str, stream_id: str) -> bool:
+    async def cancel_chat(self, session_id: str) -> bool:
         """Cancel an active response stream. Returns True if successfully accepted."""
         return False

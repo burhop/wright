@@ -84,17 +84,6 @@ ENV UV_TOOL_BIN_DIR=/usr/local/bin
 RUN uv tool install hermes-agent==0.15.2 --python 3.13 && \
     rm -rf /root/.cache/uv
 
-# ── Install Hermes WebUI from GitHub (pinned tag) ─────────────────────────
-# The WebUI imports hermes-agent at runtime, so it must be in the same venv.
-RUN git clone --branch v0.51.135 --depth 1 \
-    https://github.com/nesquena/hermes-webui.git /opt/hermes-webui && \
-    rm -rf /opt/hermes-webui/.git && \
-    uv venv /opt/hermes-webui/.venv --python 3.13 && \
-    uv pip install --python /opt/hermes-webui/.venv/bin/python \
-        -r /opt/hermes-webui/requirements.txt \
-        hermes-agent==0.15.2 && \
-    rm -rf /root/.cache/uv && \
-    chown -R agent:agent /opt/hermes-webui
 
 # ── Wright workspace setup ────────────────────────────────────────────────
 WORKDIR /workspace

@@ -711,7 +711,7 @@ async def get_workspace_mcp_status_endpoint(
         return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.")
 
     # 4. Check for mismatches
-    if expected_keys != configured_keys:
+    if expected_keys and "wrightgateway" not in configured_keys:
         return WorkspaceMcpStatusResponse(
             status="mismatch",
             message="Tool change during session. Start a new session to apply changes."
@@ -911,9 +911,38 @@ async def get_default_workspace_dir_endpoint():
 @router.post("/by-id/{workspace_id}/session")
 @traced("workspace.session.update")
 async def update_workspace_session_endpoint(
-    workspace_id: str, body: WorkspaceSessionUpdateRequest
+    workspace_id: str,
+    body: WorkspaceSessionUpdateRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
+    
+    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+    if workspace:
+        local_path = workspace["local_path"]
+        session_id = await activate_workspace(DATABASE_PATH, body.session_id, local_path, engine, allow_fallback=False)
+
+        mcp_engine = getattr(request.app.state, "mcp_engine", None)
+        if mcp_engine:
+            try:
+                await sync_workspace_runners(DATABASE_PATH, session_id, mcp_engine)
+            except Exception as e:
+                logger.error("mcp_runner_sync_failed_on_session_update", error=str(e))
+
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager:
+            try:
+                sync_manager.sync_workspace_tools(session_id)
+            except Exception as e:
+                logger.error("agent_tool_sync_failed_on_session_update", error=str(e))
+
+        try:
+            from api.routers.gateway import notify_gateway_tool_change
+            notify_gateway_tool_change()
+        except Exception as e:
+            logger.warning("failed_to_notify_gateway_on_session_update", error=str(e))
+
     return {"success": True}
 
 

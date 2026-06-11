@@ -153,53 +153,17 @@ class AgentSyncManager:
             except Exception as e:
                 logger.error("Failed to sync workspace tools to Hermes path %s: %s", path, e)
                 config_changed = True
-
-        if not config_changed:
-            logger.info("Hermes configuration has not changed. Skipping restart.")
-            return
-
-        # Restart Hermes WebUI in background to reload config
-        try:
-            # Preemptively terminate any running process bound to port 8788
-            # and wait a short duration to ensure the socket is fully released.
-            kill_cmd = "fuser -k -n tcp 8788 || true"
-            subprocess.run(kill_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=2.0)
-            import time
-            time.sleep(0.5)
-        except Exception as e:
-            logger.error("Failed to run fuser to kill port 8788: %s", e)
+        if config_changed:
+            logger.info("Hermes configuration updated. Gateway will auto-reload config.yaml.")
+        else:
+            logger.info("Hermes configuration unchanged.")
 
         try:
-            subprocess.Popen(
-                f'export HERMES_HOME="$HOME/.hermes/profiles/wright" && export TMPDIR="{tmp_dir}" && export TEMP="{tmp_dir}" && export TMP="{tmp_dir}" && /home/burhop/hermes-webui/ctl.sh stop && /home/burhop/hermes-webui/ctl.sh start 8788',
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-            # Wait for Hermes WebUI to be healthy before returning
-            import urllib.request
-            import json
-            import time
-
-            port = int(os.environ.get("HERMES_WEBUI_PORT", "8788"))
-            health_url = f"http://127.0.0.1:{port}/health"
-            logger.info("Waiting for Hermes WebUI to start up on port %d...", port)
-
-            for attempt in range(20):
-                try:
-                    with urllib.request.urlopen(health_url, timeout=1.0) as response:
-                        if response.status == 200:
-                            data = json.loads(response.read().decode())
-                            if data.get("status") == "ok":
-                                logger.info("Hermes WebUI successfully restarted and is healthy.")
-                                break
-                except Exception:
-                    pass
-                time.sleep(0.5)
-            else:
-                logger.warning("Hermes WebUI did not respond with 'ok' status in time after restart.")
+            from api.routers.gateway import notify_gateway_tool_change
+            notify_gateway_tool_change()
+            logger.info("Successfully notified gateway of tool change.")
         except Exception as e:
-            logger.error("Failed to restart Hermes WebUI: %s", e)
+            logger.debug("Failed to notify gateway of tool change: %s", e)
 
 
     def _sync_to_stub_agent(self, session_id: str, agent_name: str) -> None:

@@ -366,42 +366,26 @@ test.describe("UI Navigation Redesign E2E", () => {
       });
     });
 
-    // Mock chat turn initiation
-    await page.route('**/api/agent/chat/start', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          stream_id: 'stream-debug-123',
-          session_id: 'session-debug-123'
-        }),
-      });
-    });
-
-    // Setup native EventSource mock for streaming
-    await page.addInitScript(() => {
-      class MockEventSource extends EventTarget {
-        url: string;
-        constructor(url: string) {
-          super();
-          this.url = url;
-          setTimeout(() => {
-            const event = new MessageEvent('token', {
-              data: JSON.stringify({ text: 'This solver error happens when CalculiX solver is terminated abruptly. Check boundary constraints.' })
-            });
-            this.dispatchEvent(event);
-          }, 100);
-
-          setTimeout(() => {
-            const event = new MessageEvent('stream_end', {
-              data: JSON.stringify({ session_id: 'session-debug-123' })
-            });
-            this.dispatchEvent(event);
-          }, 300);
-        }
-        close() {}
+    // Mock chat turn streaming
+    await page.route('**/api/agent/chat', async (route) => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'text/event-stream; charset=utf-8',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+          body: [
+            'event: token\n',
+            'data: {"text": "This solver error happens when CalculiX solver is terminated abruptly. Check boundary constraints."}\n\n',
+            'event: stream_end\n',
+            'data: {"session_id": "session-debug-123"}\n\n'
+          ].join(''),
+        });
+      } else {
+        await route.fallback();
       }
-      (window as any).EventSource = MockEventSource;
     });
 
     // Navigate directly to Logs page
@@ -439,7 +423,7 @@ test.describe("UI Navigation Redesign E2E", () => {
     // Verify sliding diagnostic drawer opens and displays LLM response
     const drawer = page.getByTestId('logs-debug-drawer');
     await expect(drawer).toBeVisible();
-    await expect(drawer.getByText('HERMES')).toBeVisible();
+    await expect(drawer.getByText('HERMES', { exact: true })).toBeVisible();
     await expect(drawer.getByText('This solver error happens when CalculiX solver is terminated abruptly')).toBeVisible();
 
     // Close the drawer

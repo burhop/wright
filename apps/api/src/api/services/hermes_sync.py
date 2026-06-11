@@ -56,7 +56,12 @@ def _write_static_hermes_config() -> bool:
             try:
                 os.makedirs(os.path.dirname(path), exist_ok=True)
                 with open(path, "w") as f:
-                    yaml.safe_dump({"mcp_servers": new_mcp_servers}, f, default_flow_style=False)
+                    yaml.safe_dump({
+                        "mcp_servers": new_mcp_servers,
+                        "terminal": {
+                            "cwd": repo_dir
+                        }
+                    }, f, default_flow_style=False)
             except Exception as e:
                 logger.error("Failed to write initial config", path=path, error=str(e))
             continue
@@ -68,6 +73,10 @@ def _write_static_hermes_config() -> bool:
             import copy
             new_config = copy.deepcopy(config)
             new_config["mcp_servers"] = new_mcp_servers
+            
+            if "terminal" not in new_config:
+                new_config["terminal"] = {}
+            new_config["terminal"]["cwd"] = repo_dir
             
             if config != new_config:
                 config_changed = True
@@ -88,14 +97,10 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
     """
     if "pytest" in sys.modules:
         return
-    changed = _write_static_hermes_config()
-    if changed:
-        logger.info("static_config_changed_restarting_hermes")
-        restart_hermes_background()
-    else:
-        logger.info("static_config_unchanged_notifying_gateway")
-        from api.routers.gateway import notify_gateway_tool_change
-        notify_gateway_tool_change()
+    _write_static_hermes_config()
+    logger.info("notifying_gateway_tool_change")
+    from api.routers.gateway import notify_gateway_tool_change
+    notify_gateway_tool_change()
 
 
 def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
@@ -149,63 +154,8 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
     except Exception as e:
         logger.warning("Failed to write workspace .hermes.md during sync: %s", e)
 
-    changed = _write_static_hermes_config()
-    if changed:
-        logger.info("static_config_changed_restarting_hermes")
-        restart_hermes_background(workspace_path)
-    else:
-        logger.info("static_config_unchanged_notifying_gateway")
-        from api.routers.gateway import notify_gateway_tool_change
-        notify_gateway_tool_change()
-
-
-def restart_hermes_background(workspace_path: str | None = None) -> None:
-    """Restart Hermes WebUI in background to reload config.
-
-    Non-blocking subprocess call. Failures are silently ignored.
-    """
-    if "pytest" in sys.modules:
-        return
-
-    # Try to resolve active workspace path dynamically if not passed
-    if not workspace_path:
-        try:
-            from api.config import DATABASE_PATH
-            import sqlite3
-            conn = sqlite3.connect(DATABASE_PATH)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            cursor.execute("SELECT local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1")
-            row = cursor.fetchone()
-            if row:
-                workspace_path = row["local_path"]
-            conn.close()
-        except Exception:
-            pass
-
-    env_str = 'export HERMES_HOME="$HOME/.hermes/profiles/wright"'
-    if workspace_path:
-        tmp_dir = os.path.join(workspace_path, "tmp")
-        os.makedirs(tmp_dir, exist_ok=True)
-        env_str += f' && export TMPDIR="{tmp_dir}" && export TEMP="{tmp_dir}" && export TMP="{tmp_dir}"'
-
-    try:
-        # Preemptively terminate any running process bound to port 8788
-        # and wait a short duration to ensure the socket is fully released.
-        kill_cmd = "fuser -k -n tcp 8788 || true"
-        subprocess.run(kill_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=2.0)
-        import time
-        time.sleep(0.5)
-    except Exception:
-        pass
-
-    try:
-        subprocess.Popen(
-            f'{env_str} && $HOME/hermes-webui/ctl.sh stop && $HOME/hermes-webui/ctl.sh start 8788',
-            shell=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-    except Exception:
-        pass
+    _write_static_hermes_config()
+    logger.info("notifying_gateway_tool_change")
+    from api.routers.gateway import notify_gateway_tool_change
+    notify_gateway_tool_change()
 

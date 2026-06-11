@@ -2368,10 +2368,6 @@ export function WorkspacePanel({
               onChange={async (e) => {
                 const newSessId = e.target.value;
                 if (newSessId) {
-                  selectSession(newSessId);
-                  if (onSessionChange) {
-                    onSessionChange(newSessId);
-                  }
                   if (_workspaceId) {
                     try {
                       await workspaceService.updateWorkspaceSession(
@@ -2384,6 +2380,10 @@ export function WorkspacePanel({
                         err,
                       );
                     }
+                  }
+                  selectSession(newSessId);
+                  if (onSessionChange) {
+                    onSessionChange(newSessId);
                   }
                 }
               }}
@@ -2427,10 +2427,6 @@ export function WorkspacePanel({
               onClick={async () => {
                 const newId = await createSession(workspacePath);
                 if (newId) {
-                  selectSession(newId);
-                  if (onSessionChange) {
-                    onSessionChange(newId);
-                  }
                   if (_workspaceId) {
                     try {
                       await workspaceService.updateWorkspaceSession(
@@ -2443,6 +2439,10 @@ export function WorkspacePanel({
                         err,
                       );
                     }
+                  }
+                  selectSession(newId);
+                  if (onSessionChange) {
+                    onSessionChange(newId);
                   }
                 }
               }}

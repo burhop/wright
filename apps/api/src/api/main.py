@@ -12,7 +12,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from agent_adapters import HermesAdapter
-from api.config import HERMES_WEBUI_BASE_URL, DATABASE_PATH, get_llm_health_url
+from api.config import HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH, get_llm_health_url
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
 from api.routers.vault import router as vault_router
@@ -121,7 +121,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # Instantiate and store the Hermes adapter engine in the app state
-app.state.agent_engine = HermesAdapter(HERMES_WEBUI_BASE_URL)
+app.state.agent_engine = HermesAdapter(HERMES_API_BASE_URL, HERMES_API_KEY)
 app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the routers
@@ -216,3 +216,7 @@ else:
     @app.get("/")
     async def root():
         return {"message": "Wright API is running"}
+
+# Reload trigger comment to refresh workspace packages - v2
+
+

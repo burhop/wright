@@ -337,6 +337,7 @@ async def activate_workspace(
     session_id: str,
     local_path: str,
     engine,
+    allow_fallback: bool = True,
 ) -> str:
     """Activate a workspace: verify/create agent session, update session_id if needed.
 
@@ -353,6 +354,10 @@ async def activate_workspace(
             logger.info(
                 "agent_session_missing", session_id=session_id, local_path=local_path
             )
+            if not allow_fallback:
+                write_workspace_hermes_md(db_path, local_path)
+                return session_id
+
             # Find an existing session belonging to this local_path
             fallback_session = None
             workspace_sessions = sorted(
@@ -1100,9 +1105,17 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
         if is_enabled and srv.get("instructions"):
             active_instructions.append(f"## {srv['name']} Instructions\n{srv['instructions']}")
 
+    global_rules = (
+        "## Global Workspace Rules\n"
+        f"1. **Workspace Path**: The absolute path to the current project workspace is `{local_path}`. All files and assets generated or modified during this session must reside directly within this folder or its subdirectories.\n"
+        "2. **Excluding System Temp/Hidden Paths**: Never write or export final requested outputs to system temporary directories (such as `/tmp/`, `/var/tmp/`, etc.).\n"
+        "3. **Explicit MCP Target Arguments**: When calling MCP tools (such as OpenSCAD, FreeCAD, CalculiX, etc.) to create models, save files, run simulations, or export files (e.g., STL, 3MF, PNG, etc.), you must explicitly specify target directory and output path parameters (e.g. `workspace`, `output_path`, `path`, `directory`, `cwd`) pointing to this active workspace or a subfolder inside it (e.g. `./`), instead of relying on the tools' default parameters which often fall back to temporary system directories.\n\n"
+    )
+
     if active_instructions:
         return (
             "Here are the instructions on how to use the loaded MCP tools within the Wright platform:\n\n"
+            + global_rules
             + "\n\n".join(active_instructions)
         )
     return None

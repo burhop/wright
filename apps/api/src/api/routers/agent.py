@@ -72,16 +72,10 @@ class DeleteSessionResponse(BaseModel):
     ok: bool
 
 
-class ChatStartRequest(BaseModel):
+class ChatRequest(BaseModel):
     session_id: str
     message: str
     attachments: Optional[List[str]] = None
-
-
-class ChatStartResponse(BaseModel):
-    stream_id: str
-    session_id: str
-    trace_id: str
 
 
 class ChatHistoryMessage(BaseModel):
@@ -268,7 +262,7 @@ async def create_new_session(
         log.exception("create_session_failed", error=str(exc))
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Hermes agent failed to create session: {str(exc)}",
+            detail=f"Agent failed to create session: {str(exc)}",
         )
 
 
@@ -311,7 +305,7 @@ async def list_agent_sessions(
         log.exception("list_sessions_failed", error=str(exc))
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Hermes agent failed to list sessions: {str(exc)}",
+            detail=f"Agent failed to list sessions: {str(exc)}",
         )
 
 
@@ -339,70 +333,44 @@ async def delete_agent_session(
         log.exception("delete_session_failed", error=str(exc))
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Hermes agent failed to delete session: {str(exc)}",
+            detail=f"Agent failed to delete session: {str(exc)}",
         )
 
 
-@router.post("/chat/start", response_model=ChatStartResponse)
-@traced("agent.chat.start")
-async def start_chat_turn(
-    body: ChatStartRequest,
+@router.post("/chat")
+@traced("agent.chat")
+async def chat(
+    body: ChatRequest,
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
+    """Unified chat endpoint: send message and stream response."""
     trace_id = get_current_trace_id()
     log = logger.bind(trace_id=trace_id, session_id=body.session_id)
-    log.info("chat_start_requested")
+    log.info("chat_requested")
 
-    try:
-        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-        if sync_manager:
-            try:
-                sync_manager.sync_workspace_tools(body.session_id)
-            except Exception as e:
-                log.warn(
-                    "Failed to sync workspace tools to active agent before chat turn",
-                    error=str(e),
-                )
+    # Sync workspace tools before chat turn
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    if sync_manager:
+        try:
+            sync_manager.sync_workspace_tools(body.session_id)
+        except Exception as e:
+            log.warn("Failed to sync workspace tools", error=str(e))
 
-        chat_request = AgentChatRequest(
-            session_id=body.session_id,
-            message=body.message,
-            trace_id=trace_id,
-            attachments=body.attachments,
-        )
-        chat_response = await engine.start_chat(chat_request)
-        log.info("chat_start_success", stream_id=chat_response.stream_id)
-        return ChatStartResponse(
-            stream_id=chat_response.stream_id,
-            session_id=chat_response.session_id,
-            trace_id=trace_id,
-        )
-    except Exception as exc:
-        log.exception("chat_start_failed", error=str(exc))
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Hermes agent unavailable: {str(exc)}",
-        )
-
-
-@router.get("/chat/stream")
-@traced("agent.chat.stream")
-async def chat_response_stream(
-    stream_id: str, engine: BaseAgentEngine = Depends(get_agent_engine)
-):
-    trace_id = get_current_trace_id()
-    log = logger.bind(trace_id=trace_id, stream_id=stream_id)
-    log.info("chat_stream_connected")
+    chat_request = AgentChatRequest(
+        session_id=body.session_id,
+        message=body.message,
+        trace_id=trace_id,
+        attachments=body.attachments,
+    )
 
     async def sse_generator() -> AsyncIterator[str]:
         try:
-            async for event in engine.stream_response(stream_id):
+            async for event in engine.stream_chat(chat_request):
                 log.info("chat_stream_yield_event", type=event.type)
                 yield f"event: {event.type}\ndata: {json.dumps(event.data)}\n\n"
         except Exception as exc:
-            log.exception("chat_stream_yield_failed", error=str(exc))
-            # Yield error event and exit
+            log.exception("chat_stream_failed", error=str(exc))
             yield f"event: error\ndata: {json.dumps({'message': str(exc)})}\n\n"
 
     return StreamingResponse(
@@ -412,6 +380,7 @@ async def chat_response_stream(
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no",
             "Connection": "keep-alive",
+            "X-Trace-Id": trace_id,
         },
     )
 
@@ -446,12 +415,11 @@ async def set_active_agent_endpoint(
 @traced("agent.chat.cancel")
 async def cancel_chat_turn(
     session_id: str = Query(...),
-    stream_id: str = Query(...),
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     """Cancel a running chat turn stream."""
     try:
-        ok = await engine.cancel_chat(session_id, stream_id)
+        ok = await engine.cancel_chat(session_id)
         return {"success": ok}
     except Exception as exc:
         logger.exception("chat_cancel_failed", error=str(exc))

@@ -21,25 +21,31 @@ else
     echo "Wright profile created successfully."
 fi
 
-# 3. Check if wright WebUI is already running on port 8788
-echo "Checking if Hermes WebUI is running on port 8788..."
-if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8788/health | grep -q "200"; then
-    echo "Hermes WebUI is already running on port 8788."
+# 3. Configure the wright profile for native API gateway
+echo "Configuring the Wright profile..."
+hermes -p wright config set API_SERVER_ENABLED true
+hermes -p wright config set API_SERVER_KEY "wright-dev-key"
+hermes -p wright config set API_SERVER_PORT 8642
+
+# 4. Check if wright gateway is already running on port 8642
+echo "Checking if Hermes gateway is running on port 8642..."
+if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8642/health | grep -q "200"; then
+    echo "Hermes gateway is already running on port 8642."
 else
-    echo "Hermes WebUI is not running on port 8788. Starting it..."
+    echo "Hermes gateway is not running on port 8642. Starting it..."
     # Ensure HERMES_HOME points to the wright profile directory
     export HERMES_HOME="$HOME/.hermes/profiles/wright"
-    /home/burhop/hermes-webui/ctl.sh start 8788
+    hermes -p wright gateway start
     
-    # Wait for the WebUI to start
-    echo "Waiting for WebUI to boot..."
+    # Wait for the gateway to start
+    echo "Waiting for gateway to boot..."
     for i in {1..10}; do
-        if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8788/health | grep -q "200"; then
-            echo "WebUI is up and running!"
+        if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8642/health | grep -q "200"; then
+            echo "Gateway is up and running!"
             break
         fi
         if [ "$i" -eq 10 ]; then
-            echo "Error: WebUI failed to start within 10 seconds."
+            echo "Error: Gateway failed to start within 10 seconds."
             exit 1
         fi
         sleep 1

@@ -50,7 +50,7 @@ const API_BASE = getApiBase();
 export class HermesAgentService {
   private activeStreams = new Map<
     string,
-    { eventSource: EventSource; abort: () => void }
+    { abortController: AbortController; abort: () => void }
   >();
 
   async checkHealth(): Promise<ServiceHealthResult> {
@@ -145,179 +145,152 @@ export class HermesAgentService {
       messageLength: message.length,
       attachmentsCount: attachments?.length || 0,
     });
-    // 1. Initiate chat start
-    const response = await fetch(`${API_BASE}/api/agent/chat/start`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ session_id: sessionId, message, attachments }),
-    });
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      agentLogger.error("Failed to initiate chat", {
-        sessionId,
-        error: errData.message || errData.detail,
-      });
-      yield {
-        type: "error",
-        message: errData.message || errData.detail || "Hermes agent is not available.",
-      };
-      return;
-    }
-
-    const { stream_id } = await response.json();
-    agentLogger.info("Chat stream started", { sessionId, streamId: stream_id });
-    yield { type: "stream_start", streamId: stream_id };
-
-    // 2. Consume SSE stream via browser Native EventSource
-    const eventQueue: AgentEvent[] = [];
-    let isDone = false;
-    let resolveQueue: (() => void) | null = null;
-
-    const eventSource = new EventSource(
-      `${API_BASE}/api/agent/chat/stream?stream_id=${stream_id}`,
-    );
-
-    const pushEvent = (evt: AgentEvent) => {
-      eventQueue.push(evt);
-      if (resolveQueue) {
-        resolveQueue();
-        resolveQueue = null;
-      }
-    };
-
+    const abortController = new AbortController();
     const abort = () => {
-      eventSource.close();
-      isDone = true;
-      pushEvent({ type: "error", message: "Stream cancelled by user." });
+      abortController.abort();
     };
-    this.activeStreams.set(stream_id, { eventSource, abort });
+    this.activeStreams.set(sessionId, { abortController, abort });
 
-    eventSource.addEventListener("token", (e: MessageEvent) => {
-      try {
-        const data = JSON.parse(e.data);
-        agentLogger.debug("Stream token received", {
+    try {
+      const response = await fetch(`${API_BASE}/api/agent/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ session_id: sessionId, message, attachments }),
+        signal: abortController.signal,
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        agentLogger.error("Failed to initiate chat", {
           sessionId,
-          tokenLength: data.text?.length,
+          error: errData.message || errData.detail,
         });
-        pushEvent({ type: "token", text: data.text });
-      } catch (err) {
-        agentLogger.debug("Stream token received (raw)", {
-          sessionId,
-          tokenLength: e.data?.length,
-        });
-        pushEvent({ type: "token", text: e.data });
+        yield {
+          type: "error",
+          message: errData.message || errData.detail || "Agent is not available.",
+        };
+        return;
       }
-    });
 
-    eventSource.addEventListener("tool", (e: MessageEvent) => {
-      try {
-        const data = JSON.parse(e.data);
-        agentLogger.info("Stream tool invoke received", {
+      if (!response.body) {
+        yield { type: "error", message: "Response body is empty." };
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        // Keep the last partial line in the buffer
+        buffer = lines.pop() || "";
+
+        let currentEvent = "";
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+
+          if (trimmed.startsWith("event:")) {
+            currentEvent = trimmed.substring(6).trim();
+          } else if (trimmed.startsWith("data:")) {
+            const dataStr = trimmed.substring(5).trim();
+            if (currentEvent) {
+              const eventYield = this.parseSSEEvent(currentEvent, dataStr, sessionId);
+              if (eventYield) {
+                yield eventYield;
+              }
+              currentEvent = "";
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        yield { type: "error", message: "Stream cancelled by user." };
+      } else {
+        agentLogger.error("Stream error encountered", {
           sessionId,
-          toolName: data.name,
-          preview: data.preview,
+          error: err.message || String(err),
         });
-        pushEvent({
+        yield { type: "error", message: err.message || "Agent response stream failed." };
+      }
+    } finally {
+      this.activeStreams.delete(sessionId);
+    }
+  }
+
+  private parseSSEEvent(event: string, dataStr: string, sessionId: string): AgentEvent | null {
+    if (event === "token") {
+      try {
+        const data = JSON.parse(dataStr);
+        return { type: "token", text: data.text };
+      } catch (err) {
+        return { type: "token", text: dataStr };
+      }
+    } else if (event === "tool") {
+      try {
+        const data = JSON.parse(dataStr);
+        return {
           type: "tool",
           name: data.name,
           preview: data.preview || "",
           percentage: data.percentage,
-        });
+        };
       } catch (err) {
-        // ignore
+        return null;
       }
-    });
-
-    eventSource.addEventListener("progress", (e: MessageEvent) => {
+    } else if (event === "progress") {
       try {
-        const data = JSON.parse(e.data);
-        agentLogger.info("Stream tool progress received", {
-          sessionId,
-          percentage: data.percentage,
-          message: data.message,
-        });
-        pushEvent({
+        const data = JSON.parse(dataStr);
+        return {
           type: "progress",
           percentage: data.percentage,
           message: data.message || "",
-        });
+        };
       } catch (err) {
-        // ignore
+        return null;
       }
-    });
-
-    eventSource.addEventListener("stream_end", (_e: MessageEvent) => {
-      agentLogger.info("Stream completed", { sessionId });
-      eventSource.close();
-      this.activeStreams.delete(stream_id);
-      pushEvent({
+    } else if (event === "stream_end") {
+      return {
         type: "done",
         session: {
           sessionId,
-          title: "", // filled dynamically in reducer
+          title: "",
           messages: [],
           createdAt: Date.now(),
           updatedAt: Date.now(),
           isActive: true,
         },
-      });
-      isDone = true;
-      if (resolveQueue) {
-        resolveQueue();
-      }
-    });
-
-    eventSource.addEventListener("error", (e: any) => {
-      const errMsg = e.data
-        ? typeof e.data === "string"
-          ? e.data
-          : JSON.stringify(e.data)
-        : "Hermes response stream failed.";
-      agentLogger.error("Stream error encountered", {
-        sessionId,
-        error: errMsg,
-      });
-      eventSource.close();
-      this.activeStreams.delete(stream_id);
-      pushEvent({
-        type: "error",
-        message: e.data
-          ? JSON.parse(e.data).message
-          : "Hermes response stream failed.",
-      });
-      isDone = true;
-      if (resolveQueue) {
-        resolveQueue();
-      }
-    });
-
-    while (!isDone || eventQueue.length > 0) {
-      if (eventQueue.length === 0) {
-        await new Promise<void>((resolve) => {
-          resolveQueue = resolve;
-        });
-      }
-      while (eventQueue.length > 0) {
-        const evt = eventQueue.shift();
-        if (evt) {
-          yield evt;
-        }
+      };
+    } else if (event === "error") {
+      try {
+        const data = JSON.parse(dataStr);
+        return { type: "error", message: data.message || "Agent response stream failed." };
+      } catch (err) {
+        return { type: "error", message: dataStr || "Agent response stream failed." };
       }
     }
+    return null;
   }
 
-  async cancelStream(sessionId: string, streamId: string): Promise<boolean> {
-    const active = this.activeStreams.get(streamId);
+  async cancelStream(sessionId: string, _streamId?: string): Promise<boolean> {
+    const key = sessionId;
+    const active = this.activeStreams.get(key);
     if (active) {
       active.abort();
-      this.activeStreams.delete(streamId);
+      this.activeStreams.delete(key);
     }
     try {
       const response = await fetch(
-        `${API_BASE}/api/agent/chat/cancel?session_id=${encodeURIComponent(sessionId)}&stream_id=${encodeURIComponent(streamId)}`,
+        `${API_BASE}/api/agent/chat/cancel?session_id=${encodeURIComponent(sessionId)}`,
         {
           method: "POST",
         },

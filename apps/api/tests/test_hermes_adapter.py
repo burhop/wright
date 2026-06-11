@@ -1,28 +1,30 @@
 import pytest
+import json
 from unittest.mock import AsyncMock, patch, MagicMock
+import httpx
 from agent_adapters import HermesAdapter, AgentChatRequest
+from agent_adapters.base import AgentStreamEvent, AgentChatMessage
 
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_check_health_success():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     mock_response = MagicMock()
     mock_response.status_code = 200
 
-    # We patch httpx.AsyncClient.get to return a mock response
     with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
         mock_get.return_value = mock_response
         result = await adapter.check_health()
 
         assert result["state"] == "connected"
         assert result["latencyMs"] > 0
-        mock_get.assert_called_once_with("http://127.0.0.1:8788/health", timeout=5.0)
+        mock_get.assert_called_once_with("http://127.0.0.1:8642/health", headers=adapter.headers, timeout=5.0)
 
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_check_health_failure():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
         mock_get.side_effect = Exception("Connection refused")
@@ -34,10 +36,10 @@ async def test_hermes_adapter_check_health_failure():
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_create_session():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     mock_response = MagicMock()
-    mock_response.status_code = 200
+    mock_response.status_code = 201
     mock_response.json.return_value = {
         "session": {
             "session_id": "test_session_123",
@@ -59,7 +61,7 @@ async def test_hermes_adapter_create_session():
         assert session_info.message_count == 5
 
         mock_post.assert_called_once_with(
-            "http://127.0.0.1:8788/api/session/new",
+            "http://127.0.0.1:8642/api/sessions",
             json={"workspace": "/home/workspace"},
             headers=adapter.headers,
             timeout=10.0,
@@ -68,12 +70,12 @@ async def test_hermes_adapter_create_session():
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_list_sessions():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
-        "sessions": [
+        "data": [
             {
                 "session_id": "session1",
                 "title": "Title 1",
@@ -95,7 +97,7 @@ async def test_hermes_adapter_list_sessions():
         assert sessions[0].message_count == 2
 
         mock_get.assert_called_once_with(
-            "http://127.0.0.1:8788/api/sessions?all_profiles=0",
+            "http://127.0.0.1:8642/api/sessions",
             headers=adapter.headers,
             timeout=10.0,
         )
@@ -103,73 +105,49 @@ async def test_hermes_adapter_list_sessions():
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_delete_session():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     mock_response = MagicMock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"ok": True}
 
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-        mock_post.return_value = mock_response
+    with patch("httpx.AsyncClient.delete", new_callable=AsyncMock) as mock_delete:
+        mock_delete.return_value = mock_response
         result = await adapter.delete_session("session1")
 
         assert result is True
-        mock_post.assert_called_once_with(
-            "http://127.0.0.1:8788/api/session/delete",
-            json={"session_id": "session1"},
+        mock_delete.assert_called_once_with(
+            "http://127.0.0.1:8642/api/sessions/session1",
             headers=adapter.headers,
             timeout=10.0,
         )
 
 
 @pytest.mark.asyncio
-async def test_hermes_adapter_start_chat():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+async def test_hermes_adapter_stream_chat_success():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {
-        "stream_id": "stream123",
-        "session_id": "session123",
-    }
-
-    req = AgentChatRequest(session_id="session123", message="Hello")
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-        mock_post.return_value = mock_response
-        res = await adapter.start_chat(req)
-
-        assert res.stream_id == "stream123"
-        assert res.session_id == "session123"
-
-        mock_post.assert_called_once_with(
-            "http://127.0.0.1:8788/api/chat/start",
-            json={"session_id": "session123", "message": "Hello", "profile": "wright"},
-            headers=adapter.headers,
-            timeout=10.0,
-        )
-
-
-@pytest.mark.asyncio
-async def test_hermes_adapter_stream_response():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
-
-    # Mock EventSource and its events
     mock_sse_1 = MagicMock()
-    mock_sse_1.event = "token"
-    mock_sse_1.data = '{"text": "Hello"}'
+    mock_sse_1.event = "message"
+    mock_sse_1.data = '{"choices": [{"index": 0, "delta": {"content": "Hello"}, "finish_reason": null}]}'
 
     mock_sse_2 = MagicMock()
-    mock_sse_2.event = "stream_end"
-    mock_sse_2.data = '{"session_id": "session123"}'
+    mock_sse_2.event = "hermes.tool.progress"
+    mock_sse_2.data = '{"tool": "development", "status": "running"}'
+
+    mock_sse_3 = MagicMock()
+    mock_sse_3.event = "message"
+    mock_sse_3.data = '[DONE]'
 
     async def mock_aiter_sse():
         yield mock_sse_1
         yield mock_sse_2
+        yield mock_sse_3
 
     mock_event_source = MagicMock()
     mock_event_source.aiter_sse = mock_aiter_sse
+    mock_event_source.response = MagicMock()
+    mock_event_source.response.raise_for_status = MagicMock()
 
-    # We patch aconnect_sse context manager
     class MockAconnectSse:
         def __init__(self, *args, **kwargs):
             pass
@@ -180,42 +158,45 @@ async def test_hermes_adapter_stream_response():
         async def __aexit__(self, exc_type, exc_val, exc_tb):
             pass
 
-    with patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse):
+    req = AgentChatRequest(session_id="session123", message="Hello")
+
+    with patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse), \
+         patch.object(adapter, "get_chat_history", new_callable=AsyncMock) as mock_history:
+        mock_history.return_value = []
         events = []
-        async for event in adapter.stream_response("stream123"):
+        async for event in adapter.stream_chat(req):
             events.append(event)
 
-        assert len(events) == 2
+        assert len(events) == 3
         assert events[0].type == "token"
         assert events[0].data == {"text": "Hello"}
-        assert events[1].type == "stream_end"
-        assert events[1].data == {"session_id": "session123"}
+        assert events[1].type == "progress"
+        assert events[1].data == {"tool": "development", "status": "running"}
+        assert events[2].type == "stream_end"
+        assert events[2].data == {}
 
 
 @pytest.mark.asyncio
 async def test_hermes_adapter_get_chat_history():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
-        "session": {
-            "session_id": "session123",
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "Hello",
-                    "timestamp": 1780423800.0,
-                    "trace_id": "trace1",
-                },
-                {
-                    "role": "assistant",
-                    "content": [{"type": "text", "text": "Hi there!"}],
-                    "timestamp": 1780423805000,
-                    "trace_id": "trace2",
-                },
-            ],
-        }
+        "data": [
+            {
+                "role": "user",
+                "content": "Hello",
+                "timestamp": 1780423800.0,
+                "trace_id": "trace1",
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Hi there!"}],
+                "timestamp": 1780423805.0,
+                "trace_id": "trace2",
+            },
+        ]
     }
 
     with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
@@ -234,46 +215,25 @@ async def test_hermes_adapter_get_chat_history():
         assert history[1].trace_id == "trace2"
 
         mock_get.assert_called_once_with(
-            "http://127.0.0.1:8788/api/session?session_id=session123&messages=1",
+            "http://127.0.0.1:8642/api/sessions/session123/messages",
             headers=adapter.headers,
             timeout=10.0,
         )
 
 
 @pytest.mark.asyncio
-async def test_hermes_adapter_cancel_chat():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
-
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {"ok": True}
-
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.return_value = mock_response
-        result = await adapter.cancel_chat("session123", "stream123")
-
-        assert result is True
-        mock_get.assert_called_once_with(
-            "http://127.0.0.1:8788/api/chat/cancel?stream_id=stream123",
-            headers=adapter.headers,
-            timeout=5.0,
-        )
-
-
-@pytest.mark.asyncio
 async def test_hermes_adapter_create_session_with_instructions():
-    adapter = HermesAdapter("http://127.0.0.1:8788")
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 
     mock_response = MagicMock()
-    mock_response.status_code = 200
+    mock_response.status_code = 201
     mock_response.json.return_value = {
         "session": {
-            "session_id": "imported_session_123",
+            "session_id": "session_123",
             "title": "Untitled",
             "created_at": 1780423855.15,
             "updated_at": 1780423855.15,
-            "message_count": 1,
-            "workspace": "/home/workspace",
+            "message_count": 0,
         }
     }
 
@@ -281,19 +241,14 @@ async def test_hermes_adapter_create_session_with_instructions():
         mock_post.return_value = mock_response
         session_info = await adapter.create_session("/home/workspace", instructions="Please place files in root")
 
-        assert session_info.session_id == "imported_session_123"
-        assert session_info.workspace == "/home/workspace"
+        assert session_info.session_id == "session_123"
 
         mock_post.assert_called_once_with(
-            "http://127.0.0.1:8788/api/session/import",
+            "http://127.0.0.1:8642/api/sessions",
             json={
-                "title": "Untitled",
                 "workspace": "/home/workspace",
-                "messages": [
-                    {"role": "system", "content": "Please place files in root"}
-                ],
+                "instructions": "Please place files in root",
             },
             headers=adapter.headers,
             timeout=10.0,
         )
-
