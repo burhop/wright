@@ -114,6 +114,10 @@ RUN uv sync --python 3.13 --all-packages --no-dev && \
 # ── Copy built frontend from Stage 1 ──────────────────────────────────────
 COPY --chown=agent:agent --from=web-builder /workspace/apps/web/dist /workspace/apps/web/dist
 
+# Generate backend third-party license file using pip-licenses via uv
+RUN uv run --no-dev --with pip-licenses pip-licenses --with-license-file --output-file=/workspace/apps/web/dist/third-party-licenses-api.txt && \
+    rm -rf /home/agent/.cache/uv
+
 USER root
 
 # ── Container manifest (read-only, baked into image) ──────────────────────

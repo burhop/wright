@@ -388,6 +388,46 @@ export function SettingsPage() {
           </button>
         </div>
       </form>
+
+      {/* Card 3: System Attributions & Licenses */}
+      <div
+        style={{
+          backgroundColor: "var(--color-surface)",
+          border: "1px solid var(--color-border)",
+          borderRadius: "var(--radius-lg)",
+          padding: "var(--space-lg)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--space-md)",
+          maxWidth: "680px",
+        }}
+      >
+        <h3 style={{ fontSize: "1.1rem", fontWeight: 600, borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)", marginBottom: "var(--space-xs)" }}>
+          ⚖️ System Attributions & Licenses
+        </h3>
+        <p style={{ color: "var(--color-secondary)", fontSize: "0.85rem", margin: 0 }}>
+          This product is built using open-source software. You can view the third-party license agreements below:
+        </p>
+        <div style={{ display: "flex", gap: "var(--space-md)", alignItems: "center" }}>
+          <a
+            href="/third-party-licenses-web.txt"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="license-link"
+          >
+            Frontend Web Licenses (TXT)
+          </a>
+          <span style={{ color: "var(--color-border)", fontSize: "0.85rem" }}>|</span>
+          <a
+            href="/third-party-licenses-api.txt"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="license-link"
+          >
+            Backend API Licenses (TXT)
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

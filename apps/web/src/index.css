@@ -327,3 +327,16 @@ a {
   color: var(--color-secondary) !important;
   transform: scale(1.08);
 }
+
+/* Attributions & Licenses link styles */
+.license-link {
+  font-size: 0.85rem;
+  color: var(--color-secondary);
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.license-link:hover {
+  color: var(--color-primary);
+}
