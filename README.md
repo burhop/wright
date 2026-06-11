@@ -200,7 +200,14 @@ Join the Wright community to discuss ideas, ask for help, or collaborate:
 
 ## Support & Sponsorship
 
-Wright is an open-source project supported by our community and backers. If you find Wright valuable for your product development, manufacturing, or engineering workflows, please consider sponsoring our work. Your support helps accelerate development, maintain our open-source tools, and sustain our infrastructure.
+While Wright is an open-source project, developing and maintaining a local agent orchestrator for physical engineering incurs real computational and integration costs. We need resources not only to write code, but to run continuous end-to-end testing, integrate with commercial platforms, and build adapters for proprietary MCP servers that carry usage fees.
+
+Here is how you can support the project and help us bring generative velocity to physical engineering:
+
+*   🪙 **API & Token Sponsorships**: Financial contributions or API credits directly offset the costs of continuous LLM testing, fine-tuning, and model evaluations.
+*   🖥️ **Hardware Contributions**: Sponsoring physical hardware or GPU compute helps us test local-first, air-gapped performance. Our robust integration with the **Dell GB10** cluster was made possible directly by Dell's hardware support.
+*   🔌 **Tool Ecosystem Contributions**: Developing and publishing new Model Context Protocol (MCP) standard engineering tools is one of the most impactful ways to expand Wright's capabilities.
+*   👩‍💻 **Code & Spec Contributions**: Help us refine our core gateway, build new adapters, or write integration tests.
 
 💖 **[Sponsor Wright on GitHub](https://github.com/sponsors/burhop)**
 
