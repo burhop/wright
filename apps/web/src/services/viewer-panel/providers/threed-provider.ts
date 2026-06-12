@@ -143,6 +143,11 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
         camera.position.set(radius * 2.2, radius * 2.2, radius * 2.2);
         camera.lookAt(0, 0, 0);
         gridHelper.position.y = -radius * 1.1;
+
+        // Dynamically adjust camera near/far clipping planes based on model size
+        camera.near = Math.max(0.001, radius * 0.01);
+        camera.far = Math.max(1000, radius * 100);
+        camera.updateProjectionMatrix();
       }
     } catch (err) {
       console.error("Failed to parse STL geometry buffer in pluggable viewer", err);
@@ -152,7 +157,10 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxDistance = 400;
-    controls.minDistance = 5;
+    
+    // Set dynamic minDistance based on bounding sphere radius if available
+    const radius = geometry?.boundingSphere?.radius;
+    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
 
     const resizeObserver = new ResizeObserver((entries) => {
       if (!entries || entries.length === 0) return;
