@@ -4,24 +4,29 @@ import license from "rollup-plugin-license";
 import path from "path";
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    license({
-      thirdParty: {
-        output: {
-          file: path.resolve(__dirname, "dist/third-party-licenses-web.txt"),
-          encoding: "utf-8",
+export default defineConfig(({ command }) => {
+  const isBuild = command === "build";
+  return {
+    plugins: [
+      react(),
+      license({
+        thirdParty: {
+          output: {
+            file: isBuild
+              ? path.resolve(__dirname, "dist/third-party-licenses-web.txt")
+              : path.resolve(__dirname, "public/third-party-licenses-web.txt"),
+            encoding: "utf-8",
+          },
         },
-      },
-    }),
-  ],
-  server: {
-    allowedHosts: ["promaxgb10-9666"],
-  },
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: "./src/test/setup.ts",
-  },
+      }),
+    ],
+    server: {
+      allowedHosts: ["promaxgb10-9666"],
+    },
+    test: {
+      globals: true,
+      environment: "jsdom",
+      setupFiles: "./src/test/setup.ts",
+    },
+  };
 });
