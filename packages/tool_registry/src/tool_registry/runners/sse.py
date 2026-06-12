@@ -28,12 +28,30 @@ class SseRunner(BaseRunner):
             if self.client is not None:
                 raise RuntimeError("Runner is already running.")
 
-            self.client = httpx.AsyncClient(timeout=60.0)
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/event-stream",
+                "Cache-Control": "no-cache",
+            }
+            self.client = httpx.AsyncClient(
+                timeout=60.0,
+                headers=headers,
+                follow_redirects=True,
+            )
             self._read_task = asyncio.create_task(self._connect_and_read())
 
             # Wait for endpoint event to be ready (handshake) within 15 seconds
             try:
                 await asyncio.wait_for(self._endpoint_ready.wait(), timeout=15.0)
+            except asyncio.TimeoutError as te:
+                logger.error(
+                    "Timeout waiting for SSE 'endpoint' event from %s",
+                    self.sse_url,
+                )
+                await self._stop_locked()
+                raise RuntimeError(
+                    f"SSE handshake failed: Timeout waiting for 'endpoint' event from {self.sse_url}. Ensure the server is running and accessible."
+                ) from te
             except Exception as e:
                 logger.error(
                     "Failed to connect or establish SSE endpoint with %s: %s",
