@@ -93,8 +93,33 @@ class McpEngine:
         elif server.type == "stdio":
             if not server.command:
                 raise ValueError("Command configuration is required for stdio server.")
-            env_vars = server.env_vars or {}
-            env_vars = env_vars.copy()
+
+            # Build env_vars: merge structured definitions with saved credentials
+            from .secrets import read_secrets
+            from .models import EnvVarDefinition
+
+            env_vars: Dict[str, str] = {}
+
+            if server.env_vars:
+                if isinstance(server.env_vars, list):
+                    # New format: list of EnvVarDefinition — load values from secrets store
+                    saved_creds = read_secrets(server_id)
+                    required_missing = []
+                    for var_def in server.env_vars:
+                        if isinstance(var_def, EnvVarDefinition):
+                            if var_def.name in saved_creds:
+                                env_vars[var_def.name] = saved_creds[var_def.name]
+                            elif var_def.required:
+                                required_missing.append(var_def.name)
+                    if required_missing:
+                        missing_str = ", ".join(required_missing)
+                        raise ValueError(
+                            f"Server '{server.name}' requires credentials: {missing_str}. "
+                            "Configure them via the UI before activating."
+                        )
+                elif isinstance(server.env_vars, dict):
+                    # Old format: dict[str, str] — use directly
+                    env_vars = server.env_vars.copy()
 
             # Get workspace directory as a fallback if not provided
             if not workspace_dir:

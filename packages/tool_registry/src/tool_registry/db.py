@@ -2,7 +2,7 @@ import json
 import sqlite3
 from typing import List, Optional, Union, Dict, Any
 import structlog
-from .models import McpServer, McpTool
+from .models import McpServer, McpTool, EnvVarDefinition
 
 logger = structlog.get_logger(__name__)
 
@@ -55,12 +55,30 @@ def _serialize_command(cmd: Optional[Union[List[str], str]]) -> Optional[str]:
     return cmd
 
 
+def _serialize_env_vars(env_vars) -> Optional[str]:
+    """Serialize env_vars for database storage. Handles both formats."""
+    if env_vars is None:
+        return None
+    if isinstance(env_vars, list):
+        # list of EnvVarDefinition or dicts
+        return json.dumps([item.model_dump() if hasattr(item, "model_dump") else item for item in env_vars])
+    if isinstance(env_vars, dict):
+        return json.dumps(env_vars)
+    return None
+
+
 def _row_to_server(row: sqlite3.Row) -> McpServer:
     env_vars_raw = row["env_vars"] if "env_vars" in row.keys() else None
     env_vars = None
     if env_vars_raw:
         try:
-            env_vars = json.loads(env_vars_raw)
+            parsed = json.loads(env_vars_raw)
+            if isinstance(parsed, list):
+                # New format: list of EnvVarDefinition dicts
+                env_vars = [EnvVarDefinition(**item) if isinstance(item, dict) else item for item in parsed]
+            elif isinstance(parsed, dict):
+                # Old format: dict[str, str] — keep as-is for backward compatibility
+                env_vars = parsed
         except Exception:
             pass
 
@@ -155,7 +173,7 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.description,
                 server.source_url,
                 server.installed_version,
-                json.dumps(server.env_vars) if server.env_vars else None,
+                _serialize_env_vars(server.env_vars),
                 server.instructions,
             ),
         )
@@ -192,7 +210,7 @@ def update_server(
             params.append(value)
         elif key == "env_vars":
             set_clauses.append("env_vars = ?")
-            params.append(json.dumps(value) if value else None)
+            params.append(_serialize_env_vars(value))
         elif key == "command":
             set_clauses.append("command = ?")
             params.append(_serialize_command(value))

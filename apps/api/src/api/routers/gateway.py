@@ -43,7 +43,7 @@ async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT session_id, local_path, enabled_tools FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
+            "SELECT session_id, local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
         )
         workspace = cursor.fetchone()
         conn.close()
@@ -54,14 +54,8 @@ async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
         return {"tools": []}
 
     session_id = workspace["session_id"]
-    enabled_tools_raw = workspace["enabled_tools"]
-    
-    enabled_tools = None
-    if enabled_tools_raw:
-        try:
-            enabled_tools = json.loads(enabled_tools_raw)
-        except Exception:
-            pass
+    from core.workspace import get_workspace_enabled_tools
+    enabled_tools = get_workspace_enabled_tools(db_path, session_id)
 
     all_servers = get_servers(db_path)
     tools_response = []

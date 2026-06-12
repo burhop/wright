@@ -1,5 +1,9 @@
-import { useState } from "react";
-import type { McpServer, McpTool } from "../../services/mcp-service";
+import { useState, useCallback } from "react";
+import type {
+  McpServer,
+  McpTool,
+  EnvVarDefinition,
+} from "../../services/mcp-service";
 import {
   workspaceService,
   type WorkspaceInfo,
@@ -50,8 +54,55 @@ export function ToolCard({
   const [isUpdating, setIsUpdating] = useState(false);
   const [upToDateMessage, setUpToDateMessage] = useState(false);
 
-  const { checkServerVersion, updateServerState } = useTools();
+  const {
+    checkServerVersion,
+    updateServerState,
+    saveCredentials,
+    deleteCredentials,
+  } = useTools();
   const isLocalServer = server.type === "stdio";
+
+  // Credential configuration state
+  const hasEnvVarDefs =
+    Array.isArray(server.env_vars) && server.env_vars.length > 0;
+  const [showCredentials, setShowCredentials] = useState(false);
+  const [credentialValues, setCredentialValues] = useState<
+    Record<string, string>
+  >({});
+  const [isSavingCreds, setIsSavingCreds] = useState(false);
+  const [credentialSaved, setCredentialSaved] = useState(false);
+
+  const requiredCredsMissing = useCallback(() => {
+    if (!hasEnvVarDefs) return false;
+    const envVars = server.env_vars as EnvVarDefinition[];
+    const configured = server.credentials_configured || {};
+    return envVars.some((v) => v.required && !configured[v.name]);
+  }, [server.env_vars, server.credentials_configured, hasEnvVarDefs]);
+
+  const handleSaveCredentials = async () => {
+    setIsSavingCreds(true);
+    setCardError(null);
+    try {
+      await saveCredentials(server.server_id, credentialValues);
+      setCredentialSaved(true);
+      setCredentialValues({});
+      setTimeout(() => setCredentialSaved(false), 3000);
+    } catch (err: any) {
+      setCardError(err.message || "Failed to save credentials");
+    } finally {
+      setIsSavingCreds(false);
+    }
+  };
+
+  const handleClearCredentials = async () => {
+    setCardError(null);
+    try {
+      await deleteCredentials(server.server_id);
+      setCredentialValues({});
+    } catch (err: any) {
+      setCardError(err.message || "Failed to clear credentials");
+    }
+  };
 
   const handleInstall = async () => {
     setIsInstalling(true);
@@ -319,11 +370,16 @@ export function ToolCard({
           {!server.is_installed ? (
             <button
               onClick={handleInstall}
-              disabled={isInstalling || isDeleting}
+              disabled={isInstalling || isDeleting || requiredCredsMissing()}
               data-testid={
                 isLocalServer
                   ? `server-card-install-btn-${server.server_id}`
                   : `server-card-connect-btn-${server.server_id}`
+              }
+              title={
+                requiredCredsMissing()
+                  ? "Configure credentials before installing"
+                  : undefined
               }
               style={{
                 padding: "var(--space-xs) var(--space-md)",
@@ -333,7 +389,10 @@ export function ToolCard({
                 border: "none",
                 backgroundColor: "var(--color-secondary)",
                 color: "#ffffff",
-                cursor: isInstalling ? "not-allowed" : "pointer",
+                cursor:
+                  isInstalling || requiredCredsMissing()
+                    ? "not-allowed"
+                    : "pointer",
                 transition: "all var(--transition-smooth)",
                 boxShadow: "var(--shadow-glow)",
               }}
@@ -460,6 +519,262 @@ export function ToolCard({
             >
               ↗ View Source
             </a>
+          )}
+        </div>
+      )}
+
+      {/* Credential Configuration Panel */}
+      {hasEnvVarDefs && (
+        <div
+          data-testid={`server-card-credentials-section-${server.server_id}`}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-xs)",
+          }}
+        >
+          {/* Requires Configuration badge */}
+          {requiredCredsMissing() && !showCredentials && (
+            <span
+              data-testid={`server-card-credentials-badge-${server.server_id}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+                fontSize: "0.7rem",
+                fontWeight: 600,
+                color: "var(--color-warning)",
+                backgroundColor: "rgba(245, 158, 11, 0.08)",
+                border: "1px solid rgba(245, 158, 11, 0.2)",
+                padding: "2px 8px",
+                borderRadius: "6px",
+                width: "fit-content",
+              }}
+            >
+              🔑 Requires Configuration
+            </span>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setShowCredentials(!showCredentials)}
+            data-testid={`server-card-credentials-toggle-${server.server_id}`}
+            style={{
+              fontSize: "0.72rem",
+              color: "var(--color-secondary)",
+              cursor: "pointer",
+              border: "none",
+              background: "none",
+              textAlign: "left",
+              padding: "0",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              transition: "color var(--transition-fast)",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = "var(--color-primary)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = "var(--color-secondary)")
+            }
+          >
+            <span>
+              {showCredentials
+                ? "▼ Hide Credentials"
+                : "▶ Configure Credentials"}
+            </span>
+          </button>
+
+          {showCredentials && (
+            <div
+              data-testid={`server-card-credentials-form-${server.server_id}`}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-sm)",
+                padding: "var(--space-md)",
+                backgroundColor: "var(--color-surface-subtle)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-lg)",
+                marginTop: "var(--space-xs)",
+              }}
+            >
+              {(server.env_vars as EnvVarDefinition[]).map((varDef) => {
+                const isConfigured =
+                  server.credentials_configured?.[varDef.name] || false;
+                return (
+                  <div
+                    key={varDef.name}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "var(--space-xs)",
+                      }}
+                    >
+                      <label
+                        style={{
+                          fontSize: "0.78rem",
+                          fontWeight: 600,
+                          color: "var(--color-primary)",
+                        }}
+                      >
+                        {varDef.label}
+                      </label>
+                      {varDef.required && (
+                        <span
+                          style={{
+                            fontSize: "0.65rem",
+                            color: "var(--color-error)",
+                            fontWeight: 700,
+                          }}
+                        >
+                          *
+                        </span>
+                      )}
+                      <span
+                        data-testid={`server-card-credential-status-${varDef.name}`}
+                        style={{
+                          fontSize: "0.7rem",
+                          marginLeft: "auto",
+                          color: isConfigured
+                            ? "var(--color-success)"
+                            : "var(--color-text-dim)",
+                        }}
+                      >
+                        {isConfigured ? "✓ Saved" : "✗ Not set"}
+                      </span>
+                    </div>
+                    {varDef.description && (
+                      <span
+                        style={{
+                          fontSize: "0.7rem",
+                          color: "var(--color-text-muted)",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {varDef.description}
+                      </span>
+                    )}
+                    <input
+                      type={varDef.secret ? "password" : "text"}
+                      placeholder={
+                        isConfigured
+                          ? "••••••••  (already configured)"
+                          : `Enter ${varDef.label}`
+                      }
+                      value={credentialValues[varDef.name] || ""}
+                      onChange={(e) =>
+                        setCredentialValues((prev) => ({
+                          ...prev,
+                          [varDef.name]: e.target.value,
+                        }))
+                      }
+                      data-testid={`server-card-credential-input-${varDef.name}`}
+                      style={{
+                        padding: "6px 10px",
+                        backgroundColor: "var(--color-surface)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-md)",
+                        color: "var(--color-primary)",
+                        fontSize: "0.8rem",
+                        fontFamily: "var(--font-mono)",
+                        outline: "none",
+                        transition: "border-color var(--transition-fast)",
+                      }}
+                      onFocus={(e) =>
+                        (e.currentTarget.style.borderColor =
+                          "var(--color-secondary)")
+                      }
+                      onBlur={(e) =>
+                        (e.currentTarget.style.borderColor =
+                          "var(--color-border)")
+                      }
+                    />
+                  </div>
+                );
+              })}
+
+              {/* Save / Clear buttons */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "var(--space-sm)",
+                  marginTop: "var(--space-xs)",
+                }}
+              >
+                <button
+                  onClick={handleSaveCredentials}
+                  disabled={
+                    isSavingCreds ||
+                    Object.values(credentialValues).every((v) => !v)
+                  }
+                  data-testid={`server-card-credentials-save-btn-${server.server_id}`}
+                  style={{
+                    padding: "var(--space-xs) var(--space-md)",
+                    borderRadius: "var(--radius-md)",
+                    fontSize: "0.78rem",
+                    fontWeight: 600,
+                    border: "none",
+                    backgroundColor: "var(--color-secondary)",
+                    color: "#ffffff",
+                    cursor:
+                      isSavingCreds ||
+                      Object.values(credentialValues).every((v) => !v)
+                        ? "not-allowed"
+                        : "pointer",
+                    transition: "all var(--transition-smooth)",
+                  }}
+                >
+                  {isSavingCreds ? "Saving..." : "Save Credentials"}
+                </button>
+                <button
+                  onClick={handleClearCredentials}
+                  data-testid={`server-card-credentials-clear-btn-${server.server_id}`}
+                  style={{
+                    padding: "var(--space-xs) var(--space-md)",
+                    borderRadius: "var(--radius-md)",
+                    fontSize: "0.78rem",
+                    fontWeight: 600,
+                    border: "1px solid var(--color-border)",
+                    backgroundColor: "transparent",
+                    color: "var(--color-text-muted)",
+                    cursor: "pointer",
+                    transition: "all var(--transition-fast)",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.borderColor = "var(--color-error)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.borderColor = "var(--color-border)")
+                  }
+                >
+                  Clear Credentials
+                </button>
+                {credentialSaved && (
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--color-success)",
+                      fontWeight: 500,
+                      alignSelf: "center",
+                    }}
+                  >
+                    ✓ Saved successfully
+                  </span>
+                )}
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -894,6 +1209,7 @@ export function ToolCard({
       {/* Backend connection error message */}
       {server.error_message && (
         <div
+          data-testid={`server-card-error-${server.server_id}`}
           style={{
             backgroundColor: "rgba(239, 68, 68, 0.08)",
             border: "1px solid var(--color-error)",

@@ -1,4 +1,4 @@
-from .models import McpServer, McpServerCreate, McpServerUpdate, McpTool
+from .models import McpServer, McpServerCreate, McpServerUpdate, McpTool, EnvVarDefinition
 from .db import (
     get_servers,
     get_server,
@@ -12,6 +12,7 @@ from .db import (
     clear_server_tools,
     update_tool_enabled,
 )
+from .secrets import read_secrets, write_secrets, delete_secrets, has_credentials
 from .manager import McpEngine
 
 __all__ = [
@@ -19,6 +20,7 @@ __all__ = [
     "McpServerCreate",
     "McpServerUpdate",
     "McpTool",
+    "EnvVarDefinition",
     "get_servers",
     "get_server",
     "get_server_by_name",
@@ -30,5 +32,9 @@ __all__ = [
     "insert_tools",
     "clear_server_tools",
     "update_tool_enabled",
+    "read_secrets",
+    "write_secrets",
+    "delete_secrets",
+    "has_credentials",
     "McpEngine",
 ]

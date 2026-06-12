@@ -10,6 +10,7 @@ import type {
   McpServer,
   McpTool,
   VersionCheckResult,
+  CredentialStatusResponse,
 } from "../services/mcp-service";
 
 export interface ToolsState {
@@ -97,6 +98,11 @@ interface ToolsContextProps extends ToolsState {
   toggleToolState: (toolId: string, isEnabled: boolean) => Promise<void>;
   checkServerVersion: (serverId: string) => Promise<VersionCheckResult>;
   updateServerState: (serverId: string) => Promise<void>;
+  saveCredentials: (
+    serverId: string,
+    credentials: Record<string, string>,
+  ) => Promise<CredentialStatusResponse>;
+  deleteCredentials: (serverId: string) => Promise<void>;
 }
 
 const ToolsContext = createContext<ToolsContextProps | undefined>(undefined);
@@ -195,6 +201,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
           is_active: result.is_active,
           status: result.status,
           error_message: result.error_message || undefined,
+          ...(result.type ? { type: result.type } : {}),
         },
       });
       // Fetch tools list again since active server changes discovered tools in database
@@ -233,6 +240,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
           is_installed: result.is_installed,
           status: result.status,
           error_message: result.error_message || undefined,
+          ...(result.type ? { type: result.type } : {}),
         },
       });
       const tools = await mcpService.getTools();
@@ -256,6 +264,7 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
           is_active: false,
           status: result.status,
           error_message: result.error_message || undefined,
+          ...(result.type ? { type: result.type } : {}),
         },
       });
       const tools = await mcpService.getTools();
@@ -336,6 +345,55 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const saveCredentials = async (
+    serverId: string,
+    credentials: Record<string, string>,
+  ): Promise<CredentialStatusResponse> => {
+    try {
+      const result = await mcpService.saveCredentials(serverId, credentials);
+      // Update the server's credentials_configured in state
+      dispatch({
+        type: "UPDATE_SERVER",
+        serverId,
+        updates: {
+          credentials_configured: result.configured,
+        },
+      });
+      return result;
+    } catch (err: any) {
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to save credentials",
+      });
+      throw err;
+    }
+  };
+
+  const deleteCredentials = async (serverId: string): Promise<void> => {
+    try {
+      await mcpService.deleteCredentials(serverId);
+      // Clear credentials_configured in state
+      const server = state.servers.find((s) => s.server_id === serverId);
+      if (server?.credentials_configured) {
+        const cleared: Record<string, boolean> = {};
+        for (const key of Object.keys(server.credentials_configured)) {
+          cleared[key] = false;
+        }
+        dispatch({
+          type: "UPDATE_SERVER",
+          serverId,
+          updates: { credentials_configured: cleared },
+        });
+      }
+    } catch (err: any) {
+      dispatch({
+        type: "SET_ERROR",
+        error: err.message || "Failed to delete credentials",
+      });
+      throw err;
+    }
+  };
+
   useEffect(() => {
     fetchServersAndTools();
   }, []);
@@ -353,6 +411,8 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         toggleToolState,
         checkServerVersion,
         updateServerState,
+        saveCredentials,
+        deleteCredentials,
       }}
     >
       {children}

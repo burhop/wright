@@ -123,12 +123,50 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
             (session_id,),
         )
         row = cursor.fetchone()
-        if row and row["enabled_tools"]:
+        if row and row["enabled_tools"] is not None:
             try:
                 return json.loads(row["enabled_tools"])
             except Exception:
-                return None
-        return None
+                pass
+
+    # Fallback/Default behavior when enabled_tools is NULL or invalid JSON
+    # Default to enabling all installed MCP servers, EXCEPT those that require
+    # credentials which have not yet been configured, or those that are in error state.
+    from tool_registry.db import get_servers
+    from tool_registry.secrets import has_credentials
+    from tool_registry.models import EnvVarDefinition
+
+    try:
+        installed = get_servers(db_path)
+    except Exception:
+        # Fallback if DB structure or tool_registry import fails in some environments
+        return []
+
+    enabled = []
+    for s in installed:
+        if not s.is_installed:
+            continue
+        if s.status == "error":
+            continue
+
+        # Check if the server requires credentials
+        requires_creds = False
+        if s.env_vars and isinstance(s.env_vars, list):
+            required_vars = [
+                v.name for v in s.env_vars
+                if isinstance(v, EnvVarDefinition) and v.required
+            ]
+            if required_vars:
+                requires_creds = True
+                cred_status = has_credentials(s.server_id, required_vars)
+                # Only enable by default if all required credentials are configured
+                if all(cred_status.values()):
+                    enabled.append(s.name)
+
+        if not requires_creds:
+            enabled.append(s.name)
+
+    return enabled
 
 
 def update_workspace_enabled_tools(

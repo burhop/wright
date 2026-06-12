@@ -409,6 +409,21 @@ ENGINEERING_CATALOG = [
         "description": "CREOSON JSON-RPC middleware for Creo Parametric. Exposes JLINK/Java APIs for assembly regeneration, BOM extraction, and STEP import. ⚠️ Requires Creo.",
         "source_url": "https://github.com/SimplifiedLogic/creoson",
     },
+    # ── CAD · Cloud / Credential-Requiring ──────────────────────────────────
+    {
+        "server_id": "jarvis-onshape-mcp",
+        "name": "Jarvis OnShape MCP",
+        "type": "stdio",
+        "command": json.dumps(["uv", "run", "--with", "git+https://github.com/ReshefElisha/jarvis-onshape-mcp.git", "onshape-mcp"]),
+        "category": "cad",
+        "image_url": "https://avatars.githubusercontent.com/u/6536550?s=64",
+        "description": "AI copilot for Onshape CAD. 60+ tools: parametric sketches, extrudes, fillets, assemblies, Variable Studios, FeatureScript, and multi-view rendering with vision feedback.",
+        "source_url": "https://github.com/ReshefElisha/jarvis-onshape-mcp",
+        "env_vars": json.dumps([
+            {"name": "ONSHAPE_ACCESS_KEY", "label": "Access Key", "description": "Onshape API access key from dev-portal.onshape.com", "required": True, "secret": False},
+            {"name": "ONSHAPE_SECRET_KEY", "label": "Secret Key", "description": "Onshape API secret key (shown once at creation)", "required": True, "secret": True}
+        ]),
+    },
 ]
 
 
@@ -490,8 +505,8 @@ def run_migrations():
             INSERT OR IGNORE INTO mcp_servers 
                 (server_id, name, type, command, is_active, is_installed, status,
                  category, created_at, updated_at, image_url, description,
-                 source_url, instructions, installed_version)
-            VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, ?, NULL)
+                 source_url, instructions, installed_version, env_vars)
+            VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, ?, NULL, ?)
             """,
                 (
                     entry["server_id"],
@@ -505,6 +520,7 @@ def run_migrations():
                     entry["description"],
                     entry.get("source_url"),
                     entry.get("instructions"),
+                    entry.get("env_vars"),
                 ),
             )
 
@@ -520,7 +536,8 @@ def run_migrations():
                 image_url = ?,
                 description = ?,
                 source_url = ?,
-                instructions = ?
+                instructions = ?,
+                env_vars = COALESCE(?, env_vars)
             WHERE server_id = ?
             """,
                 (
@@ -532,6 +549,7 @@ def run_migrations():
                     entry["description"],
                     entry.get("source_url"),
                     entry.get("instructions"),
+                    entry.get("env_vars"),
                     entry["server_id"],
                 ),
             )

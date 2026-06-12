@@ -2,6 +2,15 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Union, Literal
 
 
+class EnvVarDefinition(BaseModel):
+    """Metadata about an environment variable an MCP server needs."""
+    name: str           # Variable name (e.g., "ONSHAPE_API_KEY")
+    label: str          # Human-readable label (e.g., "Access Key")
+    description: str = ""  # Help text
+    required: bool = True
+    secret: bool = False   # If True, value should be masked in UI
+
+
 class McpServer(BaseModel):
     server_id: str
     name: str
@@ -18,8 +27,10 @@ class McpServer(BaseModel):
     description: Optional[str] = None
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
-    env_vars: Optional[dict[str, str]] = None
+    env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
     instructions: Optional[str] = None
+    # Dynamic field populated by API — indicates which env vars have saved values
+    credentials_configured: Optional[dict[str, bool]] = None
 
 
 class McpServerCreate(BaseModel):
@@ -31,7 +42,7 @@ class McpServerCreate(BaseModel):
     description: Optional[str] = None
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
-    env_vars: Optional[dict[str, str]] = None
+    env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
     instructions: Optional[str] = None
 
 
@@ -39,7 +50,7 @@ class McpServerUpdate(BaseModel):
     is_active: Optional[bool] = None
     status: Optional[Literal["active", "inactive", "error"]] = None
     error_message: Optional[str] = None
-    env_vars: Optional[dict[str, str]] = None
+    env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
     instructions: Optional[str] = None
 
 
@@ -51,3 +62,4 @@ class McpTool(BaseModel):
     input_schema: dict = Field(default_factory=dict)
     is_enabled: bool
     created_at: int
+

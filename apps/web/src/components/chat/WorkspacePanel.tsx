@@ -97,9 +97,12 @@ export function WorkspacePanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propSessionId]);
 
-  // Always prefer the ChatProvider's globally-active session (which updates synchronously on creation/switch)
-  // falling back to the workspace-specific session prop if the global active state is not initialized.
-  const activeSessionId = state.activeSessionId || propSessionId;
+  // Always prefer the ChatProvider's globally-active session if it matches the workspace's session prop.
+  // This prevents race conditions during workspace switching where the global state hasn't updated yet.
+  const activeSessionId =
+    !propSessionId || state.activeSessionId === propSessionId
+      ? state.activeSessionId
+      : null;
   const statuses = useHealthStatus();
   const agentStatus = statuses.find(
     (s) => s.serviceId === "hermes-agent",
@@ -315,6 +318,10 @@ export function WorkspacePanel({
 
   // Synchronise stored tabs from savedLayout on mount/initialisation
   const tabsInitialized = useRef(false);
+  useEffect(() => {
+    tabsInitialized.current = false;
+  }, [activeSessionId]);
+
   useEffect(() => {
     if (!tabsInitialized.current && savedLayout?.openTabs && activeSessionId) {
       tabsInitialized.current = true;

@@ -8,6 +8,7 @@ from tool_registry import (
     McpServer,
     McpServerCreate,
     McpTool,
+    EnvVarDefinition,
     get_servers,
     get_server,
     insert_server,
@@ -16,6 +17,10 @@ from tool_registry import (
     get_tool,
     update_tool_enabled,
     McpEngine,
+    read_secrets,
+    write_secrets,
+    delete_secrets,
+    has_credentials,
 )
 from core.tracing import traced
 from api.services.hermes_sync import (
@@ -58,6 +63,7 @@ class ServerToggleResponse(BaseModel):
     is_active: bool
     status: str
     error_message: Optional[str] = None
+    type: Optional[str] = None
 
 
 class ServerInstallResponse(BaseModel):
@@ -65,6 +71,7 @@ class ServerInstallResponse(BaseModel):
     is_installed: bool
     status: str
     error_message: Optional[str] = None
+    type: Optional[str] = None
 
 
 class ToolsListResponse(BaseModel):
@@ -80,6 +87,16 @@ class ToolToggleResponse(BaseModel):
     is_enabled: bool
 
 
+class CredentialStatusResponse(BaseModel):
+    server_id: str
+    env_vars: list = []
+    configured: dict = {}
+
+
+class SaveCredentialsRequest(BaseModel):
+    credentials: dict
+
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
 
 
@@ -88,6 +105,17 @@ class ToolToggleResponse(BaseModel):
 async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
     try:
         servers = get_servers(engine.db_path)
+        # Add credentials_configured status for servers with env_var definitions
+        for server in servers:
+            if server.env_vars and isinstance(server.env_vars, list):
+                var_names = [
+                    v.name for v in server.env_vars
+                    if isinstance(v, EnvVarDefinition)
+                ]
+                if var_names:
+                    server.credentials_configured = has_credentials(
+                        server.server_id, var_names
+                    )
         return ServersListResponse(servers=servers)
     except Exception as e:
         logger.exception("list_servers_failed", error=str(e))
@@ -186,6 +214,7 @@ async def toggle_server_activation(
             is_active=updated.is_active,
             status=updated.status,
             error_message=updated.error_message,
+            type=updated.type,
         )
     except Exception as e:
         logger.exception("toggle_server_failed", server_id=server_id, error=str(e))
@@ -213,6 +242,21 @@ async def install_server_endpoint(
         )
 
     try:
+        # Validate required credentials before installation
+        if server.env_vars and isinstance(server.env_vars, list):
+            required_vars = [
+                v.name for v in server.env_vars
+                if isinstance(v, EnvVarDefinition) and v.required
+            ]
+            if required_vars:
+                cred_status = has_credentials(server_id, required_vars)
+                missing = [name for name, configured in cred_status.items() if not configured]
+                if missing:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"Server '{server.name}' requires credentials before installation: {', '.join(missing)}. Configure them via the credentials panel first.",
+                    )
+
         # Mark as installed in database
         from tool_registry.db import update_server
 
@@ -257,7 +301,10 @@ async def install_server_endpoint(
             is_installed=updated.is_installed,
             status=updated.status,
             error_message=updated.error_message,
+            type=updated.type,
         )
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception("install_server_failed", server_id=server_id, error=str(e))
         raise HTTPException(
@@ -312,6 +359,7 @@ async def uninstall_server_endpoint(
             is_installed=updated.is_installed,
             status=updated.status,
             error_message=updated.error_message,
+            type=updated.type,
         )
     except Exception as e:
         logger.exception("uninstall_server_failed", server_id=server_id, error=str(e))
@@ -340,12 +388,12 @@ async def delete_server_endpoint(
         await engine.stop_server(server_id)
         # Delete server from database
         delete_server(engine.db_path, server_id)
+        # Clean up any saved credentials
+        delete_secrets(server_id)
 
         # Sync removal with Hermes config
         server.is_active = False
         sync_mcp_server_to_hermes(server)
-
-
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as e:
@@ -481,3 +529,106 @@ async def update_server_endpoint(
         "success": True,
         "error": None,
     }
+
+
+# ── Credential Management Endpoints ──────────────────────────────────────────
+
+
+@router.get("/servers/{server_id}/credentials", response_model=CredentialStatusResponse)
+@traced("mcp.server.credentials.get")
+async def get_credential_status(
+    server_id: str, engine: McpEngine = Depends(get_mcp_engine)
+):
+    """Get credential definitions and configured status for a server.
+    Never returns actual credential values."""
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found.",
+        )
+
+    env_var_defs = []
+    configured = {}
+    if server.env_vars and isinstance(server.env_vars, list):
+        env_var_defs = [
+            v.model_dump() if isinstance(v, EnvVarDefinition) else v
+            for v in server.env_vars
+        ]
+        var_names = [
+            v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
+        ]
+        configured = has_credentials(server_id, var_names)
+
+    return CredentialStatusResponse(
+        server_id=server_id,
+        env_vars=env_var_defs,
+        configured=configured,
+    )
+
+
+@router.put("/servers/{server_id}/credentials", response_model=CredentialStatusResponse)
+@traced("mcp.server.credentials.save")
+async def save_credentials(
+    server_id: str,
+    body: SaveCredentialsRequest,
+    engine: McpEngine = Depends(get_mcp_engine),
+):
+    """Save credential values for a server. Values are stored in the local
+    secrets file, never in the database or API responses."""
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found.",
+        )
+
+    # Validate credentials are strings — never log values
+    sanitized: dict = {}
+    for key, value in body.credentials.items():
+        if not isinstance(key, str) or not isinstance(value, str):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Credential keys and values must be strings.",
+            )
+        sanitized[key] = value
+
+    logger.info("saving_credentials", server_id=server_id, var_count=len(sanitized))
+    write_secrets(server_id, sanitized)
+
+    # Return updated configured status
+    env_var_defs = []
+    configured = {}
+    if server.env_vars and isinstance(server.env_vars, list):
+        env_var_defs = [
+            v.model_dump() if isinstance(v, EnvVarDefinition) else v
+            for v in server.env_vars
+        ]
+        var_names = [
+            v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
+        ]
+        configured = has_credentials(server_id, var_names)
+
+    return CredentialStatusResponse(
+        server_id=server_id,
+        env_vars=env_var_defs,
+        configured=configured,
+    )
+
+
+@router.delete("/servers/{server_id}/credentials", status_code=status.HTTP_204_NO_CONTENT)
+@traced("mcp.server.credentials.delete")
+async def delete_credentials_endpoint(
+    server_id: str, engine: McpEngine = Depends(get_mcp_engine)
+):
+    """Delete all saved credentials for a server."""
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found.",
+        )
+
+    logger.info("deleting_credentials", server_id=server_id)
+    delete_secrets(server_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

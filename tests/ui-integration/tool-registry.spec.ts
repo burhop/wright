@@ -332,8 +332,47 @@ test.describe('Tool Registry Enhanced UI', () => {
     await expect(page.getByTestId('server-card-install-btn-openscad-mcp-id')).toBeVisible();
   });
 
+  test('should keep network type badge after a failed install/connect error', async ({ page }) => {
+    await page.route('**/api/mcp/servers', async (route) => {
+      await route.fulfill({ json: { servers: MOCK_SERVERS } });
+    });
+    await page.route('**/api/mcp/tools', async (route) => {
+      await route.fulfill({ json: { tools: MOCK_TOOLS } });
+    });
+
+    await page.route('**/api/mcp/servers/network-mcp-id/install*', async (route) => {
+      await route.fulfill({
+        json: {
+          server_id: "network-mcp-id",
+          is_installed: true,
+          status: "error",
+          error_message: "Connection failed to network endpoint"
+        }
+      });
+    });
+
+    await page.goto('/tool-registry');
+
+    // Confirm starting type is network
+    const card = page.getByTestId('server-card-network-mcp-id');
+    await expect(card.getByTestId('server-type-badge-sse')).toBeVisible();
+
+    const connectBtn = page.getByTestId('server-card-connect-btn-network-mcp-id');
+    await connectBtn.click();
+
+    // Verify error banner is shown
+    const errorBanner = page.getByTestId('server-card-error-network-mcp-id');
+    await expect(errorBanner).toBeVisible();
+    await expect(errorBanner).toContainText('Connection failed to network endpoint');
+
+    // Verify it is still a network badge and has NOT changed to stdio/local
+    await expect(card.getByTestId('server-type-badge-sse')).toBeVisible();
+    await expect(card.getByTestId('server-type-badge-stdio')).not.toBeVisible();
+  });
+
   test('should display tool registry page heading @smoke', async ({ page }) => {
     await page.goto('/tool-registry');
     await expect(page.getByRole('heading', { name: 'Engineering Tool Registry' })).toBeVisible();
   });
 });
+

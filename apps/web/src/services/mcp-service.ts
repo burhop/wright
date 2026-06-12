@@ -2,6 +2,20 @@ import { logger } from "./logger";
 
 const mcpLogger = logger.child("McpService");
 
+export interface EnvVarDefinition {
+  name: string;
+  label: string;
+  description?: string;
+  required: boolean;
+  secret: boolean;
+}
+
+export interface CredentialStatusResponse {
+  server_id: string;
+  env_vars: EnvVarDefinition[];
+  configured: Record<string, boolean>;
+}
+
 export interface McpServer {
   server_id: string;
   name: string;
@@ -18,6 +32,8 @@ export interface McpServer {
   description?: string;
   source_url?: string;
   installed_version?: string;
+  env_vars?: EnvVarDefinition[];
+  credentials_configured?: Record<string, boolean>;
 }
 
 export interface McpTool {
@@ -120,7 +136,7 @@ export class McpService {
     return {
       server_id: data.server_id,
       name: "", // backend patch returns server_id, is_active, status, error_message
-      type: "stdio",
+      type: data.type,
       is_active: data.is_active,
       is_installed: data.is_installed || false,
       status: data.status,
@@ -197,7 +213,7 @@ export class McpService {
     return {
       server_id: data.server_id,
       name: "",
-      type: "stdio",
+      type: data.type,
       is_active: false,
       is_installed: data.is_installed,
       status: data.status,
@@ -229,7 +245,7 @@ export class McpService {
     return {
       server_id: data.server_id,
       name: "",
-      type: "stdio",
+      type: data.type,
       is_active: false,
       is_installed: data.is_installed,
       status: data.status,
@@ -267,6 +283,66 @@ export class McpService {
       throw new Error(`Failed to update server: ${response.statusText}`);
     }
     return response.json();
+  }
+
+  async getCredentialStatus(
+    serverId: string,
+  ): Promise<CredentialStatusResponse> {
+    mcpLogger.info("Fetching credential status", { serverId });
+    const response = await fetch(
+      `${API_BASE}/api/mcp/servers/${serverId}/credentials`,
+    );
+    if (!response.ok) {
+      mcpLogger.error("Failed to get credential status", {
+        status: response.status,
+      });
+      throw new Error(
+        `Failed to get credential status: ${response.statusText}`,
+      );
+    }
+    return response.json();
+  }
+
+  async saveCredentials(
+    serverId: string,
+    credentials: Record<string, string>,
+  ): Promise<CredentialStatusResponse> {
+    mcpLogger.info("Saving credentials", { serverId });
+    const response = await fetch(
+      `${API_BASE}/api/mcp/servers/${serverId}/credentials`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ credentials }),
+      },
+    );
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      const msg = errData.detail || response.statusText;
+      mcpLogger.error("Failed to save credentials", { msg });
+      throw new Error(msg);
+    }
+    return response.json();
+  }
+
+  async deleteCredentials(serverId: string): Promise<void> {
+    mcpLogger.info("Deleting credentials", { serverId });
+    const response = await fetch(
+      `${API_BASE}/api/mcp/servers/${serverId}/credentials`,
+      {
+        method: "DELETE",
+      },
+    );
+    if (!response.ok) {
+      mcpLogger.error("Failed to delete credentials", {
+        status: response.status,
+      });
+      throw new Error(
+        `Failed to delete credentials: ${response.statusText}`,
+      );
+    }
   }
 }
 
