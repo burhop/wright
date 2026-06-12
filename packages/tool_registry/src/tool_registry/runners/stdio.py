@@ -47,6 +47,11 @@ class StdioRunner(BaseRunner):
                     env=run_env,
                     cwd=self.cwd,
                 )
+                # Increase StreamReader limit to 10MB to support large tool schemas/responses
+                if self.process.stdout:
+                    self.process.stdout._limit = 10 * 1024 * 1024
+                if self.process.stderr:
+                    self.process.stderr._limit = 10 * 1024 * 1024
             except Exception as e:
                 logger.error(
                     "mcp_server_spawn_failed", command=self.command, error=str(e)
@@ -56,9 +61,9 @@ class StdioRunner(BaseRunner):
             self._read_task = asyncio.create_task(self._read_stdout())
             self._stderr_task = asyncio.create_task(self._read_stderr())
 
-        # Enforce handshake within 10 seconds (done outside lock to prevent deadlock)
+        # Enforce handshake within 60 seconds (done outside lock to prevent deadlock)
         try:
-            await asyncio.wait_for(self._handshake(), timeout=10.0)
+            await asyncio.wait_for(self._handshake(), timeout=60.0)
         except Exception as e:
             logger.error(
                 "mcp_server_handshake_failed", command=self.command, error=str(e)
