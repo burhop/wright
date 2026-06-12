@@ -464,7 +464,11 @@ def run_migrations():
         # 4. ── Fix false is_installed flags ──────────────────────────────────
         #    Reset servers that are marked installed+error but aren't actually
         #    running.  Keep OpenSCAD Geometry (the only truly installed server).
-        conn.execute("""
+        #    Only reset catalog servers, not custom user-added servers.
+        catalog_ids = [entry["server_id"] for entry in ENGINEERING_CATALOG]
+        placeholders = ",".join("?" for _ in catalog_ids)
+        conn.execute(
+            f"""
         UPDATE mcp_servers
         SET is_installed = 0,
             status = 'inactive',
@@ -472,8 +476,11 @@ def run_migrations():
             installed_version = NULL
         WHERE is_installed = 1
           AND status = 'error'
+          AND server_id IN ({placeholders})
           AND server_id != 'openscad-mcp-server'
-        """)
+        """,
+            tuple(catalog_ids),
+        )
 
         # 5. Seed the full engineering catalog
         now = int(time.time())

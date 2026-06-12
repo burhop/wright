@@ -4,14 +4,14 @@ import logging
 from typing import List, Dict, Any, Optional
 from urllib.parse import urljoin
 import httpx
-from httpx_sse import aconnect_sse
+from httpx_sse import aconnect_sse, EventSource
 from .base import BaseRunner
 
 logger = logging.getLogger(__name__)
 
 
 class SseRunner(BaseRunner):
-    """MCP Runner implementing SSE (Server-Sent Events) communication with remote MCP servers."""
+    """MCP Runner implementing SSE (Server-Sent Events) and Streamable HTTP transport with remote MCP servers."""
 
     def __init__(self, sse_url: str):
         self.sse_url = sse_url
@@ -23,14 +23,32 @@ class SseRunner(BaseRunner):
         self._lock = asyncio.Lock()
         self._endpoint_ready = asyncio.Event()
 
+        # Streamable HTTP state
+        self._is_streamable_http = False
+        self._session_id: Optional[str] = None
+        self._protocol_version: Optional[str] = None
+        self._probe_response: Optional[Dict[str, Any]] = None
+
+    def _prepare_headers(self) -> Dict[str, str]:
+        headers = {
+            "Accept": "application/json, text/event-stream",
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        }
+        if self._session_id:
+            headers["mcp-session-id"] = self._session_id
+        if self._protocol_version:
+            headers["mcp-protocol-version"] = self._protocol_version
+        return headers
+
     async def start(self) -> None:
         async with self._lock:
             if self.client is not None:
                 raise RuntimeError("Runner is already running.")
 
+            # Set up base client
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Accept": "text/event-stream",
                 "Cache-Control": "no-cache",
             }
             self.client = httpx.AsyncClient(
@@ -38,28 +56,89 @@ class SseRunner(BaseRunner):
                 headers=headers,
                 follow_redirects=True,
             )
+
+            # Probe for Streamable HTTP by sending a POST initialize payload
+            logger.info("Probing endpoint %s for Streamable HTTP support...", self.sse_url)
+            probe_payload = {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "wright", "version": "0.1.0"},
+                },
+            }
+            try:
+                response = await self.client.post(
+                    self.sse_url,
+                    json=probe_payload,
+                    headers={
+                        "Accept": "application/json, text/event-stream",
+                        "Content-Type": "application/json",
+                    },
+                    timeout=10.0
+                )
+
+                if response.status_code == 200:
+                    content_type = response.headers.get("content-type", "").lower()
+                    resp_data = None
+                    if "application/json" in content_type:
+                        try:
+                            resp_data = response.json()
+                        except Exception:
+                            pass
+                    elif "text/event-stream" in content_type:
+                        try:
+                            event_source = EventSource(response)
+                            async for sse in event_source.aiter_sse():
+                                if sse.event == "message" and sse.data:
+                                    resp_data = json.loads(sse.data)
+                                    break
+                        except Exception:
+                            pass
+
+                    if resp_data and ("result" in resp_data and "protocolVersion" in resp_data["result"]):
+                        self._is_streamable_http = True
+                        self._session_id = response.headers.get("mcp-session-id")
+                        if "result" in resp_data:
+                            self._protocol_version = str(resp_data["result"].get("protocolVersion"))
+                        self._probe_response = resp_data
+                        self._message_endpoint = self.sse_url
+                        logger.info(
+                            "Detected Streamable HTTP support for %s (Session ID: %s)",
+                            self.sse_url,
+                            self._session_id,
+                        )
+            except Exception as e:
+                logger.debug("Streamable HTTP probe failed (will fallback to legacy SSE): %s", e)
+
+            # Start reading task
             self._read_task = asyncio.create_task(self._connect_and_read())
 
-            # Wait for endpoint event to be ready (handshake) within 15 seconds
-            try:
-                await asyncio.wait_for(self._endpoint_ready.wait(), timeout=15.0)
-            except asyncio.TimeoutError as te:
-                logger.error(
-                    "Timeout waiting for SSE 'endpoint' event from %s",
-                    self.sse_url,
-                )
-                await self._stop_locked()
-                raise RuntimeError(
-                    f"SSE handshake failed: Timeout waiting for 'endpoint' event from {self.sse_url}. Ensure the server is running and accessible."
-                ) from te
-            except Exception as e:
-                logger.error(
-                    "Failed to connect or establish SSE endpoint with %s: %s",
-                    self.sse_url,
-                    e,
-                )
-                await self._stop_locked()
-                raise RuntimeError(f"SSE handshake failed: {e}") from e
+            if self._is_streamable_http:
+                self._endpoint_ready.set()
+            else:
+                # Wait for endpoint event to be ready (handshake) within 15 seconds
+                try:
+                    await asyncio.wait_for(self._endpoint_ready.wait(), timeout=15.0)
+                except asyncio.TimeoutError as te:
+                    logger.error(
+                        "Timeout waiting for SSE 'endpoint' event from %s",
+                        self.sse_url,
+                    )
+                    await self._stop_locked()
+                    raise RuntimeError(
+                        f"SSE handshake failed: Timeout waiting for 'endpoint' event from {self.sse_url}. Ensure the server is running and accessible."
+                    ) from te
+                except Exception as e:
+                    logger.error(
+                        "Failed to connect or establish SSE endpoint with %s: %s",
+                        self.sse_url,
+                        e,
+                    )
+                    await self._stop_locked()
+                    raise RuntimeError(f"SSE handshake failed: {e}") from e
 
             # Perform MCP Handshake
             try:
@@ -88,6 +167,10 @@ class SseRunner(BaseRunner):
 
         self._message_endpoint = None
         self._endpoint_ready.clear()
+        self._is_streamable_http = False
+        self._session_id = None
+        self._protocol_version = None
+        self._probe_response = None
 
     async def stop(self) -> None:
         async with self._lock:
@@ -138,6 +221,12 @@ class SseRunner(BaseRunner):
         if not self.is_running():
             raise RuntimeError("SSE runner is not running or not initialized.")
 
+        # Intercept initialize if we already performed it in Streamable HTTP probe
+        if method == "initialize" and self._is_streamable_http and self._probe_response:
+            if "error" in self._probe_response:
+                raise RuntimeError(f"RPC Error: {self._probe_response['error']}")
+            return self._probe_response.get("result", {})
+
         req_id = self._next_id
         self._next_id += 1
 
@@ -148,22 +237,40 @@ class SseRunner(BaseRunner):
         if params is not None:
             payload["params"] = params
 
+        headers = self._prepare_headers() if self._is_streamable_http else None
+
         try:
             # Post request to the message endpoint
-            response = await self.client.post(self._message_endpoint, json=payload)
+            response = await self.client.post(self._message_endpoint, json=payload, headers=headers)
             response.raise_for_status()
 
             # If the response contains the result directly, resolve immediately
             if response.status_code == 200:
-                try:
-                    data = response.json()
-                    if "id" in data and data["id"] == req_id:
-                        self._pending_requests.pop(req_id, None)
-                        if "error" in data:
-                            raise RuntimeError(f"RPC Error: {data['error']}")
-                        return data.get("result", {})
-                except json.JSONDecodeError:
-                    pass
+                content_type = response.headers.get("content-type", "").lower()
+                if "application/json" in content_type:
+                    try:
+                        data = response.json()
+                        if "id" in data and data["id"] == req_id:
+                            self._pending_requests.pop(req_id, None)
+                            if "error" in data:
+                                raise RuntimeError(f"RPC Error: {data['error']}")
+                            return data.get("result", {})
+                    except Exception:
+                        pass
+                elif "text/event-stream" in content_type:
+                    # Read and parse response body as SSE event
+                    try:
+                        event_source = EventSource(response)
+                        async for sse in event_source.aiter_sse():
+                            if sse.event == "message" and sse.data:
+                                data = json.loads(sse.data)
+                                if "id" in data and data["id"] == req_id:
+                                    self._pending_requests.pop(req_id, None)
+                                    if "error" in data:
+                                        raise RuntimeError(f"RPC Error: {data['error']}")
+                                    return data.get("result", {})
+                    except Exception as sse_err:
+                        logger.error("Failed to parse SSE response in POST request: %s", sse_err)
         except Exception as e:
             self._pending_requests.pop(req_id, None)
             raise RuntimeError(
@@ -183,17 +290,26 @@ class SseRunner(BaseRunner):
         if params is not None:
             payload["params"] = params
 
+        headers = self._prepare_headers() if self._is_streamable_http else None
+
         try:
-            response = await self.client.post(self._message_endpoint, json=payload)
+            response = await self.client.post(self._message_endpoint, json=payload, headers=headers)
             response.raise_for_status()
         except Exception as e:
             logger.error("Failed to send SSE notification %s: %s", method, e)
 
     async def _connect_and_read(self) -> None:
+        if self._is_streamable_http and not self._session_id:
+            logger.info("Streamable HTTP server without session ID. Skipping background GET stream.")
+            return
+
         while self.client:
             try:
+                headers = self._prepare_headers() if self._is_streamable_http else {
+                    "Accept": "text/event-stream",
+                }
                 async with aconnect_sse(
-                    self.client, "GET", self.sse_url
+                    self.client, "GET", self.sse_url, headers=headers
                 ) as event_source:
                     async for sse in event_source.aiter_sse():
                         event_type = sse.event
@@ -247,3 +363,4 @@ class SseRunner(BaseRunner):
                     e,
                 )
                 await asyncio.sleep(5)
+

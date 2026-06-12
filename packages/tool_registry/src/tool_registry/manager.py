@@ -238,7 +238,7 @@ class McpEngine:
             )
             return updated
 
-    async def stop_server(self, server_id: str) -> McpServer:
+    async def stop_server(self, server_id: str, update_db: bool = True) -> McpServer:
         """Stop an active MCP server runner and update DB state."""
         runner = self._active_runners.pop(server_id, None)
         if runner:
@@ -247,20 +247,22 @@ class McpEngine:
             except Exception as e:
                 logger.error("Error stopping runner for %s: %s", server_id, e)
 
-        # Clear active tools from database
-        clear_server_tools(self.db_path, server_id)
+        if update_db:
+            # Clear active tools from database
+            clear_server_tools(self.db_path, server_id)
 
-        updated = update_server(
-            self.db_path,
-            server_id,
-            {
-                "is_active": False,
-                "status": "inactive",
-                "error_message": None,
-                "updated_at": int(time.time()),
-            },
-        )
-        return updated
+            updated = update_server(
+                self.db_path,
+                server_id,
+                {
+                    "is_active": False,
+                    "status": "inactive",
+                    "error_message": None,
+                    "updated_at": int(time.time()),
+                },
+            )
+            return updated
+        return get_server(self.db_path, server_id)
 
     async def call_tool(
         self, server_id: str, tool_name: str, arguments: Dict[str, Any]
@@ -332,6 +334,6 @@ class McpEngine:
         active_ids = list(self._active_runners.keys())
         for sid in active_ids:
             try:
-                await self.stop_server(sid)
+                await self.stop_server(sid, update_db=False)
             except Exception as e:
                 logger.error("Error shutting down server %s: %s", sid, e)
