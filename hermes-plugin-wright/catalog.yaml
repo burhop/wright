@@ -1,0 +1,586 @@
+servers:
+  - id: freecad-mcp-sandraschi
+    name: "FreeCAD Engineering"
+    vendor: sandraschi
+    description: >
+      End-to-end engineering: FreeCAD geometry → CalculiX FEA →
+      OpenFOAM CFD → PrusaSlicer G-code.
+    domains: [cad, fea, cfd, cam]
+    tags: [open-source, linux, headless, local]
+    transport: stdio
+    command: ["uv", "run", "--with", "freecad-mcp", "freecad-mcp"]
+    source_url: https://github.com/sandraschi/freecad-mcp
+    image_url: https://raw.githubusercontent.com/sandraschi/freecad-mcp/main/icon.png
+    locality: local
+    weight: heavy
+    env_vars: []
+    dependencies:
+      system: [freecad]
+      python: []
+      node: []
+
+  - id: jarvis-onshape-mcp
+    name: "Jarvis OnShape MCP"
+    vendor: ReshefElisha
+    description: >
+      AI copilot for Onshape CAD. 60+ tools: parametric sketches,
+      extrudes, fillets, assemblies, Variable Studios, FeatureScript,
+      and multi-view rendering with vision feedback.
+    domains: [cad, cloud-cad]
+    tags: [startup, cloud, rest-api]
+    transport: stdio
+    command: ["uv", "run", "--with", "jarvis-onshape-mcp", "onshape-mcp"]
+    source_url: https://github.com/ReshefElisha/jarvis-onshape-mcp
+    image_url: https://avatars.githubusercontent.com/u/6536550?s=64
+    locality: remote
+    weight: light
+    env_vars:
+      - name: ONSHAPE_API_KEY
+        label: "Access Key"
+        description: "Onshape API access key from dev-portal.onshape.com"
+        required: true
+        secret: false
+      - name: ONSHAPE_API_SECRET
+        label: "Secret Key"
+        description: "Onshape API secret key (shown once at creation)"
+        required: true
+        secret: true
+    dependencies:
+      system: []
+      python: [jarvis-onshape-mcp]
+      node: []
+
+  - id: aps-mcp-server-nodejs
+    name: "Autodesk Platform Services Node MCP"
+    vendor: Autodesk
+    description: "Secure gateway for accessing Autodesk Platform Services cloud data modeling and derivative extraction APIs."
+    domains: [plm, cloud-cad]
+    tags: [autodesk, cloud, node, server-to-server]
+    transport: stdio
+    command: ["node", "dist/index.js"]
+    source_url: https://github.com/autodesk-platform-services/aps-mcp-server-nodejs
+    locality: remote
+    weight: light
+    env_vars:
+      - name: APS_CLIENT_ID
+        label: "APS Client ID"
+        description: "Developer client ID from developer.autodesk.com"
+        required: true
+        secret: false
+      - name: APS_CLIENT_SECRET
+        label: "APS Client Secret"
+        description: "Developer client secret from developer.autodesk.com"
+        required: true
+        secret: true
+    dependencies:
+      system: []
+      python: []
+      node: [aps-mcp-server-nodejs]
+
+  - id: aps-mcp-server-petr
+    name: "Autodesk Platform Services Python MCP"
+    vendor: petrbroz
+    description: "Python-based Autodesk Platform Services integration for querying construction and project data."
+    domains: [plm, cloud-cad]
+    tags: [autodesk, cloud, python]
+    transport: stdio
+    command: ["python", "-m", "aps_mcp_server"]
+    source_url: https://github.com/petrbroz/aps-mcp-server
+    locality: remote
+    weight: light
+    env_vars:
+      - name: APS_CLIENT_ID
+        label: "APS Client ID"
+        required: true
+        secret: false
+      - name: APS_CLIENT_SECRET
+        label: "APS Client Secret"
+        required: true
+        secret: true
+    dependencies:
+      system: []
+      python: [aps-mcp-server]
+      node: []
+
+  - id: fusion360-mcp-server
+    name: "Autodesk Fusion 360 CAM"
+    vendor: faust-machines
+    description: "Controls Fusion 360 geometric engine, parametric sketches, body logic, and CAM setups for CNC post-processing."
+    domains: [cad, cam]
+    tags: [local, desktop, CNC, gcode]
+    transport: stdio
+    command: ["python", "server.py"]
+    source_url: https://github.com/faust-machines/fusion360-mcp-server
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [fusion360]
+      python: [pywin32]
+      node: []
+
+  - id: autodesk-fusion-mcp-python
+    name: "Fusion 360 Python API Bridge"
+    vendor: sockcymbal
+    description: "Python MCP bridge wrapping the local Fusion 360 script interface."
+    domains: [cad]
+    tags: [local, python, automation]
+    transport: stdio
+    command: ["python", "main.py"]
+    source_url: https://github.com/sockcymbal/autodesk-fusion-mcp-python
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [fusion360]
+      python: []
+      node: []
+
+  - id: revit-mcp
+    name: "Revit BIM MCP"
+    vendor: mcp-servers-for-revit
+    description: "Query and execute CRUD commands directly over Revit Building Information Modeling (BIM) structural elements."
+    domains: [bim]
+    tags: [local, AEC, building, structural]
+    transport: stdio
+    command: ["dotnet", "run", "--project", "RevitMcp.csproj"]
+    source_url: https://github.com/mcp-servers-for-revit/revit-mcp
+    locality: local
+    weight: heavy
+    env_vars: []
+    dependencies:
+      system: [revit]
+      python: []
+      node: []
+
+  - id: siemens-element-mcp
+    name: "Siemens Element Design System"
+    vendor: Siemens
+    description: "Retrieves UX writing guidelines, component specs, and API patterns for Element components via RAG."
+    domains: [mesh]
+    tags: [design-system, siemens, UI, elements]
+    transport: stdio
+    command: ["npx", "@siemens/element-mcp"]
+    source_url: https://element.siemens.io/get-started/element-mcp/
+    locality: remote
+    weight: light
+    env_vars: []
+    dependencies:
+      system: []
+      python: []
+      node: ["@siemens/element-mcp"]
+
+  - id: wincc-unified-mcp
+    name: "Siemens WinCC Unified SCADA"
+    vendor: Siemens
+    description: "Bridges industrial runtime alarms, machine variables, and UDT tag data queries via Openness API."
+    domains: [iot]
+    tags: [factory, SCADA, plc, siemens]
+    transport: stdio
+    command: ["wincc-unified-mcp.exe"]
+    source_url: https://support.industry.siemens.com/cs/document/110002407
+    locality: local
+    weight: heavy
+    env_vars: []
+    dependencies:
+      system: [wincc-unified]
+      python: []
+      node: []
+
+  - id: thingworx-mcp
+    name: "PTC ThingWorx IoT Platform"
+    vendor: PTC
+    description: "Exposes industrial machine telemetry, alarms, and sensor KPIs configured as MCPServices."
+    domains: [iot, plm]
+    tags: [industrial, iot, ptc, cloud]
+    transport: sse
+    command: ["ptc-thingworx-mcp"]
+    source_url: https://support.ptc.com/help/thingworx/platform/r10.1/
+    locality: remote
+    weight: light
+    env_vars:
+      - name: THINGWORX_APP_KEY
+        label: "Application Key"
+        required: true
+        secret: true
+    dependencies:
+      system: []
+      python: []
+      node: []
+
+  - id: creo-mcp
+    name: "Creo Parametric Bridge"
+    vendor: yangkunyi
+    description: "Integrates with CREOSON json-rpc middleware for mechanical CAD assemblies assembly analysis."
+    domains: [cad]
+    tags: [desktop, ptc, creo]
+    transport: stdio
+    command: ["python", "creo_mcp.py"]
+    source_url: https://github.com/yangkunyi/creo-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [creoson]
+      python: [creopyson]
+      node: []
+
+  - id: creoson-mcp-bridge
+    name: "CREOSON JSON-RPC Server"
+    vendor: SimplifiedLogic
+    description: "Direct JLINK bridge to PTC Creo Parametric modeling kernel."
+    domains: [cad]
+    tags: [middleware, java, jsonrpc]
+    transport: stdio
+    command: ["java", "-jar", "creoson.jar"]
+    source_url: https://github.com/SimplifiedLogic/creoson
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [java, creo]
+      python: []
+      node: []
+
+  - id: solidworks-mcp-python
+    name: "SolidWorks Python COM"
+    vendor: andrewbartels1
+    description: "Exposes 100+ CAD drawing and sketching functions over the local Windows COM/VBA backend, with preview rendering and SQLite rollback states."
+    domains: [cad, tolerance]
+    tags: [windows, solidworks, com, local]
+    transport: stdio
+    command: ["python", "server.py"]
+    source_url: https://github.com/andrewbartels1/SolidworksMCP-python
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [solidworks]
+      python: [pywin32]
+      node: []
+
+  - id: solidworks-mcp-ts
+    name: "SolidWorks TypeScript COM"
+    vendor: vespo92
+    description: "TypeScript/Node-based COM wrapper supporting VBA macro fallback generation for large parameter geometries."
+    domains: [cad]
+    tags: [windows, typescript, node]
+    transport: stdio
+    command: ["node", "dist/index.js"]
+    source_url: https://github.com/vespo92/SolidworksMCP-TS
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [solidworks]
+      python: []
+      node: [winax]
+
+  - id: solidworks-mcp-alisamsam
+    name: "SolidWorks Document Manager"
+    vendor: alisamsam
+    description: "MCP tool managing SolidWorks file attributes, drawings, and metadata properties."
+    domains: [cad]
+    tags: [windows, files, metadata]
+    transport: stdio
+    command: ["python", "main.py"]
+    source_url: https://github.com/alisamsam/solidworks-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [solidworks]
+      python: []
+      node: []
+
+  - id: solidworks-api-mcp
+    name: "SolidWorks API Knowledge Base"
+    vendor: kilwizac
+    description: "Search and RAG helper exposing SolidWorks API documents for code syntax lookup."
+    domains: [cad]
+    tags: [api-docs, search, rag]
+    transport: stdio
+    command: ["python", "search_server.py"]
+    source_url: https://github.com/kilwizac/solidworks-api-mcp
+    locality: local
+    weight: light
+    env_vars: []
+    dependencies:
+      system: []
+      python: []
+      node: []
+
+  - id: freecad-mcp-contextform
+    name: "FreeCAD Copilot Workbench"
+    vendor: contextform
+    description: "Launches FreeCAD native Copilot panel. Extends view control, primitive modeling, and viewport captures."
+    domains: [cad]
+    tags: [freecad, workbench, local]
+    transport: stdio
+    command: ["npx", "freecad-mcp"]
+    source_url: https://github.com/contextform/freecad-mcp
+    locality: local
+    weight: heavy
+    env_vars: []
+    dependencies:
+      system: [freecad]
+      python: []
+      node: ["freecad-mcp"]
+
+  - id: freecad-addon-robust
+    name: "FreeCAD Robust Server"
+    vendor: spkane
+    description: "Exposes 150+ CAD tools, headless rendering, and arbitrary macro generation/execution."
+    domains: [cad]
+    tags: [headless, xmlrpc, linux]
+    transport: stdio
+    command: ["python", "robust_mcp.py"]
+    source_url: https://github.com/spkane/freecad-addon-robust-mcp-server
+    locality: local
+    weight: heavy
+    env_vars: []
+    dependencies:
+      system: [freecad]
+      python: []
+      node: []
+
+  - id: freecad-mcp-nekanat
+    name: "FreeCAD Python Server"
+    vendor: neka-nat
+    description: "Minimalist FreeCAD python automation hook."
+    domains: [cad]
+    tags: [python, base]
+    transport: stdio
+    command: ["python", "freecad_server.py"]
+    source_url: https://github.com/neka-nat/freecad-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [freecad]
+      python: []
+      node: []
+
+  - id: caid-mcp
+    name: "CAiD OCCT Kernel Bridge"
+    vendor: dreliq9
+    description: "Direct OpenCASCADE geometric kernel bridge bypassing FreeCAD GUI with volume/manifold diagnostic layers."
+    domains: [cad, code-cad]
+    tags: [occ, opencascade, geometry, validation]
+    transport: stdio
+    command: ["python", "caid_mcp.py"]
+    source_url: https://github.com/dreliq9/caid-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: []
+      python: [caid]
+      node: []
+
+  - id: autocad-mcp
+    name: "AutoCAD LT LISP Generator"
+    vendor: hvkshetry
+    description: "Generates and dispatches AutoLISP code scripts to AutoCAD LT version for piping and P&ID automation."
+    domains: [drafting]
+    tags: [autocad, lisp, drafting, 2D]
+    transport: stdio
+    command: ["node", "dist/index.js"]
+    source_url: https://github.com/hvkshetry/autocad-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [autocad]
+      python: []
+      node: []
+
+  - id: easy-mcp-autocad
+    name: "AutoCAD SQLite Exporter"
+    vendor: zh19980811
+    description: "Extracts AutoCAD drawing elements and persists drawings in SQLite tables for analytics."
+    domains: [drafting]
+    tags: [data, database, sql, export]
+    transport: stdio
+    command: ["python", "exporter.py"]
+    source_url: https://github.com/zh19980811/Easy-MCP-AutoCad
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [autocad]
+      python: []
+      node: []
+
+  - id: multicad-mcp
+    name: "multiCAD COM Bridge"
+    vendor: AnCode666
+    description: "Universal COM wrapper routing CAD commands to ZWCAD, GstarCAD, and BricsCAD platforms."
+    domains: [drafting]
+    tags: [com, zwcad, brics_cad, alternate-cad]
+    transport: stdio
+    command: ["python", "multicad.py"]
+    source_url: https://github.com/AnCode666/multiCAD-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [zwcad]
+      python: [pywin32]
+      node: []
+
+  - id: cad-mcp-daobataotie
+    name: "CAD Universal COM"
+    vendor: daobataotie
+    description: "Basic 2D plotting automation engine via Windows COM."
+    domains: [drafting]
+    tags: [windows, com, drafting]
+    transport: stdio
+    command: ["python", "plotting.py"]
+    source_url: https://github.com/daobataotie/CAD-MCP
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [autocad]
+      python: [pywin32]
+      node: []
+
+  - id: openscad-mcp
+    name: "OpenSCAD Rendering Engine"
+    vendor: quellant
+    description: "Background OpenSCAD compilation rendering previews as Base64 arrays or animations."
+    domains: [code-cad]
+    tags: [openscad, math-cad, rendering]
+    transport: stdio
+    command: ["python", "openscad_mcp.py"]
+    source_url: https://github.com/quellant/openscad-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [openscad]
+      python: []
+      node: []
+
+  - id: trikos529-openscad
+    name: "OpenSCAD Code Linter"
+    vendor: trikos529
+    description: "Checks SCAD files for parameter standards, syntax validation, and hardcoded values."
+    domains: [code-cad]
+    tags: [linting, code-quality]
+    transport: stdio
+    command: ["python", "linter.py"]
+    source_url: https://github.com/topics/cad-3d
+    locality: local
+    weight: light
+    env_vars: []
+    dependencies:
+      system: [openscad]
+      python: []
+      node: []
+
+  - id: blender-mcp
+    name: "Blender 3D Mesh Copilot"
+    vendor: ahujasid
+    description: "Controls Blender polygonal mesh modeling, lighting setup, and Poly Haven assets integration."
+    domains: [mesh]
+    tags: [blender, polygons, materials, assets]
+    transport: stdio
+    command: ["python", "blender_mcp.py"]
+    source_url: https://github.com/ahujasid/blender-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [blender]
+      python: [bpy]
+      node: []
+
+  - id: rhino-mcp
+    name: "Rhino NURBS C# MCP"
+    vendor: jingcheng-chen
+    description: "NURBS geometry controller running inside Rhino thread via C# loopback connection."
+    domains: [mesh, code-cad]
+    tags: [rhino, nurbs, grasshopper, csharp]
+    transport: stdio
+    command: ["dotnet", "RhinoMcp.dll"]
+    source_url: https://github.com/jingcheng-chen/rhinomcp
+    locality: local
+    weight: heavy
+    env_vars: []
+    dependencies:
+      system: [rhino]
+      python: []
+      node: []
+
+  - id: sketchup-mcp
+    name: "SketchUp Ruby Server"
+    vendor: mhyrr
+    description: "Controls SketchUp component definitions and materials via a local Ruby TCP hook."
+    domains: [mesh]
+    tags: [sketchup, ruby, local]
+    transport: stdio
+    command: ["ruby", "server.rb"]
+    source_url: https://github.com/mhyrr/sketchup-mcp
+    locality: local
+    weight: medium
+    env_vars: []
+    dependencies:
+      system: [sketchup]
+      python: []
+      node: []
+
+  - id: zoo-mcp
+    name: "Zoo.dev Cloud CAD API"
+    vendor: KittyCAD
+    description: "High-scale cloud CAD modeling and rapid file conversion service."
+    domains: [code-cad]
+    tags: [cloud, zoo, conversion, light]
+    transport: stdio
+    command: ["npx", "@zoo-dev/mcp"]
+    source_url: https://github.com/KittyCAD/zoo-mcp
+    locality: remote
+    weight: light
+    env_vars:
+      - name: ZOO_API_TOKEN
+        label: "Zoo API Token"
+        required: true
+        secret: true
+    dependencies:
+      system: []
+      python: []
+      node: ["@zoo-dev/mcp"]
+
+  - id: webmcp-openscad
+    name: "Web OpenSCAD"
+    vendor: jherr
+    description: "Exposes client-side OpenSCAD modeling tools in TanStack web interface."
+    domains: [code-cad]
+    tags: [web, browser, openscad, local]
+    transport: webmcp
+    command: []
+    source_url: https://github.com/jherr/webmcp-openscad
+    locality: local
+    weight: light
+    env_vars: []
+    dependencies:
+      system: []
+      python: []
+      node: []
+
+  - id: web3d-mcp
+    name: "React Three Fiber Web3D"
+    vendor: modelcontextprotocol
+    description: "R3F-based browser 3D graphics rendering script builder."
+    domains: [mesh]
+    tags: [threejs, r3f, webgl, browser]
+    transport: stdio
+    command: ["npx", "web3d-mcp"]
+    locality: remote
+    weight: light
+    env_vars: []
+    dependencies:
+      system: []
+      python: []
+      node: ["web3d-mcp"]

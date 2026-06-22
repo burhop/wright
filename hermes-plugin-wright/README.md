@@ -8,9 +8,13 @@ This is the official Wright integration plugin for Hermes Agent. It provides a b
 hermes-plugin-wright/
 ├── plugin.yaml              # Plugin metadata manifest
 ├── __init__.py              # Registration entry point: register(ctx)
+├── catalog.yaml             # Registry database containing ~30 engineering tools
+├── catalog.py               # CatalogLoader implementation (search and filter APIs)
+├── schemas.py               # Pydantic validation schemas (CatalogEntry, etc.)
 ├── pyproject.toml           # Packaging and dependencies
 ├── tests/
-│   └── conftest.py          # Test configuration
+│   ├── conftest.py          # Test configuration
+│   └── test_catalog.py      # Unit tests for validation and search
 └── README.md                # This file
 ```
 
@@ -28,4 +32,21 @@ Or install it in editable mode inside your Python environment:
 
 ```bash
 pip install -e ./hermes-plugin-wright
+```
+
+## Catalog Usage
+
+You can load and query the engineering tool catalog programmatically:
+
+```python
+from hermes_plugin_wright.catalog import CatalogLoader
+
+# Load the catalog
+loader = CatalogLoader()
+
+# Query by domain taxonomy
+cad_tools = loader.get_by_domain("cad")
+
+# Search by keyword
+results = loader.search("CalculiX")
 ```
