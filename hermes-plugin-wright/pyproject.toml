@@ -20,5 +20,6 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-force-include = { "__init__.py" = "hermes_plugin_wright/__init__.py", "plugin.yaml" = "hermes_plugin_wright/plugin.yaml", "catalog.py" = "hermes_plugin_wright/catalog.py", "schemas.py" = "hermes_plugin_wright/schemas.py", "catalog.yaml" = "hermes_plugin_wright/catalog.yaml", "bridge.py" = "hermes_plugin_wright/bridge.py" }
+force-include = { "__init__.py" = "hermes_plugin_wright/__init__.py", "plugin.yaml" = "hermes_plugin_wright/plugin.yaml", "catalog.py" = "hermes_plugin_wright/catalog.py", "schemas.py" = "hermes_plugin_wright/schemas.py", "catalog.yaml" = "hermes_plugin_wright/catalog.yaml", "bridge.py" = "hermes_plugin_wright/bridge.py", "commands.py" = "hermes_plugin_wright/commands.py" }
+
 

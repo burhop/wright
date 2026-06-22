@@ -1,6 +1,6 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/029-wright-api-bridge/plan.md
+at specs/030-wright-slash-commands/plan.md
 <!-- SPECKIT END -->
 

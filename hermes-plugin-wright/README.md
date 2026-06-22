@@ -36,6 +36,22 @@ Or install it in editable mode inside your Python environment:
 pip install -e ./hermes-plugin-wright
 ```
 
+## Slash Commands
+
+Once loaded in Hermes, the plugin exposes the `/wright` slash command group:
+
+| Command | Arguments | Description |
+|:---|:---|:---|
+| `/wright start` | | Builds frontend web assets, starts the FastAPI server, and opens the UI in your browser |
+| `/wright stop` | | Gracefully shuts down the FastAPI server via SIGTERM signaling |
+| `/wright open` | | Opens the Wright UI in your default browser (requires running stack) |
+| `/wright doctor` | | Performs a diagnostic environment health check |
+| `/wright status` | | Shows connection status, active workspace, and status of configured MCP tools |
+| `/wright catalog` | `[domain]` | Lists available engineering tools filterable by domain tag (e.g. `cad`, `fea`) |
+| `/wright catalog search` | `<query>` | Performs a keyword search across catalog attributes |
+| `/wright info` | `<id>` | Displays requirements, commands, credentials, and dependencies of a catalog item |
+| `/wright install` | `<id>` | Installs/registers a cataloged engineering MCP server in the Wright gateway |
+
 ## Catalog Usage
 
 You can load and query the engineering tool catalog programmatically:
