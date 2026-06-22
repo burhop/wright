@@ -1,0 +1,12 @@
+name: wright
+version: "1.0.0"
+description: >
+  Curated catalog of engineering MCP servers for CAD, FEA, CAM,
+  and simulation. Bridges Hermes to Wright's tool management system.
+  Browse by engineering domain, install on demand.
+author: Wright Project (github.com/burhop/wright)
+license: MIT
+homepage: https://github.com/burhop/wright
+capabilities:
+  - commands
+min_hermes_version: "1.0.0"
