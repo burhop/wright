@@ -36,6 +36,39 @@ Or install it in editable mode inside your Python environment:
 pip install -e ./hermes-plugin-wright
 ```
 
+### Docker Appliance Installation
+The plugin is baked into the official Wright appliance Docker image. To build and run the appliance:
+
+```bash
+# Build the Docker image
+docker build -t wright-appliance:latest -f docker/Dockerfile .
+
+# Start the appliance container
+docker run -d -p 8000:8000 --name wright-app wright-appliance:latest
+```
+
+## Quick Start Guide
+
+Once the plugin is loaded in Hermes, run the following slash commands:
+
+1. **Start the stack**:
+   ```bash
+   /wright start
+   ```
+   *(Locally builds web assets and starts uvicorn; inside Docker, verifies supervisord uvicorn service health).*
+
+2. **Browse catalog of tools**:
+   ```bash
+   /wright catalog cad
+   ```
+   *(Lists CAD tools like FreeCAD and OpenSCAD).*
+
+3. **Install an MCP tool**:
+   ```bash
+   /wright install openscad-mcp
+   ```
+   *(Registers the tool in the active Wright workspace).*
+
 ## Slash Commands
 
 Once loaded in Hermes, the plugin exposes the `/wright` slash command group:
@@ -98,3 +131,7 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
+## References
+
+For full details, designs, and distribution strategies, check the [Wright Hermes Plugin Plan](file:///home/burhop/repos/wright/docs/wright-hermes-plugin-plan.md).

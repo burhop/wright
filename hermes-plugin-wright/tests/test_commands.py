@@ -350,6 +350,30 @@ async def test_handle_status():
         assert "🔴 **calculix** (inactive)" in res
 
 
+@pytest.mark.asyncio
+async def test_handle_start_in_docker_healthy():
+    from hermes_plugin_wright.commands import handle_start
+    with patch("hermes_plugin_wright.commands.is_in_docker", return_callable=lambda: True), \
+         patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+         patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
+        
+        mock_health.return_value = True
+        res = await handle_start()
+        assert "already running" in res
+        mock_open.assert_called_once_with("http://localhost:8000")
+
+
+@pytest.mark.asyncio
+async def test_handle_start_in_docker_unhealthy():
+    from hermes_plugin_wright.commands import handle_start
+    with patch("hermes_plugin_wright.commands.is_in_docker", return_callable=lambda: True), \
+         patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health:
+        
+        mock_health.return_value = False
+        res = await handle_start()
+        assert "unhealthy inside the container" in res
+
+
 
 
 

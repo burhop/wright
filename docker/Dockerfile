@@ -77,11 +77,12 @@ RUN userdel -r ubuntu && \
     useradd -m -u 1000 -s /bin/bash agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# ── Install Hermes Agent from PyPI (pinned version) ───────────────────────
-# Uses uv tool install for an isolated venv with CLI on PATH
+# ── Install Hermes Agent from PyPI (pinned version) with Wright Plugin ────
+# Copies the plugin package and installs the agent with the plugin in the same env
 ENV UV_TOOL_DIR=/opt/uv-tools
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
-RUN uv tool install hermes-agent==0.15.2 --python 3.13 && \
+COPY hermes-plugin-wright/ /opt/hermes-plugins/wright/
+RUN uv tool install hermes-agent==0.15.2 --python 3.13 --with /opt/hermes-plugins/wright/ && \
     rm -rf /root/.cache/uv
 
 

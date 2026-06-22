@@ -55,6 +55,11 @@ async def is_api_healthy() -> bool:
         return False
 
 
+def is_in_docker() -> bool:
+    """Detect if executing inside a Docker container context."""
+    return os.path.exists('/.dockerenv')
+
+
 def _newest_mtime(directory: str) -> float:
     """Find the newest file modification time under a directory."""
     newest = 0.0
@@ -77,6 +82,13 @@ async def handle_start() -> str:
         return (
             "✅ Wright is already running at http://localhost:8000\n"
             "   Browser opened."
+        )
+
+    # If inside Docker and API is not running/unhealthy, abort with supervisor instructions
+    if is_in_docker():
+        return (
+            "❌ Wright API is not running or unhealthy inside the container.\n"
+            "   Please check supervisord logs or start supervisord services: supervisorctl status wright-api"
         )
 
     # 2. Find repo
