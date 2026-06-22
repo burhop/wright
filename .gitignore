@@ -281,7 +281,11 @@ ps_debug.log
 test-*-output.log
 test-live-*.log
 *.log
+*.log.*
 state.db
 tests_output/
 tmp/
 /tmp/
+
+# Data vault local state
+.vault/

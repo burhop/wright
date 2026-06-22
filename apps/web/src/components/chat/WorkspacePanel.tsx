@@ -60,6 +60,24 @@ export function WorkspacePanel({
   const { state, createSession, selectSession, sendMessage, refreshSessions, cancelActiveStream } = useChat();
   const navigate = useNavigate();
 
+  const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") return;
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setPanelWidth(entry.contentRect.width);
+      }
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const isThin = panelWidth < 768;
+
+
   // Refresh sessions when workspace changes
   useEffect(() => {
     refreshSessions(_workspaceId);
@@ -976,8 +994,273 @@ export function WorkspacePanel({
     }
   };
 
+  if (isThin) {
+    return (
+      <div
+        ref={containerRef}
+        data-testid="workspace-panel"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          width: "100%",
+          backgroundColor: "var(--color-surface)",
+          color: "var(--color-primary)",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          data-testid="agent-sidebar"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
+          {/* Agent Tools Window Header */}
+          <div
+            data-testid="agent-tools-window"
+            style={{
+              padding: "var(--space-sm) var(--space-md)",
+              borderBottom: "1px solid var(--color-border)",
+              backgroundColor: "var(--color-surface-subtle)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+            }}
+          >
+            {/* Row 1: Title */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  color: "#969696",
+                }}
+              >
+                Agent Control Pane
+              </span>
+            </div>
+
+            {/* Row 2: Model and Session Selector + New Session Button */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-xs)",
+                width: "100%",
+              }}
+            >
+              {/* Model Select */}
+              <select
+                data-testid="llm-model-select"
+                value={selectedModel}
+                onChange={(e) => handleModelChange(e.target.value)}
+                style={{
+                  flex: 1,
+                  backgroundColor: "var(--color-surface-subtle)",
+                  color: "var(--color-primary)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "6px",
+                  fontSize: "0.75rem",
+                  outline: "none",
+                  cursor: "pointer",
+                  transition: "border-color var(--transition-fast)",
+                }}
+                title="Select LLM Model"
+              >
+                <option value="Hermes">Hermes (Active)</option>
+                <option value="Qwen">Qwen</option>
+                <option value="openclaw">openclaw</option>
+                <option value="PI">PI</option>
+              </select>
+
+              <select
+                data-testid="sessions-sidebar"
+                value={state.activeSessionId || ""}
+                onChange={async (e) => {
+                  const newSessId = e.target.value;
+                  if (newSessId) {
+                    if (_workspaceId) {
+                      try {
+                        await workspaceService.updateWorkspaceSession(
+                          _workspaceId,
+                          newSessId,
+                        );
+                      } catch (err) {
+                        console.error(
+                          "Failed to update workspace session association",
+                          err,
+                        );
+                      }
+                    }
+                    selectSession(newSessId);
+                    if (onSessionChange) {
+                      onSessionChange(newSessId);
+                    }
+                  }
+                }}
+                style={{
+                  flex: 1.5,
+                  backgroundColor: "var(--color-surface-subtle)",
+                  color: "var(--color-primary)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "6px",
+                  fontSize: "0.75rem",
+                  outline: "none",
+                  cursor: "pointer",
+                  textOverflow: "ellipsis",
+                  transition: "border-color var(--transition-fast)",
+                }}
+                title="Select Session Context"
+              >
+                {state.sessions.length === 0 ? (
+                  <option value="" data-testid="session-none">
+                    No sessions
+                  </option>
+                ) : (
+                  state.sessions.map((session) => (
+                    <option
+                      key={session.sessionId}
+                      value={session.sessionId}
+                      data-testid={`session-${session.sessionId}`}
+                    >
+                      {session.title.length > 20
+                        ? `${session.title.slice(0, 18)}...`
+                        : session.title}
+                    </option>
+                  ))
+                )}
+              </select>
+
+              {/* New Session Button */}
+              <button
+                data-testid="create-session-btn"
+                onClick={async () => {
+                  const newId = await createSession(workspacePath);
+                  if (newId) {
+                    if (_workspaceId) {
+                      try {
+                        await workspaceService.updateWorkspaceSession(
+                          _workspaceId,
+                          newId,
+                        );
+                      } catch (err) {
+                        console.error(
+                          "Failed to update workspace session association",
+                          err,
+                        );
+                      }
+                    }
+                    selectSession(newId);
+                    if (onSessionChange) {
+                      onSessionChange(newId);
+                    }
+                  }
+                }}
+                style={{
+                  backgroundColor: "var(--color-secondary)",
+                  color: "var(--color-surface-subtle)",
+                  border: "none",
+                  borderRadius: "var(--radius-md)",
+                  width: "28px",
+                  height: "28px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  transition:
+                    "background-color var(--transition-fast), box-shadow var(--transition-fast)",
+                  boxShadow: "var(--shadow-glow)",
+                }}
+                title="Create New Session"
+              >
+                ＋
+              </button>
+            </div>
+          </div>
+
+          {isAgentDisconnected && (
+            <div
+              data-testid="health-banner-hermes"
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                borderBottom: "1px solid rgba(239, 68, 68, 0.2)",
+                color: "#ef4444",
+                padding: "var(--space-sm) var(--space-md)",
+                fontSize: "0.75rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-xs)",
+                fontFamily: "var(--font-ui)",
+              }}
+            >
+              <span>
+                ⚠️ Hermes agent is not available. Check that the wright profile
+                WebUI is running.
+              </span>
+            </div>
+          )}
+
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div style={{ flex: 1, overflowY: "auto" }}>
+              <ChatTranscript
+                session={activeSession}
+                isStreaming={state.isStreaming}
+                streamedText={state.streamedText}
+                activeTool={state.activeTool}
+                onOpenFile={handleFileClick}
+                activeSessionId={activeSessionId || undefined}
+                workspacePath={workspacePath || undefined}
+              />
+            </div>
+
+            {activeSession && (
+              <div
+                style={{
+                  padding: "var(--space-md)",
+                  borderTop: "1px solid var(--color-border)",
+                  backgroundColor: "var(--color-surface-subtle)",
+                }}
+              >
+                <MessageComposer
+                  onSend={sendMessage}
+                  isStreaming={state.isStreaming}
+                  onCancel={cancelActiveStream}
+                  sessionId={activeSessionId || undefined}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
+      ref={containerRef}
       data-testid="workspace-panel"
       style={{
         display: "grid",
@@ -993,6 +1276,7 @@ export function WorkspacePanel({
             : "grid-template-columns 0.15s ease-out",
       }}
     >
+
       {/* 1. Activity Bar (far left) */}
       <div
         style={{

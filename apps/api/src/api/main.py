@@ -2,14 +2,14 @@ import time
 import httpx
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
+
 
 from agent_adapters import HermesAdapter
 from api.config import HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH, get_llm_health_url
@@ -182,6 +182,67 @@ async def check_inference_health():
     except Exception:
         pass
     return HealthResponse(state="disconnected", latencyMs=0.0)
+
+
+@app.get("/api/proxy/onshape", response_class=HTMLResponse)
+async def proxy_onshape():
+    try:
+        async with httpx.AsyncClient() as client:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+            response = await client.get("https://www.onshape.com", headers=headers, follow_redirects=True, timeout=10.0)
+            html = response.text
+            
+            # Rewrite absolute and relative links to point to our proxy
+            html = html.replace('href="/', 'href="/api/proxy/onshape/')
+            html = html.replace('src="/', 'src="/api/proxy/onshape/')
+            html = html.replace('action="/', 'action="/api/proxy/onshape/')
+            html = html.replace('href="https://www.onshape.com/', 'href="/api/proxy/onshape/')
+            html = html.replace('src="https://www.onshape.com/', 'src="/api/proxy/onshape/')
+            
+            # Strip/neutralize frame-busting JS
+            html = html.replace("window.top.location", "window.self.location")
+            html = html.replace("top.location", "self.location")
+            
+            return HTMLResponse(content=html, status_code=response.status_code)
+    except Exception as e:
+        logger.error(f"Failed to proxy onshape: {e}")
+        return HTMLResponse(content=f"<h3>Failed to connect to Onshape</h3><p>{e}</p>", status_code=502)
+
+
+@app.get("/api/proxy/onshape/{path:path}")
+async def proxy_onshape_path(path: str, request: Request):
+    try:
+        url = f"https://www.onshape.com/{path}"
+        query_params = dict(request.query_params)
+        async with httpx.AsyncClient() as client:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+            response = await client.get(url, params=query_params, headers=headers, follow_redirects=True, timeout=10.0)
+            
+            content_type = response.headers.get("content-type", "text/html")
+            content = response.content
+            
+            if "text/html" in content_type:
+                html = response.text
+                html = html.replace('href="/', 'href="/api/proxy/onshape/')
+                html = html.replace('src="/', 'src="/api/proxy/onshape/')
+                html = html.replace('action="/', 'action="/api/proxy/onshape/')
+                html = html.replace('href="https://www.onshape.com/', 'href="/api/proxy/onshape/')
+                html = html.replace('src="https://www.onshape.com/', 'src="/api/proxy/onshape/')
+                
+                html = html.replace("window.top.location", "window.self.location")
+                html = html.replace("top.location", "self.location")
+                
+                return HTMLResponse(content=html, status_code=response.status_code)
+            
+            return Response(content=content, media_type=content_type, status_code=response.status_code)
+    except Exception as e:
+        logger.error(f"Failed to proxy onshape path {path}: {e}")
+        return Response(content=f"Error: {e}", status_code=502)
+
 
 
 # Serve frontend static files in production if the dist directory exists
