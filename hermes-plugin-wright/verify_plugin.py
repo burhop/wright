@@ -19,7 +19,10 @@ def verify():
         
         # 2. Try loading the entry point
         print("Loading entry point...")
-        register_func = wright_ep.load()
+        register_mod = wright_ep.load()
+        register_func = getattr(register_mod, "register", None)
+        if register_func is None:
+            raise AttributeError("Loaded module has no 'register' function.")
         print("✅ Entry point loaded successfully.")
         
         # 3. Invoke registration

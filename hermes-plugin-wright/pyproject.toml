@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.entry-points."hermes_agent.plugins"]
-wright = "hermes_plugin_wright:register"
+wright = "hermes_plugin_wright"
 
 [build-system]
 requires = ["hatchling"]
