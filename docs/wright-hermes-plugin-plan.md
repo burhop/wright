@@ -1374,3 +1374,87 @@ Before publishing:
 ---
 
 *This document is the canonical reference for the Wright Hermes Plugin. It accurately reflects the existing Wright architecture and avoids duplicating functionality that is already implemented.*
+
+---
+
+## 20. Spec Kit Prompts — Handoff to Coding Agent
+
+The following `/speckit specify` prompts decompose this plan into buildable features.
+Run them **in order** — each feature builds on the previous one.
+
+> [!IMPORTANT]
+> Each prompt below is meant to be copy-pasted as the argument to `/speckit specify`.
+> The coding agent will generate a `spec.md`, then proceed through `/speckit plan` → `/speckit tasks` → `/speckit implement`.
+
+---
+
+### Feature 1: Plugin Skeleton & Registration
+
+```text
+/speckit specify Create the hermes-plugin-wright Python package that registers as a Hermes Agent plugin. The package lives at the repo root in a new hermes-plugin-wright/ directory. It contains: plugin.yaml (Hermes plugin manifest with name "wright", version, min_hermes_version, description), __init__.py with a register(ctx) entry point that Hermes calls on load, pyproject.toml for PyPI distribution (package name hermes-plugin-wright, Python >=3.11, dependencies: httpx, pyyaml, pydantic), and an empty tests/ directory with conftest.py. The register() function should log "Wright plugin loaded" using structlog and do nothing else for now — it will be extended by later features. The plugin.yaml should declare the /wright slash command namespace. Reference: docs/wright-hermes-plugin-plan.md sections 5 (Plugin Structure) and 11 (Distribution Strategy). The Wright project repo is https://github.com/burhop/wright.
+```
+
+---
+
+### Feature 2: Engineering Tool Catalog
+
+```text
+/speckit specify Create the catalog system for hermes-plugin-wright that provides a browseable registry of ~30 engineering MCP servers. The catalog is a YAML file (hermes-plugin-wright/catalog.yaml) with entries for engineering tools across domains: CAD (FreeCAD, Fusion 360, OpenSCAD, Zoo.dev), cloud-CAD (OnShape/Jarvis, APS), FEA (CalculiX), CFD (OpenFOAM), CAM (PrusaSlicer), PLM, BIM, EDA, mesh/surface (Blender, Rhino, SketchUp), and drafting (AutoCAD). Each entry has: id, name, vendor, description, domains (list of tags like "cad", "fea"), tags, transport (stdio|sse|webmcp), command (list of strings), source_url, image_url, locality (local|remote), weight (light|medium|heavy), env_vars (list of {name, label, description, required, secret}), and dependencies ({system, python, node} lists). Create a Pydantic schema in schemas.py (CatalogEntry, EnvVarDefinition, DependencySpec) that matches the existing tool_registry.models.EnvVarDefinition exactly so entries are directly insertable into the Wright DB. Create catalog.py with a CatalogLoader class that loads/parses the YAML, filters by domain, and supports free-text search across name/description/tags. Include a domain taxonomy: cad, code-cad, cloud-cad, fea, cfd, cam, plm, bim, eda, thermal, tolerance, drafting, mesh, iot. Write unit tests for the loader and schema validation. Reference: docs/wright-hermes-plugin-plan.md sections 6 (Catalog System) and 6.4 (Domain Taxonomy).
+```
+
+---
+
+### Feature 3: Wright API Bridge
+
+```text
+/speckit specify Create the Wright API bridge client for hermes-plugin-wright that communicates with the Wright FastAPI server at http://127.0.0.1:8000. The bridge lives in hermes-plugin-wright/bridge.py. It must: (1) Auto-detect the Wright repo directory by reading the Hermes config.yaml wrightgateway entry — look in ~/.hermes/profiles/wright/config.yaml and ~/.hermes/config.yaml for mcp_servers.wrightgateway.args, find the --project flag value. (2) Provide an async health check via GET /api/health. (3) Provide async methods to: get server list (GET /api/mcp/servers), install a catalog entry (POST /api/mcp/servers with name, type, command, category, image_url, description, source_url, env_vars from the catalog entry schema), get workspace info (GET /api/workspace/list), and check credential status (GET /api/mcp/servers/{id}/credentials). (4) Use httpx.AsyncClient with a 30-second timeout. (5) Never log or expose credential values — only check configured/not-configured status. (6) Handle connection errors gracefully — return structured error results, never raise unhandled exceptions. (7) Export constants WRIGHT_API_BASE = "http://127.0.0.1:8000" and WRIGHT_UI_URL = "http://localhost:8000". The bridge does NOT manage MCP servers directly — it delegates everything to the Wright FastAPI API which already handles McpEngine lifecycle, credential storage, and gateway SSE notifications. Write unit tests with httpx mocking. Reference: docs/wright-hermes-plugin-plan.md sections 7 (Gateway Bridge) and 9.2 (Repo Path Detection).
+```
+
+---
+
+### Feature 4: Slash Commands — Launcher (`start`, `stop`, `open`, `doctor`)
+
+```text
+/speckit specify Create the /wright launcher slash commands for hermes-plugin-wright that let users start and manage the Wright application stack from within Hermes. The commands live in hermes-plugin-wright/commands.py. Implement four subcommands: (1) "/wright start" — checks if API is already healthy (GET /api/health), auto-detects repo path via bridge.detect_repo_dir(), builds the React frontend if stale (npm install + npm run build in apps/web/, only if apps/web/dist/ is missing or apps/web/src/ has newer files), starts uvicorn as a detached background process (sys.executable -m uvicorn api.main:app --host 127.0.0.1 --port 8000, with FRONTEND_DIST_DIR=apps/web/dist, start_new_session=True, logs to repo/tmp/wright-api.log), polls /api/health for up to 15 seconds, opens browser via webbrowser.open("http://localhost:8000"), writes PID to repo/tmp/wright-api.pid. (2) "/wright stop" — reads PID file, sends SIGTERM, waits up to 5 seconds for exit, cleans up PID file. (3) "/wright open" — checks health then opens browser, or shows "not running" message directing to /wright start. (4) "/wright doctor" — full health check reporting: repo found, API server healthy, frontend built, SQLite DB exists, secrets file exists with correct 0600 permissions, MCP server count (installed/active), credential gaps. All commands use the bridge.py module for API communication and repo detection. The existing Wright FastAPI server serves the built React frontend as static files when FRONTEND_DIST_DIR is set (see apps/api/src/api/main.py lines 248-274). Dev and prod work identically — always build frontend, always serve from single port 8000. Hermes is already running (the user types /wright from a Hermes session). Reference: docs/wright-hermes-plugin-plan.md sections 9.3-9.6.
+```
+
+---
+
+### Feature 5: Slash Commands — Catalog & Status (`status`, `catalog`, `install`, `info`)
+
+```text
+/speckit specify Create the /wright catalog and status slash commands for hermes-plugin-wright that let users browse engineering tools and check Wright status from within Hermes. Extend the existing commands.py with four additional subcommands: (1) "/wright status" — queries the Wright API for connection health, active workspace name and path, and enabled tools with their status (active/needs credentials/inactive), formats as a rich text block with emoji indicators (● active, ○ needs action). (2) "/wright catalog [domain]" — uses CatalogLoader to list catalog entries, optionally filtered by domain tag (cad, fea, cfd, cam, etc.), displayed as a formatted table with columns: ID, Name, Locality, Weight. (3) "/wright catalog search <query>" — free-text search across catalog entry names, descriptions, and tags. (4) "/wright info <id>" — shows full details for a single catalog entry including description, domains, transport type, command, source URL, required credentials, and system dependencies. (5) "/wright install <id>" — looks up catalog entry by ID, calls bridge.install_tool_from_catalog() which POSTs to /api/mcp/servers with the entry data, reports success or error. (6) Default "/wright" with no args or unknown subcommand — shows help text listing all available commands grouped by category (Launcher, Catalog, Status) with the repo URL https://github.com/burhop/wright. Wire the command router in register_commands(ctx, catalog) to dispatch to all handlers (start, stop, open, doctor from Feature 4, plus status, catalog, info, install from this feature). Register with ctx.register_command(name="wright", ...). Reference: docs/wright-hermes-plugin-plan.md sections 9.7 (Command Router) and 9.8 (Output Formatting).
+```
+
+---
+
+### Feature 6: Docker Integration & Distribution
+
+```text
+/speckit specify Create the Docker integration and distribution packaging for hermes-plugin-wright so the plugin works in both Docker appliance and local install scenarios. (1) Docker: Modify the existing docker/Dockerfile to COPY the hermes-plugin-wright/ directory into the image and pip install it during the build stage. The existing docker/supervisord.conf already starts both wright-api (uvicorn on port 8000) and hermes-gateway (hermes -p wright gateway run on port 8642). In Docker, /wright start should detect that the API is already running (supervisord manages it) and just open the browser / report status. The existing docker/entrypoint.sh bootstraps the Hermes profile — the plugin should be automatically available after image build. (2) Local install: The plugin should be installable via "pip install hermes-plugin-wright" or "pip install -e ./hermes-plugin-wright" for development. Update pyproject.toml with proper entry points so Hermes auto-discovers the plugin. (3) Context injection: Wire the register(ctx) function in __init__.py to load the catalog, register the /wright slash command, and inject workspace context into the Hermes session. The existing hermes_sync.py already writes .hermes.md files and the wrightgateway config.yaml entry — the plugin should not duplicate this. (4) README: Create hermes-plugin-wright/README.md with installation instructions (pip install, Docker), quick start guide (/wright start, /wright catalog, /wright install), and link to the full plan. Reference: docs/wright-hermes-plugin-plan.md sections 11 (Distribution), 12 (Docker Integration), 13 (Existing-Install Integration).
+```
+
+---
+
+### Running the Prompts
+
+For each feature above, run the full Spec Kit workflow:
+
+```bash
+# 1. Create the spec
+/speckit specify <paste prompt above>
+
+# 2. Clarify any ambiguities
+/speckit clarify
+
+# 3. Generate implementation plan
+/speckit plan
+
+# 4. Generate tasks
+/speckit tasks
+
+# 5. Execute implementation
+/speckit implement
+```
+
+**Dependency order**: Feature 1 → 2 → 3 → 4 → 5 → 6 (each builds on the previous).
