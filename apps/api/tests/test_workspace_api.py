@@ -1090,6 +1090,7 @@ def test_workspace_mcp_status_endpoint(client):
     data = response.json()
     assert "status" in data
     assert "message" in data
+    assert "running_mcps" in data
 
 
 

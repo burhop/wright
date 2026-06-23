@@ -63,6 +63,7 @@ from api.schemas.workspace import (
     WorkspaceToolToggleRequest,
     WorkspaceToolToggleResponse,
     WorkspaceMcpStatusResponse,
+    RunningMcpInfo,
     WorkspaceListEntry,
     WorkspaceListResponse,
     WorkspaceCreateRequest,
@@ -657,7 +658,7 @@ async def get_workspace_mcp_status_endpoint(
     # 1. Get current workspace by session_id
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if not workspace:
-        return WorkspaceMcpStatusResponse(status="ok", message="No active workspace.")
+        return WorkspaceMcpStatusResponse(status="ok", message="No active workspace.", running_mcps=[])
 
     # 2. Get currently enabled tools in the database
     enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
@@ -673,6 +674,15 @@ async def get_workspace_mcp_status_endpoint(
                 is_enabled = (s.name in enabled_tools) or (s.server_id in enabled_tools)
             if is_enabled:
                 expected_servers.append(s)
+
+    running_mcps = [
+        RunningMcpInfo(
+            name=s.name,
+            status=s.status,
+            error_message=s.error_message
+        )
+        for s in expected_servers
+    ]
 
     # Sanitize expected server names to match config.yaml keys
     expected_keys = set()
@@ -693,7 +703,7 @@ async def get_workspace_mcp_status_endpoint(
         if os.path.exists(path):
             try:
                 with open(path, "r") as f:
-                    config = yaml.safe_load(f) or {}
+                     config = yaml.safe_load(f) or {}
                 mcp_servers = config.get("mcp_servers", {})
                 configured_keys = set(mcp_servers.keys())
                 config_loaded = True
@@ -706,15 +716,17 @@ async def get_workspace_mcp_status_endpoint(
         if expected_keys:
             return WorkspaceMcpStatusResponse(
                 status="mismatch",
-                message="Tool change during session. Start a new session to apply changes."
+                message="Tool change during session. Start a new session to apply changes.",
+                running_mcps=running_mcps
             )
-        return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.")
+        return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.", running_mcps=running_mcps)
 
     # 4. Check for mismatches
     if expected_keys and "wrightgateway" not in configured_keys:
         return WorkspaceMcpStatusResponse(
             status="mismatch",
-            message="Tool change during session. Start a new session to apply changes."
+            message="Tool change during session. Start a new session to apply changes.",
+            running_mcps=running_mcps
         )
 
     # 5. Check for broken servers
@@ -723,10 +735,11 @@ async def get_workspace_mcp_status_endpoint(
             err_msg = s.error_message or "Unknown error"
             return WorkspaceMcpStatusResponse(
                 status="error",
-                message=f"Cannot connect to MCP Server: {s.name} ({err_msg})"
+                message=f"Cannot connect to MCP Server: {s.name} ({err_msg})",
+                running_mcps=running_mcps
             )
 
-    return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.")
+    return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.", running_mcps=running_mcps)
 
 
 # ── Workspace CRUD ───────────────────────────────────────────────────────

@@ -16,11 +16,27 @@ export function CommandMenu({
   onSelect,
   position,
 }: CommandMenuProps) {
-  const filteredCommands = commands.filter(
-    (cmd) =>
-      cmd.prefix === prefix &&
-      cmd.name.toLowerCase().startsWith(filter.toLowerCase()),
-  );
+  const filteredCommands = commands
+    .filter((cmd) => {
+      if (cmd.prefix !== prefix) return false;
+      const nameLower = cmd.name.toLowerCase();
+      const filterLower = filter.toLowerCase();
+
+      // Matches path start (e.g. "/src/..." or "src/...")
+      if (nameLower.startsWith(filterLower)) return true;
+      if (
+        nameLower.startsWith("/") &&
+        nameLower.slice(1).startsWith(filterLower)
+      )
+        return true;
+
+      // Matches filename start (e.g. "MessageComposer.tsx")
+      const filename = cmd.name.split("/").pop() || "";
+      if (filename.toLowerCase().startsWith(filterLower)) return true;
+
+      return false;
+    })
+    .slice(0, 10);
 
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const containerRef = useRef<HTMLDivElement>(null);

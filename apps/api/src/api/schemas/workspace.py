@@ -237,9 +237,16 @@ def serialize_workspace(w: dict) -> WorkspaceListEntry:
     )
 
 
+class RunningMcpInfo(BaseModel):
+    name: str
+    status: str
+    error_message: Optional[str] = None
+
+
 class WorkspaceMcpStatusResponse(BaseModel):
     status: str
     message: str
+    running_mcps: Optional[List[RunningMcpInfo]] = None
 
 
 class FileBackupRequest(BaseModel):

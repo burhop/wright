@@ -37,7 +37,11 @@ export function MessageComposer({
   const [menuPrefix, setMenuPrefix] = useState("/");
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [showPlusMenu, setShowPlusMenu] = useState(false);
-  const [mcpStatus, setMcpStatus] = useState<{ status: string; message: string } | null>(null);
+  const [mcpStatus, setMcpStatus] = useState<{
+    status: string;
+    message: string;
+    running_mcps?: { name: string; status: string; error_message?: string | null }[];
+  } | null>(null);
   const [showStatusPopup, setShowStatusPopup] = useState(false);
   const [workspaceFiles, setWorkspaceFiles] = useState<{ name: string; path: string }[]>([]);
 
@@ -192,10 +196,29 @@ export function MessageComposer({
       return;
     }
 
-    // Check for "/" or "@" typed at the beginning of a word
-    const match = textBeforeCursor.match(/(?:^|\s)([@\/])(\w*)$/);
+    // Check for "@" followed by search filter (can contain slashes, dots, hyphens)
+    const atMatch = textBeforeCursor.match(/(?:^|\s)(@)(\S*)$/);
+    if (atMatch) {
+      setMenuPrefix(atMatch[1]); // "@"
+      setMenuFilter(atMatch[2]);
+      if (workspaceFiles.length === 0) {
+        fetchWorkspaceFiles();
+      }
+      if (textareaRef.current) {
+        const rect = textareaRef.current.getBoundingClientRect();
+        setMenuPosition({
+          top: rect.top - 10,
+          left: rect.left + 20,
+        });
+      }
+      setShowMenu(true);
+      return;
+    }
+
+    // Check for "/" typed at the beginning of a word
+    const match = textBeforeCursor.match(/(?:^|\s)(\/)(\w*)$/);
     if (match) {
-      setMenuPrefix(match[1]);
+      setMenuPrefix(match[1]); // "/"
       setMenuFilter(match[2]);
 
       if (textareaRef.current) {
@@ -299,11 +322,11 @@ export function MessageComposer({
       {showMenu && (
         <CommandMenu
           commands={
-            menuPrefix === "@file "
+            (menuPrefix === "@" || menuPrefix === "@file ")
               ? workspaceFiles.map((f) => ({
                   name: f.path,
-                  description: `File: ${f.name}`,
-                  prefix: "@file ",
+                  description: "",
+                  prefix: menuPrefix,
                 }))
               : commands
           }
@@ -553,6 +576,35 @@ export function MessageComposer({
                 <div style={{ lineHeight: "1.4", color: "var(--color-secondary)" }}>
                   {mcpStatus.message}
                 </div>
+                {mcpStatus.running_mcps && mcpStatus.running_mcps.length > 0 && (
+                  <div style={{ marginTop: "12px", borderTop: "1px solid var(--color-border)", paddingTop: "8px" }}>
+                    <div style={{ fontWeight: "bold", marginBottom: "6px", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-text-dim)" }}>
+                      Running MCP Servers ({mcpStatus.running_mcps.length})
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {mcpStatus.running_mcps.map((mcp, idx) => (
+                        <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                          <span style={{ fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }} title={mcp.name}>
+                            {mcp.name}
+                          </span>
+                          <span
+                            style={{
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              fontSize: "0.6rem",
+                              fontWeight: "bold",
+                              textTransform: "uppercase",
+                              backgroundColor: mcp.status === "active" ? "rgba(34, 197, 94, 0.1)" : "rgba(239, 68, 68, 0.1)",
+                              color: mcp.status === "active" ? "#22c55e" : "#ef4444",
+                            }}
+                          >
+                            {mcp.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
