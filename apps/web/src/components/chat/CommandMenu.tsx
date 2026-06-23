@@ -101,7 +101,7 @@ export function CommandMenu({
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            padding: "var(--space-sm)",
+            padding: "6px 8px",
             backgroundColor:
               index === selectedIndex
                 ? "var(--color-surface-hover)"
@@ -119,22 +119,33 @@ export function CommandMenu({
               display: "flex",
               alignItems: "center",
               gap: "var(--space-xs)",
+              width: "100%",
             }}
           >
-            <span style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
+            <span
+              style={{
+                fontWeight: "600",
+                color: "var(--color-primary)",
+                fontSize: "0.775rem",
+                lineHeight: "1.3",
+                wordBreak: "break-all",
+              }}
+            >
               {cmd.prefix}
               {cmd.name}
             </span>
           </div>
-          <span
-            style={{
-              fontSize: "0.75rem",
-              color: "var(--color-secondary)",
-              marginTop: "2px",
-            }}
-          >
-            {cmd.description}
-          </span>
+          {cmd.description && (
+            <span
+              style={{
+                fontSize: "0.7rem",
+                color: "var(--color-secondary)",
+                marginTop: "2px",
+              }}
+            >
+              {cmd.description}
+            </span>
+          )}
         </button>
       ))}
     </div>
