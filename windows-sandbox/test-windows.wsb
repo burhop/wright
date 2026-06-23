@@ -1,0 +1,15 @@
+<Configuration>
+  <MappedFolders>
+    <!-- Maps your cloned repository folder into the sandbox environment -->
+    <MappedFolder>
+      <!-- Change this path to the location of the wright repo on your Windows host -->
+      <HostFolder>C:\Users\YOUR_USERNAME\repos\wright</HostFolder>
+      <SandboxFolder>C:\wright</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <!-- Runs the setup and testing script automatically on Sandbox boot -->
+  <LogonCommand>
+    <Command>powershell.exe -ExecutionPolicy Bypass -File C:\wright\windows-sandbox\setup-and-test.ps1</Command>
+  </LogonCommand>
+</Configuration>
