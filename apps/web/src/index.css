@@ -1,6 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap");
 @import "./tokens/design-tokens.css";
 
+/* Titlebar & Desktop Shell integration variable */
+:root {
+  --titlebar-height: 0px;
+}
+
+[data-desktop="true"] {
+  --titlebar-height: 34px;
+}
+
 /* Global Reset */
 *,
 *::before,

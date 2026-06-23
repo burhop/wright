@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { webMcpService } from "../../services/webmcp-service";
+import { isDesktop } from "../../services/host-adapter";
 
 interface AppShellProps {
   children: ReactNode;
@@ -86,9 +87,12 @@ export function AppShell({ children }: AppShellProps) {
     };
   }, [isDragging]);
 
+  const desktop = isDesktop();
+
   return (
     <div
       data-testid="app-shell"
+      data-desktop={desktop}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -97,6 +101,7 @@ export function AppShell({ children }: AppShellProps) {
         backgroundColor: "var(--color-neutral)",
         color: "var(--color-primary)",
         overflow: "hidden",
+        paddingTop: desktop ? "var(--titlebar-height, 34px)" : "0px",
       }}
     >
       <Header />

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppShell from "./components/layout/AppShell";
 import DashboardPage from "./components/pages/DashboardPage";
 import WorkspacePage from "./components/pages/WorkspacePage";
@@ -13,6 +13,8 @@ import SettingsPage from "./components/pages/SettingsPage";
 import { ToolsProvider } from "./store/tools";
 import { ChatProvider } from "./store/sessions";
 import { ViewerPanelProvider } from "./store/viewer";
+import { hostAdapter } from "./services/host-adapter";
+import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 
 const getApiUrl = (path: string) => {
   if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
@@ -24,6 +26,7 @@ const getApiUrl = (path: string) => {
 };
 
 function App() {
+  useDesktopIntegration();
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -67,8 +70,10 @@ function App() {
     return <SetupPage onConfigured={() => setIsConfigured(true)} />;
   }
 
+  const Router = hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
+
   return (
-    <BrowserRouter>
+    <Router>
       <ChatProvider>
         <ViewerPanelProvider>
           <ToolsProvider>
@@ -91,7 +96,7 @@ function App() {
           </ToolsProvider>
         </ViewerPanelProvider>
       </ChatProvider>
-    </BrowserRouter>
+    </Router>
   );
 }
 

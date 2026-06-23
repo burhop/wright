@@ -8,6 +8,7 @@
  *   3. Logs structured error entries on failure (status, url, duration_ms, trace_id)
  */
 import telemetry from "./telemetry";
+import { hostAdapter } from "./host-adapter";
 
 export interface ApiError {
   error_code: string;
@@ -74,7 +75,7 @@ async function apiRequest<T>(
       fetchOptions.body = JSON.stringify(body);
     }
 
-    const response = await fetch(url, fetchOptions);
+    const response = await hostAdapter.fetch(url, fetchOptions);
     const durationMs = Math.round(performance.now() - startTime);
 
     if (!response.ok) {

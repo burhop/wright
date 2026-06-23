@@ -1,0 +1,19 @@
+{
+  "name": "hermes-wright-panel",
+  "version": "0.1.0",
+  "description": "Integration package for embedding Wright UI into Hermes Desktop Electron shell",
+  "main": "panel.cjs",
+  "exports": {
+    ".": "./panel.cjs",
+    "./preload": "./preload.cjs"
+  },
+  "types": "types.d.ts",
+  "peerDependencies": {
+    "electron": ">=30.0.0"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0"
+  },
+  "author": "Wright Developers",
+  "license": "MIT"
+}

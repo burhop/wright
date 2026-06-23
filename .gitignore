@@ -234,6 +234,9 @@ playwright/.cache/
 # Wright — Project-specific ignores
 # =============================================================================
 
+# Desktop build output
+apps/web/dist-desktop/
+
 # Artifact vault (STEP, STL, G-code files — large binary artifacts)
 vault/
 

@@ -4,6 +4,7 @@ import type {
   ChatMessage,
 } from "../store/types";
 import { logger } from "./logger";
+import { hostAdapter } from "./host-adapter";
 
 const agentLogger = logger.child("HermesAgentService");
 
@@ -259,6 +260,7 @@ export class HermesAgentService {
         return null;
       }
     } else if (event === "stream_end") {
+      hostAdapter.notify("Agent Task Finished", "The agent has completed your request.");
       return {
         type: "done",
         session: {

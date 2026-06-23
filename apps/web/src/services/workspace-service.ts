@@ -1,4 +1,6 @@
 import { logger } from "./logger";
+import { hostAdapter } from "./host-adapter";
+import type { SelectOptions } from "./host-adapter/wright-desktop";
 
 const workspaceLogger = logger.child("WorkspaceService");
 
@@ -28,7 +30,20 @@ export const API_BASE = getApiBase();
 export class WorkspaceService {
   async getWorkspaceFiles(sessionId: string): Promise<WorkspaceNode> {
     workspaceLogger.info("Fetching workspace files", { sessionId });
-    const response = await fetch(
+    
+    if (hostAdapter.mode === 'desktop') {
+      try {
+        const config = await window.wrightDesktop?.getConfig();
+        const rootPath = config?.workspacePath;
+        if (rootPath) {
+          return await this.buildWorkspaceTree(rootPath);
+        }
+      } catch (e: any) {
+        workspaceLogger.error("Failed to build workspace tree via IPC, falling back to HTTP", { error: e?.message || String(e) });
+      }
+    }
+
+    const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/files?session_id=${sessionId}`,
     );
     if (!response.ok) {
@@ -43,6 +58,48 @@ export class WorkspaceService {
     return data.workspace;
   }
 
+  private async buildWorkspaceTree(dirPath: string): Promise<WorkspaceNode> {
+    const name = dirPath.split(/[/\\]/).pop() || dirPath;
+    const entries = await hostAdapter.listDirectory(dirPath);
+    const children: WorkspaceNode[] = [];
+    
+    for (const entry of entries) {
+      if (entry.name === '.git' || entry.name === 'node_modules') continue;
+      
+      if (entry.isDirectory) {
+        const childNode = await this.buildWorkspaceTree(entry.path);
+        children.push(childNode);
+      } else {
+        children.push({
+          name: entry.name,
+          path: entry.path,
+          type: 'file',
+          size: entry.size || 0,
+          last_modified: Date.now(),
+          git_status: 'Clean',
+          children: null,
+        });
+      }
+    }
+    
+    children.sort((a, b) => {
+      if (a.type !== b.type) {
+        return a.type === 'directory' ? -1 : 1;
+      }
+      return a.name.localeCompare(b.name);
+    });
+    
+    return {
+      name,
+      path: dirPath,
+      type: 'directory',
+      size: null,
+      last_modified: Date.now(),
+      git_status: 'Clean',
+      children,
+    };
+  }
+
   async getFileContentArrayBuffer(
     sessionId: string,
     filePath: string,
@@ -53,12 +110,16 @@ export class WorkspaceService {
       filePath,
       backupId,
     });
+    if (hostAdapter.mode === "desktop" && !backupId) {
+      const text = await hostAdapter.readFile(filePath);
+      return new TextEncoder().encode(text).buffer;
+    }
     const encodedPath = encodeURIComponent(filePath);
     let url = `${API_BASE}/api/workspace/files/content?session_id=${sessionId}&path=${encodedPath}`;
     if (backupId) {
       url += `&backup_id=${encodeURIComponent(backupId)}`;
     }
-    const response = await fetch(url);
+    const response = await hostAdapter.fetch(url);
     if (!response.ok) {
       workspaceLogger.error("Failed to fetch file content", {
         status: response.status,
@@ -78,19 +139,22 @@ export class WorkspaceService {
       filePath,
       backupId,
     });
+    if (hostAdapter.mode === "desktop" && !backupId) {
+      return hostAdapter.readFile(filePath);
+    }
     const encodedPath = encodeURIComponent(filePath);
     let url = `${API_BASE}/api/workspace/files/content?session_id=${sessionId}&path=${encodedPath}`;
     if (backupId) {
       url += `&backup_id=${encodeURIComponent(backupId)}`;
     }
-    const response = await fetch(url);
+    const response = await hostAdapter.fetch(url);
     if (!response.ok) {
       workspaceLogger.error("Failed to fetch file content", {
         status: response.status,
       });
       throw new Error(`Failed to fetch file content: ${response.statusText}`);
     }
-    const contentType = response.headers.get("content-type");
+    const contentType = response.headers?.get?.("content-type");
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       return data.content;
@@ -449,7 +513,11 @@ export class WorkspaceService {
     content: string,
   ): Promise<boolean> {
     workspaceLogger.info("Saving file content", { sessionId, filePath });
-    const response = await fetch(`${API_BASE}/api/workspace/files/content`, {
+    if (hostAdapter.mode === "desktop") {
+      await hostAdapter.writeFile(filePath, content);
+      return true;
+    }
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files/content`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -739,6 +807,10 @@ export class WorkspaceService {
       throw new Error(data.detail || `Failed to run file: ${response.statusText}`);
     }
     return response.json();
+  }
+
+  async selectFiles(options?: SelectOptions): Promise<string[]> {
+    return hostAdapter.selectFiles(options);
   }
 }
 

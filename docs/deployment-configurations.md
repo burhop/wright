@@ -6,13 +6,14 @@
 
 ## Overview
 
-Wright has three deployment configurations, each targeting a different user profile:
+Wright has four deployment configurations, each targeting a different user profile:
 
 | Configuration | Target Audience | Host | Managed By |
 |:---|:---|:---|:---|
 | **Development** | Core developers | Bare-metal GB10 | Manual / systemd user services |
 | **Docker Appliance** | New / simple users | Any Docker host | supervisord inside container |
 | **Plugin Install** | Existing Hermes users | Any Hermes host | `uv tool install --with` or `pip install` |
+| **Embedded Desktop** | Hermes Desktop users | Electron Desktop shell | `hermes-wright-panel` container / preload |
 
 ---
 
@@ -459,24 +460,88 @@ After installing the plugin, users need to:
 
 ---
 
+## 4. Embedded Desktop Configuration (Hermes Desktop Integration)
+
+For users running Hermes Desktop (Electron app), Wright can be embedded directly as a sidebar panel or separate tab. The UI is built specifically for Electron, using a custom preload script for native IPC capabilities.
+
+### Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Hermes Desktop (Electron App)"
+        direction TB
+        MAIN["Electron Main Process<br/>(hermes-wright-panel/panel.cjs)"]
+        
+        subgraph "BrowserView / <webview>"
+            PRELOAD["Preload Bridge<br/>(hermes-wright-panel/preload.cjs)"]
+            WEB["Wright Frontend<br/>(dist-desktop index.html)"]
+            WEB --> PRELOAD
+        end
+        
+        PRELOAD -- "IPC (wright:readFile, etc)" --> MAIN
+    end
+
+    subgraph "Wright Stack (started by host)"
+        API4["FastAPI Backend<br/>:8000"]
+    end
+
+    subgraph "Host OS"
+        OS_FS["Direct Filesystem Access"]
+        OS_NOTIF["System Notifications"]
+        OS_DLG["Native File Dialogs"]
+    end
+
+    MAIN -- "wright:api Proxy" --> API4
+    MAIN --> OS_FS
+    MAIN --> OS_NOTIF
+    MAIN --> OS_DLG
+```
+
+### Component Details
+
+| Component | Version | Port | How It's Started |
+|:---|:---|:---|:---|
+| Hermes Desktop | v0.15.x | — | Launched by user (Electron App) |
+| Wright Panel Manager | `hermes-wright-panel` | — | Loaded by Electron as a BrowserView panel |
+| Wright FastAPI | 0.1.0 | 8000 | Started by plugin / supervisor |
+| Electron Shell | 32.x / 33.x | — | Managed by Hermes Desktop |
+
+### Native Electron Integration
+
+Unlike standard browser-based deployments, the Embedded Desktop configuration enables several native features:
+1. **Direct Filesystem Access**: Reading and writing workspace files bypasses HTTP. It uses direct Node.js `fs` calls proxied through IPC.
+2. **Native File Dialogs**: File selection triggers the OS-native file dialog (via Electron's `dialog.showOpenDialog`) instead of a browser upload input.
+3. **OS Notifications**: Emits native desktop notifications on long-running task completions.
+4. **Theme Live-Sync**: Listens to theme changes on the host Hermes Desktop app and automatically updates colors and layout spacing (including a 34px titlebar padding offset).
+
+### Build Process for Desktop
+
+To run in Electron, the React frontend must be compiled with relative asset paths to support the `file://` protocol.
+```bash
+npm run build:desktop
+```
+This produces `apps/web/dist-desktop/` containing `index.html` with relative asset links (e.g. `./assets/...`).
+
+---
+
 ## Comparison Matrix
 
-| Feature | Development | Docker Appliance | Plugin Install |
-|:---|:---|:---|:---|
-| **Target user** | Core devs | New users | Hermes power users |
-| **Hermes version** | v0.15.x (local) | v0.15.2 (pinned in image) | User's existing version |
-| **Python** | 3.13.x | 3.13 | User's existing |
-| **Node.js** | 22.x | 22.x | User's existing |
-| **Frontend** | Vite dev server (`:5173`, HMR) | Pre-built static → **FastAPI serves** | `npm run build` → **FastAPI serves** |
-| **Process manager** | systemd + manual | supervisord | Manual |
-| **OpenSCAD** | System install | Bundled in image | User installs separately |
-| **FreeCAD** | AppImage on host | AppImage in image | User installs separately |
-| **CAD tools included?** | ✅ Pre-installed | ✅ Bundled | ❌ Install separately |
-| **Hot reload?** | ✅ Yes | ❌ No | ❌ No |
-| **Wright API port** | 8000 | 8000 | 8000 |
-| **Hermes gateway port** | 8642 | 8642 (internal) | User's config |
-| **Frontend port** | 5173 (Vite proxy → API) | 8000 (FastAPI `StaticFiles`) | 8000 (FastAPI `StaticFiles`) |
-| **Vite at runtime?** | ✅ Yes (dev server) | ❌ No (build-time only) | ❌ No (build-time only) |
+| Feature | Development | Docker Appliance | Plugin Install | Embedded Desktop |
+|:---|:---|:---|:---|:---|
+| **Target user** | Core devs | New users | Hermes power users | Desktop app users |
+| **Hermes version** | v0.15.x (local) | v0.15.2 (pinned in image) | User's existing version | User's desktop app version |
+| **Python** | 3.13.x | 3.13 | User's existing | Host system Python |
+| **Node.js** | 22.x | 22.x | User's existing | Managed by Electron |
+| **Frontend** | Vite dev server (`:5173`, HMR) | Pre-built static → **FastAPI serves** | `npm run build` → **FastAPI serves** | Embedded panel (`file://` or dev server) |
+| **Process manager** | systemd + manual | supervisord | Manual | Managed by Electron/Host |
+| **OpenSCAD** | System install | Bundled in image | User installs separately | User installs separately |
+| **FreeCAD** | AppImage on host | AppImage in image | User installs separately | User installs separately |
+| **CAD tools included?** | ✅ Pre-installed | ✅ Bundled | ❌ Install separately | ❌ Install separately |
+| **Hot reload?** | ✅ Yes | ❌ No | ❌ No | Optional (via dev server link) |
+| **Wright API port** | 8000 | 8000 | 8000 | 8000 |
+| **Hermes gateway port** | 8642 | 8642 (internal) | User's config | User's config / Internal |
+| **Frontend port** | 5173 (Vite proxy → API) | 8000 (FastAPI `StaticFiles`) | 8000 (FastAPI `StaticFiles`) | N/A (`file://` protocol) |
+| **Vite at runtime?** | ✅ Yes (dev server) | ❌ No (build-time only) | ❌ No (build-time only) | ❌ No (uses static `dist-desktop/`) |
 
 ---
 
