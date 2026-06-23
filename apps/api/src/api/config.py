@@ -36,6 +36,8 @@ def get_llm_health_url() -> str:
                     # Strip trailing slash if present
                     if url.endswith("/"):
                         url = url[:-1]
+                    if url.endswith("/v1"):
+                        url = url[:-3]
                     return f"{url}/health"
                 return url
     except Exception:

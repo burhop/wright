@@ -102,6 +102,8 @@ class HermesAdapter(BaseAgentEngine):
             # Support both direct return or nested 'session' key if wrapper exists
             session = data.get("session", data)
             session_id = session.get("session_id", session.get("id"))
+            if session_id is not None:
+                session_id = str(session_id)
             return AgentSessionInfo(
                 session_id=session_id,
                 title=session.get("title") or "Untitled",
@@ -131,6 +133,7 @@ class HermesAdapter(BaseAgentEngine):
                         session_id = s.get("session_id", s.get("id"))
                         if not session_id:
                             continue
+                        session_id = str(session_id)
                         result.append(
                             AgentSessionInfo(
                                 session_id=session_id,
@@ -321,6 +324,10 @@ class HermesAdapter(BaseAgentEngine):
                         continue
 
                     msg_id = msg.get("id", msg.get("message_id", ""))
+                    if msg_id is not None:
+                        msg_id = str(msg_id)
+                    else:
+                        msg_id = ""
                     if not msg_id:
                         msg_id = f"msg-{session_id}-{idx}"
 

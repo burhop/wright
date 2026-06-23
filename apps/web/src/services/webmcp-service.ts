@@ -11,9 +11,6 @@ export class WebMcpService {
     const host = window.location.hostname;
     const port = window.location.port;
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    if (port === "5173" || port === "5174") {
-      return `${protocol}//${host}:8000/api/webmcp/ws`;
-    }
     return `${protocol}//${host}${port ? `:${port}` : ""}/api/webmcp/ws`;
   }
   private reconnectTimer: any = null;

@@ -28,7 +28,7 @@ describe("BrowserHostAdapter", () => {
   });
 
   it("should resolve correct API base URL based on port", () => {
-    expect(adapter.getApiBaseUrl()).toBe("http://localhost:8000");
+    expect(adapter.getApiBaseUrl()).toBe("");
   });
 
   it("should delegate fetch to global fetch", async () => {
@@ -49,7 +49,7 @@ describe("BrowserHostAdapter", () => {
 
     const content = await adapter.readFile("some/file.txt", { sessionId: "session-123" });
     expect(fetchSpy).toHaveBeenCalledWith(
-      "http://localhost:8000/api/workspace/files/content?session_id=session-123&path=some%2Ffile.txt"
+      "/api/workspace/files/content?session_id=session-123&path=some%2Ffile.txt"
     );
     expect(content).toBe("file content");
   });
@@ -61,7 +61,7 @@ describe("BrowserHostAdapter", () => {
 
     await adapter.writeFile("some/file.txt", "new content", { sessionId: "session-123" });
     expect(fetchSpy).toHaveBeenCalledWith(
-      "http://localhost:8000/api/workspace/files/content",
+      "/api/workspace/files/content",
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

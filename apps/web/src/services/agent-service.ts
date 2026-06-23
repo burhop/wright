@@ -42,7 +42,7 @@ const getApiBase = () => {
   const host = window.location.hostname;
   const port = window.location.port;
   if (port === "5173" || port === "5174") {
-    return `http://${host}:8000`;
+    return "";
   }
   return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
 };
