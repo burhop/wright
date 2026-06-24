@@ -1,6 +1,13 @@
 # Windows Sandbox Automated Test Runner Script
 # Runs inside the isolated sandbox to install dependencies and execute the test suites.
 
+# Prevent running on the host machine directly
+$isSandbox = ($env:USERNAME -eq "WDAGUtilityAccount") -or (Get-Process -Name "CExecSvc" -ErrorAction SilentlyContinue)
+if (-not $isSandbox) {
+    Write-Error "[ERROR] This script is designed to run INSIDE Windows Sandbox. To start the sandbox, please configure and double-click the 'test-windows.wsb' file on your host machine instead."
+    Exit 1
+}
+
 Write-Output "=== 1. Installing Chocolatey (Package Manager) ==="
 Set-ExecutionPolicy Bypass -Scope Process -Force
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -10,12 +17,16 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 Write-Output "=== 2. Installing Node.js, Python, and uv ==="
-# Install packages via Chocolatey (force python 3.13)
-choco install git nodejs-lts python3 --params "/InstallDir:C:\Python313" --version 3.13.0 -y
-choco install uv -y
+# Install packages via Chocolatey
+choco install git -y
+choco install nodejs-lts -y
+choco install python3 --params "/InstallDir:C:\Python313" --version 3.13.0 -y
 
-# Refresh Environment Variables
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+# Install uv using official installer script
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Refresh Environment Variables and include uv's install location
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User") + ";$env:USERPROFILE\.local\bin"
 
 Write-Output "=== 3. Navigating to Wright Workspace ==="
 cd C:\wright
