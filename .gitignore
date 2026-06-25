@@ -292,3 +292,7 @@ tmp/
 
 # Data vault local state
 .vault/
+
+# Windows Sandbox / VM testing local cache and virtual machines
+windows-sandbox/.vm/
+windows-sandbox/tmp/

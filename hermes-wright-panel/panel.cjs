@@ -144,7 +144,8 @@ class WrightPanel {
     this.registerIpc();
     
     if (this.distPath) {
-      const indexUrl = `file://${path.resolve(this.distPath, 'index.html')}`;
+      const { pathToFileURL } = require('url');
+      const indexUrl = pathToFileURL(path.resolve(this.distPath, 'index.html')).toString();
       view.webContents.loadURL(indexUrl);
     } else {
       view.webContents.loadURL(`http://localhost:${this.wrightApiPort}`);

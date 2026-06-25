@@ -17,6 +17,11 @@ from hermes_plugin_wright.schemas import CatalogEntry
 
 
 def test_detect_repo_dir(monkeypatch):
+    # Mock _is_wright_repo to avoid filesystem checks for test paths
+    monkeypatch.setattr(
+        "hermes_plugin_wright.bridge._is_wright_repo",
+        lambda path: path == "/home/burhop/repos/wright"
+    )
     # Mock home directory using a temp directory
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.setenv("HOME", tmpdir)

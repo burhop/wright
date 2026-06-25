@@ -1,6 +1,8 @@
 """Commands module for /wright slash commands."""
 import asyncio
 import os
+import platform
+import shutil
 import sys
 import subprocess
 import signal
@@ -8,6 +10,8 @@ import webbrowser
 import httpx
 import structlog
 from typing import List, Optional, Dict, Any
+
+IS_WINDOWS = platform.system() == "Windows"
 
 from .bridge import (
     detect_repo_dir,
@@ -60,6 +64,24 @@ def is_in_docker() -> bool:
     return os.path.exists('/.dockerenv')
 
 
+def _run_npm(args: list, **kwargs) -> subprocess.CompletedProcess:
+    """Run an npm command, handling Windows where npm is a .cmd file."""
+    npm_path = shutil.which("npm")
+    if npm_path is None:
+        raise FileNotFoundError(
+            "npm not found on PATH. Install Node.js first."
+        )
+    return subprocess.run([npm_path] + args, **kwargs)
+
+
+def _open_browser(url: str) -> None:
+    """Open a URL in the default browser, ignoring errors."""
+    try:
+        webbrowser.open(url)
+    except Exception:
+        pass  # May fail inside headless VMs or Electron contexts
+
+
 def _newest_mtime(directory: str) -> float:
     """Find the newest file modification time under a directory."""
     newest = 0.0
@@ -78,7 +100,7 @@ async def handle_start() -> str:
     """Build frontend, start FastAPI, open browser."""
     # 1. Already running?
     if await is_api_healthy():
-        webbrowser.open(WRIGHT_UI_URL)
+        _open_browser(WRIGHT_UI_URL)
         return (
             "✅ Wright is already running at http://localhost:8000\n"
             "   Browser opened."
@@ -115,16 +137,16 @@ async def handle_start() -> str:
     if needs_build:
         # Ensure node_modules exist
         if not os.path.exists(os.path.join(web_dir, "node_modules")):
-            proc = subprocess.run(
-                ["npm", "install"],
+            proc = _run_npm(
+                ["install"],
                 cwd=web_dir,
                 capture_output=True, text=True, timeout=120
             )
             if proc.returncode != 0:
                 return f"❌ npm install failed:\n{proc.stderr[:500]}"
 
-        proc = subprocess.run(
-            ["npm", "run", "build"],
+        proc = _run_npm(
+            ["run", "build"],
             cwd=web_dir,
             capture_output=True, text=True, timeout=120
         )
@@ -139,6 +161,22 @@ async def handle_start() -> str:
     env = os.environ.copy()
     env["FRONTEND_DIST_DIR"] = dist_dir
 
+    # Platform-specific detach: on POSIX use setsid, on Windows use
+    # CREATE_NEW_PROCESS_GROUP so the child survives parent exit.
+    popen_kwargs = {
+        "cwd": repo_dir,
+        "env": env,
+        "stdout": open(log_path, "a"),
+        "stderr": subprocess.STDOUT,
+    }
+    if IS_WINDOWS:
+        popen_kwargs["creationflags"] = (
+            subprocess.CREATE_NEW_PROCESS_GROUP
+            | subprocess.DETACHED_PROCESS
+        )
+    else:
+        popen_kwargs["start_new_session"] = True
+
     server_proc = subprocess.Popen(
         [
             sys.executable, "-m", "uvicorn",
@@ -146,11 +184,7 @@ async def handle_start() -> str:
             "--host", "127.0.0.1",
             "--port", "8000",
         ],
-        cwd=repo_dir,
-        env=env,
-        stdout=open(log_path, "a"),
-        stderr=subprocess.STDOUT,
-        start_new_session=True,  # Detach from Hermes process tree
+        **popen_kwargs,
     )
 
     # 5. Wait for health check (up to 15 seconds)
@@ -164,7 +198,7 @@ async def handle_start() -> str:
         return f"❌ Server did not become healthy within 15 seconds.\n   Check logs: {log_path}"
 
     # 6. Open browser
-    webbrowser.open(WRIGHT_UI_URL)
+    _open_browser(WRIGHT_UI_URL)
 
     # 7. Write PID file for /wright stop
     pid_path = os.path.join(log_dir, "wright-api.pid")
@@ -197,7 +231,15 @@ async def handle_stop() -> str:
         with open(pid_path, "r") as f:
             pid = int(f.read().strip())
 
-        os.kill(pid, signal.SIGTERM)
+        # Platform-specific termination: Windows has no SIGTERM;
+        # use taskkill instead.
+        if IS_WINDOWS:
+            subprocess.run(
+                ["taskkill", "/PID", str(pid), "/F"],
+                capture_output=True,
+            )
+        else:
+            os.kill(pid, signal.SIGTERM)
 
         # Wait for process to exit (up to 5 seconds)
         for _ in range(10):
@@ -225,7 +267,7 @@ async def handle_open() -> str:
             "❌ Wright is not running.\n"
             "   Use `/wright start` to launch it first."
         )
-    webbrowser.open(WRIGHT_UI_URL)
+    _open_browser(WRIGHT_UI_URL)
     return "🌐 Opened Wright UI at http://localhost:8000"
 
 

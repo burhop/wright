@@ -60,6 +60,12 @@ async def test_handle_start_success():
             assert "PID:     12345" in res
             mock_popen.assert_called_once()
             mock_open.assert_called_once()
+
+            # Close the open log file handle to prevent file locking on Windows
+            if mock_popen.call_args:
+                stdout_file = mock_popen.call_args[1].get("stdout")
+                if stdout_file and hasattr(stdout_file, "close"):
+                    stdout_file.close()
             
             pid_file = os.path.join(tmpdir, "tmp", "wright-api.pid")
             assert os.path.exists(pid_file)
@@ -127,9 +133,14 @@ async def test_handle_doctor():
         dist_dir = os.path.join(tmpdir, "apps", "web", "dist")
         os.makedirs(dist_dir, exist_ok=True)
         
+        # Mock os.stat to return 0600 permissions for the secrets file
+        mock_stat = MagicMock()
+        mock_stat.return_value.st_mode = 0o100600
+
         with patch("hermes_plugin_wright.commands.detect_repo_dir", return_value=tmpdir), \
              patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
              patch("hermes_plugin_wright.commands.os.path.expanduser", lambda p: p.replace("~", tmpdir)), \
+             patch("hermes_plugin_wright.commands.os.stat", mock_stat), \
              patch("hermes_plugin_wright.commands.get_mcp_servers", new_callable=AsyncMock) as mock_servers:
             
             mock_health.return_value = True

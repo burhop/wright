@@ -105,8 +105,9 @@ class AgentSyncManager:
         except Exception as e:
             logger.warning("Failed to update .gitignore in _sync_to_hermes: %s", e)
 
-        # Configure static wright-gateway server config instead of dynamic list
-        repo_dir = "/home/burhop/repos/wright"
+        # Detect repo root dynamically (Constitution §4)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        repo_dir = os.path.abspath(os.path.join(current_dir, "..", "..", "..", ".."))
         new_mcp_servers = {
             "wrightgateway": {
                 "command": "uv",

@@ -158,6 +158,8 @@ wright/
 │   ├── ui-integration/         # Tier 2 — Playwright UI integration tests
 │   └── e2e/                    # Tier 3 — System smoke tests
 ├── docker/                     # Dockerfile and supervisord process configurations
+├── scripts/                    # Development utility scripts (Docker backups, database purge, CI log fetching)
+├── windows-sandbox/            # Host/Guest automation for isolated Windows 11 VM testing
 ├── docs/                       # Architecture specifications and documentation
 └── .specify/                   # Spec-kit developer workflow configurations
 ```
@@ -165,6 +167,16 @@ wright/
 Refer to [docs/virtual_engineer_architecture.pdf](docs/virtual_engineer_architecture.pdf) for the formal architecture analysis, and [constitution.md](constitution.md) for core project engineering standards.
 
 ---
+
+## Development & Automation Scripts
+
+To assist with local testing, container operations, and environment configuration, the project provides several helper scripts:
+
+*   **Utility & Database Scripts**: Located in the [`scripts/`](file:///d:/repos/wright/scripts) directory. Includes tools for database resets, Docker volume backups/restores, applying submodule patches, and downloading GitHub Actions failure logs. See the [Scripts README](file:///d:/repos/wright/scripts/README.md) for a complete list of commands.
+*   **Windows & Hermes Testing**: Located in the [`windows-sandbox/`](file:///d:/repos/wright/windows-sandbox) directory. Provides fully automated scripts to provision an isolated Windows 11 Hyper-V VM, install Hermes Desktop, load the Wright plugin, and run local automated tests. See the [Windows Testing Guide](file:///d:/repos/wright/windows-sandbox/README.md) for setup instructions.
+
+---
+
 
 ## Spec-Kit (Spec-Driven Development)
 

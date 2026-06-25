@@ -3,19 +3,45 @@ Secure local credential store for MCP server secrets.
 
 Stores credentials in a JSON file at ~/.config/wright/mcp-secrets.json,
 outside the repository tree. File permissions are set to 0600 (owner read/write only).
-Uses fcntl advisory locking to prevent concurrent write corruption.
+Uses advisory file locking to prevent concurrent write corruption.
 
 Secret values are NEVER logged.
 """
 
-import fcntl
 import json
 import os
+import sys
 from typing import Dict, List, Optional
 
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+# ---------- Cross-platform file locking ----------
+if sys.platform == "win32":
+    import msvcrt
+
+    def _lock_file(f: object, exclusive: bool = False) -> None:
+        """Acquire an advisory lock (Windows)."""
+        msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK if exclusive else msvcrt.LK_LOCK, 1)
+
+    def _unlock_file(f: object) -> None:
+        """Release an advisory lock (Windows)."""
+        try:
+            f.seek(0)
+            msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+        except OSError:
+            pass  # Already unlocked or file closed
+else:
+    import fcntl
+
+    def _lock_file(f: object, exclusive: bool = False) -> None:
+        """Acquire an advisory lock (Unix)."""
+        fcntl.flock(f, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
+
+    def _unlock_file(f: object) -> None:
+        """Release an advisory lock (Unix)."""
+        fcntl.flock(f, fcntl.LOCK_UN)
 
 # Default path, overridable via env var for testing
 _DEFAULT_SECRETS_PATH = os.path.expanduser("~/.config/wright/mcp-secrets.json")
@@ -45,11 +71,11 @@ def _read_secrets_file(secrets_path: str) -> Dict[str, Dict[str, str]]:
         return {}
     try:
         with open(secrets_path, "r") as f:
-            fcntl.flock(f, fcntl.LOCK_SH)
+            _lock_file(f, exclusive=False)
             try:
                 data = json.load(f)
             finally:
-                fcntl.flock(f, fcntl.LOCK_UN)
+                _unlock_file(f)
         if isinstance(data, dict):
             return data
         logger.warning("secrets_file_invalid_format", path=secrets_path)
@@ -64,12 +90,12 @@ def _write_secrets_file(secrets_path: str, data: Dict[str, Dict[str, str]]) -> N
     _ensure_secrets_dir(secrets_path)
     try:
         with open(secrets_path, "w") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
+            _lock_file(f, exclusive=True)
             try:
                 json.dump(data, f, indent=2)
                 f.write("\n")
             finally:
-                fcntl.flock(f, fcntl.LOCK_UN)
+                _unlock_file(f)
         os.chmod(secrets_path, 0o600)
     except OSError as e:
         logger.error("secrets_file_write_error", path=secrets_path, error=str(e))

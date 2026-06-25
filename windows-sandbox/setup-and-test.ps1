@@ -1,5 +1,12 @@
 # Windows Sandbox Automated Test Runner Script
 # Runs inside the isolated sandbox to install dependencies and execute the test suites.
+# Prevent running on the host machine directly
+
+$isSandbox = ($env:USERNAME -eq "WDAGUtilityAccount") -or (Get-Process -Name "CExecSvc" -ErrorAction SilentlyContinue)
+if (-not $isSandbox) {
+    Write-Error "[ERROR] This script is designed to run INSIDE Windows Sandbox. To start the sandbox, please configure and double-click the 'test-windows.wsb' file on your host machine instead."
+    Exit 1
+}
 
 Write-Output "=== 1. Installing Chocolatey (Package Manager) ==="
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -10,15 +17,20 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 Write-Output "=== 2. Installing Node.js, Python, and uv ==="
-# Install packages via Chocolatey (force python 3.13)
-choco install git nodejs-lts python3 --params "/InstallDir:C:\Python313" --version 3.13.0 -y
+# Install packages via Chocolatey individually (version/params flags are per-package)
+choco install git -y
+choco install nodejs-lts -y
+choco install python3 -y
 choco install uv -y
 
 # Refresh Environment Variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-Write-Output "=== 3. Navigating to Wright Workspace ==="
-cd C:\wright
+Write-Output "=== 3. Copying Repo to Local Sandbox Path ==="
+# Mapped folders don't support symlinks (npm workspaces need them).
+# Copy to a local path inside the sandbox for full NTFS support.
+xcopy C:\wright C:\wright-local /E /I /H /Y /Q
+cd C:\wright-local
 
 Write-Output "=== 4. Setting up Python Virtual Environment (uv sync) ==="
 uv sync --all-packages
@@ -38,13 +50,13 @@ npm run test --workspace=apps/web
 Write-Output "=== 9. Running Playwright Integration Tests ==="
 # Run the API and frontend servers in the background
 $backendJob = Start-Job -ScriptBlock {
-    cd C:\wright
+    cd C:\wright-local
     $env:LLM_API_URL = "http://127.0.0.1:8000/v1" # Mock or local endpoint
     uv run uvicorn api.main:app --host 127.0.0.1 --port 8000
 }
 
 $frontendJob = Start-Job -ScriptBlock {
-    cd C:\wright
+    cd C:\wright-local
     npm run dev --workspace=apps/web -- --host
 }
 

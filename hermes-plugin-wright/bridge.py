@@ -8,10 +8,30 @@ WRIGHT_API_BASE = "http://127.0.0.1:8000"
 WRIGHT_UI_URL = "http://localhost:8000"
 
 
+def _is_wright_repo(directory: str) -> bool:
+    """Check if a directory looks like the Wright repo root."""
+    return (
+        os.path.isdir(directory)
+        and os.path.isfile(os.path.join(directory, "pyproject.toml"))
+        and os.path.isdir(os.path.join(directory, "api"))
+        and os.path.isdir(os.path.join(directory, "apps", "web"))
+    )
+
+
 def detect_repo_dir() -> Optional[str]:
-    """Auto-detect the Wright repo directory from Hermes config.yaml.
-    Checks ~/.hermes/profiles/wright/config.yaml and ~/.hermes/config.yaml.
+    """Auto-detect the Wright repo directory.
+
+    Search order:
+      1. WRIGHT_REPO_DIR environment variable (explicit override)
+      2. Hermes config.yaml mcp_servers.wrightgateway --project flag
+      3. Common filesystem locations (platform-aware)
     """
+    # 1. Environment variable override — highest priority
+    env_dir = os.environ.get("WRIGHT_REPO_DIR")
+    if env_dir and _is_wright_repo(env_dir):
+        return env_dir
+
+    # 2. Hermes config.yaml (existing logic)
     config_paths = [
         os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
         os.path.expanduser("~/.hermes/config.yaml"),
@@ -28,9 +48,28 @@ def detect_repo_dir() -> Optional[str]:
             # Find --project flag value
             for i, arg in enumerate(args):
                 if arg == "--project" and i + 1 < len(args):
-                    return args[i + 1]
+                    candidate = args[i + 1]
+                    if _is_wright_repo(candidate):
+                        return candidate
         except Exception:
             continue
+
+    # 3. Common filesystem locations
+    candidates = [
+        # Windows common locations
+        r"C:\wright",
+        os.path.join(os.path.expanduser("~"), "wright"),
+        os.path.join(os.path.expanduser("~"), "repos", "wright"),
+        # Linux/macOS common locations
+        os.path.expanduser("~/wright"),
+        os.path.expanduser("~/repos/wright"),
+        "/opt/wright",
+    ]
+
+    for candidate in candidates:
+        if _is_wright_repo(candidate):
+            return candidate
+
     return None
 
 
