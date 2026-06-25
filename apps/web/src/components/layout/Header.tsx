@@ -6,6 +6,14 @@ import telemetry from "../../services/telemetry";
 import type { TraceContext } from "../../store/types";
 import { SplitIcon } from "../common/Icons";
 
+const readPreference = (key: string) => {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
 export function Header() {
   const statuses = useHealthStatus();
   const [latestTrace, setLatestTrace] = useState<TraceContext | null>(null);
@@ -13,7 +21,7 @@ export function Header() {
   const isWorkspaceView = location.pathname.startsWith("/workspace/");
 
   const [isSplit, setIsSplit] = useState(
-    () => localStorage.getItem("wright-split-active") === "true",
+    () => readPreference("wright-split-active") === "true",
   );
 
   useEffect(() => {

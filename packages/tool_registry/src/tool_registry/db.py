@@ -7,6 +7,14 @@ from .models import McpServer, McpTool, EnvVarDefinition
 logger = structlog.get_logger(__name__)
 
 
+class _ClosingConnection(sqlite3.Connection):
+    def __exit__(self, exc_type, exc_value, traceback):
+        try:
+            return super().__exit__(exc_type, exc_value, traceback)
+        finally:
+            self.close()
+
+
 def ensure_migrations(conn: sqlite3.Connection) -> None:
     columns = [
         ("image_url", "TEXT DEFAULT NULL"),
@@ -25,7 +33,7 @@ def ensure_migrations(conn: sqlite3.Connection) -> None:
 
 
 def _get_conn(db_path: str) -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, factory=_ClosingConnection)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.row_factory = sqlite3.Row

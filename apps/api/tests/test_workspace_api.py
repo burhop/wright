@@ -323,6 +323,14 @@ def test_git_diff_and_revert(client):
 def test_workspace_config_and_remote_operations(client):
     import subprocess
     import shutil
+    import stat
+
+    def remove_tree(path):
+        def handle_remove_readonly(func, remove_path, _exc_info):
+            os.chmod(remove_path, stat.S_IWRITE)
+            func(remove_path)
+
+        shutil.rmtree(path, onerror=handle_remove_readonly)
 
     # 1. GET config initially
     response = client.get(
@@ -479,10 +487,10 @@ def test_workspace_config_and_remote_operations(client):
             assert "/push_test.txt" in conflict_data["conflicted_files"]
 
         finally:
-            shutil.rmtree(clone_dir)
+            remove_tree(clone_dir)
 
     finally:
-        shutil.rmtree(remote_dir)
+        remove_tree(remote_dir)
 
 
 def test_workspace_file_locks(client):

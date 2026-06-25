@@ -4,9 +4,9 @@ import license from "rollup-plugin-license";
 import path from "path";
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   const isBuild = command === "build";
-  const isDesktop = process.env.BUILD_TARGET === "desktop";
+  const isDesktop = process.env.BUILD_TARGET === "desktop" || mode === "desktop";
   
   return {
     base: isDesktop ? "./" : "/",
