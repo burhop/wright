@@ -155,6 +155,8 @@ async def webmcp_websocket_endpoint(websocket: WebSocket):
 class HealthResponse(BaseModel):
     state: str
     latencyMs: float
+    baseUrl: str | None = None
+    error: str | None = None
 
 
 @app.get("/api/health", response_model=HealthResponse)
@@ -165,7 +167,12 @@ async def check_api_health():
 @app.get("/api/agent/health", response_model=HealthResponse)
 async def check_agent_health():
     res = await app.state.agent_engine.check_health()
-    return HealthResponse(state=res["state"], latencyMs=res["latencyMs"])
+    return HealthResponse(
+        state=res["state"],
+        latencyMs=res["latencyMs"],
+        baseUrl=res.get("baseUrl"),
+        error=res.get("error"),
+    )
 
 
 @app.get("/api/inference/health", response_model=HealthResponse)
@@ -174,14 +181,34 @@ async def check_inference_health():
     try:
         async with httpx.AsyncClient() as client:
             health_url = get_llm_health_url()
+            if not health_url:
+                return HealthResponse(
+                    state="disconnected",
+                    latencyMs=0.0,
+                    error="LLM API URL is not configured",
+                )
             response = await client.get(health_url, timeout=5.0)
             latency = (time.perf_counter() - start_time) * 1000.0
             if response.status_code == 200:
                 # Also accept json status if available
-                return HealthResponse(state="connected", latencyMs=latency)
-    except Exception:
-        pass
-    return HealthResponse(state="disconnected", latencyMs=0.0)
+                return HealthResponse(
+                    state="connected",
+                    latencyMs=latency,
+                    baseUrl=health_url,
+                )
+            return HealthResponse(
+                state="disconnected",
+                latencyMs=latency,
+                baseUrl=health_url,
+                error=f"HTTP {response.status_code}: {response.text[:200]}",
+            )
+    except Exception as e:
+        return HealthResponse(
+            state="disconnected",
+            latencyMs=0.0,
+            baseUrl=get_llm_health_url() or None,
+            error=str(e),
+        )
 
 
 @app.get("/api/proxy/onshape", response_class=HTMLResponse)

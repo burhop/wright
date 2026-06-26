@@ -1,4 +1,6 @@
 import asyncio
+import os
+import subprocess
 import re
 import urllib.request
 import urllib.error
@@ -11,6 +13,18 @@ from .models import McpServer
 logger = structlog.get_logger(__name__)
 
 VERSION_REGEX = re.compile(r"(\d+\.\d+\.\d+(?:\.\d+)?[a-zA-Z0-9\-\.]*)")
+
+
+def _subprocess_kwargs() -> dict:
+    """Hide package-manager probe consoles on Windows."""
+    if os.name != "nt":
+        return {}
+
+    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    if not creationflags:
+        return {}
+
+    return {"creationflags": creationflags}
 
 
 def parse_command(command: Optional[Union[List[str], str]]) -> List[str]:
@@ -133,6 +147,7 @@ async def get_pip_installed(package: str) -> Optional[str]:
             package,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            **_subprocess_kwargs(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip()
@@ -153,6 +168,7 @@ async def get_npm_installed(package: str) -> Optional[str]:
             "--depth=0",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            **_subprocess_kwargs(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip()
@@ -168,6 +184,7 @@ async def get_npm_installed(package: str) -> Optional[str]:
             "--depth=0",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            **_subprocess_kwargs(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip()
@@ -185,6 +202,7 @@ async def get_version_from_cmd_version(cmd: List[str]) -> Optional[str]:
             *(cmd + ["--version"]),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            **_subprocess_kwargs(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=3.0)
         output = stdout.decode().strip() or stderr.decode().strip()
@@ -297,7 +315,10 @@ async def update_server(server: McpServer) -> dict:
 
     try:
         proc = await asyncio.create_subprocess_exec(
-            *upgrade_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+            *upgrade_cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            **_subprocess_kwargs(),
         )
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=15.0)
         if proc.returncode != 0:
@@ -312,6 +333,7 @@ async def update_server(server: McpServer) -> dict:
                     package,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE,
+                    **_subprocess_kwargs(),
                 )
                 stdout2, stderr2 = await asyncio.wait_for(
                     proc2.communicate(), timeout=15.0

@@ -138,6 +138,16 @@ def test_list_workspace_files(client):
     assert designs_node["children"][0]["path"] == "/designs/bracket.stl"
 
 
+def test_default_workspace_parent_prefers_userprofile(monkeypatch):
+    from api.routers.workspace import get_default_workspace_parent_dir
+
+    monkeypatch.delenv("WRIGHT_WORKSPACES_DIR", raising=False)
+    monkeypatch.setenv("USERPROFILE", r"C:\Users\User")
+    monkeypatch.setenv("HOME", r"C:\unexpected-home")
+
+    assert get_default_workspace_parent_dir() == r"C:\Users\User\wright"
+
+
 def test_get_file_content_success(client):
     # Fetch .scad file content
     response = client.get(
@@ -1101,7 +1111,54 @@ def test_workspace_mcp_status_endpoint(client):
     assert "running_mcps" in data
 
 
+def test_create_workspace_uses_local_session_when_agent_unavailable(client, workspace_setup):
+    class FailingCreateSessionEngine(MockAgentEngine):
+        async def create_session(self, workspace: str | None = None) -> AgentSessionInfo:
+            raise RuntimeError("Hermes unavailable")
 
+    original_engine = app.state.agent_engine
+    app.state.agent_engine = FailingCreateSessionEngine(workspace_setup)
+    local_path = os.path.join(workspace_setup, "local-fallback-workspace")
+
+    try:
+        response = client.post(
+            "/api/workspace/create",
+            json={"name": "Local Fallback Workspace", "local_path": local_path},
+        )
+    finally:
+        app.state.agent_engine = original_engine
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["session_id"].startswith("wright-local-")
+    assert data["local_path"] == local_path
+    assert os.path.isdir(local_path)
+
+
+def test_workspace_files_uses_local_dir_when_agent_lookup_fails(client, workspace_setup, monkeypatch):
+    from api.routers import workspace as workspace_router
+
+    class FailingLookupEngine(MockAgentEngine):
+        async def get_session_workspace(self, session_id: str) -> str | None:
+            raise RuntimeError("Hermes unavailable")
+
+    default_parent = os.path.join(workspace_setup, "wright-defaults")
+    monkeypatch.setenv("WRIGHT_WORKSPACES_DIR", default_parent)
+    original_engine = app.state.agent_engine
+    app.state.agent_engine = FailingLookupEngine(workspace_setup)
+    session_id = "offline-session"
+
+    try:
+        response = client.get("/api/workspace/files", params={"session_id": session_id})
+    finally:
+        app.state.agent_engine = original_engine
+
+    expected_path = os.path.join(
+        workspace_router.get_default_workspace_parent_dir(),
+        session_id,
+    )
+    assert response.status_code == 200
+    assert os.path.isdir(expected_path)
 
 
 

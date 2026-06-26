@@ -5,11 +5,11 @@ HERMES_API_PORT = int(os.getenv("HERMES_API_PORT", "8642"))
 HERMES_API_BASE_URL = os.getenv(
     "HERMES_API_BASE_URL", f"http://127.0.0.1:{HERMES_API_PORT}"
 )
-HERMES_API_KEY = os.getenv("HERMES_API_KEY", "wright-dev-key")
+HERMES_API_KEY = os.getenv("HERMES_API_KEY", os.getenv("API_SERVER_KEY", ""))
 
 
 # LLM inference host and health check endpoint
-LLM_HEALTH_URL = os.getenv("LLM_HEALTH_URL", "http://promaxgb10-5c88:8000/health")
+LLM_HEALTH_URL = os.getenv("LLM_HEALTH_URL", "")
 
 
 # UI theme configuration (defaulting to "dark")
@@ -42,7 +42,16 @@ def get_llm_health_url() -> str:
                 return url
     except Exception:
         pass
-    return os.getenv("LLM_HEALTH_URL", "http://promaxgb10-5c88:8000/health")
+    health_url = os.getenv("LLM_HEALTH_URL")
+    if health_url:
+        return health_url
+    api_url = os.getenv("LLM_API_URL")
+    if api_url:
+        api_url = api_url.rstrip("/")
+        if api_url.endswith("/v1"):
+            api_url = api_url[:-3]
+        return f"{api_url.rstrip('/')}/health"
+    return ""
 
 
 def get_llm_api_url() -> str:
@@ -65,7 +74,9 @@ def get_llm_api_url() -> str:
     env_url = os.getenv("LLM_API_URL")
     if env_url:
         return env_url
-    health_url = os.getenv("LLM_HEALTH_URL", "http://promaxgb10-5c88:8000/health")
+    health_url = os.getenv("LLM_HEALTH_URL", "")
+    if not health_url:
+        return ""
     if health_url.endswith("/health"):
         return health_url[:-7]
     return health_url

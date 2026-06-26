@@ -9,4 +9,4 @@ license: MIT
 homepage: https://github.com/burhop/wright
 capabilities:
   - commands
-min_hermes_version: "1.0.0"
+min_hermes_version: "0.17.0"

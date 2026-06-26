@@ -16,21 +16,12 @@ import { ViewerPanelProvider } from "./store/viewer";
 import { hostAdapter } from "./services/host-adapter";
 import { useDesktopIntegration } from "./hooks/useDesktopIntegration";
 
-const getApiUrl = (path: string) => {
-  if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
-  const host = window.location.hostname;
-  const port = window.location.port;
-  const base =
-    port === "5173" || port === "5174" ? `http://${host}:8000` : "";
-  return `${base}${path}`;
-};
-
 function App() {
   useDesktopIntegration();
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetch(getApiUrl("/api/setup/status"))
+    hostAdapter.fetch(`${hostAdapter.getApiBaseUrl()}/api/setup/status`)
       .then((res) => res.json())
       .then((data) => {
         setIsConfigured(data.is_configured);

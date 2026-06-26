@@ -296,3 +296,8 @@ tmp/
 # Windows Sandbox / VM testing local cache and virtual machines
 windows-sandbox/.vm/
 windows-sandbox/tmp/
+windows-sandbox/*.latest.txt
+windows-sandbox/*.latest.path
+windows-sandbox/image-factory/packer/packer_cache/
+windows-sandbox/image-factory/packer/crash.log
+windows-sandbox/image-factory/**/*.log

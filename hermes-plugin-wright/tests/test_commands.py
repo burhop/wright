@@ -1,6 +1,7 @@
 import pytest
 import os
 import tempfile
+import subprocess
 import yaml
 import respx
 import httpx
@@ -9,6 +10,132 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from hermes_plugin_wright.commands import register_commands, WRIGHT_HELP_TEXT
 from hermes_plugin_wright.catalog import CatalogLoader
+
+
+def test_api_launch_command_prefers_uv_runtime(monkeypatch):
+    from hermes_plugin_wright.commands import _api_launch_command
+
+    monkeypatch.delenv("WRIGHT_API_HOST", raising=False)
+    monkeypatch.setattr(
+        "hermes_plugin_wright.commands.shutil.which",
+        lambda name: r"C:\tools\uv.exe" if name == "uv" else None,
+    )
+
+    command = _api_launch_command(r"C:\wright")
+
+    assert command[:3] == [r"C:\tools\uv.exe", "run", "--project"]
+    assert command[3] == os.path.join(r"C:\wright", "apps", "api")
+    assert "uvicorn" in command
+    assert "api.main:app" in command
+    assert "--app-dir" in command
+    assert command[command.index("--app-dir") + 1] == os.path.join(
+        r"C:\wright", "apps", "api", "src"
+    )
+    assert "fastapi" not in command
+    assert "--host" in command
+    assert "127.0.0.1" in command
+
+
+def test_api_launch_command_honors_host_override(monkeypatch):
+    from hermes_plugin_wright.commands import _api_launch_command
+
+    monkeypatch.setenv("WRIGHT_API_HOST", "0.0.0.0")
+    monkeypatch.setattr(
+        "hermes_plugin_wright.commands.shutil.which",
+        lambda name: r"C:\tools\uv.exe" if name == "uv" else None,
+    )
+
+    command = _api_launch_command(r"C:\wright")
+
+    assert "--host" in command
+    assert command[command.index("--host") + 1] == "0.0.0.0"
+    assert "--app-dir" in command
+
+
+@pytest.mark.parametrize(
+    ("raw_host", "expected"),
+    [
+        ("0.0.0.0 ", "0.0.0.0"),
+        (" http://0.0.0.0:8000/ ", "0.0.0.0:8000"),
+        ("", "127.0.0.1"),
+    ],
+)
+def test_api_launch_command_sanitizes_host_override(monkeypatch, raw_host, expected):
+    from hermes_plugin_wright.commands import _api_launch_command
+
+    monkeypatch.setenv("WRIGHT_API_HOST", raw_host)
+    monkeypatch.setattr(
+        "hermes_plugin_wright.commands.shutil.which",
+        lambda name: r"C:\tools\uv.exe" if name == "uv" else None,
+    )
+
+    command = _api_launch_command(r"C:\wright")
+
+    assert command[command.index("--host") + 1] == expected
+
+
+def test_api_launch_command_falls_back_to_repo_venv_python(monkeypatch, tmp_path):
+    from hermes_plugin_wright.commands import _api_launch_command
+
+    monkeypatch.delenv("WRIGHT_API_HOST", raising=False)
+    repo_python = tmp_path / ".venv" / "Scripts" / "python.exe"
+    repo_python.parent.mkdir(parents=True)
+    repo_python.write_text("")
+    monkeypatch.setattr("hermes_plugin_wright.commands.IS_WINDOWS", True)
+    monkeypatch.setattr("hermes_plugin_wright.commands.shutil.which", lambda _name: None)
+
+    command = _api_launch_command(str(tmp_path))
+
+    assert command[:3] == [str(repo_python), "-m", "uvicorn"]
+    assert "api.main:app" in command
+    assert "--app-dir" in command
+
+
+def test_api_layout_supports_top_level_api(tmp_path):
+    from hermes_plugin_wright.commands import _api_launch_command
+
+    api_dir = tmp_path / "api"
+    api_dir.mkdir()
+    (api_dir / "main.py").write_text("app = object()")
+
+    command = _api_launch_command(str(tmp_path))
+
+    assert command[command.index("--app-dir") + 1] == str(tmp_path)
+
+
+def test_ensure_python_workspace_synced_runs_sync_when_probe_fails(monkeypatch):
+    from hermes_plugin_wright.commands import _ensure_python_workspace_synced
+
+    calls = []
+
+    def fake_run(command, **kwargs):
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 1 if len(calls) == 1 else 0, "", "")
+
+    import subprocess
+
+    monkeypatch.setattr(
+        "hermes_plugin_wright.commands.shutil.which",
+        lambda name: r"C:\tools\uv.exe" if name == "uv" else None,
+    )
+    monkeypatch.setattr("hermes_plugin_wright.commands.subprocess.run", fake_run)
+
+    result = _ensure_python_workspace_synced(r"C:\wright")
+
+    assert result.returncode == 0
+    assert calls[0][:4] == [
+        r"C:\tools\uv.exe",
+        "run",
+        "--project",
+        os.path.join(r"C:\wright", "apps", "api"),
+    ]
+    assert calls[1] == [
+        r"C:\tools\uv.exe",
+        "sync",
+        "--all-packages",
+        "--all-groups",
+    ]
+
 
 def test_register_commands():
     ctx = MagicMock()
@@ -26,29 +153,88 @@ def test_register_commands():
 
 
 @pytest.mark.asyncio
-async def test_handle_start_already_running():
-    from hermes_plugin_wright.commands import handle_start
-    with patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
-         patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
-        
-        mock_health.return_value = True
-        res = await handle_start()
-        assert "already running" in res
-        mock_open.assert_called_once_with("http://localhost:8000")
+async def test_open_wright_ui_returns_preview_link_in_desktop_mode(monkeypatch):
+    from hermes_plugin_wright import commands
+
+    monkeypatch.setenv("WRIGHT_UI_MODE", "preview")
+    monkeypatch.setattr(commands.webbrowser, "open", MagicMock())
+
+    message = await commands._open_wright_ui("http://127.0.0.1:8000/")
+
+    assert "[Preview: Wright](#preview/http%3A%2F%2F127.0.0.1%3A8000%2F)" in message
+    commands.webbrowser.open.assert_not_called()
 
 
 @pytest.mark.asyncio
-async def test_handle_start_success():
+async def test_open_wright_ui_opens_browser_by_default(monkeypatch):
+    from hermes_plugin_wright import commands
+
+    monkeypatch.delenv("WRIGHT_UI_MODE", raising=False)
+    monkeypatch.delenv("HERMES_DESKTOP", raising=False)
+    mock_open = MagicMock(return_value=True)
+    monkeypatch.setattr(commands.webbrowser, "open", mock_open)
+
+    message = await commands._open_wright_ui("http://127.0.0.1:8000/")
+
+    assert "default browser" in message
+    mock_open.assert_called_once_with("http://127.0.0.1:8000/")
+
+
+@pytest.mark.asyncio
+async def test_handle_start_already_running(monkeypatch):
     from hermes_plugin_wright.commands import handle_start
+    monkeypatch.delenv("WRIGHT_UI_MODE", raising=False)
+    monkeypatch.delenv("HERMES_DESKTOP", raising=False)
+
+    with patch("hermes_plugin_wright.commands._HERMES_CONTEXT", None), \
+         patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+         patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
+        
+        mock_health.return_value = True
+        mock_open.return_value = True
+        res = await handle_start()
+        assert "already running" in res
+        assert "default browser" in res
+        mock_open.assert_called_once_with("http://127.0.0.1:8000/")
+
+
+@pytest.mark.asyncio
+async def test_handle_start_already_running_desktop_uses_preview(monkeypatch):
+    from hermes_plugin_wright.commands import handle_start
+
+    monkeypatch.setenv("WRIGHT_UI_MODE", "preview")
+    with patch("hermes_plugin_wright.commands._HERMES_CONTEXT", None), \
+         patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+         patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
+
+        mock_health.return_value = True
+        res = await handle_start()
+
+        assert "already running" in res
+        assert "#preview/http%3A%2F%2F127.0.0.1%3A8000%2F" in res
+        mock_open.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_handle_start_success(monkeypatch):
+    from hermes_plugin_wright.commands import handle_start
+    monkeypatch.delenv("WRIGHT_UI_MODE", raising=False)
+    monkeypatch.delenv("HERMES_DESKTOP", raising=False)
+
     with tempfile.TemporaryDirectory() as tmpdir:
         os.makedirs(os.path.join(tmpdir, "apps", "web", "dist"), exist_ok=True)
         
-        with patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+        with patch("hermes_plugin_wright.commands._HERMES_CONTEXT", None), \
+             patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
              patch("hermes_plugin_wright.commands.detect_repo_dir", return_value=tmpdir), \
+             patch("hermes_plugin_wright.commands._ensure_python_workspace_synced") as mock_sync, \
+             patch("hermes_plugin_wright.commands.shutil.which", return_value=r"C:\tools\uv.exe"), \
              patch("hermes_plugin_wright.commands.subprocess.Popen") as mock_popen, \
              patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
             
             mock_health.side_effect = [False, True]
+            mock_sync.return_value = subprocess.CompletedProcess([], 0, "", "")
+            mock_open.return_value = True
             
             mock_proc = MagicMock()
             mock_proc.pid = 12345
@@ -59,7 +245,14 @@ async def test_handle_start_success():
             assert "🚀 Wright is running!" in res
             assert "PID:     12345" in res
             mock_popen.assert_called_once()
-            mock_open.assert_called_once()
+            command = mock_popen.call_args.args[0]
+            assert command[:3] == [r"C:\tools\uv.exe", "run", "--project"]
+            assert "api.main:app" in command
+            assert "--app-dir" in command
+            assert "fastapi" not in command
+            assert mock_popen.call_args.kwargs["cwd"] == tmpdir
+            assert "default browser" in res
+            mock_open.assert_called_once_with("http://127.0.0.1:8000/")
 
             # Close the open log file handle to prevent file locking on Windows
             if mock_popen.call_args:
@@ -71,6 +264,59 @@ async def test_handle_start_success():
             assert os.path.exists(pid_file)
             with open(pid_file, "r") as f:
                 assert f.read() == "12345"
+
+
+@pytest.mark.asyncio
+async def test_handle_start_hides_windows_console(monkeypatch):
+    from hermes_plugin_wright import commands
+    from hermes_plugin_wright.commands import handle_start
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.makedirs(os.path.join(tmpdir, "apps", "web", "dist"), exist_ok=True)
+
+        monkeypatch.setattr(commands, "IS_WINDOWS", True)
+        monkeypatch.setenv("WRIGHT_UI_MODE", "preview")
+        monkeypatch.setattr(commands.subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200, raising=False)
+        monkeypatch.setattr(commands.subprocess, "DETACHED_PROCESS", 0x00000008, raising=False)
+        monkeypatch.setattr(commands.subprocess, "CREATE_NO_WINDOW", 0x08000000, raising=False)
+
+        with patch("hermes_plugin_wright.commands._HERMES_CONTEXT", None), \
+             patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+             patch("hermes_plugin_wright.commands.detect_repo_dir", return_value=tmpdir), \
+             patch("hermes_plugin_wright.commands._ensure_python_workspace_synced") as mock_sync, \
+             patch("hermes_plugin_wright.commands.shutil.which", return_value=r"C:\tools\uv.exe"), \
+             patch("hermes_plugin_wright.commands.subprocess.Popen") as mock_popen:
+
+            mock_health.side_effect = [False, True]
+            mock_sync.return_value = subprocess.CompletedProcess([], 0, "", "")
+            mock_proc = MagicMock()
+            mock_proc.pid = 12345
+            mock_proc.poll.return_value = None
+            mock_popen.return_value = mock_proc
+
+            await handle_start()
+
+            creationflags = mock_popen.call_args.kwargs["creationflags"]
+            assert creationflags & commands.subprocess.CREATE_NO_WINDOW
+
+            stdout_file = mock_popen.call_args[1].get("stdout")
+            if stdout_file and hasattr(stdout_file, "close"):
+                stdout_file.close()
+
+
+@pytest.mark.asyncio
+async def test_handle_start_missing_repo_mentions_env_override():
+    from hermes_plugin_wright.commands import handle_start
+
+    with patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+         patch("hermes_plugin_wright.commands.detect_repo_dir", return_value=None):
+        mock_health.return_value = False
+
+        res = await handle_start()
+
+        assert "Could not find the Wright repo" in res
+        assert "WRIGHT_REPO_DIR" in res
+        assert "restart Hermes Desktop" in res
 
 
 @pytest.mark.asyncio
@@ -94,22 +340,34 @@ async def test_handle_stop_success():
 
 
 @pytest.mark.asyncio
-async def test_handle_open():
+async def test_handle_open(monkeypatch):
     from hermes_plugin_wright.commands import handle_open
-    with patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
+    with patch("hermes_plugin_wright.commands._HERMES_CONTEXT", None), \
+         patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
          patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
         
+        monkeypatch.delenv("WRIGHT_UI_MODE", raising=False)
+        monkeypatch.delenv("HERMES_DESKTOP", raising=False)
+
         # Unhealthy Case
         mock_health.return_value = False
         res_error = await handle_open()
         assert "not running" in res_error
         mock_open.assert_not_called()
         
-        # Healthy Case
+        # Healthy browser Case
         mock_health.return_value = True
+        mock_open.return_value = True
         res_success = await handle_open()
-        assert "Opened Wright UI" in res_success
-        mock_open.assert_called_once_with("http://localhost:8000")
+        assert "default browser" in res_success
+        mock_open.assert_called_once_with("http://127.0.0.1:8000/")
+
+        # Healthy Desktop Case
+        mock_open.reset_mock()
+        monkeypatch.setenv("WRIGHT_UI_MODE", "preview")
+        res_desktop = await handle_open()
+        assert "#preview/http%3A%2F%2F127.0.0.1%3A8000%2F" in res_desktop
+        mock_open.assert_not_called()
 
 
 @pytest.mark.asyncio
@@ -362,16 +620,22 @@ async def test_handle_status():
 
 
 @pytest.mark.asyncio
-async def test_handle_start_in_docker_healthy():
+async def test_handle_start_in_docker_healthy(monkeypatch):
     from hermes_plugin_wright.commands import handle_start
-    with patch("hermes_plugin_wright.commands.is_in_docker", return_callable=lambda: True), \
+    monkeypatch.delenv("WRIGHT_UI_MODE", raising=False)
+    monkeypatch.delenv("HERMES_DESKTOP", raising=False)
+
+    with patch("hermes_plugin_wright.commands._HERMES_CONTEXT", None), \
+         patch("hermes_plugin_wright.commands.is_in_docker", return_callable=lambda: True), \
          patch("hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock) as mock_health, \
          patch("hermes_plugin_wright.commands.webbrowser.open") as mock_open:
         
         mock_health.return_value = True
+        mock_open.return_value = True
         res = await handle_start()
         assert "already running" in res
-        mock_open.assert_called_once_with("http://localhost:8000")
+        assert "default browser" in res
+        mock_open.assert_called_once_with("http://127.0.0.1:8000/")
 
 
 @pytest.mark.asyncio

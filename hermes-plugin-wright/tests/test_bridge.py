@@ -16,6 +16,17 @@ from hermes_plugin_wright.bridge import (
 from hermes_plugin_wright.schemas import CatalogEntry
 
 
+def test_is_wright_repo_accepts_current_monorepo_layout(tmp_path):
+    from hermes_plugin_wright.bridge import _is_wright_repo
+
+    repo = tmp_path / "wright"
+    (repo / "apps" / "api").mkdir(parents=True)
+    (repo / "apps" / "web").mkdir(parents=True)
+    (repo / "pyproject.toml").write_text("[project]\nname = 'wright'\n")
+
+    assert _is_wright_repo(str(repo)) is True
+
+
 def test_detect_repo_dir(monkeypatch):
     # Mock _is_wright_repo to avoid filesystem checks for test paths
     monkeypatch.setattr(
@@ -136,6 +147,35 @@ async def test_register_mcp_server():
     payload = json.loads(request.content)
     assert payload["name"] == "Test Tool"
     assert payload["type"] == "stdio"
+
+
+@respx.mock
+@pytest.mark.asyncio
+async def test_register_webmcp_server_omits_empty_command():
+    entry = CatalogEntry(
+        id="web-tool",
+        name="Web Tool",
+        vendor="Test",
+        description="A web MCP tool",
+        domains=["cad"],
+        transport="webmcp",
+        command=[],
+        locality="local",
+        weight="light",
+    )
+    route = respx.post(f"{WRIGHT_API_BASE}/api/mcp/servers").mock(
+        return_value=httpx.Response(201, json={"server_id": "web-tool"})
+    )
+
+    result = await register_mcp_server(entry)
+
+    assert result["success"] is True
+    request = route.calls.last.request
+    import json
+
+    payload = json.loads(request.content)
+    assert payload["type"] == "webmcp"
+    assert payload["command"] is None
 
 
 @respx.mock
