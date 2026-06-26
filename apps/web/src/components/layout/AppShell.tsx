@@ -18,16 +18,33 @@ const getApiUrl = (path: string) => {
   return `${base}${path}`;
 };
 
+const readPreference = (key: string) => {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const writePreference = (key: string, value: string) => {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Storage can be unavailable in restricted browser/test contexts.
+  }
+};
+
 export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const isWorkspaceView = location.pathname.startsWith("/workspace/");
 
   const [isSplit, setIsSplit] = useState(
-    () => localStorage.getItem("wright-split-active") === "true",
+    () => readPreference("wright-split-active") === "true",
   );
   const [splitPercent, setSplitPercent] = useState<number>(() => {
-    const saved = localStorage.getItem("wright-split-percent");
-    return saved ? parseFloat(saved) : 30;
+    const saved = readPreference("wright-split-percent");
+    const parsed = saved ? parseFloat(saved) : Number.NaN;
+    return Number.isFinite(parsed) ? parsed : 30;
   });
   const [isDragging, setIsDragging] = useState(false);
 
@@ -43,7 +60,7 @@ export function AppShell({ children }: AppShellProps) {
     const handleToggle = () => {
       setIsSplit((prev) => {
         const next = !prev;
-        localStorage.setItem("wright-split-active", next ? "true" : "false");
+        writePreference("wright-split-active", next ? "true" : "false");
         window.dispatchEvent(
           new CustomEvent("wright-split-state-changed", {
             detail: { active: next },
@@ -71,7 +88,7 @@ export function AppShell({ children }: AppShellProps) {
       // Clamp percent between 5% and 95%
       const clampedPercent = Math.max(5, Math.min(95, newPercent));
       setSplitPercent(clampedPercent);
-      localStorage.setItem("wright-split-percent", clampedPercent.toString());
+      writePreference("wright-split-percent", clampedPercent.toString());
     };
 
     const handleMouseUp = () => {

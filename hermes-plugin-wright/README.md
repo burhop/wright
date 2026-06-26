@@ -29,6 +29,18 @@ To load this plugin manually in Hermes, copy the package directory into your loc
 cp -r hermes-plugin-wright/ ~/.hermes/plugins/wright
 ```
 
+Hermes Desktop for Windows may load plugins from its bundled application data
+tree instead of the profile folder. During VM validation, the active plugin copy
+was loaded from:
+
+```text
+%LOCALAPPDATA%\hermes\hermes-agent\plugins\wright
+```
+
+If fixes appear to have no effect, fully quit Hermes Desktop from the system
+tray, replace the active plugin directory above, and restart Hermes Desktop.
+Patching `~/.hermes` alone may not affect the desktop app.
+
 ### PyPI Installation
 Or install it in editable mode inside your Python environment:
 
@@ -55,7 +67,7 @@ Once the plugin is loaded in Hermes, run the following slash commands:
    ```bash
    /wright start
    ```
-   *(Locally builds web assets and starts uvicorn; inside Docker, verifies supervisord uvicorn service health).*
+   *(Locally builds web assets and starts Wright with `uv run uvicorn`; inside Docker, verifies supervisord uvicorn service health).*
 
 2. **Browse catalog of tools**:
    ```bash
@@ -68,6 +80,19 @@ Once the plugin is loaded in Hermes, run the following slash commands:
    /wright install openscad-mcp
    ```
    *(Registers the tool in the active Wright workspace).*
+
+## Hermes Desktop Notes
+
+Hermes Desktop can load the Wright slash command plugin, but Wright also needs
+the Hermes API Server enabled to show a green Hermes connection light. A normal
+Hermes Desktop install may not enable that API server by default.
+
+For Windows/Hermes Desktop setup, API server configuration, LLM status setup,
+plugin load paths, and fresh-install hygiene, see:
+
+```text
+docs/hermes-desktop-wright.md
+```
 
 ## Slash Commands
 

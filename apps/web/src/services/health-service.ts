@@ -1,17 +1,7 @@
 import type { ServiceStatus } from "../store/types";
+import { hostAdapter } from "./host-adapter";
 
-const getApiBase = () => {
-  if (typeof window === "undefined") {
-    return "http://127.0.0.1:8000";
-  }
-  const host = window.location.hostname;
-  const port = window.location.port;
-  if (port === "5173" || port === "5174") {
-    return "";
-  }
-  return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
-};
-const API_BASE = getApiBase();
+const API_BASE = hostAdapter.getApiBaseUrl();
 
 export class LiveHealthService {
   private statuses: ServiceStatus[] = [
@@ -50,7 +40,7 @@ export class LiveHealthService {
       const checks = this.statuses.map(async (svc) => {
         const fetchWithRetry = async (retries = 1): Promise<"connected" | "disconnected"> => {
           try {
-            const response = await fetch(`${API_BASE}${svc.endpoint}`);
+              const response = await hostAdapter.fetch(`${API_BASE}${svc.endpoint}`);
             if (response.ok) {
               const data = await response.json();
               if (data.state === "connected" || data.state === "disconnected") {

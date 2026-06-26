@@ -1,5 +1,7 @@
 import asyncio
 import json
+import os
+import subprocess
 import structlog
 import shlex
 from typing import List, Dict, Any, Optional, Union
@@ -8,6 +10,18 @@ from .base import BaseRunner
 
 logger = structlog.get_logger(__name__)
 tracer = trace.get_tracer(__name__)
+
+
+def _subprocess_kwargs() -> Dict[str, Any]:
+    """Hide stdio tool subprocess consoles on Windows."""
+    if os.name != "nt":
+        return {}
+
+    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    if not creationflags:
+        return {}
+
+    return {"creationflags": creationflags}
 
 
 class StdioRunner(BaseRunner):
@@ -46,6 +60,7 @@ class StdioRunner(BaseRunner):
                     stderr=asyncio.subprocess.PIPE,
                     env=run_env,
                     cwd=self.cwd,
+                    **_subprocess_kwargs(),
                 )
                 # Increase StreamReader limit to 10MB to support large tool schemas/responses
                 if self.process.stdout:

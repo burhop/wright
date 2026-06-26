@@ -12,6 +12,7 @@ async def test_hermes_adapter_check_health_success():
 
     mock_response = MagicMock()
     mock_response.status_code = 200
+    mock_response.text = '{"status":"ok"}'
 
     with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
         mock_get.return_value = mock_response
@@ -19,7 +20,11 @@ async def test_hermes_adapter_check_health_success():
 
         assert result["state"] == "connected"
         assert result["latencyMs"] > 0
-        mock_get.assert_called_once_with("http://127.0.0.1:8642/health", headers=adapter.headers, timeout=5.0)
+        mock_get.assert_called_once_with(
+            "http://127.0.0.1:8642/health",
+            headers=adapter.headers,
+            timeout=2.0,
+        )
 
 
 @pytest.mark.asyncio
@@ -50,8 +55,8 @@ async def test_hermes_adapter_create_session():
         }
     }
 
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-        mock_post.return_value = mock_response
+    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+        mock_request.return_value = mock_response
         session_info = await adapter.create_session("/home/workspace")
 
         assert session_info.session_id == "test_session_123"
@@ -60,10 +65,10 @@ async def test_hermes_adapter_create_session():
         assert session_info.updated_at == 1780423855150
         assert session_info.message_count == 5
 
-        mock_post.assert_called_once_with(
-            "http://127.0.0.1:8642/api/sessions",
-            json={"workspace": "/home/workspace"},
-            headers=adapter.headers,
+        mock_request.assert_called_once_with(
+            "POST",
+            "/api/sessions",
+            json_body={"workspace": "/home/workspace"},
             timeout=10.0,
         )
 
@@ -86,8 +91,8 @@ async def test_hermes_adapter_list_sessions():
         ]
     }
 
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.return_value = mock_response
+    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+        mock_request.return_value = mock_response
         sessions = await adapter.list_sessions()
 
         assert len(sessions) == 1
@@ -96,9 +101,9 @@ async def test_hermes_adapter_list_sessions():
         assert sessions[0].created_at == 1780423800000
         assert sessions[0].message_count == 2
 
-        mock_get.assert_called_once_with(
-            "http://127.0.0.1:8642/api/sessions",
-            headers=adapter.headers,
+        mock_request.assert_called_once_with(
+            "GET",
+            "/api/sessions",
             timeout=10.0,
         )
 
@@ -110,14 +115,14 @@ async def test_hermes_adapter_delete_session():
     mock_response = MagicMock()
     mock_response.status_code = 200
 
-    with patch("httpx.AsyncClient.delete", new_callable=AsyncMock) as mock_delete:
-        mock_delete.return_value = mock_response
+    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+        mock_request.return_value = mock_response
         result = await adapter.delete_session("session1")
 
         assert result is True
-        mock_delete.assert_called_once_with(
-            "http://127.0.0.1:8642/api/sessions/session1",
-            headers=adapter.headers,
+        mock_request.assert_called_once_with(
+            "DELETE",
+            "/api/sessions/session1",
             timeout=10.0,
         )
 
@@ -199,8 +204,8 @@ async def test_hermes_adapter_get_chat_history():
         ]
     }
 
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.return_value = mock_response
+    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+        mock_request.return_value = mock_response
         history = await adapter.get_chat_history("session123")
 
         assert len(history) == 2
@@ -214,9 +219,9 @@ async def test_hermes_adapter_get_chat_history():
         assert history[1].timestamp == 1780423805000
         assert history[1].trace_id == "trace2"
 
-        mock_get.assert_called_once_with(
-            "http://127.0.0.1:8642/api/sessions/session123/messages",
-            headers=adapter.headers,
+        mock_request.assert_called_once_with(
+            "GET",
+            "/api/sessions/session123/messages",
             timeout=10.0,
         )
 
@@ -237,18 +242,18 @@ async def test_hermes_adapter_create_session_with_instructions():
         }
     }
 
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-        mock_post.return_value = mock_response
+    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+        mock_request.return_value = mock_response
         session_info = await adapter.create_session("/home/workspace", instructions="Please place files in root")
 
         assert session_info.session_id == "session_123"
 
-        mock_post.assert_called_once_with(
-            "http://127.0.0.1:8642/api/sessions",
-            json={
+        mock_request.assert_called_once_with(
+            "POST",
+            "/api/sessions",
+            json_body={
                 "workspace": "/home/workspace",
                 "instructions": "Please place files in root",
             },
-            headers=adapter.headers,
             timeout=10.0,
         )

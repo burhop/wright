@@ -7,6 +7,14 @@ from typing import Dict, Any, Optional
 logger = structlog.get_logger(__name__)
 
 
+class _ClosingConnection(sqlite3.Connection):
+    def __exit__(self, exc_type, exc_value, traceback):
+        try:
+            return super().__exit__(exc_type, exc_value, traceback)
+        finally:
+            self.close()
+
+
 def sanitize_workspace_name(name: str) -> str:
     """Sanitize a workspace name to construct a safe directory name.
 
@@ -29,10 +37,21 @@ def sanitize_workspace_name(name: str) -> str:
 
 
 def _get_db_conn(db_path: str) -> sqlite3.Connection:
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, factory=_ClosingConnection)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def _api_rel_path(abs_path: str, base_dir: str) -> str:
+    return "/" + os.path.relpath(abs_path, base_dir).replace(os.sep, "/").strip("/")
+
+
+def _is_within_path(path: str, parent: str) -> bool:
+    try:
+        return os.path.commonpath([os.path.abspath(path), os.path.abspath(parent)]) == os.path.abspath(parent)
+    except ValueError:
+        return False
 
 
 def get_workspace_by_session(db_path: str, session_id: str) -> Optional[Dict[str, Any]]:
@@ -570,9 +589,7 @@ class WorkspaceManager:
                     for root, _, files in os.walk(abs_path):
                         for file in files:
                             child_abs = os.path.join(root, file)
-                            child_rel = "/" + os.path.relpath(
-                                child_abs, self.base_dir
-                            ).strip("/")
+                            child_rel = _api_rel_path(child_abs, self.base_dir)
                             child_lock = self._get_lock_path(child_rel)
                             if os.path.exists(child_lock):
                                 return True
@@ -582,18 +599,25 @@ class WorkspaceManager:
 
     def sanitize_path(self, relative_path: str) -> str:
         """Sanitize relative path and resolve to absolute path under base_dir or allow /tmp/ to prevent path traversal."""
+        normalized_path = relative_path.replace("\\", "/")
+        system_tmp = os.path.abspath("/tmp")
+
+        if os.path.isabs(relative_path) and _is_within_path(relative_path, system_tmp):
+            if os.path.exists(relative_path):
+                return os.path.abspath(relative_path)
+
         # Support paths inside /tmp/ (e.g. for geometry/exports scratchpads)
-        if relative_path.startswith("/tmp/") or relative_path.startswith("tmp/"):
+        if normalized_path.startswith("/tmp/") or normalized_path.startswith("tmp/"):
             # Try to resolve relative to workspace base_dir first (workspace-local tmp)
-            local_resolved = os.path.abspath(os.path.join(self.base_dir, relative_path.lstrip("/")))
+            local_resolved = os.path.abspath(os.path.join(self.base_dir, normalized_path.lstrip("/")))
             if os.path.exists(local_resolved):
                 return local_resolved
 
-            if relative_path.startswith("tmp/"):
-                resolved = os.path.abspath("/" + relative_path)
+            if normalized_path.startswith("tmp/"):
+                resolved = os.path.abspath("/" + normalized_path)
             else:
-                resolved = os.path.abspath(relative_path)
-            if resolved.startswith("/tmp/"):
+                resolved = os.path.abspath(normalized_path)
+            if _is_within_path(resolved, system_tmp):
                 if os.path.exists(resolved):
                     return resolved
                 return local_resolved
@@ -605,7 +629,7 @@ class WorkspaceManager:
         # Resolve path
         resolved = os.path.abspath(os.path.join(self.base_dir, clean_rel))
         # Ensure it's under base_dir
-        if not resolved.startswith(self.base_dir):
+        if not _is_within_path(resolved, self.base_dir):
             raise ValueError("Access denied: path traversal attempt detected.")
         return resolved
 
@@ -681,7 +705,7 @@ class WorkspaceManager:
         if abs_path == self.base_dir:
             rel_path = "/"
         else:
-            rel_path = "/" + os.path.relpath(abs_path, self.base_dir).strip("/")
+            rel_path = _api_rel_path(abs_path, self.base_dir)
 
         stat = os.stat(abs_path)
         last_modified = int(stat.st_mtime)
@@ -757,7 +781,7 @@ class WorkspaceManager:
         last_modified = int(stat.st_mtime)
         name = os.path.basename(abs_path)
         statuses = self._get_git_statuses()
-        clean_rel = "/" + os.path.relpath(abs_path, self.base_dir).strip("/")
+        clean_rel = _api_rel_path(abs_path, self.base_dir)
 
         return {
             "name": name,
@@ -1215,7 +1239,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
             rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}",
             re.DOTALL
         )
-        new_content = pattern.sub(generated_block, existing_content)
+        new_content = pattern.sub(lambda _: generated_block, existing_content)
     elif start_marker in existing_content or end_marker in existing_content:
         # Markers are mismatched or incomplete, append to the end
         new_content = existing_content.rstrip() + "\n\n" + generated_block
@@ -1233,7 +1257,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
             rf"{re.escape(start_prompt_marker)}.*?{re.escape(end_prompt_marker)}",
             re.DOTALL
         )
-        new_content = pattern.sub(generated_prompt_block, new_content)
+        new_content = pattern.sub(lambda _: generated_prompt_block, new_content)
     elif start_prompt_marker in new_content or end_prompt_marker in new_content:
         new_content = new_content.rstrip() + "\n\n" + generated_prompt_block
     else:

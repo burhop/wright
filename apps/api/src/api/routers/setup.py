@@ -18,7 +18,7 @@ class SetupStatusResponse(BaseModel):
 
 
 class ConfigureRequest(BaseModel):
-    llm_api_url: str
+    llm_api_url: str = ""
     active_agent: str
 
 
@@ -58,7 +58,7 @@ async def get_setup_status(request: Request):
     if not llm_api_url:
         llm_api_url = os.getenv("LLM_API_URL")
 
-    # 3. Fallback to default configuration if database/env config is not set
+    # 3. Fallback to explicit runtime configuration if database/env config is not set.
     if not llm_api_url:
         from api.config import get_llm_api_url
         llm_api_url = get_llm_api_url()
@@ -70,7 +70,14 @@ async def get_setup_status(request: Request):
         if active_agent != sync_manager.active_agent:
             sync_manager.active_agent = active_agent
 
-    is_configured = bool(llm_api_url and llm_api_url.strip())
+    launched_by_hermes = os.getenv("WRIGHT_LAUNCHED_BY_HERMES", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    is_configured = bool(llm_api_url and llm_api_url.strip()) or (
+        active_agent == "hermes" and launched_by_hermes
+    )
     from api.config import get_ui_theme
 
     theme = get_ui_theme()
@@ -88,7 +95,7 @@ async def configure_system(body: ConfigureRequest, request: Request):
     url = body.llm_api_url.strip()
     agent = body.active_agent.strip().lower()
 
-    if not url:
+    if not url and agent != "hermes":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="LLM API URL cannot be empty.",

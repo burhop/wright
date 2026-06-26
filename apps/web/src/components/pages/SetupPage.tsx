@@ -23,6 +23,8 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const canContinue =
+    selectedAgent === "hermes" || healthStatus === "healthy";
 
   // Load initial settings if present
   useEffect(() => {
@@ -83,7 +85,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (healthStatus !== "healthy") return;
+    if (!canContinue) return;
 
     setIsSubmitting(true);
     setSubmitError(null);
@@ -126,7 +128,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
           </div>
           <h1 style={styles.title}>Welcome to Wright</h1>
           <p style={styles.subtitle}>
-            Configure your LLM connection and activate your workspace agent.
+            Activate your workspace agent and optionally connect an LLM host.
           </p>
         </div>
 
@@ -183,6 +185,12 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
                   Ensure the LLM API is running, accepts CORS, or uses the
                   correct port (e.g. 8000/v1).
                 </div>
+              </div>
+            )}
+            {selectedAgent === "hermes" && !llmUrl.trim() && (
+              <div style={styles.helpNote}>
+                Hermes is already the workspace agent. You can add an LLM host
+                later from settings.
               </div>
             )}
           </div>
@@ -261,17 +269,17 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
           <div style={styles.actionContainer}>
             <button
               type="submit"
-              disabled={healthStatus !== "healthy" || isSubmitting}
+              disabled={!canContinue || isSubmitting}
               style={{
                 ...styles.button,
                 backgroundColor:
-                  healthStatus === "healthy"
+                  canContinue
                     ? "var(--color-secondary)"
                     : "#1e293b",
-                color: healthStatus === "healthy" ? "#090D16" : "#64748b",
-                cursor: healthStatus === "healthy" ? "pointer" : "not-allowed",
+                color: canContinue ? "#090D16" : "#64748b",
+                cursor: canContinue ? "pointer" : "not-allowed",
                 boxShadow:
-                  healthStatus === "healthy"
+                  canContinue
                     ? "0 0 15px rgba(56, 189, 248, 0.3)"
                     : "none",
               }}
@@ -435,6 +443,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: "11px",
     color: "#f87171",
     marginTop: "6px",
+  },
+  helpNote: {
+    color: "#94a3b8",
+    fontSize: "12px",
+    lineHeight: "1.4",
   },
   agentGrid: {
     display: "flex",

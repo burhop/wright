@@ -7,6 +7,7 @@ All handlers are decorated with @traced for OTel span creation.
 """
 
 import os
+import ntpath
 import uuid
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
@@ -84,6 +85,19 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
+def get_default_workspace_parent_dir() -> str:
+    """Return the per-user parent directory for Wright-created workspaces."""
+    home_dir = (
+        os.environ.get("WRIGHT_WORKSPACES_DIR")
+        or os.environ.get("USERPROFILE")
+        or os.environ.get("HOME")
+        or os.path.expanduser("~")
+    )
+    if ":" in home_dir or "\\" in home_dir:
+        return ntpath.join(home_dir, "wright")
+    return os.path.join(home_dir, "wright")
+
+
 async def get_workspace_dir(
     session_id: str, engine: BaseAgentEngine = Depends(get_agent_engine)
 ) -> str:
@@ -91,10 +105,17 @@ async def get_workspace_dir(
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if workspace:
         return workspace["local_path"]
-    workspace_path = await engine.get_session_workspace(session_id)
+    try:
+        workspace_path = await engine.get_session_workspace(session_id)
+    except Exception as e:
+        logger.warning(
+            "workspace_session_lookup_failed_using_local_workspace",
+            session_id=session_id,
+            error=str(e),
+        )
+        workspace_path = None
     if not workspace_path:
-        home_dir = os.environ.get("HOME", os.path.expanduser("~"))
-        workspace_path = os.path.join(home_dir, "workspace", session_id)
+        workspace_path = os.path.join(get_default_workspace_parent_dir(), session_id)
     os.makedirs(workspace_path, exist_ok=True)
     
     # Check if there is an existing workspace with this local_path
@@ -760,8 +781,7 @@ async def create_workspace_endpoint(
             sanitized = sanitize_workspace_name(body.name)
             if not sanitized:
                 raise ValueError("Workspace name cannot be empty or invalid.")
-            home_dir = os.environ.get("HOME", os.path.expanduser("~"))
-            parent_dir = os.path.join(home_dir, "wright")
+            parent_dir = get_default_workspace_parent_dir()
             local_path = os.path.join(parent_dir, sanitized)
 
         # Check DB for duplicate name or path
@@ -794,12 +814,23 @@ async def create_workspace_endpoint(
         os.makedirs(local_path, exist_ok=True)
         WorkspaceManager(local_path)
 
-        # Create session in engine and save
+        # Create session in engine and save. If Hermes is unavailable, keep the
+        # browser workflow usable with a local placeholder session id.
         from core.workspace import write_workspace_hermes_md
         write_workspace_hermes_md(DATABASE_PATH, local_path)
-        session_info = await engine.create_session(local_path)
+        try:
+            session_info = await engine.create_session(local_path)
+            session_id = session_info.session_id
+        except Exception as e:
+            session_id = f"wright-local-{uuid.uuid4()}"
+            logger.warning(
+                "workspace_create_agent_session_failed_using_local_session",
+                local_path=local_path,
+                session_id=session_id,
+                error=str(e),
+            )
         ws = create_workspace_from_dashboard(
-            DATABASE_PATH, body.name, local_path, session_info.session_id
+            DATABASE_PATH, body.name, local_path, session_id
         )
         return serialize_workspace(ws)
     except ValueError as e:
@@ -917,7 +948,7 @@ async def activate_workspace_endpoint(
 @router.get("/default-dir", response_model=DefaultWorkspaceDirResponse)
 @traced("workspace.get")
 async def get_default_workspace_dir_endpoint():
-    default_path = os.path.join(os.path.expanduser("~"), "wright")
+    default_path = get_default_workspace_parent_dir()
     return DefaultWorkspaceDirResponse(default_dir=default_path)
 
 

@@ -96,6 +96,11 @@ class TestSecretsModule:
         from tool_registry.secrets import write_secrets
 
         write_secrets("test-server", {"KEY": "value"})
+        if os.name == "nt":
+            assert os.path.exists(self.secrets_path)
+            assert os.access(self.secrets_path, os.R_OK | os.W_OK)
+            return
+
         mode = oct(stat.S_IMODE(os.stat(self.secrets_path).st_mode))
         assert mode == "0o600", f"Expected 0o600, got {mode}"
 

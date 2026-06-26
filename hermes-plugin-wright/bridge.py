@@ -5,15 +5,17 @@ from typing import Optional, List, Dict, Any
 from .schemas import CatalogEntry
 
 WRIGHT_API_BASE = "http://127.0.0.1:8000"
-WRIGHT_UI_URL = "http://localhost:8000"
+WRIGHT_UI_URL = "http://127.0.0.1:8000/"
 
 
 def _is_wright_repo(directory: str) -> bool:
     """Check if a directory looks like the Wright repo root."""
+    api_dir = os.path.join(directory, "api")
+    apps_api_dir = os.path.join(directory, "apps", "api")
     return (
         os.path.isdir(directory)
         and os.path.isfile(os.path.join(directory, "pyproject.toml"))
-        and os.path.isdir(os.path.join(directory, "api"))
+        and (os.path.isdir(api_dir) or os.path.isdir(apps_api_dir))
         and os.path.isdir(os.path.join(directory, "apps", "web"))
     )
 
@@ -114,10 +116,14 @@ async def get_mcp_servers() -> Dict[str, Any]:
 
 async def register_mcp_server(entry: CatalogEntry) -> Dict[str, Any]:
     """Registers an MCP server from a CatalogEntry via POST /api/mcp/servers."""
+    command = entry.command
+    if entry.transport == "webmcp" and command == []:
+        command = None
+
     payload = {
         "name": entry.name,
         "type": entry.transport,
-        "command": entry.command,
+        "command": command,
         "category": entry.domains[0] if entry.domains else "utilities",
         "image_url": entry.image_url,
         "description": entry.description,

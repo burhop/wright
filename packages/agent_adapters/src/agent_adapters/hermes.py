@@ -1,6 +1,8 @@
 import os
 import time
 import json
+import re
+from pathlib import Path
 from typing import AsyncIterator
 import httpx
 from httpx_sse import aconnect_sse
@@ -18,6 +20,16 @@ from .base import (
 logger = structlog.get_logger(__name__)
 
 
+def _gateway_unavailable_message(last_error: Exception | str | None) -> str:
+    return (
+        "Hermes API Server is not reachable. Start Hermes Gateway with "
+        "`hermes gateway run`, or enable API_SERVER_ENABLED=true, "
+        "API_SERVER_PORT=8642, and API_SERVER_KEY in %LOCALAPPDATA%\\hermes\\.env "
+        "and restart Hermes Desktop/Gateway. "
+        f"Last error: {last_error}"
+    )
+
+
 class HermesAdapter(BaseAgentEngine):
     """Concrete implementation of BaseAgentEngine that proxies to Hermes Native API (Constitution §2)."""
 
@@ -25,32 +37,159 @@ class HermesAdapter(BaseAgentEngine):
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.db_path = db_path
-        self.headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        }
+        self.headers = {"Content-Type": "application/json"}
+        if api_key:
+            self.headers["Authorization"] = f"Bearer {api_key}"
         self._active_clients = {}  # session_id -> httpx.AsyncClient
+
+    def _candidate_base_urls(self) -> list[str]:
+        """Return configured and likely Hermes API URLs, preserving priority."""
+        configured = [self.base_url]
+        env_candidates = re.split(r"[,;]\s*", os.getenv("HERMES_API_CANDIDATES", ""))
+        discovered_candidates = self._discover_dashboard_base_urls()
+        if os.getenv("HERMES_API_DISABLE_DEFAULT_CANDIDATES", "").strip().lower() in {"1", "true", "yes"}:
+            default_candidates = []
+        else:
+            default_candidates = [
+                "http://127.0.0.1:8642",
+                "http://localhost:8642",
+                "http://127.0.0.1:3001",
+                "http://localhost:3001",
+                "http://127.0.0.1:3000",
+                "http://localhost:3000",
+                "http://127.0.0.1:1421",
+                "http://localhost:1421",
+                "http://127.0.0.1:1420",
+                "http://localhost:1420",
+            ]
+
+        candidates = []
+        for url in configured + env_candidates + discovered_candidates + default_candidates:
+            cleaned = (url or "").strip().rstrip("/")
+            if cleaned and cleaned not in candidates:
+                candidates.append(cleaned)
+        return candidates
+
+    def _discover_dashboard_base_urls(self) -> list[str]:
+        """Discover Hermes Desktop's dynamic dashboard/API port from local logs."""
+        if os.getenv("HERMES_API_DISABLE_LOG_DISCOVERY", "").strip().lower() in {"1", "true", "yes"}:
+            return []
+
+        log_paths = []
+        local_app_data = os.getenv("LOCALAPPDATA")
+        if local_app_data:
+            log_paths.extend([
+                Path(local_app_data) / "hermes" / "logs" / "desktop.log",
+                Path(local_app_data) / "hermes" / "logs" / "gui.log",
+            ])
+
+        home = Path.home()
+        log_paths.extend([
+            home / ".hermes" / "logs" / "desktop.log",
+            home / ".hermes" / "logs" / "gui.log",
+        ])
+
+        ports = []
+        for log_path in log_paths:
+            try:
+                if not log_path.exists():
+                    continue
+                text = log_path.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+
+            matches = re.findall(r"HERMES_DASHBOARD_READY\s+port=(\d+)", text)
+            for port in reversed(matches):
+                if port not in ports:
+                    ports.append(port)
+
+        candidates = []
+        for port in ports[:5]:
+            candidates.append(f"http://127.0.0.1:{port}")
+            candidates.append(f"http://localhost:{port}")
+        return candidates
+
+    async def _request_with_fallback(
+        self,
+        method: str,
+        path: str,
+        *,
+        timeout: float,
+        json_body: dict | None = None,
+    ) -> httpx.Response:
+        """Try the configured Hermes API URL, then fallback candidates."""
+        last_error: Exception | None = None
+        async with httpx.AsyncClient() as client:
+            for base_url in self._candidate_base_urls():
+                try:
+                    response = await client.request(
+                        method,
+                        f"{base_url}{path}",
+                        json=json_body,
+                        headers=self.headers,
+                        timeout=timeout,
+                    )
+                    response.raise_for_status()
+                    self.base_url = base_url
+                    return response
+                except Exception as exc:
+                    last_error = exc
+                    logger.debug(
+                        "Hermes request failed",
+                        method=method,
+                        base_url=base_url,
+                        path=path,
+                        error=str(exc),
+                    )
+
+        if last_error:
+            raise RuntimeError(_gateway_unavailable_message(last_error)) from last_error
+        raise RuntimeError("No Hermes API candidates configured")
 
     async def check_health(self) -> dict:
         """Return {"state": "connected"|"disconnected", "latencyMs": float}."""
         import asyncio
         start_time = time.perf_counter()
+        last_error = None
         for attempt in range(2):
-            try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(
-                        f"{self.base_url}/health",
-                        headers=self.headers,
-                        timeout=5.0
+            for base_url in self._candidate_base_urls():
+                try:
+                    async with httpx.AsyncClient() as client:
+                        response = await client.get(
+                            f"{base_url}/health",
+                            headers=self.headers,
+                            timeout=2.0
+                        )
+                        latency = (time.perf_counter() - start_time) * 1000.0
+                        body_preview = response.text[:200].lower()
+                        is_html_shell = "<!doctype html" in body_preview or "<html" in body_preview
+                        if response.status_code == 200 and not is_html_shell:
+                            self.base_url = base_url
+                            return {
+                                "state": "connected",
+                                "latencyMs": latency,
+                                "baseUrl": self.base_url,
+                            }
+                        if response.status_code == 200 and is_html_shell:
+                            last_error = f"{base_url} returned dashboard HTML, not Hermes API health"
+                        else:
+                            last_error = f"{base_url} HTTP {response.status_code}: {response.text[:200]}"
+                except Exception as e:
+                    last_error = f"{base_url}: {e}"
+                    logger.debug(
+                        "Hermes health check attempt failed",
+                        attempt=attempt + 1,
+                        base_url=base_url,
+                        error=str(e),
                     )
-                    latency = (time.perf_counter() - start_time) * 1000.0
-                    if response.status_code == 200:
-                        return {"state": "connected", "latencyMs": latency}
-            except Exception as e:
-                logger.debug("Hermes health check attempt %d failed: %s", attempt + 1, e)
             if attempt == 0:
                 await asyncio.sleep(0.5)
-        return {"state": "disconnected", "latencyMs": 0.0}
+        return {
+            "state": "disconnected",
+            "latencyMs": 0.0,
+            "baseUrl": self.base_url,
+            "error": last_error,
+        }
 
     def _to_epoch_ms(self, val) -> int:
         if not val:
@@ -83,68 +222,64 @@ class HermesAdapter(BaseAgentEngine):
         self, workspace: str | None = None, instructions: str | None = None
     ) -> AgentSessionInfo:
         """Create a new agent session."""
-        async with httpx.AsyncClient() as client:
-            payload = {}
-            if workspace:
-                payload["workspace"] = workspace
-            if instructions:
-                # Standard OpenAI system message import for native API
-                payload["instructions"] = instructions
+        payload = {}
+        if workspace:
+            payload["workspace"] = workspace
+        if instructions:
+            # Standard OpenAI system message import for native API
+            payload["instructions"] = instructions
 
-            response = await client.post(
-                f"{self.base_url}/api/sessions",
-                json=payload,
-                headers=self.headers,
-                timeout=10.0,
-            )
-            response.raise_for_status()
-            data = response.json()
-            # Support both direct return or nested 'session' key if wrapper exists
-            session = data.get("session", data)
-            session_id = session.get("session_id", session.get("id"))
-            if session_id is not None:
-                session_id = str(session_id)
-            return AgentSessionInfo(
-                session_id=session_id,
-                title=session.get("title") or "Untitled",
-                created_at=self._to_epoch_ms(session.get("created_at", 0)),
-                updated_at=self._to_epoch_ms(session.get("updated_at", 0)),
-                message_count=session.get("message_count", 0),
-                workspace=workspace or self._get_workspace_from_db(session_id),
-            )
+        response = await self._request_with_fallback(
+            "POST",
+            "/api/sessions",
+            json_body=payload,
+            timeout=10.0,
+        )
+        data = response.json()
+        # Support both direct return or nested 'session' key if wrapper exists
+        session = data.get("session", data)
+        session_id = session.get("session_id", session.get("id"))
+        if session_id is not None:
+            session_id = str(session_id)
+        return AgentSessionInfo(
+            session_id=session_id,
+            title=session.get("title") or "Untitled",
+            created_at=self._to_epoch_ms(session.get("created_at", 0)),
+            updated_at=self._to_epoch_ms(session.get("updated_at", 0)),
+            message_count=session.get("message_count", 0),
+            workspace=workspace or self._get_workspace_from_db(session_id),
+        )
 
     async def list_sessions(self) -> list[AgentSessionInfo]:
         """List all sessions for this adapter's profile."""
         import asyncio
         for attempt in range(2):
             try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(
-                        f"{self.base_url}/api/sessions",
-                        headers=self.headers,
-                        timeout=10.0,
-                    )
-                    response.raise_for_status()
-                    data = response.json()
-                    sessions = data if isinstance(data, list) else (data.get("data") or data.get("sessions") or [])
+                response = await self._request_with_fallback(
+                    "GET",
+                    "/api/sessions",
+                    timeout=10.0,
+                )
+                data = response.json()
+                sessions = data if isinstance(data, list) else (data.get("data") or data.get("sessions") or [])
 
-                    result = []
-                    for s in sessions:
-                        session_id = s.get("session_id", s.get("id"))
-                        if not session_id:
-                            continue
-                        session_id = str(session_id)
-                        result.append(
-                            AgentSessionInfo(
-                                session_id=session_id,
-                                title=s.get("title") or "Untitled",
-                                created_at=self._to_epoch_ms(s.get("created_at", 0)),
-                                updated_at=self._to_epoch_ms(s.get("updated_at", 0)),
-                                message_count=s.get("message_count", 0),
-                                workspace=self._get_workspace_from_db(session_id),
-                            )
+                result = []
+                for s in sessions:
+                    session_id = s.get("session_id", s.get("id"))
+                    if not session_id:
+                        continue
+                    session_id = str(session_id)
+                    result.append(
+                        AgentSessionInfo(
+                            session_id=session_id,
+                            title=s.get("title") or "Untitled",
+                            created_at=self._to_epoch_ms(s.get("created_at", 0)),
+                            updated_at=self._to_epoch_ms(s.get("updated_at", 0)),
+                            message_count=s.get("message_count", 0),
+                            workspace=self._get_workspace_from_db(session_id),
                         )
-                    return result
+                    )
+                return result
             except Exception as e:
                 logger.debug("Hermes list_sessions attempt %d failed: %s", attempt + 1, e)
                 if attempt == 0:
@@ -155,13 +290,12 @@ class HermesAdapter(BaseAgentEngine):
     async def delete_session(self, session_id: str) -> bool:
         """Delete a session. Returns True if deleted."""
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.delete(
-                    f"{self.base_url}/api/sessions/{session_id}",
-                    headers=self.headers,
-                    timeout=10.0,
-                )
-                return response.status_code in (200, 204)
+            response = await self._request_with_fallback(
+                "DELETE",
+                f"/api/sessions/{session_id}",
+                timeout=10.0,
+            )
+            return response.status_code in (200, 204)
         except Exception:
             logger.exception("Failed to delete session %s", session_id)
         return False
@@ -261,15 +395,13 @@ class HermesAdapter(BaseAgentEngine):
 
         # Fallback to native sessions API
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.base_url}/api/sessions/{session_id}",
-                    headers=self.headers,
-                    timeout=5.0,
-                )
-                if response.status_code == 200:
-                    data = response.json()
-                    return data.get("workspace")
+            response = await self._request_with_fallback(
+                "GET",
+                f"/api/sessions/{session_id}",
+                timeout=5.0,
+            )
+            data = response.json()
+            return data.get("workspace")
         except Exception as e:
             logger.debug("Failed to query workspace for session from native API: %s", e)
 
@@ -304,57 +436,52 @@ class HermesAdapter(BaseAgentEngine):
     async def get_chat_history(self, session_id: str) -> list[AgentChatMessage]:
         """Retrieve chat history from Hermes Native API."""
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.base_url}/api/sessions/{session_id}/messages",
-                    headers=self.headers,
-                    timeout=10.0,
-                )
-                if response.status_code == 404:
-                    logger.debug("No session/history found for session %s", session_id)
-                    return []
-                response.raise_for_status()
-                data = response.json()
-                messages = data if isinstance(data, list) else (data.get("data") or data.get("messages") or [])
+            response = await self._request_with_fallback(
+                "GET",
+                f"/api/sessions/{session_id}/messages",
+                timeout=10.0,
+            )
+            data = response.json()
+            messages = data if isinstance(data, list) else (data.get("data") or data.get("messages") or [])
 
-                result = []
-                for idx, msg in enumerate(messages):
-                    role = msg.get("role", "assistant")
-                    if role == "system":
-                        continue
+            result = []
+            for idx, msg in enumerate(messages):
+                role = msg.get("role", "assistant")
+                if role == "system":
+                    continue
 
-                    msg_id = msg.get("id", msg.get("message_id", ""))
-                    if msg_id is not None:
-                        msg_id = str(msg_id)
-                    else:
-                        msg_id = ""
-                    if not msg_id:
-                        msg_id = f"msg-{session_id}-{idx}"
+                msg_id = msg.get("id", msg.get("message_id", ""))
+                if msg_id is not None:
+                    msg_id = str(msg_id)
+                else:
+                    msg_id = ""
+                if not msg_id:
+                    msg_id = f"msg-{session_id}-{idx}"
 
-                    content = msg.get("content", "")
-                    if isinstance(content, list):
-                        parts = []
-                        for item in content:
-                            if isinstance(item, str):
-                                parts.append(item)
-                            elif isinstance(item, dict) and isinstance(item.get("text"), str):
-                                parts.append(item["text"])
-                        content = "".join(parts)
-                    elif not isinstance(content, str):
-                        content = str(content) if content is not None else ""
+                content = msg.get("content", "")
+                if isinstance(content, list):
+                    parts = []
+                    for item in content:
+                        if isinstance(item, str):
+                            parts.append(item)
+                        elif isinstance(item, dict) and isinstance(item.get("text"), str):
+                            parts.append(item["text"])
+                    content = "".join(parts)
+                elif not isinstance(content, str):
+                    content = str(content) if content is not None else ""
 
-                    timestamp = self._to_epoch_ms(msg.get("timestamp", msg.get("created_at", 0)))
+                timestamp = self._to_epoch_ms(msg.get("timestamp", msg.get("created_at", 0)))
 
-                    result.append(
-                        AgentChatMessage(
-                            id=msg_id,
-                            role=role,
-                            content=content,
-                            timestamp=timestamp,
-                            trace_id=msg.get("trace_id"),
-                        )
+                result.append(
+                    AgentChatMessage(
+                        id=msg_id,
+                        role=role,
+                        content=content,
+                        timestamp=timestamp,
+                        trace_id=msg.get("trace_id"),
                     )
-                return result
+                )
+            return result
         except Exception as e:
             logger.error("Failed to fetch chat history for session %s: %s", session_id, e)
             return []
@@ -362,19 +489,17 @@ class HermesAdapter(BaseAgentEngine):
     async def get_commands(self) -> list[AgentCommand]:
         """Retrieve the available slash commands from Hermes."""
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.base_url}/api/commands",
-                    headers=self.headers,
-                    timeout=5.0,
-                )
-                response.raise_for_status()
-                data = response.json()
-                cmds = data if isinstance(data, list) else (data.get("data") or data.get("commands") or [])
-                return [
-                    AgentCommand(name=c["name"], description=c.get("description", ""))
-                    for c in cmds
-                ]
+            response = await self._request_with_fallback(
+                "GET",
+                "/api/commands",
+                timeout=5.0,
+            )
+            data = response.json()
+            cmds = data if isinstance(data, list) else (data.get("data") or data.get("commands") or [])
+            return [
+                AgentCommand(name=c["name"], description=c.get("description", ""))
+                for c in cmds
+            ]
         except Exception as e:
             logger.debug("Failed to fetch commands from Hermes API, falling back to local registry file: %s", e)
             try:

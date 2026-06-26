@@ -9,6 +9,7 @@ license = {text = "MIT"}
 [tool.uv.workspace]
 members = [
     "apps/api",
+    "hermes-plugin-wright",
     "packages/core",
     "packages/agent_adapters",
     "packages/tool_registry",
@@ -19,5 +20,6 @@ members = [
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
+    "respx>=0.22",
     "ruff>=0.4",
 ]
