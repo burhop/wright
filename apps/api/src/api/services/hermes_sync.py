@@ -19,17 +19,16 @@ from tool_registry import McpServer
 
 logger = structlog.get_logger(__name__)
 
-# Resolve repository root and default OpenSCAD path dynamically
+# Resolve repository root dynamically for local and container installs.
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.abspath(os.path.join(_CURRENT_DIR, *[".."] * 5))
-_DEFAULT_OPENSCAD_PATH = os.path.join(_REPO_ROOT, "scripts", "openscad-headless.sh")
 
 
 def _write_static_hermes_config() -> bool:
     """Writes the static wright-gateway configuration to config.yaml.
     Returns True if config changed or was newly created, False otherwise.
     """
-    repo_dir = "/home/burhop/repos/wright"
+    repo_dir = os.getenv("WRIGHT_REPO_DIR", _REPO_ROOT)
     new_mcp_servers = {
         "wrightgateway": {
             "command": "uv",

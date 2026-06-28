@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ToolRegistryPage } from "../components/pages/ToolRegistryPage";
 import { useTools } from "../store/tools";
-import type { McpServer, McpTool } from "../services/mcp-service";
+import { defaultMcpMetadata, type McpServer, type McpTool } from "../services/mcp-service";
 
 // Mock the useTools hook
 vi.mock("../store/tools", () => ({
@@ -50,6 +50,7 @@ describe("ToolRegistryPage Visual Layout", () => {
       created_at: 1000,
       updated_at: 1000,
       description: "Finite element analysis solver.",
+      ...defaultMcpMetadata(),
     },
   ];
 

@@ -1,6 +1,7 @@
 import uuid
 import time
 import structlog
+from pathlib import Path
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Response
 from pydantic import BaseModel
@@ -26,6 +27,9 @@ from core.tracing import traced
 from api.services.hermes_sync import (
     sync_mcp_server_to_hermes,
 )
+from tool_registry.mcp_catalog import is_install_blocked, tier_sort_key
+from tool_registry.mcp_followups import write_followup_record
+from tool_registry.mcp_validation import classify_server
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -97,6 +101,24 @@ class SaveCredentialsRequest(BaseModel):
     credentials: dict
 
 
+class ValidateServerResponse(BaseModel):
+    server_id: str
+    environment: str
+    status: str
+    installability_tier: str
+    message: str
+    missing_dependencies: list[str] = []
+    diagnostics: str = ""
+    follow_up_url: Optional[str] = None
+
+
+class MissingMcpReportRequest(BaseModel):
+    name: str
+    source_url: Optional[str] = None
+    notes: Optional[str] = None
+    category: str = "utilities"
+
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
 
 
@@ -104,7 +126,7 @@ class SaveCredentialsRequest(BaseModel):
 @traced("mcp.server.list")
 async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
     try:
-        servers = get_servers(engine.db_path)
+        servers = sorted(get_servers(engine.db_path), key=tier_sort_key)
         # Add credentials_configured status for servers with env_var definitions
         for server in servers:
             if server.env_vars and isinstance(server.env_vars, list):
@@ -164,6 +186,19 @@ async def register_server(
         source_url=body.source_url,
         installed_version=body.installed_version,
         env_vars=body.env_vars,
+        instructions=body.instructions,
+        verification_state=body.verification_state,
+        installability_tier=body.installability_tier,
+        risk_level=body.risk_level,
+        deployment_mode=body.deployment_mode,
+        platform_support=body.platform_support,
+        host_software_required=body.host_software_required,
+        credentials_required=body.credentials_required,
+        default_enabled=body.default_enabled,
+        approval_gates=body.approval_gates,
+        validation_result=body.validation_result,
+        follow_up_url=body.follow_up_url,
+        install_blocked_reason=body.install_blocked_reason,
     )
     try:
         insert_server(engine.db_path, new_server)
@@ -240,6 +275,11 @@ async def install_server_endpoint(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"MCP Server '{server_id}' not found.",
         )
+    if is_install_blocked(server):
+        reason = server.install_blocked_reason or (
+            f"Server '{server.name}' is marked {server.installability_tier}."
+        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=reason)
 
     try:
         # Validate required credentials before installation
@@ -311,6 +351,98 @@ async def install_server_endpoint(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to install MCP server: {e}",
         )
+
+
+@router.post("/servers/{server_id}/validate", response_model=ValidateServerResponse)
+@traced("mcp.server.validate")
+async def validate_server_endpoint(
+    server_id: str,
+    engine: McpEngine = Depends(get_mcp_engine),
+):
+    server = get_server(engine.db_path, server_id)
+    if not server:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"MCP Server '{server_id}' not found.",
+        )
+
+    result = classify_server(server)
+    follow_up_url = result.follow_up_url
+    if result.status == "failed" or result.installability_tier == "non_working":
+        follow_up_url = write_followup_record(
+            Path("docs/mcp-catalog/followups"),
+            result,
+            source_url=server.source_url,
+            verification_state=server.verification_state,
+        )
+        result.follow_up_url = follow_up_url
+
+    from tool_registry.db import update_server as db_update_server
+
+    db_update_server(
+        engine.db_path,
+        server_id,
+        {
+            "validation_result": result.as_summary(),
+            "installability_tier": result.installability_tier,
+            "follow_up_url": follow_up_url,
+        },
+    )
+    return ValidateServerResponse(**result.model_dump())
+
+
+@router.post(
+    "/servers/report-missing",
+    response_model=RegisterServerResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("mcp.server.report_missing")
+async def report_missing_mcp(
+    body: MissingMcpReportRequest,
+    engine: McpEngine = Depends(get_mcp_engine),
+):
+    normalized = "".join(
+        char.lower() if char.isalnum() else "-"
+        for char in body.name.strip()
+    ).strip("-")
+    normalized = "-".join(part for part in normalized.split("-") if part)
+    server_id = f"reported-{normalized or uuid.uuid4().hex[:8]}"
+    now = int(time.time())
+
+    existing = get_server(engine.db_path, server_id)
+    if existing:
+        return RegisterServerResponse(
+            server_id=existing.server_id,
+            name=existing.name,
+            status=existing.status,
+        )
+
+    server = McpServer(
+        server_id=server_id,
+        name=body.name,
+        type="stdio",
+        command=None,
+        is_active=False,
+        is_installed=False,
+        status="inactive",
+        category=body.category,
+        created_at=now,
+        updated_at=now,
+        description=body.notes or "User-reported MCP candidate pending verification.",
+        source_url=body.source_url,
+        verification_state="user_reported_url_needed",
+        installability_tier="blocked",
+        risk_level="low",
+        deployment_mode="unknown",
+        default_enabled=False,
+        install_blocked_reason="User-reported MCP candidate pending source and install verification.",
+    )
+    insert_server(engine.db_path, server)
+    return RegisterServerResponse(
+        server_id=server.server_id,
+        name=server.name,
+        status=server.status,
+    )
 
 
 @router.post("/servers/{server_id}/uninstall", response_model=ServerInstallResponse)

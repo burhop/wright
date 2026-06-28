@@ -1,7 +1,8 @@
 # =============================================================================
-# Wright Agent Container — Full Stack Production Image
+# Wright Agent Container - Full Stack Production Image
 # =============================================================================
-# Includes: Wright API + Frontend, Hermes Agent, Hermes WebUI, OpenSCAD
+# Includes: Wright API + Frontend, Hermes Agent, Hermes WebUI.
+# MCP-specific host software is installed during selected MCP validation/use.
 # Managed by supervisord (Wright API on :8000, Hermes WebUI on :8788 internal)
 # =============================================================================
 
@@ -17,10 +18,9 @@ RUN npm run build --workspace=apps/web
 # Stage 2: Production runtime image
 FROM ubuntu:26.04
 
-# Prevent interactive prompts during apt commands
 ENV DEBIAN_FRONTEND=noninteractive
 
-# ── System packages (base + OpenSCAD + Xvfb + supervisor) ─────────────────
+# System packages: Wright runtime, operator utilities, and supervisor.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     curl \
@@ -34,11 +34,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     gnupg \
     supervisor \
-    openscad \
-    xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# ── Python 3.13 (deadsnakes PPA) ──────────────────────────────────────────
+# Python 3.13.
 RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -48,51 +46,37 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
     pipx \
     && rm -rf /var/lib/apt/lists/*
 
-# ── Node.js 22 ────────────────────────────────────────────────────────────
+# Node.js 22.
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
     apt-get purge -y --auto-remove software-properties-common gnupg && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# ── uv (Python package manager) ───────────────────────────────────────────
+# uv and micromamba support dynamic MCP package/dependency installation.
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-
-# ── micromamba ─────────────────────────────────────────────────────────────
 RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest \
     | tar -xvj -C /usr/local bin/micromamba
 
-# ── FreeCAD (AppImage extraction) ──────────────────────────────────────────
-RUN curl -L -o /tmp/FreeCAD.AppImage https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-aarch64-py311.AppImage && \
-    chmod +x /tmp/FreeCAD.AppImage && \
-    /tmp/FreeCAD.AppImage --appimage-extract && \
-    mv squashfs-root /opt/freecad && \
-    rm /tmp/FreeCAD.AppImage && \
-    ln -s /opt/freecad/usr/bin/freecadcmd /usr/local/bin/freecadcmd && \
-    ln -s /opt/freecad/usr/bin/freecad /usr/local/bin/freecad
-ENV FREECAD_PATH=/usr/local/bin/freecadcmd
-
-# ── Create agent user (UID 1000) ──────────────────────────────────────────
+# Create agent user (UID 1000).
 RUN userdel -r ubuntu && \
     useradd -m -u 1000 -s /bin/bash agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# ── Install Hermes Agent from PyPI (pinned version) with Wright Plugin ────
-# Copies the plugin package and installs the agent with the plugin in the same env
+# Install Hermes Agent from PyPI with the Wright plugin in the same tool env.
 ENV UV_TOOL_DIR=/opt/uv-tools
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
 COPY hermes-plugin-wright/ /opt/hermes-plugins/wright/
 RUN uv tool install hermes-agent==0.15.2 --python 3.13 --with /opt/hermes-plugins/wright/ && \
     rm -rf /root/.cache/uv
 
-
-# ── Wright workspace setup ────────────────────────────────────────────────
+# Wright workspace setup.
 WORKDIR /workspace
 RUN chown agent:agent /workspace
 
 USER agent
 
-# Copy dependency configs first for better layer caching
+# Copy dependency configs first for better layer caching.
 COPY --chown=agent:agent pyproject.toml uv.lock ./
 COPY --chown=agent:agent apps/api/pyproject.toml apps/api/pyproject.toml
 COPY --chown=agent:agent packages/core/pyproject.toml packages/core/pyproject.toml
@@ -100,58 +84,47 @@ COPY --chown=agent:agent packages/agent_adapters/pyproject.toml packages/agent_a
 COPY --chown=agent:agent packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
 COPY --chown=agent:agent packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
 
-# Sync dependencies using Python 3.13 (no dev packages)
+# Sync dependencies using Python 3.13 without dev packages.
 RUN uv sync --python 3.13 --all-packages --no-install-workspace --no-dev && \
     rm -rf /home/agent/.cache/uv
 
-# Copy python codebases
 COPY --chown=agent:agent packages/ packages/
 COPY --chown=agent:agent apps/api/ apps/api/
 
-# Re-run uv sync to install the workspace itself
+# Install the workspace packages.
 RUN uv sync --python 3.13 --all-packages --no-dev && \
     rm -rf /home/agent/.cache/uv
 
-# ── Copy built frontend from Stage 1 ──────────────────────────────────────
+# Copy built frontend from Stage 1.
 COPY --chown=agent:agent --from=web-builder /workspace/apps/web/dist /workspace/apps/web/dist
 
-# Generate backend third-party license file using pip-licenses via uv
+# Generate backend third-party license file using pip-licenses via uv.
 RUN uv run --no-dev --with pip-licenses pip-licenses --with-license-file --output-file=/workspace/apps/web/dist/third-party-licenses-api.txt && \
     rm -rf /home/agent/.cache/uv
 
 USER root
 
-# ── Container manifest (read-only, baked into image) ──────────────────────
 COPY docker/container-manifest.md /container-manifest.md
 RUN chmod 444 /container-manifest.md
 
-# ── OpenSCAD headless wrapper ─────────────────────────────────────────────
-COPY scripts/openscad-headless.sh /usr/local/bin/openscad-headless
-RUN chmod +x /usr/local/bin/openscad-headless
-
-# ── Supervisord configuration ─────────────────────────────────────────────
 COPY docker/supervisord.conf /etc/supervisor/conf.d/wright.conf
 
-# ── Entrypoint script ─────────────────────────────────────────────────────
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
-# ── Log directories ───────────────────────────────────────────────────────
 RUN touch /var/log/agent-startup.log /var/log/agent-changes.log && \
     chown agent:agent /var/log/agent-startup.log /var/log/agent-changes.log && \
     chmod 664 /var/log/agent-startup.log /var/log/agent-changes.log
 
-# Supervisor needs writable log directory
 RUN mkdir -p /var/log/supervisor && \
     chown -R agent:agent /var/log/supervisor
 
-# ── OCI Image Metadata Labels ─────────────────────────────────────────────
 ARG VERSION=unknown
 ARG REVISION=unknown
 ARG CREATED=unknown
 
 LABEL org.opencontainers.image.title="Wright" \
-      org.opencontainers.image.description="Local-first AI mechanical engineer — CAD generation, FEA, and manufacturing automation powered by multi-agent LLMs" \
+      org.opencontainers.image.description="Local-first AI mechanical engineer - CAD generation, FEA, and manufacturing automation powered by multi-agent LLMs" \
       org.opencontainers.image.url="https://github.com/burhop/wright" \
       org.opencontainers.image.source="https://github.com/burhop/wright" \
       org.opencontainers.image.documentation="https://burhop.github.io/wright/" \
@@ -161,11 +134,9 @@ LABEL org.opencontainers.image.title="Wright" \
       org.opencontainers.image.revision="${REVISION}" \
       org.opencontainers.image.created="${CREATED}"
 
-# ── Runtime user and working directory ────────────────────────────────────
 USER agent
 WORKDIR /home/agent
 
-# Wright API (external)
 EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -277,3 +277,68 @@ def test_register_server_with_env_vars(client):
     servers = servers_res.json()["servers"]
     new_server = next(s for s in servers if s["name"] == "Env Test Server")
     assert new_server["env_vars"] == {"CUSTOM_KEY": "CUSTOM_VAL"}
+
+
+def test_list_servers_includes_catalog_metadata(client):
+    response = client.get("/api/mcp/servers")
+    assert response.status_code == 200
+    server = response.json()["servers"][0]
+    assert server["verification_state"] == "user_reported_url_needed"
+    assert server["installability_tier"] == "might_work"
+    assert "platform_support" in server
+
+
+def test_install_blocked_for_blocked_catalog_entry(client):
+    from tool_registry.db import update_server
+
+    engine = client.app.state.mcp_engine
+    update_server(
+        engine.db_path,
+        "calc-id-123",
+        {
+            "installability_tier": "blocked",
+            "install_blocked_reason": "URL missing",
+        },
+    )
+
+    response = client.post("/api/mcp/servers/calc-id-123/install")
+
+    assert response.status_code == 400
+    data = response.json()
+    assert "URL missing" in data.get("detail", data.get("message", ""))
+
+
+def test_validate_server_reports_missing_host_dependency(client):
+    from tool_registry.db import update_server
+
+    engine = client.app.state.mcp_engine
+    update_server(
+        engine.db_path,
+        "calc-id-123",
+        {"host_software_required": ["DefinitelyMissingCadHost"]},
+    )
+
+    response = client.post("/api/mcp/servers/calc-id-123/validate")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "dependency_missing"
+    assert data["missing_dependencies"] == ["DefinitelyMissingCadHost"]
+
+
+def test_report_missing_mcp_creates_blocked_seed(client):
+    response = client.post(
+        "/api/mcp/servers/report-missing",
+        json={
+            "name": "New Candidate MCP",
+            "source_url": "https://example.com/new-candidate",
+            "notes": "Needs verification",
+        },
+    )
+
+    assert response.status_code == 201
+    server_id = response.json()["server_id"]
+    servers = client.get("/api/mcp/servers").json()["servers"]
+    created = next(server for server in servers if server["server_id"] == server_id)
+    assert created["verification_state"] == "user_reported_url_needed"
+    assert created["installability_tier"] == "blocked"

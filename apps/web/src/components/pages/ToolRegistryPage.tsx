@@ -4,6 +4,7 @@ import { useChat } from "../../store/sessions";
 import { ToolCard } from "../tools/ToolCard";
 import { AddToolModal } from "../tools/AddToolModal";
 import useLogger from "../../hooks/useLogger";
+import { mcpService } from "../../services/mcp-service";
 import {
   workspaceService,
   type WorkspaceInfo,
@@ -21,6 +22,13 @@ const CATEGORY_META: Record<string, { icon: string; label: string }> = {
   analysis: { icon: "📊", label: "Analysis" },
 };
 
+const TIER_ORDER: Record<string, number> = {
+  tested: 0,
+  might_work: 1,
+  blocked: 2,
+  non_working: 3,
+};
+
 export function ToolRegistryPage() {
   const logger = useLogger("ToolRegistryPage");
   const { state: chatState } = useChat();
@@ -32,6 +40,7 @@ export function ToolRegistryPage() {
     isLoading,
     error,
     registerCustomServer,
+    fetchServersAndTools,
     installServerState,
     uninstallServerState,
     deleteServerState,
@@ -56,6 +65,18 @@ export function ToolRegistryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleReportMissing = async () => {
+    const name = window.prompt("MCP name");
+    if (!name?.trim()) return;
+    const sourceUrl = window.prompt("Source URL") || undefined;
+    await mcpService.reportMissingMcp({
+      name: name.trim(),
+      source_url: sourceUrl,
+      notes: "User-reported MCP candidate pending verification.",
+    });
+    await fetchServersAndTools();
+  };
+
   useEffect(() => {
     logger.info("Tool Registry Page loaded");
   }, [logger]);
@@ -76,7 +97,16 @@ export function ToolRegistryPage() {
       server.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (server.description || "")
         .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+        .includes(searchQuery.toLowerCase()) ||
+      server.verification_state.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      server.installability_tier.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      server.risk_level.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      server.host_software_required.some((dependency) =>
+        dependency.toLowerCase().includes(searchQuery.toLowerCase()),
+      ) ||
+      server.credentials_required.some((credential) =>
+        credential.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
     let matchesCategory = false;
     if (selectedCategory === "all") {
       matchesCategory = true;
@@ -91,10 +121,12 @@ export function ToolRegistryPage() {
     return matchesSearch && matchesCategory;
   });
 
-  // Sort: installed first, then by name
+  // Sort: tested first, then might-work, blocked, non-working, then by name
   const sortedServers = [...filteredServers].sort((a, b) => {
-    if (a.is_installed && !b.is_installed) return -1;
-    if (!a.is_installed && b.is_installed) return 1;
+    const tierDiff =
+      (TIER_ORDER[a.installability_tier] ?? 99) -
+      (TIER_ORDER[b.installability_tier] ?? 99);
+    if (tierDiff !== 0) return tierDiff;
     return a.name.localeCompare(b.name);
   });
 
@@ -109,6 +141,15 @@ export function ToolRegistryPage() {
   };
 
   const installedCount = servers.filter((s) => s.is_installed).length;
+  const testedCount = servers.filter((s) => s.installability_tier === "tested").length;
+  const mightWorkCount = servers.filter(
+    (s) => s.installability_tier === "might_work",
+  ).length;
+  const blockedCount = servers.filter(
+    (s) =>
+      s.installability_tier === "blocked" ||
+      s.installability_tier === "non_working",
+  ).length;
 
   return (
     <div
@@ -209,6 +250,22 @@ export function ToolRegistryPage() {
           }}
         >
           + Register Custom Tool
+        </button>
+        <button
+          onClick={handleReportMissing}
+          data-testid="server-card-report-missing-mcp"
+          style={{
+            padding: "var(--space-md) var(--space-lg)",
+            backgroundColor: "var(--color-surface-subtle)",
+            color: "var(--color-secondary)",
+            fontWeight: 600,
+            borderRadius: "var(--radius-lg)",
+            border: "1px solid var(--color-border)",
+            cursor: "pointer",
+            whiteSpace: "nowrap",
+          }}
+        >
+          Report Missing MCP
         </button>
       </div>
 
@@ -360,6 +417,33 @@ export function ToolRegistryPage() {
                   style={{ fontWeight: 600, color: "var(--color-secondary)" }}
                 >
                   {servers.length - installedCount}
+                </span>
+              </div>
+              <div
+                data-testid="tool-registry-tier-tested"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <span>Tested</span>
+                <span style={{ fontWeight: 600, color: "var(--color-success)" }}>
+                  {testedCount}
+                </span>
+              </div>
+              <div
+                data-testid="tool-registry-tier-might-work"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <span>Might work</span>
+                <span style={{ fontWeight: 600, color: "var(--color-warning)" }}>
+                  {mightWorkCount}
+                </span>
+              </div>
+              <div
+                data-testid="tool-registry-tier-blocked"
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <span>Blocked</span>
+                <span style={{ fontWeight: 600, color: "var(--color-error)" }}>
+                  {blockedCount}
                 </span>
               </div>
             </div>

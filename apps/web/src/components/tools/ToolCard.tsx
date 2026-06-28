@@ -79,6 +79,32 @@ export function ToolCard({
     return envVars.some((v) => v.required && !configured[v.name]);
   }, [server.env_vars, server.credentials_configured, hasEnvVarDefs]);
 
+  const isInstallBlocked =
+    server.installability_tier === "blocked" ||
+    server.installability_tier === "non_working";
+  const currentPlatform =
+    server.platform_support?.linux_x64 ||
+    server.platform_support?.windows_11_x64 ||
+    Object.values(server.platform_support || {})[0];
+
+  const badgeStyle = (
+    color: string,
+    backgroundColor = "var(--color-surface-subtle)",
+  ) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    fontSize: "0.65rem",
+    textTransform: "uppercase" as const,
+    backgroundColor,
+    color,
+    padding: "2px 6px",
+    borderRadius: "var(--radius-sm)",
+    border: "1px solid var(--color-border)",
+    fontWeight: 700,
+    letterSpacing: 0,
+    maxWidth: "100%",
+  });
+
   const handleSaveCredentials = async () => {
     setIsSavingCreds(true);
     setCardError(null);
@@ -361,6 +387,35 @@ export function ToolCard({
               >
                 {server.category}
               </span>
+              <span
+                data-testid={`server-card-verification-${server.server_id}`}
+                style={badgeStyle("var(--color-secondary)")}
+              >
+                {server.verification_state.replaceAll("_", " ")}
+              </span>
+              <span
+                data-testid={`server-card-installability-${server.server_id}`}
+                style={badgeStyle(
+                  server.installability_tier === "tested"
+                    ? "var(--color-success)"
+                    : server.installability_tier === "might_work"
+                      ? "var(--color-warning)"
+                      : "var(--color-error)",
+                )}
+              >
+                {server.installability_tier.replaceAll("_", " ")}
+              </span>
+              <span
+                data-testid={`server-card-risk-${server.server_id}`}
+                style={badgeStyle(
+                  server.risk_level === "high" ||
+                    server.risk_level === "safety-critical"
+                    ? "var(--color-error)"
+                    : "var(--color-text-muted)",
+                )}
+              >
+                {server.risk_level}
+              </span>
             </div>
           </div>
         </div>
@@ -370,7 +425,12 @@ export function ToolCard({
           {!server.is_installed ? (
             <button
               onClick={handleInstall}
-              disabled={isInstalling || isDeleting || requiredCredsMissing()}
+              disabled={
+                isInstalling ||
+                isDeleting ||
+                requiredCredsMissing() ||
+                isInstallBlocked
+              }
               data-testid={
                 isLocalServer
                   ? `server-card-install-btn-${server.server_id}`
@@ -379,6 +439,9 @@ export function ToolCard({
               title={
                 requiredCredsMissing()
                   ? "Configure credentials before installing"
+                  : isInstallBlocked
+                    ? server.install_blocked_reason ||
+                      "This entry is blocked from automated install"
                   : undefined
               }
               style={{
@@ -391,6 +454,7 @@ export function ToolCard({
                 color: "#ffffff",
                 cursor:
                   isInstalling || requiredCredsMissing()
+                  || isInstallBlocked
                     ? "not-allowed"
                     : "pointer",
                 transition: "all var(--transition-smooth)",
@@ -522,6 +586,74 @@ export function ToolCard({
           )}
         </div>
       )}
+
+      <div
+        data-testid={`server-card-platform-${server.server_id}`}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--space-xs)",
+          padding: "var(--space-sm)",
+          border: "1px solid var(--color-border)",
+          borderRadius: "var(--radius-md)",
+          backgroundColor: "var(--color-surface-subtle)",
+          textAlign: "left",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "var(--space-sm)",
+            fontSize: "0.76rem",
+          }}
+        >
+          <span style={{ color: "var(--color-primary)", fontWeight: 700 }}>
+            Linux x64
+          </span>
+          <span style={{ color: "var(--color-secondary)", fontWeight: 700 }}>
+            {currentPlatform?.status || "unknown"}
+            {currentPlatform?.tested ? " · tested" : ""}
+          </span>
+        </div>
+        {currentPlatform?.notes && (
+          <span style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
+            {currentPlatform.notes}
+          </span>
+        )}
+        {(server.host_software_required.length > 0 ||
+          server.credentials_required.length > 0) && (
+          <span style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
+            Requires:{" "}
+            {[...server.host_software_required, ...server.credentials_required]
+              .join(", ")}
+          </span>
+        )}
+        {server.validation_result?.message && (
+          <span style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
+            {server.validation_result.message}
+          </span>
+        )}
+        {server.install_blocked_reason && (
+          <span style={{ fontSize: "0.72rem", color: "var(--color-warning)" }}>
+            {server.install_blocked_reason}
+          </span>
+        )}
+        {server.follow_up_url && (
+          <a
+            href={server.follow_up_url}
+            data-testid={`server-card-followup-${server.server_id}`}
+            style={{
+              fontSize: "0.72rem",
+              color: "var(--color-secondary)",
+              textDecoration: "none",
+              fontWeight: 700,
+            }}
+          >
+            Follow-up record
+          </a>
+        )}
+      </div>
 
       {/* Credential Configuration Panel */}
       {hasEnvVarDefs && (

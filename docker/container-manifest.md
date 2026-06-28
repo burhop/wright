@@ -6,8 +6,13 @@ engineering appliance. The container includes:
   - Wright API (FastAPI on port 8000)
   - Hermes Agent v0.15.2 (AI agent framework)
   - Hermes WebUI v0.51.135 (session manager on port 8788, internal)
-  - OpenSCAD + Xvfb (headless CAD for MCP geometry tools)
+  - General runtime tooling for installing and validating selected MCP servers
   - supervisord (process manager)
+
+MCP-specific host software such as OpenSCAD, FreeCAD, Blender, vendor CAD
+systems, simulation solvers, license managers, and hardware drivers is installed
+only during validation or use of the selected MCP server. It is not part of the
+base container contract.
 
 All agents access an external LLM API via the LLM_API_URL environment variable.
 

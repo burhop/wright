@@ -11,7 +11,16 @@ import type {
   McpTool,
   VersionCheckResult,
   CredentialStatusResponse,
+  PlatformSupportRecord,
 } from "../services/mcp-service";
+
+const defaultPlatformSupport = (): Record<string, PlatformSupportRecord> => ({
+  windows_11_x64: { status: "unknown", tested: false, notes: "not tested" },
+  linux_x64: { status: "unknown", tested: false, notes: "not tested" },
+  linux_arm64: { status: "unknown", tested: false, notes: "not tested" },
+  macos_x64: { status: "unknown", tested: false, notes: "not tested" },
+  macos_arm64: { status: "unknown", tested: false, notes: "not tested" },
+});
 
 export interface ToolsState {
   servers: McpServer[];
@@ -167,6 +176,22 @@ export function ToolsProvider({ children }: { children: ReactNode }) {
         image_url: imageUrl,
         description,
         source_url: sourceUrl,
+        verification_state: "user_reported_url_needed",
+        installability_tier: "blocked",
+        risk_level: "low",
+        deployment_mode: "unknown",
+        platform_support: defaultPlatformSupport(),
+        host_software_required: [],
+        credentials_required: [],
+        default_enabled: false,
+        approval_gates: [],
+        validation_result: {
+          status: "not_tested",
+          message: "Not yet validated in this environment",
+          missing_dependencies: [],
+        },
+        install_blocked_reason:
+          "Custom server pending source and install verification.",
       };
       dispatch({ type: "ADD_SERVER", server: newServer });
     } catch (err: any) {
