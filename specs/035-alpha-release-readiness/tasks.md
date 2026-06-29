@@ -76,3 +76,10 @@
 - [X] T036 Preserve stable-only `latest` behavior across Docker Hub and GHCR.
 - [X] T037 Document GHCR/Docker Hub image names and release prerequisites.
 - [X] T038 Add tests for registry tags, permissions, and image-name docs.
+
+## Phase 10: Optional Docker Hub Publishing
+
+- [X] T039 Make Docker Hub login and description sync conditional on Docker Hub credentials.
+- [X] T040 Generate Docker Hub image tags only when Docker Hub credentials are configured.
+- [X] T041 Document GHCR as the default release registry path and Docker Hub as optional.
+- [X] T042 Add tests for optional Docker Hub release behavior.

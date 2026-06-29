@@ -12,6 +12,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
     steps:
       - name: Checkout Code
@@ -32,10 +35,11 @@ jobs:
           echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
       - name: Log in to Docker Hub
+        if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -47,12 +51,12 @@ jobs:
       - name: Classify Release Tag
         id: tag
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           GHCR_OWNER: ${{ github.repository_owner }}
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
           IS_PRERELEASE=false
           GHCR_OWNER_LC="$(echo "$GHCR_OWNER" | tr '[:upper:]' '[:lower:]')"
+          HAS_DOCKERHUB=false
 
           if [[ "$TAG_NAME" =~ -(alpha|beta|rc)(\.|[0-9]|$) ]]; then
             IS_PRERELEASE=true
@@ -61,12 +65,22 @@ jobs:
           {
             echo "tag_name=$TAG_NAME"
             echo "is_prerelease=$IS_PRERELEASE"
+            if [[ -n "${DOCKERHUB_USERNAME:-}" && -n "${DOCKERHUB_TOKEN:-}" ]]; then
+              echo "has_dockerhub=true"
+              HAS_DOCKERHUB=true
+            else
+              echo "has_dockerhub=false"
+            fi
             echo "docker_tags<<EOF"
-            echo "${DOCKERHUB_USERNAME}/wright-agent:${TAG_NAME}"
             echo "ghcr.io/${GHCR_OWNER_LC}/wright-agent:${TAG_NAME}"
+            if [[ "$HAS_DOCKERHUB" == "true" ]]; then
+              echo "${DOCKERHUB_USERNAME}/wright-agent:${TAG_NAME}"
+            fi
             if [[ "$IS_PRERELEASE" != "true" ]]; then
-              echo "${DOCKERHUB_USERNAME}/wright-agent:latest"
               echo "ghcr.io/${GHCR_OWNER_LC}/wright-agent:latest"
+              if [[ "$HAS_DOCKERHUB" == "true" ]]; then
+                echo "${DOCKERHUB_USERNAME}/wright-agent:latest"
+              fi
             fi
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
@@ -85,11 +99,12 @@ jobs:
             CREATED=${{ steps.prep.outputs.created }}
 
       - name: Sync Docker Hub Description
+        if: ${{ steps.tag.outputs.has_dockerhub == 'true' }}
         uses: peter-evans/dockerhub-description@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/wright-agent
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+          repository: ${{ env.DOCKERHUB_USERNAME }}/wright-agent
           readme-filepath: docker/DOCKER_HUB_README.md
 
       - name: Publish GitHub Release

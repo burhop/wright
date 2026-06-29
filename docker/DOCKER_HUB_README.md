@@ -14,11 +14,12 @@ drivers. Install and validate those only for the selected MCP server.
 
 ## Image Names
 
-Public alpha images are intended to be published with matching immutable tags on
-both registries:
+Public alpha images are always intended to be published with immutable tags on
+GHCR. Docker Hub publication uses matching tags when Docker Hub credentials are
+configured for the release workflow:
 
 - `ghcr.io/burhop/wright-agent:<tag>`
-- `<dockerhub-username>/wright-agent:<tag>`
+- `<dockerhub-username>/wright-agent:<tag>` when Docker Hub is enabled
 
 Stable tags may also move `latest`. Alpha, beta, and release-candidate tags do
 not move `latest`.
