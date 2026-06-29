@@ -2,7 +2,7 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test check
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test check security-scan docker-smoke alpha-release-check
 
 # Default target displays help
 help:
@@ -13,6 +13,7 @@ help:
 	@echo "  docker-logs     - Follow the logs from the test container"
 	@echo "  docker-shell    - Open an interactive shell inside the running container"
 	@echo "  docker-test-e2e - Run Playwright UI tests against the built Docker image"
+	@echo "  docker-smoke    - Build and smoke-test the production Docker image"
 	@echo ""
 	@echo "Local Developer Targets (Non-Docker):"
 	@echo "  lint            - Run Ruff and ESLint checkers"
@@ -20,9 +21,14 @@ help:
 	@echo "  typecheck       - Run Mypy and TSC type check validation"
 	@echo "  test            - Run pytest and frontend vitest suites"
 	@echo "  check           - Execute all local quality gates (lint + format + typecheck + test)"
+	@echo "  security-scan   - Run public-alpha, Gitleaks, and TruffleHog secret scans"
+	@echo "  alpha-release-check - Run final alpha release gates including Docker smoke"
 
 docker-build:
 	docker build -t wright-agent:latest -f docker/Dockerfile .
+
+docker-smoke:
+	./scripts/docker-smoke-test.sh
 
 docker-test:
 	@if [ ! -f docker/.env ]; then \
@@ -119,4 +125,10 @@ check:
 	npx tsc --noEmit -p apps/web/tsconfig.app.json
 	uv run pytest
 	npm run test --workspace=apps/web
+
+security-scan:
+	./scripts/security-scan.sh --include-untracked
+
+alpha-release-check:
+	./scripts/alpha-release-check.sh
 

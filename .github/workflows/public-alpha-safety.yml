@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v5
@@ -25,3 +27,27 @@ jobs:
 
       - name: Run Public Alpha Leak Scan
         run: python scripts/check-public-alpha-leaks.py
+
+      - name: Run Gitleaks History Scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" \
+            ghcr.io/gitleaks/gitleaks:v8.30.1 \
+            git /repo \
+            --config /repo/.gitleaks.toml \
+            --no-banner \
+            --redact \
+            --verbose
+
+      - name: Run TruffleHog History Scan
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" \
+            -w /repo \
+            ghcr.io/trufflesecurity/trufflehog:3.95.7 \
+            git file:///repo \
+            --no-update \
+            --fail \
+            --results=verified,unknown \
+            --no-verification \
+            --exclude-globs=uv.lock,package-lock.json

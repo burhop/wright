@@ -1,0 +1,14 @@
+title = "Wright Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Historical Onshape credential examples in the MCP credential setup spec are placeholders, not live credentials."
+condition = "AND"
+paths = ['''specs/026-mcp-credential-setup/data-model\.md''']
+regexTarget = "secret"
+regexes = [
+  '''on_dPlLqKAcKfwxInzX8JVqw''',
+  '''iG5e4db0lzGzZmIO8oWMhl01nTaDODgAbR8IRhJpOeRFNBce''',
+]

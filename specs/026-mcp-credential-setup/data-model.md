@@ -31,8 +31,8 @@ Metadata about an environment variable required by an MCP server.
 ```json
 {
   "jarvis-onshape-mcp": {
-    "ONSHAPE_API_KEY": "on_dPlLqKAcKfwxInzX8JVqw",
-    "ONSHAPE_API_SECRET": "iG5e4db0lzGzZmIO8oWMhl01nTaDODgAbR8IRhJpOeRFNBce"
+    "ONSHAPE_API_KEY": "onshape-access-key-placeholder",
+    "ONSHAPE_API_SECRET": "onshape-secret-key-placeholder"
   },
   "another-server-id": {
     "API_TOKEN": "tok_..."
@@ -86,8 +86,8 @@ The deserialization layer detects the format:
 ```json
 {
   "credentials": {
-    "ONSHAPE_API_KEY": "on_dPlLqKAcKfwxInzX8JVqw",
-    "ONSHAPE_API_SECRET": "iG5e4db0lzGzZmIO8oWMhl01nTaDODgAbR8IRhJpOeRFNBce"
+    "ONSHAPE_API_KEY": "onshape-access-key-placeholder",
+    "ONSHAPE_API_SECRET": "onshape-secret-key-placeholder"
   }
 }
 ```

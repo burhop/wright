@@ -12,7 +12,7 @@ enabled only when credentials are configured.
 | --- | --- | --- |
 | `python-quality.yml` | Push or pull request to `main` or `dev` | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`. |
 | `frontend-quality.yml` | Push or pull request to `main` or `dev` | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`. |
-| `public-alpha-safety.yml` | Push, pull request, or manual run | `python scripts/check-public-alpha-leaks.py` against tracked files. |
+| `public-alpha-safety.yml` | Push, pull request, or manual run | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan. |
 | `docker-build.yml` | Push to `main`, `dev`, or `v*` tags when Docker/app paths change; pull requests to `main` or `dev` | Builds and loads a local `wright-agent:<sha>` image, runs a non-blocking Trivy scan, and runs the Docker smoke test. It does not publish public images. |
 | `docs-deploy.yml` | Push to `main`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
 | `release.yml` | Push to tag matching `v*` | Builds and pushes release images, publishes the GitHub Release, marks alpha/beta/rc tags as prereleases, and applies the stable-only `latest` policy. |
@@ -30,6 +30,8 @@ npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 mkdocs build --strict
 python scripts/check-public-alpha-leaks.py
+scripts/security-scan.sh --include-untracked
+scripts/alpha-release-check.sh
 ```
 
 The frontend workflow also runs ESLint, Prettier, and TypeScript. The Python
@@ -97,7 +99,21 @@ npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 uv run --with mkdocs-material mkdocs build --strict
 python scripts/check-public-alpha-leaks.py --include-untracked
+scripts/security-scan.sh --include-untracked
+make alpha-release-check
+scripts/alpha-release-check.sh
 ```
+
+On Windows PowerShell, run the scanner wrapper directly:
+
+```powershell
+scripts/security-scan.ps1 -IncludeUntracked
+scripts/alpha-release-check.ps1
+```
+
+The scanner wrappers use Dockerized `ghcr.io/gitleaks/gitleaks:v8.30.1` and
+`ghcr.io/trufflesecurity/trufflehog:3.95.7`, so no global Gitleaks or
+TruffleHog install is required.
 
 For Docker release candidates, also run the local smoke helper against the image
 you plan to publish:

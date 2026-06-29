@@ -24,11 +24,17 @@ Suggested local commands:
 git status --short
 git diff --check
 python scripts/check-public-alpha-leaks.py --include-untracked
-git grep -n "sk-[A-Za-z0-9]\\{20,\\}\\|api_key\\|token\\|password" -- . ':!uv.lock' ':!package-lock.json'
+scripts/security-scan.sh --include-untracked
 ```
 
-Use a dedicated scanner such as `gitleaks` or `trufflehog` for the final
-history scan.
+On Windows PowerShell:
+
+```powershell
+scripts/security-scan.ps1 -IncludeUntracked
+```
+
+The security scan wrappers run the repo-native public-alpha leak scan plus
+Dockerized gitleaks and trufflehog history scans.
 
 ## 2. Build and Test Gates
 
@@ -36,6 +42,8 @@ history scan.
 - [ ] `npm run test --workspace=apps/web`
 - [ ] `npm run build --workspace=apps/web`
 - [ ] `uv run --with mkdocs-material mkdocs build --strict`
+- [ ] `scripts/alpha-release-check.sh`, `scripts/alpha-release-check.ps1`, or
+  `make alpha-release-check`.
 - [ ] Docker appliance smoke test passes for the public image candidate.
 - [ ] Clean-container MCP validation was run only for selected MCP entries,
   following `docs/mcp-catalog/mcp-server-testing-process.md`.

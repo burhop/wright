@@ -8,13 +8,38 @@ This directory contains helper scripts to automate local development, manage Doc
 | :--- | :--- | :--- | :--- |
 | [`backup-volumes.sh`](#backup-volumessh) | Bash | Backs up Wright Docker volumes to local disk | Docker |
 | [`restore-volume.sh`](#restore-volumesh) | Bash | Restores a Docker volume from a saved backup | Docker |
+| [`alpha-release-check.sh`](#alpha-release-checksh-and-alpha-release-checkps1) / [`alpha-release-check.ps1`](#alpha-release-checksh-and-alpha-release-checkps1) | Bash / PowerShell | Runs the full local alpha release gate | Python 3, uv, npm, Docker |
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
+| [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, permissions, and self-healing behaviors | Docker |
 | [`fetch_ci_failures.py`](#fetch_ci_failurespy) | Python | Retrieves logs of failed GitHub Action runs to a local markdown file | Python 3, `gh` CLI |
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
 | [`patch-submodule.sh`](#patch-submodulesh) | Bash | Applies localized patches to the FreeCAD MCP submodule | Git |
 | [`setup-wright-profile.sh`](#setup-wright-profilesh) | Bash | Provisions and configures a Hermes profile for native Wright development | `hermes` CLI |
+
+---
+
+### `alpha-release-check.sh` and `alpha-release-check.ps1`
+
+Runs the full local alpha release gate:
+
+1. `git diff --check`
+2. `uv run pytest`
+3. `npm run test --workspace=apps/web`
+4. `npm run build --workspace=apps/web`
+5. `uv run --with mkdocs-material mkdocs build --strict`
+6. `scripts/security-scan.* --include-untracked`
+7. `scripts/docker-smoke-test.sh`
+
+* **Bash usage**:
+  ```bash
+  scripts/alpha-release-check.sh
+  ```
+* **PowerShell usage**:
+  ```powershell
+  scripts/alpha-release-check.ps1
+  ```
 
 ---
 
@@ -81,6 +106,28 @@ secret/token/password assignments. Documented placeholders such as
 
 This is a fast guardrail, not a substitute for a full history scan with a
 dedicated tool such as `gitleaks` or `trufflehog`.
+
+---
+
+### `security-scan.sh` and `security-scan.ps1`
+
+Runs the full local public-alpha secret scanning gate:
+
+1. `python scripts/check-public-alpha-leaks.py`
+2. Gitleaks history scan with `ghcr.io/gitleaks/gitleaks:v8.30.1`
+3. TruffleHog history scan with `ghcr.io/trufflesecurity/trufflehog:3.95.7`
+
+The wrappers use Docker images, so Gitleaks and TruffleHog do not need to be
+installed globally.
+
+* **Bash usage**:
+  ```bash
+  scripts/security-scan.sh --include-untracked
+  ```
+* **PowerShell usage**:
+  ```powershell
+  scripts/security-scan.ps1 -IncludeUntracked
+  ```
 
 ---
 

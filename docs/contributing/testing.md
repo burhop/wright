@@ -78,6 +78,11 @@ uv run --with mkdocs-material mkdocs build --strict
 # Public-alpha leak scan
 python scripts/check-public-alpha-leaks.py --include-untracked
 
+# Dedicated secret scanners via Dockerized Gitleaks and TruffleHog
+scripts/security-scan.sh --include-untracked
+# Windows PowerShell:
+scripts/security-scan.ps1 -IncludeUntracked
+
 # Mocked Playwright UI workflows when browser dependencies are available
 npx playwright test
 
@@ -86,6 +91,19 @@ docker compose -f docker-compose.minimal.yml up -d --build
 curl http://localhost:8080/api/health
 curl http://localhost:8080/api/agent/health
 docker compose -f docker-compose.minimal.yml down
+```
+
+The one-command local alpha release gate is:
+
+```bash
+scripts/alpha-release-check.sh
+make alpha-release-check
+```
+
+On Windows PowerShell:
+
+```powershell
+scripts/alpha-release-check.ps1
 ```
 
 For engineering MCP catalog validation, follow the clean-container workflow in

@@ -177,3 +177,11 @@
   spec artifacts.
 - [X] T080 Add regression tests for prompt archive location.
 - [X] T081 Run final automated gates before manual file testing.
+
+## Phase 22: Dedicated Secret Scanners and Local CI Gate
+
+- [X] T082 Add Gitleaks and TruffleHog security scanning to CI.
+- [X] T083 Add local security scan wrappers.
+- [X] T084 Add Gitleaks configuration for documented placeholders.
+- [X] T085 Add local alpha release check target.
+- [X] T086 Add regression tests for scanner setup.
