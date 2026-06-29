@@ -170,3 +170,10 @@
 - [X] T077 Refresh Wright Hermes plugin plan polish goal with alpha-ready
   community sharing language.
 - [X] T078 Add regression tests for legacy plan alpha language.
+
+## Phase 21: Final Wrap-Up and Manual Test Prep
+
+- [X] T079 Archive original alpha release readiness prompt with the feature
+  spec artifacts.
+- [X] T080 Add regression tests for prompt archive location.
+- [X] T081 Run final automated gates before manual file testing.
