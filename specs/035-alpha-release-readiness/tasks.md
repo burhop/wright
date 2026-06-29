@@ -132,3 +132,11 @@
   Docker appliance and selected-MCP-dependency contract.
 - [X] T062 Update system overview BYO-AI and selected MCP boundaries.
 - [X] T063 Add regression tests for architecture alpha docs.
+
+## Phase 17: Intro Blog Alpha Contract
+
+- [X] T064 Refresh introductory blog alpha/BYO-AI language and remove
+  overconfident guarantee language.
+- [X] T065 Update introductory blog Docker quickstart to the current minimal
+  compose path and LLM environment variables.
+- [X] T066 Add regression tests for introductory blog alpha docs.

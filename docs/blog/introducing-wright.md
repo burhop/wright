@@ -1,99 +1,130 @@
-# Introducing Wright: Your Local-First AI Mechanical Engineer
+# Introducing Wright: A Local-First AI Mechanical Engineering Workbench
 
-Product designers, mechanical engineers, and structural analysts are facing an engineering velocity bottleneck. While software developers enjoy order-of-magnitude productivity increases through generative AI, physical engineering has remained largely untouched by the AI revolution. 
+Product designers, mechanical engineers, and structural analysts are facing an
+engineering velocity bottleneck. Software teams already use AI to speed up
+drafting, review, and test loops; physical engineering needs the same leverage
+without pretending that a model can ignore physics, safety margins, or toolchain
+constraints.
 
-Today, we are excited to introduce **Wright**: an open-source, local-first agent orchestrator designed to bring generative AI velocity to physical engineering. Wright bridges the gap between natural language design intent and mathematically rigorous computational execution, helping engineers design, simulate, and manufacture physical products faster than ever before.
-
----
+Wright is an open-source, local-first agent orchestrator for AI-assisted
+physical engineering. It is public-alpha software and bring-your-own-AI: Wright
+does not bundle an LLM, model weights, hosted provider account, API key, paid
+engineering backend, or MCP-specific host software.
 
 ## The Bottleneck in Physical Engineering
 
-Software development is inherently probabilistic and digital; code can be parsed, tested, and rolled back instantly. In contrast, physical engineering is bound by the laws of physics and demanding safety margins. If a software agent generates code with a minor syntax bug, a linter or test run catches it. If an AI generates a mechanical load bearing bracket with a mathematical error, the physical structure fails.
+Software development is inherently digital; code can be parsed, tested, and
+rolled back quickly. Physical engineering is bound by materials, geometry,
+manufacturing tolerances, and safety-critical failure modes. If an AI generates
+a mechanical load-bearing bracket with a mathematical error, the fix is not just
+a lint pass.
 
-Furthermore, traditional engineering workflows present unique challenges:
-1.  **IP Protection and Data Privacy**: CAD designs and aerospace simulations are highly sensitive corporate IP. Uploading these models to public cloud LLM APIs is often prohibited by enterprise security policies.
-2.  **Air-Gapped Workstations**: Many mechanical engineers work in highly secure, air-gapped facilities or isolated local networks where external API connections are unavailable.
-3.  **Probabilistic Hallucinations**: Standard LLMs are poor at directly compiling solid geometry (STEP/IGES) or computing finite element load vectors. They generate approximate geometry that fails compilation or breaks solver constraints.
+Traditional engineering workflows also carry hard constraints:
 
-Wright was designed from the ground up to solve these three critical problems.
+1. **IP protection and data privacy**: CAD designs and simulations are sensitive
+   corporate or research assets.
+2. **Local and air-gapped workstations**: Many teams work on isolated networks
+   where external API access is limited or unavailable.
+3. **Toolchain reality**: CAD, CAE, CAM, and vendor systems require explicit
+   installation, licensing, validation, and safety controls.
 
----
+Wright is designed to make those constraints visible instead of hiding them.
 
-## How Wright Works: Deterministic Tool Actuation
+## How Wright Works
 
-Instead of expecting a probabilistic LLM to write raw CAD code or run stress calculations directly, Wright positions the AI agent as a high-level **orchestrator of deterministic engineering tools**. 
+Wright positions the AI agent as an orchestrator around deterministic tools. The
+agent manages design intent, parameters, and error interpretation; selected MCP
+servers connect that reasoning loop to engineering software that operators have
+installed and validated for the workflow.
 
-The AI manages the design logic, iterates on parameters, and analyzes failure logs. Meanwhile, standard, mathematically rigorous engineering software handles the execution:
-*   **CAD and Solid Modeling**: The agent interacts with programmatic CAD kernels like **FreeCAD** and **OpenSCAD** to build solid geometry using code.
-*   **FEA and CAE Simulation**: The agent runs structural simulations and computational fluid dynamics (CFD) using open-source solvers like **CalculiX** and **OpenFOAM**.
-*   **CAM and Slicing**: The agent configures slicers (like **PrusaSlicer**) to generate G-code toolpaths for 3D printers and manufacturing equipment.
+- **CAD and solid modeling**: MCP servers can connect to tools such as FreeCAD
+  or OpenSCAD when those host dependencies are installed for the selected
+  workflow.
+- **FEA and CAE simulation**: MCP servers can expose solvers such as CalculiX or
+  OpenFOAM when their setup, platform, and safety boundaries are understood.
+- **CAM and slicing**: MCP servers can wrap slicers and manufacturing tools, but
+  destructive or hardware-bound actions must remain explicitly gated.
 
-By relying on deterministic solvers for the physical calculations, Wright guarantees that the generated artifacts are mathematically sound and compile correctly, while the AI manages the iteration loops.
+This approach does not guarantee a correct design. It gives engineers a local
+orchestration layer where generated artifacts can be inspected, tested, and
+iterated with traceable tool calls.
 
----
+## Architectural Deep Dive
 
-## Architectural Deep-Dive: A Local-First Monorepo
-
-Wright is built as a highly structured, modular monorepo designed to run fully locally, even on completely air-gapped hardware.
+Wright is a modular monorepo built around a FastAPI backend, React frontend,
+Hermes integration, and an MCP tool registry.
 
 ```mermaid
 flowchart TD
     User([User Web Browser]) -->|HTTP / WebSockets| API[FastAPI API Gateway]
-    API -->|Routing| Agent[BaseAgentEngine - Hermes]
+    API -->|Routing| Agent[Agent Adapter - Hermes or another provider]
     API -->|Routing| MCP[McpEngine - Tool Registry]
     Agent -->|Uses| MCP
-    MCP -->|Subprocess| OpenSCAD[OpenSCAD Headless]
-    MCP -->|Simulations| CalculiX[CalculiX FEA]
-    API -->|Database & Vector RAG| Vault[Local SQLite & LanceDB]
+    MCP -->|Selected server| Tools[Selected MCP host dependencies]
+    API -->|Database & files| Vault[SQLite, LanceDB, and local vault]
 ```
 
-### 1. The API Gateway (FastAPI)
-The entry point is a strictly-typed FastAPI server that serves as a thin routing layer. It exposes endpoints for workspace management, chat turns, and tool registry configurations. The API itself contains zero business logic, ensuring strict boundary isolation.
+### API Gateway
 
-### 2. Embedded Databases and Zero-Server Storage
-To run locally without consuming precious GPU/CPU resources on external database servers, Wright uses embedded databases:
-*   **SQLite (WAL Mode)**: Relational state, chat sessions, task trees, and configuration options are saved in a local SQLite file using Write-Ahead Logging for concurrency.
-*   **LanceDB (Apache Arrow)**: All semantic engineering data (standard specs, fastener dimensions) is stored in-process via LanceDB, enabling fast local RAG queries.
-*   **Local File Vault**: Generated physical artifacts (STEP, STL, G-code) are saved directly to the host's filesystem and indexed in SQLite.
+The FastAPI server is a routing layer for workspace management, chat turns,
+setup state, logs, file vault access, and MCP registry operations.
 
-### 3. Tool Registry & Model Context Protocol (MCP)
-Engineering tools are integrated as independent processes using the **Model Context Protocol (MCP)**. This separates the tools from the core orchestration code. Wright can actuate any tool that exposes an MCP server wrapper, making it simple to add custom local or commercial cloud tools.
+### Embedded Storage
 
----
+Wright is local-first. Runtime state is stored in embedded SQLite, semantic data
+can be stored through LanceDB, and generated artifacts live in the local file
+vault.
 
-## Quick Start: Getting Started with Docker
+### Tool Registry and MCP
 
-You can spin up the full Wright stack locally using our pre-configured Docker Compose profile:
+Engineering tools are integrated as independent MCP servers. The public-alpha
+Docker appliance does not preload every possible CAD, CAE, CAM, vendor backend,
+license manager, or GPU driver. Selected MCP servers are validated with the
+clean-container process in `docs/mcp-catalog/mcp-server-testing-process.md`.
+
+## Quick Start
+
+The fastest public-alpha path is the Docker appliance:
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/burhop/wright.git && cd wright
-
-# 2. Configure credentials
+git clone https://github.com/burhop/wright.git
+cd wright
 cp docker/.env.example docker/.env
-# Edit docker/.env and set your API keys
-
-# 3. Build and launch the appliance
-make docker-build && docker compose up
+# Set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL for your provider or local model server.
+docker compose -f docker-compose.minimal.yml up -d --build
 ```
 
-Once started, open `http://localhost:8080` in your browser to access the web console.
+Open:
 
----
+```text
+http://localhost:8080
+```
 
-## Roadmap: What's Next?
+For a local OpenAI-compatible model server running on the host, use a value such
+as:
 
-We are just beginning to scratch the surface of AI-driven physical design. Our upcoming roadmap milestones include:
-*   **Enterprise CAD Connectors**: Standard MCP servers to bridge local agents with commercial CAD tools like SolidWorks and Autodesk Fusion 360.
-*   **Multi-Agent Topology Optimization**: Dedicated agent sub-loops where design agents and analysis agents collaborate autonomously to optimize weight and structural safety.
-*   **Full WebMCP Integration**: Supporting standard browser forms and controls to actuate cloud design interfaces.
+```env
+LLM_API_URL=http://host.docker.internal:8000/v1
+LLM_API_KEY=not-needed
+LLM_API_MODEL=local-model-name
+```
 
----
+For all supported install paths, see
+`docs/getting-started/overview.md`.
 
-## Get Involved!
+## Roadmap
 
-Wright is fully open-source under the MIT license, and we welcome developers, mechanical engineers, and designers to join us in shaping the future of physical engineering.
+Wright is still early. Near-term work focuses on better setup guidance, safer
+MCP validation, WebMCP workflows, local model ergonomics, viewer polish, and
+clearer release gates.
 
-*   Join our **[Discord Server](https://discord.gg/2JsdMRxq)** to chat, ask questions, and showcase your designs.
-*   Visit **[GitHub Discussions](https://github.com/burhop/wright/discussions)** to share RFC ideas and collaborate on architecture.
-*   Check out our **[Contributing Guide](https://github.com/burhop/wright/blob/main/CONTRIBUTING.md)** and look for the `good first issue` label to make your first contribution!
+## Get Involved
+
+Wright is open source under the MIT license. Developers, mechanical engineers,
+MCP porters, and local-AI experimenters are welcome.
+
+- Join the Discord community to chat, ask questions, and share experiments.
+- Visit GitHub Discussions to propose architecture and workflow ideas.
+- Check the
+  [Contributing Guide](https://github.com/burhop/wright/blob/main/CONTRIBUTING.md)
+  and look for issues labeled `good-first-issue`.
