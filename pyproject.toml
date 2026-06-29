@@ -20,6 +20,6 @@ members = [
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
-    "respx>=0.22",
+    "respx>=0.23.1",
     "ruff>=0.4",
 ]
