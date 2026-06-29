@@ -100,7 +100,7 @@ jobs:
 
       - name: Sync Docker Hub Description
         if: ${{ steps.tag.outputs.has_dockerhub == 'true' }}
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
