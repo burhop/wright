@@ -1,9 +1,9 @@
 # =============================================================================
 # Wright Agent Container - Full Stack Production Image
 # =============================================================================
-# Includes: Wright API + Frontend, Hermes Agent, Hermes WebUI.
+# Includes: Wright API + Frontend, Hermes Agent gateway integration.
 # MCP-specific host software is installed during selected MCP validation/use.
-# Managed by supervisord (Wright API on :8000, Hermes WebUI on :8788 internal)
+# Managed by supervisord (Wright API on :8000, Hermes gateway on :8642 internal)
 # =============================================================================
 
 ARG HERMES_BASE_IMAGE=wright-hermes-only:latest

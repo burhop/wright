@@ -9,9 +9,9 @@ By utilizing the open **Model Context Protocol (MCP)**, Wright decouples Large L
 Traditional engineering software runs inside heavy desktop client configurations or fragmented cloud networks, creating significant latency and data governance vulnerabilities. Wright consolidates:
 1.  **Multi-Agent Coordination Layer**: Specialized agent systems routing design plans, execution instructions, and code verification stages.
 2.  **Model Context Protocol Engine**: Unified server executors connecting LLMs to local filesystems, command lines, and binary geometry kernels.
-3.  **Local Geometry compute kernel**: High-performance open-source solvers (like FreeCAD, CalculiX, and OpenSCAD) to execute parameters locally.
+3.  **Deterministic tool layer**: Cataloged MCP servers can connect agents to selected local or hosted engineering tools such as FreeCAD, CalculiX, OpenSCAD, and vendor systems when those dependencies are installed and validated for that workflow.
 
-Coupled with professional workstations, Wright forms a complete, air-gapped engineering appliance.
+Coupled with professional workstations and selected tool installs, Wright can form a local-first engineering appliance while keeping AI providers and MCP host dependencies explicit.
 
 ## Core Workflows
 

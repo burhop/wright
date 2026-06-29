@@ -21,6 +21,28 @@
 
 ---
 
+## Public Alpha Status
+
+Wright is alpha software for developer testing, MCP porting, demos, and selected
+beta feedback. Expect rough edges, incomplete workflows, and changing APIs.
+
+Wright is bring-your-own-AI. The repository and Docker image do not bundle an
+LLM, API key, local model, hosted model, or paid engineering backend. Configure
+`LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL` for an OpenAI-compatible
+endpoint, a local model server, or your hosted provider.
+
+The current public-alpha paths are:
+
+* **Docker appliance**: Wright API, static web UI, Hermes profile/bootstrap, and
+  general validation tooling in one container.
+* **Local development**: run the FastAPI backend and Vite frontend from the
+  monorepo.
+* **Existing Hermes setup**: install the Wright plugin and point it at this repo.
+
+MCP-specific host software such as FreeCAD, OpenSCAD, CalculiX, Blender, vendor
+CAD systems, license managers, or hardware drivers is installed only for the
+selected MCP validation/use case. It is not part of the base Docker contract.
+
 ## Why Wright?
 
 ### The Vision
@@ -61,7 +83,7 @@ Wright is committed to open, vendor-neutral standards that allow the toolbox to 
 * 🚀 **Software-Level Workflow Automation** — Bring rapid prototyping, versioned rollbacks (via local Git), and test-driven loops of modern software development to physical design tasks.
 * 🔒 **Flexible & Secure Deployment** — Run local-first (on on-prem hardware to safeguard IP) or scale using hybrid cloud tools.
 * 🎨 **Global Design Tokens & Themes** — Switch color schemes dynamically between premium Space Slate Dark and neomorphic Light themes at runtime via the `UI_THEME` environment configuration.
-* 🐳 **Appliance-in-a-Box Setup** — Get started instantly with a bundled Docker stack that includes standard open-source tools (FreeCAD, OpenSCAD, CalculiX) pre-configured.
+* 🐳 **Docker Appliance Setup** — Run the Wright API, static web UI, Hermes profile/bootstrap, and general validation tooling in one container. Selected MCP server dependencies are installed and validated per-server instead of being silently bundled.
 
 
 ---
@@ -91,7 +113,7 @@ The application supports two harmonious, highly crafted color schemes:
 * **Space Slate Dark (Default)**: A premium dark mode designed for high contrast and developer comfort under low light.
 * **Neomorphic Light**: A modern light mode with soft shadows and rich color accents for daytime readability.
 
-Both themes are configured as standard CSS variables in [design-tokens.css](file:///home/burhop/repos/wright/apps/web/src/tokens/design-tokens.css) and are applied dynamically at runtime based on the `UI_THEME` environment configuration.
+Both themes are configured as standard CSS variables in [design-tokens.css](apps/web/src/tokens/design-tokens.css) and are applied dynamically at runtime based on the `UI_THEME` environment configuration.
 
 ### 2. Standardized Typography Scale
 To prevent visual layout overflows, card overlaps, and font sizes that are inconsistent or too large, all typography is controlled using a strict type scale:
@@ -109,7 +131,8 @@ This scale guarantees that bounding boxes align perfectly and UI panels maintain
 
 ### Docker (Recommended)
 
-Start the complete local appliance stack with a single command. 
+Start the local alpha appliance with Docker Compose. This path runs Wright and
+Hermes integration services locally, then connects them to your own LLM endpoint.
 
 ```bash
 # 1. Clone the repository
@@ -117,12 +140,17 @@ git clone https://github.com/burhop/wright.git && cd wright
 
 # 2. Configure your local LLM API credentials
 cp docker/.env.example docker/.env
-# Edit docker/.env and set your API keys
+# Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL
 
-# 3. Build and launch the container
-make docker-build && docker compose up
+# 3. Build and launch the minimal appliance on http://localhost:8080
+docker compose -f docker-compose.minimal.yml up -d --build
+
 # Open http://localhost:8080 in your browser
 ```
+
+The default `docker-compose.yml` also starts Jaeger and maps Wright to
+`http://localhost:8000`. See [Docker quickstart](docs/getting-started/quickstart-docker.md)
+for LAN access, local model server, persistent volume, and cleanup examples.
 
 For advanced manual installation (development outside Docker using `uv`), see [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -172,8 +200,8 @@ Refer to [docs/virtual_engineer_architecture.pdf](docs/virtual_engineer_architec
 
 To assist with local testing, container operations, and environment configuration, the project provides several helper scripts:
 
-*   **Utility & Database Scripts**: Located in the [`scripts/`](file:///d:/repos/wright/scripts) directory. Includes tools for database resets, Docker volume backups/restores, applying submodule patches, and downloading GitHub Actions failure logs. See the [Scripts README](file:///d:/repos/wright/scripts/README.md) for a complete list of commands.
-*   **Windows & Hermes Testing**: Located in the [`windows-sandbox/`](file:///d:/repos/wright/windows-sandbox) directory. Provides fully automated scripts to provision an isolated Windows 11 Hyper-V VM, install Hermes Desktop, load the Wright plugin, and run local automated tests. See the [Windows Testing Guide](file:///d:/repos/wright/windows-sandbox/README.md) for setup instructions.
+*   **Utility & Database Scripts**: Located in the [`scripts/`](scripts) directory. Includes tools for database resets, Docker volume backups/restores, applying submodule patches, and downloading GitHub Actions failure logs. See the [Scripts README](scripts/README.md) for a complete list of commands.
+*   **Windows & Hermes Testing**: Located in the [`windows-sandbox/`](windows-sandbox) directory. Provides fully automated scripts to provision an isolated Windows 11 Hyper-V VM, install Hermes Desktop, load the Wright plugin, and run local automated tests. See the [Windows Testing Guide](windows-sandbox/README.md) for setup instructions.
 
 ---
 

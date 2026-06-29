@@ -9,7 +9,7 @@ Before opening a new issue or asking a question, please review the resources bel
 ## 1. Documentation & Self-Help
 
 For guides, architectural diagrams, and technical details:
-* Browse the local `/docs` directory in this repository (e.g., [docs/community-readiness-roadmap.md](file:///home/burhop/repos/wright/docs/community-readiness-roadmap.md) or [docs/technical_analysis.md](file:///home/burhop/repos/wright/docs/technical_analysis.md)).
+* Browse the local `/docs` directory in this repository (e.g., [docs/community-readiness-roadmap.md](docs/community-readiness-roadmap.md) or [docs/technical_analysis.md](docs/technical_analysis.md)).
 * Check the `/specs` directory for detailed specifications of implemented features.
 
 ---

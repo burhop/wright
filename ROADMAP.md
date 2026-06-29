@@ -4,6 +4,48 @@ This document outlines the strategic vision and upcoming feature development for
 
 Rather than strict chronological phases, we organize our roadmap into **Development Tracks**. These areas can be developed in parallel depending on contributor interests, community needs, and project priorities.
 
+## Public Alpha Priorities
+
+These items are the near-term backlog for making Wright useful to MCP porters,
+demo users, and selected beta testers while preserving its alpha status.
+
+- [ ] **MCP Catalog Improvements:** Continue validating statused engineering MCP
+  entries, add setup recipes, and convert failed validations into durable
+  follow-up records.
+- [ ] **Web MCP Support:** Prototype browser-native WebMCP flows for web-based
+  engineering tools while keeping credential and origin boundaries explicit.
+- [ ] **Process Flow Support:** Add workflow/process views for multi-step
+  engineering runs such as spec -> CAD -> mesh -> simulation -> review.
+- [ ] **OpenClaw Support:** Complete the OpenClaw agent adapter path and add
+  parity tests with Hermes-backed workflows.
+- [ ] **Hermes Desktop Integration:** Deepen panel, setup, and status integration
+  with Hermes Desktop while keeping browser-based Wright usable on its own.
+- [ ] **Local LLM Setup Flows:** Improve setup/status screens for OpenAI-
+  compatible local servers, hosted providers, degraded health states, and
+  troubleshooting.
+- [ ] **Security and Workspace Isolation:** Harden workspace boundaries, secret
+  handling, local auth, and MCP execution safety before broader public use.
+- [ ] **CAD/CAE/CAM Artifact Viewers:** Add first-class STEP, STL, G-code, mesh,
+  simulation result, and validation viewers.
+- [ ] **MCP Apps / Embedded Panels:** Explore parameter panels and embedded UI
+  surfaces for safe, inspectable engineering tool control.
+
+## Needed MCP Server Backlog
+
+Candidates remain disabled or limited until their source, dependency burden,
+platform support, and safety posture are validated.
+
+| Priority | Area | Candidate | Source | Status | Dependencies | Platforms | Safety notes | Next action |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+| P0 | CAD/geometry | OpenSCAD linter/server | `docs/mcp-catalog/tools-list.md` | Follow-up exists | OpenSCAD for full backend probe | Linux first | Safe read/export probes only | Finish clean-container recipe |
+| P0 | CAD/geometry | FreeCAD engineering MCPs | `docs/mcp-catalog/tools-list.md` | Follow-ups exist | FreeCAD host install/AppImage | Linux/Windows varies | Avoid destructive filesystem actions | Validate dependency-missing diagnostics |
+| P1 | FEA/CFD | CalculiX/OpenFOAM adapters | To source | Needed | Solver installs, meshes, examples | Linux first | Non-destructive sample simulations only | Identify maintained MCP servers |
+| P1 | CAM/slicing | PrusaSlicer/CuraEngine adapters | To source | Needed | CLI slicer and sample STL | Linux/Windows/macOS varies | No machine-control output execution | Find maintained CLI-safe MCPs |
+| P1 | Electronics/EDA | KiCad MCP | `docs/mcp-catalog/tools-list.md` | Follow-up exists | KiCad install | Linux/Windows/macOS varies | Read-only project inspection first | Retest with clean dependency recipe |
+| P2 | PLM/PDM/docs | Document/PDM connectors | To source | Needed | Provider APIs, credentials | Cloud/enterprise varies | Credential-bound, disabled by default | Inventory open-source candidates |
+| P2 | Vendor/proprietary | SolidWorks/Fusion/Creo bridges | `docs/mcp-catalog/tools-list.md` | Follow-ups exist | Licensed desktop software/SDKs | Mostly Windows/macOS | License-bound and host-dependent | Keep blocked until maintainer can test |
+| P2 | Browser/Web MCP | Web-based CAD and calculators | To source | Needed | Browser APIs, site credentials | Browser-dependent | Origin and credential isolation required | Prototype with non-sensitive demo tool |
+
 ## 🧠 Agent Intelligence & Orchestration
 *Focuses on the core LLM capabilities, multi-agent frameworks, and specialized personas.*
 

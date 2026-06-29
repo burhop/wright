@@ -2,6 +2,17 @@
 
 > A complete guide to the three ways Wright can be deployed, their architectures, dependencies, and upgrade paths.
 
+> [!IMPORTANT]
+> Public-alpha Docker images include the Wright API, web UI, Hermes integration,
+> and general validation tooling. They do not bundle an LLM, API key, model
+> weights, paid engineering backend, or MCP-specific host software such as
+> FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems, license managers, or
+> hardware drivers. Older diagrams in this document may describe planned or
+> development-only dependency layouts; use
+> [Quick Start: Docker Appliance](getting-started/quickstart-docker.md) and
+> [MCP Server Testing Process](mcp-catalog/mcp-server-testing-process.md) as the
+> current public-alpha contract.
+
 ---
 
 ## Overview

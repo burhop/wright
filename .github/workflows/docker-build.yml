@@ -158,7 +158,7 @@ jobs:
           for i in $(seq 1 5); do
             PROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)
             echo "$PROCS"
-            if echo "$PROCS" | grep -q "wright-api.*RUNNING" && echo "$PROCS" | grep -q "hermes-webui.*RUNNING"; then
+            if echo "$PROCS" | grep -q "wright-api.*RUNNING" && echo "$PROCS" | grep -q "hermes-gateway.*RUNNING"; then
               echo "✅ All processes running"
               break
             fi

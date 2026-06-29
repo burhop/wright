@@ -31,3 +31,9 @@ jobs:
 
       - name: Type Check with TSC
         run: npx tsc --noEmit -p apps/web/tsconfig.app.json
+
+      - name: Run Vitest
+        run: npm run test --workspace=apps/web
+
+      - name: Build frontend
+        run: npm run build --workspace=apps/web

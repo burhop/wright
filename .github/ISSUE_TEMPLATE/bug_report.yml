@@ -1,88 +1,161 @@
 name: Bug Report
-description: Report a bug or unexpected behavior in the Wright toolbox
+description: Report a reproducible Wright alpha bug or unexpected behavior
 title: "[BUG]: "
-labels: ["bug", "needs-triage"]
+labels: ["bug", "needs-triage", "alpha"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for reporting a bug! Please fill out the form below with as much detail as possible to help us reproduce and resolve the issue.
-  - type: textarea
-    id: description
-    attributes:
-      label: Bug Description
-      description: A clear and concise description of what the bug is.
-      placeholder: What went wrong?
-    validations:
-      required: true
-  - type: textarea
-    id: reproduction
-    attributes:
-      label: Steps to Reproduce
-      description: Explain how we can reproduce this issue.
-      placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. Scroll down to '...'
-        4. See error
-    validations:
-      required: true
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected Behavior
-      description: A clear and concise description of what you expected to happen.
-      placeholder: What should have happened?
-    validations:
-      required: true
-  - type: textarea
-    id: actual
-    attributes:
-      label: Actual Behavior
-      description: A clear and concise description of what actually happened.
-      placeholder: What actually happened?
-    validations:
-      required: true
+        Thanks for testing Wright. Wright is alpha software, so deployment context is often the fastest path to a fix.
+
   - type: dropdown
-    id: environment
+    id: deployment-path
     attributes:
-      label: Environment Details
-      description: Where are you running Wright?
+      label: Deployment path
+      description: How are you running Wright?
       options:
-        - Docker deployment
-        - Local development
-        - CI/CD
+        - Docker appliance
+        - Local development checkout
+        - Wright plugin in an existing Hermes setup
+        - Hermes Desktop integration
+        - CI or automated test
+        - Other
     validations:
       required: true
+
   - type: input
-    id: version
+    id: image-tag-version
     attributes:
-      label: Wright Version / Commit SHA
-      description: The version of Wright or specific Git commit SHA you are using.
-      placeholder: e.g. v1.0.0 or 37f2da2
+      label: Image tag or package version
+      description: Docker image tag, release tag, package version, or branch name.
+      placeholder: "e.g. ghcr.io/burhop/wright:0.1.0-alpha.1, Docker Hub tag, or 035-alpha-release-readiness"
+    validations:
+      required: false
+
+  - type: input
+    id: commit-sha
+    attributes:
+      label: Commit SHA
+      description: The exact commit if you built from source.
+      placeholder: "e.g. b753c487d2da2e8f78268465d64a54ff1ecc31ba"
     validations:
       required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Host operating system
+      description: Include version and architecture.
+      placeholder: "e.g. Ubuntu 24.04 x86_64, Windows 11 24H2, macOS 15 arm64"
+    validations:
+      required: true
+
   - type: input
     id: docker-version
     attributes:
-      label: Docker Version (if applicable)
-      description: The version of Docker and Docker Compose you are using.
-      placeholder: e.g. Docker v26.1.1, Compose v2.27.0
+      label: Docker version
+      description: Include Docker Engine/Desktop and Compose versions if Docker is involved.
+      placeholder: "e.g. Docker 27.5.1, Compose v2.32.4"
     validations:
       required: false
+
   - type: input
-    id: os
+    id: browser
     attributes:
-      label: Operating System
-      description: The host operating system you are running.
-      placeholder: e.g. Ubuntu 22.04 LTS, macOS Sonoma, Windows 11
+      label: Browser
+      description: Browser name and version for web UI bugs.
+      placeholder: "e.g. Chrome 128, Edge 128, Firefox 129"
+    validations:
+      required: false
+
+  - type: input
+    id: llm-provider-model
+    attributes:
+      label: LLM provider and model
+      description: Wright is BYO-AI; include provider style and model id without secrets.
+      placeholder: "e.g. local vLLM / Qwen3-32B, OpenAI-compatible hosted API / gpt-4.1-mini"
+    validations:
+      required: false
+
+  - type: input
+    id: hermes-version
+    attributes:
+      label: Hermes version
+      description: Include Hermes Agent/Desktop version if Hermes is involved.
+      placeholder: "e.g. hermes-agent 0.15.2, Hermes Desktop version/build"
+    validations:
+      required: false
+
+  - type: input
+    id: mcp-server
+    attributes:
+      label: MCP server or catalog entry
+      description: If the issue involves MCP install/status/validation, name the entry.
+      placeholder: "e.g. openscad-linter-trikos529"
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: What went wrong?
+      placeholder: "Describe the failure, including the exact UI state or command output."
     validations:
       required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include commands, URLs, clicked UI controls, and selected MCP entries.
+      placeholder: |
+        1. Run `docker compose -f docker-compose.minimal.yml up -d --build`
+        2. Open `http://localhost:8080`
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect Wright to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+
   - type: textarea
     id: logs
     attributes:
-      label: Relevant Logs or Screenshots
-      description: Paste any error logs, terminal output, or screenshots here.
-      placeholder: Error log stack trace...
+      label: Logs
+      description: Paste relevant terminal, browser console, Docker, API, Hermes, or MCP validation logs. Remove secrets first.
+      placeholder: |
+        docker compose logs --tail=200
+        curl http://localhost:8080/api/health
+        curl http://localhost:8080/api/agent/health
     validations:
       required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or screen recordings
+      description: Attach screenshots for UI, setup, status, registry, file vault, or layout bugs. Remove sensitive content first.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed API keys, tokens, private hostnames, proprietary files, and sensitive screenshots from this report.
+          required: true
