@@ -117,3 +117,11 @@
 - [X] T056 Update deployment run, port, and upgrade examples to current compose
   paths and GHCR image names.
 - [X] T057 Add regression tests for deployment configuration docs.
+
+## Phase 15: Community Feature Brief Truth Check
+
+- [X] T058 Refresh release-engineering community feature brief with alpha
+  prerelease, GHCR default, optional Docker Hub, and stable-only latest policy.
+- [X] T059 Refresh Docker distribution community feature brief with current
+  registry, compose, port, MCP dependency, security, and architecture guidance.
+- [X] T060 Add regression tests for community feature briefs.
