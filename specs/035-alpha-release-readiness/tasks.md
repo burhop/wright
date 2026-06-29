@@ -83,3 +83,14 @@
 - [X] T040 Generate Docker Hub image tags only when Docker Hub credentials are configured.
 - [X] T041 Document GHCR as the default release registry path and Docker Hub as optional.
 - [X] T042 Add tests for optional Docker Hub release behavior.
+
+## Phase 11: Concrete Install Path Documentation
+
+- [X] T043 Replace local quickstart with PC-local alpha setup that uses current
+  `uv`, `uvicorn`, npm workspace, LLM, health-check, and verification commands.
+- [X] T044 Add GB10/DGX workstation install path with host model-server,
+  GPU-passthrough, architecture, and MCP validation boundaries.
+- [X] T045 Add existing Hermes plugin install path with Hermes API server,
+  plugin install, LLM status, and `/wright` command guidance.
+- [X] T046 Publish install paths in MkDocs nav and overview.
+- [X] T047 Add regression tests for getting-started install paths.

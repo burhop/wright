@@ -46,8 +46,10 @@ nav:
   - Getting Started:
       - Overview: getting-started/overview.md
       - Prerequisites: getting-started/prerequisites.md
-      - Quick Start (Docker): getting-started/quickstart-docker.md
-      - Quick Start (Local): getting-started/quickstart-local.md
+      - Docker Appliance: getting-started/quickstart-docker.md
+      - PC Local Setup: getting-started/quickstart-local.md
+      - GB10 and DGX Workstations: getting-started/workstation-gb10-dgx.md
+      - Existing Hermes Plugin: getting-started/hermes-plugin.md
   - User Guide:
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md

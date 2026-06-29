@@ -4,6 +4,19 @@ Wright is a modular agent orchestration platform built to enable autonomous, loc
 
 By utilizing the open **Model Context Protocol (MCP)**, Wright decouples Large Language Model reasoning from system-specific engineering packages, bringing agentic capabilities to standard computational software.
 
+## Choose Your Alpha Path
+
+Wright is alpha software and bring-your-own-AI. Pick the path that matches what
+you already have, then add model providers and selected MCP host dependencies
+explicitly.
+
+| Path | Best for | Start here |
+| --- | --- | --- |
+| Docker appliance | Fastest public-alpha trial, demos, MCP porting from a clean container | [Quick Start: Docker Appliance](quickstart-docker.md) |
+| PC local setup | Editing the API, UI, plugin, docs, or tests on a normal development PC | [Quick Start: PC Local Setup](quickstart-local.md) |
+| GB10/DGX workstation | Running Wright beside a local model server or GPU-backed engineering tools | [Quick Start: GB10 and DGX Workstations](workstation-gb10-dgx.md) |
+| Existing Hermes plugin | Hermes Desktop or CLI users who want `/wright` commands first | [Quick Start: Existing Hermes Plugin](hermes-plugin.md) |
+
 ## The Engineering AI-in-a-Box Concept
 
 Traditional engineering software runs inside heavy desktop client configurations or fragmented cloud networks, creating significant latency and data governance vulnerabilities. Wright consolidates:
