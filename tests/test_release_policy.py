@@ -11,6 +11,7 @@ def read_text(relative_path: str) -> str:
 def test_release_workflow_marks_alpha_beta_rc_as_prereleases() -> None:
     workflow = read_text(".github/workflows/release.yml")
 
+    assert "packages: write" in workflow
     assert "Classify Release Tag" in workflow
     assert "is_prerelease=$IS_PRERELEASE" in workflow
     assert "-(alpha|beta|rc)" in workflow
@@ -20,10 +21,15 @@ def test_release_workflow_marks_alpha_beta_rc_as_prereleases() -> None:
 def test_release_workflow_does_not_push_latest_for_prereleases() -> None:
     workflow = read_text(".github/workflows/release.yml")
 
+    assert "Log in to GHCR" in workflow
+    assert "registry: ghcr.io" in workflow
+    assert "password: ${{ secrets.GITHUB_TOKEN }}" in workflow
     assert "docker_tags<<EOF" in workflow
     assert "wright-agent:${TAG_NAME}" in workflow
+    assert "ghcr.io/${GHCR_OWNER_LC}/wright-agent:${TAG_NAME}" in workflow
     assert 'if [[ "$IS_PRERELEASE" != "true" ]]; then' in workflow
     assert "wright-agent:latest" in workflow
+    assert "ghcr.io/${GHCR_OWNER_LC}/wright-agent:latest" in workflow
     assert "tags: ${{ steps.tag.outputs.docker_tags }}" in workflow
 
 
@@ -37,6 +43,8 @@ def test_versioning_documents_alpha_tag_and_latest_policy() -> None:
         "v0.1.0-rc.1",
         "Prerelease tags containing `-alpha`, `-beta`, or `-rc` do not update `latest`.",
         "marked as GitHub prereleases",
+        "pushed to GHCR and Docker Hub",
+        "ghcr.io/burhop/wright-agent:<tag>",
         "bring-your-own-AI",
         "Docker smoke results",
         "skipped MCP validation",

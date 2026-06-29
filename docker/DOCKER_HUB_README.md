@@ -12,6 +12,17 @@ The base image also does not bundle MCP-specific host software such as FreeCAD,
 OpenSCAD, CalculiX, Blender, vendor CAD systems, license managers, or hardware
 drivers. Install and validate those only for the selected MCP server.
 
+## Image Names
+
+Public alpha images are intended to be published with matching immutable tags on
+both registries:
+
+- `ghcr.io/burhop/wright-agent:<tag>`
+- `<dockerhub-username>/wright-agent:<tag>`
+
+Stable tags may also move `latest`. Alpha, beta, and release-candidate tags do
+not move `latest`.
+
 ## Quick Start
 
 From a source checkout:

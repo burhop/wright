@@ -36,6 +36,8 @@ def test_public_launch_checklist_covers_release_blockers() -> None:
         "Docker appliance smoke test",
         "GHCR",
         "Docker Hub",
+        "packages: write",
+        "Docker Hub credentials",
         "linux/amd64",
         "linux/arm64",
         "bring-your-own-AI",

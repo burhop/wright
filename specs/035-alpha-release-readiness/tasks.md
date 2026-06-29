@@ -69,3 +69,10 @@
 - [X] T032 Ensure issue template labels exist in the manifest.
 - [X] T033 Update public launch checklist to reference the label manifest.
 - [X] T034 Add tests for required labels and template-label consistency.
+
+## Phase 9: Docker Registry Publication Policy
+
+- [X] T035 Add GHCR login and image tags to the release workflow.
+- [X] T036 Preserve stable-only `latest` behavior across Docker Hub and GHCR.
+- [X] T037 Document GHCR/Docker Hub image names and release prerequisites.
+- [X] T038 Add tests for registry tags, permissions, and image-name docs.

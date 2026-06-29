@@ -44,6 +44,8 @@ history scan.
 ## 3. Docker and Release Metadata
 
 - [ ] Confirm image names and registries: GHCR and/or Docker Hub.
+- [ ] Confirm the release workflow has `packages: write` permission for GHCR
+  and Docker Hub credentials are configured if Docker Hub publishing is enabled.
 - [ ] Confirm tag policy for alpha images, immutable version tags, SHA tags, and
   any `latest` behavior.
 - [ ] Confirm linux/amd64 and linux/arm64 support claims match actual builds and

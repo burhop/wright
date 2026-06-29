@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
   release:
@@ -36,13 +37,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Classify Release Tag
         id: tag
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          GHCR_OWNER: ${{ github.repository_owner }}
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
           IS_PRERELEASE=false
+          GHCR_OWNER_LC="$(echo "$GHCR_OWNER" | tr '[:upper:]' '[:lower:]')"
 
           if [[ "$TAG_NAME" =~ -(alpha|beta|rc)(\.|[0-9]|$) ]]; then
             IS_PRERELEASE=true
@@ -53,8 +63,10 @@ jobs:
             echo "is_prerelease=$IS_PRERELEASE"
             echo "docker_tags<<EOF"
             echo "${DOCKERHUB_USERNAME}/wright-agent:${TAG_NAME}"
+            echo "ghcr.io/${GHCR_OWNER_LC}/wright-agent:${TAG_NAME}"
             if [[ "$IS_PRERELEASE" != "true" ]]; then
               echo "${DOCKERHUB_USERNAME}/wright-agent:latest"
+              echo "ghcr.io/${GHCR_OWNER_LC}/wright-agent:latest"
             fi
             echo "EOF"
           } >> "$GITHUB_OUTPUT"

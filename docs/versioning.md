@@ -26,7 +26,8 @@ example:
 To ensure absolute consistency, the version version source of truth is declared in:
 - **Python Manifest**: The `version` field in the root `pyproject.toml` file.
 
-All Git release tags and Docker Hub container registry tags must stay in sync with this version number.
+All Git release tags, GHCR image tags, and Docker Hub container registry tags
+must stay in sync with this version number.
 
 ---
 
@@ -37,8 +38,13 @@ Wright automates package builds and image publication:
 1. **Tag Push**: Pushing a tag matching `v*` (e.g. `v0.1.0` or `v0.1.0-alpha.1`) triggers the Automated Release workflow.
 2. **Build and Tag**: The workflow builds the container image and tags it with the exact version tag.
 3. **Latest Policy**: Stable tags also update `latest`. Prerelease tags containing `-alpha`, `-beta`, or `-rc` do not update `latest`.
-4. **Publishing**: The tagged container is pushed to Docker Hub, and a GitHub Release is published containing generated notes. Prerelease tags are marked as GitHub prereleases.
+4. **Publishing**: The tagged container is pushed to GHCR and Docker Hub, and a GitHub Release is published containing generated notes. Prerelease tags are marked as GitHub prereleases.
 
 Alpha releases must continue to state that Wright is alpha and bring-your-own-AI.
 They should include known manual gates, untested architectures, Docker smoke
 results, and any skipped MCP validation.
+
+Current public image names:
+
+- `ghcr.io/burhop/wright-agent:<tag>`
+- `<dockerhub-username>/wright-agent:<tag>`
