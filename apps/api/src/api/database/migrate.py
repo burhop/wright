@@ -1350,7 +1350,7 @@ CATALOG_METADATA = {
         "host_software_required": ["KiCad", "Python", "uv"],
         "platform_support": platform_support({
             "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation"},
-            "linux_x64": {"status": "partial", "tested": True, "notes": "clean Intel Ubuntu validation initialized MCP and project discovery worked, but 11 of 16 tools expose required `ctx` arguments and cannot be called by a normal MCP client"},
+            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation initialized MCP and project discovery worked, but 11 of 16 tools expose required `ctx` arguments and cannot be called by a normal MCP client"},
             "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; blocked by MCP schema issue before ARM64/backend validation"},
             "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation"},
             "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation"},
