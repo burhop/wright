@@ -40,6 +40,8 @@ def test_public_launch_checklist_covers_release_blockers() -> None:
         "Docker Hub credentials",
         "linux/amd64",
         "linux/arm64",
+        "docs/alpha-release-notes-template.md",
+        "SBOM/provenance status",
         "bring-your-own-AI",
         "MCP-specific host software",
         "marked prerelease",

@@ -94,3 +94,11 @@
   plugin install, LLM status, and `/wright` command guidance.
 - [X] T046 Publish install paths in MkDocs nav and overview.
 - [X] T047 Add regression tests for getting-started install paths.
+
+## Phase 12: Alpha Release Notes Discipline
+
+- [X] T048 Add alpha release notes template with image, gate, architecture,
+  SBOM/provenance, and skipped MCP validation status.
+- [X] T049 Link the template from public launch checklist and versioning policy.
+- [X] T050 Publish the template in MkDocs nav.
+- [X] T051 Add regression tests for alpha release notes requirements.

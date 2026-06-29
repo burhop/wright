@@ -42,7 +42,8 @@ Wright automates package builds and image publication:
 
 Alpha releases must continue to state that Wright is alpha and bring-your-own-AI.
 They should include known manual gates, untested architectures, Docker smoke
-results, and any skipped MCP validation.
+results, SBOM/provenance status, and any skipped MCP validation. Use
+`docs/alpha-release-notes-template.md` before publishing a prerelease.
 
 Current public image names:
 

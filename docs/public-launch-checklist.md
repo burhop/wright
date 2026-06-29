@@ -39,7 +39,8 @@ history scan.
 - [ ] Docker appliance smoke test passes for the public image candidate.
 - [ ] Clean-container MCP validation was run only for selected MCP entries,
   following `docs/mcp-catalog/mcp-server-testing-process.md`.
-- [ ] Known skipped or manual gates are written in release notes.
+- [ ] Known skipped or manual gates are written in release notes using
+  `docs/alpha-release-notes-template.md`.
 
 ## 3. Docker and Release Metadata
 
@@ -53,7 +54,8 @@ history scan.
   smoke tests.
 - [ ] Confirm DGX Spark, GB10, NVIDIA Container Toolkit, CUDA, and `--gpus all`
   notes are documented as assumptions unless tested.
-- [ ] Confirm SBOM/provenance status is documented or explicitly deferred.
+- [ ] Confirm SBOM/provenance status is documented in release notes or
+  explicitly deferred using `docs/alpha-release-notes-template.md`.
 - [ ] Confirm Docker Hub/GHCR README says Wright is alpha and bring-your-own-AI.
 
 ## 4. GitHub Repository Settings
@@ -83,7 +85,7 @@ history scan.
 
 ## 6. Launch and Discovery
 
-- [ ] Draft the alpha release notes.
+- [ ] Draft the alpha release notes from `docs/alpha-release-notes-template.md`.
 - [ ] Confirm GitHub release is marked prerelease for alpha tags.
 - [ ] Prepare Docker Hub/GHCR package pages.
 - [ ] Prepare but do not submit external listings without maintainer approval:
