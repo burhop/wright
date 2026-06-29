@@ -109,3 +109,11 @@
   docs, leak-scan, Docker smoke, release, release-drafter, and Windows gates.
 - [X] T053 Document GHCR default, optional Docker Hub, and prerelease latest policy.
 - [X] T054 Add regression tests for CI/CD workflow docs.
+
+## Phase 14: Deployment Configuration Truth Check
+
+- [X] T055 Align deployment configuration Docker appliance section with the
+  public-alpha BYO-AI and selected-MCP-dependency contract.
+- [X] T056 Update deployment run, port, and upgrade examples to current compose
+  paths and GHCR image names.
+- [X] T057 Add regression tests for deployment configuration docs.

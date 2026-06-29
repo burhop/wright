@@ -177,7 +177,15 @@ open http://127.0.0.1:5173/              # Frontend UI
 
 ## 2. Docker Appliance (Simple Users)
 
-For users who don't have Hermes or Wright installed, the Docker image bundles **everything** into a single container. Users just `docker run` and point it at their LLM endpoint.
+For users who do not have Hermes or Wright installed, the Docker appliance is
+the quickest public-alpha path for the Wright API, web UI, Hermes integration,
+and MCP catalog. The image does not bundle an LLM, model weights, paid
+engineering backend, or MCP-specific host software. Users provide an
+OpenAI-compatible endpoint and install selected MCP host dependencies only for
+the server they are validating.
+
+Selected MCP host software is installed per selected MCP validation only; it is
+not part of the base Docker appliance.
 
 > [!NOTE]
 > **No Vite at runtime.** The frontend is pre-built during the Docker image build (Stage 1) using `npm run build`. At runtime, FastAPI serves the resulting static files directly via its `StaticFiles` mount. There is no Node.js or Vite process running inside the container.
@@ -200,9 +208,8 @@ graph TB
             GW2 --> PLUG2
         end
 
-        subgraph "CAD Runtimes"
-            OS2["OpenSCAD + Xvfb"]
-            FC2["FreeCAD 1.0.0 AppImage"]
+        subgraph "Selected MCP Host Software"
+            MCPHOST["Installed per selected<br/>MCP validation only"]
         end
 
         SUPER --> API2
@@ -235,13 +242,11 @@ The image is built in two stages from
 | **Python** | Python (deadsnakes PPA) | 3.13 |
 | **Node** | Node.js (nodesource) | 22.x |
 | **Package Manager** | uv (Astral) | latest |
-| **Conda** | micromamba | latest |
-| **CAD** | OpenSCAD | system package |
-| **CAD** | FreeCAD AppImage | 1.0.0 |
 | **AI Agent** | hermes-agent (PyPI) | 0.15.2 |
 | **Plugin** | hermes-plugin-wright | 1.0.0 (baked in) |
 | **Process Mgr** | supervisord | system package |
 | **Frontend** | Pre-built static assets | (built in Stage 1, served by FastAPI) |
+| **MCP host dependencies** | Selected-server installs | Not bundled in the base image |
 
 ### Build Process
 
@@ -256,13 +261,11 @@ graph LR
 
     subgraph "Stage 2: Runtime"
         S2["ubuntu:26.04"]
-        S2 --> SYS["apt: supervisor,<br/>openscad, xvfb, ..."]
+        S2 --> SYS["apt: supervisor,<br/>runtime basics"]
         SYS --> PY["Python 3.13"]
         PY --> NODE["Node.js 22"]
         NODE --> UV["uv (from ghcr)"]
-        UV --> MAMBA["micromamba"]
-        MAMBA --> FC["FreeCAD 1.0.0<br/>AppImage extract"]
-        FC --> HERMES_INSTALL["uv tool install<br/>hermes-agent==0.15.2<br/>--with hermes-plugin-wright"]
+        UV --> HERMES_INSTALL["uv tool install<br/>hermes-agent==0.15.2<br/>--with hermes-plugin-wright"]
         HERMES_INSTALL --> WSYNC["uv sync<br/>(wright workspace)"]
         WSYNC --> COPY_DIST["COPY dist/<br/>(from Stage 1)"]
     end
@@ -301,7 +304,7 @@ On first container start, the
 [`docker/entrypoint.sh`](https://github.com/burhop/wright/blob/main/docker/entrypoint.sh)
 runs a bootstrap:
 
-1. **Validate** `LLM_API_URL` environment variable
+1. **Read** `LLM_API_URL`; warn and continue if it is missing
 2. **Export** the container manifest (`/container-manifest.md`)
 3. **Create** backup directories
 4. **Bootstrap Hermes** (first-run only):
@@ -314,34 +317,34 @@ runs a bootstrap:
 ### Running the Docker Appliance
 
 ```bash
-# Build
-docker build -t wright-appliance:latest -f docker/Dockerfile .
+# Recommended first run
+docker compose -f docker-compose.minimal.yml up -d --build
 
-# Run (minimal)
-docker run -d \
-  -p 8000:8000 \
-  -e LLM_API_URL=http://your-llm-host:8000/v1 \
-  --name wright \
-  wright-appliance:latest
-
-# Run (with persistent storage + API key)
-docker run -d \
-  -p 8000:8000 \
-  -e LLM_API_URL=http://your-llm-host:8000/v1 \
-  -e LLM_API_KEY=your-key \
-  -e LLM_API_MODEL=your-model \
-  -v wright-home:/home/agent \
-  -v wright-logs:/var/log \
-  --name wright \
-  wright-appliance:latest
+# Full local stack with Jaeger
+docker compose up -d --build
 ```
+
+Open the minimal appliance at `http://localhost:8080`. The full local stack
+uses `http://localhost:8000`.
+
+For a host model server, set:
+
+```env
+LLM_API_URL=http://host.docker.internal:8000/v1
+LLM_API_KEY=not-needed
+LLM_API_MODEL=local-model-name
+```
+
+On Linux, add a local compose override with
+`host.docker.internal:host-gateway` when Docker does not provide that name.
 
 ### Exposed Ports
 
 | Port | Service | Accessible? |
 |:---|:---|:---|
-| **8000** | Wright API + Frontend | ✅ Exposed (EXPOSE 8000) |
-| 8642 | Hermes Gateway API | 🔒 Internal only |
+| **8080** | Minimal compose host port for Wright API + frontend | Localhost only by default |
+| **8000** | Full compose host port and container API + frontend port | Localhost only by default |
+| 8642 | Hermes Gateway API | Internal only |
 
 ### Filesystem Persistence
 
@@ -552,9 +555,9 @@ This produces `apps/web/dist-desktop/` containing `index.html` with relative ass
 | **Node.js** | 22.x | 22.x | User's existing | Managed by Electron |
 | **Frontend** | Vite dev server (`:5173`, HMR) | Pre-built static → **FastAPI serves** | `npm run build` → **FastAPI serves** | Embedded panel (`file://` or dev server) |
 | **Process manager** | systemd + manual | supervisord | Manual | Managed by Electron/Host |
-| **OpenSCAD** | System install | Bundled in image | User installs separately | User installs separately |
-| **FreeCAD** | AppImage on host | AppImage in image | User installs separately | User installs separately |
-| **CAD tools included?** | ✅ Pre-installed | ✅ Bundled | ❌ Install separately | ❌ Install separately |
+| **OpenSCAD** | Selected-server host install | Selected-server install only | User installs separately | User installs separately |
+| **FreeCAD** | Selected-server host install | Selected-server install only | User installs separately | User installs separately |
+| **CAD tools included?** | No, selected MCP dependencies are explicit | No, selected MCP dependencies are explicit | No | No |
 | **Hot reload?** | ✅ Yes | ❌ No | ❌ No | Optional (via dev server link) |
 | **Wright API port** | 8000 | 8000 | 8000 | 8000 |
 | **Hermes gateway port** | 8642 | 8642 (internal) | User's config | User's config / Internal |
@@ -590,19 +593,13 @@ systemctl --user restart hermes-gateway-wright
 # 1. Pull or rebuild the image
 docker build -t wright-appliance:latest -f docker/Dockerfile .
 # — or —
-docker pull ghcr.io/burhop/wright:latest
+docker pull ghcr.io/burhop/wright-agent:<tag>
 
-# 2. Stop and remove old container (data persists in volumes)
-docker stop wright && docker rm wright
+# 2. Stop the minimal compose stack (data persists in volumes)
+docker compose -f docker-compose.minimal.yml down
 
-# 3. Start new container with same volumes
-docker run -d \
-  -p 8000:8000 \
-  -e LLM_API_URL=http://your-llm:8000/v1 \
-  -v wright-home:/home/agent \
-  -v wright-logs:/var/log \
-  --name wright \
-  wright-appliance:latest
+# 3. Start with the same named volumes
+docker compose -f docker-compose.minimal.yml up -d
 ```
 
 > [!IMPORTANT]
