@@ -162,3 +162,11 @@
 - [X] T074 Remove stale engineering AI-in-a-box and thick-base claims from
   public docs.
 - [X] T075 Add regression tests for docs home and overview alpha contract.
+
+## Phase 20: Legacy Plan Alpha Language
+
+- [X] T076 Refresh legacy agent Docker architecture implementation note with
+  alpha-compatible deployment language.
+- [X] T077 Refresh Wright Hermes plugin plan polish goal with alpha-ready
+  community sharing language.
+- [X] T078 Add regression tests for legacy plan alpha language.

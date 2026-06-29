@@ -639,7 +639,7 @@ No instruction set will make Hermes, OpenClaw, or Pi perfectly safe. They are ca
 
 ## 9. Implementation Notes & Deviations
 
-During the actual implementation on the `010-agent-docker-setup` branch, the following deviations and design decisions were made to ensure a production-ready, clash-free, and robust deployment:
+During the actual implementation on the `010-agent-docker-setup` branch, the following deviations and design decisions were made to ensure an alpha-compatible, clash-free, and recoverable deployment:
 
 ### 9.1 Multi-Stage Production Build
 The production `Dockerfile` was upgraded to a multi-stage build:

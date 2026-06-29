@@ -1314,7 +1314,7 @@ Before publishing:
 
 ### Phase 4 — Polish & Submission (Week 7-8)
 
-> **Goal**: Production-ready, community-shareable plugin.
+> **Goal**: Alpha-ready, community-shareable plugin.
 
 | Task | Deliverable |
 |:---|:---|
