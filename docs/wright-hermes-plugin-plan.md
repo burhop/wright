@@ -4,7 +4,7 @@
 **Status**: Draft — Revised  
 **Created**: 2026-06-22  
 **Last Updated**: 2026-06-22  
-**Related Specs**: [026-mcp-credential-setup](../specs/026-mcp-credential-setup/plan.md)
+**Related Specs**: [026-mcp-credential-setup](https://github.com/burhop/wright/blob/main/specs/026-mcp-credential-setup/plan.md)
 
 ---
 

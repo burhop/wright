@@ -34,3 +34,10 @@
   templates, CI commands, and Docker gateway contract.
 - [X] T013 Run targeted pytest release-readiness tests.
 - [X] T014 Run frontend Vitest and production build.
+
+## Phase 4: Continued Docs Release Gate
+
+- [X] T015 Fix MkDocs strict-build warnings caused by source/spec links.
+- [X] T016 Add PR-time strict MkDocs build gate in `.github/workflows/docs-deploy.yml`.
+- [X] T017 Add public repository launch checklist to published docs nav.
+- [X] T018 Add tests for docs build workflow and launch checklist coverage.

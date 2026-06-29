@@ -67,6 +67,7 @@ nav:
       - Code Style: contributing/code-style.md
       - Testing Guidelines: contributing/testing.md
       - Pull Requests: contributing/pull-requests.md
+      - Public Launch Checklist: public-launch-checklist.md
   - API Reference: api/api-reference.md
   - MCP Tools Catalog:
       - Tool Directory: mcp-catalog/tools-list.md

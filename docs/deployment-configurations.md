@@ -226,7 +226,8 @@ graph TB
 
 ### What's Inside the Image
 
-The image is built in two stages from [`docker/Dockerfile`](../docker/Dockerfile):
+The image is built in two stages from
+[`docker/Dockerfile`](https://github.com/burhop/wright/blob/main/docker/Dockerfile):
 
 | Layer | Component | Version |
 |:---|:---|:---|
@@ -271,7 +272,8 @@ graph LR
 
 ### How FastAPI Serves the Frontend
 
-In production (Docker and plugin install), FastAPI detects the `dist/` directory and serves it directly. The relevant code in [`apps/api/src/api/main.py`](../apps/api/src/api/main.py):
+In production (Docker and plugin install), FastAPI detects the `dist/` directory and serves it directly. The relevant code is in
+[`apps/api/src/api/main.py`](https://github.com/burhop/wright/blob/main/apps/api/src/api/main.py):
 
 ```python
 dist_dir = os.environ.get("FRONTEND_DIST_DIR", "/workspace/apps/web/dist")
@@ -295,7 +297,9 @@ This means:
 
 ### First Boot Sequence
 
-On first container start, the [`docker/entrypoint.sh`](../docker/entrypoint.sh) runs a bootstrap:
+On first container start, the
+[`docker/entrypoint.sh`](https://github.com/burhop/wright/blob/main/docker/entrypoint.sh)
+runs a bootstrap:
 
 1. **Validate** `LLM_API_URL` environment variable
 2. **Export** the container manifest (`/container-manifest.md`)
@@ -425,7 +429,8 @@ sequenceDiagram
     PM-->>H: plugin loaded ✓
 ```
 
-The key entry point is defined in [`hermes-plugin-wright/pyproject.toml`](../hermes-plugin-wright/pyproject.toml):
+The key entry point is defined in
+[`hermes-plugin-wright/pyproject.toml`](https://github.com/burhop/wright/blob/main/hermes-plugin-wright/pyproject.toml):
 
 ```toml
 [project.entry-points."hermes_agent.plugins"]
@@ -436,7 +441,9 @@ When Hermes starts, its `PluginManager` scans for all packages that declare `her
 
 ### What `/wright start` Does
 
-The [`hermes-plugin-wright/commands.py`](../hermes-plugin-wright/commands.py) `handle_start()` function:
+The
+[`hermes-plugin-wright/commands.py`](https://github.com/burhop/wright/blob/main/hermes-plugin-wright/commands.py)
+`handle_start()` function:
 
 1. Checks if the API is already running (skips if healthy)
 2. Detects the Wright repo path

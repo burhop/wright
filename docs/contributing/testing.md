@@ -72,6 +72,9 @@ npm run test --workspace=apps/web
 # Frontend production build
 npm run build --workspace=apps/web
 
+# Documentation site build and link validation
+uv run --with mkdocs-material mkdocs build --strict
+
 # Mocked Playwright UI workflows when browser dependencies are available
 npx playwright test
 
