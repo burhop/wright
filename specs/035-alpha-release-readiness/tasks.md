@@ -41,3 +41,10 @@
 - [X] T016 Add PR-time strict MkDocs build gate in `.github/workflows/docs-deploy.yml`.
 - [X] T017 Add public repository launch checklist to published docs nav.
 - [X] T018 Add tests for docs build workflow and launch checklist coverage.
+
+## Phase 5: Release Tag Policy
+
+- [X] T019 Mark alpha, beta, and release-candidate tags as GitHub prereleases.
+- [X] T020 Prevent prerelease tags from moving the Docker `latest` tag.
+- [X] T021 Document prerelease and Docker `latest` policy in `docs/versioning.md`.
+- [X] T022 Add tests for release workflow and versioning policy.

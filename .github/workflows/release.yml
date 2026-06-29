@@ -36,9 +36,28 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract Tag Name
+      - name: Classify Release Tag
         id: tag
-        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          IS_PRERELEASE=false
+
+          if [[ "$TAG_NAME" =~ -(alpha|beta|rc)(\.|[0-9]|$) ]]; then
+            IS_PRERELEASE=true
+          fi
+
+          {
+            echo "tag_name=$TAG_NAME"
+            echo "is_prerelease=$IS_PRERELEASE"
+            echo "docker_tags<<EOF"
+            echo "${DOCKERHUB_USERNAME}/wright-agent:${TAG_NAME}"
+            if [[ "$IS_PRERELEASE" != "true" ]]; then
+              echo "${DOCKERHUB_USERNAME}/wright-agent:latest"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
@@ -47,9 +66,7 @@ jobs:
           file: docker/Dockerfile
           push: true
           # platforms: linux/amd64,linux/arm64 # Uncomment to enable multi-architecture builds when arm64 solvers are fully supported
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/wright-agent:${{ steps.tag.outputs.tag_name }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/wright-agent:latest
+          tags: ${{ steps.tag.outputs.docker_tags }}
           build-args: |
             VERSION=${{ steps.prep.outputs.version }}
             REVISION=${{ steps.prep.outputs.revision }}
@@ -69,5 +86,5 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag_name }}
           name: Release ${{ steps.tag.outputs.tag_name }}
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.tag.outputs.is_prerelease == 'true' }}
           generate_release_notes: true
