@@ -55,3 +55,10 @@
 - [X] T024 Add CI workflow for tracked-file leak scanning.
 - [X] T025 Document local tracked and untracked leak-scan commands.
 - [X] T026 Add tests for leak detection, placeholder allowlisting, and current tracked tree.
+
+## Phase 7: Docker Smoke Contract
+
+- [X] T027 Align local Docker smoke script with setup-pending LLM behavior.
+- [X] T028 Add existing-image smoke mode for release candidate images.
+- [X] T029 Update script documentation for current Docker smoke behavior.
+- [X] T030 Add tests for Docker smoke script and CI process-name contract.

@@ -93,11 +93,15 @@ Runs a local verification suite against a production Docker build to ensure envi
   2. Asserts that the container user runs as the non-root `agent` user by default.
   3. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
   4. Verifies that `/entrypoint.sh` is present and executable.
-  5. Validates fail-fast rules (fails if `LLM_API_URL` is missing, succeeds if provided).
+  5. Validates setup-pending behavior (warns and continues if `LLM_API_URL` is missing, succeeds when provided).
   6. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
 * **Usage**:
   ```bash
   ./scripts/docker-smoke-test.sh
+  ```
+* **Smoke an existing image without rebuilding**:
+  ```bash
+  WRIGHT_DOCKER_IMAGE=wright-agent:latest WRIGHT_DOCKER_SKIP_BUILD=1 ./scripts/docker-smoke-test.sh
   ```
 
 ---

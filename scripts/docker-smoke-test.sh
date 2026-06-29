@@ -9,12 +9,17 @@ NC='\033[0m' # No Color
 
 echo -e "${YELLOW}=== Running Docker Smoke Test ===${NC}"
 
-# Define image tag
-IMAGE_TAG="wright-agent:test"
+# Define image tag. Set WRIGHT_DOCKER_IMAGE to smoke an existing image, or set
+# WRIGHT_DOCKER_SKIP_BUILD=1 to skip the local build step.
+IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright-agent:test}"
 
 # 1. Build the production Docker image
-echo -e "\n${YELLOW}Step 1: Building production Docker image...${NC}"
-docker build -t "$IMAGE_TAG" -f docker/Dockerfile .
+if [ "${WRIGHT_DOCKER_SKIP_BUILD:-0}" = "1" ]; then
+  echo -e "\n${YELLOW}Step 1: Skipping build; using existing image ${IMAGE_TAG}...${NC}"
+else
+  echo -e "\n${YELLOW}Step 1: Building production Docker image...${NC}"
+  docker build -t "$IMAGE_TAG" -f docker/Dockerfile .
+fi
 
 # 2. Inspect the image for user 'agent'
 echo -e "\n${YELLOW}Step 2: Inspecting image for 'agent' user...${NC}"
@@ -63,15 +68,18 @@ else
   exit 1
 fi
 
-# 5. Run basic 'echo ok' test (validating LLM_API_URL requirement)
+# 5. Run basic 'echo ok' tests for configured and setup-pending LLM states.
 echo -e "\n${YELLOW}Step 5: Testing basic command execution...${NC}"
-# First test: should fail if LLM_API_URL is missing
-echo -e "Testing fail-fast with missing LLM_API_URL..."
-if docker run --rm "$IMAGE_TAG" echo "should fail" 2>/dev/null; then
-  echo -e "${RED}✗ Container did not fail-fast when LLM_API_URL was missing!${NC}"
-  exit 1
+# First test: missing LLM_API_URL should warn and continue so the setup UI can
+# collect configuration.
+echo -e "Testing setup-pending warning with missing LLM_API_URL..."
+MISSING_LLM_OUTPUT=$(docker run --rm "$IMAGE_TAG" echo "ok" 2>&1)
+if [[ "$MISSING_LLM_OUTPUT" == *"Warning: LLM_API_URL environment variable is not set"* ]] && [[ "$MISSING_LLM_OUTPUT" == *"ok"* ]]; then
+  echo -e "${GREEN}✓ Container warned and continued when LLM_API_URL was missing.${NC}"
 else
-  echo -e "${GREEN}✓ Container correctly failed-fast when LLM_API_URL was missing.${NC}"
+  echo -e "${RED}✗ Container did not show the expected missing LLM warning and command output.${NC}"
+  echo "$MISSING_LLM_OUTPUT"
+  exit 1
 fi
 
 # Second test: should succeed when LLM_API_URL is provided
