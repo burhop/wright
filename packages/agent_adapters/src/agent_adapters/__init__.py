@@ -12,6 +12,7 @@ from .base import (
     AgentChatMessage,
 )
 from .hermes import HermesAdapter
+from .hermes_config import HermesApiSettings, resolve_hermes_api_settings
 
 __all__ = [
     "BaseAgentEngine",
@@ -20,4 +21,6 @@ __all__ = [
     "AgentSessionInfo",
     "AgentChatMessage",
     "HermesAdapter",
+    "HermesApiSettings",
+    "resolve_hermes_api_settings",
 ]

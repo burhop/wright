@@ -6,6 +6,8 @@
 # Managed by supervisord (Wright API on :8000, Hermes WebUI on :8788 internal)
 # =============================================================================
 
+ARG HERMES_BASE_IMAGE=wright-hermes-only:latest
+
 # Stage 1: Build the Vite frontend
 FROM node:26-slim AS web-builder
 WORKDIR /workspace
@@ -16,15 +18,18 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Production runtime image
-FROM ubuntu:26.04
+FROM ${HERMES_BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV HOME=/home/agent
+ENV HERMES_HOME=/home/agent/.hermes
+ENV HERMES_PROFILE=wright
+ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
 
-# System packages: Wright runtime, operator utilities, and supervisor.
+# System packages: Wright operator utilities and supervisor. Hermes, Python,
+# Node.js, and uv come from the Hermes base image.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    curl \
-    git \
     bzip2 \
     ca-certificates \
     sudo \
@@ -36,39 +41,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-# Python 3.13.
-RUN add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-    python3.13 \
-    python3.13-venv \
-    python3.13-dev \
-    pipx \
-    && rm -rf /var/lib/apt/lists/*
-
-# Node.js 22.
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y --no-install-recommends nodejs && \
-    apt-get purge -y --auto-remove software-properties-common gnupg && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# uv and micromamba support dynamic MCP package/dependency installation.
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
-RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest \
-    | tar -xvj -C /usr/local bin/micromamba
+# micromamba supports dynamic MCP package/dependency installation.
+RUN curl --fail --location --retry 5 --retry-all-errors \
+        --output /tmp/micromamba.tar.bz2 \
+        https://micro.mamba.pm/api/micromamba/linux-64/latest && \
+    tar -xjf /tmp/micromamba.tar.bz2 -C /usr/local bin/micromamba && \
+    rm -f /tmp/micromamba.tar.bz2
 
 # Create agent user (UID 1000).
-RUN userdel -r ubuntu && \
-    useradd -m -u 1000 -s /bin/bash agent && \
+RUN useradd -m -u 1000 -s /bin/bash agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Install Hermes Agent from PyPI with the Wright plugin in the same tool env.
-ENV UV_TOOL_DIR=/opt/uv-tools
-ENV UV_TOOL_BIN_DIR=/usr/local/bin
+# Install the Wright plugin in the Hermes base image environment.
 COPY hermes-plugin-wright/ /opt/hermes-plugins/wright/
-RUN uv tool install hermes-agent==0.15.2 --python 3.13 --with /opt/hermes-plugins/wright/ && \
-    rm -rf /root/.cache/uv
+RUN uv pip install --python /opt/hermes/.venv/bin/python /opt/hermes-plugins/wright/ && \
+    rm -rf /root/.cache/uv /home/agent/.cache/uv && \
+    chown -R agent:agent /home/agent
 
 # Wright workspace setup.
 WORKDIR /workspace

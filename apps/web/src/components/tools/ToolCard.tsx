@@ -87,6 +87,106 @@ export function ToolCard({
     server.platform_support?.windows_11_x64 ||
     Object.values(server.platform_support || {})[0];
 
+  const titleCase = (value: string) =>
+    value
+      .split(/[_-]/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
+  const verificationMeta: Record<
+    McpServer["verification_state"],
+    { label: string; tooltip: string }
+  > = {
+    verified_mcp: {
+      label: "Verified MCP",
+      tooltip:
+        "Catalog evidence indicates this is an MCP server, but this is not a security review.",
+    },
+    verified_docs_mcp: {
+      label: "Docs verified MCP",
+      tooltip:
+        "Project documentation describes MCP support; this is not a security review.",
+    },
+    community_mcp: {
+      label: "Community MCP",
+      tooltip:
+        "Community or public catalog entry; review the source before installing.",
+    },
+    user_reported_url_needed: {
+      label: "Needs source URL",
+      tooltip:
+        "User-reported candidate that needs a source URL before validation.",
+    },
+    verified_api_wrapper_candidate: {
+      label: "API wrapper candidate",
+      tooltip:
+        "Likely wraps an API as MCP, but the exact server implementation needs review.",
+    },
+    capability_alias: {
+      label: "Capability alias",
+      tooltip:
+        "Represents a capability area rather than a directly installable MCP server.",
+    },
+    ui_or_web_standard: {
+      label: "UI/web standard",
+      tooltip:
+        "Represents a UI or web standard integration, not a normal MCP server package.",
+    },
+    watchlist: {
+      label: "Watchlist",
+      tooltip:
+        "Tracked as a possible future MCP entry; not ready for normal install.",
+    },
+    excluded: {
+      label: "Excluded",
+      tooltip: "Intentionally excluded from normal MCP installation workflows.",
+    },
+  };
+
+  const installabilityMeta: Record<
+    McpServer["installability_tier"],
+    { label: string; tooltip: string }
+  > = {
+    tested: {
+      label: "Launch tested",
+      tooltip:
+        "Wright ran the MCP server in the validation environment. This is not a security review and does not guarantee bug-free behavior.",
+    },
+    might_work: {
+      label: "Needs validation",
+      tooltip:
+        "The catalog entry looks plausible but has not passed Wright's MCP launch validation.",
+    },
+    blocked: {
+      label: "Blocked",
+      tooltip:
+        server.install_blocked_reason ||
+        "Automated install is blocked until the catalog entry is corrected.",
+    },
+    non_working: {
+      label: "Not working",
+      tooltip:
+        "Validation found this MCP server does not currently work in the supported environment.",
+    },
+  };
+
+  const riskTooltip =
+    server.risk_level === "read-only"
+      ? "Expected to read data only. Review permissions and source before installing."
+      : server.risk_level === "safety-critical"
+        ? "Could affect safety-critical workflows. Requires careful human review before use."
+        : `${titleCase(server.risk_level)} risk classification from catalog metadata. Review source and permissions before installing.`;
+
+  const verification = verificationMeta[server.verification_state] || {
+    label: titleCase(server.verification_state),
+    tooltip: "Catalog verification status.",
+  };
+  const installability = installabilityMeta[server.installability_tier] || {
+    label: titleCase(server.installability_tier),
+    tooltip: "Catalog installability status.",
+  };
+
   const badgeStyle = (
     color: string,
     backgroundColor = "var(--color-surface-subtle)",
@@ -372,6 +472,7 @@ export function ToolCard({
             >
               <ServerTypeBadge type={server.type} />
               <span
+                title={`Category: ${titleCase(server.category)}`}
                 style={{
                   display: "inline-block",
                   fontSize: "0.65rem",
@@ -389,24 +490,30 @@ export function ToolCard({
               </span>
               <span
                 data-testid={`server-card-verification-${server.server_id}`}
+                title={verification.tooltip}
+                aria-label={verification.tooltip}
                 style={badgeStyle("var(--color-secondary)")}
               >
-                {server.verification_state.replaceAll("_", " ")}
+                {verification.label}
               </span>
               <span
                 data-testid={`server-card-installability-${server.server_id}`}
+                title={installability.tooltip}
+                aria-label={installability.tooltip}
                 style={badgeStyle(
                   server.installability_tier === "tested"
                     ? "var(--color-success)"
                     : server.installability_tier === "might_work"
                       ? "var(--color-warning)"
-                      : "var(--color-error)",
+                    : "var(--color-error)",
                 )}
               >
-                {server.installability_tier.replaceAll("_", " ")}
+                {installability.label}
               </span>
               <span
                 data-testid={`server-card-risk-${server.server_id}`}
+                title={riskTooltip}
+                aria-label={riskTooltip}
                 style={badgeStyle(
                   server.risk_level === "high" ||
                     server.risk_level === "safety-critical"
@@ -414,7 +521,9 @@ export function ToolCard({
                     : "var(--color-text-muted)",
                 )}
               >
-                {server.risk_level}
+                {server.risk_level === "read-only"
+                  ? "Read only"
+                  : `${titleCase(server.risk_level)} risk`}
               </span>
             </div>
           </div>
@@ -587,6 +696,43 @@ export function ToolCard({
         </div>
       )}
 
+      <button
+        type="button"
+        onClick={() => setShowDetails(!showDetails)}
+        data-testid={`server-card-details-toggle-${server.server_id}`}
+        aria-expanded={showDetails}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "var(--space-sm)",
+          width: "100%",
+          padding: "var(--space-xs) 0 0",
+          color: "var(--color-secondary)",
+          background: "none",
+          border: "none",
+          borderTop: "1px solid var(--color-border)",
+          cursor: "pointer",
+          fontSize: "0.78rem",
+          fontWeight: 700,
+          textAlign: "left",
+          textTransform: "uppercase",
+          letterSpacing: "0.04em",
+          transition: "color var(--transition-fast)",
+        }}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.color = "var(--color-primary)")
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.color = "var(--color-secondary)")
+        }
+      >
+        <span>{showDetails ? "Hide details" : "Show details"}</span>
+        <span>{showDetails ? "Collapse" : "Expand"}</span>
+      </button>
+
+      {showDetails && (
+        <>
       <div
         data-testid={`server-card-platform-${server.server_id}`}
         style={{
@@ -951,9 +1097,8 @@ export function ToolCard({
         </div>
       )}
 
-      {/* Connection Info / Code Command — collapsible for non-installed */}
-      {(server.is_installed || showDetails) && (
-        <div
+      {/* Connection Info / Code Command */}
+      <div
           style={{
             display: "flex",
             flexDirection: "column",
@@ -996,32 +1141,7 @@ export function ToolCard({
               </span>
             </div>
           )}
-        </div>
-      )}
-      {!server.is_installed && !showDetails && (
-        <button
-          onClick={() => setShowDetails(true)}
-          style={{
-            fontSize: "0.75rem",
-            color: "var(--color-text-dim)",
-            cursor: "pointer",
-            border: "none",
-            background: "none",
-            textAlign: "left",
-            padding: "0",
-            transition: "color var(--transition-fast)",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.color = "var(--color-secondary)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.color = "var(--color-text-dim)")
-          }
-        >
-          ▸ Show connection details
-        </button>
-      )}
-
+      </div>
       {/* Workspace Enablement Collapsible (Only if installed) */}
       {(() => {
         const enabledCount = workspaces.filter(
@@ -1486,6 +1606,8 @@ export function ToolCard({
             </div>
           )}
         </div>
+      )}
+        </>
       )}
     </div>
   );

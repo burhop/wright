@@ -1,11 +1,12 @@
 import os
+from urllib.parse import urlparse
+from agent_adapters.hermes_config import resolve_hermes_api_settings
 
 # Hermes Native API port and base URL configuration for the 'wright' profile
-HERMES_API_PORT = int(os.getenv("HERMES_API_PORT", "8642"))
-HERMES_API_BASE_URL = os.getenv(
-    "HERMES_API_BASE_URL", f"http://127.0.0.1:{HERMES_API_PORT}"
-)
-HERMES_API_KEY = os.getenv("HERMES_API_KEY", os.getenv("API_SERVER_KEY", ""))
+_HERMES_API_SETTINGS = resolve_hermes_api_settings()
+HERMES_API_BASE_URL = _HERMES_API_SETTINGS.base_url
+HERMES_API_KEY = _HERMES_API_SETTINGS.api_key
+HERMES_API_PORT = urlparse(HERMES_API_BASE_URL).port or 8642
 
 
 # LLM inference host and health check endpoint

@@ -1101,6 +1101,95 @@ def test_write_workspace_hermes_md(tmp_path):
     assert "My test instructions" not in new_content
 
 
+@pytest.mark.asyncio
+async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_path):
+    from core.workspace import create_workspace, sync_workspace_runners
+    import json
+    import sqlite3
+    import time
+    import asyncio
+
+    db_path = str(tmp_path / "test.db")
+    now = int(time.time())
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("""
+        CREATE TABLE engineering_workspaces (
+            workspace_id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL UNIQUE,
+            workspace_name TEXT,
+            local_path TEXT NOT NULL,
+            git_remote_url TEXT,
+            git_username TEXT,
+            git_token TEXT,
+            enabled_tools TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+        """)
+        conn.execute("""
+        CREATE TABLE mcp_servers (
+            server_id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL,
+            command TEXT,
+            is_active INTEGER NOT NULL DEFAULT 0,
+            is_installed INTEGER NOT NULL DEFAULT 0,
+            status TEXT NOT NULL DEFAULT 'inactive',
+            category TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+        """)
+        conn.commit()
+    finally:
+        conn.close()
+
+    workspace_dir = str(tmp_path / "workspace")
+    os.makedirs(workspace_dir, exist_ok=True)
+    create_workspace(db_path, "ws1", "session-1", workspace_dir, "Workspace 1")
+
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE session_id = ?",
+            (json.dumps(["assigned-mcp"]), "session-1"),
+        )
+        conn.executemany(
+            """
+            INSERT INTO mcp_servers
+                (server_id, name, type, command, is_installed, status, created_at, updated_at)
+            VALUES (?, ?, 'stdio', '[]', 1, 'inactive', ?, ?)
+            """,
+            [
+                ("assigned-mcp", "Assigned MCP", now, now),
+                ("unassigned-mcp", "Unassigned MCP", now, now),
+            ],
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    class FakeMcpEngine:
+        def __init__(self):
+            self.started = []
+            self.stopped = []
+
+        async def start_server(self, server_id):
+            self.started.append(server_id)
+
+        async def stop_server(self, server_id):
+            self.stopped.append(server_id)
+
+    engine = FakeMcpEngine()
+
+    await sync_workspace_runners(db_path, "session-1", engine)
+    await asyncio.sleep(0)
+
+    assert engine.started == ["assigned-mcp"]
+    assert engine.stopped == ["unassigned-mcp"]
+
+
 def test_workspace_mcp_status_endpoint(client):
     # Retrieve mcp status for a session
     response = client.get("/api/workspace/mcp-status", params={"session_id": "test-session"})

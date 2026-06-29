@@ -172,23 +172,38 @@ describe("ToolRegistryPage", () => {
     expect(screen.getByText("Simulation Solver")).toBeInTheDocument();
     expect(screen.getByText("CAD Extractor")).toBeInTheDocument();
 
-    // Expand connection details for Server 1
+    expect(screen.queryByText("uv run sim")).not.toBeInTheDocument();
+    expect(screen.queryByText("http://127.0.0.1:9090/sse")).not.toBeInTheDocument();
+
+    // Expand full card details for Server 1
     const serverOneCard = screen.getByTestId("server-card-server-1");
-    const expandBtn = within(serverOneCard).getByRole("button", {
-      name: /Show connection details/i,
-    });
+    const expandBtn = within(serverOneCard).getByTestId(
+      "server-card-details-toggle-server-1",
+    );
     fireEvent.click(expandBtn);
 
     // Server 1: stdio command display
     expect(screen.getByText("uv run sim")).toBeInTheDocument();
+
+    const serverTwoCard = screen.getByTestId("server-card-server-2");
+    fireEvent.click(
+      within(serverTwoCard).getByTestId("server-card-details-toggle-server-2"),
+    );
+
     // Server 2: URL display
     expect(screen.getByText("http://127.0.0.1:9090/sse")).toBeInTheDocument();
     expect(screen.getByTestId("server-card-verification-server-2")).toHaveTextContent(
-      "verified mcp",
+      "Verified MCP",
     );
     expect(
       screen.getByTestId("server-card-installability-server-2"),
-    ).toHaveTextContent("tested");
+    ).toHaveTextContent("Launch tested");
+    expect(
+      screen.getByTestId("server-card-installability-server-2"),
+    ).toHaveAttribute(
+      "title",
+      expect.stringContaining("not a security review"),
+    );
   });
 
   it("orders tested servers before blocked servers", () => {
@@ -200,6 +215,14 @@ describe("ToolRegistryPage", () => {
     expect(cards[2]).toHaveTextContent("Blocked Candidate");
     expect(screen.getByTestId("tool-registry-tier-tested")).toHaveTextContent("1");
     expect(screen.getByTestId("tool-registry-tier-blocked")).toHaveTextContent("1");
+
+    const blockedCard = screen.getByTestId("server-card-server-3");
+    expect(
+      within(blockedCard).queryByTestId("server-card-followup-server-3"),
+    ).not.toBeInTheDocument();
+    fireEvent.click(
+      within(blockedCard).getByTestId("server-card-details-toggle-server-3"),
+    );
     expect(screen.getByTestId("server-card-followup-server-3")).toHaveTextContent(
       "Follow-up record",
     );
