@@ -62,3 +62,10 @@
 - [X] T028 Add existing-image smoke mode for release candidate images.
 - [X] T029 Update script documentation for current Docker smoke behavior.
 - [X] T030 Add tests for Docker smoke script and CI process-name contract.
+
+## Phase 8: GitHub Label Readiness
+
+- [X] T031 Add `.github/labels.yml` with public-alpha triage labels.
+- [X] T032 Ensure issue template labels exist in the manifest.
+- [X] T033 Update public launch checklist to reference the label manifest.
+- [X] T034 Add tests for required labels and template-label consistency.

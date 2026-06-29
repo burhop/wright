@@ -1,0 +1,51 @@
+- name: bug
+  color: d73a4a
+  description: Confirmed or suspected defect.
+
+- name: needs-triage
+  color: fbca04
+  description: New report that needs maintainer review.
+
+- name: alpha
+  color: 6f42c1
+  description: Public-alpha feedback, release readiness, or early tester issue.
+
+- name: enhancement
+  color: a2eeef
+  description: Feature request or improvement proposal.
+
+- name: docker
+  color: 0e8a16
+  description: Docker image, compose, runtime, smoke, or publishing work.
+
+- name: docs
+  color: 0075ca
+  description: Documentation, examples, launch checklist, or docs site work.
+
+- name: mcp
+  color: 5319e7
+  description: MCP catalog, server validation, gateway, or tool integration work.
+
+- name: ui
+  color: c5def5
+  description: Frontend, layout, visual state, accessibility, or Playwright work.
+
+- name: hermes
+  color: 1d76db
+  description: Hermes Agent, Hermes Desktop, plugin, gateway, or profile integration.
+
+- name: ci
+  color: 0052cc
+  description: GitHub Actions, release gates, quality checks, or automation.
+
+- name: security
+  color: b60205
+  description: Secrets, credential handling, vulnerability, or isolation work.
+
+- name: release
+  color: 0052cc
+  description: Versioning, tags, release notes, image publication, or launch work.
+
+- name: good-first-issue
+  color: 7057ff
+  description: Small, well-scoped task suitable for a new contributor.

@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest an idea or enhancement for the Wright toolbox
 title: "[FEATURE]: "
-labels: ["enhancement", "needs-triage"]
+labels: ["enhancement", "needs-triage", "alpha"]
 body:
   - type: markdown
     attributes:

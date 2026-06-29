@@ -62,8 +62,9 @@ history scan.
 - [ ] Branch protection is configured for `main` and required checks.
 - [ ] Issues, Discussions, SECURITY, SUPPORT, CODE_OF_CONDUCT, CONTRIBUTING,
   license, PR template, and release notes are present.
-- [ ] Labels exist or are planned: `bug`, `needs-triage`, `alpha`, `docker`,
-  `docs`, `mcp`, `ui`, `hermes`, and `good-first-issue`.
+- [ ] Labels in `.github/labels.yml` are synced to GitHub: `bug`,
+  `needs-triage`, `alpha`, `docker`, `docs`, `mcp`, `ui`, `hermes`, and
+  `good-first-issue`.
 
 ## 5. Documentation Truth Check
 
