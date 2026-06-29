@@ -7,7 +7,7 @@
 
 The global product development lifecycle—spanning initial product concept, CAD (Computer-Aided Design), CAM (Computer-Aided Manufacturing), CAE/FEA/CFD (Computer-Aided Engineering/Finite Element Analysis/Computational Fluid Dynamics), PDM/PLM (Product Data/Lifecycle Management), and MES (Manufacturing Execution Systems)—is historically bottlenecked by fragmented APIs, proprietary data silos, and manual, user-driven desktop workflows.
 
-**Wright** is a modular agent orchestration platform that engineers and designers use to manage a variety of AI agents focused on different product development tasks. When coupled with local high-performance hardware (such as a Dell GB10 / NVIDIA DGX Spark with 128 GB unified memory), the platform provides a complete, standalone **"engineering AI-in-a-box"** that operates efficiently in fully air-gapped, high-security, or limited-access environments.
+**Wright** is a modular agent orchestration platform that engineers and designers use to manage AI agents focused on different product development tasks. In the current public-alpha posture, Wright is bring-your-own-AI and works as a local or hybrid control plane: operators provide the model endpoint, credentials, selected MCP host dependencies, and any paid or proprietary engineering backends needed for a workflow.
 
 ```text
                                   ┌───────────────────────────┐
@@ -33,7 +33,7 @@ The global product development lifecycle—spanning initial product concept, CAD
 ### The Core Value Proposition for Investors
 - **Agent Orchestration Platform**: Wright empowers the engineer to deploy and manage task-specific agents tailored to different phases of the design cycle, from initial concept to physical production.
 - **Universal Tool Actuation**: Wright leverages the open Model Context Protocol (MCP) as a universal interface layer. If an MCP server is configured for a tool, database, or API in any engineering domain, Wright's orchestrator enables the appropriate agent to utilize it programmatically. This extends from open-source tools to commercial enterprise suites from Autodesk, Siemens, PTC, and Dassault Systèmes.
-- **Standalone Engineering AI-in-a-Box**: Coupled with hardware like the Dell GB10, Wright provides a self-contained, powerful engineering sandbox. This is critical for defense, aerospace, and advanced R&D sectors where data cannot leave physical premises due to security compliance or lack of cloud connectivity.
+- **Local or hybrid engineering control plane**: Coupled with hardware like the Dell GB10, Wright can run beside local model servers and selected engineering toolchains while keeping AI providers, credentials, licenses, and host software explicit.
 - **Model Agnostic**: Fully decoupled from underlying LLMs, the orchestrator connects to either local on-premise models or remote cloud endpoints.
 
 ```mermaid
@@ -41,7 +41,7 @@ graph TD
     User([Engineers / Designers]) <--> |Browser UI / Web3D| FE[React 19 Frontend SPA]
     FE <--> |Local Network HTTP / SSE / WS| BE[FastAPI API Gateway]
     
-    subgraph Standalone Engineering AI-in-a-Box (e.g. Dell GB10 / DGX Spark)
+    subgraph WrightAlpha["Alpha local or hybrid Wright appliance"]
         BE <--> |Adapter Pattern| AA[Agent Adapters: Local/Remote LLM Engines]
         BE <--> |JSON-RPC over Pipes/WebSockets| TR[TR: McpEngine / Extensible Tool Registry]
         BE <--> |In-Process Arrow| DV[Data Vault: Vector RAG]
@@ -73,10 +73,12 @@ wright/
 └── tests/                      # 3-Tier Testing suite (Vitest, pytest, Playwright E2E)
 ```
 
-### Containerization Strategy (Thick Base / Thin Code)
-To eliminate local dependency drift and simplify deployment on air-gapped hardware, Wright employs a **Thick Base / Thin Code** Docker architecture:
-- **Base Image (`Dockerfile.base`)**: Contains the massive, system-level dependencies required for engineering computation, including NVIDIA CUDA runtimes, PyTorch, FreeCAD (Python bindings), CalculiX (FEA solver), and OpenSCAD.
-- **Application Mount**: The application logic (`/apps` and `/packages`) is mounted as a live volume during development and container execution. This permits near-instant iteration and agent-driven hot-swapping without costly container rebuilds, maximizing deployment efficiency.
+### Containerization Strategy
+The public-alpha Docker appliance packages the Wright API, static web UI, Hermes profile/bootstrap, and general validation tooling. The recommended first run is `docker-compose.minimal.yml`, which binds Wright to `http://localhost:8080`.
+
+The Docker image does not bundle an LLM, model weights, API key, hosted provider account, paid engineering backend, or MCP-specific host software. Selected MCP host dependencies such as FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems, license managers, GPU drivers, and hardware interfaces are installed only for the selected MCP server being validated or used.
+
+Engineering MCP validation follows `docs/mcp-catalog/mcp-server-testing-process.md`: start from a clean container, install only the selected server's package and testable free/open host dependencies, run standard MCP protocol probes, and record blocked proprietary or hardware-bound dependencies as follow-up work.
 
 ---
 
@@ -124,7 +126,7 @@ classDiagram
 
 ### LLM Agnosticism and Configuration
 The agent adapter layer bridges the system to any target LLM provider:
-- **Local Inference**: Can connect directly to locally hosted engines via standard local APIs (e.g., Llama.cpp, Ollama, local WebUI backends), ensuring 100% offline security.
+- **Local Inference**: Can connect directly to locally hosted engines via standard local APIs (e.g., Llama.cpp, Ollama, local WebUI backends), supporting private deployments when the operator supplies the model runtime.
 - **Remote / Cloud Inference**: Can connect to remote enterprise cloud LLM endpoints, utilizing API keys and secure tokens.
 - **SSE Streaming**: Natural language tokens, tool call invocations, and progress messages are streamed asynchronously using Server-Sent Events (SSE).
 - **Context Persistence**: Workspace-specific agent configurations and conversation histories are serialized and persisted in the local SQLite database (`agent_contexts`), allowing users to restore previous states instantly.
@@ -231,7 +233,7 @@ Engineering processes require high predictability. Wright rejects the "black box
 
 ## 9. Testing and Quality Assurance Stack
 
-Wright is covered by a rigorous, three-tier testing pyramid to guarantee 100% reliability in fully offline environments. All pipeline verification occurs locally.
+Wright is covered by a three-tier testing pyramid that reduces regression risk across local development, CI, and Docker smoke validation. Pipeline verification is designed to run locally without requiring bundled model credentials.
 
 ```mermaid
 classDiagram

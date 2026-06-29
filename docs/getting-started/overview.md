@@ -1,48 +1,68 @@
 # Platform Overview
 
-Wright is a modular agent orchestration platform built to enable autonomous, local-first product design, CAD manipulation, structural engineering, and manufacturing setups. 
+Wright is a modular agent orchestration platform for local-first product design,
+CAD manipulation, structural engineering, manufacturing setup, and MCP server
+validation.
 
-By utilizing the open **Model Context Protocol (MCP)**, Wright decouples Large Language Model reasoning from system-specific engineering packages, bringing agentic capabilities to standard computational software.
+Wright is alpha software and bring-your-own-AI. It does not bundle an LLM, API
+key, local model, hosted model, or paid engineering backend. Choose the run path
+that matches what you already have, then configure model providers and selected
+MCP host dependencies explicitly.
 
 ## Choose Your Alpha Path
 
-Wright is alpha software and bring-your-own-AI. Pick the path that matches what
-you already have, then add model providers and selected MCP host dependencies
-explicitly.
-
 | Path | Best for | Start here |
 | --- | --- | --- |
-| Docker appliance | Fastest public-alpha trial, demos, MCP porting from a clean container | [Quick Start: Docker Appliance](quickstart-docker.md) |
+| Docker appliance | Fastest public-alpha trial, demos, and MCP porting from a clean container | [Quick Start: Docker Appliance](quickstart-docker.md) |
 | PC local setup | Editing the API, UI, plugin, docs, or tests on a normal development PC | [Quick Start: PC Local Setup](quickstart-local.md) |
 | GB10/DGX workstation | Running Wright beside a local model server or GPU-backed engineering tools | [Quick Start: GB10 and DGX Workstations](workstation-gb10-dgx.md) |
 | Existing Hermes plugin | Hermes Desktop or CLI users who want `/wright` commands first | [Quick Start: Existing Hermes Plugin](hermes-plugin.md) |
 
-## The Engineering AI-in-a-Box Concept
+## Current Appliance Model
 
-Traditional engineering software runs inside heavy desktop client configurations or fragmented cloud networks, creating significant latency and data governance vulnerabilities. Wright consolidates:
-1.  **Multi-Agent Coordination Layer**: Specialized agent systems routing design plans, execution instructions, and code verification stages.
-2.  **Model Context Protocol Engine**: Unified server executors connecting LLMs to local filesystems, command lines, and binary geometry kernels.
-3.  **Deterministic tool layer**: Cataloged MCP servers can connect agents to selected local or hosted engineering tools such as FreeCAD, CalculiX, OpenSCAD, and vendor systems when those dependencies are installed and validated for that workflow.
+The Docker appliance runs the Wright API, static web UI, Hermes
+profile/bootstrap, and general validation tooling. It is a control plane for
+selected tools, not a sealed image that already contains every CAD, CAE, CAM,
+PLM, AI, or hardware integration.
 
-Coupled with professional workstations and selected tool installs, Wright can form a local-first engineering appliance while keeping AI providers and MCP host dependencies explicit.
+Selected MCP dependencies are installed and validated per server:
+
+1. Start from a clean Wright container.
+2. Read the server catalog metadata.
+3. Install only the selected MCP package and testable free/open host
+   dependencies needed for a safe probe.
+4. Record proprietary, license-bound, credential-bound, or hardware-bound gaps
+   as blocked follow-up work.
+
+MCP-specific host software such as FreeCAD, OpenSCAD, CalculiX, Blender, vendor
+CAD systems, license managers, and GPU drivers is outside the base-image
+contract unless it is required for the selected server being validated or used.
 
 ## Core Workflows
 
-```
-┌─────────────────┐       ┌──────────────────┐       ┌───────────────────┐
-│ 1. Define Spec  │ ───>  │ 2. Draft CAD     │ ───>  │ 3. Run Simulation │
-│ (Spec-Kit docs) │       │ (OpenSCAD/FreeCAD)│      │ (CalculiX/OpenFOAM)│
-└─────────────────┘       └──────────────────┘       └───────────────────┘
-                                                               │
-                                                               ▼
-┌─────────────────┐       ┌──────────────────┐       ┌───────────────────┐
-│ 6. Commit & Tag │ <───  │ 5. Slice G-Code  │ <───  │ 4. Verify Mesh    │
-│ (Local Git repo)│       │ (PrusaSlicer CLI)│       │ (OpenCASCADE OCCT)│
-└─────────────────┘       └──────────────────┘       └───────────────────┘
+```text
+1. Define spec
+   |
+   v
+2. Plan and run an agent workflow
+   |
+   v
+3. Actuate selected MCP tools
+   |
+   v
+4. Review generated artifacts and logs
+   |
+   v
+5. Commit or revise the local workspace
 ```
 
-1.  **Specification Generation**: Outline requirements using standard markdown and YAML structures.
-2.  **Parametric Drafting**: Agents generate parametric shapes using script-driven modeling engines.
-3.  **Simulation & Mesh Verification**: Structural stress (FEA) and fluid flow (CFD) run automatically to assess load limits.
-4.  **Manufacturing Execution**: Files slice to G-code formats to prepare for additive and subtractive industrial machines.
-5.  **Workspace Commit**: Version design modifications inside the workspace Git repository.
+Typical alpha workflows include:
+
+- Drafting requirements and implementation plans with Spec Kit.
+- Connecting Wright to a local or hosted OpenAI-compatible model endpoint.
+- Testing the Docker appliance on `http://localhost:8080`.
+- Validating a selected MCP server from a clean container.
+- Recording MCP setup recipes and follow-up records for missing dependencies.
+
+See the Docker, local setup, workstation, and Hermes plugin quickstarts for the
+supported first-run commands.

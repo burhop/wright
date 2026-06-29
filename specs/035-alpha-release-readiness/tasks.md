@@ -150,3 +150,15 @@
 - [X] T069 Remove stale thick-base and one-command Docker launch guidance from
   public docs.
 - [X] T070 Add regression tests for README branding and Docker user guide docs.
+
+## Phase 19: Docs Home and Overview Alpha Contract
+
+- [X] T071 Refresh docs homepage with alpha, bring-your-own-AI, compose, and
+  selected MCP dependency boundaries.
+- [X] T072 Refresh getting-started overview with supported alpha paths and
+  current appliance model.
+- [X] T073 Refresh technical analysis container strategy with current Docker
+  and selected MCP host dependency boundaries.
+- [X] T074 Remove stale engineering AI-in-a-box and thick-base claims from
+  public docs.
+- [X] T075 Add regression tests for docs home and overview alpha contract.
