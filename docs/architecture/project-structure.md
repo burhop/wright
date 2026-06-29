@@ -18,12 +18,27 @@ wright/
 └── tests/                      # 3-Tier Testing suite (Vitest, pytest, Playwright E2E)
 ```
 
-## Containerization Strategy (Thick Base / Thin Code)
+## Containerization Strategy
 
-To eliminate local dependency drift and simplify deployment on air-gapped hardware, Wright employs a **Thick Base / Thin Code** Docker architecture:
+Wright's public-alpha Docker appliance is a local-first control plane for the
+API, web UI, Hermes integration, and MCP catalog. It does not bundle an LLM,
+model weights, hosted provider account, paid engineering backend, or
+MCP-specific host software.
 
-*   **Base Image (`Dockerfile.base`)**: Contains the massive, system-level dependencies required for engineering computation, including NVIDIA CUDA runtimes, PyTorch, FreeCAD (Python bindings), CalculiX (FEA solver), and OpenSCAD.
-*   **Application Mount**: The application logic (`/apps` and `/packages`) is mounted as a live volume during development and container execution. This permits near-instant iteration and agent-driven hot-swapping without costly container rebuilds, maximizing deployment efficiency.
+Current container roles:
+
+*   **Runtime image (`docker/Dockerfile`)**: Builds the React UI, installs the
+    Wright Python workspace, installs Hermes with the Wright plugin, and runs
+    `wright-api` plus `hermes-gateway` under supervisord.
+*   **Compose entry points**: `docker-compose.minimal.yml` is the recommended
+    public-alpha first run on `http://localhost:8080`; `docker-compose.yml` adds
+    Jaeger and uses `http://localhost:8000`.
+*   **Selected MCP dependencies**: FreeCAD, OpenSCAD, CalculiX, Blender, vendor
+    CAD systems, license managers, GPU drivers, and similar host software are
+    installed only for the selected MCP server being validated or used.
+*   **Clean-container validation**: Engineering MCP server validation follows
+    `docs/mcp-catalog/mcp-server-testing-process.md`; do not add MCP-specific
+    host software to the base image just to make catalog validation pass.
 
 ---
 

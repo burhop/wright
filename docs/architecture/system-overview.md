@@ -1,6 +1,16 @@
 # System Overview
 
-Wright is a modular agent orchestration platform that engineers and designers use to manage a variety of AI agents focused on different product development tasks. When coupled with local high-performance hardware (such as a Dell GB10 / NVIDIA DGX Spark with 128 GB unified memory), the platform provides a complete, standalone **"engineering AI-in-a-box"** that operates efficiently in fully air-gapped, high-security, or limited-access environments.
+Wright is a modular agent orchestration platform that engineers and designers
+use to manage AI-assisted product development workflows. Wright is alpha
+software and bring-your-own-AI: it does not bundle an LLM, model weights,
+hosted provider account, API key, paid engineering backend, or MCP-specific host
+software.
+
+When coupled with local high-performance hardware, such as a GB10 or NVIDIA DGX
+Spark-style workstation, Wright can be configured as a local-first engineering
+appliance. Operators still provide the model endpoint through `LLM_API_URL` and
+install selected MCP host dependencies only for the engineering tools they are
+validating or using.
 
 ```
                                   ┌───────────────────────────┐
@@ -30,13 +40,13 @@ graph TD
     User([Engineers / Designers]) <--> |Browser UI / Web3D| FE[React 19 Frontend SPA]
     FE <--> |Local Network HTTP / SSE / WS| BE[FastAPI API Gateway]
     
-    subgraph Standalone Engineering AI-in-a-Box (e.g. Dell GB10 / DGX Spark)
+    subgraph Local-First Engineering Appliance (e.g. GB10 / DGX Spark)
         BE <--> |Adapter Pattern| AA[Agent Adapters: Local/Remote LLM Engines]
         BE <--> |JSON-RPC over Pipes/WebSockets| TR[TR: McpEngine / Extensible Tool Registry]
         BE <--> |In-Process Arrow| DV[Data Vault: Vector RAG]
         BE <--> |SQL / WAL Mode| DB[(SQLite State Database)]
         
-        TR <--> |stdio / subprocess| SC[Local & Proprietary Toolchains: Siemens, PTC, Autodesk, Dassault, FreeCAD]
+        TR <--> |stdio / subprocess| SC[Selected MCP Toolchains: open-source, vendor, or local installs]
         TR <--> |webmcp / websocket| BR[Browser DOM Tools]
     end
 ```
@@ -45,8 +55,8 @@ graph TD
 
 *   **Agent Orchestration Platform**: Wright empowers the engineer to deploy and manage task-specific agents tailored to different phases of the design cycle, from initial concept to physical production.
 *   **Universal Tool Actuation**: Wright leverages the open Model Context Protocol (MCP) as a universal interface layer. If an MCP server is configured for a tool, database, or API in any engineering domain, Wright's orchestrator enables the appropriate agent to utilize it programmatically. This extends from open-source tools to commercial enterprise suites from Autodesk, Siemens, PTC, and Dassault Systèmes.
-*   **Standalone Engineering AI-in-a-Box**: Coupled with hardware like the Dell GB10, Wright provides a self-contained, powerful engineering sandbox. This is critical for defense, aerospace, and advanced R&D sectors where data cannot leave physical premises due to security compliance or lack of cloud connectivity.
-*   **Model Agnostic**: Fully decoupled from underlying LLMs, the orchestrator connects to either local on-premise models or remote cloud endpoints.
+*   **Local-First Engineering Appliance**: Coupled with hardware like a GB10 or DGX Spark-style workstation, Wright can provide a local engineering sandbox. The appliance is not self-contained for every CAD, CAE, CAM, or AI workflow; selected MCP servers and model endpoints must be configured per use case.
+*   **Model Agnostic**: Fully decoupled from underlying LLMs, the orchestrator connects to either local on-premise models or remote cloud endpoints supplied by the operator.
 
 ## Security & Governance Control
 

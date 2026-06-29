@@ -125,3 +125,10 @@
 - [X] T059 Refresh Docker distribution community feature brief with current
   registry, compose, port, MCP dependency, security, and architecture guidance.
 - [X] T060 Add regression tests for community feature briefs.
+
+## Phase 16: Architecture Alpha Contract Docs
+
+- [X] T061 Update project-structure container strategy to match the current
+  Docker appliance and selected-MCP-dependency contract.
+- [X] T062 Update system overview BYO-AI and selected MCP boundaries.
+- [X] T063 Add regression tests for architecture alpha docs.
