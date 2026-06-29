@@ -75,6 +75,9 @@ npm run build --workspace=apps/web
 # Documentation site build and link validation
 uv run --with mkdocs-material mkdocs build --strict
 
+# Public-alpha leak scan
+python scripts/check-public-alpha-leaks.py --include-untracked
+
 # Mocked Playwright UI workflows when browser dependencies are available
 npx playwright test
 

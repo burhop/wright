@@ -23,6 +23,7 @@ Suggested local commands:
 ```bash
 git status --short
 git diff --check
+python scripts/check-public-alpha-leaks.py --include-untracked
 git grep -n "sk-[A-Za-z0-9]\\{20,\\}\\|api_key\\|token\\|password" -- . ':!uv.lock' ':!package-lock.json'
 ```
 

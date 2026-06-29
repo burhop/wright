@@ -9,6 +9,7 @@ This directory contains helper scripts to automate local development, manage Doc
 | [`backup-volumes.sh`](#backup-volumessh) | Bash | Backs up Wright Docker volumes to local disk | Docker |
 | [`restore-volume.sh`](#restore-volumesh) | Bash | Restores a Docker volume from a saved backup | Docker |
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
+| [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, permissions, and self-healing behaviors | Docker |
 | [`fetch_ci_failures.py`](#fetch_ci_failurespy) | Python | Retrieves logs of failed GitHub Action runs to a local markdown file | Python 3, `gh` CLI |
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
@@ -59,6 +60,27 @@ Resets the active developer environment by purging generated engineering workspa
   ```bash
   uv run python scripts/cleanup-workspaces.py
   ```
+
+---
+
+### `check-public-alpha-leaks.py`
+
+Scans tracked repository text files for obvious public-alpha leaks such as
+private key headers, OpenAI-style keys, GitHub tokens, and generic
+secret/token/password assignments. Documented placeholders such as
+`sk-your-key-here`, `${{ secrets.NAME }}`, and `wright-dev-key` are ignored.
+
+* **CI usage**:
+  ```bash
+  python scripts/check-public-alpha-leaks.py
+  ```
+* **Local pre-launch usage**:
+  ```bash
+  python scripts/check-public-alpha-leaks.py --include-untracked
+  ```
+
+This is a fast guardrail, not a substitute for a full history scan with a
+dedicated tool such as `gitleaks` or `trufflehog`.
 
 ---
 

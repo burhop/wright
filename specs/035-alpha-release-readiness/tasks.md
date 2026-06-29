@@ -48,3 +48,10 @@
 - [X] T020 Prevent prerelease tags from moving the Docker `latest` tag.
 - [X] T021 Document prerelease and Docker `latest` policy in `docs/versioning.md`.
 - [X] T022 Add tests for release workflow and versioning policy.
+
+## Phase 6: Public Alpha Leak Gate
+
+- [X] T023 Add repo-native public-alpha leak scan script.
+- [X] T024 Add CI workflow for tracked-file leak scanning.
+- [X] T025 Document local tracked and untracked leak-scan commands.
+- [X] T026 Add tests for leak detection, placeholder allowlisting, and current tracked tree.
