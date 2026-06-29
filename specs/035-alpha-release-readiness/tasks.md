@@ -140,3 +140,13 @@
 - [X] T065 Update introductory blog Docker quickstart to the current minimal
   compose path and LLM environment variables.
 - [X] T066 Add regression tests for introductory blog alpha docs.
+
+## Phase 18: README Branding and Docker User Guide Truth Check
+
+- [X] T067 Refresh README branding feature brief with public-alpha,
+  bring-your-own-AI, registry, and selected MCP dependency guidance.
+- [X] T068 Refresh Docker user guide with the current public-alpha appliance,
+  compose, filesystem, BYO-AI, and selected MCP dependency contract.
+- [X] T069 Remove stale thick-base and one-command Docker launch guidance from
+  public docs.
+- [X] T070 Add regression tests for README branding and Docker user guide docs.

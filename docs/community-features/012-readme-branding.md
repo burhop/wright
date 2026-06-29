@@ -1,64 +1,138 @@
-# Feature Brief: README Overhaul & Branding
+# Feature Brief: README Overhaul and Branding
 
-Transform the Wright README from an internal developer reference into a high-impact landing page that converts visitors into users and contributors within 30 seconds, modeled after top agentic framework repos like OpenHands (64k+ stars), CrewAI, and OpenClaw.
+Refresh the Wright README as a public-alpha entry point for developers, MCP
+porters, demo users, and selected beta testers. The README should tell visitors
+what works today, what they must bring themselves, and where to contribute
+without implying a production or all-in-one engineering appliance.
 
-## What to build
+## Public-Alpha Contract
 
-### Visual Identity
+The README must front-load these truths:
 
-1. **Project logo** — Design or generate a professional SVG logo for Wright that combines engineering/mechanical and AI themes. The logo should work at small sizes (32px favicon) and large sizes (README hero). Store in `docs/images/wright-logo.svg` and `docs/images/wright-logo.png` (high-res export).
+- Wright is alpha software for testing, MCP porting, demos, and early feedback.
+- Wright is bring-your-own-AI.
+- The Docker image does not bundle an LLM, API key, local model, hosted
+  model, or paid engineering backend.
+- Configure `LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL` for an
+  OpenAI-compatible local or hosted provider.
+- MCP-specific host software such as FreeCAD, OpenSCAD, CalculiX, Blender,
+  vendor CAD systems, license managers, and hardware drivers is installed only
+  for the selected MCP validation or usage case.
+- Engineering MCP server validation follows
+  `docs/mcp-catalog/mcp-server-testing-process.md`.
 
-2. **Social preview image** — Create a 1280×640px image for GitHub's social preview (shown when the repo link is shared on Slack, Twitter, etc.). Include the Wright logo, tagline ("Local-first AI mechanical engineer"), and 3-4 key feature icons. Store in `docs/images/social-preview.png`. Document how the repo owner should upload it via GitHub Settings → Social Preview.
+## Visual Identity
 
-### README Structure Redesign
+1. Keep the Wright logo visible at the top of the README and use assets from
+   `docs/images/`.
+2. Keep badges truthful for the current alpha release posture:
+   - GitHub Actions status
+   - MIT license
+   - Python and Node versions
+   - GitHub stars
+   - Community/discussion links
+3. GHCR is the default registry path for release images. Docker Hub remains
+   optional, so Docker Hub pull badges should appear only when that publishing
+   path is actively configured and documented.
+4. Social preview images should use the Wright logo and concise alpha-aware
+   messaging, not claims of completed production reliability.
 
-Restructure `README.md` to follow the proven layout used by popular repos:
+## README Structure
 
-3. **Hero section** — At the very top:
-   - Centered Wright logo
-   - One-line tagline: "A digital engineer, designer, and mechanical analyst — powered by local-first multi-agent AI."
-   - Badge row: Build status (GitHub Actions), License (MIT), Docker Pulls, Python version, Node.js version, GitHub stars
-   - Use shields.io badge URLs
+### Hero
 
-4. **"Why Wright?" section** — Before the architecture section, add a narrative that explains:
-   - The problem: Mechanical engineers need AI assistance but can't send proprietary designs to cloud APIs
-   - The solution: Wright runs entirely on your local machine (Dell DGX Spark), orchestrating multiple AI agents for CAD, FEA, and manufacturing
-   - Who it's for: Mechanical engineers, manufacturing teams, and engineering shops that need AI but can't use cloud services
-   - Key differentiators: offline-first, multi-agent, full-stack appliance, Docker-deployable
+Use a short tagline that frames Wright as a local-first agent orchestrator for
+physical engineering. Avoid claims that Wright includes every engineering tool,
+model, solver, or cloud service.
 
-5. **Feature highlights** — A visually scannable section with emoji-prefixed cards:
-   - 🔧 Parametric CAD Generation (OpenSCAD via MCP)
-   - 🧮 Finite Element Analysis
-   - 🏭 Manufacturing Pipeline Automation
-   - 🤖 Multi-Agent Orchestration (Hermes + adapters)
-   - 🔒 100% Local — No Cloud Required
-   - 🐳 One-Command Docker Deployment
+### Why Wright?
 
-6. **Demo screenshots** — Embed the existing UI screenshots (currently loose in repo root as `screenshot_*.png`). Move them to `docs/images/` and embed with captions showing: the agent chat interface, the tool registry, and the file vault.
+Explain the problem and direction:
 
-7. **Simplified Quick Start** — Reduce to the absolute minimum:
-   ```
-   # Docker (recommended)
-   git clone ... && cd wright
-   cp docker/.env.example docker/.env  # edit with your LLM API key
-   make docker-build && docker compose up
-   # Open http://localhost:8080
-   ```
+- Engineering teams need AI-assisted workflows without handing every design to a
+  single hosted black box.
+- Wright coordinates agents and deterministic tools while leaving LLM/provider
+  choice to the operator.
+- The first public alpha is for developers, MCP porters, demos, and selected
+  beta feedback.
+- Local and hybrid deployments are supported, but every real toolchain still
+  needs explicit configuration, credentials, licenses, or host software when
+  applicable.
 
-8. **Architecture section** — Keep the existing content but add a Mermaid diagram showing the high-level component flow (API → Agent Adapters → Tool Registry → MCP Tools).
+### Feature Highlights
 
-9. **Contributing callout** — A brief section encouraging contributions with a link to CONTRIBUTING.md and a mention of "Good First Issues".
+Highlight capabilities as alpha surfaces:
 
-10. **Footer** — License info, star history badge (using star-history.com), and contributor avatars.
+- Agent orchestration for engineering workflows.
+- MCP tool registry and selected-server validation.
+- Deterministic CAD, CAE, CAM, and calculation tool actuation through adapters.
+- Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,
+  and general validation tooling.
+- BYO-AI provider configuration for local or hosted OpenAI-compatible endpoints.
 
-### Cleanup
+Do not describe the Docker image as a complete CAD/CAE/CAM workstation.
 
-11. **Move screenshots** — Relocate `screenshot_agent_chat.png`, `screenshot_file_vault.png`, `screenshot_initial.png`, and `screenshot_tool_registry.png` from the repo root to `docs/images/`. Update any existing references.
+### Screenshots
+
+Store screenshots under `docs/images/` and show the active product surfaces:
+
+- Agent chat interface.
+- Tool registry.
+- File vault.
+
+## Quick Start
+
+The recommended first-run path is the minimal Docker appliance:
+
+```bash
+git clone https://github.com/burhop/wright.git
+cd wright
+cp docker/.env.example docker/.env
+# Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL
+docker compose -f docker-compose.minimal.yml up -d --build
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+The full compose file also exists for local tracing work, but the README should
+route first-time alpha users to the minimal compose file and the Docker
+quickstart for details.
+
+## Architecture Section
+
+Keep the architecture overview short and consistent with the current monorepo:
+
+- FastAPI gateway and static web UI.
+- Agent adapters and Hermes integration.
+- MCP tool registry.
+- Data vault and local workspace state.
+- Selected MCP host dependencies installed per server, not silently bundled in
+  the base image.
+
+Use a Mermaid diagram only if it stays readable in GitHub's README renderer.
+
+## Contributing Callout
+
+Point contributors to:
+
+- `CONTRIBUTING.md`
+- Spec Kit workflow docs
+- GitHub issues labeled for public-alpha triage
+- MCP setup recipes and follow-up records
+
+The contribution copy should invite help while making clear that alpha bugs,
+missing MCP dependencies, and incomplete workflows are expected.
 
 ## Constraints
 
-- The README must remain a single file (no splitting into multiple docs — that's the docs site feature)
-- The Docker Quick Start and architecture sections can be condensed but their information must not be lost (detailed Docker docs will live in the docs site)
-- Do not modify any source code, Docker files, or CI/CD workflows
-- All badge URLs should use shields.io for consistency
-- The README should render correctly on both GitHub and npm/package registries
+- Keep the README as a single file.
+- Do not modify source code, Docker files, or CI/CD workflows as part of the
+  README branding brief.
+- Do not claim production readiness, bundled model access, bundled paid
+  engineering backends, or universal local execution.
+- Keep registry language aligned with release policy: GHCR default, Docker Hub
+  optional, and stable-only `latest`.
