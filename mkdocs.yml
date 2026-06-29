@@ -68,6 +68,7 @@ nav:
       - Spec-Kit Workflow: contributing/spec-kit.md
       - Code Style: contributing/code-style.md
       - Testing Guidelines: contributing/testing.md
+      - CI/CD Workflows: contributing/ci-cd-workflows.md
       - Pull Requests: contributing/pull-requests.md
       - Public Launch Checklist: public-launch-checklist.md
       - Alpha Release Notes Template: alpha-release-notes-template.md

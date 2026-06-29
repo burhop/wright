@@ -102,3 +102,10 @@
 - [X] T049 Link the template from public launch checklist and versioning policy.
 - [X] T050 Publish the template in MkDocs nav.
 - [X] T051 Add regression tests for alpha release notes requirements.
+
+## Phase 13: CI/CD Guide Refresh
+
+- [X] T052 Refresh CI/CD workflow guide to match current Python, frontend,
+  docs, leak-scan, Docker smoke, release, release-drafter, and Windows gates.
+- [X] T053 Document GHCR default, optional Docker Hub, and prerelease latest policy.
+- [X] T054 Add regression tests for CI/CD workflow docs.
