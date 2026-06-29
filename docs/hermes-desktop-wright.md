@@ -24,8 +24,6 @@ setx API_SERVER_ENABLED true
 setx API_SERVER_HOST 127.0.0.1
 setx API_SERVER_PORT 8642
 setx API_SERVER_KEY wright-local-dev
-setx HERMES_API_BASE_URL http://127.0.0.1:8642
-setx HERMES_API_KEY wright-local-dev
 ```
 
 Hermes Desktop reads the local app data env file during backend startup:
@@ -65,6 +63,11 @@ Expected response shape:
 ```json
 {"state":"connected","baseUrl":"http://127.0.0.1:8642"}
 ```
+
+Wright resolves the Hermes API endpoint from Hermes' own environment file. It
+uses `hermes config env-path` to locate the active `.env`, then reads
+`API_SERVER_HOST`, `API_SERVER_PORT`, and `API_SERVER_KEY`. Use
+`HERMES_API_BASE_URL` only as an explicit override for non-standard deployments.
 
 ## Plugin Load Paths on Windows
 

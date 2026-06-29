@@ -4,6 +4,21 @@ This page provides a comprehensive index of Model Context Protocol (MCP) integra
 
 ---
 
+## Readiness Policy
+
+The Wright catalog is statused rather than a flat list. Entries are ordered by practical readiness:
+
+1. **Tested**: validated in the current supported environment.
+2. **Might work**: source/install evidence exists, but host software, credentials, GUI apps, licenses, hardware, or architecture support may still be required.
+3. **Blocked**: useful to track, but automated install is disabled because source URL, package evidence, or safety review is incomplete.
+4. **Non-working**: validation failed for reasons that need follow-up.
+
+Host-dependent CAD integrations may still be healthy catalog entries when they install but report a clear message such as "FreeCAD not installed" or "SolidWorks host unavailable." Broken entries should link to a follow-up record under `docs/mcp-catalog/followups/` so they can become GitHub PRs or issues later.
+
+Validation must follow the clean-container process in `docs/mcp-catalog/mcp-server-testing-process.md`: start Wright in an Intel Ubuntu container, inspect the selected MCP metadata, install only that MCP server and its specific test dependencies, record the result, and reset before moving to the next catalog entry.
+
+---
+
 ## 1. Enterprise PLM & Cloud CAD Integrations
 
 ### Autodesk Ecosystem
@@ -36,7 +51,10 @@ This page provides a comprehensive index of Model Context Protocol (MCP) integra
 
 ### Code-Driven CAD
 *   **`openscad-mcp`**: Renders OpenSCAD geometries to Base64 PNG frames to complete the visual design feedback loop.
-*   **`zoo-mcp`**: Cloud-native CAD API connection to Zoo.dev geometric compute kernels.
+*   **`zoo-mcp`**: Python/uv stdio MCP for Zoo.dev cloud CAD compute, file conversion, and KCL docs/samples. Linux x64 validation initialized MCP, listed tools, and searched KCL docs with a dummy token; full CAD compute remains credential-limited on `ZOO_API_TOKEN`.
+
+### Finite Element Analysis
+*   **`OASiS Open FEM Agent` (Hereon-InstituteMS)**: Multi-solver FEA MCP for scikit-fem, FEniCSx, NGSolve, deal.II, Kratos, DUNE-fem, 4C, and FEBio. Linux x64 validation fully exercised the scikit-fem Poisson path; other solver backends are installed only when selected.
 
 ---
 
@@ -54,11 +72,13 @@ This page provides a comprehensive index of Model Context Protocol (MCP) integra
 | **hedless-onshape-mcp** | Cloud 3D CAD | hedless | Startup / OSS | [GitHub Repository](https://github.com/hedless/onshape-mcp) |
 | **SolidworksMCP-python** | 3D CAD | andrewbartels1 | Open Source | [GitHub Repository](https://github.com/andrewbartels1/SolidworksMCP-python) |
 | **SolidworksMCP-TS** | 3D CAD | vespo92 | Open Source | [GitHub Repository](https://github.com/vespo92/SolidworksMCP-TS) |
+| **SolidWorks API Docs** | API docs / CAD code help | kilwizac | Open Source | [GitHub Repository](https://github.com/kilwizac/solidworks-api-mcp) |
+| **OASiS Open FEM Agent** | FEA / Simulation | Hereon-InstituteMS | Open Source | [GitHub Repository](https://github.com/Hereon-InstituteMS/OASiS) |
 | **freecad-mcp (sandraschi)** | 3D CAD / FEA / CFD | sandraschi | Open Source | [GitHub Repository](https://github.com/sandraschi/freecad-mcp) |
 | **freecad-mcp (contextform)** | 3D CAD Copilot | contextform | Open Source | [GitHub Repository](https://github.com/contextform/freecad-mcp) |
 | **freecad-addon-robust** | 3D CAD / Macros | spkane | Open Source | [GitHub Repository](https://github.com/spkane/freecad-addon-robust-mcp-server) |
 | **openscad-mcp** | Code CAD | quellant | Open Source | [GitHub Repository](https://github.com/quellant/openscad-mcp) |
 | **RhinoMCP** | 3D NURBS / Scripting | jingcheng-chen (McNeel) | Enterprise (OSS) | [GitHub Repository](https://github.com/jingcheng-chen/rhinomcp) |
 | **blender-mcp** | 3D Mesh / Blender | ahujasid | Open Source | [GitHub Repository](https://github.com/ahujasid/blender-mcp) |
-| **zoo-mcp** | Cloud CAD API | Zoo.dev | Startup (OSS) | [GitHub Repository](https://github.com/KittyCAD/zoo-mcp) |
+| **zoo-mcp** | Cloud CAD API / KCL docs | Zoo.dev | Startup (OSS, credential-limited) | [GitHub Repository](https://github.com/KittyCAD/zoo-mcp) |
 | **webmcp-openscad** | Web 3D Modeling | jherr | Open Source | [GitHub Repository](https://github.com/jherr/webmcp-openscad) |

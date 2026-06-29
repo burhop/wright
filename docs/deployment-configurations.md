@@ -676,7 +676,8 @@ graph TB
 ```bash
 # Check Hermes version and status
 hermes --version
-hermes -p wright config get API_SERVER_PORT
+hermes config env-path
+grep API_SERVER_PORT "$(hermes config env-path)"
 
 # Check running processes
 pgrep -fa hermes

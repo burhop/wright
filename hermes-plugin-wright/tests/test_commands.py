@@ -244,19 +244,20 @@ async def test_handle_start_success(monkeypatch):
             res = await handle_start()
             assert "🚀 Wright is running!" in res
             assert "PID:     12345" in res
-            mock_popen.assert_called_once()
-            command = mock_popen.call_args.args[0]
+            assert mock_popen.call_count == 2
+            api_call = mock_popen.call_args_list[1]
+            command = api_call.args[0]
             assert command[:3] == [r"C:\tools\uv.exe", "run", "--project"]
             assert "api.main:app" in command
             assert "--app-dir" in command
             assert "fastapi" not in command
-            assert mock_popen.call_args.kwargs["cwd"] == tmpdir
+            assert api_call.kwargs["cwd"] == tmpdir
             assert "default browser" in res
             mock_open.assert_called_once_with("http://127.0.0.1:8000/")
 
             # Close the open log file handle to prevent file locking on Windows
-            if mock_popen.call_args:
-                stdout_file = mock_popen.call_args[1].get("stdout")
+            for call in mock_popen.call_args_list:
+                stdout_file = call.kwargs.get("stdout")
                 if stdout_file and hasattr(stdout_file, "close"):
                     stdout_file.close()
             

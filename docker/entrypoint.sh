@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+export PATH="/opt/hermes/bin:/opt/hermes/.venv/bin:${PATH}"
+export HOME="/home/agent"
+HERMES_CLI="/opt/hermes/bin/hermes"
 
 echo "=== Agent Container Starting ==="
 echo "  LLM_API_URL : ${LLM_API_URL}"
@@ -20,21 +23,26 @@ fi
 
 # ── 3. Create backup directories ───────────────────────────────────────────
 mkdir -p /home/agent/.backups/etc || echo "Warning: Failed to create /home/agent/.backups/etc" >&2
+mkdir -p /home/agent/.local/share/wright || echo "Warning: Failed to create Wright state directory" >&2
 
 # ── 4. Bootstrap Hermes Agent (first-run only) ─────────────────────────────
 HERMES_HOME="/home/agent/.hermes"
 export HERMES_HOME
+export HERMES_PROFILE="wright"
 
-if [ ! -d "${HERMES_HOME}" ]; then
-  echo "First boot: initializing Hermes Agent..."
-
-  # Create the directory structure hermes expects
+ensure_wright_profile() {
+  mkdir -p "${HERMES_HOME}"
+  if [ ! -d "${HERMES_HOME}/profiles/wright" ]; then
+    echo "Creating Hermes profile: wright"
+    "${HERMES_CLI}" profile create wright || true
+  fi
   mkdir -p "${HERMES_HOME}/profiles/wright/sessions"
   mkdir -p "${HERMES_HOME}/profiles/wright/skills"
   mkdir -p "${HERMES_HOME}/webui/sessions"
   mkdir -p "${HERMES_HOME}/webui/workspace"
+}
 
-  # Write config.yaml in the format Hermes actually expects
+write_hermes_config() {
   LLM_URL="${LLM_API_URL:-http://localhost:8000/v1}"
   LLM_KEY="${LLM_API_KEY:-NotNeeded}"
   LLM_MODEL="${LLM_API_MODEL:-default}"
@@ -60,14 +68,18 @@ terminal:
   timeout: 300
 YAML
 
-  # Copy config to wright profile as well
   cp "${HERMES_HOME}/config.yaml" "${HERMES_HOME}/profiles/wright/config.yaml"
 
-  # Enable API server in the wright profile
-  hermes -p wright config set API_SERVER_ENABLED true
-  hermes -p wright config set API_SERVER_KEY "${HERMES_API_KEY:-wright-dev-key}"
-  hermes -p wright config set API_SERVER_PORT 8642
+  "${HERMES_CLI}" -p wright config set API_SERVER_ENABLED true
+  "${HERMES_CLI}" -p wright config set API_SERVER_HOST "${API_SERVER_HOST:-127.0.0.1}"
+  "${HERMES_CLI}" -p wright config set API_SERVER_KEY "${HERMES_API_KEY:-${API_SERVER_KEY:-wright-dev-key}}"
+  "${HERMES_CLI}" -p wright config set API_SERVER_PORT "${API_SERVER_PORT:-8642}"
+}
 
+ensure_wright_profile
+write_hermes_config
+
+if [ ! -f "${HERMES_HOME}/profiles/wright/SOUL.md" ]; then
   # Write SOUL.md with Wright agent instructions
   cat > "${HERMES_HOME}/profiles/wright/SOUL.md" <<'EOF'
 # Hermes Agent Persona
@@ -82,22 +94,9 @@ You are Wright, a professional engineering and 3D design assistant.
 2. **Intermediate & Working Files**: Only use the `tmp/` folder (which maps to the workspace's local `tmp/` folder) for transient internal renders, scratch files, build outputs, cache files, and logs. Do NOT put final files, exports, or requested images in `tmp/`.
 EOF
 
-
   echo "Hermes bootstrapped with LLM endpoint: ${LLM_URL}"
 else
-  echo "Hermes home exists at ${HERMES_HOME}, skipping bootstrap."
-
-  # Update LLM config if env vars changed (idempotent)
-  if [ -n "${LLM_API_URL}" ] && [ -f "${HERMES_HOME}/config.yaml" ]; then
-    CURRENT_URL=$(grep "^base_url:" "${HERMES_HOME}/config.yaml" 2>/dev/null | sed 's/base_url: *"\?\([^"]*\)"\?/\1/' || echo "")
-    if [ "${CURRENT_URL}" != "${LLM_API_URL}" ]; then
-      echo "Updating LLM endpoint from ${CURRENT_URL} to ${LLM_API_URL}"
-      sed -i "s|^base_url:.*|base_url: \"${LLM_API_URL}\"|" "${HERMES_HOME}/config.yaml"
-      if [ -f "${HERMES_HOME}/profiles/wright/config.yaml" ]; then
-        sed -i "s|^base_url:.*|base_url: \"${LLM_API_URL}\"|" "${HERMES_HOME}/profiles/wright/config.yaml"
-      fi
-    fi
-  fi
+  echo "Hermes profile ready at ${HERMES_HOME}/profiles/wright."
 fi
 
 # ── 5. Create default workspace directory ──────────────────────────────────

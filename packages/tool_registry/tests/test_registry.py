@@ -126,6 +126,50 @@ def test_database_crud(temp_db_path):
     assert get_server(temp_db_path, server_id) is None
 
 
+def test_database_persists_catalog_metadata(temp_db_path):
+    server = McpServer(
+        server_id="metadata-server",
+        name="Metadata Server",
+        type="stdio",
+        command=["uvx", "metadata-server"],
+        is_active=False,
+        status="inactive",
+        created_at=1,
+        updated_at=1,
+        verification_state="verified_mcp",
+        installability_tier="tested",
+        risk_level="medium",
+        deployment_mode="local-only",
+        platform_support={
+            "linux_x64": {
+                "status": "yes",
+                "tested": True,
+                "notes": "validated in unit test",
+            }
+        },
+        host_software_required=["OpenSCAD"],
+        credentials_required=["TOKEN"],
+        default_enabled=False,
+        approval_gates=["workspace_write_approval"],
+        validation_result={
+            "status": "passed",
+            "message": "Validated",
+            "missing_dependencies": [],
+        },
+        follow_up_url="docs/mcp-catalog/followups/metadata-server.md",
+    )
+    insert_server(temp_db_path, server)
+
+    fetched = get_server(temp_db_path, "metadata-server")
+    assert fetched.verification_state == "verified_mcp"
+    assert fetched.installability_tier == "tested"
+    assert fetched.platform_support["linux_x64"].status == "yes"
+    assert fetched.host_software_required == ["OpenSCAD"]
+    assert fetched.credentials_required == ["TOKEN"]
+    assert fetched.default_enabled is False
+    assert fetched.validation_result.status == "passed"
+
+
 @pytest.mark.asyncio
 async def test_stdio_runner_mock():
     mock_server_path = os.path.join(os.path.dirname(__file__), "mock_server.py")

@@ -2,7 +2,6 @@ import os
 import time
 import json
 import re
-from pathlib import Path
 from typing import AsyncIterator
 import httpx
 from httpx_sse import aconnect_sse
@@ -16,6 +15,7 @@ from .base import (
     AgentChatMessage,
     AgentCommand,
 )
+from .hermes_config import resolve_hermes_api_settings
 
 logger = structlog.get_logger(__name__)
 
@@ -34,79 +34,32 @@ class HermesAdapter(BaseAgentEngine):
     """Concrete implementation of BaseAgentEngine that proxies to Hermes Native API (Constitution §2)."""
 
     def __init__(self, base_url: str, api_key: str, db_path: str | None = None):
-        self.base_url = base_url.rstrip("/")
-        self.api_key = api_key
+        settings = resolve_hermes_api_settings()
+        self.base_url = (base_url or settings.base_url).rstrip("/")
+        self.api_key = api_key or settings.api_key
         self.db_path = db_path
         self.headers = {"Content-Type": "application/json"}
-        if api_key:
-            self.headers["Authorization"] = f"Bearer {api_key}"
+        if self.api_key:
+            self.headers["Authorization"] = f"Bearer {self.api_key}"
         self._active_clients = {}  # session_id -> httpx.AsyncClient
 
     def _candidate_base_urls(self) -> list[str]:
-        """Return configured and likely Hermes API URLs, preserving priority."""
+        """Return configured Hermes API URLs, preserving priority."""
         configured = [self.base_url]
         env_candidates = re.split(r"[,;]\s*", os.getenv("HERMES_API_CANDIDATES", ""))
-        discovered_candidates = self._discover_dashboard_base_urls()
         if os.getenv("HERMES_API_DISABLE_DEFAULT_CANDIDATES", "").strip().lower() in {"1", "true", "yes"}:
             default_candidates = []
         else:
             default_candidates = [
                 "http://127.0.0.1:8642",
                 "http://localhost:8642",
-                "http://127.0.0.1:3001",
-                "http://localhost:3001",
-                "http://127.0.0.1:3000",
-                "http://localhost:3000",
-                "http://127.0.0.1:1421",
-                "http://localhost:1421",
-                "http://127.0.0.1:1420",
-                "http://localhost:1420",
             ]
 
         candidates = []
-        for url in configured + env_candidates + discovered_candidates + default_candidates:
+        for url in configured + env_candidates + default_candidates:
             cleaned = (url or "").strip().rstrip("/")
             if cleaned and cleaned not in candidates:
                 candidates.append(cleaned)
-        return candidates
-
-    def _discover_dashboard_base_urls(self) -> list[str]:
-        """Discover Hermes Desktop's dynamic dashboard/API port from local logs."""
-        if os.getenv("HERMES_API_DISABLE_LOG_DISCOVERY", "").strip().lower() in {"1", "true", "yes"}:
-            return []
-
-        log_paths = []
-        local_app_data = os.getenv("LOCALAPPDATA")
-        if local_app_data:
-            log_paths.extend([
-                Path(local_app_data) / "hermes" / "logs" / "desktop.log",
-                Path(local_app_data) / "hermes" / "logs" / "gui.log",
-            ])
-
-        home = Path.home()
-        log_paths.extend([
-            home / ".hermes" / "logs" / "desktop.log",
-            home / ".hermes" / "logs" / "gui.log",
-        ])
-
-        ports = []
-        for log_path in log_paths:
-            try:
-                if not log_path.exists():
-                    continue
-                text = log_path.read_text(encoding="utf-8", errors="ignore")
-            except OSError:
-                continue
-
-            matches = re.findall(r"HERMES_DASHBOARD_READY\s+port=(\d+)", text)
-            for port in reversed(matches):
-                if port not in ports:
-                    ports.append(port)
-
-        candidates = []
-        for port in ports[:5]:
-            candidates.append(f"http://127.0.0.1:{port}")
-            candidates.append(f"http://localhost:{port}")
         return candidates
 
     async def _request_with_fallback(
@@ -171,7 +124,7 @@ class HermesAdapter(BaseAgentEngine):
                                 "baseUrl": self.base_url,
                             }
                         if response.status_code == 200 and is_html_shell:
-                            last_error = f"{base_url} returned dashboard HTML, not Hermes API health"
+                            last_error = f"{base_url} returned HTML, not Hermes API health"
                         else:
                             last_error = f"{base_url} HTTP {response.status_code}: {response.text[:200]}"
                 except Exception as e:

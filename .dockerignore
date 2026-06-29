@@ -35,6 +35,8 @@ lance_db/
 docker-volumes/
 jwt_secret.txt
 state.db
+**/state.db
+*.db
 apps/state.db
 .specify/
 specs/

@@ -36,20 +36,21 @@ export const ServerTypeBadge: React.FC<ServerTypeBadgeProps> = ({ type }) => {
     color: "var(--color-secondary)",
   };
 
-  const style = isLocal ? localStyle : networkStyle;
-  const label = isLocal ? "⬡ Local" : "⚡ Network";
+  const label = isLocal ? "Local process" : "Network endpoint";
   const tooltip = isLocal
     ? "Runs as a local subprocess on this machine via stdio."
     : "Connects to a remote endpoint via SSE or WebSocket.";
 
   return (
     <div
-      style={style}
+      style={isLocal ? localStyle : networkStyle}
       title={tooltip}
+      aria-label={tooltip}
       data-testid={`server-type-badge-${type}`}
     >
       <span>{label}</span>
     </div>
   );
 };
+
 export default ServerTypeBadge;

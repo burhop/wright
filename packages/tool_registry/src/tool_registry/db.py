@@ -23,6 +23,18 @@ def ensure_migrations(conn: sqlite3.Connection) -> None:
         ("installed_version", "TEXT DEFAULT NULL"),
         ("env_vars", "TEXT DEFAULT NULL"),
         ("instructions", "TEXT DEFAULT NULL"),
+        ("verification_state", "TEXT DEFAULT 'user_reported_url_needed'"),
+        ("installability_tier", "TEXT DEFAULT 'might_work'"),
+        ("risk_level", "TEXT DEFAULT 'low'"),
+        ("deployment_mode", "TEXT DEFAULT 'unknown'"),
+        ("platform_support", "TEXT DEFAULT NULL"),
+        ("host_software_required", "TEXT DEFAULT NULL"),
+        ("credentials_required", "TEXT DEFAULT NULL"),
+        ("default_enabled", "INTEGER DEFAULT 1"),
+        ("approval_gates", "TEXT DEFAULT NULL"),
+        ("validation_result", "TEXT DEFAULT NULL"),
+        ("follow_up_url", "TEXT DEFAULT NULL"),
+        ("install_blocked_reason", "TEXT DEFAULT NULL"),
     ]
     for col_name, col_type in columns:
         try:
@@ -75,6 +87,38 @@ def _serialize_env_vars(env_vars) -> Optional[str]:
     return None
 
 
+def _serialize_json(value) -> Optional[str]:
+    if value is None:
+        return None
+    if hasattr(value, "model_dump"):
+        return json.dumps(value.model_dump())
+    if isinstance(value, list):
+        return json.dumps([
+            item.model_dump() if hasattr(item, "model_dump") else item
+            for item in value
+        ])
+    if isinstance(value, dict):
+        return json.dumps({
+            key: item.model_dump() if hasattr(item, "model_dump") else item
+            for key, item in value.items()
+        })
+    return json.dumps(value)
+
+
+def _parse_json(raw, default):
+    if not raw:
+        return default
+    try:
+        parsed = json.loads(raw)
+        return parsed if parsed is not None else default
+    except Exception:
+        return default
+
+
+def _row_value(row: sqlite3.Row, key: str, default=None):
+    return row[key] if key in row.keys() else default
+
+
 def _row_to_server(row: sqlite3.Row) -> McpServer:
     env_vars_raw = row["env_vars"] if "env_vars" in row.keys() else None
     env_vars = None
@@ -96,22 +140,34 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         type=row["type"],
         command=_parse_command(row["command"]),
         is_active=bool(row["is_active"]),
-        is_installed=bool(row["is_installed"])
-        if "is_installed" in row.keys()
-        else False,
+        is_installed=bool(_row_value(row, "is_installed", False)),
         status=row["status"],
         error_message=row["error_message"],
         category=row["category"],
         created_at=row["created_at"],
         updated_at=row["updated_at"],
-        image_url=row["image_url"] if "image_url" in row.keys() else None,
-        description=row["description"] if "description" in row.keys() else None,
-        source_url=row["source_url"] if "source_url" in row.keys() else None,
-        installed_version=row["installed_version"]
-        if "installed_version" in row.keys()
-        else None,
+        image_url=_row_value(row, "image_url"),
+        description=_row_value(row, "description"),
+        source_url=_row_value(row, "source_url"),
+        installed_version=_row_value(row, "installed_version"),
         env_vars=env_vars,
-        instructions=row["instructions"] if "instructions" in row.keys() else None,
+        instructions=_row_value(row, "instructions"),
+        verification_state=_row_value(
+            row, "verification_state", "user_reported_url_needed"
+        ),
+        installability_tier=_row_value(row, "installability_tier", "might_work"),
+        risk_level=_row_value(row, "risk_level", "low"),
+        deployment_mode=_row_value(row, "deployment_mode", "unknown"),
+        platform_support=_parse_json(_row_value(row, "platform_support"), {}),
+        host_software_required=_parse_json(
+            _row_value(row, "host_software_required"), []
+        ),
+        credentials_required=_parse_json(_row_value(row, "credentials_required"), []),
+        default_enabled=bool(_row_value(row, "default_enabled", True)),
+        approval_gates=_parse_json(_row_value(row, "approval_gates"), []),
+        validation_result=_parse_json(_row_value(row, "validation_result"), {}),
+        follow_up_url=_row_value(row, "follow_up_url"),
+        install_blocked_reason=_row_value(row, "install_blocked_reason"),
     )
 
 
@@ -162,8 +218,12 @@ def insert_server(db_path: str, server: McpServer) -> None:
             """
             INSERT INTO mcp_servers (
                 server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at,
-                image_url, description, source_url, installed_version, env_vars, instructions
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                image_url, description, source_url, installed_version, env_vars, instructions,
+                verification_state, installability_tier, risk_level, deployment_mode,
+                platform_support, host_software_required, credentials_required,
+                default_enabled, approval_gates, validation_result, follow_up_url,
+                install_blocked_reason
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -183,6 +243,18 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.installed_version,
                 _serialize_env_vars(server.env_vars),
                 server.instructions,
+                server.verification_state,
+                server.installability_tier,
+                server.risk_level,
+                server.deployment_mode,
+                _serialize_json(server.platform_support),
+                _serialize_json(server.host_software_required),
+                _serialize_json(server.credentials_required),
+                1 if server.default_enabled else 0,
+                _serialize_json(server.approval_gates),
+                _serialize_json(server.validation_result),
+                server.follow_up_url,
+                server.install_blocked_reason,
             ),
         )
         conn.commit()
@@ -213,9 +285,27 @@ def update_server(
             "source_url",
             "installed_version",
             "instructions",
+            "verification_state",
+            "installability_tier",
+            "risk_level",
+            "deployment_mode",
+            "follow_up_url",
+            "install_blocked_reason",
         ):
             set_clauses.append(f"{key} = ?")
             params.append(value)
+        elif key == "default_enabled":
+            set_clauses.append("default_enabled = ?")
+            params.append(1 if value else 0)
+        elif key in (
+            "platform_support",
+            "host_software_required",
+            "credentials_required",
+            "approval_gates",
+            "validation_result",
+        ):
+            set_clauses.append(f"{key} = ?")
+            params.append(_serialize_json(value))
         elif key == "env_vars":
             set_clauses.append("env_vars = ?")
             params.append(_serialize_env_vars(value))

@@ -16,11 +16,42 @@ def test_hermes_api_key_falls_back_to_api_server_key(monkeypatch):
     import api.config as config
 
     monkeypatch.delenv("HERMES_API_KEY", raising=False)
+    monkeypatch.delenv("HERMES_API_BASE_URL", raising=False)
+    monkeypatch.delenv("HERMES_ENV_PATH", raising=False)
     monkeypatch.setenv("API_SERVER_KEY", "wright-local-dev")
 
     reloaded = importlib.reload(config)
     try:
         assert reloaded.HERMES_API_KEY == "wright-local-dev"
+    finally:
+        importlib.reload(config)
+
+
+def test_hermes_api_settings_use_hermes_env_path(monkeypatch, tmp_path):
+    import api.config as config
+
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "\n".join([
+            "API_SERVER_HOST=127.0.0.1",
+            "API_SERVER_PORT=9876",
+            "API_SERVER_KEY=from-hermes",
+        ]),
+        encoding="utf-8",
+    )
+    monkeypatch.delenv("HERMES_API_BASE_URL", raising=False)
+    monkeypatch.delenv("HERMES_API_KEY", raising=False)
+    monkeypatch.delenv("API_SERVER_HOST", raising=False)
+    monkeypatch.delenv("API_SERVER_PORT", raising=False)
+    monkeypatch.delenv("API_SERVER_KEY", raising=False)
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(tmp_path / "missing-config.yaml"))
+    monkeypatch.setenv("HERMES_ENV_PATH", str(env_file))
+
+    reloaded = importlib.reload(config)
+    try:
+        assert reloaded.HERMES_API_BASE_URL == "http://127.0.0.1:9876"
+        assert reloaded.HERMES_API_KEY == "from-hermes"
+        assert reloaded.HERMES_API_PORT == 9876
     finally:
         importlib.reload(config)
 

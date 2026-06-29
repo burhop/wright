@@ -16,6 +16,49 @@ export interface CredentialStatusResponse {
   configured: Record<string, boolean>;
 }
 
+export type VerificationState =
+  | "verified_mcp"
+  | "verified_docs_mcp"
+  | "community_mcp"
+  | "user_reported_url_needed"
+  | "verified_api_wrapper_candidate"
+  | "capability_alias"
+  | "ui_or_web_standard"
+  | "watchlist"
+  | "excluded";
+
+export type InstallabilityTier =
+  | "tested"
+  | "might_work"
+  | "blocked"
+  | "non_working";
+
+export type RiskLevel =
+  | "read-only"
+  | "low"
+  | "medium"
+  | "high"
+  | "safety-critical";
+
+export interface PlatformSupportRecord {
+  status: "yes" | "likely" | "host-dependent" | "unknown" | "no";
+  tested: boolean;
+  notes: string;
+}
+
+export interface ValidationSummary {
+  status:
+    | "passed"
+    | "dependency_missing"
+    | "blocked"
+    | "failed"
+    | "skipped"
+    | "not_tested";
+  message: string;
+  environment?: string;
+  missing_dependencies: string[];
+}
+
 export interface McpServer {
   server_id: string;
   name: string;
@@ -34,6 +77,18 @@ export interface McpServer {
   installed_version?: string;
   env_vars?: EnvVarDefinition[];
   credentials_configured?: Record<string, boolean>;
+  verification_state: VerificationState;
+  installability_tier: InstallabilityTier;
+  risk_level: RiskLevel;
+  deployment_mode: string;
+  platform_support: Record<string, PlatformSupportRecord>;
+  host_software_required: string[];
+  credentials_required: string[];
+  default_enabled: boolean;
+  approval_gates: string[];
+  validation_result: ValidationSummary;
+  follow_up_url?: string;
+  install_blocked_reason?: string;
 }
 
 export interface McpTool {
@@ -54,6 +109,36 @@ export interface RegisterServerPayload {
   image_url?: string;
   description?: string;
   source_url?: string;
+}
+
+export const defaultMcpMetadata = () => ({
+  verification_state: "user_reported_url_needed" as VerificationState,
+  installability_tier: "might_work" as InstallabilityTier,
+  risk_level: "low" as RiskLevel,
+  deployment_mode: "unknown",
+  platform_support: {
+    windows_11_x64: { status: "unknown" as const, tested: false, notes: "not tested" },
+    linux_x64: { status: "unknown" as const, tested: false, notes: "not tested" },
+    linux_arm64: { status: "unknown" as const, tested: false, notes: "not tested" },
+    macos_x64: { status: "unknown" as const, tested: false, notes: "not tested" },
+    macos_arm64: { status: "unknown" as const, tested: false, notes: "not tested" },
+  },
+  host_software_required: [],
+  credentials_required: [],
+  default_enabled: true,
+  approval_gates: [],
+  validation_result: {
+    status: "not_tested" as const,
+    message: "Not yet validated in this environment",
+    missing_dependencies: [],
+  },
+});
+
+export interface MissingMcpReportPayload {
+  name: string;
+  source_url?: string;
+  notes?: string;
+  category?: string;
 }
 export interface VersionCheckResult {
   server_id: string;
@@ -115,6 +200,24 @@ export class McpService {
     return response.json();
   }
 
+  async reportMissingMcp(
+    payload: MissingMcpReportPayload,
+  ): Promise<{ server_id: string; name: string; status: string }> {
+    const response = await fetch(`${API_BASE}/api/mcp/servers/report-missing`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.detail || response.statusText);
+    }
+    return response.json();
+  }
+
   async toggleServer(serverId: string, isActive: boolean): Promise<McpServer> {
     mcpLogger.info("Toggling server active state", { serverId, isActive });
     const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}`, {
@@ -144,6 +247,7 @@ export class McpService {
       category: "",
       created_at: 0,
       updated_at: 0,
+      ...defaultMcpMetadata(),
     };
   }
 
@@ -221,6 +325,7 @@ export class McpService {
       category: "",
       created_at: 0,
       updated_at: 0,
+      ...defaultMcpMetadata(),
     };
   }
 
@@ -253,6 +358,7 @@ export class McpService {
       category: "",
       created_at: 0,
       updated_at: 0,
+      ...defaultMcpMetadata(),
     };
   }
 

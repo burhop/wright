@@ -42,18 +42,9 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.exception("database_migration_failed", error=str(e))
 
-    # Startup: Initialize McpEngine and sync servers configured as active in DB
+    # Startup initializes the MCP engine only. MCP server processes are started
+    # when an active workspace has those installed servers assigned to it.
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
-    try:
-        await app.state.mcp_engine.sync_active_servers()
-        # Sync database server states into Hermes configs on startup
-        from api.services.hermes_sync import sync_mcp_server_to_hermes
-        from tool_registry import get_servers
-
-        for s in get_servers(DATABASE_PATH):
-            sync_mcp_server_to_hermes(s)
-    except Exception as e:
-        logger.exception("mcp_startup_sync_failed", error=str(e))
     yield
     # Shutdown: Stop active subprocesses/runners
     try:

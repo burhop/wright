@@ -1,4 +1,65 @@
 servers:
+  - id: oasis-open-fem-agent
+    name: "OASiS Open FEM Agent"
+    vendor: Hereon-InstituteMS
+    description: >
+      Multi-solver finite element MCP server for scikit-fem, FEniCSx,
+      NGSolve, deal.II, Kratos, DUNE-fem, 4C, and FEBio backends.
+    domains: [fea, simulation]
+    tags: [open-source, linux, headless, local, scikit-fem]
+    transport: stdio
+    command: ["python", "-m", "server"]
+    source_url: https://github.com/Hereon-InstituteMS/OASiS
+    image_url: https://avatars.githubusercontent.com/u/139527664?s=64
+    locality: local
+    weight: heavy
+    env_vars:
+      - name: PYVISTA_OFF_SCREEN
+        label: "PyVista off-screen mode"
+        description: "Set to true for headless Linux/container validation."
+        required: false
+        secret: false
+    dependencies:
+      system: []
+      python: [oasis-mcp, scikit-fem]
+      node: []
+    aliases: [open-fem-agent, Open FEM Agent, OASiS]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: high
+    deployment_mode: local-only
+    platform_support:
+      windows_11_x64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; backend support must be checked per solver"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation passed with scikit-fem backend"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Python wheels and solver backends must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "not tested; backend support must be checked per solver"
+      macos_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Python wheels and solver backends must be checked"
+    host_software_required:
+      - Python
+      - optional solver backends selected by the user
+    default_enabled: false
+    approval_gates: [workspace_write_approval, execute_code_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation passed with source install, 15 MCP tools, scikit-fem discovery, Poisson prepare_simulation, Poisson run_simulation, result.vtu output, and upstream MCP stdio tests 5/5."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+
   - id: freecad-mcp-sandraschi
     name: "FreeCAD Engineering"
     vendor: sandraschi
@@ -6,18 +67,58 @@ servers:
       End-to-end engineering: FreeCAD geometry → CalculiX FEA →
       OpenFOAM CFD → PrusaSlicer G-code.
     domains: [cad, fea, cfd, cam]
-    tags: [open-source, linux, headless, local]
+    tags: [open-source, linux, headless, local, freecad, calculix, openfoam]
     transport: stdio
-    command: ["uv", "run", "--with", "freecad-mcp", "freecad-mcp"]
+    command: ["uv", "run", "--with", "git+https://github.com/sandraschi/freecad-mcp.git", "python", "-m", "freecad_mcp.server", "--mode", "stdio"]
     source_url: https://github.com/sandraschi/freecad-mcp
     image_url: https://raw.githubusercontent.com/sandraschi/freecad-mcp/main/icon.png
     locality: local
     weight: heavy
-    env_vars: []
+    env_vars:
+      - name: FREECAD_PATH
+        label: "FreeCADCmd path"
+        description: "Path to the selected FreeCAD headless executable, for example an extracted AppImage usr/bin/freecadcmd."
+        required: true
+        secret: false
     dependencies:
-      system: [freecad]
-      python: []
+      system: [FreeCAD, CalculiX, OpenFOAM, PrusaSlicer]
+      python: [freecad-mcp]
       node: []
+    verification_state: community_mcp
+    installability_tier: non_working
+    risk_level: high
+    deployment_mode: local-bridge
+    host_software_required: [FreeCAD, CalculiX, OpenFOAM, PrusaSlicer]
+    approval_gates: [workspace_write_approval, execute_code_approval]
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD and optional simulation/slicer hosts; not tested on Windows"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage and direct FreeCAD STL export worked, but MCP status stayed false and create_shape returned success while no STL was produced"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; FreeCAD AppImage/backend and Python package support must be checked"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD and optional simulation/slicer hosts; not tested on macOS"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD and optional simulation/slicer hosts; not tested on macOS ARM64"
+    validation_result:
+      status: failed
+      message: "Clean Intel Ubuntu validation cloned commit a71f60a71987ac23a65a3bdeda5f71c8f1579efb, installed dependencies with uv sync --extra dev, and upstream tests passed 94 with 2 integration tests deselected. MCP initialized as FreeCAD MCP 3.4.2, listed 47 tools, and freecad_status returned success:false/freecad_ok:false. FreeCAD 1.1.1 AppImage direct CLI exported /tmp/direct_freecad_box.stl at 684 bytes. The advertised --freecad-path option did not affect the subprocess path: create_shape returned FreeCADCmd not found. With FREECAD_PATH=/tmp/freecadcmd, create_shape ran FreeCAD but returned success:true while stderr reported Cannot create a mesh out of a 'Part.Solid' and no STL output was produced."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    follow_up_url: docs/mcp-catalog/followups/freecad-engineering-sandraschi.md
+    install_blocked_reason: "Clean Intel Ubuntu validation found incorrect success reporting and failed STL creation through the MCP server; see follow-up record."
+    headless_ok: "no"
 
   - id: jarvis-onshape-mcp
     name: "Jarvis OnShape MCP"
@@ -27,9 +128,9 @@ servers:
       extrudes, fillets, assemblies, Variable Studios, FeatureScript,
       and multi-view rendering with vision feedback.
     domains: [cad, cloud-cad]
-    tags: [startup, cloud, rest-api]
+    tags: [startup, cloud, rest-api, onshape, tested-with-credentials-boundary]
     transport: stdio
-    command: ["uv", "run", "--with", "jarvis-onshape-mcp", "onshape-mcp"]
+    command: ["uv", "run", "--with", "git+https://github.com/ReshefElisha/jarvis-onshape-mcp.git", "onshape-mcp"]
     source_url: https://github.com/ReshefElisha/jarvis-onshape-mcp
     image_url: https://avatars.githubusercontent.com/u/6536550?s=64
     locality: remote
@@ -47,8 +148,104 @@ servers:
         secret: true
     dependencies:
       system: []
-      python: [jarvis-onshape-mcp]
+      python: [onshape-mcp]
       node: []
+    aliases: [onshape-mcp-jarvis, Jarvis Onshape MCP]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: medium
+    deployment_mode: cloud-saas
+    credentials_required: [ONSHAPE_API_KEY, ONSHAPE_API_SECRET]
+    approval_gates: [secrets_approval, cloud_upload_approval]
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Python/uv stdio MCP expected; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed from source, passed upstream tests, initialized MCP, listed tools, and returned clear Onshape 401 diagnostics with dummy credentials"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Python dependencies and cloud API access must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Python/uv stdio MCP expected; not tested on macOS"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Python/uv stdio MCP expected; not tested on macOS ARM64"
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit b0e725852280ebcfda5d46a4f2ed2d0b720beace, installed dependencies with uv sync --extra dev, and upstream tests passed 698/698 with 3 Pydantic deprecation warnings. MCP initialized as onshape-mcp 1.17.0 from package onshape-mcp 1.2.0, listed 69 tools, list_cached_images returned the expected no-images-cached message, list_documents reached https://cad.onshape.com/api/v6/documents and returned API returned 401 with dummy credentials, and create_document reached https://cad.onshape.com/api/v10/documents and returned Unauthenticated API request. Full validation requires real Onshape API credentials."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [ONSHAPE_API_KEY, ONSHAPE_API_SECRET]
+    headless_ok: "yes"
+
+  - id: onshape-mcp-hedless
+    name: "Onshape MCP"
+    vendor: hedless
+    description: >
+      Cloud-native Onshape REST API MCP for document discovery, Part Studios,
+      sketches, features, assemblies, FeatureScript, variables, and export.
+    domains: [cad, cloud-cad]
+    tags: [onshape, cloud, rest-api, python]
+    transport: stdio
+    command: ["python", "-m", "onshape_mcp.server"]
+    source_url: https://github.com/hedless/onshape-mcp
+    image_url: https://avatars.githubusercontent.com/u/6536550?s=64
+    locality: remote
+    weight: medium
+    env_vars:
+      - name: ONSHAPE_ACCESS_KEY
+        label: "Onshape access key"
+        description: "Access key from the Onshape Developer Portal."
+        required: true
+        secret: false
+      - name: ONSHAPE_SECRET_KEY
+        label: "Onshape secret key"
+        description: "Secret key from the Onshape Developer Portal."
+        required: true
+        secret: true
+    dependencies:
+      system: []
+      python: [onshape-mcp]
+      node: []
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: medium
+    deployment_mode: cloud-saas
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Python stdio MCP expected; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed package, initialized MCP, listed tools, and returned clean missing-credential diagnostics"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Python wheels and cloud API access must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Python stdio MCP expected; not tested on macOS"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Python stdio MCP expected; not tested on macOS ARM64"
+    credentials_required: [ONSHAPE_ACCESS_KEY, ONSHAPE_SECRET_KEY]
+    approval_gates: [secrets_approval, cloud_upload_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation installed from source, listed 45 MCP tools, and `list_documents` returned a clean 401 credential diagnostic. Upstream tests passed 497/497 with 86.28% coverage. Full cloud operation requires Onshape API credentials."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [ONSHAPE_ACCESS_KEY, ONSHAPE_SECRET_KEY]
 
   - id: aps-mcp-server-nodejs
     name: "Autodesk Platform Services Node MCP"
@@ -57,7 +254,7 @@ servers:
     domains: [plm, cloud-cad]
     tags: [autodesk, cloud, node, server-to-server]
     transport: stdio
-    command: ["node", "dist/index.js"]
+    command: ["node", "server.js"]
     source_url: https://github.com/autodesk-platform-services/aps-mcp-server-nodejs
     locality: remote
     weight: light
@@ -72,19 +269,67 @@ servers:
         description: "Developer client secret from developer.autodesk.com"
         required: true
         secret: true
+      - name: SSA_ID
+        label: "Secure service account ID"
+        description: "Autodesk Secure Service Account ID."
+        required: true
+        secret: false
+      - name: SSA_KEY_ID
+        label: "SSA key ID"
+        description: "Autodesk Secure Service Account private key ID."
+        required: true
+        secret: false
+      - name: SSA_KEY_PATH
+        label: "SSA private key path"
+        description: "Path to the downloaded Secure Service Account PEM private key."
+        required: true
+        secret: false
     dependencies:
       system: []
       python: []
       node: [aps-mcp-server-nodejs]
+    aliases: [autodesk-aps-official, Autodesk Platform Services]
+    verification_state: verified_mcp
+    installability_tier: might_work
+    risk_level: medium
+    deployment_mode: cloud-saas
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Node stdio server; requires Autodesk APS/ACC credentials"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed npm dependencies, initialized MCP with dummy credentials, listed tools, and reached the expected APS auth boundary"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Node dependencies must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Node stdio server; requires Autodesk APS/ACC credentials"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Node stdio server; requires Autodesk APS/ACC credentials"
+    credentials_required: [APS_CLIENT_ID, APS_CLIENT_SECRET, SSA_ID, SSA_KEY_ID, SSA_KEY_PATH]
+    approval_gates: [secrets_approval, cloud_upload_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit 722591abb08c42000e9aedcabc746bbd7f413739, ran npm install successfully, found no npm test script, and confirmed no-credential startup exits with the missing APS/SSA environment variable diagnostic. With dummy APS variables and a generated dummy RSA key, MCP initialized as aps-mcp-server-nodejs 0.0.1, listed 4 tools, and getProjectsTool reached APS auth and returned AUTH-001 for the dummy client."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [APS_CLIENT_ID, APS_CLIENT_SECRET, SSA_ID, SSA_KEY_ID, SSA_KEY_PATH]
 
   - id: aps-mcp-server-petr
-    name: "Autodesk Platform Services Python MCP"
+    name: "Autodesk APS Community MCP"
     vendor: petrbroz
-    description: "Python-based Autodesk Platform Services integration for querying construction and project data."
+    description: "Superseded community Autodesk Platform Services MCP for Autodesk Construction Cloud account, project, folder, issue, and item-version queries."
     domains: [plm, cloud-cad]
-    tags: [autodesk, cloud, python]
+    tags: [autodesk, cloud, node, server-to-server, superseded]
     transport: stdio
-    command: ["python", "-m", "aps_mcp_server"]
+    command: ["node", "build/server.js"]
     source_url: https://github.com/petrbroz/aps-mcp-server
     locality: remote
     weight: light
@@ -97,85 +342,302 @@ servers:
         label: "APS Client Secret"
         required: true
         secret: true
+      - name: APS_SA_ID
+        label: "APS service account ID"
+        required: true
+        secret: false
+      - name: APS_SA_EMAIL
+        label: "APS service account email"
+        required: true
+        secret: false
+      - name: APS_SA_KEY_ID
+        label: "APS service account key ID"
+        required: true
+        secret: false
+      - name: APS_SA_PRIVATE_KEY
+        label: "Base64-encoded APS service account private key"
+        required: true
+        secret: true
     dependencies:
-      system: []
-      python: [aps-mcp-server]
-      node: []
+      system: [nodejs, yarn]
+      python: []
+      node: ["@modelcontextprotocol/sdk", typescript, "@aps_sdk/authentication", "@aps_sdk/data-management", "@aps_sdk/construction-issues"]
+    aliases: [autodesk-aps-petrbroz, Autodesk APS Community]
+    verification_state: community_mcp
+    installability_tier: blocked
+    risk_level: medium
+    deployment_mode: cloud-saas
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Node stdio server, but upstream README says this repo moved to the official Autodesk APS MCP server"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed with yarn, built TypeScript, initialized MCP with dummy credentials, listed tools, and reached APS auth; blocked because upstream redirects users to the official repo"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; use the official Autodesk APS MCP server instead"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Node stdio server, but upstream README says this repo moved to the official Autodesk APS MCP server"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Node stdio server, but upstream README says this repo moved to the official Autodesk APS MCP server"
+    credentials_required: [APS_CLIENT_ID, APS_CLIENT_SECRET, APS_SA_ID, APS_SA_EMAIL, APS_SA_KEY_ID, APS_SA_PRIVATE_KEY]
+    approval_gates: [secrets_approval, cloud_upload_approval]
+    validation_result:
+      status: blocked
+      message: "Clean Intel Ubuntu validation cloned commit 557556235e806a5d74265fcf556b9dae4206abdd, installed yarn 1.22.22, ran yarn install --frozen-lockfile and yarn run build successfully, and confirmed there is no yarn test script. Without credentials, node build/server.js exits with the missing APS_CLIENT_ID, APS_CLIENT_SECRET, APS_SA_ID, APS_SA_EMAIL, APS_SA_KEY_ID, and APS_SA_PRIVATE_KEY diagnostic. With dummy APS variables and a generated base64 RSA private key, MCP initialized as autodesk-platform-services 0.0.1, listed 8 tools, and get-accounts reached Autodesk auth and returned AUTH-001 for the dummy client. The repo README says the project moved to the official Autodesk APS MCP server, so Wright should steer users to aps-mcp-server-nodejs."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [APS_CLIENT_ID, APS_CLIENT_SECRET, APS_SA_ID, APS_SA_EMAIL, APS_SA_KEY_ID, APS_SA_PRIVATE_KEY]
+    install_blocked_reason: "Repository README says this project moved to https://github.com/autodesk-platform-services/aps-mcp-server-nodejs."
 
   - id: fusion360-mcp-server
-    name: "Autodesk Fusion 360 CAM"
+    name: "Fusion 360 MCP"
     vendor: faust-machines
-    description: "Controls Fusion 360 geometric engine, parametric sketches, body logic, and CAM setups for CNC post-processing."
+    description: "85-tool MCP bridge for Fusion 360 parametric sketches, body operations, export, and CAM workflows through the Fusion360MCP add-in."
     domains: [cad, cam]
-    tags: [local, desktop, CNC, gcode]
+    tags: [fusion360, local, desktop, CNC, gcode]
     transport: stdio
-    command: ["python", "server.py"]
+    command: ["uv", "run", "--with", "fusion360-mcp-server", "fusion360-mcp-server", "--mode", "socket"]
     source_url: https://github.com/faust-machines/fusion360-mcp-server
     locality: local
     weight: medium
-    env_vars: []
+    env_vars:
+      - name: FREECAD_PATH
+        label: "FreeCADCmd path"
+        description: "Path to the selected FreeCAD headless executable, for example an extracted AppImage usr/bin/freecadcmd."
+        required: true
+        secret: false
     dependencies:
-      system: [fusion360]
-      python: [pywin32]
+      system: ["Fusion 360 desktop", "Fusion360MCP add-in"]
+      python: [fusion360-mcp-server]
       node: []
+    aliases: [fusion360-mcp-faust, Autodesk Fusion 360 CAM]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Fusion 360 desktop and the Fusion360MCP add-in"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation passed package tests/mock MCP, but socket mode correctly reported Fusion add-in unavailable"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Fusion 360 desktop is not available for Linux ARM64"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Fusion 360 desktop and the Fusion360MCP add-in"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Fusion 360 desktop and the Fusion360MCP add-in"
+    host_software_required: ["Fusion 360 desktop", "Fusion360MCP add-in"]
+    approval_gates: [workspace_write_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit b44b667e440da070081795cfcbfaf75de2a44251, passed 282 upstream tests, initialized MCP in mock and socket modes as fusion360-mcp-server 1.26.0, listed 85 tools, mock ping returned pong, mock create_box returned deltas, and socket ping returned the expected error that Fusion 360/add-in is not running."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["Fusion 360 desktop", "Fusion360MCP add-in"]
+    headless_ok: "no"
 
   - id: autodesk-fusion-mcp-python
     name: "Fusion 360 Python API Bridge"
     vendor: sockcymbal
     description: "Python MCP bridge wrapping the local Fusion 360 script interface."
     domains: [cad]
-    tags: [local, python, automation]
+    tags: [local, python, automation, fusion360, aps]
     transport: stdio
-    command: ["python", "main.py"]
+    command: ["python", "fusion_mcp.py"]
     source_url: https://github.com/sockcymbal/autodesk-fusion-mcp-python
     locality: local
     weight: medium
-    env_vars: []
+    env_vars:
+      - name: APS_CLIENT_ID
+        label: "APS client ID"
+        description: "Autodesk Platform Services client ID."
+        required: true
+        secret: false
+      - name: APS_CLIENT_SECRET
+        label: "APS client secret"
+        description: "Autodesk Platform Services client secret."
+        required: true
+        secret: true
+      - name: FUSION_ACTIVITY_ID
+        label: "Fusion activity ID"
+        description: "Registered APS Design Automation activity ID, for example nick.GenerateCube+prod."
+        required: true
+        secret: false
     dependencies:
-      system: [fusion360]
-      python: []
+      system: [Fusion 360, "APS Design Automation activity"]
+      python: [mcp, httpx, python-dotenv]
       node: []
+    verification_state: community_mcp
+    installability_tier: non_working
+    risk_level: high
+    deployment_mode: cloud-saas
+    host_software_required: [Fusion 360, "APS Design Automation activity"]
+    credentials_required: [APS_CLIENT_ID, APS_CLIENT_SECRET, FUSION_ACTIVITY_ID]
+    approval_gates: [workspace_write_approval, execute_code_approval, secrets_approval, cloud_upload_approval]
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed requirements and initialized MCP with dummy APS env, but generate_cube fails before APS auth due httpx BasicAuth.auth_header bug"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; blocked by MCP auth helper bug first"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation"
+    validation_result:
+      status: failed
+      message: "Clean Intel Ubuntu validation cloned commit a3398ac5c76baa252240f301167a4cba2fe6f5b8, found no upstream tests, and installed requirements.txt in a Python 3.12 virtual environment. The catalog command python main.py was stale; the actual MCP script is python fusion_mcp.py. Without APS env vars, startup exits with KeyError: 'APS_CLIENT_ID'. With dummy APS_CLIENT_ID, APS_CLIENT_SECRET, and FUSION_ACTIVITY_ID, MCP initialized as fusion 1.28.1 and listed one tool, generate_cube, but the tool failed before any APS request with 'BasicAuth' object has no attribute 'auth_header' from httpx.BasicAuth(CLIENT_ID, CLIENT_SECRET).auth_header."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Fusion 360, APS_CLIENT_ID, APS_CLIENT_SECRET, FUSION_ACTIVITY_ID]
+    follow_up_url: docs/mcp-catalog/followups/autodesk-fusion-mcp-python.md
+    install_blocked_reason: "MCP backend call fails before APS/Fusion validation because the upstream auth helper uses a removed/invalid httpx BasicAuth.auth_header attribute."
+    headless_ok: "no"
 
   - id: revit-mcp
     name: "Revit BIM MCP"
     vendor: mcp-servers-for-revit
     description: "Query and execute CRUD commands directly over Revit Building Information Modeling (BIM) structural elements."
     domains: [bim]
-    tags: [local, AEC, building, structural]
+    tags: [local, AEC, building, structural, revit, windows]
     transport: stdio
-    command: ["dotnet", "run", "--project", "RevitMcp.csproj"]
+    command: ["node", "build/index.js"]
     source_url: https://github.com/mcp-servers-for-revit/revit-mcp
     locality: local
     weight: heavy
     env_vars: []
     dependencies:
-      system: [revit]
+      system: [nodejs, npm, build-essential, Revit, revit-mcp-plugin]
       python: []
-      node: []
+      node: ["@modelcontextprotocol/sdk", "better-sqlite3", "ws", "zod"]
+    aliases: [revit-mcp-servers, Autodesk Revit BIM]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Revit desktop plus the revit-mcp-plugin socket service; Node MCP server should run from build/index.js"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation built the Node MCP server, initialized MCP, listed 25 tools, and got expected Revit plugin connection failures"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Revit desktop is not available for Linux ARM64"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "Revit desktop is Windows-only"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "Revit desktop is Windows-only"
+    host_software_required: [Revit, revit-mcp-plugin, Windows]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit c9ef49e4c397298d291304f822b89ba3a102e6bf, installed Node 18/npm plus build-essential after better-sqlite3 required make/native compilation, built the TypeScript server, and found no upstream test script. MCP initialized as revit-mcp 1.0.0, listed 25 tools, and `say_hello` plus `get_current_view_info` both returned the expected backend diagnostic `connect to revit client failed` with ECONNREFUSED ::1:8080 because Revit desktop and the revit-mcp-plugin socket are unavailable in the Linux container."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Revit, revit-mcp-plugin]
+    headless_ok: "no"
 
   - id: siemens-element-mcp
     name: "Siemens Element Design System"
     vendor: Siemens
     description: "Retrieves UX writing guidelines, component specs, and API patterns for Element components via RAG."
     domains: [mesh]
-    tags: [design-system, siemens, UI, elements]
+    tags: [design-system, siemens, UI, elements, angular, rag]
     transport: stdio
     command: ["npx", "@siemens/element-mcp"]
     source_url: https://element.siemens.io/get-started/element-mcp/
     locality: remote
     weight: light
-    env_vars: []
+    env_vars:
+      - name: SDL_MCP_TOKEN_ENV
+        label: "Use environment token"
+        description: "Set to true in container/WSL/headless environments so the MCP reads the Siemens LLM token from environment variables instead of a system keychain."
+        required: false
+        secret: false
+      - name: OPENAI_API_KEY
+        label: "Siemens LLM API token"
+        description: "Token from my.siemens.com with llm scope; upstream uses this variable name for the Siemens embeddings API."
+        required: true
+        secret: true
     dependencies:
-      system: []
+      system: [nodejs, npm]
       python: []
-      node: ["@siemens/element-mcp"]
+      node: ["@siemens/element-mcp@49.12.0-v.1.11.1"]
+    verification_state: verified_docs_mcp
+    installability_tier: might_work
+    risk_level: read-only
+    deployment_mode: local-cloud
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "npm package is cross-platform; Windows still needs a configured Siemens LLM token or keychain setup"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed the npm package in a project, started stdio MCP, listed tools, and reached the Siemens embeddings credential boundary"
+      linux_arm64:
+        status: "likely"
+        tested: false
+        notes: "package declares Linux ARM64 LanceDB optional dependency; not tested"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "package declares macOS x64 LanceDB optional dependency; not tested"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "package declares macOS ARM64 LanceDB optional dependency; not tested"
+    credentials_required: [OPENAI_API_KEY]
+    approval_gates: [secrets_approval, cloud_upload_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation installed npm package @siemens/element-mcp version 49.12.0-v.1.11.1 from https://registry.npmjs.org/@siemens/element-mcp/-/element-mcp-49.12.0-v.1.11.1.tgz; the package metadata points to https://code.siemens.com/ux/sdl-mcp but no public commit hash is included in the npm artifact. There is no upstream test script in the package. A fresh `npx -y @siemens/element-mcp` failed before local install with `element-mcp: not found`, but the documented project-install flow worked: `npm install --save-dev --save-exact @siemens/element-mcp@49.12.0-v.1.11.1`, then `npx @siemens/element-mcp` or `npx element-mcp`. MCP initialized as @siemens/element-mcp 1.0.0, listed 2 tools (`element-search`, `element-icon-search`), and both tools reached the backend credential boundary with `Embedding API error: 403 Forbidden`; `element-mcp check` also reported `LLM token not found. Run 'element-mcp setup-token'`. Full validation requires a Siemens LLM token with llm scope."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [OPENAI_API_KEY]
+    headless_ok: "yes"
 
   - id: wincc-unified-mcp
     name: "Siemens WinCC Unified SCADA"
     vendor: Siemens
     description: "Bridges industrial runtime alarms, machine variables, and UDT tag data queries via Openness API."
     domains: [iot]
-    tags: [factory, SCADA, plc, siemens]
+    tags: [factory, SCADA, plc, siemens, windows, login-required]
     transport: stdio
     command: ["wincc-unified-mcp.exe"]
     source_url: https://support.industry.siemens.com/cs/document/110002407
@@ -183,88 +645,287 @@ servers:
     weight: heavy
     env_vars: []
     dependencies:
-      system: [wincc-unified]
+      system: [Windows, "WinCC Unified PC Runtime", "Siemens support package 110002407"]
       python: []
       node: []
+    aliases: [siemens-wincc-unified, "Integration of MCP Server with WinCC Unified PC Runtime"]
+    verification_state: user_reported_url_needed
+    installability_tier: blocked
+    risk_level: safety-critical
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "official artifact appears to require Siemens Support login plus WinCC Unified PC Runtime"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation could not access the Siemens support artifact, found no npm/PyPI package, and the configured .exe command is unavailable"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "official entry appears Windows/WinCC-host dependent"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "official entry appears Windows/WinCC-host dependent"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "official entry appears Windows/WinCC-host dependent"
+    host_software_required: [Windows, "WinCC Unified PC Runtime", "Siemens support package 110002407"]
+    approval_gates: [secrets_approval, machine_control_approval, safety_review_approval]
+    validation_result:
+      status: blocked
+      message: "Clean Intel Ubuntu validation checked Siemens Support Entry ID 110002407. Public search results confirm `Integration of MCP Server with WinCC Unified PC Runtime` and show a login-required `110002407_MCPServerPCRuntime_READMEOSS.zip`; direct curl requests to the support page and PDF attachment returned HTTP 403 from Akamai. `npm view wincc-unified-mcp`, `npm view @siemens/wincc-unified-mcp`, `pip index versions wincc-unified-mcp`, and `pip index versions wincc_unified_mcp` found no package. The configured `wincc-unified-mcp.exe` command was not present in Linux, and guessed Siemens GitHub repository URLs required authentication or did not resolve publicly. No MCP stdio calls could be made until the official support artifact is obtained and installed on a Windows host with WinCC Unified PC Runtime."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Windows, "WinCC Unified PC Runtime", "Siemens Support login", "110002407_MCPServerPCRuntime_READMEOSS.zip"]
+    follow_up_url: docs/mcp-catalog/followups/wincc-unified-mcp.md
+    install_blocked_reason: "Official Siemens support artifact for Entry ID 110002407 is login-gated and no public npm/PyPI/GitHub package or Linux command could be verified."
+    headless_ok: "no"
 
   - id: thingworx-mcp
     name: "PTC ThingWorx IoT Platform"
     vendor: PTC
     description: "Exposes industrial machine telemetry, alarms, and sensor KPIs configured as MCPServices."
     domains: [iot, plm]
-    tags: [industrial, iot, ptc, cloud]
+    tags: [industrial, iot, ptc, cloud, oauth, appkey]
     transport: sse
-    command: ["ptc-thingworx-mcp"]
+    command: "${THINGWORX_BASE_URL}/mcp"
     source_url: https://support.ptc.com/help/thingworx/platform/r10.1/
     locality: remote
     weight: light
     env_vars:
+      - name: THINGWORX_BASE_URL
+        label: "ThingWorx server URL"
+        description: "Base URL for a ThingWorx 10.1+ server with MCP enabled; the MCP endpoint is `${THINGWORX_BASE_URL}/mcp`."
+        required: true
+        secret: false
       - name: THINGWORX_APP_KEY
         label: "Application Key"
-        required: true
+        description: "ThingWorx application key when the deployment uses AppKey authentication."
+        required: false
+        secret: true
+      - name: THINGWORX_OAUTH_TOKEN
+        label: "OAuth token"
+        description: "OAuth bearer token for ThingWorx deployments using RFC 9728-protected MCP metadata."
+        required: false
         secret: true
     dependencies:
-      system: []
+      system: ["ThingWorx 10.1+ MCP-enabled server"]
       python: []
       node: []
+    aliases: [ptc-thingworx-mcp, ThingWorxMCPServer]
+    verification_state: verified_mcp
+    installability_tier: might_work
+    risk_level: safety-critical
+    deployment_mode: cloud-saas
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "client-side HTTP/SSE configuration should work once a ThingWorx 10.1+ MCP endpoint and credentials are available"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation confirmed official PTC MCP docs are reachable, but no live ThingWorx endpoint or credentials were available for MCP calls"
+      linux_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "remote HTTP/SSE endpoint should be client-architecture independent; not tested"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "remote HTTP/SSE endpoint should be client-architecture independent; not tested"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "remote HTTP/SSE endpoint should be client-architecture independent; not tested"
+    host_software_required: ["ThingWorx 10.1+ MCP-enabled server"]
+    credentials_required: [THINGWORX_BASE_URL, "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN"]
+    approval_gates: [secrets_approval, cloud_upload_approval, machine_control_approval, safety_review_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation confirmed official PTC ThingWorx 10.1 MCP documentation pages returned HTTP 200. PTC docs describe setting an MCP client to HTTP/SSE endpoint `<ThingWorx Server URL>/mcp`, managing tools/resources/prompts with the `MCPServices` resource, and OAuth-protected metadata; therefore the catalog command was corrected from the nonexistent local `ptc-thingworx-mcp` binary to `${THINGWORX_BASE_URL}/mcp`. No standalone npm/PyPI package was found: `npm view ptc-thingworx-mcp`, `npm view thingworx-mcp`, `npm view @ptc/thingworx-mcp`, `pip index versions ptc-thingworx-mcp`, and `pip index versions thingworx-mcp` all failed. The configured `ptc-thingworx-mcp` command was not present in Linux. A separate community repository `https://github.com/doubleSlashde/thingworx-mcp-server` exists at commit 7e22ef9be1af495acf1a46101ebb17380eed86ae, but it is not the official PTC product-hosted MCP entry. No MCP calls could be made without a live ThingWorx 10.1+ MCP endpoint and credentials."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["ThingWorx 10.1+ MCP-enabled server", THINGWORX_BASE_URL, "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN"]
+    headless_ok: "yes"
 
   - id: creo-mcp
-    name: "Creo Parametric Bridge"
+    name: "Creo/CadQuery MCP"
     vendor: yangkunyi
-    description: "Integrates with CREOSON json-rpc middleware for mechanical CAD assemblies assembly analysis."
-    domains: [cad]
-    tags: [desktop, ptc, creo]
+    description: "CadQuery code-execution MCP that can export STEP files locally, query a Volcengine knowledge base, and open STEP files in Creo through a local CREOSON bridge."
+    domains: [cad, code-cad]
+    tags: [desktop, ptc, creo, creoson, cadquery, step]
     transport: stdio
-    command: ["python", "creo_mcp.py"]
+    command: ["uvx", "creo-mcp", "--authorization", "${VOLCENGINE_AUTHORIZATION}", "--service-resource-id", "${VOLCENGINE_SERVICE_RESOURCE_ID}"]
     source_url: https://github.com/yangkunyi/creo-mcp
     locality: local
     weight: medium
-    env_vars: []
+    env_vars:
+      - name: VOLCENGINE_AUTHORIZATION
+        label: "Volcengine authorization token"
+        description: "Bearer token for the Volcengine knowledge-base service call."
+        required: true
+        secret: true
+      - name: VOLCENGINE_SERVICE_RESOURCE_ID
+        label: "Volcengine service resource ID"
+        description: "Service resource ID for the Volcengine knowledge-base retrieval endpoint."
+        required: true
+        secret: false
     dependencies:
-      system: [creoson]
-      python: [creopyson]
+      system: [libgl1, CREOSON, Creo]
+      python: [creo-mcp, cadquery, creopyson]
       node: []
+    aliases: [creo-parametric-mcp, PTC Creo Parametric]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Creo desktop plus CREOSON for open_file_in_cad; local CadQuery generation should be retested on Windows"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed source package plus libGL, initialized MCP, listed tools, and generated a STEP file with CadQuery; Creo open and Volcengine retrieval require external dependencies"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; CadQuery/OCP wheels and Creo/CREOSON availability must be checked"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Creo desktop plus CREOSON; not tested on macOS"
+      macos_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; CadQuery/OCP wheels and Creo/CREOSON availability must be checked"
+    host_software_required: [Creo, CREOSON]
+    credentials_required: [VOLCENGINE_AUTHORIZATION, VOLCENGINE_SERVICE_RESOURCE_ID]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval, secrets_approval, cloud_upload_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit 1a2f164c88c896c0b98a8edec36a7dc4e2eb06ff, found no upstream tests, installed the source package with Python 3.12, and added libgl1 after the first start failed with ImportError: libGL.so.1. MCP then initialized as python-code-executor 1.28.1, listed 3 tools, execute_python_code used CadQuery to export /tmp/wright_creo_box.step at 15418 bytes, open_file_in_cad returned the expected CREOSON connection-refused diagnostic for localhost:9056, and retrieve_from_knowledge_base with dummy credentials returned HTTP 400 from the Volcengine endpoint. Full validation requires Creo, CREOSON, and real Volcengine credentials."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Creo, CREOSON, VOLCENGINE_AUTHORIZATION, VOLCENGINE_SERVICE_RESOURCE_ID]
+    headless_ok: "partial"
 
   - id: creoson-mcp-bridge
     name: "CREOSON JSON-RPC Server"
     vendor: SimplifiedLogic
     description: "Direct JLINK bridge to PTC Creo Parametric modeling kernel."
     domains: [cad]
-    tags: [middleware, java, jsonrpc]
+    tags: [middleware, java, jsonrpc, creo, jlink, not-mcp]
     transport: stdio
-    command: ["java", "-jar", "creoson.jar"]
+    command: ["java", "-classpath", "*.jar", "com.simplifiedlogic.nitro.jshell.MainServer"]
     source_url: https://github.com/SimplifiedLogic/creoson
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [java, creo]
+      system: [Java, Creo, JLINK, "pfcasync.jar", "CreosonServer-3.0.1-win64.zip"]
       python: []
       node: []
+    aliases: [creopyson-creoson, CREOSON Middleware]
+    verification_state: capability_alias
+    installability_tier: blocked
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "release is a Windows Creo/JLINK JSON bridge; requires Creo, JLINK, setvars.bat, and Windows DLL setup"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation downloaded the release and confirmed it is not an MCP server; startup fails without Creo/JLINK classes"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "release is Windows/Creo/JLINK host dependent and not an MCP server"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "release is Windows/Creo/JLINK host dependent and not an MCP server"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "release is Windows/Creo/JLINK host dependent and not an MCP server"
+    host_software_required: [Creo, JLINK, "pfcasync.jar", Windows]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: blocked
+      message: "Clean Intel Ubuntu validation cloned SimplifiedLogic/creoson at commit 1939a585a1fcc94b6c05586af92c2da00adebdb0 and downloaded release v3.0.1 asset CreosonServer-3.0.1-win64.zip. The source build requires a Creo installation with JLINK `text/java/pfcasync.jar`, CreosonSetup ZIPs, Commons Codec, and Jackson jars. The release ZIP contains CreosonServer-3.0.0.jar plus dependencies, `creoson_run.bat`, and `jshellnative.dll`; it is a CREOSON JSON/JLINK micro-server, not an MCP protocol server. The catalog's old `java -jar creoson.jar` command is invalid: `java -jar CreosonServer-3.0.0.jar` returns `no main manifest attribute`. Calling the actual main class `com.simplifiedlogic.nitro.jshell.MainServer` with the release jars fails with `NoClassDefFoundError: com/ptc/cipjava/jxthrowable`, the expected missing Creo/JLINK Java class. No MCP initialize/tools/list calls could be made because CREOSON does not implement MCP stdio/SSE; it should remain a dependency for Creo MCPs rather than a runnable MCP server entry."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Creo, JLINK, "pfcasync.jar", "MCP wrapper"]
+    follow_up_url: docs/mcp-catalog/followups/creoson-mcp-bridge.md
+    install_blocked_reason: "CREOSON is a valid Creo JSON/JLINK bridge but does not implement MCP; it needs an MCP wrapper and a Windows Creo/JLINK host before Wright can expose it as an MCP server."
+    headless_ok: "no"
 
   - id: solidworks-mcp-python
     name: "SolidWorks Python COM"
     vendor: andrewbartels1
     description: "Exposes 100+ CAD drawing and sketching functions over the local Windows COM/VBA backend, with preview rendering and SQLite rollback states."
     domains: [cad, tolerance]
-    tags: [windows, solidworks, com, local]
+    tags: [windows, solidworks, com, local, failed]
     transport: stdio
-    command: ["python", "server.py"]
+    command: ["python", "-m", "solidworks_mcp.server"]
     source_url: https://github.com/andrewbartels1/SolidworksMCP-python
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [solidworks]
-      python: [pywin32]
+      system: [Windows, SolidWorks, "Windows COM"]
+      python: [solidworks-mcp-python, fastmcp, pydantic-ai, pywin32, pywin32-ctypes, comtypes]
       node: []
+    aliases: [SolidWorksMCP-python, SolidWorks CAD Assistant]
+    verification_state: community_mcp
+    installability_tier: non_working
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Windows 10/11, python.org Python, SolidWorks, and Windows COM after the Python dependency mismatch is fixed"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed the package but startup fails before MCP initialization because pydantic-ai 2.0.0 no longer provides pydantic_ai.toolsets.fastmcp"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and SolidWorks are required; Linux ARM64 not applicable for live CAD automation"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and SolidWorks are required"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and SolidWorks are required"
+    host_software_required: [Windows, SolidWorks, "Windows COM"]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: failed
+      message: "Clean Intel Ubuntu validation cloned andrewbartels1/SolidworksMCP-python at commit f0858a7b9cf8cb9a7838ddfaa91a706ef6439cab, created a Python 3.12 virtual environment, and installed with `pip install -e \".[test]\"`. The install resolved `solidworks-mcp-python` 1.0.0, `pydantic-ai` 2.0.0, `fastmcp` 3.4.2, and `mcp` 1.28.1; Linux correctly skipped the Windows-only `pywin32`, `pywin32-ctypes`, and `comtypes` dependencies. Upstream focused tests failed during import because `src/solidworks_mcp/server.py` imports `pydantic_ai.toolsets.fastmcp.FastMCPToolset`, which is not present in `pydantic-ai` 2.0.0. `solidworks-mcp --help` and `python -m solidworks_mcp.server` fail with `ModuleNotFoundError: No module named 'pydantic_ai.toolsets.fastmcp'` before MCP initialization, so no `initialize`, `notifications/initialized`, or `tools/list` calls could be made. Full live CAD validation also requires Windows, SolidWorks, and COM after the Python dependency mismatch is fixed."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["compatible pydantic-ai API", Windows, SolidWorks, "Windows COM"]
+    follow_up_url: docs/mcp-catalog/followups/solidworks-mcp-python.md
+    install_blocked_reason: "Current declared dependency range resolves to pydantic-ai 2.0.0, which breaks server import before MCP startup."
+    headless_ok: "no"
 
   - id: solidworks-mcp-ts
     name: "SolidWorks TypeScript COM"
     vendor: vespo92
     description: "TypeScript/Node-based COM wrapper supporting VBA macro fallback generation for large parameter geometries."
     domains: [cad]
-    tags: [windows, typescript, node]
+    tags: [windows, typescript, node, com]
     transport: stdio
     command: ["node", "dist/index.js"]
     source_url: https://github.com/vespo92/SolidworksMCP-TS
@@ -272,196 +933,637 @@ servers:
     weight: medium
     env_vars: []
     dependencies:
-      system: [solidworks]
+      system: [Windows, SolidWorks, "Windows COM"]
       python: []
-      node: [winax]
+      node: [solidworks-mcp-server, winax]
+    aliases: [SolidworksMCP-TS, solidworks-mcp-server]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Windows 10/11, Node 20+, SolidWorks, and winax/Windows COM for live CAD operations"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed, built, passed mock tests, initialized MCP, and reached clear winax/Windows COM diagnostics on tool calls"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "winax and SolidWorks COM are Windows-only"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "winax and SolidWorks COM are Windows-only"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "winax and SolidWorks COM are Windows-only"
+    host_software_required: [Windows, SolidWorks, "Windows COM", winax]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned vespo92/SolidworksMCP-TS at commit c50ba5867f1d1632a5f6857a2b4aa5ad9b1838b7, installed selected Node 20.20.2 because the package requires Node >=20, ran `npm install`, `npm run build`, and `USE_MOCK_SOLIDWORKS=true npm test`. Upstream tests passed with 52 tests across 4 files. Package version is `solidworks-mcp-server` 3.1.3; `npm ls winax --depth=0` reported `winax` 3.6.2, but the native module cannot self-register on Linux. MCP stdio initialized as serverInfo `solidworks-mcp-server` version 3.1.3 and listed 86 tools. Calls to `generate_vba_script` and `create_part` both returned the expected diagnostic: `The winax native module is not available. SolidWorks COM automation requires it on Windows`, with underlying load error `Module did not self-register: '/tmp/solidworks-mcp-ts/node_modules/winax/build/Release/node_activex.node'`. Full validation requires Windows, SolidWorks, and a working winax build."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Windows, SolidWorks, "Windows COM", "working winax native module"]
+    install_blocked_reason: "Ubuntu can install, build, test, initialize, and list tools, but every meaningful tool call requires the Windows-only winax/SolidWorks COM backend."
+    headless_ok: "no"
 
   - id: solidworks-mcp-alisamsam
     name: "SolidWorks Document Manager"
     vendor: alisamsam
     description: "MCP tool managing SolidWorks file attributes, drawings, and metadata properties."
     domains: [cad]
-    tags: [windows, files, metadata]
+    tags: [windows, files, metadata, solidworks, failed]
     transport: stdio
-    command: ["python", "main.py"]
+    command: ["python", "solidworks_mcp_server.py"]
     source_url: https://github.com/alisamsam/solidworks-mcp
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [solidworks]
-      python: []
+      system: [Windows, SolidWorks, "Windows COM"]
+      python: [mcp, python-dotenv, asyncio-compat, pywin32]
       node: []
+    aliases: [solidworks-mcp-server, "SolidWorks MCP Server by Samsaam Ali Baig"]
+    verification_state: community_mcp
+    installability_tier: non_working
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Windows, SolidWorks 2023-2025, and pywin32 after requirements are fixed"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation failed exact requirements install because asyncio-compat and pywin32 have no Linux PyPI distributions; minimal start then failed importing win32com"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and SolidWorks are required"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and SolidWorks are required"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and SolidWorks are required"
+    host_software_required: [Windows, SolidWorks, "Windows COM", pywin32]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: failed
+      message: "Clean Intel Ubuntu validation cloned alisamsam/solidworks-mcp at commit ee8f42a1a919af5e0fa8d1dcd24270c9983ce027 and followed the documented install path `pip install -r requirements.txt`. The exact install failed because `asyncio-compat>=0.1.0` has no matching PyPI distribution. `pip index versions asyncio-compat` and `pip index versions pywin32` both returned no matching distribution on Linux. After installing only the available runtime dependencies (`mcp` and `python-dotenv`) to continue as far as possible, `python solidworks_mcp_server.py` failed during import with `ModuleNotFoundError: No module named 'win32com'` from `solidworks_mcp/automation/base.py`. No upstream tests were present, and no MCP `initialize`, `notifications/initialized`, or `tools/list` calls could be made because the server cannot start from the declared requirements. Windows/SolidWorks validation should wait until the invalid requirement is removed and Windows-only dependencies are marked appropriately."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["published asyncio-compat package or removed requirement", pywin32, win32com, Windows, SolidWorks]
+    follow_up_url: docs/mcp-catalog/followups/solidworks-mcp-alisamsam.md
+    install_blocked_reason: "The documented requirements file references an unavailable package and unconditionally requires Windows-only COM modules."
+    headless_ok: "no"
 
   - id: solidworks-api-mcp
     name: "SolidWorks API Knowledge Base"
     vendor: kilwizac
     description: "Search and RAG helper exposing SolidWorks API documents for code syntax lookup."
     domains: [cad]
-    tags: [api-docs, search, rag]
+    tags: [api-docs, search, rag, solidworks, read-only]
     transport: stdio
-    command: ["python", "search_server.py"]
+    command: ["bun", "run", "start"]
     source_url: https://github.com/kilwizac/solidworks-api-mcp
     locality: local
     weight: light
-    env_vars: []
+    env_vars:
+      - name: SW_API_DATA_ROOT
+        label: "SolidWorks API data root"
+        description: "Optional path to the local SolidWorks API documentation corpus."
+        required: false
+        secret: false
     dependencies:
       system: []
       python: []
-      node: []
+      node: [bun]
+    aliases: [solidworks-api-docs, solidworks-mcp, SolidWorks API Docs]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: read-only
+    deployment_mode: local-only
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Bun/TypeScript docs server expected; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation passed with Bun 1.3.14 and local documentation corpus"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Bun and corpus access must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Bun/TypeScript docs server expected; not tested on macOS"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Bun/TypeScript docs server expected; not tested on macOS ARM64"
+    host_software_required:
+      - Bun
+      - local SolidWorks API documentation corpus
+    approval_gates: [workspace_read_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation passed with Bun install, typecheck, 40/40 upstream tests, 6 MCP tools, corpus search, ISldWorks member listing, OpenDoc6 lookup, and OpenDoc6 examples."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
 
   - id: freecad-mcp-contextform
     name: "FreeCAD Copilot Workbench"
     vendor: contextform
     description: "Launches FreeCAD native Copilot panel. Extends view control, primitive modeling, and viewport captures."
     domains: [cad]
-    tags: [freecad, workbench, local]
+    tags: [freecad, workbench, local, gui, failed]
     transport: stdio
-    command: ["npx", "freecad-mcp"]
+    command: ["python3", "working_bridge.py"]
     source_url: https://github.com/contextform/freecad-mcp
     locality: local
     weight: heavy
     env_vars: []
     dependencies:
-      system: [freecad]
-      python: []
-      node: ["freecad-mcp"]
+      system: [FreeCAD, Xvfb]
+      python: [mcp]
+      node: [freecad-mcp-setup]
+    aliases: [freecad-copilot-contextform, freecad-mcp-setup, AICopilot]
+    verification_state: community_mcp
+    installability_tier: non_working
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD desktop with AI Copilot workbench; not tested on Windows"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and AICopilot; MCP listed socket-backed tools, but part_operations timed out and FreeCAD logged Qt thread errors"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; FreeCAD GUI/AppImage/workbench support must be checked"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD desktop with AI Copilot workbench"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD desktop with AI Copilot workbench"
+    host_software_required: [FreeCAD, "AICopilot workbench", Xvfb]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: failed
+      message: "Clean Intel Ubuntu validation cloned contextform/freecad-mcp at commit de4fed2a7a4352fcb0de60d2b784063c54eeb812. The catalog's old `npx freecad-mcp` command is incorrect: the npm package is `freecad-mcp-setup` version 1.0.8 and the actual MCP bridge is `working_bridge.py`. `npm install` and `npm test` passed for the installer. `npx freecad-mcp setup` installed the workbench and warned that FreeCAD and Claude Code were not detected. Ubuntu apt had no `freecad` package candidate, so validation installed FreeCAD 1.1.1 revision 20260414 from the Linux x86_64 AppImage plus Xvfb, installed `mcp` for Python, and copied AICopilot to `~/.local/share/FreeCAD/v1-1/Mod/AICopilot`. FreeCAD launched under Xvfb and `/tmp/freecad_mcp.sock` appeared after 6 seconds. MCP stdio initialized as serverInfo `freecad` version 2.0.0, listed 7 tools (`check_freecad_connection`, `test_echo`, `partdesign_operations`, `part_operations`, `view_control`, `execute_python`, `continue_selection`), `check_freecad_connection` returned `FreeCAD running with AI Copilot workbench`, and `test_echo` returned `Bridge received: wright validation`. The first backend modeling call, `part_operations` with `operation=box`, `length=10`, `width=8`, `height=6`, and `name=WrightBox`, timed out after 30 seconds. FreeCAD logged `Event observer error: No module named 'PySide2'`, `QObject: Cannot create children for a parent that is in a different thread`, and `QObject::startTimer: Timers cannot be started from another thread`. Because install/start/discovery work but a real backend operation hangs with FreeCAD present, this entry remains non-working until the workbench dispatches GUI operations on the correct FreeCAD thread or documents a non-headless requirement."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    follow_up_url: docs/mcp-catalog/followups/freecad-copilot-contextform.md
+    install_blocked_reason: "The MCP bridge reaches a running FreeCAD workbench socket, but the first backend modeling operation hangs with Qt cross-thread errors."
+    headless_ok: "no"
 
   - id: freecad-addon-robust
     name: "FreeCAD Robust Server"
     vendor: spkane
     description: "Exposes 150+ CAD tools, headless rendering, and arbitrary macro generation/execution."
     domains: [cad]
-    tags: [headless, xmlrpc, linux]
+    tags: [headless, xmlrpc, linux, freecad, tested]
     transport: stdio
-    command: ["python", "robust_mcp.py"]
+    command: ["uv", "tool", "run", "--from", "freecad-robust-mcp", "freecad-mcp"]
     source_url: https://github.com/spkane/freecad-addon-robust-mcp-server
     locality: local
     weight: heavy
-    env_vars: []
+    env_vars:
+      - name: FREECAD_MODE
+        label: "FreeCAD connection mode"
+        description: "Use xmlrpc for the validated headless bridge path."
+        required: false
+        secret: false
+        default: xmlrpc
+      - name: FREECAD_SOCKET_HOST
+        label: "FreeCAD bridge host"
+        description: "Host running the Robust MCP XML-RPC bridge."
+        required: false
+        secret: false
+        default: 127.0.0.1
+      - name: FREECAD_XMLRPC_PORT
+        label: "FreeCAD XML-RPC port"
+        description: "XML-RPC port exposed by the Robust MCP bridge."
+        required: false
+        secret: false
+        default: "9875"
     dependencies:
-      system: [freecad]
-      python: []
+      system: [FreeCAD, "RobustMCPBridge"]
+      python: [freecad-robust-mcp]
       node: []
+    aliases: [freecad-robust-spkane, freecad-robust-mcp]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "XML-RPC mode is documented as cross-platform, but Windows host validation is still needed"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation passed with FreeCAD 1.1.1 AppImage and headless XML-RPC bridge"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; FreeCAD/AppImage and Python package support must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "XML-RPC mode is documented as cross-platform; macOS validation still needed"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "XML-RPC mode is documented as cross-platform; macOS ARM validation still needed"
+    host_software_required: [FreeCAD, "RobustMCPBridge"]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation cloned spkane/freecad-addon-robust-mcp-server at commit d9a37118a8331e8739ad45fd97d027437984296f. The source package installed as `freecad-robust-mcp` version `0.1.dev1+gd9a37118a`; upstream unit tests passed with 420 tests. Ubuntu apt had no `freecad` package candidate, so validation installed FreeCAD 1.1.1 revision 20260414 from the Linux x86_64 AppImage. The Robust MCP Bridge started headless under `freecadcmd` on XML-RPC port 9875, and `freecad-mcp --check` reported `Connection successful` with FreeCAD version 1.1.1 and GUI available 0. MCP stdio initialized as serverInfo `freecad-mcp` version 1.28.1 and listed 152 tools. `get_connection_status` returned connected true in xmlrpc mode with FreeCAD 1.1.1; `get_freecad_version` returned version 1.1.1 and build date `20260414 (Git shallow)`. Backend operations passed: `create_document` created `WrightDoc`, `create_box` created `WrightBox` as `Part::Box` with volume 480.0, and `list_objects` reported `WrightBox`."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes"
 
   - id: freecad-mcp-nekanat
     name: "FreeCAD Python Server"
     vendor: neka-nat
     description: "Minimalist FreeCAD python automation hook."
     domains: [cad]
-    tags: [python, base]
+    tags: [python, base, freecad, xvfb, tested]
     transport: stdio
-    command: ["python", "freecad_server.py"]
+    command: ["uvx", "freecad-mcp", "--only-text-feedback"]
     source_url: https://github.com/neka-nat/freecad-mcp
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [freecad]
-      python: []
+      system: [FreeCAD, "FreeCADMCP addon", Xvfb]
+      python: [freecad-mcp]
       node: []
+    aliases: [freecad-core-nekanat]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and the FreeCADMCP addon; MCP created and read back a Part::Box"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; FreeCAD backend and Python package support must be checked"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on macOS"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on macOS ARM64"
+    host_software_required: [FreeCAD, "FreeCADMCP addon", Python, uv]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation passed: cloned neka-nat/freecad-mcp at commit 63acb305573194a011641ab13ccfb391fe95769f; package `freecad-mcp` version 0.1.18 exposes console script `freecad-mcp`; no upstream tests were present. `uv tool run --from /tmp/freecad-nekanat-src freecad-mcp --help` built and installed the source package and showed `--only-text-feedback` and `--host`. Ubuntu apt had no `freecad` package candidate, so validation installed FreeCAD 1.1.1 revision 20260414 from the Linux x86_64 AppImage, copied `addon/FreeCADMCP` into FreeCAD user Mod paths, wrote localhost-only `freecad_mcp_settings.json` with `auto_start_rpc: true`, and launched FreeCAD under Xvfb. MCP stdio initialized as serverInfo `FreeCADMCP` version 1.28.1 and listed 14 tools. `list_documents` returned `[]`; backend operations passed: `create_document` created `WrightDoc`, `create_object` created `WrightBox` as `Part::Box`, and `get_objects` reported `WrightBox` with volume 480.0."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes-with-xvfb"
 
   - id: caid-mcp
     name: "CAiD OCCT Kernel Bridge"
     vendor: dreliq9
     description: "Direct OpenCASCADE geometric kernel bridge bypassing FreeCAD GUI with volume/manifold diagnostic layers."
     domains: [cad, code-cad]
-    tags: [occ, opencascade, geometry, validation]
+    tags: [occ, opencascade, geometry, validation, headless]
     transport: stdio
-    command: ["python", "caid_mcp.py"]
+    command: ["python", "server.py"]
     source_url: https://github.com/dreliq9/caid-mcp
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: []
-      python: [caid]
+      system: [libgl1]
+      python: [caid-mcp, "CAiD from GitHub source", OCP]
       node: []
+    aliases: [caid-opencascade-dreliq9, CAiD OpenCASCADE, CAiD OCCT]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: medium
+    deployment_mode: local-only
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Python/OCP stack expected but not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed libGL, CAiD from GitHub source, and caid-mcp; tests passed and create_box returned validated geometry"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; OCP/OpenCASCADE wheels must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Python/OCP stack expected but not tested on macOS"
+      macos_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; OCP/OpenCASCADE wheels must be checked"
+    host_software_required: [CAiD, OCP/OpenCASCADE, libGL]
+    approval_gates: [workspace_write_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation passed: installed libgl1, CAiD from GitHub commit 840d9ece24499dca4d1cc6b7a7aef2b88a203f14, and caid-mcp from commit bb863e9fe64f951fac9d59daed26254544682bc3; upstream MCP tests passed 72/72, MCP initialized, listed 107 tools, create_box returned ok with volume 480 mm^3, and scene query reported the 10 x 8 x 6 mm box."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes"
 
   - id: autocad-mcp
-    name: "AutoCAD LT LISP Generator"
+    name: "AutoCAD MCP"
     vendor: hvkshetry
-    description: "Generates and dispatches AutoLISP code scripts to AutoCAD LT version for piping and P&ID automation."
+    description: "AutoCAD/LT automation bridge with a Linux-safe ezdxf backend for headless DXF generation plus a Windows AutoCAD File IPC backend for desktop automation."
     domains: [drafting]
-    tags: [autocad, lisp, drafting, 2D]
+    tags: [autocad, dxf, ezdxf, drafting, 2D]
     transport: stdio
-    command: ["node", "dist/index.js"]
+    command: ["uv", "run", "--with", "git+https://github.com/hvkshetry/autocad-mcp.git", "python", "-m", "autocad_mcp"]
     source_url: https://github.com/hvkshetry/autocad-mcp
     locality: local
     weight: medium
-    env_vars: []
+    env_vars:
+      - name: AUTOCAD_MCP_BACKEND
+        label: "AutoCAD MCP backend"
+        description: "Use ezdxf for Linux headless DXF generation, file_ipc for Windows AutoCAD IPC, or auto for upstream auto-selection."
+        required: false
+        secret: false
     dependencies:
-      system: [autocad]
-      python: []
+      system: []
+      python: ["git+https://github.com/hvkshetry/autocad-mcp.git"]
       node: []
+    aliases: [autocad-mcp-hvkshetry, AutoCAD LT LISP Generator]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: medium
+    deployment_mode: local-only
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "Windows AutoCAD File IPC backend requires AutoCAD LT 2024+ and was not tested in the Linux container"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation passed with AUTOCAD_MCP_BACKEND=ezdxf: upstream tests passed, MCP listed 8 tools, created a line, and saved a DXF"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Python wheels and matplotlib/ezdxf stack must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "ezdxf backend should be host-independent but was not tested on macOS"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "ezdxf backend should be host-independent but was not tested on macOS ARM64"
+    approval_gates: [workspace_write_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation passed with AUTOCAD_MCP_BACKEND=ezdxf: cloned commit 95476a33a1c246308326eb4709d6379ef2efdbc1, 123 upstream tests passed, MCP initialized as autocad-mcp 1.26.0, listed 8 tools, system reported ezdxf 1.4.3, created a drawing and line, and saved /tmp/wright-autocad-validation.dxf at 15561 bytes. Windows AutoCAD File IPC remains host-dependent and untested in Linux."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes"
 
   - id: easy-mcp-autocad
-    name: "AutoCAD SQLite Exporter"
+    name: "Easy-MCP-AutoCAD"
     vendor: zh19980811
-    description: "Extracts AutoCAD drawing elements and persists drawings in SQLite tables for analytics."
+    description: "Windows AutoCAD COM MCP server with drawing tools, entity scanning, text matching, and SQLite persistence for CAD element analytics."
     domains: [drafting]
-    tags: [data, database, sql, export]
+    tags: [autocad, windows, com, sqlite, drafting]
     transport: stdio
-    command: ["python", "exporter.py"]
+    command: ["python", "server.py"]
     source_url: https://github.com/zh19980811/Easy-MCP-AutoCad
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [autocad]
-      python: []
+      system: ["Windows", "AutoCAD 2018+"]
+      python: [pywin32, comtypes, pyautocad, sqlalchemy, mcp]
       node: []
+    aliases: [AutoCAD SQLite Exporter, Easy-MCP-AutoCad]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "README requires Windows and AutoCAD 2018+ with COM support"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation cloned repo, but dependency installation cannot satisfy Windows-only pywin32; direct startup fails on win32com import"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM dependency is not available on Linux ARM64"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "Windows COM dependency is not available on macOS"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM dependency is not available on macOS"
+    host_software_required: ["Windows", "AutoCAD 2018+", pywin32, "COM interface"]
+    approval_gates: [workspace_write_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit 332215b91e976c1738dfd3940e9f9770c0fd5856 and confirmed Windows plus AutoCAD 2018+ COM requirements. pip install -r requirements.txt failed because pywin32 has no Linux wheels; uv pip install -e . on Python 3.13 failed because pywin32>=309 only has Windows wheels; direct python server.py after non-Windows dependencies failed at import with ModuleNotFoundError: No module named 'win32com'."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["Windows COM", pywin32, "AutoCAD 2018+"]
+    headless_ok: "no"
 
   - id: multicad-mcp
     name: "multiCAD COM Bridge"
     vendor: AnCode666
     description: "Universal COM wrapper routing CAD commands to ZWCAD, GstarCAD, and BricsCAD platforms."
     domains: [drafting]
-    tags: [com, zwcad, brics_cad, alternate-cad]
+    tags: [com, zwcad, gstarcad, bricscad, autocad, windows, dependency-missing]
     transport: stdio
-    command: ["python", "multicad.py"]
+    command: ["python", "src/server.py"]
     source_url: https://github.com/AnCode666/multiCAD-mcp
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [zwcad]
-      python: [pywin32]
+      system: [Windows, "Windows COM", AutoCAD, ZWCAD, GstarCAD, BricsCAD]
+      python: [multiCAD-mcp, pywin32]
       node: []
+    aliases: [multicad-mcp-ancode666]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "README requires Windows, Python 3.10+, pywin32, and one supported CAD application with COM support"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation cloned source and confirmed Linux cannot install pywin32 or start the COM adapter"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and pywin32 are not available on Linux ARM64"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and pywin32 are not available on macOS"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM and pywin32 are not available on macOS ARM64"
+    host_software_required: [Windows, "Windows COM", pywin32, "AutoCAD 2018+", "ZWCAD 2020+", "GstarCAD 2020+", "BricsCAD 21+"]
+    approval_gates: [workspace_write_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned AnCode666/multiCAD-mcp at commit 360ec77c970ec95a962bd4d0a3238715ee78dd7c; package `multiCAD-mcp` version 0.2.0 documents Windows OS, Python 3.10+, and a COM-capable CAD application. Exact `pip install -e '.[dev]'` failed because `pywin32>=300` has no Linux distribution. Installing the source with `--no-deps` plus non-Windows dependencies succeeded, but upstream unit collection failed with `ImportError: AutoCAD adapter requires Windows OS with COM support`. `python src/server.py --help` and direct startup both exited before MCP initialization with the same diagnostic, so no MCP `initialize` or `tools/list` calls were possible in Linux. This is an expected host dependency boundary for Windows COM plus AutoCAD/ZWCAD/GstarCAD/BricsCAD, not a source availability failure."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Windows, "Windows COM", pywin32, "AutoCAD 2018+ or ZWCAD 2020+ or GstarCAD 2020+ or BricsCAD 21+"]
+    headless_ok: "no"
 
   - id: cad-mcp-daobataotie
-    name: "CAD Universal COM"
+    name: "CAD-MCP Universal COM"
     vendor: daobataotie
-    description: "Basic 2D plotting automation engine via Windows COM."
+    description: "Windows COM bridge for AutoCAD, GstarCAD, and ZWCAD 2D drawing operations through natural-language and direct drawing tools."
     domains: [drafting]
-    tags: [windows, com, drafting]
+    tags: [windows, com, drafting, autocad, gstarcad, zwcad]
     transport: stdio
-    command: ["python", "plotting.py"]
+    command: ["python", "src/server.py"]
     source_url: https://github.com/daobataotie/CAD-MCP
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [autocad]
-      python: [pywin32]
+      system: [Windows, "AutoCAD/GstarCAD/ZWCAD"]
+      python: [pywin32, mcp, pydantic, typing]
       node: []
+    aliases: [cad-mcp-universal, CAD-MCP Universal]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "README requires Windows plus AutoCAD, GstarCAD, or ZWCAD through COM"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation cloned repo, but requirements cannot satisfy Windows-only pywin32 and startup fails importing win32com"
+      linux_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM dependency is not available on Linux ARM64"
+      macos_x64:
+        status: "no"
+        tested: false
+        notes: "Windows COM dependency is not available on macOS"
+      macos_arm64:
+        status: "no"
+        tested: false
+        notes: "Windows COM dependency is not available on macOS"
+    host_software_required: [Windows, pywin32, AutoCAD, GstarCAD, ZWCAD]
+    approval_gates: [workspace_write_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned commit 352541820a56823568a90993dd773e7014205f44, found no upstream tests, confirmed the README command is python src/server.py, and confirmed README requirements for Windows plus AutoCAD, GstarCAD, or ZWCAD. Installing requirements.txt in Python 3.12 failed because pywin32>=228 has no Linux distribution. After installing only mcp, pydantic, and typing, python src/server.py exited before MCP initialization with ModuleNotFoundError: No module named 'win32com' from src/cad_controller.py. Full validation requires Windows, pywin32, and a supported CAD COM host."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [Windows COM, pywin32, "AutoCAD/GstarCAD/ZWCAD"]
+    headless_ok: "no"
 
   - id: openscad-mcp
     name: "OpenSCAD Rendering Engine"
     vendor: quellant
     description: "Background OpenSCAD compilation rendering previews as Base64 arrays or animations."
     domains: [code-cad]
-    tags: [openscad, math-cad, rendering]
+    tags: [openscad, math-cad, rendering, tested]
     transport: stdio
-    command: ["python", "openscad_mcp.py"]
+    command: ["uv", "run", "--with", "git+https://github.com/quellant/openscad-mcp.git", "openscad-mcp"]
     source_url: https://github.com/quellant/openscad-mcp
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [openscad]
-      python: []
+      system: [openscad, xvfb]
+      python: ["git+https://github.com/quellant/openscad-mcp.git"]
       node: []
+    aliases: [openscad-mcp-server, OpenSCAD Geometry]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: medium
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "OpenSCAD host available on Windows; Wright validation not run there"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu container installed OpenSCAD/Xvfb only for this MCP, exported STL, and verified Wright/Hermes gateway tool calls"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; OpenSCAD package and Python dependencies must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "OpenSCAD host available on macOS; Wright validation not run there"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "OpenSCAD host available on macOS ARM64; Wright validation not run there"
+    host_software_required: [OpenSCAD]
+    approval_gates: [workspace_write_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation passed: installed OpenSCAD/Xvfb only for this MCP, initialized openscad-mcp, listed 15 tools, check_openscad reported OpenSCAD 2021.01, export_model produced a 1449-byte cube STL, and the Wright/Hermes gateway exposed and called the prefixed tools."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes"
 
   - id: trikos529-openscad
     name: "OpenSCAD Code Linter"
@@ -470,7 +1572,7 @@ servers:
     domains: [code-cad]
     tags: [linting, code-quality]
     transport: stdio
-    command: ["python", "linter.py"]
+    command: ["uvx", "openscad-linter-mcp"]
     source_url: https://github.com/topics/cad-3d
     locality: local
     weight: light
@@ -479,108 +1581,366 @@ servers:
       system: [openscad]
       python: []
       node: []
+    aliases: [openscad-linter-trikos529, OpenSCAD Linter]
+    verification_state: user_reported_url_needed
+    installability_tier: non_working
+    risk_level: low
+    deployment_mode: unknown
+    platform_support:
+      windows_11_x64:
+        status: "unknown"
+        tested: false
+        notes: "exact MCP source/package is not verified"
+      linux_x64:
+        status: "no"
+        tested: true
+        notes: "clean Intel Ubuntu validation could not resolve openscad-linter-mcp from the configured command"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "blocked until source/package is verified"
+      macos_x64:
+        status: "unknown"
+        tested: false
+        notes: "exact MCP source/package is not verified"
+      macos_arm64:
+        status: "unknown"
+        tested: false
+        notes: "exact MCP source/package is not verified"
+    validation_result:
+      status: failed
+      message: "Clean Intel Ubuntu validation failed before MCP startup: uv tool run openscad-linter-mcp --help reported that openscad-linter-mcp was not found in the package registry, and the configured source URL is only a GitHub topic page."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    follow_up_url: docs/mcp-catalog/followups/openscad-linter-trikos529.md
+    install_blocked_reason: "Exact MCP source URL/package is not verified; current URL is only a topic/reference page and the configured package name does not resolve."
 
   - id: blender-mcp
     name: "Blender 3D Mesh Copilot"
     vendor: ahujasid
-    description: "Controls Blender polygonal mesh modeling, lighting setup, and Poly Haven assets integration."
+    description: "Controls Blender polygonal mesh modeling, lighting, screenshots, procedural code execution, and optional Poly Haven/Sketchfab/3D generation integrations through a Blender add-on socket."
     domains: [mesh]
-    tags: [blender, polygons, materials, assets]
+    tags: [blender, polygons, materials, assets, python, xvfb]
     transport: stdio
-    command: ["python", "blender_mcp.py"]
+    command: ["uvx", "--python", "3.11", "blender-mcp"]
     source_url: https://github.com/ahujasid/blender-mcp
     locality: local
     weight: medium
-    env_vars: []
+    env_vars:
+      - name: BLENDER_HOST
+        label: "Blender add-on host"
+        description: "Host for the BlenderMCP add-on socket; defaults to localhost."
+        required: false
+        secret: false
+      - name: BLENDER_PORT
+        label: "Blender add-on port"
+        description: "Port for the BlenderMCP add-on socket; defaults to 9876."
+        required: false
+        secret: false
+      - name: BLENDER_MCP_DISABLE_TELEMETRY
+        label: "Disable Blender MCP telemetry"
+        description: "Set to true to disable anonymous telemetry during validation or private deployments."
+        required: false
+        secret: false
     dependencies:
-      system: [blender]
-      python: [bpy]
+      system: [blender, python3-requests, xvfb]
+      python: [blender-mcp]
       node: []
+    aliases: [blender-mcp-ahujasid, Blender 3D]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Blender desktop app and add-on; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed Blender 4.0.2, python3-requests, and Xvfb; add-on socket started and MCP executed read/write Blender operations"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Blender package and Python wheels must be checked"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Blender desktop app and add-on; not tested on macOS"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Blender desktop app and add-on; not tested on macOS"
+    host_software_required: [Blender, BlenderMCP addon]
+    approval_gates: [workspace_write_approval, machine_control_approval, network_asset_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation cloned commit 6e99eb5a442b83766a5796975ec7bb5bfc791341, found no upstream tests, installed Blender 4.0.2, python3-requests, Xvfb, and uvx 0.11.25 only for this MCP, and launched the add-on under Xvfb. Without the add-on socket, MCP initialized as BlenderMCP 1.28.1, listed 22 tools, and get_scene_info/execute_blender_code returned the expected diagnostic that the Blender add-on is not running. With the add-on socket live, MCP initialized as BlenderMCP 1.28.1, listed 22 tools, get_scene_info returned the default Cube/Light/Camera scene, execute_blender_code created WrightValidationCube at (1.0, 2.0, 3.0), and get_object_info verified the cube mesh with 8 vertices, 12 edges, and 6 polygons."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes-with-xvfb"
 
   - id: rhino-mcp
     name: "Rhino NURBS C# MCP"
     vendor: jingcheng-chen
     description: "NURBS geometry controller running inside Rhino thread via C# loopback connection."
     domains: [mesh, code-cad]
-    tags: [rhino, nurbs, grasshopper, csharp]
+    tags: [rhino, nurbs, grasshopper, csharp, python, dependency-missing]
     transport: stdio
-    command: ["dotnet", "RhinoMcp.dll"]
+    command: ["uvx", "rhinomcp"]
     source_url: https://github.com/jingcheng-chen/rhinomcp
     locality: local
     weight: heavy
-    env_vars: []
+    env_vars:
+      - name: RHINO_MCP_HOST
+        label: "Rhino MCP bridge host"
+        description: "Host running Rhino 8 with the RhinoMCP plugin started via the `mcpstart` command; defaults to 127.0.0.1."
+        required: false
+        secret: false
     dependencies:
-      system: [rhino]
-      python: []
+      system: ["Rhino 8", "RhinoMCP plugin"]
+      python: [rhinomcp]
       node: []
+    aliases: [rhino-mcp-mcneel, rhinomcp]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "README targets Rhino 8 on Windows and macOS; Windows host must install the RhinoMCP plugin and run `mcpstart`"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed and started the Python stdio MCP, listed tools, and reached the expected missing Rhino bridge diagnostic"
+      linux_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "Python stdio client may run, but a Rhino 8 bridge host is still required; not tested on ARM64"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "README targets Rhino 8 on macOS; install plugin and run `mcpstart`"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "README targets Rhino 8 on macOS; install plugin and run `mcpstart`"
+    host_software_required: ["Rhino 8", "RhinoMCP plugin", "mcpstart bridge on 127.0.0.1:1999"]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned jingcheng-chen/rhinomcp at commit b56338a9da733d17555744ab895facdc84a80542. The current Python MCP package is `rhinomcp` version 0.3.1 with console command `rhinomcp`; upstream Python/contract tests passed 192/192 with 12 pytest return-value warnings. MCP stdio initialized from source as serverInfo `RhinoMCP` version 1.26.0 and listed 66 tools. `get_commands`, `get_document_summary`, and backend-touching `create_object` all returned the expected missing-bridge diagnostic: `Could not connect to Rhino at 127.0.0.1:1999. Please start Rhino, run the Rhino command `mcpstart`, then retry the MCP request.` Full validation requires Rhino 8 with the RhinoMCP plugin installed and `mcpstart` running."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["Rhino 8", "RhinoMCP plugin", "mcpstart bridge on 127.0.0.1:1999"]
+    headless_ok: "no"
 
   - id: sketchup-mcp
     name: "SketchUp Ruby Server"
     vendor: mhyrr
     description: "Controls SketchUp component definitions and materials via a local Ruby TCP hook."
     domains: [mesh]
-    tags: [sketchup, ruby, local]
+    tags: [sketchup, ruby, python, local, dependency-missing]
     transport: stdio
-    command: ["ruby", "server.rb"]
+    command: ["uvx", "sketchup-mcp"]
     source_url: https://github.com/mhyrr/sketchup-mcp
     locality: local
     weight: medium
     env_vars: []
     dependencies:
-      system: [sketchup]
-      python: []
+      system: [SketchUp, "SketchupMCP extension"]
+      python: [sketchup-mcp]
       node: []
+    aliases: [sketchup-mcp-mhyrr]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: high
+    deployment_mode: local-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires SketchUp desktop plus the SketchupMCP extension server on port 9876; not tested on Windows"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed and started the Python stdio MCP, listed tools, and reached the expected missing SketchUp extension diagnostic"
+      linux_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "Python stdio client may run, but a SketchUp extension host is still required; not tested on ARM64"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires SketchUp desktop plus the SketchupMCP extension server; not tested on macOS"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires SketchUp desktop plus the SketchupMCP extension server; not tested on macOS ARM64"
+    host_software_required: [SketchUp, "SketchupMCP extension", "extension server on port 9876"]
+    approval_gates: [workspace_write_approval, execute_code_approval, machine_control_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned mhyrr/sketchup-mcp at commit aa096f04d3d7b22a70860368f2b576343feac405. The current MCP package is `sketchup-mcp` version 0.1.17 with console command `sketchup-mcp`; the README user command is `uvx sketchup-mcp`. The repo has no real pytest suite: `test_eval_ruby.py` is a script and pytest reports no tests, while `examples/simple_test.py` fails to collect because it imports removed `mcp.client.Client`. `uv tool run --from /tmp/sketchup-src sketchup-mcp --help` built the source package but started the server rather than printing CLI help. MCP stdio initialized as serverInfo `SketchupMCP` version 1.28.1 and listed 10 tools. README-advertised `get_scene_info` is not in `tools/list`; actual read/status `get_selection` returned `Could not connect to Sketchup. Make sure the Sketchup extension is running.` Backend-touching `eval_ruby` returned JSON `success: false` with the same missing-extension diagnostic. Full validation requires SketchUp desktop with the SketchupMCP extension server running."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [SketchUp, "SketchupMCP extension server on port 9876"]
+    headless_ok: "no"
 
   - id: zoo-mcp
     name: "Zoo.dev Cloud CAD API"
     vendor: KittyCAD
-    description: "High-scale cloud CAD modeling and rapid file conversion service."
-    domains: [code-cad]
-    tags: [cloud, zoo, conversion, light]
+    description: "High-scale cloud CAD modeling, KCL documentation search, and rapid file conversion service."
+    domains: [cad, cloud-cad, code-cad]
+    tags: [cloud, zoo, conversion, kcl, python]
     transport: stdio
-    command: ["npx", "@zoo-dev/mcp"]
+    command: ["uvx", "zoo-mcp"]
     source_url: https://github.com/KittyCAD/zoo-mcp
     locality: remote
     weight: light
     env_vars:
       - name: ZOO_API_TOKEN
         label: "Zoo API Token"
+        description: "Zoo.dev API token required for cloud CAD compute and conversion tools."
         required: true
         secret: true
     dependencies:
       system: []
-      python: []
-      node: ["@zoo-dev/mcp"]
+      python: [zoo-mcp]
+      node: []
+    aliases: [zoo-dev-cloud-cad, KittyCAD MCP, Zoo MCP Server]
+    verification_state: verified_mcp
+    installability_tier: might_work
+    risk_level: medium
+    deployment_mode: cloud-saas
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Python/uv stdio MCP expected; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed from source, initialized MCP, listed tools, and verified local docs search; full CAD compute requires ZOO_API_TOKEN"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Python wheels must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Python/uv stdio MCP expected; not tested on macOS"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Python/uv stdio MCP expected; not tested on macOS ARM64"
+    credentials_required: [ZOO_API_TOKEN]
+    approval_gates: [secrets_approval, cloud_upload_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation installed KittyCAD/zoo-mcp at 0868cac70443f1151226a2a33663730765ad038b, confirmed missing credentials fail before MCP initialization, and with a dummy ZOO_API_TOKEN initialized serverInfo `Zoo MCP Server` 1.27.1, listed 30 tools, searched KCL docs, and returned a clear bad-authentication diagnostic from calculate_volume."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: [ZOO_API_TOKEN]
+    headless_ok: "yes"
 
   - id: webmcp-openscad
     name: "Web OpenSCAD"
     vendor: jherr
     description: "Exposes client-side OpenSCAD modeling tools in TanStack web interface."
     domains: [code-cad]
-    tags: [web, browser, openscad, local]
+    tags: [web, browser, openscad, local, dependency-missing]
     transport: webmcp
-    command: []
+    command: ["npx", "-y", "@mcp-b/webmcp-local-relay@latest"]
     source_url: https://github.com/jherr/webmcp-openscad
+    locality: local
+    weight: light
+    env_vars: []
+    dependencies:
+      system: ["browser with WebMCP page"]
+      python: []
+      node: [pnpm, "@mcp-b/webmcp-local-relay", scad-webmcp]
+    aliases: [webmcp-openscad-jherr, scad-webmcp]
+    verification_state: community_mcp
+    installability_tier: might_work
+    risk_level: medium
+    deployment_mode: browser-bridge
+    platform_support:
+      windows_11_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge"
+      linux_x64:
+        status: "host-dependent"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed Node 22 and pnpm, built the app, initialized the local relay MCP, and confirmed page tools require a connected browser source"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; browser/WebMCP bridge and OpenSCAD WASM package support must be checked"
+      macos_x64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge"
+      macos_arm64:
+        status: "host-dependent"
+        tested: false
+        notes: "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge"
+    host_software_required: ["browser with WebMCP page", "MCP-B extension or @mcp-b/webmcp-local-relay"]
+    approval_gates: [workspace_write_approval]
+    validation_result:
+      status: dependency_missing
+      message: "Clean Intel Ubuntu validation cloned jherr/webmcp-openscad at commit a3acb68578701001f0251459c75716a55aadfa10. Ubuntu's default Node 18 could not run pnpm 11.9.0, so validation installed Node 22.23.1 with `n` after adding curl. `pnpm install --frozen-lockfile` succeeded with pnpm 11.9.0. `pnpm test` did not find any test files and exited 1, with additional Vitest/Vite shutdown noise `ReferenceError: module is not defined`; this repo does not currently provide a usable upstream test suite. `pnpm build` succeeded for the TanStack/Nitro app. Serving `node .output/server/index.mjs` produced a 7156-byte HTML page titled `scad-webmcp · agent-driven parametric CAD` that embeds `@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js`. MCP stdio probing `npx -y @mcp-b/webmcp-local-relay@latest` initialized serverInfo `webmcp-local-relay` version 0.0.0, listed 4 relay tools, and calls to `webmcp_list_sources` and `webmcp_list_tools` returned zero sources/tools because no browser page was connected. Full validation of the advertised 16 OpenSCAD browser tools requires a browser tab connected through MCP-B or native WebMCP."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: ["browser tab running scad-webmcp", "MCP-B extension or native WebMCP bridge"]
+    headless_ok: "no"
+
+  - id: web3d-mcp
+    name: "React Three Fiber Web3D"
+    vendor: dev261004
+    description: "R3F-based browser 3D graphics rendering script builder."
+    domains: [mesh]
+    tags: [threejs, r3f, webgl, browser, codegen, tested]
+    transport: stdio
+    command: ["node", "dist/server.js"]
+    source_url: https://github.com/dev261004/web3d-mcp-server
     locality: local
     weight: light
     env_vars: []
     dependencies:
       system: []
       python: []
-      node: []
-
-  - id: web3d-mcp
-    name: "React Three Fiber Web3D"
-    vendor: modelcontextprotocol
-    description: "R3F-based browser 3D graphics rendering script builder."
-    domains: [mesh]
-    tags: [threejs, r3f, webgl, browser]
-    transport: stdio
-    command: ["npx", "web3d-mcp"]
-    locality: remote
-    weight: light
-    env_vars: []
-    dependencies:
-      system: []
-      python: []
-      node: ["web3d-mcp"]
+      node: ["node>=22", npm]
+    aliases: [web3d-mcp-r3f, web3d-mcp-server, "3d-scene-mcp"]
+    verification_state: community_mcp
+    installability_tier: tested
+    risk_level: medium
+    deployment_mode: local-only
+    platform_support:
+      windows_11_x64:
+        status: "likely"
+        tested: false
+        notes: "Node 22+ stdio server expected; not tested on Windows"
+      linux_x64:
+        status: "yes"
+        tested: true
+        notes: "clean Intel Ubuntu validation installed from GitHub source with Node 22, passed tests, initialized MCP, and generated validated R3F code"
+      linux_arm64:
+        status: "unknown"
+        tested: false
+        notes: "not tested; Node dependency support must be checked"
+      macos_x64:
+        status: "likely"
+        tested: false
+        notes: "Node 22+ stdio server expected; not tested on macOS"
+      macos_arm64:
+        status: "likely"
+        tested: false
+        notes: "Node 22+ stdio server expected; not tested on macOS ARM64"
+    approval_gates: [workspace_write_approval]
+    validation_result:
+      status: passed
+      message: "Clean Intel Ubuntu validation found the seeded `npx web3d-mcp` package and `https://web3d-mcp.dev` URL invalid: npm returned 404 for `web3d-mcp` and `web3d-mcp-server`, and DNS could not resolve `web3d-mcp.dev`. Web search and the Reddit source identified the real source as dev261004/web3d-mcp-server. Validation cloned commit b6e3cb59ba243ab53be2e1b1a674e5199bfc0c6a. With Ubuntu's Node 18.19.1, `npm install`, `npm run build`, and health checks passed but direct MCP startup failed with `ReferenceError: File is not defined` from undici; after installing Node 22.23.1 with `n`, MCP stdio started successfully. Full upstream `npm test -- --runInBand` passed 10 suites and 65 tests; the build precheck also passed 7 health suites and 54 tests. MCP initialized as serverInfo `3d-scene-mcp` version 1.0.0 using newline-delimited JSON framing and listed 12 tools. Tool calls generated a cube scene via `generate_scene`, `validate_scene` returned `is_valid:true` with all 13 checks passed, `preview` returned SVG wireframe data, and `generate_r3f_code` returned `SUCCESS` with 948 bytes of Vite/TypeScript React Three Fiber code. npm audit reported 33 vulnerabilities in installed dependencies, and upstream README still says Node 18+ even though runtime startup required Node 22 in this container."
+      environment: ubuntu-linux-x64-container
+      missing_dependencies: []
+    headless_ok: "yes"

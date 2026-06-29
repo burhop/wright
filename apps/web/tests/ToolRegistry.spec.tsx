@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ToolRegistryPage } from "../src/components/pages/ToolRegistryPage";
 import { useTools } from "../src/store/tools";
@@ -47,6 +47,29 @@ vi.mock("../src/hooks/useLogger", () => ({
 }));
 
 describe("ToolRegistryPage", () => {
+  const metadata = {
+    verification_state: "community_mcp" as const,
+    installability_tier: "might_work" as const,
+    risk_level: "low" as const,
+    deployment_mode: "local-only",
+    platform_support: {
+      linux_x64: {
+        status: "likely" as const,
+        tested: false,
+        notes: "test fixture",
+      },
+    },
+    host_software_required: [],
+    credentials_required: [],
+    default_enabled: true,
+    approval_gates: [],
+    validation_result: {
+      status: "not_tested" as const,
+      message: "Not yet validated in this environment",
+      missing_dependencies: [],
+    },
+  };
+
   const mockServers: McpServer[] = [
     {
       server_id: "server-1",
@@ -59,6 +82,8 @@ describe("ToolRegistryPage", () => {
       category: "simulation",
       created_at: 1000,
       updated_at: 1000,
+      ...metadata,
+      installability_tier: "might_work",
     },
     {
       server_id: "server-2",
@@ -71,6 +96,30 @@ describe("ToolRegistryPage", () => {
       category: "cad",
       created_at: 1000,
       updated_at: 1000,
+      ...metadata,
+      installability_tier: "tested",
+      verification_state: "verified_mcp",
+      validation_result: {
+        status: "passed",
+        message: "Validated in test fixture",
+        missing_dependencies: [],
+      },
+    },
+    {
+      server_id: "server-3",
+      name: "Blocked Candidate",
+      type: "stdio",
+      command: ["uvx", "blocked"],
+      is_active: false,
+      is_installed: false,
+      status: "inactive",
+      category: "utilities",
+      created_at: 1000,
+      updated_at: 1000,
+      ...metadata,
+      installability_tier: "blocked",
+      install_blocked_reason: "Source URL missing.",
+      follow_up_url: "docs/mcp-catalog/followups/server-3.md",
     },
   ];
 
@@ -123,16 +172,61 @@ describe("ToolRegistryPage", () => {
     expect(screen.getByText("Simulation Solver")).toBeInTheDocument();
     expect(screen.getByText("CAD Extractor")).toBeInTheDocument();
 
-    // Expand connection details for Server 1
-    const expandBtn = screen.getByRole("button", {
-      name: /Show connection details/i,
-    });
+    expect(screen.queryByText("uv run sim")).not.toBeInTheDocument();
+    expect(screen.queryByText("http://127.0.0.1:9090/sse")).not.toBeInTheDocument();
+
+    // Expand full card details for Server 1
+    const serverOneCard = screen.getByTestId("server-card-server-1");
+    const expandBtn = within(serverOneCard).getByTestId(
+      "server-card-details-toggle-server-1",
+    );
     fireEvent.click(expandBtn);
 
     // Server 1: stdio command display
     expect(screen.getByText("uv run sim")).toBeInTheDocument();
+
+    const serverTwoCard = screen.getByTestId("server-card-server-2");
+    fireEvent.click(
+      within(serverTwoCard).getByTestId("server-card-details-toggle-server-2"),
+    );
+
     // Server 2: URL display
     expect(screen.getByText("http://127.0.0.1:9090/sse")).toBeInTheDocument();
+    expect(screen.getByTestId("server-card-verification-server-2")).toHaveTextContent(
+      "Verified MCP",
+    );
+    expect(
+      screen.getByTestId("server-card-installability-server-2"),
+    ).toHaveTextContent("Launch tested");
+    expect(
+      screen.getByTestId("server-card-installability-server-2"),
+    ).toHaveAttribute(
+      "title",
+      expect.stringContaining("not a security review"),
+    );
+  });
+
+  it("orders tested servers before blocked servers", () => {
+    render(<ToolRegistryPage />);
+
+    const cards = screen.getAllByTestId(/server-card-server-/);
+    expect(cards[0]).toHaveTextContent("CAD Extractor");
+    expect(cards[1]).toHaveTextContent("Simulation Solver");
+    expect(cards[2]).toHaveTextContent("Blocked Candidate");
+    expect(screen.getByTestId("tool-registry-tier-tested")).toHaveTextContent("1");
+    expect(screen.getByTestId("tool-registry-tier-blocked")).toHaveTextContent("1");
+
+    const blockedCard = screen.getByTestId("server-card-server-3");
+    expect(
+      within(blockedCard).queryByTestId("server-card-followup-server-3"),
+    ).not.toBeInTheDocument();
+    fireEvent.click(
+      within(blockedCard).getByTestId("server-card-details-toggle-server-3"),
+    );
+    expect(screen.getByTestId("server-card-followup-server-3")).toHaveTextContent(
+      "Follow-up record",
+    );
+    expect(screen.getByTestId("server-card-report-missing-mcp")).toBeInTheDocument();
   });
 
   it("filters servers by search query input", () => {
@@ -159,7 +253,7 @@ describe("ToolRegistryPage", () => {
     render(<ToolRegistryPage />);
 
     // Click to install server 1 (which is not installed)
-    const installBtn = screen.getByRole("button", { name: "Install" });
+    const installBtn = screen.getByTestId("server-card-install-btn-server-1");
     expect(installBtn).toBeInTheDocument();
 
     fireEvent.click(installBtn);
