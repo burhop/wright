@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  HashRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import AppShell from "./components/layout/AppShell";
 import DashboardPage from "./components/pages/DashboardPage";
 import WorkspacePage from "./components/pages/WorkspacePage";
@@ -21,7 +27,8 @@ function App() {
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
 
   useEffect(() => {
-    hostAdapter.fetch(`${hostAdapter.getApiBaseUrl()}/api/setup/status`)
+    hostAdapter
+      .fetch(`${hostAdapter.getApiBaseUrl()}/api/setup/status`)
       .then((res) => res.json())
       .then((data) => {
         setIsConfigured(data.is_configured);
@@ -61,7 +68,8 @@ function App() {
     return <SetupPage onConfigured={() => setIsConfigured(true)} />;
   }
 
-  const Router = hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
+  const Router =
+    hostAdapter.getRouterType() === "hash" ? HashRouter : BrowserRouter;
 
   return (
     <Router>
@@ -69,20 +77,23 @@ function App() {
         <ViewerPanelProvider>
           <ToolsProvider>
             <AppShell>
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route
-                path="/workspace/:workspaceId"
-                element={<WorkspacePage />}
-              />
-              <Route path="/tool-registry" element={<ToolRegistryPage />} />
-              <Route path="/file-vault" element={<FileVaultPage />} />
-              <Route path="/logs" element={<LogsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
-              <Route path="/agent-chat" element={<Navigate to="/" replace />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route
+                  path="/workspace/:workspaceId"
+                  element={<WorkspacePage />}
+                />
+                <Route path="/tool-registry" element={<ToolRegistryPage />} />
+                <Route path="/file-vault" element={<FileVaultPage />} />
+                <Route path="/logs" element={<LogsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
+                <Route
+                  path="/agent-chat"
+                  element={<Navigate to="/" replace />}
+                />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
             </AppShell>
           </ToolsProvider>
         </ViewerPanelProvider>

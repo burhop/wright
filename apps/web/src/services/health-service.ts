@@ -38,9 +38,13 @@ export class LiveHealthService {
 
     const runChecks = async () => {
       const checks = this.statuses.map(async (svc) => {
-        const fetchWithRetry = async (retries = 1): Promise<"connected" | "disconnected"> => {
+        const fetchWithRetry = async (
+          retries = 1,
+        ): Promise<"connected" | "disconnected"> => {
           try {
-              const response = await hostAdapter.fetch(`${API_BASE}${svc.endpoint}`);
+            const response = await hostAdapter.fetch(
+              `${API_BASE}${svc.endpoint}`,
+            );
             if (response.ok) {
               const data = await response.json();
               if (data.state === "connected" || data.state === "disconnected") {

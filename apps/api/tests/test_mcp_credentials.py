@@ -20,7 +20,7 @@ from api.main import app
 from tool_registry import McpEngine
 
 
-# ── T006: Credential Store Module Tests ──────────────────────────────────────
+#  T006: Credential Store Module Tests
 
 
 class TestSecretsModule:
@@ -35,7 +35,9 @@ class TestSecretsModule:
     def test_write_and_read_secrets(self):
         from tool_registry.secrets import write_secrets, read_secrets
 
-        write_secrets("test-server", {"API_KEY": "test-key-123", "API_SECRET": "test-secret-456"})
+        write_secrets(
+            "test-server", {"API_KEY": "test-key-123", "API_SECRET": "test-secret-456"}
+        )
         result = read_secrets("test-server")
         assert result == {"API_KEY": "test-key-123", "API_SECRET": "test-secret-456"}
 
@@ -128,7 +130,7 @@ class TestSecretsModule:
         assert result == {"KEY": False}  # empty string = not configured
 
 
-# ── Shared fixture for API tests with McpEngine ──────────────────────────────
+#  Shared fixture for API tests with McpEngine
 
 
 @pytest.fixture
@@ -172,25 +174,42 @@ def cred_test_db_path():
     );
     """)
     # Seed the OnShape MCP entry with env_var definitions
-    env_vars = json.dumps([
-        {"name": "ONSHAPE_ACCESS_KEY", "label": "Access Key", "description": "Onshape API access key from dev-portal.onshape.com", "required": True, "secret": False},
-        {"name": "ONSHAPE_SECRET_KEY", "label": "Secret Key", "description": "Onshape API secret key (shown once at creation)", "required": True, "secret": True},
-    ])
-    conn.execute("""
+    env_vars = json.dumps(
+        [
+            {
+                "name": "ONSHAPE_ACCESS_KEY",
+                "label": "Access Key",
+                "description": "Onshape API access key from dev-portal.onshape.com",
+                "required": True,
+                "secret": False,
+            },
+            {
+                "name": "ONSHAPE_SECRET_KEY",
+                "label": "Secret Key",
+                "description": "Onshape API secret key (shown once at creation)",
+                "required": True,
+                "secret": True,
+            },
+        ]
+    )
+    conn.execute(
+        """
     INSERT INTO mcp_servers (server_id, name, type, command, is_active, is_installed,
         status, category, created_at, updated_at, image_url, description, source_url, env_vars)
     VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, 1000, 1000, ?, ?, ?, ?)
-    """, (
-        "jarvis-onshape-mcp",
-        "Jarvis OnShape MCP",
-        "stdio",
-        json.dumps(["uv", "run", "--with", "jarvis-onshape-mcp", "onshape-mcp"]),
-        "cad",
-        "https://avatars.githubusercontent.com/u/6536550?s=64",
-        "AI copilot for Onshape CAD.",
-        "https://github.com/ReshefElisha/jarvis-onshape-mcp",
-        env_vars,
-    ))
+    """,
+        (
+            "jarvis-onshape-mcp",
+            "Jarvis OnShape MCP",
+            "stdio",
+            json.dumps(["uv", "run", "--with", "jarvis-onshape-mcp", "onshape-mcp"]),
+            "cad",
+            "https://avatars.githubusercontent.com/u/6536550?s=64",
+            "AI copilot for Onshape CAD.",
+            "https://github.com/ReshefElisha/jarvis-onshape-mcp",
+            env_vars,
+        ),
+    )
     conn.commit()
     conn.close()
 
@@ -212,7 +231,7 @@ def cred_client(cred_test_db_path, tmp_path, monkeypatch):
         yield c
 
 
-# ── T007: Credential API Endpoint Tests ──────────────────────────────────────
+#  T007: Credential API Endpoint Tests
 
 
 class TestCredentialAPIEndpoints:
@@ -235,17 +254,21 @@ class TestCredentialAPIEndpoints:
         """PUT /credentials saves values; GET shows them as configured."""
         save_response = cred_client.put(
             "/api/mcp/servers/jarvis-onshape-mcp/credentials",
-            json={"credentials": {
-                "ONSHAPE_ACCESS_KEY": "test-access-key",
-                "ONSHAPE_SECRET_KEY": "test-secret-key",
-            }},
+            json={
+                "credentials": {
+                    "ONSHAPE_ACCESS_KEY": "test-access-key",
+                    "ONSHAPE_SECRET_KEY": "test-secret-key",
+                }
+            },
         )
         assert save_response.status_code == 200
         save_data = save_response.json()
         assert save_data["configured"]["ONSHAPE_ACCESS_KEY"] is True
         assert save_data["configured"]["ONSHAPE_SECRET_KEY"] is True
 
-        get_response = cred_client.get("/api/mcp/servers/jarvis-onshape-mcp/credentials")
+        get_response = cred_client.get(
+            "/api/mcp/servers/jarvis-onshape-mcp/credentials"
+        )
         get_data = get_response.json()
         assert get_data["configured"]["ONSHAPE_ACCESS_KEY"] is True
         assert get_data["configured"]["ONSHAPE_SECRET_KEY"] is True
@@ -254,13 +277,22 @@ class TestCredentialAPIEndpoints:
         """DELETE /credentials removes saved values."""
         cred_client.put(
             "/api/mcp/servers/jarvis-onshape-mcp/credentials",
-            json={"credentials": {"ONSHAPE_ACCESS_KEY": "key", "ONSHAPE_SECRET_KEY": "secret"}},
+            json={
+                "credentials": {
+                    "ONSHAPE_ACCESS_KEY": "key",
+                    "ONSHAPE_SECRET_KEY": "secret",
+                }
+            },
         )
 
-        del_response = cred_client.delete("/api/mcp/servers/jarvis-onshape-mcp/credentials")
+        del_response = cred_client.delete(
+            "/api/mcp/servers/jarvis-onshape-mcp/credentials"
+        )
         assert del_response.status_code == 204
 
-        get_response = cred_client.get("/api/mcp/servers/jarvis-onshape-mcp/credentials")
+        get_response = cred_client.get(
+            "/api/mcp/servers/jarvis-onshape-mcp/credentials"
+        )
         get_data = get_response.json()
         assert get_data["configured"]["ONSHAPE_ACCESS_KEY"] is False
         assert get_data["configured"]["ONSHAPE_SECRET_KEY"] is False
@@ -279,7 +311,7 @@ class TestCredentialAPIEndpoints:
         assert response.status_code == 404
 
 
-# ── T013: Security Validation Tests ──────────────────────────────────────────
+#  T013: Security Validation Tests
 
 
 class TestCredentialSecurity:
@@ -289,10 +321,12 @@ class TestCredentialSecurity:
         """GET /servers response must not contain actual credential values."""
         cred_client.put(
             "/api/mcp/servers/jarvis-onshape-mcp/credentials",
-            json={"credentials": {
-                "ONSHAPE_ACCESS_KEY": "SUPER_SECRET_KEY_12345",
-                "ONSHAPE_SECRET_KEY": "ULTRA_SECRET_VALUE_67890",
-            }},
+            json={
+                "credentials": {
+                    "ONSHAPE_ACCESS_KEY": "SUPER_SECRET_KEY_12345",
+                    "ONSHAPE_SECRET_KEY": "ULTRA_SECRET_VALUE_67890",
+                }
+            },
         )
 
         response = cred_client.get("/api/mcp/servers")
@@ -305,10 +339,12 @@ class TestCredentialSecurity:
         """GET /servers includes credentials_configured booleans."""
         cred_client.put(
             "/api/mcp/servers/jarvis-onshape-mcp/credentials",
-            json={"credentials": {
-                "ONSHAPE_ACCESS_KEY": "key-value",
-                "ONSHAPE_SECRET_KEY": "secret-value",
-            }},
+            json={
+                "credentials": {
+                    "ONSHAPE_ACCESS_KEY": "key-value",
+                    "ONSHAPE_SECRET_KEY": "secret-value",
+                }
+            },
         )
 
         response = cred_client.get("/api/mcp/servers")
@@ -336,7 +372,7 @@ class TestCredentialSecurity:
         assert "requires credentials" in detail.lower()
 
 
-# ── T016: OnShape MCP Catalog Entry Tests ────────────────────────────────────
+#  T016: OnShape MCP Catalog Entry Tests
 
 
 class TestOnShapeCatalogEntry:
@@ -376,7 +412,9 @@ class TestOnShapeCatalogEntry:
         assert key_def["required"] is True
         assert key_def["secret"] is False
 
-        secret_def = next(v for v in data["env_vars"] if v["name"] == "ONSHAPE_SECRET_KEY")
+        secret_def = next(
+            v for v in data["env_vars"] if v["name"] == "ONSHAPE_SECRET_KEY"
+        )
         assert secret_def["label"] == "Secret Key"
         assert secret_def["required"] is True
         assert secret_def["secret"] is True
@@ -390,7 +428,6 @@ class TestWorkspaceDefaultTools:
         from core.workspace import get_workspace_enabled_tools
         from tool_registry.db import insert_server
         from tool_registry.models import McpServer, EnvVarDefinition
-        import json
         import uuid
 
         db_path = cred_test_db_path
@@ -398,47 +435,59 @@ class TestWorkspaceDefaultTools:
 
         # Seed mock servers:
         # 1. Stdio server, installed, no credentials -> should be enabled
-        insert_server(db_path, McpServer(
-            server_id="server-ok",
-            name="Server OK",
-            type="stdio",
-            is_active=False,
-            is_installed=True,
-            status="inactive",
-            created_at=0,
-            updated_at=0,
-        ))
+        insert_server(
+            db_path,
+            McpServer(
+                server_id="server-ok",
+                name="Server OK",
+                type="stdio",
+                is_active=False,
+                is_installed=True,
+                status="inactive",
+                created_at=0,
+                updated_at=0,
+            ),
+        )
 
         # 2. Stdio server, installed, requires credentials (missing) -> should be filtered out
-        insert_server(db_path, McpServer(
-            server_id="server-missing-creds",
-            name="Server Missing Creds",
-            type="stdio",
-            is_active=False,
-            is_installed=True,
-            status="inactive",
-            created_at=0,
-            updated_at=0,
-            env_vars=[
-                EnvVarDefinition(name="API_SECRET", label="Secret", required=True, secret=True)
-            ]
-        ))
+        insert_server(
+            db_path,
+            McpServer(
+                server_id="server-missing-creds",
+                name="Server Missing Creds",
+                type="stdio",
+                is_active=False,
+                is_installed=True,
+                status="inactive",
+                created_at=0,
+                updated_at=0,
+                env_vars=[
+                    EnvVarDefinition(
+                        name="API_SECRET", label="Secret", required=True, secret=True
+                    )
+                ],
+            ),
+        )
 
         # 3. SSE server, installed, has error status -> should be filtered out
-        insert_server(db_path, McpServer(
-            server_id="server-error",
-            name="Server Error",
-            type="sse",
-            is_active=False,
-            is_installed=True,
-            status="error",
-            error_message="Timeout",
-            created_at=0,
-            updated_at=0,
-        ))
+        insert_server(
+            db_path,
+            McpServer(
+                server_id="server-error",
+                name="Server Error",
+                type="sse",
+                is_active=False,
+                is_installed=True,
+                status="error",
+                error_message="Timeout",
+                created_at=0,
+                updated_at=0,
+            ),
+        )
 
         # Create engineering_workspaces table and insert workspace row
         import sqlite3
+
         conn = sqlite3.connect(db_path)
         conn.execute("""
         CREATE TABLE engineering_workspaces (
@@ -470,4 +519,3 @@ class TestWorkspaceDefaultTools:
         assert "Server OK" in enabled
         assert "Server Missing Creds" not in enabled
         assert "Server Error" not in enabled
-

@@ -123,6 +123,38 @@ docker compose -f docker-compose.minimal.yml -f docker-compose.lan.yml up -d --b
 
 Use TLS and authentication for anything beyond a private demo network.
 
+## Production Update Gate
+
+Production updates are operator-driven. Ordinary pushes do not deploy Wright,
+except for documented GitHub Pages and release artifact publishing workflows.
+
+Before updating a production checkout, run the guarded update script from the
+repository root:
+
+```bash
+scripts/production-update.sh --pull
+```
+
+The script fetches fresh refs and refuses to deploy if:
+
+- the working tree is dirty, unless `--allow-dirty` is passed;
+- the local branch is behind `origin/main`;
+- the checked-out commit is not the current `origin/main` commit or the
+  selected release tag passed with `--ref`;
+- required GitHub Actions checks are not green when authenticated `gh` CLI
+  access is available.
+
+To deploy a reviewed release tag instead of `origin/main`:
+
+```bash
+git checkout v0.1.0-alpha.1
+scripts/production-update.sh --ref v0.1.0-alpha.1
+```
+
+Use `--compose-file` to select a different checked-in compose file. Local
+override files for LAN exposure or host-specific volumes should stay
+uncommitted.
+
 ## Cleanup
 
 Stop the minimal appliance while preserving named volumes:

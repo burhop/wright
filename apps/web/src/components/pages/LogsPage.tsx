@@ -25,7 +25,7 @@ export function LogsPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [totalLogs, setTotalLogs] = useState(0);
   const [workspaces, setWorkspaces] = useState<WorkspaceInfo[]>([]);
-  
+
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [selectedLevel, setSelectedLevel] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -88,7 +88,7 @@ export function LogsPage() {
 
       const res = await fetch(getApiUrl(`/api/logs?${params.toString()}`));
       if (!res.ok) throw new Error("Failed to fetch logs from backend");
-      
+
       const data = await res.json();
       setLogs(data.logs || []);
       setTotalLogs(data.total || 0);
@@ -150,17 +150,22 @@ export function LogsPage() {
 
     try {
       // 1. Create a session on the backend
-      const session = await agentService.createSession(selectedWorkspace || undefined);
+      const session = await agentService.createSession(
+        selectedWorkspace || undefined,
+      );
       setChatSessionId(session.sessionId);
 
       // 2. Format the diagnostic log message
       const initialPrompt = `The following log output was selected for debugging:\n\n\`\`\`json\n${contextMenu.selectedText}\n\`\`\`\n\nPlease analyze this log for issues and offer troubleshooting solutions.`;
-      
+
       setChatMessages([{ role: "user", content: initialPrompt }]);
-      
+
       // 3. Send to agent
       let responseText = "";
-      for await (const event of agentService.sendMessage(session.sessionId, initialPrompt)) {
+      for await (const event of agentService.sendMessage(
+        session.sessionId,
+        initialPrompt,
+      )) {
         if (event.type === "token") {
           responseText += event.text;
           setStreamedResponse(responseText);
@@ -178,7 +183,10 @@ export function LogsPage() {
       console.error(err);
       setChatMessages((prev) => [
         ...prev,
-        { role: "assistant", content: `Failed to communicate with Hermes: ${err.message || "Unknown error"}` },
+        {
+          role: "assistant",
+          content: `Failed to communicate with Hermes: ${err.message || "Unknown error"}`,
+        },
       ]);
     } finally {
       setIsSending(false);
@@ -198,7 +206,10 @@ export function LogsPage() {
 
     try {
       let responseText = "";
-      for await (const event of agentService.sendMessage(chatSessionId, userMsg)) {
+      for await (const event of agentService.sendMessage(
+        chatSessionId,
+        userMsg,
+      )) {
         if (event.type === "token") {
           responseText += event.text;
           setStreamedResponse(responseText);
@@ -215,7 +226,10 @@ export function LogsPage() {
     } catch (err: any) {
       setChatMessages((prev) => [
         ...prev,
-        { role: "assistant", content: `Error: ${err.message || "Failed to send message."}` },
+        {
+          role: "assistant",
+          content: `Error: ${err.message || "Failed to send message."}`,
+        },
       ]);
     } finally {
       setIsSending(false);
@@ -237,8 +251,16 @@ export function LogsPage() {
       }}
     >
       {/* Title & Stats */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600 }}>📋 Application Logs</h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600 }}>
+          Application Logs
+        </h2>
         <span style={{ fontSize: "0.85rem", color: "var(--color-secondary)" }}>
           Total logs found: <strong>{totalLogs}</strong>
         </span>
@@ -258,8 +280,24 @@ export function LogsPage() {
         }}
       >
         {/* Workspace Dropdown */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: "180px", textAlign: "left" }}>
-          <label style={{ fontSize: "0.7rem", color: "var(--color-secondary)", fontWeight: 600 }}>FILTER WORKSPACE</label>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+            minWidth: "180px",
+            textAlign: "left",
+          }}
+        >
+          <label
+            style={{
+              fontSize: "0.7rem",
+              color: "var(--color-secondary)",
+              fontWeight: 600,
+            }}
+          >
+            FILTER WORKSPACE
+          </label>
           <select
             data-testid="logs-filter-workspace"
             value={selectedWorkspace}
@@ -283,8 +321,24 @@ export function LogsPage() {
         </div>
 
         {/* Severity Level Dropdown */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: "120px", textAlign: "left" }}>
-          <label style={{ fontSize: "0.7rem", color: "var(--color-secondary)", fontWeight: 600 }}>SEVERITY LEVEL</label>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+            minWidth: "120px",
+            textAlign: "left",
+          }}
+        >
+          <label
+            style={{
+              fontSize: "0.7rem",
+              color: "var(--color-secondary)",
+              fontWeight: 600,
+            }}
+          >
+            SEVERITY LEVEL
+          </label>
           <select
             data-testid="logs-filter-level"
             value={selectedLevel}
@@ -306,8 +360,25 @@ export function LogsPage() {
         </div>
 
         {/* Search Query Input */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1, minWidth: "200px", textAlign: "left" }}>
-          <label style={{ fontSize: "0.7rem", color: "var(--color-secondary)", fontWeight: 600 }}>KEYWORD SEARCH</label>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "2px",
+            flex: 1,
+            minWidth: "200px",
+            textAlign: "left",
+          }}
+        >
+          <label
+            style={{
+              fontSize: "0.7rem",
+              color: "var(--color-secondary)",
+              fontWeight: 600,
+            }}
+          >
+            KEYWORD SEARCH
+          </label>
           <input
             data-testid="logs-filter-search"
             type="text"
@@ -327,7 +398,13 @@ export function LogsPage() {
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: "flex", gap: "var(--space-sm)", alignSelf: "flex-end" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "var(--space-sm)",
+            alignSelf: "flex-end",
+          }}
+        >
           <button
             data-testid="logs-refresh-btn"
             onClick={fetchLogs}
@@ -357,25 +434,81 @@ export function LogsPage() {
         }}
       >
         {isLoading ? (
-          <div style={{ padding: "var(--space-2xl)", color: "var(--color-secondary)", fontSize: "0.9rem" }}>
+          <div
+            style={{
+              padding: "var(--space-2xl)",
+              color: "var(--color-secondary)",
+              fontSize: "0.9rem",
+            }}
+          >
             Loading system logs...
           </div>
         ) : error ? (
-          <div style={{ padding: "var(--space-2xl)", color: "var(--color-error)", fontSize: "0.9rem" }}>
+          <div
+            style={{
+              padding: "var(--space-2xl)",
+              color: "var(--color-error)",
+              fontSize: "0.9rem",
+            }}
+          >
             {error}
           </div>
         ) : logs.length === 0 ? (
-          <div style={{ padding: "var(--space-2xl)", color: "var(--color-secondary)", fontSize: "0.9rem" }}>
+          <div
+            style={{
+              padding: "var(--space-2xl)",
+              color: "var(--color-secondary)",
+              fontSize: "0.9rem",
+            }}
+          >
             No logs matched the selected filters.
           </div>
         ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem", textAlign: "left" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontSize: "0.8rem",
+              textAlign: "left",
+            }}
+          >
             <thead>
-              <tr style={{ borderBottom: "1px solid var(--color-border)", backgroundColor: "var(--color-surface-subtle)" }}>
-                <th style={{ padding: "8px", width: "80px", color: "var(--color-secondary)" }}>TIME</th>
-                <th style={{ padding: "8px", width: "80px", color: "var(--color-secondary)" }}>LEVEL</th>
-                <th style={{ padding: "8px", width: "150px", color: "var(--color-secondary)" }}>LOGGER</th>
-                <th style={{ padding: "8px", color: "var(--color-secondary)" }}>MESSAGE</th>
+              <tr
+                style={{
+                  borderBottom: "1px solid var(--color-border)",
+                  backgroundColor: "var(--color-surface-subtle)",
+                }}
+              >
+                <th
+                  style={{
+                    padding: "8px",
+                    width: "80px",
+                    color: "var(--color-secondary)",
+                  }}
+                >
+                  TIME
+                </th>
+                <th
+                  style={{
+                    padding: "8px",
+                    width: "80px",
+                    color: "var(--color-secondary)",
+                  }}
+                >
+                  LEVEL
+                </th>
+                <th
+                  style={{
+                    padding: "8px",
+                    width: "150px",
+                    color: "var(--color-secondary)",
+                  }}
+                >
+                  LOGGER
+                </th>
+                <th style={{ padding: "8px", color: "var(--color-secondary)" }}>
+                  MESSAGE
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -384,11 +517,22 @@ export function LogsPage() {
                   key={idx}
                   style={{
                     borderBottom: "1px solid var(--color-border)",
-                    backgroundColor: log.level === "error" ? "rgba(239, 68, 68, 0.02)" : "transparent",
+                    backgroundColor:
+                      log.level === "error"
+                        ? "rgba(239, 68, 68, 0.02)"
+                        : "transparent",
                   }}
                 >
-                  <td style={{ padding: "6px 8px", fontFamily: "var(--font-mono)", color: "var(--color-secondary)" }}>
-                    {log.timestamp.includes("T") ? log.timestamp.split("T")[1].substring(0, 8) : log.timestamp.substring(11, 19)}
+                  <td
+                    style={{
+                      padding: "6px 8px",
+                      fontFamily: "var(--font-mono)",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    {log.timestamp.includes("T")
+                      ? log.timestamp.split("T")[1].substring(0, 8)
+                      : log.timestamp.substring(11, 19)}
                   </td>
                   <td style={{ padding: "6px 8px" }}>
                     <span
@@ -415,10 +559,23 @@ export function LogsPage() {
                       {log.level}
                     </span>
                   </td>
-                  <td style={{ padding: "6px 8px", color: "var(--color-secondary)", fontFamily: "var(--font-mono)" }}>
+                  <td
+                    style={{
+                      padding: "6px 8px",
+                      color: "var(--color-secondary)",
+                      fontFamily: "var(--font-mono)",
+                    }}
+                  >
                     {log.logger}
                   </td>
-                  <td style={{ padding: "6px 8px", fontFamily: "var(--font-mono)", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+                  <td
+                    style={{
+                      padding: "6px 8px",
+                      fontFamily: "var(--font-mono)",
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-all",
+                    }}
+                  >
                     {log.message}
                   </td>
                 </tr>
@@ -430,7 +587,14 @@ export function LogsPage() {
 
       {/* Pagination (Simple) */}
       {logs.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.8rem" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            fontSize: "0.8rem",
+          }}
+        >
           <button
             disabled={offset === 0}
             onClick={() => setOffset((prev) => Math.max(0, prev - limit))}
@@ -441,10 +605,11 @@ export function LogsPage() {
               opacity: offset === 0 ? 0.4 : 1,
             }}
           >
-            ← Previous
+            Previous
           </button>
           <span>
-            Showing logs {offset + 1} - {Math.min(offset + logs.length, totalLogs)} of {totalLogs}
+            Showing logs {offset + 1} -{" "}
+            {Math.min(offset + logs.length, totalLogs)} of {totalLogs}
           </span>
           <button
             disabled={offset + logs.length >= totalLogs}
@@ -456,7 +621,7 @@ export function LogsPage() {
               opacity: offset + logs.length >= totalLogs ? 0.4 : 1,
             }}
           >
-            Next →
+            Next
           </button>
         </div>
       )}
@@ -489,13 +654,14 @@ export function LogsPage() {
               cursor: "pointer",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.08)";
+              e.currentTarget.style.backgroundColor =
+                "rgba(56, 189, 248, 0.08)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = "transparent";
             }}
           >
-            🔍 Send selection to Hermes for help
+            Send selection to Hermes for help
           </button>
         </div>
       )}
@@ -531,7 +697,9 @@ export function LogsPage() {
               backgroundColor: "var(--color-surface-subtle)",
             }}
           >
-            <h3 style={{ fontSize: "1rem", fontWeight: 600 }}>🤖 Hermes Diagnostic Debugger</h3>
+            <h3 style={{ fontSize: "1rem", fontWeight: 600 }}>
+              Hermes Diagnostic Debugger
+            </h3>
             <button
               data-testid="logs-drawer-close"
               onClick={() => setIsDrawerOpen(false)}
@@ -540,9 +708,7 @@ export function LogsPage() {
                 color: "var(--color-secondary)",
                 padding: "2px var(--space-xs)",
               }}
-            >
-              ✕
-            </button>
+            ></button>
           </div>
 
           {/* Chat Transcript */}
@@ -561,7 +727,10 @@ export function LogsPage() {
                 key={idx}
                 style={{
                   alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                  backgroundColor: msg.role === "user" ? "rgba(56, 189, 248, 0.08)" : "var(--color-surface-subtle)",
+                  backgroundColor:
+                    msg.role === "user"
+                      ? "rgba(56, 189, 248, 0.08)"
+                      : "var(--color-surface-subtle)",
                   border: "1px solid var(--color-border)",
                   borderRadius: "var(--radius-lg)",
                   padding: "var(--space-sm) var(--space-md)",
@@ -569,10 +738,19 @@ export function LogsPage() {
                   fontSize: "0.8rem",
                 }}
               >
-                <div style={{ fontWeight: "bold", fontSize: "0.7rem", marginBottom: "2px", color: "var(--color-secondary)" }}>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "0.7rem",
+                    marginBottom: "2px",
+                    color: "var(--color-secondary)",
+                  }}
+                >
                   {msg.role === "user" ? "YOU" : "HERMES"}
                 </div>
-                <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                <div
+                  style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                >
                   {msg.content}
                 </div>
               </div>
@@ -591,10 +769,19 @@ export function LogsPage() {
                   fontSize: "0.8rem",
                 }}
               >
-                <div style={{ fontWeight: "bold", fontSize: "0.7rem", marginBottom: "2px", color: "var(--color-secondary)" }}>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "0.7rem",
+                    marginBottom: "2px",
+                    color: "var(--color-secondary)",
+                  }}
+                >
                   HERMES
                 </div>
-                <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                <div
+                  style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                >
                   {streamedResponse}
                   <span className="thinking-dot" />
                 </div>
@@ -602,7 +789,13 @@ export function LogsPage() {
             )}
 
             {isSending && !streamedResponse && (
-              <div style={{ display: "flex", gap: "4px", paddingLeft: "var(--space-xs)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "4px",
+                  paddingLeft: "var(--space-xs)",
+                }}
+              >
                 <span className="thinking-dot" />
                 <span className="thinking-dot" />
                 <span className="thinking-dot" />

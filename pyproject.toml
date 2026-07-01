@@ -1,7 +1,7 @@
 [project]
 name = "wright"
 version = "0.1.0"
-description = "A digital engineer, designer, and mechanical analyst — local-first multi-agent mechanical engineering appliance"
+description = "A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance"
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}

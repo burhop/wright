@@ -42,7 +42,9 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
   readonly id = "threed-viewer";
   private changeCallbacks = new Set<(e: ViewerDocumentChangeEvent) => void>();
 
-  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (listener) => {
+  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (
+    listener,
+  ) => {
     this.changeCallbacks.add(listener);
     return {
       dispose: () => {
@@ -51,12 +53,19 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     };
   };
 
-  async openDocument(file: FileDescriptor, context: OpenContext): Promise<ThreeDDocument> {
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<ThreeDDocument> {
     const sessionId = context.sessionId;
     if (!sessionId) {
       throw new Error("No active session ID provided");
     }
-    const buffer = await workspaceService.getFileContentArrayBuffer(sessionId, file.uri, context.backupId);
+    const buffer = await workspaceService.getFileContentArrayBuffer(
+      sessionId,
+      file.uri,
+      context.backupId,
+    );
     return new ThreeDDocumentImpl(file.uri, buffer);
   }
 
@@ -68,7 +77,7 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     document: ThreeDDocument,
     panel: PanelHost,
     _mode: string,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
     const container = panel.container;
 
@@ -150,17 +159,21 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
         camera.updateProjectionMatrix();
       }
     } catch (err) {
-      console.error("Failed to parse STL geometry buffer in pluggable viewer", err);
+      console.error(
+        "Failed to parse STL geometry buffer in pluggable viewer",
+        err,
+      );
     }
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxDistance = 400;
-    
+
     // Set dynamic minDistance based on bounding sphere radius if available
     const radius = geometry?.boundingSphere?.radius;
-    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
+    controls.minDistance =
+      radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
 
     const resizeObserver = new ResizeObserver((entries) => {
       if (!entries || entries.length === 0) return;
@@ -197,20 +210,26 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     });
   }
 
-  async save(_document: ThreeDDocument, _token: CancellationToken): Promise<void> {}
+  async save(
+    _document: ThreeDDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async saveAs(
     _document: ThreeDDocument,
     _destination: FileDescriptor,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {}
 
-  async revert(_document: ThreeDDocument, _token: CancellationToken): Promise<void> {}
+  async revert(
+    _document: ThreeDDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async backup(
     document: ThreeDDocument,
     _context: BackupContext,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<BackupHandle> {
     return {
       id: "backup-" + document.uri,

@@ -117,11 +117,31 @@ export const defaultMcpMetadata = () => ({
   risk_level: "low" as RiskLevel,
   deployment_mode: "unknown",
   platform_support: {
-    windows_11_x64: { status: "unknown" as const, tested: false, notes: "not tested" },
-    linux_x64: { status: "unknown" as const, tested: false, notes: "not tested" },
-    linux_arm64: { status: "unknown" as const, tested: false, notes: "not tested" },
-    macos_x64: { status: "unknown" as const, tested: false, notes: "not tested" },
-    macos_arm64: { status: "unknown" as const, tested: false, notes: "not tested" },
+    windows_11_x64: {
+      status: "unknown" as const,
+      tested: false,
+      notes: "not tested",
+    },
+    linux_x64: {
+      status: "unknown" as const,
+      tested: false,
+      notes: "not tested",
+    },
+    linux_arm64: {
+      status: "unknown" as const,
+      tested: false,
+      notes: "not tested",
+    },
+    macos_x64: {
+      status: "unknown" as const,
+      tested: false,
+      notes: "not tested",
+    },
+    macos_arm64: {
+      status: "unknown" as const,
+      tested: false,
+      notes: "not tested",
+    },
   },
   host_software_required: [],
   credentials_required: [],
@@ -445,9 +465,7 @@ export class McpService {
       mcpLogger.error("Failed to delete credentials", {
         status: response.status,
       });
-      throw new Error(
-        `Failed to delete credentials: ${response.statusText}`,
-      );
+      throw new Error(`Failed to delete credentials: ${response.statusText}`);
     }
   }
 }

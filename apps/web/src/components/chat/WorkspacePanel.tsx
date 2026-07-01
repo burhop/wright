@@ -57,7 +57,14 @@ export function WorkspacePanel({
   sessionId: propSessionId,
   onSessionChange,
 }: WorkspacePanelProps) {
-  const { state, createSession, selectSession, sendMessage, refreshSessions, cancelActiveStream } = useChat();
+  const {
+    state,
+    createSession,
+    selectSession,
+    sendMessage,
+    refreshSessions,
+    cancelActiveStream,
+  } = useChat();
   const navigate = useNavigate();
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
@@ -76,7 +83,6 @@ export function WorkspacePanel({
   }, []);
 
   const isThin = panelWidth < 768;
-
 
   // Refresh sessions when workspace changes
   useEffect(() => {
@@ -161,7 +167,8 @@ export function WorkspacePanel({
 
   // --- Layout state persistence via localStorage ---
   const layoutKey = useMemo(
-    () => (activeSessionId ? `wright-workspace-layout-${activeSessionId}` : null),
+    () =>
+      activeSessionId ? `wright-workspace-layout-${activeSessionId}` : null,
     [activeSessionId],
   );
 
@@ -177,7 +184,7 @@ export function WorkspacePanel({
     return null;
   }, [layoutKey]);
 
-  // Layout states — initialised from localStorage when available
+  // Layout states  initialised from localStorage when available
   const [activeSidebar, setActiveSidebar] = useState<
     "marketplace" | "files" | "git" | "settings" | "docs"
   >(savedLayout?.activeSidebar ?? "files");
@@ -212,7 +219,8 @@ export function WorkspacePanel({
 
   // Workspace Config state
   const [workspacePrompt, setWorkspacePrompt] = useState("");
-  const [gitLargeFileThreshold, setGitLargeFileThreshold] = useState<number>(10);
+  const [gitLargeFileThreshold, setGitLargeFileThreshold] =
+    useState<number>(10);
 
   // Compact MCP tools state
   const [mcpServers, setMcpServers] = useState<any[]>([]);
@@ -221,7 +229,7 @@ export function WorkspacePanel({
 
   const installedServers = mcpServers.filter((s) => s.is_installed);
 
-  // File tree expanded directories — persisted so the tree stays open across refresh
+  // File tree expanded directories  persisted so the tree stays open across refresh
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
     () => new Set<string>(savedLayout?.expandedPaths ?? []),
   );
@@ -259,7 +267,7 @@ export function WorkspacePanel({
       try {
         localStorage.setItem(layoutKey, JSON.stringify(state));
       } catch {
-        /* quota exceeded — not critical */
+        /* quota exceeded  not critical */
       }
     }, 300);
     return () => {
@@ -277,8 +285,6 @@ export function WorkspacePanel({
     expandedPaths,
   ]);
 
-
-
   const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
     null,
   );
@@ -286,7 +292,9 @@ export function WorkspacePanel({
   useEffect(() => {
     workspaceRootRef.current = workspaceRoot;
   }, [workspaceRoot]);
-  const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(null);
+  const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(
+    null,
+  );
   const [workspacePath, setWorkspacePath] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -345,7 +353,9 @@ export function WorkspacePanel({
       tabsInitialized.current = true;
       const syncTabs = async () => {
         for (const tab of savedLayout.openTabs) {
-          const fileNode = workspaceRootRef.current ? findFileInTree(workspaceRootRef.current, tab.path) : null;
+          const fileNode = workspaceRootRef.current
+            ? findFileInTree(workspaceRootRef.current, tab.path)
+            : null;
           const ext = tab.path.split(".").pop()?.toLowerCase() || "";
           const name = tab.path.split("/").pop() || tab.path;
           let mimeType = "text/plain";
@@ -381,7 +391,9 @@ export function WorkspacePanel({
   useEffect(() => {
     if (!activeTabPath || !viewerContainerRef.current) return;
 
-    const fileNode = workspaceRootRef.current ? findFileInTree(workspaceRootRef.current, activeTabPath) : null;
+    const fileNode = workspaceRootRef.current
+      ? findFileInTree(workspaceRootRef.current, activeTabPath)
+      : null;
     const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
     const name = activeTabPath.split("/").pop() || activeTabPath;
 
@@ -411,8 +423,9 @@ export function WorkspacePanel({
     const contribution = viewerRegistry.getDefaultViewer(file, mode);
     if (!contribution) return;
 
-    const provider = getProvider(activeTabPath) || contribution.providerFactory();
-    
+    const provider =
+      getProvider(activeTabPath) || contribution.providerFactory();
+
     let activeDocument = getDocument(activeTabPath);
     let cancelled = false;
 
@@ -428,7 +441,7 @@ export function WorkspacePanel({
       name,
       viewerContainerRef.current,
       true,
-      true
+      true,
     );
 
     const subUnresponsive = host.onDidBecomeUnresponsive?.(() => {
@@ -442,7 +455,9 @@ export function WorkspacePanel({
     const loadViewer = async () => {
       try {
         if (!activeDocument) {
-          activeDocument = await provider.openDocument(file, { sessionId: activeSessionId || undefined });
+          activeDocument = await provider.openDocument(file, {
+            sessionId: activeSessionId || undefined,
+          });
         }
         if (!cancelled && viewerContainerRef.current) {
           await provider.resolveViewer(activeDocument, host, mode, token);
@@ -537,7 +552,7 @@ export function WorkspacePanel({
       const config = await workspaceService.getWorkspaceConfig(activeSessionId);
       setRemoteUrl(config.git_remote_url || "");
       setGitUsername(config.git_username || "");
-      setGitToken(config.has_token ? "••••••••" : "");
+      setGitToken(config.has_token ? "" : "");
       setWorkspacePrompt(config.workspace_prompt || "");
       setGitLargeFileThreshold(config.git_large_file_threshold ?? 10);
       if (config.workspace_path) {
@@ -560,8 +575,6 @@ export function WorkspacePanel({
     setGitLargeFileThreshold,
     setWorkspacePath,
   ]);
-
-
 
   // Workspace Polling Loop for disk changes
   useEffect(() => {
@@ -653,7 +666,7 @@ export function WorkspacePanel({
     setOptionsError(null);
     setOptionsSaved(false);
     try {
-      const tokenToSend = gitToken === "••••••••" ? null : gitToken;
+      const tokenToSend = gitToken === "" ? null : gitToken;
       await workspaceService.updateWorkspaceConfig(
         activeSessionId,
         remoteUrl.trim() || null,
@@ -771,14 +784,14 @@ export function WorkspacePanel({
     }
   };
 
-  // Click file in Tree → Open Tab
+  // Click file in Tree  Open Tab
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
 
     const ext = path.split(".").pop()?.toLowerCase() || "";
     const name = path.split("/").pop() || path;
     const fileNode = workspaceRoot ? findFileInTree(workspaceRoot, path) : null;
-    
+
     let mimeType = "text/plain";
     if (ext === "pdf") mimeType = "application/pdf";
     else if (ext === "png") mimeType = "image/png";
@@ -849,8 +862,6 @@ export function WorkspacePanel({
       // Update tabs if opened
       const newName = newPath.split("/").pop() || newPath;
       updateTabPath(oldPath, newPath, newName);
-
-
     } catch (err: unknown) {
       console.error("Failed to rename file node:", err);
       throw err;
@@ -879,8 +890,6 @@ export function WorkspacePanel({
 
   const handleCloseTab = (path: string) => {
     closeTab(path);
-
-
   };
 
   const handleSelectTab = (path: string) => {
@@ -966,8 +975,9 @@ export function WorkspacePanel({
         const data = await serversRes.json();
         setMcpServers(data.servers || []);
       }
-      
-      const enabledList = await workspaceService.getWorkspaceTools(activeSessionId);
+
+      const enabledList =
+        await workspaceService.getWorkspaceTools(activeSessionId);
       setEnabledTools(enabledList || []);
     } catch (err) {
       console.error("Failed to load compact MCP list", err);
@@ -982,12 +992,20 @@ export function WorkspacePanel({
     }
   }, [activeSidebar, fetchMcpData]);
 
-  const handleToggleMcpTool = async (serverName: string, currentlyEnabled: boolean) => {
+  const handleToggleMcpTool = async (
+    serverName: string,
+    currentlyEnabled: boolean,
+  ) => {
     if (!activeSessionId) return;
     try {
-      await workspaceService.toggleWorkspaceTool(activeSessionId, serverName, !currentlyEnabled);
+      await workspaceService.toggleWorkspaceTool(
+        activeSessionId,
+        serverName,
+        !currentlyEnabled,
+      );
       // Re-fetch enabled tools list
-      const enabledList = await workspaceService.getWorkspaceTools(activeSessionId);
+      const enabledList =
+        await workspaceService.getWorkspaceTools(activeSessionId);
       setEnabledTools(enabledList || []);
     } catch (err) {
       console.error("Failed to toggle MCP tool", err);
@@ -1188,9 +1206,7 @@ export function WorkspacePanel({
                   boxShadow: "var(--shadow-glow)",
                 }}
                 title="Create New Session"
-              >
-                ＋
-              </button>
+              ></button>
             </div>
           </div>
 
@@ -1210,7 +1226,7 @@ export function WorkspacePanel({
               }}
             >
               <span>
-                ⚠️ Hermes agent is not available. Check that the wright profile
+                Hermes agent is not available. Check that the wright profile
                 WebUI is running.
               </span>
             </div>
@@ -1276,7 +1292,6 @@ export function WorkspacePanel({
             : "grid-template-columns 0.15s ease-out",
       }}
     >
-
       {/* 1. Activity Bar (far left) */}
       <div
         style={{
@@ -1393,8 +1408,7 @@ export function WorkspacePanel({
             border: "none",
             cursor: "pointer",
             padding: "var(--space-xs)",
-            opacity:
-              !isSidebarCollapsed && activeSidebar === "docs" ? 1 : 0.45,
+            opacity: !isSidebarCollapsed && activeSidebar === "docs" ? 1 : 0.45,
             color:
               !isSidebarCollapsed && activeSidebar === "docs"
                 ? "var(--color-secondary)"
@@ -1435,15 +1449,39 @@ export function WorkspacePanel({
             >
               MCP Tools Selector
             </div>
-            <div style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}>
+            <div
+              style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}
+            >
               {mcpLoading ? (
-                <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem" }}>Loading workspace tools...</div>
+                <div
+                  style={{
+                    color: "var(--color-secondary)",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  Loading workspace tools...
+                </div>
               ) : installedServers.length === 0 ? (
-                <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem" }}>No MCP servers configured.</div>
+                <div
+                  style={{
+                    color: "var(--color-secondary)",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  No MCP servers configured.
+                </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--space-sm)",
+                  }}
+                >
                   {installedServers.map((server) => {
-                    const isEnabled = enabledTools.includes(server.name) || enabledTools.includes(server.server_id);
+                    const isEnabled =
+                      enabledTools.includes(server.name) ||
+                      enabledTools.includes(server.server_id);
                     const isGloballyActive = server.is_active;
 
                     return (
@@ -1461,23 +1499,60 @@ export function WorkspacePanel({
                           gap: "var(--space-sm)",
                         }}
                       >
-                        <div style={{ display: "flex", flexDirection: "column", gap: "2px", textAlign: "left", flex: 1 }}>
-                          <span style={{ fontWeight: "600", fontSize: "0.8rem", color: "var(--color-primary)" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "2px",
+                            textAlign: "left",
+                            flex: 1,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: "600",
+                              fontSize: "0.8rem",
+                              color: "var(--color-primary)",
+                            }}
+                          >
                             {server.name}
                           </span>
-                          <span style={{ fontSize: "0.65rem", color: "var(--color-secondary)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "180px" }}>
+                          <span
+                            style={{
+                              fontSize: "0.65rem",
+                              color: "var(--color-secondary)",
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              maxWidth: "180px",
+                            }}
+                          >
                             {server.description || `MCP type: ${server.type}`}
                           </span>
-                          <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              marginTop: "2px",
+                            }}
+                          >
                             <span
                               style={{
                                 width: "5px",
                                 height: "5px",
                                 borderRadius: "50%",
-                                backgroundColor: isGloballyActive ? "var(--color-success)" : "#858585",
+                                backgroundColor: isGloballyActive
+                                  ? "var(--color-success)"
+                                  : "#858585",
                               }}
                             />
-                            <span style={{ fontSize: "0.6rem", color: "var(--color-secondary)" }}>
+                            <span
+                              style={{
+                                fontSize: "0.6rem",
+                                color: "var(--color-secondary)",
+                              }}
+                            >
                               {isGloballyActive ? "active" : "inactive"}
                             </span>
                           </div>
@@ -1486,7 +1561,9 @@ export function WorkspacePanel({
                           data-testid={`mcp-toggle-${server.name.toLowerCase()}`}
                           type="checkbox"
                           checked={isEnabled}
-                          onChange={() => handleToggleMcpTool(server.name, isEnabled)}
+                          onChange={() =>
+                            handleToggleMcpTool(server.name, isEnabled)
+                          }
                           style={{ cursor: "pointer" }}
                         />
                       </div>
@@ -1602,10 +1679,22 @@ export function WorkspacePanel({
                   borderRadius: "var(--radius-md)",
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontWeight: "600" }}>Branch: 🌿 {gitBranch}</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ fontWeight: "600" }}>Branch: {gitBranch}</span>
                 </div>
-                <div style={{ display: "flex", gap: "var(--space-xs)", marginTop: "2px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "var(--space-xs)",
+                    marginTop: "2px",
+                  }}
+                >
                   <button
                     data-testid="git-new-branch-btn"
                     onClick={async () => {
@@ -1614,7 +1703,11 @@ export function WorkspacePanel({
                       if (!activeSessionId) return;
                       setGitLoading(true);
                       try {
-                        await workspaceService.checkoutBranch(activeSessionId, name.trim(), true);
+                        await workspaceService.checkoutBranch(
+                          activeSessionId,
+                          name.trim(),
+                          true,
+                        );
                         alert(`Created and switched to branch: ${name}`);
                         await fetchGitData();
                       } catch (err: any) {
@@ -1640,12 +1733,17 @@ export function WorkspacePanel({
                   <button
                     data-testid="git-merge-btn"
                     onClick={async () => {
-                      const name = prompt("Enter branch name to merge into current branch:");
+                      const name = prompt(
+                        "Enter branch name to merge into current branch:",
+                      );
                       if (!name || !name.trim()) return;
                       if (!activeSessionId) return;
                       setGitLoading(true);
                       try {
-                        const res = await workspaceService.mergeBranch(activeSessionId, name.trim());
+                        const res = await workspaceService.mergeBranch(
+                          activeSessionId,
+                          name.trim(),
+                        );
                         alert(res.message || "Branch merged successfully");
                         await fetchGitData();
                       } catch (err: any) {
@@ -1670,7 +1768,13 @@ export function WorkspacePanel({
                   </button>
                 </div>
 
-                <div style={{ display: "flex", gap: "var(--space-xs)", marginTop: "2px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "var(--space-xs)",
+                    marginTop: "2px",
+                  }}
+                >
                   <button
                     data-testid="git-pull-btn"
                     onClick={async () => {
@@ -1734,7 +1838,7 @@ export function WorkspacePanel({
                     marginBottom: "var(--space-sm)",
                   }}
                 >
-                  ⚠️ {gitError}
+                  {gitError}
                 </div>
               )}
 
@@ -1806,7 +1910,9 @@ export function WorkspacePanel({
                     }}
                   >
                     {gitChanges.map((c) => {
-                      const isOversized = c.file_size && c.file_size > (gitLargeFileThreshold * 1024 * 1024);
+                      const isOversized =
+                        c.file_size &&
+                        c.file_size > gitLargeFileThreshold * 1024 * 1024;
                       return (
                         <div
                           key={c.path}
@@ -1821,7 +1927,13 @@ export function WorkspacePanel({
                             fontSize: "0.7rem",
                           }}
                         >
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
                             <span
                               style={{
                                 overflow: "hidden",
@@ -1847,9 +1959,7 @@ export function WorkspacePanel({
                                   color: "var(--color-primary)",
                                 }}
                                 title="View Diff"
-                              >
-                                🔍
-                              </button>
+                              ></button>
                               <button
                                 onClick={() => handleRevert(c.path)}
                                 style={{
@@ -1860,15 +1970,27 @@ export function WorkspacePanel({
                                   color: "var(--color-error)",
                                 }}
                                 title="Revert File"
-                              >
-                                ⎌
-                              </button>
+                              ></button>
                             </div>
                           </div>
 
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2px" }}>
-                            <span style={{ fontSize: "0.6rem", color: "var(--color-secondary)" }}>
-                              {c.file_size ? `${(c.file_size / (1024 * 1024)).toFixed(2)} MB` : "unknown size"}
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              marginTop: "2px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "0.6rem",
+                                color: "var(--color-secondary)",
+                              }}
+                            >
+                              {c.file_size
+                                ? `${(c.file_size / (1024 * 1024)).toFixed(2)} MB`
+                                : "unknown size"}
                             </span>
                             {isOversized && (
                               <span
@@ -1881,7 +2003,7 @@ export function WorkspacePanel({
                                   fontWeight: "bold",
                                 }}
                               >
-                                ⚠️ OVERSIZED (&gt;{gitLargeFileThreshold}MB)
+                                OVERSIZED (&gt;{gitLargeFileThreshold}MB)
                               </span>
                             )}
                           </div>
@@ -1931,7 +2053,7 @@ export function WorkspacePanel({
                             opacity: 0.7,
                           }}
                         >
-                          <span>👤 {h.author}</span>
+                          <span> {h.author}</span>
                           <span style={{ fontFamily: "monospace" }}>
                             {h.commit_hash.substring(0, 7)}
                           </span>
@@ -1988,7 +2110,7 @@ export function WorkspacePanel({
                     marginBottom: "var(--space-xs)",
                   }}
                 >
-                  ⚠️ {optionsError}
+                  {optionsError}
                 </div>
               )}
 
@@ -2000,9 +2122,32 @@ export function WorkspacePanel({
                   gap: "var(--space-md)",
                 }}
               >
-                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-md)", marginBottom: "var(--space-xs)" }}>
-                  <span style={{ fontWeight: "bold", marginBottom: "var(--space-xs)", color: "var(--color-secondary)" }}>Git Credentials</span>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--space-xs)",
+                    borderBottom: "1px solid var(--color-border)",
+                    paddingBottom: "var(--space-md)",
+                    marginBottom: "var(--space-xs)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      marginBottom: "var(--space-xs)",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    Git Credentials
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                    }}
+                  >
                     <label>Git Remote URL</label>
                     <input
                       data-testid="workspace-settings-remote-url"
@@ -2020,7 +2165,14 @@ export function WorkspacePanel({
                       }}
                     />
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px", marginTop: "var(--space-xs)" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                      marginTop: "var(--space-xs)",
+                    }}
+                  >
                     <label>Git Username</label>
                     <input
                       data-testid="workspace-settings-username"
@@ -2038,7 +2190,14 @@ export function WorkspacePanel({
                       }}
                     />
                   </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px", marginTop: "var(--space-xs)" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                      marginTop: "var(--space-xs)",
+                    }}
+                  >
                     <label>Personal Access Token</label>
                     <input
                       data-testid="workspace-settings-token"
@@ -2058,9 +2217,32 @@ export function WorkspacePanel({
                   </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-md)", marginBottom: "var(--space-xs)" }}>
-                  <span style={{ fontWeight: "bold", marginBottom: "var(--space-xs)", color: "var(--color-secondary)" }}>Hermes Prompt Context</span>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--space-xs)",
+                    borderBottom: "1px solid var(--color-border)",
+                    paddingBottom: "var(--space-md)",
+                    marginBottom: "var(--space-xs)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      marginBottom: "var(--space-xs)",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    Hermes Prompt Context
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                    }}
+                  >
                     <label>System Prompt Overlay</label>
                     <textarea
                       data-testid="workspace-prompt-input"
@@ -2083,9 +2265,29 @@ export function WorkspacePanel({
                   </div>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
-                  <span style={{ fontWeight: "bold", marginBottom: "var(--space-xs)", color: "var(--color-secondary)" }}>File Exclusions & Limits</span>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "var(--space-xs)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      marginBottom: "var(--space-xs)",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    File Exclusions & Limits
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "2px",
+                    }}
+                  >
                     <label>Oversized Warning Threshold (MB)</label>
                     <input
                       data-testid="workspace-settings-git-threshold"
@@ -2093,7 +2295,9 @@ export function WorkspacePanel({
                       min={1}
                       max={100}
                       value={gitLargeFileThreshold}
-                      onChange={(e) => setGitLargeFileThreshold(parseInt(e.target.value) || 10)}
+                      onChange={(e) =>
+                        setGitLargeFileThreshold(parseInt(e.target.value) || 10)
+                      }
                       style={{
                         backgroundColor: "var(--color-surface-subtle)",
                         color: "var(--color-primary)",
@@ -2134,7 +2338,7 @@ export function WorkspacePanel({
                       textAlign: "center",
                     }}
                   >
-                    ✓ Saved!
+                    Saved!
                   </div>
                 )}
               </form>
@@ -2214,30 +2418,88 @@ export function WorkspacePanel({
                 gap: "var(--space-md)",
               }}
             >
-              <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)" }}>
-                <h4 style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-secondary)" }}>
-                  💡 Customizing Hermes Prompt
+              <div
+                style={{
+                  borderBottom: "1px solid var(--color-border)",
+                  paddingBottom: "var(--space-sm)",
+                }}
+              >
+                <h4
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.85rem",
+                    color: "var(--color-secondary)",
+                  }}
+                >
+                  Customizing Hermes Prompt
                 </h4>
-                <p style={{ marginTop: "4px", fontSize: "0.7rem", color: "var(--color-secondary)", lineHeight: "1.4" }}>
-                  Use the <strong>Workspace Settings</strong> tab to supply custom context prompt overlays. This context is synced immediately with the local `.hermes.md` file and injected into Hermes's environment for specialized code generations.
+                <p
+                  style={{
+                    marginTop: "4px",
+                    fontSize: "0.7rem",
+                    color: "var(--color-secondary)",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  Use the <strong>Workspace Settings</strong> tab to supply
+                  custom context prompt overlays. This context is synced
+                  immediately with the local `.hermes.md` file and injected into
+                  Hermes's environment for specialized code generations.
                 </p>
               </div>
 
-              <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)" }}>
-                <h4 style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-secondary)" }}>
-                  🌿 Managing Branches & Merges
+              <div
+                style={{
+                  borderBottom: "1px solid var(--color-border)",
+                  paddingBottom: "var(--space-sm)",
+                }}
+              >
+                <h4
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.85rem",
+                    color: "var(--color-secondary)",
+                  }}
+                >
+                  Managing Branches & Merges
                 </h4>
-                <p style={{ marginTop: "4px", fontSize: "0.7rem", color: "var(--color-secondary)", lineHeight: "1.4" }}>
-                  To create a new workspace task branch, use the <strong>New Branch</strong> button. Check out or switch branches seamlessly. Use the <strong>Merge</strong> tool to consolidate branch features into your active branch context.
+                <p
+                  style={{
+                    marginTop: "4px",
+                    fontSize: "0.7rem",
+                    color: "var(--color-secondary)",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  To create a new workspace task branch, use the{" "}
+                  <strong>New Branch</strong> button. Check out or switch
+                  branches seamlessly. Use the <strong>Merge</strong> tool to
+                  consolidate branch features into your active branch context.
                 </p>
               </div>
 
               <div>
-                <h4 style={{ fontWeight: 600, fontSize: "0.85rem", color: "var(--color-secondary)" }}>
-                  🛠 Active MCP Tools integration
+                <h4
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.85rem",
+                    color: "var(--color-secondary)",
+                  }}
+                >
+                  Active MCP Tools integration
                 </h4>
-                <p style={{ marginTop: "4px", fontSize: "0.7rem", color: "var(--color-secondary)", lineHeight: "1.4" }}>
-                  Ensure you enable required MCP tools under the <strong>MCP Tools Selector</strong> tab. Toggled tools are dynamically exposed to the Hermes session prompt for real-time model interactions.
+                <p
+                  style={{
+                    marginTop: "4px",
+                    fontSize: "0.7rem",
+                    color: "var(--color-secondary)",
+                    lineHeight: "1.4",
+                  }}
+                >
+                  Ensure you enable required MCP tools under the{" "}
+                  <strong>MCP Tools Selector</strong> tab. Toggled tools are
+                  dynamically exposed to the Hermes session prompt for real-time
+                  model interactions.
                 </p>
               </div>
             </div>
@@ -2279,7 +2541,15 @@ export function WorkspacePanel({
           position: "relative",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "var(--color-neutral-dark, #121212)", paddingRight: "var(--space-md, 12px)" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "var(--color-neutral-dark, #121212)",
+            paddingRight: "var(--space-md, 12px)",
+          }}
+        >
           <div style={{ flex: 1, overflow: "hidden" }}>
             <EditorTabs
               tabs={openTabs}
@@ -2295,7 +2565,9 @@ export function WorkspacePanel({
               style={{
                 background: "none",
                 border: "none",
-                color: isInspectorOpen ? "var(--color-secondary, #aaaaaa)" : "var(--color-primary, #ffffff)",
+                color: isInspectorOpen
+                  ? "var(--color-secondary, #aaaaaa)"
+                  : "var(--color-primary, #ffffff)",
                 opacity: 0.7,
                 cursor: "pointer",
                 padding: "8px",
@@ -2305,13 +2577,18 @@ export function WorkspacePanel({
                 justifyContent: "center",
               }}
               title="Inspect Viewer Details"
-            >
-              🔍
-            </button>
+            ></button>
           )}
         </div>
 
-        <div style={{ flex: 1, display: "flex", overflow: "hidden", position: "relative" }}>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
           {activeTabPath ? (
             <>
               <div
@@ -2357,30 +2634,64 @@ export function WorkspacePanel({
                       boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
                     }}
                   >
-                    <div style={{ fontSize: "2rem", marginBottom: "var(--space-sm)" }}>⚠️</div>
-                    <h4 style={{ margin: "0 0 var(--space-sm)", color: "var(--color-error, #ef4444)" }}>
+                    <div
+                      style={{
+                        fontSize: "2rem",
+                        marginBottom: "var(--space-sm)",
+                      }}
+                    ></div>
+                    <h4
+                      style={{
+                        margin: "0 0 var(--space-sm)",
+                        color: "var(--color-error, #ef4444)",
+                      }}
+                    >
                       Viewer Unresponsive
                     </h4>
-                    <p style={{ margin: "0 0 var(--space-lg)", fontSize: "0.85rem", opacity: 0.8, lineHeight: 1.5 }}>
-                      The viewer panel is not responding. You can try reloading it, or close it to release resources.
+                    <p
+                      style={{
+                        margin: "0 0 var(--space-lg)",
+                        fontSize: "0.85rem",
+                        opacity: 0.8,
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      The viewer panel is not responding. You can try reloading
+                      it, or close it to release resources.
                     </p>
-                    <div style={{ display: "flex", gap: "var(--space-md)", justifyContent: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "var(--space-md)",
+                        justifyContent: "center",
+                      }}
+                    >
                       <button
                         data-testid="watchdog-reload"
                         onClick={async () => {
                           if (activeTabPath) {
-                            const fileNode = workspaceRoot ? findFileInTree(workspaceRoot, activeTabPath) : null;
+                            const fileNode = workspaceRoot
+                              ? findFileInTree(workspaceRoot, activeTabPath)
+                              : null;
                             if (fileNode) {
-                              const ext = activeTabPath.split(".").pop()?.toLowerCase() || "";
-                              const name = activeTabPath.split("/").pop() || activeTabPath;
+                              const ext =
+                                activeTabPath.split(".").pop()?.toLowerCase() ||
+                                "";
+                              const name =
+                                activeTabPath.split("/").pop() || activeTabPath;
                               const file: FileDescriptor = {
                                 id: activeTabPath,
                                 uri: activeTabPath,
                                 name,
                                 extension: ext,
-                                mimeType: ext === "pdf" ? "application/pdf" : "text/plain",
+                                mimeType:
+                                  ext === "pdf"
+                                    ? "application/pdf"
+                                    : "text/plain",
                                 size: fileNode?.size || undefined,
-                                metadata: { last_modified: fileNode?.last_modified },
+                                metadata: {
+                                  last_modified: fileNode?.last_modified,
+                                },
                               };
                               await reloadDocument(file);
                             }
@@ -2439,7 +2750,7 @@ export function WorkspacePanel({
                 gap: "var(--space-md)",
               }}
             >
-              <div style={{ fontSize: "3rem", opacity: 0.4 }}>💻</div>
+              <div style={{ fontSize: "3rem", opacity: 0.4 }}></div>
               <div
                 style={{
                   fontSize: "0.9rem",
@@ -2518,9 +2829,7 @@ export function WorkspacePanel({
                     cursor: "pointer",
                     fontSize: "0.9rem",
                   }}
-                >
-                  ✕
-                </button>
+                ></button>
               </div>
             </div>
             <div
@@ -2614,9 +2923,7 @@ export function WorkspacePanel({
                 fontSize: "0.8rem",
               }}
               title="Collapse Agent Console"
-            >
-              ▶
-            </button>
+            ></button>
           </div>
 
           {/* Row 2: Model and Session Selector + New Session Button */}
@@ -2755,9 +3062,7 @@ export function WorkspacePanel({
                 boxShadow: "var(--shadow-glow)",
               }}
               title="Create New Session"
-            >
-              ＋
-            </button>
+            ></button>
           </div>
         </div>
 
@@ -2777,8 +3082,8 @@ export function WorkspacePanel({
             }}
           >
             <span>
-              ⚠️ Hermes agent is not available. Check that the wright profile
-              WebUI is running.
+              Hermes agent is not available. Check that the wright profile WebUI
+              is running.
             </span>
           </div>
         )}
@@ -2849,9 +3154,7 @@ export function WorkspacePanel({
               "background-color var(--transition-fast), box-shadow var(--transition-fast)",
           }}
           title="Open Agent Console"
-        >
-          ◀
-        </button>
+        ></button>
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import type { HostAdapter } from "./host-adapter";
 import type { FileEntry, SelectOptions } from "./wright-desktop";
 
 export class DesktopHostAdapter implements HostAdapter {
-  readonly mode = 'desktop';
+  readonly mode = "desktop";
   private apiPort = 8000;
   private workspacePath: string | null = null;
   private configPromise: Promise<void>;
@@ -17,7 +17,10 @@ export class DesktopHostAdapter implements HostAdapter {
         const config = await window.wrightDesktop.getConfig();
         this.apiPort = config.apiPort;
         this.workspacePath = config.workspacePath;
-        console.debug("[DesktopHostAdapter] Configured workspace path:", this.workspacePath);
+        console.debug(
+          "[DesktopHostAdapter] Configured workspace path:",
+          this.workspacePath,
+        );
       } catch (e) {
         console.error("Failed to load desktop config", e);
       }
@@ -28,8 +31,8 @@ export class DesktopHostAdapter implements HostAdapter {
     return `http://localhost:${this.apiPort}`;
   }
 
-  getRouterType(): 'browser' | 'hash' {
-    return 'hash';
+  getRouterType(): "browser" | "hash" {
+    return "hash";
   }
 
   async fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
@@ -38,22 +41,22 @@ export class DesktopHostAdapter implements HostAdapter {
     }
 
     // Parse the URL to get the path
-    let urlString = '';
-    if (typeof input === 'string') {
+    let urlString = "";
+    if (typeof input === "string") {
       urlString = input;
     } else if (input instanceof URL) {
       urlString = input.toString();
-    } else if (input && typeof input === 'object' && 'url' in input) {
+    } else if (input && typeof input === "object" && "url" in input) {
       urlString = (input as Request).url;
     }
 
     // Extract path starting with /api/
     let apiPath = urlString;
     try {
-      if (urlString.startsWith('http://') || urlString.startsWith('https://')) {
+      if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
         const parsedUrl = new URL(urlString);
         apiPath = parsedUrl.pathname + parsedUrl.search;
-      } else if (urlString.startsWith('file://')) {
+      } else if (urlString.startsWith("file://")) {
         const match = urlString.match(/file:\/\/[^\/]*(\/api\/.*)/);
         if (match) {
           apiPath = match[1];
@@ -66,10 +69,10 @@ export class DesktopHostAdapter implements HostAdapter {
     // Ensure apiPort config is initialized if possible
     await this.configPromise.catch(() => {});
 
-    const method = init?.method || 'GET';
+    const method = init?.method || "GET";
     let bodyObj: any = undefined;
     if (init?.body) {
-      if (typeof init.body === 'string') {
+      if (typeof init.body === "string") {
         try {
           bodyObj = JSON.parse(init.body);
         } catch (e) {
@@ -91,22 +94,26 @@ export class DesktopHostAdapter implements HostAdapter {
       return {
         ok: true,
         status: 200,
-        statusText: 'OK',
+        statusText: "OK",
         json: async () => result,
-        text: async () => typeof result === 'string' ? result : JSON.stringify(result),
-        arrayBuffer: async () => new TextEncoder().encode(typeof result === 'string' ? result : JSON.stringify(result)).buffer,
+        text: async () =>
+          typeof result === "string" ? result : JSON.stringify(result),
+        arrayBuffer: async () =>
+          new TextEncoder().encode(
+            typeof result === "string" ? result : JSON.stringify(result),
+          ).buffer,
       } as Response;
     } catch (err: any) {
       const statusCode = err.status || 500;
-      const statusText = err.message || 'Internal Server Error';
+      const statusText = err.message || "Internal Server Error";
       return {
         ok: false,
         status: statusCode,
         statusText: statusText,
         json: async () => ({
-          error_code: err.code || 'API_ERROR',
-          message: err.message || 'API request failed',
-          trace_id: 'unknown',
+          error_code: err.code || "API_ERROR",
+          message: err.message || "API request failed",
+          trace_id: "unknown",
           details: err.details,
         }),
         text: async () => JSON.stringify(err),

@@ -173,7 +173,9 @@ describe("ToolRegistryPage", () => {
     expect(screen.getByText("CAD Extractor")).toBeInTheDocument();
 
     expect(screen.queryByText("uv run sim")).not.toBeInTheDocument();
-    expect(screen.queryByText("http://127.0.0.1:9090/sse")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("http://127.0.0.1:9090/sse"),
+    ).not.toBeInTheDocument();
 
     // Expand full card details for Server 1
     const serverOneCard = screen.getByTestId("server-card-server-1");
@@ -192,9 +194,9 @@ describe("ToolRegistryPage", () => {
 
     // Server 2: URL display
     expect(screen.getByText("http://127.0.0.1:9090/sse")).toBeInTheDocument();
-    expect(screen.getByTestId("server-card-verification-server-2")).toHaveTextContent(
-      "Verified MCP",
-    );
+    expect(
+      screen.getByTestId("server-card-verification-server-2"),
+    ).toHaveTextContent("Verified MCP");
     expect(
       screen.getByTestId("server-card-installability-server-2"),
     ).toHaveTextContent("Launch tested");
@@ -213,8 +215,12 @@ describe("ToolRegistryPage", () => {
     expect(cards[0]).toHaveTextContent("CAD Extractor");
     expect(cards[1]).toHaveTextContent("Simulation Solver");
     expect(cards[2]).toHaveTextContent("Blocked Candidate");
-    expect(screen.getByTestId("tool-registry-tier-tested")).toHaveTextContent("1");
-    expect(screen.getByTestId("tool-registry-tier-blocked")).toHaveTextContent("1");
+    expect(screen.getByTestId("tool-registry-tier-tested")).toHaveTextContent(
+      "1",
+    );
+    expect(screen.getByTestId("tool-registry-tier-blocked")).toHaveTextContent(
+      "1",
+    );
 
     const blockedCard = screen.getByTestId("server-card-server-3");
     expect(
@@ -223,10 +229,12 @@ describe("ToolRegistryPage", () => {
     fireEvent.click(
       within(blockedCard).getByTestId("server-card-details-toggle-server-3"),
     );
-    expect(screen.getByTestId("server-card-followup-server-3")).toHaveTextContent(
-      "Follow-up record",
-    );
-    expect(screen.getByTestId("server-card-report-missing-mcp")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("server-card-followup-server-3"),
+    ).toHaveTextContent("Follow-up record");
+    expect(
+      screen.getByTestId("server-card-report-missing-mcp"),
+    ).toBeInTheDocument();
   });
 
   it("filters servers by search query input", () => {

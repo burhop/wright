@@ -53,7 +53,15 @@ function preprocessContent(
 
     return part.replace(
       regex,
-      (match, mediaToken, markdownLink, url, absPath, relPathWithSlash, relPathNoSlash) => {
+      (
+        match,
+        mediaToken,
+        markdownLink,
+        url,
+        absPath,
+        relPathWithSlash,
+        relPathNoSlash,
+      ) => {
         if (mediaToken) {
           const mediaPath = mediaToken.substring(6); // Strip "MEDIA:"
           let cleanPath = mediaPath;

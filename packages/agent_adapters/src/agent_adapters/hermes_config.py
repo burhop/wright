@@ -33,7 +33,7 @@ def parse_env_file(path: str | Path) -> dict[str, str]:
         key, value = line.split("=", 1)
         key = key.strip()
         if key.startswith("export "):
-            key = key[len("export "):].strip()
+            key = key[len("export ") :].strip()
         if key:
             values[key] = _parse_env_value(value)
     return values

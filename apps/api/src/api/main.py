@@ -12,7 +12,12 @@ from pydantic import BaseModel
 
 
 from agent_adapters import HermesAdapter
-from api.config import HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH, get_llm_health_url
+from api.config import (
+    HERMES_API_BASE_URL,
+    HERMES_API_KEY,
+    DATABASE_PATH,
+    get_llm_health_url,
+)
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
 from api.routers.vault import router as vault_router
@@ -27,7 +32,7 @@ from core.logging import configure_logging, get_logger
 from tool_registry import McpEngine
 from core import AgentSyncManager
 
-# Configure structured JSON logging globally (Constitution §7)
+# Configure structured JSON logging globally (Constitution Section 7)
 configure_logging()
 logger = get_logger("api.main")
 
@@ -64,11 +69,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add OpenTelemetry tracing middleware (Constitution §7)
+# Add OpenTelemetry tracing middleware (Constitution Section 7)
 app.add_middleware(TracingMiddleware)
 
 
-# ── Custom exception handlers for standardized ErrorResponse ──────────────
+# Custom exception handlers for standardized ErrorResponse
 
 
 def _get_trace_id(request: Request) -> str:
@@ -112,7 +117,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # Instantiate and store the Hermes adapter engine in the app state
-app.state.agent_engine = HermesAdapter(HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH)
+app.state.agent_engine = HermesAdapter(
+    HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH
+)
 app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the routers
@@ -209,24 +216,35 @@ async def proxy_onshape():
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
-            response = await client.get("https://www.onshape.com", headers=headers, follow_redirects=True, timeout=10.0)
+            response = await client.get(
+                "https://www.onshape.com",
+                headers=headers,
+                follow_redirects=True,
+                timeout=10.0,
+            )
             html = response.text
-            
+
             # Rewrite absolute and relative links to point to our proxy
             html = html.replace('href="/', 'href="/api/proxy/onshape/')
             html = html.replace('src="/', 'src="/api/proxy/onshape/')
             html = html.replace('action="/', 'action="/api/proxy/onshape/')
-            html = html.replace('href="https://www.onshape.com/', 'href="/api/proxy/onshape/')
-            html = html.replace('src="https://www.onshape.com/', 'src="/api/proxy/onshape/')
-            
+            html = html.replace(
+                'href="https://www.onshape.com/', 'href="/api/proxy/onshape/'
+            )
+            html = html.replace(
+                'src="https://www.onshape.com/', 'src="/api/proxy/onshape/'
+            )
+
             # Strip/neutralize frame-busting JS
             html = html.replace("window.top.location", "window.self.location")
             html = html.replace("top.location", "self.location")
-            
+
             return HTMLResponse(content=html, status_code=response.status_code)
     except Exception as e:
         logger.error(f"Failed to proxy onshape: {e}")
-        return HTMLResponse(content=f"<h3>Failed to connect to Onshape</h3><p>{e}</p>", status_code=502)
+        return HTMLResponse(
+            content=f"<h3>Failed to connect to Onshape</h3><p>{e}</p>", status_code=502
+        )
 
 
 @app.get("/api/proxy/onshape/{path:path}")
@@ -238,29 +256,42 @@ async def proxy_onshape_path(path: str, request: Request):
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
-            response = await client.get(url, params=query_params, headers=headers, follow_redirects=True, timeout=10.0)
-            
+            response = await client.get(
+                url,
+                params=query_params,
+                headers=headers,
+                follow_redirects=True,
+                timeout=10.0,
+            )
+
             content_type = response.headers.get("content-type", "text/html")
             content = response.content
-            
+
             if "text/html" in content_type:
                 html = response.text
                 html = html.replace('href="/', 'href="/api/proxy/onshape/')
                 html = html.replace('src="/', 'src="/api/proxy/onshape/')
                 html = html.replace('action="/', 'action="/api/proxy/onshape/')
-                html = html.replace('href="https://www.onshape.com/', 'href="/api/proxy/onshape/')
-                html = html.replace('src="https://www.onshape.com/', 'src="/api/proxy/onshape/')
-                
+                html = html.replace(
+                    'href="https://www.onshape.com/', 'href="/api/proxy/onshape/'
+                )
+                html = html.replace(
+                    'src="https://www.onshape.com/', 'src="/api/proxy/onshape/'
+                )
+
                 html = html.replace("window.top.location", "window.self.location")
                 html = html.replace("top.location", "self.location")
-                
+
                 return HTMLResponse(content=html, status_code=response.status_code)
-            
-            return Response(content=content, media_type=content_type, status_code=response.status_code)
+
+            return Response(
+                content=content,
+                media_type=content_type,
+                status_code=response.status_code,
+            )
     except Exception as e:
         logger.error(f"Failed to proxy onshape path {path}: {e}")
         return Response(content=f"Error: {e}", status_code=502)
-
 
 
 # Serve frontend static files in production if the dist directory exists
@@ -297,5 +328,3 @@ else:
         return {"message": "Wright API is running"}
 
 # Reload trigger comment to refresh workspace packages - v2
-
-

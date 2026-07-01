@@ -95,10 +95,11 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxDistance = 400;
-    
+
     // Set dynamic minDistance based on bounding sphere radius if available
     const radius = geometry?.boundingSphere?.radius;
-    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
+    controls.minDistance =
+      radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
 
     // 8. Handle Resizing
     const resizeObserver = new ResizeObserver((entries) => {

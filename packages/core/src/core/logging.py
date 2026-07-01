@@ -1,7 +1,7 @@
 """
 Shared structured logging configuration for all Wright backend packages.
 
-Constitution §7: All packages MUST implement structured JSON logging (structlog).
+Constitution 7: All packages MUST implement structured JSON logging (structlog).
 Traditional text logs are forbidden.
 """
 
@@ -19,15 +19,18 @@ LOG_FILE_PATH = os.path.join(_repo_root, "apps", "api", "wright.log")
 
 # Setup standard rotating file handler (10MB limit per file, 5 backups)
 os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
-_file_handler = RotatingFileHandler(LOG_FILE_PATH, maxBytes=10*1024*1024, backupCount=5, encoding="utf-8")
+_file_handler = RotatingFileHandler(
+    LOG_FILE_PATH, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8"
+)
 _file_handler.setFormatter(logging.Formatter("%(message)s"))
+
 
 class WrightPrintLogger:
     def msg(self, message):
         # Write to stdout for developer console (uvicorn output)
         sys.stdout.write(message + "\n")
         sys.stdout.flush()
-        
+
         # Emit to rotating file handler
         try:
             record = logging.LogRecord(
@@ -37,7 +40,7 @@ class WrightPrintLogger:
                 lineno=0,
                 msg=message,
                 args=(),
-                exc_info=None
+                exc_info=None,
             )
             _file_handler.emit(record)
         except Exception:
@@ -52,6 +55,7 @@ class WrightPrintLogger:
     critical = msg
     exception = msg
     fatal = msg
+
 
 class WrightLoggerFactory:
     def __call__(self, *args, **kwargs):

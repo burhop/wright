@@ -81,4 +81,3 @@ TBD
 """
     path.write_text(content, encoding="utf-8")
     return str(path)
-

@@ -56,10 +56,7 @@ export class TextProvider implements ViewerProvider<TextDocument> {
     doc.dispose();
   }
 
-  async resolveViewer(
-    document: TextDocument,
-    panel: PanelHost,
-  ): Promise<void> {
+  async resolveViewer(document: TextDocument, panel: PanelHost): Promise<void> {
     const pre = window.document.createElement("pre");
     pre.style.margin = "0";
     pre.style.padding = "var(--space-md)";

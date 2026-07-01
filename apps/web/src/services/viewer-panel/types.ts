@@ -80,7 +80,9 @@ export interface ViewerDocumentChangeEvent {
   readonly edit?: ViewerEdit;
 }
 
-export interface ViewerProvider<TDocument extends ViewerDocument = ViewerDocument> {
+export interface ViewerProvider<
+  TDocument extends ViewerDocument = ViewerDocument,
+> {
   readonly id: string;
 
   openDocument(file: FileDescriptor, context: OpenContext): Promise<TDocument>;
@@ -90,20 +92,20 @@ export interface ViewerProvider<TDocument extends ViewerDocument = ViewerDocumen
     document: TDocument,
     panel: PanelHost,
     mode: ViewerMode,
-    token: CancellationToken
+    token: CancellationToken,
   ): Promise<void>;
 
   save(document: TDocument, token: CancellationToken): Promise<void>;
   saveAs(
     document: TDocument,
     destination: FileDescriptor,
-    token: CancellationToken
+    token: CancellationToken,
   ): Promise<void>;
   revert(document: TDocument, token: CancellationToken): Promise<void>;
   backup(
     document: TDocument,
     context: BackupContext,
-    token: CancellationToken
+    token: CancellationToken,
   ): Promise<BackupHandle>;
 
   readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent>;

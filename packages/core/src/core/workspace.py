@@ -49,7 +49,9 @@ def _api_rel_path(abs_path: str, base_dir: str) -> str:
 
 def _is_within_path(path: str, parent: str) -> bool:
     try:
-        return os.path.commonpath([os.path.abspath(path), os.path.abspath(parent)]) == os.path.abspath(parent)
+        return os.path.commonpath(
+            [os.path.abspath(path), os.path.abspath(parent)]
+        ) == os.path.abspath(parent)
     except ValueError:
         return False
 
@@ -172,7 +174,8 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
         requires_creds = False
         if s.env_vars and isinstance(s.env_vars, list):
             required_vars = [
-                v.name for v in s.env_vars
+                v.name
+                for v in s.env_vars
                 if isinstance(v, EnvVarDefinition) and v.required
             ]
             if required_vars:
@@ -609,7 +612,9 @@ class WorkspaceManager:
         # Support paths inside /tmp/ (e.g. for geometry/exports scratchpads)
         if normalized_path.startswith("/tmp/") or normalized_path.startswith("tmp/"):
             # Try to resolve relative to workspace base_dir first (workspace-local tmp)
-            local_resolved = os.path.abspath(os.path.join(self.base_dir, normalized_path.lstrip("/")))
+            local_resolved = os.path.abspath(
+                os.path.join(self.base_dir, normalized_path.lstrip("/"))
+            )
             if os.path.exists(local_resolved):
                 return local_resolved
 
@@ -636,6 +641,7 @@ class WorkspaceManager:
     def write_backup(self, rel_path: str, content: bytes) -> str:
         """Write temporary backup file for unsaved edits under .git/backups/."""
         import hashlib
+
         hash_val = hashlib.sha256(rel_path.encode()).hexdigest()
         backups_dir = os.path.join(self.base_dir, ".git", "backups")
         os.makedirs(backups_dir, exist_ok=True)
@@ -1157,7 +1163,9 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
         cursor.execute("PRAGMA table_info(mcp_servers)")
         columns = [col[1] for col in cursor.fetchall()]
         if "instructions" in columns:
-            cursor.execute("SELECT name, server_id, instructions FROM mcp_servers WHERE is_installed = 1")
+            cursor.execute(
+                "SELECT name, server_id, instructions FROM mcp_servers WHERE is_installed = 1"
+            )
             installed_servers = [dict(row) for row in cursor.fetchall()]
     except Exception:
         pass
@@ -1168,9 +1176,13 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
     for srv in installed_servers:
         is_enabled = True
         if enabled_tools is not None:
-            is_enabled = (srv["name"] in enabled_tools) or (srv["server_id"] in enabled_tools)
+            is_enabled = (srv["name"] in enabled_tools) or (
+                srv["server_id"] in enabled_tools
+            )
         if is_enabled and srv.get("instructions"):
-            active_instructions.append(f"## {srv['name']} Instructions\n{srv['instructions']}")
+            active_instructions.append(
+                f"## {srv['name']} Instructions\n{srv['instructions']}"
+            )
 
     global_rules = (
         "## Global Workspace Rules\n"
@@ -1236,8 +1248,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
     if start_marker in existing_content and end_marker in existing_content:
         # Replace the existing block
         pattern = re.compile(
-            rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}",
-            re.DOTALL
+            rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}", re.DOTALL
         )
         new_content = pattern.sub(lambda _: generated_block, existing_content)
     elif start_marker in existing_content or end_marker in existing_content:
@@ -1255,7 +1266,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         # Replace the existing block
         pattern = re.compile(
             rf"{re.escape(start_prompt_marker)}.*?{re.escape(end_prompt_marker)}",
-            re.DOTALL
+            re.DOTALL,
         )
         new_content = pattern.sub(lambda _: generated_prompt_block, new_content)
     elif start_prompt_marker in new_content or end_prompt_marker in new_content:
@@ -1278,7 +1289,7 @@ def read_application_logs(
     level: Optional[str] = None,
     search: Optional[str] = None,
     limit: int = 100,
-    offset: int = 0
+    offset: int = 0,
 ) -> dict:
     """Read and parse application logs from apps/api/wright.log."""
     import os
@@ -1310,7 +1321,11 @@ def read_application_logs(
 
                     # Filter by workspace_id
                     if workspace_id:
-                        ws_id_val = entry.get("workspace_id") or entry.get("extra", {}).get("workspaceId") or entry.get("workspaceId")
+                        ws_id_val = (
+                            entry.get("workspace_id")
+                            or entry.get("extra", {}).get("workspaceId")
+                            or entry.get("workspaceId")
+                        )
                         if ws_id_val != workspace_id:
                             continue
 
@@ -1353,6 +1368,3 @@ def read_application_logs(
     paginated = parsed_logs[offset : offset + limit]
 
     return {"logs": paginated, "total": total}
-
-
-

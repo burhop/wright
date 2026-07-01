@@ -1,9 +1,6 @@
 import pytest
-import json
 from unittest.mock import AsyncMock, patch, MagicMock
-import httpx
 from agent_adapters import HermesAdapter, AgentChatRequest
-from agent_adapters.base import AgentStreamEvent, AgentChatMessage
 
 
 @pytest.mark.asyncio
@@ -55,7 +52,9 @@ async def test_hermes_adapter_create_session():
         }
     }
 
-    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
         mock_request.return_value = mock_response
         session_info = await adapter.create_session("/home/workspace")
 
@@ -91,7 +90,9 @@ async def test_hermes_adapter_list_sessions():
         ]
     }
 
-    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
         mock_request.return_value = mock_response
         sessions = await adapter.list_sessions()
 
@@ -115,7 +116,9 @@ async def test_hermes_adapter_delete_session():
     mock_response = MagicMock()
     mock_response.status_code = 200
 
-    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
         mock_request.return_value = mock_response
         result = await adapter.delete_session("session1")
 
@@ -141,7 +144,7 @@ async def test_hermes_adapter_stream_chat_success():
 
     mock_sse_3 = MagicMock()
     mock_sse_3.event = "message"
-    mock_sse_3.data = '[DONE]'
+    mock_sse_3.data = "[DONE]"
 
     async def mock_aiter_sse():
         yield mock_sse_1
@@ -165,8 +168,12 @@ async def test_hermes_adapter_stream_chat_success():
 
     req = AgentChatRequest(session_id="session123", message="Hello")
 
-    with patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse), \
-         patch.object(adapter, "get_chat_history", new_callable=AsyncMock) as mock_history:
+    with (
+        patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse),
+        patch.object(
+            adapter, "get_chat_history", new_callable=AsyncMock
+        ) as mock_history,
+    ):
         mock_history.return_value = []
         events = []
         async for event in adapter.stream_chat(req):
@@ -204,7 +211,9 @@ async def test_hermes_adapter_get_chat_history():
         ]
     }
 
-    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
         mock_request.return_value = mock_response
         history = await adapter.get_chat_history("session123")
 
@@ -242,9 +251,13 @@ async def test_hermes_adapter_create_session_with_instructions():
         }
     }
 
-    with patch.object(adapter, "_request_with_fallback", new_callable=AsyncMock) as mock_request:
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
         mock_request.return_value = mock_response
-        session_info = await adapter.create_session("/home/workspace", instructions="Please place files in root")
+        session_info = await adapter.create_session(
+            "/home/workspace", instructions="Please place files in root"
+        )
 
         assert session_info.session_id == "session_123"
 

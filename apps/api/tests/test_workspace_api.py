@@ -53,7 +53,9 @@ class MockAgentEngine(BaseAgentEngine):
     async def delete_session(self, session_id: str) -> bool:
         return True
 
-    async def stream_chat(self, request: AgentChatRequest) -> AsyncIterator[AgentStreamEvent]:
+    async def stream_chat(
+        self, request: AgentChatRequest
+    ) -> AsyncIterator[AgentStreamEvent]:
         yield AgentStreamEvent(type="token", data={"text": "hello"})
 
     async def get_session_workspace(self, session_id: str) -> str | None:
@@ -707,7 +709,9 @@ def test_agent_sessions_filtering_by_workspace(client):
     workspace_id = response.json()["workspace_id"]
 
     # Retrieve sessions with workspace_id query parameter
-    response_sessions = client.get("/api/agent/sessions", params={"workspace_id": workspace_id})
+    response_sessions = client.get(
+        "/api/agent/sessions", params={"workspace_id": workspace_id}
+    )
     assert response_sessions.status_code == 200
     sessions = response_sessions.json()["sessions"]
     # Our MockAgentEngine lists test-session and mock-session under workspace_setup, so both should match
@@ -715,7 +719,9 @@ def test_agent_sessions_filtering_by_workspace(client):
     assert {s["session_id"] for s in sessions} == {"test-session", "mock-session"}
 
     # Query with a non-existent workspace_id, should return empty sessions
-    response_empty = client.get("/api/agent/sessions", params={"workspace_id": "non-existent-workspace-uuid"})
+    response_empty = client.get(
+        "/api/agent/sessions", params={"workspace_id": "non-existent-workspace-uuid"}
+    )
     assert response_empty.status_code == 200
     assert len(response_empty.json()["sessions"]) == 0
 
@@ -739,6 +745,7 @@ def test_workspace_activate_session_fallback(client):
 
         # Override mock engine's list_sessions to return an active session matching temp_dir
         original_list_sessions = app.state.agent_engine.list_sessions
+
         async def mock_list_sessions():
             return [
                 AgentSessionInfo(
@@ -750,6 +757,7 @@ def test_workspace_activate_session_fallback(client):
                     workspace=temp_dir,
                 )
             ]
+
         app.state.agent_engine.list_sessions = mock_list_sessions
 
         try:
@@ -770,19 +778,19 @@ def test_workspace_activate_session_fallback(client):
 def test_workspace_gitignore_setup(tmp_path):
     from core.workspace import WorkspaceManager
     import os
-    
+
     # Initialize WorkspaceManager with a fresh directory
     workspace_dir = str(tmp_path / "new_workspace")
     WorkspaceManager(workspace_dir)
-    
+
     # Check if .gitignore was created
     gitignore_path = os.path.join(workspace_dir, ".gitignore")
     assert os.path.exists(gitignore_path)
-    
+
     # Read gitignore content
     with open(gitignore_path, "r") as f:
         content = f.read()
-        
+
     assert "tmp/\n" in content
     assert "/tmp/\n" in content
 
@@ -893,7 +901,9 @@ def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     assert resolved_local_slash == local_file_path
 
     # 2. Check system-wide fallback. We will use a tempfile in the real /tmp directory.
-    with tempfile.NamedTemporaryFile(dir="/tmp", prefix="global_test_", suffix=".scad", delete=False) as temp_global:
+    with tempfile.NamedTemporaryFile(
+        dir="/tmp", prefix="global_test_", suffix=".scad", delete=False
+    ) as temp_global:
         temp_global.write(b"global content")
         global_path = temp_global.name
 
@@ -979,6 +989,7 @@ def test_activate_workspace_fallback_passes_instructions(tmp_path):
 
         async def create_session(self, workspace, instructions=None):
             from agent_adapters import AgentSessionInfo
+
             info = AgentSessionInfo(
                 session_id="new-fallback-session",
                 title="New Session",
@@ -991,7 +1002,7 @@ def test_activate_workspace_fallback_passes_instructions(tmp_path):
             return info
 
     engine = MockEngine()
-    
+
     # Activate workspace - this should trigger creating a fallback session and writing .hermes.md
     session_id = asyncio.run(
         activate_workspace(db_path, "missing-session", local_path, engine)
@@ -1087,7 +1098,9 @@ def test_write_workspace_hermes_md(tmp_path):
     # Modify instructions in DB
     conn = sqlite3.connect(db_path)
     try:
-        conn.execute("UPDATE mcp_servers SET instructions = 'Updated instructions' WHERE server_id = 'mcp1'")
+        conn.execute(
+            "UPDATE mcp_servers SET instructions = 'Updated instructions' WHERE server_id = 'mcp1'"
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1192,7 +1205,9 @@ async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_pat
 
 def test_workspace_mcp_status_endpoint(client):
     # Retrieve mcp status for a session
-    response = client.get("/api/workspace/mcp-status", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/mcp-status", params={"session_id": "test-session"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "status" in data
@@ -1200,9 +1215,13 @@ def test_workspace_mcp_status_endpoint(client):
     assert "running_mcps" in data
 
 
-def test_create_workspace_uses_local_session_when_agent_unavailable(client, workspace_setup):
+def test_create_workspace_uses_local_session_when_agent_unavailable(
+    client, workspace_setup
+):
     class FailingCreateSessionEngine(MockAgentEngine):
-        async def create_session(self, workspace: str | None = None) -> AgentSessionInfo:
+        async def create_session(
+            self, workspace: str | None = None
+        ) -> AgentSessionInfo:
             raise RuntimeError("Hermes unavailable")
 
     original_engine = app.state.agent_engine
@@ -1224,7 +1243,9 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(client, work
     assert os.path.isdir(local_path)
 
 
-def test_workspace_files_uses_local_dir_when_agent_lookup_fails(client, workspace_setup, monkeypatch):
+def test_workspace_files_uses_local_dir_when_agent_lookup_fails(
+    client, workspace_setup, monkeypatch
+):
     from api.routers import workspace as workspace_router
 
     class FailingLookupEngine(MockAgentEngine):
@@ -1248,6 +1269,3 @@ def test_workspace_files_uses_local_dir_when_agent_lookup_fails(client, workspac
     )
     assert response.status_code == 200
     assert os.path.isdir(expected_path)
-
-
-

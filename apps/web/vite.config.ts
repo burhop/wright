@@ -6,8 +6,9 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }) => {
   const isBuild = command === "build";
-  const isDesktop = process.env.BUILD_TARGET === "desktop" || mode === "desktop";
-  
+  const isDesktop =
+    process.env.BUILD_TARGET === "desktop" || mode === "desktop";
+
   return {
     base: isDesktop ? "./" : "/",
     plugins: [
@@ -16,7 +17,12 @@ export default defineConfig(({ command, mode }) => {
         thirdParty: {
           output: {
             file: isBuild
-              ? path.resolve(__dirname, isDesktop ? "dist-desktop/third-party-licenses-web.txt" : "dist/third-party-licenses-web.txt")
+              ? path.resolve(
+                  __dirname,
+                  isDesktop
+                    ? "dist-desktop/third-party-licenses-web.txt"
+                    : "dist/third-party-licenses-web.txt",
+                )
               : path.resolve(__dirname, "public/third-party-licenses-web.txt"),
             encoding: "utf-8",
           },

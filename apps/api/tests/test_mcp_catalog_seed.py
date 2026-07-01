@@ -23,7 +23,9 @@ def test_fresh_engineering_catalog_seed_does_not_preinstall_mcps(tmp_path, monke
     assert all(not server.is_active for server in servers)
 
 
-def test_migration_clears_failed_catalog_installs_including_openscad(tmp_path, monkeypatch):
+def test_migration_clears_failed_catalog_installs_including_openscad(
+    tmp_path, monkeypatch
+):
     import sqlite3
     from api.database import migrate
 
@@ -44,7 +46,8 @@ def test_migration_clears_failed_catalog_installs_including_openscad(tmp_path, m
 
     migrate.run_migrations()
     openscad = next(
-        server for server in get_servers(str(db_path))
+        server
+        for server in get_servers(str(db_path))
         if server.server_id == "openscad-mcp-server"
     )
 

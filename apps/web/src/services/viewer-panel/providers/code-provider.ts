@@ -53,7 +53,9 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
   readonly id = "code-editor";
   private changeCallbacks = new Set<(e: ViewerDocumentChangeEvent) => void>();
 
-  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (listener) => {
+  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (
+    listener,
+  ) => {
     this.changeCallbacks.add(listener);
     return {
       dispose: () => {
@@ -62,12 +64,19 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     };
   };
 
-  async openDocument(file: FileDescriptor, context: OpenContext): Promise<CodeDocument> {
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<CodeDocument> {
     const sessionId = context.sessionId;
     if (!sessionId) {
       throw new Error("No active session ID provided");
     }
-    const text = await workspaceService.getFileContentText(sessionId, file.uri, context.backupId);
+    const text = await workspaceService.getFileContentText(
+      sessionId,
+      file.uri,
+      context.backupId,
+    );
     return new CodeDocumentImpl(file.uri, text, sessionId);
   }
 
@@ -79,7 +88,7 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     document: CodeDocument,
     panel: PanelHost,
     _mode: string,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
     const container = panel.container;
     container.innerHTML = "";
@@ -117,9 +126,9 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     statusText.textContent = document.isDirty() ? "Unsaved Changes" : "Saved";
     controls.appendChild(statusText);
 
-    // ▶ Run Button (Only for Python files)
+    // Run Button (Only for Python files)
     const runButton = window.document.createElement("button");
-    runButton.textContent = "▶ Run";
+    runButton.textContent = "Run";
     runButton.style.backgroundColor = "var(--color-success, #10b981)";
     runButton.style.color = "white";
     runButton.style.border = "none";
@@ -261,7 +270,7 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     headerActions.style.gap = "8px";
 
     const fixBtn = window.document.createElement("button");
-    fixBtn.textContent = "🔧 Fix with Agent";
+    fixBtn.textContent = "Fix with Agent";
     fixBtn.style.backgroundColor = "var(--color-accent, #4f46e5)";
     fixBtn.style.color = "white";
     fixBtn.style.border = "none";
@@ -274,7 +283,7 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
     headerActions.appendChild(fixBtn);
 
     const closeConsoleBtn = window.document.createElement("button");
-    closeConsoleBtn.textContent = "✕";
+    closeConsoleBtn.textContent = "x";
     closeConsoleBtn.style.background = "none";
     closeConsoleBtn.style.border = "none";
     closeConsoleBtn.style.color = "inherit";
@@ -310,34 +319,38 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
 
       if (!isPython) return escapeHtml(code);
 
-      const tokenRegex = /(#[^\n]*)|(f?"""[\s\S]*?"""|r?"""[\s\S]*?"""|f?'''[\s\S]*?'''|r?'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|r?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r?'[^'\\]*(?:\\.[^'\\]*)*')|(\b(?:def|class|import|from|as|return|if|elif|else|try|except|finally|raise|assert|for|while|in|is|not|and|or|pass|break|continue|lambda|with|yield|global|nonlocal|True|False|None|print)\b)|(\b[a-zA-Z_]\w*(?=\())|(\b\d+(?:\.\d+)?\b)/g;
+      const tokenRegex =
+        /(#[^\n]*)|(f?"""[\s\S]*?"""|r?"""[\s\S]*?"""|f?'''[\s\S]*?'''|r?'''[\s\S]*?'''|f?"[^"\\]*(?:\\.[^"\\]*)*"|r?"[^"\\]*(?:\\.[^"\\]*)*"|f?'[^'\\]*(?:\\.[^'\\]*)*'|r?'[^'\\]*(?:\\.[^'\\]*)*')|(\b(?:def|class|import|from|as|return|if|elif|else|try|except|finally|raise|assert|for|while|in|is|not|and|or|pass|break|continue|lambda|with|yield|global|nonlocal|True|False|None|print)\b)|(\b[a-zA-Z_]\w*(?=\())|(\b\d+(?:\.\d+)?\b)/g;
 
       let lastIndex = 0;
       let html = "";
 
-      code.replace(tokenRegex, (match, comment, stringVal, keyword, funcName, numberVal, offset) => {
-        if (offset > lastIndex) {
-          html += escapeHtml(code.slice(lastIndex, offset));
-        }
+      code.replace(
+        tokenRegex,
+        (match, comment, stringVal, keyword, funcName, numberVal, offset) => {
+          if (offset > lastIndex) {
+            html += escapeHtml(code.slice(lastIndex, offset));
+          }
 
-        const escapedMatch = escapeHtml(match);
-        if (comment) {
-          html += `<span style="color: #6a9955;">${escapedMatch}</span>`;
-        } else if (stringVal) {
-          html += `<span style="color: #ce9178;">${escapedMatch}</span>`;
-        } else if (keyword) {
-          html += `<span style="color: #569cd6; font-weight: 600;">${escapedMatch}</span>`;
-        } else if (funcName) {
-          html += `<span style="color: #dcdcaa;">${escapedMatch}</span>`;
-        } else if (numberVal) {
-          html += `<span style="color: #b5cea8;">${escapedMatch}</span>`;
-        } else {
-          html += escapedMatch;
-        }
+          const escapedMatch = escapeHtml(match);
+          if (comment) {
+            html += `<span style="color: #6a9955;">${escapedMatch}</span>`;
+          } else if (stringVal) {
+            html += `<span style="color: #ce9178;">${escapedMatch}</span>`;
+          } else if (keyword) {
+            html += `<span style="color: #569cd6; font-weight: 600;">${escapedMatch}</span>`;
+          } else if (funcName) {
+            html += `<span style="color: #dcdcaa;">${escapedMatch}</span>`;
+          } else if (numberVal) {
+            html += `<span style="color: #b5cea8;">${escapedMatch}</span>`;
+          } else {
+            html += escapedMatch;
+          }
 
-        lastIndex = offset + match.length;
-        return match;
-      });
+          lastIndex = offset + match.length;
+          return match;
+        },
+      );
 
       if (lastIndex < code.length) {
         html += escapeHtml(code.slice(lastIndex));
@@ -354,7 +367,7 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
       const lineCount = textarea.value.split("\n").length;
       gutter.textContent = Array.from(
         { length: Math.max(lineCount, 1) },
-        (_, i) => i + 1
+        (_, i) => i + 1,
       ).join("\n");
     };
 
@@ -371,7 +384,10 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
       saveButton.disabled = true;
       statusText.textContent = "Saving...";
       try {
-        await this.save(document, { isCancellationRequested: false, onCancellationRequested: () => ({ dispose: () => {} }) });
+        await this.save(document, {
+          isCancellationRequested: false,
+          onCancellationRequested: () => ({ dispose: () => {} }),
+        });
         saveButton.style.display = "none";
         statusText.textContent = "Saved";
       } catch (err: any) {
@@ -432,7 +448,10 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
       runButton.disabled = true;
 
       try {
-        const result = await workspaceService.runFile(document.sessionId, document.uri);
+        const result = await workspaceService.runFile(
+          document.sessionId,
+          document.uri,
+        );
         if (result.success) {
           consoleBody.style.color = "var(--color-success, #10b981)";
           consoleBody.textContent = `[Exit Code 0]\n\n${result.stdout || "(No output)"}`;
@@ -447,9 +466,9 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
             const event = new CustomEvent("viewer-message", {
               detail: {
                 type: "create-prompt",
-                content: `When executing @${fileName} we got this output. Fix any problems: ${errOutput}`
+                content: `When executing @${fileName} we got this output. Fix any problems: ${errOutput}`,
               },
-              bubbles: true
+              bubbles: true,
             });
             consoleHeader.dispatchEvent(event);
           };
@@ -464,9 +483,9 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
           const event = new CustomEvent("viewer-message", {
             detail: {
               type: "create-prompt",
-              content: `When executing @${fileName} we got this output. Fix any problems: ${errMsg}`
+              content: `When executing @${fileName} we got this output. Fix any problems: ${errMsg}`,
             },
-            bubbles: true
+            bubbles: true,
           });
           consoleHeader.dispatchEvent(event);
         };
@@ -485,7 +504,11 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
   }
 
   async save(document: CodeDocument, _token: CancellationToken): Promise<void> {
-    await workspaceService.saveFileContent(document.sessionId, document.uri, document.content);
+    await workspaceService.saveFileContent(
+      document.sessionId,
+      document.uri,
+      document.content,
+    );
     document.initialContent = document.content;
     document.markClean();
 
@@ -498,12 +521,19 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
   async saveAs(
     document: CodeDocument,
     destination: FileDescriptor,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
-    await workspaceService.saveFileContent(document.sessionId, destination.uri, document.content);
+    await workspaceService.saveFileContent(
+      document.sessionId,
+      destination.uri,
+      document.content,
+    );
   }
 
-  async revert(document: CodeDocument, _token: CancellationToken): Promise<void> {
+  async revert(
+    document: CodeDocument,
+    _token: CancellationToken,
+  ): Promise<void> {
     document.content = document.initialContent;
     document.markClean();
     for (const callback of this.changeCallbacks) {
@@ -514,12 +544,12 @@ export class CodeProvider implements ViewerProvider<CodeDocument> {
   async backup(
     document: CodeDocument,
     _context: BackupContext,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<BackupHandle> {
     const backupId = await workspaceService.backupFileContent(
       document.sessionId,
       document.uri,
-      document.content
+      document.content,
     );
     return {
       id: backupId,

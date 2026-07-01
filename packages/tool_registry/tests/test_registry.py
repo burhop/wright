@@ -115,7 +115,9 @@ def test_database_crud(temp_db_path):
 
     # Update Server
     updated = update_server(
-        temp_db_path, server_id, {"is_active": True, "status": "active", "env_vars": {"NEW_VAR": "new_val"}}
+        temp_db_path,
+        server_id,
+        {"is_active": True, "status": "active", "env_vars": {"NEW_VAR": "new_val"}},
     )
     assert updated.is_active is True
     assert updated.status == "active"

@@ -2,7 +2,11 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ToolRegistryPage } from "../components/pages/ToolRegistryPage";
 import { useTools } from "../store/tools";
-import { defaultMcpMetadata, type McpServer, type McpTool } from "../services/mcp-service";
+import {
+  defaultMcpMetadata,
+  type McpServer,
+  type McpTool,
+} from "../services/mcp-service";
 
 // Mock the useTools hook
 vi.mock("../store/tools", () => ({

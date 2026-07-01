@@ -52,7 +52,9 @@ class McpEngine:
         except Exception as e:
             logger.error("Failed to process WebMCP WebSocket message: %s", e)
 
-    async def start_server(self, server_id: str, workspace_dir: Optional[str] = None) -> McpServer:
+    async def start_server(
+        self, server_id: str, workspace_dir: Optional[str] = None
+    ) -> McpServer:
         """Start an MCP server subprocess or remote SSE connection, query its tools, and sync with database."""
         server = get_server(self.db_path, server_id)
         if not server:
@@ -102,7 +104,7 @@ class McpEngine:
 
             if server.env_vars:
                 if isinstance(server.env_vars, list):
-                    # New format: list of EnvVarDefinition — load values from secrets store
+                    # New format: list of EnvVarDefinition  load values from secrets store
                     saved_creds = read_secrets(server_id)
                     required_missing = []
                     for var_def in server.env_vars:
@@ -118,13 +120,14 @@ class McpEngine:
                             "Configure them via the UI before activating."
                         )
                 elif isinstance(server.env_vars, dict):
-                    # Old format: dict[str, str] — use directly
+                    # Old format: dict[str, str]  use directly
                     env_vars = server.env_vars.copy()
 
             # Get workspace directory as a fallback if not provided
             if not workspace_dir:
                 try:
                     import sqlite3
+
                     with sqlite3.connect(self.db_path) as conn:
                         conn.row_factory = sqlite3.Row
                         cursor = conn.cursor()
@@ -135,7 +138,9 @@ class McpEngine:
                         if row:
                             workspace_dir = row["local_path"]
                 except Exception as e:
-                    logger.warning("Failed to fetch active workspace directory from DB: %s", e)
+                    logger.warning(
+                        "Failed to fetch active workspace directory from DB: %s", e
+                    )
 
             key_name = "".join(c.lower() for c in server.name if c.isalnum())
             if not key_name:
@@ -150,21 +155,30 @@ class McpEngine:
                             default_fc = "/usr/local/bin/freecadcmd"
                     env_vars["FREECAD_PATH"] = default_fc
                 if workspace_dir and "FREECAD_MCP_WORK_DIR" not in env_vars:
-                    env_vars["FREECAD_MCP_WORK_DIR"] = os.path.join(workspace_dir, "freecad_mcp_work")
+                    env_vars["FREECAD_MCP_WORK_DIR"] = os.path.join(
+                        workspace_dir, "freecad_mcp_work"
+                    )
 
             # Wrap with xvfb-run if we are headless, xvfb-run is available, and it is a CAD server
             import shutil
+
             is_headless = not os.environ.get("DISPLAY")
             xvfb_path = shutil.which("xvfb-run")
-            is_cad_server = server.category == "cad" or any(x in key_name for x in ["cad", "openscad", "freecad", "blender"])
+            is_cad_server = server.category == "cad" or any(
+                x in key_name for x in ["cad", "openscad", "freecad", "blender"]
+            )
 
             command = server.command
             if is_headless and xvfb_path and is_cad_server:
-                logger.info("Wrapping stdio command with xvfb-run for headless rendering", server_name=server.name)
+                logger.info(
+                    "Wrapping stdio command with xvfb-run for headless rendering",
+                    server_name=server.name,
+                )
                 if isinstance(server.command, list):
                     command = [xvfb_path, "-a"] + server.command
                 else:
                     import shlex
+
                     command = [xvfb_path, "-a"] + shlex.split(server.command)
 
             runner = StdioRunner(command, env=env_vars, cwd=workspace_dir)

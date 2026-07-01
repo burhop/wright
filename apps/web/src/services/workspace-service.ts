@@ -30,8 +30,8 @@ export const API_BASE = getApiBase();
 export class WorkspaceService {
   async getWorkspaceFiles(sessionId: string): Promise<WorkspaceNode> {
     workspaceLogger.info("Fetching workspace files", { sessionId });
-    
-    if (hostAdapter.mode === 'desktop') {
+
+    if (hostAdapter.mode === "desktop") {
       try {
         const config = await window.wrightDesktop?.getConfig();
         const rootPath = config?.workspacePath;
@@ -39,7 +39,10 @@ export class WorkspaceService {
           return await this.buildWorkspaceTree(rootPath);
         }
       } catch (e: any) {
-        workspaceLogger.error("Failed to build workspace tree via IPC, falling back to HTTP", { error: e?.message || String(e) });
+        workspaceLogger.error(
+          "Failed to build workspace tree via IPC, falling back to HTTP",
+          { error: e?.message || String(e) },
+        );
       }
     }
 
@@ -62,10 +65,10 @@ export class WorkspaceService {
     const name = dirPath.split(/[/\\]/).pop() || dirPath;
     const entries = await hostAdapter.listDirectory(dirPath);
     const children: WorkspaceNode[] = [];
-    
+
     for (const entry of entries) {
-      if (entry.name === '.git' || entry.name === 'node_modules') continue;
-      
+      if (entry.name === ".git" || entry.name === "node_modules") continue;
+
       if (entry.isDirectory) {
         const childNode = await this.buildWorkspaceTree(entry.path);
         children.push(childNode);
@@ -73,29 +76,29 @@ export class WorkspaceService {
         children.push({
           name: entry.name,
           path: entry.path,
-          type: 'file',
+          type: "file",
           size: entry.size || 0,
           last_modified: Date.now(),
-          git_status: 'Clean',
+          git_status: "Clean",
           children: null,
         });
       }
     }
-    
+
     children.sort((a, b) => {
       if (a.type !== b.type) {
-        return a.type === 'directory' ? -1 : 1;
+        return a.type === "directory" ? -1 : 1;
       }
       return a.name.localeCompare(b.name);
     });
-    
+
     return {
       name,
       path: dirPath,
-      type: 'directory',
+      type: "directory",
       size: null,
       last_modified: Date.now(),
-      git_status: 'Clean',
+      git_status: "Clean",
       children,
     };
   }
@@ -172,17 +175,20 @@ export class WorkspaceService {
       filePath,
       nodeType,
     });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/files`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path: filePath,
+          type: nodeType,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        path: filePath,
-        type: nodeType,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to create workspace file node", {
         status: response.status,
@@ -222,17 +228,20 @@ export class WorkspaceService {
       sourcePath,
       destinationPath,
     });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files/move`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/files/move`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          source_path: sourcePath,
+          destination_path: destinationPath,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        source_path: sourcePath,
-        destination_path: destinationPath,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to move workspace file node", {
         status: response.status,
@@ -246,7 +255,12 @@ export class WorkspaceService {
   async getGitStatus(sessionId: string): Promise<{
     branch_name: string;
     is_clean: boolean;
-    changes: { path: string; git_status: string; staged: boolean; file_size?: number }[];
+    changes: {
+      path: string;
+      git_status: string;
+      staged: boolean;
+      file_size?: number;
+    }[];
   }> {
     workspaceLogger.info("Fetching git status", { sessionId });
     const response = await hostAdapter.fetch(
@@ -279,16 +293,19 @@ export class WorkspaceService {
 
   async revertFile(sessionId: string, filePath: string): Promise<void> {
     workspaceLogger.info("Reverting file changes", { sessionId, filePath });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/git/revert`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/revert`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path: filePath,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        path: filePath,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to revert file changes", {
         status: response.status,
@@ -307,16 +324,19 @@ export class WorkspaceService {
     timestamp: number;
   }> {
     workspaceLogger.info("Committing changes", { sessionId, message });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/git/commit`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/commit`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          message,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        message,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to commit changes", {
         status: response.status,
@@ -387,20 +407,23 @@ export class WorkspaceService {
       remoteUrl,
       username,
     });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/config`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/config`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          git_remote_url: remoteUrl,
+          git_username: username,
+          git_token: token,
+          workspace_prompt: workspacePrompt,
+          git_large_file_threshold: gitLargeFileThreshold,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        git_remote_url: remoteUrl,
-        git_username: username,
-        git_token: token,
-        workspace_prompt: workspacePrompt,
-        git_large_file_threshold: gitLargeFileThreshold,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to update workspace config", {
         status: response.status,
@@ -416,15 +439,18 @@ export class WorkspaceService {
     sessionId: string,
   ): Promise<{ success: boolean; message: string }> {
     workspaceLogger.info("Pushing commits to remote", { sessionId });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/git/push`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/push`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to push commits", {
         status: response.status,
@@ -438,15 +464,18 @@ export class WorkspaceService {
     sessionId: string,
   ): Promise<{ success: boolean; message: string }> {
     workspaceLogger.info("Pulling commits from remote", { sessionId });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/git/pull`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/pull`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-      }),
-    });
+    );
     if (response.status === 409) {
       const data = await response.json();
       throw new MergeConflictError(
@@ -461,26 +490,36 @@ export class WorkspaceService {
       throw new Error(`Failed to pull changes: ${response.statusText}`);
     }
     return response.json();
-  }  async checkoutBranch(
+  }
+  async checkoutBranch(
     sessionId: string,
     branchName: string,
     create = false,
   ): Promise<{ success: boolean; message: string }> {
-    workspaceLogger.info("Checking out branch", { sessionId, branchName, create });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/git/branch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        session_id: sessionId,
-        branch_name: branchName,
-        create,
-      }),
+    workspaceLogger.info("Checking out branch", {
+      sessionId,
+      branchName,
+      create,
     });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/branch`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          branch_name: branchName,
+          create,
+        }),
+      },
+    );
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      throw new Error(data.detail || `Failed to checkout branch: ${response.statusText}`);
+      throw new Error(
+        data.detail || `Failed to checkout branch: ${response.statusText}`,
+      );
     }
     return response.json();
   }
@@ -490,19 +529,24 @@ export class WorkspaceService {
     branchName: string,
   ): Promise<{ success: boolean; message: string }> {
     workspaceLogger.info("Merging branch", { sessionId, branchName });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/git/merge`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/git/merge`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          branch_name: branchName,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        branch_name: branchName,
-      }),
-    });
+    );
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      throw new Error(data.detail || `Failed to merge branch: ${response.statusText}`);
+      throw new Error(
+        data.detail || `Failed to merge branch: ${response.statusText}`,
+      );
     }
     return response.json();
   }
@@ -517,17 +561,20 @@ export class WorkspaceService {
       await hostAdapter.writeFile(filePath, content);
       return true;
     }
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files/content`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/files/content`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path: filePath,
+          content,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        path: filePath,
-        content,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to save file content", {
         status: response.status,
@@ -544,17 +591,20 @@ export class WorkspaceService {
     content: string,
   ): Promise<string> {
     workspaceLogger.info("Backing up file content", { sessionId, filePath });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files/backup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/files/backup`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path: filePath,
+          content,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        path: filePath,
-        content,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to backup file content", {
         status: response.status,
@@ -565,21 +615,21 @@ export class WorkspaceService {
     return data.backup_id;
   }
 
-  async deleteBackup(
-    sessionId: string,
-    backupId: string,
-  ): Promise<boolean> {
+  async deleteBackup(sessionId: string, backupId: string): Promise<boolean> {
     workspaceLogger.info("Deleting file backup", { sessionId, backupId });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files/backup`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/files/backup`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          backup_id: backupId,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        backup_id: backupId,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to delete backup", {
         status: response.status,
@@ -617,17 +667,20 @@ export class WorkspaceService {
       serverId,
       isEnabled,
     });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/tools/toggle`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/tools/toggle`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          server_id: serverId,
+          is_enabled: isEnabled,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        server_id: serverId,
-        is_enabled: isEnabled,
-      }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to toggle workspace tool", {
         status: response.status,
@@ -640,7 +693,9 @@ export class WorkspaceService {
 
   async getRecentWorkspaces(): Promise<WorkspaceInfo[]> {
     workspaceLogger.info("Fetching recent workspaces");
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/recent`);
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/recent`,
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to fetch recent workspaces", {
         status: response.status,
@@ -668,13 +723,16 @@ export class WorkspaceService {
 
   async activateWorkspace(sessionId: string): Promise<boolean> {
     workspaceLogger.info("Activating workspace", { sessionId });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/activate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/activate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ session_id: sessionId }),
       },
-      body: JSON.stringify({ session_id: sessionId }),
-    });
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to activate workspace", {
         status: response.status,
@@ -694,13 +752,16 @@ export class WorkspaceService {
     if (localPath) {
       payload.local_path = localPath;
     }
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload),
-    });
+    );
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
       workspaceLogger.error("Failed to create workspace", {
@@ -729,7 +790,9 @@ export class WorkspaceService {
 
   async getDefaultWorkspaceDir(): Promise<string> {
     workspaceLogger.info("Fetching default workspace dir");
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/default-dir`);
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/default-dir`,
+    );
     if (!response.ok) {
       workspaceLogger.error("Failed to fetch default workspace dir", {
         status: response.status,
@@ -787,24 +850,34 @@ export class WorkspaceService {
   async runFile(
     sessionId: string,
     filePath: string,
-  ): Promise<{ success: boolean; stdout: string; stderr: string; exit_code: number }> {
+  ): Promise<{
+    success: boolean;
+    stdout: string;
+    stderr: string;
+    exit_code: number;
+  }> {
     workspaceLogger.info("Running file in workspace", { sessionId, filePath });
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/files/run`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/files/run`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          path: filePath,
+        }),
       },
-      body: JSON.stringify({
-        session_id: sessionId,
-        path: filePath,
-      }),
-    });
+    );
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
       workspaceLogger.error("Failed to run file", {
         status: response.status,
       });
-      throw new Error(data.detail || `Failed to run file: ${response.statusText}`);
+      throw new Error(
+        data.detail || `Failed to run file: ${response.statusText}`,
+      );
     }
     return response.json();
   }

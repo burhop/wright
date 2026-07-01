@@ -41,11 +41,12 @@ class ValidationSummary(BaseModel):
 
 class EnvVarDefinition(BaseModel):
     """Metadata about an environment variable an MCP server needs."""
-    name: str           # Variable name (e.g., "ONSHAPE_API_KEY")
-    label: str          # Human-readable label (e.g., "Access Key")
+
+    name: str  # Variable name (e.g., "ONSHAPE_API_KEY")
+    label: str  # Human-readable label (e.g., "Access Key")
     description: str = ""  # Help text
     required: bool = True
-    secret: bool = False   # If True, value should be masked in UI
+    secret: bool = False  # If True, value should be masked in UI
 
 
 class McpServer(BaseModel):
@@ -66,7 +67,7 @@ class McpServer(BaseModel):
     installed_version: Optional[str] = None
     env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
     instructions: Optional[str] = None
-    # Dynamic field populated by API — indicates which env vars have saved values
+    # Dynamic field populated by API  indicates which env vars have saved values
     credentials_configured: Optional[dict[str, bool]] = None
     verification_state: VerificationState = "user_reported_url_needed"
     installability_tier: InstallabilityTier = "might_work"
@@ -135,4 +136,3 @@ class McpTool(BaseModel):
     input_schema: dict = Field(default_factory=dict)
     is_enabled: bool
     created_at: int
-

@@ -5,7 +5,7 @@ import type { ViewerContribution, ViewerProvider } from "../types";
 describe("ViewerRegistry", () => {
   let registry: ViewerRegistry;
 
-  const dummyProviderFactory = (id: string): () => ViewerProvider => {
+  const dummyProviderFactory = (id: string): (() => ViewerProvider) => {
     return () => ({
       id,
       openDocument: async (file) => ({

@@ -7,6 +7,7 @@ import httpx
 # Resolve default API base URL
 API_BASE_URL = os.getenv("WRIGHT_API_BASE_URL", "http://127.0.0.1:8000")
 
+
 async def get_stdio_streams():
     loop = asyncio.get_running_loop()
     reader = asyncio.StreamReader()
@@ -18,6 +19,7 @@ async def get_stdio_streams():
     writer = asyncio.StreamWriter(w_transport, w_protocol, reader, loop)
     return reader, writer
 
+
 async def listen_for_events(writer):
     """Listens to the FastAPI backend's SSE events for tool changes and forwards them to Hermes."""
     url = f"{API_BASE_URL}/api/gateway/events"
@@ -27,11 +29,11 @@ async def listen_for_events(writer):
                 async with client.stream("GET", url) as r:
                     async for line in r.aiter_lines():
                         if line.startswith("data:"):
-                            data = line[len("data:"):].strip()
+                            data = line[len("data:") :].strip()
                             if data == "list_changed":
                                 notification = {
                                     "jsonrpc": "2.0",
-                                    "method": "notifications/tools/list_changed"
+                                    "method": "notifications/tools/list_changed",
                                 }
                                 payload = json.dumps(notification) + "\n"
                                 writer.write(payload.encode("utf-8"))
@@ -39,6 +41,7 @@ async def listen_for_events(writer):
         except Exception:
             # Fail silently and retry connection in the background
             await asyncio.sleep(3.0)
+
 
 async def main():
     reader, writer = await get_stdio_streams()
@@ -72,16 +75,12 @@ async def main():
                         "id": req_id,
                         "result": {
                             "protocolVersion": "2024-11-05",
-                            "capabilities": {
-                                "tools": {
-                                    "listChanged": True
-                                }
-                            },
+                            "capabilities": {"tools": {"listChanged": True}},
                             "serverInfo": {
                                 "name": "wright-gateway",
-                                "version": "0.1.0"
-                            }
-                        }
+                                "version": "0.1.0",
+                            },
+                        },
                     }
                     writer.write((json.dumps(response) + "\n").encode("utf-8"))
                     await writer.drain()
@@ -92,11 +91,7 @@ async def main():
 
                 elif method == "ping":
                     # Respond locally
-                    response = {
-                        "jsonrpc": "2.0",
-                        "id": req_id,
-                        "result": {}
-                    }
+                    response = {"jsonrpc": "2.0", "id": req_id, "result": {}}
                     writer.write((json.dumps(response) + "\n").encode("utf-8"))
                     await writer.drain()
 
@@ -107,15 +102,14 @@ async def main():
                         if r.status_code == 200:
                             result = r.json()
                         else:
-                            result = {"tools": [], "error": f"Backend returned HTTP {r.status_code}"}
+                            result = {
+                                "tools": [],
+                                "error": f"Backend returned HTTP {r.status_code}",
+                            }
                     except Exception as e:
                         result = {"tools": [], "error": str(e)}
 
-                    response = {
-                        "jsonrpc": "2.0",
-                        "id": req_id,
-                        "result": result
-                    }
+                    response = {"jsonrpc": "2.0", "id": req_id, "result": result}
                     writer.write((json.dumps(response) + "\n").encode("utf-8"))
                     await writer.drain()
 
@@ -124,27 +118,32 @@ async def main():
                     params = request.get("params", {})
                     try:
                         r = await client.post(
-                            f"{API_BASE_URL}/api/gateway/call",
-                            json=params
+                            f"{API_BASE_URL}/api/gateway/call", json=params
                         )
                         if r.status_code == 200:
                             result = r.json()
                         else:
                             result = {
                                 "isError": True,
-                                "content": [{"type": "text", "text": f"Backend error: HTTP {r.status_code}"}]
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": f"Backend error: HTTP {r.status_code}",
+                                    }
+                                ],
                             }
                     except Exception as e:
                         result = {
                             "isError": True,
-                            "content": [{"type": "text", "text": f"Error communicating with backend: {e}"}]
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": f"Error communicating with backend: {e}",
+                                }
+                            ],
                         }
 
-                    response = {
-                        "jsonrpc": "2.0",
-                        "id": req_id,
-                        "result": result
-                    }
+                    response = {"jsonrpc": "2.0", "id": req_id, "result": result}
                     writer.write((json.dumps(response) + "\n").encode("utf-8"))
                     await writer.drain()
 
@@ -155,8 +154,8 @@ async def main():
                         "id": req_id,
                         "error": {
                             "code": -32601,
-                            "message": f"Method not found: {method}"
-                        }
+                            "message": f"Method not found: {method}",
+                        },
                     }
                     writer.write((json.dumps(response) + "\n").encode("utf-8"))
                     await writer.drain()
@@ -166,6 +165,7 @@ async def main():
                 pass
 
     event_task.cancel()
+
 
 if __name__ == "__main__":
     try:

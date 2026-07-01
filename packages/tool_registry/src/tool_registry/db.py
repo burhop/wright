@@ -81,7 +81,12 @@ def _serialize_env_vars(env_vars) -> Optional[str]:
         return None
     if isinstance(env_vars, list):
         # list of EnvVarDefinition or dicts
-        return json.dumps([item.model_dump() if hasattr(item, "model_dump") else item for item in env_vars])
+        return json.dumps(
+            [
+                item.model_dump() if hasattr(item, "model_dump") else item
+                for item in env_vars
+            ]
+        )
     if isinstance(env_vars, dict):
         return json.dumps(env_vars)
     return None
@@ -93,15 +98,19 @@ def _serialize_json(value) -> Optional[str]:
     if hasattr(value, "model_dump"):
         return json.dumps(value.model_dump())
     if isinstance(value, list):
-        return json.dumps([
-            item.model_dump() if hasattr(item, "model_dump") else item
-            for item in value
-        ])
+        return json.dumps(
+            [
+                item.model_dump() if hasattr(item, "model_dump") else item
+                for item in value
+            ]
+        )
     if isinstance(value, dict):
-        return json.dumps({
-            key: item.model_dump() if hasattr(item, "model_dump") else item
-            for key, item in value.items()
-        })
+        return json.dumps(
+            {
+                key: item.model_dump() if hasattr(item, "model_dump") else item
+                for key, item in value.items()
+            }
+        )
     return json.dumps(value)
 
 
@@ -127,9 +136,12 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
             parsed = json.loads(env_vars_raw)
             if isinstance(parsed, list):
                 # New format: list of EnvVarDefinition dicts
-                env_vars = [EnvVarDefinition(**item) if isinstance(item, dict) else item for item in parsed]
+                env_vars = [
+                    EnvVarDefinition(**item) if isinstance(item, dict) else item
+                    for item in parsed
+                ]
             elif isinstance(parsed, dict):
-                # Old format: dict[str, str] — keep as-is for backward compatibility
+                # Old format: dict[str, str]  keep as-is for backward compatibility
                 env_vars = parsed
         except Exception:
             pass

@@ -109,7 +109,7 @@ viewerRegistry.register({
     { extension: "step" },
     { extension: "stp" },
     { extension: "iges" },
-    { extension: "igs" }
+    { extension: "igs" },
   ],
   priority: "default",
   providerFactory: () => new ThreeDProvider(),
@@ -128,7 +128,7 @@ viewerRegistry.register({
     { extension: "ts" },
     { extension: "tsx" },
     { extension: "jsx" },
-    { extension: "css" }
+    { extension: "css" },
   ],
   priority: "default",
   providerFactory: () => new CodeProvider(),
@@ -137,10 +137,7 @@ viewerRegistry.register({
 viewerRegistry.register({
   id: "pdf-viewer",
   label: "PDF Document Viewer",
-  selector: [
-    { extension: "pdf" },
-    { mimeType: "application/pdf" }
-  ],
+  selector: [{ extension: "pdf" }, { mimeType: "application/pdf" }],
   priority: "default",
   providerFactory: () => new PdfProvider(),
 });
@@ -148,10 +145,7 @@ viewerRegistry.register({
 viewerRegistry.register({
   id: "iframe-viewer",
   label: "HTML Previewer",
-  selector: [
-    { extension: "html" },
-    { extension: "htm" }
-  ],
+  selector: [{ extension: "html" }, { extension: "htm" }],
   priority: "default",
   providerFactory: () => new IframeProvider(),
 });
@@ -172,7 +166,7 @@ viewerRegistry.register({
     { mimeType: "image/webp" },
     { mimeType: "image/gif" },
     { mimeType: "image/bmp" },
-    { mimeType: "image/svg+xml" }
+    { mimeType: "image/svg+xml" },
   ],
   priority: "default",
   providerFactory: () => new ImageProvider(),
@@ -181,9 +175,7 @@ viewerRegistry.register({
 viewerRegistry.register({
   id: "text-viewer",
   label: "Plain Text Viewer",
-  selector: [
-    { predicate: () => true }
-  ],
+  selector: [{ predicate: () => true }],
   priority: "option",
   providerFactory: () => new TextProvider(),
 });

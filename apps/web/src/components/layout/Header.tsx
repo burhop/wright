@@ -31,7 +31,10 @@ export function Header() {
     };
     window.addEventListener("wright-split-state-changed", handleStateChange);
     return () =>
-      window.removeEventListener("wright-split-state-changed", handleStateChange);
+      window.removeEventListener(
+        "wright-split-state-changed",
+        handleStateChange,
+      );
   }, []);
 
   const handleToggleSplit = () => {
@@ -116,7 +119,9 @@ export function Header() {
               background: "none",
               border: "1px solid var(--color-border)",
               borderRadius: "var(--radius-md)",
-              color: isSplit ? "var(--color-secondary)" : "var(--color-primary)",
+              color: isSplit
+                ? "var(--color-secondary)"
+                : "var(--color-primary)",
               opacity: isSplit ? 1 : 0.65,
               padding: "4px 12px",
               height: "30px",
@@ -142,4 +147,3 @@ export function Header() {
 }
 
 export default Header;
-

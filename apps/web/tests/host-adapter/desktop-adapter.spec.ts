@@ -13,7 +13,9 @@ describe("DesktopHostAdapter", () => {
       listDirectory: vi.fn(),
       selectFiles: vi.fn(),
       notify: vi.fn(),
-      getConfig: vi.fn().mockResolvedValue({ apiPort: 8888, workspacePath: "/mock/workspace" }),
+      getConfig: vi
+        .fn()
+        .mockResolvedValue({ apiPort: 8888, workspacePath: "/mock/workspace" }),
     };
 
     vi.stubGlobal("window", {
@@ -43,11 +45,14 @@ describe("DesktopHostAdapter", () => {
   it("should route fetch through wrightDesktop api bridge", async () => {
     mockBridge.api.mockResolvedValue({ success: true, count: 42 });
 
-    const res = await adapter.fetch("http://localhost:8000/api/workspace/list", {
-      method: "POST",
-      body: JSON.stringify({ active: true }),
-      headers: { "X-Test": "yes" },
-    });
+    const res = await adapter.fetch(
+      "http://localhost:8000/api/workspace/list",
+      {
+        method: "POST",
+        body: JSON.stringify({ active: true }),
+        headers: { "X-Test": "yes" },
+      },
+    );
 
     expect(mockBridge.api).toHaveBeenCalledWith({
       path: "/api/workspace/list",
@@ -62,7 +67,11 @@ describe("DesktopHostAdapter", () => {
   });
 
   it("should return ok=false response when bridge API rejects", async () => {
-    const errorObj = { status: 400, code: "BAD_REQUEST", message: "Invalid parameters" };
+    const errorObj = {
+      status: 400,
+      code: "BAD_REQUEST",
+      message: "Invalid parameters",
+    };
     mockBridge.api.mockRejectedValue(errorObj);
 
     const res = await adapter.fetch("/api/bad-endpoint");
@@ -87,11 +96,16 @@ describe("DesktopHostAdapter", () => {
   it("should delegate writeFile to bridge", async () => {
     mockBridge.writeFile.mockResolvedValue(undefined);
     await adapter.writeFile("/path/to/file.txt", "content text");
-    expect(mockBridge.writeFile).toHaveBeenCalledWith("/path/to/file.txt", "content text");
+    expect(mockBridge.writeFile).toHaveBeenCalledWith(
+      "/path/to/file.txt",
+      "content text",
+    );
   });
 
   it("should delegate listDirectory to bridge", async () => {
-    const entries = [{ name: "foo.txt", path: "/path/foo.txt", isDirectory: false }];
+    const entries = [
+      { name: "foo.txt", path: "/path/foo.txt", isDirectory: false },
+    ];
     mockBridge.listDirectory.mockResolvedValue(entries);
     const result = await adapter.listDirectory("/path");
     expect(mockBridge.listDirectory).toHaveBeenCalledWith("/path");
@@ -102,14 +116,19 @@ describe("DesktopHostAdapter", () => {
     const files = ["/path/a.txt", "/path/b.txt"];
     mockBridge.selectFiles.mockResolvedValue(files);
     const result = await adapter.selectFiles({ title: "Choose Files" });
-    expect(mockBridge.selectFiles).toHaveBeenCalledWith({ title: "Choose Files" });
+    expect(mockBridge.selectFiles).toHaveBeenCalledWith({
+      title: "Choose Files",
+    });
     expect(result).toEqual(files);
   });
 
   it("should delegate notify to bridge", async () => {
     mockBridge.notify.mockResolvedValue(true);
     const result = await adapter.notify("Title", "Body");
-    expect(mockBridge.notify).toHaveBeenCalledWith({ title: "Title", body: "Body" });
+    expect(mockBridge.notify).toHaveBeenCalledWith({
+      title: "Title",
+      body: "Body",
+    });
     expect(result).toBe(true);
   });
 });

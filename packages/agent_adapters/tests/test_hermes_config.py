@@ -12,13 +12,15 @@ from agent_adapters.hermes_config import (
 def test_parse_env_file_reads_api_server_values(tmp_path):
     env_file = tmp_path / ".env"
     env_file.write_text(
-        "\n".join([
-            "# Hermes secrets",
-            "API_SERVER_HOST=0.0.0.0",
-            "API_SERVER_PORT=8765",
-            "API_SERVER_KEY=\"secret key\"",
-            "export HERMES_API_KEY='explicit'",
-        ]),
+        "\n".join(
+            [
+                "# Hermes secrets",
+                "API_SERVER_HOST=0.0.0.0",
+                "API_SERVER_PORT=8765",
+                'API_SERVER_KEY="secret key"',
+                "export HERMES_API_KEY='explicit'",
+            ]
+        ),
         encoding="utf-8",
     )
 
@@ -33,13 +35,15 @@ def test_parse_env_file_reads_api_server_values(tmp_path):
 def test_parse_top_level_config_file_reads_api_server_values(tmp_path):
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
-        "\n".join([
-            "API_SERVER_HOST: 0.0.0.0",
-            "API_SERVER_PORT: 8765",
-            "API_SERVER_KEY: secret",
-            "model:",
-            "  default: ignored",
-        ]),
+        "\n".join(
+            [
+                "API_SERVER_HOST: 0.0.0.0",
+                "API_SERVER_PORT: 8765",
+                "API_SERVER_KEY: secret",
+                "model:",
+                "  default: ignored",
+            ]
+        ),
         encoding="utf-8",
     )
 
@@ -80,18 +84,22 @@ def test_resolve_api_settings_from_hermes_config_path(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
     env_file = tmp_path / ".env"
     config_file.write_text(
-        "\n".join([
-            "API_SERVER_HOST: 127.0.0.1",
-            "API_SERVER_PORT: 9876",
-            "API_SERVER_KEY: from-config",
-        ]),
+        "\n".join(
+            [
+                "API_SERVER_HOST: 127.0.0.1",
+                "API_SERVER_PORT: 9876",
+                "API_SERVER_KEY: from-config",
+            ]
+        ),
         encoding="utf-8",
     )
     env_file.write_text(
-        "\n".join([
-            "API_SERVER_PORT=1111",
-            "API_SERVER_KEY=from-env",
-        ]),
+        "\n".join(
+            [
+                "API_SERVER_PORT=1111",
+                "API_SERVER_KEY=from-env",
+            ]
+        ),
         encoding="utf-8",
     )
 
@@ -112,11 +120,13 @@ def test_resolve_api_settings_from_hermes_config_path(monkeypatch, tmp_path):
 def test_resolve_api_settings_from_hermes_env_path(monkeypatch, tmp_path):
     env_file = tmp_path / ".env"
     env_file.write_text(
-        "\n".join([
-            "API_SERVER_HOST=127.0.0.1",
-            "API_SERVER_PORT=9876",
-            "API_SERVER_KEY=from-hermes",
-        ]),
+        "\n".join(
+            [
+                "API_SERVER_HOST=127.0.0.1",
+                "API_SERVER_PORT=9876",
+                "API_SERVER_KEY=from-hermes",
+            ]
+        ),
         encoding="utf-8",
     )
 

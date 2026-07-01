@@ -45,9 +45,7 @@ const ViewerPanelContext = createContext<ViewerPanelContextType | null>(null);
 export const useViewerPanel = () => {
   const ctx = useContext(ViewerPanelContext);
   if (!ctx) {
-    throw new Error(
-      "useViewerPanel must be used within ViewerPanelProvider",
-    );
+    throw new Error("useViewerPanel must be used within ViewerPanelProvider");
   }
   return ctx;
 };
@@ -140,7 +138,9 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       const provider = contrib.providerFactory();
-      const doc = await provider.openDocument(file, { sessionId: chatState.activeSessionId || undefined });
+      const doc = await provider.openDocument(file, {
+        sessionId: chatState.activeSessionId || undefined,
+      });
 
       // Save document and provider refs
       setDocuments((prev) => {
@@ -155,38 +155,41 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       // Subscribe to change events
-      const sub = provider.onDidChangeDocument((event: ViewerDocumentChangeEvent) => {
-        if (event.document.uri !== file.uri) return;
+      const sub = provider.onDidChangeDocument(
+        (event: ViewerDocumentChangeEvent) => {
+          if (event.document.uri !== file.uri) return;
 
-        setTabDirty(file.uri, event.document.isDirty());
+          setTabDirty(file.uri, event.document.isDirty());
 
-        if (event.document.isDirty()) {
-          const cancelToken = createDummyCancellationToken();
-          provider.backup(event.document, { destination: "" }, cancelToken)
-            .then((handle) => {
-              const oldHandle = backupHandlesRef.current.get(file.uri);
-              if (oldHandle) {
-                oldHandle.delete().catch(() => {});
-              }
-              backupHandlesRef.current.set(file.uri, handle);
-            })
-            .catch((err) => console.error("Auto-backup failed:", err));
-        }
+          if (event.document.isDirty()) {
+            const cancelToken = createDummyCancellationToken();
+            provider
+              .backup(event.document, { destination: "" }, cancelToken)
+              .then((handle) => {
+                const oldHandle = backupHandlesRef.current.get(file.uri);
+                if (oldHandle) {
+                  oldHandle.delete().catch(() => {});
+                }
+                backupHandlesRef.current.set(file.uri, handle);
+              })
+              .catch((err) => console.error("Auto-backup failed:", err));
+          }
 
-        if (event.edit) {
-          setUndoStacks((prev) => {
-            const next = new Map(prev);
-            const currentStack = next.get(file.uri) || [];
-            next.set(file.uri, [...currentStack, event.edit!]);
-            return next;
-          });
-          setRedoStacks((prev) => {
-            const next = new Map(prev);
-            next.delete(file.uri); // clear redo history on new edit
-            return next;
-          });
-        }
-      });
+          if (event.edit) {
+            setUndoStacks((prev) => {
+              const next = new Map(prev);
+              const currentStack = next.get(file.uri) || [];
+              next.set(file.uri, [...currentStack, event.edit!]);
+              return next;
+            });
+            setRedoStacks((prev) => {
+              const next = new Map(prev);
+              next.delete(file.uri); // clear redo history on new edit
+              return next;
+            });
+          }
+        },
+      );
       subscriptionsRef.current.set(file.uri, sub);
 
       const newTab: EditorTab = {
@@ -258,206 +261,248 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
     [activeTabPath],
   );
 
-  const updateTabPath = useCallback((oldPath: string, newPath: string, newName: string) => {
-    setOpenTabs((prev) =>
-      prev.map((t) =>
-        t.path === oldPath ? { ...t, path: newPath, name: newName } : t,
-      ),
-    );
-    if (activeTabPath === oldPath) {
-      setActiveTabPath(newPath);
-    }
-    setDocuments((prev) => {
-      const next = new Map(prev);
-      const doc = next.get(oldPath);
+  const updateTabPath = useCallback(
+    (oldPath: string, newPath: string, newName: string) => {
+      setOpenTabs((prev) =>
+        prev.map((t) =>
+          t.path === oldPath ? { ...t, path: newPath, name: newName } : t,
+        ),
+      );
+      if (activeTabPath === oldPath) {
+        setActiveTabPath(newPath);
+      }
+      setDocuments((prev) => {
+        const next = new Map(prev);
+        const doc = next.get(oldPath);
+        if (doc) {
+          next.set(newPath, doc);
+          next.delete(oldPath);
+        }
+        return next;
+      });
+      setProviders((prev) => {
+        const next = new Map(prev);
+        const provider = next.get(oldPath);
+        if (provider) {
+          next.set(newPath, provider);
+          next.delete(oldPath);
+        }
+        return next;
+      });
+      // Move subscription and stacks
+      const sub = subscriptionsRef.current.get(oldPath);
+      if (sub) {
+        subscriptionsRef.current.set(newPath, sub);
+        subscriptionsRef.current.delete(oldPath);
+      }
+      setUndoStacks((prev) => {
+        const next = new Map(prev);
+        const stack = next.get(oldPath);
+        if (stack) {
+          next.set(newPath, stack);
+          next.delete(oldPath);
+        }
+        return next;
+      });
+      setRedoStacks((prev) => {
+        const next = new Map(prev);
+        const stack = next.get(oldPath);
+        if (stack) {
+          next.set(newPath, stack);
+          next.delete(oldPath);
+        }
+        return next;
+      });
+    },
+    [activeTabPath],
+  );
+
+  const updateTabLastModified = useCallback(
+    (path: string, lastModified: number) => {
+      setOpenTabs((prev) =>
+        prev.map((t) =>
+          t.path === path ? { ...t, last_modified: lastModified } : t,
+        ),
+      );
+    },
+    [],
+  );
+
+  const reloadDocument = useCallback(
+    async (file: FileDescriptor) => {
+      const mode = "preview";
+      const contrib = viewerRegistry.getDefaultViewer(file, mode);
+      if (!contrib) return;
+      const provider = contrib.providerFactory();
+      const doc = await provider.openDocument(file, {
+        sessionId: chatState.activeSessionId || undefined,
+      });
+      setDocuments((prev) => {
+        const next = new Map(prev);
+        next.set(file.uri, doc);
+        return next;
+      });
+      setOpenTabs((prev) =>
+        prev.map((t) =>
+          t.path === file.uri
+            ? {
+                ...t,
+                last_modified: file.metadata?.last_modified as
+                  | number
+                  | undefined,
+              }
+            : t,
+        ),
+      );
+    },
+    [chatState.activeSessionId],
+  );
+
+  const getDocument = useCallback(
+    (path: string) => {
+      return documents.get(path);
+    },
+    [documents],
+  );
+
+  const getProvider = useCallback(
+    (path: string) => {
+      return providers.get(path);
+    },
+    [providers],
+  );
+
+  const undo = useCallback(
+    async (path: string) => {
+      const uStack = undoStacks.get(path) || [];
+      if (uStack.length === 0) return;
+      const rStack = redoStacks.get(path) || [];
+
+      const edit = uStack[uStack.length - 1];
+      const newUStack = uStack.slice(0, -1);
+
+      await edit.undo();
+
+      const newRStack = [...rStack, edit];
+
+      setUndoStacks((prev) => {
+        const next = new Map(prev);
+        next.set(path, newUStack);
+        return next;
+      });
+      setRedoStacks((prev) => {
+        const next = new Map(prev);
+        next.set(path, newRStack);
+        return next;
+      });
+
+      const doc = documents.get(path);
       if (doc) {
-        next.set(newPath, doc);
-        next.delete(oldPath);
+        setTabDirty(path, doc.isDirty());
       }
-      return next;
-    });
-    setProviders((prev) => {
-      const next = new Map(prev);
-      const provider = next.get(oldPath);
-      if (provider) {
-        next.set(newPath, provider);
-        next.delete(oldPath);
+    },
+    [undoStacks, redoStacks, documents, setTabDirty],
+  );
+
+  const redo = useCallback(
+    async (path: string) => {
+      const rStack = redoStacks.get(path) || [];
+      if (rStack.length === 0) return;
+      const uStack = undoStacks.get(path) || [];
+
+      const edit = rStack[rStack.length - 1];
+      const newRStack = rStack.slice(0, -1);
+
+      await edit.redo();
+
+      const newUStack = [...uStack, edit];
+
+      setUndoStacks((prev) => {
+        const next = new Map(prev);
+        next.set(path, newUStack);
+        return next;
+      });
+      setRedoStacks((prev) => {
+        const next = new Map(prev);
+        next.set(path, newRStack);
+        return next;
+      });
+
+      const doc = documents.get(path);
+      if (doc) {
+        setTabDirty(path, doc.isDirty());
       }
-      return next;
-    });
-    // Move subscription and stacks
-    const sub = subscriptionsRef.current.get(oldPath);
-    if (sub) {
-      subscriptionsRef.current.set(newPath, sub);
-      subscriptionsRef.current.delete(oldPath);
-    }
-    setUndoStacks((prev) => {
-      const next = new Map(prev);
-      const stack = next.get(oldPath);
-      if (stack) {
-        next.set(newPath, stack);
-        next.delete(oldPath);
+    },
+    [undoStacks, redoStacks, documents, setTabDirty],
+  );
+
+  const canUndo = useCallback(
+    (path: string) => {
+      return (undoStacks.get(path)?.length ?? 0) > 0;
+    },
+    [undoStacks],
+  );
+
+  const canRedo = useCallback(
+    (path: string) => {
+      return (redoStacks.get(path)?.length ?? 0) > 0;
+    },
+    [redoStacks],
+  );
+
+  const saveDocument = useCallback(
+    async (path: string) => {
+      const doc = documents.get(path);
+      const provider = providers.get(path);
+      if (!doc || !provider) return;
+
+      const token = createDummyCancellationToken();
+      await provider.save(doc, token);
+
+      // Delete backup if exists
+      const handle = backupHandlesRef.current.get(path);
+      if (handle) {
+        await handle.delete().catch(() => {});
+        backupHandlesRef.current.delete(path);
       }
-      return next;
-    });
-    setRedoStacks((prev) => {
-      const next = new Map(prev);
-      const stack = next.get(oldPath);
-      if (stack) {
-        next.set(newPath, stack);
-        next.delete(oldPath);
+
+      setTabDirty(path, false);
+    },
+    [documents, providers, setTabDirty],
+  );
+
+  const revertDocument = useCallback(
+    async (path: string) => {
+      const doc = documents.get(path);
+      const provider = providers.get(path);
+      if (!doc || !provider) return;
+
+      const token = createDummyCancellationToken();
+      await provider.revert(doc, token);
+
+      // Delete backup if exists
+      const handle = backupHandlesRef.current.get(path);
+      if (handle) {
+        await handle.delete().catch(() => {});
+        backupHandlesRef.current.delete(path);
       }
-      return next;
-    });
-  }, [activeTabPath]);
 
-  const updateTabLastModified = useCallback((path: string, lastModified: number) => {
-    setOpenTabs((prev) =>
-      prev.map((t) => (t.path === path ? { ...t, last_modified: lastModified } : t)),
-    );
-  }, []);
+      // Clear undo/redo stacks on revert
+      setUndoStacks((prev) => {
+        const next = new Map(prev);
+        next.delete(path);
+        return next;
+      });
+      setRedoStacks((prev) => {
+        const next = new Map(prev);
+        next.delete(path);
+        return next;
+      });
 
-  const reloadDocument = useCallback(async (file: FileDescriptor) => {
-    const mode = "preview";
-    const contrib = viewerRegistry.getDefaultViewer(file, mode);
-    if (!contrib) return;
-    const provider = contrib.providerFactory();
-    const doc = await provider.openDocument(file, { sessionId: chatState.activeSessionId || undefined });
-    setDocuments((prev) => {
-      const next = new Map(prev);
-      next.set(file.uri, doc);
-      return next;
-    });
-    setOpenTabs((prev) =>
-      prev.map((t) =>
-        t.path === file.uri
-          ? { ...t, last_modified: file.metadata?.last_modified as number | undefined }
-          : t,
-      ),
-    );
-  }, [chatState.activeSessionId]);
-
-  const getDocument = useCallback((path: string) => {
-    return documents.get(path);
-  }, [documents]);
-
-  const getProvider = useCallback((path: string) => {
-    return providers.get(path);
-  }, [providers]);
-
-  const undo = useCallback(async (path: string) => {
-    const uStack = undoStacks.get(path) || [];
-    if (uStack.length === 0) return;
-    const rStack = redoStacks.get(path) || [];
-
-    const edit = uStack[uStack.length - 1];
-    const newUStack = uStack.slice(0, -1);
-
-    await edit.undo();
-
-    const newRStack = [...rStack, edit];
-
-    setUndoStacks((prev) => {
-      const next = new Map(prev);
-      next.set(path, newUStack);
-      return next;
-    });
-    setRedoStacks((prev) => {
-      const next = new Map(prev);
-      next.set(path, newRStack);
-      return next;
-    });
-
-    const doc = documents.get(path);
-    if (doc) {
-      setTabDirty(path, doc.isDirty());
-    }
-  }, [undoStacks, redoStacks, documents, setTabDirty]);
-
-  const redo = useCallback(async (path: string) => {
-    const rStack = redoStacks.get(path) || [];
-    if (rStack.length === 0) return;
-    const uStack = undoStacks.get(path) || [];
-
-    const edit = rStack[rStack.length - 1];
-    const newRStack = rStack.slice(0, -1);
-
-    await edit.redo();
-
-    const newUStack = [...uStack, edit];
-
-    setUndoStacks((prev) => {
-      const next = new Map(prev);
-      next.set(path, newUStack);
-      return next;
-    });
-    setRedoStacks((prev) => {
-      const next = new Map(prev);
-      next.set(path, newRStack);
-      return next;
-    });
-
-    const doc = documents.get(path);
-    if (doc) {
-      setTabDirty(path, doc.isDirty());
-    }
-  }, [undoStacks, redoStacks, documents, setTabDirty]);
-
-  const canUndo = useCallback((path: string) => {
-    return (undoStacks.get(path)?.length ?? 0) > 0;
-  }, [undoStacks]);
-
-  const canRedo = useCallback((path: string) => {
-    return (redoStacks.get(path)?.length ?? 0) > 0;
-  }, [redoStacks]);
-
-  const saveDocument = useCallback(async (path: string) => {
-    const doc = documents.get(path);
-    const provider = providers.get(path);
-    if (!doc || !provider) return;
-
-    const token = createDummyCancellationToken();
-    await provider.save(doc, token);
-
-    // Delete backup if exists
-    const handle = backupHandlesRef.current.get(path);
-    if (handle) {
-      await handle.delete().catch(() => {});
-      backupHandlesRef.current.delete(path);
-    }
-
-    setTabDirty(path, false);
-  }, [documents, providers, setTabDirty]);
-
-  const revertDocument = useCallback(async (path: string) => {
-    const doc = documents.get(path);
-    const provider = providers.get(path);
-    if (!doc || !provider) return;
-
-    const token = createDummyCancellationToken();
-    await provider.revert(doc, token);
-
-    // Delete backup if exists
-    const handle = backupHandlesRef.current.get(path);
-    if (handle) {
-      await handle.delete().catch(() => {});
-      backupHandlesRef.current.delete(path);
-    }
-
-    // Clear undo/redo stacks on revert
-    setUndoStacks((prev) => {
-      const next = new Map(prev);
-      next.delete(path);
-      return next;
-    });
-    setRedoStacks((prev) => {
-      const next = new Map(prev);
-      next.delete(path);
-      return next;
-    });
-
-    setTabDirty(path, false);
-  }, [documents, providers, setTabDirty]);
+      setTabDirty(path, false);
+    },
+    [documents, providers, setTabDirty],
+  );
 
   return (
     <ViewerPanelContext.Provider

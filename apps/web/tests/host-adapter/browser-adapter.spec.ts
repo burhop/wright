@@ -32,7 +32,9 @@ describe("BrowserHostAdapter", () => {
   });
 
   it("should delegate fetch to global fetch", async () => {
-    const mockResponse = new Response(JSON.stringify({ data: "ok" }), { status: 200 });
+    const mockResponse = new Response(JSON.stringify({ data: "ok" }), {
+      status: 200,
+    });
     const fetchSpy = vi.fn().mockResolvedValue(mockResponse);
     vi.stubGlobal("fetch", fetchSpy);
 
@@ -47,30 +49,33 @@ describe("BrowserHostAdapter", () => {
     const fetchSpy = vi.fn().mockResolvedValue(mockResponse);
     vi.stubGlobal("fetch", fetchSpy);
 
-    const content = await adapter.readFile("some/file.txt", { sessionId: "session-123" });
+    const content = await adapter.readFile("some/file.txt", {
+      sessionId: "session-123",
+    });
     expect(fetchSpy).toHaveBeenCalledWith(
-      "/api/workspace/files/content?session_id=session-123&path=some%2Ffile.txt"
+      "/api/workspace/files/content?session_id=session-123&path=some%2Ffile.txt",
     );
     expect(content).toBe("file content");
   });
 
   it("should write files using the API content endpoint", async () => {
-    const mockResponse = new Response(JSON.stringify({ success: true }), { status: 200 });
+    const mockResponse = new Response(JSON.stringify({ success: true }), {
+      status: 200,
+    });
     const fetchSpy = vi.fn().mockResolvedValue(mockResponse);
     vi.stubGlobal("fetch", fetchSpy);
 
-    await adapter.writeFile("some/file.txt", "new content", { sessionId: "session-123" });
-    expect(fetchSpy).toHaveBeenCalledWith(
-      "/api/workspace/files/content",
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: "session-123",
-          path: "some/file.txt",
-          content: "new content",
-        }),
-      }
-    );
+    await adapter.writeFile("some/file.txt", "new content", {
+      sessionId: "session-123",
+    });
+    expect(fetchSpy).toHaveBeenCalledWith("/api/workspace/files/content", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session_id: "session-123",
+        path: "some/file.txt",
+        content: "new content",
+      }),
+    });
   });
 });

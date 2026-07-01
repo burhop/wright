@@ -32,11 +32,13 @@ def test_hermes_api_settings_use_hermes_env_path(monkeypatch, tmp_path):
 
     env_file = tmp_path / ".env"
     env_file.write_text(
-        "\n".join([
-            "API_SERVER_HOST=127.0.0.1",
-            "API_SERVER_PORT=9876",
-            "API_SERVER_KEY=from-hermes",
-        ]),
+        "\n".join(
+            [
+                "API_SERVER_HOST=127.0.0.1",
+                "API_SERVER_PORT=9876",
+                "API_SERVER_KEY=from-hermes",
+            ]
+        ),
         encoding="utf-8",
     )
     monkeypatch.delenv("HERMES_API_BASE_URL", raising=False)

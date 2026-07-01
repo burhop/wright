@@ -27,7 +27,12 @@ def _subprocess_kwargs() -> Dict[str, Any]:
 class StdioRunner(BaseRunner):
     """MCP Runner implementing stdio-based JSON-RPC communication with local subprocesses."""
 
-    def __init__(self, command: Union[List[str], str], env: Optional[Dict[str, str]] = None, cwd: Optional[str] = None):
+    def __init__(
+        self,
+        command: Union[List[str], str],
+        env: Optional[Dict[str, str]] = None,
+        cwd: Optional[str] = None,
+    ):
         if isinstance(command, str):
             self.command = shlex.split(command)
         else:
@@ -47,6 +52,7 @@ class StdioRunner(BaseRunner):
                 raise RuntimeError("Runner is already running.")
 
             import os
+
             run_env = os.environ.copy()
             if self.env:
                 run_env.update(self.env)

@@ -69,7 +69,9 @@ def _missing_host_dependencies(server: McpServer) -> list[str]:
     return missing
 
 
-def classify_server(server: McpServer, environment: str | None = None) -> ValidationResult:
+def classify_server(
+    server: McpServer, environment: str | None = None
+) -> ValidationResult:
     env = environment or current_environment()
     if is_install_blocked(server):
         message = server.install_blocked_reason or (
@@ -119,4 +121,3 @@ def classify_server(server: McpServer, environment: str | None = None) -> Valida
         message="No safe automated probe is defined for this validation mode.",
         diagnostics="Dry-run validation classified metadata only.",
     )
-

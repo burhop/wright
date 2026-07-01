@@ -8,7 +8,7 @@
 
 **Decision**: Use a process manager (supervisord or a bash entrypoint launching background processes) to run the Wright API, web frontend, and agent runtime inside a single container.
 
-**Rationale**: The user explicitly chose a full-stack single container (clarification Q3). For a self-contained appliance, this simplifies deployment — one `docker compose up` brings up everything. The entrypoint script will launch uvicorn (API), the Vite-built static frontend (served by the API or a lightweight static server), and agent processes.
+**Rationale**: The user explicitly chose a full-stack single container (clarification Q3). For a self-contained appliance, this simplifies deployment  one `docker compose up` brings up everything. The entrypoint script will launch uvicorn (API), the Vite-built static frontend (served by the API or a lightweight static server), and agent processes.
 
 **Alternatives considered**:
 - Separate containers for API/frontend/agents via docker-compose: More complex orchestration, inter-container networking, multiple images to manage. Rejected per user decision.
@@ -19,22 +19,22 @@
 **Decision**: Build on top of the existing `docker/` directory and `docker-compose.yml` rather than replacing them.
 
 **Rationale**: The project already has:
-- `docker/Dockerfile.base` — skeleton for future GPU/CUDA heavy image (keep as-is)
-- `docker/Dockerfile.dev` — lightweight dev image using Python 3.13-slim + uv (reference for dependency resolution patterns)
-- `docker-compose.yml` — defines API service + Jaeger, with live-mount volumes and localhost-only ports
-- `.dockerignore` — comprehensive exclusion rules already in place
+- `docker/Dockerfile.base`  skeleton for future GPU/CUDA heavy image (keep as-is)
+- `docker/Dockerfile.dev`  lightweight dev image using Python 3.13-slim + uv (reference for dependency resolution patterns)
+- `docker-compose.yml`  defines API service + Jaeger, with live-mount volumes and localhost-only ports
+- `.dockerignore`  comprehensive exclusion rules already in place
 
 The new `docker/Dockerfile` should follow the `Dockerfile.dev` patterns (uv for Python deps, `pyproject.toml` copy for layer caching) but extend it with Node.js, the full Wright stack, and the container manifest.
 
 ### 3. GitHub Actions Docker Build
 
-**Decision**: Use `docker/build-push-action@v6` with Docker Buildx and GitHub Actions cache for fast CI builds. Push to Docker Hub using repository secrets.
+**Decision**: Use `docker/build-push-action@v7` with Docker Buildx and GitHub Actions cache for fast CI builds. Use GHCR as the default public image path; Docker Hub remains optional and only runs when maintainer secrets are configured.
 
 **Rationale**: This is the standard GitHub Actions pattern for Docker builds. Buildx enables multi-platform builds (future aarch64 support for Dell GB10) and efficient layer caching via `type=gha` cache backend.
 
 **Alternatives considered**:
 - Plain `docker build` in a `run` step: No caching, slower builds. Rejected.
-- Self-hosted runner: Not needed yet — GitHub-hosted runners have Docker pre-installed.
+- Self-hosted runner: Not needed yet  GitHub-hosted runners have Docker pre-installed.
 
 ### 4. Volume Strategy Alignment
 

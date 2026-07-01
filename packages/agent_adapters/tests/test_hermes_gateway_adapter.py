@@ -47,7 +47,9 @@ async def test_hermes_health_reports_base_url_and_error_on_failure(monkeypatch):
 @pytest.mark.asyncio
 @respx.mock
 async def test_hermes_health_falls_back_to_candidate_url(monkeypatch):
-    monkeypatch.setenv("HERMES_API_CANDIDATES", "http://127.0.0.1:9999,http://127.0.0.1:3001")
+    monkeypatch.setenv(
+        "HERMES_API_CANDIDATES", "http://127.0.0.1:9999,http://127.0.0.1:3001"
+    )
     respx.get("http://127.0.0.1:8642/health").mock(
         return_value=httpx.Response(404, text="missing")
     )

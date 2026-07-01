@@ -19,7 +19,10 @@ export function SettingsPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
   // Helper to construct API URL
   const getApiUrl = (path: string) => {
@@ -38,7 +41,7 @@ export function SettingsPage() {
         const res = await fetch(getApiUrl("/api/settings"));
         if (!res.ok) throw new Error("Failed to load settings from backend");
         const data = await res.json();
-        
+
         // Ensure standard keys exist in api_keys object
         const apiKeys = {
           OPENAI_API_KEY: "",
@@ -54,7 +57,10 @@ export function SettingsPage() {
         });
 
         // Set document attribute
-        document.documentElement.setAttribute("data-theme", data.theme || "dark");
+        document.documentElement.setAttribute(
+          "data-theme",
+          data.theme || "dark",
+        );
       } catch (err: any) {
         setMessage({
           text: err.message || "Failed to fetch settings from API",
@@ -83,7 +89,7 @@ export function SettingsPage() {
       });
 
       if (!res.ok) throw new Error("Failed to save settings to backend");
-      
+
       setMessage({
         text: "Global settings successfully updated!",
         type: "success",
@@ -133,7 +139,9 @@ export function SettingsPage() {
           <span className="thinking-dot" />
           <span className="thinking-dot" />
         </div>
-        <span style={{ marginLeft: "var(--space-sm)" }}>Loading preferences...</span>
+        <span style={{ marginLeft: "var(--space-sm)" }}>
+          Loading preferences...
+        </span>
       </div>
     );
   }
@@ -155,11 +163,18 @@ export function SettingsPage() {
     >
       {/* Page Header */}
       <div>
-        <h1 style={{ fontFamily: "var(--font-ui)", fontWeight: 700, marginBottom: "var(--space-xs)" }}>
-          ⚙️ Global Settings
+        <h1
+          style={{
+            fontFamily: "var(--font-ui)",
+            fontWeight: 700,
+            marginBottom: "var(--space-xs)",
+          }}
+        >
+          Global Settings
         </h1>
         <p style={{ color: "var(--color-secondary)", fontSize: "0.9rem" }}>
-          Configure default AI models, interface preferences, and API credentials.
+          Configure default AI models, interface preferences, and API
+          credentials.
         </p>
       </div>
 
@@ -171,15 +186,21 @@ export function SettingsPage() {
             padding: "var(--space-md)",
             borderRadius: "var(--radius-md)",
             border: `1px solid ${message.type === "success" ? "var(--color-success)" : "var(--color-error)"}`,
-            backgroundColor: message.type === "success" ? "rgba(34, 197, 94, 0.05)" : "rgba(239, 68, 68, 0.05)",
-            color: message.type === "success" ? "var(--color-success)" : "var(--color-error)",
+            backgroundColor:
+              message.type === "success"
+                ? "rgba(34, 197, 94, 0.05)"
+                : "rgba(239, 68, 68, 0.05)",
+            color:
+              message.type === "success"
+                ? "var(--color-success)"
+                : "var(--color-error)",
             fontSize: "0.9rem",
             display: "flex",
             alignItems: "center",
             gap: "var(--space-sm)",
           }}
         >
-          {message.type === "success" ? "✓" : "⚠"} {message.text}
+          {message.type === "success" ? "" : ""} {message.text}
         </div>
       )}
 
@@ -205,19 +226,41 @@ export function SettingsPage() {
             gap: "var(--space-md)",
           }}
         >
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 600, borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)", marginBottom: "var(--space-xs)" }}>
+          <h3
+            style={{
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              borderBottom: "1px solid var(--color-border)",
+              paddingBottom: "var(--space-sm)",
+              marginBottom: "var(--space-xs)",
+            }}
+          >
             Model & UI Preferences
           </h3>
 
           {/* LLM Provider */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-primary)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               Active AI Provider
             </label>
             <select
               data-testid="settings-llm-provider"
               value={settings.llm_provider}
-              onChange={(e) => setSettings({ ...settings, llm_provider: e.target.value })}
+              onChange={(e) =>
+                setSettings({ ...settings, llm_provider: e.target.value })
+              }
               style={{
                 backgroundColor: "var(--color-surface-subtle)",
                 border: "1px solid var(--color-border)",
@@ -234,20 +277,38 @@ export function SettingsPage() {
               <option value="anthropic">Anthropic Claude 3.5 Sonnet</option>
               <option value="gemini">Gemini 1.5 Pro</option>
             </select>
-            <span style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-              Determines the backing language model used by the autonomous workspace agents.
+            <span
+              style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
+            >
+              Determines the backing language model used by the autonomous
+              workspace agents.
             </span>
           </div>
 
           {/* Interface Theme */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", marginTop: "var(--space-sm)" }}>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-primary)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+              marginTop: "var(--space-sm)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               Interface Theme
             </label>
             <select
               data-testid="settings-theme"
               value={settings.theme}
-              onChange={(e) => setSettings({ ...settings, theme: e.target.value })}
+              onChange={(e) =>
+                setSettings({ ...settings, theme: e.target.value })
+              }
               style={{
                 backgroundColor: "var(--color-surface-subtle)",
                 border: "1px solid var(--color-border)",
@@ -262,8 +323,11 @@ export function SettingsPage() {
               <option value="dark">Dark Theme</option>
               <option value="light">Light Theme</option>
             </select>
-            <span style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-              Toggle between the classic high-contrast workspace dark mode and clean light mode.
+            <span
+              style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
+            >
+              Toggle between the classic high-contrast workspace dark mode and
+              clean light mode.
             </span>
           </div>
         </div>
@@ -280,16 +344,44 @@ export function SettingsPage() {
             gap: "var(--space-md)",
           }}
         >
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 600, borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)", marginBottom: "var(--space-xs)" }}>
+          <h3
+            style={{
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              borderBottom: "1px solid var(--color-border)",
+              paddingBottom: "var(--space-sm)",
+              marginBottom: "var(--space-xs)",
+            }}
+          >
             API Keys & Secrets
           </h3>
-          <p style={{ color: "var(--color-secondary)", fontSize: "0.8rem", marginTop: "-var(--space-xs)", marginBottom: "var(--space-xs)" }}>
-            Keys are saved securely in your local sqlite database and never transmitted anywhere else.
+          <p
+            style={{
+              color: "var(--color-secondary)",
+              fontSize: "0.8rem",
+              marginTop: "-var(--space-xs)",
+              marginBottom: "var(--space-xs)",
+            }}
+          >
+            Keys are saved securely in your local sqlite database and never
+            transmitted anywhere else.
           </p>
 
           {/* OpenAI Key */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-primary)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               OpenAI API Key
             </label>
             <input
@@ -312,8 +404,21 @@ export function SettingsPage() {
           </div>
 
           {/* Anthropic Key */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", marginTop: "var(--space-sm)" }}>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-primary)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+              marginTop: "var(--space-sm)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               Anthropic API Key
             </label>
             <input
@@ -321,7 +426,9 @@ export function SettingsPage() {
               type="password"
               placeholder="sk-ant-..."
               value={settings.api_keys.ANTHROPIC_API_KEY || ""}
-              onChange={(e) => updateApiKey("ANTHROPIC_API_KEY", e.target.value)}
+              onChange={(e) =>
+                updateApiKey("ANTHROPIC_API_KEY", e.target.value)
+              }
               style={{
                 backgroundColor: "var(--color-surface-subtle)",
                 border: "1px solid var(--color-border)",
@@ -336,8 +443,21 @@ export function SettingsPage() {
           </div>
 
           {/* Gemini Key */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", marginTop: "var(--space-sm)" }}>
-            <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-primary)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+              marginTop: "var(--space-sm)",
+            }}
+          >
+            <label
+              style={{
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                color: "var(--color-primary)",
+              }}
+            >
               Gemini API Key
             </label>
             <input
@@ -361,7 +481,13 @@ export function SettingsPage() {
         </div>
 
         {/* Submit Actions */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-md)" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "var(--space-md)",
+          }}
+        >
           <button
             data-testid="settings-save-btn"
             type="submit"
@@ -374,7 +500,8 @@ export function SettingsPage() {
               fontSize: "0.95rem",
               borderRadius: "var(--radius-md)",
               opacity: isSaving ? 0.7 : 1,
-              transition: "transform var(--transition-fast), opacity var(--transition-fast)",
+              transition:
+                "transform var(--transition-fast), opacity var(--transition-fast)",
               boxShadow: "var(--shadow-glow)",
             }}
             onMouseEnter={(e) => {
@@ -402,13 +529,34 @@ export function SettingsPage() {
           maxWidth: "680px",
         }}
       >
-        <h3 style={{ fontSize: "1.1rem", fontWeight: 600, borderBottom: "1px solid var(--color-border)", paddingBottom: "var(--space-sm)", marginBottom: "var(--space-xs)" }}>
-          ⚖️ System Attributions & Licenses
+        <h3
+          style={{
+            fontSize: "1.1rem",
+            fontWeight: 600,
+            borderBottom: "1px solid var(--color-border)",
+            paddingBottom: "var(--space-sm)",
+            marginBottom: "var(--space-xs)",
+          }}
+        >
+          System Attributions & Licenses
         </h3>
-        <p style={{ color: "var(--color-secondary)", fontSize: "0.85rem", margin: 0 }}>
-          This product is built using open-source software. You can view the third-party license agreements below:
+        <p
+          style={{
+            color: "var(--color-secondary)",
+            fontSize: "0.85rem",
+            margin: 0,
+          }}
+        >
+          This product is built using open-source software. You can view the
+          third-party license agreements below:
         </p>
-        <div style={{ display: "flex", gap: "var(--space-md)", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "var(--space-md)",
+            alignItems: "center",
+          }}
+        >
           <a
             href="/third-party-licenses-web.txt"
             target="_blank"
@@ -417,7 +565,9 @@ export function SettingsPage() {
           >
             Frontend Web Licenses (TXT)
           </a>
-          <span style={{ color: "var(--color-border)", fontSize: "0.85rem" }}>|</span>
+          <span style={{ color: "var(--color-border)", fontSize: "0.85rem" }}>
+            |
+          </span>
           <a
             href="/third-party-licenses-api.txt"
             target="_blank"

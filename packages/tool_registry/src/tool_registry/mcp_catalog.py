@@ -47,7 +47,9 @@ DEFAULT_PLATFORM_SUPPORT = {
 }
 
 
-def platform_support(overrides: dict[str, dict[str, Any]] | None = None) -> dict[str, dict[str, Any]]:
+def platform_support(
+    overrides: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, dict[str, Any]]:
     support = deepcopy(DEFAULT_PLATFORM_SUPPORT)
     for key, value in (overrides or {}).items():
         if key in support:
@@ -83,4 +85,3 @@ def is_install_blocked(server: Any) -> bool:
     if isinstance(server, dict):
         tier = server.get("installability_tier")
     return tier in {"blocked", "non_working"}
-

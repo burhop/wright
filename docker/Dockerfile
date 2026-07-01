@@ -29,7 +29,7 @@ ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
 
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
 # Node.js, and uv come from the Hermes base image.
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     sudo \
@@ -47,6 +47,14 @@ RUN curl --fail --location --retry 5 --retry-all-errors \
         https://micro.mamba.pm/api/micromamba/linux-64/latest && \
     tar -xjf /tmp/micromamba.tar.bz2 -C /usr/local bin/micromamba && \
     rm -f /tmp/micromamba.tar.bz2
+
+# Keep the inherited Hermes runtime patched for public-alpha image scans.
+RUN uv pip install --python /opt/hermes/.venv/bin/python --upgrade \
+        "cryptography>=49.0.0" \
+        "python-multipart>=0.0.32" \
+        "starlette>=1.3.1" \
+        "tornado>=6.5.6" && \
+    rm -rf /root/.cache/uv /home/agent/.cache/uv
 
 # Create agent user (UID 1000).
 RUN useradd -m -u 1000 -s /bin/bash agent && \
@@ -112,7 +120,7 @@ ARG REVISION=unknown
 ARG CREATED=unknown
 
 LABEL org.opencontainers.image.title="Wright" \
-      org.opencontainers.image.description="Local-first AI mechanical engineer - CAD generation, FEA, and manufacturing automation powered by multi-agent LLMs" \
+      org.opencontainers.image.description="Public-alpha, local-first agent orchestration for physical engineering workflows" \
       org.opencontainers.image.url="https://github.com/burhop/wright" \
       org.opencontainers.image.source="https://github.com/burhop/wright" \
       org.opencontainers.image.documentation="https://burhop.github.io/wright/" \

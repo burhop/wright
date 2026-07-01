@@ -17,7 +17,7 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-# ── Dependency injection helper ──────────────────────────────────────────────
+#  Dependency injection helper
 def get_agent_engine(request: Request) -> BaseAgentEngine:
     """Extract BaseAgentEngine from app state."""
     engine = getattr(request.app.state, "agent_engine", None)
@@ -37,7 +37,7 @@ def get_current_trace_id() -> str:
     return secrets.token_hex(16)
 
 
-# ── Pydantic Request/Response Schemas ─────────────────────────────────────────
+#  Pydantic Request/Response Schemas
 class ActiveAgentResponse(BaseModel):
     agent: str
 
@@ -101,7 +101,7 @@ class CommandsResponse(BaseModel):
     commands: List[CommandModel]
 
 
-# ── Route Handlers ───────────────────────────────────────────────────────────
+#  Route Handlers
 
 
 @router.get("/commands", response_model=CommandsResponse)
@@ -203,6 +203,7 @@ async def create_new_session(
         WorkspaceManager(workspace_path)
 
         from core.workspace import write_workspace_hermes_md
+
         write_workspace_hermes_md(DATABASE_PATH, workspace_path)
 
         session_info = await engine.create_session(workspace_path)
@@ -281,6 +282,7 @@ async def list_agent_sessions(
         if workspace_id:
             from core.workspace import get_workspace_by_id
             from api.config import DATABASE_PATH
+
             workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
             if workspace:
                 local_path = workspace["local_path"]

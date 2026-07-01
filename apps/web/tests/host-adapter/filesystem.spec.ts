@@ -37,11 +37,16 @@ describe("Filesystem Adapter Methods", () => {
   it("should delegate writeFile to bridge in desktop mode", async () => {
     mockBridge.writeFile.mockResolvedValue(undefined);
     await desktopAdapter.writeFile("/path/file.txt", "hello");
-    expect(mockBridge.writeFile).toHaveBeenCalledWith("/path/file.txt", "hello");
+    expect(mockBridge.writeFile).toHaveBeenCalledWith(
+      "/path/file.txt",
+      "hello",
+    );
   });
 
   it("should delegate listDirectory to bridge in desktop mode", async () => {
-    const mockEntries = [{ name: "a.txt", path: "/path/a.txt", isDirectory: false }];
+    const mockEntries = [
+      { name: "a.txt", path: "/path/a.txt", isDirectory: false },
+    ];
     mockBridge.listDirectory.mockResolvedValue(mockEntries);
     const result = await desktopAdapter.listDirectory("/path");
     expect(mockBridge.listDirectory).toHaveBeenCalledWith("/path");
@@ -49,6 +54,8 @@ describe("Filesystem Adapter Methods", () => {
   });
 
   it("should throw in browser mode for listDirectory", async () => {
-    await expect(browserAdapter.listDirectory("/path")).rejects.toThrow("listDirectory is not supported in browser mode");
+    await expect(browserAdapter.listDirectory("/path")).rejects.toThrow(
+      "listDirectory is not supported in browser mode",
+    );
   });
 });

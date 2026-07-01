@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { isDesktop, detectEnvironment } from "../../src/services/host-adapter/detect";
+import {
+  isDesktop,
+  detectEnvironment,
+} from "../../src/services/host-adapter/detect";
 
 describe("detectEnvironment", () => {
   beforeEach(() => {

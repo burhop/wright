@@ -27,7 +27,10 @@ describe("Notifications Adapter Methods", () => {
 
   it("should delegate notify to bridge in desktop mode", async () => {
     const result = await desktopAdapter.notify("Hello", "World");
-    expect(mockBridge.notify).toHaveBeenCalledWith({ title: "Hello", body: "World" });
+    expect(mockBridge.notify).toHaveBeenCalledWith({
+      title: "Hello",
+      body: "World",
+    });
     expect(result).toBe(true);
   });
 
@@ -45,7 +48,9 @@ describe("Notifications Adapter Methods", () => {
 
     const result = await browserAdapter.notify("Hello", "World");
     expect(mockNotificationClass.requestPermission).toHaveBeenCalled();
-    expect(mockNotificationSpy).toHaveBeenCalledWith("Hello", { body: "World" });
+    expect(mockNotificationSpy).toHaveBeenCalledWith("Hello", {
+      body: "World",
+    });
     expect(result).toBe(true);
   });
 

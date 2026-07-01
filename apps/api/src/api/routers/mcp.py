@@ -18,7 +18,6 @@ from tool_registry import (
     get_tool,
     update_tool_enabled,
     McpEngine,
-    read_secrets,
     write_secrets,
     delete_secrets,
     has_credentials,
@@ -35,7 +34,7 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-# ── Dependency injection helper ──────────────────────────────────────────────
+#  Dependency injection helper
 def get_mcp_engine(request: Request) -> McpEngine:
     """Extract McpEngine from app state."""
     engine = getattr(request.app.state, "mcp_engine", None)
@@ -47,7 +46,7 @@ def get_mcp_engine(request: Request) -> McpEngine:
     return engine
 
 
-# ── REST Models ──────────────────────────────────────────────────────────────
+#  REST Models
 class ServersListResponse(BaseModel):
     servers: List[McpServer]
 
@@ -119,7 +118,7 @@ class MissingMcpReportRequest(BaseModel):
     category: str = "utilities"
 
 
-# ── Route Handlers ───────────────────────────────────────────────────────────
+#  Route Handlers
 
 
 @router.get("/servers", response_model=ServersListResponse)
@@ -131,8 +130,7 @@ async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
         for server in servers:
             if server.env_vars and isinstance(server.env_vars, list):
                 var_names = [
-                    v.name for v in server.env_vars
-                    if isinstance(v, EnvVarDefinition)
+                    v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
                 ]
                 if var_names:
                     server.credentials_configured = has_credentials(
@@ -242,8 +240,6 @@ async def toggle_server_activation(
         # Sync with Hermes config
         sync_mcp_server_to_hermes(updated)
 
-
-
         return ServerToggleResponse(
             server_id=updated.server_id,
             is_active=updated.is_active,
@@ -285,12 +281,15 @@ async def install_server_endpoint(
         # Validate required credentials before installation
         if server.env_vars and isinstance(server.env_vars, list):
             required_vars = [
-                v.name for v in server.env_vars
+                v.name
+                for v in server.env_vars
                 if isinstance(v, EnvVarDefinition) and v.required
             ]
             if required_vars:
                 cred_status = has_credentials(server_id, required_vars)
-                missing = [name for name, configured in cred_status.items() if not configured]
+                missing = [
+                    name for name, configured in cred_status.items() if not configured
+                ]
                 if missing:
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
@@ -402,8 +401,7 @@ async def report_missing_mcp(
     engine: McpEngine = Depends(get_mcp_engine),
 ):
     normalized = "".join(
-        char.lower() if char.isalnum() else "-"
-        for char in body.name.strip()
+        char.lower() if char.isalnum() else "-" for char in body.name.strip()
     ).strip("-")
     normalized = "-".join(part for part in normalized.split("-") if part)
     server_id = f"reported-{normalized or uuid.uuid4().hex[:8]}"
@@ -663,7 +661,7 @@ async def update_server_endpoint(
     }
 
 
-# ── Credential Management Endpoints ──────────────────────────────────────────
+#  Credential Management Endpoints
 
 
 @router.get("/servers/{server_id}/credentials", response_model=CredentialStatusResponse)
@@ -687,9 +685,7 @@ async def get_credential_status(
             v.model_dump() if isinstance(v, EnvVarDefinition) else v
             for v in server.env_vars
         ]
-        var_names = [
-            v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
-        ]
+        var_names = [v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)]
         configured = has_credentials(server_id, var_names)
 
     return CredentialStatusResponse(
@@ -715,7 +711,7 @@ async def save_credentials(
             detail=f"MCP Server '{server_id}' not found.",
         )
 
-    # Validate credentials are strings — never log values
+    # Validate credentials are strings  never log values
     sanitized: dict = {}
     for key, value in body.credentials.items():
         if not isinstance(key, str) or not isinstance(value, str):
@@ -736,9 +732,7 @@ async def save_credentials(
             v.model_dump() if isinstance(v, EnvVarDefinition) else v
             for v in server.env_vars
         ]
-        var_names = [
-            v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
-        ]
+        var_names = [v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)]
         configured = has_credentials(server_id, var_names)
 
     return CredentialStatusResponse(
@@ -748,7 +742,9 @@ async def save_credentials(
     )
 
 
-@router.delete("/servers/{server_id}/credentials", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/servers/{server_id}/credentials", status_code=status.HTTP_204_NO_CONTENT
+)
 @traced("mcp.server.credentials.delete")
 async def delete_credentials_endpoint(
     server_id: str, engine: McpEngine = Depends(get_mcp_engine)

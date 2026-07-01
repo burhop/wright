@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sqlite3
 import sys
 import json
@@ -8,17 +8,21 @@ import time
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from api.config import DATABASE_PATH
-from tool_registry.mcp_catalog import platform_support, tier_sort_key, validation_summary
+from tool_registry.mcp_catalog import (
+    platform_support,
+    tier_sort_key,
+    validation_summary,
+)
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -----------------------------------------------------------------------------
 # Engineering MCP Catalog  (sourced from docs/Engineering MCP Tools Discovery.md)
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -----------------------------------------------------------------------------
 # Each entry uses a stable deterministic server_id so INSERT OR IGNORE is idempotent.
 # Fields: (server_id, name, type, command, is_active, is_installed, status,
 #          category, image_url, description, source_url, installed_version)
 
 ENGINEERING_CATALOG = [
-    # â”€â”€ CAD Â· Open Source / Linux-Installable â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # CAD - Open Source / Linux-Installable
     {
         "server_id": "openscad-mcp-server",
         "name": "OpenSCAD Geometry",
@@ -81,15 +85,17 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/1413352?s=64",
         "description": "End-to-end engineering pipeline: FreeCAD geometric kernel connected to OpenFOAM CFD, CalculiX FEA, and PrusaSlicer for automated 3D-print G-code generation.",
         "source_url": "https://github.com/sandraschi/freecad-mcp",
-        "env_vars": json.dumps([
-            {
-                "name": "FREECAD_PATH",
-                "label": "FreeCADCmd path",
-                "description": "Path to the selected FreeCAD headless executable, for example an extracted AppImage `usr/bin/freecadcmd`.",
-                "required": True,
-                "secret": False,
-            }
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "FREECAD_PATH",
+                    "label": "FreeCADCmd path",
+                    "description": "Path to the selected FreeCAD headless executable, for example an extracted AppImage `usr/bin/freecadcmd`.",
+                    "required": True,
+                    "secret": False,
+                }
+            ]
+        ),
         "instructions": (
             "1. Output Delivery: The FreeCAD MCP server automatically runs inside the workspace and saves all "
             "created geometric primitives, converted mesh STL files, and slice G-code to its local outputs directory: "
@@ -116,7 +122,9 @@ ENGINEERING_CATALOG = [
         "server_id": "freecad-robust-spkane",
         "name": "FreeCAD Robust",
         "type": "stdio",
-        "command": json.dumps(["uv", "tool", "run", "--from", "freecad-robust-mcp", "freecad-mcp"]),
+        "command": json.dumps(
+            ["uv", "tool", "run", "--from", "freecad-robust-mcp", "freecad-mcp"]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1413352?s=64",
         "description": "Broad FreeCAD control for object management, arbitrary Python execution, macro development, and headless CI workflows. Supports XML-RPC, JSON-RPC socket, and embedded Linux modes.",
@@ -152,7 +160,7 @@ ENGINEERING_CATALOG = [
         "description": "Direct OpenCASCADE (OCCT) kernel interface via CAiD. Strict ForgeResult validation layer tracks volume, surface area, and manifold diagnostics.",
         "source_url": "https://github.com/dreliq9/caid-mcp",
     },
-    # â”€â”€ CAD Â· Cloud / Network Services â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  CAD  Cloud / Network Services
     {
         "server_id": "zoo-dev-cloud-cad",
         "name": "Zoo.dev Cloud CAD",
@@ -162,15 +170,17 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/80992670?s=64",
         "description": "Cloud CAD engine by Zoo.dev (formerly KittyCAD). Offloads heavy geometric computation to scalable cloud infrastructure with per-second billing.",
         "source_url": "https://github.com/KittyCAD/zoo-mcp",
-        "env_vars": json.dumps([
-            {
-                "name": "ZOO_API_TOKEN",
-                "label": "Zoo API token",
-                "description": "Zoo.dev API token required for cloud CAD compute and conversion tools.",
-                "required": True,
-                "secret": True,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "ZOO_API_TOKEN",
+                    "label": "Zoo API token",
+                    "description": "Zoo.dev API token required for cloud CAD compute and conversion tools.",
+                    "required": True,
+                    "secret": True,
+                },
+            ]
+        ),
     },
     {
         "server_id": "onshape-mcp-hedless",
@@ -181,24 +191,26 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/6536550?s=64",
         "description": "Cloud-native Onshape REST API access. Navigate workspaces, manage Part Studios, create parametric sketches, and read/write variable tables.",
         "source_url": "https://github.com/hedless/onshape-mcp",
-        "env_vars": json.dumps([
-            {
-                "name": "ONSHAPE_ACCESS_KEY",
-                "label": "Onshape access key",
-                "description": "Access key from the Onshape Developer Portal.",
-                "required": True,
-                "secret": False,
-            },
-            {
-                "name": "ONSHAPE_SECRET_KEY",
-                "label": "Onshape secret key",
-                "description": "Secret key from the Onshape Developer Portal.",
-                "required": True,
-                "secret": True,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "ONSHAPE_ACCESS_KEY",
+                    "label": "Onshape access key",
+                    "description": "Access key from the Onshape Developer Portal.",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "ONSHAPE_SECRET_KEY",
+                    "label": "Onshape secret key",
+                    "description": "Secret key from the Onshape Developer Portal.",
+                    "required": True,
+                    "secret": True,
+                },
+            ]
+        ),
     },
-    # â”€â”€ Simulation / FEA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  Simulation / FEA
     {
         "server_id": "oasis-open-fem-agent",
         "name": "OASiS Open FEM Agent",
@@ -208,29 +220,31 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/139527664?s=64",
         "description": "Open-source finite element MCP server connecting AI agents to multiple FEM solver backends including scikit-fem, FEniCSx, NGSolve, deal.II, Kratos, DUNE-fem, 4C, and FEBio.",
         "source_url": "https://github.com/Hereon-InstituteMS/OASiS",
-        "env_vars": json.dumps([
-            {
-                "name": "PYVISTA_OFF_SCREEN",
-                "label": "PyVista off-screen mode",
-                "description": "Set to `true` for headless Linux/container validation and rendering.",
-                "required": False,
-                "secret": False,
-            },
-            {
-                "name": "FENICS_PYTHON",
-                "label": "FEniCSx Python path",
-                "description": "Optional Python executable for a FEniCSx/dolfinx environment when that backend is selected.",
-                "required": False,
-                "secret": False,
-            },
-            {
-                "name": "FEBIO_BINARY",
-                "label": "FEBio binary path",
-                "description": "Optional FEBio executable path when that backend is selected.",
-                "required": False,
-                "secret": False,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "PYVISTA_OFF_SCREEN",
+                    "label": "PyVista off-screen mode",
+                    "description": "Set to `true` for headless Linux/container validation and rendering.",
+                    "required": False,
+                    "secret": False,
+                },
+                {
+                    "name": "FENICS_PYTHON",
+                    "label": "FEniCSx Python path",
+                    "description": "Optional Python executable for a FEniCSx/dolfinx environment when that backend is selected.",
+                    "required": False,
+                    "secret": False,
+                },
+                {
+                    "name": "FEBIO_BINARY",
+                    "label": "FEBio binary path",
+                    "description": "Optional FEBio executable path when that backend is selected.",
+                    "required": False,
+                    "secret": False,
+                },
+            ]
+        ),
         "instructions": (
             "Clone `https://github.com/Hereon-InstituteMS/OASiS`, create a virtual environment, run `pip install -e .`, "
             "then install only the selected solver backend. The Linux x64 validation used `pip install scikit-fem` and "
@@ -249,7 +263,7 @@ ENGINEERING_CATALOG = [
         "description": "Open-source finite element analysis (FEA) solver. Performs structural stress, strain, and thermal analysis on 3D meshes via the CalculiX MCP bridge.",
         "source_url": "https://github.com/calculix/calculix-mcp",
     },
-    # â”€â”€ PLM / Enterprise Cloud APIs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  PLM / Enterprise Cloud APIs
     {
         "server_id": "autodesk-aps-official",
         "name": "Autodesk Platform Services",
@@ -259,43 +273,45 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
         "description": "Official Autodesk APS integration. Secure data management, model derivatives, webhooks, and AEC data modeling with SSA-based authentication.",
         "source_url": "https://github.com/autodesk-platform-services/aps-mcp-server-nodejs",
-        "env_vars": json.dumps([
-            {
-                "name": "APS_CLIENT_ID",
-                "label": "APS client ID",
-                "description": "Autodesk Platform Services application client ID.",
-                "required": True,
-                "secret": False,
-            },
-            {
-                "name": "APS_CLIENT_SECRET",
-                "label": "APS client secret",
-                "description": "Autodesk Platform Services application client secret.",
-                "required": True,
-                "secret": True,
-            },
-            {
-                "name": "SSA_ID",
-                "label": "Secure service account ID",
-                "description": "Autodesk Secure Service Account ID.",
-                "required": True,
-                "secret": False,
-            },
-            {
-                "name": "SSA_KEY_ID",
-                "label": "SSA key ID",
-                "description": "Autodesk Secure Service Account private key ID.",
-                "required": True,
-                "secret": False,
-            },
-            {
-                "name": "SSA_KEY_PATH",
-                "label": "SSA private key path",
-                "description": "Path to the downloaded Secure Service Account PEM private key.",
-                "required": True,
-                "secret": False,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "APS_CLIENT_ID",
+                    "label": "APS client ID",
+                    "description": "Autodesk Platform Services application client ID.",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "APS_CLIENT_SECRET",
+                    "label": "APS client secret",
+                    "description": "Autodesk Platform Services application client secret.",
+                    "required": True,
+                    "secret": True,
+                },
+                {
+                    "name": "SSA_ID",
+                    "label": "Secure service account ID",
+                    "description": "Autodesk Secure Service Account ID.",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "SSA_KEY_ID",
+                    "label": "SSA key ID",
+                    "description": "Autodesk Secure Service Account private key ID.",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "SSA_KEY_PATH",
+                    "label": "SSA private key path",
+                    "description": "Path to the downloaded Secure Service Account PEM private key.",
+                    "required": True,
+                    "secret": False,
+                },
+            ]
+        ),
     },
     {
         "server_id": "autodesk-aps-petrbroz",
@@ -316,22 +332,24 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/4006395?s=64",
         "description": "Siemens Element design system via RAG. Provides AI agents with component APIs, UX writing guidelines, and front-end best practices with version matching.",
         "source_url": "https://element.siemens.io/get-started/element-mcp/",
-        "env_vars": json.dumps([
-            {
-                "name": "SDL_MCP_TOKEN_ENV",
-                "label": "Use environment token",
-                "description": "Set to true in container/WSL/headless environments so the MCP reads the Siemens LLM token from environment variables instead of a system keychain.",
-                "required": False,
-                "secret": False,
-            },
-            {
-                "name": "OPENAI_API_KEY",
-                "label": "Siemens LLM API token",
-                "description": "Token from my.siemens.com with llm scope; upstream uses this variable name for the Siemens embeddings API.",
-                "required": True,
-                "secret": True,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "SDL_MCP_TOKEN_ENV",
+                    "label": "Use environment token",
+                    "description": "Set to true in container/WSL/headless environments so the MCP reads the Siemens LLM token from environment variables instead of a system keychain.",
+                    "required": False,
+                    "secret": False,
+                },
+                {
+                    "name": "OPENAI_API_KEY",
+                    "label": "Siemens LLM API token",
+                    "description": "Token from my.siemens.com with llm scope; upstream uses this variable name for the Siemens embeddings API.",
+                    "required": True,
+                    "secret": True,
+                },
+            ]
+        ),
         "instructions": (
             "Install in the user's project with `npm install --save-dev --save-exact "
             "@siemens/element-mcp@49.12.0-v.1.11.1`, configure a Siemens LLM token with "
@@ -358,37 +376,49 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/1690598?s=64",
         "description": "PTC ThingWorx 10.1+ product-hosted MCP endpoint. Tools for machine KPIs, resources for sensor data, prompts for interaction templates, and MCPServices configuration.",
         "source_url": "https://support.ptc.com/help/thingworx/platform/r10.1/",
-        "env_vars": json.dumps([
-            {
-                "name": "THINGWORX_BASE_URL",
-                "label": "ThingWorx server URL",
-                "description": "Base URL for a ThingWorx 10.1+ server with MCP enabled; the MCP endpoint is `${THINGWORX_BASE_URL}/mcp`.",
-                "required": True,
-                "secret": False,
-            },
-            {
-                "name": "THINGWORX_APP_KEY",
-                "label": "Application Key",
-                "description": "ThingWorx application key when the deployment uses AppKey authentication.",
-                "required": False,
-                "secret": True,
-            },
-            {
-                "name": "THINGWORX_OAUTH_TOKEN",
-                "label": "OAuth token",
-                "description": "OAuth bearer token for ThingWorx deployments using RFC 9728-protected MCP metadata.",
-                "required": False,
-                "secret": True,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "THINGWORX_BASE_URL",
+                    "label": "ThingWorx server URL",
+                    "description": "Base URL for a ThingWorx 10.1+ server with MCP enabled; the MCP endpoint is `${THINGWORX_BASE_URL}/mcp`.",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "THINGWORX_APP_KEY",
+                    "label": "Application Key",
+                    "description": "ThingWorx application key when the deployment uses AppKey authentication.",
+                    "required": False,
+                    "secret": True,
+                },
+                {
+                    "name": "THINGWORX_OAUTH_TOKEN",
+                    "label": "OAuth token",
+                    "description": "OAuth bearer token for ThingWorx deployments using RFC 9728-protected MCP metadata.",
+                    "required": False,
+                    "secret": True,
+                },
+            ]
+        ),
         "instructions": "Configure the MCP client to `${THINGWORX_BASE_URL}/mcp` for a ThingWorx 10.1+ server with MCP enabled, then provide the deployment's AppKey or OAuth credential.",
     },
-    # â”€â”€ CAD Â· Desktop / Windows Required â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  CAD  Desktop / Windows Required
     {
         "server_id": "fusion360-mcp-faust",
         "name": "Autodesk Fusion 360",
         "type": "stdio",
-        "command": json.dumps(["uv", "run", "--with", "fusion360-mcp-server", "fusion360-mcp-server", "--mode", "socket"]),
+        "command": json.dumps(
+            [
+                "uv",
+                "run",
+                "--with",
+                "fusion360-mcp-server",
+                "fusion360-mcp-server",
+                "--mode",
+                "socket",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
         "description": "85-tool Fusion 360 bridge for parametric sketching, sheet metal, Boolean operations, export, and CAM. Requires the Fusion360MCP add-in running inside Fusion 360 on a supported desktop host.",
@@ -403,11 +433,31 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
         "description": "Small Fusion 360/Autodesk Platform Services MCP exposing a generate_cube Design Automation tool plus a separate LiveCube Fusion add-in bridge. Current upstream auth helper is broken with current httpx.",
         "source_url": "https://github.com/sockcymbal/autodesk-fusion-mcp-python",
-        "env_vars": json.dumps([
-            {"name": "APS_CLIENT_ID", "label": "APS client ID", "description": "Autodesk Platform Services client ID.", "required": True, "secret": False},
-            {"name": "APS_CLIENT_SECRET", "label": "APS client secret", "description": "Autodesk Platform Services client secret.", "required": True, "secret": True},
-            {"name": "FUSION_ACTIVITY_ID", "label": "Fusion activity ID", "description": "Registered APS Design Automation activity ID, for example nick.GenerateCube+prod.", "required": True, "secret": False},
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "APS_CLIENT_ID",
+                    "label": "APS client ID",
+                    "description": "Autodesk Platform Services client ID.",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "APS_CLIENT_SECRET",
+                    "label": "APS client secret",
+                    "description": "Autodesk Platform Services client secret.",
+                    "required": True,
+                    "secret": True,
+                },
+                {
+                    "name": "FUSION_ACTIVITY_ID",
+                    "label": "Fusion activity ID",
+                    "description": "Registered APS Design Automation activity ID, for example nick.GenerateCube+prod.",
+                    "required": True,
+                    "secret": False,
+                },
+            ]
+        ),
     },
     {
         "server_id": "solidworks-mcp-python",
@@ -448,15 +498,17 @@ ENGINEERING_CATALOG = [
         "image_url": "https://avatars.githubusercontent.com/u/6536550?s=64",
         "description": "Full-text and keyword search over the SolidWorks API documentation corpus. Look up interface members and enums during code generation.",
         "source_url": "https://github.com/kilwizac/solidworks-api-mcp",
-        "env_vars": json.dumps([
-            {
-                "name": "SW_API_DATA_ROOT",
-                "label": "SolidWorks API data root",
-                "description": "Optional path to the local SolidWorks API documentation corpus. Defaults to the cloned repository's `solidworks-api` directory.",
-                "required": False,
-                "secret": False,
-            }
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "SW_API_DATA_ROOT",
+                    "label": "SolidWorks API data root",
+                    "description": "Optional path to the local SolidWorks API documentation corpus. Defaults to the cloned repository's `solidworks-api` directory.",
+                    "required": False,
+                    "secret": False,
+                }
+            ]
+        ),
         "instructions": (
             "Clone `https://github.com/kilwizac/solidworks-api-mcp`, install Bun, run `bun install`, "
             "and launch from the clone with `bun run start`. This is a documentation/search MCP and does not require "
@@ -467,34 +519,38 @@ ENGINEERING_CATALOG = [
         "server_id": "creo-parametric-mcp",
         "name": "Creo/CadQuery MCP",
         "type": "stdio",
-        "command": json.dumps([
-            "uvx",
-            "creo-mcp",
-            "--authorization",
-            "${VOLCENGINE_AUTHORIZATION}",
-            "--service-resource-id",
-            "${VOLCENGINE_SERVICE_RESOURCE_ID}",
-        ]),
+        "command": json.dumps(
+            [
+                "uvx",
+                "creo-mcp",
+                "--authorization",
+                "${VOLCENGINE_AUTHORIZATION}",
+                "--service-resource-id",
+                "${VOLCENGINE_SERVICE_RESOURCE_ID}",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1690598?s=64",
         "description": "CadQuery code-execution MCP that can export STEP files locally, query a Volcengine knowledge base, and open STEP files in Creo through a local CREOSON bridge.",
         "source_url": "https://github.com/yangkunyi/creo-mcp",
-        "env_vars": json.dumps([
-            {
-                "name": "VOLCENGINE_AUTHORIZATION",
-                "label": "Volcengine authorization token",
-                "description": "Authorization token used by the optional Volcengine knowledge-base tool.",
-                "required": True,
-                "secret": True,
-            },
-            {
-                "name": "VOLCENGINE_SERVICE_RESOURCE_ID",
-                "label": "Volcengine service resource ID",
-                "description": "Service resource ID used by the optional Volcengine knowledge-base tool.",
-                "required": True,
-                "secret": False,
-            },
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "VOLCENGINE_AUTHORIZATION",
+                    "label": "Volcengine authorization token",
+                    "description": "Authorization token used by the optional Volcengine knowledge-base tool.",
+                    "required": True,
+                    "secret": True,
+                },
+                {
+                    "name": "VOLCENGINE_SERVICE_RESOURCE_ID",
+                    "label": "Volcengine service resource ID",
+                    "description": "Service resource ID used by the optional Volcengine knowledge-base tool.",
+                    "required": True,
+                    "secret": False,
+                },
+            ]
+        ),
     },
     {
         "server_id": "rhino-mcp-mcneel",
@@ -503,7 +559,7 @@ ENGINEERING_CATALOG = [
         "command": json.dumps(["uvx", "rhinomcp"]),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1220980?s=64",
-        "description": "NURBS surface modeling via Rhino 3D. Precise primitive generation, layer filtering, and experimental RhinoCommon C# script execution. âš ï¸ Requires Rhino 3D.",
+        "description": "NURBS surface modeling via Rhino 3D. Precise primitive generation, layer filtering, and experimental RhinoCommon C# script execution.  Requires Rhino 3D.",
         "source_url": "https://github.com/jingcheng-chen/rhinomcp",
     },
     {
@@ -523,7 +579,7 @@ ENGINEERING_CATALOG = [
         "command": json.dumps(["uvx", "sketchup-mcp"]),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/458134?s=64",
-        "description": "Ruby-based TCP server in SketchUp. Component manipulation, material application, and Ruby code evaluation. âš ï¸ Requires SketchUp desktop.",
+        "description": "Ruby-based TCP server in SketchUp. Component manipulation, material application, and Ruby code evaluation.  Requires SketchUp desktop.",
         "source_url": "https://github.com/mhyrr/sketchup-mcp",
     },
     {
@@ -536,33 +592,37 @@ ENGINEERING_CATALOG = [
         "description": "BIM automation bridge for Revit. Exposes model query, element creation, tagging, room export, and C# code execution tools through a Revit plugin socket.",
         "source_url": "https://github.com/mcp-servers-for-revit/revit-mcp",
     },
-    # â”€â”€ 2D CAD / Drafting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  2D CAD / Drafting
     {
         "server_id": "autocad-mcp-hvkshetry",
         "name": "AutoCAD MCP",
         "type": "stdio",
-        "command": json.dumps([
-            "uv",
-            "run",
-            "--with",
-            "git+https://github.com/hvkshetry/autocad-mcp.git",
-            "python",
-            "-m",
-            "autocad_mcp",
-        ]),
+        "command": json.dumps(
+            [
+                "uv",
+                "run",
+                "--with",
+                "git+https://github.com/hvkshetry/autocad-mcp.git",
+                "python",
+                "-m",
+                "autocad_mcp",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
         "description": "AutoCAD/LT automation bridge with a Linux-safe ezdxf backend for headless DXF generation plus a Windows AutoCAD File IPC backend for desktop automation.",
         "source_url": "https://github.com/hvkshetry/autocad-mcp",
-        "env_vars": json.dumps([
-            {
-                "name": "AUTOCAD_MCP_BACKEND",
-                "label": "AutoCAD MCP backend",
-                "description": "Use `ezdxf` for Linux headless DXF generation, `file_ipc` for Windows AutoCAD IPC, or `auto` for upstream auto-selection.",
-                "required": False,
-                "secret": False,
-            }
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "AUTOCAD_MCP_BACKEND",
+                    "label": "AutoCAD MCP backend",
+                    "description": "Use `ezdxf` for Linux headless DXF generation, `file_ipc` for Windows AutoCAD IPC, or `auto` for upstream auto-selection.",
+                    "required": False,
+                    "secret": False,
+                }
+            ]
+        ),
     },
     {
         "server_id": "easy-mcp-autocad",
@@ -571,7 +631,7 @@ ENGINEERING_CATALOG = [
         "command": json.dumps(["python", "server.py"]),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
-        "description": "AutoCAD integration with SQLite data persistence. Extracts elemental data into queryable databases for BOM extraction and spatial analysis. âš ï¸ Requires AutoCAD.",
+        "description": "AutoCAD integration with SQLite data persistence. Extracts elemental data into queryable databases for BOM extraction and spatial analysis.  Requires AutoCAD.",
         "source_url": "https://github.com/zh19980811/Easy-MCP-AutoCad",
     },
     {
@@ -581,7 +641,7 @@ ENGINEERING_CATALOG = [
         "command": json.dumps(["python", "src/server.py"]),
         "category": "cad",
         "image_url": None,
-        "description": "Cross-platform 2D CAD control for ZWCAD 2020+, GstarCAD 2020+, and BricsCAD 21+ via Windows COM. Execute drawing commands via natural language. âš ï¸ Windows only.",
+        "description": "Cross-platform 2D CAD control for ZWCAD 2020+, GstarCAD 2020+, and BricsCAD 21+ via Windows COM. Execute drawing commands via natural language.  Windows only.",
         "source_url": "https://github.com/AnCode666/multiCAD-mcp",
     },
     {
@@ -591,10 +651,10 @@ ENGINEERING_CATALOG = [
         "command": json.dumps(["python", "src/server.py"]),
         "category": "cad",
         "image_url": None,
-        "description": "Universal 2D CAD automation via COM. Compatible with AutoCAD-like APIs. Draw, plot, and manipulate 2D geometry. âš ï¸ Requires Windows + CAD software.",
+        "description": "Universal 2D CAD automation via COM. Compatible with AutoCAD-like APIs. Draw, plot, and manipulate 2D geometry.  Requires Windows + CAD software.",
         "source_url": "https://github.com/daobataotie/CAD-MCP",
     },
-    # â”€â”€ Web / Experimental â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  Web / Experimental
     {
         "server_id": "webmcp-standard",
         "name": "WebMCP Standard",
@@ -602,7 +662,7 @@ ENGINEERING_CATALOG = [
         "command": "https://webmcp.io",
         "category": "utilities",
         "image_url": None,
-        "description": "Open standard for browser-based AI interaction. Exposes webpage functionality as MCP tools directly to agents â€” eliminates brittle DOM actuation.",
+        "description": "Open standard for browser-based AI interaction. Exposes webpage functionality as MCP tools directly to agents  eliminates brittle DOM actuation.",
         "source_url": "https://github.com/anthropics/anthropic-cookbook",
     },
     {
@@ -635,37 +695,75 @@ ENGINEERING_CATALOG = [
         "description": "Web-based 3D modeling interface built with TanStack Start. Integrates AI support directly into browser-based OpenSCAD workflows.",
         "source_url": "https://github.com/jherr/webmcp-openscad",
     },
-    # â”€â”€ Manufacturing / CAM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  Manufacturing / CAM
     {
         "server_id": "creopyson-creoson",
         "name": "CREOSON Middleware",
         "type": "stdio",
-        "command": json.dumps(["java", "-classpath", "*.jar", "com.simplifiedlogic.nitro.jshell.MainServer"]),
+        "command": json.dumps(
+            [
+                "java",
+                "-classpath",
+                "*.jar",
+                "com.simplifiedlogic.nitro.jshell.MainServer",
+            ]
+        ),
         "category": "manufacturing",
         "image_url": "https://avatars.githubusercontent.com/u/1690598?s=64",
         "description": "CREOSON JSON-RPC middleware for Creo Parametric. This is a Java/JLINK bridge dependency for Creo workflows, not an MCP protocol server by itself.",
         "source_url": "https://github.com/SimplifiedLogic/creoson",
     },
-    # â”€â”€ CAD Â· Cloud / Credential-Requiring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    #  CAD  Cloud / Credential-Requiring
     {
         "server_id": "jarvis-onshape-mcp",
         "name": "Jarvis OnShape MCP",
         "type": "stdio",
-        "command": json.dumps(["uv", "run", "--with", "git+https://github.com/ReshefElisha/jarvis-onshape-mcp.git", "onshape-mcp"]),
+        "command": json.dumps(
+            [
+                "uv",
+                "run",
+                "--with",
+                "git+https://github.com/ReshefElisha/jarvis-onshape-mcp.git",
+                "onshape-mcp",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/6536550?s=64",
         "description": "AI copilot for Onshape CAD. 60+ tools: parametric sketches, extrudes, fillets, assemblies, Variable Studios, FeatureScript, and multi-view rendering with vision feedback.",
         "source_url": "https://github.com/ReshefElisha/jarvis-onshape-mcp",
-        "env_vars": json.dumps([
-            {"name": "ONSHAPE_API_KEY", "label": "Access Key", "description": "Onshape API access key from dev-portal.onshape.com", "required": True, "secret": False},
-            {"name": "ONSHAPE_API_SECRET", "label": "Secret Key", "description": "Onshape API secret key (shown once at creation)", "required": True, "secret": True}
-        ]),
+        "env_vars": json.dumps(
+            [
+                {
+                    "name": "ONSHAPE_API_KEY",
+                    "label": "Access Key",
+                    "description": "Onshape API access key from dev-portal.onshape.com",
+                    "required": True,
+                    "secret": False,
+                },
+                {
+                    "name": "ONSHAPE_API_SECRET",
+                    "label": "Secret Key",
+                    "description": "Onshape API secret key (shown once at creation)",
+                    "required": True,
+                    "secret": True,
+                },
+            ]
+        ),
     },
     {
         "server_id": "kicad-mcp-lamaalrajih",
         "name": "KiCad MCP",
         "type": "stdio",
-        "command": json.dumps(["uv", "tool", "run", "--from", "git+https://github.com/lamaalrajih/kicad-mcp.git", "kicad-mcp"]),
+        "command": json.dumps(
+            [
+                "uv",
+                "tool",
+                "run",
+                "--from",
+                "git+https://github.com/lamaalrajih/kicad-mcp.git",
+                "kicad-mcp",
+            ]
+        ),
         "category": "cad",
         "image_url": "https://avatars.githubusercontent.com/u/3374914?s=64",
         "description": "Community KiCad MCP for electronics project inspection and local bridge workflows. Requires KiCad 9.0+ for host-backed operations.",
@@ -730,13 +828,27 @@ def _with_meta(entry, **metadata):
 
 
 def _hosted(notes):
-    return platform_support({
-        "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": notes},
-        "linux_x64": {"status": "host-dependent", "tested": False, "notes": notes},
-        "linux_arm64": {"status": "unknown", "tested": False, "notes": "host stack not tested on ARM64"},
-        "macos_x64": {"status": "host-dependent", "tested": False, "notes": notes},
-        "macos_arm64": {"status": "host-dependent", "tested": False, "notes": notes},
-    })
+    return platform_support(
+        {
+            "windows_11_x64": {
+                "status": "host-dependent",
+                "tested": False,
+                "notes": notes,
+            },
+            "linux_x64": {"status": "host-dependent", "tested": False, "notes": notes},
+            "linux_arm64": {
+                "status": "unknown",
+                "tested": False,
+                "notes": "host stack not tested on ARM64",
+            },
+            "macos_x64": {"status": "host-dependent", "tested": False, "notes": notes},
+            "macos_arm64": {
+                "status": "host-dependent",
+                "tested": False,
+                "notes": notes,
+            },
+        }
+    )
 
 
 CATALOG_METADATA = {
@@ -746,12 +858,30 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "local-bridge",
         "host_software_required": ["OpenSCAD"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "OpenSCAD host available on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu container: per-MCP OpenSCAD install, direct MCP probe, and Wright gateway export probe passed"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "OpenSCAD host available on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "OpenSCAD host available on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "OpenSCAD host available on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu container: per-MCP OpenSCAD install, direct MCP probe, and Wright gateway export probe passed",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "OpenSCAD host available on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "OpenSCAD host available on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": ["workspace_write_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -765,13 +895,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "local-only",
         "host_software_required": ["CAiD", "OCP/OpenCASCADE", "libGL"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Python/OCP stack expected but not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed libGL, CAiD from GitHub source, and caid-mcp; tests passed and `create_box` returned validated geometry"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; OCP/OpenCASCADE wheels must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Python/OCP stack expected but not tested on macOS"},
-            "macos_arm64": {"status": "unknown", "tested": False, "notes": "not tested; OCP/OpenCASCADE wheels must be checked"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/OCP stack expected but not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed libGL, CAiD from GitHub source, and caid-mcp; tests passed and `create_box` returned validated geometry",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; OCP/OpenCASCADE wheels must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/OCP stack expected but not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; OCP/OpenCASCADE wheels must be checked",
+                },
+            }
+        ),
         "approval_gates": ["workspace_write_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -785,13 +937,35 @@ CATALOG_METADATA = {
         "risk_level": "low",
         "deployment_mode": "unknown",
         "host_software_required": ["OpenSCAD"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "unknown", "tested": False, "notes": "exact MCP source/package is not verified"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation could not resolve `openscad-linter-mcp` from the configured command"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; blocked until source/package is verified"},
-            "macos_x64": {"status": "unknown", "tested": False, "notes": "exact MCP source/package is not verified"},
-            "macos_arm64": {"status": "unknown", "tested": False, "notes": "exact MCP source/package is not verified"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "exact MCP source/package is not verified",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation could not resolve `openscad-linter-mcp` from the configured command",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; blocked until source/package is verified",
+                },
+                "macos_x64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "exact MCP source/package is not verified",
+                },
+                "macos_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "exact MCP source/package is not verified",
+                },
+            }
+        ),
         "validation_result": validation_summary(
             "failed",
             "Clean Intel Ubuntu validation failed before MCP startup: `uv tool run openscad-linter-mcp --help` reported that `openscad-linter-mcp` was not found in the package registry, and the configured source URL is only a GitHub topic page.",
@@ -806,13 +980,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "cloud-saas",
         "credentials_required": ["ZOO_API_TOKEN"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Python/uv stdio MCP expected; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed from source, initialized MCP, listed tools, and verified local docs search; full CAD compute requires ZOO_API_TOKEN"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python wheels must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Python/uv stdio MCP expected; not tested on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "Python/uv stdio MCP expected; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/uv stdio MCP expected; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed from source, initialized MCP, listed tools, and verified local docs search; full CAD compute requires ZOO_API_TOKEN",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python wheels must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/uv stdio MCP expected; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/uv stdio MCP expected; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": CLOUD_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -827,20 +1023,48 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "medium",
         "deployment_mode": "browser-bridge",
-        "host_software_required": ["browser with WebMCP page", "MCP-B extension or @mcp-b/webmcp-local-relay"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation installed Node 22 and pnpm, built the app, initialized the local relay MCP, and confirmed page tools require a connected browser source"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; browser/WebMCP bridge and OpenSCAD WASM package support must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge"},
-        }),
+        "host_software_required": [
+            "browser with WebMCP page",
+            "MCP-B extension or @mcp-b/webmcp-local-relay",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed Node 22 and pnpm, built the app, initialized the local relay MCP, and confirmed page tools require a connected browser source",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; browser/WebMCP bridge and OpenSCAD WASM package support must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Node, a browser tab running the WebMCP OpenSCAD app, and MCP-B or native WebMCP bridge",
+                },
+            }
+        ),
         "approval_gates": ["workspace_write_approval"],
         "validation_result": validation_summary(
             "dependency_missing",
-            "Clean Intel Ubuntu validation cloned jherr/webmcp-openscad at commit a3acb68578701001f0251459c75716a55aadfa10. Ubuntu's default Node 18 could not run pnpm 11.9.0, so validation installed Node 22.23.1 with `n` after adding curl. `pnpm install --frozen-lockfile` succeeded with pnpm 11.9.0. `pnpm test` did not find any test files and exited 1, with additional Vitest/Vite shutdown noise `ReferenceError: module is not defined`; this repo does not currently provide a usable upstream test suite. `pnpm build` succeeded for the TanStack/Nitro app. Serving `node .output/server/index.mjs` produced a 7156-byte HTML page titled `scad-webmcp · agent-driven parametric CAD` that embeds `@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js`. MCP stdio probing `npx -y @mcp-b/webmcp-local-relay@latest` initialized serverInfo `webmcp-local-relay` version 0.0.0, listed 4 relay tools, and calls to `webmcp_list_sources` and `webmcp_list_tools` returned zero sources/tools because no browser page was connected. Full validation of the advertised 16 OpenSCAD browser tools requires a browser tab connected through MCP-B or native WebMCP.",
+            "Clean Intel Ubuntu validation cloned jherr/webmcp-openscad at commit a3acb68578701001f0251459c75716a55aadfa10. Ubuntu's default Node 18 could not run pnpm 11.9.0, so validation installed Node 22.23.1 with `n` after adding curl. `pnpm install --frozen-lockfile` succeeded with pnpm 11.9.0. `pnpm test` did not find any test files and exited 1, with additional Vitest/Vite shutdown noise `ReferenceError: module is not defined`; this repo does not currently provide a usable upstream test suite. `pnpm build` succeeded for the TanStack/Nitro app. Serving `node .output/server/index.mjs` produced a 7156-byte HTML page titled `scad-webmcp  agent-driven parametric CAD` that embeds `@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js`. MCP stdio probing `npx -y @mcp-b/webmcp-local-relay@latest` initialized serverInfo `webmcp-local-relay` version 0.0.0, listed 4 relay tools, and calls to `webmcp_list_sources` and `webmcp_list_tools` returned zero sources/tools because no browser page was connected. Full validation of the advertised 16 OpenSCAD browser tools requires a browser tab connected through MCP-B or native WebMCP.",
             "ubuntu-linux-x64-container",
-            ["browser tab running scad-webmcp", "MCP-B extension or native WebMCP bridge"],
+            [
+                "browser tab running scad-webmcp",
+                "MCP-B extension or native WebMCP bridge",
+            ],
         ),
         "headless_ok": "no",
     },
@@ -849,13 +1073,35 @@ CATALOG_METADATA = {
         "installability_tier": "tested",
         "risk_level": "medium",
         "deployment_mode": "local-only",
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Node 22+ stdio server expected; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed from GitHub source with Node 22, passed tests, initialized MCP, and generated validated R3F code"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Node dependency support must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Node 22+ stdio server expected; not tested on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "Node 22+ stdio server expected; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Node 22+ stdio server expected; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed from GitHub source with Node 22, passed tests, initialized MCP, and generated validated R3F code",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Node dependency support must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Node 22+ stdio server expected; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Node 22+ stdio server expected; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": ["workspace_write_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -869,14 +1115,40 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "high",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["Rhino 8", "RhinoMCP plugin", "mcpstart bridge on 127.0.0.1:1999"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "README targets Rhino 8 on Windows and macOS; Windows host must install the RhinoMCP plugin and run `mcpstart`"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation installed and started the Python stdio MCP, listed tools, and reached the expected missing Rhino bridge diagnostic"},
-            "linux_arm64": {"status": "host-dependent", "tested": False, "notes": "Python stdio client may run, but a Rhino 8 bridge host is still required; not tested on ARM64"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "README targets Rhino 8 on macOS; install plugin and run `mcpstart`"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "README targets Rhino 8 on macOS; install plugin and run `mcpstart`"},
-        }),
+        "host_software_required": [
+            "Rhino 8",
+            "RhinoMCP plugin",
+            "mcpstart bridge on 127.0.0.1:1999",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "README targets Rhino 8 on Windows and macOS; Windows host must install the RhinoMCP plugin and run `mcpstart`",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed and started the Python stdio MCP, listed tools, and reached the expected missing Rhino bridge diagnostic",
+                },
+                "linux_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "Python stdio client may run, but a Rhino 8 bridge host is still required; not tested on ARM64",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "README targets Rhino 8 on macOS; install plugin and run `mcpstart`",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "README targets Rhino 8 on macOS; install plugin and run `mcpstart`",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -891,14 +1163,40 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "high",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["SketchUp", "SketchupMCP extension", "extension server on port 9876"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires SketchUp desktop plus the SketchupMCP extension server on port 9876; not tested on Windows"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation installed and started the Python stdio MCP, listed tools, and reached the expected missing SketchUp extension diagnostic"},
-            "linux_arm64": {"status": "host-dependent", "tested": False, "notes": "Python stdio client may run, but a SketchUp extension host is still required; not tested on ARM64"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires SketchUp desktop plus the SketchupMCP extension server; not tested on macOS"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires SketchUp desktop plus the SketchupMCP extension server; not tested on macOS ARM64"},
-        }),
+        "host_software_required": [
+            "SketchUp",
+            "SketchupMCP extension",
+            "extension server on port 9876",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires SketchUp desktop plus the SketchupMCP extension server on port 9876; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed and started the Python stdio MCP, listed tools, and reached the expected missing SketchUp extension diagnostic",
+                },
+                "linux_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "Python stdio client may run, but a SketchUp extension host is still required; not tested on ARM64",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires SketchUp desktop plus the SketchupMCP extension server; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires SketchUp desktop plus the SketchupMCP extension server; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -914,13 +1212,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Blender"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Blender desktop app and add-on; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed Blender 4.0.2, python3-requests, and Xvfb; add-on socket started and MCP executed read/write Blender operations"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Blender package and Python wheels must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires Blender desktop app and add-on; not tested on macOS"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires Blender desktop app and add-on; not tested on macOS"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Blender desktop app and add-on; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed Blender 4.0.2, python3-requests, and Xvfb; add-on socket started and MCP executed read/write Blender operations",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Blender package and Python wheels must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Blender desktop app and add-on; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Blender desktop app and add-on; not tested on macOS",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "passed",
@@ -934,13 +1254,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["FreeCAD", "CalculiX", "OpenFOAM", "PrusaSlicer"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD and optional simulation/slicer hosts; not tested on Windows"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "FreeCAD 1.1.1 AppImage installed and direct FreeCAD STL export worked, but MCP `freecad_status` stayed false and `create_shape` returned success while FreeCAD reported a mesh failure"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; host stack and wheels must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD and optional simulation/slicer hosts"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD and optional simulation/slicer hosts"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD and optional simulation/slicer hosts; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "FreeCAD 1.1.1 AppImage installed and direct FreeCAD STL export worked, but MCP `freecad_status` stayed false and `create_shape` returned success while FreeCAD reported a mesh failure",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; host stack and wheels must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD and optional simulation/slicer hosts",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD and optional simulation/slicer hosts",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "failed",
@@ -955,14 +1297,41 @@ CATALOG_METADATA = {
         "installability_tier": "non_working",
         "risk_level": "high",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["FreeCAD GUI", "AICopilot workbench", "Python", "Node.js"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop with AI Copilot workbench"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation installed FreeCAD 1.1.1, Xvfb, and the workbench; MCP listed socket-backed tools, but `part_operations` hung and FreeCAD logged Qt thread errors"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; GUI/AppImage/workbench support must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop with AI Copilot workbench"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop with AI Copilot workbench"},
-        }),
+        "host_software_required": [
+            "FreeCAD GUI",
+            "AICopilot workbench",
+            "Python",
+            "Node.js",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop with AI Copilot workbench",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed FreeCAD 1.1.1, Xvfb, and the workbench; MCP listed socket-backed tools, but `part_operations` hung and FreeCAD logged Qt thread errors",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; GUI/AppImage/workbench support must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop with AI Copilot workbench",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop with AI Copilot workbench",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "failed",
@@ -978,13 +1347,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "local-only",
         "host_software_required": [],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "Windows AutoCAD File IPC backend requires AutoCAD LT 2024+ and was not tested in the Linux container"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation passed with `AUTOCAD_MCP_BACKEND=ezdxf`: repo tests passed, MCP listed 8 tools, created a line, and saved a DXF"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python wheels and matplotlib/ezdxf stack must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "ezdxf backend should be host-independent but was not tested on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "ezdxf backend should be host-independent but was not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "Windows AutoCAD File IPC backend requires AutoCAD LT 2024+ and was not tested in the Linux container",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation passed with `AUTOCAD_MCP_BACKEND=ezdxf`: repo tests passed, MCP listed 8 tools, created a line, and saved a DXF",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python wheels and matplotlib/ezdxf stack must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "ezdxf backend should be host-independent but was not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "ezdxf backend should be host-independent but was not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": ["workspace_write_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -997,20 +1388,55 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "high",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["Windows", "Windows COM", "pywin32", "AutoCAD 2018+", "ZWCAD 2020+", "GstarCAD 2020+", "BricsCAD 21+"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "README requires Windows, Python 3.10+, pywin32, and one supported CAD application with COM support"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation cloned source and confirmed Linux cannot install pywin32 or start the COM adapter"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Windows COM and pywin32 are not available on Linux ARM64"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "Windows COM and pywin32 are not available on macOS"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "Windows COM and pywin32 are not available on macOS ARM64"},
-        }),
+        "host_software_required": [
+            "Windows",
+            "Windows COM",
+            "pywin32",
+            "AutoCAD 2018+",
+            "ZWCAD 2020+",
+            "GstarCAD 2020+",
+            "BricsCAD 21+",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "README requires Windows, Python 3.10+, pywin32, and one supported CAD application with COM support",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation cloned source and confirmed Linux cannot install pywin32 or start the COM adapter",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and pywin32 are not available on Linux ARM64",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and pywin32 are not available on macOS",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and pywin32 are not available on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
             "Clean Intel Ubuntu validation cloned AnCode666/multiCAD-mcp at commit 360ec77c970ec95a962bd4d0a3238715ee78dd7c; package `multiCAD-mcp` version 0.2.0 documents Windows OS, Python 3.10+, and a COM-capable CAD application. Exact `pip install -e '.[dev]'` failed because `pywin32>=300` has no Linux distribution. Installing the source with `--no-deps` plus non-Windows dependencies succeeded, but upstream unit collection failed with `ImportError: AutoCAD adapter requires Windows OS with COM support`. `python src/server.py --help` and direct startup both exited before MCP initialization with the same diagnostic, so no MCP `initialize` or `tools/list` calls were possible in Linux. This is an expected host dependency boundary for Windows COM plus AutoCAD/ZWCAD/GstarCAD/BricsCAD, not a source availability failure.",
             "ubuntu-linux-x64-container",
-            ["Windows", "Windows COM", "pywin32", "AutoCAD 2018+ or ZWCAD 2020+ or GstarCAD 2020+ or BricsCAD 21+"],
+            [
+                "Windows",
+                "Windows COM",
+                "pywin32",
+                "AutoCAD 2018+ or ZWCAD 2020+ or GstarCAD 2020+ or BricsCAD 21+",
+            ],
         ),
         "headless_ok": "no",
     },
@@ -1019,20 +1445,54 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "medium",
         "deployment_mode": "cloud-saas",
-        "credentials_required": ["APS_CLIENT_ID", "APS_CLIENT_SECRET", "SSA_ID", "SSA_KEY_ID", "SSA_KEY_PATH"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Node stdio server; requires Autodesk APS/ACC credentials"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation installed npm dependencies and confirmed the expected missing-credential diagnostic"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Node dependencies must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Node stdio server; requires Autodesk APS/ACC credentials"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "Node stdio server; requires Autodesk APS/ACC credentials"},
-        }),
+        "credentials_required": [
+            "APS_CLIENT_ID",
+            "APS_CLIENT_SECRET",
+            "SSA_ID",
+            "SSA_KEY_ID",
+            "SSA_KEY_PATH",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Node stdio server; requires Autodesk APS/ACC credentials",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed npm dependencies and confirmed the expected missing-credential diagnostic",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Node dependencies must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Node stdio server; requires Autodesk APS/ACC credentials",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Node stdio server; requires Autodesk APS/ACC credentials",
+                },
+            }
+        ),
         "approval_gates": CLOUD_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
             "Clean Intel Ubuntu validation cloned aps-mcp-server-nodejs at 722591abb08c42000e9aedcabc746bbd7f413739, ran `npm install` successfully, found no npm test script, and confirmed no-credential startup exits with the expected diagnostic: missing APS_CLIENT_ID, APS_CLIENT_SECRET, SSA_ID, SSA_KEY_ID, and SSA_KEY_PATH. With dummy APS variables and a generated dummy RSA key, MCP initialized as `aps-mcp-server-nodejs` 0.0.1, listed 4 tools, and `getProjectsTool` reached APS auth and returned AUTH-001 for the dummy client.",
             "ubuntu-linux-x64-container",
-            ["APS_CLIENT_ID", "APS_CLIENT_SECRET", "SSA_ID", "SSA_KEY_ID", "SSA_KEY_PATH"],
+            [
+                "APS_CLIENT_ID",
+                "APS_CLIENT_SECRET",
+                "SSA_ID",
+                "SSA_KEY_ID",
+                "SSA_KEY_PATH",
+            ],
         ),
     },
     "autodesk-aps-petrbroz": {
@@ -1040,20 +1500,56 @@ CATALOG_METADATA = {
         "installability_tier": "blocked",
         "risk_level": "medium",
         "deployment_mode": "cloud-saas",
-        "credentials_required": ["APS_CLIENT_ID", "APS_CLIENT_SECRET", "APS_SA_ID", "APS_SA_EMAIL", "APS_SA_KEY_ID", "APS_SA_PRIVATE_KEY"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "superseded by official Autodesk repo"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "build succeeded and missing-credential diagnostic was clear, but README says project moved to official repo"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; use official Autodesk repo instead"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "superseded by official Autodesk repo"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "superseded by official Autodesk repo"},
-        }),
+        "credentials_required": [
+            "APS_CLIENT_ID",
+            "APS_CLIENT_SECRET",
+            "APS_SA_ID",
+            "APS_SA_EMAIL",
+            "APS_SA_KEY_ID",
+            "APS_SA_PRIVATE_KEY",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "superseded by official Autodesk repo",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "build succeeded and missing-credential diagnostic was clear, but README says project moved to official repo",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; use official Autodesk repo instead",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "superseded by official Autodesk repo",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "superseded by official Autodesk repo",
+                },
+            }
+        ),
         "approval_gates": CLOUD_GATES,
         "validation_result": validation_summary(
             "blocked",
             "Clean Intel Ubuntu validation cloned commit 557556235e806a5d74265fcf556b9dae4206abdd, installed yarn 1.22.22, ran `yarn install --frozen-lockfile` and `yarn run build` successfully, and confirmed there is no `yarn test` script. Without credentials, `node build/server.js` exits with the expected missing-variable diagnostic for APS_CLIENT_ID, APS_CLIENT_SECRET, APS_SA_ID, APS_SA_EMAIL, APS_SA_KEY_ID, and APS_SA_PRIVATE_KEY. With dummy APS variables and a generated base64 RSA private key, MCP initialized as `autodesk-platform-services` 0.0.1, listed 8 tools, and `get-accounts` reached Autodesk auth and returned AUTH-001 for the dummy client. The repository README states the project moved to the official Autodesk APS MCP server, so use `autodesk-aps-official` instead.",
             "ubuntu-linux-x64-container",
-            ["APS_CLIENT_ID", "APS_CLIENT_SECRET", "APS_SA_ID", "APS_SA_EMAIL", "APS_SA_KEY_ID", "APS_SA_PRIVATE_KEY"],
+            [
+                "APS_CLIENT_ID",
+                "APS_CLIENT_SECRET",
+                "APS_SA_ID",
+                "APS_SA_EMAIL",
+                "APS_SA_KEY_ID",
+                "APS_SA_PRIVATE_KEY",
+            ],
         ),
         "install_blocked_reason": "Repository README says this project moved to https://github.com/autodesk-platform-services/aps-mcp-server-nodejs.",
     },
@@ -1063,13 +1559,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Fusion 360 desktop", "Fusion360MCP add-in"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Fusion 360 desktop and the Fusion360MCP add-in"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation passed package tests/mock MCP, but socket mode correctly reported Fusion add-in unavailable"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Fusion 360 desktop is not available for Linux ARM64"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires Fusion 360 desktop and the Fusion360MCP add-in"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires Fusion 360 desktop and the Fusion360MCP add-in"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Fusion 360 desktop and the Fusion360MCP add-in",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation passed package tests/mock MCP, but socket mode correctly reported Fusion add-in unavailable",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Fusion 360 desktop is not available for Linux ARM64",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Fusion 360 desktop and the Fusion360MCP add-in",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Fusion 360 desktop and the Fusion360MCP add-in",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1084,14 +1602,40 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "cloud-saas",
         "host_software_required": ["Fusion 360", "APS Design Automation activity"],
-        "credentials_required": ["APS_CLIENT_ID", "APS_CLIENT_SECRET", "FUSION_ACTIVITY_ID"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation installed requirements and initialized MCP with dummy APS env, but generate_cube fails before APS auth due httpx BasicAuth.auth_header bug"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; blocked by MCP auth helper bug first"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation"},
-        }),
+        "credentials_required": [
+            "APS_CLIENT_ID",
+            "APS_CLIENT_SECRET",
+            "FUSION_ACTIVITY_ID",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed requirements and initialized MCP with dummy APS env, but generate_cube fails before APS auth due httpx BasicAuth.auth_header bug",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; blocked by MCP auth helper bug first",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Fusion 360 and APS credentials; blocked by MCP auth helper bug before host validation",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES + CLOUD_GATES,
         "validation_result": validation_summary(
             "failed",
@@ -1109,13 +1653,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Revit", "revit-mcp-plugin", "Windows"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Revit desktop plus the revit-mcp-plugin socket service"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation built the Node MCP server, listed 25 tools, and got the expected Revit plugin connection failure"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Revit desktop is not available for Linux ARM64"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "Revit desktop is Windows-only"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "Revit desktop is Windows-only"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Revit desktop plus the revit-mcp-plugin socket service",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation built the Node MCP server, listed 25 tools, and got the expected Revit plugin connection failure",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Revit desktop is not available for Linux ARM64",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Revit desktop is Windows-only",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Revit desktop is Windows-only",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1129,14 +1695,42 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "high",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["Windows", "pywin32", "AutoCAD", "GstarCAD", "ZWCAD"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "README requires Windows plus AutoCAD, GstarCAD, or ZWCAD through COM"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation cloned repo, but `pip install -r requirements.txt` cannot satisfy Windows-only `pywin32` and startup fails importing `win32com`"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Windows COM dependency is not available on Linux ARM64"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "Windows COM dependency is not available on macOS"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "Windows COM dependency is not available on macOS"},
-        }),
+        "host_software_required": [
+            "Windows",
+            "pywin32",
+            "AutoCAD",
+            "GstarCAD",
+            "ZWCAD",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "README requires Windows plus AutoCAD, GstarCAD, or ZWCAD through COM",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation cloned repo, but `pip install -r requirements.txt` cannot satisfy Windows-only `pywin32` and startup fails importing `win32com`",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM dependency is not available on Linux ARM64",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM dependency is not available on macOS",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM dependency is not available on macOS",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1152,13 +1746,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "unknown",
         "host_software_required": ["CalculiX", "FreeCAD FEM or standalone wrapper TBD"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "unknown", "tested": False, "notes": "no verified standalone MCP source; may be a FreeCAD FEM capability"},
-            "linux_x64": {"status": "unknown", "tested": True, "notes": "clean Intel Ubuntu validation could not clone the configured repo and `calculix-mcp` was not found in the package registry"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "blocked until a verified standalone MCP source exists"},
-            "macos_x64": {"status": "unknown", "tested": False, "notes": "blocked until a verified standalone MCP source exists"},
-            "macos_arm64": {"status": "unknown", "tested": False, "notes": "blocked until a verified standalone MCP source exists"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "no verified standalone MCP source; may be a FreeCAD FEM capability",
+                },
+                "linux_x64": {
+                    "status": "unknown",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation could not clone the configured repo and `calculix-mcp` was not found in the package registry",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "blocked until a verified standalone MCP source exists",
+                },
+                "macos_x64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "blocked until a verified standalone MCP source exists",
+                },
+                "macos_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "blocked until a verified standalone MCP source exists",
+                },
+            }
+        ),
         "validation_result": validation_summary(
             "blocked",
             "Clean Intel Ubuntu validation found no installable standalone CalculiX MCP: `git clone https://github.com/calculix/calculix-mcp` failed with a credential prompt and `uv tool run calculix-mcp --help` reported the package was not found. The research handoff models this as a FreeCAD FEM capability alias or wrapper candidate until a real MCP source is verified.",
@@ -1171,14 +1787,41 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "high",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["Windows", "AutoCAD 2018+", "pywin32", "COM interface"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "README requires Windows and AutoCAD 2018+ with COM support"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation cloned repo, but dependency installation cannot satisfy Windows-only `pywin32`"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Windows COM dependency is not available on Linux ARM64"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "Windows COM dependency is not available on macOS"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "Windows COM dependency is not available on macOS"},
-        }),
+        "host_software_required": [
+            "Windows",
+            "AutoCAD 2018+",
+            "pywin32",
+            "COM interface",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "README requires Windows and AutoCAD 2018+ with COM support",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation cloned repo, but dependency installation cannot satisfy Windows-only `pywin32`",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM dependency is not available on Linux ARM64",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM dependency is not available on macOS",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM dependency is not available on macOS",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1194,13 +1837,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["FreeCAD"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD and Node.js; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation built the TypeScript MCP server, installed FreeCAD 1.1.1 AppImage, created a box, and listed FreeCAD objects"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; FreeCAD backend availability must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD and Node.js; not tested on macOS"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD and Node.js; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD and Node.js; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation built the TypeScript MCP server, installed FreeCAD 1.1.1 AppImage, created a box, and listed FreeCAD objects",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; FreeCAD backend availability must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD and Node.js; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD and Node.js; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "passed",
@@ -1215,13 +1880,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["FreeCAD", "Robust MCP Bridge", "Python", "uv"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop plus the Robust MCP Bridge; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, started the Robust MCP Bridge with freecadcmd, and created/read back a Part::Box through XML-RPC mode"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; FreeCAD backend, AppImage, and Python package support must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop plus the Robust MCP Bridge; use XML-RPC/socket mode rather than embedded mode"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop plus the Robust MCP Bridge; use XML-RPC/socket mode rather than embedded mode"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop plus the Robust MCP Bridge; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, started the Robust MCP Bridge with freecadcmd, and created/read back a Part::Box through XML-RPC mode",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; FreeCAD backend, AppImage, and Python package support must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop plus the Robust MCP Bridge; use XML-RPC/socket mode rather than embedded mode",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop plus the Robust MCP Bridge; use XML-RPC/socket mode rather than embedded mode",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "passed",
@@ -1236,13 +1923,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["FreeCAD", "Python", "uv"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and the FreeCADMCP addon; MCP created and read back a Part::Box"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; FreeCAD backend and Python package support must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on macOS"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and the FreeCADMCP addon; MCP created and read back a Part::Box",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; FreeCAD backend and Python package support must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires FreeCAD desktop plus the FreeCADMCP addon; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "passed",
@@ -1257,13 +1966,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "cloud-saas",
         "credentials_required": ["ONSHAPE_API_KEY", "ONSHAPE_API_SECRET"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Python/uv stdio MCP expected; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed from source, passed upstream tests, initialized MCP, listed tools, and returned clear Onshape 401 diagnostics with dummy credentials"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python dependencies and cloud API access must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Python/uv stdio MCP expected; not tested on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "Python/uv stdio MCP expected; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/uv stdio MCP expected; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed from source, passed upstream tests, initialized MCP, listed tools, and returned clear Onshape 401 diagnostics with dummy credentials",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python dependencies and cloud API access must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/uv stdio MCP expected; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python/uv stdio MCP expected; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": CLOUD_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1278,13 +2009,35 @@ CATALOG_METADATA = {
         "installability_tier": "might_work",
         "risk_level": "read-only",
         "deployment_mode": "local-cloud",
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "npm package is cross-platform; Windows still needs a configured Siemens LLM token or keychain setup"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed the npm package in a project, started stdio MCP, listed tools, and reached the Siemens embeddings credential boundary"},
-            "linux_arm64": {"status": "likely", "tested": False, "notes": "package declares Linux ARM64 LanceDB optional dependency; not tested"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "package declares macOS x64 LanceDB optional dependency; not tested"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "package declares macOS ARM64 LanceDB optional dependency; not tested"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "npm package is cross-platform; Windows still needs a configured Siemens LLM token or keychain setup",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed the npm package in a project, started stdio MCP, listed tools, and reached the Siemens embeddings credential boundary",
+                },
+                "linux_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "package declares Linux ARM64 LanceDB optional dependency; not tested",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "package declares macOS x64 LanceDB optional dependency; not tested",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "package declares macOS ARM64 LanceDB optional dependency; not tested",
+                },
+            }
+        ),
         "credentials_required": ["OPENAI_API_KEY"],
         "approval_gates": CLOUD_GATES,
         "validation_result": validation_summary(
@@ -1300,20 +2053,53 @@ CATALOG_METADATA = {
         "installability_tier": "blocked",
         "risk_level": "safety-critical",
         "deployment_mode": "local-bridge",
-        "host_software_required": ["Windows", "WinCC Unified PC Runtime", "Siemens support package 110002407"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "official artifact appears to require Siemens Support login plus WinCC Unified PC Runtime"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation could not access the Siemens support artifact, found no npm/PyPI package, and the configured .exe command is unavailable"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "official entry appears Windows/WinCC-host dependent"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "official entry appears Windows/WinCC-host dependent"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "official entry appears Windows/WinCC-host dependent"},
-        }),
-        "approval_gates": CLOUD_GATES + MACHINE_CONTROL_GATES + ["safety_review_approval"],
+        "host_software_required": [
+            "Windows",
+            "WinCC Unified PC Runtime",
+            "Siemens support package 110002407",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "official artifact appears to require Siemens Support login plus WinCC Unified PC Runtime",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation could not access the Siemens support artifact, found no npm/PyPI package, and the configured .exe command is unavailable",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "official entry appears Windows/WinCC-host dependent",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "official entry appears Windows/WinCC-host dependent",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "official entry appears Windows/WinCC-host dependent",
+                },
+            }
+        ),
+        "approval_gates": CLOUD_GATES
+        + MACHINE_CONTROL_GATES
+        + ["safety_review_approval"],
         "validation_result": validation_summary(
             "blocked",
             "Clean Intel Ubuntu validation checked Siemens Support Entry ID 110002407. Public search results confirm `Integration of MCP Server with WinCC Unified PC Runtime` and show a login-required `110002407_MCPServerPCRuntime_READMEOSS.zip`; direct curl requests to the support page and PDF attachment returned HTTP 403 from Akamai. `npm view wincc-unified-mcp`, `npm view @siemens/wincc-unified-mcp`, `pip index versions wincc-unified-mcp`, and `pip index versions wincc_unified_mcp` found no package. The configured `wincc-unified-mcp.exe` command was not present in Linux, and guessed Siemens GitHub repository URLs required authentication or did not resolve publicly. No MCP stdio calls could be made until the official support artifact is obtained and installed on a Windows host with WinCC Unified PC Runtime.",
             "ubuntu-linux-x64-container",
-            ["Windows", "WinCC Unified PC Runtime", "Siemens Support login", "110002407_MCPServerPCRuntime_READMEOSS.zip"],
+            [
+                "Windows",
+                "WinCC Unified PC Runtime",
+                "Siemens Support login",
+                "110002407_MCPServerPCRuntime_READMEOSS.zip",
+            ],
         ),
         "follow_up_url": "docs/mcp-catalog/followups/wincc-unified-mcp.md",
         "install_blocked_reason": "Official Siemens support artifact for Entry ID 110002407 is login-gated and no public npm/PyPI/GitHub package or Linux command could be verified.",
@@ -1325,20 +2111,51 @@ CATALOG_METADATA = {
         "risk_level": "safety-critical",
         "deployment_mode": "cloud-saas",
         "host_software_required": ["ThingWorx 10.1+ MCP-enabled server"],
-        "credentials_required": ["THINGWORX_BASE_URL", "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "client-side HTTP/SSE configuration should work once a ThingWorx 10.1+ MCP endpoint and credentials are available"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation confirmed official PTC MCP docs are reachable, but no live ThingWorx endpoint or credentials were available for MCP calls"},
-            "linux_arm64": {"status": "host-dependent", "tested": False, "notes": "remote HTTP/SSE endpoint should be client-architecture independent; not tested"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "remote HTTP/SSE endpoint should be client-architecture independent; not tested"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "remote HTTP/SSE endpoint should be client-architecture independent; not tested"},
-        }),
-        "approval_gates": CLOUD_GATES + MACHINE_CONTROL_GATES + ["safety_review_approval"],
+        "credentials_required": [
+            "THINGWORX_BASE_URL",
+            "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "client-side HTTP/SSE configuration should work once a ThingWorx 10.1+ MCP endpoint and credentials are available",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation confirmed official PTC MCP docs are reachable, but no live ThingWorx endpoint or credentials were available for MCP calls",
+                },
+                "linux_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "remote HTTP/SSE endpoint should be client-architecture independent; not tested",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "remote HTTP/SSE endpoint should be client-architecture independent; not tested",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "remote HTTP/SSE endpoint should be client-architecture independent; not tested",
+                },
+            }
+        ),
+        "approval_gates": CLOUD_GATES
+        + MACHINE_CONTROL_GATES
+        + ["safety_review_approval"],
         "validation_result": validation_summary(
             "dependency_missing",
             "Clean Intel Ubuntu validation confirmed official PTC ThingWorx 10.1 MCP documentation pages returned HTTP 200. PTC docs describe setting an MCP client to HTTP/SSE endpoint `<ThingWorx Server URL>/mcp`, managing tools/resources/prompts with the `MCPServices` resource, and OAuth-protected metadata; therefore the catalog command was corrected from the nonexistent local `ptc-thingworx-mcp` binary to `${THINGWORX_BASE_URL}/mcp`. No standalone npm/PyPI package was found: `npm view ptc-thingworx-mcp`, `npm view thingworx-mcp`, `npm view @ptc/thingworx-mcp`, `pip index versions ptc-thingworx-mcp`, and `pip index versions thingworx-mcp` all failed. The configured `ptc-thingworx-mcp` command was not present in Linux. A separate community repository `https://github.com/doubleSlashde/thingworx-mcp-server` exists at commit 7e22ef9be1af495acf1a46101ebb17380eed86ae, but it is not the official PTC product-hosted MCP entry. No MCP calls could be made without a live ThingWorx 10.1+ MCP endpoint and credentials.",
             "ubuntu-linux-x64-container",
-            ["ThingWorx 10.1+ MCP-enabled server", "THINGWORX_BASE_URL", "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN"],
+            [
+                "ThingWorx 10.1+ MCP-enabled server",
+                "THINGWORX_BASE_URL",
+                "THINGWORX_APP_KEY or THINGWORX_OAUTH_TOKEN",
+            ],
         ),
         "headless_ok": "yes",
     },
@@ -1348,13 +2165,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "local-bridge",
         "host_software_required": ["KiCad", "Python", "uv"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation initialized MCP and project discovery worked, but 11 of 16 tools expose required `ctx` arguments and cannot be called by a normal MCP client"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; blocked by MCP schema issue before ARM64/backend validation"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation initialized MCP and project discovery worked, but 11 of 16 tools expose required `ctx` arguments and cannot be called by a normal MCP client",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; blocked by MCP schema issue before ARM64/backend validation",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires KiCad 9.0+; MCP schema issue must be fixed before full validation",
+                },
+            }
+        ),
         "validation_result": validation_summary(
             "failed",
             "Clean Intel Ubuntu validation found the GitHub package command starts MCP and read-only project discovery works, but the README/catalog `python main.py` launch path fails with `ValueError: a coroutine was expected, got None`. MCP initialized as `KiCad` 1.11.0, listed 16 tools, `list_projects` and `get_project_structure` worked against a sample `WrightBoard` project, but 11 of 16 tools expose a required `ctx` input; `run_drc_check` failed before backend execution with `Input validation error: 'ctx' is a required property`. Upstream functional tests passed only with coverage disabled: 37 passed, 2 skipped; the default test command failed its 80% coverage gate at 10.04%. Ubuntu 24.04 default apt only offers KiCad 7.0.11 while upstream requires KiCad 9.0+.",
@@ -1370,13 +2209,35 @@ CATALOG_METADATA = {
         "risk_level": "low",
         "deployment_mode": "local-only",
         "host_software_required": [],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "unknown", "tested": False, "notes": "not tested; Python rosbags stack may work, but path handling must be checked"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation passed with source run and `rosbags==0.10.10`; listed bags, read bag info, and retrieved a message from a generated ROS 2 bag"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python wheels for rosbags/numpy/plotly stack must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "not tested; Python rosbags stack expected but dependency pin must be applied"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "not tested; Python rosbags stack expected but dependency pin must be applied"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python rosbags stack may work, but path handling must be checked",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation passed with source run and `rosbags==0.10.10`; listed bags, read bag info, and retrieved a message from a generated ROS 2 bag",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python wheels for rosbags/numpy/plotly stack must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "not tested; Python rosbags stack expected but dependency pin must be applied",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "not tested; Python rosbags stack expected but dependency pin must be applied",
+                },
+            }
+        ),
         "approval_gates": ["workspace_read_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -1395,13 +2256,35 @@ CATALOG_METADATA = {
             "scikit-fem for validated smoke tests",
             "optional FEniCSx/NGSolve/deal.II/Kratos/DUNE-fem/4C/FEBio backends",
         ],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "unknown", "tested": False, "notes": "not tested; Python package should install, but solver backend support must be checked per backend"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation passed with source install plus scikit-fem backend; other solver backends reported clear not-installed diagnostics"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python wheels and solver backend availability must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "not tested; Python package expected, solver backend support must be checked per backend"},
-            "macos_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python wheels and solver backend availability must be checked"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python package should install, but solver backend support must be checked per backend",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation passed with source install plus scikit-fem backend; other solver backends reported clear not-installed diagnostics",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python wheels and solver backend availability must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "not tested; Python package expected, solver backend support must be checked per backend",
+                },
+                "macos_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python wheels and solver backend availability must be checked",
+                },
+            }
+        ),
         "approval_gates": ["workspace_write_approval", "execute_code_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -1416,13 +2299,35 @@ CATALOG_METADATA = {
         "risk_level": "read-only",
         "deployment_mode": "local-only",
         "host_software_required": ["Bun", "local SolidWorks API documentation corpus"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Bun/TypeScript docs server expected; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation passed with Bun 1.3.14 and local documentation corpus; no SolidWorks desktop required"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Bun and corpus access must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Bun/TypeScript docs server expected; not tested on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "Bun/TypeScript docs server expected; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Bun/TypeScript docs server expected; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation passed with Bun 1.3.14 and local documentation corpus; no SolidWorks desktop required",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Bun and corpus access must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Bun/TypeScript docs server expected; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Bun/TypeScript docs server expected; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": ["workspace_read_approval"],
         "validation_result": validation_summary(
             "passed",
@@ -1437,13 +2342,35 @@ CATALOG_METADATA = {
         "risk_level": "medium",
         "deployment_mode": "cloud-saas",
         "credentials_required": ["ONSHAPE_ACCESS_KEY", "ONSHAPE_SECRET_KEY"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "likely", "tested": False, "notes": "Python stdio MCP expected; not tested on Windows"},
-            "linux_x64": {"status": "yes", "tested": True, "notes": "clean Intel Ubuntu validation installed package, initialized MCP, listed tools, and returned clean missing-credential diagnostics"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; Python wheels and cloud API access must be checked"},
-            "macos_x64": {"status": "likely", "tested": False, "notes": "Python stdio MCP expected; not tested on macOS"},
-            "macos_arm64": {"status": "likely", "tested": False, "notes": "Python stdio MCP expected; not tested on macOS ARM64"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python stdio MCP expected; not tested on Windows",
+                },
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed package, initialized MCP, listed tools, and returned clean missing-credential diagnostics",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; Python wheels and cloud API access must be checked",
+                },
+                "macos_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python stdio MCP expected; not tested on macOS",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Python stdio MCP expected; not tested on macOS ARM64",
+                },
+            }
+        ),
         "approval_gates": CLOUD_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1458,10 +2385,22 @@ CATALOG_METADATA = {
         "installability_tier": "blocked",
         "risk_level": "read-only",
         "deployment_mode": "docs-only",
-        "platform_support": platform_support({
-            key: {"status": "likely", "tested": False, "notes": "docs/remote MCP expected once exact config URL is pinned"}
-            for key in ("windows_11_x64", "linux_x64", "linux_arm64", "macos_x64", "macos_arm64")
-        }),
+        "platform_support": platform_support(
+            {
+                key: {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "docs/remote MCP expected once exact config URL is pinned",
+                }
+                for key in (
+                    "windows_11_x64",
+                    "linux_x64",
+                    "linux_arm64",
+                    "macos_x64",
+                    "macos_arm64",
+                )
+            }
+        ),
         "install_blocked_reason": "Exact client configuration URL still needs to be captured from Siemens docs.",
     },
     "autodesk-product-help-mcp": {
@@ -1469,10 +2408,22 @@ CATALOG_METADATA = {
         "installability_tier": "blocked",
         "risk_level": "read-only",
         "deployment_mode": "docs-only",
-        "platform_support": platform_support({
-            key: {"status": "likely", "tested": False, "notes": "docs-only entry expected cross-platform once endpoint is verified"}
-            for key in ("windows_11_x64", "linux_x64", "linux_arm64", "macos_x64", "macos_arm64")
-        }),
+        "platform_support": platform_support(
+            {
+                key: {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "docs-only entry expected cross-platform once endpoint is verified",
+                }
+                for key in (
+                    "windows_11_x64",
+                    "linux_x64",
+                    "linux_arm64",
+                    "macos_x64",
+                    "macos_arm64",
+                )
+            }
+        ),
         "install_blocked_reason": "Official Autodesk MCP endpoint/client config is not verified.",
     },
     "webmcp-standard": {
@@ -1495,20 +2446,50 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Creo", "CREOSON"],
-        "credentials_required": ["VOLCENGINE_AUTHORIZATION", "VOLCENGINE_SERVICE_RESOURCE_ID"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Creo desktop plus CREOSON for open_file_in_cad; local CadQuery generation should be retested on Windows"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation installed source package plus libgl1, generated a STEP file with CadQuery, and reached clear missing CREOSON/Volcengine boundaries"},
-            "linux_arm64": {"status": "unknown", "tested": False, "notes": "not tested; CadQuery/OCP wheels and host dependencies must be checked"},
-            "macos_x64": {"status": "host-dependent", "tested": False, "notes": "requires Creo desktop plus CREOSON for full operation"},
-            "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "requires Creo desktop plus CREOSON and compatible CadQuery/OCP wheels"},
-        }),
+        "credentials_required": [
+            "VOLCENGINE_AUTHORIZATION",
+            "VOLCENGINE_SERVICE_RESOURCE_ID",
+        ],
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Creo desktop plus CREOSON for open_file_in_cad; local CadQuery generation should be retested on Windows",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed source package plus libgl1, generated a STEP file with CadQuery, and reached clear missing CREOSON/Volcengine boundaries",
+                },
+                "linux_arm64": {
+                    "status": "unknown",
+                    "tested": False,
+                    "notes": "not tested; CadQuery/OCP wheels and host dependencies must be checked",
+                },
+                "macos_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Creo desktop plus CREOSON for full operation",
+                },
+                "macos_arm64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Creo desktop plus CREOSON and compatible CadQuery/OCP wheels",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES + CLOUD_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
             "Clean Intel Ubuntu validation cloned yangkunyi/creo-mcp at 1a2f164c88c896c0b98a8edec36a7dc4e2eb06ff, found no upstream tests, installed the source package with Python 3.12, and added `libgl1` after the first start failed with `ImportError: libGL.so.1`. MCP then initialized as `python-code-executor` 1.28.1, listed 3 tools, `execute_python_code` used CadQuery to export `/tmp/wright_creo_box.step` at 15418 bytes, `open_file_in_cad` returned the expected CREOSON connection-refused diagnostic for localhost:9056, and `retrieve_from_knowledge_base` with dummy credentials returned HTTP 400 from the Volcengine endpoint. Full validation requires Creo, CREOSON, and real Volcengine credentials.",
             "ubuntu-linux-x64-container",
-            ["Creo", "CREOSON", "VOLCENGINE_AUTHORIZATION", "VOLCENGINE_SERVICE_RESOURCE_ID"],
+            [
+                "Creo",
+                "CREOSON",
+                "VOLCENGINE_AUTHORIZATION",
+                "VOLCENGINE_SERVICE_RESOURCE_ID",
+            ],
         ),
         "headless_ok": "partial",
     },
@@ -1518,13 +2499,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Creo", "JLINK", "pfcasync.jar", "Windows"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "release is a Windows Creo/JLINK JSON bridge; requires Creo, JLINK, setvars.bat, and Windows DLL setup"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation downloaded the release and confirmed it is not an MCP server; startup fails without Creo/JLINK classes"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "release is Windows/Creo/JLINK host dependent and not an MCP server"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "release is Windows/Creo/JLINK host dependent and not an MCP server"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "release is Windows/Creo/JLINK host dependent and not an MCP server"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "release is a Windows Creo/JLINK JSON bridge; requires Creo, JLINK, setvars.bat, and Windows DLL setup",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation downloaded the release and confirmed it is not an MCP server; startup fails without Creo/JLINK classes",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "release is Windows/Creo/JLINK host dependent and not an MCP server",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "release is Windows/Creo/JLINK host dependent and not an MCP server",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "release is Windows/Creo/JLINK host dependent and not an MCP server",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "blocked",
@@ -1542,13 +2545,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Windows", "SolidWorks", "Windows COM"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Windows 10/11, python.org Python, SolidWorks, and Windows COM after the Python dependency mismatch is fixed"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation installed the package but startup fails before MCP initialization because pydantic-ai 2.0.0 no longer provides pydantic_ai.toolsets.fastmcp"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Windows COM and SolidWorks are required; Linux ARM64 not applicable for live CAD automation"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "Windows COM and SolidWorks are required"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "Windows COM and SolidWorks are required"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Windows 10/11, python.org Python, SolidWorks, and Windows COM after the Python dependency mismatch is fixed",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed the package but startup fails before MCP initialization because pydantic-ai 2.0.0 no longer provides pydantic_ai.toolsets.fastmcp",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and SolidWorks are required; Linux ARM64 not applicable for live CAD automation",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and SolidWorks are required",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and SolidWorks are required",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "failed",
@@ -1566,13 +2591,35 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Windows", "SolidWorks", "Windows COM", "winax"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Windows 10/11, Node 20+, SolidWorks, and winax/Windows COM for live CAD operations"},
-            "linux_x64": {"status": "host-dependent", "tested": True, "notes": "clean Intel Ubuntu validation installed, built, passed mock tests, initialized MCP, and reached clear winax/Windows COM diagnostics on tool calls"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "winax and SolidWorks COM are Windows-only"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "winax and SolidWorks COM are Windows-only"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "winax and SolidWorks COM are Windows-only"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Windows 10/11, Node 20+, SolidWorks, and winax/Windows COM for live CAD operations",
+                },
+                "linux_x64": {
+                    "status": "host-dependent",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation installed, built, passed mock tests, initialized MCP, and reached clear winax/Windows COM diagnostics on tool calls",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "winax and SolidWorks COM are Windows-only",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "winax and SolidWorks COM are Windows-only",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "winax and SolidWorks COM are Windows-only",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "dependency_missing",
@@ -1589,19 +2636,47 @@ CATALOG_METADATA = {
         "risk_level": "high",
         "deployment_mode": "local-bridge",
         "host_software_required": ["Windows", "SolidWorks", "Windows COM", "pywin32"],
-        "platform_support": platform_support({
-            "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Windows, SolidWorks 2023-2025, and pywin32 after requirements are fixed"},
-            "linux_x64": {"status": "no", "tested": True, "notes": "clean Intel Ubuntu validation failed exact requirements install because asyncio-compat and pywin32 have no Linux PyPI distributions; minimal start then failed importing win32com"},
-            "linux_arm64": {"status": "no", "tested": False, "notes": "Windows COM and SolidWorks are required"},
-            "macos_x64": {"status": "no", "tested": False, "notes": "Windows COM and SolidWorks are required"},
-            "macos_arm64": {"status": "no", "tested": False, "notes": "Windows COM and SolidWorks are required"},
-        }),
+        "platform_support": platform_support(
+            {
+                "windows_11_x64": {
+                    "status": "host-dependent",
+                    "tested": False,
+                    "notes": "requires Windows, SolidWorks 2023-2025, and pywin32 after requirements are fixed",
+                },
+                "linux_x64": {
+                    "status": "no",
+                    "tested": True,
+                    "notes": "clean Intel Ubuntu validation failed exact requirements install because asyncio-compat and pywin32 have no Linux PyPI distributions; minimal start then failed importing win32com",
+                },
+                "linux_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and SolidWorks are required",
+                },
+                "macos_x64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and SolidWorks are required",
+                },
+                "macos_arm64": {
+                    "status": "no",
+                    "tested": False,
+                    "notes": "Windows COM and SolidWorks are required",
+                },
+            }
+        ),
         "approval_gates": HIGH_RISK_GATES,
         "validation_result": validation_summary(
             "failed",
             "Clean Intel Ubuntu validation cloned alisamsam/solidworks-mcp at commit ee8f42a1a919af5e0fa8d1dcd24270c9983ce027 and followed the documented install path `pip install -r requirements.txt`. The exact install failed because `asyncio-compat>=0.1.0` has no matching PyPI distribution. `pip index versions asyncio-compat` and `pip index versions pywin32` both returned no matching distribution on Linux. After installing only the available runtime dependencies (`mcp` and `python-dotenv`) to continue as far as possible, `python solidworks_mcp_server.py` failed during import with `ModuleNotFoundError: No module named 'win32com'` from `solidworks_mcp/automation/base.py`. No upstream tests were present, and no MCP `initialize`, `notifications/initialized`, or `tools/list` calls could be made because the server cannot start from the declared requirements. Windows/SolidWorks validation should wait until the invalid requirement is removed and Windows-only dependencies are marked appropriately.",
             "ubuntu-linux-x64-container",
-            ["published asyncio-compat package or removed requirement", "pywin32", "win32com", "Windows", "SolidWorks"],
+            [
+                "published asyncio-compat package or removed requirement",
+                "pywin32",
+                "win32com",
+                "Windows",
+                "SolidWorks",
+            ],
         ),
         "follow_up_url": "docs/mcp-catalog/followups/solidworks-mcp-alisamsam.md",
         "install_blocked_reason": "The documented requirements file references an unavailable package and unconditionally requires Windows-only COM modules.",
@@ -1617,20 +2692,45 @@ WINDOWS_DESKTOP_HOSTS = {
 
 for index, entry in enumerate(ENGINEERING_CATALOG):
     metadata = CATALOG_METADATA.get(entry["server_id"], {})
-    if entry["server_id"] in WINDOWS_DESKTOP_HOSTS and entry["server_id"] not in CATALOG_METADATA:
+    if (
+        entry["server_id"] in WINDOWS_DESKTOP_HOSTS
+        and entry["server_id"] not in CATALOG_METADATA
+    ):
         metadata = {
             "verification_state": "user_reported_url_needed",
             "installability_tier": "might_work",
             "risk_level": "high",
             "deployment_mode": "local-bridge",
             "host_software_required": WINDOWS_DESKTOP_HOSTS[entry["server_id"]],
-            "platform_support": platform_support({
-                "windows_11_x64": {"status": "host-dependent", "tested": False, "notes": "requires Windows desktop host software"},
-                "linux_x64": {"status": "no", "tested": True, "notes": "not runnable in the first Ubuntu container target"},
-                "linux_arm64": {"status": "no", "tested": False, "notes": "not runnable in the first Ubuntu container target"},
-                "macos_x64": {"status": "host-dependent", "tested": False, "notes": "only if host software supports macOS"},
-                "macos_arm64": {"status": "host-dependent", "tested": False, "notes": "only if host software supports macOS ARM64"},
-            }),
+            "platform_support": platform_support(
+                {
+                    "windows_11_x64": {
+                        "status": "host-dependent",
+                        "tested": False,
+                        "notes": "requires Windows desktop host software",
+                    },
+                    "linux_x64": {
+                        "status": "no",
+                        "tested": True,
+                        "notes": "not runnable in the first Ubuntu container target",
+                    },
+                    "linux_arm64": {
+                        "status": "no",
+                        "tested": False,
+                        "notes": "not runnable in the first Ubuntu container target",
+                    },
+                    "macos_x64": {
+                        "status": "host-dependent",
+                        "tested": False,
+                        "notes": "only if host software supports macOS",
+                    },
+                    "macos_arm64": {
+                        "status": "host-dependent",
+                        "tested": False,
+                        "notes": "only if host software supports macOS ARM64",
+                    },
+                }
+            ),
             "approval_gates": HIGH_RISK_GATES,
         }
     ENGINEERING_CATALOG[index] = _with_meta(entry, **metadata)
@@ -1694,7 +2794,7 @@ def run_migrations():
         );
         """)
 
-        # 3. â”€â”€ One-time cleanup: remove junk / test entries â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        # 3.  One-time cleanup: remove junk / test entries
         cursor = conn.cursor()
         cursor.execute("PRAGMA table_info(mcp_servers)")
         existing_mcp_columns = [col[1] for col in cursor.fetchall()]
@@ -1929,7 +3029,9 @@ def run_migrations():
             conn.execute(
                 "ALTER TABLE engineering_workspaces ADD COLUMN git_large_file_threshold INTEGER DEFAULT 10485760;"
             )
-            print("Added git_large_file_threshold column to engineering_workspaces table.")
+            print(
+                "Added git_large_file_threshold column to engineering_workspaces table."
+            )
 
         # 9. Create agent_contexts table (007-workspace-dashboard-ux)
         conn.execute("""

@@ -5,17 +5,21 @@
 <h1 align="center">Wright</h1>
 
 <p align="center">
-  <strong>An open-source agent orchestrator for physical engineering — actuating deterministic tools for designers, engineers, and product managers.</strong>
+  <strong>Public-alpha, local-first agent orchestration for physical engineering.</strong>
 </p>
 
 <p align="center">
-  <a href="https://github.com/burhop/wright/actions"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://hub.docker.com/r/burhop/wright"><img src="https://img.shields.io/docker/pulls/burhop/wright.svg" alt="Docker Pulls"></a>
-  <a href="https://discord.gg/2JsdMRxq"><img src="https://img.shields.io/badge/Discord-Join%20Chat-blue?logo=discord" alt="Discord"></a>
-  <a href="https://github.com/burhop/wright/discussions"><img src="https://img.shields.io/badge/Discussions-GitHub-orange?logo=github" alt="Discussions"></a>
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-22+-green.svg" alt="Node 22+"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/python-quality.yml"><img src="https://github.com/burhop/wright/actions/workflows/python-quality.yml/badge.svg" alt="Python CI"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml"><img src="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml/badge.svg" alt="Frontend CI"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/docker-build.yml"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg" alt="Docker Build"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml"><img src="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml/badge.svg" alt="Docs"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml"><img src="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml/badge.svg" alt="Security Scan"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/release.yml"><img src="https://github.com/burhop/wright/actions/workflows/release.yml/badge.svg" alt="Release"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-22%2B-green.svg" alt="Node 22+"></a>
+  <a href="https://github.com/burhop/wright/pkgs/container/wright-agent"><img src="https://img.shields.io/badge/image-GHCR-blue" alt="GHCR image"></a>
+  <a href="https://github.com/burhop/wright/discussions"><img src="https://img.shields.io/badge/discussions-GitHub-orange?logo=github" alt="GitHub Discussions"></a>
   <a href="https://github.com/burhop/wright/stargazers"><img src="https://img.shields.io/github/stars/burhop/wright.svg?style=social" alt="GitHub stars"></a>
 </p>
 
@@ -29,237 +33,201 @@ beta feedback. Expect rough edges, incomplete workflows, and changing APIs.
 Wright is bring-your-own-AI. The repository and Docker image do not bundle an
 LLM, API key, local model, hosted model, or paid engineering backend. Configure
 `LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL` for an OpenAI-compatible
-endpoint, a local model server, or your hosted provider.
-
-The current public-alpha paths are:
-
-* **Docker appliance**: Wright API, static web UI, Hermes profile/bootstrap, and
-  general validation tooling in one container.
-* **Local development**: run the FastAPI backend and Vite frontend from the
-  monorepo.
-* **Existing Hermes setup**: install the Wright plugin and point it at this repo.
+endpoint, a local model server, or a hosted provider.
 
 MCP-specific host software such as FreeCAD, OpenSCAD, CalculiX, Blender, vendor
 CAD systems, license managers, or hardware drivers is installed only for the
-selected MCP validation/use case. It is not part of the base Docker contract.
+selected MCP validation or usage case. It is not part of the base Docker image.
+Engineering MCP server validation follows
+[the clean-container process](docs/mcp-catalog/mcp-server-testing-process.md).
 
 ## Why Wright?
 
-### The Vision
-The rise of generative AI has brought unprecedented, compound productivity gains to software developers. Wright is built to bring this same AI-driven engineering velocity to traditional physical engineering roles. 
+Engineering teams need AI-assisted workflows without handing every design to a
+single hosted black box. Wright coordinates agents and deterministic tools while
+leaving LLM/provider choice, credentials, licenses, and host software under the
+operator's control.
 
-Our vision is to unlock new, order-of-magnitude levels of productivity for **product designers**, **engineers** (mechanical, structural, thermal, electrical), and **engineering product managers**. By orchestrating specialized, agentic workflows, Wright bridges the gap between high-level engineering design intent and low-level computational execution, enabling the engineer to model, simulate, and manufacture faster than ever before.
+The first public alpha is aimed at developers, MCP porters, demo users, and
+selected beta feedback. Local and hybrid deployments are supported, but real
+engineering toolchains still require explicit configuration.
 
-### Orchestrating Deterministic Tools
-Physical engineering demands absolute mathematical rigor. While LLMs excel at planning, reasoning, and translating natural language into design parameters, they are probabilistic and cannot directly compute physical load vectors or compile error-free CAD geometry. 
+## What Works Today
 
-Wright bridges this gap. It positions AI agents not as direct geometry creators, but as orchestrators that **actuate, coordinate, and steer deterministic engineering tools**. The AI manages the high-level workflow loops, parameter optimization, and feedback cycles, while industry-standard deterministic kernels guarantee physical validity and mathematical precision:
-* **Commercial Vendors**: Coordinate enterprise CAD/CAM suites (like SolidWorks, Creo, Fusion 360) and proprietary cloud simulation APIs.
-* **Startups**: Actuate cutting-edge generative design, neural topology optimization, and programmatic geometry platforms (like Zoo/KittyCAD).
-* **Universities & Researchers**: Hook into specialized academic solvers, finite element analyses (FEA), and custom engineering calculators.
-* **Open Source Developers**: Actuate community-driven tools like FreeCAD, OpenSCAD, CalculiX, and PrusaSlicer via the standardized Model Context Protocol (MCP).
+- Agent orchestration surfaces for engineering workflows.
+- MCP tool registry metadata and selected-server validation paths.
+- Deterministic CAD, CAE, CAM, and calculation tool actuation through adapters.
+- Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,
+  and general validation tooling.
+- BYO-AI configuration for local or hosted OpenAI-compatible endpoints.
 
-### Secure and Flexible Execution
-* **Orchestration Power**: Run any agentic framework or LLM model. Swap commercial cloud models, research APIs, and local models seamlessly.
-* **Modular Integrations**: Actuate professional CAD, FEA, and CAM software via extensible, standardized MCP servers.
-* **Local or Hybrid Cloud**: Wright's architecture is fully open. While capable of running completely local and air-gapped on enterprise hardware (like the Dell GB10 / NVIDIA DGX Spark) to safeguard proprietary designs, it is equally ready to scale with cloud-based hybrid tools.
-
-### Built on Open Industry Standards
-Wright is committed to open, vendor-neutral standards that allow the toolbox to grow alongside the AI and engineering ecosystems. We actively support and plan compatibility with key emerging specs:
-* **[Model Context Protocol (MCP)](https://github.com/modelcontextprotocol)**: Developed under the Linux Foundation, MCP serves as our core translation layer, enabling loose coupling so any compliant tool, database, or API can be actuated by any agent runtime.
-* **[MCP Apps](https://github.com/modelcontextprotocol/ext-apps)** (the official standardization of the experimental *MCP-UI* proposal): Allows MCP servers to deliver rich, dynamic web interfaces (such as parameter sliders and data visualizations) that render directly in the agent session.
-* **[WebMCP](https://github.com/webmachinelearning/webmcp)**: A browser-native standard incubated by the W3C Web Machine Learning Community Group that exposes web forms and imperative JavaScript APIs to agents via `navigator.modelContext`, letting Wright actuate browser-based tooling natively.
-
----
-
-## Key Features
-
-* 🤖 **Universal Agent Orchestration** — Act as the central coordinator and control loop, coordinating any LLM engine (commercial cloud, startup APIs, or local runtimes) and agentic framework.
-* 🔌 **Plug-and-Play Tool Registry** — Load, swap, and manage any compliant engineering tool via standard Model Context Protocol (MCP) servers. The core platform is completely decoupled from the tools themselves.
-* 🔧 **Deterministic Tool Actuation** — Actuate and steer rigorous physical engineering engines. Rather than relying on probabilistic models to generate geometry or math, Wright coordinates deterministic external software:
-  * *CAD & Geometry kernels* (e.g., FreeCAD, OpenSCAD, PTC Creo, Autodesk Fusion 360) for parametric solid modeling
-  * *CAE & Simulation solvers* (e.g., CalculiX FEA, OpenFOAM CFD) for structural stress and thermal analysis
-  * *CAM & Manufacturing engines* (e.g., PrusaSlicer, CuraEngine) for automated G-code toolpath slicing
-* 🚀 **Software-Level Workflow Automation** — Bring rapid prototyping, versioned rollbacks (via local Git), and test-driven loops of modern software development to physical design tasks.
-* 🔒 **Flexible & Secure Deployment** — Run local-first (on on-prem hardware to safeguard IP) or scale using hybrid cloud tools.
-* 🎨 **Global Design Tokens & Themes** — Switch color schemes dynamically between premium Space Slate Dark and neomorphic Light themes at runtime via the `UI_THEME` environment configuration.
-* 🐳 **Docker Appliance Setup** — Run the Wright API, static web UI, Hermes profile/bootstrap, and general validation tooling in one container. Selected MCP server dependencies are installed and validated per-server instead of being silently bundled.
-
-
----
+The Docker appliance is not a complete CAD/CAE/CAM workstation and does not
+silently install every possible backend.
 
 ## User Interface
 
-### 1. Agent Chat Interface
-Interact with local LLM agents to iterate on designs, request modifications, or write code.
+### Agent Chat Interface
+
+Interact with local LLM agents to iterate on designs, request modifications, or
+write code.
+
 ![Agent Chat Interface](docs/images/screenshot_agent_chat.png)
 
-### 2. Tool Registry
-View active engineering tools (CAD, simulation, calculators) available to the AI agents.
+### Tool Registry
+
+View engineering tools, MCP status, and validation metadata available to agents.
+
 ![Tool Registry](docs/images/screenshot_tool_registry.png)
 
-### 3. File Vault
-Browse STEP, STL, and G-code artifacts generated by the agent during design turns.
+### File Vault
+
+Browse STEP, STL, G-code, and other artifacts generated during design turns.
+
 ![File Vault](docs/images/screenshot_file_vault.png)
-
----
-
-## Themes & Typography
-
-Wright features a robust, configuration-driven UI layout and custom styling engine:
-
-### 1. Global Color Themes
-The application supports two harmonious, highly crafted color schemes:
-* **Space Slate Dark (Default)**: A premium dark mode designed for high contrast and developer comfort under low light.
-* **Neomorphic Light**: A modern light mode with soft shadows and rich color accents for daytime readability.
-
-Both themes are configured as standard CSS variables in [design-tokens.css](apps/web/src/tokens/design-tokens.css) and are applied dynamically at runtime based on the `UI_THEME` environment configuration.
-
-### 2. Standardized Typography Scale
-To prevent visual layout overflows, card overlaps, and font sizes that are inconsistent or too large, all typography is controlled using a strict type scale:
-* **H1 / Page Titles**: `1.75rem` (`28px`), semi-bold. Used for main context headers.
-* **H2 / Section Headers**: `1.25rem` (`20px`), semi-bold. Used for layout sections.
-* **H3 / Card Titles**: `1.0rem` (`16px`), semi-bold. Used for tool and file cards.
-* **Body / UI Text**: `0.875rem` (`14px`), regular/medium. Used for primary text content.
-* **Muted / Caption Text**: `0.75rem` (`12px`), regular. Used for metadata and subtext.
-
-This scale guarantees that bounding boxes align perfectly and UI panels maintain clean, predictable dimensions across standard display sizes.
-
----
 
 ## Quick Start
 
-### Docker (Recommended)
+### Docker Appliance
 
 Start the local alpha appliance with Docker Compose. This path runs Wright and
 Hermes integration services locally, then connects them to your own LLM endpoint.
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/burhop/wright.git && cd wright
-
-# 2. Configure your local LLM API credentials
+git clone https://github.com/burhop/wright.git
+cd wright
 cp docker/.env.example docker/.env
 # Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL
-
-# 3. Build and launch the minimal appliance on http://localhost:8080
 docker compose -f docker-compose.minimal.yml up -d --build
+```
 
-# Open http://localhost:8080 in your browser
+Then open:
+
+```text
+http://localhost:8080
 ```
 
 The default `docker-compose.yml` also starts Jaeger and maps Wright to
-`http://localhost:8000`. See [Docker quickstart](docs/getting-started/quickstart-docker.md)
-for LAN access, local model server, persistent volume, and cleanup examples.
+`http://localhost:8000`. See the
+[Docker quickstart](docs/getting-started/quickstart-docker.md) and
+[Docker deployment guide](docs/user-guide/docker.md) for LAN access, local model
+server, persistent volume, and cleanup examples.
 
-For advanced manual installation (development outside Docker using `uv`), see [CONTRIBUTING.md](CONTRIBUTING.md).
+For development outside Docker, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
----
+## Images and Releases
+
+GHCR is Wright's default public release image registry:
+
+```text
+ghcr.io/burhop/wright-agent:<tag>
+```
+
+Docker Hub publishing is optional and only runs when maintainers configure
+`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets. Prerelease tags
+such as `v0.1.0-alpha.1` do not move `latest`; stable tags may.
 
 ## Architecture
 
-Wright is built as a modular monorepo, separating routing endpoints from domain business logic and agent runtimes.
+Wright is a modular monorepo with a FastAPI gateway, React/Vite web UI, Hermes
+integration, MCP tool registry, and local workspace state.
 
 ```mermaid
 flowchart TD
     User([User Web Browser]) -->|HTTP / WebSockets| API[FastAPI API Gateway]
-    API -->|Routing| Agent[BaseAgentEngine - Hermes]
-    API -->|Routing| MCP[McpEngine - Tool Registry]
+    API -->|Routing| Agent[Agent Adapters and Hermes]
+    API -->|Routing| MCP[MCP Tool Registry]
     Agent -->|Uses| MCP
-    MCP -->|Subprocess| OpenSCAD[OpenSCAD Headless]
-    MCP -->|Simulations| CalculiX[CalculiX FEA]
-    API -->|Database & Vector RAG| Vault[Local SQLite & LanceDB]
+    MCP -->|Selected server| Tools[CAD, CAE, CAM, calculators]
+    API -->|Database and files| Vault[SQLite, LanceDB, File Vault]
 ```
 
 ### Repository Structure
+
 ```text
 wright/
-├── apps/
-│   ├── api/                    # FastAPI — zero business logic, routing only
-│   └── web/                    # Frontend UI (React + Vite, atomic design)
-├── packages/
-│   ├── core/                   # Shared domain models, structured JSON logging
-│   ├── agent_adapters/         # Adapter pattern for LLM agents (Hermes, openclaw, PI)
-│   ├── tool_registry/          # BaseTool pattern with online/offline fallback
-│   └── data_vault/             # SQLite (WAL) + LanceDB (Arrow) + filesystem vault
-├── tests/
-│   ├── ui-integration/         # Tier 2 — Playwright UI integration tests
-│   └── e2e/                    # Tier 3 — System smoke tests
-├── docker/                     # Dockerfile and supervisord process configurations
-├── scripts/                    # Development utility scripts (Docker backups, database purge, CI log fetching)
-├── windows-sandbox/            # Host/Guest automation for isolated Windows 11 VM testing
-├── docs/                       # Architecture specifications and documentation
-└── .specify/                   # Spec-kit developer workflow configurations
+|-- apps/
+|   |-- api/                    # FastAPI gateway
+|   `-- web/                    # React + Vite frontend
+|-- packages/
+|   |-- core/                   # Shared domain models and logging
+|   |-- agent_adapters/         # Adapter pattern for agent runtimes
+|   |-- tool_registry/          # MCP registry and validation logic
+|   `-- data_vault/             # SQLite, LanceDB, and filesystem vault
+|-- hermes-plugin-wright/       # Wright Hermes plugin and catalog seed data
+|-- tests/
+|   |-- ui-integration/         # Playwright integration tests
+|   `-- e2e/                    # Smoke and system tests
+|-- docker/                     # Dockerfile and supervisord configuration
+|-- docs/                       # Documentation site content and runbooks
+|-- specs/                      # Spec Kit feature artifacts
+`-- .github/                   # Community templates and CI workflows
 ```
 
-Refer to [docs/virtual_engineer_architecture.pdf](docs/virtual_engineer_architecture.pdf) for the formal architecture analysis, and [constitution.md](constitution.md) for core project engineering standards.
+Refer to [docs/virtual_engineer_architecture.pdf](docs/virtual_engineer_architecture.pdf)
+for the formal architecture analysis and [constitution.md](constitution.md) for
+core project engineering standards.
 
----
+## Development
 
-## Development & Automation Scripts
+Run the main local quality gates:
 
-To assist with local testing, container operations, and environment configuration, the project provides several helper scripts:
+```bash
+uv run pytest
+uv run ruff check apps/api/ packages/
+uv run ruff format --check apps/api/ packages/
+npm ci
+npx -w apps/web eslint .
+npx prettier --check apps/web/
+npx tsc --noEmit -p apps/web/tsconfig.app.json
+npm run test --workspace=apps/web
+npm run build --workspace=apps/web
+mkdocs build --strict
+```
 
-*   **Utility & Database Scripts**: Located in the [`scripts/`](scripts) directory. Includes tools for database resets, Docker volume backups/restores, applying submodule patches, and downloading GitHub Actions failure logs. See the [Scripts README](scripts/README.md) for a complete list of commands.
-*   **Windows & Hermes Testing**: Located in the [`windows-sandbox/`](windows-sandbox) directory. Provides fully automated scripts to provision an isolated Windows 11 Hyper-V VM, install Hermes Desktop, load the Wright plugin, and run local automated tests. See the [Windows Testing Guide](windows-sandbox/README.md) for setup instructions.
+Helper scripts live in [scripts/](scripts), including public-alpha leak scans,
+Docker smoke tests, CI failure log fetching, and release checks.
 
----
+## Spec Kit
 
-
-## Spec-Kit (Spec-Driven Development)
-
-This project uses [spec-kit](https://github.com/github/spec-kit) with the Antigravity (`agy`) integration. Available workflow skills:
-
-| Skill | Purpose |
-|---|---|
-| `$speckit-constitution` | Establish project principles |
-| `$speckit-specify` | Define what to build |
-| `$speckit-plan` | Create implementation plans |
-| `$speckit-tasks` | Generate actionable task lists |
-| `$speckit-implement` | Execute implementation |
-| `$speckit-clarify` | Clarify ambiguous areas |
-| `$speckit-analyze` | Cross-artifact consistency check |
-
----
+Wright uses [spec-kit](https://github.com/github/spec-kit) for design-led
+feature work. Most substantive changes should start with a feature spec, plan,
+tasks, and implementation checklist under `specs/`.
 
 ## Contributing
 
-We welcome contributions from the community! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code style, specification requirements, and local setup. 
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for
+local setup, branch discipline, testing, pull request expectations, and the
+Spec Kit workflow.
 
-Looking for a place to start? Look for the **Good First Issue** label on our issues tracker!
+Looking for a place to start? Browse issues labeled
+[`good-first-issue`](https://github.com/burhop/wright/labels/good-first-issue).
 
----
+## Community and Support
 
-## Community & Support
+- Ask usage questions in
+  [GitHub Discussions](https://github.com/burhop/wright/discussions).
+- Report reproducible bugs with
+  [GitHub Issues](https://github.com/burhop/wright/issues/new/choose).
+- Report security issues privately using [SECURITY.md](SECURITY.md); do not
+  open public security issues.
 
-Join the Wright community to discuss ideas, ask for help, or collaborate:
-*   💬 **Discord Server**: Join our [Discord Server](https://discord.gg/2JsdMRxq) for real-time chat, general discussions, support, and showcased designs.
-*   🗣️ **GitHub Discussions**: Visit our [GitHub Discussions](https://github.com/burhop/wright/discussions) to ask complex questions, suggest new features, and review RFCs.
+## Support and Sponsorship
 
----
+Wright is open source, but integration testing, model evaluation, and engineering
+tool adapters require ongoing resources.
 
-## Support & Sponsorship
+- API, token, and compute sponsorships help cover continuous LLM testing.
+- Hardware contributions help test local-first and air-gapped deployments.
+- Tool ecosystem contributions help expand the MCP catalog safely.
+- Code, docs, and Spec Kit contributions help harden the public alpha.
 
-While Wright is an open-source project, developing and maintaining a local agent orchestrator for physical engineering incurs real computational and integration costs. We need resources not only to write code, but to run continuous end-to-end testing, integrate with commercial platforms, and build adapters for proprietary MCP servers that carry usage fees.
-
-Here is how you can support the project and help us bring generative velocity to physical engineering:
-
-*   🪙 **API & Token Sponsorships**: Financial contributions or API credits directly offset the costs of continuous LLM testing, fine-tuning, and model evaluations.
-*   🖥️ **Hardware Contributions**: Sponsoring physical hardware or GPU compute helps us test local-first, air-gapped performance. Our robust integration with the **Dell GB10** cluster was made possible directly by Dell's hardware support.
-*   🔌 **Tool Ecosystem Contributions**: Developing and publishing new Model Context Protocol (MCP) standard engineering tools is one of the most impactful ways to expand Wright's capabilities.
-*   👩‍💻 **Code & Spec Contributions**: Help us refine our core gateway, build new adapters, or write integration tests.
-
-💖 **[Sponsor Wright on GitHub](https://github.com/sponsors/burhop)**
-
----
+[Sponsor Wright on GitHub](https://github.com/sponsors/burhop)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
----
-
-## Star History & Contributors
+## Star History and Contributors
 
 [![Star History Chart](https://api.star-history.com/svg?repos=burhop/wright&type=Date)](https://github.com/burhop/wright)
 

@@ -13,8 +13,12 @@ router = APIRouter()
 @router.get("", response_model=LogsListResponse)
 @traced("logs.get")
 async def get_logs(
-    workspace_id: Optional[str] = Query(None, description="Filter logs by workspace ID"),
-    level: Optional[str] = Query(None, description="Filter logs by level (info, warning, error)"),
+    workspace_id: Optional[str] = Query(
+        None, description="Filter logs by workspace ID"
+    ),
+    level: Optional[str] = Query(
+        None, description="Filter logs by level (info, warning, error)"
+    ),
     search: Optional[str] = Query(None, description="Keyword search within log events"),
     limit: int = Query(100, ge=1, le=1000, description="Max logs to return"),
     offset: int = Query(0, ge=0, description="Pagination offset"),
@@ -28,13 +32,10 @@ async def get_logs(
             limit=limit,
             offset=offset,
         )
-        return LogsListResponse(
-            logs=result["logs"],
-            total=result["total"]
-        )
+        return LogsListResponse(logs=result["logs"], total=result["total"])
     except Exception as e:
         logger.exception("fetch_logs_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch application logs: {e}"
+            detail=f"Failed to fetch application logs: {e}",
         )
