@@ -112,6 +112,14 @@ def test_frontend_quality_runs_linux_playwright_e2e() -> None:
     assert "Backend process exited before becoming ready" in workflow
 
 
+def test_playwright_ci_fails_fast_without_retries() -> None:
+    config = read_text("playwright.config.ts")
+
+    assert "retries: 0" in config
+    assert "maxFailures: process.env.CI ? 1 : undefined" in config
+    assert "retries: process.env.CI" not in config
+
+
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")
