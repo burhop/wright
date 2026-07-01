@@ -53,7 +53,9 @@ class MockAgentEngine(BaseAgentEngine):
     async def delete_session(self, session_id: str) -> bool:
         return True
 
-    async def stream_chat(self, request: AgentChatRequest) -> AsyncIterator[AgentStreamEvent]:
+    async def stream_chat(
+        self, request: AgentChatRequest
+    ) -> AsyncIterator[AgentStreamEvent]:
         yield AgentStreamEvent(type="token", data={"text": "hello"})
 
     async def get_session_workspace(self, session_id: str) -> str | None:
@@ -754,7 +756,9 @@ def test_agent_sessions_filtering_by_workspace(client):
     workspace_id = response.json()["workspace_id"]
 
     # Retrieve sessions with workspace_id query parameter
-    response_sessions = client.get("/api/agent/sessions", params={"workspace_id": workspace_id})
+    response_sessions = client.get(
+        "/api/agent/sessions", params={"workspace_id": workspace_id}
+    )
     assert response_sessions.status_code == 200
     sessions = response_sessions.json()["sessions"]
     # Our MockAgentEngine lists test-session and mock-session under workspace_setup, so both should match
@@ -762,7 +766,9 @@ def test_agent_sessions_filtering_by_workspace(client):
     assert {s["session_id"] for s in sessions} == {"test-session", "mock-session"}
 
     # Query with a non-existent workspace_id, should return empty sessions
-    response_empty = client.get("/api/agent/sessions", params={"workspace_id": "non-existent-workspace-uuid"})
+    response_empty = client.get(
+        "/api/agent/sessions", params={"workspace_id": "non-existent-workspace-uuid"}
+    )
     assert response_empty.status_code == 200
     assert len(response_empty.json()["sessions"]) == 0
 
@@ -786,6 +792,7 @@ def test_workspace_activate_session_fallback(client):
 
         # Override mock engine's list_sessions to return an active session matching temp_dir
         original_list_sessions = app.state.agent_engine.list_sessions
+
         async def mock_list_sessions():
             return [
                 AgentSessionInfo(
@@ -797,6 +804,7 @@ def test_workspace_activate_session_fallback(client):
                     workspace=temp_dir,
                 )
             ]
+
         app.state.agent_engine.list_sessions = mock_list_sessions
 
         try:
@@ -940,7 +948,12 @@ def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     assert resolved_local_slash == local_file_path
 
     # 2. Check system-wide fallback. We will use a tempfile in the real /tmp directory.
-    with tempfile.NamedTemporaryFile(dir="/tmp", prefix="global_test_", suffix=".scad", delete=False) as temp_global:
+    # Windows GitHub runners may not have this POSIX-style temp alias yet.
+    system_tmp_dir = os.path.abspath("/tmp")
+    os.makedirs(system_tmp_dir, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        dir=system_tmp_dir, prefix="global_test_", suffix=".scad", delete=False
+    ) as temp_global:
         temp_global.write(b"global content")
         global_path = temp_global.name
 
@@ -1026,6 +1039,7 @@ def test_activate_workspace_fallback_passes_instructions(tmp_path):
 
         async def create_session(self, workspace, instructions=None):
             from agent_adapters import AgentSessionInfo
+
             info = AgentSessionInfo(
                 session_id="new-fallback-session",
                 title="New Session",
@@ -1134,7 +1148,9 @@ def test_write_workspace_hermes_md(tmp_path):
     # Modify instructions in DB
     conn = sqlite3.connect(db_path)
     try:
-        conn.execute("UPDATE mcp_servers SET instructions = 'Updated instructions' WHERE server_id = 'mcp1'")
+        conn.execute(
+            "UPDATE mcp_servers SET instructions = 'Updated instructions' WHERE server_id = 'mcp1'"
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1239,7 +1255,9 @@ async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_pat
 
 def test_workspace_mcp_status_endpoint(client):
     # Retrieve mcp status for a session
-    response = client.get("/api/workspace/mcp-status", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/mcp-status", params={"session_id": "test-session"}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "status" in data
@@ -1285,7 +1303,9 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
         conn.close()
 
     try:
-        response = client.get("/api/workspace/mcp-status", params={"session_id": "test-session"})
+        response = client.get(
+            "/api/workspace/mcp-status", params={"session_id": "test-session"}
+        )
 
         assert response.status_code == 200
         data = response.json()
@@ -1301,7 +1321,9 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
     finally:
         conn = sqlite3.connect(DATABASE_PATH)
         try:
-            conn.execute("DELETE FROM mcp_servers WHERE server_id = 'inactive-test-mcp'")
+            conn.execute(
+                "DELETE FROM mcp_servers WHERE server_id = 'inactive-test-mcp'"
+            )
             conn.execute(
                 "UPDATE engineering_workspaces SET enabled_tools = NULL WHERE session_id = ?",
                 ("test-session",),
@@ -1311,9 +1333,13 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
             conn.close()
 
 
-def test_create_workspace_uses_local_session_when_agent_unavailable(client, workspace_setup):
+def test_create_workspace_uses_local_session_when_agent_unavailable(
+    client, workspace_setup
+):
     class FailingCreateSessionEngine(MockAgentEngine):
-        async def create_session(self, workspace: str | None = None) -> AgentSessionInfo:
+        async def create_session(
+            self, workspace: str | None = None
+        ) -> AgentSessionInfo:
             raise RuntimeError("Hermes unavailable")
 
     original_engine = app.state.agent_engine
@@ -1355,7 +1381,9 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
             str(uuid.uuid4()),
             "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8",
             "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8",
-            os.path.join(workspace_setup, "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8"),
+            os.path.join(
+                workspace_setup, "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8"
+            ),
             now + 2,
         ),
         (
@@ -1377,12 +1405,16 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
                 (workspace_id, session_id, workspace_name, local_path, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?)
             """,
-            [(workspace_id, session_id, name, path, updated_at, updated_at)
-             for workspace_id, session_id, name, path, updated_at in rows],
+            [
+                (workspace_id, session_id, name, path, updated_at, updated_at)
+                for workspace_id, session_id, name, path, updated_at in rows
+            ],
         )
         conn.commit()
 
-        recent_names = {w["workspace_name"] for w in get_recent_workspaces(DATABASE_PATH, limit=10)}
+        recent_names = {
+            w["workspace_name"] for w in get_recent_workspaces(DATABASE_PATH, limit=10)
+        }
         all_names = {w["workspace_name"] for w in get_all_workspaces(DATABASE_PATH)}
 
         assert "api_1782845491_1094a132" not in recent_names
@@ -1400,7 +1432,9 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
         conn.close()
 
 
-def test_workspace_files_uses_local_dir_when_agent_lookup_fails(client, workspace_setup, monkeypatch):
+def test_workspace_files_uses_local_dir_when_agent_lookup_fails(
+    client, workspace_setup, monkeypatch
+):
     from api.routers import workspace as workspace_router
 
     class FailingLookupEngine(MockAgentEngine):
