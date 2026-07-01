@@ -78,22 +78,22 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Add gateway profile contract tests in `packages/agent_adapters/tests/test_wright_gateway_contracts.py`
-- [ ] T024 [P] [US2] Add Hermes gateway profile compatibility tests in `packages/agent_adapters/tests/test_hermes_gateway_profile.py`
-- [ ] T025 [P] [US2] Add OpenClaw stub gateway tests in `packages/agent_adapters/tests/test_openclaw_gateway_stub.py`
-- [ ] T026 [P] [US2] Update Hermes sync API compatibility tests in `apps/api/tests/test_hermes_sync.py`
+- [X] T023 [P] [US2] Add gateway profile contract tests in `packages/agent_adapters/tests/test_wright_gateway_contracts.py`
+- [X] T024 [P] [US2] Add Hermes gateway profile compatibility tests in `packages/agent_adapters/tests/test_hermes_gateway_profile.py`
+- [X] T025 [P] [US2] Add OpenClaw stub gateway tests in `packages/agent_adapters/tests/test_openclaw_gateway_stub.py`
+- [X] T026 [P] [US2] Update Hermes sync API compatibility tests in `apps/api/tests/test_hermes_sync.py`
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implement Wright gateway profile contracts in `packages/agent_adapters/src/agent_adapters/gateway.py`
-- [ ] T028 [US2] Implement Hermes Wright gateway profile adapter in `packages/agent_adapters/src/agent_adapters/hermes_gateway.py`
-- [ ] T029 [US2] Add OpenClaw gateway stub metadata without an engine factory in `packages/agent_adapters/src/agent_adapters/openclaw.py`
-- [ ] T030 [US2] Export gateway contracts from `packages/agent_adapters/src/agent_adapters/__init__.py`
-- [ ] T031 [US2] Create generic gateway sync service wrapper in `apps/api/src/api/services/wright_gateway_sync.py`
-- [ ] T032 [US2] Preserve `api.services.hermes_sync` compatibility wrappers in `apps/api/src/api/services/hermes_sync.py`
-- [ ] T033 [US2] Keep workspace context writing compatible while isolating Hermes-specific filenames in `packages/core/src/core/workspace.py`
-- [ ] T034 [US2] Update gateway route tests for generic Wright gateway terminology in `apps/api/tests/test_gateway_api.py`
-- [ ] T035 [US2] Run targeted US2 tests documented in `specs/037-refactoring-audit/quickstart.md`
+- [X] T027 [US2] Implement Wright gateway profile contracts in `packages/agent_adapters/src/agent_adapters/gateway.py`
+- [X] T028 [US2] Implement Hermes Wright gateway profile adapter in `packages/agent_adapters/src/agent_adapters/hermes_gateway.py`
+- [X] T029 [US2] Add OpenClaw gateway stub metadata without an engine factory in `packages/agent_adapters/src/agent_adapters/openclaw.py`
+- [X] T030 [US2] Export gateway contracts from `packages/agent_adapters/src/agent_adapters/__init__.py`
+- [X] T031 [US2] Create generic gateway sync service wrapper in `apps/api/src/api/services/wright_gateway_sync.py`
+- [X] T032 [US2] Preserve `api.services.hermes_sync` compatibility wrappers in `apps/api/src/api/services/hermes_sync.py`
+- [X] T033 [US2] Keep workspace context writing compatible while isolating Hermes-specific filenames in `packages/core/src/core/workspace.py`
+- [X] T034 [US2] Update gateway route tests for generic Wright gateway terminology in `apps/api/tests/test_gateway_api.py`
+- [X] T035 [US2] Run targeted US2 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: Wright gateway is agent-neutral in contracts, Hermes remains compatible, and OpenClaw has only a non-production seam.
 

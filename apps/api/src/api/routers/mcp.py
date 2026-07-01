@@ -24,8 +24,8 @@ from tool_registry import (
     has_credentials,
 )
 from core.tracing import traced
-from api.services.hermes_sync import (
-    sync_mcp_server_to_hermes,
+from api.services.wright_gateway_sync import (
+    sync_mcp_server_to_wright_gateway,
 )
 from tool_registry.mcp_catalog import is_install_blocked, tier_sort_key
 from tool_registry.mcp_followups import write_followup_record
@@ -238,8 +238,8 @@ async def toggle_server_activation(
         else:
             updated = await engine.stop_server(server_id)
 
-        # Sync with Hermes config
-        sync_mcp_server_to_hermes(updated)
+        # Sync with the active Wright gateway profile.
+        sync_mcp_server_to_wright_gateway(updated)
 
         return ServerToggleResponse(
             server_id=updated.server_id,
@@ -504,9 +504,9 @@ async def delete_server_endpoint(
         # Clean up any saved credentials
         delete_secrets(server_id)
 
-        # Sync removal with Hermes config
+        # Sync removal with the active Wright gateway profile.
         server.is_active = False
-        sync_mcp_server_to_hermes(server)
+        sync_mcp_server_to_wright_gateway(server)
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except Exception as e:

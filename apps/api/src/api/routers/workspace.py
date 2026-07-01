@@ -2,7 +2,7 @@
 Workspace router — thin HTTP handlers only.
 
 All Pydantic models are in api.schemas.workspace.
-All business logic is in core.workspace and api.services.hermes_sync.
+All business logic is in core.workspace and api.services.wright_gateway_sync.
 All handlers are decorated with @traced for OTel span creation.
 """
 

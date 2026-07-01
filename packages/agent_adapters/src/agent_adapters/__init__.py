@@ -22,6 +22,7 @@ from .registry import (
     default_agent_registry,
     resolve_agent_api_settings,
 )
+from .gateway import WrightGatewayProfile, build_wright_gateway_args
 
 __all__ = [
     "BaseAgentEngine",
@@ -39,4 +40,6 @@ __all__ = [
     "create_agent_engine",
     "default_agent_registry",
     "resolve_agent_api_settings",
+    "WrightGatewayProfile",
+    "build_wright_gateway_args",
 ]

@@ -86,6 +86,16 @@ def test_gateway_tools_endpoint(test_client):
     assert data["tools"][0]["description"] == "Calculate mesh"
 
 
+def test_mcp_router_uses_generic_wright_gateway_sync():
+    from api.routers import mcp
+
+    assert "sync_mcp_server_to_hermes" not in vars(mcp)
+    assert (
+        mcp.sync_mcp_server_to_wright_gateway.__module__
+        == "api.services.wright_gateway_sync"
+    )
+
+
 def test_gateway_tools_prefers_pinned_active_session(test_client):
     db_path = app.state.mcp_engine.db_path
     active_server_id = "gateway-active-server"

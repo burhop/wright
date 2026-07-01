@@ -1290,20 +1290,22 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
     )
 
 
-def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
-    """Compile workspace MCP instructions and write them to .hermes.md in the workspace directory.
+def write_workspace_agent_context(
+    db_path: str, local_path: str, context_filename: str
+) -> None:
+    """Compile workspace MCP instructions and write them to an agent context file.
 
-    If the .hermes.md file already exists, preserves user's custom instructions outside of
+    If the context file already exists, preserves user's custom instructions outside of
     the Wright MCP instructions and Workspace Context blocks.
     """
     import os
     import re
 
-    if not os.path.exists(local_path):
+    if not os.path.exists(local_path) or not context_filename:
         return
 
     instructions = compile_workspace_mcp_instructions(db_path, local_path)
-    hermes_md_path = os.path.join(local_path, ".hermes.md")
+    context_path = os.path.join(local_path, context_filename)
 
     start_marker = "<!-- WRIGHT MCP INSTRUCTIONS START -->"
     end_marker = "<!-- WRIGHT MCP INSTRUCTIONS END -->"
@@ -1329,9 +1331,9 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         generated_prompt_block = f"{start_prompt_marker}\n{end_prompt_marker}"
 
     existing_content = ""
-    if os.path.exists(hermes_md_path):
+    if os.path.exists(context_path):
         try:
-            with open(hermes_md_path, "r", encoding="utf-8") as f:
+            with open(context_path, "r", encoding="utf-8") as f:
                 existing_content = f.read()
         except Exception:
             pass
@@ -1370,10 +1372,17 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
             new_content = generated_prompt_block
 
     try:
-        with open(hermes_md_path, "w", encoding="utf-8") as f:
+        with open(context_path, "w", encoding="utf-8") as f:
             f.write(new_content.strip() + "\n")
     except Exception as e:
-        logger.error("Failed to write .hermes.md: %s", e)
+        logger.error(
+            "Failed to write workspace agent context %s: %s", context_filename, e
+        )
+
+
+def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
+    """Compile workspace MCP instructions and write them to .hermes.md."""
+    write_workspace_agent_context(db_path, local_path, ".hermes.md")
 
 
 def read_application_logs(
