@@ -144,13 +144,20 @@ jobs:
             )
 
             for ($attempt = 1; $attempt -le 120; $attempt++) {
-              try {
-                Invoke-WebRequest -UseBasicParsing -Uri $Url -TimeoutSec 2 | Out-Null
+              $probe = & curl.exe --fail --silent --show-error --max-time 2 $Url 2>&1
+              if ($LASTEXITCODE -eq 0) {
                 Write-Host "$Name is ready at $Url"
                 return
-              } catch {
-                Start-Sleep -Seconds 2
               }
+
+              if (($attempt % 15) -eq 0) {
+                Write-Host "$Name is not ready yet at $Url"
+                if ($probe) {
+                  Write-Host $probe
+                }
+              }
+
+              Start-Sleep -Seconds 2
             }
 
             Write-ServerLogs
