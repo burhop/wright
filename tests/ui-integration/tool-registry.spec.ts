@@ -1,7 +1,31 @@
 import { test, expect } from '@playwright/test';
 
+const MOCK_SERVER_METADATA = {
+  verification_state: "verified_mcp",
+  installability_tier: "might_work",
+  risk_level: "low",
+  deployment_mode: "unknown",
+  platform_support: {
+    windows_11_x64: { status: "unknown", tested: false, notes: "not tested" },
+    linux_x64: { status: "unknown", tested: false, notes: "not tested" },
+    linux_arm64: { status: "unknown", tested: false, notes: "not tested" },
+    macos_x64: { status: "unknown", tested: false, notes: "not tested" },
+    macos_arm64: { status: "unknown", tested: false, notes: "not tested" },
+  },
+  host_software_required: [],
+  credentials_required: [],
+  default_enabled: true,
+  approval_gates: [],
+  validation_result: {
+    status: "not_tested",
+    message: "Not yet validated in this environment",
+    missing_dependencies: [],
+  },
+};
+
 const MOCK_SERVERS = [
   {
+    ...MOCK_SERVER_METADATA,
     server_id: "calc-mcp-id",
     name: "CalculiX Simulation",
     type: "stdio",
@@ -19,6 +43,8 @@ const MOCK_SERVERS = [
     installed_version: "2.21.0"
   },
   {
+    ...MOCK_SERVER_METADATA,
+    installability_tier: "tested",
     server_id: "openscad-mcp-id",
     name: "OpenSCAD Geometry",
     type: "stdio",
@@ -36,6 +62,7 @@ const MOCK_SERVERS = [
     installed_version: "1.0.0"
   },
   {
+    ...MOCK_SERVER_METADATA,
     server_id: "network-mcp-id",
     name: "Custom SSE Link",
     type: "sse",
@@ -184,6 +211,8 @@ test.describe('Tool Registry Enhanced UI', () => {
 
     await page.goto('/tool-registry');
 
+    await page.getByTestId('server-card-details-toggle-calc-mcp-id').click();
+
     const installBtn = page.getByTestId('server-card-install-btn-calc-mcp-id');
     await installBtn.click();
 
@@ -227,6 +256,8 @@ test.describe('Tool Registry Enhanced UI', () => {
     });
 
     await page.goto('/tool-registry');
+
+    await page.getByTestId('server-card-details-toggle-openscad-mcp-id').click();
 
     const checkBtn = page.getByTestId('server-card-check-update-btn-openscad-mcp-id');
     await expect(checkBtn).toBeVisible();
@@ -356,6 +387,7 @@ test.describe('Tool Registry Enhanced UI', () => {
     // Confirm starting type is network
     const card = page.getByTestId('server-card-network-mcp-id');
     await expect(card.getByTestId('server-type-badge-sse')).toBeVisible();
+    await page.getByTestId('server-card-details-toggle-network-mcp-id').click();
 
     const connectBtn = page.getByTestId('server-card-connect-btn-network-mcp-id');
     await connectBtn.click();
