@@ -31,7 +31,7 @@
 
 **CRITICAL**: No user story implementation should proceed without these compatibility guardrails.
 
-- [ ] T005 [P] Add unsupported-runtime domain error tests in `packages/agent_adapters/tests/test_agent_registry.py`
+- [x] T005 [P] Add unsupported-runtime domain error tests in `packages/agent_adapters/tests/test_agent_registry.py`
 - [ ] T006 [P] Add MCP service result/error mapping tests in `packages/tool_registry/tests/test_mcp_services.py`
 - [ ] T007 [P] Add shared catalog fixture entries in `packages/tool_registry/tests/fixtures/catalog_normalization.yaml`
 - [ ] T008 [P] Add validation evidence fixture data in `packages/tool_registry/tests/fixtures/validation_evidence.json`
@@ -48,23 +48,23 @@
 
 ### Tests for User Story 1
 
-- [ ] T009 [P] [US1] Add registry default and explicit Hermes tests in `packages/agent_adapters/tests/test_agent_registry.py`
-- [ ] T010 [P] [US1] Add invalid runtime selection tests in `packages/agent_adapters/tests/test_agent_registry.py`
-- [ ] T011 [P] [US1] Add API boot import-boundary test in `apps/api/tests/test_agent_runtime_boot.py`
-- [ ] T012 [P] [US1] Add active agent selection API tests in `apps/api/tests/test_agent_health.py`
-- [ ] T013 [P] [US1] Update setup API invalid-agent tests in `apps/api/tests/test_setup_api.py`
+- [x] T009 [P] [US1] Add registry default and explicit Hermes tests in `packages/agent_adapters/tests/test_agent_registry.py`
+- [x] T010 [P] [US1] Add invalid runtime selection tests in `packages/agent_adapters/tests/test_agent_registry.py`
+- [x] T011 [P] [US1] Add API boot import-boundary test in `apps/api/tests/test_agent_runtime_boot.py`
+- [x] T012 [P] [US1] Add active agent selection API tests in `apps/api/tests/test_agent_health.py`
+- [x] T013 [P] [US1] Update setup API invalid-agent tests in `apps/api/tests/test_setup_api.py`
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implement provider metadata and runtime errors in `packages/agent_adapters/src/agent_adapters/registry.py`
-- [ ] T015 [US1] Implement Hermes provider factory using existing Hermes config resolution in `packages/agent_adapters/src/agent_adapters/registry.py`
-- [ ] T016 [US1] Export registry types and factory helpers from `packages/agent_adapters/src/agent_adapters/__init__.py`
-- [ ] T017 [US1] Remove direct `HermesAdapter` boot wiring from `apps/api/src/api/main.py`
-- [ ] T018 [US1] Move Hermes API settings compatibility behind registry-backed helpers in `apps/api/src/api/config.py`
-- [ ] T019 [US1] Use registry validation for active agent GET/POST behavior in `apps/api/src/api/routers/agent.py`
-- [ ] T020 [US1] Replace hardcoded supported-agent list with registry metadata in `apps/api/src/api/routers/setup.py`
+- [x] T014 [US1] Implement provider metadata and runtime errors in `packages/agent_adapters/src/agent_adapters/registry.py`
+- [x] T015 [US1] Implement Hermes provider factory using existing Hermes config resolution in `packages/agent_adapters/src/agent_adapters/registry.py`
+- [x] T016 [US1] Export registry types and factory helpers from `packages/agent_adapters/src/agent_adapters/__init__.py`
+- [x] T017 [US1] Remove direct `HermesAdapter` boot wiring from `apps/api/src/api/main.py`
+- [x] T018 [US1] Move Hermes API settings compatibility behind registry-backed helpers in `apps/api/src/api/config.py`
+- [x] T019 [US1] Use registry validation for active agent GET/POST behavior in `apps/api/src/api/routers/agent.py`
+- [x] T020 [US1] Replace hardcoded supported-agent list with registry metadata in `apps/api/src/api/routers/setup.py`
 - [ ] T021 [US1] Update API test fixtures to inject registry-created or fake engines in `apps/api/tests/conftest.py`
-- [ ] T022 [US1] Run targeted US1 tests documented in `specs/037-refactoring-audit/quickstart.md`
+- [x] T022 [US1] Run targeted US1 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: Hermes still works as default, API boot is agent-neutral, and no public health response shape changed.
 

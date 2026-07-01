@@ -11,6 +11,9 @@ from core.tracing import traced
 from agent_adapters import (
     BaseAgentEngine,
     AgentChatRequest,
+    UnsupportedAgentRuntimeError,
+    create_agent_engine,
+    default_agent_registry,
 )
 
 logger = structlog.get_logger(__name__)
@@ -391,8 +394,13 @@ async def chat(
 @traced("agent.active.get")
 async def get_active_agent_endpoint(request: Request):
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    agent_name = sync_manager.active_agent if sync_manager else "hermes"
-    return ActiveAgentResponse(agent=agent_name)
+    registry = default_agent_registry()
+    agent_name = sync_manager.active_agent if sync_manager else None
+    try:
+        provider = registry.resolve_provider(agent_name)
+    except UnsupportedAgentRuntimeError:
+        provider = registry.default_provider()
+    return ActiveAgentResponse(agent=provider.name)
 
 
 @router.post("/active", response_model=ActiveAgentResponse)
@@ -400,9 +408,20 @@ async def get_active_agent_endpoint(request: Request):
 async def set_active_agent_endpoint(
     body: SetActiveAgentRequest, request: Request, session_id: Optional[str] = None
 ):
+    registry = default_agent_registry()
+    try:
+        provider = registry.resolve_provider(body.agent)
+    except UnsupportedAgentRuntimeError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+    from api.config import DATABASE_PATH
+
+    request.app.state.agent_engine = create_agent_engine(
+        provider.name, db_path=DATABASE_PATH, registry=registry
+    )
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:
-        sync_manager.active_agent = body.agent
+        sync_manager.active_agent = provider.name
         if session_id:
             # Sync tools immediately for the active workspace session
             try:
@@ -410,7 +429,7 @@ async def set_active_agent_endpoint(
             except Exception as e:
                 logger.error("Failed to sync tools on agent switch: %s", e)
         return ActiveAgentResponse(agent=sync_manager.active_agent)
-    return ActiveAgentResponse(agent="hermes")
+    return ActiveAgentResponse(agent=provider.name)
 
 
 @router.post("/chat/cancel")

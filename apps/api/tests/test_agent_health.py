@@ -45,3 +45,47 @@ async def test_inference_health_uses_agent_llm_backend_check(client, mock_agent_
         "baseUrl": "http://llm.local/v1",
         "error": "LLM backend is offline",
     }
+
+
+@pytest.mark.asyncio
+async def test_active_agent_defaults_to_hermes(client):
+    from api.main import app
+
+    app.state.agent_sync_manager.active_agent = "hermes"
+
+    response = await client.get("/api/agent/active")
+
+    assert response.status_code == 200
+    assert response.json() == {"agent": "hermes"}
+
+
+@pytest.mark.asyncio
+async def test_active_agent_rejects_unknown_runtime(client):
+    from api.main import app
+
+    app.state.agent_sync_manager.active_agent = "hermes"
+
+    response = await client.post(
+        "/api/agent/active",
+        json={"agent": "unknown-agent"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Unsupported agent runtime: unknown-agent"
+    assert app.state.agent_sync_manager.active_agent == "hermes"
+
+
+@pytest.mark.asyncio
+async def test_active_agent_rejects_known_unimplemented_runtime(client):
+    from api.main import app
+
+    app.state.agent_sync_manager.active_agent = "hermes"
+
+    response = await client.post(
+        "/api/agent/active",
+        json={"agent": "openclaw"},
+    )
+
+    assert response.status_code == 400
+    assert "not implemented" in response.json()["message"]
+    assert app.state.agent_sync_manager.active_agent == "hermes"

@@ -11,10 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 
-from agent_adapters import HermesAdapter
+from agent_adapters import create_agent_engine
 from api.config import (
-    HERMES_API_BASE_URL,
-    HERMES_API_KEY,
     DATABASE_PATH,
     get_llm_health_url,
 )
@@ -116,10 +114,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-# Instantiate and store the Hermes adapter engine in the app state
-app.state.agent_engine = HermesAdapter(
-    HERMES_API_BASE_URL, HERMES_API_KEY, DATABASE_PATH
-)
+# Instantiate and store the default agent engine in the app state.
+app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
 app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the routers

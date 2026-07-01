@@ -1,9 +1,9 @@
 import os
 from urllib.parse import urlparse
-from agent_adapters.hermes_config import resolve_hermes_api_settings
+from agent_adapters import resolve_agent_api_settings
 
 # Hermes Native API port and base URL configuration for the 'wright' profile
-_HERMES_API_SETTINGS = resolve_hermes_api_settings()
+_HERMES_API_SETTINGS = resolve_agent_api_settings("hermes")
 HERMES_API_BASE_URL = _HERMES_API_SETTINGS.base_url
 HERMES_API_KEY = _HERMES_API_SETTINGS.api_key
 HERMES_API_PORT = urlparse(HERMES_API_BASE_URL).port or 8642
