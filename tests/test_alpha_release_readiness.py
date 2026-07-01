@@ -91,37 +91,25 @@ def test_dependabot_covers_root_and_frontend_npm_lockfiles() -> None:
     assert 'package-ecosystem: "npm"\n    directory: "/apps/web"' in config
 
 
-def test_windows_playwright_workflow_uses_windows_command_shims() -> None:
+def test_windows_workflow_keeps_platform_checks_without_e2e_server_loop() -> None:
     workflow = read_text(".github/workflows/test-windows.yml")
 
-    assert 'FilePath ".\\.venv\\Scripts\\uvicorn.exe"' in workflow
-    assert 'FilePath ".\\.venv\\Scripts\\python.exe"' not in workflow
-    assert 'FilePath "uv.exe"' not in workflow
-    assert 'FilePath "npm.cmd"' in workflow
-    assert 'FilePath "npm" -ArgumentList "run", "dev"' not in workflow
+    assert "Backend Tests (Windows)" in workflow
+    assert "Frontend Tests (Windows)" in workflow
+    assert "Playwright E2E (Windows)" not in workflow
+    assert "Start backend server" not in workflow
+    assert "curl.exe" not in workflow
 
 
-def test_windows_playwright_workflow_uses_stable_server_python() -> None:
-    workflow = read_text(".github/workflows/test-windows.yml")
-    backend_job = workflow.split("  frontend-tests:", 1)[0]
-    playwright_job = workflow.split("  playwright-tests:", 1)[1]
+def test_frontend_quality_runs_linux_playwright_e2e() -> None:
+    workflow = read_text(".github/workflows/frontend-quality.yml")
 
-    assert 'python-version: "3.13"' in backend_job
-    assert 'python-version: "3.12"' in playwright_job
-
-
-def test_windows_playwright_workflow_waits_for_servers_with_logs() -> None:
-    workflow = read_text(".github/workflows/test-windows.yml")
-
-    assert "wright-api.err.log" in workflow
-    assert "wright-web.err.log" in workflow
+    assert "playwright-e2e:" in workflow
+    assert "runs-on: ubuntu-latest" in workflow
+    assert "uv run uvicorn api.main:app" in workflow
     assert "http://127.0.0.1:8000/api/health" in workflow
-    assert "http://127.0.0.1:5173" in workflow
-    assert "curl.exe --fail --silent --show-error --max-time 1" in workflow
-    assert "[DateTime]::UtcNow.AddMinutes(12)" in workflow
-    assert "PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173" in workflow
-    assert "Invoke-WebRequest" not in workflow
-    assert "Start-Sleep -Seconds 15" not in workflow
+    assert "npx playwright test" in workflow
+    assert "Backend process exited before becoming ready" in workflow
 
 
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
