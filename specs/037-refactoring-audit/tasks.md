@@ -192,17 +192,17 @@
 
 ### Tests for User Story 6
 
-- [ ] T073 [P] [US6] Add API health smoke test in `tests/e2e/test_api_health_smoke.py`
-- [ ] T074 [P] [US6] Add agent registry default smoke test in `tests/e2e/test_agent_registry_smoke.py`
-- [ ] T075 [P] [US6] Add MCP listing smoke test in `tests/e2e/test_mcp_listing_smoke.py`
-- [ ] T076 [P] [US6] Add Wright gateway happy-path smoke test in `tests/e2e/test_wright_gateway_smoke.py`
+- [X] T073 [P] [US6] Add API health smoke test in `tests/e2e/test_api_health_smoke.py`
+- [X] T074 [P] [US6] Add agent registry default smoke test in `tests/e2e/test_agent_registry_smoke.py`
+- [X] T075 [P] [US6] Add MCP listing smoke test in `tests/e2e/test_mcp_listing_smoke.py`
+- [X] T076 [P] [US6] Add Wright gateway happy-path smoke test in `tests/e2e/test_wright_gateway_smoke.py`
 
 ### Implementation for User Story 6
 
-- [ ] T077 [US6] Add reusable offline API smoke fixtures in `tests/e2e/conftest.py`
-- [ ] T078 [US6] Update smoke test documentation in `tests/e2e/README.md`
-- [ ] T079 [US6] Ensure smoke fixtures use temporary SQLite state in `tests/e2e/conftest.py`
-- [ ] T080 [US6] Run targeted US6 tests documented in `specs/037-refactoring-audit/quickstart.md`
+- [X] T077 [US6] Add reusable offline API smoke fixtures in `tests/e2e/conftest.py`
+- [X] T078 [US6] Update smoke test documentation in `tests/e2e/README.md`
+- [X] T079 [US6] Ensure smoke fixtures use temporary SQLite state in `tests/e2e/conftest.py`
+- [X] T080 [US6] Run targeted US6 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: Constitution-required smoke coverage exists and stays offline-safe by default.
 
