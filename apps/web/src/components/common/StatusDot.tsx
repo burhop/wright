@@ -1,12 +1,14 @@
 interface StatusDotProps {
   state: "connected" | "disconnected" | "unknown";
   label?: string;
+  title?: string;
   "data-testid"?: string;
 }
 
 export function StatusDot({
   state,
   label,
+  title,
   "data-testid": testId,
 }: StatusDotProps) {
   const colorMap = {
@@ -20,6 +22,7 @@ export function StatusDot({
   return (
     <span
       data-testid={testId || `status-dot-${state}`}
+      title={title}
       style={{
         display: "inline-flex",
         alignItems: "center",

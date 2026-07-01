@@ -20,7 +20,7 @@ from api.main import app
 from tool_registry import McpEngine
 
 
-#  T006: Credential Store Module Tests
+# ── T006: Credential Store Module Tests ──────────────────────────────────────
 
 
 class TestSecretsModule:
@@ -130,7 +130,7 @@ class TestSecretsModule:
         assert result == {"KEY": False}  # empty string = not configured
 
 
-#  Shared fixture for API tests with McpEngine
+# ── Shared fixture for API tests with McpEngine ──────────────────────────────
 
 
 @pytest.fixture
@@ -231,7 +231,7 @@ def cred_client(cred_test_db_path, tmp_path, monkeypatch):
         yield c
 
 
-#  T007: Credential API Endpoint Tests
+# ── T007: Credential API Endpoint Tests ──────────────────────────────────────
 
 
 class TestCredentialAPIEndpoints:
@@ -273,6 +273,37 @@ class TestCredentialAPIEndpoints:
         assert get_data["configured"]["ONSHAPE_ACCESS_KEY"] is True
         assert get_data["configured"]["ONSHAPE_SECRET_KEY"] is True
 
+    def test_save_credentials_merges_with_existing_values(self, cred_client):
+        """PUT /credentials updates nonblank values without clearing saved secrets."""
+        from tool_registry.secrets import read_secrets
+
+        cred_client.put(
+            "/api/mcp/servers/jarvis-onshape-mcp/credentials",
+            json={
+                "credentials": {
+                    "ONSHAPE_ACCESS_KEY": "original-access-key",
+                    "ONSHAPE_SECRET_KEY": "original-secret-key",
+                }
+            },
+        )
+
+        save_response = cred_client.put(
+            "/api/mcp/servers/jarvis-onshape-mcp/credentials",
+            json={
+                "credentials": {
+                    "ONSHAPE_ACCESS_KEY": "updated-access-key",
+                    "ONSHAPE_SECRET_KEY": "",
+                }
+            },
+        )
+
+        assert save_response.status_code == 200
+        assert save_response.json()["configured"]["ONSHAPE_ACCESS_KEY"] is True
+        assert save_response.json()["configured"]["ONSHAPE_SECRET_KEY"] is True
+        saved = read_secrets("jarvis-onshape-mcp")
+        assert saved["ONSHAPE_ACCESS_KEY"] == "updated-access-key"
+        assert saved["ONSHAPE_SECRET_KEY"] == "original-secret-key"
+
     def test_delete_credentials(self, cred_client):
         """DELETE /credentials removes saved values."""
         cred_client.put(
@@ -311,7 +342,7 @@ class TestCredentialAPIEndpoints:
         assert response.status_code == 404
 
 
-#  T013: Security Validation Tests
+# ── T013: Security Validation Tests ──────────────────────────────────────────
 
 
 class TestCredentialSecurity:
@@ -361,18 +392,18 @@ class TestCredentialSecurity:
         assert "key-value" not in response.text
         assert "secret-value" not in response.text
 
-    def test_install_blocked_without_credentials(self, cred_client):
-        """POST /install returns 400 when required credentials are missing."""
+    def test_install_allowed_without_credentials(self, cred_client):
+        """POST /install can install for tool discovery before credentials exist."""
         cred_client.delete("/api/mcp/servers/jarvis-onshape-mcp/credentials")
 
         response = cred_client.post("/api/mcp/servers/jarvis-onshape-mcp/install")
-        assert response.status_code == 400
+        assert response.status_code == 200
         data = response.json()
-        detail = data.get("detail", data.get("message", ""))
-        assert "requires credentials" in detail.lower()
+        assert data["server_id"] == "jarvis-onshape-mcp"
+        assert data["is_installed"] is True
 
 
-#  T016: OnShape MCP Catalog Entry Tests
+# ── T016: OnShape MCP Catalog Entry Tests ────────────────────────────────────
 
 
 class TestOnShapeCatalogEntry:
@@ -428,6 +459,7 @@ class TestWorkspaceDefaultTools:
         from core.workspace import get_workspace_enabled_tools
         from tool_registry.db import insert_server
         from tool_registry.models import McpServer, EnvVarDefinition
+        import json
         import uuid
 
         db_path = cred_test_db_path

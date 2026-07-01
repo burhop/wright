@@ -1621,3 +1621,25 @@ Result:
   passed 10 suites and 65 tests; `npm run build` prechecks passed 7 health
   suites and 54 tests. npm audit still reported 33 dependency vulnerabilities,
   which should be reviewed upstream but did not block local MCP validation.
+
+Problem:
+  The Hermes-facing Wright gateway could publish a tool list for the wrong
+  workspace because `/api/gateway/tools` selected the latest
+  `engineering_workspaces.updated_at` row. In the Nous hackathon container this
+  made Hermes intermittently report only a subset of the active MCPs even though
+  Wright showed Blender, OpenSCAD, Jarvis OnShape, and Autodesk Product Help as
+  active.
+
+Solution:
+  Pin the active Hermes gateway session in `system_settings` whenever a
+  workspace/session is activated or synced to Hermes, and resolve
+  `/api/gateway/tools` and `/api/gateway/call` from that pinned session before
+  falling back to the latest workspace row.
+
+Result:
+  Targeted tests passed for the gateway and Hermes sync paths. The running
+  `wright_nous_hackathon` container was restarted without rebuilding, the API
+  returned healthy, `/api/workspace/mcp-status` showed all four MCPs active, and
+  `/api/gateway/tools` listed 108 tools: 22 Blender, 15 OpenSCAD, 69 Jarvis
+  OnShape, and 2 Autodesk Product Help. Hermes logged a `tools/list_changed`
+  refresh followed by `dynamically refreshed 108 tool(s)`.

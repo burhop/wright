@@ -23,9 +23,37 @@ def test_fresh_engineering_catalog_seed_does_not_preinstall_mcps(tmp_path, monke
     assert all(not server.is_active for server in servers)
 
 
-def test_migration_clears_failed_catalog_installs_including_openscad(
+def test_autodesk_product_help_seed_uses_official_remote_mcp_endpoint(
     tmp_path, monkeypatch
 ):
+    from api.database import migrate
+
+    db_path = tmp_path / "autodesk-product-help-seed.db"
+    monkeypatch.setattr(migrate, "DATABASE_PATH", str(db_path))
+
+    migrate.run_migrations()
+    autodesk_help = next(
+        server
+        for server in get_servers(str(db_path))
+        if server.server_id == "autodesk-product-help-mcp"
+    )
+
+    assert (
+        autodesk_help.command
+        == "https://developer.api.autodesk.com/knowledge/public/v1/mcp"
+    )
+    assert (
+        autodesk_help.source_url
+        == "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html"
+    )
+    assert autodesk_help.verification_state == "verified_docs_mcp"
+    assert autodesk_help.installability_tier == "tested"
+    assert autodesk_help.install_blocked_reason is None
+    assert autodesk_help.validation_result.status == "passed"
+    assert "get_available_products" in autodesk_help.validation_result.message
+
+
+def test_migration_clears_failed_catalog_installs_including_openscad(tmp_path, monkeypatch):
     import sqlite3
     from api.database import migrate
 
@@ -46,8 +74,7 @@ def test_migration_clears_failed_catalog_installs_including_openscad(
 
     migrate.run_migrations()
     openscad = next(
-        server
-        for server in get_servers(str(db_path))
+        server for server in get_servers(str(db_path))
         if server.server_id == "openscad-mcp-server"
     )
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import type {
   McpServer,
   McpTool,
@@ -53,6 +53,7 @@ export function ToolCard({
   } | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [upToDateMessage, setUpToDateMessage] = useState(false);
+  const [cardNotice, setCardNotice] = useState<string | null>(null);
 
   const {
     checkServerVersion,
@@ -71,13 +72,21 @@ export function ToolCard({
   >({});
   const [isSavingCreds, setIsSavingCreds] = useState(false);
   const [credentialSaved, setCredentialSaved] = useState(false);
-
-  const requiredCredsMissing = useCallback(() => {
-    if (!hasEnvVarDefs) return false;
-    const envVars = server.env_vars as EnvVarDefinition[];
-    const configured = server.credentials_configured || {};
-    return envVars.some((v) => v.required && !configured[v.name]);
-  }, [server.env_vars, server.credentials_configured, hasEnvVarDefs]);
+  const credentialDefs = hasEnvVarDefs
+    ? (server.env_vars as EnvVarDefinition[])
+    : [];
+  const configuredCredentials = server.credentials_configured || {};
+  const missingRequiredCredentialDefs = credentialDefs.filter(
+    (v) => v.required && !configuredCredentials[v.name],
+  );
+  const requiredCredsMissing = () => missingRequiredCredentialDefs.length > 0;
+  const hasUnsavedCredentialValues = Object.values(credentialValues).some(
+    (value) => value.trim().length > 0,
+  );
+  const hasValuesForMissingRequiredCredentials =
+    missingRequiredCredentialDefs.every(
+      (varDef) => (credentialValues[varDef.name] || "").trim().length > 0,
+    );
 
   const isInstallBlocked =
     server.installability_tier === "blocked" ||
@@ -205,17 +214,67 @@ export function ToolCard({
     maxWidth: "100%",
   });
 
-  const handleSaveCredentials = async () => {
+  const persistCredentialValues = async () => {
+    const valuesToSave = Object.fromEntries(
+      Object.entries(credentialValues).filter(
+        ([, value]) => value.trim().length > 0,
+      ),
+    );
+    if (Object.keys(valuesToSave).length === 0) {
+      return false;
+    }
     setIsSavingCreds(true);
     setCardError(null);
+    await saveCredentials(server.server_id, valuesToSave);
+    setCredentialSaved(true);
+    setCredentialValues({});
+    setTimeout(() => setCredentialSaved(false), 3000);
+    setIsSavingCreds(false);
+    return true;
+  };
+
+  const handleSaveCredentials = async () => {
+    setCardNotice(null);
     try {
-      await saveCredentials(server.server_id, credentialValues);
-      setCredentialSaved(true);
-      setCredentialValues({});
-      setTimeout(() => setCredentialSaved(false), 3000);
+      await persistCredentialValues();
     } catch (err: any) {
       setCardError(err.message || "Failed to save credentials");
     } finally {
+      setIsSavingCreds(false);
+    }
+  };
+
+  const performInstall = async () => {
+    await onInstall(server.server_id, activeSessionId);
+    await onRefreshWorkspaces();
+  };
+
+  const revealCredentialForm = (notice: string) => {
+    setShowDetails(true);
+    setShowCredentials(true);
+    setCardNotice(notice);
+  };
+
+  const handleInstall = async () => {
+    setCardError(null);
+    setCardNotice(null);
+
+    if (requiredCredsMissing() && !hasValuesForMissingRequiredCredentials) {
+      revealCredentialForm("Enter the required credentials to continue.");
+      return;
+    }
+
+    setIsInstalling(true);
+    try {
+      if (requiredCredsMissing() || hasUnsavedCredentialValues) {
+        await persistCredentialValues();
+      }
+      await performInstall();
+    } catch (err: any) {
+      console.error(err);
+      setCardError(err.message || "Failed to install server");
+    } finally {
+      setIsInstalling(false);
       setIsSavingCreds(false);
     }
   };
@@ -227,20 +286,6 @@ export function ToolCard({
       setCredentialValues({});
     } catch (err: any) {
       setCardError(err.message || "Failed to clear credentials");
-    }
-  };
-
-  const handleInstall = async () => {
-    setIsInstalling(true);
-    setCardError(null);
-    try {
-      await onInstall(server.server_id, activeSessionId);
-      await onRefreshWorkspaces();
-    } catch (err: any) {
-      console.error(err);
-      setCardError(err.message || "Failed to install server");
-    } finally {
-      setIsInstalling(false);
     }
   };
 
@@ -535,10 +580,7 @@ export function ToolCard({
             <button
               onClick={handleInstall}
               disabled={
-                isInstalling ||
-                isDeleting ||
-                requiredCredsMissing() ||
-                isInstallBlocked
+                isInstalling || isSavingCreds || isDeleting || isInstallBlocked
               }
               data-testid={
                 isLocalServer
@@ -546,11 +588,11 @@ export function ToolCard({
                   : `server-card-connect-btn-${server.server_id}`
               }
               title={
-                requiredCredsMissing()
-                  ? "Configure credentials before installing"
-                  : isInstallBlocked
-                    ? server.install_blocked_reason ||
-                      "This entry is blocked from automated install"
+                isInstallBlocked
+                  ? server.install_blocked_reason ||
+                    "This entry is blocked from automated install"
+                  : requiredCredsMissing()
+                    ? "Enter the required credentials to install"
                     : undefined
               }
               style={{
@@ -562,7 +604,7 @@ export function ToolCard({
                 backgroundColor: "var(--color-secondary)",
                 color: "#ffffff",
                 cursor:
-                  isInstalling || requiredCredsMissing() || isInstallBlocked
+                  isInstalling || isSavingCreds || isInstallBlocked
                     ? "not-allowed"
                     : "pointer",
                 transition: "all var(--transition-smooth)",
@@ -575,14 +617,86 @@ export function ToolCard({
                 e.currentTarget.style.boxShadow = "var(--shadow-glow)";
               }}
             >
-              {isInstalling
+              {isInstalling || isSavingCreds
                 ? isLocalServer
-                  ? "Installing..."
-                  : "Connecting..."
+                  ? requiredCredsMissing()
+                    ? "Saving..."
+                    : "Installing..."
+                  : requiredCredsMissing()
+                    ? "Saving..."
+                    : "Connecting..."
                 : isLocalServer
-                  ? "Install"
-                  : "Connect"}
+                  ? requiredCredsMissing() && showCredentials
+                    ? "Save & Install"
+                    : "Install"
+                  : requiredCredsMissing() && showCredentials
+                    ? "Save & Connect"
+                    : "Connect"}
             </button>
+          ) : requiredCredsMissing() ? (
+            <div
+              style={{
+                display: "flex",
+                gap: "var(--space-xs)",
+                alignItems: "center",
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setCardError(null);
+                  revealCredentialForm(
+                    "Enter the required credentials before using this server.",
+                  );
+                }}
+                disabled={isSavingCreds || isDeleting}
+                data-testid={`server-card-add-credentials-btn-${server.server_id}`}
+                title="Required credentials are missing"
+                style={{
+                  padding: "var(--space-xs) var(--space-md)",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  border: "none",
+                  backgroundColor: "var(--color-warning)",
+                  color: "var(--color-surface)",
+                  cursor: isSavingCreds || isDeleting ? "not-allowed" : "pointer",
+                  transition: "all var(--transition-smooth)",
+                }}
+              >
+                Add Credentials
+              </button>
+              <button
+                onClick={handleUninstall}
+                disabled={isUninstalling}
+                data-testid={
+                  isLocalServer
+                    ? `server-card-uninstall-btn-${server.server_id}`
+                    : `server-card-disconnect-btn-${server.server_id}`
+                }
+                style={{
+                  padding: "var(--space-xs) var(--space-sm)",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  border: "1px solid rgba(239, 68, 68, 0.35)",
+                  backgroundColor: "transparent",
+                  color: "var(--color-error)",
+                  cursor: isUninstalling ? "not-allowed" : "pointer",
+                  transition: "all var(--transition-smooth)",
+                }}
+              >
+                {isUninstalling
+                  ? isLocalServer
+                    ? "Uninstalling..."
+                    : "Disconnecting..."
+                  : isLocalServer
+                    ? "Uninstall"
+                    : "Disconnect"}
+              </button>
+            </div>
           ) : (
             <button
               onClick={handleUninstall}
@@ -649,9 +763,9 @@ export function ToolCard({
               textAlign: "left",
             }}
           >
-            {server.description.split("")[0].trim()}
+            {server.description.split("⚠️")[0].trim()}
           </p>
-          {server.description.includes("") && (
+          {server.description.includes("⚠️") && (
             <span
               style={{
                 display: "inline-flex",
@@ -667,7 +781,7 @@ export function ToolCard({
                 width: "fit-content",
               }}
             >
-              {server.description.split("")[1].trim()}
+              ⚠️ {server.description.split("⚠️")[1].trim()}
             </span>
           )}
           {server.source_url && (
@@ -689,7 +803,7 @@ export function ToolCard({
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
             >
-              View Source
+              ↗ View Source
             </a>
           )}
         </div>
@@ -760,7 +874,7 @@ export function ToolCard({
                 style={{ color: "var(--color-secondary)", fontWeight: 700 }}
               >
                 {currentPlatform?.status || "unknown"}
-                {currentPlatform?.tested ? "  tested" : ""}
+                {currentPlatform?.tested ? " · tested" : ""}
               </span>
             </div>
             {currentPlatform?.notes && (
@@ -849,7 +963,7 @@ export function ToolCard({
                     width: "fit-content",
                   }}
                 >
-                  Requires Configuration
+                  🔑 Requires Configuration
                 </span>
               )}
 
@@ -882,8 +996,8 @@ export function ToolCard({
               >
                 <span>
                   {showCredentials
-                    ? " Hide Credentials"
-                    : " Configure Credentials"}
+                    ? "▼ Hide Credentials"
+                    : "▶ Configure Credentials"}
                 </span>
               </button>
 
@@ -950,7 +1064,7 @@ export function ToolCard({
                                 : "var(--color-text-dim)",
                             }}
                           >
-                            {isConfigured ? " Saved" : " Not set"}
+                            {isConfigured ? "✓ Saved" : "✗ Not set"}
                           </span>
                         </div>
                         {varDef.description && (
@@ -968,7 +1082,7 @@ export function ToolCard({
                           type={varDef.secret ? "password" : "text"}
                           placeholder={
                             isConfigured
-                              ? "  (already configured)"
+                              ? "••••••••  (already configured)"
                               : `Enter ${varDef.label}`
                           }
                           value={credentialValues[varDef.name] || ""}
@@ -1070,7 +1184,7 @@ export function ToolCard({
                           alignSelf: "center",
                         }}
                       >
-                        Saved successfully
+                        ✓ Saved successfully
                       </span>
                     )}
                   </div>
@@ -1098,7 +1212,7 @@ export function ToolCard({
             >
               <span>
                 <strong>Update available:</strong> v{updateAvailable.installed}{" "}
-                v{updateAvailable.latest}
+                → v{updateAvailable.latest}
               </span>
               <button
                 onClick={handleUpdate}
@@ -1217,8 +1331,8 @@ export function ToolCard({
                   >
                     <span>
                       {showWorkspaces
-                        ? " Hide Workspaces"
-                        : ` Configure Workspaces (${enabledCount}/${workspaces.length})`}
+                        ? "▼ Hide Workspaces"
+                        : `▶ Configure Workspaces (${enabledCount}/${workspaces.length})`}
                     </span>
                   </button>
 
@@ -1406,7 +1520,7 @@ export function ToolCard({
                       (e.currentTarget.style.color = "var(--color-secondary)")
                     }
                   >
-                    {isCheckingUpdate ? "Checking..." : " Check for Updates"}
+                    {isCheckingUpdate ? "Checking..." : "↻ Check for Updates"}
                   </button>
                 )}
                 {upToDateMessage && (
@@ -1417,7 +1531,7 @@ export function ToolCard({
                       fontWeight: 500,
                     }}
                   >
-                    Up to date
+                    ✓ Up to date
                   </span>
                 )}
                 {!server.is_installed && !server.source_url && (
@@ -1445,6 +1559,42 @@ export function ToolCard({
                   </button>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Card-local dismissible notice block */}
+          {cardNotice && (
+            <div
+              data-testid={`server-card-notice-${server.server_id}`}
+              style={{
+                backgroundColor: "rgba(245, 158, 11, 0.08)",
+                border: "1px solid var(--color-warning)",
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-md)",
+                fontSize: "0.8rem",
+                color: "var(--color-warning)",
+                wordBreak: "break-word",
+                textAlign: "left",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "var(--space-sm)",
+              }}
+            >
+              <span>{cardNotice}</span>
+              <button
+                onClick={() => setCardNotice(null)}
+                style={{
+                  color: "var(--color-warning)",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  padding: "0 4px",
+                  background: "none",
+                  border: "none",
+                }}
+              >
+                âœ•
+              </button>
             </div>
           )}
 
@@ -1480,7 +1630,9 @@ export function ToolCard({
                   background: "none",
                   border: "none",
                 }}
-              ></button>
+              >
+                ✕
+              </button>
             </div>
           )}
 
@@ -1531,7 +1683,7 @@ export function ToolCard({
                 }}
               >
                 <span>Exposed Tools ({tools.length})</span>
-                <span>{showTools ? "" : ""}</span>
+                <span>{showTools ? "▲" : "▼"}</span>
               </button>
 
               {showTools && (

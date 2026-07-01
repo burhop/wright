@@ -31,6 +31,9 @@ export interface ServiceStatus {
   endpoint: string;
   state: "connected" | "disconnected" | "unknown";
   lastChecked: number | null;
+  latencyMs?: number | null;
+  baseUrl?: string | null;
+  error?: string | null;
 }
 
 export interface WorkspaceFile {
