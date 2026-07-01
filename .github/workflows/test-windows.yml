@@ -99,20 +99,82 @@ jobs:
       - name: Start backend server
         run: |
           $env:LLM_API_URL = "http://127.0.0.1:8000/v1"
-          Start-Process -NoNewWindow -FilePath "uv" -ArgumentList "run", "uvicorn", "api.main:app", "--host", "127.0.0.1", "--port", "8000"
+          $env:DATABASE_PATH = "$env:RUNNER_TEMP\wright-ci.db"
+          $api = Start-Process -NoNewWindow -FilePath "uv.exe" `
+            -ArgumentList "run", "uvicorn", "api.main:app", "--host", "127.0.0.1", "--port", "8000" `
+            -RedirectStandardOutput "$env:RUNNER_TEMP\wright-api.out.log" `
+            -RedirectStandardError "$env:RUNNER_TEMP\wright-api.err.log" `
+            -PassThru
+          $api.Id | Set-Content "$env:RUNNER_TEMP\wright-api.pid"
         shell: pwsh
 
       - name: Start frontend dev server
         run: |
-          Start-Process -NoNewWindow -FilePath "npm.cmd" -ArgumentList "run", "dev", "--workspace=apps/web", "--", "--host"
+          $web = Start-Process -NoNewWindow -FilePath "npm.cmd" `
+            -ArgumentList "run", "dev", "--workspace=apps/web", "--", "--host", "127.0.0.1" `
+            -RedirectStandardOutput "$env:RUNNER_TEMP\wright-web.out.log" `
+            -RedirectStandardError "$env:RUNNER_TEMP\wright-web.err.log" `
+            -PassThru
+          $web.Id | Set-Content "$env:RUNNER_TEMP\wright-web.pid"
         shell: pwsh
 
       - name: Wait for servers
-        run: Start-Sleep -Seconds 15
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          function Write-ServerLogs {
+            foreach ($path in @(
+              "$env:RUNNER_TEMP\wright-api.err.log",
+              "$env:RUNNER_TEMP\wright-api.out.log",
+              "$env:RUNNER_TEMP\wright-web.err.log",
+              "$env:RUNNER_TEMP\wright-web.out.log"
+            )) {
+              if (Test-Path $path) {
+                Write-Host "::group::$([System.IO.Path]::GetFileName($path))"
+                Get-Content $path -Tail 200
+                Write-Host "::endgroup::"
+              }
+            }
+          }
+
+          function Wait-ForUrl {
+            param(
+              [string]$Name,
+              [string]$Url
+            )
+
+            for ($attempt = 1; $attempt -le 30; $attempt++) {
+              try {
+                Invoke-WebRequest -UseBasicParsing -Uri $Url -TimeoutSec 2 | Out-Null
+                Write-Host "$Name is ready at $Url"
+                return
+              } catch {
+                Start-Sleep -Seconds 2
+              }
+            }
+
+            Write-ServerLogs
+            throw "$Name did not become ready at $Url"
+          }
+
+          Wait-ForUrl -Name "Backend" -Url "http://127.0.0.1:8000/api/health"
+          Wait-ForUrl -Name "Frontend" -Url "http://127.0.0.1:5173"
         shell: pwsh
 
       - name: Run Playwright tests
         run: npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173
+
+      - name: Upload server logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-server-logs
+          path: |
+            ${{ runner.temp }}/wright-api*.log
+            ${{ runner.temp }}/wright-web*.log
+          retention-days: 7
 
       - name: Upload test results
         if: always()

@@ -94,8 +94,20 @@ def test_dependabot_covers_root_and_frontend_npm_lockfiles() -> None:
 def test_windows_playwright_workflow_uses_windows_command_shims() -> None:
     workflow = read_text(".github/workflows/test-windows.yml")
 
+    assert 'FilePath "uv.exe"' in workflow
     assert 'FilePath "npm.cmd"' in workflow
     assert 'FilePath "npm" -ArgumentList "run", "dev"' not in workflow
+
+
+def test_windows_playwright_workflow_waits_for_servers_with_logs() -> None:
+    workflow = read_text(".github/workflows/test-windows.yml")
+
+    assert "wright-api.err.log" in workflow
+    assert "wright-web.err.log" in workflow
+    assert "http://127.0.0.1:8000/api/health" in workflow
+    assert "http://127.0.0.1:5173" in workflow
+    assert "PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173" in workflow
+    assert "Start-Sleep -Seconds 15" not in workflow
 
 
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
