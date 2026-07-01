@@ -100,6 +100,15 @@ def test_windows_playwright_workflow_uses_windows_command_shims() -> None:
     assert 'FilePath "npm" -ArgumentList "run", "dev"' not in workflow
 
 
+def test_windows_playwright_workflow_uses_stable_server_python() -> None:
+    workflow = read_text(".github/workflows/test-windows.yml")
+    backend_job = workflow.split("  frontend-tests:", 1)[0]
+    playwright_job = workflow.split("  playwright-tests:", 1)[1]
+
+    assert 'python-version: "3.13"' in backend_job
+    assert 'python-version: "3.12"' in playwright_job
+
+
 def test_windows_playwright_workflow_waits_for_servers_with_logs() -> None:
     workflow = read_text(".github/workflows/test-windows.yml")
 
