@@ -23,6 +23,8 @@ from .mcp_validation import classify_server
 from .manager import McpEngine
 from .models import EnvVarDefinition, McpServer, McpServerCreate, McpTool
 from .secrets import delete_secrets, has_credentials, read_secrets, write_secrets
+from .validation_evidence import evidence_from_preflight
+from .validation_plan import build_validation_plan
 from .version_check import check_server_version, update_server as update_server_version
 
 
@@ -221,6 +223,9 @@ def validate_registered_server(
 ):
     server = _require_server(db_path, server_id)
     result = classify_server(server)
+    plan = build_validation_plan(server, environment=result.environment)
+    evidence = evidence_from_preflight(plan, result)
+    result.diagnostics = evidence.redacted_model_dump()["diagnostics"]
     follow_up_url = result.follow_up_url
     if result.status == "failed" or result.installability_tier == "non_working":
         follow_up_url = write_followup_record(

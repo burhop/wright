@@ -357,8 +357,19 @@ def test_validate_server_reports_missing_host_dependency(client):
 
     assert response.status_code == 200
     data = response.json()
+    assert set(data.keys()) == {
+        "server_id",
+        "environment",
+        "status",
+        "installability_tier",
+        "message",
+        "missing_dependencies",
+        "diagnostics",
+        "follow_up_url",
+    }
     assert data["status"] == "dependency_missing"
     assert data["missing_dependencies"] == ["DefinitelyMissingCadHost"]
+    assert "DefinitelyMissingCadHost" in data["diagnostics"]
 
 
 def test_report_missing_mcp_creates_blocked_seed(client):

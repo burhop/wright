@@ -51,6 +51,19 @@ For each MCP server, work in catalog order:
    follow-up work.
 10. Reset to a clean container state before moving to the next MCP server.
 
+## Validation Plan And Evidence Seam
+
+Fast local tests may generate a `ValidationPlan`, serialize `ValidationEvidence`,
+and run the lightweight mock MCP probe runner. Those tests must use fake or local
+mock clients only; they must not start Docker, fetch packages, call external
+networks, require credentials, or install host CAD/CAE/CAM software.
+
+Clean-container execution is opt-in. A validation plan may mark
+`requires_docker`, `requires_network`, or `requires_credentials`, but those flags
+are declarations for a separate operator-invoked runner. Default API and package
+tests only preserve metadata preflight classification and evidence
+serialization.
+
 ## Ordering Policy
 
 Catalog entries must remain sorted as:

@@ -165,20 +165,20 @@
 
 ### Tests for User Story 5
 
-- [ ] T062 [P] [US5] Add validation plan generation tests in `packages/tool_registry/tests/test_mcp_validation_plan.py`
-- [ ] T063 [P] [US5] Add validation evidence serialization/redaction tests in `packages/tool_registry/tests/test_mcp_validation_evidence.py`
-- [ ] T064 [P] [US5] Add lightweight mock MCP probe tests in `packages/tool_registry/tests/test_mcp_validation_runner.py`
-- [ ] T065 [P] [US5] Add API validation compatibility tests in `apps/api/tests/test_mcp_api.py`
+- [X] T062 [P] [US5] Add validation plan generation tests in `packages/tool_registry/tests/test_mcp_validation_plan.py`
+- [X] T063 [P] [US5] Add validation evidence serialization/redaction tests in `packages/tool_registry/tests/test_mcp_validation_evidence.py`
+- [X] T064 [P] [US5] Add lightweight mock MCP probe tests in `packages/tool_registry/tests/test_mcp_validation_runner.py`
+- [X] T065 [P] [US5] Add API validation compatibility tests in `apps/api/tests/test_mcp_api.py`
 
 ### Implementation for User Story 5
 
-- [ ] T066 [US5] Implement `ValidationPlan` and probe step models in `packages/tool_registry/src/tool_registry/validation_plan.py`
-- [ ] T067 [US5] Implement `ValidationEvidence` and redaction helpers in `packages/tool_registry/src/tool_registry/validation_evidence.py`
-- [ ] T068 [US5] Implement lightweight local validation runner seam in `packages/tool_registry/src/tool_registry/validation_runner.py`
-- [ ] T069 [US5] Preserve metadata classification as preflight in `packages/tool_registry/src/tool_registry/mcp_validation.py`
-- [ ] T070 [US5] Wire validation plan/evidence through MCP validation service in `packages/tool_registry/src/tool_registry/services.py`
-- [ ] T071 [US5] Document Docker/network validation opt-in details in `docs/mcp-catalog/mcp-server-testing-process.md`
-- [ ] T072 [US5] Run targeted US5 tests documented in `specs/037-refactoring-audit/quickstart.md`
+- [X] T066 [US5] Implement `ValidationPlan` and probe step models in `packages/tool_registry/src/tool_registry/validation_plan.py`
+- [X] T067 [US5] Implement `ValidationEvidence` and redaction helpers in `packages/tool_registry/src/tool_registry/validation_evidence.py`
+- [X] T068 [US5] Implement lightweight local validation runner seam in `packages/tool_registry/src/tool_registry/validation_runner.py`
+- [X] T069 [US5] Preserve metadata classification as preflight in `packages/tool_registry/src/tool_registry/mcp_validation.py`
+- [X] T070 [US5] Wire validation plan/evidence through MCP validation service in `packages/tool_registry/src/tool_registry/services.py`
+- [X] T071 [US5] Document Docker/network validation opt-in details in `docs/mcp-catalog/mcp-server-testing-process.md`
+- [X] T072 [US5] Run targeted US5 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: Fast validation tests are offline-safe, and clean-container execution is a documented opt-in seam.
 
