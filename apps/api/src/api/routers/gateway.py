@@ -1,4 +1,3 @@
-import sqlite3
 import asyncio
 from typing import Set
 import structlog
@@ -11,6 +10,7 @@ from tool_registry import (
     get_tools,
 )
 from api.routers.mcp import get_mcp_engine
+from core.workspace import get_gateway_workspace, get_workspace_enabled_tools
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -18,48 +18,29 @@ router = APIRouter()
 # Active SSE listener queues
 gateway_event_queues: Set[asyncio.Queue] = set()
 
-
 def notify_gateway_tool_change():
     """Notify all connected gateway clients that the tool list has changed."""
-    logger.info(
-        "notifying_gateways_of_tool_change", active_queues=len(gateway_event_queues)
-    )
+    logger.info("notifying_gateways_of_tool_change", active_queues=len(gateway_event_queues))
     for queue in list(gateway_event_queues):
         try:
             queue.put_nowait("list_changed")
         except Exception as e:
             logger.warning("failed_to_queue_gateway_event", error=str(e))
 
-
 class GatewayCallRequest(BaseModel):
     name: str
     arguments: dict = {}
-
 
 @router.get("/tools")
 async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
     """Return consolidated list of enabled tools for the active workspace session."""
     db_path = engine.db_path
-
-    workspace = None
-    try:
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT session_id, local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
-        )
-        workspace = cursor.fetchone()
-        conn.close()
-    except Exception as e:
-        logger.exception("gateway_tools_db_error", error=str(e))
+    workspace = get_gateway_workspace(db_path)
 
     if not workspace:
         return {"tools": []}
 
     session_id = workspace["session_id"]
-    from core.workspace import get_workspace_enabled_tools
-
     enabled_tools = get_workspace_enabled_tools(db_path, session_id)
 
     all_servers = get_servers(db_path)
@@ -72,9 +53,7 @@ async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
         # Check if server is enabled
         is_enabled = True
         if enabled_tools is not None:
-            is_enabled = (server.name in enabled_tools) or (
-                server.server_id in enabled_tools
-            )
+            is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
 
         if not is_enabled:
             continue
@@ -89,26 +68,24 @@ async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
                 continue
 
             prefixed_name = f"{key_name}__{tool.name}"
-            tools_response.append(
-                {
-                    "name": prefixed_name,
-                    "description": tool.description,
-                    "inputSchema": tool.input_schema,
-                }
-            )
+            tools_response.append({
+                "name": prefixed_name,
+                "description": tool.description,
+                "inputSchema": tool.input_schema
+            })
 
     return {"tools": tools_response}
 
-
 @router.post("/call")
 async def call_gateway_tool(
-    body: GatewayCallRequest, engine: McpEngine = Depends(get_mcp_engine)
+    body: GatewayCallRequest,
+    engine: McpEngine = Depends(get_mcp_engine)
 ):
     """Execute a prefixed tool call on the corresponding child MCP server runner."""
     if "__" not in body.name:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid prefixed tool name: {body.name}",
+            detail=f"Invalid prefixed tool name: {body.name}"
         )
 
     server_key, tool_name = body.name.split("__", 1)
@@ -127,7 +104,7 @@ async def call_gateway_tool(
     if not target_server:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server with key prefix '{server_key}' not found.",
+            detail=f"MCP Server with key prefix '{server_key}' not found."
         )
 
     # Start the server runner if not active
@@ -136,53 +113,29 @@ async def call_gateway_tool(
         if not runner or not runner.is_running():
             workspace_dir = None
             try:
-                conn = sqlite3.connect(db_path)
-                conn.row_factory = sqlite3.Row
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
-                )
-                row = cursor.fetchone()
-                if row:
-                    workspace_dir = row["local_path"]
-                conn.close()
+                workspace = get_gateway_workspace(db_path)
+                if workspace:
+                    workspace_dir = workspace["local_path"]
             except Exception:
                 pass
-            await engine.start_server(
-                target_server.server_id, workspace_dir=workspace_dir
-            )
+            await engine.start_server(target_server.server_id, workspace_dir=workspace_dir)
     except Exception as e:
-        logger.exception(
-            "gateway_start_server_failed", server=target_server.name, error=str(e)
-        )
+        logger.exception("gateway_start_server_failed", server=target_server.name, error=str(e))
         return {
             "isError": True,
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"Failed to start MCP Server '{target_server.name}': {e}",
-                }
-            ],
+            "content": [{"type": "text", "text": f"Failed to start MCP Server '{target_server.name}': {e}"}]
         }
 
     # Execute tool call
     try:
-        result = await engine.call_tool(
-            target_server.server_id, tool_name, body.arguments
-        )
+        result = await engine.call_tool(target_server.server_id, tool_name, body.arguments)
         return result
     except Exception as e:
         logger.exception("gateway_call_tool_failed", tool=tool_name, error=str(e))
         return {
             "isError": True,
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"Error calling tool '{tool_name}' on '{target_server.name}': {e}",
-                }
-            ],
+            "content": [{"type": "text", "text": f"Error calling tool '{tool_name}' on '{target_server.name}': {e}"}]
         }
-
 
 async def event_generator(queue: asyncio.Queue):
     try:
@@ -196,7 +149,6 @@ async def event_generator(queue: asyncio.Queue):
     finally:
         gateway_event_queues.discard(queue)
 
-
 @router.get("/events")
 async def stream_gateway_events(request: Request):
     """SSE endpoint for forwarding tool configuration/workspace changes to the gateway client."""
@@ -209,5 +161,5 @@ async def stream_gateway_events(request: Request):
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
-        },
+        }
     )

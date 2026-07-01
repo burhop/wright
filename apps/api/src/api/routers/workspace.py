@@ -1,5 +1,5 @@
 """
-Workspace router  thin HTTP handlers only.
+Workspace router — thin HTTP handlers only.
 
 All Pydantic models are in api.schemas.workspace.
 All business logic is in core.workspace and api.services.hermes_sync.
@@ -8,6 +8,7 @@ All handlers are decorated with @traced for OTel span creation.
 
 import os
 import ntpath
+import sqlite3
 import uuid
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
@@ -26,6 +27,7 @@ from core.workspace import (
     create_workspace_from_dashboard,
     get_workspace_by_id,
     get_workspace_by_path,
+    is_synthetic_session_workspace,
     update_workspace_remote_by_id,
     save_agent_context,
     load_agent_context,
@@ -118,11 +120,19 @@ async def get_workspace_dir(
         workspace_path = os.path.join(get_default_workspace_parent_dir(), session_id)
     os.makedirs(workspace_path, exist_ok=True)
 
+    synthetic_fallback = is_synthetic_session_workspace(
+        {
+            "session_id": session_id,
+            "local_path": workspace_path,
+            "workspace_name": os.path.basename(workspace_path),
+        }
+    )
+
     # Check if there is an existing workspace with this local_path
     existing = get_workspace_by_path(DATABASE_PATH, workspace_path)
     if existing:
         update_workspace_session(DATABASE_PATH, existing["workspace_id"], session_id)
-    else:
+    elif not synthetic_fallback:
         workspace_id = str(uuid.uuid4())
         create_workspace(
             DATABASE_PATH,
@@ -134,7 +144,7 @@ async def get_workspace_dir(
     return workspace_path
 
 
-#  File Operations
+# ── File Operations ──────────────────────────────────────────────────────
 
 
 @router.get("/files", response_model=WorkspaceTreeResponse)
@@ -168,8 +178,7 @@ async def get_file_content(
         abs_path = os.path.join(backups_dir, backup_id)
         if not os.path.exists(abs_path):
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Backup not found: {backup_id}",
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Backup not found: {backup_id}"
             )
     else:
         try:
@@ -303,56 +312,53 @@ async def run_file_endpoint(
 
     # Secure path norm
     safe_path = os.path.normpath(body.path)
-    if (
-        safe_path.startswith("..")
-        or os.path.isabs(safe_path)
-        or safe_path.startswith("/")
-    ):
+    if safe_path.startswith("..") or os.path.isabs(safe_path) or safe_path.startswith("/"):
         safe_path = safe_path.lstrip("/").replace("../", "")
 
     full_path = os.path.normpath(os.path.join(workspace_dir, safe_path))
 
     if not os.path.exists(full_path) or not os.path.isfile(full_path):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {body.path}"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"File not found: {body.path}"
         )
 
     if not full_path.endswith(".py"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only Python files (.py) are supported for running.",
+            detail="Only Python files (.py) are supported for running."
         )
 
     import subprocess
-
     try:
         res = subprocess.run(
             ["python", full_path],
             cwd=workspace_dir,
             capture_output=True,
             text=True,
-            timeout=10.0,
+            timeout=10.0
         )
         return FileRunResponse(
             success=res.returncode == 0,
             stdout=res.stdout,
             stderr=res.stderr,
-            exit_code=res.returncode,
+            exit_code=res.returncode
         )
     except subprocess.TimeoutExpired as e:
         return FileRunResponse(
             success=False,
             stdout=e.stdout or "",
             stderr=e.stderr or "Process timed out after 10.0 seconds.",
-            exit_code=-9,
+            exit_code=-9
         )
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
         )
 
 
-#  Git Operations
+# ── Git Operations ───────────────────────────────────────────────────────
 
 
 @router.get("/git/status", response_model=GitStatusResponse)
@@ -574,7 +580,7 @@ async def git_merge_endpoint(
         )
 
 
-#  Workspace Config
+# ── Workspace Config ─────────────────────────────────────────────────────
 
 
 @router.get("/config", response_model=WorkspaceConfigGetResponse)
@@ -620,12 +626,11 @@ async def update_workspace_config(
     )
     # Write updated prompt context immediately to .hermes.md
     from core.workspace import write_workspace_hermes_md
-
     write_workspace_hermes_md(DATABASE_PATH, workspace_dir)
     return WorkspaceConfigResponse(success=True, workspace_id=workspace["workspace_id"])
 
 
-#  Workspace Tools
+# ── Workspace Tools ──────────────────────────────────────────────────────
 
 
 @router.get("/tools", response_model=WorkspaceToolsGetResponse)
@@ -636,7 +641,6 @@ async def get_workspace_tools_endpoint(
     enabled = get_workspace_enabled_tools(DATABASE_PATH, session_id)
     if enabled is None:
         from tool_registry.db import get_servers
-
         enabled = [s.name for s in get_servers(DATABASE_PATH) if s.is_installed]
     return WorkspaceToolsGetResponse(session_id=session_id, enabled_tools=enabled)
 
@@ -652,7 +656,6 @@ async def toggle_workspace_tool_endpoint(
     current = get_workspace_enabled_tools(DATABASE_PATH, body.session_id)
     if current is None:
         from tool_registry.db import get_servers
-
         current = [s.name for s in get_servers(DATABASE_PATH) if s.is_installed]
 
     if body.is_enabled and body.server_id not in current:
@@ -664,7 +667,6 @@ async def toggle_workspace_tool_endpoint(
     # Notify gateway of tool list change so Hermes updates dynamically
     try:
         from api.routers.gateway import notify_gateway_tool_change
-
         notify_gateway_tool_change()
     except Exception as e:
         logger.warning("failed_to_notify_gateway_tool_change", error=str(e))
@@ -687,14 +689,11 @@ async def get_workspace_mcp_status_endpoint(
     # 1. Get current workspace by session_id
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if not workspace:
-        return WorkspaceMcpStatusResponse(
-            status="ok", message="No active workspace.", running_mcps=[]
-        )
+        return WorkspaceMcpStatusResponse(status="ok", message="No active workspace.", running_mcps=[])
 
     # 2. Get currently enabled tools in the database
     enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
     from tool_registry.db import get_servers
-
     all_servers = get_servers(DATABASE_PATH)
 
     # Active servers expected to be configured
@@ -708,7 +707,11 @@ async def get_workspace_mcp_status_endpoint(
                 expected_servers.append(s)
 
     running_mcps = [
-        RunningMcpInfo(name=s.name, status=s.status, error_message=s.error_message)
+        RunningMcpInfo(
+            name=s.name,
+            status=s.status,
+            error_message=s.error_message
+        )
         for s in expected_servers
     ]
 
@@ -731,7 +734,7 @@ async def get_workspace_mcp_status_endpoint(
         if os.path.exists(path):
             try:
                 with open(path, "r") as f:
-                    config = yaml.safe_load(f) or {}
+                     config = yaml.safe_load(f) or {}
                 mcp_servers = config.get("mcp_servers", {})
                 configured_keys = set(mcp_servers.keys())
                 config_loaded = True
@@ -745,20 +748,16 @@ async def get_workspace_mcp_status_endpoint(
             return WorkspaceMcpStatusResponse(
                 status="mismatch",
                 message="Tool change during session. Start a new session to apply changes.",
-                running_mcps=running_mcps,
+                running_mcps=running_mcps
             )
-        return WorkspaceMcpStatusResponse(
-            status="ok",
-            message="MCP configuration is active and healthy.",
-            running_mcps=running_mcps,
-        )
+        return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.", running_mcps=running_mcps)
 
     # 4. Check for mismatches
     if expected_keys and "wrightgateway" not in configured_keys:
         return WorkspaceMcpStatusResponse(
             status="mismatch",
             message="Tool change during session. Start a new session to apply changes.",
-            running_mcps=running_mcps,
+            running_mcps=running_mcps
         )
 
     # 5. Check for broken servers
@@ -768,17 +767,24 @@ async def get_workspace_mcp_status_endpoint(
             return WorkspaceMcpStatusResponse(
                 status="error",
                 message=f"Cannot connect to MCP Server: {s.name} ({err_msg})",
-                running_mcps=running_mcps,
+                running_mcps=running_mcps
             )
+    inactive_servers = [
+        s.name for s in expected_servers
+        if s.status != "active"
+    ]
+    if inactive_servers:
+        names = ", ".join(inactive_servers)
+        return WorkspaceMcpStatusResponse(
+            status="error",
+            message=f"MCP server is not active: {names}",
+            running_mcps=running_mcps
+        )
 
-    return WorkspaceMcpStatusResponse(
-        status="ok",
-        message="MCP configuration is active and healthy.",
-        running_mcps=running_mcps,
-    )
+    return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.", running_mcps=running_mcps)
 
 
-#  Workspace CRUD
+# ── Workspace CRUD ───────────────────────────────────────────────────────
 
 
 @router.post(
@@ -793,7 +799,6 @@ async def create_workspace_endpoint(
         local_path = body.local_path
         if not local_path:
             from core.workspace import sanitize_workspace_name
-
             sanitized = sanitize_workspace_name(body.name)
             if not sanitized:
                 raise ValueError("Workspace name cannot be empty or invalid.")
@@ -802,7 +807,6 @@ async def create_workspace_endpoint(
 
         # Check DB for duplicate name or path
         import sqlite3
-
         conn = sqlite3.connect(DATABASE_PATH)
         conn.row_factory = sqlite3.Row
         try:
@@ -812,9 +816,7 @@ async def create_workspace_endpoint(
                 (local_path,),
             )
             if cursor.fetchone():
-                raise ValueError(
-                    f"Workspace directory path already exists: {local_path}"
-                )
+                raise ValueError(f"Workspace directory path already exists: {local_path}")
 
             cursor.execute(
                 "SELECT * FROM engineering_workspaces WHERE workspace_name = ?",
@@ -827,9 +829,7 @@ async def create_workspace_endpoint(
 
         # Check disk for existing folder
         if os.path.exists(local_path):
-            raise ValueError(
-                f"Workspace directory already exists on disk: {local_path}"
-            )
+            raise ValueError(f"Workspace directory already exists on disk: {local_path}")
 
         # Create folder and init git
         os.makedirs(local_path, exist_ok=True)
@@ -838,7 +838,6 @@ async def create_workspace_endpoint(
         # Create session in engine and save. If Hermes is unavailable, keep the
         # browser workflow usable with a local placeholder session id.
         from core.workspace import write_workspace_hermes_md
-
         write_workspace_hermes_md(DATABASE_PATH, local_path)
         try:
             session_info = await engine.create_session(local_path)
@@ -958,7 +957,6 @@ async def activate_workspace_endpoint(
     # Notify gateway that workspace tools have changed
     try:
         from api.routers.gateway import notify_gateway_tool_change
-
         notify_gateway_tool_change()
     except Exception as e:
         logger.warning("failed_to_notify_gateway_workspace_activation", error=str(e))
@@ -983,14 +981,19 @@ async def update_workspace_session_endpoint(
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
-    update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
+    session_id = body.session_id
+    try:
+        update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
+    except sqlite3.IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Session is already associated with another workspace",
+        ) from exc
 
     workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
     if workspace:
         local_path = workspace["local_path"]
-        session_id = await activate_workspace(
-            DATABASE_PATH, body.session_id, local_path, engine, allow_fallback=False
-        )
+        session_id = await activate_workspace(DATABASE_PATH, body.session_id, local_path, engine, allow_fallback=False)
 
         mcp_engine = getattr(request.app.state, "mcp_engine", None)
         if mcp_engine:
@@ -1008,12 +1011,11 @@ async def update_workspace_session_endpoint(
 
         try:
             from api.routers.gateway import notify_gateway_tool_change
-
             notify_gateway_tool_change()
         except Exception as e:
             logger.warning("failed_to_notify_gateway_on_session_update", error=str(e))
 
-    return {"success": True}
+    return {"success": True, "session_id": session_id}
 
 
 @router.post("/files/backup", response_model=FileBackupResponse)

@@ -18,6 +18,7 @@ from tool_registry import (
     get_tool,
     update_tool_enabled,
     McpEngine,
+    read_secrets,
     write_secrets,
     delete_secrets,
     has_credentials,
@@ -34,7 +35,7 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-#  Dependency injection helper
+# ── Dependency injection helper ──────────────────────────────────────────────
 def get_mcp_engine(request: Request) -> McpEngine:
     """Extract McpEngine from app state."""
     engine = getattr(request.app.state, "mcp_engine", None)
@@ -46,7 +47,7 @@ def get_mcp_engine(request: Request) -> McpEngine:
     return engine
 
 
-#  REST Models
+# ── REST Models ──────────────────────────────────────────────────────────────
 class ServersListResponse(BaseModel):
     servers: List[McpServer]
 
@@ -118,7 +119,7 @@ class MissingMcpReportRequest(BaseModel):
     category: str = "utilities"
 
 
-#  Route Handlers
+# ── Route Handlers ───────────────────────────────────────────────────────────
 
 
 @router.get("/servers", response_model=ServersListResponse)
@@ -278,24 +279,6 @@ async def install_server_endpoint(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=reason)
 
     try:
-        # Validate required credentials before installation
-        if server.env_vars and isinstance(server.env_vars, list):
-            required_vars = [
-                v.name
-                for v in server.env_vars
-                if isinstance(v, EnvVarDefinition) and v.required
-            ]
-            if required_vars:
-                cred_status = has_credentials(server_id, required_vars)
-                missing = [
-                    name for name, configured in cred_status.items() if not configured
-                ]
-                if missing:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"Server '{server.name}' requires credentials before installation: {', '.join(missing)}. Configure them via the credentials panel first.",
-                    )
-
         # Mark as installed in database
         from tool_registry.db import update_server
 
@@ -661,7 +644,7 @@ async def update_server_endpoint(
     }
 
 
-#  Credential Management Endpoints
+# ── Credential Management Endpoints ──────────────────────────────────────────
 
 
 @router.get("/servers/{server_id}/credentials", response_model=CredentialStatusResponse)
@@ -711,7 +694,7 @@ async def save_credentials(
             detail=f"MCP Server '{server_id}' not found.",
         )
 
-    # Validate credentials are strings  never log values
+    # Validate credentials are strings — never log values
     sanitized: dict = {}
     for key, value in body.credentials.items():
         if not isinstance(key, str) or not isinstance(value, str):
@@ -719,10 +702,13 @@ async def save_credentials(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Credential keys and values must be strings.",
             )
-        sanitized[key] = value
+        if value.strip():
+            sanitized[key] = value
 
     logger.info("saving_credentials", server_id=server_id, var_count=len(sanitized))
-    write_secrets(server_id, sanitized)
+    if sanitized:
+        existing = read_secrets(server_id)
+        write_secrets(server_id, {**existing, **sanitized})
 
     # Return updated configured status
     env_var_defs = []

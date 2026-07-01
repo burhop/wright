@@ -793,11 +793,11 @@ ENGINEERING_CATALOG = [
         "server_id": "autodesk-product-help-mcp",
         "name": "Autodesk Product Help MCP",
         "type": "sse",
-        "command": "https://help.autodesk.com/",
+        "command": "https://developer.api.autodesk.com/knowledge/public/v1/mcp",
         "category": "utilities",
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
-        "description": "Documentation/help MCP seed for Autodesk product documentation. Not a Fusion, Revit, Inventor, or AutoCAD automation server.",
-        "source_url": None,
+        "description": "Official remote Autodesk Product Help MCP for read-only access to Autodesk Help content across 110+ products.",
+        "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html",
     },
 ]
 
@@ -2404,16 +2404,16 @@ CATALOG_METADATA = {
         "install_blocked_reason": "Exact client configuration URL still needs to be captured from Siemens docs.",
     },
     "autodesk-product-help-mcp": {
-        "verification_state": "user_reported_url_needed",
-        "installability_tier": "blocked",
+        "verification_state": "verified_docs_mcp",
+        "installability_tier": "tested",
         "risk_level": "read-only",
-        "deployment_mode": "docs-only",
+        "deployment_mode": "remote-docs",
         "platform_support": platform_support(
             {
                 key: {
-                    "status": "likely",
-                    "tested": False,
-                    "notes": "docs-only entry expected cross-platform once endpoint is verified",
+                    "status": "yes",
+                    "tested": key == "linux_x64",
+                    "notes": "official Autodesk remote MCP endpoint; Wright Streamable HTTP runner initialized and listed tools",
                 }
                 for key in (
                     "windows_11_x64",
@@ -2424,7 +2424,11 @@ CATALOG_METADATA = {
                 )
             }
         ),
-        "install_blocked_reason": "Official Autodesk MCP endpoint/client config is not verified.",
+        "validation_result": validation_summary(
+            "passed",
+            "Verified against the official Autodesk Product Help remote MCP endpoint `https://developer.api.autodesk.com/knowledge/public/v1/mcp`; Wright initialized Streamable HTTP and listed `get_available_products` and `search_help_content`.",
+            "ubuntu-linux-x64-container",
+        ),
     },
     "webmcp-standard": {
         "verification_state": "ui_or_web_standard",

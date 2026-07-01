@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class AgentSyncManager:
-    """Manages workspace tools configuration synchronization across various agent profiles (Constitution 4)."""
+    """Manages workspace tools configuration synchronization across various agent profiles (Constitution §4)."""
 
     def __init__(self, db_path: str):
         self.db_path = db_path
@@ -66,11 +66,15 @@ class AgentSyncManager:
         if "pytest" in sys.modules:
             return
 
-        from core.workspace import get_workspace_by_session
+        from core.workspace import (
+            get_workspace_by_session,
+            set_active_gateway_session,
+        )
 
         workspace = get_workspace_by_session(self.db_path, session_id)
         if not workspace:
             return
+        set_active_gateway_session(self.db_path, session_id)
 
         workspace_path = workspace["local_path"]
         tmp_dir = os.path.join(workspace_path, "tmp")
@@ -104,7 +108,7 @@ class AgentSyncManager:
         except Exception as e:
             logger.warning("Failed to update .gitignore in _sync_to_hermes: %s", e)
 
-        # Detect repo root dynamically (Constitution 4)
+        # Detect repo root dynamically (Constitution §4)
         current_dir = os.path.dirname(os.path.abspath(__file__))
         repo_dir = os.path.abspath(os.path.join(current_dir, "..", "..", "..", ".."))
         new_mcp_servers = {
@@ -116,8 +120,8 @@ class AgentSyncManager:
                     repo_dir,
                     "python",
                     "-m",
-                    "tool_registry.gateway",
-                ],
+                    "tool_registry.gateway"
+                ]
             }
         }
 
@@ -133,11 +137,7 @@ class AgentSyncManager:
                 try:
                     os.makedirs(os.path.dirname(path), exist_ok=True)
                     with open(path, "w") as f:
-                        yaml.safe_dump(
-                            {"mcp_servers": new_mcp_servers},
-                            f,
-                            default_flow_style=False,
-                        )
+                        yaml.safe_dump({"mcp_servers": new_mcp_servers}, f, default_flow_style=False)
                 except Exception as e:
                     logger.error("Failed to write initial config to %s: %s", path, e)
                 continue
@@ -147,7 +147,6 @@ class AgentSyncManager:
                     old_config = yaml.safe_load(f) or {}
 
                 import copy
-
                 new_config = copy.deepcopy(old_config)
                 new_config["mcp_servers"] = new_mcp_servers
 
@@ -156,24 +155,20 @@ class AgentSyncManager:
                     with open(path, "w") as f:
                         yaml.safe_dump(new_config, f, default_flow_style=False)
             except Exception as e:
-                logger.error(
-                    "Failed to sync workspace tools to Hermes path %s: %s", path, e
-                )
+                logger.error("Failed to sync workspace tools to Hermes path %s: %s", path, e)
                 config_changed = True
         if config_changed:
-            logger.info(
-                "Hermes configuration updated. Gateway will auto-reload config.yaml."
-            )
+            logger.info("Hermes configuration updated. Gateway will auto-reload config.yaml.")
         else:
             logger.info("Hermes configuration unchanged.")
 
         try:
             from api.routers.gateway import notify_gateway_tool_change
-
             notify_gateway_tool_change()
             logger.info("Successfully notified gateway of tool change.")
         except Exception as e:
             logger.debug("Failed to notify gateway of tool change: %s", e)
+
 
     def _sync_to_stub_agent(self, session_id: str, agent_name: str) -> None:
         """Simulate syncing workspace tools to a generalized agent (e.g. openclaw or PI)."""

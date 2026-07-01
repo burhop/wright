@@ -2,6 +2,10 @@ import type { ServiceStatus } from "../store/types";
 import { hostAdapter } from "./host-adapter";
 
 const API_BASE = hostAdapter.getApiBaseUrl();
+type HealthCheckResult = Pick<
+  ServiceStatus,
+  "state" | "latencyMs" | "baseUrl" | "error"
+>;
 
 export class LiveHealthService {
   private statuses: ServiceStatus[] = [
@@ -20,8 +24,8 @@ export class LiveHealthService {
       lastChecked: null,
     },
     {
-      serviceId: "inference",
-      name: "LLM Inference",
+      serviceId: "llm-backend",
+      name: "LLM Backend",
       endpoint: "/api/inference/health",
       state: "unknown",
       lastChecked: null,
@@ -40,7 +44,7 @@ export class LiveHealthService {
       const checks = this.statuses.map(async (svc) => {
         const fetchWithRetry = async (
           retries = 1,
-        ): Promise<"connected" | "disconnected"> => {
+        ): Promise<HealthCheckResult> => {
           try {
             const response = await hostAdapter.fetch(
               `${API_BASE}${svc.endpoint}`,
@@ -48,7 +52,12 @@ export class LiveHealthService {
             if (response.ok) {
               const data = await response.json();
               if (data.state === "connected" || data.state === "disconnected") {
-                return data.state as "connected" | "disconnected";
+                return {
+                  state: data.state as "connected" | "disconnected",
+                  latencyMs: data.latencyMs ?? null,
+                  baseUrl: data.baseUrl ?? null,
+                  error: data.error ?? null,
+                };
               }
             }
           } catch (err) {
@@ -58,13 +67,18 @@ export class LiveHealthService {
             await new Promise((resolve) => setTimeout(resolve, 500));
             return fetchWithRetry(retries - 1);
           }
-          return "disconnected";
+          return {
+            state: "disconnected",
+            latencyMs: null,
+            baseUrl: null,
+            error: "Health check request failed",
+          };
         };
 
-        const state = await fetchWithRetry();
+        const result = await fetchWithRetry();
         return {
           ...svc,
-          state,
+          ...result,
           lastChecked: Date.now(),
         };
       });

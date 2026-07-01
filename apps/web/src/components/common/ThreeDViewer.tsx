@@ -8,6 +8,30 @@ interface ThreeDViewerProps {
   fileName?: string;
 }
 
+const VIEWER_BACKGROUND = 0x090d16;
+const PART_MATERIAL = 0xd9f3ff;
+const PART_SPECULAR = 0x7dd3fc;
+const GRID_PRIMARY = 0x1e293b;
+const GRID_SECONDARY = 0x0d1220;
+
+const fitCameraToRadius = (
+  camera: THREE.PerspectiveCamera,
+  radius: number,
+) => {
+  const safeRadius = Math.max(radius, 1);
+  const fov = THREE.MathUtils.degToRad(camera.fov);
+  const distance = (safeRadius / Math.sin(fov / 2)) * 1.35;
+  const component = distance / Math.sqrt(3);
+
+  camera.position.set(component, component, component);
+  camera.lookAt(0, 0, 0);
+  camera.near = Math.max(0.001, safeRadius / 1000);
+  camera.far = Math.max(1000, distance * 8, safeRadius * 80);
+  camera.updateProjectionMatrix();
+
+  return { distance, radius: safeRadius };
+};
+
 export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,10 +47,10 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
 
     // 1. Create Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x151515); // Calm dark console surface color
+    scene.background = new THREE.Color(VIEWER_BACKGROUND);
 
     // 2. Create Camera
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 10000);
     camera.position.set(40, 40, 40);
 
     // 3. Create Renderer
@@ -35,19 +59,19 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // 4. Add Lights
-    const ambientLight = new THREE.AmbientLight(0x444444);
+    const ambientLight = new THREE.AmbientLight(0xb8d8f0, 0.65);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.1);
     dirLight1.position.set(1, 1, 1).normalize();
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0x555555, 0.4);
+    const dirLight2 = new THREE.DirectionalLight(0x7dd3fc, 0.45);
     dirLight2.position.set(-1, -1, -1).normalize();
     scene.add(dirLight2);
 
     // 5. Add Grid & Axis Helpers
-    const gridHelper = new THREE.GridHelper(80, 40, 0x333333, 0x222222);
+    const gridHelper = new THREE.GridHelper(80, 40, GRID_PRIMARY, GRID_SECONDARY);
     gridHelper.position.y = -10;
     scene.add(gridHelper);
 
@@ -62,8 +86,8 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
       geometry.center();
 
       material = new THREE.MeshPhongMaterial({
-        color: 0x4f46e5, // Wright console accent indigo
-        specular: 0x222222,
+        color: PART_MATERIAL,
+        specular: PART_SPECULAR,
         shininess: 60,
       });
 
@@ -74,17 +98,11 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
       geometry.computeBoundingSphere();
       const boundingSphere = geometry.boundingSphere;
       if (boundingSphere) {
-        const radius = boundingSphere.radius;
-        // Position camera based on radius
-        camera.position.set(radius * 2.2, radius * 2.2, radius * 2.2);
-        camera.lookAt(0, 0, 0);
+        const { radius } = fitCameraToRadius(camera, boundingSphere.radius);
         // Adjust grid position to fit base
         gridHelper.position.y = -radius * 1.1;
-
-        // Dynamically adjust camera near/far clipping planes based on model size
-        camera.near = Math.max(0.001, radius * 0.01);
-        camera.far = Math.max(1000, radius * 100);
-        camera.updateProjectionMatrix();
+        const gridSize = Math.max(80, radius * 4);
+        gridHelper.scale.setScalar(gridSize / 80);
       }
     } catch (err) {
       console.error("Failed to parse STL geometry buffer", err);
@@ -94,12 +112,11 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.maxDistance = 400;
-
-    // Set dynamic minDistance based on bounding sphere radius if available
     const radius = geometry?.boundingSphere?.radius;
-    controls.minDistance =
-      radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
+    const fitDistance =
+      radius !== undefined ? fitCameraToRadius(camera, radius).distance : 40;
+    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
+    controls.maxDistance = Math.max(1000, fitDistance * 12, (radius || 1) * 40);
 
     // 8. Handle Resizing
     const resizeObserver = new ResizeObserver((entries) => {
@@ -144,7 +161,7 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#151515",
+        backgroundColor: "#090d16",
       }}
     >
       <canvas
@@ -158,7 +175,7 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
             position: "absolute",
             bottom: "var(--space-sm)",
             left: "var(--space-sm)",
-            backgroundColor: "rgba(21, 21, 21, 0.8)",
+            backgroundColor: "rgba(9, 13, 22, 0.84)",
             padding: "2px 8px",
             borderRadius: "var(--radius-sm)",
             color: "var(--color-secondary)",

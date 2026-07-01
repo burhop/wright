@@ -6,6 +6,9 @@ from typing import Dict, Any, Optional
 
 logger = structlog.get_logger(__name__)
 
+ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
+SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
+
 
 class _ClosingConnection(sqlite3.Connection):
     def __exit__(self, exc_type, exc_value, traceback):
@@ -49,11 +52,34 @@ def _api_rel_path(abs_path: str, base_dir: str) -> str:
 
 def _is_within_path(path: str, parent: str) -> bool:
     try:
-        return os.path.commonpath(
-            [os.path.abspath(path), os.path.abspath(parent)]
-        ) == os.path.abspath(parent)
+        return os.path.commonpath([os.path.abspath(path), os.path.abspath(parent)]) == os.path.abspath(parent)
     except ValueError:
         return False
+
+
+def is_synthetic_session_workspace(row: Dict[str, Any]) -> bool:
+    """Return True for fallback rows created from transient agent session IDs."""
+    session_id = str(row.get("session_id") or "").strip()
+    local_path = str(row.get("local_path") or "").rstrip("/\\")
+    basename = os.path.basename(local_path)
+    workspace_name = str(row.get("workspace_name") or "").strip()
+
+    synthetic_id = session_id.startswith(SYNTHETIC_SESSION_PREFIXES) or basename.startswith(
+        SYNTHETIC_SESSION_PREFIXES
+    )
+    if not synthetic_id:
+        return False
+
+    display_name = workspace_name or basename
+    return display_name in {session_id, basename}
+
+
+def _visible_workspace_rows(rows: list[sqlite3.Row]) -> list[Dict[str, Any]]:
+    return [
+        row_dict
+        for row in rows
+        if not is_synthetic_session_workspace(row_dict := dict(row))
+    ]
 
 
 def get_workspace_by_session(db_path: str, session_id: str) -> Optional[Dict[str, Any]]:
@@ -72,6 +98,69 @@ def get_workspace(db_path: str, workspace_id: str) -> Optional[Dict[str, Any]]:
         cursor.execute(
             "SELECT * FROM engineering_workspaces WHERE workspace_id = ?",
             (workspace_id,),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def _ensure_system_settings_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS system_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        )
+        """
+    )
+
+
+def set_active_gateway_session(db_path: str, session_id: str) -> None:
+    """Pin the Hermes-facing Wright gateway to the session currently in use."""
+    if not session_id:
+        return
+    with _get_db_conn(db_path) as conn:
+        _ensure_system_settings_table(conn)
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO system_settings (key, value)
+            VALUES (?, ?)
+            """,
+            (ACTIVE_GATEWAY_SESSION_SETTING, session_id),
+        )
+        conn.commit()
+
+
+def get_active_gateway_session(db_path: str) -> Optional[str]:
+    try:
+        with _get_db_conn(db_path) as conn:
+            _ensure_system_settings_table(conn)
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT value FROM system_settings WHERE key = ?",
+                (ACTIVE_GATEWAY_SESSION_SETTING,),
+            )
+            row = cursor.fetchone()
+            if not row:
+                return None
+            session_id = str(row["value"]).strip()
+            return session_id or None
+    except Exception as e:
+        logger.debug("failed_to_read_active_gateway_session", error=str(e))
+        return None
+
+
+def get_gateway_workspace(db_path: str) -> Optional[Dict[str, Any]]:
+    """Return the workspace whose MCP tools should be visible through wrightgateway."""
+    active_session_id = get_active_gateway_session(db_path)
+    if active_session_id:
+        workspace = get_workspace_by_session(db_path, active_session_id)
+        if workspace:
+            return workspace
+
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
         )
         row = cursor.fetchone()
         return dict(row) if row else None
@@ -174,8 +263,7 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
         requires_creds = False
         if s.env_vars and isinstance(s.env_vars, list):
             required_vars = [
-                v.name
-                for v in s.env_vars
+                v.name for v in s.env_vars
                 if isinstance(v, EnvVarDefinition) and v.required
             ]
             if required_vars:
@@ -216,16 +304,16 @@ def get_recent_workspaces(db_path: str, limit: int = 5) -> list[Dict[str, Any]]:
         cursor = conn.cursor()
         cursor.execute(
             "SELECT * FROM engineering_workspaces ORDER BY updated_at DESC LIMIT ?",
-            (limit,),
+            (max(limit * 4, limit),),
         )
-        return [dict(row) for row in cursor.fetchall()]
+        return _visible_workspace_rows(cursor.fetchall())[:limit]
 
 
 def get_all_workspaces(db_path: str) -> list[Dict[str, Any]]:
     with _get_db_conn(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM engineering_workspaces ORDER BY local_path ASC")
-        return [dict(row) for row in cursor.fetchall()]
+        return _visible_workspace_rows(cursor.fetchall())
 
 
 def touch_workspace(db_path: str, session_id: str) -> None:
@@ -465,6 +553,7 @@ async def activate_workspace(
         logger.warning("failed_to_write_hermes_md_on_activate", error=str(e))
 
     touch_workspace(db_path, session_id)
+    set_active_gateway_session(db_path, session_id)
     return session_id
 
 
@@ -612,9 +701,7 @@ class WorkspaceManager:
         # Support paths inside /tmp/ (e.g. for geometry/exports scratchpads)
         if normalized_path.startswith("/tmp/") or normalized_path.startswith("tmp/"):
             # Try to resolve relative to workspace base_dir first (workspace-local tmp)
-            local_resolved = os.path.abspath(
-                os.path.join(self.base_dir, normalized_path.lstrip("/"))
-            )
+            local_resolved = os.path.abspath(os.path.join(self.base_dir, normalized_path.lstrip("/")))
             if os.path.exists(local_resolved):
                 return local_resolved
 
@@ -641,7 +728,6 @@ class WorkspaceManager:
     def write_backup(self, rel_path: str, content: bytes) -> str:
         """Write temporary backup file for unsaved edits under .git/backups/."""
         import hashlib
-
         hash_val = hashlib.sha256(rel_path.encode()).hexdigest()
         backups_dir = os.path.join(self.base_dir, ".git", "backups")
         os.makedirs(backups_dir, exist_ok=True)
@@ -1163,9 +1249,7 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
         cursor.execute("PRAGMA table_info(mcp_servers)")
         columns = [col[1] for col in cursor.fetchall()]
         if "instructions" in columns:
-            cursor.execute(
-                "SELECT name, server_id, instructions FROM mcp_servers WHERE is_installed = 1"
-            )
+            cursor.execute("SELECT name, server_id, instructions FROM mcp_servers WHERE is_installed = 1")
             installed_servers = [dict(row) for row in cursor.fetchall()]
     except Exception:
         pass
@@ -1176,13 +1260,9 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
     for srv in installed_servers:
         is_enabled = True
         if enabled_tools is not None:
-            is_enabled = (srv["name"] in enabled_tools) or (
-                srv["server_id"] in enabled_tools
-            )
+            is_enabled = (srv["name"] in enabled_tools) or (srv["server_id"] in enabled_tools)
         if is_enabled and srv.get("instructions"):
-            active_instructions.append(
-                f"## {srv['name']} Instructions\n{srv['instructions']}"
-            )
+            active_instructions.append(f"## {srv['name']} Instructions\n{srv['instructions']}")
 
     global_rules = (
         "## Global Workspace Rules\n"
@@ -1248,7 +1328,8 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
     if start_marker in existing_content and end_marker in existing_content:
         # Replace the existing block
         pattern = re.compile(
-            rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}", re.DOTALL
+            rf"{re.escape(start_marker)}.*?{re.escape(end_marker)}",
+            re.DOTALL
         )
         new_content = pattern.sub(lambda _: generated_block, existing_content)
     elif start_marker in existing_content or end_marker in existing_content:
@@ -1266,7 +1347,7 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         # Replace the existing block
         pattern = re.compile(
             rf"{re.escape(start_prompt_marker)}.*?{re.escape(end_prompt_marker)}",
-            re.DOTALL,
+            re.DOTALL
         )
         new_content = pattern.sub(lambda _: generated_prompt_block, new_content)
     elif start_prompt_marker in new_content or end_prompt_marker in new_content:
@@ -1289,7 +1370,7 @@ def read_application_logs(
     level: Optional[str] = None,
     search: Optional[str] = None,
     limit: int = 100,
-    offset: int = 0,
+    offset: int = 0
 ) -> dict:
     """Read and parse application logs from apps/api/wright.log."""
     import os
@@ -1321,11 +1402,7 @@ def read_application_logs(
 
                     # Filter by workspace_id
                     if workspace_id:
-                        ws_id_val = (
-                            entry.get("workspace_id")
-                            or entry.get("extra", {}).get("workspaceId")
-                            or entry.get("workspaceId")
-                        )
+                        ws_id_val = entry.get("workspace_id") or entry.get("extra", {}).get("workspaceId") or entry.get("workspaceId")
                         if ws_id_val != workspace_id:
                             continue
 

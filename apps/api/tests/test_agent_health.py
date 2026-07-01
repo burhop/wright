@@ -22,3 +22,26 @@ async def test_agent_health_includes_connection_details(client, mock_agent_engin
         "baseUrl": "http://127.0.0.1:8642",
         "error": "connection refused",
     }
+
+
+@pytest.mark.asyncio
+async def test_inference_health_uses_agent_llm_backend_check(client, mock_agent_engine):
+    async def llm_backend_health():
+        return {
+            "state": "disconnected",
+            "latencyMs": 12.5,
+            "baseUrl": "http://llm.local/v1",
+            "error": "LLM backend is offline",
+        }
+
+    mock_agent_engine.check_llm_backend_health = llm_backend_health
+
+    response = await client.get("/api/inference/health")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "state": "disconnected",
+        "latencyMs": 12.5,
+        "baseUrl": "http://llm.local/v1",
+        "error": "LLM backend is offline",
+    }

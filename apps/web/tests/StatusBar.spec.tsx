@@ -17,15 +17,16 @@ describe("StatusBar", () => {
         serviceId: "hermes-agent",
         name: "Hermes Agent",
         endpoint: "/api/agent/health",
-        state: "disconnected",
+        state: "connected",
         lastChecked: Date.now(),
       },
       {
-        serviceId: "inference",
-        name: "LLM Inference",
+        serviceId: "llm-backend",
+        name: "LLM Backend",
         endpoint: "/api/inference/health",
-        state: "unknown",
-        lastChecked: null,
+        state: "disconnected",
+        lastChecked: Date.now(),
+        error: "LLM backend is not ready",
       },
     ];
 
@@ -44,9 +45,16 @@ describe("StatusBar", () => {
 
     expect(screen.getByTestId("status-wright-api")).toBeInTheDocument();
     expect(screen.getByTestId("status-hermes-agent")).toBeInTheDocument();
-    expect(screen.getByTestId("status-inference")).toBeInTheDocument();
+    expect(screen.getByTestId("status-llm-backend")).toBeInTheDocument();
+    expect(screen.queryByTestId("status-inference")).not.toBeInTheDocument();
+    expect(screen.queryByText("LLM Inference")).not.toBeInTheDocument();
 
-    expect(screen.getByTestId("health-error-hermes")).toBeInTheDocument();
+    expect(screen.queryByTestId("health-error-hermes")).not.toBeInTheDocument();
+    expect(screen.getByTestId("health-error-llm-backend")).toBeInTheDocument();
+    expect(screen.getByTestId("status-llm-backend")).toHaveAttribute(
+      "title",
+      "LLM Backend: LLM backend is not ready",
+    );
     expect(screen.getByTestId("latest-trace")).toHaveTextContent(
       /TRACE: tr-abc12/,
     );
@@ -57,7 +65,24 @@ describe("StatusBar", () => {
       if (url.includes("/api/agent/health")) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({ state: "disconnected", latencyMs: 4 }),
+          json: () =>
+            Promise.resolve({
+              state: "connected",
+              latencyMs: 4,
+              baseUrl: "http://127.0.0.1:8642",
+            }),
+        });
+      }
+      if (url.includes("/api/inference/health")) {
+        return Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              state: "disconnected",
+              latencyMs: 4,
+              baseUrl: "http://127.0.0.1:8642",
+              error: "LLM backend is not ready",
+            }),
         });
       }
       return Promise.resolve({
@@ -79,12 +104,16 @@ describe("StatusBar", () => {
     const statuses = healthService.getStatuses();
     const wrightStatus = statuses.find((s) => s.serviceId === "wright-api");
     const hermesStatus = statuses.find((s) => s.serviceId === "hermes-agent");
+    const llmStatus = statuses.find((s) => s.serviceId === "llm-backend");
 
     expect(wrightStatus?.state).toBe("connected");
-    expect(hermesStatus?.state).toBe("disconnected");
+    expect(hermesStatus?.state).toBe("connected");
+    expect(llmStatus?.state).toBe("disconnected");
+    expect(llmStatus?.error).toBe("LLM backend is not ready");
 
     const { rerender } = render(<StatusBar statuses={statuses} />);
-    expect(screen.getByTestId("health-error-hermes")).toBeInTheDocument();
+    expect(screen.queryByTestId("health-error-hermes")).not.toBeInTheDocument();
+    expect(screen.getByTestId("health-error-llm-backend")).toBeInTheDocument();
 
     // Now switch mock to connected
     mockFetch.mockImplementation(() =>
@@ -101,10 +130,17 @@ describe("StatusBar", () => {
     const updatedHermesStatus = updatedStatuses.find(
       (s) => s.serviceId === "hermes-agent",
     );
+    const updatedLlmStatus = updatedStatuses.find(
+      (s) => s.serviceId === "llm-backend",
+    );
     expect(updatedHermesStatus?.state).toBe("connected");
+    expect(updatedLlmStatus?.state).toBe("connected");
 
     rerender(<StatusBar statuses={updatedStatuses} />);
     expect(screen.queryByTestId("health-error-hermes")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("health-error-llm-backend"),
+    ).not.toBeInTheDocument();
     expect(screen.getByTestId("status-hermes-agent")).toBeInTheDocument();
 
     healthService.stopPolling();
