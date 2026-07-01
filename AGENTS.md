@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/036-port-nous-fixes/plan.md
+at specs/037-refactoring-audit/plan.md
 <!-- SPECKIT END -->
 
 For engineering MCP server validation, follow the clean-container process in
