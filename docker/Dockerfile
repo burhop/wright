@@ -6,8 +6,6 @@
 # Managed by supervisord (Wright API on :8000, Hermes gateway on :8642 internal)
 # =============================================================================
 
-ARG HERMES_BASE_IMAGE=wright-hermes-only:latest
-
 # Stage 1: Build the Vite frontend
 FROM node:26-slim AS web-builder
 WORKDIR /workspace
@@ -17,8 +15,29 @@ RUN npm ci
 COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
-# Stage 2: Production runtime image
-FROM ${HERMES_BASE_IMAGE}
+# Stage 2: Clean Hermes runtime base built from public sources.
+FROM python:3.13-slim AS hermes-base
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV HERMES_HOME=/home/agent/.hermes
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
+    uv pip install --python /opt/hermes/.venv/bin/python hermes-agent aiohttp && \
+    mkdir -p /opt/hermes/bin && \
+    ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
+    rm -rf /root/.cache/uv
+
+# Stage 3: Production runtime image
+FROM hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -32,6 +51,7 @@ ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
+    curl \
     sudo \
     vim \
     nano \

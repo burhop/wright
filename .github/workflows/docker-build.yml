@@ -62,8 +62,6 @@ jobs:
             VERSION=${{ steps.prep.outputs.version }}
             REVISION=${{ steps.prep.outputs.revision }}
             CREATED=${{ steps.prep.outputs.created }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@v0.36.0
@@ -134,7 +132,7 @@ jobs:
           echo "Testing workspace creation..."
           WS_RESPONSE=$(curl -sf -X POST http://127.0.0.1:8090/api/workspace/create \
             -H "Content-Type: application/json" \
-            -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace"}')
+            -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace/ci-smoke-test"}')
           WS_ID=$(echo "$WS_RESPONSE" | jq -r '.workspace_id // empty')
           if [ -z "$WS_ID" ]; then
             echo "Workspace creation failed: $WS_RESPONSE"
