@@ -6,6 +6,9 @@ from typing import Dict, Any, Optional
 
 logger = structlog.get_logger(__name__)
 
+ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
+SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
+
 
 class _ClosingConnection(sqlite3.Connection):
     def __exit__(self, exc_type, exc_value, traceback):
@@ -54,6 +57,31 @@ def _is_within_path(path: str, parent: str) -> bool:
         return False
 
 
+def is_synthetic_session_workspace(row: Dict[str, Any]) -> bool:
+    """Return True for fallback rows created from transient agent session IDs."""
+    session_id = str(row.get("session_id") or "").strip()
+    local_path = str(row.get("local_path") or "").rstrip("/\\")
+    basename = os.path.basename(local_path)
+    workspace_name = str(row.get("workspace_name") or "").strip()
+
+    synthetic_id = session_id.startswith(SYNTHETIC_SESSION_PREFIXES) or basename.startswith(
+        SYNTHETIC_SESSION_PREFIXES
+    )
+    if not synthetic_id:
+        return False
+
+    display_name = workspace_name or basename
+    return display_name in {session_id, basename}
+
+
+def _visible_workspace_rows(rows: list[sqlite3.Row]) -> list[Dict[str, Any]]:
+    return [
+        row_dict
+        for row in rows
+        if not is_synthetic_session_workspace(row_dict := dict(row))
+    ]
+
+
 def get_workspace_by_session(db_path: str, session_id: str) -> Optional[Dict[str, Any]]:
     with _get_db_conn(db_path) as conn:
         cursor = conn.cursor()
@@ -70,6 +98,69 @@ def get_workspace(db_path: str, workspace_id: str) -> Optional[Dict[str, Any]]:
         cursor.execute(
             "SELECT * FROM engineering_workspaces WHERE workspace_id = ?",
             (workspace_id,),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def _ensure_system_settings_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS system_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        )
+        """
+    )
+
+
+def set_active_gateway_session(db_path: str, session_id: str) -> None:
+    """Pin the Hermes-facing Wright gateway to the session currently in use."""
+    if not session_id:
+        return
+    with _get_db_conn(db_path) as conn:
+        _ensure_system_settings_table(conn)
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO system_settings (key, value)
+            VALUES (?, ?)
+            """,
+            (ACTIVE_GATEWAY_SESSION_SETTING, session_id),
+        )
+        conn.commit()
+
+
+def get_active_gateway_session(db_path: str) -> Optional[str]:
+    try:
+        with _get_db_conn(db_path) as conn:
+            _ensure_system_settings_table(conn)
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT value FROM system_settings WHERE key = ?",
+                (ACTIVE_GATEWAY_SESSION_SETTING,),
+            )
+            row = cursor.fetchone()
+            if not row:
+                return None
+            session_id = str(row["value"]).strip()
+            return session_id or None
+    except Exception as e:
+        logger.debug("failed_to_read_active_gateway_session", error=str(e))
+        return None
+
+
+def get_gateway_workspace(db_path: str) -> Optional[Dict[str, Any]]:
+    """Return the workspace whose MCP tools should be visible through wrightgateway."""
+    active_session_id = get_active_gateway_session(db_path)
+    if active_session_id:
+        workspace = get_workspace_by_session(db_path, active_session_id)
+        if workspace:
+            return workspace
+
+    with _get_db_conn(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
         )
         row = cursor.fetchone()
         return dict(row) if row else None
@@ -213,16 +304,16 @@ def get_recent_workspaces(db_path: str, limit: int = 5) -> list[Dict[str, Any]]:
         cursor = conn.cursor()
         cursor.execute(
             "SELECT * FROM engineering_workspaces ORDER BY updated_at DESC LIMIT ?",
-            (limit,),
+            (max(limit * 4, limit),),
         )
-        return [dict(row) for row in cursor.fetchall()]
+        return _visible_workspace_rows(cursor.fetchall())[:limit]
 
 
 def get_all_workspaces(db_path: str) -> list[Dict[str, Any]]:
     with _get_db_conn(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM engineering_workspaces ORDER BY local_path ASC")
-        return [dict(row) for row in cursor.fetchall()]
+        return _visible_workspace_rows(cursor.fetchall())
 
 
 def touch_workspace(db_path: str, session_id: str) -> None:
@@ -462,6 +553,7 @@ async def activate_workspace(
         logger.warning("failed_to_write_hermes_md_on_activate", error=str(e))
 
     touch_workspace(db_path, session_id)
+    set_active_gateway_session(db_path, session_id)
     return session_id
 
 

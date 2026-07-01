@@ -8,6 +8,7 @@ All handlers are decorated with @traced for OTel span creation.
 
 import os
 import ntpath
+import sqlite3
 import uuid
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
@@ -26,6 +27,7 @@ from core.workspace import (
     create_workspace_from_dashboard,
     get_workspace_by_id,
     get_workspace_by_path,
+    is_synthetic_session_workspace,
     update_workspace_remote_by_id,
     save_agent_context,
     load_agent_context,
@@ -117,12 +119,20 @@ async def get_workspace_dir(
     if not workspace_path:
         workspace_path = os.path.join(get_default_workspace_parent_dir(), session_id)
     os.makedirs(workspace_path, exist_ok=True)
+
+    synthetic_fallback = is_synthetic_session_workspace(
+        {
+            "session_id": session_id,
+            "local_path": workspace_path,
+            "workspace_name": os.path.basename(workspace_path),
+        }
+    )
     
     # Check if there is an existing workspace with this local_path
     existing = get_workspace_by_path(DATABASE_PATH, workspace_path)
     if existing:
         update_workspace_session(DATABASE_PATH, existing["workspace_id"], session_id)
-    else:
+    elif not synthetic_fallback:
         workspace_id = str(uuid.uuid4())
         create_workspace(
             DATABASE_PATH,
@@ -759,6 +769,17 @@ async def get_workspace_mcp_status_endpoint(
                 message=f"Cannot connect to MCP Server: {s.name} ({err_msg})",
                 running_mcps=running_mcps
             )
+    inactive_servers = [
+        s.name for s in expected_servers
+        if s.status != "active"
+    ]
+    if inactive_servers:
+        names = ", ".join(inactive_servers)
+        return WorkspaceMcpStatusResponse(
+            status="error",
+            message=f"MCP server is not active: {names}",
+            running_mcps=running_mcps
+        )
 
     return WorkspaceMcpStatusResponse(status="ok", message="MCP configuration is active and healthy.", running_mcps=running_mcps)
 
@@ -960,7 +981,14 @@ async def update_workspace_session_endpoint(
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
-    update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
+    session_id = body.session_id
+    try:
+        update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
+    except sqlite3.IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Session is already associated with another workspace",
+        ) from exc
     
     workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
     if workspace:
@@ -987,7 +1015,7 @@ async def update_workspace_session_endpoint(
         except Exception as e:
             logger.warning("failed_to_notify_gateway_on_session_update", error=str(e))
 
-    return {"success": True}
+    return {"success": True, "session_id": session_id}
 
 
 @router.post("/files/backup", response_model=FileBackupResponse)

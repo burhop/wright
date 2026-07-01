@@ -1,10 +1,8 @@
 import pytest
 import sqlite3
-import json
 import asyncio
 from fastapi.testclient import TestClient
 from api.main import app
-from api.config import DATABASE_PATH
 from tool_registry import McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
 
@@ -63,6 +61,108 @@ def test_gateway_tools_endpoint(test_client):
     assert len(data["tools"]) == 1
     assert data["tools"][0]["name"] == "calculmesh__mesh_calc"
     assert data["tools"][0]["description"] == "Calculate mesh"
+
+
+def test_gateway_tools_prefers_pinned_active_session(test_client):
+    db_path = app.state.mcp_engine.db_path
+    active_server_id = "gateway-active-server"
+    newer_server_id = "gateway-newer-server"
+
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute("DELETE FROM mcp_tools WHERE server_id IN (?, ?)", (active_server_id, newer_server_id))
+        conn.execute("DELETE FROM mcp_servers WHERE server_id IN (?, ?)", (active_server_id, newer_server_id))
+        conn.execute(
+            "DELETE FROM engineering_workspaces WHERE session_id IN (?, ?)",
+            ("gateway-active-session", "gateway-newer-session"),
+        )
+        conn.execute(
+            "DELETE FROM system_settings WHERE key = 'active_gateway_session_id'"
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    insert_server(
+        db_path,
+        McpServer(
+            server_id=active_server_id,
+            name="Active CAD",
+            type="stdio",
+            command=["uv", "run", "active-cad"],
+            is_active=True,
+            is_installed=True,
+            status="active",
+            created_at=1000,
+            updated_at=1000,
+        ),
+    )
+    insert_server(
+        db_path,
+        McpServer(
+            server_id=newer_server_id,
+            name="Newer CAD",
+            type="stdio",
+            command=["uv", "run", "newer-cad"],
+            is_active=True,
+            is_installed=True,
+            status="active",
+            created_at=1000,
+            updated_at=1000,
+        ),
+    )
+    insert_tools(
+        db_path,
+        [
+            McpTool(
+                tool_id=f"{active_server_id}:active_tool",
+                server_id=active_server_id,
+                name="active_tool",
+                description="Active session tool",
+                input_schema={"type": "object"},
+                is_enabled=True,
+                created_at=1000,
+            ),
+            McpTool(
+                tool_id=f"{newer_server_id}:newer_tool",
+                server_id=newer_server_id,
+                name="newer_tool",
+                description="Newer workspace tool",
+                input_schema={"type": "object"},
+                is_enabled=True,
+                created_at=1000,
+            ),
+        ],
+    )
+
+    conn = sqlite3.connect(db_path)
+    try:
+        conn.execute(
+            """
+            INSERT INTO engineering_workspaces (
+                workspace_id, workspace_name, local_path, session_id, enabled_tools, created_at, updated_at
+            ) VALUES
+                ('gateway-active-ws', 'Active Workspace', '/tmp/active-ws', 'gateway-active-session', '["Active CAD"]', 1000, 2000),
+                ('gateway-newer-ws', 'Newer Workspace', '/tmp/newer-ws', 'gateway-newer-session', '["Newer CAD"]', 1000, 3000)
+            """
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO system_settings (key, value)
+            VALUES ('active_gateway_session_id', 'gateway-active-session')
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    response = test_client.get("/api/gateway/tools")
+
+    assert response.status_code == 200
+    tool_names = [tool["name"] for tool in response.json()["tools"]]
+    assert "activecad__active_tool" in tool_names
+    assert "newercad__newer_tool" not in tool_names
+
 
 def test_gateway_call_endpoint(test_client):
     # Pre-seed default server and tool first

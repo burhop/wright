@@ -7,10 +7,12 @@ import type {
 
 import { TextProvider } from "./providers/text-provider";
 import { ThreeDProvider } from "./providers/threed-provider";
+import { OnlineModelProvider } from "./providers/online-model-provider";
 import { CodeProvider } from "./providers/code-provider";
 import { PdfProvider } from "./providers/pdf-provider";
 import { IframeProvider } from "./providers/iframe-provider";
 import { ImageProvider } from "./providers/image-provider";
+import { MarkdownProvider } from "./providers/markdown-provider";
 
 export class ViewerRegistry {
   private static instance: ViewerRegistry | null = null;
@@ -103,16 +105,41 @@ export const viewerRegistry = ViewerRegistry.getInstance();
 // Register default providers on the singleton instance
 viewerRegistry.register({
   id: "threed-viewer",
-  label: "3D Graphics Viewer",
+  label: "STL Viewer",
   selector: [
     { extension: "stl" },
-    { extension: "step" },
-    { extension: "stp" },
-    { extension: "iges" },
-    { extension: "igs" }
   ],
   priority: "default",
   providerFactory: () => new ThreeDProvider(),
+});
+
+viewerRegistry.register({
+  id: "online-model-viewer",
+  label: "Online3DViewer",
+  selector: [
+    { extension: "3dm" },
+    { extension: "3ds" },
+    { extension: "3mf" },
+    { extension: "amf" },
+    { extension: "bim" },
+    { extension: "brep" },
+    { extension: "dae" },
+    { extension: "fbx" },
+    { extension: "fcstd" },
+    { extension: "glb" },
+    { extension: "gltf" },
+    { extension: "ifc" },
+    { extension: "iges" },
+    { extension: "igs" },
+    { extension: "obj" },
+    { extension: "off" },
+    { extension: "ply" },
+    { extension: "step" },
+    { extension: "stp" },
+    { extension: "wrl" },
+  ],
+  priority: "default",
+  providerFactory: () => new OnlineModelProvider(),
 });
 
 viewerRegistry.register({
@@ -122,7 +149,6 @@ viewerRegistry.register({
     { extension: "py" },
     { extension: "scad" },
     { extension: "json" },
-    { extension: "md" },
     { extension: "txt" },
     { extension: "js" },
     { extension: "ts" },
@@ -132,6 +158,18 @@ viewerRegistry.register({
   ],
   priority: "default",
   providerFactory: () => new CodeProvider(),
+});
+
+viewerRegistry.register({
+  id: "markdown-viewer",
+  label: "Markdown Viewer",
+  selector: [
+    { extension: "md" },
+    { extension: "markdown" },
+    { mimeType: "text/markdown" },
+  ],
+  priority: "default",
+  providerFactory: () => new MarkdownProvider(),
 });
 
 viewerRegistry.register({

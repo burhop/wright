@@ -1,0 +1,74 @@
+{"kind":"deck","id":"pr/9ajre7","name":"Deck"}
+{"kind":"layout","layoutId":"b5c2faf0-8be2-4be1-9c5e-be7819f69c0b","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"449c183e-ecea-4765-b453-cc693f18e50e","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/441z7k","slide":1,"title":"WRIGHT","textShapes":14}
+{"kind":"textbox","id":"sh/i5sneloj","slide":1,"name":"brand","text":"WRIGHT","textPreview":"WRIGHT","textChars":6,"textLines":1,"bbox":[90,43,180,28]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":1,"name":"eyebrow","text":"LOCAL ENGINEERING CONTROL PLANE","textPreview":"LOCAL ENGINEERING CONTROL PLANE","textChars":31,"textLines":1,"bbox":[42,112,460,24]}
+{"kind":"textbox","id":"sh/wjudg7ad","slide":1,"name":"headline","text":"Run Wright where engineering work lives","textPreview":"Run Wright where engineering work lives","textChars":39,"textLines":1,"bbox":[42,152,820,126]}
+{"kind":"textbox","id":"sh/p4r65wju","slide":1,"name":"subhead","text":"Works on NVIDIA DGX Spark and similar AI workstations, beside local models, private data, and selected engineering toolchains.","textPreview":"Works on NVIDIA DGX Spark and similar AI workstations, beside local models, private data, and selected engineering toolchains.","textChars":126,"textLines":1,"bbox":[42,296,690,72]}
+{"kind":"shape","id":"sh/ed8v6psf","slide":1,"name":"right-rail","bbox":[842,0,438,720]}
+{"kind":"textbox","id":"sh/7y1kre1w","slide":1,"name":"rail-label","text":"WORKSTATION READY","textPreview":"WORKSTATION READY","textChars":17,"textLines":1,"bbox":[884,74,320,24]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":1,"name":"dgx","text":"DGX\nSpark","textPreview":"DGX | Spark","textChars":9,"textLines":2,"bbox":[884,132,320,170]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":1,"name":"rail-copy","text":"Local AI compute\nPrivate workspaces\nEngineering viewers\nAutomatic backups","textPreview":"Local AI compute | Private workspaces | Engineering viewers | Automatic backups","textChars":73,"textLines":4,"bbox":[884,344,330,170]}
+{"kind":"shape","id":"sh/xobm58z2","slide":1,"name":"accent-rule","bbox":[884,532,284,2]}
+{"kind":"textbox","id":"sh/83itgfml","slide":1,"name":"rail-foot","text":"Keep proprietary design work close to the teams and systems that own it.","textPreview":"Keep proprietary design work close to the teams and systems that own it.","textChars":72,"textLines":1,"bbox":[884,560,310,64]}
+{"kind":"shape","id":"sh/fil0rqd4","slide":1,"name":"block-bg-1","bbox":[42,432,246,182]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":1,"name":"block-title-1","text":"Workspace data","textPreview":"Workspace data","textChars":14,"textLines":1,"bbox":[66,456,198,38]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":1,"name":"block-body-1","text":"CAD, CAE, CAM, FEA, MFG files, tasks, and outputs.","textPreview":"CAD, CAE, CAM, FEA, MFG files, tasks, and outputs.","textChars":50,"textLines":1,"bbox":[66,510,198,86]}
+{"kind":"shape","id":"sh/4fu18jqh","slide":1,"name":"block-bg-2","bbox":[316,432,246,182]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":1,"name":"block-title-2","text":"Engineering viewers","textPreview":"Engineering viewers","textChars":19,"textLines":1,"bbox":[340,456,198,38]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":1,"name":"block-body-2","text":"Inspect geometry, meshes, and generated artifacts in place.","textPreview":"Inspect geometry, meshes, and generated artifacts in place.","textChars":59,"textLines":1,"bbox":[340,510,198,86]}
+{"kind":"shape","id":"sh/xc3ylc7u","slide":1,"name":"block-bg-3","bbox":[590,432,218,182]}
+{"kind":"textbox","id":"sh/4r65wjud","slide":1,"name":"block-title-3","text":"Backups by design","textPreview":"Backups by design","textChars":17,"textLines":1,"bbox":[614,456,170,38]}
+{"kind":"textbox","id":"sh/032lszqt","slide":1,"name":"block-body-3","text":"Persistent workspaces protect key data during agent runs.","textPreview":"Persistent workspaces protect key data during agent runs.","textChars":57,"textLines":1,"bbox":[614,510,170,86]}
+{"kind":"image","id":"im/cvixczed","slide":1,"name":"","alt":"Wright logo","bbox":[42,38,38,38]}
+{"kind":"notes","id":"nt/441z7k","slide":1,"text":""}
+{"kind":"slide","id":"sl/l1amyu","slide":2,"title":"WRIGHT","textShapes":13}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":2,"name":"brand","text":"WRIGHT","textPreview":"WRIGHT","textChars":6,"textLines":1,"bbox":[90,43,180,28]}
+{"kind":"textbox","id":"sh/tcj6tova","slide":2,"name":"eyebrow","text":"STRIPE-POWERED TOOL ACCESS","textPreview":"STRIPE-POWERED TOOL ACCESS","textChars":26,"textLines":1,"bbox":[42,112,460,24]}
+{"kind":"textbox","id":"sh/idonyd0z","slide":2,"name":"headline","text":"Buy, build, or bring engineering tools","textPreview":"Buy, build, or bring engineering tools","textChars":38,"textLines":1,"bbox":[42,152,820,126]}
+{"kind":"textbox","id":"sh/byhgn29g","slide":2,"name":"subhead","text":"Wright connects tool builders, vendors, and engineering teams through MCP-ready software access and real-world tool purchases.","textPreview":"Wright connects tool builders, vendors, and engineering teams through MCP-ready software access and real-world tool purchases.","textChars":126,"textLines":1,"bbox":[42,296,690,72]}
+{"kind":"shape","id":"sh/0je9cvix","slide":2,"name":"stripe-band","bbox":[42,536,1196,138]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":2,"name":"stripe-title","text":"Stripe handles subscriptions and purchases","textPreview":"Stripe handles subscriptions and purchases","textChars":42,"textLines":1,"bbox":[74,562,630,38]}
+{"kind":"textbox","id":"sh/i9s36hcr","slide":2,"name":"stripe-copy","text":"Subscribe to MCP tools, buy software, or purchase hardware tools, fixtures, tooling, and manufacturing services.","textPreview":"Subscribe to MCP tools, buy software, or purchase hardware tools, fixtures, tooling, and manufacturing services.","textChars":112,"textLines":1,"bbox":[74,612,970,48]}
+{"kind":"textbox","id":"sh/bulwval8","slide":2,"name":"stripe-word","text":"STRIPE","textPreview":"STRIPE","textChars":6,"textLines":1,"bbox":[1032,568,160,38]}
+{"kind":"shape","id":"sh/j6tovaho","slide":2,"name":"compact-bg-1","bbox":[42,360,374,142]}
+{"kind":"textbox","id":"sh/ulwval87","slide":2,"name":"compact-title-1","text":"MCP software","textPreview":"MCP software","textChars":12,"textLines":1,"bbox":[66,382,326,34]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":2,"name":"compact-body-1","text":"Subscribe to CAD, CAE, CAM, FEA, and manufacturing tools.","textPreview":"Subscribe to CAD, CAE, CAM, FEA, and manufacturing tools.","textChars":57,"textLines":1,"bbox":[66,426,326,64]}
+{"kind":"shape","id":"sh/crmhk3q5","slide":2,"name":"compact-bg-2","bbox":[453,360,374,142]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":2,"name":"compact-title-2","text":"Physical products","textPreview":"Physical products","textChars":17,"textLines":1,"bbox":[477,382,326,34]}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":2,"name":"compact-body-2","text":"Purchase hardware tools, fixtures, tooling, and services.","textPreview":"Purchase hardware tools, fixtures, tooling, and services.","textChars":57,"textLines":1,"bbox":[477,426,326,64]}
+{"kind":"shape","id":"sh/1kre1w7m","slide":2,"name":"compact-bg-3","bbox":[864,360,374,142]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":2,"name":"compact-title-3","text":"Custom tools","textPreview":"Custom tools","textChars":12,"textLines":1,"bbox":[888,382,326,34]}
+{"kind":"textbox","id":"sh/jqh0fepk","slide":2,"name":"compact-body-3","text":"Add internal MCP servers or publish through Tool Builder.","textPreview":"Add internal MCP servers or publish through Tool Builder.","textChars":57,"textLines":1,"bbox":[888,426,326,64]}
+{"kind":"image","id":"im/yxobm58z","slide":2,"name":"","alt":"Wright logo","bbox":[42,38,38,38]}
+{"kind":"notes","id":"nt/l1amyu","slide":2,"text":""}
+{"kind":"slide","id":"sl/wl4dup","slide":3,"title":"WRIGHT","textShapes":20}
+{"kind":"textbox","id":"sh/bi9s36hc","slide":3,"name":"brand","text":"WRIGHT","textPreview":"WRIGHT","textChars":6,"textLines":1,"bbox":[90,43,180,28]}
+{"kind":"textbox","id":"sh/ixczed8v","slide":3,"name":"eyebrow","text":"HERMES PLUGIN + PARALLEL AGENTS","textPreview":"HERMES PLUGIN + PARALLEL AGENTS","textChars":31,"textLines":1,"bbox":[42,112,520,24]}
+{"kind":"textbox","id":"sh/p0bi9s36","slide":3,"name":"headline","text":"Delegate engineering tests to AI agents","textPreview":"Delegate engineering tests to AI agents","textChars":39,"textLines":1,"bbox":[42,152,1010,68]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":3,"name":"subhead","text":"Wright is fully integrated as a Hermes plugin, so all Hermes functionality remains available while Wright adds engineering workspaces, MCP tools, and viewers.","textPreview":"Wright is fully integrated as a Hermes plugin, so all Hermes functionality remains available while Wright adds engineering workspaces, MC...","textChars":158,"textLines":1,"bbox":[42,250,1090,62]}
+{"kind":"shape","id":"sh/bulwval8","slide":3,"name":"flow-bg","bbox":[42,356,1196,126]}
+{"kind":"textbox","id":"sh/i9s36hcr","slide":3,"name":"flow-0","text":"Designer /\nEngineer","textPreview":"Designer / | Engineer","textChars":19,"textLines":2,"bbox":[74,394,190,58]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":3,"name":"arrow-0","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[278,404,62,34]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":3,"name":"flow-1","text":"Hermes","textPreview":"Hermes","textChars":6,"textLines":1,"bbox":[364,394,190,58]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":3,"name":"arrow-1","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[568,404,62,34]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":3,"name":"flow-2","text":"Parallel\nagents","textPreview":"Parallel | agents","textChars":15,"textLines":2,"bbox":[608,394,190,58]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":3,"name":"arrow-2","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[812,404,62,34]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":3,"name":"flow-3","text":"Tests +\nartifacts","textPreview":"Tests + | artifacts","textChars":17,"textLines":2,"bbox":[894,394,190,58]}
+{"kind":"shape","id":"sh/adsji5sn","slide":3,"name":"compact-bg-1","bbox":[42,520,276,100]}
+{"kind":"textbox","id":"sh/3ylc7u54","slide":3,"name":"compact-title-1","text":"Hermes native","textPreview":"Hermes native","textChars":13,"textLines":1,"bbox":[66,542,228,34]}
+{"kind":"textbox","id":"sh/sji5snel","slide":3,"name":"compact-body-1","text":"All Hermes functionality remains available.","textPreview":"All Hermes functionality remains available.","textChars":43,"textLines":1,"bbox":[66,586,228,22]}
+{"kind":"shape","id":"sh/h4byhgn2","slide":3,"name":"compact-bg-2","bbox":[354,520,276,100]}
+{"kind":"textbox","id":"sh/ap4r65wj","slide":3,"name":"compact-title-2","text":"Parallel testing","textPreview":"Parallel testing","textChars":16,"textLines":1,"bbox":[378,542,228,34]}
+{"kind":"textbox","id":"sh/za1gvy90","slide":3,"name":"compact-body-2","text":"Run checks, simulations, CAM prep, and variants.","textPreview":"Run checks, simulations, CAM prep, and variants.","textChars":48,"textLines":1,"bbox":[378,586,228,22]}
+{"kind":"shape","id":"sh/ra5gbq1o","slide":3,"name":"compact-bg-3","bbox":[666,520,276,100]}
+{"kind":"textbox","id":"sh/2p8nqxs7","slide":3,"name":"compact-title-3","text":"Workspace memory","textPreview":"Workspace memory","textChars":16,"textLines":1,"bbox":[690,542,228,34]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":3,"name":"compact-body-3","text":"Capture files, results, prompts, traces, and backups.","textPreview":"Capture files, results, prompts, traces, and backups.","textChars":53,"textLines":1,"bbox":[690,586,228,22]}
+{"kind":"shape","id":"sh/gvy90je9","slide":3,"name":"compact-bg-4","bbox":[978,520,260,100]}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":3,"name":"compact-title-4","text":"Human control","textPreview":"Human control","textChars":13,"textLines":1,"bbox":[1002,542,212,34]}
+{"kind":"textbox","id":"sh/2hwfyxob","slide":3,"name":"compact-body-4","text":"Gate writes, purchases, and machine actions.","textPreview":"Gate writes, purchases, and machine actions.","textChars":44,"textLines":1,"bbox":[1002,586,212,22]}
+{"kind":"shape","id":"sh/94fu18jq","slide":3,"name":"closing-band","bbox":[0,660,1280,60]}
+{"kind":"textbox","id":"sh/kjm1cfa9","slide":3,"name":"closing","text":"Agent-ready workspaces: organized data, deterministic tools, delegated tests, automatic backups, and engineering viewers.","textPreview":"Agent-ready workspaces: organized data, deterministic tools, delegated tests, automatic backups, and engineering viewers.","textChars":121,"textLines":1,"bbox":[42,678,1160,28]}
+{"kind":"image","id":"im/p0bi9s36","slide":3,"name":"","alt":"Wright logo","bbox":[42,38,38,38]}
+{"kind":"notes","id":"nt/wl4dup","slide":3,"text":""}

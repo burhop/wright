@@ -1,5 +1,3 @@
-import json
-import sqlite3
 import asyncio
 from typing import Set
 import structlog
@@ -12,6 +10,7 @@ from tool_registry import (
     get_tools,
 )
 from api.routers.mcp import get_mcp_engine
+from core.workspace import get_gateway_workspace, get_workspace_enabled_tools
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -36,25 +35,12 @@ class GatewayCallRequest(BaseModel):
 async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
     """Return consolidated list of enabled tools for the active workspace session."""
     db_path = engine.db_path
-    
-    workspace = None
-    try:
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT session_id, local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
-        )
-        workspace = cursor.fetchone()
-        conn.close()
-    except Exception as e:
-        logger.exception("gateway_tools_db_error", error=str(e))
+    workspace = get_gateway_workspace(db_path)
         
     if not workspace:
         return {"tools": []}
 
     session_id = workspace["session_id"]
-    from core.workspace import get_workspace_enabled_tools
     enabled_tools = get_workspace_enabled_tools(db_path, session_id)
 
     all_servers = get_servers(db_path)
@@ -127,16 +113,9 @@ async def call_gateway_tool(
         if not runner or not runner.is_running():
             workspace_dir = None
             try:
-                conn = sqlite3.connect(db_path)
-                conn.row_factory = sqlite3.Row
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT local_path FROM engineering_workspaces ORDER BY updated_at DESC LIMIT 1"
-                )
-                row = cursor.fetchone()
-                if row:
-                    workspace_dir = row["local_path"]
-                conn.close()
+                workspace = get_gateway_workspace(db_path)
+                if workspace:
+                    workspace_dir = workspace["local_path"]
             except Exception:
                 pass
             await engine.start_server(target_server.server_id, workspace_dir=workspace_dir)

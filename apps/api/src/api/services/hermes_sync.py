@@ -7,14 +7,14 @@ Handles syncing MCP server state and workspace tool enablement to Hermes config 
 
 import os
 import sys
-import shlex
-import subprocess
-from typing import Any
 
 import structlog
 import yaml
 
-from core.workspace import get_workspace_by_session, get_workspace_enabled_tools
+from core.workspace import (
+    get_workspace_by_session,
+    set_active_gateway_session,
+)
 from tool_registry import McpServer
 
 logger = structlog.get_logger(__name__)
@@ -114,6 +114,7 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
     workspace = get_workspace_by_session(db_path, session_id)
     if not workspace:
         return
+    set_active_gateway_session(db_path, session_id)
 
     workspace_path = workspace["local_path"]
     tmp_dir = os.path.join(workspace_path, "tmp")

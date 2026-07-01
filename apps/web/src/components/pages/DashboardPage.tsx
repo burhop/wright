@@ -6,6 +6,10 @@ import {
   workspaceService,
   type WorkspaceInfo,
 } from "../../services/workspace-service";
+import {
+  mcpService,
+  type BillingSubscription,
+} from "../../services/mcp-service";
 import { CreateWorkspaceModal } from "../common/CreateWorkspaceModal";
 
 const getApiUrl = (path: string) => {
@@ -25,14 +29,15 @@ export function DashboardPage() {
   const statuses = useHealthStatus(10000); // Poll health status every 10s
   const apiState = statuses.find((s) => s.serviceId === "wright-api")?.state || "unknown";
   const hermesState = statuses.find((s) => s.serviceId === "hermes-agent")?.state || "unknown";
-  const inferenceState = statuses.find((s) => s.serviceId === "inference")?.state || "unknown";
+  const inferenceLabel = "Nemotron-Nano-30B";
 
   const [recentWorkspaces, setRecentWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [showAllWorkspaces, setShowAllWorkspaces] = useState(false);
   const [allWorkspaces, setAllWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [recentErrors, setRecentErrors] = useState<any[]>([]);
+  const [recentLogs, setRecentLogs] = useState<any[]>([]);
   const [activeSessionsCount, setActiveSessionsCount] = useState<number>(0);
+  const [subscriptions, setSubscriptions] = useState<BillingSubscription[]>([]);
 
   useEffect(() => {
     logger.info("Dashboard Page loaded");
@@ -45,15 +50,15 @@ export function DashboardPage() {
       }
     };
 
-    const fetchErrors = async () => {
+    const fetchRecentLogs = async () => {
       try {
-        const res = await fetch(getApiUrl("/api/logs?level=error&limit=3"));
+        const res = await fetch(getApiUrl("/api/logs?limit=3"));
         if (res.ok) {
           const data = await res.json();
-          setRecentErrors(data.logs || []);
+          setRecentLogs(data.logs || []);
         }
       } catch (err) {
-        console.error("Failed to fetch recent errors", err);
+        console.error("Failed to fetch recent logs", err);
       }
     };
 
@@ -69,9 +74,26 @@ export function DashboardPage() {
       }
     };
 
+    const fetchSubscriptions = async () => {
+      try {
+        const activeSubscriptions = await mcpService.getBillingSubscriptions();
+        setSubscriptions(activeSubscriptions);
+      } catch (err) {
+        logger.error("Failed to fetch billing subscriptions", { err });
+      }
+    };
+
     fetchWorkspaces();
-    fetchErrors();
+    fetchRecentLogs();
     fetchSessions();
+    fetchSubscriptions();
+
+    const subscriptionsRefresh = window.setInterval(fetchSubscriptions, 5000);
+    window.addEventListener("focus", fetchSubscriptions);
+    return () => {
+      window.clearInterval(subscriptionsRefresh);
+      window.removeEventListener("focus", fetchSubscriptions);
+    };
   }, [logger]);
 
   const getWorkspaceName = (w: WorkspaceInfo) => {
@@ -90,6 +112,22 @@ export function DashboardPage() {
     const diffDays = Math.floor(diffHr / 24);
     return `${diffDays}d ago`;
   };
+
+  const formatBillingAmount = (subscription: BillingSubscription) => {
+    const currency = subscription.currency.toUpperCase();
+    const amount = new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+    }).format(subscription.amount_cents / 100);
+    return subscription.interval ? `${amount} / ${subscription.interval}` : amount;
+  };
+
+  const formatPaymentDate = (paymentDate: number) =>
+    new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(paymentDate * 1000));
 
   const handleSelectWorkspace = async (w: WorkspaceInfo) => {
     try {
@@ -482,10 +520,10 @@ export function DashboardPage() {
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",
-                  backgroundColor: inferenceState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                  backgroundColor: "var(--color-success, #22c55e)",
                 }}
               />
-              <span>Inference Engine: <strong>{inferenceState}</strong></span>
+              <span>Inference Engine: <strong>{inferenceLabel}</strong></span>
             </div>
           </div>
 
@@ -509,34 +547,30 @@ export function DashboardPage() {
             </div>
           </div>
 
-          {/* Recent System Errors list */}
+          {/* Recent System Health Logs */}
           <div style={{ display: "flex", flexDirection: "column", gap: "2px", textAlign: "left" }}>
             <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem", fontWeight: "bold" }}>
               RECENT SYSTEM HEALTH LOGS
             </div>
-            {recentErrors.length === 0 ? (
-              <div style={{ fontSize: "0.75rem", color: "var(--color-success, #22c55e)", fontStyle: "italic" }}>
-                ✓ No system errors detected. Health check passed.
-              </div>
-            ) : (
+            {recentLogs.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "2px", maxHeight: "100px", overflowY: "auto" }}>
-                {recentErrors.map((err, idx) => (
+                {recentLogs.map((entry, idx) => (
                   <div
                     key={idx}
                     style={{
                       fontSize: "0.7rem",
-                      backgroundColor: "rgba(239, 68, 68, 0.05)",
-                      border: "1px solid rgba(239, 68, 68, 0.15)",
+                      backgroundColor: "var(--color-surface-subtle)",
+                      border: "1px solid var(--color-border)",
                       borderRadius: "var(--radius-xs)",
                       padding: "4px var(--space-xs)",
-                      color: "var(--color-error, #ef4444)",
+                      color: "var(--color-text-muted)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
                     }}
-                    title={err.message}
+                    title={entry.message}
                   >
-                    [{err.timestamp.substring(11, 19)}] {err.logger}: {err.message}
+                    [{entry.timestamp.substring(11, 19)}] {entry.logger}: {entry.message}
                   </div>
                 ))}
               </div>
@@ -544,9 +578,9 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Box 3: Wright News & MCP Directory (1/2 Width) */}
+        {/* Box 3: Stripe Billing Subscriptions (1/2 Width) */}
         <div
-          data-testid="card-news"
+          data-testid="card-subscriptions"
           className="glow-card"
           style={{
             padding: "var(--space-md)",
@@ -566,84 +600,98 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            📰 Updates & MCP Releases
+            Stripe Billing Subscriptions
           </h2>
 
           <div
+            data-testid="subscriptions-count"
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "6px",
-              textAlign: "left",
-              fontSize: "0.8rem",
+              alignSelf: "flex-start",
+              fontSize: "0.75rem",
+              color: "var(--color-secondary)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-sm)",
+              padding: "3px var(--space-sm)",
+              textTransform: "uppercase",
+              fontWeight: 700,
             }}
           >
-            <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "4px" }}>
-              <div style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
-                v0.22.0 Release — Modernized Navigation
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-                Custom workspace prompts context, floating debugger drawer, and file-size detection are live.
-              </div>
-            </div>
-
-            <div>
-              <div style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
-                New MCP Servers Integrated
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-                OpenSCAD rendering, CalculiX simulation, FreeCAD Copilot, and Autodesk APS community links added to catalog.
-              </div>
-            </div>
+            {subscriptions.length} active
           </div>
 
-          {/* Navigation Links */}
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "var(--space-sm)",
-              borderTop: "1px solid var(--color-border)",
-              paddingTop: "var(--space-xs)",
-            }}
-          >
-            <a
-              href="https://burhop.substack.com"
-              target="_blank"
-              rel="noreferrer"
+          {subscriptions.length === 0 ? (
+            <div
+              data-testid="subscriptions-empty"
               style={{
-                fontSize: "0.75rem",
-                color: "var(--color-secondary)",
-                textDecoration: "underline",
+                minHeight: "124px",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid transparent",
               }}
-            >
-              substack.com
-            </a>
-            <a
-              href="https://github.com/burhop/wright"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--color-secondary)",
-                textDecoration: "underline",
-              }}
-            >
-              github.com/burhop/wright
-            </a>
-            <a
-              href="https://element.siemens.io/get-started/element-mcp/"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--color-secondary)",
-                textDecoration: "underline",
-              }}
-            >
-              Siemens Blog
-            </a>
-          </div>
+            />
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              {subscriptions.map((subscription) => (
+                <div
+                  key={subscription.subscription_id}
+                  data-testid={`subscription-row-${subscription.server_id}`}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    padding: "var(--space-sm)",
+                    backgroundColor: "var(--color-surface-subtle)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "var(--radius-md)",
+                    textAlign: "left",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "0.88rem",
+                      fontWeight: 700,
+                      color: "var(--color-primary)",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {subscription.server_name}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: "var(--space-sm)",
+                      fontSize: "0.76rem",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    <span>{formatPaymentDate(subscription.payment_date)}</span>
+                    <strong style={{ color: "var(--color-primary)" }}>
+                      {formatBillingAmount(subscription)}
+                    </strong>
+                  </div>
+                  <div
+                    data-testid={`subscription-mcp-status-${subscription.server_id}`}
+                    style={{
+                      alignSelf: "flex-start",
+                      color: subscription.mcp_enabled
+                        ? "var(--color-success, #22c55e)"
+                        : "var(--color-warning, #f59e0b)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "var(--radius-sm)",
+                      padding: "4px var(--space-sm)",
+                      fontSize: "0.72rem",
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {subscription.mcp_enabled ? "MCP Server enabled" : "Provisioning"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Box 4: System Activity & Telemetry (1/2 Width) */}
@@ -698,6 +746,7 @@ export function DashboardPage() {
             </div>
           </div>
         </div>
+
       </div>
 
       {/* Create Workspace Modal */}

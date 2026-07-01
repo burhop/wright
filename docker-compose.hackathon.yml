@@ -1,0 +1,78 @@
+# =============================================================================
+# Wright Nous Hackathon Prototype Compose
+# =============================================================================
+# Localhost-only demo stack with Hermes Agent, Stripe payment tooling,
+# official NemoClaw source assets, Wright API, and Vite dev UI.
+# =============================================================================
+
+services:
+  agent:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.hackathon
+    image: wright-nous-hackathon:latest
+    container_name: wright_nous_hackathon
+    env_file:
+      - docker/.env
+    ports:
+      - "127.0.0.1:8088:8000"   # Wright API and production static UI
+      - "127.0.0.1:5188:5173"   # Vite dev UI for rapid UI tweaks
+      - "127.0.0.1:8643:8642"   # Hermes gateway API, localhost only
+    volumes:
+      - nous_hackathon_home:/home/
+      - nous_hackathon_local:/usr/local/
+      - nous_hackathon_opt:/opt/
+      - nous_hackathon_varlib:/var/lib/
+      - nous_hackathon_varcache:/var/cache/
+      - nous_hackathon_etc:/etc/
+      - nous_hackathon_logs:/var/log/
+      - ./apps:/workspace/apps
+      - ./packages:/workspace/packages
+      - ./hermes-plugin-wright:/workspace/hermes-plugin-wright
+      - ./scripts:/recovery:ro
+      - nous_hackathon_web_node_modules:/workspace/apps/web/node_modules
+    environment:
+      - WRIGHT_ENV=hackathon
+      - WRIGHT_UI_MODE=dev
+      - WRIGHT_REPO_DIR=/workspace
+      - DATABASE_PATH=/home/agent/.local/share/wright/state.db
+      - HERMES_HOME=/home/agent/.hermes
+      - HERMES_PROFILE=wright
+      - HERMES_API_BASE_URL=http://127.0.0.1:8642
+      - HERMES_API_KEY=wright-local-dev
+      - API_SERVER_ENABLED=true
+      - API_SERVER_HOST=0.0.0.0
+      - API_SERVER_PORT=8642
+      - API_SERVER_KEY=wright-local-dev
+      - HERMES_DEFAULT_LLM_API_URL=http://192.168.1.165:8000/v1
+      - HERMES_DEFAULT_MODEL=nemotron-nano
+      - NEMOCLAW_HOME=/opt/nemoclaw
+      - STRIPE_CLI_TELEMETRY_OPTOUT=1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  nous_hackathon_home:
+    name: nous_hackathon_home
+  nous_hackathon_local:
+    name: nous_hackathon_local
+  nous_hackathon_opt:
+    name: nous_hackathon_opt
+  nous_hackathon_varlib:
+    name: nous_hackathon_varlib
+  nous_hackathon_varcache:
+    name: nous_hackathon_varcache
+  nous_hackathon_etc:
+    name: nous_hackathon_etc
+  nous_hackathon_logs:
+    name: nous_hackathon_logs
+  nous_hackathon_web_node_modules:
+    name: nous_hackathon_web_node_modules

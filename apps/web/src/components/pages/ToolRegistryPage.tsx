@@ -4,7 +4,11 @@ import { useChat } from "../../store/sessions";
 import { ToolCard } from "../tools/ToolCard";
 import { AddToolModal } from "../tools/AddToolModal";
 import useLogger from "../../hooks/useLogger";
-import { mcpService } from "../../services/mcp-service";
+import {
+  mcpService,
+  type BillingProduct,
+  type McpServer,
+} from "../../services/mcp-service";
 import {
   workspaceService,
   type WorkspaceInfo,
@@ -22,11 +26,52 @@ const CATEGORY_META: Record<string, { icon: string; label: string }> = {
   analysis: { icon: "📊", label: "Analysis" },
 };
 
+CATEGORY_META.business = { icon: "$", label: "Business Ops" };
+
 const TIER_ORDER: Record<string, number> = {
   tested: 0,
   might_work: 1,
   blocked: 2,
   non_working: 3,
+};
+
+const PAID_DEMO_SERVER_ID = "premium-ops-intelligence-mcp";
+
+const billingProductForServer = (
+  server: McpServer,
+  products: Record<string, BillingProduct>,
+): BillingProduct | undefined => {
+  const product = products[server.server_id];
+  if (product) {
+    return product;
+  }
+
+  if (
+    server.server_id !== PAID_DEMO_SERVER_ID &&
+    !server.approval_gates?.includes("stripe_link_approval")
+  ) {
+    return undefined;
+  }
+
+  const purchased = Boolean(server.is_installed);
+  return {
+    server_id: server.server_id,
+    name: server.name,
+    description: server.description || "",
+    price_cents: 1900,
+    currency: "usd",
+    interval: "month",
+    payment_mode: "stripe_billing_subscription_mock",
+    requires_payment: !purchased,
+    purchased,
+    install_state: purchased
+      ? server.status === "active"
+        ? "active"
+        : "purchased"
+      : "locked",
+    latest_purchase_status: null,
+    checkout_url: null,
+  };
 };
 
 export function ToolRegistryPage() {
@@ -48,17 +93,30 @@ export function ToolRegistryPage() {
   } = useTools();
 
   const [workspaces, setWorkspaces] = useState<WorkspaceInfo[]>([]);
+  const [billingProducts, setBillingProducts] = useState<
+    Record<string, BillingProduct>
+  >({});
 
   useEffect(() => {
-    const fetchWorkspaces = async () => {
+    const fetchWorkspacesAndBilling = async () => {
       try {
         const list = await workspaceService.getAllWorkspaces();
         setWorkspaces(list);
       } catch (err) {
         console.error("Failed to load workspaces in ToolRegistryPage", err);
       }
+      try {
+        const products = await mcpService.getBillingProducts();
+        setBillingProducts(
+          Object.fromEntries(
+            products.map((product) => [product.server_id, product]),
+          ),
+        );
+      } catch (err) {
+        console.error("Failed to load MCP billing products", err);
+      }
     };
-    fetchWorkspaces();
+    fetchWorkspacesAndBilling();
   }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,6 +147,7 @@ export function ToolRegistryPage() {
     "simulation",
     "manufacturing",
     "plm",
+    "business",
     "utilities",
   ];
 
@@ -635,6 +694,10 @@ export function ToolRegistryPage() {
                       onToggleTool={toggleToolState}
                       workspaces={workspaces}
                       activeSessionId={activeSessionId}
+                      billingProduct={billingProductForServer(
+                        server,
+                        billingProducts,
+                      )}
                       onRefreshWorkspaces={async () => {
                         try {
                           const list =

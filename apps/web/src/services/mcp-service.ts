@@ -148,6 +148,36 @@ export interface VersionCheckResult {
   error: string | null;
 }
 
+export interface BillingProduct {
+  server_id: string;
+  name: string;
+  description: string;
+  price_cents: number;
+  currency: string;
+  interval: string;
+  payment_mode: string;
+  requires_payment: boolean;
+  purchased: boolean;
+  install_state: string;
+  latest_purchase_status?: string | null;
+  checkout_url?: string | null;
+}
+
+export interface BillingSubscription {
+  subscription_id: string;
+  server_id: string;
+  server_name: string;
+  customer_id: string;
+  session_id?: string | null;
+  amount_cents: number;
+  currency: string;
+  interval: string;
+  payment_date: number;
+  status: string;
+  mcp_enabled: boolean;
+  mcp_status: string;
+}
+
 const getApiBase = () => {
   if (typeof window === "undefined") {
     return "http://127.0.0.1:8000";
@@ -173,6 +203,43 @@ export class McpService {
     }
     const data = await response.json();
     return data.servers;
+  }
+
+  buildMcpCheckoutUrl(serverId: string, sessionId?: string | null): string {
+    const params = new URLSearchParams();
+    params.set("format", "html");
+    if (sessionId) {
+      params.set("session_id", sessionId);
+    }
+    const query = params.toString();
+    return `${API_BASE}/api/billing/mcp-products/${serverId}/checkout${
+      query ? `?${query}` : ""
+    }`;
+  }
+
+  async getBillingProducts(): Promise<BillingProduct[]> {
+    const response = await fetch(`${API_BASE}/api/billing/mcp-products`);
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(
+        errData.detail || `Failed to fetch billing products: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.products || [];
+  }
+
+  async getBillingSubscriptions(): Promise<BillingSubscription[]> {
+    const response = await fetch(`${API_BASE}/api/billing/subscriptions`);
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(
+        errData.detail ||
+          `Failed to fetch billing subscriptions: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.subscriptions || [];
   }
 
   async registerServer(

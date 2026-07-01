@@ -745,7 +745,7 @@ export class WorkspaceService {
   async updateWorkspaceSession(
     workspaceId: string,
     sessionId: string,
-  ): Promise<boolean> {
+  ): Promise<string> {
     workspaceLogger.info("Updating workspace session ID", {
       workspaceId,
       sessionId,
@@ -769,12 +769,20 @@ export class WorkspaceService {
       );
     }
     const data = await response.json();
-    return data.success;
+    return data.session_id || sessionId;
   }
 
   async getMcpStatus(
     sessionId: string,
-  ): Promise<{ status: string; message: string }> {
+  ): Promise<{
+    status: string;
+    message: string;
+    running_mcps?: {
+      name: string;
+      status: string;
+      error_message?: string | null;
+    }[];
+  }> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/mcp-status?session_id=${sessionId}`,
     );

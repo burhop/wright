@@ -4,6 +4,7 @@ import {
   useReducer,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
 import type { ReactNode } from "react";
 import type { ChatSession, ChatMessage } from "./types";
@@ -52,32 +53,116 @@ const initialState: ChatState = {
   promptQueue: [],
 };
 
+function hasUsefulTitle(session: ChatSession): boolean {
+  return Boolean(
+    session.title && session.title !== "Untitled" && session.title !== "Undefined",
+  );
+}
+
+function mergeDuplicateSession(
+  existing: ChatSession,
+  incoming: ChatSession,
+): ChatSession {
+  const title = hasUsefulTitle(incoming)
+    ? incoming.title
+    : hasUsefulTitle(existing)
+      ? existing.title
+      : incoming.title || existing.title;
+
+  return {
+    ...existing,
+    ...incoming,
+    title,
+    messages:
+      incoming.messages.length > 0 ? incoming.messages : existing.messages,
+    createdAt: Math.min(existing.createdAt, incoming.createdAt),
+    updatedAt: Math.max(existing.updatedAt, incoming.updatedAt),
+    isActive: existing.isActive || incoming.isActive,
+  };
+}
+
+function dedupeSessionsById(sessions: ChatSession[]): ChatSession[] {
+  const orderedIds: string[] = [];
+  const sessionsById = new Map<string, ChatSession>();
+
+  for (const session of sessions) {
+    if (!session?.sessionId) continue;
+
+    const existing = sessionsById.get(session.sessionId);
+    if (existing) {
+      sessionsById.set(
+        session.sessionId,
+        mergeDuplicateSession(existing, session),
+      );
+    } else {
+      orderedIds.push(session.sessionId);
+      sessionsById.set(session.sessionId, session);
+    }
+  }
+
+  return orderedIds
+    .map((sessionId) => sessionsById.get(sessionId))
+    .filter((session): session is ChatSession => Boolean(session));
+}
+
+function getActiveSessionId(
+  sessions: ChatSession[],
+  preferredSessionId: string | null,
+): string | null {
+  if (
+    preferredSessionId &&
+    sessions.some((session) => session.sessionId === preferredSessionId)
+  ) {
+    return preferredSessionId;
+  }
+
+  return (
+    sessions.find((session) => session.isActive)?.sessionId ||
+    sessions[0]?.sessionId ||
+    null
+  );
+}
+
+function applyActiveSession(
+  sessions: ChatSession[],
+  activeSessionId: string | null,
+): ChatSession[] {
+  return sessions.map((session) => ({
+    ...session,
+    isActive: session.sessionId === activeSessionId,
+  }));
+}
+
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
   let newState = state;
 
   switch (action.type) {
-    case "SET_SESSIONS":
+    case "SET_SESSIONS": {
+      const incomingSessions = dedupeSessionsById(action.sessions);
+      const mergedSessions = incomingSessions.map((newSess) => {
+        const existingSess = state.sessions.find(
+          (s) => s.sessionId === newSess.sessionId,
+        );
+        return {
+          ...newSess,
+          messages:
+            existingSess && existingSess.messages.length > 0
+              ? existingSess.messages
+              : newSess.messages,
+          isActive: newSess.isActive || (existingSess?.isActive ?? false),
+        };
+      });
+      const activeSessionId = getActiveSessionId(
+        mergedSessions,
+        state.activeSessionId,
+      );
       newState = {
         ...state,
-        sessions: action.sessions.map((newSess) => {
-          const existingSess = state.sessions.find(
-            (s) => s.sessionId === newSess.sessionId,
-          );
-          return {
-            ...newSess,
-            messages:
-              existingSess && existingSess.messages.length > 0
-                ? existingSess.messages
-                : newSess.messages,
-            isActive: newSess.isActive || (existingSess?.isActive ?? false),
-          };
-        }),
-        activeSessionId:
-          action.sessions.find((s) => s.isActive)?.sessionId ||
-          action.sessions[0]?.sessionId ||
-          null,
+        sessions: applyActiveSession(mergedSessions, activeSessionId),
+        activeSessionId,
       };
       break;
+    }
 
     case "SELECT_SESSION":
       newState = {
@@ -90,16 +175,31 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       };
       break;
 
-    case "CREATE_SESSION":
+    case "CREATE_SESSION": {
+      const existingSessions = dedupeSessionsById(state.sessions);
+      const existingSession = existingSessions.find(
+        (session) => session.sessionId === action.session.sessionId,
+      );
+      const createdSession = {
+        ...action.session,
+        messages:
+          action.session.messages.length > 0
+            ? action.session.messages
+            : existingSession?.messages || [],
+        isActive: true,
+      };
       newState = {
         ...state,
-        activeSessionId: action.session.sessionId,
+        activeSessionId: createdSession.sessionId,
         sessions: [
-          action.session,
-          ...state.sessions.map((s) => ({ ...s, isActive: false })),
+          createdSession,
+          ...existingSessions
+            .filter((s) => s.sessionId !== createdSession.sessionId)
+            .map((s) => ({ ...s, isActive: false })),
         ],
       };
       break;
+    }
 
     case "DELETE_SESSION":
       const remainingSessions = state.sessions.filter(
@@ -287,6 +387,9 @@ const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
+  const createSessionPromiseRef = useRef<Promise<string | undefined> | null>(
+    null,
+  );
 
   const refreshSessions = useCallback(async (workspaceId?: string) => {
     try {
@@ -396,29 +499,40 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const createSession = useCallback(
     async (workspace?: string) => {
-      try {
-        const session = await agentService.createSession(workspace);
-
-        if (
-          !session.title ||
-          session.title === "Untitled" ||
-          session.title === "Undefined"
-        ) {
-          const workspaceName = workspace
-            ? workspace.split("/").pop()
-            : "Workspace";
-          const baseName =
-            workspaceName!.charAt(0).toUpperCase() + workspaceName!.slice(1);
-          const count = state.sessions.length + 1;
-          session.title = `${baseName} Session ${count}`;
-        }
-
-        dispatch({ type: "CREATE_SESSION", session });
-        return session.sessionId;
-      } catch (err) {
-        console.error("Failed to create session on backend", err);
-        return undefined;
+      if (createSessionPromiseRef.current) {
+        return createSessionPromiseRef.current;
       }
+
+      const createPromise = (async () => {
+        try {
+          const session = await agentService.createSession(workspace);
+
+          if (
+            !session.title ||
+            session.title === "Untitled" ||
+            session.title === "Undefined"
+          ) {
+            const workspaceName = workspace
+              ? workspace.split(/[\\/]/).pop()
+              : "Workspace";
+            const baseName =
+              workspaceName!.charAt(0).toUpperCase() + workspaceName!.slice(1);
+            const count = state.sessions.length + 1;
+            session.title = `${baseName} Session ${count}`;
+          }
+
+          dispatch({ type: "CREATE_SESSION", session });
+          return session.sessionId;
+        } catch (err) {
+          console.error("Failed to create session on backend", err);
+          return undefined;
+        } finally {
+          createSessionPromiseRef.current = null;
+        }
+      })();
+
+      createSessionPromiseRef.current = createPromise;
+      return createPromise;
     },
     [state.sessions],
   );

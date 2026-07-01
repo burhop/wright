@@ -19,6 +19,8 @@ export type AgentEvent =
 interface ServiceHealthResult {
   state: "connected" | "disconnected" | "unknown";
   latencyMs?: number;
+  baseUrl?: string | null;
+  error?: string | null;
 }
 
 export interface AgentCommand {
@@ -62,6 +64,8 @@ export class HermesAgentService {
         return {
           state: data.state as "connected" | "disconnected",
           latencyMs: data.latencyMs,
+          baseUrl: data.baseUrl ?? null,
+          error: data.error ?? null,
         };
       }
     } catch (err) {

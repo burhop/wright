@@ -2,7 +2,7 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test check security-scan docker-smoke alpha-release-check
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e hackathon-up hackathon-update hackathon-logs hackathon-shell hackathon-down lint format typecheck test check security-scan docker-smoke alpha-release-check
 
 # Default target displays help
 help:
@@ -14,6 +14,11 @@ help:
 	@echo "  docker-shell    - Open an interactive shell inside the running container"
 	@echo "  docker-test-e2e - Run Playwright UI tests against the built Docker image"
 	@echo "  docker-smoke    - Build and smoke-test the production Docker image"
+	@echo "  hackathon-up    - Build/start the Nous hackathon prototype stack"
+	@echo "  hackathon-update - Refresh mounted Wright code in the hackathon stack"
+	@echo "  hackathon-logs  - Follow hackathon stack logs"
+	@echo "  hackathon-shell - Open a shell in the hackathon container"
+	@echo "  hackathon-down  - Stop the hackathon prototype stack"
 	@echo ""
 	@echo "Local Developer Targets (Non-Docker):"
 	@echo "  lint            - Run Ruff and ESLint checkers"
@@ -78,6 +83,21 @@ docker-test-e2e:
 	@make docker-clean
 	@if [ -f docker/.env.bak ]; then mv docker/.env.bak docker/.env; fi
 	@echo "E2E tests passed."
+
+hackathon-up:
+	bash -lc 'set -o pipefail; mkdir -p tmp; docker compose -f docker-compose.hackathon.yml up -d --build 2>&1 | tee tmp/nous-hackathon-build.log'
+
+hackathon-update:
+	bash scripts/hackathon-update-wright.sh
+
+hackathon-logs:
+	docker compose -f docker-compose.hackathon.yml logs -f agent
+
+hackathon-shell:
+	docker compose -f docker-compose.hackathon.yml exec agent bash
+
+hackathon-down:
+	docker compose -f docker-compose.hackathon.yml down
 
 docker-test-live:
 	@echo "Setting up unmocked live test environment..."

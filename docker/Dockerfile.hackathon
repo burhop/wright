@@ -1,0 +1,132 @@
+# =============================================================================
+# Wright Nous Hackathon Prototype Image
+# =============================================================================
+# Includes Hermes Agent, Wright, Stripe payment tooling, and the official
+# NemoClaw source checkout. Wright source is also bind-mounted by the companion
+# compose file for fast demo iteration.
+# =============================================================================
+
+ARG HERMES_INSTALL_BRANCH=main
+
+FROM node:22-bookworm-slim AS runtime
+
+ARG HERMES_INSTALL_BRANCH
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV HOME=/home/agent
+ENV HERMES_HOME=/home/agent/.hermes
+ENV HERMES_PROFILE=wright
+ENV HERMES_API_KEY=wright-local-dev
+ENV API_SERVER_KEY=wright-local-dev
+ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
+ENV WRIGHT_REPO_DIR=/workspace
+ENV NEMOCLAW_HOME=/opt/nemoclaw
+ENV STRIPE_CLI_TELEMETRY_OPTOUT=1
+ENV PATH=/home/agent/.local/bin:/home/agent/.hermes/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    build-essential \
+    bzip2 \
+    ca-certificates \
+    curl \
+    git \
+    gnupg \
+    htop \
+    jq \
+    ffmpeg \
+    openssh-client \
+    procps \
+    python3 \
+    python3-venv \
+    ripgrep \
+    sudo \
+    supervisor \
+    tini \
+    vim \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN userdel -r node 2>/dev/null || true && \
+    useradd -m -u 1000 -s /bin/bash agent && \
+    echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    mkdir -p /home/agent/.local/share/wright /home/agent/workspace /workspace && \
+    chown -R agent:agent /home/agent /workspace
+
+# Hermes installs in an FHS layout when run as root on Linux:
+# code in /usr/local/lib/hermes-agent, command in /usr/local/bin/hermes.
+RUN curl -fsSL https://hermes-agent.nousresearch.com/install.sh -o /tmp/install-hermes.sh && \
+    bash /tmp/install-hermes.sh \
+      --skip-setup \
+      --skip-browser \
+      --non-interactive \
+      --branch "${HERMES_INSTALL_BRANCH}" && \
+    rm -f /tmp/install-hermes.sh && \
+    chown -R agent:agent /home/agent /usr/local/lib/hermes-agent
+
+# Stripe tooling used by Hermes optional payment skills.
+# @stripe/link-cli 0.8.2 currently crashes in MCP mode with incur's stdio
+# transport, while 0.8.1 remains a stable stdio server for this prototype.
+RUN npm install -g @stripe/cli @stripe/link-cli@0.8.1 mppx && \
+    npm cache clean --force
+
+# Official NemoClaw source checkout for docs, examples, and operator scripts.
+# The actual NemoHermes/OpenShell sandbox lifecycle is host-side runtime
+# infrastructure and should be activated explicitly with NVIDIA's installer.
+RUN git clone --depth 1 https://github.com/NVIDIA/NemoClaw.git /opt/nemoclaw && \
+    chown -R agent:agent /opt/nemoclaw
+
+WORKDIR /workspace
+
+# Install web dependencies before source copy for useful Docker layer caching.
+COPY --chown=agent:agent package.json package-lock.json ./
+COPY --chown=agent:agent apps/web/package.json apps/web/package.json
+RUN npm ci && \
+    chown -R agent:agent /workspace
+
+# Install Python dependencies before source copy for useful Docker layer caching.
+COPY --chown=agent:agent pyproject.toml uv.lock ./
+COPY --chown=agent:agent apps/api/pyproject.toml apps/api/pyproject.toml
+COPY --chown=agent:agent packages/core/pyproject.toml packages/core/pyproject.toml
+COPY --chown=agent:agent packages/agent_adapters/pyproject.toml packages/agent_adapters/pyproject.toml
+COPY --chown=agent:agent packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
+COPY --chown=agent:agent packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
+COPY --chown=agent:agent hermes-plugin-wright/pyproject.toml hermes-plugin-wright/pyproject.toml
+USER agent
+RUN uv sync --python 3.13 --all-packages --all-groups --no-install-workspace && \
+    rm -rf /home/agent/.cache/uv
+
+USER root
+COPY --chown=agent:agent apps/ apps/
+COPY --chown=agent:agent packages/ packages/
+COPY --chown=agent:agent hermes-plugin-wright/ hermes-plugin-wright/
+USER agent
+RUN uv sync --python 3.13 --all-packages --all-groups && \
+    HERMES_PYTHON=/usr/local/lib/hermes-agent/venv/bin/python; \
+    if [ ! -x "$HERMES_PYTHON" ]; then HERMES_PYTHON=/usr/local/lib/hermes-agent/.venv/bin/python; fi; \
+    uv pip install --python "$HERMES_PYTHON" -e /workspace/hermes-plugin-wright && \
+    rm -rf /home/agent/.cache/uv
+
+RUN stripe plugin install projects || true
+
+USER root
+COPY docker/container-manifest.md /container-manifest.md
+RUN chmod 444 /container-manifest.md
+
+COPY docker/supervisord.hackathon.conf /etc/supervisor/conf.d/wright-hackathon.conf
+COPY docker/entrypoint.hackathon.sh /entrypoint.hackathon.sh
+RUN sed -i 's/\r$//' /entrypoint.hackathon.sh && \
+    chmod +x /entrypoint.hackathon.sh && \
+    mkdir -p /var/log/supervisor && \
+    touch /var/log/agent-startup.log /var/log/agent-changes.log /var/log/hackathon-setup.log && \
+    chown -R agent:agent /var/log/supervisor /var/log/agent-startup.log /var/log/agent-changes.log /var/log/hackathon-setup.log
+
+USER agent
+WORKDIR /workspace
+
+EXPOSE 8000 5173 8642
+
+ENTRYPOINT ["/entrypoint.hackathon.sh"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/wright-hackathon.conf"]

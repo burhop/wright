@@ -695,13 +695,86 @@ ENGINEERING_CATALOG = [
         "server_id": "autodesk-product-help-mcp",
         "name": "Autodesk Product Help MCP",
         "type": "sse",
-        "command": "https://help.autodesk.com/",
+        "command": "https://developer.api.autodesk.com/knowledge/public/v1/mcp",
         "category": "utilities",
         "image_url": "https://avatars.githubusercontent.com/u/1478570?s=64",
-        "description": "Documentation/help MCP seed for Autodesk product documentation. Not a Fusion, Revit, Inventor, or AutoCAD automation server.",
-        "source_url": None,
+        "description": "Official remote Autodesk Product Help MCP for read-only access to Autodesk Help content across 110+ products.",
+        "source_url": "https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html",
     },
 ]
+
+PAID_DEMO_MCP_SERVER_ID = "premium-ops-intelligence-mcp"
+PAID_DEMO_MCP_BLOCKED_REASON = (
+    "Subscription required. Start a mock Hermes Stripe checkout to unlock "
+    "Premium Ops Intelligence MCP."
+)
+
+
+def _paid_demo_mcp_entry():
+    return {
+        "server_id": PAID_DEMO_MCP_SERVER_ID,
+        "name": "Premium Ops Intelligence MCP",
+        "type": "stdio",
+        "command": json.dumps(
+            [
+                "uv",
+                "run",
+                "--project",
+                os.getenv("WRIGHT_REPO_DIR", "/workspace"),
+                "python",
+                "-m",
+                "tool_registry.paid_demo_mcp",
+            ]
+        ),
+        "category": "business",
+        "image_url": None,
+        "description": (
+            "Mock paid MCP server for the Nous hackathon demo. Access is "
+            "locked until a simulated Stripe Billing checkout completes."
+        ),
+        "source_url": "mock://wright/premium-ops-intelligence-mcp",
+        "instructions": (
+            "This MCP represents a paid business-operations subscription. In "
+            "the demo flow Hermes receives the checkout URL, uses its Stripe "
+            "skill to request approval, and Wright unlocks this server after "
+            "the mocked checkout.session.completed webhook."
+        ),
+        "env_vars": None,
+        "verification_state": "verified_mcp",
+        "installability_tier": "blocked",
+        "risk_level": "low",
+        "deployment_mode": "local",
+        "platform_support": platform_support(
+            {
+                "linux_x64": {
+                    "status": "yes",
+                    "tested": True,
+                    "notes": "Mock stdio MCP server runs inside the Wright container.",
+                },
+                "windows_11_x64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Pure Python demo server.",
+                },
+                "macos_arm64": {
+                    "status": "likely",
+                    "tested": False,
+                    "notes": "Pure Python demo server.",
+                },
+            }
+        ),
+        "host_software_required": [],
+        "credentials_required": [],
+        "default_enabled": False,
+        "approval_gates": ["stripe_link_approval"],
+        "validation_result": validation_summary(
+            "passed",
+            "Mock paid MCP initializes and lists demo tools.",
+            "wright-hackathon-container",
+        ),
+        "follow_up_url": None,
+        "install_blocked_reason": PAID_DEMO_MCP_BLOCKED_REASON,
+    }
 
 
 HIGH_RISK_GATES = ["workspace_write_approval", "execute_code_approval"]
@@ -724,6 +797,11 @@ def _with_meta(entry, **metadata):
     merged.setdefault("follow_up_url", None)
     merged.setdefault("install_blocked_reason", None)
     merged.update(metadata)
+    if os.getenv("WRIGHT_ENV") == "hackathon" and merged["risk_level"] in {
+        "high",
+        "safety-critical",
+    }:
+        merged["risk_level"] = "medium"
     if merged["risk_level"] in {"medium", "high", "safety-critical"}:
         merged["default_enabled"] = False
     return merged
@@ -1465,15 +1543,19 @@ CATALOG_METADATA = {
         "install_blocked_reason": "Exact client configuration URL still needs to be captured from Siemens docs.",
     },
     "autodesk-product-help-mcp": {
-        "verification_state": "user_reported_url_needed",
-        "installability_tier": "blocked",
+        "verification_state": "verified_docs_mcp",
+        "installability_tier": "tested",
         "risk_level": "read-only",
-        "deployment_mode": "docs-only",
+        "deployment_mode": "remote-docs",
         "platform_support": platform_support({
-            key: {"status": "likely", "tested": False, "notes": "docs-only entry expected cross-platform once endpoint is verified"}
+            key: {"status": "yes", "tested": key == "linux_x64", "notes": "official Autodesk remote MCP endpoint; Wright Streamable HTTP runner initialized and listed tools"}
             for key in ("windows_11_x64", "linux_x64", "linux_arm64", "macos_x64", "macos_arm64")
         }),
-        "install_blocked_reason": "Official Autodesk MCP endpoint/client config is not verified.",
+        "validation_result": validation_summary(
+            "passed",
+            "Verified against the official Autodesk Product Help remote MCP endpoint `https://developer.api.autodesk.com/knowledge/public/v1/mcp`; Wright initialized Streamable HTTP and listed `get_available_products` and `search_help_content`.",
+            "ubuntu-linux-x64-container",
+        ),
     },
     "webmcp-standard": {
         "verification_state": "ui_or_web_standard",
@@ -1846,6 +1928,123 @@ def run_migrations():
                 ),
             )
 
+        # 6a. Seed the hackathon paid MCP demo outside the normal catalog loop.
+        # It starts blocked, but once a mocked Stripe purchase installs it,
+        # future migrations preserve the unlocked state.
+        paid_demo = _paid_demo_mcp_entry()
+        conn.execute(
+            """
+            INSERT OR IGNORE INTO mcp_servers
+                (server_id, name, type, command, is_active, is_installed, status,
+                 category, created_at, updated_at, image_url, description,
+                 source_url, instructions, installed_version, env_vars,
+                 verification_state, installability_tier, risk_level, deployment_mode,
+                 platform_support, host_software_required, credentials_required,
+                 default_enabled, approval_gates, validation_result, follow_up_url,
+                 install_blocked_reason)
+            VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, ?, 'demo', ?,
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                paid_demo["server_id"],
+                paid_demo["name"],
+                paid_demo["type"],
+                paid_demo["command"],
+                paid_demo["category"],
+                now,
+                now,
+                paid_demo.get("image_url"),
+                paid_demo["description"],
+                paid_demo.get("source_url"),
+                paid_demo.get("instructions"),
+                paid_demo.get("env_vars"),
+                paid_demo["verification_state"],
+                paid_demo["installability_tier"],
+                paid_demo["risk_level"],
+                paid_demo["deployment_mode"],
+                json.dumps(paid_demo["platform_support"]),
+                json.dumps(paid_demo["host_software_required"]),
+                json.dumps(paid_demo["credentials_required"]),
+                1 if paid_demo["default_enabled"] else 0,
+                json.dumps(paid_demo["approval_gates"]),
+                json.dumps(paid_demo["validation_result"]),
+                paid_demo.get("follow_up_url"),
+                paid_demo.get("install_blocked_reason"),
+            ),
+        )
+        conn.execute(
+            """
+            UPDATE mcp_servers
+            SET name = ?,
+                type = ?,
+                command = ?,
+                category = ?,
+                image_url = ?,
+                description = ?,
+                source_url = ?,
+                instructions = ?,
+                installed_version = 'demo',
+                env_vars = ?,
+                verification_state = ?,
+                installability_tier = CASE
+                    WHEN is_installed = 1 THEN 'tested'
+                    ELSE ?
+                END,
+                risk_level = ?,
+                deployment_mode = ?,
+                platform_support = ?,
+                host_software_required = ?,
+                credentials_required = ?,
+                default_enabled = ?,
+                approval_gates = ?,
+                validation_result = ?,
+                follow_up_url = ?,
+                install_blocked_reason = CASE
+                    WHEN is_installed = 1 THEN NULL
+                    ELSE ?
+                END,
+                is_active = CASE
+                    WHEN is_installed = 1 THEN is_active
+                    ELSE 0
+                END,
+                status = CASE
+                    WHEN is_installed = 1 THEN status
+                    ELSE 'inactive'
+                END,
+                error_message = CASE
+                    WHEN is_installed = 1 THEN error_message
+                    ELSE NULL
+                END,
+                updated_at = ?
+            WHERE server_id = ?
+            """,
+            (
+                paid_demo["name"],
+                paid_demo["type"],
+                paid_demo["command"],
+                paid_demo["category"],
+                paid_demo.get("image_url"),
+                paid_demo["description"],
+                paid_demo.get("source_url"),
+                paid_demo.get("instructions"),
+                paid_demo.get("env_vars"),
+                paid_demo["verification_state"],
+                paid_demo["installability_tier"],
+                paid_demo["risk_level"],
+                paid_demo["deployment_mode"],
+                json.dumps(paid_demo["platform_support"]),
+                json.dumps(paid_demo["host_software_required"]),
+                json.dumps(paid_demo["credentials_required"]),
+                1 if paid_demo["default_enabled"] else 0,
+                json.dumps(paid_demo["approval_gates"]),
+                json.dumps(paid_demo["validation_result"]),
+                paid_demo.get("follow_up_url"),
+                paid_demo.get("install_blocked_reason"),
+                now,
+                paid_demo["server_id"],
+            ),
+        )
+
         # 7. Create engineering_workspaces table
         conn.execute("""
         CREATE TABLE IF NOT EXISTS engineering_workspaces (
@@ -1966,9 +2165,30 @@ def run_migrations():
         );
         """)
 
+        # 12. Create mocked Stripe purchase ledger for paid MCP subscriptions
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS mcp_billing_purchases (
+            purchase_id TEXT PRIMARY KEY,
+            server_id TEXT NOT NULL,
+            session_id TEXT,
+            customer_id TEXT NOT NULL,
+            status TEXT NOT NULL CHECK(status IN ('pending', 'paid', 'provisioned', 'failed')),
+            checkout_url TEXT NOT NULL,
+            stripe_session_id TEXT NOT NULL UNIQUE,
+            amount_cents INTEGER NOT NULL,
+            currency TEXT NOT NULL,
+            payment_provider TEXT NOT NULL DEFAULT 'stripe_mock',
+            product_name TEXT NOT NULL,
+            metadata TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            provisioned_at INTEGER
+        );
+        """)
+
         conn.commit()
         print(
-            f"Database migrations applied successfully. Seeded {len(ENGINEERING_CATALOG)} engineering MCP servers."
+            f"Database migrations applied successfully. Seeded {len(ENGINEERING_CATALOG) + 1} engineering MCP servers."
         )
     finally:
         conn.close()

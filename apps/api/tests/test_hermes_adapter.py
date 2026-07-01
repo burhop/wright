@@ -1,9 +1,16 @@
 import pytest
-import json
 from unittest.mock import AsyncMock, patch, MagicMock
-import httpx
 from agent_adapters import HermesAdapter, AgentChatRequest
-from agent_adapters.base import AgentStreamEvent, AgentChatMessage
+
+
+@pytest.fixture(autouse=True)
+def isolate_host_hermes_config(monkeypatch, tmp_path):
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(tmp_path / "missing-config.yaml"))
+    monkeypatch.setenv("HERMES_ENV_PATH", str(tmp_path / "missing.env"))
+    monkeypatch.delenv("LLM_API_URL", raising=False)
+    monkeypatch.delenv("LLM_HEALTH_URL", raising=False)
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_API_MODEL", raising=False)
 
 
 @pytest.mark.asyncio

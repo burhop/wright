@@ -62,6 +62,17 @@ export function WorkspacePanel({
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(null);
+  const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
+    null,
+  );
+  const workspaceRootRef = useRef<WorkspaceNode | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const routeSessionId = propSessionId || workspaceInfo?.session_id || null;
+  const activeSessionId = routeSessionId || state.activeSessionId || null;
 
   useEffect(() => {
     if (typeof ResizeObserver === "undefined") return;
@@ -106,25 +117,20 @@ export function WorkspacePanel({
     };
   }, [_workspaceId]);
 
-  // Sync the prop sessionId into global chat state on mount or when the prop changes.
-  // Only depend on propSessionId to avoid loops from context-value churn.
+  // Sync the route workspace session into global chat state on mount or when it changes.
   useEffect(() => {
-    if (propSessionId) {
-      selectSession(propSessionId);
+    if (routeSessionId) {
+      selectSession(routeSessionId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [propSessionId]);
+  }, [routeSessionId]);
 
-  // Always prefer the ChatProvider's globally-active session if it matches the workspace's session prop.
-  // This prevents race conditions during workspace switching where the global state hasn't updated yet.
-  const activeSessionId =
-    !propSessionId || state.activeSessionId === propSessionId
-      ? state.activeSessionId
-      : null;
   const statuses = useHealthStatus();
-  const agentStatus = statuses.find(
+  const agentServiceStatus = statuses.find(
     (s) => s.serviceId === "hermes-agent",
-  )?.state;
+  );
+  const agentStatus = agentServiceStatus?.state;
+  const agentError = agentServiceStatus?.error;
   const isAgentDisconnected = agentStatus === "disconnected";
 
   const activeSession =
@@ -197,6 +203,7 @@ export function WorkspacePanel({
     getProvider,
     updateTabPath,
     reloadDocument,
+    resetViewer,
   } = useViewerPanel();
 
   // Resize and model states
@@ -277,19 +284,42 @@ export function WorkspacePanel({
     expandedPaths,
   ]);
 
-
-
-  const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
-    null,
-  );
-  const workspaceRootRef = useRef<WorkspaceNode | null>(null);
   useEffect(() => {
     workspaceRootRef.current = workspaceRoot;
   }, [workspaceRoot]);
-  const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(null);
-  const [workspacePath, setWorkspacePath] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const bindSessionToWorkspace = useCallback(
+    async (sessionId: string): Promise<string | undefined> => {
+      let resolvedSessionId = sessionId;
+
+      if (_workspaceId) {
+        try {
+          resolvedSessionId = await workspaceService.updateWorkspaceSession(
+            _workspaceId,
+            sessionId,
+          );
+        } catch (err) {
+          console.error(
+            "Failed to update workspace session association",
+            err,
+          );
+          setError("Failed to switch workspace session");
+          return undefined;
+        }
+      }
+
+      setError(null);
+      setWorkspaceInfo((prev) =>
+        prev ? { ...prev, session_id: resolvedSessionId } : prev,
+      );
+      await selectSession(resolvedSessionId);
+      if (onSessionChange) {
+        onSessionChange(resolvedSessionId);
+      }
+      return resolvedSessionId;
+    },
+    [_workspaceId, onSessionChange, selectSession],
+  );
 
   // Git state
   const [gitBranch, setGitBranch] = useState<string>("main");
@@ -334,6 +364,18 @@ export function WorkspacePanel({
 
   const viewerContainerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    resetViewer();
+    setWorkspaceRoot(null);
+    workspaceRootRef.current = null;
+    setActiveDiffFile(null);
+    setIsInspectorOpen(false);
+    setIsUnresponsive(false);
+    if (viewerContainerRef.current) {
+      viewerContainerRef.current.replaceChildren();
+    }
+  }, [_workspaceId, routeSessionId, resetViewer]);
+
   // Synchronise stored tabs from savedLayout on mount/initialisation
   const tabsInitialized = useRef(false);
   useEffect(() => {
@@ -358,6 +400,7 @@ export function WorkspacePanel({
           else if (ext === "svg") mimeType = "image/svg+xml";
           else if (ext === "stl") mimeType = "application/sla";
           else if (ext === "step") mimeType = "application/step";
+          else if (ext === "md" || ext === "markdown") mimeType = "text/markdown";
           const file: FileDescriptor = {
             id: tab.path,
             uri: tab.path,
@@ -396,6 +439,7 @@ export function WorkspacePanel({
     else if (ext === "stl") mimeType = "application/sla";
     else if (ext === "step") mimeType = "application/step";
     else if (ext === "json") mimeType = "application/json";
+    else if (ext === "md" || ext === "markdown") mimeType = "text/markdown";
 
     const file: FileDescriptor = {
       id: activeTabPath,
@@ -471,6 +515,7 @@ export function WorkspacePanel({
       host.dispose();
       setIsUnresponsive(false);
       container?.removeEventListener("viewer-message", handleViewerMessage);
+      container?.replaceChildren();
     };
   }, [activeTabPath, activeSessionId, getDocument, getProvider, sendMessage]);
 
@@ -1088,27 +1133,11 @@ export function WorkspacePanel({
 
               <select
                 data-testid="sessions-sidebar"
-                value={state.activeSessionId || ""}
+                value={activeSessionId || ""}
                 onChange={async (e) => {
                   const newSessId = e.target.value;
                   if (newSessId) {
-                    if (_workspaceId) {
-                      try {
-                        await workspaceService.updateWorkspaceSession(
-                          _workspaceId,
-                          newSessId,
-                        );
-                      } catch (err) {
-                        console.error(
-                          "Failed to update workspace session association",
-                          err,
-                        );
-                      }
-                    }
-                    selectSession(newSessId);
-                    if (onSessionChange) {
-                      onSessionChange(newSessId);
-                    }
+                    await bindSessionToWorkspace(newSessId);
                   }
                 }}
                 style={{
@@ -1151,23 +1180,7 @@ export function WorkspacePanel({
                 onClick={async () => {
                   const newId = await createSession(workspacePath);
                   if (newId) {
-                    if (_workspaceId) {
-                      try {
-                        await workspaceService.updateWorkspaceSession(
-                          _workspaceId,
-                          newId,
-                        );
-                      } catch (err) {
-                        console.error(
-                          "Failed to update workspace session association",
-                          err,
-                        );
-                      }
-                    }
-                    selectSession(newId);
-                    if (onSessionChange) {
-                      onSessionChange(newId);
-                    }
+                    await bindSessionToWorkspace(newId);
                   }
                 }}
                 style={{
@@ -1209,9 +1222,14 @@ export function WorkspacePanel({
                 fontFamily: "var(--font-ui)",
               }}
             >
-              <span>
-                ⚠️ Hermes agent is not available. Check that the wright profile
-                WebUI is running.
+              <span
+                title={agentError || undefined}
+                style={{ lineHeight: 1.35, overflowWrap: "anywhere" }}
+              >
+                Hermes agent is not available.
+                {agentError
+                  ? ` ${agentError}`
+                  : " Check that the wright profile WebUI is running."}
               </span>
             </div>
           )}
@@ -2655,27 +2673,11 @@ export function WorkspacePanel({
 
             <select
               data-testid="sessions-sidebar"
-              value={state.activeSessionId || ""}
+              value={activeSessionId || ""}
               onChange={async (e) => {
                 const newSessId = e.target.value;
                 if (newSessId) {
-                  if (_workspaceId) {
-                    try {
-                      await workspaceService.updateWorkspaceSession(
-                        _workspaceId,
-                        newSessId,
-                      );
-                    } catch (err) {
-                      console.error(
-                        "Failed to update workspace session association",
-                        err,
-                      );
-                    }
-                  }
-                  selectSession(newSessId);
-                  if (onSessionChange) {
-                    onSessionChange(newSessId);
-                  }
+                  await bindSessionToWorkspace(newSessId);
                 }
               }}
               style={{
@@ -2718,23 +2720,7 @@ export function WorkspacePanel({
               onClick={async () => {
                 const newId = await createSession(workspacePath);
                 if (newId) {
-                  if (_workspaceId) {
-                    try {
-                      await workspaceService.updateWorkspaceSession(
-                        _workspaceId,
-                        newId,
-                      );
-                    } catch (err) {
-                      console.error(
-                        "Failed to update workspace session association",
-                        err,
-                      );
-                    }
-                  }
-                  selectSession(newId);
-                  if (onSessionChange) {
-                    onSessionChange(newId);
-                  }
+                  await bindSessionToWorkspace(newId);
                 }
               }}
               style={{
@@ -2776,9 +2762,14 @@ export function WorkspacePanel({
               fontFamily: "var(--font-ui)",
             }}
           >
-            <span>
-              ⚠️ Hermes agent is not available. Check that the wright profile
-              WebUI is running.
+            <span
+              title={agentError || undefined}
+              style={{ lineHeight: 1.35, overflowWrap: "anywhere" }}
+            >
+              Hermes agent is not available.
+              {agentError
+                ? ` ${agentError}`
+                : " Check that the wright profile WebUI is running."}
             </span>
           </div>
         )}

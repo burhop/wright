@@ -38,6 +38,7 @@ interface ViewerPanelContextType {
   canRedo: (path: string) => boolean;
   saveDocument: (path: string) => Promise<void>;
   revertDocument: (path: string) => Promise<void>;
+  resetViewer: () => void;
 }
 
 const ViewerPanelContext = createContext<ViewerPanelContextType | null>(null);
@@ -79,8 +80,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
   const subscriptionsRef = React.useRef<Map<string, Disposable>>(new Map());
   const backupHandlesRef = React.useRef<Map<string, BackupHandle>>(new Map());
 
-  React.useEffect(() => {
-    // Clear all open tabs and resource references when active session changes
+  const resetViewer = useCallback(() => {
     for (const sub of subscriptionsRef.current.values()) {
       try {
         sub.dispose();
@@ -115,7 +115,12 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
     setRedoStacks(new Map());
     setOpenTabs([]);
     setActiveTabPath(null);
-  }, [chatState.activeSessionId]);
+  }, []);
+
+  React.useEffect(() => {
+    // Clear all open tabs and resource references when active session changes
+    resetViewer();
+  }, [chatState.activeSessionId, resetViewer]);
 
   const setTabDirty = useCallback((path: string, isDirty: boolean) => {
     setOpenTabs((prev) =>
@@ -479,6 +484,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         canRedo,
         saveDocument,
         revertDocument,
+        resetViewer,
       }}
     >
       {children}

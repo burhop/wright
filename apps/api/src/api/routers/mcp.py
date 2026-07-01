@@ -131,8 +131,7 @@ async def list_servers(engine: McpEngine = Depends(get_mcp_engine)):
         for server in servers:
             if server.env_vars and isinstance(server.env_vars, list):
                 var_names = [
-                    v.name for v in server.env_vars
-                    if isinstance(v, EnvVarDefinition)
+                    v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
                 ]
                 if var_names:
                     server.credentials_configured = has_credentials(
@@ -242,8 +241,6 @@ async def toggle_server_activation(
         # Sync with Hermes config
         sync_mcp_server_to_hermes(updated)
 
-
-
         return ServerToggleResponse(
             server_id=updated.server_id,
             is_active=updated.is_active,
@@ -282,21 +279,6 @@ async def install_server_endpoint(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=reason)
 
     try:
-        # Validate required credentials before installation
-        if server.env_vars and isinstance(server.env_vars, list):
-            required_vars = [
-                v.name for v in server.env_vars
-                if isinstance(v, EnvVarDefinition) and v.required
-            ]
-            if required_vars:
-                cred_status = has_credentials(server_id, required_vars)
-                missing = [name for name, configured in cred_status.items() if not configured]
-                if missing:
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"Server '{server.name}' requires credentials before installation: {', '.join(missing)}. Configure them via the credentials panel first.",
-                    )
-
         # Mark as installed in database
         from tool_registry.db import update_server
 
@@ -402,8 +384,7 @@ async def report_missing_mcp(
     engine: McpEngine = Depends(get_mcp_engine),
 ):
     normalized = "".join(
-        char.lower() if char.isalnum() else "-"
-        for char in body.name.strip()
+        char.lower() if char.isalnum() else "-" for char in body.name.strip()
     ).strip("-")
     normalized = "-".join(part for part in normalized.split("-") if part)
     server_id = f"reported-{normalized or uuid.uuid4().hex[:8]}"
@@ -687,9 +668,7 @@ async def get_credential_status(
             v.model_dump() if isinstance(v, EnvVarDefinition) else v
             for v in server.env_vars
         ]
-        var_names = [
-            v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
-        ]
+        var_names = [v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)]
         configured = has_credentials(server_id, var_names)
 
     return CredentialStatusResponse(
@@ -723,10 +702,13 @@ async def save_credentials(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Credential keys and values must be strings.",
             )
-        sanitized[key] = value
+        if value.strip():
+            sanitized[key] = value
 
     logger.info("saving_credentials", server_id=server_id, var_count=len(sanitized))
-    write_secrets(server_id, sanitized)
+    if sanitized:
+        existing = read_secrets(server_id)
+        write_secrets(server_id, {**existing, **sanitized})
 
     # Return updated configured status
     env_var_defs = []
@@ -736,9 +718,7 @@ async def save_credentials(
             v.model_dump() if isinstance(v, EnvVarDefinition) else v
             for v in server.env_vars
         ]
-        var_names = [
-            v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)
-        ]
+        var_names = [v.name for v in server.env_vars if isinstance(v, EnvVarDefinition)]
         configured = has_credentials(server_id, var_names)
 
     return CredentialStatusResponse(
@@ -748,7 +728,9 @@ async def save_credentials(
     )
 
 
-@router.delete("/servers/{server_id}/credentials", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/servers/{server_id}/credentials", status_code=status.HTTP_204_NO_CONTENT
+)
 @traced("mcp.server.credentials.delete")
 async def delete_credentials_endpoint(
     server_id: str, engine: McpEngine = Depends(get_mcp_engine)

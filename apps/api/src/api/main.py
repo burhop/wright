@@ -21,6 +21,7 @@ from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
+from api.routers.billing import router as billing_router
 from api.middleware.tracing import TracingMiddleware
 from api.schemas.common import ErrorResponse, ErrorCodes
 from core.logging import configure_logging, get_logger
@@ -124,6 +125,7 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+app.include_router(billing_router, prefix="/api/billing", tags=["Billing"])
 
 
 @app.websocket("/api/webmcp/ws")
@@ -168,6 +170,16 @@ async def check_agent_health():
 
 @app.get("/api/inference/health", response_model=HealthResponse)
 async def check_inference_health():
+    llm_health_checker = getattr(app.state.agent_engine, "check_llm_backend_health", None)
+    if callable(llm_health_checker):
+        res = await llm_health_checker()
+        return HealthResponse(
+            state=res["state"],
+            latencyMs=res.get("latencyMs", 0.0),
+            baseUrl=res.get("baseUrl"),
+            error=res.get("error"),
+        )
+
     start_time = time.perf_counter()
     try:
         async with httpx.AsyncClient() as client:

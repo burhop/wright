@@ -16,6 +16,7 @@
     "@opentelemetry/sdk-trace-web": "^2.7.1",
     "@testing-library/user-event": "^14.6.1",
     "idb": "^8.0.3",
+    "online-3d-viewer": "^0.18.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-markdown": "^10.1.0",

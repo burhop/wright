@@ -690,10 +690,57 @@ def test_workspace_session_update(client):
     )
     assert response_update.status_code == 200
     assert response_update.json()["success"] is True
+    assert response_update.json()["session_id"] == "new-test-session"
 
     # Verify the updated session ID in config
     response_config = client.get("/api/workspace/by-id/" + workspace_id)
     assert response_config.json()["session_id"] == "new-test-session"
+
+
+def test_workspace_session_update_conflicts_when_session_owned_elsewhere(
+    client, tmp_path
+):
+    from api.config import DATABASE_PATH
+    from core.workspace import create_workspace
+    import sqlite3
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    other_path = tmp_path / "other-workspace"
+    other_path.mkdir()
+    create_workspace(
+        DATABASE_PATH,
+        "other-workspace-id",
+        "occupied-session",
+        str(other_path),
+        "Other Workspace",
+    )
+
+    try:
+        response_update = client.post(
+            f"/api/workspace/by-id/{workspace_id}/session",
+            json={"session_id": "occupied-session"},
+        )
+
+        assert response_update.status_code == 409
+        assert (
+            response_update.json()["message"]
+            == "Session is already associated with another workspace"
+        )
+    finally:
+        conn = sqlite3.connect(DATABASE_PATH)
+        try:
+            conn.execute(
+                "DELETE FROM engineering_workspaces WHERE workspace_id = ?",
+                ("other-workspace-id",),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
 
 def test_agent_sessions_filtering_by_workspace(client):
@@ -1200,6 +1247,70 @@ def test_workspace_mcp_status_endpoint(client):
     assert "running_mcps" in data
 
 
+def test_workspace_mcp_status_errors_when_expected_server_inactive(
+    client, monkeypatch, tmp_path
+):
+    from api.config import DATABASE_PATH
+    import json
+    import sqlite3
+    import time
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    hermes_config = tmp_path / ".hermes" / "profiles" / "wright" / "config.yaml"
+    hermes_config.parent.mkdir(parents=True)
+    hermes_config.write_text("mcp_servers:\n  wrightgateway: {}\n", encoding="utf-8")
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    now = int(time.time())
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE session_id = ?",
+            (json.dumps(["inactive-test-mcp"]), "test-session"),
+        )
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO mcp_servers
+                (server_id, name, type, command, is_active, is_installed,
+                 status, error_message, category, created_at, updated_at)
+            VALUES
+                ('inactive-test-mcp', 'Inactive Test MCP', 'stdio', '[]',
+                 0, 1, 'inactive', NULL, 'cad', ?, ?)
+            """,
+            (now, now),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    try:
+        response = client.get("/api/workspace/mcp-status", params={"session_id": "test-session"})
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "error"
+        assert data["message"] == "MCP server is not active: Inactive Test MCP"
+        assert data["running_mcps"] == [
+            {
+                "name": "Inactive Test MCP",
+                "status": "inactive",
+                "error_message": None,
+            }
+        ]
+    finally:
+        conn = sqlite3.connect(DATABASE_PATH)
+        try:
+            conn.execute("DELETE FROM mcp_servers WHERE server_id = 'inactive-test-mcp'")
+            conn.execute(
+                "UPDATE engineering_workspaces SET enabled_tools = NULL WHERE session_id = ?",
+                ("test-session",),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+
 def test_create_workspace_uses_local_session_when_agent_unavailable(client, workspace_setup):
     class FailingCreateSessionEngine(MockAgentEngine):
         async def create_session(self, workspace: str | None = None) -> AgentSessionInfo:
@@ -1222,6 +1333,71 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(client, work
     assert data["session_id"].startswith("wright-local-")
     assert data["local_path"] == local_path
     assert os.path.isdir(local_path)
+
+
+def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
+    from api.config import DATABASE_PATH
+    from core.workspace import get_all_workspaces, get_recent_workspaces
+    import sqlite3
+    import time
+    import uuid
+
+    now = int(time.time())
+    rows = [
+        (
+            str(uuid.uuid4()),
+            "api_1782845491_1094a132",
+            "api_1782845491_1094a132",
+            os.path.join(workspace_setup, "api_1782845491_1094a132"),
+            now + 3,
+        ),
+        (
+            str(uuid.uuid4()),
+            "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8",
+            "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8",
+            os.path.join(workspace_setup, "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8"),
+            now + 2,
+        ),
+        (
+            str(uuid.uuid4()),
+            "wright-local-real-session",
+            "Demo",
+            os.path.join(workspace_setup, "demo"),
+            now + 1,
+        ),
+    ]
+    for _, _, _, local_path, _ in rows:
+        os.makedirs(local_path, exist_ok=True)
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.executemany(
+            """
+            INSERT INTO engineering_workspaces
+                (workspace_id, session_id, workspace_name, local_path, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            [(workspace_id, session_id, name, path, updated_at, updated_at)
+             for workspace_id, session_id, name, path, updated_at in rows],
+        )
+        conn.commit()
+
+        recent_names = {w["workspace_name"] for w in get_recent_workspaces(DATABASE_PATH, limit=10)}
+        all_names = {w["workspace_name"] for w in get_all_workspaces(DATABASE_PATH)}
+
+        assert "api_1782845491_1094a132" not in recent_names
+        assert "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8" not in recent_names
+        assert "api_1782845491_1094a132" not in all_names
+        assert "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8" not in all_names
+        assert "Demo" in recent_names
+        assert "Demo" in all_names
+    finally:
+        conn.execute(
+            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?)",
+            tuple(row[0] for row in rows),
+        )
+        conn.commit()
+        conn.close()
 
 
 def test_workspace_files_uses_local_dir_when_agent_lookup_fails(client, workspace_setup, monkeypatch):
