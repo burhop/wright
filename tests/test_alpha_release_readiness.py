@@ -91,6 +91,13 @@ def test_dependabot_covers_root_and_frontend_npm_lockfiles() -> None:
     assert 'package-ecosystem: "npm"\n    directory: "/apps/web"' in config
 
 
+def test_windows_playwright_workflow_uses_windows_command_shims() -> None:
+    workflow = read_text(".github/workflows/test-windows.yml")
+
+    assert 'FilePath "npm.cmd"' in workflow
+    assert 'FilePath "npm" -ArgumentList "run", "dev"' not in workflow
+
+
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")

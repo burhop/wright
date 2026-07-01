@@ -104,7 +104,7 @@ jobs:
 
       - name: Start frontend dev server
         run: |
-          Start-Process -NoNewWindow -FilePath "npm" -ArgumentList "run", "dev", "--workspace=apps/web", "--", "--host"
+          Start-Process -NoNewWindow -FilePath "npm.cmd" -ArgumentList "run", "dev", "--workspace=apps/web", "--", "--host"
         shell: pwsh
 
       - name: Wait for servers
