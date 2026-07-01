@@ -94,7 +94,8 @@ def test_dependabot_covers_root_and_frontend_npm_lockfiles() -> None:
 def test_windows_playwright_workflow_uses_windows_command_shims() -> None:
     workflow = read_text(".github/workflows/test-windows.yml")
 
-    assert 'FilePath "uv.exe"' in workflow
+    assert 'FilePath ".\\.venv\\Scripts\\python.exe"' in workflow
+    assert 'FilePath "uv.exe"' not in workflow
     assert 'FilePath "npm.cmd"' in workflow
     assert 'FilePath "npm" -ArgumentList "run", "dev"' not in workflow
 

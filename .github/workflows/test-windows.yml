@@ -100,8 +100,8 @@ jobs:
         run: |
           $env:LLM_API_URL = "http://127.0.0.1:8000/v1"
           $env:DATABASE_PATH = "$env:RUNNER_TEMP\wright-ci.db"
-          $api = Start-Process -NoNewWindow -FilePath "uv.exe" `
-            -ArgumentList "run", "uvicorn", "api.main:app", "--host", "127.0.0.1", "--port", "8000" `
+          $api = Start-Process -NoNewWindow -FilePath ".\.venv\Scripts\python.exe" `
+            -ArgumentList "-m", "uvicorn", "api.main:app", "--host", "127.0.0.1", "--port", "8000" `
             -RedirectStandardOutput "$env:RUNNER_TEMP\wright-api.out.log" `
             -RedirectStandardError "$env:RUNNER_TEMP\wright-api.err.log" `
             -PassThru
