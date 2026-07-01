@@ -143,7 +143,7 @@ jobs:
               [string]$Url
             )
 
-            for ($attempt = 1; $attempt -le 30; $attempt++) {
+            for ($attempt = 1; $attempt -le 120; $attempt++) {
               try {
                 Invoke-WebRequest -UseBasicParsing -Uri $Url -TimeoutSec 2 | Out-Null
                 Write-Host "$Name is ready at $Url"

@@ -107,6 +107,7 @@ def test_windows_playwright_workflow_waits_for_servers_with_logs() -> None:
     assert "wright-web.err.log" in workflow
     assert "http://127.0.0.1:8000/api/health" in workflow
     assert "http://127.0.0.1:5173" in workflow
+    assert "$attempt -le 120" in workflow
     assert "PLAYWRIGHT_BASE_URL: http://127.0.0.1:5173" in workflow
     assert "Start-Sleep -Seconds 15" not in workflow
 
