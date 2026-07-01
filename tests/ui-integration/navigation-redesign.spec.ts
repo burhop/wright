@@ -295,7 +295,7 @@ test.describe("UI Navigation Redesign E2E", () => {
 
     // Verify updates / news card details
     await expect(page.getByTestId("card-news")).toBeVisible();
-    await expect(page.getByText("v0.22.0 Release — Modernized Navigation")).toBeVisible();
+    await expect(page.getByText("v0.22.0 Release Modernized Navigation")).toBeVisible();
 
     // Verify system telemetry card details
     const telemetryCard = page.getByTestId("card-telemetry");

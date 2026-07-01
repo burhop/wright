@@ -27,7 +27,9 @@ export function DashboardPage() {
   const hermesState =
     statuses.find((s) => s.serviceId === "hermes-agent")?.state || "unknown";
   const inferenceState =
-    statuses.find((s) => s.serviceId === "inference")?.state || "unknown";
+    statuses.find(
+      (s) => s.serviceId === "llm-backend" || s.serviceId === "inference",
+    )?.state || "unknown";
 
   const [recentWorkspaces, setRecentWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [showAllWorkspaces, setShowAllWorkspaces] = useState(false);
