@@ -88,10 +88,12 @@ def test_gateway_tools_endpoint(test_client):
 
 def test_mcp_router_uses_generic_wright_gateway_sync():
     from api.routers import mcp
+    from api.services import mcp_services
 
     assert "sync_mcp_server_to_hermes" not in vars(mcp)
+    assert "sync_mcp_server_to_wright_gateway" not in vars(mcp)
     assert (
-        mcp.sync_mcp_server_to_wright_gateway.__module__
+        mcp_services.sync_mcp_server_to_wright_gateway.__module__
         == "api.services.wright_gateway_sync"
     )
 

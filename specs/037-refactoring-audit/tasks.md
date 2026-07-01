@@ -107,24 +107,24 @@
 
 ### Tests for User Story 3
 
-- [ ] T036 [P] [US3] Add MCP list/register service tests in `packages/tool_registry/tests/test_mcp_services.py`
-- [ ] T037 [P] [US3] Add MCP install/uninstall/activation service tests in `packages/tool_registry/tests/test_mcp_services.py`
-- [ ] T038 [P] [US3] Add MCP credential service tests in `packages/tool_registry/tests/test_mcp_services.py`
-- [ ] T039 [P] [US3] Add MCP validation/follow-up service tests in `packages/tool_registry/tests/test_mcp_services.py`
-- [ ] T040 [P] [US3] Add MCP version check/update service tests in `packages/tool_registry/tests/test_mcp_services.py`
-- [ ] T041 [P] [US3] Add route response compatibility assertions in `apps/api/tests/test_mcp_api.py`
+- [X] T036 [P] [US3] Add MCP list/register service tests in `packages/tool_registry/tests/test_mcp_services.py`
+- [X] T037 [P] [US3] Add MCP install/uninstall/activation service tests in `packages/tool_registry/tests/test_mcp_services.py`
+- [X] T038 [P] [US3] Add MCP credential service tests in `packages/tool_registry/tests/test_mcp_services.py`
+- [X] T039 [P] [US3] Add MCP validation/follow-up service tests in `packages/tool_registry/tests/test_mcp_services.py`
+- [X] T040 [P] [US3] Add MCP version check/update service tests in `packages/tool_registry/tests/test_mcp_services.py`
+- [X] T041 [P] [US3] Add route response compatibility assertions in `apps/api/tests/test_mcp_api.py`
 
 ### Implementation for User Story 3
 
-- [ ] T042 [US3] Implement MCP catalog/list/register service operations in `packages/tool_registry/src/tool_registry/services.py`
-- [ ] T043 [US3] Implement MCP install/uninstall/activation service operations in `packages/tool_registry/src/tool_registry/services.py`
-- [ ] T044 [US3] Implement MCP credential service operations in `packages/tool_registry/src/tool_registry/services.py`
-- [ ] T045 [US3] Implement MCP validation/follow-up service operations in `packages/tool_registry/src/tool_registry/services.py`
-- [ ] T046 [US3] Implement MCP version check/update service operations in `packages/tool_registry/src/tool_registry/services.py`
-- [ ] T047 [US3] Add API-side service dependency wiring in `apps/api/src/api/services/mcp_services.py`
-- [ ] T048 [US3] Refactor MCP route handlers to delegate to services in `apps/api/src/api/routers/mcp.py`
-- [ ] T049 [US3] Keep route response model names unchanged in `apps/api/src/api/routers/mcp.py`
-- [ ] T050 [US3] Run targeted US3 tests documented in `specs/037-refactoring-audit/quickstart.md`
+- [X] T042 [US3] Implement MCP catalog/list/register service operations in `packages/tool_registry/src/tool_registry/services.py`
+- [X] T043 [US3] Implement MCP install/uninstall/activation service operations in `packages/tool_registry/src/tool_registry/services.py`
+- [X] T044 [US3] Implement MCP credential service operations in `packages/tool_registry/src/tool_registry/services.py`
+- [X] T045 [US3] Implement MCP validation/follow-up service operations in `packages/tool_registry/src/tool_registry/services.py`
+- [X] T046 [US3] Implement MCP version check/update service operations in `packages/tool_registry/src/tool_registry/services.py`
+- [X] T047 [US3] Add API-side service dependency wiring in `apps/api/src/api/services/mcp_services.py`
+- [X] T048 [US3] Refactor MCP route handlers to delegate to services in `apps/api/src/api/routers/mcp.py`
+- [X] T049 [US3] Keep route response model names unchanged in `apps/api/src/api/routers/mcp.py`
+- [X] T050 [US3] Run targeted US3 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: MCP routes are thin for moved operation groups, service tests cover business logic, and API contracts are unchanged.
 

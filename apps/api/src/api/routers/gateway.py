@@ -9,7 +9,7 @@ from tool_registry import (
     get_servers,
     get_tools,
 )
-from api.routers.mcp import get_mcp_engine
+from api.services.mcp_services import get_mcp_engine
 from core.workspace import get_gateway_workspace, get_workspace_enabled_tools
 
 logger = structlog.get_logger(__name__)

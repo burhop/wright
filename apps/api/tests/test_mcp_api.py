@@ -173,6 +173,41 @@ def test_toggle_tool_enabled(client):
     assert tools[0]["is_enabled"] is False
 
 
+def test_mcp_route_response_shapes_remain_compatible(client):
+    servers = client.get("/api/mcp/servers").json()
+    assert set(servers.keys()) == {"servers"}
+
+    tools = client.get("/api/mcp/tools").json()
+    assert set(tools.keys()) == {"tools"}
+    assert {"tool_id", "server_id", "name", "is_enabled"}.issubset(
+        tools["tools"][0].keys()
+    )
+
+    toggle = client.patch(
+        "/api/mcp/tools/calc-id-123:mesh_calc", json={"is_enabled": False}
+    ).json()
+    assert toggle == {"tool_id": "calc-id-123:mesh_calc", "is_enabled": False}
+
+    install = client.post("/api/mcp/servers/calc-id-123/install").json()
+    assert set(install.keys()) == {
+        "server_id",
+        "is_installed",
+        "status",
+        "error_message",
+        "type",
+    }
+
+    registered = client.post(
+        "/api/mcp/servers",
+        json={
+            "name": "Shape Check Server",
+            "type": "sse",
+            "command": "http://127.0.0.1:8123/sse",
+        },
+    ).json()
+    assert set(registered.keys()) == {"server_id", "name", "status"}
+
+
 def test_version_check_success(client):
     from tool_registry.db import update_server
 
