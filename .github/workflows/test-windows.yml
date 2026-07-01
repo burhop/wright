@@ -143,8 +143,12 @@ jobs:
               [string]$Url
             )
 
-            for ($attempt = 1; $attempt -le 120; $attempt++) {
-              $probe = & curl.exe --fail --silent --show-error --max-time 2 $Url 2>&1
+            $deadline = [DateTime]::UtcNow.AddMinutes(12)
+            $attempt = 0
+
+            while ([DateTime]::UtcNow -lt $deadline) {
+              $attempt += 1
+              $probe = & curl.exe --fail --silent --show-error --max-time 1 $Url 2>&1
               if ($LASTEXITCODE -eq 0) {
                 Write-Host "$Name is ready at $Url"
                 return
