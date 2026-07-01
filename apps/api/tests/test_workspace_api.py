@@ -900,9 +900,12 @@ def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     resolved_local_slash = manager.sanitize_path("/tmp/openscad-mcp/test.scad")
     assert resolved_local_slash == local_file_path
 
-    # 2. Check system-wide fallback. We will use a tempfile in the real /tmp directory.
+    # 2. Check system-wide fallback. On Windows, Python resolves /tmp to a
+    # drive-root temp directory such as D:\tmp, which may not exist on CI.
+    system_tmp = os.path.abspath("/tmp")
+    os.makedirs(system_tmp, exist_ok=True)
     with tempfile.NamedTemporaryFile(
-        dir="/tmp", prefix="global_test_", suffix=".scad", delete=False
+        dir=system_tmp, prefix="global_test_", suffix=".scad", delete=False
     ) as temp_global:
         temp_global.write(b"global content")
         global_path = temp_global.name

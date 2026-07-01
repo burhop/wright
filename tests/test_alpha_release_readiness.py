@@ -63,6 +63,34 @@ def test_alpha_bug_template_collects_actionable_context() -> None:
     assert "blank_issues_enabled: true" in config
 
 
+def test_alpha_bug_template_commit_sha_is_optional() -> None:
+    template = read_text(".github/ISSUE_TEMPLATE/bug_report.yml")
+    commit_sha_block = template.split("id: commit-sha", 1)[1].split("  - type:", 1)[0]
+
+    assert "label: Commit SHA" in commit_sha_block
+    assert "required: false" in commit_sha_block
+    assert "required: true" not in commit_sha_block
+
+
+def test_pr_template_does_not_require_spec_kit_for_every_pr() -> None:
+    template = read_text(".github/PULL_REQUEST_TEMPLATE.md")
+    contributing = read_text("CONTRIBUTING.md")
+
+    assert "Spec Kit artifacts" not in template
+    assert "Feature changes should follow" in contributing
+    assert (
+        "Routine bug fixes, documentation edits, test-only changes, and CI maintenance"
+        in contributing
+    )
+
+
+def test_dependabot_covers_root_and_frontend_npm_lockfiles() -> None:
+    config = read_text(".github/dependabot.yml")
+
+    assert 'package-ecosystem: "npm"\n    directory: "/"' in config
+    assert 'package-ecosystem: "npm"\n    directory: "/apps/web"' in config
+
+
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")

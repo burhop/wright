@@ -28,8 +28,11 @@ screenshots from all public reports.
 
 ## Spec Kit Workflow
 
-Wright uses Spec Kit for design-led feature work. Substantial changes should
-follow this lifecycle under `specs/<feature-name>/`:
+Wright uses Spec Kit for design-led feature work. Feature changes should follow
+this lifecycle under `specs/<feature-name>/`:
+
+Routine bug fixes, documentation edits, test-only changes, and CI maintenance do
+not need Spec Kit artifacts unless they grow into feature work.
 
 1. Specify the feature and user requirements.
 2. Clarify ambiguous requirements.
@@ -92,7 +95,6 @@ pre-commit install
 ## Pull Request Checklist
 
 - [ ] I read this contributing guide.
-- [ ] I updated Spec Kit artifacts when the change is feature-sized.
 - [ ] I kept the public-alpha/BYO-AI contract accurate.
 - [ ] I added or updated tests where behavior changed.
 - [ ] I updated docs where user or maintainer workflows changed.

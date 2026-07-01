@@ -14,9 +14,3 @@ Please review and check all items that apply to your submission:
 - [ ] I have updated the documentation to reflect my changes.
 - [ ] My branch is up to date with the target branch (`main` or `dev`).
 - [ ] My changes do not introduce any breaking changes.
-
-## Spec-Kit & Constitution Compliance
-<!-- Required checklist items for all spec-driven development tasks -->
-
-- [ ] Spec-kit artifacts (`spec.md`, `plan.md`, `tasks.md`) under `specs/` are updated.
-- [ ] All code and configuration changes comply with the project [constitution.md](constitution.md).

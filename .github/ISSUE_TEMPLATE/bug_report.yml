@@ -39,7 +39,7 @@ body:
       description: The exact commit if you built from source.
       placeholder: "e.g. b753c487d2da2e8f78268465d64a54ff1ecc31ba"
     validations:
-      required: true
+      required: false
 
   - type: input
     id: operating-system
