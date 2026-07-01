@@ -3,9 +3,13 @@ Shared test fixtures for Wright API tests.
 
 Provides:
   - Temporary SQLite database for test isolation
-  - mock_agent_engine fixture for simulating HermesAdapter
+  - mock_agent_engine fixture for exercising API boot without a live agent
   - httpx TestClient fixture with traced request support
   - ErrorResponse assertion helper
+
+Registry boundary tests should import the real API app and inject a fake
+BaseAgentEngine through app.state.agent_engine. That keeps API contract tests
+offline while still proving startup does not depend on HermesAdapter imports.
 """
 
 import os

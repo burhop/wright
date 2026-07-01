@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from tool_registry.mcp_validation import ValidationResult
 from tool_registry.validation_evidence import (
     ValidationEvidence,
@@ -6,6 +9,8 @@ from tool_registry.validation_evidence import (
     redact_secret_values,
 )
 from tool_registry.validation_plan import ValidationPlan, ValidationProbeStep
+
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def test_redacts_secret_like_assignments_and_explicit_values():
@@ -40,6 +45,20 @@ def test_validation_evidence_redacted_dump_scrubs_steps():
     assert "abc123" not in str(data)
     assert "bearer-token" not in str(data)
     assert data["steps"][0]["output"] == "secret=[REDACTED]"
+
+
+def test_validation_evidence_fixture_round_trips_and_redacts():
+    data = json.loads(
+        (FIXTURES / "validation_evidence.json").read_text(encoding="utf-8")
+    )
+    evidence = ValidationEvidence.model_validate(data)
+
+    redacted = evidence.redacted_model_dump(["abc123", "bearer-token"])
+
+    assert redacted["server_id"] == "mock-cad"
+    assert "abc123" not in str(redacted)
+    assert "bearer-token" not in str(redacted)
+    assert redacted["diagnostics"] == "API_TOKEN=[REDACTED]"
 
 
 def test_preflight_evidence_preserves_classification_without_execution():

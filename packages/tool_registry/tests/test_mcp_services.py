@@ -161,6 +161,35 @@ async def test_activation_install_and_uninstall_services(db_path):
     assert uninstalled.sync_session_id == "session-1"
 
 
+@pytest.mark.asyncio
+async def test_service_errors_are_domain_specific(db_path):
+    _insert_server(db_path)
+
+    with pytest.raises(services.McpConflictError, match="Calcul mesh"):
+        services.register_server(
+            db_path,
+            McpServerCreate(
+                name="Calcul mesh",
+                type="stdio",
+                command=["uv", "run", "other"],
+            ),
+        )
+
+    with pytest.raises(services.McpNotFoundError, match="missing-tool"):
+        services.set_tool_enabled(db_path, "missing-tool", False)
+
+    _insert_server(
+        db_path,
+        server_id="blocked-id",
+        name="Blocked CAD",
+        installability_tier="blocked",
+        install_blocked_reason="No usable source URL.",
+    )
+
+    with pytest.raises(services.McpInvalidOperationError, match="No usable source URL"):
+        await services.install_server(FakeEngine(db_path), "blocked-id")
+
+
 def test_credential_services(db_path, tmp_path, monkeypatch):
     monkeypatch.setenv("WRIGHT_SECRETS_PATH", str(tmp_path / "secrets.json"))
     _insert_server(

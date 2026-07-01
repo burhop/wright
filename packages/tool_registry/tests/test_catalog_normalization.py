@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from tool_registry.catalog_loader import (
@@ -6,6 +8,8 @@ from tool_registry.catalog_loader import (
     normalize_mcp_seed_entry,
 )
 from tool_registry.catalog_models import REQUIRED_PLATFORM_KEYS
+
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def test_normalized_seed_entry_fills_shared_defaults():
@@ -42,28 +46,7 @@ def test_high_risk_seed_entry_defaults_disabled():
 
 
 def test_load_catalog_entries_normalizes_and_converts_to_seed(tmp_path):
-    catalog_file = tmp_path / "catalog.yaml"
-    catalog_file.write_text(
-        """
-servers:
-  - id: risky
-    name: Risky Tool
-    vendor: Test
-    description: Test description
-    domains: [cad]
-    transport: stdio
-    command: [python, server.py]
-    locality: local
-    weight: light
-    risk_level: medium
-    platform_support:
-      linux_x64:
-        status: yes
-        tested: true
-        notes: tested
-""",
-        encoding="utf-8",
-    )
+    catalog_file = FIXTURES / "catalog_normalization.yaml"
 
     entry = load_catalog_entries(catalog_file)[0]
 

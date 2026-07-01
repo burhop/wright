@@ -42,3 +42,33 @@ No blocking ambiguity remains for Phase 1. For later phases, this plan resolves 
 - HTTP translation: `apps/api`.
 - Hermes plugin remains first-class and consumes shared contracts where practical.
 
+## Phase Checklist
+
+- [x] Phase 1: registry-backed agent runtime selection with Hermes default.
+- [x] Phase 2: Wright gateway contracts with Hermes compatibility and OpenClaw
+  seam.
+- [x] Phase 3: thin MCP API routes backed by service-layer operations.
+- [x] Phase 4: shared catalog normalization with `hermes-plugin-wright` as a
+  package consumer.
+- [x] Phase 5: validation plan/evidence seam with clean-container execution
+  kept opt-in.
+- [x] Phase 6: offline E2E smoke coverage for constitution-required flows.
+
+## Implementation Boundary Summary
+
+- Agent runtime selection now lives in `packages/agent_adapters`; API boot asks
+  the registry for the default Hermes engine.
+- Wright gateway contracts live in `packages/agent_adapters`, with Hermes
+  compatibility wrappers preserved in `apps/api`.
+- MCP route business logic moved into `packages/tool_registry.services` plus an
+  API translation service; route response models remain unchanged.
+- Catalog defaults and normalization now live in `packages/tool_registry`;
+  `hermes-plugin-wright` consumes that shared loader while keeping its plugin
+  APIs.
+- Validation plan/evidence abstractions are additive and offline-safe by
+  default; Docker/network validation remains operator-invoked.
+- E2E smoke coverage uses temporary SQLite state and fake/mock paths only.
+
+Rollback remains commit-scoped: each implemented phase can be reverted
+independently. The highest-risk fallback remains restoring the previous Hermes
+wrapper and route-local MCP logic while keeping database state intact.

@@ -18,10 +18,10 @@
 
 **Purpose**: Establish implementation guardrails and reusable fixtures before touching runtime behavior
 
-- [ ] T001 Add a phase checklist to `specs/037-refactoring-audit/risk-review.md`
-- [ ] T002 [P] Add API import-boundary test helper notes to `apps/api/tests/conftest.py`
-- [ ] T003 [P] Add smoke-test fixture plan comments to `tests/e2e/README.md`
-- [ ] T004 [P] Document opt-in clean-container validation command shape in `docs/mcp-catalog/mcp-server-testing-process.md`
+- [X] T001 Add a phase checklist to `specs/037-refactoring-audit/risk-review.md`
+- [X] T002 [P] Add API import-boundary test helper notes to `apps/api/tests/conftest.py`
+- [X] T003 [P] Add smoke-test fixture plan comments to `tests/e2e/README.md`
+- [X] T004 [P] Document opt-in clean-container validation command shape in `docs/mcp-catalog/mcp-server-testing-process.md`
 
 ---
 
@@ -32,9 +32,9 @@
 **CRITICAL**: No user story implementation should proceed without these compatibility guardrails.
 
 - [x] T005 [P] Add unsupported-runtime domain error tests in `packages/agent_adapters/tests/test_agent_registry.py`
-- [ ] T006 [P] Add MCP service result/error mapping tests in `packages/tool_registry/tests/test_mcp_services.py`
-- [ ] T007 [P] Add shared catalog fixture entries in `packages/tool_registry/tests/fixtures/catalog_normalization.yaml`
-- [ ] T008 [P] Add validation evidence fixture data in `packages/tool_registry/tests/fixtures/validation_evidence.json`
+- [X] T006 [P] Add MCP service result/error mapping tests in `packages/tool_registry/tests/test_mcp_services.py`
+- [X] T007 [P] Add shared catalog fixture entries in `packages/tool_registry/tests/fixtures/catalog_normalization.yaml`
+- [X] T008 [P] Add validation evidence fixture data in `packages/tool_registry/tests/fixtures/validation_evidence.json`
 
 **Checkpoint**: Foundational fixtures and expected error surfaces are ready for implementation.
 
@@ -63,7 +63,7 @@
 - [x] T018 [US1] Move Hermes API settings compatibility behind registry-backed helpers in `apps/api/src/api/config.py`
 - [x] T019 [US1] Use registry validation for active agent GET/POST behavior in `apps/api/src/api/routers/agent.py`
 - [x] T020 [US1] Replace hardcoded supported-agent list with registry metadata in `apps/api/src/api/routers/setup.py`
-- [ ] T021 [US1] Update API test fixtures to inject registry-created or fake engines in `apps/api/tests/conftest.py`
+- [X] T021 [US1] Update API test fixtures to inject registry-created or fake engines in `apps/api/tests/conftest.py`
 - [x] T022 [US1] Run targeted US1 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: Hermes still works as default, API boot is agent-neutral, and no public health response shape changed.
@@ -212,12 +212,12 @@
 
 **Purpose**: Final compatibility verification, documentation, and staged commits
 
-- [ ] T081 [P] Update final boundary summary in `specs/037-refactoring-audit/risk-review.md`
-- [ ] T082 [P] Update architecture follow-up notes in `docs/architecture/refactoring-audit-2026-07-01.md`
-- [ ] T083 Run full targeted pytest set from `specs/037-refactoring-audit/quickstart.md`
-- [ ] T084 Run frontend/Playwright checks from `specs/037-refactoring-audit/quickstart.md` if frontend files changed
-- [ ] T085 Review `AGENTS.md` and `.specify/feature.json` for correct feature references
-- [ ] T086 Commit each completed implementation phase with clear commit messages from `specs/037-refactoring-audit/tasks.md`
+- [X] T081 [P] Update final boundary summary in `specs/037-refactoring-audit/risk-review.md`
+- [X] T082 [P] Update architecture follow-up notes in `docs/architecture/refactoring-audit-2026-07-01.md`
+- [X] T083 Run full targeted pytest set from `specs/037-refactoring-audit/quickstart.md`
+- [X] T084 Run frontend/Playwright checks from `specs/037-refactoring-audit/quickstart.md` if frontend files changed
+- [X] T085 Review `AGENTS.md` and `.specify/feature.json` for correct feature references
+- [X] T086 Commit each completed implementation phase with clear commit messages from `specs/037-refactoring-audit/tasks.md`
 
 ---
 

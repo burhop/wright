@@ -426,3 +426,30 @@ Suggested tests or verification:
 - Should the web UI read display metadata directly from the API, or should it
   continue to derive labels client-side from shared constants generated from
   backend schema?
+
+## Implementation Notes
+
+Implemented on branch `codex/refactoring-audit-2026-07-01`:
+
+- `packages/agent_adapters` now owns the agent runtime registry and Wright
+  gateway profile contracts.
+- `apps/api` no longer imports `HermesAdapter` directly during API boot.
+- `apps/api/src/api/routers/mcp.py` delegates moved MCP operations to service
+  layers while preserving route response models.
+- `packages/tool_registry` now owns shared catalog normalization and MCP
+  validation plan/evidence seams.
+- `hermes-plugin-wright` remains first-class and consumes shared catalog loading
+  through an adapter.
+- `tests/e2e` now contains offline smoke coverage for API health, default agent
+  behavior, MCP listing, and a Wright gateway happy path.
+
+Follow-up work remains:
+
+- Continue extracting `agent.py` and `workspace.py` route business logic into
+  services.
+- Decide whether the migration seed or `hermes-plugin-wright/catalog.yaml`
+  becomes the canonical catalog source after deeper parity checks.
+- Add an operator-invoked clean-container validation runner that consumes the
+  new validation plan/evidence models.
+- Expand frontend metadata consumption only after backend catalog boundaries are
+  stable.
