@@ -4,6 +4,7 @@ import tempfile
 import yaml
 from hermes_plugin_wright.catalog import CatalogLoader
 from hermes_plugin_wright.schemas import CatalogEntry
+from tool_registry.catalog_loader import load_catalog_entries
 
 
 def test_default_catalog_loads():
@@ -15,6 +16,43 @@ def test_default_catalog_loads():
     ids = [entry.id for entry in entries]
     assert "freecad-mcp-sandraschi" in ids
     assert "jarvis-onshape-mcp" in ids
+
+
+def test_plugin_catalog_matches_shared_loader_for_representative_entry():
+    loader = CatalogLoader()
+    shared_entries = load_catalog_entries(loader.catalog_path)
+
+    plugin_entry = next(entry for entry in loader.get_all() if entry.id == "blender-mcp")
+    shared_entry = next(entry for entry in shared_entries if entry.id == "blender-mcp")
+
+    assert isinstance(plugin_entry, CatalogEntry)
+    assert plugin_entry.model_dump(mode="json") == shared_entry.model_dump(mode="json")
+
+
+def test_plugin_catalog_applies_shared_default_normalization(tmp_path):
+    catalog_file = tmp_path / "catalog.yaml"
+    catalog_file.write_text(
+        """
+servers:
+  - id: risky
+    name: Risky Tool
+    vendor: Test
+    description: Test
+    domains: [cad]
+    transport: stdio
+    command: test
+    locality: local
+    weight: light
+    risk_level: high
+""",
+        encoding="utf-8",
+    )
+
+    entry = CatalogLoader(str(catalog_file)).get_all()[0]
+
+    assert isinstance(entry, CatalogEntry)
+    assert entry.default_enabled is False
+    assert "linux_x64" in entry.platform_support
 
 
 def test_domain_filtering():

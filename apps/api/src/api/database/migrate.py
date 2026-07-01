@@ -8,6 +8,10 @@ import time
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from api.config import DATABASE_PATH
+from tool_registry.catalog_loader import (
+    catalog_entry_to_mcp_seed,
+    normalize_mcp_seed_entry,
+)
 from tool_registry.mcp_catalog import (
     platform_support,
     tier_sort_key,
@@ -808,23 +812,11 @@ MACHINE_CONTROL_GATES = ["machine_control_approval"]
 
 
 def _with_meta(entry, **metadata):
-    merged = dict(entry)
-    merged.setdefault("verification_state", "user_reported_url_needed")
-    merged.setdefault("installability_tier", "might_work")
-    merged.setdefault("risk_level", "low")
-    merged.setdefault("deployment_mode", "unknown")
-    merged.setdefault("platform_support", platform_support())
-    merged.setdefault("host_software_required", [])
-    merged.setdefault("credentials_required", [])
-    merged.setdefault("default_enabled", True)
-    merged.setdefault("approval_gates", [])
-    merged.setdefault("validation_result", validation_summary())
-    merged.setdefault("follow_up_url", None)
-    merged.setdefault("install_blocked_reason", None)
-    merged.update(metadata)
-    if merged["risk_level"] in {"medium", "high", "safety-critical"}:
-        merged["default_enabled"] = False
-    return merged
+    return normalize_mcp_seed_entry(entry, metadata)
+
+
+def _catalog_entry_to_seed(entry):
+    return catalog_entry_to_mcp_seed(entry)
 
 
 def _hosted(notes):

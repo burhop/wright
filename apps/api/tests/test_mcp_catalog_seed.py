@@ -9,6 +9,32 @@ def test_seeded_engineering_catalog_metadata_loads_through_models():
     assert all(server.platform_support for server in servers)
 
 
+def test_api_seed_helper_uses_shared_catalog_normalization():
+    from api.database import migrate
+    from tool_registry.catalog_models import CatalogEntry, REQUIRED_PLATFORM_KEYS
+
+    entry = CatalogEntry(
+        id="shared-sample",
+        name="Shared Sample",
+        vendor="Wright",
+        description="Sample",
+        domains=["cad"],
+        transport="stdio",
+        command=["uvx", "shared-sample"],
+        locality="local",
+        weight="light",
+        risk_level="medium",
+    )
+
+    seed = migrate._catalog_entry_to_seed(entry)
+
+    assert seed["server_id"] == "shared-sample"
+    assert seed["type"] == "stdio"
+    assert seed["category"] == "cad"
+    assert seed["default_enabled"] is False
+    assert set(REQUIRED_PLATFORM_KEYS).issubset(seed["platform_support"])
+
+
 def test_fresh_engineering_catalog_seed_does_not_preinstall_mcps(tmp_path, monkeypatch):
     from api.database import migrate
 

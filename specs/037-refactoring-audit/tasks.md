@@ -138,20 +138,20 @@
 
 ### Tests for User Story 4
 
-- [ ] T051 [P] [US4] Add shared catalog normalization tests in `packages/tool_registry/tests/test_catalog_normalization.py`
-- [ ] T052 [P] [US4] Add API seed normalization parity tests in `apps/api/tests/test_mcp_catalog_seed.py`
-- [ ] T053 [P] [US4] Add Hermes plugin parity tests in `hermes-plugin-wright/tests/test_catalog.py`
-- [ ] T054 [P] [US4] Add duplicate/invalid catalog normalization tests in `packages/tool_registry/tests/test_catalog_normalization.py`
+- [X] T051 [P] [US4] Add shared catalog normalization tests in `packages/tool_registry/tests/test_catalog_normalization.py`
+- [X] T052 [P] [US4] Add API seed normalization parity tests in `apps/api/tests/test_mcp_catalog_seed.py`
+- [X] T053 [P] [US4] Add Hermes plugin parity tests in `hermes-plugin-wright/tests/test_catalog.py`
+- [X] T054 [P] [US4] Add duplicate/invalid catalog normalization tests in `packages/tool_registry/tests/test_catalog_normalization.py`
 
 ### Implementation for User Story 4
 
-- [ ] T055 [US4] Implement shared catalog schema models in `packages/tool_registry/src/tool_registry/catalog_models.py`
-- [ ] T056 [US4] Implement catalog normalization loader in `packages/tool_registry/src/tool_registry/catalog_loader.py`
-- [ ] T057 [US4] Reuse shared installability sorting/default platform support in `packages/tool_registry/src/tool_registry/mcp_catalog.py`
-- [ ] T058 [US4] Add API seed conversion helper in `apps/api/src/api/database/migrate.py`
-- [ ] T059 [US4] Add Hermes plugin shared-model adapter without deleting plugin APIs in `hermes-plugin-wright/catalog.py`
-- [ ] T060 [US4] Add shared dependency to Hermes plugin package metadata in `hermes-plugin-wright/pyproject.toml`
-- [ ] T061 [US4] Run targeted US4 tests documented in `specs/037-refactoring-audit/quickstart.md`
+- [X] T055 [US4] Implement shared catalog schema models in `packages/tool_registry/src/tool_registry/catalog_models.py`
+- [X] T056 [US4] Implement catalog normalization loader in `packages/tool_registry/src/tool_registry/catalog_loader.py`
+- [X] T057 [US4] Reuse shared installability sorting/default platform support in `packages/tool_registry/src/tool_registry/mcp_catalog.py`
+- [X] T058 [US4] Add API seed conversion helper in `apps/api/src/api/database/migrate.py`
+- [X] T059 [US4] Add Hermes plugin shared-model adapter without deleting plugin APIs in `hermes-plugin-wright/catalog.py`
+- [X] T060 [US4] Add shared dependency to Hermes plugin package metadata in `hermes-plugin-wright/pyproject.toml`
+- [X] T061 [US4] Run targeted US4 tests documented in `specs/037-refactoring-audit/quickstart.md`
 
 **Checkpoint**: Shared normalization exists and parity is proven for representative entries without deleting or demoting the Hermes plugin.
 
