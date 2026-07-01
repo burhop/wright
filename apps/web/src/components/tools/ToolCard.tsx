@@ -662,7 +662,8 @@ export function ToolCard({
                   border: "none",
                   backgroundColor: "var(--color-warning)",
                   color: "var(--color-surface)",
-                  cursor: isSavingCreds || isDeleting ? "not-allowed" : "pointer",
+                  cursor:
+                    isSavingCreds || isDeleting ? "not-allowed" : "pointer",
                   transition: "all var(--transition-smooth)",
                 }}
               >

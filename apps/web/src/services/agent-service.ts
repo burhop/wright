@@ -175,7 +175,8 @@ export class HermesAgentService {
         });
         yield {
           type: "error",
-          message: errData.message || errData.detail || "Agent is not available.",
+          message:
+            errData.message || errData.detail || "Agent is not available.",
         };
         return;
       }
@@ -208,7 +209,11 @@ export class HermesAgentService {
           } else if (trimmed.startsWith("data:")) {
             const dataStr = trimmed.substring(5).trim();
             if (currentEvent) {
-              const eventYield = this.parseSSEEvent(currentEvent, dataStr, sessionId);
+              const eventYield = this.parseSSEEvent(
+                currentEvent,
+                dataStr,
+                sessionId,
+              );
               if (eventYield) {
                 yield eventYield;
               }
@@ -225,14 +230,21 @@ export class HermesAgentService {
           sessionId,
           error: err.message || String(err),
         });
-        yield { type: "error", message: err.message || "Agent response stream failed." };
+        yield {
+          type: "error",
+          message: err.message || "Agent response stream failed.",
+        };
       }
     } finally {
       this.activeStreams.delete(sessionId);
     }
   }
 
-  private parseSSEEvent(event: string, dataStr: string, sessionId: string): AgentEvent | null {
+  private parseSSEEvent(
+    event: string,
+    dataStr: string,
+    sessionId: string,
+  ): AgentEvent | null {
     if (event === "token") {
       try {
         const data = JSON.parse(dataStr);
@@ -264,7 +276,10 @@ export class HermesAgentService {
         return null;
       }
     } else if (event === "stream_end") {
-      hostAdapter.notify("Agent Task Finished", "The agent has completed your request.");
+      hostAdapter.notify(
+        "Agent Task Finished",
+        "The agent has completed your request.",
+      );
       return {
         type: "done",
         session: {
@@ -279,9 +294,15 @@ export class HermesAgentService {
     } else if (event === "error") {
       try {
         const data = JSON.parse(dataStr);
-        return { type: "error", message: data.message || "Agent response stream failed." };
+        return {
+          type: "error",
+          message: data.message || "Agent response stream failed.",
+        };
       } catch (err) {
-        return { type: "error", message: dataStr || "Agent response stream failed." };
+        return {
+          type: "error",
+          message: dataStr || "Agent response stream failed.",
+        };
       }
     }
     return null;
@@ -306,7 +327,10 @@ export class HermesAgentService {
         return data.success;
       }
     } catch (err) {
-      agentLogger.error("Failed to cancel stream on backend", err instanceof Error ? { error: err.message } : { error: String(err) });
+      agentLogger.error(
+        "Failed to cancel stream on backend",
+        err instanceof Error ? { error: err.message } : { error: String(err) },
+      );
     }
     return false;
   }

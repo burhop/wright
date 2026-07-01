@@ -14,10 +14,7 @@ const PART_SPECULAR = 0x7dd3fc;
 const GRID_PRIMARY = 0x1e293b;
 const GRID_SECONDARY = 0x0d1220;
 
-const fitCameraToRadius = (
-  camera: THREE.PerspectiveCamera,
-  radius: number,
-) => {
+const fitCameraToRadius = (camera: THREE.PerspectiveCamera, radius: number) => {
   const safeRadius = Math.max(radius, 1);
   const fov = THREE.MathUtils.degToRad(camera.fov);
   const distance = (safeRadius / Math.sin(fov / 2)) * 1.35;
@@ -50,7 +47,12 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     scene.background = new THREE.Color(VIEWER_BACKGROUND);
 
     // 2. Create Camera
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 10000);
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      width / height,
+      0.001,
+      10000,
+    );
     camera.position.set(40, 40, 40);
 
     // 3. Create Renderer
@@ -71,7 +73,12 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     scene.add(dirLight2);
 
     // 5. Add Grid & Axis Helpers
-    const gridHelper = new THREE.GridHelper(80, 40, GRID_PRIMARY, GRID_SECONDARY);
+    const gridHelper = new THREE.GridHelper(
+      80,
+      40,
+      GRID_PRIMARY,
+      GRID_SECONDARY,
+    );
     gridHelper.position.y = -10;
     scene.add(gridHelper);
 
@@ -115,7 +122,8 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
     const radius = geometry?.boundingSphere?.radius;
     const fitDistance =
       radius !== undefined ? fitCameraToRadius(camera, radius).distance : 40;
-    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
+    controls.minDistance =
+      radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
     controls.maxDistance = Math.max(1000, fitDistance * 12, (radius || 1) * 40);
 
     // 8. Handle Resizing

@@ -459,7 +459,6 @@ class TestWorkspaceDefaultTools:
         from core.workspace import get_workspace_enabled_tools
         from tool_registry.db import insert_server
         from tool_registry.models import McpServer, EnvVarDefinition
-        import json
         import uuid
 
         db_path = cred_test_db_path

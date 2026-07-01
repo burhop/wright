@@ -54,7 +54,9 @@ async def test_hermes_health_reports_base_url_and_error_on_failure(monkeypatch):
 @pytest.mark.asyncio
 @respx.mock
 async def test_hermes_health_falls_back_to_candidate_url(monkeypatch):
-    monkeypatch.setenv("HERMES_API_CANDIDATES", "http://127.0.0.1:9999,http://127.0.0.1:3001")
+    monkeypatch.setenv(
+        "HERMES_API_CANDIDATES", "http://127.0.0.1:9999,http://127.0.0.1:3001"
+    )
     respx.get("http://127.0.0.1:8642/health").mock(
         return_value=httpx.Response(404, text="missing")
     )
@@ -78,15 +80,17 @@ async def test_hermes_health_falls_back_to_candidate_url(monkeypatch):
 async def test_llm_backend_health_checks_configured_provider(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
-        "\n".join([
-            "model:",
-            "  base_url: http://llm.local/v1",
-            "  default: test-model",
-            "custom_providers:",
-            "- base_url: http://llm.local/v1",
-            "  api_key: test-key",
-            "  model: test-model",
-        ]),
+        "\n".join(
+            [
+                "model:",
+                "  base_url: http://llm.local/v1",
+                "  default: test-model",
+                "custom_providers:",
+                "- base_url: http://llm.local/v1",
+                "  api_key: test-key",
+                "  model: test-model",
+            ]
+        ),
         encoding="utf-8",
     )
     monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_file))
@@ -109,11 +113,13 @@ async def test_llm_backend_health_checks_configured_provider(monkeypatch, tmp_pa
 async def test_llm_backend_health_reports_provider_failure(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
-        "\n".join([
-            "model:",
-            "  base_url: http://llm.local/v1",
-            "  default: test-model",
-        ]),
+        "\n".join(
+            [
+                "model:",
+                "  base_url: http://llm.local/v1",
+                "  default: test-model",
+            ]
+        ),
         encoding="utf-8",
     )
     monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_file))
@@ -137,22 +143,26 @@ async def test_llm_backend_health_reports_provider_failure(monkeypatch, tmp_path
 async def test_llm_backend_health_accepts_openai_codex_auth(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
-        "\n".join([
-            "model:",
-            "  provider: openai-codex",
-            "  base_url: https://chatgpt.com/backend-api/codex",
-            "  default: gpt-5.5",
-        ]),
+        "\n".join(
+            [
+                "model:",
+                "  provider: openai-codex",
+                "  base_url: https://chatgpt.com/backend-api/codex",
+                "  default: gpt-5.5",
+            ]
+        ),
         encoding="utf-8",
     )
     (tmp_path / "auth.json").write_text(
-        json.dumps({
-            "providers": {
-                "openai-codex": {
-                    "tokens": {"access_token": "codex-token"},
+        json.dumps(
+            {
+                "providers": {
+                    "openai-codex": {
+                        "tokens": {"access_token": "codex-token"},
+                    },
                 },
-            },
-        }),
+            }
+        ),
         encoding="utf-8",
     )
     monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_file))
@@ -165,15 +175,19 @@ async def test_llm_backend_health_accepts_openai_codex_auth(monkeypatch, tmp_pat
 
 
 @pytest.mark.asyncio
-async def test_llm_backend_health_reports_missing_openai_codex_auth(monkeypatch, tmp_path):
+async def test_llm_backend_health_reports_missing_openai_codex_auth(
+    monkeypatch, tmp_path
+):
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
-        "\n".join([
-            "model:",
-            "  provider: openai-codex",
-            "  base_url: https://chatgpt.com/backend-api/codex",
-            "  default: gpt-5.5",
-        ]),
+        "\n".join(
+            [
+                "model:",
+                "  provider: openai-codex",
+                "  base_url: https://chatgpt.com/backend-api/codex",
+                "  default: gpt-5.5",
+            ]
+        ),
         encoding="utf-8",
     )
     monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_file))
@@ -190,11 +204,13 @@ async def test_llm_backend_health_reports_missing_openai_codex_auth(monkeypatch,
 async def test_hermes_health_does_not_include_llm_backend_status(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
     config_file.write_text(
-        "\n".join([
-            "model:",
-            "  base_url: http://llm.local/v1",
-            "  default: test-model",
-        ]),
+        "\n".join(
+            [
+                "model:",
+                "  base_url: http://llm.local/v1",
+                "  default: test-model",
+            ]
+        ),
         encoding="utf-8",
     )
     monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_file))

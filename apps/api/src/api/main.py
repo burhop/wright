@@ -175,7 +175,9 @@ async def check_agent_health():
 
 @app.get("/api/inference/health", response_model=HealthResponse)
 async def check_inference_health():
-    llm_health_checker = getattr(app.state.agent_engine, "check_llm_backend_health", None)
+    llm_health_checker = getattr(
+        app.state.agent_engine, "check_llm_backend_health", None
+    )
     if callable(llm_health_checker):
         res = await llm_health_checker()
         return HealthResponse(

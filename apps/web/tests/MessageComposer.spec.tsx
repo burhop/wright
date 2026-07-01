@@ -15,7 +15,11 @@ vi.mock("../src/services/workspace-service", () => ({
         { type: "file", name: "index.css", path: "/src/index.css" },
       ],
     }),
-    getMcpStatus: vi.fn().mockResolvedValue({ status: "ok", message: "Healthy", running_mcps: [] }),
+    getMcpStatus: vi.fn().mockResolvedValue({
+      status: "ok",
+      message: "Healthy",
+      running_mcps: [],
+    }),
   },
 }));
 
@@ -47,7 +51,7 @@ describe("MessageComposer", () => {
         onSend={handleSend}
         isStreaming={true}
         onCancel={handleCancel}
-      />
+      />,
     );
 
     const input = screen.getByTestId("composer-input");

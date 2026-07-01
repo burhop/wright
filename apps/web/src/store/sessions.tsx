@@ -39,7 +39,10 @@ type ChatAction =
   | { type: "SET_TOOL_PROGRESS"; percentage: number; message: string }
   | { type: "CLEAR_ACTIVE_TOOL" }
   | { type: "END_STREAMING"; finalSession?: ChatSession }
-  | { type: "QUEUE_PROMPT"; prompt: { content: string; attachments?: string[] } }
+  | {
+      type: "QUEUE_PROMPT";
+      prompt: { content: string; attachments?: string[] };
+    }
   | { type: "DEQUEUE_PROMPT" }
   | { type: "CLEAR_STREAM_ID" };
 
@@ -55,7 +58,9 @@ const initialState: ChatState = {
 
 function hasUsefulTitle(session: ChatSession): boolean {
   return Boolean(
-    session.title && session.title !== "Untitled" && session.title !== "Undefined",
+    session.title &&
+    session.title !== "Untitled" &&
+    session.title !== "Undefined",
   );
 }
 
@@ -378,7 +383,11 @@ interface ChatContextProps {
   createSession: (workspace?: string) => Promise<string | undefined>;
   selectSession: (sessionId: string) => Promise<void>;
   deleteSession: (sessionId: string) => Promise<void>;
-  sendMessage: (content: string, attachments?: string[], isQueuedExecution?: boolean) => Promise<void>;
+  sendMessage: (
+    content: string,
+    attachments?: string[],
+    isQueuedExecution?: boolean,
+  ) => Promise<void>;
   refreshSessions: (workspaceId?: string) => Promise<void>;
   cancelActiveStream: () => Promise<void>;
 }
@@ -428,9 +437,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         ) {
           const firstMsg = matched.messages[0].content;
           title =
-            firstMsg.length > 30
-              ? `${firstMsg.substring(0, 27)}...`
-              : firstMsg;
+            firstMsg.length > 30 ? `${firstMsg.substring(0, 27)}...` : firstMsg;
         }
 
         return {
@@ -444,8 +451,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       });
 
       dispatch({ type: "SET_SESSIONS", sessions });
-
-
     } catch (err) {
       console.error(
         "Failed to sync sessions with backend, falling back to localStorage",
@@ -551,7 +556,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendMessage = useCallback(
-    async (content: string, attachments?: string[], isQueuedExecution?: boolean) => {
+    async (
+      content: string,
+      attachments?: string[],
+      isQueuedExecution?: boolean,
+    ) => {
       if (!state.activeSessionId) return;
       const sessionId = state.activeSessionId;
 
@@ -697,12 +706,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [state.activeSessionId]);
 
   useEffect(() => {
-    if (!state.isStreaming && state.promptQueue.length > 0 && state.activeSessionId) {
+    if (
+      !state.isStreaming &&
+      state.promptQueue.length > 0 &&
+      state.activeSessionId
+    ) {
       const nextPrompt = state.promptQueue[0];
       dispatch({ type: "DEQUEUE_PROMPT" });
       sendMessage(nextPrompt.content, nextPrompt.attachments, true);
     }
-  }, [state.isStreaming, state.promptQueue, state.activeSessionId, sendMessage]);
+  }, [
+    state.isStreaming,
+    state.promptQueue,
+    state.activeSessionId,
+    sendMessage,
+  ]);
 
   return (
     <ChatContext.Provider

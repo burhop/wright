@@ -38,8 +38,8 @@ def _write_static_hermes_config() -> bool:
                 repo_dir,
                 "python",
                 "-m",
-                "tool_registry.gateway"
-            ]
+                "tool_registry.gateway",
+            ],
         }
     }
 
@@ -55,12 +55,11 @@ def _write_static_hermes_config() -> bool:
             try:
                 os.makedirs(os.path.dirname(path), exist_ok=True)
                 with open(path, "w") as f:
-                    yaml.safe_dump({
-                        "mcp_servers": new_mcp_servers,
-                        "terminal": {
-                            "cwd": repo_dir
-                        }
-                    }, f, default_flow_style=False)
+                    yaml.safe_dump(
+                        {"mcp_servers": new_mcp_servers, "terminal": {"cwd": repo_dir}},
+                        f,
+                        default_flow_style=False,
+                    )
             except Exception as e:
                 logger.error("Failed to write initial config", path=path, error=str(e))
             continue
@@ -70,6 +69,7 @@ def _write_static_hermes_config() -> bool:
                 config = yaml.safe_load(f) or {}
 
             import copy
+
             new_config = copy.deepcopy(config)
             new_config["mcp_servers"] = new_mcp_servers
 
@@ -82,7 +82,9 @@ def _write_static_hermes_config() -> bool:
                 with open(path, "w") as f:
                     yaml.safe_dump(new_config, f, default_flow_style=False)
         except Exception as e:
-            logger.error("Failed to sync static config to Hermes", path=path, error=str(e))
+            logger.error(
+                "Failed to sync static config to Hermes", path=path, error=str(e)
+            )
             config_changed = True
 
     return config_changed
@@ -99,6 +101,7 @@ def sync_mcp_server_to_hermes(server: McpServer) -> None:
     _write_static_hermes_config()
     logger.info("notifying_gateway_tool_change")
     from api.routers.gateway import notify_gateway_tool_change
+
     notify_gateway_tool_change()
 
 
@@ -150,6 +153,7 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
 
     try:
         from core.workspace import write_workspace_hermes_md
+
         write_workspace_hermes_md(db_path, workspace_path)
     except Exception as e:
         logger.warning("Failed to write workspace .hermes.md during sync: %s", e)
@@ -157,4 +161,5 @@ def sync_workspace_tools_to_hermes(session_id: str, db_path: str) -> None:
     _write_static_hermes_config()
     logger.info("notifying_gateway_tool_change")
     from api.routers.gateway import notify_gateway_tool_change
+
     notify_gateway_tool_change()

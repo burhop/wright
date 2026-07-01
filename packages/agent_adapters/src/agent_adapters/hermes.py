@@ -110,11 +110,18 @@ def _openai_codex_auth_is_present(config_path: str | None) -> bool:
         if isinstance(tokens, dict) and str(tokens.get("access_token") or "").strip():
             return True
 
-    pool = auth.get("credential_pool") if isinstance(auth.get("credential_pool"), dict) else {}
+    pool = (
+        auth.get("credential_pool")
+        if isinstance(auth.get("credential_pool"), dict)
+        else {}
+    )
     entries = pool.get("openai-codex") if isinstance(pool, dict) else None
     if isinstance(entries, list):
         return any(
-            isinstance(entry, dict) and str(entry.get("secret_fingerprint") or entry.get("access_token") or "").strip()
+            isinstance(entry, dict)
+            and str(
+                entry.get("secret_fingerprint") or entry.get("access_token") or ""
+            ).strip()
             for entry in entries
         )
 
@@ -138,7 +145,11 @@ class HermesAdapter(BaseAgentEngine):
         """Return configured Hermes API URLs, preserving priority."""
         configured = [self.base_url]
         env_candidates = re.split(r"[,;]\s*", os.getenv("HERMES_API_CANDIDATES", ""))
-        if os.getenv("HERMES_API_DISABLE_DEFAULT_CANDIDATES", "").strip().lower() in {"1", "true", "yes"}:
+        if os.getenv("HERMES_API_DISABLE_DEFAULT_CANDIDATES", "").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+        }:
             default_candidates = []
         else:
             default_candidates = [
@@ -268,7 +279,11 @@ class HermesAdapter(BaseAgentEngine):
             }
 
         headers = {"Accept": "application/json"}
-        if api_key and not _is_placeholder(api_key) and api_key.lower() not in {"not-needed", "none", "null"}:
+        if (
+            api_key
+            and not _is_placeholder(api_key)
+            and api_key.lower() not in {"not-needed", "none", "null"}
+        ):
             headers["Authorization"] = f"Bearer {api_key}"
 
         last_error = None
@@ -301,7 +316,9 @@ class HermesAdapter(BaseAgentEngine):
                         last_error = f"{url} rejected the configured credentials with HTTP {response.status_code}"
                         break
                     else:
-                        last_error = f"{url} HTTP {response.status_code}: {response.text[:200]}"
+                        last_error = (
+                            f"{url} HTTP {response.status_code}: {response.text[:200]}"
+                        )
                 except Exception as exc:
                     last_error = f"{url}: {exc}"
 
@@ -352,6 +369,7 @@ class HermesAdapter(BaseAgentEngine):
     async def check_health(self) -> dict:
         """Return {"state": "connected"|"disconnected", "latencyMs": float}."""
         import asyncio
+
         start_time = time.perf_counter()
         last_error = None
         for attempt in range(2):
@@ -359,13 +377,13 @@ class HermesAdapter(BaseAgentEngine):
                 try:
                     async with httpx.AsyncClient() as client:
                         response = await client.get(
-                            f"{base_url}/health",
-                            headers=self.headers,
-                            timeout=2.0
+                            f"{base_url}/health", headers=self.headers, timeout=2.0
                         )
                         latency = (time.perf_counter() - start_time) * 1000.0
                         body_preview = response.text[:200].lower()
-                        is_html_shell = "<!doctype html" in body_preview or "<html" in body_preview
+                        is_html_shell = (
+                            "<!doctype html" in body_preview or "<html" in body_preview
+                        )
                         if response.status_code == 200 and not is_html_shell:
                             self.base_url = base_url
                             return {
@@ -374,7 +392,9 @@ class HermesAdapter(BaseAgentEngine):
                                 "baseUrl": self.base_url,
                             }
                         if response.status_code == 200 and is_html_shell:
-                            last_error = f"{base_url} returned HTML, not Hermes API health"
+                            last_error = (
+                                f"{base_url} returned HTML, not Hermes API health"
+                            )
                         else:
                             last_error = f"{base_url} HTTP {response.status_code}: {response.text[:200]}"
                 except Exception as e:
@@ -405,6 +425,7 @@ class HermesAdapter(BaseAgentEngine):
         if not self.db_path or not os.path.exists(self.db_path):
             return None
         import sqlite3
+
         try:
             conn = sqlite3.connect(self.db_path)
             conn.row_factory = sqlite3.Row
@@ -418,7 +439,11 @@ class HermesAdapter(BaseAgentEngine):
             if row:
                 return row["local_path"]
         except Exception as e:
-            logger.debug("Failed to query workspace from database", session_id=session_id, error=str(e))
+            logger.debug(
+                "Failed to query workspace from database",
+                session_id=session_id,
+                error=str(e),
+            )
         return None
 
     async def create_session(
@@ -456,6 +481,7 @@ class HermesAdapter(BaseAgentEngine):
     async def list_sessions(self) -> list[AgentSessionInfo]:
         """List all sessions for this adapter's profile."""
         import asyncio
+
         for attempt in range(2):
             try:
                 response = await self._request_with_fallback(
@@ -464,7 +490,11 @@ class HermesAdapter(BaseAgentEngine):
                     timeout=10.0,
                 )
                 data = response.json()
-                sessions = data if isinstance(data, list) else (data.get("data") or data.get("sessions") or [])
+                sessions = (
+                    data
+                    if isinstance(data, list)
+                    else (data.get("data") or data.get("sessions") or [])
+                )
 
                 result = []
                 for s in sessions:
@@ -484,7 +514,9 @@ class HermesAdapter(BaseAgentEngine):
                     )
                 return result
             except Exception as e:
-                logger.debug("Hermes list_sessions attempt %d failed: %s", attempt + 1, e)
+                logger.debug(
+                    "Hermes list_sessions attempt %d failed: %s", attempt + 1, e
+                )
                 if attempt == 0:
                     await asyncio.sleep(0.5)
                 else:
@@ -508,10 +540,7 @@ class HermesAdapter(BaseAgentEngine):
         history = await self.get_chat_history(request.session_id)
         messages = [{"role": "system", "content": WRIGHT_SYSTEM_HINT}]
         for msg in history:
-            messages.append({
-                "role": msg.role,
-                "content": msg.content
-            })
+            messages.append({"role": msg.role, "content": msg.content})
 
         # Determine the workspace path for the session and prefix the user message
         workspace_path = await self.get_session_workspace(request.session_id)
@@ -519,10 +548,7 @@ class HermesAdapter(BaseAgentEngine):
         if workspace_path:
             message_content = f"[Workspace::v1: {workspace_path}] {message_content}"
 
-        messages.append({
-            "role": "user",
-            "content": message_content
-        })
+        messages.append({"role": "user", "content": message_content})
         return messages
 
     async def stream_chat(
@@ -559,7 +585,10 @@ class HermesAdapter(BaseAgentEngine):
                             data = json.loads(sse.data)
                             yield AgentStreamEvent(type="progress", data=data)
                         except Exception:
-                            logger.warn("Failed to parse hermes.tool.progress event data", data=sse.data)
+                            logger.warn(
+                                "Failed to parse hermes.tool.progress event data",
+                                data=sse.data,
+                            )
                     elif sse.data == "[DONE]":
                         yield AgentStreamEvent(type="stream_end", data={})
                     else:
@@ -570,18 +599,29 @@ class HermesAdapter(BaseAgentEngine):
                                 continue
                             delta = choices[0].get("delta", {})
                             if delta.get("content"):
-                                yield AgentStreamEvent(type="token", data={"text": delta["content"]})
+                                yield AgentStreamEvent(
+                                    type="token", data={"text": delta["content"]}
+                                )
                             if delta.get("tool_calls"):
-                                yield AgentStreamEvent(type="tool", data={"tool_calls": delta["tool_calls"]})
+                                yield AgentStreamEvent(
+                                    type="tool",
+                                    data={"tool_calls": delta["tool_calls"]},
+                                )
                         except Exception:
-                            logger.warn("Failed to parse completion chunk data", data=sse.data)
+                            logger.warn(
+                                "Failed to parse completion chunk data", data=sse.data
+                            )
         except httpx.HTTPStatusError as exc:
             if exc.response.status_code in (502, 503):
-                yield AgentStreamEvent(type="error", data={"message": "LLM model unavailable"})
+                yield AgentStreamEvent(
+                    type="error", data={"message": "LLM model unavailable"}
+                )
             else:
                 yield AgentStreamEvent(
                     type="error",
-                    data={"message": f"HTTP error {exc.response.status_code}: {exc.response.text}"}
+                    data={
+                        "message": f"HTTP error {exc.response.status_code}: {exc.response.text}"
+                    },
                 )
         except Exception as exc:
             yield AgentStreamEvent(type="error", data={"message": str(exc)})
@@ -645,7 +685,11 @@ class HermesAdapter(BaseAgentEngine):
                 timeout=10.0,
             )
             data = response.json()
-            messages = data if isinstance(data, list) else (data.get("data") or data.get("messages") or [])
+            messages = (
+                data
+                if isinstance(data, list)
+                else (data.get("data") or data.get("messages") or [])
+            )
 
             result = []
             for idx, msg in enumerate(messages):
@@ -667,13 +711,17 @@ class HermesAdapter(BaseAgentEngine):
                     for item in content:
                         if isinstance(item, str):
                             parts.append(item)
-                        elif isinstance(item, dict) and isinstance(item.get("text"), str):
+                        elif isinstance(item, dict) and isinstance(
+                            item.get("text"), str
+                        ):
                             parts.append(item["text"])
                     content = "".join(parts)
                 elif not isinstance(content, str):
                     content = str(content) if content is not None else ""
 
-                timestamp = self._to_epoch_ms(msg.get("timestamp", msg.get("created_at", 0)))
+                timestamp = self._to_epoch_ms(
+                    msg.get("timestamp", msg.get("created_at", 0))
+                )
 
                 result.append(
                     AgentChatMessage(
@@ -686,7 +734,9 @@ class HermesAdapter(BaseAgentEngine):
                 )
             return result
         except Exception as e:
-            logger.error("Failed to fetch chat history for session %s: %s", session_id, e)
+            logger.error(
+                "Failed to fetch chat history for session %s: %s", session_id, e
+            )
             return []
 
     async def get_commands(self) -> list[AgentCommand]:
@@ -698,21 +748,32 @@ class HermesAdapter(BaseAgentEngine):
                 timeout=5.0,
             )
             data = response.json()
-            cmds = data if isinstance(data, list) else (data.get("data") or data.get("commands") or [])
+            cmds = (
+                data
+                if isinstance(data, list)
+                else (data.get("data") or data.get("commands") or [])
+            )
             return [
                 AgentCommand(name=c["name"], description=c.get("description", ""))
                 for c in cmds
             ]
         except Exception as e:
-            logger.debug("Failed to fetch commands from Hermes API, falling back to local registry file: %s", e)
+            logger.debug(
+                "Failed to fetch commands from Hermes API, falling back to local registry file: %s",
+                e,
+            )
             try:
-                commands_path = os.path.join(os.path.dirname(__file__), "hermes-slash-commands.json")
+                commands_path = os.path.join(
+                    os.path.dirname(__file__), "hermes-slash-commands.json"
+                )
                 if os.path.exists(commands_path):
                     with open(commands_path, "r") as f:
                         data = json.load(f)
                         cmds = data.get("flat", []) if isinstance(data, dict) else data
                         return [
-                            AgentCommand(name=c["name"], description=c.get("description", ""))
+                            AgentCommand(
+                                name=c["name"], description=c.get("description", "")
+                            )
                             for c in cmds
                         ]
             except Exception as le:

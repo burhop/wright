@@ -114,9 +114,7 @@ describe("ChatProvider session state", () => {
     expect(
       screen.getByText("Can you tell me ho...:session-2"),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("active-session")).toHaveTextContent(
-      "session-1",
-    );
+    expect(screen.getByTestId("active-session")).toHaveTextContent("session-1");
   });
 
   it("replaces an existing session when create returns the same session id", async () => {
@@ -152,9 +150,7 @@ describe("ChatProvider session state", () => {
     await waitFor(() => {
       expect(screen.getAllByTestId("session-row")).toHaveLength(1);
     });
-    expect(screen.getByTestId("active-session")).toHaveTextContent(
-      "session-1",
-    );
+    expect(screen.getByTestId("active-session")).toHaveTextContent("session-1");
   });
 
   it("coalesces concurrent create requests into one backend session", async () => {

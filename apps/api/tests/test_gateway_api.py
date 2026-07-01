@@ -6,6 +6,7 @@ from api.main import app
 from tool_registry import McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
 
+
 @pytest.fixture
 def test_client():
     """Fixture that enters TestClient context manager to trigger lifespan startup."""
@@ -92,8 +93,14 @@ def test_gateway_tools_prefers_pinned_active_session(test_client):
 
     conn = sqlite3.connect(db_path)
     try:
-        conn.execute("DELETE FROM mcp_tools WHERE server_id IN (?, ?)", (active_server_id, newer_server_id))
-        conn.execute("DELETE FROM mcp_servers WHERE server_id IN (?, ?)", (active_server_id, newer_server_id))
+        conn.execute(
+            "DELETE FROM mcp_tools WHERE server_id IN (?, ?)",
+            (active_server_id, newer_server_id),
+        )
+        conn.execute(
+            "DELETE FROM mcp_servers WHERE server_id IN (?, ?)",
+            (active_server_id, newer_server_id),
+        )
         conn.execute(
             "DELETE FROM engineering_workspaces WHERE session_id IN (?, ?)",
             ("gateway-active-session", "gateway-newer-session"),
@@ -215,13 +222,11 @@ def test_gateway_call_endpoint(test_client):
     insert_tools(db_path, [tool])
 
     # Test calling a tool via the gateway mock runner
-    payload = {
-        "name": "calculmesh__mesh_calc",
-        "arguments": {"test": "val"}
-    }
+    payload = {"name": "calculmesh__mesh_calc", "arguments": {"test": "val"}}
     response = test_client.post("/api/gateway/call", json=payload)
     assert response.status_code == 200
     assert response.json() == {}
+
 
 @pytest.mark.asyncio
 async def test_gateway_events_generator():

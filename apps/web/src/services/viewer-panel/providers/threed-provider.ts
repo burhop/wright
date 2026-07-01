@@ -21,10 +21,7 @@ const PART_SPECULAR = 0x7dd3fc;
 const GRID_PRIMARY = 0x1e293b;
 const GRID_SECONDARY = 0x0d1220;
 
-const fitCameraToRadius = (
-  camera: THREE.PerspectiveCamera,
-  radius: number,
-) => {
+const fitCameraToRadius = (camera: THREE.PerspectiveCamera, radius: number) => {
   const safeRadius = Math.max(radius, 1);
   const fov = THREE.MathUtils.degToRad(camera.fov);
   const distance = (safeRadius / Math.sin(fov / 2)) * 1.35;
@@ -66,7 +63,9 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
   readonly id = "threed-viewer";
   private changeCallbacks = new Set<(e: ViewerDocumentChangeEvent) => void>();
 
-  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (listener) => {
+  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (
+    listener,
+  ) => {
     this.changeCallbacks.add(listener);
     return {
       dispose: () => {
@@ -75,12 +74,19 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     };
   };
 
-  async openDocument(file: FileDescriptor, context: OpenContext): Promise<ThreeDDocument> {
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<ThreeDDocument> {
     const sessionId = context.sessionId;
     if (!sessionId) {
       throw new Error("No active session ID provided");
     }
-    const buffer = await workspaceService.getFileContentArrayBuffer(sessionId, file.uri, context.backupId);
+    const buffer = await workspaceService.getFileContentArrayBuffer(
+      sessionId,
+      file.uri,
+      context.backupId,
+    );
     return new ThreeDDocumentImpl(file.uri, buffer);
   }
 
@@ -92,7 +98,7 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     document: ThreeDDocument,
     panel: PanelHost,
     _mode: string,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
     const container = panel.container;
 
@@ -120,7 +126,12 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(VIEWER_BACKGROUND);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 10000);
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      width / height,
+      0.001,
+      10000,
+    );
     camera.position.set(40, 40, 40);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
@@ -138,7 +149,12 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     dirLight2.position.set(-1, -1, -1).normalize();
     scene.add(dirLight2);
 
-    const gridHelper = new THREE.GridHelper(80, 40, GRID_PRIMARY, GRID_SECONDARY);
+    const gridHelper = new THREE.GridHelper(
+      80,
+      40,
+      GRID_PRIMARY,
+      GRID_SECONDARY,
+    );
     gridHelper.position.y = -10;
     scene.add(gridHelper);
 
@@ -169,7 +185,10 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
         gridHelper.scale.setScalar(gridSize / 80);
       }
     } catch (err) {
-      console.error("Failed to parse STL geometry buffer in pluggable viewer", err);
+      console.error(
+        "Failed to parse STL geometry buffer in pluggable viewer",
+        err,
+      );
     }
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -178,7 +197,8 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     const radius = geometry?.boundingSphere?.radius;
     const fitDistance =
       radius !== undefined ? fitCameraToRadius(camera, radius).distance : 40;
-    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
+    controls.minDistance =
+      radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
     controls.maxDistance = Math.max(1000, fitDistance * 12, (radius || 1) * 40);
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -216,20 +236,26 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     });
   }
 
-  async save(_document: ThreeDDocument, _token: CancellationToken): Promise<void> {}
+  async save(
+    _document: ThreeDDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async saveAs(
     _document: ThreeDDocument,
     _destination: FileDescriptor,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {}
 
-  async revert(_document: ThreeDDocument, _token: CancellationToken): Promise<void> {}
+  async revert(
+    _document: ThreeDDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async backup(
     document: ThreeDDocument,
     _context: BackupContext,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<BackupHandle> {
     return {
       id: "backup-" + document.uri,

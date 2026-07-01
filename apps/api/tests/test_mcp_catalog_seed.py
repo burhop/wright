@@ -53,7 +53,9 @@ def test_autodesk_product_help_seed_uses_official_remote_mcp_endpoint(
     assert "get_available_products" in autodesk_help.validation_result.message
 
 
-def test_migration_clears_failed_catalog_installs_including_openscad(tmp_path, monkeypatch):
+def test_migration_clears_failed_catalog_installs_including_openscad(
+    tmp_path, monkeypatch
+):
     import sqlite3
     from api.database import migrate
 
@@ -74,7 +76,8 @@ def test_migration_clears_failed_catalog_installs_including_openscad(tmp_path, m
 
     migrate.run_migrations()
     openscad = next(
-        server for server in get_servers(str(db_path))
+        server
+        for server in get_servers(str(db_path))
         if server.server_id == "openscad-mcp-server"
     )
 
