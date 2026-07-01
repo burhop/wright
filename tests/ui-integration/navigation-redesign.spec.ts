@@ -34,7 +34,7 @@ test.describe("UI Navigation Redesign E2E", () => {
           workspace_id: 'test-workspace-id',
           session_id: 'session-1',
           workspace_name: 'Test Project',
-          local_path: '/home/burhop/repos/wright',
+          local_path: '/tmp/wright-e2e-workspace',
           git_remote_url: null,
           git_username: null,
           updated_at: Math.floor(Date.now() / 1000)
@@ -50,7 +50,7 @@ test.describe("UI Navigation Redesign E2E", () => {
         body: JSON.stringify({
           success: true,
           session_id: 'session-1',
-          workspace_path: '/home/burhop/repos/wright'
+          workspace_path: '/tmp/wright-e2e-workspace'
         }),
       });
     });
@@ -235,7 +235,7 @@ test.describe("UI Navigation Redesign E2E", () => {
               workspace_id: 'test-workspace-id',
               session_id: 'session-1',
               workspace_name: 'Test Project',
-              local_path: '/home/burhop/repos/wright',
+              local_path: '/tmp/wright-e2e-workspace',
               git_remote_url: 'https://github.com/burhop/wright.git',
               git_username: 'burhop',
               updated_at: Math.floor(Date.now() / 1000) - 120
@@ -316,7 +316,7 @@ test.describe("UI Navigation Redesign E2E", () => {
               workspace_id: 'test-workspace-id',
               session_id: 'session-1',
               workspace_name: 'Test Project',
-              local_path: '/home/burhop/repos/wright',
+              local_path: '/tmp/wright-e2e-workspace',
               git_remote_url: null,
               git_username: null,
               updated_at: Math.floor(Date.now() / 1000)
@@ -442,7 +442,7 @@ test.describe("UI Navigation Redesign E2E", () => {
           git_remote_url: 'https://github.com/burhop/wright.git',
           git_username: 'burhop',
           has_token: true,
-          workspace_path: '/home/burhop/repos/wright',
+          workspace_path: '/tmp/wright-e2e-workspace',
           workspace_prompt: 'Initial prompt context',
           git_large_file_threshold: 10
         }),

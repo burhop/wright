@@ -120,6 +120,28 @@ def test_playwright_ci_fails_fast_without_retries() -> None:
     assert "retries: process.env.CI" not in config
 
 
+def test_playwright_screenshot_test_uses_portable_output_paths() -> None:
+    spec = read_text("tests/ui-integration/capture-screenshot.spec.ts")
+
+    assert "testInfo.outputPath" in spec
+    assert "/home/burhop/repos/wright" not in spec
+
+
+def test_active_ui_tests_do_not_use_developer_home_paths() -> None:
+    test_files = [
+        *Path(ROOT / "tests/ui-integration").glob("*.ts"),
+        ROOT / "tests/ui-smoke-test.ts",
+    ]
+
+    offenders = [
+        str(path.relative_to(ROOT))
+        for path in test_files
+        if "/home/burhop/" in path.read_text(encoding="utf-8")
+    ]
+
+    assert offenders == []
+
+
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")

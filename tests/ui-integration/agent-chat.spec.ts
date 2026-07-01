@@ -82,7 +82,7 @@ test.describe('Agent Chat Page', () => {
           workspace_id: 'ws-1',
           session_id: 'session123',
           workspace_name: 'Test Project',
-          local_path: '/home/burhop/repos/wright',
+          local_path: '/tmp/wright-e2e-workspace',
           git_remote_url: null,
           git_username: null,
           updated_at: Math.floor(Date.now() / 1000)
@@ -95,7 +95,7 @@ test.describe('Agent Chat Page', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true, session_id: 'session123', workspace_path: '/home/burhop/repos/wright' }),
+        body: JSON.stringify({ success: true, session_id: 'session123', workspace_path: '/tmp/wright-e2e-workspace' }),
       });
     });
 
@@ -265,7 +265,7 @@ test.describe('Agent Chat Page', () => {
           workspace_id: 'ws-1',
           session_id: 'session-1',
           workspace_name: 'Test Project',
-          local_path: '/home/burhop/repos/wright',
+          local_path: '/tmp/wright-e2e-workspace',
           git_remote_url: null,
           git_username: null,
           updated_at: Math.floor(Date.now() / 1000)
@@ -278,7 +278,7 @@ test.describe('Agent Chat Page', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true, session_id: 'session-1', workspace_path: '/home/burhop/repos/wright' }),
+        body: JSON.stringify({ success: true, session_id: 'session-1', workspace_path: '/tmp/wright-e2e-workspace' }),
       });
     });
 
@@ -382,7 +382,7 @@ test.describe('Agent Chat Page', () => {
           workspace_id: 'ws-1',
           session_id: 'session-1',
           workspace_name: 'Test Project',
-          local_path: '/home/burhop/repos/wright',
+          local_path: '/tmp/wright-e2e-workspace',
           git_remote_url: null,
           git_username: null,
           updated_at: Math.floor(Date.now() / 1000)
@@ -395,7 +395,7 @@ test.describe('Agent Chat Page', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true, session_id: 'session-1', workspace_path: '/home/burhop/repos/wright' }),
+        body: JSON.stringify({ success: true, session_id: 'session-1', workspace_path: '/tmp/wright-e2e-workspace' }),
       });
     });
 
