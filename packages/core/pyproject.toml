@@ -1,13 +1,34 @@
 [project]
 name = "wright-core"
 version = "0.1.0"
-description = "Shared domain models, structured JSON logging, and common utilities"
+description = "Shared Wright domain models, structured JSON logging, and common utilities"
+readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Wright Project", email = "wright@example.com" }]
+keywords = ["wright", "engineering", "local-first", "telemetry"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 
 dependencies = [
+    "opentelemetry-api>=1.25",
     "pydantic>=2.7",
     "structlog>=24.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/burhop/wright"
+Source = "https://github.com/burhop/wright/tree/main/packages/core"
+Issues = "https://github.com/burhop/wright/issues"
+Documentation = "https://burhop.github.io/wright/"
+Releases = "https://github.com/burhop/wright/releases"
 
 [build-system]
 requires = ["hatchling"]

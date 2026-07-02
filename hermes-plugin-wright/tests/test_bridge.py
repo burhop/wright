@@ -31,7 +31,7 @@ def test_detect_repo_dir(monkeypatch):
     # Mock _is_wright_repo to avoid filesystem checks for test paths
     monkeypatch.setattr(
         "hermes_plugin_wright.bridge._is_wright_repo",
-        lambda path: path == "/home/burhop/repos/wright"
+        lambda path: path == "/home/burhop/repos/wright",
     )
     # Mock home directory using a temp directory
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -58,7 +58,11 @@ def test_detect_repo_dir(monkeypatch):
         monkeypatch.setattr(
             os.path,
             "expanduser",
-            lambda path: path.replace("~", tmpdir) if path.startswith("~") else original_expanduser(path)
+            lambda path: (
+                path.replace("~", tmpdir)
+                if path.startswith("~")
+                else original_expanduser(path)
+            ),
         )
 
         repo_dir = detect_repo_dir()
@@ -94,7 +98,7 @@ async def test_check_api_health():
     assert route.called
 
     # Error Case
-    route_error = respx.get(f"{WRIGHT_API_BASE}/api/health").mock(
+    respx.get(f"{WRIGHT_API_BASE}/api/health").mock(
         side_effect=httpx.ConnectError("Connection refused")
     )
     result_error = await check_api_health()
@@ -107,9 +111,14 @@ async def test_check_api_health():
 @pytest.mark.asyncio
 async def test_get_mcp_servers():
     mock_servers = [
-        {"server_id": "test-id", "name": "Test Server", "type": "stdio", "is_active": True}
+        {
+            "server_id": "test-id",
+            "name": "Test Server",
+            "type": "stdio",
+            "is_active": True,
+        }
     ]
-    route = respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers").mock(
+    respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers").mock(
         return_value=httpx.Response(200, json={"servers": mock_servers})
     )
     result = await get_mcp_servers()
@@ -184,7 +193,7 @@ async def test_get_workspaces():
     mock_workspaces = [
         {"id": "ws-1", "name": "Workspace 1", "local_path": "/path/to/ws"}
     ]
-    route = respx.get(f"{WRIGHT_API_BASE}/api/workspace/list").mock(
+    respx.get(f"{WRIGHT_API_BASE}/api/workspace/list").mock(
         return_value=httpx.Response(200, json={"workspaces": mock_workspaces})
     )
     result = await get_workspaces()
@@ -195,7 +204,7 @@ async def test_get_workspaces():
 @respx.mock
 @pytest.mark.asyncio
 async def test_get_credential_status():
-    route = respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers/test-id/credentials").mock(
+    respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers/test-id/credentials").mock(
         return_value=httpx.Response(200, json={"credentials": {"API_KEY": True}})
     )
     result = await get_credential_status("test-id")

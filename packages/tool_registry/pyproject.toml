@@ -1,15 +1,36 @@
 [project]
 name = "wright-tool-registry"
 version = "0.1.0"
-description = "Model Context Protocol (MCP) server integration, stdio runners, and tool schemas"
+description = "Model Context Protocol server integration, stdio runners, engineering catalog schemas, and tool safety metadata"
+readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Wright Project", email = "wright@example.com" }]
+keywords = ["wright", "mcp", "engineering", "tool-registry", "cad", "simulation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 
 dependencies = [
     "pydantic>=2.7",
-    "wright-core",
+    "wright-core>=0.1.0,<0.2.0",
     "httpx>=0.28",
     "httpx-sse>=0.4",
+    "PyYAML>=6.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/burhop/wright"
+Source = "https://github.com/burhop/wright/tree/main/packages/tool_registry"
+Issues = "https://github.com/burhop/wright/issues"
+Documentation = "https://burhop.github.io/wright/"
+Releases = "https://github.com/burhop/wright/releases"
 
 [tool.uv.sources]
 wright-core = { workspace = true }

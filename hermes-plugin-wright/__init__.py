@@ -9,6 +9,7 @@ the wheel maps those files into the hermes_plugin_wright package. When Hermes
 loads the flat directory directly, bootstrap this module as that package name so
 imports resolve the same way in both modes.
 """
+
 from __future__ import annotations
 
 import os
@@ -25,6 +26,7 @@ import structlog
 try:
     from hermes_plugin_wright.catalog import CatalogLoader
     from hermes_plugin_wright.commands import register_commands
+
     _IMPORT_ERROR = None
 except Exception as exc:  # pragma: no cover - exercised by Hermes at import time
     CatalogLoader = None

@@ -1,173 +1,88 @@
-# Hermes Wright Plugin
+# Wright Hermes Plugin Mirror
 
-This is the official Wright integration plugin for Hermes Agent. It provides
-Hermes slash commands for starting and managing the Wright stack, and it remains
-the first-class Hermes integration while Wright's shared catalog and runtime
-contracts live in the monorepo packages.
+This is the official thin Wright Hermes plugin mirror for the main Wright project: https://github.com/burhop/wright.
 
-## Directory Structure
+The mirror exists so Hermes users can install, update, and remove the Wright plugin through the standard Hermes plugin lifecycle. Development, issues, roadmap, full documentation, and broader Wright source code remain in the main repository.
 
-```text
-hermes-plugin-wright/
-├── plugin.yaml              # Plugin metadata manifest
-├── __init__.py              # Registration entry point: register(ctx)
-├── catalog.yaml             # Hermes compatibility catalog seed
-├── catalog.py               # CatalogLoader compatibility implementation
-├── bridge.py                # Wright FastAPI server API client bridge
-├── schemas.py               # Pydantic validation schemas (CatalogEntry, etc.)
-├── pyproject.toml           # Packaging and dependencies
-├── tests/
-│   ├── conftest.py          # Test configuration
-│   ├── test_catalog.py      # Unit tests for validation and search
-│   └── test_bridge.py       # Unit tests for bridge API client
-└── README.md                # This file
-```
-
-## Installation
-
-### Manual Installation (Development)
-To load this plugin manually in Hermes, copy the package directory into your local Hermes plugins folder:
+## Stable Install
 
 ```bash
-cp -r hermes-plugin-wright/ ~/.hermes/plugins/wright
+hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/main --enable
 ```
 
-Hermes Desktop for Windows may load plugins from its bundled application data
-tree instead of the profile folder. During VM validation, the active plugin copy
-was loaded from:
-
-```text
-%LOCALAPPDATA%\hermes\hermes-agent\plugins\wright
-```
-
-If fixes appear to have no effect, fully quit Hermes Desktop from the system
-tray, replace the active plugin directory above, and restart Hermes Desktop.
-Patching `~/.hermes` alone may not affect the desktop app.
-
-### PyPI Installation
-Or install it in editable mode inside your Python environment:
+## Development Install
 
 ```bash
-pip install -e ./hermes-plugin-wright
+hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable
 ```
 
-### Docker Appliance Installation
-The plugin is baked into the official Wright appliance Docker image. To build and run the appliance:
+The development channel tracks Wright's `dev` flow and may use TestPyPI packages or pinned Git revisions during pre-release testing. Stable users should use the main branch once package dependencies are published on PyPI.
+
+## Update
 
 ```bash
-# Build the Docker image
-docker build -t wright-appliance:latest -f docker/Dockerfile .
-
-# Start the appliance container
-docker run -d -p 8000:8000 --name wright-app wright-appliance:latest
+hermes plugins update wright
 ```
 
-## Quick Start Guide
+The mirror keeps `plugin.yaml` at the repository root so Hermes installs the plugin directory as a Git checkout. That is what makes the standard update command work.
 
-Once the plugin is loaded in Hermes, run the following slash commands:
+## Remove
 
-1. **Start the stack**:
-   ```bash
-   /wright start
-   ```
-   *(Locally builds web assets and starts Wright with `uv run uvicorn`; inside Docker, verifies supervisord uvicorn service health).*
+```bash
+hermes plugins remove wright
+```
 
-2. **Browse catalog of tools**:
-   ```bash
-   /wright catalog cad
-   ```
-   *(Lists CAD tools like FreeCAD and OpenSCAD).*
+You can reinstall from either the stable or development install command after removal.
 
-3. **Install an MCP tool**:
-   ```bash
-   /wright install openscad-mcp
-   ```
-   *(Registers the tool in the active Wright workspace).*
+## Migration From the Monorepo Subdirectory
 
-## Hermes Desktop Notes
-
-Hermes Desktop can load the Wright slash command plugin, but Wright also needs
-the Hermes API Server enabled to show a green Hermes connection light. A normal
-Hermes Desktop install may not enable that API server by default.
-
-For Windows/Hermes Desktop setup, API server configuration, LLM status setup,
-plugin load paths, and fresh-install hygiene, see:
+Older Wright testing instructions installed from the main monorepo subdirectory:
 
 ```text
-docs/hermes-desktop-wright.md
+https://github.com/burhop/wright/tree/dev/hermes-plugin-wright
 ```
+
+That layout can install, but Hermes may copy only the subdirectory into the plugin folder. Without the plugin directory's own `.git` metadata, `hermes plugins update wright` cannot perform a normal Git update.
+
+To migrate:
+
+1. Remove the old plugin:
+   ```bash
+   hermes plugins remove wright
+   ```
+2. Install from this mirror root:
+   ```bash
+   hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable
+   ```
+3. Confirm update works:
+   ```bash
+   hermes plugins update wright
+   ```
+
+## Package Dependencies
+
+Stable mirror releases depend on versioned Python packages published from the main Wright repository:
+
+- `wright-core`: https://pypi.org/project/wright-core/
+- `wright-tool-registry`: https://pypi.org/project/wright-tool-registry/
+
+Development mirror builds may use TestPyPI packages or pinned Git revisions while release candidates are being validated.
+
+## Main Wright Links
+
+- Main repository: https://github.com/burhop/wright
+- Issues and support: https://github.com/burhop/wright/issues
+- Documentation: https://burhop.github.io/wright/
+- Releases: https://github.com/burhop/wright/releases
+- Hermes setup guide: https://github.com/burhop/wright/blob/main/docs/getting-started/hermes-plugin.md
+- Release runbook: https://github.com/burhop/wright/blob/main/docs/release/hermes-plugin-mirror.md
+
+## Provenance
+
+Each mirrored release records the main Wright source revision and package versions in `PROVENANCE.md` and `provenance.json` generated by the mirror sync workflow.
+
+For this source copy, see [PROVENANCE.md](PROVENANCE.md).
 
 ## Slash Commands
 
-Once loaded in Hermes, the plugin exposes the `/wright` slash command group:
-
-| Command | Arguments | Description |
-|:---|:---|:---|
-| `/wright start` | | Builds frontend web assets, starts the FastAPI server, and opens the UI in your browser |
-| `/wright stop` | | Gracefully shuts down the FastAPI server via SIGTERM signaling |
-| `/wright open` | | Opens the Wright UI in your default browser (requires running stack) |
-| `/wright doctor` | | Performs a diagnostic environment health check |
-| `/wright status` | | Shows connection status, active workspace, and status of configured MCP tools |
-| `/wright catalog` | `[domain]` | Lists available engineering tools filterable by domain tag (e.g. `cad`, `fea`) |
-| `/wright catalog search` | `<query>` | Performs a keyword search across catalog attributes |
-| `/wright info` | `<id>` | Displays requirements, commands, credentials, and dependencies of a catalog item |
-| `/wright install` | `<id>` | Installs/registers a cataloged engineering MCP server in the Wright gateway |
-
-## Catalog Usage
-
-`packages/tool_registry` is the long-term owner for canonical MCP catalog
-models, normalization, safety policy, validation metadata, and evidence. The
-Hermes plugin remains first-class, but plugin catalog behavior should stay in
-parity with `tool_registry` instead of becoming an independent source of truth.
-
-You can load and query the engineering tool catalog programmatically:
-
-```python
-from hermes_plugin_wright.catalog import CatalogLoader
-
-# Load the catalog
-loader = CatalogLoader()
-
-# Query by domain taxonomy
-cad_tools = loader.get_by_domain("cad")
-
-# Search by keyword
-results = loader.search("CalculiX")
-```
-
-## Bridge Client Usage
-
-You can communicate with the Wright stack API server via the asynchronous bridge client:
-
-```python
-import asyncio
-from hermes_plugin_wright.bridge import (
-    detect_repo_dir,
-    check_api_health,
-    get_mcp_servers,
-    get_workspaces,
-)
-
-async def main():
-    # Auto-detect Wright repository path from local Hermes config
-    repo_dir = detect_repo_dir()
-    print(f"Detected repo path: {repo_dir}")
-
-    # Check the API health
-    health = await check_api_health()
-    print(f"API Health: {health}")
-
-    # Fetch registered MCP servers
-    servers = await get_mcp_servers()
-    print(f"MCP Servers: {servers}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-## References
-
-For current architecture direction, see
-[`docs/architecture/refactoring-phase-2-2026-07-01.md`](../docs/architecture/refactoring-phase-2-2026-07-01.md)
-and the MCP clean-container validation process in
-[`docs/mcp-catalog/mcp-server-testing-process.md`](../docs/mcp-catalog/mcp-server-testing-process.md).
+Once loaded, the plugin exposes the `/wright` command group for starting Wright, opening the UI, checking status, browsing the engineering MCP catalog, and installing cataloged tools.

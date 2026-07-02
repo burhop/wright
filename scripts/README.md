@@ -276,3 +276,39 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
   ```bash
   ./scripts/setup-wright-profile.sh
   ```
+
+### Hermes Plugin Mirror and Package Release Scripts
+
+These helpers support the thin `hermes-plugin-wright` mirror and the PyPI/TestPyPI package publication path used by the Wright Hermes plugin.
+
+| Script | Language | Purpose | Key Dependencies |
+| :--- | :--- | :--- | :--- |
+| `build-python-distributions.sh` | Bash | Validates `wright-core` and `wright-tool-registry` package metadata, builds source/wheel artifacts, and optionally performs clean install/import checks | Python 3, `build`, pip |
+| `sync-hermes-plugin-mirror.sh` | Bash | Exports only allowlisted plugin files from `hermes-plugin-wright/` into a root-level mirror directory and writes provenance | Git, Python 3 |
+| `validate-hermes-plugin-mirror.sh` | Bash | Validates mirror required files, prohibited paths, README links, provenance, and dependency policy | Bash, Python 3 |
+
+* Validate package metadata without building artifacts:
+  ```bash
+  scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+  ```
+
+* Preview mirror contents:
+  ```bash
+  scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --dry-run
+  ```
+
+* Generate and validate a local development mirror:
+  ```bash
+  tmp_dir=$(mktemp -d)
+  scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir "$tmp_dir"
+  scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$tmp_dir" --channel development
+  ```
+
+* Test the standard Hermes lifecycle against the root mirror repository:
+  ```bash
+  scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+  scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+  scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+  ```
+
+The root mirror identifier is `https://github.com/burhop/hermes-plugin-wright/tree/dev` for development testing and `https://github.com/burhop/hermes-plugin-wright/tree/main` for stable customer testing. Use `--mirror-root` when validating the mirror repository itself; use the default subdirectory mode only when intentionally testing the legacy monorepo path.

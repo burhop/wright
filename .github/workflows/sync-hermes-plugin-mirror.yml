@@ -1,0 +1,141 @@
+name: sync-hermes-plugin-mirror
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Mirror channel to validate
+        required: true
+        default: development
+        type: choice
+        options:
+          - development
+          - stable
+      ref:
+        description: Mirror branch to generate
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - main
+      publish:
+        description: Push generated mirror to burhop/hermes-plugin-wright
+        required: true
+        default: false
+        type: boolean
+  push:
+    branches: [ dev, main ]
+    paths:
+      - 'hermes-plugin-wright/**'
+      - 'packages/core/**'
+      - 'packages/tool_registry/**'
+      - 'scripts/sync-hermes-plugin-mirror.sh'
+      - 'scripts/validate-hermes-plugin-mirror.sh'
+      - 'scripts/test-hermes-plugin-*.sh'
+      - '.github/workflows/sync-hermes-plugin-mirror.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-publish-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Wright
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Resolve channel
+        id: channel
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "channel=${{ inputs.channel }}" >> "$GITHUB_OUTPUT"
+            echo "ref=${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
+            echo "publish=${{ inputs.publish }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "channel=stable" >> "$GITHUB_OUTPUT"
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "channel=development" >> "$GITHUB_OUTPUT"
+            echo "ref=dev" >> "$GITHUB_OUTPUT"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate package metadata
+        run: scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+
+      - name: Generate mirror
+        run: |
+          scripts/sync-hermes-plugin-mirror.sh             --source hermes-plugin-wright             --mirror-url https://github.com/burhop/hermes-plugin-wright             --branch "${{ steps.channel.outputs.ref }}"             --channel "${{ steps.channel.outputs.channel }}"             --output-dir /tmp/hermes-plugin-wright
+
+      - name: Validate mirror content and provenance
+        run: scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/hermes-plugin-wright --channel "${{ steps.channel.outputs.channel }}"
+
+      - name: README/provenance validation summary
+        run: |
+          echo "Mirror README and provenance validation passed for ${{ steps.channel.outputs.channel }}."
+          cat /tmp/hermes-plugin-wright/provenance.json
+
+      - name: Start mirror deploy SSH agent
+        if: steps.channel.outputs.publish == 'true'
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.HERMES_PLUGIN_MIRROR_SSH_KEY }}
+
+      - name: Trust GitHub SSH host key
+        if: steps.channel.outputs.publish == 'true'
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Publish generated mirror branch
+        if: steps.channel.outputs.publish == 'true'
+        shell: bash
+        env:
+          MIRROR_BRANCH: ${{ steps.channel.outputs.ref }}
+          MIRROR_CHANNEL: ${{ steps.channel.outputs.channel }}
+          MIRROR_REMOTE: git@github.com:burhop/hermes-plugin-wright.git
+        run: |
+          set -euo pipefail
+          publish_dir=/tmp/hermes-plugin-wright-publish
+          rm -rf "$publish_dir"
+
+          if git ls-remote --exit-code --heads "$MIRROR_REMOTE" "$MIRROR_BRANCH" >/dev/null 2>&1; then
+            git clone --depth 1 --branch "$MIRROR_BRANCH" "$MIRROR_REMOTE" "$publish_dir"
+          else
+            mkdir -p "$publish_dir"
+            git -C "$publish_dir" init
+            git -C "$publish_dir" checkout -B "$MIRROR_BRANCH"
+            git -C "$publish_dir" remote add origin "$MIRROR_REMOTE"
+          fi
+
+          find "$publish_dir" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a /tmp/hermes-plugin-wright/. "$publish_dir/"
+
+          git -C "$publish_dir" config user.name "github-actions[bot]"
+          git -C "$publish_dir" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$publish_dir" add -A
+
+          if git -C "$publish_dir" diff --cached --quiet; then
+            echo "No mirror changes to publish for $MIRROR_CHANNEL on $MIRROR_BRANCH."
+            exit 0
+          fi
+
+          git -C "$publish_dir" commit -m "Sync $MIRROR_CHANNEL mirror from ${GITHUB_SHA}"
+          git -C "$publish_dir" push origin "HEAD:$MIRROR_BRANCH"
+
+      - name: Upload generated mirror artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: hermes-plugin-wright-${{ steps.channel.outputs.channel }}
+          path: /tmp/hermes-plugin-wright

@@ -11,7 +11,7 @@ def test_default_catalog_loads():
     loader = CatalogLoader()
     entries = loader.get_all()
     assert len(entries) >= 30
-    
+
     # Check that FreeCAD and OnShape are in there
     ids = [entry.id for entry in entries]
     assert "freecad-mcp-sandraschi" in ids
@@ -22,7 +22,9 @@ def test_plugin_catalog_matches_shared_loader_for_representative_entry():
     loader = CatalogLoader()
     shared_entries = load_catalog_entries(loader.catalog_path)
 
-    plugin_entry = next(entry for entry in loader.get_all() if entry.id == "blender-mcp")
+    plugin_entry = next(
+        entry for entry in loader.get_all() if entry.id == "blender-mcp"
+    )
     shared_entry = next(entry for entry in shared_entries if entry.id == "blender-mcp")
 
     assert isinstance(plugin_entry, CatalogEntry)
@@ -92,7 +94,11 @@ def test_oasis_fea_entry_is_searchable():
     fea_results = loader.get_by_domain("fea")
     assert any(tool.id == "oasis-open-fem-agent" for tool in fea_results)
 
-    oasis = next(tool for tool in loader.search("scikit-fem") if tool.id == "oasis-open-fem-agent")
+    oasis = next(
+        tool
+        for tool in loader.search("scikit-fem")
+        if tool.id == "oasis-open-fem-agent"
+    )
     assert oasis.installability_tier == "tested"
     assert oasis.validation_result.status == "passed"
     assert oasis.platform_support["linux_x64"].tested is True
@@ -102,9 +108,7 @@ def test_freecad_engineering_records_false_success_failure():
     loader = CatalogLoader()
 
     freecad = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "freecad-mcp-sandraschi"
+        tool for tool in loader.get_all() if tool.id == "freecad-mcp-sandraschi"
     )
     assert freecad.command == [
         "uv",
@@ -123,18 +127,20 @@ def test_freecad_engineering_records_false_success_failure():
     assert freecad.platform_support["linux_x64"].tested is True
     assert freecad.env_vars[0].name == "FREECAD_PATH"
     assert "94" in freecad.validation_result.message
-    assert "Cannot create a mesh out of a 'Part.Solid'" in freecad.validation_result.message
-    assert freecad.follow_up_url == "docs/mcp-catalog/followups/freecad-engineering-sandraschi.md"
+    assert (
+        "Cannot create a mesh out of a 'Part.Solid'"
+        in freecad.validation_result.message
+    )
+    assert (
+        freecad.follow_up_url
+        == "docs/mcp-catalog/followups/freecad-engineering-sandraschi.md"
+    )
 
 
 def test_caid_entry_records_validated_opencascade_stack():
     loader = CatalogLoader()
 
-    caid = next(
-        tool
-        for tool in loader.search("opencascade")
-        if tool.id == "caid-mcp"
-    )
+    caid = next(tool for tool in loader.search("opencascade") if tool.id == "caid-mcp")
     assert caid.command == ["python", "server.py"]
     assert caid.installability_tier == "tested"
     assert caid.validation_result.status == "passed"
@@ -146,11 +152,14 @@ def test_openscad_renderer_entry_is_tested_and_gateway_validated():
     loader = CatalogLoader()
 
     openscad = next(
-        tool
-        for tool in loader.search("openscad")
-        if tool.id == "openscad-mcp"
+        tool for tool in loader.search("openscad") if tool.id == "openscad-mcp"
     )
-    assert openscad.command[:4] == ["uv", "run", "--with", "git+https://github.com/quellant/openscad-mcp.git"]
+    assert openscad.command[:4] == [
+        "uv",
+        "run",
+        "--with",
+        "git+https://github.com/quellant/openscad-mcp.git",
+    ]
     assert openscad.installability_tier == "tested"
     assert openscad.validation_result.status == "passed"
     assert openscad.platform_support["linux_x64"].status == "yes"
@@ -160,13 +169,14 @@ def test_openscad_linter_entry_records_failed_source_verification():
     loader = CatalogLoader()
 
     linter = next(
-        tool
-        for tool in loader.search("linter")
-        if tool.id == "trikos529-openscad"
+        tool for tool in loader.search("linter") if tool.id == "trikos529-openscad"
     )
     assert linter.installability_tier == "non_working"
     assert linter.validation_result.status == "failed"
-    assert linter.follow_up_url == "docs/mcp-catalog/followups/openscad-linter-trikos529.md"
+    assert (
+        linter.follow_up_url
+        == "docs/mcp-catalog/followups/openscad-linter-trikos529.md"
+    )
     assert "not found" in linter.validation_result.message
 
 
@@ -174,9 +184,7 @@ def test_autocad_entry_records_headless_ezdxf_validation():
     loader = CatalogLoader()
 
     autocad = next(
-        tool
-        for tool in loader.search("autocad")
-        if tool.id == "autocad-mcp"
+        tool for tool in loader.search("autocad") if tool.id == "autocad-mcp"
     )
     assert autocad.command == [
         "uv",
@@ -196,11 +204,7 @@ def test_autocad_entry_records_headless_ezdxf_validation():
 def test_easy_autocad_entry_records_windows_com_dependency():
     loader = CatalogLoader()
 
-    easy = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "easy-mcp-autocad"
-    )
+    easy = next(tool for tool in loader.get_all() if tool.id == "easy-mcp-autocad")
     assert easy.command == ["python", "server.py"]
     assert easy.installability_tier == "might_work"
     assert easy.validation_result.status == "dependency_missing"
@@ -223,9 +227,7 @@ def test_fusion360_entry_records_mock_pass_and_missing_desktop():
     loader = CatalogLoader()
 
     fusion = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "fusion360-mcp-server"
+        tool for tool in loader.get_all() if tool.id == "fusion360-mcp-server"
     )
     assert fusion.command == [
         "uv",
@@ -250,9 +252,7 @@ def test_autodesk_fusion_python_entry_records_auth_helper_failure():
     loader = CatalogLoader()
 
     fusion = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "autodesk-fusion-mcp-python"
+        tool for tool in loader.get_all() if tool.id == "autodesk-fusion-mcp-python"
     )
     assert fusion.command == ["python", "fusion_mcp.py"]
     assert fusion.installability_tier == "non_working"
@@ -267,17 +267,16 @@ def test_autodesk_fusion_python_entry_records_auth_helper_failure():
     ]
     assert "BasicAuth" in fusion.validation_result.message
     assert "listed one tool" in fusion.validation_result.message
-    assert fusion.follow_up_url == "docs/mcp-catalog/followups/autodesk-fusion-mcp-python.md"
+    assert (
+        fusion.follow_up_url
+        == "docs/mcp-catalog/followups/autodesk-fusion-mcp-python.md"
+    )
 
 
 def test_aps_node_entry_records_required_ssa_credentials():
     loader = CatalogLoader()
 
-    aps = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "aps-mcp-server-nodejs"
-    )
+    aps = next(tool for tool in loader.get_all() if tool.id == "aps-mcp-server-nodejs")
     assert aps.command == ["node", "server.js"]
     assert aps.installability_tier == "might_work"
     assert aps.validation_result.status == "dependency_missing"
@@ -295,11 +294,7 @@ def test_aps_node_entry_records_required_ssa_credentials():
 def test_aps_community_entry_redirects_to_official_server():
     loader = CatalogLoader()
 
-    aps = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "aps-mcp-server-petr"
-    )
+    aps = next(tool for tool in loader.get_all() if tool.id == "aps-mcp-server-petr")
     assert aps.command == ["node", "build/server.js"]
     assert aps.installability_tier == "blocked"
     assert aps.validation_result.status == "blocked"
@@ -314,17 +309,15 @@ def test_aps_community_entry_redirects_to_official_server():
     ]
     assert "557556235e806a5d74265fcf556b9dae4206abdd" in aps.validation_result.message
     assert "listed 8 tools" in aps.validation_result.message
-    assert "autodesk-platform-services/aps-mcp-server-nodejs" in aps.install_blocked_reason
+    assert (
+        "autodesk-platform-services/aps-mcp-server-nodejs" in aps.install_blocked_reason
+    )
 
 
 def test_blender_entry_records_xvfb_backend_validation():
     loader = CatalogLoader()
 
-    blender = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "blender-mcp"
-    )
+    blender = next(tool for tool in loader.get_all() if tool.id == "blender-mcp")
     assert blender.command == ["uvx", "--python", "3.11", "blender-mcp"]
     assert blender.installability_tier == "tested"
     assert blender.validation_result.status == "passed"
@@ -339,11 +332,7 @@ def test_blender_entry_records_xvfb_backend_validation():
 def test_cad_mcp_universal_records_windows_com_dependency():
     loader = CatalogLoader()
 
-    cad = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "cad-mcp-daobataotie"
-    )
+    cad = next(tool for tool in loader.get_all() if tool.id == "cad-mcp-daobataotie")
     assert cad.command == ["python", "src/server.py"]
     assert cad.installability_tier == "might_work"
     assert cad.validation_result.status == "dependency_missing"
@@ -362,11 +351,7 @@ def test_cad_mcp_universal_records_windows_com_dependency():
 def test_creo_mcp_records_cadquery_pass_and_missing_host_dependencies():
     loader = CatalogLoader()
 
-    creo = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "creo-mcp"
-    )
+    creo = next(tool for tool in loader.get_all() if tool.id == "creo-mcp")
     assert creo.command == [
         "uvx",
         "creo-mcp",
@@ -393,11 +378,7 @@ def test_creo_mcp_records_cadquery_pass_and_missing_host_dependencies():
 def test_revit_mcp_records_node_server_and_plugin_boundary():
     loader = CatalogLoader()
 
-    revit = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "revit-mcp"
-    )
+    revit = next(tool for tool in loader.get_all() if tool.id == "revit-mcp")
     assert revit.command == ["node", "build/index.js"]
     assert revit.installability_tier == "might_work"
     assert revit.validation_result.status == "dependency_missing"
@@ -417,9 +398,7 @@ def test_siemens_element_records_project_install_and_token_boundary():
     loader = CatalogLoader()
 
     element = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "siemens-element-mcp"
+        tool for tool in loader.get_all() if tool.id == "siemens-element-mcp"
     )
     assert element.transport == "stdio"
     assert element.command == ["npx", "@siemens/element-mcp"]
@@ -440,11 +419,7 @@ def test_siemens_element_records_project_install_and_token_boundary():
 def test_wincc_unified_records_login_gated_official_artifact():
     loader = CatalogLoader()
 
-    wincc = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "wincc-unified-mcp"
-    )
+    wincc = next(tool for tool in loader.get_all() if tool.id == "wincc-unified-mcp")
     assert wincc.command == ["wincc-unified-mcp.exe"]
     assert wincc.installability_tier == "blocked"
     assert wincc.risk_level == "safety-critical"
@@ -463,11 +438,7 @@ def test_wincc_unified_records_login_gated_official_artifact():
 def test_thingworx_records_product_hosted_mcp_endpoint():
     loader = CatalogLoader()
 
-    thingworx = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "thingworx-mcp"
-    )
+    thingworx = next(tool for tool in loader.get_all() if tool.id == "thingworx-mcp")
     assert thingworx.transport == "sse"
     assert thingworx.command == "${THINGWORX_BASE_URL}/mcp"
     assert thingworx.installability_tier == "might_work"
@@ -491,11 +462,7 @@ def test_thingworx_records_product_hosted_mcp_endpoint():
 def test_creoson_records_backend_alias_not_mcp_server():
     loader = CatalogLoader()
 
-    creoson = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "creoson-mcp-bridge"
-    )
+    creoson = next(tool for tool in loader.get_all() if tool.id == "creoson-mcp-bridge")
     assert creoson.verification_state == "capability_alias"
     assert creoson.installability_tier == "blocked"
     assert creoson.validation_result.status == "blocked"
@@ -514,16 +481,17 @@ def test_solidworks_python_records_dependency_api_break():
     loader = CatalogLoader()
 
     solidworks = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "solidworks-mcp-python"
+        tool for tool in loader.get_all() if tool.id == "solidworks-mcp-python"
     )
     assert solidworks.command == ["python", "-m", "solidworks_mcp.server"]
     assert solidworks.installability_tier == "non_working"
     assert solidworks.validation_result.status == "failed"
     assert solidworks.platform_support["linux_x64"].status == "no"
     assert solidworks.platform_support["linux_x64"].tested is True
-    assert solidworks.follow_up_url == "docs/mcp-catalog/followups/solidworks-mcp-python.md"
+    assert (
+        solidworks.follow_up_url
+        == "docs/mcp-catalog/followups/solidworks-mcp-python.md"
+    )
     assert "f0858a7b9cf8cb9a7838ddfaa91a706ef6439cab" in (
         solidworks.validation_result.message
     )
@@ -543,9 +511,7 @@ def test_solidworks_ts_records_windows_com_dependency_boundary():
     loader = CatalogLoader()
 
     solidworks = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "solidworks-mcp-ts"
+        tool for tool in loader.get_all() if tool.id == "solidworks-mcp-ts"
     )
     assert solidworks.command == ["node", "dist/index.js"]
     assert solidworks.installability_tier == "might_work"
@@ -572,9 +538,7 @@ def test_solidworks_alisamsam_records_broken_requirements():
     loader = CatalogLoader()
 
     solidworks = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "solidworks-mcp-alisamsam"
+        tool for tool in loader.get_all() if tool.id == "solidworks-mcp-alisamsam"
     )
     assert solidworks.command == ["python", "solidworks_mcp_server.py"]
     assert solidworks.installability_tier == "non_working"
@@ -604,9 +568,7 @@ def test_freecad_contextform_records_backend_timeout():
     loader = CatalogLoader()
 
     freecad = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "freecad-mcp-contextform"
+        tool for tool in loader.get_all() if tool.id == "freecad-mcp-contextform"
     )
     assert freecad.command == ["python3", "working_bridge.py"]
     assert "freecad-copilot-contextform" in freecad.aliases
@@ -631,9 +593,7 @@ def test_freecad_robust_records_headless_xmlrpc_backend_pass():
     loader = CatalogLoader()
 
     freecad = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "freecad-addon-robust"
+        tool for tool in loader.get_all() if tool.id == "freecad-addon-robust"
     )
     assert freecad.command == [
         "uv",
@@ -663,9 +623,7 @@ def test_freecad_nekanat_records_xvfb_backend_pass():
     loader = CatalogLoader()
 
     freecad = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "freecad-mcp-nekanat"
+        tool for tool in loader.get_all() if tool.id == "freecad-mcp-nekanat"
     )
     assert freecad.command == ["uvx", "freecad-mcp", "--only-text-feedback"]
     assert "freecad-core-nekanat" in freecad.aliases
@@ -687,11 +645,7 @@ def test_freecad_nekanat_records_xvfb_backend_pass():
 def test_multicad_records_windows_com_dependency_boundary():
     loader = CatalogLoader()
 
-    multicad = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "multicad-mcp"
-    )
+    multicad = next(tool for tool in loader.get_all() if tool.id == "multicad-mcp")
     assert multicad.command == ["python", "src/server.py"]
     assert "multicad-mcp-ancode666" in multicad.aliases
     assert multicad.installability_tier == "might_work"
@@ -720,11 +674,7 @@ def test_multicad_records_windows_com_dependency_boundary():
 def test_rhino_records_missing_bridge_boundary():
     loader = CatalogLoader()
 
-    rhino = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "rhino-mcp"
-    )
+    rhino = next(tool for tool in loader.get_all() if tool.id == "rhino-mcp")
     assert rhino.command == ["uvx", "rhinomcp"]
     assert "rhino-mcp-mcneel" in rhino.aliases
     assert rhino.installability_tier == "might_work"
@@ -751,11 +701,7 @@ def test_rhino_records_missing_bridge_boundary():
 def test_sketchup_records_missing_extension_boundary():
     loader = CatalogLoader()
 
-    sketchup = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "sketchup-mcp"
-    )
+    sketchup = next(tool for tool in loader.get_all() if tool.id == "sketchup-mcp")
     assert sketchup.command == ["uvx", "sketchup-mcp"]
     assert "sketchup-mcp-mhyrr" in sketchup.aliases
     assert sketchup.installability_tier == "might_work"
@@ -778,11 +724,7 @@ def test_sketchup_records_missing_extension_boundary():
 def test_webmcp_openscad_records_browser_bridge_boundary():
     loader = CatalogLoader()
 
-    webmcp = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "webmcp-openscad"
-    )
+    webmcp = next(tool for tool in loader.get_all() if tool.id == "webmcp-openscad")
     assert webmcp.command == ["npx", "-y", "@mcp-b/webmcp-local-relay@latest"]
     assert "webmcp-openscad-jherr" in webmcp.aliases
     assert "scad-webmcp" in webmcp.aliases
@@ -809,11 +751,7 @@ def test_webmcp_openscad_records_browser_bridge_boundary():
 def test_web3d_records_verified_source_build_and_mcp_codegen():
     loader = CatalogLoader()
 
-    web3d = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "web3d-mcp"
-    )
+    web3d = next(tool for tool in loader.get_all() if tool.id == "web3d-mcp")
     assert web3d.vendor == "dev261004"
     assert web3d.command == ["node", "dist/server.js"]
     assert web3d.source_url == "https://github.com/dev261004/web3d-mcp-server"
@@ -834,9 +772,7 @@ def test_web3d_records_verified_source_build_and_mcp_codegen():
     assert "validate_scene` returned `is_valid:true`" in (
         web3d.validation_result.message
     )
-    assert "generate_r3f_code` returned `SUCCESS`" in (
-        web3d.validation_result.message
-    )
+    assert "generate_r3f_code` returned `SUCCESS`" in (web3d.validation_result.message)
     assert web3d.validation_result.missing_dependencies == []
 
 
@@ -844,9 +780,7 @@ def test_solidworks_api_docs_entry_is_tested_read_only():
     loader = CatalogLoader()
 
     docs_entry = next(
-        tool
-        for tool in loader.search("solidworks")
-        if tool.id == "solidworks-api-mcp"
+        tool for tool in loader.search("solidworks") if tool.id == "solidworks-api-mcp"
     )
     assert docs_entry.installability_tier == "tested"
     assert docs_entry.risk_level == "read-only"
@@ -858,9 +792,7 @@ def test_onshape_entry_records_missing_credentials():
     loader = CatalogLoader()
 
     onshape = next(
-        tool
-        for tool in loader.search("onshape")
-        if tool.id == "onshape-mcp-hedless"
+        tool for tool in loader.search("onshape") if tool.id == "onshape-mcp-hedless"
     )
     assert onshape.installability_tier == "might_work"
     assert onshape.validation_result.status == "dependency_missing"
@@ -873,11 +805,7 @@ def test_onshape_entry_records_missing_credentials():
 def test_jarvis_onshape_entry_records_git_source_and_credentials_boundary():
     loader = CatalogLoader()
 
-    jarvis = next(
-        tool
-        for tool in loader.get_all()
-        if tool.id == "jarvis-onshape-mcp"
-    )
+    jarvis = next(tool for tool in loader.get_all() if tool.id == "jarvis-onshape-mcp")
     assert jarvis.command == [
         "uv",
         "run",
@@ -901,11 +829,7 @@ def test_jarvis_onshape_entry_records_git_source_and_credentials_boundary():
 def test_zoo_entry_records_python_stdio_and_token_requirement():
     loader = CatalogLoader()
 
-    zoo = next(
-        tool
-        for tool in loader.search("zoo")
-        if tool.id == "zoo-mcp"
-    )
+    zoo = next(tool for tool in loader.search("zoo") if tool.id == "zoo-mcp")
     assert zoo.transport == "stdio"
     assert zoo.command == ["uvx", "zoo-mcp"]
     assert zoo.installability_tier == "might_work"
@@ -984,7 +908,7 @@ def test_validation_errors():
                 "transport": "invalid-value",  # Should fail literal stdio/sse/webmcp
                 "command": "python test.py",
                 "locality": "local",
-                "weight": "light"
+                "weight": "light",
             }
         ]
     }
@@ -1012,7 +936,7 @@ def test_duplicate_ids():
                 "transport": "stdio",
                 "command": "test",
                 "locality": "local",
-                "weight": "light"
+                "weight": "light",
             },
             {
                 "id": "dup-id",
@@ -1023,8 +947,8 @@ def test_duplicate_ids():
                 "transport": "stdio",
                 "command": "test",
                 "locality": "local",
-                "weight": "light"
-            }
+                "weight": "light",
+            },
         ]
     }
 

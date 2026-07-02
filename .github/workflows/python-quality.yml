@@ -42,6 +42,9 @@ jobs:
           uv pip install mypy
           uv run mypy apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
 
+      - name: Validate Python package distributions
+        run: scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+
       - name: Configure Git for tests
         run: |
           git config --global user.email "test-ci@example.com"
