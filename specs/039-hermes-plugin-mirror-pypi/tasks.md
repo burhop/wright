@@ -138,7 +138,7 @@
 - [X] T050 [P] Update lifecycle script documentation for mirror-root usage in `scripts/README.md`
 - [X] T051 [P] Update release workflow notes for package-scoped tags in `docs/release/hermes-plugin-mirror.md`
 - [X] T052 Run Ruff, package tests, plugin tests, and release-engineering tests and record results in `docs/release/hermes-plugin-mirror.md`
-- [ ] T053 Run Docker-backed Hermes install/update/remove lifecycle validation for the development mirror channel and record results in `docs/release/hermes-plugin-mirror.md`
+- [X] T053 Run Docker-backed Hermes install/update/remove lifecycle validation for the development mirror channel and record results in `docs/release/hermes-plugin-mirror.md`
 - [X] T054 Run mirror validation against the stable channel and record any blocked-release findings in `docs/release/hermes-plugin-mirror.md`
 - [X] T055 Audit generated artifacts for caches, credentials, personal paths, and workspace-only dependencies in `scripts/validate-hermes-plugin-mirror.sh`
 

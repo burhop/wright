@@ -167,9 +167,18 @@ Use this section to record release candidate validation runs.
 - `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --dry-run` listed only allowlisted plugin, test, metadata, license, README, and provenance files.
 - `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir /tmp/wright-mirror-dev.pY8s1V` generated a development mirror export.
 - `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-dev.pY8s1V --channel development` passed.
-- `uv run pytest ... tests/test_hermes_plugin_mirror_sync.py tests/test_hermes_plugin_mirror_validation.py tests/test_hermes_plugin_lifecycle_contract.py ...` passed as part of the 148-test release suite.
+- `uv run pytest ... tests/test_hermes_plugin_mirror_sync.py tests/test_hermes_plugin_mirror_validation.py tests/test_hermes_plugin_lifecycle_contract.py ...` passed as part of the 151-test release suite.
 
-2026-07-02 Docker-backed GitHub lifecycle validation is blocked: `git ls-remote --heads https://github.com/burhop/hermes-plugin-wright dev main` failed with `Repository not found`, so the development mirror branch is not yet customer-installable. Create and populate `burhop/hermes-plugin-wright` with `dev` and `main` branches, then rerun the three `--mirror-root` lifecycle scripts.
+2026-07-02 GitHub mirror lifecycle validation passed:
+
+- Created public mirror repository `https://github.com/burhop/hermes-plugin-wright` and set `main` as the default branch.
+- Added read-write deploy key `wright mirror sync` to the mirror and stored `HERMES_PLUGIN_MIRROR_SSH_KEY` as a `burhop/wright` Actions secret.
+- Published mirror `dev` and `main` branches. `git ls-remote --heads https://github.com/burhop/hermes-plugin-wright dev main` returned both branch heads.
+- Published a second generated `dev` commit and verified an existing clone updated with `git pull --ff-only` from `31d0115` to `66981ff`, proving generated updates preserve branch history.
+- Development mirror dependencies are rewritten to pinned Git references until PyPI packages are published; stable mirror dependencies remain PyPI-only.
+- `scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
+- `scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
+- `scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
 
 ### US2 Package Build and Clean Install
 
@@ -183,17 +192,17 @@ Use this section to record release candidate validation runs.
 
 2026-07-02 validation passed:
 
-- `uv run pytest ... tests/test_hermes_plugin_mirror_readme.py tests/test_hermes_plugin_mirror_provenance.py tests/test_hermes_plugin_mirror_docs.py` passed as part of the 148-test release suite.
+- `uv run pytest ... tests/test_hermes_plugin_mirror_readme.py tests/test_hermes_plugin_mirror_provenance.py tests/test_hermes_plugin_mirror_docs.py` passed as part of the 151-test release suite.
 - `scripts/validate-hermes-plugin-mirror.sh --mirror-dir tests/fixtures/hermes_plugin_mirror --channel stable` passed, including README and provenance checks.
 
 ### Final Release Gate
 
-2026-07-02 validation passed except for the external GitHub mirror lifecycle blocker noted above:
+2026-07-02 validation passed for the development mirror lifecycle and stable mirror content gates:
 
 - `uv run ruff check ...` passed for package, plugin, and release-engineering Python surfaces.
 - `uv run ruff format --check ...` passed for the same surfaces.
-- `uv run pytest packages/core/tests packages/tool_registry/tests hermes-plugin-wright/tests tests/test_release_engineering_scripts.py tests/test_hermes_plugin_mirror_sync.py tests/test_hermes_plugin_mirror_validation.py tests/test_hermes_plugin_lifecycle_contract.py tests/test_python_package_metadata.py tests/test_python_package_distribution_build.py tests/test_publish_python_packages_workflow.py tests/test_hermes_plugin_mirror_readme.py tests/test_hermes_plugin_mirror_provenance.py tests/test_hermes_plugin_mirror_docs.py` passed: 148 tests in 101.41 seconds.
-- `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch main --channel stable --output-dir /tmp/wright-mirror-stable.gX6tCi` generated a stable mirror export.
-- `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-stable.gX6tCi --channel stable` passed.
+- `uv run pytest packages/core/tests packages/tool_registry/tests hermes-plugin-wright/tests tests/test_release_engineering_scripts.py tests/test_hermes_plugin_mirror_sync.py tests/test_hermes_plugin_mirror_validation.py tests/test_hermes_plugin_lifecycle_contract.py tests/test_python_package_metadata.py tests/test_python_package_distribution_build.py tests/test_publish_python_packages_workflow.py tests/test_sync_hermes_plugin_mirror_workflow.py tests/test_hermes_plugin_mirror_readme.py tests/test_hermes_plugin_mirror_provenance.py tests/test_hermes_plugin_mirror_docs.py` passed: 151 tests in 101.29 seconds.
+- `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch main --channel stable --output-dir /tmp/wright-mirror-stable-final.TftFem` generated a stable mirror export.
+- `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-stable-final.TftFem --channel stable` passed.
 
-Release remains blocked for customer lifecycle testing until the mirror repository exists and the Docker-backed install, update, remove, and reinstall scripts pass against `https://github.com/burhop/hermes-plugin-wright/tree/dev`.
+Stable customer release remains gated on publishing `wright-core` and `wright-tool-registry` to PyPI, then rerunning stable install validation against `https://github.com/burhop/hermes-plugin-wright/tree/main`. Development customer testing can use `https://github.com/burhop/hermes-plugin-wright/tree/dev`.
