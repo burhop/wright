@@ -80,7 +80,7 @@ async def test_configure_rejects_unknown_agent(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_configure_rejects_known_unimplemented_agent(client: AsyncClient):
+async def test_configure_accepts_openclaw_stub_agent(client: AsyncClient):
     clear_setup_settings()
 
     response = await client.post(
@@ -88,5 +88,5 @@ async def test_configure_rejects_known_unimplemented_agent(client: AsyncClient):
         json={"llm_api_url": "http://llm.local/v1", "active_agent": "openclaw"},
     )
 
-    assert response.status_code == 400
-    assert "not implemented" in response.json()["message"]
+    assert response.status_code == 200
+    assert response.json()["success"] is True

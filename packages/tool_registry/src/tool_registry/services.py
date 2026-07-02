@@ -17,12 +17,13 @@ from .db import (
     update_server as db_update_server,
     update_tool_enabled,
 )
-from .mcp_catalog import is_install_blocked, tier_sort_key
+from .mcp_catalog import tier_sort_key
 from .mcp_followups import write_followup_record
 from .mcp_validation import classify_server
 from .manager import McpEngine
 from .models import EnvVarDefinition, McpServer, McpServerCreate, McpTool
 from .secrets import delete_secrets, has_credentials, read_secrets, write_secrets
+from .safety import ApprovalContext, McpSafetyPolicy
 from .validation_evidence import evidence_from_preflight
 from .validation_plan import build_validation_plan
 from .version_check import check_server_version, update_server as update_server_version
@@ -128,10 +129,21 @@ def register_server(
 
 
 async def toggle_server_activation(
-    engine: McpEngine, server_id: str, is_active: bool
+    engine: McpEngine,
+    server_id: str,
+    is_active: bool,
+    *,
+    approval_context: ApprovalContext | None = None,
 ) -> McpServer:
-    _require_server(engine.db_path, server_id)
+    server = _require_server(engine.db_path, server_id)
     if is_active:
+        decision = McpSafetyPolicy().can_start(
+            server,
+            approval_context,
+            credentials_configured=_credential_status_for_policy(server),
+        )
+        if not decision.allowed:
+            raise McpInvalidOperationError(decision.reason)
         return await engine.start_server(server_id)
     return await engine.stop_server(server_id)
 
@@ -142,13 +154,12 @@ async def install_server(
     *,
     session_id: str | None = None,
     is_server_enabled_for_session: Callable[[McpServer], bool] | None = None,
+    approval_context: ApprovalContext | None = None,
 ) -> McpInstallResult:
     server = _require_server(engine.db_path, server_id)
-    if is_install_blocked(server):
-        reason = server.install_blocked_reason or (
-            f"Server '{server.name}' is marked {server.installability_tier}."
-        )
-        raise McpInvalidOperationError(reason)
+    decision = McpSafetyPolicy().can_install(server, approval_context)
+    if not decision.allowed:
+        raise McpInvalidOperationError(decision.reason)
 
     db_update_server(
         engine.db_path,
@@ -156,7 +167,25 @@ async def install_server(
         {"is_installed": True, "updated_at": int(time.time())},
     )
 
-    updated = await engine.start_server(server_id)
+    start_decision = McpSafetyPolicy().can_start(
+        server,
+        approval_context,
+        credentials_configured=_credential_status_for_policy(server),
+    )
+    if start_decision.allowed:
+        updated = await engine.start_server(server_id)
+    else:
+        updated = db_update_server(
+            engine.db_path,
+            server_id,
+            {
+                "is_installed": True,
+                "is_active": False,
+                "status": "inactive",
+                "error_message": None,
+                "updated_at": int(time.time()),
+            },
+        )
 
     should_stop = True
     if session_id and is_server_enabled_for_session:
@@ -168,6 +197,19 @@ async def install_server(
         updated.is_installed = True
 
     return McpInstallResult(server=updated, sync_session_id=session_id)
+
+
+def _credential_status_for_policy(server: McpServer) -> dict[str, bool]:
+    required = list(server.credentials_required)
+    if server.env_vars and isinstance(server.env_vars, list):
+        required.extend(
+            var.name
+            for var in server.env_vars
+            if isinstance(var, EnvVarDefinition) and var.required
+        )
+    if not required:
+        return {}
+    return has_credentials(server.server_id, sorted(set(required)))
 
 
 async def uninstall_server(
@@ -318,7 +360,9 @@ async def check_registered_server_version(db_path: str, server_id: str) -> dict:
 async def update_registered_server_version(db_path: str, server_id: str) -> dict:
     server = _require_server(db_path, server_id)
     if server.type != "stdio":
-        raise McpInvalidOperationError("Update not applicable for network-type servers.")
+        raise McpInvalidOperationError(
+            "Update not applicable for network-type servers."
+        )
 
     result = await update_server_version(server)
     if result.get("error"):
@@ -370,7 +414,9 @@ def save_server_credentials(
     sanitized: dict[str, str] = {}
     for key, value in credentials.items():
         if not isinstance(key, str) or not isinstance(value, str):
-            raise McpInvalidOperationError("Credential keys and values must be strings.")
+            raise McpInvalidOperationError(
+                "Credential keys and values must be strings."
+            )
         if value.strip():
             sanitized[key] = value
 

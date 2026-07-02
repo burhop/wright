@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from core.redaction import redact_text
+
 from .mcp_validation import ValidationResult
 
 SECRET_PATTERN = re.compile(
@@ -11,7 +13,9 @@ SECRET_PATTERN = re.compile(
 
 
 def redact_secrets(text: str) -> str:
-    return SECRET_PATTERN.sub(lambda match: f"{match.group(1)}=<redacted>", text)
+    return SECRET_PATTERN.sub(
+        lambda match: f"{match.group(1)}=<redacted>", redact_text(text)
+    )
 
 
 def followup_path(root: Path, server_id: str) -> Path:

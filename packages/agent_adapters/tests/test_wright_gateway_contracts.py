@@ -45,4 +45,3 @@ def test_wright_gateway_profile_does_not_require_hermes_paths():
         *profile.args,
     ]
     assert not any("hermes" in value.lower() for value in values)
-

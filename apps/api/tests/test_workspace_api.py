@@ -1053,7 +1053,7 @@ def test_activate_workspace_fallback_passes_instructions(tmp_path):
 
     engine = MockEngine()
 
-    # Activate workspace - this should trigger creating a fallback session and writing .hermes.md
+    # Activate workspace - this should trigger creating a fallback session.
     session_id = asyncio.run(
         activate_workspace(db_path, "missing-session", local_path, engine)
     )
@@ -1062,20 +1062,16 @@ def test_activate_workspace_fallback_passes_instructions(tmp_path):
     assert len(engine.created_sessions) == 1
     workspace_path, instructions = engine.created_sessions[0]
     assert workspace_path == local_path
-    assert instructions is None  # Handled via file instead
+    assert instructions is None
 
-    # Verify .hermes.md was written
+    # Provider-specific context materialization is owned by agent adapters.
     hermes_md_path = os.path.join(local_path, ".hermes.md")
-    assert os.path.exists(hermes_md_path)
-    with open(hermes_md_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    assert "<!-- WRIGHT MCP INSTRUCTIONS START -->" in content
-    assert "My test instructions" in content
-    assert "<!-- WRIGHT MCP INSTRUCTIONS END -->" in content
+    assert not os.path.exists(hermes_md_path)
 
 
 def test_write_workspace_hermes_md(tmp_path):
-    from core.workspace import write_workspace_hermes_md, create_workspace
+    from agent_adapters.hermes_gateway import write_workspace_hermes_md
+    from core.workspace import create_workspace
     import sqlite3
     import os
 

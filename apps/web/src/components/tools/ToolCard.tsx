@@ -10,6 +10,7 @@ import {
 } from "../../services/workspace-service";
 import { ServerTypeBadge } from "./ServerTypeBadge";
 import { useTools } from "../../store/tools";
+import { WorkspaceEnablement } from "./WorkspaceEnablement";
 
 interface ToolCardProps {
   server: McpServer;
@@ -381,11 +382,6 @@ export function ToolCard({
     } finally {
       setTogglingWorkspaceId(null);
     }
-  };
-
-  const getWorkspaceName = (path: string) => {
-    const parts = path.split("/");
-    return parts[parts.length - 1] || path;
   };
 
   const getStatusColor = () => {
@@ -1281,164 +1277,16 @@ export function ToolCard({
               </div>
             )}
           </div>
-          {/* Workspace Enablement Collapsible (Only if installed) */}
-          {(() => {
-            const enabledCount = workspaces.filter(
-              (w) =>
-                w.enabled_tools?.includes(server.server_id) ||
-                w.enabled_tools?.includes(server.name) ||
-                false,
-            ).length;
-
-            return (
-              server.is_installed && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "var(--space-xs)",
-                    borderTop: "1px solid var(--color-border)",
-                    paddingTop: "var(--space-sm)",
-                    marginTop: "var(--space-xs)",
-                    textAlign: "left",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setShowWorkspaces(!showWorkspaces)}
-                    data-testid={`server-card-workspaces-toggle-${server.server_id}`}
-                    style={{
-                      fontSize: "0.72rem",
-                      color: "var(--color-secondary)",
-                      cursor: "pointer",
-                      border: "none",
-                      background: "none",
-                      textAlign: "left",
-                      padding: "0",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      fontWeight: 600,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      transition: "color var(--transition-fast)",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--color-primary)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--color-secondary)")
-                    }
-                  >
-                    <span>
-                      {showWorkspaces
-                        ? "▼ Hide Workspaces"
-                        : `▶ Configure Workspaces (${enabledCount}/${workspaces.length})`}
-                    </span>
-                  </button>
-
-                  {showWorkspaces && (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "var(--space-xs)",
-                        maxHeight: "120px",
-                        overflowY: "auto",
-                        paddingRight: "4px",
-                        marginTop: "var(--space-xs)",
-                      }}
-                    >
-                      {workspaces.length === 0 ? (
-                        <span
-                          style={{
-                            fontSize: "0.8rem",
-                            color: "var(--color-secondary)",
-                            fontStyle: "italic",
-                          }}
-                        >
-                          No workspaces available.
-                        </span>
-                      ) : (
-                        workspaces.map((w) => {
-                          const isEnabled =
-                            w.enabled_tools?.includes(server.server_id) ||
-                            w.enabled_tools?.includes(server.name) ||
-                            false;
-                          const isTogglingW =
-                            togglingWorkspaceId === w.workspace_id;
-                          return (
-                            <label
-                              key={w.workspace_id}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                padding: "4px var(--space-md)",
-                                backgroundColor: isEnabled
-                                  ? "rgba(56, 189, 248, 0.04)"
-                                  : "var(--color-surface-card-subtle)",
-                                border: "1px solid var(--color-border)",
-                                borderRadius: "var(--radius-md)",
-                                fontSize: "0.78rem",
-                                cursor: isTogglingW ? "not-allowed" : "pointer",
-                                transition: "all var(--transition-fast)",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "var(--space-sm)",
-                                  overflow: "hidden",
-                                }}
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={isEnabled}
-                                  disabled={isTogglingW}
-                                  onChange={(e) =>
-                                    handleToggleWorkspace(w, e.target.checked)
-                                  }
-                                  style={{
-                                    accentColor: "var(--color-secondary)",
-                                    cursor: "pointer",
-                                  }}
-                                />
-                                <span
-                                  style={{
-                                    fontWeight: 500,
-                                    color: isEnabled
-                                      ? "var(--color-primary)"
-                                      : "var(--color-secondary)",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
-                                  {getWorkspaceName(w.local_path)}
-                                </span>
-                              </div>
-                              {isTogglingW && (
-                                <span
-                                  style={{
-                                    fontSize: "0.7rem",
-                                    color: "var(--color-secondary)",
-                                  }}
-                                >
-                                  Updating...
-                                </span>
-                              )}
-                            </label>
-                          );
-                        })
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            );
-          })()}
+          <WorkspaceEnablement
+            serverId={server.server_id}
+            serverName={server.name}
+            isInstalled={server.is_installed}
+            workspaces={workspaces}
+            showWorkspaces={showWorkspaces}
+            togglingWorkspaceId={togglingWorkspaceId}
+            onToggleVisible={() => setShowWorkspaces((visible) => !visible)}
+            onToggleWorkspace={handleToggleWorkspace}
+          />
 
           {/* Status Indicators & Control Buttons */}
           {(server.is_installed ||

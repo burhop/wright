@@ -76,7 +76,7 @@ async def test_active_agent_rejects_unknown_runtime(client):
 
 
 @pytest.mark.asyncio
-async def test_active_agent_rejects_known_unimplemented_runtime(client):
+async def test_active_agent_accepts_openclaw_stub_runtime(client):
     from api.main import app
 
     app.state.agent_sync_manager.active_agent = "hermes"
@@ -86,6 +86,6 @@ async def test_active_agent_rejects_known_unimplemented_runtime(client):
         json={"agent": "openclaw"},
     )
 
-    assert response.status_code == 400
-    assert "not implemented" in response.json()["message"]
-    assert app.state.agent_sync_manager.active_agent == "hermes"
+    assert response.status_code == 200
+    assert response.json() == {"agent": "openclaw"}
+    assert app.state.agent_sync_manager.active_agent == "openclaw"

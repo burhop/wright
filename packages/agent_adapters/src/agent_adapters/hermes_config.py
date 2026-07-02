@@ -121,11 +121,7 @@ def hermes_env_path(env: Mapping[str, str] | None = None) -> str | None:
     cli_path = _hermes_config_command("env-path", env)
     if cli_path:
         return cli_path
-    if (
-        not use_host_defaults
-        and "HERMES_HOME" not in env
-        and "LOCALAPPDATA" not in env
-    ):
+    if not use_host_defaults and "HERMES_HOME" not in env and "LOCALAPPDATA" not in env:
         return None
 
     candidates = []

@@ -10,7 +10,7 @@ import sys
 import logging
 from logging.handlers import RotatingFileHandler
 import structlog
-from opentelemetry import trace
+from .telemetry import current_trace_fields
 
 # Resolve the absolute path to apps/api/wright.log
 _lib_dir = os.path.dirname(os.path.abspath(__file__))
@@ -64,12 +64,7 @@ class WrightLoggerFactory:
 
 def _add_trace_id(logger, method_name, event_dict):
     """Processor that binds trace_id from the active OTel span to every log entry."""
-    span = trace.get_current_span()
-    if span and span.get_span_context().is_valid:
-        event_dict["trace_id"] = f"{span.get_span_context().trace_id:032x}"
-        event_dict["span_id"] = f"{span.get_span_context().span_id:016x}"
-    elif "trace_id" not in event_dict:
-        event_dict["trace_id"] = "no-active-span"
+    event_dict.update(current_trace_fields())
     return event_dict
 
 

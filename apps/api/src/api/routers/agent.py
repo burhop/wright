@@ -15,6 +15,7 @@ from agent_adapters import (
     create_agent_engine,
     default_agent_registry,
 )
+from workspace_service import WorkspaceService
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -181,7 +182,9 @@ async def get_session_history(
 @router.post("/sessions/new", response_model=NewSessionResponse)
 @traced("agent.session.create")
 async def create_new_session(
-    body: NewSessionRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: NewSessionRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     import os
     import uuid
@@ -205,10 +208,6 @@ async def create_new_session(
         # Instantiate WorkspaceManager to automatically run git init
         WorkspaceManager(workspace_path)
 
-        from core.workspace import write_workspace_hermes_md
-
-        write_workspace_hermes_md(DATABASE_PATH, workspace_path)
-
         session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
 
@@ -227,6 +226,7 @@ async def create_new_session(
         finally:
             conn.close()
 
+        workspace_id = existing["workspace_id"] if existing else str(uuid.uuid4())
         if existing:
             import time
 
@@ -245,17 +245,26 @@ async def create_new_session(
                 conn.close()
             log.info(
                 "create_session_updated_existing_workspace",
-                workspace_id=existing["workspace_id"],
+                workspace_id=workspace_id,
                 session_id=session_info.session_id,
             )
         else:
             create_workspace(
                 DATABASE_PATH,
-                str(uuid.uuid4()),
+                workspace_id,
                 session_info.session_id,
                 workspace_path,
                 workspace_name=os.path.basename(workspace_path),
             )
+
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        agent_id = getattr(sync_manager, "active_agent", "hermes")
+        WorkspaceService(DATABASE_PATH).refresh_agent_context_for_path(
+            workspace_path,
+            agent_id=agent_id,
+            workspace_id=workspace_id,
+            session_id=session_info.session_id,
+        )
 
         return NewSessionResponse(
             session_id=session_info.session_id,

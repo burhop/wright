@@ -506,7 +506,6 @@ async def activate_workspace(
                 "agent_session_missing", session_id=session_id, local_path=local_path
             )
             if not allow_fallback:
-                write_workspace_hermes_md(db_path, local_path)
                 return session_id
 
             # Find an existing session belonging to this local_path
@@ -527,7 +526,6 @@ async def activate_workspace(
             else:
                 # None found, create a new one
                 logger.info("creating_new_session_for_fallback", local_path=local_path)
-                write_workspace_hermes_md(db_path, local_path)
                 session_info = await engine.create_session(local_path)
 
             conn = sqlite3.connect(db_path)
@@ -549,11 +547,6 @@ async def activate_workspace(
         logger.warning(
             "agent_session_verify_failed", session_id=session_id, error=str(e)
         )
-
-    try:
-        write_workspace_hermes_md(db_path, local_path)
-    except Exception as e:
-        logger.warning("failed_to_write_hermes_md_on_activate", error=str(e))
 
     touch_workspace(db_path, session_id)
     set_active_gateway_session(db_path, session_id)
@@ -1378,11 +1371,6 @@ def write_workspace_agent_context(
         logger.error(
             "Failed to write workspace agent context %s: %s", context_filename, e
         )
-
-
-def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
-    """Compile workspace MCP instructions and write them to .hermes.md."""
-    write_workspace_agent_context(db_path, local_path, ".hermes.md")
 
 
 def read_application_logs(

@@ -1,4 +1,7 @@
-from agent_adapters.hermes_gateway import hermes_config_paths, hermes_wright_gateway_profile
+from agent_adapters.hermes_gateway import (
+    hermes_config_paths,
+    hermes_wright_gateway_profile,
+)
 
 
 def test_hermes_gateway_profile_preserves_wrightgateway_key():
@@ -25,4 +28,3 @@ def test_hermes_config_paths_are_hermes_specific():
 
     assert paths
     assert all(".hermes" in path for path in paths)
-

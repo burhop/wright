@@ -20,6 +20,8 @@ from .db import (
 )
 from .secrets import read_secrets, write_secrets, delete_secrets, has_credentials
 from .manager import McpEngine
+from .safety import ApprovalContext, McpSafetyPolicy, PolicyDecision
+from .engineering_catalog import ENGINEERING_CATALOG
 
 __all__ = [
     "McpServer",
@@ -43,4 +45,8 @@ __all__ = [
     "delete_secrets",
     "has_credentials",
     "McpEngine",
+    "ApprovalContext",
+    "McpSafetyPolicy",
+    "PolicyDecision",
+    "ENGINEERING_CATALOG",
 ]

@@ -5,6 +5,7 @@ from functools import lru_cache
 from typing import Callable, Mapping
 
 from .base import BaseAgentEngine
+from .context import SupportLevel
 
 
 class UnsupportedAgentRuntimeError(ValueError):
@@ -28,6 +29,7 @@ class AgentRuntimeProvider:
     display_name: str
     description: str
     supported: bool
+    support_level: SupportLevel = "supported"
     is_default: bool = False
     factory: AgentEngineFactory | None = None
 
@@ -58,6 +60,7 @@ class AgentEngineRegistry:
                 display_name=provider.display_name,
                 description=provider.description,
                 supported=provider.supported,
+                support_level=provider.support_level,
                 is_default=provider.is_default,
                 factory=provider.factory,
             )
@@ -111,6 +114,12 @@ def _create_hermes_engine(db_path: str | None = None) -> BaseAgentEngine:
     return HermesAdapter(settings.base_url, settings.api_key, db_path)
 
 
+def _create_openclaw_stub_engine(db_path: str | None = None) -> BaseAgentEngine:
+    from .openclaw import OpenClawStubEngine
+
+    return OpenClawStubEngine(db_path)
+
+
 @lru_cache(maxsize=1)
 def default_agent_registry() -> AgentEngineRegistry:
     return AgentEngineRegistry(
@@ -120,6 +129,7 @@ def default_agent_registry() -> AgentEngineRegistry:
                 display_name="Hermes",
                 description="Default Wright workspace agent runtime.",
                 supported=True,
+                support_level="supported",
                 is_default=True,
                 factory=_create_hermes_engine,
             ),
@@ -127,13 +137,16 @@ def default_agent_registry() -> AgentEngineRegistry:
                 name="openclaw",
                 display_name="OpenClaw",
                 description="Future Wright agent runtime using the Wright gateway.",
-                supported=False,
+                supported=True,
+                support_level="stub",
+                factory=_create_openclaw_stub_engine,
             ),
             AgentRuntimeProvider(
                 name="pi",
                 display_name="Pi",
                 description="Future lightweight local agent runtime.",
                 supported=False,
+                support_level="unavailable",
             ),
         ]
     )

@@ -1,6 +1,6 @@
 import pytest
 
-from agent_adapters import HermesAdapter
+from agent_adapters import HermesAdapter, OpenClawStubEngine
 from agent_adapters.registry import (
     AgentEngineRegistry,
     UnsupportedAgentRuntimeError,
@@ -65,15 +65,18 @@ def test_unknown_agent_selection_is_rejected():
     assert "Unsupported agent runtime" in str(exc_info.value)
 
 
-def test_known_future_agent_is_not_selectable_until_supported():
+def test_openclaw_stub_is_selectable_without_hermes():
     registry = default_agent_registry()
 
     assert "openclaw" in registry.known_names()
-    assert "openclaw" not in registry.supported_names()
-    with pytest.raises(UnsupportedAgentRuntimeError) as exc_info:
-        registry.resolve_provider("openclaw")
+    assert "openclaw" in registry.supported_names()
+    provider = registry.resolve_provider("openclaw")
+    engine = provider.create_engine("test.db")
 
-    assert "not implemented" in str(exc_info.value)
+    assert provider.name == "openclaw"
+    assert provider.support_level == "stub"
+    assert isinstance(engine, OpenClawStubEngine)
+    assert engine.db_path == "test.db"
 
 
 def test_registry_requires_single_default_provider():

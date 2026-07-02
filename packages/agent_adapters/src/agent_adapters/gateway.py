@@ -34,4 +34,3 @@ class WrightGatewayProfile:
 
     def terminal_config(self) -> dict:
         return {"cwd": self.terminal_cwd}
-

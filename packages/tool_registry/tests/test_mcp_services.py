@@ -10,6 +10,7 @@ from tool_registry.db import (
     update_server as db_update_server,
 )
 from tool_registry import services
+from tool_registry.safety import ApprovalContext
 
 
 @pytest.fixture
@@ -188,6 +189,53 @@ async def test_service_errors_are_domain_specific(db_path):
 
     with pytest.raises(services.McpInvalidOperationError, match="No usable source URL"):
         await services.install_server(FakeEngine(db_path), "blocked-id")
+
+    _insert_server(
+        db_path,
+        server_id="risky-id",
+        name="Risky CAD",
+        risk_level="high",
+        approval_gates=["workspace_write_approval"],
+    )
+
+    with pytest.raises(services.McpInvalidOperationError, match="requires approval"):
+        await services.install_server(FakeEngine(db_path), "risky-id")
+
+    installed = await services.install_server(
+        FakeEngine(db_path),
+        "risky-id",
+        approval_context=ApprovalContext(
+            machine_approvals={"workspace_write_approval"}
+        ),
+    )
+    assert installed.server.is_installed is True
+
+
+@pytest.mark.asyncio
+async def test_install_succeeds_without_start_when_credentials_missing(
+    db_path, tmp_path, monkeypatch
+):
+    monkeypatch.setenv("WRIGHT_SECRETS_PATH", str(tmp_path / "secrets.json"))
+    _insert_server(
+        db_path,
+        server_id="credentialed-id",
+        name="Credentialed MCP",
+        env_vars=[
+            EnvVarDefinition(
+                name="API_TOKEN",
+                label="API token",
+                required=True,
+                secret=True,
+            )
+        ],
+    )
+    engine = FakeEngine(db_path)
+
+    installed = await services.install_server(engine, "credentialed-id")
+
+    assert installed.server.is_installed is True
+    assert installed.server.is_active is False
+    assert engine.started == []
 
 
 def test_credential_services(db_path, tmp_path, monkeypatch):

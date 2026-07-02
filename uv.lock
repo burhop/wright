@@ -16,6 +16,7 @@ members = [
     "wright-core",
     "wright-data-vault",
     "wright-tool-registry",
+    "wright-workspace-service",
 ]
 
 [[package]]
@@ -1594,6 +1595,9 @@ wheels = [
 name = "wright"
 version = "0.1.0"
 source = { virtual = "." }
+dependencies = [
+    { name = "wright-workspace-service" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -1604,6 +1608,7 @@ dev = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "wright-workspace-service", editable = "packages/workspace_service" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1652,6 +1657,7 @@ dependencies = [
     { name = "wright-core" },
     { name = "wright-data-vault" },
     { name = "wright-tool-registry" },
+    { name = "wright-workspace-service" },
 ]
 
 [package.metadata]
@@ -1671,6 +1677,7 @@ requires-dist = [
     { name = "wright-core", editable = "packages/core" },
     { name = "wright-data-vault", editable = "packages/data_vault" },
     { name = "wright-tool-registry", editable = "packages/tool_registry" },
+    { name = "wright-workspace-service", editable = "packages/workspace_service" },
 ]
 
 [[package]]
@@ -1724,4 +1731,25 @@ requires-dist = [
     { name = "httpx-sse", specifier = ">=0.4" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "wright-core", editable = "packages/core" },
+]
+
+[[package]]
+name = "wright-workspace-service"
+version = "0.1.0"
+source = { editable = "packages/workspace_service" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "wright-agent-adapters" },
+    { name = "wright-core" },
+    { name = "wright-data-vault" },
+    { name = "wright-tool-registry" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pydantic", specifier = ">=2.7" },
+    { name = "wright-agent-adapters", editable = "packages/agent_adapters" },
+    { name = "wright-core", editable = "packages/core" },
+    { name = "wright-data-vault", editable = "packages/data_vault" },
+    { name = "wright-tool-registry", editable = "packages/tool_registry" },
 ]

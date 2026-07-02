@@ -10,8 +10,8 @@ def test_seeded_engineering_catalog_metadata_loads_through_models():
 
 
 def test_api_seed_helper_uses_shared_catalog_normalization():
-    from api.database import migrate
     from tool_registry.catalog_models import CatalogEntry, REQUIRED_PLATFORM_KEYS
+    from tool_registry.catalog_loader import catalog_entry_to_mcp_seed
 
     entry = CatalogEntry(
         id="shared-sample",
@@ -26,13 +26,23 @@ def test_api_seed_helper_uses_shared_catalog_normalization():
         risk_level="medium",
     )
 
-    seed = migrate._catalog_entry_to_seed(entry)
+    seed = catalog_entry_to_mcp_seed(entry)
 
     assert seed["server_id"] == "shared-sample"
     assert seed["type"] == "stdio"
     assert seed["category"] == "cad"
     assert seed["default_enabled"] is False
     assert set(REQUIRED_PLATFORM_KEYS).issubset(seed["platform_support"])
+
+
+def test_api_migration_uses_tool_registry_engineering_catalog():
+    import inspect
+
+    from api.database import migrate
+    from tool_registry.engineering_catalog import ENGINEERING_CATALOG
+
+    assert migrate.ENGINEERING_CATALOG is ENGINEERING_CATALOG
+    assert "OpenSCAD Geometry" not in inspect.getsource(migrate)
 
 
 def test_fresh_engineering_catalog_seed_does_not_preinstall_mcps(tmp_path, monkeypatch):

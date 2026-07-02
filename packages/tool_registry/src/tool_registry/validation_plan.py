@@ -42,7 +42,8 @@ def _requires_credentials(server: McpServer) -> bool:
         return True
     if server.env_vars and isinstance(server.env_vars, list):
         return any(
-            isinstance(var, EnvVarDefinition) and var.required for var in server.env_vars
+            isinstance(var, EnvVarDefinition) and var.required
+            for var in server.env_vars
         )
     return False
 
@@ -50,8 +51,26 @@ def _requires_credentials(server: McpServer) -> bool:
 def _requires_network(server: McpServer) -> bool:
     if server.type in {"sse", "webmcp"}:
         return True
+    command_text = ""
     if isinstance(server.command, str):
-        return server.command.startswith(("http://", "https://"))
+        command_text = server.command
+    elif isinstance(server.command, list):
+        command_text = " ".join(str(part) for part in server.command)
+    lower_command = command_text.lower()
+    if lower_command.startswith(("http://", "https://")):
+        return True
+    network_markers = (
+        "git+",
+        "http://",
+        "https://",
+        "uvx ",
+        "uv run --with",
+        "npx ",
+        "npm ",
+        "pip install",
+    )
+    if any(marker in lower_command for marker in network_markers):
+        return True
     return False
 
 

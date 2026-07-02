@@ -55,8 +55,7 @@ def catalog_entry_to_mcp_seed(entry: CatalogEntry) -> dict[str, Any]:
             "risk_level": entry.risk_level,
             "deployment_mode": entry.deployment_mode,
             "platform_support": {
-                key: value.model_dump()
-                for key, value in entry.platform_support.items()
+                key: value.model_dump() for key, value in entry.platform_support.items()
             },
             "host_software_required": entry.host_software_required,
             "credentials_required": entry.credentials_required,

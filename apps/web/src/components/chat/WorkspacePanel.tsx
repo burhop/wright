@@ -4,6 +4,10 @@ import FileTree from "../common/FileTree";
 import DiffViewer from "../common/DiffViewer";
 import EditorTabs from "./EditorTabs";
 import ViewerInspector from "./ViewerInspector";
+import {
+  WorkspaceActivityBar,
+  type WorkspaceSidebarId,
+} from "./WorkspaceActivityBar";
 import { useChat } from "../../store/sessions";
 import { useViewerPanel } from "../../store/viewer";
 import { viewerRegistry } from "../../services/viewer-panel/registry";
@@ -19,15 +23,6 @@ import { agentService } from "../../services/agent-service";
 import useHealthStatus from "../../hooks/useHealthStatus";
 import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
-import {
-  FolderIcon,
-  GitIcon,
-  SettingsIcon,
-  BackIcon,
-  MCPIcon,
-  BookOpenIcon,
-} from "../common/Icons";
-
 import type { EditorTab } from "../../store/viewer";
 
 function findFileInTree(
@@ -193,9 +188,9 @@ export function WorkspacePanel({
   }, [layoutKey]);
 
   // Layout states — initialised from localStorage when available
-  const [activeSidebar, setActiveSidebar] = useState<
-    "marketplace" | "files" | "git" | "settings" | "docs"
-  >(savedLayout?.activeSidebar ?? "files");
+  const [activeSidebar, setActiveSidebar] = useState<WorkspaceSidebarId>(
+    savedLayout?.activeSidebar ?? "files",
+  );
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
@@ -991,11 +986,9 @@ export function WorkspacePanel({
   }, [isRightDragging]);
 
   // Toggle activity bar sidebar
-  const handleActivityBarClick = (
-    sidebar: "marketplace" | "files" | "git" | "settings" | "docs",
-  ) => {
+  const handleActivityBarClick = (sidebar: WorkspaceSidebarId) => {
     if (activeSidebar === sidebar) {
-      setIsSidebarCollapsed(!isSidebarCollapsed);
+      setIsSidebarCollapsed((collapsed) => !collapsed);
     } else {
       setActiveSidebar(sidebar);
       setIsSidebarCollapsed(false);
@@ -1312,134 +1305,12 @@ export function WorkspacePanel({
             : "grid-template-columns 0.15s ease-out",
       }}
     >
-      {/* 1. Activity Bar (far left) */}
-      <div
-        style={{
-          backgroundColor: "var(--color-surface-subtle)",
-          borderRight: "1px solid var(--color-border)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          paddingTop: "var(--space-md)",
-          gap: "var(--space-md)",
-          zIndex: 5,
-        }}
-      >
-        <button
-          data-testid="activity-bar-back-btn"
-          onClick={() => navigate("/")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity: 0.45,
-            color: "var(--color-primary)",
-          }}
-          title="Back to Dashboard"
-          className="activity-bar-icon"
-        >
-          <BackIcon size={20} />
-        </button>
-        <button
-          data-testid="activity-bar-explorer-btn"
-          onClick={() => handleActivityBarClick("files")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity:
-              !isSidebarCollapsed && activeSidebar === "files" ? 1 : 0.45,
-            color:
-              !isSidebarCollapsed && activeSidebar === "files"
-                ? "var(--color-secondary)"
-                : "var(--color-primary)",
-          }}
-          title="Workspace Files"
-          className="activity-bar-icon"
-        >
-          <FolderIcon size={20} />
-        </button>
-        <button
-          data-testid="activity-bar-mcp-btn"
-          onClick={() => handleActivityBarClick("marketplace")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity:
-              !isSidebarCollapsed && activeSidebar === "marketplace" ? 1 : 0.45,
-            color:
-              !isSidebarCollapsed && activeSidebar === "marketplace"
-                ? "var(--color-secondary)"
-                : "var(--color-primary)",
-          }}
-          title="MCP Tools"
-          className="activity-bar-icon"
-        >
-          <MCPIcon size={20} />
-        </button>
-        <button
-          data-testid="activity-bar-git-btn"
-          onClick={() => handleActivityBarClick("git")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity: !isSidebarCollapsed && activeSidebar === "git" ? 1 : 0.45,
-            color:
-              !isSidebarCollapsed && activeSidebar === "git"
-                ? "var(--color-secondary)"
-                : "var(--color-primary)",
-          }}
-          title="Git Version Control"
-          className="activity-bar-icon"
-        >
-          <GitIcon size={20} />
-        </button>
-        <button
-          data-testid="activity-bar-settings-btn"
-          onClick={() => handleActivityBarClick("settings")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity:
-              !isSidebarCollapsed && activeSidebar === "settings" ? 1 : 0.45,
-            color:
-              !isSidebarCollapsed && activeSidebar === "settings"
-                ? "var(--color-secondary)"
-                : "var(--color-primary)",
-          }}
-          title="Workspace Settings"
-          className="activity-bar-icon"
-        >
-          <SettingsIcon size={20} />
-        </button>
-        <button
-          data-testid="activity-bar-docs-btn"
-          onClick={() => handleActivityBarClick("docs")}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "var(--space-xs)",
-            opacity: !isSidebarCollapsed && activeSidebar === "docs" ? 1 : 0.45,
-            color:
-              !isSidebarCollapsed && activeSidebar === "docs"
-                ? "var(--color-secondary)"
-                : "var(--color-primary)",
-          }}
-          title="Docs & Tutorials"
-          className="activity-bar-icon"
-        >
-          <BookOpenIcon size={20} />
-        </button>
-      </div>
+      <WorkspaceActivityBar
+        activeSidebar={activeSidebar}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onBack={() => navigate("/")}
+        onSelectSidebar={handleActivityBarClick}
+      />
 
       {/* 2. Left Sidebar Panel (collapsible) */}
       <div

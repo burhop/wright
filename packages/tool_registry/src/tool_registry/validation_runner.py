@@ -14,7 +14,9 @@ class LightweightProbeClient(Protocol):
 
     async def list_tools(self) -> list[dict[str, Any]]: ...
 
-    async def call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]: ...
+    async def call_tool(
+        self, name: str, arguments: dict[str, Any]
+    ) -> dict[str, Any]: ...
 
 
 async def run_lightweight_validation(

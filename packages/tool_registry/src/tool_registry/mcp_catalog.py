@@ -5,7 +5,6 @@ from typing import Any
 
 from .catalog_models import (
     DEFAULT_PLATFORM_SUPPORT,
-    REQUIRED_PLATFORM_KEYS,
     TIER_ORDER,
     validation_summary_dict,
 )

@@ -1,16 +1,19 @@
 import time
-import logging
 import json
 import uuid
 import asyncio
 from typing import Dict, Any, Optional, Set
+from core.logging import get_logger
+from core.redaction import redact_command, redact_mapping, redact_text
 from .models import McpServer, McpTool
 from .db import get_server, get_servers, update_server, insert_tools, clear_server_tools
 from .runners.base import BaseRunner
 from .runners.stdio import StdioRunner
 from .runners.sse import SseRunner
+from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
+from .secrets import has_credentials
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class McpEngine:
@@ -26,16 +29,16 @@ class McpEngine:
         """Register a new WebMCP WebSocket connection from the client browser."""
         self._webmcp_connections.add(websocket)
         logger.info(
-            "Registered WebMCP WebSocket connection. Total: %d",
-            len(self._webmcp_connections),
+            "webmcp_connection_registered",
+            total=len(self._webmcp_connections),
         )
 
     async def unregister_webmcp_connection(self, websocket: Any) -> None:
         """Unregister a WebMCP WebSocket connection on disconnect."""
         self._webmcp_connections.discard(websocket)
         logger.info(
-            "Unregistered WebMCP WebSocket connection. Total: %d",
-            len(self._webmcp_connections),
+            "webmcp_connection_unregistered",
+            total=len(self._webmcp_connections),
         )
 
     async def handle_webmcp_message(self, message_str: str) -> None:
@@ -50,15 +53,39 @@ class McpEngine:
                 if not future.done():
                     future.set_result(payload)
         except Exception as e:
-            logger.error("Failed to process WebMCP WebSocket message: %s", e)
+            logger.error("webmcp_message_process_failed", error=redact_text(e))
 
     async def start_server(
-        self, server_id: str, workspace_dir: Optional[str] = None
+        self,
+        server_id: str,
+        workspace_dir: Optional[str] = None,
+        *,
+        approval_context: ApprovalContext | None = None,
     ) -> McpServer:
         """Start an MCP server subprocess or remote SSE connection, query its tools, and sync with database."""
         server = get_server(self.db_path, server_id)
         if not server:
             raise ValueError(f"Server with ID {server_id} does not exist.")
+
+        credential_names = required_credentials(server)
+        decision = McpSafetyPolicy().can_start(
+            server,
+            approval_context,
+            credentials_configured=(
+                has_credentials(server.server_id, credential_names)
+                if credential_names
+                else {}
+            ),
+        )
+        logger.info(
+            "mcp_safety_evaluate",
+            server_id=server_id,
+            operation="start",
+            allowed=decision.allowed,
+            reason=decision.reason,
+        )
+        if not decision.allowed:
+            raise RuntimeError(decision.reason)
 
         # If already running, stop first to restart cleanly
         if server_id in self._active_runners:
@@ -130,7 +157,9 @@ class McpEngine:
                             workspace_dir = row["local_path"]
                 except Exception as e:
                     logger.warning(
-                        "Failed to fetch active workspace directory from DB: %s", e
+                        "mcp_workspace_lookup_failed",
+                        server_id=server_id,
+                        error=redact_text(e),
                     )
 
             key_name = "".join(c.lower() for c in server.name if c.isalnum())
@@ -162,7 +191,7 @@ class McpEngine:
             command = server.command
             if is_headless and xvfb_path and is_cad_server:
                 logger.info(
-                    "Wrapping stdio command with xvfb-run for headless rendering",
+                    "mcp_command_wrapped_with_xvfb",
                     server_name=server.name,
                 )
                 if isinstance(server.command, list):
@@ -203,7 +232,9 @@ class McpEngine:
             self._active_runners[server_id] = runner
 
             # Retrieve tools list
-            logger.info("Querying tools list from MCP server: %s", server.name)
+            logger.info(
+                "mcp_tools_list_query", server_id=server_id, server_name=server.name
+            )
             tools_list = await runner.list_tools()
 
             # Format and insert tools into DB
@@ -244,7 +275,13 @@ class McpEngine:
             return updated
 
         except Exception as e:
-            logger.exception("Failed to start MCP server %s", server.name)
+            logger.exception(
+                "mcp_server_start_failed",
+                server_id=server_id,
+                server_name=server.name,
+                command=redact_command(server.command or []),
+                error=redact_text(e),
+            )
             if runner:
                 try:
                     await runner.stop()
@@ -275,7 +312,11 @@ class McpEngine:
             try:
                 await runner.stop()
             except Exception as e:
-                logger.error("Error stopping runner for %s: %s", server_id, e)
+                logger.error(
+                    "mcp_runner_stop_failed",
+                    server_id=server_id,
+                    error=redact_text(e),
+                )
 
         if update_db:
             # Clear active tools from database
@@ -295,12 +336,40 @@ class McpEngine:
         return get_server(self.db_path, server_id)
 
     async def call_tool(
-        self, server_id: str, tool_name: str, arguments: Dict[str, Any]
+        self,
+        server_id: str,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        *,
+        approval_context: ApprovalContext | None = None,
     ) -> Dict[str, Any]:
         """Invoke a tool on an active MCP server."""
         server = get_server(self.db_path, server_id)
         if not server:
             raise ValueError(f"Server with ID {server_id} does not exist.")
+
+        credential_names = required_credentials(server)
+        decision = McpSafetyPolicy().can_call_tool(
+            server,
+            tool_name,
+            approval_context,
+            credentials_configured=(
+                has_credentials(server.server_id, credential_names)
+                if credential_names
+                else {}
+            ),
+        )
+        logger.info(
+            "mcp_safety_evaluate",
+            server_id=server_id,
+            operation="call",
+            tool_name=tool_name,
+            allowed=decision.allowed,
+            reason=decision.reason,
+            arguments=redact_mapping(arguments),
+        )
+        if not decision.allowed:
+            raise RuntimeError(decision.reason)
 
         if server.type == "webmcp":
             if not self._webmcp_connections:
@@ -325,7 +394,12 @@ class McpEngine:
                 try:
                     await conn.send_text(send_payload)
                 except Exception as e:
-                    logger.warning("Failed to send WebMCP payload to connection: %s", e)
+                    logger.warning(
+                        "webmcp_payload_send_failed",
+                        server_id=server_id,
+                        tool_name=tool_name,
+                        error=redact_text(e),
+                    )
 
             try:
                 # Wait for client response over WebSocket with a 30-second timeout
@@ -349,14 +423,19 @@ class McpEngine:
         servers = get_servers(self.db_path)
         for server in servers:
             if server.is_active:
-                logger.info("Sync starting configured active server: %s", server.name)
+                logger.info(
+                    "mcp_sync_starting_active_server",
+                    server_id=server.server_id,
+                    server_name=server.name,
+                )
                 try:
                     await self.start_server(server.server_id)
                 except Exception as e:
                     logger.error(
-                        "Failed to automatically start server %s on sync: %s",
-                        server.name,
-                        e,
+                        "mcp_sync_start_failed",
+                        server_id=server.server_id,
+                        server_name=server.name,
+                        error=redact_text(e),
                     )
 
     async def shutdown(self) -> None:
@@ -366,4 +445,6 @@ class McpEngine:
             try:
                 await self.stop_server(sid, update_db=False)
             except Exception as e:
-                logger.error("Error shutting down server %s: %s", sid, e)
+                logger.error(
+                    "mcp_shutdown_stop_failed", server_id=sid, error=redact_text(e)
+                )

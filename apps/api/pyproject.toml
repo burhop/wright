@@ -17,6 +17,7 @@ dependencies = [
     "wright-agent-adapters",
     "wright-tool-registry",
     "wright-data-vault",
+    "wright-workspace-service",
     "httpx>=0.28",
     "httpx-sse>=0.4",
     "python-multipart>=0.0.32",
@@ -27,6 +28,7 @@ wright-core = { workspace = true }
 wright-agent-adapters = { workspace = true }
 wright-tool-registry = { workspace = true }
 wright-data-vault = { workspace = true }
+wright-workspace-service = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
