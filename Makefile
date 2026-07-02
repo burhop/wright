@@ -2,7 +2,9 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test check security-scan docker-smoke alpha-release-check
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test hermes-plugin-lifecycle-test alpha-release-check python-package-build-check hermes-plugin-mirror-sync-dry-run hermes-plugin-mirror-validate hermes-plugin-root-lifecycle-test
+
+PYTHON_WORKSPACE_PATHS := apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
 # Default target displays help
 help:
@@ -20,15 +22,31 @@ help:
 	@echo "  format          - Apply Ruff and Prettier code formatting"
 	@echo "  typecheck       - Run Mypy and TSC type check validation"
 	@echo "  test            - Run pytest and frontend vitest suites"
+	@echo "  test-external-freecad - Run opt-in FreeCAD MCP package tests"
 	@echo "  check           - Execute all local quality gates (lint + format + typecheck + test)"
 	@echo "  security-scan   - Run public-alpha, Gitleaks, and TruffleHog secret scans"
 	@echo "  alpha-release-check - Run final alpha release gates including Docker smoke"
+	@echo "  python-package-build-check - Validate Wright package metadata for PyPI/TestPyPI"
+	@echo "  hermes-plugin-mirror-sync-dry-run - Preview thin Hermes plugin mirror contents"
+	@echo "  hermes-plugin-mirror-validate - Generate and validate a local thin plugin mirror"
+	@echo "  hermes-plugin-root-lifecycle-test - Test Hermes install/update/remove from the mirror root"
 
 docker-build:
 	docker build -t wright-agent:latest -f docker/Dockerfile .
 
 docker-smoke:
 	./scripts/docker-smoke-test.sh
+
+hermes-plugin-install-test:
+	./scripts/test-hermes-plugin-install.sh
+
+hermes-plugin-uninstall-test:
+	./scripts/test-hermes-plugin-uninstall.sh
+
+hermes-plugin-update-test:
+	./scripts/test-hermes-plugin-update.sh
+
+hermes-plugin-lifecycle-test: hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test
 
 docker-test:
 	@if [ ! -f docker/.env ]; then \
@@ -99,31 +117,36 @@ docker-test-live:
 
 # Local Developer Targets (Non-Docker)
 lint:
-	uv run ruff check apps/api/ packages/
+	uv run ruff check $(PYTHON_WORKSPACE_PATHS)
 	npx -w apps/web eslint .
 
 format:
-	uv run ruff format apps/api/ packages/
+	uv run ruff format $(PYTHON_WORKSPACE_PATHS)
 	npx prettier --write apps/web/
 
 typecheck:
 	uv run pip install mypy --quiet
-	uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "Mypy checks failed (warning only)"
+	uv run mypy $(PYTHON_WORKSPACE_PATHS) --ignore-missing-imports || echo "Mypy checks failed (warning only)"
 	npx tsc --noEmit -p apps/web/tsconfig.app.json
 
 test:
 	uv run pytest
+	uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
 	npm run test --workspace=apps/web
 
+test-external-freecad:
+	cd packages/freecad_mcp && uv run pytest
+
 check:
-	uv run ruff check apps/api/ packages/
+	uv run ruff check $(PYTHON_WORKSPACE_PATHS)
 	npx -w apps/web eslint .
-	uv run ruff format --check apps/api/ packages/
+	uv run ruff format --check $(PYTHON_WORKSPACE_PATHS)
 	npx prettier --check apps/web/
 	uv run pip install mypy --quiet
-	uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "Mypy checks failed (warning only)"
+	uv run mypy $(PYTHON_WORKSPACE_PATHS) --ignore-missing-imports || echo "Mypy checks failed (warning only)"
 	npx tsc --noEmit -p apps/web/tsconfig.app.json
 	uv run pytest
+	uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
 	npm run test --workspace=apps/web
 
 security-scan:
@@ -132,3 +155,20 @@ security-scan:
 alpha-release-check:
 	./scripts/alpha-release-check.sh
 
+
+python-package-build-check:
+	./scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+
+hermes-plugin-mirror-sync-dry-run:
+	./scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --dry-run
+
+hermes-plugin-mirror-validate:
+	@tmp_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/wright-plugin-mirror.XXXXXX"); \
+	trap 'rm -rf "$$tmp_dir"' EXIT; \
+	./scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir "$$tmp_dir"; \
+	./scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$$tmp_dir" --channel development
+
+hermes-plugin-root-lifecycle-test:
+	./scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+	./scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+	./scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev

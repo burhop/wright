@@ -32,15 +32,18 @@ jobs:
         run: uv sync --all-packages --all-groups
 
       - name: Lint with Ruff
-        run: uv run ruff check apps/api/ packages/
+        run: uv run ruff check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
       - name: Check Formatting with Ruff
-        run: uv run ruff format --check apps/api/ packages/
+        run: uv run ruff format --check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
       - name: Type Check with mypy
         run: |
           uv pip install mypy
-          uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
+          uv run mypy apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
+
+      - name: Validate Python package distributions
+        run: scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
 
       - name: Configure Git for tests
         run: |

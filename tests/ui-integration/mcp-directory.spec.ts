@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('MCP Tool Registry Directory E2E Flow', () => {
+test.describe('MCP Tool Registry Directory E2E Flow @live', () => {
   test('should register, list, toggle, and delete a custom MCP server', async ({ page }) => {
     // 1. Navigate to the tool registry page
     await page.goto('/tool-registry');

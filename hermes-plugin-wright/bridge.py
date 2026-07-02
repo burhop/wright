@@ -1,7 +1,9 @@
 import os
-import yaml
+from typing import Any, Dict, Optional
+
 import httpx
-from typing import Optional, List, Dict, Any
+import yaml
+
 from .schemas import CatalogEntry
 
 WRIGHT_API_BASE = "http://127.0.0.1:8000"
@@ -128,7 +130,9 @@ async def register_mcp_server(entry: CatalogEntry) -> Dict[str, Any]:
         "image_url": entry.image_url,
         "description": entry.description,
         "source_url": entry.source_url,
-        "env_vars": [v.model_dump() for v in entry.env_vars] if entry.env_vars else None,
+        "env_vars": [v.model_dump() for v in entry.env_vars]
+        if entry.env_vars
+        else None,
     }
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -168,7 +172,9 @@ async def get_credential_status(server_id: str) -> Dict[str, Any]:
     """Checks missing/configured credentials for a server via GET /api/mcp/servers/{id}/credentials."""
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            r = await client.get(f"{WRIGHT_API_BASE}/api/mcp/servers/{server_id}/credentials")
+            r = await client.get(
+                f"{WRIGHT_API_BASE}/api/mcp/servers/{server_id}/credentials"
+            )
             r.raise_for_status()
             data = r.json()
             return {

@@ -80,7 +80,7 @@ graph TB
 
 | Component | Version | Port | How It's Started |
 |:---|:---|:---|:---|
-| Hermes Agent | v0.15.x | 8642 (gateway API) | `systemctl --user start hermes-gateway-wright` |
+| Hermes Agent | v0.18.x | 8642 (gateway API) | `systemctl --user start hermes-gateway-wright` |
 | Wright FastAPI | 0.1.0 | 8000 | `uv run uvicorn api.main:app --host 0.0.0.0 --port 8000` |
 | Vite Dev Server | 8.x | 5173 | `npm run dev --workspace=apps/web -- --host` |
 | Python | 3.13.x | — | System / uv managed |
@@ -141,7 +141,7 @@ graph LR
     end
 
     subgraph "Separate Python Environment"
-        HERMES["hermes-agent v0.15.x"]
+        HERMES["hermes-agent v0.18.x"]
         PLUGIN["hermes-plugin-wright v1.0.0"]
         HERMES --> PLUGIN
     end
@@ -242,7 +242,7 @@ The image is built in two stages from
 | **Python** | Python (deadsnakes PPA) | 3.13 |
 | **Node** | Node.js (nodesource) | 22.x |
 | **Package Manager** | uv (Astral) | latest |
-| **AI Agent** | hermes-agent (PyPI) | 0.15.2 |
+| **AI Agent** | hermes-agent (PyPI) | 0.18.0 |
 | **Plugin** | hermes-plugin-wright | 1.0.0 (baked in) |
 | **Process Mgr** | supervisord | system package |
 | **Frontend** | Pre-built static assets | (built in Stage 1, served by FastAPI) |
@@ -265,7 +265,7 @@ graph LR
         SYS --> PY["Python 3.13"]
         PY --> NODE["Node.js 22"]
         NODE --> UV["uv (from ghcr)"]
-        UV --> HERMES_INSTALL["uv tool install<br/>hermes-agent==0.15.2<br/>--with hermes-plugin-wright"]
+        UV --> HERMES_INSTALL["uv tool install<br/>hermes-agent==0.18.0<br/>--with hermes-plugin-wright"]
         HERMES_INSTALL --> WSYNC["uv sync<br/>(wright workspace)"]
         WSYNC --> COPY_DIST["COPY dist/<br/>(from Stage 1)"]
     end
@@ -522,7 +522,7 @@ graph TB
 
 | Component | Version | Port | How It's Started |
 |:---|:---|:---|:---|
-| Hermes Desktop | v0.15.x | — | Launched by user (Electron App) |
+| Hermes Desktop | v0.18.x | — | Launched by user (Electron App) |
 | Wright Panel Manager | `hermes-wright-panel` | — | Loaded by Electron as a BrowserView panel |
 | Wright FastAPI | 0.1.0 | 8000 | Started by plugin / supervisor |
 | Electron Shell | 32.x / 33.x | — | Managed by Hermes Desktop |
@@ -550,7 +550,7 @@ This produces `apps/web/dist-desktop/` containing `index.html` with relative ass
 | Feature | Development | Docker Appliance | Plugin Install | Embedded Desktop |
 |:---|:---|:---|:---|:---|
 | **Target user** | Core devs | New users | Hermes power users | Desktop app users |
-| **Hermes version** | v0.15.x (local) | v0.15.2 (pinned in image) | User's existing version | User's desktop app version |
+| **Hermes version** | v0.18.x (local) | v0.18.0 (pinned in image) | User's existing version | User's desktop app version |
 | **Python** | 3.13.x | 3.13 | User's existing | Host system Python |
 | **Node.js** | 22.x | 22.x | User's existing | Managed by Electron |
 | **Frontend** | Vite dev server (`:5173`, HMR) | Pre-built static → **FastAPI serves** | `npm run build` → **FastAPI serves** | Embedded panel (`file://` or dev server) |
@@ -640,7 +640,7 @@ graph TB
     end
 
     subgraph "External Dependencies"
-        HERMES["hermes-agent<br/>(PyPI, v0.15.x)"]
+        HERMES["hermes-agent<br/>(PyPI, v0.18.x)"]
         PLUGIN["hermes-plugin-wright<br/>(local package)"]
         HERMES --> PLUGIN
 

@@ -1305,8 +1305,10 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
 
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "error"
-        assert data["message"] == "MCP server is not active: Inactive Test MCP"
+        assert data["status"] == "warning"
+        assert (
+            data["message"] == "MCP server installed but not active: Inactive Test MCP"
+        )
         assert data["running_mcps"] == [
             {
                 "name": "Inactive Test MCP",
@@ -1454,3 +1456,133 @@ def test_workspace_files_uses_local_dir_when_agent_lookup_fails(
     )
     assert response.status_code == 200
     assert os.path.isdir(expected_path)
+
+
+def test_agent_chat_starts_enabled_workspace_mcp_servers(client, monkeypatch):
+    from api.config import DATABASE_PATH
+    from tool_registry import McpServer
+    from tool_registry.db import insert_server
+    import sqlite3
+    import time
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    now = int(time.time())
+    server_id = "chat-preflight-mcp"
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute("DELETE FROM mcp_tools WHERE server_id = ?", (server_id,))
+        conn.execute("DELETE FROM mcp_servers WHERE server_id = ?", (server_id,))
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE session_id = ?",
+            ('["chat-preflight-mcp"]', "test-session"),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    insert_server(
+        DATABASE_PATH,
+        McpServer(
+            server_id=server_id,
+            name="Chat Preflight MCP",
+            type="stdio",
+            command=["uv", "run", "chat-preflight"],
+            is_active=False,
+            is_installed=True,
+            status="inactive",
+            created_at=now,
+            updated_at=now,
+        ),
+    )
+
+    started = []
+
+    async def fake_start_server(server_id_arg, workspace_dir=None, **_kwargs):
+        started.append((server_id_arg, workspace_dir))
+        return None
+
+    monkeypatch.setattr(client.app.state.mcp_engine, "start_server", fake_start_server)
+
+    response = client.post(
+        "/api/agent/chat",
+        json={"session_id": "test-session", "message": "hello"},
+    )
+
+    assert response.status_code == 200
+    assert started == [(server_id, client.app.state.agent_engine.workspace_path)]
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute("DELETE FROM mcp_servers WHERE server_id = ?", (server_id,))
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = NULL WHERE session_id = ?",
+            ("test-session",),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
+    from api.config import DATABASE_PATH
+    from tool_registry import McpServer
+    from tool_registry.db import insert_server
+    import sqlite3
+    import time
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    now = int(time.time())
+    server_id = "chat-failing-mcp"
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute("DELETE FROM mcp_tools WHERE server_id = ?", (server_id,))
+        conn.execute("DELETE FROM mcp_servers WHERE server_id = ?", (server_id,))
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE session_id = ?",
+            ('["chat-failing-mcp"]', "test-session"),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    insert_server(
+        DATABASE_PATH,
+        McpServer(
+            server_id=server_id,
+            name="Chat Failing MCP",
+            type="stdio",
+            command=["uv", "run", "chat-failing"],
+            is_active=False,
+            is_installed=True,
+            status="inactive",
+            created_at=now,
+            updated_at=now,
+        ),
+    )
+
+    async def fake_start_server(*_args, **_kwargs):
+        raise RuntimeError("missing credentials")
+
+    monkeypatch.setattr(client.app.state.mcp_engine, "start_server", fake_start_server)
+
+    response = client.post(
+        "/api/agent/chat",
+        json={"session_id": "test-session", "message": "hello"},
+    )
+
+    assert response.status_code == 503
+    assert "Failed to start workspace MCP server(s)" in response.text
+    assert "Chat Failing MCP: missing credentials" in response.text
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute("DELETE FROM mcp_servers WHERE server_id = ?", (server_id,))
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = NULL WHERE session_id = ?",
+            ("test-session",),
+        )
+        conn.commit()
+    finally:
+        conn.close()

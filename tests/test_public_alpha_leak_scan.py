@@ -45,6 +45,7 @@ def test_scan_file_ignores_documented_placeholders(tmp_path, monkeypatch) -> Non
             [
                 "LLM_API_KEY=sk-your-key-here",
                 "API_SERVER_KEY=wright-dev-key",
+                "API_SERVER_KEY=wright-local-dev-key-000000000000000000000000",
                 "password: ${{ secrets.DOCKERHUB_TOKEN }}",
                 "TOKEN=provider-token",
             ]

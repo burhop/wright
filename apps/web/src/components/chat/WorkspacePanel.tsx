@@ -9,7 +9,11 @@ import {
   type WorkspaceSidebarId,
 } from "./WorkspaceActivityBar";
 import { useChat } from "../../store/sessions";
-import { useViewerPanel } from "../../store/viewer";
+import {
+  dedupeEditorTabs,
+  normalizeEditorTabPath,
+  useViewerPanel,
+} from "../../store/viewer";
 import { viewerRegistry } from "../../services/viewer-panel/registry";
 import { PanelHostImpl } from "../../services/viewer-panel/panel-host";
 import type { FileDescriptor } from "../../services/viewer-panel/types";
@@ -45,6 +49,17 @@ interface WorkspacePanelProps {
   workspaceId?: string;
   sessionId?: string;
   onSessionChange?: (sessionId: string) => void;
+}
+
+function getSessionOptionLabel(session: {
+  title?: string | null;
+  sessionId: string;
+}): string {
+  const title =
+    typeof session.title === "string" && session.title.trim()
+      ? session.title.trim()
+      : "Untitled Session";
+  return title.length > 20 ? `${title.slice(0, 18)}...` : title;
 }
 
 export function WorkspacePanel({
@@ -144,11 +159,10 @@ export function WorkspacePanel({
     const fetchActiveAgent = async () => {
       try {
         const active = await agentService.getActiveAgent();
-        if (active === "hermes") setSelectedModel("Hermes");
-        else if (active === "openclaw") setSelectedModel("openclaw");
-        else if (active === "pi") setSelectedModel("PI");
-        else if (active === "qwen") setSelectedModel("Qwen");
-        else setSelectedModel(active);
+        if (active !== "hermes") {
+          await agentService.setActiveAgent("hermes");
+        }
+        setSelectedModel("Hermes");
       } catch (err) {
         console.error("Failed to fetch active agent from backend", err);
       }
@@ -157,12 +171,14 @@ export function WorkspacePanel({
   }, []);
 
   const handleModelChange = async (newModel: string) => {
-    setSelectedModel(newModel);
+    if (newModel !== "Hermes") {
+      setSelectedModel("Hermes");
+      return;
+    }
+
+    setSelectedModel("Hermes");
     try {
-      await agentService.setActiveAgent(
-        newModel.toLowerCase(),
-        activeSessionId,
-      );
+      await agentService.setActiveAgent("hermes", activeSessionId);
     } catch (err) {
       console.error("Failed to change active agent on backend", err);
     }
@@ -262,8 +278,10 @@ export function WorkspacePanel({
         activeSidebar,
         isSidebarCollapsed,
         isAgentCollapsed,
-        openTabs,
-        activeTabPath,
+        openTabs: dedupeEditorTabs(openTabs),
+        activeTabPath: activeTabPath
+          ? normalizeEditorTabPath(activeTabPath)
+          : null,
         leftSidebarWidth,
         rightSidebarWidth,
         expandedPaths: Array.from(expandedPaths),
@@ -293,6 +311,14 @@ export function WorkspacePanel({
     workspaceRootRef.current = workspaceRoot;
   }, [workspaceRoot]);
 
+  const selectChatSession = useCallback(
+    async (sessionId: string): Promise<void> => {
+      setError(null);
+      await selectSession(sessionId);
+    },
+    [selectSession],
+  );
+
   const bindSessionToWorkspace = useCallback(
     async (sessionId: string): Promise<string | undefined> => {
       let resolvedSessionId = sessionId;
@@ -305,7 +331,7 @@ export function WorkspacePanel({
           );
         } catch (err) {
           console.error("Failed to update workspace session association", err);
-          setError("Failed to switch workspace session");
+          setError("Failed to bind new session to workspace");
           return undefined;
         }
       }
@@ -324,11 +350,11 @@ export function WorkspacePanel({
   );
 
   // Git state
-  const [gitBranch, setGitBranch] = useState<string>("main");
-  const [gitChanges, setGitChanges] = useState<
+  const [, setGitBranch] = useState<string>("main");
+  const [, setGitChanges] = useState<
     { path: string; git_status: string; staged: boolean; file_size?: number }[]
   >([]);
-  const [gitHistory, setGitHistory] = useState<
+  const [, setGitHistory] = useState<
     {
       commit_hash: string;
       message: string;
@@ -336,9 +362,8 @@ export function WorkspacePanel({
       timestamp: number;
     }[]
   >([]);
-  const [commitMessage, setCommitMessage] = useState("");
-  const [gitLoading, setGitLoading] = useState(false);
-  const [gitError, setGitError] = useState<string | null>(null);
+  const [, setGitLoading] = useState(false);
+  const [, setGitError] = useState<string | null>(null);
   const [activeDiffFile, setActiveDiffFile] = useState<{
     path: string;
     diffText: string;
@@ -388,12 +413,13 @@ export function WorkspacePanel({
     if (!tabsInitialized.current && savedLayout?.openTabs && activeSessionId) {
       tabsInitialized.current = true;
       const syncTabs = async () => {
-        for (const tab of savedLayout.openTabs) {
+        for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
+          const tabPath = normalizeEditorTabPath(tab.path);
           const fileNode = workspaceRootRef.current
-            ? findFileInTree(workspaceRootRef.current, tab.path)
+            ? findFileInTree(workspaceRootRef.current, tabPath)
             : null;
-          const ext = tab.path.split(".").pop()?.toLowerCase() || "";
-          const name = tab.path.split("/").pop() || tab.path;
+          const ext = tabPath.split(".").pop()?.toLowerCase() || "";
+          const name = tabPath.split("/").pop() || tabPath;
           let mimeType = "text/plain";
           if (ext === "pdf") mimeType = "application/pdf";
           else if (ext === "png") mimeType = "image/png";
@@ -407,8 +433,8 @@ export function WorkspacePanel({
           else if (ext === "md" || ext === "markdown")
             mimeType = "text/markdown";
           const file: FileDescriptor = {
-            id: tab.path,
-            uri: tab.path,
+            id: tabPath,
+            uri: tabPath,
             name,
             extension: ext,
             mimeType,
@@ -418,7 +444,7 @@ export function WorkspacePanel({
           await openTab(file, "preview");
         }
         if (savedLayout.activeTabPath) {
-          setActiveTabPath(savedLayout.activeTabPath);
+          setActiveTabPath(normalizeEditorTabPath(savedLayout.activeTabPath));
         }
       };
       syncTabs();
@@ -765,44 +791,6 @@ export function WorkspacePanel({
   };
 
   // Git Action Handlers
-  const handleCommit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeSessionId || !commitMessage.trim()) return;
-    setGitLoading(true);
-    setGitError(null);
-    try {
-      await workspaceService.commitChanges(
-        activeSessionId,
-        commitMessage.trim(),
-      );
-      setCommitMessage("");
-      const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
-      setWorkspaceRoot(tree);
-      await fetchGitData();
-    } catch (err: unknown) {
-      setGitError(err instanceof Error ? err.message : "Commit failed");
-    } finally {
-      setGitLoading(false);
-    }
-  };
-
-  const handleViewDiff = async (filePath: string) => {
-    if (!activeSessionId) return;
-    setGitLoading(true);
-    setGitError(null);
-    try {
-      const diffText = await workspaceService.getGitDiff(
-        activeSessionId,
-        filePath,
-      );
-      setActiveDiffFile({ path: filePath, diffText });
-    } catch (err: unknown) {
-      setGitError(err instanceof Error ? err.message : "Failed to view diff");
-    } finally {
-      setGitLoading(false);
-    }
-  };
-
   const handleRevert = async (filePath: string) => {
     if (!activeSessionId) return;
     if (!confirm(`Are you sure you want to revert changes in ${filePath}?`))
@@ -929,7 +917,18 @@ export function WorkspacePanel({
   };
 
   const handleCloseTab = (path: string) => {
+    const normalizedPath = normalizeEditorTabPath(path);
+    const remainingTabs = openTabs.filter((tab) => tab.path !== normalizedPath);
     closeTab(path);
+
+    if (remainingTabs.length === 0) {
+      setIsInspectorOpen(false);
+      setIsUnresponsive(false);
+      setActiveDiffFile(null);
+      if (viewerContainerRef.current) {
+        viewerContainerRef.current.replaceChildren();
+      }
+    }
   };
 
   const handleSelectTab = (path: string) => {
@@ -1137,9 +1136,9 @@ export function WorkspacePanel({
                 title="Select LLM Model"
               >
                 <option value="Hermes">Hermes (Active)</option>
-                <option value="Qwen">Qwen</option>
-                <option value="openclaw">openclaw</option>
-                <option value="PI">PI</option>
+                <option value="OpenClaw" disabled>
+                  OpenClaw
+                </option>
               </select>
 
               <select
@@ -1148,7 +1147,7 @@ export function WorkspacePanel({
                 onChange={async (e) => {
                   const newSessId = e.target.value;
                   if (newSessId) {
-                    await bindSessionToWorkspace(newSessId);
+                    await selectChatSession(newSessId);
                   }
                 }}
                 style={{
@@ -1177,9 +1176,7 @@ export function WorkspacePanel({
                       value={session.sessionId}
                       data-testid={`session-${session.sessionId}`}
                     >
-                      {session.title.length > 20
-                        ? `${session.title.slice(0, 18)}...`
-                        : session.title}
+                      {getSessionOptionLabel(session)}
                     </option>
                   ))
                 )}
@@ -1189,7 +1186,10 @@ export function WorkspacePanel({
               <button
                 data-testid="create-session-btn"
                 onClick={async () => {
-                  const newId = await createSession(workspacePath);
+                  const newId = await createSession(
+                    workspacePath,
+                    _workspaceId,
+                  );
                   if (newId) {
                     await bindSessionToWorkspace(newId);
                   }
@@ -1318,6 +1318,7 @@ export function WorkspacePanel({
         style={{
           backgroundColor: "var(--color-surface)",
           borderRight: "1px solid var(--color-border)",
+          gridColumn: "2",
           display: isSidebarCollapsed ? "none" : "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -1534,7 +1535,15 @@ export function WorkspacePanel({
 
         {activeSidebar === "git" && (
           <div
-            style={{ display: "flex", flexDirection: "column", height: "100%" }}
+            data-testid="git-panel-coming-soon"
+            aria-disabled="true"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              pointerEvents: "none",
+              opacity: 0.72,
+            }}
           >
             <div
               style={{
@@ -1552,422 +1561,35 @@ export function WorkspacePanel({
             <div
               style={{
                 flex: 1,
-                overflowY: "auto",
-                padding: "var(--space-md)",
-                fontSize: "0.75rem",
-                textAlign: "left",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "var(--space-sm)",
+                padding: "var(--space-lg)",
+                textAlign: "center",
+                color: "var(--color-secondary)",
               }}
             >
               <div
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "var(--space-xs)",
-                  marginBottom: "var(--space-md)",
-                  backgroundColor: "var(--color-surface-subtle)",
-                  padding: "var(--space-sm)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.75rem",
+                  fontWeight: "700",
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                  color: "var(--color-primary)",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span style={{ fontWeight: "600" }}>
-                    Branch: 🌿 {gitBranch}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "var(--space-xs)",
-                    marginTop: "2px",
-                  }}
-                >
-                  <button
-                    data-testid="git-new-branch-btn"
-                    onClick={async () => {
-                      const name = prompt("Enter new branch name:");
-                      if (!name || !name.trim()) return;
-                      if (!activeSessionId) return;
-                      setGitLoading(true);
-                      try {
-                        await workspaceService.checkoutBranch(
-                          activeSessionId,
-                          name.trim(),
-                          true,
-                        );
-                        alert(`Created and switched to branch: ${name}`);
-                        await fetchGitData();
-                      } catch (err: any) {
-                        alert(err.message || "Failed to create branch");
-                      } finally {
-                        setGitLoading(false);
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      backgroundColor: "var(--color-surface)",
-                      border: "1px solid var(--color-border)",
-                      padding: "3px",
-                      cursor: "pointer",
-                      fontSize: "0.65rem",
-                      borderRadius: "var(--radius-sm)",
-                      fontWeight: "600",
-                      color: "var(--color-primary)",
-                    }}
-                  >
-                    New Branch
-                  </button>
-                  <button
-                    data-testid="git-merge-btn"
-                    onClick={async () => {
-                      const name = prompt(
-                        "Enter branch name to merge into current branch:",
-                      );
-                      if (!name || !name.trim()) return;
-                      if (!activeSessionId) return;
-                      setGitLoading(true);
-                      try {
-                        const res = await workspaceService.mergeBranch(
-                          activeSessionId,
-                          name.trim(),
-                        );
-                        alert(res.message || "Branch merged successfully");
-                        await fetchGitData();
-                      } catch (err: any) {
-                        alert(err.message || "Failed to merge branch");
-                      } finally {
-                        setGitLoading(false);
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      backgroundColor: "var(--color-surface)",
-                      border: "1px solid var(--color-border)",
-                      padding: "3px",
-                      cursor: "pointer",
-                      fontSize: "0.65rem",
-                      borderRadius: "var(--radius-sm)",
-                      fontWeight: "600",
-                      color: "var(--color-primary)",
-                    }}
-                  >
-                    Merge
-                  </button>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "var(--space-xs)",
-                    marginTop: "2px",
-                  }}
-                >
-                  <button
-                    data-testid="git-pull-btn"
-                    onClick={async () => {
-                      setGitLoading(true);
-                      try {
-                        await handlePull();
-                      } catch (err) {
-                        // Handled inside handlePull
-                      } finally {
-                        setGitLoading(false);
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      backgroundColor: "var(--color-surface)",
-                      border: "1px solid var(--color-border)",
-                      padding: "3px",
-                      cursor: "pointer",
-                      fontSize: "0.65rem",
-                      borderRadius: "var(--radius-sm)",
-                      fontWeight: "600",
-                      color: "var(--color-primary)",
-                    }}
-                  >
-                    Pull
-                  </button>
-                  <button
-                    data-testid="git-push-btn"
-                    onClick={async () => {
-                      setGitLoading(true);
-                      try {
-                        await handlePush();
-                      } catch (err) {
-                        // Handled inside handlePush
-                      } finally {
-                        setGitLoading(false);
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      backgroundColor: "var(--color-surface)",
-                      border: "1px solid var(--color-border)",
-                      padding: "3px",
-                      cursor: "pointer",
-                      fontSize: "0.65rem",
-                      borderRadius: "var(--radius-sm)",
-                      fontWeight: "600",
-                      color: "var(--color-primary)",
-                    }}
-                  >
-                    Push
-                  </button>
-                </div>
+                Coming soon
               </div>
-
-              {gitError && (
-                <div
-                  style={{
-                    color: "var(--color-error)",
-                    fontSize: "0.7rem",
-                    marginBottom: "var(--space-sm)",
-                  }}
-                >
-                  ⚠️ {gitError}
-                </div>
-              )}
-
-              <form
-                onSubmit={handleCommit}
+              <div
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "var(--space-xs)",
-                  marginBottom: "var(--space-md)",
+                  maxWidth: "220px",
+                  fontSize: "0.75rem",
+                  lineHeight: 1.45,
                 }}
               >
-                <input
-                  type="text"
-                  placeholder="Commit message..."
-                  value={commitMessage}
-                  onChange={(e) => setCommitMessage(e.target.value)}
-                  style={{
-                    backgroundColor: "var(--color-surface-subtle)",
-                    color: "var(--color-primary)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-sm)",
-                    padding: "4px var(--space-sm)",
-                    fontSize: "0.75rem",
-                    outline: "none",
-                  }}
-                />
-                <button
-                  type="submit"
-                  disabled={
-                    gitLoading ||
-                    gitChanges.length === 0 ||
-                    !commitMessage.trim()
-                  }
-                  style={{
-                    backgroundColor: "var(--color-secondary)",
-                    color: "var(--color-surface-subtle)",
-                    border: "none",
-                    borderRadius: "var(--radius-sm)",
-                    padding: "5px",
-                    cursor: "pointer",
-                    fontWeight: "600",
-                    fontSize: "0.7rem",
-                    opacity:
-                      gitChanges.length === 0 || !commitMessage.trim()
-                        ? 0.6
-                        : 1,
-                  }}
-                >
-                  Commit Changes
-                </button>
-              </form>
-
-              {/* Git Changes List */}
-              <div style={{ marginBottom: "var(--space-md)" }}>
-                <div style={{ fontWeight: "600", marginBottom: "4px" }}>
-                  Changes ({gitChanges.length})
-                </div>
-                {gitChanges.length === 0 ? (
-                  <div style={{ fontSize: "0.7rem", opacity: 0.7 }}>
-                    No unstaged changes.
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                    }}
-                  >
-                    {gitChanges.map((c) => {
-                      const isOversized =
-                        c.file_size &&
-                        c.file_size > gitLargeFileThreshold * 1024 * 1024;
-                      return (
-                        <div
-                          key={c.path}
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "2px",
-                            padding: "6px",
-                            backgroundColor: "var(--color-surface-subtle)",
-                            border: `1px solid ${isOversized ? "var(--color-error)" : "var(--color-border)"}`,
-                            borderRadius: "var(--radius-xs)",
-                            fontSize: "0.7rem",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <span
-                              style={{
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                maxWidth: "150px",
-                              }}
-                              title={c.path}
-                            >
-                              <strong style={{ marginRight: "6px" }}>
-                                {c.git_status}
-                              </strong>
-                              {c.path}
-                            </span>
-                            <div style={{ display: "flex", gap: "2px" }}>
-                              <button
-                                onClick={() => handleViewDiff(c.path)}
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  fontSize: "0.75rem",
-                                  color: "var(--color-primary)",
-                                }}
-                                title="View Diff"
-                              >
-                                🔍
-                              </button>
-                              <button
-                                onClick={() => handleRevert(c.path)}
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  fontSize: "0.75rem",
-                                  color: "var(--color-error)",
-                                }}
-                                title="Revert File"
-                              >
-                                ⎌
-                              </button>
-                            </div>
-                          </div>
-
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              marginTop: "2px",
-                            }}
-                          >
-                            <span
-                              style={{
-                                fontSize: "0.6rem",
-                                color: "var(--color-secondary)",
-                              }}
-                            >
-                              {c.file_size
-                                ? `${(c.file_size / (1024 * 1024)).toFixed(2)} MB`
-                                : "unknown size"}
-                            </span>
-                            {isOversized && (
-                              <span
-                                style={{
-                                  backgroundColor: "rgba(239, 68, 68, 0.15)",
-                                  color: "var(--color-error)",
-                                  padding: "1px 4px",
-                                  borderRadius: "2px",
-                                  fontSize: "0.55rem",
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                ⚠️ OVERSIZED (&gt;{gitLargeFileThreshold}MB)
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Git History List */}
-              <div style={{ marginTop: "var(--space-md)" }}>
-                <div style={{ fontWeight: "600", marginBottom: "4px" }}>
-                  History ({gitHistory.length})
-                </div>
-                {gitHistory.length === 0 ? (
-                  <div style={{ fontSize: "0.7rem", opacity: 0.7 }}>
-                    No commits found.
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                      maxHeight: "150px",
-                      overflowY: "auto",
-                    }}
-                  >
-                    {gitHistory.map((h) => (
-                      <div
-                        key={h.commit_hash}
-                        style={{
-                          padding: "4px",
-                          backgroundColor: "var(--color-surface-subtle)",
-                          borderRadius: "var(--radius-xs)",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "2px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            fontSize: "0.6rem",
-                            opacity: 0.7,
-                          }}
-                        >
-                          <span>👤 {h.author}</span>
-                          <span style={{ fontFamily: "monospace" }}>
-                            {h.commit_hash.substring(0, 7)}
-                          </span>
-                        </div>
-                        <span
-                          style={{
-                            fontWeight: "500",
-                            color: "var(--color-primary)",
-                            fontSize: "0.7rem",
-                          }}
-                        >
-                          {h.message}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                Git controls are disabled while this workflow is being finished.
               </div>
             </div>
           </div>
@@ -2315,35 +1937,83 @@ export function WorkspacePanel({
                 gap: "var(--space-md)",
               }}
             >
-              <div
-                style={{
-                  borderBottom: "1px solid var(--color-border)",
-                  paddingBottom: "var(--space-sm)",
-                }}
-              >
-                <h4
+              {[
+                {
+                  title: "Start Here",
+                  body: "Use these references when you need install help, Hermes plugin details, or MCP tool guidance.",
+                  links: [
+                    [
+                      "Wright quickstart",
+                      "https://github.com/burhop/wright/blob/dev/docs/getting-started/quickstart-local.md",
+                    ],
+                    [
+                      "Hermes plugin guide",
+                      "https://github.com/burhop/wright/blob/dev/docs/getting-started/hermes-plugin.md",
+                    ],
+                    [
+                      "Hermes desktop notes",
+                      "https://github.com/burhop/wright/blob/dev/docs/hermes-desktop-wright.md",
+                    ],
+                    [
+                      "MCP tools catalog",
+                      "https://github.com/burhop/wright/blob/dev/docs/mcp-catalog/tools-list.md",
+                    ],
+                  ],
+                },
+              ].map((section) => (
+                <div
+                  key={section.title}
                   style={{
-                    fontWeight: 600,
-                    fontSize: "0.85rem",
-                    color: "var(--color-secondary)",
+                    borderBottom: "1px solid var(--color-border)",
+                    paddingBottom: "var(--space-sm)",
                   }}
                 >
-                  💡 Customizing Hermes Prompt
-                </h4>
-                <p
-                  style={{
-                    marginTop: "4px",
-                    fontSize: "0.7rem",
-                    color: "var(--color-secondary)",
-                    lineHeight: "1.4",
-                  }}
-                >
-                  Use the <strong>Workspace Settings</strong> tab to supply
-                  custom context prompt overlays. This context is synced
-                  immediately with the local `.hermes.md` file and injected into
-                  Hermes's environment for specialized code generations.
-                </p>
-              </div>
+                  <h4
+                    style={{
+                      margin: 0,
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    {section.title}
+                  </h4>
+                  <p
+                    style={{
+                      margin: "6px 0",
+                      fontSize: "0.7rem",
+                      color: "var(--color-secondary)",
+                      lineHeight: "1.4",
+                    }}
+                  >
+                    {section.body}
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
+                    {section.links.map(([label, href]) => (
+                      <a
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          color: "var(--color-secondary)",
+                          textDecoration: "underline",
+                          textUnderlineOffset: "2px",
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
 
               <div
                 style={{
@@ -2353,50 +2023,96 @@ export function WorkspacePanel({
               >
                 <h4
                   style={{
+                    margin: 0,
                     fontWeight: 600,
                     fontSize: "0.85rem",
                     color: "var(--color-secondary)",
                   }}
                 >
-                  🌿 Managing Branches & Merges
+                  Suggested Prompts
                 </h4>
                 <p
                   style={{
-                    marginTop: "4px",
+                    margin: "6px 0",
                     fontSize: "0.7rem",
                     color: "var(--color-secondary)",
                     lineHeight: "1.4",
                   }}
                 >
-                  To create a new workspace task branch, use the{" "}
-                  <strong>New Branch</strong> button. Check out or switch
-                  branches seamlessly. Use the <strong>Merge</strong> tool to
-                  consolidate branch features into your active branch context.
+                  Send one of these to Hermes to bootstrap the current workspace
+                  context.
                 </p>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                  }}
+                >
+                  {[
+                    [
+                      "Explain this workspace",
+                      "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
+                    ],
+                    [
+                      "Check available CAD tools",
+                      "List the MCP tools available in this session and explain which ones are useful for Onshape CAD creation, inspection, rendering, and export.",
+                    ],
+                    [
+                      "Plan the next CAD step",
+                      "Review the active design/specification files and propose a concise next-step plan before making any CAD changes.",
+                    ],
+                  ].map(([label, prompt]) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => sendMessage(prompt)}
+                      disabled={!activeSessionId || state.isStreaming}
+                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        color: "var(--color-primary)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-sm)",
+                        padding: "6px 8px",
+                        fontSize: "0.7rem",
+                        fontWeight: 600,
+                        textAlign: "left",
+                        cursor:
+                          !activeSessionId || state.isStreaming
+                            ? "not-allowed"
+                            : "pointer",
+                        opacity:
+                          !activeSessionId || state.isStreaming ? 0.55 : 1,
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
                 <h4
                   style={{
+                    margin: 0,
                     fontWeight: 600,
                     fontSize: "0.85rem",
                     color: "var(--color-secondary)",
                   }}
                 >
-                  🛠 Active MCP Tools integration
+                  Workspace Notes
                 </h4>
                 <p
                   style={{
-                    marginTop: "4px",
+                    margin: "6px 0 0",
                     fontSize: "0.7rem",
                     color: "var(--color-secondary)",
                     lineHeight: "1.4",
                   }}
                 >
-                  Ensure you enable required MCP tools under the{" "}
-                  <strong>MCP Tools Selector</strong> tab. Toggled tools are
-                  dynamically exposed to the Hermes session prompt for real-time
-                  model interactions.
+                  Workspace Settings can add persistent context for Hermes. MCP
+                  tools can be enabled from the MCP Tools Selector and are then
+                  exposed to the active Hermes session.
                 </p>
               </div>
             </div>
@@ -2409,6 +2125,7 @@ export function WorkspacePanel({
         <div
           data-testid="left-resize-handle"
           style={{
+            gridColumn: "3",
             width: "4px",
             cursor: "col-resize",
             backgroundColor: isLeftDragging
@@ -2431,6 +2148,7 @@ export function WorkspacePanel({
       {/* 3. Central Tabbed Editor View */}
       <div
         style={{
+          gridColumn: "4",
           display: "flex",
           flexDirection: "column",
           backgroundColor: "var(--color-neutral)",
@@ -2438,47 +2156,49 @@ export function WorkspacePanel({
           position: "relative",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            backgroundColor: "var(--color-neutral-dark, #121212)",
-            paddingRight: "var(--space-md, 12px)",
-          }}
-        >
-          <div style={{ flex: 1, overflow: "hidden" }}>
-            <EditorTabs
-              tabs={openTabs}
-              activeTabPath={activeTabPath}
-              onSelectTab={handleSelectTab}
-              onCloseTab={handleCloseTab}
-            />
+        {openTabs.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              backgroundColor: "var(--color-neutral-dark, #121212)",
+              paddingRight: "var(--space-md, 12px)",
+            }}
+          >
+            <div style={{ flex: 1, overflow: "hidden" }}>
+              <EditorTabs
+                tabs={openTabs}
+                activeTabPath={activeTabPath}
+                onSelectTab={handleSelectTab}
+                onCloseTab={handleCloseTab}
+              />
+            </div>
+            {activeTabPath && (
+              <button
+                data-testid="viewer-inspector-toggle"
+                onClick={() => setIsInspectorOpen(!isInspectorOpen)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: isInspectorOpen
+                    ? "var(--color-secondary, #aaaaaa)"
+                    : "var(--color-primary, #ffffff)",
+                  opacity: 0.7,
+                  cursor: "pointer",
+                  padding: "8px",
+                  fontSize: "0.9rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                title="Inspect Viewer Details"
+              >
+                🔍
+              </button>
+            )}
           </div>
-          {activeTabPath && (
-            <button
-              data-testid="viewer-inspector-toggle"
-              onClick={() => setIsInspectorOpen(!isInspectorOpen)}
-              style={{
-                background: "none",
-                border: "none",
-                color: isInspectorOpen
-                  ? "var(--color-secondary, #aaaaaa)"
-                  : "var(--color-primary, #ffffff)",
-                opacity: 0.7,
-                cursor: "pointer",
-                padding: "8px",
-                fontSize: "0.9rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              title="Inspect Viewer Details"
-            >
-              🔍
-            </button>
-          )}
-        </div>
+        )}
 
         <div
           style={{
@@ -2616,7 +2336,7 @@ export function WorkspacePanel({
                         data-testid="watchdog-close"
                         onClick={() => {
                           if (activeTabPath) {
-                            closeTab(activeTabPath);
+                            handleCloseTab(activeTabPath);
                           }
                         }}
                         style={{
@@ -2640,7 +2360,10 @@ export function WorkspacePanel({
           ) : (
             /* Welcome / landing screen when no tabs are open */
             <div
+              data-testid="workspace-empty-state"
               style={{
+                flex: 1,
+                width: "100%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -2754,6 +2477,7 @@ export function WorkspacePanel({
         <div
           data-testid="right-resize-handle"
           style={{
+            gridColumn: "5",
             width: "4px",
             cursor: "col-resize",
             backgroundColor: isRightDragging
@@ -2779,6 +2503,7 @@ export function WorkspacePanel({
         style={{
           backgroundColor: "var(--color-surface)",
           borderLeft: "1px solid var(--color-border)",
+          gridColumn: "6",
           display: isAgentCollapsed ? "none" : "flex",
           flexDirection: "column",
           overflow: "hidden",
@@ -2860,9 +2585,9 @@ export function WorkspacePanel({
               title="Select LLM Model"
             >
               <option value="Hermes">Hermes (Active)</option>
-              <option value="Qwen">Qwen</option>
-              <option value="openclaw">openclaw</option>
-              <option value="PI">PI</option>
+              <option value="OpenClaw" disabled>
+                OpenClaw
+              </option>
             </select>
 
             <select
@@ -2871,7 +2596,7 @@ export function WorkspacePanel({
               onChange={async (e) => {
                 const newSessId = e.target.value;
                 if (newSessId) {
-                  await bindSessionToWorkspace(newSessId);
+                  await selectChatSession(newSessId);
                 }
               }}
               style={{
@@ -2900,9 +2625,7 @@ export function WorkspacePanel({
                     value={session.sessionId}
                     data-testid={`session-${session.sessionId}`}
                   >
-                    {session.title.length > 20
-                      ? `${session.title.slice(0, 18)}...`
-                      : session.title}
+                    {getSessionOptionLabel(session)}
                   </option>
                 ))
               )}
@@ -2912,7 +2635,7 @@ export function WorkspacePanel({
             <button
               data-testid="create-session-btn"
               onClick={async () => {
-                const newId = await createSession(workspacePath);
+                const newId = await createSession(workspacePath, _workspaceId);
                 if (newId) {
                   await bindSessionToWorkspace(newId);
                 }
@@ -2982,6 +2705,7 @@ export function WorkspacePanel({
               isStreaming={state.isStreaming}
               streamedText={state.streamedText}
               activeTool={state.activeTool}
+              streamActivity={state.streamActivity}
               onOpenFile={handleFileClick}
               activeSessionId={activeSessionId || undefined}
               workspacePath={workspacePath || undefined}

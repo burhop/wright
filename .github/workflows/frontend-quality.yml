@@ -109,7 +109,7 @@ jobs:
           exit 1
 
       - name: Run Playwright tests
-        run: npx playwright test
+        run: PLAYWRIGHT_INCLUDE_LIVE=1 npx playwright test
 
       - name: Upload server logs
         if: always()

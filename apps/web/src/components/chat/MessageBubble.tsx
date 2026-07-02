@@ -25,6 +25,10 @@ const getApiBase = () => {
  * Preprocesses message content by isolating code blocks and wrapping URLs
  * and file paths in the non-code segments with markdown link syntax.
  */
+function stripWorkspaceContext(content: string): string {
+  return content.replace(/^\[Workspace::v1:[^\]]*(?:\]\s*)?/, "");
+}
+
 function preprocessContent(
   content: string,
   activeSessionId?: string,
@@ -64,6 +68,13 @@ function preprocessContent(
       ) => {
         if (mediaToken) {
           const mediaPath = mediaToken.substring(6); // Strip "MEDIA:"
+          if (
+            mediaPath.startsWith("http://") ||
+            mediaPath.startsWith("https://")
+          ) {
+            return `![Rendered Image](${mediaPath})`;
+          }
+
           let cleanPath = mediaPath;
           if (workspacePath && mediaPath.startsWith(workspacePath)) {
             cleanPath = mediaPath.slice(workspacePath.length);
@@ -132,9 +143,10 @@ export function MessageBubble({
   workspacePath,
 }: MessageBubbleProps) {
   const isUser = message.role === "user";
+  const displayContent = stripWorkspaceContext(message.content);
   const processedContent = isUser
-    ? message.content
-    : preprocessContent(message.content, activeSessionId, workspacePath);
+    ? displayContent
+    : preprocessContent(displayContent, activeSessionId, workspacePath);
 
   return (
     <div
@@ -145,11 +157,15 @@ export function MessageBubble({
         alignItems: isUser ? "flex-end" : "flex-start",
         gap: "var(--space-xs)",
         width: "100%",
+        minWidth: 0,
       }}
     >
       <div
         style={{
-          maxWidth: "80%",
+          width: isUser ? "fit-content" : "100%",
+          maxWidth: isUser ? "80%" : "100%",
+          minWidth: 0,
+          boxSizing: "border-box",
           padding: "var(--space-md) var(--space-lg)",
           borderRadius: "var(--radius-lg)",
           backgroundColor: isUser
@@ -169,10 +185,21 @@ export function MessageBubble({
             fontFamily: "var(--font-body)",
             fontSize: "0.8rem",
             lineHeight: "1.4",
+            minWidth: 0,
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
           }}
         >
           {isUser ? (
-            <div style={{ whiteSpace: "pre-wrap" }}>{processedContent}</div>
+            <div
+              style={{
+                whiteSpace: "pre-wrap",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}
+            >
+              {processedContent}
+            </div>
           ) : (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -189,6 +216,22 @@ export function MessageBubble({
                 return isSafe ? url : "#";
               }}
               components={{
+                img: ({ src, alt, ...props }) => (
+                  <img
+                    src={src || ""}
+                    alt={alt || "Rendered Image"}
+                    {...props}
+                    style={{
+                      display: "block",
+                      maxWidth: "100%",
+                      maxHeight: "420px",
+                      objectFit: "contain",
+                      borderRadius: "var(--radius-md)",
+                      border: "1px solid var(--color-border)",
+                      marginTop: "var(--space-sm)",
+                    }}
+                  />
+                ),
                 a: ({ href, children, ...props }) => {
                   if (href && href.startsWith("file://")) {
                     let filePath = href.substring(7);
@@ -215,6 +258,11 @@ export function MessageBubble({
                           padding: 0,
                           font: "inherit",
                           display: "inline",
+                          maxWidth: "100%",
+                          whiteSpace: "normal",
+                          overflowWrap: "anywhere",
+                          wordBreak: "break-word",
+                          textAlign: "left",
                         }}
                         title={`Open ${filePath}`}
                       >
@@ -260,11 +308,6 @@ export function MessageBubble({
           }}
         >
           <span>{new Date(message.timestamp).toLocaleTimeString()}</span>
-          {message.traceId && (
-            <span style={{ opacity: 0.7 }}>
-              ID: {message.traceId.slice(0, 8)}
-            </span>
-          )}
         </div>
       </div>
     </div>

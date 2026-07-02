@@ -13,7 +13,7 @@ def test_plugin_manifest_supports_current_hermes_agent():
 
     assert manifest["name"] == "wright"
     assert "commands" in manifest["capabilities"]
-    assert Version(manifest["min_hermes_version"]) <= Version("0.17.0")
+    assert Version(manifest["min_hermes_version"]) == Version("0.18.0")
 
 
 def test_flat_directory_plugin_load_registers_wright_command(monkeypatch):
@@ -44,3 +44,17 @@ def test_flat_directory_plugin_load_registers_wright_command(monkeypatch):
         for name in list(sys.modules):
             if name.startswith("hermes_plugin_wright."):
                 sys.modules.pop(name, None)
+
+
+def test_plugin_dependency_policy_is_mirror_release_ready():
+    try:
+        import tomllib
+    except ModuleNotFoundError:  # pragma: no cover
+        import tomli as tomllib
+
+    pyproject_path = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    with pyproject_path.open("rb") as fh:
+        project = tomllib.load(fh)["project"]
+
+    deps = project["dependencies"]
+    assert any(dep.startswith("wright-tool-registry>=") and ",<" in dep for dep in deps)

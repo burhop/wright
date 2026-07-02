@@ -183,8 +183,12 @@ async def test_hermes_adapter_stream_chat_success():
         patch.object(
             adapter, "get_chat_history", new_callable=AsyncMock
         ) as mock_history,
+        patch.object(
+            adapter, "_generated_image_media_token_for_turn", new_callable=AsyncMock
+        ) as mock_media_token,
     ):
         mock_history.return_value = []
+        mock_media_token.return_value = None
         events = []
         async for event in adapter.stream_chat(req):
             events.append(event)
@@ -196,6 +200,224 @@ async def test_hermes_adapter_stream_chat_success():
         assert events[1].data == {"tool": "development", "status": "running"}
         assert events[2].type == "stream_end"
         assert events[2].data == {}
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_stream_chat_surfaces_error_chunk():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_sse = MagicMock()
+    mock_sse.event = "message"
+    mock_sse.data = (
+        '{"choices": [{"index": 0, "delta": {}, '
+        '"finish_reason": "error"}], '
+        '"error": {"message": '
+        '"HTTP 404: The model qwen36-35b-moe does not exist."}, '
+        '"hermes": {"failed": true}}'
+    )
+
+    async def mock_aiter_sse():
+        yield mock_sse
+
+    mock_event_source = MagicMock()
+    mock_event_source.aiter_sse = mock_aiter_sse
+    mock_event_source.response = MagicMock()
+    mock_event_source.response.raise_for_status = MagicMock()
+
+    class MockAconnectSse:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return mock_event_source
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    req = AgentChatRequest(session_id="session123", message="Hello")
+
+    with (
+        patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse),
+        patch.object(
+            adapter, "get_chat_history", new_callable=AsyncMock
+        ) as mock_history,
+        patch.object(
+            adapter, "get_session_workspace", new_callable=AsyncMock
+        ) as mock_workspace,
+        patch.object(
+            adapter, "_generated_image_media_token_for_turn", new_callable=AsyncMock
+        ) as mock_media_token,
+    ):
+        mock_history.return_value = []
+        mock_workspace.return_value = None
+        mock_media_token.return_value = None
+        events = []
+        async for event in adapter.stream_chat(req):
+            events.append(event)
+
+        assert len(events) == 1
+        assert events[0].type == "error"
+        assert events[0].data == {
+            "message": "HTTP 404: The model qwen36-35b-moe does not exist."
+        }
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_stream_chat_rejects_empty_done():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_sse = MagicMock()
+    mock_sse.event = "message"
+    mock_sse.data = "[DONE]"
+
+    async def mock_aiter_sse():
+        yield mock_sse
+
+    mock_event_source = MagicMock()
+    mock_event_source.aiter_sse = mock_aiter_sse
+    mock_event_source.response = MagicMock()
+    mock_event_source.response.raise_for_status = MagicMock()
+
+    class MockAconnectSse:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return mock_event_source
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    req = AgentChatRequest(session_id="session123", message="Hello")
+
+    with (
+        patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse),
+        patch.object(
+            adapter, "get_chat_history", new_callable=AsyncMock
+        ) as mock_history,
+        patch.object(
+            adapter, "get_session_workspace", new_callable=AsyncMock
+        ) as mock_workspace,
+        patch.object(
+            adapter, "_generated_image_media_token_for_turn", new_callable=AsyncMock
+        ) as mock_media_token,
+    ):
+        mock_history.return_value = []
+        mock_workspace.return_value = None
+        mock_media_token.return_value = None
+        events = []
+        async for event in adapter.stream_chat(req):
+            events.append(event)
+
+        assert len(events) == 1
+        assert events[0].type == "error"
+        assert events[0].data == {
+            "message": "Hermes ended the chat turn without returning a response."
+        }
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_finds_generated_image_media_token_for_turn():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_response = MagicMock()
+    mock_response.json.return_value = {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Make a studio rendering",
+                "timestamp": 1780423800.0,
+            },
+            {
+                "role": "tool",
+                "tool_name": "image_generate",
+                "content": (
+                    '{"success": true, '
+                    '"image": "https://cdn.example/render.png", '
+                    '"host_image": "/home/burhop/.hermes/cache/render.png"}'
+                ),
+                "timestamp": 1780423805.0,
+            },
+            {
+                "role": "assistant",
+                "content": "Here is the rendering.",
+                "timestamp": 1780423806.0,
+            },
+        ]
+    }
+
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
+        mock_request.return_value = mock_response
+
+        token = await adapter._generated_image_media_token_for_turn(
+            session_id="session123",
+            user_message="Make a studio rendering",
+            turn_started_ms=1780423799000,
+            assistant_text="Here is the rendering.",
+        )
+
+    assert token == "MEDIA:https://cdn.example/render.png"
+    mock_request.assert_called_once_with(
+        "GET",
+        "/api/sessions/session123/messages",
+        timeout=5.0,
+    )
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_copies_local_generated_image_into_workspace(tmp_path):
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+    source_image = tmp_path / "cache" / "codex-render.png"
+    source_image.parent.mkdir()
+    source_image.write_bytes(b"png-bytes")
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+
+    with patch.object(
+        adapter, "get_session_workspace", new_callable=AsyncMock
+    ) as mock_workspace:
+        mock_workspace.return_value = str(workspace)
+
+        source = await adapter._wright_display_source_for_generated_image(
+            "session123", [str(source_image)]
+        )
+
+    assert source == "/renders/codex-render.png"
+    assert (workspace / "renders" / "codex-render.png").read_bytes() == b"png-bytes"
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_skips_generated_image_media_token_when_text_already_has_it():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_response = MagicMock()
+    mock_response.json.return_value = {
+        "messages": [
+            {"role": "user", "content": "Make a rendering", "timestamp": 1},
+            {
+                "role": "tool",
+                "tool_name": "image_generate",
+                "content": '{"success": true, "image": "https://cdn.example/render.png"}',
+                "timestamp": 2,
+            },
+        ]
+    }
+
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
+        mock_request.return_value = mock_response
+
+        token = await adapter._generated_image_media_token_for_turn(
+            session_id="session123",
+            user_message="Make a rendering",
+            turn_started_ms=0,
+            assistant_text="![Generated](https://cdn.example/render.png)",
+        )
+
+    assert token is None
 
 
 @pytest.mark.asyncio
@@ -280,3 +502,68 @@ async def test_hermes_adapter_create_session_with_instructions():
             },
             timeout=10.0,
         )
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_get_chat_history_filters_internal_and_tool_payloads():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "messages": [
+            {
+                "id": "system-1",
+                "role": "system",
+                "content": "system prompt",
+                "timestamp": 1000,
+            },
+            {
+                "id": "user-1",
+                "role": "user",
+                "content": "[Workspace::v1: /home/burhop/wright/onshape] hello.",
+                "timestamp": 1001,
+            },
+            {
+                "id": "assistant-empty",
+                "role": "assistant",
+                "content": "",
+                "timestamp": 1002,
+            },
+            {
+                "id": "tool-result",
+                "role": "assistant",
+                "content": '{"bytes_written": 21769, "dirs_created": true, "status": "skipped"}',
+                "timestamp": 1003,
+            },
+            {
+                "id": "tool-role",
+                "role": "tool",
+                "content": "raw tool role payload",
+                "timestamp": 1004,
+            },
+            {
+                "id": "assistant-1",
+                "role": "assistant",
+                "content": "Done. I created the file.",
+                "timestamp": 1005,
+            },
+        ]
+    }
+
+    with patch.object(
+        adapter, "_request_with_fallback", new_callable=AsyncMock
+    ) as mock_request:
+        mock_request.return_value = mock_response
+
+        history = await adapter.get_chat_history("session-1")
+
+    assert [(message.role, message.content) for message in history] == [
+        ("user", "hello."),
+        ("assistant", "Done. I created the file."),
+    ]
+    mock_request.assert_called_once_with(
+        "GET",
+        "/api/sessions/session-1/messages",
+        timeout=10.0,
+    )

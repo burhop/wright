@@ -39,6 +39,7 @@ class EnvVarDefinition(BaseModel):
     """Metadata about an environment variable an MCP server needs.
     Matches tool_registry.models.EnvVarDefinition exactly.
     """
+
     name: str
     label: str
     description: str = ""
@@ -48,6 +49,7 @@ class EnvVarDefinition(BaseModel):
 
 class DependencySpec(BaseModel):
     """Dependencies required to run the MCP server."""
+
     system: List[str] = Field(default_factory=list)
     python: List[str] = Field(default_factory=list)
     node: List[str] = Field(default_factory=list)
@@ -67,14 +69,12 @@ class ValidationSummary(BaseModel):
 
 
 def default_platform_support() -> dict[str, PlatformSupportRecord]:
-    return {
-        key: PlatformSupportRecord()
-        for key in REQUIRED_PLATFORM_KEYS
-    }
+    return {key: PlatformSupportRecord() for key in REQUIRED_PLATFORM_KEYS}
 
 
 class CatalogEntry(BaseModel):
     """A registered engineering MCP server in the catalog."""
+
     id: str
     name: str
     vendor: str

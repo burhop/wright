@@ -2,6 +2,7 @@ import os
 import time
 import json
 import re
+import shutil
 from pathlib import Path
 from typing import Any, AsyncIterator
 import httpx
@@ -79,6 +80,117 @@ def _load_mapping_file(path: str | None) -> dict[str, Any]:
         return loaded if isinstance(loaded, dict) else {}
     except Exception:
         return {}
+
+
+def _strip_workspace_context(content: str) -> str:
+    return re.sub(r"^\[Workspace::v1: [^\]]+\]\s*", "", content or "")
+
+
+def _looks_like_tool_result_payload(content: str) -> bool:
+    text = (content or "").strip()
+    if not text or not text.startswith(("{", "[")):
+        return False
+
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return False
+
+    tool_keys = {
+        "bytes_written",
+        "dirs_created",
+        "files_modified",
+        "file_size",
+        "hint",
+        "lint",
+        "resolved_path",
+        "status",
+        "truncated",
+    }
+    if isinstance(payload, dict):
+        return bool(tool_keys.intersection(payload.keys()))
+    if isinstance(payload, list) and payload:
+        return all(isinstance(item, dict) for item in payload)
+    return False
+
+
+def _history_message_content(msg: dict[str, Any]) -> str:
+    content = msg.get("content", "")
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict) and isinstance(item.get("text"), str):
+                parts.append(item["text"])
+        content = "".join(parts)
+    elif not isinstance(content, str):
+        content = str(content) if content is not None else ""
+    return _strip_workspace_context(content).strip()
+
+
+def _message_timestamp_ms(msg: dict[str, Any]) -> int:
+    timestamp = msg.get("timestamp", msg.get("created_at", 0))
+    try:
+        value = float(timestamp)
+    except (TypeError, ValueError):
+        return 0
+    if value < 10000000000:
+        return int(value * 1000)
+    return int(value)
+
+
+def _load_json_object(value: Any) -> dict[str, Any] | None:
+    if isinstance(value, dict):
+        return value
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        payload = json.loads(value)
+    except json.JSONDecodeError:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _image_sources_from_tool_result(content: Any) -> list[str]:
+    payload = _load_json_object(content)
+    if not payload or payload.get("success") is False:
+        return []
+
+    sources = []
+    for key in ("host_image", "image", "agent_visible_image"):
+        source = payload.get(key)
+        if isinstance(source, str) and source.strip() and source not in sources:
+            sources.append(source.strip())
+    return sources
+
+
+def _completion_error_message(chunk: dict[str, Any]) -> str | None:
+    """Extract Hermes/OpenAI-compatible error details from a streamed chunk."""
+    message = ""
+
+    error = chunk.get("error")
+    if isinstance(error, dict):
+        message = str(error.get("message") or error.get("error") or "").strip()
+    elif isinstance(error, str):
+        message = error.strip()
+
+    hermes = chunk.get("hermes")
+    if not message and isinstance(hermes, dict):
+        message = str(hermes.get("error") or "").strip()
+
+    choices = chunk.get("choices")
+    finish_reason = None
+    if isinstance(choices, list) and choices:
+        first_choice = choices[0]
+        if isinstance(first_choice, dict):
+            finish_reason = first_choice.get("finish_reason")
+
+    hermes_failed = isinstance(hermes, dict) and bool(hermes.get("failed"))
+    if message or finish_reason == "error" or hermes_failed:
+        return message or "Hermes failed to produce a response."
+
+    return None
 
 
 def _unique_urls(urls: list[str]) -> list[str]:
@@ -560,6 +672,9 @@ class HermesAdapter(BaseAgentEngine):
 
         client = httpx.AsyncClient()
         self._active_clients[session_id] = client
+        received_agent_output = False
+        turn_started_ms = int(time.time() * 1000)
+        emitted_text_parts: list[str] = []
 
         try:
             headers = {**self.headers, "X-Hermes-Session-Id": session_id}
@@ -590,19 +705,51 @@ class HermesAdapter(BaseAgentEngine):
                                 data=sse.data,
                             )
                     elif sse.data == "[DONE]":
+                        media_token = await self._generated_image_media_token_for_turn(
+                            session_id=session_id,
+                            user_message=request.message,
+                            turn_started_ms=turn_started_ms,
+                            assistant_text="".join(emitted_text_parts),
+                        )
+                        if media_token:
+                            received_agent_output = True
+                            emitted_text_parts.append(f"\n\n{media_token}")
+                            yield AgentStreamEvent(
+                                type="token", data={"text": f"\n\n{media_token}"}
+                            )
+                        if not received_agent_output:
+                            yield AgentStreamEvent(
+                                type="error",
+                                data={
+                                    "message": (
+                                        "Hermes ended the chat turn without returning "
+                                        "a response."
+                                    )
+                                },
+                            )
+                            return
                         yield AgentStreamEvent(type="stream_end", data={})
                     else:
                         try:
                             chunk = json.loads(sse.data)
+                            error_message = _completion_error_message(chunk)
+                            if error_message:
+                                yield AgentStreamEvent(
+                                    type="error", data={"message": error_message}
+                                )
+                                return
                             choices = chunk.get("choices", [])
                             if not choices:
                                 continue
                             delta = choices[0].get("delta", {})
                             if delta.get("content"):
+                                received_agent_output = True
+                                emitted_text_parts.append(delta["content"])
                                 yield AgentStreamEvent(
                                     type="token", data={"text": delta["content"]}
                                 )
                             if delta.get("tool_calls"):
+                                received_agent_output = True
                                 yield AgentStreamEvent(
                                     type="tool",
                                     data={"tool_calls": delta["tool_calls"]},
@@ -628,6 +775,115 @@ class HermesAdapter(BaseAgentEngine):
         finally:
             self._active_clients.pop(session_id, None)
             await client.aclose()
+
+    async def _generated_image_media_token_for_turn(
+        self,
+        *,
+        session_id: str,
+        user_message: str,
+        turn_started_ms: int,
+        assistant_text: str,
+    ) -> str | None:
+        """Return a MEDIA token for this turn's successful image_generate result."""
+        try:
+            response = await self._request_with_fallback(
+                "GET",
+                f"/api/sessions/{session_id}/messages",
+                timeout=5.0,
+            )
+            data = response.json()
+        except Exception as exc:
+            logger.debug(
+                "Failed to inspect Hermes history for generated image",
+                session_id=session_id,
+                error=str(exc),
+            )
+            return None
+
+        messages = (
+            data
+            if isinstance(data, list)
+            else (data.get("data") or data.get("messages") or [])
+        )
+        if not isinstance(messages, list):
+            return None
+
+        normalized_user = _strip_workspace_context(user_message).strip()
+        turn_start_index = -1
+        for idx, msg in enumerate(messages):
+            if not isinstance(msg, dict) or msg.get("role") != "user":
+                continue
+            content = _history_message_content(msg)
+            if content == normalized_user:
+                turn_start_index = idx
+
+        if turn_start_index >= 0:
+            turn_messages = messages[turn_start_index + 1 :]
+        else:
+            turn_messages = [
+                msg
+                for msg in messages
+                if isinstance(msg, dict)
+                and _message_timestamp_ms(msg) >= max(0, turn_started_ms - 5000)
+            ]
+
+        for msg in reversed(turn_messages):
+            if not isinstance(msg, dict):
+                continue
+            tool_name = msg.get("tool_name") or msg.get("name")
+            if msg.get("role") != "tool" and tool_name != "image_generate":
+                continue
+            if tool_name and tool_name != "image_generate":
+                continue
+            sources = _image_sources_from_tool_result(msg.get("content"))
+            if not sources:
+                continue
+            if any(source in assistant_text for source in sources):
+                return None
+            source = await self._wright_display_source_for_generated_image(
+                session_id, sources
+            )
+            return f"MEDIA:{source}" if source else None
+
+        return None
+
+    async def _wright_display_source_for_generated_image(
+        self, session_id: str, sources: list[str]
+    ) -> str | None:
+        for source in sources:
+            if source.startswith(("http://", "https://")):
+                return source
+
+        workspace = await self.get_session_workspace(session_id)
+        if not workspace:
+            return sources[0] if sources else None
+
+        workspace_path = Path(workspace)
+        for source in sources:
+            source_path = Path(source).expanduser()
+            if not source_path.is_absolute() or not source_path.exists():
+                continue
+            try:
+                renders_dir = workspace_path / "renders"
+                renders_dir.mkdir(parents=True, exist_ok=True)
+                dest = renders_dir / source_path.name
+                if dest.exists():
+                    dest = (
+                        renders_dir
+                        / f"{source_path.stem}-{int(time.time())}{source_path.suffix}"
+                    )
+                shutil.copy2(source_path, dest)
+                return f"/renders/{dest.name}"
+            except OSError as exc:
+                logger.debug(
+                    "Failed to copy generated image into workspace",
+                    session_id=session_id,
+                    source=str(source_path),
+                    workspace=workspace,
+                    error=str(exc),
+                )
+
+        return sources[0] if sources else None
 
     async def get_session_workspace(self, session_id: str) -> str | None:
         """Retrieve the workspace path for a given session ID."""
@@ -694,7 +950,11 @@ class HermesAdapter(BaseAgentEngine):
             result = []
             for idx, msg in enumerate(messages):
                 role = msg.get("role", "assistant")
-                if role == "system":
+                if role not in {"user", "assistant"}:
+                    continue
+
+                content = _history_message_content(msg)
+                if not content or _looks_like_tool_result_payload(content):
                     continue
 
                 msg_id = msg.get("id", msg.get("message_id", ""))
@@ -704,20 +964,6 @@ class HermesAdapter(BaseAgentEngine):
                     msg_id = ""
                 if not msg_id:
                     msg_id = f"msg-{session_id}-{idx}"
-
-                content = msg.get("content", "")
-                if isinstance(content, list):
-                    parts = []
-                    for item in content:
-                        if isinstance(item, str):
-                            parts.append(item)
-                        elif isinstance(item, dict) and isinstance(
-                            item.get("text"), str
-                        ):
-                            parts.append(item["text"])
-                    content = "".join(parts)
-                elif not isinstance(content, str):
-                    content = str(content) if content is not None else ""
 
                 timestamp = self._to_epoch_ms(
                     msg.get("timestamp", msg.get("created_at", 0))

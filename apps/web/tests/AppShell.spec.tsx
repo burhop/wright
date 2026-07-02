@@ -20,4 +20,20 @@ describe("AppShell", () => {
       "Dashboard Content",
     );
   });
+  it("does not render the obsolete Split Onshape control", () => {
+    render(
+      <MemoryRouter initialEntries={["/workspace/demo-session"]}>
+        <AppShell>
+          <div data-testid="test-child">Workspace Content</div>
+        </AppShell>
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByTestId("split-view-toggle")).not.toBeInTheDocument();
+    expect(screen.queryByText("Split Onshape")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("split-resizer")).not.toBeInTheDocument();
+    expect(screen.getByTestId("test-child")).toHaveTextContent(
+      "Workspace Content",
+    );
+  });
 });

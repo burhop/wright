@@ -123,6 +123,62 @@ test.describe("UI Navigation Redesign E2E", () => {
       });
     });
 
+    await page.route('**/api/agent/sessions?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ sessions: [] }),
+      });
+    });
+
+    await page.route('**/api/agent/sessions/*/history', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ messages: [] }),
+      });
+    });
+
+    await page.route('**/api/agent/commands', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ commands: [] }),
+      });
+    });
+
+    await page.route('**/api/workspace/mcp-status?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ enabled_servers: [], available_servers: [] }),
+      });
+    });
+
+    await page.route('**/api/workspace/tools?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ enabled_tools: [] }),
+      });
+    });
+
+    await page.route('**/api/workspace/config?*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'test-workspace-id',
+          git_remote_url: null,
+          git_username: null,
+          has_token: false,
+          workspace_path: '/tmp/wright-e2e-workspace',
+          workspace_prompt: '',
+          git_large_file_threshold: 50,
+        }),
+      });
+    });
+
     // Mock tool list
     await page.route('**/api/mcp/servers', async (route) => {
       await route.fulfill({
@@ -214,7 +270,7 @@ test.describe("UI Navigation Redesign E2E", () => {
 
     // Click Settings button and check it displays Workspace Settings
     await page.getByTestId("activity-bar-settings-btn").click();
-    await expect(page.getByText("Workspace Settings")).toBeVisible();
+    await expect(page.getByText("Workspace Settings", { exact: true })).toBeVisible();
     await expect(page.getByTestId("workspace-prompt-input")).toBeVisible();
     await expect(page.getByTestId("workspace-settings-git-threshold")).toBeVisible();
 

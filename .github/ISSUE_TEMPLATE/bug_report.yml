@@ -82,7 +82,7 @@ body:
     attributes:
       label: Hermes version
       description: Include Hermes Agent/Desktop version if Hermes is involved.
-      placeholder: "e.g. hermes-agent 0.15.2, Hermes Desktop version/build"
+      placeholder: "e.g. hermes-agent 0.18.0, Hermes Desktop version/build"
     validations:
       required: false
 

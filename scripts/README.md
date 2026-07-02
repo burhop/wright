@@ -13,6 +13,7 @@ This directory contains helper scripts to automate local development, manage Doc
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, permissions, and self-healing behaviors | Docker |
+| [`test-hermes-plugin-install.sh`](#hermes-plugin-lifecycle-scripts) / [`test-hermes-plugin-uninstall.sh`](#hermes-plugin-lifecycle-scripts) / [`test-hermes-plugin-update.sh`](#hermes-plugin-lifecycle-scripts) | Bash | Validates Hermes plugin install, uninstall, and update paths in Docker | Docker |
 | [`production-update.sh`](#production-updatesh) | Bash | Guards operator-run production updates against stale, dirty, or unverified commits | Git, Docker, optional `gh` CLI |
 | [`fetch_ci_failures.py`](#fetch_ci_failurespy) | Python | Retrieves logs of failed GitHub Action runs to a local markdown file | Python 3, `gh` CLI |
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
@@ -94,7 +95,7 @@ Resets the active developer environment by purging generated engineering workspa
 Scans tracked repository text files for obvious public-alpha leaks such as
 private key headers, OpenAI-style keys, GitHub tokens, and generic
 secret/token/password assignments. Documented placeholders such as
-`sk-your-key-here`, `${{ secrets.NAME }}`, and `wright-dev-key` are ignored.
+`sk-your-key-here`, `${{ secrets.NAME }}`, and `wright-local-dev-key-000000000000000000000000` are ignored.
 
 * **CI usage**:
   ```bash
@@ -151,6 +152,43 @@ Runs a local verification suite against a production Docker build to ensure envi
   ```bash
   WRIGHT_DOCKER_IMAGE=wright-agent:latest WRIGHT_DOCKER_SKIP_BUILD=1 ./scripts/docker-smoke-test.sh
   ```
+
+---
+
+### Hermes Plugin Lifecycle Scripts
+
+Validates the standard Hermes user-plugin lifecycle in a disposable Docker container with an isolated `HERMES_HOME`. These scripts exercise Hermes Git-managed plugin path under `~/.hermes/plugins`, not the plugin that is baked into the Wright Docker appliance with `uv pip install`.
+
+* **Install path**:
+  ```bash
+  scripts/test-hermes-plugin-install.sh
+  ```
+* **Uninstall path**:
+  ```bash
+  scripts/test-hermes-plugin-uninstall.sh
+  ```
+* **Update path**:
+  ```bash
+  scripts/test-hermes-plugin-update.sh
+  ```
+* **Run all three**:
+  ```bash
+  make hermes-plugin-lifecycle-test
+  ```
+
+By default, the scripts use `WRIGHT_DOCKER_IMAGE=wright-agent:test` and install from the public Wright Git repository on the `dev` branch: `https://github.com/burhop/wright/tree/dev/hermes-plugin-wright`. Use `--ref main` or `WRIGHT_PLUGIN_REF=main` to test the main-branch customer path; the default is `dev`.
+
+`test-hermes-plugin-update.sh` intentionally uses Hermes standard `plugins update`, which requires the installed plugin directory to be a Git checkout. This is why the script installs from GitHub instead of the local checkout. If Hermes still drops `.git` metadata for the `hermes-plugin-wright` subdirectory install, the script fails with that diagnosis so we can fix the distribution shape before users hit it.
+
+Useful overrides:
+
+```bash
+WRIGHT_DOCKER_BUILD=1 scripts/test-hermes-plugin-install.sh
+WRIGHT_DOCKER_IMAGE=wright-agent:latest WRIGHT_DOCKER_SKIP_BUILD=1 make hermes-plugin-lifecycle-test
+scripts/test-hermes-plugin-update.sh --ref main
+scripts/test-hermes-plugin-install.sh --identifier file:///wright-src#hermes-plugin-wright
+WRIGHT_KEEP_TEST_HOME=1 scripts/test-hermes-plugin-uninstall.sh
+```
 
 ---
 
@@ -227,7 +265,7 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
 
 * **Configuration Set**:
   - `API_SERVER_ENABLED=true`
-  - `API_SERVER_KEY=wright-dev-key`
+  - `API_SERVER_KEY=wright-local-dev-key-000000000000000000000000`
   - `API_SERVER_PORT=8642`
 * **Workflow**:
   1. Verifies the `hermes` CLI is installed.
@@ -238,3 +276,39 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
   ```bash
   ./scripts/setup-wright-profile.sh
   ```
+
+### Hermes Plugin Mirror and Package Release Scripts
+
+These helpers support the thin `hermes-plugin-wright` mirror and the PyPI/TestPyPI package publication path used by the Wright Hermes plugin.
+
+| Script | Language | Purpose | Key Dependencies |
+| :--- | :--- | :--- | :--- |
+| `build-python-distributions.sh` | Bash | Validates `wright-core` and `wright-tool-registry` package metadata, builds source/wheel artifacts, and optionally performs clean install/import checks | Python 3, `build`, pip |
+| `sync-hermes-plugin-mirror.sh` | Bash | Exports only allowlisted plugin files from `hermes-plugin-wright/` into a root-level mirror directory and writes provenance | Git, Python 3 |
+| `validate-hermes-plugin-mirror.sh` | Bash | Validates mirror required files, prohibited paths, README links, provenance, and dependency policy | Bash, Python 3 |
+
+* Validate package metadata without building artifacts:
+  ```bash
+  scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+  ```
+
+* Preview mirror contents:
+  ```bash
+  scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --dry-run
+  ```
+
+* Generate and validate a local development mirror:
+  ```bash
+  tmp_dir=$(mktemp -d)
+  scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir "$tmp_dir"
+  scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$tmp_dir" --channel development
+  ```
+
+* Test the standard Hermes lifecycle against the root mirror repository:
+  ```bash
+  scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+  scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+  scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+  ```
+
+The root mirror identifier is `https://github.com/burhop/hermes-plugin-wright/tree/dev` for development testing and `https://github.com/burhop/hermes-plugin-wright/tree/main` for stable customer testing. Use `--mirror-root` when validating the mirror repository itself; use the default subdirectory mode only when intentionally testing the legacy monorepo path.
