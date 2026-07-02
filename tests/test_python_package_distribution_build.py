@@ -2,7 +2,14 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="Release shell scripts require a POSIX shell; Windows CI validates them through Linux jobs.",
+)
 
 
 def test_package_build_helper_dry_run_validates_initial_packages() -> None:

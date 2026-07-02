@@ -3,6 +3,8 @@ import os
 import subprocess
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -23,6 +25,10 @@ def run_help(script: str) -> str:
     return result.stdout + result.stderr
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="Release shell scripts require a POSIX shell; Windows CI validates them through Linux jobs.",
+)
 def test_release_engineering_scripts_are_executable_and_documented() -> None:
     scripts = [
         "scripts/build-python-distributions.sh",

@@ -9,12 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/burhop/wright/actions/workflows/python-quality.yml"><img src="https://github.com/burhop/wright/actions/workflows/python-quality.yml/badge.svg" alt="Python CI"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml"><img src="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml/badge.svg" alt="Frontend CI"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/docker-build.yml"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg" alt="Docker Build"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml"><img src="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml/badge.svg" alt="Docs"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml"><img src="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml/badge.svg" alt="Security Scan"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/release.yml"><img src="https://github.com/burhop/wright/actions/workflows/release.yml/badge.svg" alt="Release"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/python-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/python-quality.yml/badge.svg?branch=main" alt="Production Python CI"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml/badge.svg?branch=main" alt="Production Frontend CI"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/docker-build.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg?branch=main" alt="Production Docker Build"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml/badge.svg?branch=main" alt="Production Docs"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml/badge.svg?branch=main" alt="Production Security Scan"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/release.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/release.yml/badge.svg?branch=main" alt="Production Release"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+"></a>
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-22%2B-green.svg" alt="Node 22+"></a>
@@ -29,6 +29,10 @@
 
 Wright is alpha software for developer testing, MCP porting, demos, and selected
 beta feedback. Expect rough edges, incomplete workflows, and changing APIs.
+
+The status badges above are pinned to the production branch, `main`. Integration
+work happens on `dev`, so `dev` CI may fail while production remains green; use
+the GitHub Actions branch filter when checking a specific branch.
 
 Wright is bring-your-own-AI. The repository and Docker image do not bundle an
 LLM, API key, local model, hosted model, or paid engineering backend. Configure

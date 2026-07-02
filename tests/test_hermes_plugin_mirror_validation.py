@@ -3,7 +3,14 @@ import shutil
 import subprocess
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="Release shell scripts require a POSIX shell; Windows CI validates them through Linux jobs.",
+)
 FIXTURE = ROOT / "tests/fixtures/hermes_plugin_mirror"
 
 

@@ -4,7 +4,14 @@ import re
 import subprocess
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="Release shell scripts require a POSIX shell; Windows CI validates them through Linux jobs.",
+)
 
 
 def run_script(script_name: str, *args: str) -> subprocess.CompletedProcess[str]:
