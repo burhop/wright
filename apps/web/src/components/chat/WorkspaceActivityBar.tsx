@@ -1,3 +1,5 @@
+import type { ReactElement } from "react";
+
 import {
   FolderIcon,
   GitIcon,
@@ -25,7 +27,7 @@ const items: Array<{
   id: WorkspaceSidebarId;
   testId: string;
   title: string;
-  icon: (size: number) => JSX.Element;
+  icon: (size: number) => ReactElement;
 }> = [
   {
     id: "files",
