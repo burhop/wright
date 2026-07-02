@@ -2,6 +2,18 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import MessageComposer from "../src/components/chat/MessageComposer";
 import { workspaceService } from "../src/services/workspace-service";
+import { agentService } from "../src/services/agent-service";
+
+vi.mock("../src/services/agent-service", () => ({
+  agentService: {
+    getCommands: vi.fn().mockResolvedValue([]),
+    uploadFile: vi.fn(),
+  },
+  default: {
+    getCommands: vi.fn().mockResolvedValue([]),
+    uploadFile: vi.fn(),
+  },
+}));
 
 // Mock workspace-service
 vi.mock("../src/services/workspace-service", () => ({
@@ -26,6 +38,7 @@ vi.mock("../src/services/workspace-service", () => ({
 describe("MessageComposer", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(agentService.getCommands).mockResolvedValue([]);
   });
 
   it("sends typed message on submit", () => {
@@ -87,10 +100,48 @@ describe("MessageComposer", () => {
     expect(input).toHaveValue("@/package.json ");
   });
 
-  it("shows a red MCP indicator when an expected server is inactive", async () => {
+  it("opens a useful add-context menu from the plus button", () => {
+    render(<MessageComposer onSend={vi.fn()} sessionId="test-session" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Add context" }));
+
+    expect(screen.getByTestId("composer-plus-menu")).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: /command/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: /workspace file/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Upload image")).toBeInTheDocument();
+    expect(
+      screen.getByText("Run a Hermes or Wright slash command"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Reference a file from this workspace"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows the Wright slash command from the command API", async () => {
+    vi.mocked(agentService.getCommands).mockResolvedValueOnce([
+      {
+        name: "wright",
+        description: "Wright engineering platform",
+        prefix: "/",
+      },
+    ]);
+
+    render(<MessageComposer onSend={vi.fn()} sessionId="test-session" />);
+
+    const input = screen.getByTestId("composer-input");
+    fireEvent.change(input, { target: { value: "/w" } });
+
+    expect(await screen.findByText("/wright")).toBeInTheDocument();
+  });
+
+  it("shows a warning MCP indicator when an expected server is inactive", async () => {
     vi.mocked(workspaceService.getMcpStatus).mockResolvedValueOnce({
-      status: "error",
-      message: "MCP server is not active: Jarvis OnShape MCP",
+      status: "warning",
+      message: "MCP server installed but not active: Jarvis OnShape MCP",
       running_mcps: [
         {
           name: "Jarvis OnShape MCP",
@@ -103,16 +154,16 @@ describe("MessageComposer", () => {
     render(<MessageComposer onSend={vi.fn()} sessionId="test-session" />);
 
     const indicator = await screen.findByTestId("mcp-status-indicator");
-    expect(indicator).toHaveStyle({ backgroundColor: "#ef4444" });
+    expect(indicator).toHaveStyle({ backgroundColor: "#f59e0b" });
     expect(indicator).toHaveAttribute(
       "title",
-      "MCP server is not active: Jarvis OnShape MCP",
+      "MCP server installed but not active: Jarvis OnShape MCP",
     );
 
     fireEvent.click(indicator);
 
     expect(screen.getByTestId("mcp-status-popup")).toBeInTheDocument();
-    expect(screen.getByText("MCP Status: Error")).toBeInTheDocument();
+    expect(screen.getByText("MCP Status: Needs attention")).toBeInTheDocument();
     expect(screen.getByText("Jarvis OnShape MCP")).toBeInTheDocument();
     expect(screen.getByText("inactive")).toBeInTheDocument();
   });

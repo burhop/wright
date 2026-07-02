@@ -712,8 +712,8 @@ async def get_workspace_mcp_status_endpoint(
     if inactive_servers:
         names = ", ".join(inactive_servers)
         return WorkspaceMcpStatusResponse(
-            status="error",
-            message=f"MCP server is not active: {names}",
+            status="warning",
+            message=f"MCP server installed but not active: {names}",
             running_mcps=running_mcps,
         )
 

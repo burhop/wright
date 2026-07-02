@@ -57,6 +57,7 @@ PLACEHOLDER_HINTS = (
     "sk-your-key",
     "test-secret",
     "wright-dev-key",
+    "wright-local-dev-key",
     "your-",
 )
 

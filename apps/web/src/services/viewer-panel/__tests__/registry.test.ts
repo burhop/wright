@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { ViewerRegistry } from "../registry";
+import { ViewerRegistry, viewerRegistry } from "../registry";
 import type { ViewerContribution, ViewerProvider } from "../types";
 
 describe("ViewerRegistry", () => {
@@ -181,5 +181,19 @@ describe("ViewerRegistry", () => {
     handle.dispose();
 
     expect(registry.getViewersFor(file, "preview").length).toBe(0);
+  });
+  it("uses the default markdown viewer for markdown files", () => {
+    const markdownViewer = viewerRegistry.getDefaultViewer(
+      {
+        id: "/README.md",
+        uri: "/README.md",
+        name: "README.md",
+        extension: "md",
+        mimeType: "text/markdown",
+      },
+      "preview",
+    );
+
+    expect(markdownViewer?.id).toBe("markdown-viewer");
   });
 });
