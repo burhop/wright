@@ -88,8 +88,11 @@ if [ -f "$pyproject" ]; then
     grep -q '\[tool\.uv\.sources\]' "$pyproject" && fail "stable mirror pyproject must not contain [tool.uv.sources]"
     grep -q 'workspace *= *true' "$pyproject" && fail "stable mirror pyproject must not contain workspace sources"
     grep -Eq 'git\+|@[[:space:]]*git' "$pyproject" && fail "stable mirror pyproject must not contain Git dependencies"
+    grep -Eq 'wright-tool-registry[><=~!]' "$pyproject" || fail "stable pyproject must pin a versioned wright-tool-registry dependency"
+  else
+    grep -Eq 'wright-core @ git\+https://github\.com/burhop/wright\.git@[0-9a-f]{40}#subdirectory=packages/core' "$pyproject" || fail "development pyproject must pin wright-core to a source Git commit"
+    grep -Eq 'wright-tool-registry @ git\+https://github\.com/burhop/wright\.git@[0-9a-f]{40}#subdirectory=packages/tool_registry' "$pyproject" || fail "development pyproject must pin wright-tool-registry to a source Git commit"
   fi
-  grep -Eq 'wright-tool-registry[><=~!]' "$pyproject" || fail "pyproject must pin a versioned wright-tool-registry dependency"
 fi
 
 if [ -f "$MIRROR_DIR/provenance.json" ]; then
