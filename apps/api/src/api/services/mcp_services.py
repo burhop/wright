@@ -65,7 +65,9 @@ class McpApiService:
         return result.server
 
     async def delete_server(self, server_id: str):
-        server = await registry_services.delete_registered_server(self.engine, server_id)
+        server = await registry_services.delete_registered_server(
+            self.engine, server_id
+        )
         sync_mcp_server_to_wright_gateway(server)
         return server
 

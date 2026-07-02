@@ -18,6 +18,7 @@ from tool_registry.services import McpServiceError
 logger = structlog.get_logger(__name__)
 router = APIRouter()
 
+
 # ── REST Models ──────────────────────────────────────────────────────────────
 class ServersListResponse(BaseModel):
     servers: List[McpServer]

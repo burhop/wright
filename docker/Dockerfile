@@ -78,12 +78,7 @@ RUN uv pip install --python /opt/hermes/.venv/bin/python --upgrade \
 
 # Create agent user (UID 1000).
 RUN useradd -m -u 1000 -s /bin/bash agent && \
-    echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-# Install the Wright plugin in the Hermes base image environment.
-COPY hermes-plugin-wright/ /opt/hermes-plugins/wright/
-RUN uv pip install --python /opt/hermes/.venv/bin/python /opt/hermes-plugins/wright/ && \
-    rm -rf /root/.cache/uv /home/agent/.cache/uv && \
+    echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     chown -R agent:agent /home/agent
 
 # Wright workspace setup.
@@ -95,10 +90,12 @@ USER agent
 # Copy dependency configs first for better layer caching.
 COPY --chown=agent:agent pyproject.toml uv.lock ./
 COPY --chown=agent:agent apps/api/pyproject.toml apps/api/pyproject.toml
+COPY --chown=agent:agent hermes-plugin-wright/pyproject.toml hermes-plugin-wright/pyproject.toml
 COPY --chown=agent:agent packages/core/pyproject.toml packages/core/pyproject.toml
 COPY --chown=agent:agent packages/agent_adapters/pyproject.toml packages/agent_adapters/pyproject.toml
 COPY --chown=agent:agent packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
 COPY --chown=agent:agent packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
+COPY --chown=agent:agent packages/workspace_service/pyproject.toml packages/workspace_service/pyproject.toml
 
 # Sync dependencies using Python 3.13 without dev packages.
 RUN uv sync --python 3.13 --all-packages --no-install-workspace --no-dev && \
@@ -106,6 +103,20 @@ RUN uv sync --python 3.13 --all-packages --no-install-workspace --no-dev && \
 
 COPY --chown=agent:agent packages/ packages/
 COPY --chown=agent:agent apps/api/ apps/api/
+COPY --chown=agent:agent hermes-plugin-wright/ hermes-plugin-wright/
+
+USER root
+
+# Install the Wright plugin in the Hermes runtime with its local package
+# dependencies after the workspace sources are available.
+RUN uv pip install --python /opt/hermes/.venv/bin/python \
+        /workspace/packages/core \
+        /workspace/packages/tool_registry \
+        /workspace/hermes-plugin-wright && \
+    rm -rf /root/.cache/uv /home/agent/.cache/uv && \
+    chown -R agent:agent /home/agent
+
+USER agent
 
 # Install the workspace packages.
 RUN uv sync --python 3.13 --all-packages --no-dev && \

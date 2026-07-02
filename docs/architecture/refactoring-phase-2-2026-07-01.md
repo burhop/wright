@@ -5,8 +5,8 @@ Date: 2026-07-01
 Related documents:
 
 - [Refactoring Audit 2026-07-01](refactoring-audit-2026-07-01.md)
-- [Spec 038 Phase 2 Plan](../../specs/038-refactoring-phase-2/plan.md)
-- [Engineering MCP Catalog Plan](../../specs/034-engineering-mcp-catalog/plan.md)
+- Spec 038 Phase 2 Plan: `specs/038-refactoring-phase-2/plan.md`
+- Engineering MCP Catalog Plan: `specs/034-engineering-mcp-catalog/plan.md`
 - [MCP Server Testing Process](../mcp-catalog/mcp-server-testing-process.md)
 
 ## Purpose
