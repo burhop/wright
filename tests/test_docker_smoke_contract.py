@@ -35,3 +35,11 @@ def test_docker_smoke_script_keeps_gateway_process_name() -> None:
 
     assert "hermes-gateway.*RUNNING" in workflow
     assert "hermes-webui.*RUNNING" not in workflow
+    assert "Hermes gateway direct health is ready" in workflow
+    assert "Agent health attempt" in workflow
+
+
+def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+
+    assert "hermes-agent==0.17.0" in dockerfile

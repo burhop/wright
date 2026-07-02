@@ -12,7 +12,7 @@ This document covers research and design selections made for the Wright visual i
   * **Robot mascot**: Rejected as it is too generic and doesn't represent the precise engineering focus of the project.
 
 ### 2. Badge Architecture
-* **Decision**: Dynamic shields.io badges mapped to repository indicators (GitHub Actions, MIT License, Docker Hub pulls, Python, Node, Stars).
+* **Decision**: Dynamic shields.io badges mapped to repository indicators (GitHub Actions, MIT License, GHCR release image, Python, Node, Stars).
 * **Rationale**: Dynamic badges build trust by proving the codebase is actively building, licensed, and deployed. Using shields.io maintains visual styling consistency.
 * **Alternatives Considered**: 
   * **No badges**: Rejected. Badges are table-stakes for open-source frameworks and indicate project health at first glance.

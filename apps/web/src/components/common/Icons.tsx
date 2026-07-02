@@ -442,4 +442,3 @@ export const SplitIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
     <line x1="12" x2="12" y1="3" y2="21" />
   </svg>
 );
-

@@ -1,9 +1,12 @@
+import { mkdir } from 'node:fs/promises';
+import path from 'node:path';
 import { chromium } from 'playwright';
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
-  const ssDir = '/home/burhop/repos/wright/tests/screenshots';
+  const ssDir = path.join(process.cwd(), 'test-results', 'ui-smoke-screenshots');
+  await mkdir(ssDir, { recursive: true });
 
   // Capture errors
   page.on('response', response => {

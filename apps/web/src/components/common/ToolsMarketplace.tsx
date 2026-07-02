@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import workspaceService from "../../services/workspace-service";
 
 interface McpServer {
@@ -23,11 +23,10 @@ export const ToolsMarketplace: React.FC<ToolsMarketplaceProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      // Fetch global servers list
       const host =
         typeof window !== "undefined" ? window.location.hostname : "127.0.0.1";
       const serversResponse = await fetch(
@@ -37,8 +36,6 @@ export const ToolsMarketplace: React.FC<ToolsMarketplaceProps> = ({
         throw new Error("Failed to fetch MCP servers list");
       }
       const serversData = await serversResponse.json();
-
-      // Fetch session-specific tools
       const enabledList = await workspaceService.getWorkspaceTools(sessionId);
 
       setServers(serversData.servers);
@@ -49,11 +46,11 @@ export const ToolsMarketplace: React.FC<ToolsMarketplaceProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [sessionId]);
 
   useEffect(() => {
     fetchData();
-  }, [sessionId]);
+  }, [fetchData]);
 
   const handleToggleTool = async (
     serverName: string,
@@ -65,7 +62,6 @@ export const ToolsMarketplace: React.FC<ToolsMarketplaceProps> = ({
         serverName,
         !currentlyEnabled,
       );
-      // Refresh list
       const enabledList = await workspaceService.getWorkspaceTools(sessionId);
       setEnabledTools(enabledList);
     } catch (err: unknown) {
@@ -99,7 +95,7 @@ export const ToolsMarketplace: React.FC<ToolsMarketplaceProps> = ({
           fontSize: "0.8rem",
         }}
       >
-        ⚠️ {error}
+        Warning: {error}
       </div>
     );
   }

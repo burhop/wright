@@ -1,7 +1,31 @@
 import { test, expect } from '@playwright/test';
 
+const MOCK_SERVER_METADATA = {
+  verification_state: "verified_mcp",
+  installability_tier: "might_work",
+  risk_level: "low",
+  deployment_mode: "unknown",
+  platform_support: {
+    windows_11_x64: { status: "unknown", tested: false, notes: "not tested" },
+    linux_x64: { status: "unknown", tested: false, notes: "not tested" },
+    linux_arm64: { status: "unknown", tested: false, notes: "not tested" },
+    macos_x64: { status: "unknown", tested: false, notes: "not tested" },
+    macos_arm64: { status: "unknown", tested: false, notes: "not tested" },
+  },
+  host_software_required: [],
+  credentials_required: [],
+  default_enabled: true,
+  approval_gates: [],
+  validation_result: {
+    status: "not_tested",
+    message: "Not yet validated in this environment",
+    missing_dependencies: [],
+  },
+};
+
 const MOCK_SERVERS = [
   {
+    ...MOCK_SERVER_METADATA,
     server_id: "calc-mcp-id",
     name: "CalculiX Simulation",
     type: "stdio",
@@ -19,6 +43,8 @@ const MOCK_SERVERS = [
     installed_version: "2.21.0"
   },
   {
+    ...MOCK_SERVER_METADATA,
+    installability_tier: "tested",
     server_id: "openscad-mcp-id",
     name: "OpenSCAD Geometry",
     type: "stdio",

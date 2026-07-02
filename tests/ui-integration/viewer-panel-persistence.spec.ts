@@ -55,7 +55,7 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
           workspace_id: 'ws-1',
           session_id: 'session-1',
           workspace_name: 'Test Project',
-          local_path: '/home/burhop/repos/wright',
+          local_path: '/tmp/wright-e2e-workspace',
           git_remote_url: null,
           git_username: null,
         }),
@@ -70,7 +70,7 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
         body: JSON.stringify({
           success: true,
           session_id: 'session-1',
-          workspace_path: '/home/burhop/repos/wright',
+          workspace_path: '/tmp/wright-e2e-workspace',
         }),
       });
     });

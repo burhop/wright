@@ -17,6 +17,23 @@ updates:
           - "minor"
           - "patch"
 
+  # npm dependencies (root workspace tooling)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      root-npm-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
   # npm dependencies (React frontend in apps/web)
   - package-ecosystem: "npm"
     directory: "/apps/web"

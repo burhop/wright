@@ -12,8 +12,7 @@ const getApiUrl = (path: string) => {
   if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
   const host = window.location.hostname;
   const port = window.location.port;
-  const base =
-    port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+  const base = port === "5173" || port === "5174" ? `http://${host}:8000` : "";
   return `${base}${path}`;
 };
 
@@ -23,9 +22,14 @@ export function DashboardPage() {
 
   // Health and Agent Connection state
   const statuses = useHealthStatus(10000); // Poll health status every 10s
-  const apiState = statuses.find((s) => s.serviceId === "wright-api")?.state || "unknown";
-  const hermesState = statuses.find((s) => s.serviceId === "hermes-agent")?.state || "unknown";
-  const inferenceState = statuses.find((s) => s.serviceId === "inference")?.state || "unknown";
+  const apiState =
+    statuses.find((s) => s.serviceId === "wright-api")?.state || "unknown";
+  const hermesState =
+    statuses.find((s) => s.serviceId === "hermes-agent")?.state || "unknown";
+  const inferenceState =
+    statuses.find(
+      (s) => s.serviceId === "llm-backend" || s.serviceId === "inference",
+    )?.state || "unknown";
 
   const [recentWorkspaces, setRecentWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [showAllWorkspaces, setShowAllWorkspaces] = useState(false);
@@ -236,7 +240,7 @@ export function DashboardPage() {
                 color: "var(--color-primary)",
               }}
             >
-              🛠️ Engineering Workspaces
+              Engineering Workspaces
             </h2>
           </div>
 
@@ -281,7 +285,8 @@ export function DashboardPage() {
                     transition: "all var(--transition-smooth)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-secondary)";
+                    e.currentTarget.style.borderColor =
+                      "var(--color-secondary)";
                     e.currentTarget.style.transform = "translateX(2px)";
                   }}
                   onMouseLeave={(e) => {
@@ -297,9 +302,9 @@ export function DashboardPage() {
                       overflow: "hidden",
                     }}
                   >
-                    <div style={{ color: "var(--color-secondary)", flexShrink: 0 }}>
-                      📁
-                    </div>
+                    <div
+                      style={{ color: "var(--color-secondary)", flexShrink: 0 }}
+                    ></div>
                     <div
                       style={{
                         display: "flex",
@@ -350,9 +355,12 @@ export function DashboardPage() {
                     >
                       {formatTimeAgo(w.updated_at)}
                     </span>
-                    <span style={{ color: "var(--color-secondary)", fontSize: "0.8rem" }}>
-                      →
-                    </span>
+                    <span
+                      style={{
+                        color: "var(--color-secondary)",
+                        fontSize: "0.8rem",
+                      }}
+                    ></span>
                   </div>
                 </div>
               ))
@@ -360,7 +368,9 @@ export function DashboardPage() {
           </div>
 
           {recentWorkspaces.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+            >
               <button
                 data-testid="view-all-workspaces-btn"
                 id="view-all-workspaces-btn"
@@ -378,7 +388,9 @@ export function DashboardPage() {
                   transition: "all var(--transition-fast)",
                 }}
               >
-                {showAllWorkspaces ? "▲ Hide all workspaces" : "▼ View all workspaces"}
+                {showAllWorkspaces
+                  ? " Hide all workspaces"
+                  : " View all workspaces"}
               </button>
 
               {showAllWorkspaces && (
@@ -407,16 +419,27 @@ export function DashboardPage() {
                         borderRadius: "var(--radius-sm)",
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(56, 189, 248, 0.04)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(56, 189, 248, 0.04)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = "transparent";
                       }}
                     >
-                      <span style={{ fontWeight: 600, color: "var(--color-primary)" }}>
+                      <span
+                        style={{
+                          fontWeight: 600,
+                          color: "var(--color-primary)",
+                        }}
+                      >
                         {getWorkspaceName(w)}
                       </span>
-                      <span style={{ color: "var(--color-secondary)", fontSize: "0.7rem" }}>
+                      <span
+                        style={{
+                          color: "var(--color-secondary)",
+                          fontSize: "0.7rem",
+                        }}
+                      >
                         {formatTimeAgo(w.updated_at)}
                       </span>
                     </div>
@@ -449,21 +472,33 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            🤖 Agent Status (Hermes)
+            Agent Status (Hermes)
           </h2>
 
           {/* Connection Indicators */}
-          <div style={{ display: "flex", gap: "var(--space-md)", flexWrap: "wrap", fontSize: "0.8rem" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "var(--space-md)",
+              flexWrap: "wrap",
+              fontSize: "0.8rem",
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span
                 style={{
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",
-                  backgroundColor: apiState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                  backgroundColor:
+                    apiState === "connected"
+                      ? "var(--color-success, #22c55e)"
+                      : "var(--color-error, #ef4444)",
                 }}
               />
-              <span>Wright API: <strong>{apiState}</strong></span>
+              <span>
+                Wright API: <strong>{apiState}</strong>
+              </span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span
@@ -471,10 +506,15 @@ export function DashboardPage() {
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",
-                  backgroundColor: hermesState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                  backgroundColor:
+                    hermesState === "connected"
+                      ? "var(--color-success, #22c55e)"
+                      : "var(--color-error, #ef4444)",
                 }}
               />
-              <span>Hermes: <strong>{hermesState}</strong></span>
+              <span>
+                Hermes: <strong>{hermesState}</strong>
+              </span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span
@@ -482,10 +522,15 @@ export function DashboardPage() {
                   width: "8px",
                   height: "8px",
                   borderRadius: "50%",
-                  backgroundColor: inferenceState === "connected" ? "var(--color-success, #22c55e)" : "var(--color-error, #ef4444)",
+                  backgroundColor:
+                    inferenceState === "connected"
+                      ? "var(--color-success, #22c55e)"
+                      : "var(--color-error, #ef4444)",
                 }}
               />
-              <span>Inference Engine: <strong>{inferenceState}</strong></span>
+              <span>
+                Inference Engine: <strong>{inferenceState}</strong>
+              </span>
             </div>
           </div>
 
@@ -500,26 +545,66 @@ export function DashboardPage() {
               textAlign: "left",
             }}
           >
-            <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem", fontWeight: "bold" }}>
+            <div
+              style={{
+                color: "var(--color-secondary)",
+                fontSize: "0.75rem",
+                fontWeight: "bold",
+              }}
+            >
               CURRENT AGENT RUNNING STATE
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                marginTop: "2px",
+              }}
+            >
               <span className="thinking-dot" />
               <span>Idle (Awaiting task request)</span>
             </div>
           </div>
 
           {/* Recent System Errors list */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px", textAlign: "left" }}>
-            <div style={{ color: "var(--color-secondary)", fontSize: "0.75rem", fontWeight: "bold" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "2px",
+              textAlign: "left",
+            }}
+          >
+            <div
+              style={{
+                color: "var(--color-secondary)",
+                fontSize: "0.75rem",
+                fontWeight: "bold",
+              }}
+            >
               RECENT SYSTEM HEALTH LOGS
             </div>
             {recentErrors.length === 0 ? (
-              <div style={{ fontSize: "0.75rem", color: "var(--color-success, #22c55e)", fontStyle: "italic" }}>
-                ✓ No system errors detected. Health check passed.
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-success, #22c55e)",
+                  fontStyle: "italic",
+                }}
+              >
+                No system errors detected. Health check passed.
               </div>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px", maxHeight: "100px", overflowY: "auto" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "2px",
+                  maxHeight: "100px",
+                  overflowY: "auto",
+                }}
+              >
                 {recentErrors.map((err, idx) => (
                   <div
                     key={idx}
@@ -536,7 +621,8 @@ export function DashboardPage() {
                     }}
                     title={err.message}
                   >
-                    [{err.timestamp.substring(11, 19)}] {err.logger}: {err.message}
+                    [{err.timestamp.substring(11, 19)}] {err.logger}:{" "}
+                    {err.message}
                   </div>
                 ))}
               </div>
@@ -566,7 +652,7 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            📰 Updates & MCP Releases
+            Updates & MCP Releases
           </h2>
 
           <div
@@ -578,21 +664,36 @@ export function DashboardPage() {
               fontSize: "0.8rem",
             }}
           >
-            <div style={{ borderBottom: "1px solid var(--color-border)", paddingBottom: "4px" }}>
-              <div style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
-                v0.22.0 Release — Modernized Navigation
+            <div
+              style={{
+                borderBottom: "1px solid var(--color-border)",
+                paddingBottom: "4px",
+              }}
+            >
+              <div
+                style={{ fontWeight: "bold", color: "var(--color-primary)" }}
+              >
+                v0.22.0 Release Modernized Navigation
               </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-                Custom workspace prompts context, floating debugger drawer, and file-size detection are live.
+              <div
+                style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
+              >
+                Custom workspace prompts context, floating debugger drawer, and
+                file-size detection are live.
               </div>
             </div>
 
             <div>
-              <div style={{ fontWeight: "bold", color: "var(--color-primary)" }}>
+              <div
+                style={{ fontWeight: "bold", color: "var(--color-primary)" }}
+              >
                 New MCP Servers Integrated
               </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-                OpenSCAD rendering, CalculiX simulation, FreeCAD Copilot, and Autodesk APS community links added to catalog.
+              <div
+                style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}
+              >
+                OpenSCAD rendering, CalculiX simulation, FreeCAD Copilot, and
+                Autodesk APS community links added to catalog.
               </div>
             </div>
           </div>
@@ -668,7 +769,7 @@ export function DashboardPage() {
               color: "var(--color-primary)",
             }}
           >
-            📊 System Telemetry
+            System Telemetry
           </h2>
 
           <div
@@ -681,20 +782,38 @@ export function DashboardPage() {
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "var(--color-secondary)" }}>SQLite DB Location:</span>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>state.db</span>
+              <span style={{ color: "var(--color-secondary)" }}>
+                SQLite DB Location:
+              </span>
+              <span
+                style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}
+              >
+                state.db
+              </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "var(--color-secondary)" }}>Total Workspaces Indexed:</span>
-              <span><strong>{recentWorkspaces.length}</strong></span>
+              <span style={{ color: "var(--color-secondary)" }}>
+                Total Workspaces Indexed:
+              </span>
+              <span>
+                <strong>{recentWorkspaces.length}</strong>
+              </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "var(--color-secondary)" }}>Active Agent Chat Sessions:</span>
-              <span><strong>{activeSessionsCount}</strong></span>
+              <span style={{ color: "var(--color-secondary)" }}>
+                Active Agent Chat Sessions:
+              </span>
+              <span>
+                <strong>{activeSessionsCount}</strong>
+              </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ color: "var(--color-secondary)" }}>Offline-First Mode:</span>
-              <span style={{ color: "var(--color-success, #22c55e)" }}>Enabled (100% Local)</span>
+              <span style={{ color: "var(--color-secondary)" }}>
+                Offline-First Mode:
+              </span>
+              <span style={{ color: "var(--color-success, #22c55e)" }}>
+                Enabled (100% Local)
+              </span>
             </div>
           </div>
         </div>

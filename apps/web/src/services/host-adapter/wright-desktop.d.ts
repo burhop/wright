@@ -48,14 +48,23 @@ export interface WrightDesktopBridge {
   selectFiles: (options?: SelectOptions) => Promise<string[]>;
   notify: (payload: NotifyPayload) => Promise<boolean>;
   getConfig: () => Promise<WrightConfig>;
-  onThemeChange: (callback: (payload: { theme: 'dark' | 'light' }) => void) => () => void;
+  onThemeChange: (
+    callback: (payload: { theme: "dark" | "light" }) => void,
+  ) => () => void;
   terminal: {
-    start: (options?: { cols?: number; rows?: number; cwd?: string }) => Promise<TerminalSession>;
+    start: (options?: {
+      cols?: number;
+      rows?: number;
+      cwd?: string;
+    }) => Promise<TerminalSession>;
     write: (id: string, data: string) => Promise<void>;
     resize: (id: string, size: { cols: number; rows: number }) => Promise<void>;
     dispose: (id: string) => Promise<boolean>;
     onData: (id: string, callback: (data: string) => void) => () => void;
-    onExit: (id: string, callback: (payload: { exitCode: number; signal?: number }) => void) => () => void;
+    onExit: (
+      id: string,
+      callback: (payload: { exitCode: number; signal?: number }) => void,
+    ) => () => void;
   };
 }
 

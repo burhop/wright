@@ -39,6 +39,7 @@ def test_ci_cd_docs_list_current_workflows_and_pr_gates() -> None:
 
 def test_ci_cd_docs_match_docker_smoke_and_docs_release_contracts() -> None:
     docs = squashed("docs/contributing/ci-cd-workflows.md")
+    docs_workflow = read_text(".github/workflows/docs-deploy.yml")
 
     for expected in [
         "does not publish public images",
@@ -47,11 +48,13 @@ def test_ci_cd_docs_match_docker_smoke_and_docs_release_contracts() -> None:
         "`wright-api` and `hermes-gateway`",
         "Trivy",
         "exit code `0`",
-        "docs workflow builds strictly on pull requests",
+        "docs workflow builds strictly on pull requests and branch pushes",
         "deploys GitHub Pages only for non-PR `main` builds",
     ]:
         assert expected in docs
 
+    assert "push:" in docs_workflow
+    assert "- dev" in docs_workflow
     assert "hermes-webui" not in docs
     assert "pushes the image to Docker Hub with the `dev` tag" not in docs
     assert "pushes the image to Docker Hub with both the `latest`" not in docs

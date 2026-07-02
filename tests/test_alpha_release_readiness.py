@@ -63,6 +63,85 @@ def test_alpha_bug_template_collects_actionable_context() -> None:
     assert "blank_issues_enabled: true" in config
 
 
+def test_alpha_bug_template_commit_sha_is_optional() -> None:
+    template = read_text(".github/ISSUE_TEMPLATE/bug_report.yml")
+    commit_sha_block = template.split("id: commit-sha", 1)[1].split("  - type:", 1)[0]
+
+    assert "label: Commit SHA" in commit_sha_block
+    assert "required: false" in commit_sha_block
+    assert "required: true" not in commit_sha_block
+
+
+def test_pr_template_does_not_require_spec_kit_for_every_pr() -> None:
+    template = read_text(".github/PULL_REQUEST_TEMPLATE.md")
+    contributing = read_text("CONTRIBUTING.md")
+
+    assert "Spec Kit artifacts" not in template
+    assert "Feature changes should follow" in contributing
+    assert (
+        "Routine bug fixes, documentation edits, test-only changes, and CI maintenance"
+        in contributing
+    )
+
+
+def test_dependabot_covers_root_and_frontend_npm_lockfiles() -> None:
+    config = read_text(".github/dependabot.yml")
+
+    assert 'package-ecosystem: "npm"\n    directory: "/"' in config
+    assert 'package-ecosystem: "npm"\n    directory: "/apps/web"' in config
+
+
+def test_windows_workflow_keeps_platform_checks_without_e2e_server_loop() -> None:
+    workflow = read_text(".github/workflows/test-windows.yml")
+
+    assert "Backend Tests (Windows)" in workflow
+    assert "Frontend Tests (Windows)" in workflow
+    assert "Playwright E2E (Windows)" not in workflow
+    assert "Start backend server" not in workflow
+    assert "curl.exe" not in workflow
+
+
+def test_frontend_quality_runs_linux_playwright_e2e() -> None:
+    workflow = read_text(".github/workflows/frontend-quality.yml")
+
+    assert "playwright-e2e:" in workflow
+    assert "runs-on: ubuntu-latest" in workflow
+    assert "uv run uvicorn api.main:app" in workflow
+    assert "http://127.0.0.1:8000/api/health" in workflow
+    assert "npx playwright test" in workflow
+    assert "Backend process exited before becoming ready" in workflow
+
+
+def test_playwright_ci_fails_fast_without_retries() -> None:
+    config = read_text("playwright.config.ts")
+
+    assert "retries: 0" in config
+    assert "maxFailures: process.env.CI ? 1 : undefined" in config
+    assert "retries: process.env.CI" not in config
+
+
+def test_playwright_screenshot_test_uses_portable_output_paths() -> None:
+    spec = read_text("tests/ui-integration/capture-screenshot.spec.ts")
+
+    assert "testInfo.outputPath" in spec
+    assert "/home/burhop/repos/wright" not in spec
+
+
+def test_active_ui_tests_do_not_use_developer_home_paths() -> None:
+    test_files = [
+        *Path(ROOT / "tests/ui-integration").glob("*.ts"),
+        ROOT / "tests/ui-smoke-test.ts",
+    ]
+
+    offenders = [
+        str(path.relative_to(ROOT))
+        for path in test_files
+        if "/home/burhop/" in path.read_text(encoding="utf-8")
+    ]
+
+    assert offenders == []
+
+
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")

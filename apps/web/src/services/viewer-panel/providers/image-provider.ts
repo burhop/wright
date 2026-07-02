@@ -39,7 +39,9 @@ export class ImageProvider implements ViewerProvider<ImageDocument> {
   readonly id = "image-viewer";
   private changeCallbacks = new Set<(e: ViewerDocumentChangeEvent) => void>();
 
-  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (listener) => {
+  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (
+    listener,
+  ) => {
     this.changeCallbacks.add(listener);
     return {
       dispose: () => {
@@ -48,7 +50,10 @@ export class ImageProvider implements ViewerProvider<ImageDocument> {
     };
   };
 
-  async openDocument(file: FileDescriptor, context: OpenContext): Promise<ImageDocument> {
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<ImageDocument> {
     const sessionId = context.sessionId;
     if (!sessionId) {
       throw new Error("No active session ID provided");
@@ -64,7 +69,7 @@ export class ImageProvider implements ViewerProvider<ImageDocument> {
     document: ImageDocument,
     panel: PanelHost,
     _mode: string,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
     const container = panel.container;
     container.innerHTML = "";
@@ -94,20 +99,26 @@ export class ImageProvider implements ViewerProvider<ImageDocument> {
     container.appendChild(wrapper);
   }
 
-  async save(_document: ImageDocument, _token: CancellationToken): Promise<void> {}
+  async save(
+    _document: ImageDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async saveAs(
     _document: ImageDocument,
     _destination: FileDescriptor,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {}
 
-  async revert(_document: ImageDocument, _token: CancellationToken): Promise<void> {}
+  async revert(
+    _document: ImageDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async backup(
     document: ImageDocument,
     _context: BackupContext,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<BackupHandle> {
     return {
       id: "backup-" + document.uri,

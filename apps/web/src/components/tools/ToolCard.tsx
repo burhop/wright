@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import type {
   McpServer,
   McpTool,
@@ -10,6 +10,7 @@ import {
 } from "../../services/workspace-service";
 import { ServerTypeBadge } from "./ServerTypeBadge";
 import { useTools } from "../../store/tools";
+import { WorkspaceEnablement } from "./WorkspaceEnablement";
 
 interface ToolCardProps {
   server: McpServer;
@@ -53,6 +54,7 @@ export function ToolCard({
   } | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [upToDateMessage, setUpToDateMessage] = useState(false);
+  const [cardNotice, setCardNotice] = useState<string | null>(null);
 
   const {
     checkServerVersion,
@@ -71,13 +73,21 @@ export function ToolCard({
   >({});
   const [isSavingCreds, setIsSavingCreds] = useState(false);
   const [credentialSaved, setCredentialSaved] = useState(false);
-
-  const requiredCredsMissing = useCallback(() => {
-    if (!hasEnvVarDefs) return false;
-    const envVars = server.env_vars as EnvVarDefinition[];
-    const configured = server.credentials_configured || {};
-    return envVars.some((v) => v.required && !configured[v.name]);
-  }, [server.env_vars, server.credentials_configured, hasEnvVarDefs]);
+  const credentialDefs = hasEnvVarDefs
+    ? (server.env_vars as EnvVarDefinition[])
+    : [];
+  const configuredCredentials = server.credentials_configured || {};
+  const missingRequiredCredentialDefs = credentialDefs.filter(
+    (v) => v.required && !configuredCredentials[v.name],
+  );
+  const requiredCredsMissing = () => missingRequiredCredentialDefs.length > 0;
+  const hasUnsavedCredentialValues = Object.values(credentialValues).some(
+    (value) => value.trim().length > 0,
+  );
+  const hasValuesForMissingRequiredCredentials =
+    missingRequiredCredentialDefs.every(
+      (varDef) => (credentialValues[varDef.name] || "").trim().length > 0,
+    );
 
   const isInstallBlocked =
     server.installability_tier === "blocked" ||
@@ -205,17 +215,67 @@ export function ToolCard({
     maxWidth: "100%",
   });
 
-  const handleSaveCredentials = async () => {
+  const persistCredentialValues = async () => {
+    const valuesToSave = Object.fromEntries(
+      Object.entries(credentialValues).filter(
+        ([, value]) => value.trim().length > 0,
+      ),
+    );
+    if (Object.keys(valuesToSave).length === 0) {
+      return false;
+    }
     setIsSavingCreds(true);
     setCardError(null);
+    await saveCredentials(server.server_id, valuesToSave);
+    setCredentialSaved(true);
+    setCredentialValues({});
+    setTimeout(() => setCredentialSaved(false), 3000);
+    setIsSavingCreds(false);
+    return true;
+  };
+
+  const handleSaveCredentials = async () => {
+    setCardNotice(null);
     try {
-      await saveCredentials(server.server_id, credentialValues);
-      setCredentialSaved(true);
-      setCredentialValues({});
-      setTimeout(() => setCredentialSaved(false), 3000);
+      await persistCredentialValues();
     } catch (err: any) {
       setCardError(err.message || "Failed to save credentials");
     } finally {
+      setIsSavingCreds(false);
+    }
+  };
+
+  const performInstall = async () => {
+    await onInstall(server.server_id, activeSessionId);
+    await onRefreshWorkspaces();
+  };
+
+  const revealCredentialForm = (notice: string) => {
+    setShowDetails(true);
+    setShowCredentials(true);
+    setCardNotice(notice);
+  };
+
+  const handleInstall = async () => {
+    setCardError(null);
+    setCardNotice(null);
+
+    if (requiredCredsMissing() && !hasValuesForMissingRequiredCredentials) {
+      revealCredentialForm("Enter the required credentials to continue.");
+      return;
+    }
+
+    setIsInstalling(true);
+    try {
+      if (requiredCredsMissing() || hasUnsavedCredentialValues) {
+        await persistCredentialValues();
+      }
+      await performInstall();
+    } catch (err: any) {
+      console.error(err);
+      setCardError(err.message || "Failed to install server");
+    } finally {
+      setIsInstalling(false);
       setIsSavingCreds(false);
     }
   };
@@ -227,20 +287,6 @@ export function ToolCard({
       setCredentialValues({});
     } catch (err: any) {
       setCardError(err.message || "Failed to clear credentials");
-    }
-  };
-
-  const handleInstall = async () => {
-    setIsInstalling(true);
-    setCardError(null);
-    try {
-      await onInstall(server.server_id, activeSessionId);
-      await onRefreshWorkspaces();
-    } catch (err: any) {
-      console.error(err);
-      setCardError(err.message || "Failed to install server");
-    } finally {
-      setIsInstalling(false);
     }
   };
 
@@ -336,11 +382,6 @@ export function ToolCard({
     } finally {
       setTogglingWorkspaceId(null);
     }
-  };
-
-  const getWorkspaceName = (path: string) => {
-    const parts = path.split("/");
-    return parts[parts.length - 1] || path;
   };
 
   const getStatusColor = () => {
@@ -505,7 +546,7 @@ export function ToolCard({
                     ? "var(--color-success)"
                     : server.installability_tier === "might_work"
                       ? "var(--color-warning)"
-                    : "var(--color-error)",
+                      : "var(--color-error)",
                 )}
               >
                 {installability.label}
@@ -535,10 +576,7 @@ export function ToolCard({
             <button
               onClick={handleInstall}
               disabled={
-                isInstalling ||
-                isDeleting ||
-                requiredCredsMissing() ||
-                isInstallBlocked
+                isInstalling || isSavingCreds || isDeleting || isInstallBlocked
               }
               data-testid={
                 isLocalServer
@@ -546,12 +584,12 @@ export function ToolCard({
                   : `server-card-connect-btn-${server.server_id}`
               }
               title={
-                requiredCredsMissing()
-                  ? "Configure credentials before installing"
-                  : isInstallBlocked
-                    ? server.install_blocked_reason ||
-                      "This entry is blocked from automated install"
-                  : undefined
+                isInstallBlocked
+                  ? server.install_blocked_reason ||
+                    "This entry is blocked from automated install"
+                  : requiredCredsMissing()
+                    ? "Enter the required credentials to install"
+                    : undefined
               }
               style={{
                 padding: "var(--space-xs) var(--space-md)",
@@ -562,8 +600,7 @@ export function ToolCard({
                 backgroundColor: "var(--color-secondary)",
                 color: "#ffffff",
                 cursor:
-                  isInstalling || requiredCredsMissing()
-                  || isInstallBlocked
+                  isInstalling || isSavingCreds || isInstallBlocked
                     ? "not-allowed"
                     : "pointer",
                 transition: "all var(--transition-smooth)",
@@ -576,14 +613,87 @@ export function ToolCard({
                 e.currentTarget.style.boxShadow = "var(--shadow-glow)";
               }}
             >
-              {isInstalling
+              {isInstalling || isSavingCreds
                 ? isLocalServer
-                  ? "Installing..."
-                  : "Connecting..."
+                  ? requiredCredsMissing()
+                    ? "Saving..."
+                    : "Installing..."
+                  : requiredCredsMissing()
+                    ? "Saving..."
+                    : "Connecting..."
                 : isLocalServer
-                  ? "Install"
-                  : "Connect"}
+                  ? requiredCredsMissing() && showCredentials
+                    ? "Save & Install"
+                    : "Install"
+                  : requiredCredsMissing() && showCredentials
+                    ? "Save & Connect"
+                    : "Connect"}
             </button>
+          ) : requiredCredsMissing() ? (
+            <div
+              style={{
+                display: "flex",
+                gap: "var(--space-xs)",
+                alignItems: "center",
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setCardError(null);
+                  revealCredentialForm(
+                    "Enter the required credentials before using this server.",
+                  );
+                }}
+                disabled={isSavingCreds || isDeleting}
+                data-testid={`server-card-add-credentials-btn-${server.server_id}`}
+                title="Required credentials are missing"
+                style={{
+                  padding: "var(--space-xs) var(--space-md)",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  border: "none",
+                  backgroundColor: "var(--color-warning)",
+                  color: "var(--color-surface)",
+                  cursor:
+                    isSavingCreds || isDeleting ? "not-allowed" : "pointer",
+                  transition: "all var(--transition-smooth)",
+                }}
+              >
+                Add Credentials
+              </button>
+              <button
+                onClick={handleUninstall}
+                disabled={isUninstalling}
+                data-testid={
+                  isLocalServer
+                    ? `server-card-uninstall-btn-${server.server_id}`
+                    : `server-card-disconnect-btn-${server.server_id}`
+                }
+                style={{
+                  padding: "var(--space-xs) var(--space-sm)",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.78rem",
+                  fontWeight: 600,
+                  border: "1px solid rgba(239, 68, 68, 0.35)",
+                  backgroundColor: "transparent",
+                  color: "var(--color-error)",
+                  cursor: isUninstalling ? "not-allowed" : "pointer",
+                  transition: "all var(--transition-smooth)",
+                }}
+              >
+                {isUninstalling
+                  ? isLocalServer
+                    ? "Uninstalling..."
+                    : "Disconnecting..."
+                  : isLocalServer
+                    ? "Uninstall"
+                    : "Disconnect"}
+              </button>
+            </div>
           ) : (
             <button
               onClick={handleUninstall}
@@ -733,441 +843,131 @@ export function ToolCard({
 
       {showDetails && (
         <>
-      <div
-        data-testid={`server-card-platform-${server.server_id}`}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-xs)",
-          padding: "var(--space-sm)",
-          border: "1px solid var(--color-border)",
-          borderRadius: "var(--radius-md)",
-          backgroundColor: "var(--color-surface-subtle)",
-          textAlign: "left",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: "var(--space-sm)",
-            fontSize: "0.76rem",
-          }}
-        >
-          <span style={{ color: "var(--color-primary)", fontWeight: 700 }}>
-            Linux x64
-          </span>
-          <span style={{ color: "var(--color-secondary)", fontWeight: 700 }}>
-            {currentPlatform?.status || "unknown"}
-            {currentPlatform?.tested ? " · tested" : ""}
-          </span>
-        </div>
-        {currentPlatform?.notes && (
-          <span style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
-            {currentPlatform.notes}
-          </span>
-        )}
-        {(server.host_software_required.length > 0 ||
-          server.credentials_required.length > 0) && (
-          <span style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
-            Requires:{" "}
-            {[...server.host_software_required, ...server.credentials_required]
-              .join(", ")}
-          </span>
-        )}
-        {server.validation_result?.message && (
-          <span style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
-            {server.validation_result.message}
-          </span>
-        )}
-        {server.install_blocked_reason && (
-          <span style={{ fontSize: "0.72rem", color: "var(--color-warning)" }}>
-            {server.install_blocked_reason}
-          </span>
-        )}
-        {server.follow_up_url && (
-          <a
-            href={server.follow_up_url}
-            data-testid={`server-card-followup-${server.server_id}`}
+          <div
+            data-testid={`server-card-platform-${server.server_id}`}
             style={{
-              fontSize: "0.72rem",
-              color: "var(--color-secondary)",
-              textDecoration: "none",
-              fontWeight: 700,
-            }}
-          >
-            Follow-up record
-          </a>
-        )}
-      </div>
-
-      {/* Credential Configuration Panel */}
-      {hasEnvVarDefs && (
-        <div
-          data-testid={`server-card-credentials-section-${server.server_id}`}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-xs)",
-          }}
-        >
-          {/* Requires Configuration badge */}
-          {requiredCredsMissing() && !showCredentials && (
-            <span
-              data-testid={`server-card-credentials-badge-${server.server_id}`}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "4px",
-                fontSize: "0.7rem",
-                fontWeight: 600,
-                color: "var(--color-warning)",
-                backgroundColor: "rgba(245, 158, 11, 0.08)",
-                border: "1px solid rgba(245, 158, 11, 0.2)",
-                padding: "2px 8px",
-                borderRadius: "6px",
-                width: "fit-content",
-              }}
-            >
-              🔑 Requires Configuration
-            </span>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setShowCredentials(!showCredentials)}
-            data-testid={`server-card-credentials-toggle-${server.server_id}`}
-            style={{
-              fontSize: "0.72rem",
-              color: "var(--color-secondary)",
-              cursor: "pointer",
-              border: "none",
-              background: "none",
-              textAlign: "left",
-              padding: "0",
               display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
-              transition: "color var(--transition-fast)",
+              flexDirection: "column",
+              gap: "var(--space-xs)",
+              padding: "var(--space-sm)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-md)",
+              backgroundColor: "var(--color-surface-subtle)",
+              textAlign: "left",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "var(--color-primary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.color = "var(--color-secondary)")
-            }
           >
-            <span>
-              {showCredentials
-                ? "▼ Hide Credentials"
-                : "▶ Configure Credentials"}
-            </span>
-          </button>
-
-          {showCredentials && (
             <div
-              data-testid={`server-card-credentials-form-${server.server_id}`}
               style={{
                 display: "flex",
-                flexDirection: "column",
+                justifyContent: "space-between",
                 gap: "var(--space-sm)",
-                padding: "var(--space-md)",
-                backgroundColor: "var(--color-surface-subtle)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-lg)",
-                marginTop: "var(--space-xs)",
+                fontSize: "0.76rem",
               }}
             >
-              {(server.env_vars as EnvVarDefinition[]).map((varDef) => {
-                const isConfigured =
-                  server.credentials_configured?.[varDef.name] || false;
-                return (
-                  <div
-                    key={varDef.name}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "4px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "var(--space-xs)",
-                      }}
-                    >
-                      <label
-                        style={{
-                          fontSize: "0.78rem",
-                          fontWeight: 600,
-                          color: "var(--color-primary)",
-                        }}
-                      >
-                        {varDef.label}
-                      </label>
-                      {varDef.required && (
-                        <span
-                          style={{
-                            fontSize: "0.65rem",
-                            color: "var(--color-error)",
-                            fontWeight: 700,
-                          }}
-                        >
-                          *
-                        </span>
-                      )}
-                      <span
-                        data-testid={`server-card-credential-status-${varDef.name}`}
-                        style={{
-                          fontSize: "0.7rem",
-                          marginLeft: "auto",
-                          color: isConfigured
-                            ? "var(--color-success)"
-                            : "var(--color-text-dim)",
-                        }}
-                      >
-                        {isConfigured ? "✓ Saved" : "✗ Not set"}
-                      </span>
-                    </div>
-                    {varDef.description && (
-                      <span
-                        style={{
-                          fontSize: "0.7rem",
-                          color: "var(--color-text-muted)",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        {varDef.description}
-                      </span>
-                    )}
-                    <input
-                      type={varDef.secret ? "password" : "text"}
-                      placeholder={
-                        isConfigured
-                          ? "••••••••  (already configured)"
-                          : `Enter ${varDef.label}`
-                      }
-                      value={credentialValues[varDef.name] || ""}
-                      onChange={(e) =>
-                        setCredentialValues((prev) => ({
-                          ...prev,
-                          [varDef.name]: e.target.value,
-                        }))
-                      }
-                      data-testid={`server-card-credential-input-${varDef.name}`}
-                      style={{
-                        padding: "6px 10px",
-                        backgroundColor: "var(--color-surface)",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "var(--radius-md)",
-                        color: "var(--color-primary)",
-                        fontSize: "0.8rem",
-                        fontFamily: "var(--font-mono)",
-                        outline: "none",
-                        transition: "border-color var(--transition-fast)",
-                      }}
-                      onFocus={(e) =>
-                        (e.currentTarget.style.borderColor =
-                          "var(--color-secondary)")
-                      }
-                      onBlur={(e) =>
-                        (e.currentTarget.style.borderColor =
-                          "var(--color-border)")
-                      }
-                    />
-                  </div>
-                );
-              })}
-
-              {/* Save / Clear buttons */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "var(--space-sm)",
-                  marginTop: "var(--space-xs)",
-                }}
-              >
-                <button
-                  onClick={handleSaveCredentials}
-                  disabled={
-                    isSavingCreds ||
-                    Object.values(credentialValues).every((v) => !v)
-                  }
-                  data-testid={`server-card-credentials-save-btn-${server.server_id}`}
-                  style={{
-                    padding: "var(--space-xs) var(--space-md)",
-                    borderRadius: "var(--radius-md)",
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
-                    border: "none",
-                    backgroundColor: "var(--color-secondary)",
-                    color: "#ffffff",
-                    cursor:
-                      isSavingCreds ||
-                      Object.values(credentialValues).every((v) => !v)
-                        ? "not-allowed"
-                        : "pointer",
-                    transition: "all var(--transition-smooth)",
-                  }}
-                >
-                  {isSavingCreds ? "Saving..." : "Save Credentials"}
-                </button>
-                <button
-                  onClick={handleClearCredentials}
-                  data-testid={`server-card-credentials-clear-btn-${server.server_id}`}
-                  style={{
-                    padding: "var(--space-xs) var(--space-md)",
-                    borderRadius: "var(--radius-md)",
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
-                    border: "1px solid var(--color-border)",
-                    backgroundColor: "transparent",
-                    color: "var(--color-text-muted)",
-                    cursor: "pointer",
-                    transition: "all var(--transition-fast)",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--color-error)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--color-border)")
-                  }
-                >
-                  Clear Credentials
-                </button>
-                {credentialSaved && (
-                  <span
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "var(--color-success)",
-                      fontWeight: 500,
-                      alignSelf: "center",
-                    }}
-                  >
-                    ✓ Saved successfully
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Update Available Banner */}
-      {updateAvailable && (
-        <div
-          data-testid={`server-card-update-banner-${server.server_id}`}
-          style={{
-            backgroundColor: "rgba(245, 158, 11, 0.08)",
-            border: "1px solid var(--color-warning)",
-            borderRadius: "var(--radius-lg)",
-            padding: "var(--space-md)",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontSize: "0.85rem",
-            color: "var(--color-warning)",
-            textAlign: "left",
-          }}
-        >
-          <span>
-            <strong>Update available:</strong> v{updateAvailable.installed} → v
-            {updateAvailable.latest}
-          </span>
-          <button
-            onClick={handleUpdate}
-            disabled={isUpdating}
-            data-testid={`server-card-update-btn-${server.server_id}`}
-            style={{
-              backgroundColor: "var(--color-warning)",
-              color: "var(--color-surface)",
-              border: "none",
-              padding: "var(--space-xs) var(--space-md)",
-              borderRadius: "var(--radius-md)",
-              fontWeight: 600,
-              cursor: isUpdating ? "not-allowed" : "pointer",
-            }}
-          >
-            {isUpdating ? "Updating..." : "Update Now"}
-          </button>
-        </div>
-      )}
-
-      {/* Connection Info / Code Command */}
-      <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "var(--color-surface-subtle)",
-            padding: "var(--space-md)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--color-border)",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.8rem",
-            color: "var(--color-text-muted)",
-            wordBreak: "break-all",
-            gap: "var(--space-xs)",
-            textAlign: "left",
-          }}
-        >
-          <div style={{ display: "flex", gap: "var(--space-sm)" }}>
-            <span style={{ color: "var(--color-primary)", fontWeight: 500 }}>
-              Transport:
-            </span>
-            <span style={{ color: "var(--color-secondary)" }}>
-              {server.type}
-            </span>
-          </div>
-          {server.command && (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ color: "var(--color-primary)", fontWeight: 500 }}>
-                Endpoint/Command:
+              <span style={{ color: "var(--color-primary)", fontWeight: 700 }}>
+                Linux x64
               </span>
               <span
-                style={{
-                  whiteSpace: "pre-wrap",
-                  marginTop: "2px",
-                  color: "var(--color-secondary)",
-                  fontSize: "0.75rem",
-                }}
+                style={{ color: "var(--color-secondary)", fontWeight: 700 }}
               >
-                {Array.isArray(server.command)
-                  ? server.command.join(" ")
-                  : server.command}
+                {currentPlatform?.status || "unknown"}
+                {currentPlatform?.tested ? " · tested" : ""}
               </span>
             </div>
-          )}
-      </div>
-      {/* Workspace Enablement Collapsible (Only if installed) */}
-      {(() => {
-        const enabledCount = workspaces.filter(
-          (w) =>
-            w.enabled_tools?.includes(server.server_id) ||
-            w.enabled_tools?.includes(server.name) ||
-            false,
-        ).length;
+            {currentPlatform?.notes && (
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                {currentPlatform.notes}
+              </span>
+            )}
+            {(server.host_software_required.length > 0 ||
+              server.credentials_required.length > 0) && (
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                Requires:{" "}
+                {[
+                  ...server.host_software_required,
+                  ...server.credentials_required,
+                ].join(", ")}
+              </span>
+            )}
+            {server.validation_result?.message && (
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                {server.validation_result.message}
+              </span>
+            )}
+            {server.install_blocked_reason && (
+              <span
+                style={{ fontSize: "0.72rem", color: "var(--color-warning)" }}
+              >
+                {server.install_blocked_reason}
+              </span>
+            )}
+            {server.follow_up_url && (
+              <a
+                href={server.follow_up_url}
+                data-testid={`server-card-followup-${server.server_id}`}
+                style={{
+                  fontSize: "0.72rem",
+                  color: "var(--color-secondary)",
+                  textDecoration: "none",
+                  fontWeight: 700,
+                }}
+              >
+                Follow-up record
+              </a>
+            )}
+          </div>
 
-        return (
-          server.is_installed && (
+          {/* Credential Configuration Panel */}
+          {hasEnvVarDefs && (
             <div
+              data-testid={`server-card-credentials-section-${server.server_id}`}
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "var(--space-xs)",
-                borderTop: "1px solid var(--color-border)",
-                paddingTop: "var(--space-sm)",
-                marginTop: "var(--space-xs)",
-                textAlign: "left",
               }}
             >
+              {/* Requires Configuration badge */}
+              {requiredCredsMissing() && !showCredentials && (
+                <span
+                  data-testid={`server-card-credentials-badge-${server.server_id}`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    fontSize: "0.7rem",
+                    fontWeight: 600,
+                    color: "var(--color-warning)",
+                    backgroundColor: "rgba(245, 158, 11, 0.08)",
+                    border: "1px solid rgba(245, 158, 11, 0.2)",
+                    padding: "2px 8px",
+                    borderRadius: "6px",
+                    width: "fit-content",
+                  }}
+                >
+                  🔑 Requires Configuration
+                </span>
+              )}
+
               <button
                 type="button"
-                onClick={() => setShowWorkspaces(!showWorkspaces)}
-                data-testid={`server-card-workspaces-toggle-${server.server_id}`}
+                onClick={() => setShowCredentials(!showCredentials)}
+                data-testid={`server-card-credentials-toggle-${server.server_id}`}
                 style={{
                   fontSize: "0.72rem",
                   color: "var(--color-secondary)",
@@ -1192,421 +992,650 @@ export function ToolCard({
                 }
               >
                 <span>
-                  {showWorkspaces
-                    ? "▼ Hide Workspaces"
-                    : `▶ Configure Workspaces (${enabledCount}/${workspaces.length})`}
+                  {showCredentials
+                    ? "▼ Hide Credentials"
+                    : "▶ Configure Credentials"}
                 </span>
               </button>
 
-              {showWorkspaces && (
+              {showCredentials && (
                 <div
+                  data-testid={`server-card-credentials-form-${server.server_id}`}
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "var(--space-xs)",
-                    maxHeight: "120px",
-                    overflowY: "auto",
-                    paddingRight: "4px",
+                    gap: "var(--space-sm)",
+                    padding: "var(--space-md)",
+                    backgroundColor: "var(--color-surface-subtle)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "var(--radius-lg)",
                     marginTop: "var(--space-xs)",
                   }}
                 >
-                  {workspaces.length === 0 ? (
-                    <span
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "var(--color-secondary)",
-                        fontStyle: "italic",
-                      }}
-                    >
-                      No workspaces available.
-                    </span>
-                  ) : (
-                    workspaces.map((w) => {
-                      const isEnabled =
-                        w.enabled_tools?.includes(server.server_id) ||
-                        w.enabled_tools?.includes(server.name) ||
-                        false;
-                      const isTogglingW =
-                        togglingWorkspaceId === w.workspace_id;
-                      return (
-                        <label
-                          key={w.workspace_id}
+                  {(server.env_vars as EnvVarDefinition[]).map((varDef) => {
+                    const isConfigured =
+                      server.credentials_configured?.[varDef.name] || false;
+                    return (
+                      <div
+                        key={varDef.name}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "4px",
+                        }}
+                      >
+                        <div
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "space-between",
-                            padding: "4px var(--space-md)",
-                            backgroundColor: isEnabled
-                              ? "rgba(56, 189, 248, 0.04)"
-                              : "var(--color-surface-card-subtle)",
-                            border: "1px solid var(--color-border)",
-                            borderRadius: "var(--radius-md)",
-                            fontSize: "0.78rem",
-                            cursor: isTogglingW ? "not-allowed" : "pointer",
-                            transition: "all var(--transition-fast)",
+                            gap: "var(--space-xs)",
                           }}
                         >
-                          <div
+                          <label
                             style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "var(--space-sm)",
-                              overflow: "hidden",
+                              fontSize: "0.78rem",
+                              fontWeight: 600,
+                              color: "var(--color-primary)",
                             }}
                           >
-                            <input
-                              type="checkbox"
-                              checked={isEnabled}
-                              disabled={isTogglingW}
-                              onChange={(e) =>
-                                handleToggleWorkspace(w, e.target.checked)
-                              }
-                              style={{
-                                accentColor: "var(--color-secondary)",
-                                cursor: "pointer",
-                              }}
-                            />
+                            {varDef.label}
+                          </label>
+                          {varDef.required && (
                             <span
                               style={{
-                                fontWeight: 500,
-                                color: isEnabled
-                                  ? "var(--color-primary)"
-                                  : "var(--color-secondary)",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
+                                fontSize: "0.65rem",
+                                color: "var(--color-error)",
+                                fontWeight: 700,
                               }}
                             >
-                              {getWorkspaceName(w.local_path)}
-                            </span>
-                          </div>
-                          {isTogglingW && (
-                            <span
-                              style={{
-                                fontSize: "0.7rem",
-                                color: "var(--color-secondary)",
-                              }}
-                            >
-                              Updating...
+                              *
                             </span>
                           )}
-                        </label>
-                      );
-                    })
-                  )}
+                          <span
+                            data-testid={`server-card-credential-status-${varDef.name}`}
+                            style={{
+                              fontSize: "0.7rem",
+                              marginLeft: "auto",
+                              color: isConfigured
+                                ? "var(--color-success)"
+                                : "var(--color-text-dim)",
+                            }}
+                          >
+                            {isConfigured ? "✓ Saved" : "✗ Not set"}
+                          </span>
+                        </div>
+                        {varDef.description && (
+                          <span
+                            style={{
+                              fontSize: "0.7rem",
+                              color: "var(--color-text-muted)",
+                              fontStyle: "italic",
+                            }}
+                          >
+                            {varDef.description}
+                          </span>
+                        )}
+                        <input
+                          type={varDef.secret ? "password" : "text"}
+                          placeholder={
+                            isConfigured
+                              ? "••••••••  (already configured)"
+                              : `Enter ${varDef.label}`
+                          }
+                          value={credentialValues[varDef.name] || ""}
+                          onChange={(e) =>
+                            setCredentialValues((prev) => ({
+                              ...prev,
+                              [varDef.name]: e.target.value,
+                            }))
+                          }
+                          data-testid={`server-card-credential-input-${varDef.name}`}
+                          style={{
+                            padding: "6px 10px",
+                            backgroundColor: "var(--color-surface)",
+                            border: "1px solid var(--color-border)",
+                            borderRadius: "var(--radius-md)",
+                            color: "var(--color-primary)",
+                            fontSize: "0.8rem",
+                            fontFamily: "var(--font-mono)",
+                            outline: "none",
+                            transition: "border-color var(--transition-fast)",
+                          }}
+                          onFocus={(e) =>
+                            (e.currentTarget.style.borderColor =
+                              "var(--color-secondary)")
+                          }
+                          onBlur={(e) =>
+                            (e.currentTarget.style.borderColor =
+                              "var(--color-border)")
+                          }
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {/* Save / Clear buttons */}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "var(--space-sm)",
+                      marginTop: "var(--space-xs)",
+                    }}
+                  >
+                    <button
+                      onClick={handleSaveCredentials}
+                      disabled={
+                        isSavingCreds ||
+                        Object.values(credentialValues).every((v) => !v)
+                      }
+                      data-testid={`server-card-credentials-save-btn-${server.server_id}`}
+                      style={{
+                        padding: "var(--space-xs) var(--space-md)",
+                        borderRadius: "var(--radius-md)",
+                        fontSize: "0.78rem",
+                        fontWeight: 600,
+                        border: "none",
+                        backgroundColor: "var(--color-secondary)",
+                        color: "#ffffff",
+                        cursor:
+                          isSavingCreds ||
+                          Object.values(credentialValues).every((v) => !v)
+                            ? "not-allowed"
+                            : "pointer",
+                        transition: "all var(--transition-smooth)",
+                      }}
+                    >
+                      {isSavingCreds ? "Saving..." : "Save Credentials"}
+                    </button>
+                    <button
+                      onClick={handleClearCredentials}
+                      data-testid={`server-card-credentials-clear-btn-${server.server_id}`}
+                      style={{
+                        padding: "var(--space-xs) var(--space-md)",
+                        borderRadius: "var(--radius-md)",
+                        fontSize: "0.78rem",
+                        fontWeight: 600,
+                        border: "1px solid var(--color-border)",
+                        backgroundColor: "transparent",
+                        color: "var(--color-text-muted)",
+                        cursor: "pointer",
+                        transition: "all var(--transition-fast)",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.borderColor =
+                          "var(--color-error)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.borderColor =
+                          "var(--color-border)")
+                      }
+                    >
+                      Clear Credentials
+                    </button>
+                    {credentialSaved && (
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "var(--color-success)",
+                          fontWeight: 500,
+                          alignSelf: "center",
+                        }}
+                      >
+                        ✓ Saved successfully
+                      </span>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
-          )
-        );
-      })()}
+          )}
 
-      {/* Status Indicators & Control Buttons */}
-      {(server.is_installed ||
-        (!server.is_installed && !server.source_url)) && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontSize: "0.8rem",
-            borderTop: "1px solid var(--color-border)",
-            paddingTop: "var(--space-sm)",
-            marginTop: "var(--space-xs)",
-          }}
-        >
-          {server.is_installed ? (
+          {/* Update Available Banner */}
+          {updateAvailable && (
+            <div
+              data-testid={`server-card-update-banner-${server.server_id}`}
+              style={{
+                backgroundColor: "rgba(245, 158, 11, 0.08)",
+                border: "1px solid var(--color-warning)",
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-md)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                fontSize: "0.85rem",
+                color: "var(--color-warning)",
+                textAlign: "left",
+              }}
+            >
+              <span>
+                <strong>Update available:</strong> v{updateAvailable.installed}{" "}
+                → v{updateAvailable.latest}
+              </span>
+              <button
+                onClick={handleUpdate}
+                disabled={isUpdating}
+                data-testid={`server-card-update-btn-${server.server_id}`}
+                style={{
+                  backgroundColor: "var(--color-warning)",
+                  color: "var(--color-surface)",
+                  border: "none",
+                  padding: "var(--space-xs) var(--space-md)",
+                  borderRadius: "var(--radius-md)",
+                  fontWeight: 600,
+                  cursor: isUpdating ? "not-allowed" : "pointer",
+                }}
+              >
+                {isUpdating ? "Updating..." : "Update Now"}
+              </button>
+            </div>
+          )}
+
+          {/* Connection Info / Code Command */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              backgroundColor: "var(--color-surface-subtle)",
+              padding: "var(--space-md)",
+              borderRadius: "var(--radius-lg)",
+              border: "1px solid var(--color-border)",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.8rem",
+              color: "var(--color-text-muted)",
+              wordBreak: "break-all",
+              gap: "var(--space-xs)",
+              textAlign: "left",
+            }}
+          >
+            <div style={{ display: "flex", gap: "var(--space-sm)" }}>
+              <span style={{ color: "var(--color-primary)", fontWeight: 500 }}>
+                Transport:
+              </span>
+              <span style={{ color: "var(--color-secondary)" }}>
+                {server.type}
+              </span>
+            </div>
+            {server.command && (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span
+                  style={{ color: "var(--color-primary)", fontWeight: 500 }}
+                >
+                  Endpoint/Command:
+                </span>
+                <span
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    marginTop: "2px",
+                    color: "var(--color-secondary)",
+                    fontSize: "0.75rem",
+                  }}
+                >
+                  {Array.isArray(server.command)
+                    ? server.command.join(" ")
+                    : server.command}
+                </span>
+              </div>
+            )}
+          </div>
+          <WorkspaceEnablement
+            serverId={server.server_id}
+            serverName={server.name}
+            isInstalled={server.is_installed}
+            workspaces={workspaces}
+            showWorkspaces={showWorkspaces}
+            togglingWorkspaceId={togglingWorkspaceId}
+            onToggleVisible={() => setShowWorkspaces((visible) => !visible)}
+            onToggleWorkspace={handleToggleWorkspace}
+          />
+
+          {/* Status Indicators & Control Buttons */}
+          {(server.is_installed ||
+            (!server.is_installed && !server.source_url)) && (
             <div
               style={{
                 display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                fontSize: "0.8rem",
+                borderTop: "1px solid var(--color-border)",
+                paddingTop: "var(--space-sm)",
+                marginTop: "var(--space-xs)",
+              }}
+            >
+              {server.is_installed ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "var(--space-sm)",
+                  }}
+                >
+                  <span
+                    className={
+                      server.status === "active"
+                        ? "pulse-success-glow"
+                        : undefined
+                    }
+                    style={{
+                      width: "8px",
+                      height: "8px",
+                      borderRadius: "50%",
+                      backgroundColor: getStatusColor(),
+                      boxShadow: `0 0 8px ${getStatusColor()}`,
+                      display: "inline-block",
+                    }}
+                  />
+                  <span
+                    style={{
+                      color: "var(--color-primary)",
+                      textTransform: "capitalize",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {server.status}
+                  </span>
+                </div>
+              ) : (
+                <div />
+              )}
+
+              {/* Action Controls */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "var(--space-md)",
+                }}
+              >
+                {server.is_installed && isLocalServer && (
+                  <button
+                    onClick={handleCheckForUpdates}
+                    disabled={isCheckingUpdate || isUpdating}
+                    data-testid={`server-card-check-update-btn-${server.server_id}`}
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      color: "var(--color-secondary)",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      cursor: isCheckingUpdate ? "not-allowed" : "pointer",
+                      transition: "all var(--transition-fast)",
+                      padding: "0",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--color-primary)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--color-secondary)")
+                    }
+                  >
+                    {isCheckingUpdate ? "Checking..." : "↻ Check for Updates"}
+                  </button>
+                )}
+                {upToDateMessage && (
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "var(--color-success)",
+                      fontWeight: 500,
+                    }}
+                  >
+                    ✓ Up to date
+                  </span>
+                )}
+                {!server.is_installed && !server.source_url && (
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting || isInstalling}
+                    data-testid={`server-card-remove-btn-${server.server_id}`}
+                    style={{
+                      color: "var(--color-text-dim)",
+                      fontSize: "0.8rem",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                      border: "none",
+                      background: "none",
+                      transition: "color var(--transition-fast)",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "#ef4444")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--color-text-dim)")
+                    }
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Card-local dismissible notice block */}
+          {cardNotice && (
+            <div
+              data-testid={`server-card-notice-${server.server_id}`}
+              style={{
+                backgroundColor: "rgba(245, 158, 11, 0.08)",
+                border: "1px solid var(--color-warning)",
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-md)",
+                fontSize: "0.8rem",
+                color: "var(--color-warning)",
+                wordBreak: "break-word",
+                textAlign: "left",
+                display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
                 gap: "var(--space-sm)",
               }}
             >
-              <span
-                className={
-                  server.status === "active" ? "pulse-success-glow" : undefined
-                }
+              <span>{cardNotice}</span>
+              <button
+                onClick={() => setCardNotice(null)}
                 style={{
-                  width: "8px",
-                  height: "8px",
-                  borderRadius: "50%",
-                  backgroundColor: getStatusColor(),
-                  boxShadow: `0 0 8px ${getStatusColor()}`,
-                  display: "inline-block",
-                }}
-              />
-              <span
-                style={{
-                  color: "var(--color-primary)",
-                  textTransform: "capitalize",
-                  fontWeight: 500,
+                  color: "var(--color-warning)",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  padding: "0 4px",
+                  background: "none",
+                  border: "none",
                 }}
               >
-                {server.status}
-              </span>
+                âœ•
+              </button>
             </div>
-          ) : (
-            <div />
           )}
 
-          {/* Action Controls */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-md)",
-            }}
-          >
-            {server.is_installed && isLocalServer && (
-              <button
-                onClick={handleCheckForUpdates}
-                disabled={isCheckingUpdate || isUpdating}
-                data-testid={`server-card-check-update-btn-${server.server_id}`}
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-secondary)",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  cursor: isCheckingUpdate ? "not-allowed" : "pointer",
-                  transition: "all var(--transition-fast)",
-                  padding: "0",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = "var(--color-primary)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "var(--color-secondary)")
-                }
-              >
-                {isCheckingUpdate ? "Checking..." : "↻ Check for Updates"}
-              </button>
-            )}
-            {upToDateMessage && (
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--color-success)",
-                  fontWeight: 500,
-                }}
-              >
-                ✓ Up to date
+          {/* Card-local dismissible error block */}
+          {cardError && (
+            <div
+              data-testid={`server-card-error-${server.server_id}`}
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid var(--color-error)",
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-md)",
+                fontSize: "0.8rem",
+                color: "var(--color-error)",
+                wordBreak: "break-word",
+                textAlign: "left",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "var(--space-sm)",
+              }}
+            >
+              <span>
+                <strong>Error:</strong> {cardError}
               </span>
-            )}
-            {!server.is_installed && !server.source_url && (
               <button
-                onClick={handleDelete}
-                disabled={isDeleting || isInstalling}
-                data-testid={`server-card-remove-btn-${server.server_id}`}
+                onClick={() => setCardError(null)}
                 style={{
-                  color: "var(--color-text-dim)",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
+                  color: "var(--color-error)",
                   cursor: "pointer",
-                  border: "none",
+                  fontWeight: "bold",
+                  padding: "0 4px",
                   background: "none",
-                  transition: "color var(--transition-fast)",
+                  border: "none",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "var(--color-text-dim)")
-                }
               >
-                Remove
+                ✕
               </button>
-            )}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* Card-local dismissible error block */}
-      {cardError && (
-        <div
-          data-testid={`server-card-error-${server.server_id}`}
-          style={{
-            backgroundColor: "rgba(239, 68, 68, 0.08)",
-            border: "1px solid var(--color-error)",
-            borderRadius: "var(--radius-lg)",
-            padding: "var(--space-md)",
-            fontSize: "0.8rem",
-            color: "var(--color-error)",
-            wordBreak: "break-word",
-            textAlign: "left",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "var(--space-sm)",
-          }}
-        >
-          <span>
-            <strong>Error:</strong> {cardError}
-          </span>
-          <button
-            onClick={() => setCardError(null)}
-            style={{
-              color: "var(--color-error)",
-              cursor: "pointer",
-              fontWeight: "bold",
-              padding: "0 4px",
-              background: "none",
-              border: "none",
-            }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
+          {/* Backend connection error message */}
+          {server.error_message && (
+            <div
+              data-testid={`server-card-error-${server.server_id}`}
+              style={{
+                backgroundColor: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid var(--color-error)",
+                borderRadius: "var(--radius-lg)",
+                padding: "var(--space-md)",
+                fontSize: "0.8rem",
+                color: "var(--color-error)",
+                wordBreak: "break-word",
+                textAlign: "left",
+              }}
+            >
+              <strong>Connection Error:</strong> {server.error_message}
+            </div>
+          )}
 
-      {/* Backend connection error message */}
-      {server.error_message && (
-        <div
-          data-testid={`server-card-error-${server.server_id}`}
-          style={{
-            backgroundColor: "rgba(239, 68, 68, 0.08)",
-            border: "1px solid var(--color-error)",
-            borderRadius: "var(--radius-lg)",
-            padding: "var(--space-md)",
-            fontSize: "0.8rem",
-            color: "var(--color-error)",
-            wordBreak: "break-word",
-            textAlign: "left",
-          }}
-        >
-          <strong>Connection Error:</strong> {server.error_message}
-        </div>
-      )}
-
-      {/* Discovered Tools Dropdown */}
-      {server.is_installed && tools.length > 0 && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            borderTop: "1px solid var(--color-border)",
-            paddingTop: "var(--space-md)",
-            marginTop: "var(--space-xs)",
-          }}
-        >
-          <button
-            onClick={() => setShowTools(!showTools)}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              fontSize: "0.85rem",
-              color: "var(--color-secondary)",
-              cursor: "pointer",
-              textAlign: "left",
-              fontWeight: 600,
-              border: "none",
-              background: "none",
-            }}
-          >
-            <span>Exposed Tools ({tools.length})</span>
-            <span>{showTools ? "▲" : "▼"}</span>
-          </button>
-
-          {showTools && (
+          {/* Discovered Tools Dropdown */}
+          {server.is_installed && tools.length > 0 && (
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "var(--space-md)",
-                marginTop: "var(--space-md)",
+                borderTop: "1px solid var(--color-border)",
+                paddingTop: "var(--space-md)",
+                marginTop: "var(--space-xs)",
               }}
             >
-              {tools.map((tool) => (
+              <button
+                onClick={() => setShowTools(!showTools)}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                  fontSize: "0.85rem",
+                  color: "var(--color-secondary)",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  fontWeight: 600,
+                  border: "none",
+                  background: "none",
+                }}
+              >
+                <span>Exposed Tools ({tools.length})</span>
+                <span>{showTools ? "▲" : "▼"}</span>
+              </button>
+
+              {showTools && (
                 <div
-                  key={tool.tool_id}
                   style={{
-                    backgroundColor: "var(--color-surface-subtle)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-lg)",
-                    padding: "var(--space-md)",
                     display: "flex",
                     flexDirection: "column",
-                    gap: "var(--space-xs)",
-                    textAlign: "left",
+                    gap: "var(--space-md)",
+                    marginTop: "var(--space-md)",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span
+                  {tools.map((tool) => (
+                    <div
+                      key={tool.tool_id}
                       style={{
-                        fontFamily: "var(--font-mono)",
-                        fontSize: "0.8rem",
-                        color: "var(--color-primary)",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {tool.name}
-                    </span>
-
-                    {/* Tool Toggle Checkbox */}
-                    <label
-                      style={{
+                        backgroundColor: "var(--color-surface-subtle)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-lg)",
+                        padding: "var(--space-md)",
                         display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        fontSize: "0.8rem",
-                        color: "var(--color-text-muted)",
-                        cursor: "pointer",
+                        flexDirection: "column",
+                        gap: "var(--space-xs)",
+                        textAlign: "left",
                       }}
                     >
-                      <input
-                        type="checkbox"
-                        checked={tool.is_enabled}
-                        onChange={(e) =>
-                          onToggleTool(tool.tool_id, e.target.checked)
-                        }
-                        style={{
-                          cursor: "pointer",
-                          accentColor: "var(--color-secondary)",
-                        }}
-                      />
-                      {tool.is_enabled ? "Enabled" : "Disabled"}
-                    </label>
-                  </div>
-                  {tool.description && (
-                    <p
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "var(--color-secondary)",
-                        fontStyle: "italic",
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {tool.description}
-                    </p>
-                  )}
-                  {tool.input_schema &&
-                    Object.keys(tool.input_schema).length > 0 && (
                       <div
                         style={{
-                          fontSize: "0.75rem",
-                          color: "var(--color-text-dim)",
-                          marginTop: "4px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <span style={{ fontWeight: 600 }}>Schema keys:</span>{" "}
-                        {Object.keys(tool.input_schema.properties || {}).join(
-                          ", ",
-                        ) || "none"}
+                        <span
+                          style={{
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "0.8rem",
+                            color: "var(--color-primary)",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {tool.name}
+                        </span>
+
+                        {/* Tool Toggle Checkbox */}
+                        <label
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            fontSize: "0.8rem",
+                            color: "var(--color-text-muted)",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={tool.is_enabled}
+                            onChange={(e) =>
+                              onToggleTool(tool.tool_id, e.target.checked)
+                            }
+                            style={{
+                              cursor: "pointer",
+                              accentColor: "var(--color-secondary)",
+                            }}
+                          />
+                          {tool.is_enabled ? "Enabled" : "Disabled"}
+                        </label>
                       </div>
-                    )}
+                      {tool.description && (
+                        <p
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "var(--color-secondary)",
+                            fontStyle: "italic",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {tool.description}
+                        </p>
+                      )}
+                      {tool.input_schema &&
+                        Object.keys(tool.input_schema).length > 0 && (
+                          <div
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "var(--color-text-dim)",
+                              marginTop: "4px",
+                            }}
+                          >
+                            <span style={{ fontWeight: 600 }}>
+                              Schema keys:
+                            </span>{" "}
+                            {Object.keys(
+                              tool.input_schema.properties || {},
+                            ).join(", ") || "none"}
+                          </div>
+                        )}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
-        </div>
-      )}
         </>
       )}
     </div>

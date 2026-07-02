@@ -4,8 +4,7 @@ const getApiUrl = (path: string) => {
   if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
   const host = window.location.hostname;
   const port = window.location.port;
-  const base =
-    port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+  const base = port === "5173" || port === "5174" ? `http://${host}:8000` : "";
   return `${base}${path}`;
 };
 
@@ -23,8 +22,7 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const canContinue =
-    selectedAgent === "hermes" || healthStatus === "healthy";
+  const canContinue = selectedAgent === "hermes" || healthStatus === "healthy";
 
   // Load initial settings if present
   useEffect(() => {
@@ -272,19 +270,17 @@ const SetupPage: React.FC<SetupPageProps> = ({ onConfigured }) => {
               disabled={!canContinue || isSubmitting}
               style={{
                 ...styles.button,
-                backgroundColor:
-                  canContinue
-                    ? "var(--color-secondary)"
-                    : "#1e293b",
+                backgroundColor: canContinue
+                  ? "var(--color-secondary)"
+                  : "#1e293b",
                 color: canContinue ? "#090D16" : "#64748b",
                 cursor: canContinue ? "pointer" : "not-allowed",
-                boxShadow:
-                  canContinue
-                    ? "0 0 15px rgba(56, 189, 248, 0.3)"
-                    : "none",
+                boxShadow: canContinue
+                  ? "0 0 15px rgba(56, 189, 248, 0.3)"
+                  : "none",
               }}
             >
-              {isSubmitting ? "Saving..." : "Next →"}
+              {isSubmitting ? "Saving..." : "Next "}
             </button>
           </div>
         </form>

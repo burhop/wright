@@ -1,14 +1,13 @@
 site_name: Wright
 site_url: https://burhop.github.io/wright/
 site_author: Burhop
-site_description: A digital engineer, designer, and mechanical analyst — local-first multi-agent mechanical engineering appliance
+site_description: A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance
 
 theme:
   name: material
   logo: docs/images/wright-logo.png
   favicon: docs/images/favicon.ico
   palette:
-    # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: blue grey
@@ -16,7 +15,6 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    # Palette toggle for dark mode (default)
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: blue grey
@@ -77,3 +75,5 @@ nav:
       - Tool Directory: mcp-catalog/tools-list.md
       - Custom MCP Tools: mcp-catalog/custom-tools.md
       - Offline Caching: mcp-catalog/offline-cache.md
+  - Admin:
+      - GitHub Public Readiness: admin/github-public-readiness.md

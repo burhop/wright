@@ -28,7 +28,7 @@ body:
     attributes:
       label: Image tag or package version
       description: Docker image tag, release tag, package version, or branch name.
-      placeholder: "e.g. ghcr.io/burhop/wright:0.1.0-alpha.1, Docker Hub tag, or 035-alpha-release-readiness"
+      placeholder: "e.g. ghcr.io/burhop/wright-agent:v0.1.0-alpha.1, Docker Hub tag, or 035-alpha-release-readiness"
     validations:
       required: false
 
@@ -39,7 +39,7 @@ body:
       description: The exact commit if you built from source.
       placeholder: "e.g. b753c487d2da2e8f78268465d64a54ff1ecc31ba"
     validations:
-      required: true
+      required: false
 
   - type: input
     id: operating-system

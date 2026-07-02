@@ -33,7 +33,7 @@ def parse_env_file(path: str | Path) -> dict[str, str]:
         key, value = line.split("=", 1)
         key = key.strip()
         if key.startswith("export "):
-            key = key[len("export "):].strip()
+            key = key[len("export ") :].strip()
         if key:
             values[key] = _parse_env_value(value)
     return values
@@ -86,7 +86,8 @@ def _hermes_config_command(
 
 
 def hermes_config_path(env: Mapping[str, str] | None = None) -> str | None:
-    env = env or os.environ
+    use_host_defaults = env is None
+    env = os.environ if env is None else env
     explicit = env.get("HERMES_CONFIG_PATH")
     if explicit:
         return explicit
@@ -94,6 +95,8 @@ def hermes_config_path(env: Mapping[str, str] | None = None) -> str | None:
     cli_path = _hermes_config_command("path", env)
     if cli_path:
         return cli_path
+    if not use_host_defaults and "HERMES_HOME" not in env:
+        return None
 
     hermes_home = Path(env.get("HERMES_HOME") or Path.home() / ".hermes")
     profile = (env.get("HERMES_PROFILE") or "").strip()
@@ -109,7 +112,8 @@ def hermes_config_path(env: Mapping[str, str] | None = None) -> str | None:
 
 
 def hermes_env_path(env: Mapping[str, str] | None = None) -> str | None:
-    env = env or os.environ
+    use_host_defaults = env is None
+    env = os.environ if env is None else env
     explicit = env.get("HERMES_ENV_PATH")
     if explicit:
         return explicit
@@ -117,6 +121,8 @@ def hermes_env_path(env: Mapping[str, str] | None = None) -> str | None:
     cli_path = _hermes_config_command("env-path", env)
     if cli_path:
         return cli_path
+    if not use_host_defaults and "HERMES_HOME" not in env and "LOCALAPPDATA" not in env:
+        return None
 
     candidates = []
     hermes_home = Path(env.get("HERMES_HOME") or Path.home() / ".hermes")
@@ -137,7 +143,7 @@ def hermes_env_path(env: Mapping[str, str] | None = None) -> str | None:
 def resolve_hermes_api_settings(
     env: Mapping[str, str] | None = None,
 ) -> HermesApiSettings:
-    env = env or os.environ
+    env = os.environ if env is None else env
     explicit_base_url = env.get("HERMES_API_BASE_URL", "").strip().rstrip("/")
     explicit_key = env.get("HERMES_API_KEY", "").strip()
     api_server_key = env.get("API_SERVER_KEY", "").strip()

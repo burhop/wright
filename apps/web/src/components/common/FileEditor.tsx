@@ -23,7 +23,7 @@ export const FileEditor: React.FC<FileEditorProps> = ({
     setContent(initialContent);
     setIsDirty(false);
     onSaveStatusChange?.(false);
-  }, [initialContent, filePath]);
+  }, [initialContent, filePath, onSaveStatusChange]);
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
@@ -68,7 +68,6 @@ export const FileEditor: React.FC<FileEditorProps> = ({
         backgroundColor: "#1e1e1e",
       }}
     >
-      {/* Editor status bar / controls */}
       <div
         style={{
           display: "flex",
@@ -91,7 +90,9 @@ export const FileEditor: React.FC<FileEditorProps> = ({
           }}
         >
           {saveError && (
-            <span style={{ color: "var(--color-error)" }}>⚠️ {saveError}</span>
+            <span style={{ color: "var(--color-error)" }}>
+              Warning: {saveError}
+            </span>
           )}
           {saving ? (
             <span>Saving...</span>
@@ -116,7 +117,6 @@ export const FileEditor: React.FC<FileEditorProps> = ({
         </div>
       </div>
 
-      {/* Editor Body */}
       <div
         style={{
           flex: 1,
@@ -125,7 +125,6 @@ export const FileEditor: React.FC<FileEditorProps> = ({
           padding: "var(--space-sm) 0",
         }}
       >
-        {/* Line Numbers */}
         <pre
           style={{
             margin: 0,
@@ -144,7 +143,6 @@ export const FileEditor: React.FC<FileEditorProps> = ({
           {lineNumbers}
         </pre>
 
-        {/* Text Area Editor */}
         <textarea
           value={content}
           onChange={handleContentChange}

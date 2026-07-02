@@ -11,13 +11,17 @@ from core.tracing import traced
 from agent_adapters import (
     BaseAgentEngine,
     AgentChatRequest,
+    UnsupportedAgentRuntimeError,
+    create_agent_engine,
+    default_agent_registry,
 )
+from workspace_service import WorkspaceService
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-# ── Dependency injection helper ──────────────────────────────────────────────
+#  Dependency injection helper
 def get_agent_engine(request: Request) -> BaseAgentEngine:
     """Extract BaseAgentEngine from app state."""
     engine = getattr(request.app.state, "agent_engine", None)
@@ -37,7 +41,7 @@ def get_current_trace_id() -> str:
     return secrets.token_hex(16)
 
 
-# ── Pydantic Request/Response Schemas ─────────────────────────────────────────
+#  Pydantic Request/Response Schemas
 class ActiveAgentResponse(BaseModel):
     agent: str
 
@@ -101,7 +105,7 @@ class CommandsResponse(BaseModel):
     commands: List[CommandModel]
 
 
-# ── Route Handlers ───────────────────────────────────────────────────────────
+#  Route Handlers
 
 
 @router.get("/commands", response_model=CommandsResponse)
@@ -178,7 +182,9 @@ async def get_session_history(
 @router.post("/sessions/new", response_model=NewSessionResponse)
 @traced("agent.session.create")
 async def create_new_session(
-    body: NewSessionRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: NewSessionRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     import os
     import uuid
@@ -202,9 +208,6 @@ async def create_new_session(
         # Instantiate WorkspaceManager to automatically run git init
         WorkspaceManager(workspace_path)
 
-        from core.workspace import write_workspace_hermes_md
-        write_workspace_hermes_md(DATABASE_PATH, workspace_path)
-
         session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
 
@@ -223,6 +226,7 @@ async def create_new_session(
         finally:
             conn.close()
 
+        workspace_id = existing["workspace_id"] if existing else str(uuid.uuid4())
         if existing:
             import time
 
@@ -241,17 +245,26 @@ async def create_new_session(
                 conn.close()
             log.info(
                 "create_session_updated_existing_workspace",
-                workspace_id=existing["workspace_id"],
+                workspace_id=workspace_id,
                 session_id=session_info.session_id,
             )
         else:
             create_workspace(
                 DATABASE_PATH,
-                str(uuid.uuid4()),
+                workspace_id,
                 session_info.session_id,
                 workspace_path,
                 workspace_name=os.path.basename(workspace_path),
             )
+
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        agent_id = getattr(sync_manager, "active_agent", "hermes")
+        WorkspaceService(DATABASE_PATH).refresh_agent_context_for_path(
+            workspace_path,
+            agent_id=agent_id,
+            workspace_id=workspace_id,
+            session_id=session_info.session_id,
+        )
 
         return NewSessionResponse(
             session_id=session_info.session_id,
@@ -281,6 +294,7 @@ async def list_agent_sessions(
         if workspace_id:
             from core.workspace import get_workspace_by_id
             from api.config import DATABASE_PATH
+
             workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
             if workspace:
                 local_path = workspace["local_path"]
@@ -389,8 +403,13 @@ async def chat(
 @traced("agent.active.get")
 async def get_active_agent_endpoint(request: Request):
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    agent_name = sync_manager.active_agent if sync_manager else "hermes"
-    return ActiveAgentResponse(agent=agent_name)
+    registry = default_agent_registry()
+    agent_name = sync_manager.active_agent if sync_manager else None
+    try:
+        provider = registry.resolve_provider(agent_name)
+    except UnsupportedAgentRuntimeError:
+        provider = registry.default_provider()
+    return ActiveAgentResponse(agent=provider.name)
 
 
 @router.post("/active", response_model=ActiveAgentResponse)
@@ -398,9 +417,20 @@ async def get_active_agent_endpoint(request: Request):
 async def set_active_agent_endpoint(
     body: SetActiveAgentRequest, request: Request, session_id: Optional[str] = None
 ):
+    registry = default_agent_registry()
+    try:
+        provider = registry.resolve_provider(body.agent)
+    except UnsupportedAgentRuntimeError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+    from api.config import DATABASE_PATH
+
+    request.app.state.agent_engine = create_agent_engine(
+        provider.name, db_path=DATABASE_PATH, registry=registry
+    )
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:
-        sync_manager.active_agent = body.agent
+        sync_manager.active_agent = provider.name
         if session_id:
             # Sync tools immediately for the active workspace session
             try:
@@ -408,7 +438,7 @@ async def set_active_agent_endpoint(
             except Exception as e:
                 logger.error("Failed to sync tools on agent switch: %s", e)
         return ActiveAgentResponse(agent=sync_manager.active_agent)
-    return ActiveAgentResponse(agent="hermes")
+    return ActiveAgentResponse(agent=provider.name)
 
 
 @router.post("/chat/cancel")

@@ -1,5 +1,5 @@
 # =============================================================================
-# Wright — Development Docker Image
+# Wright - Development Docker Image
 # =============================================================================
 # Lightweight dev image for initial development before the thick base is ready.
 # Uses plain Python + uv for fast iteration.

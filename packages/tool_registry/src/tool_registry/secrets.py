@@ -43,6 +43,7 @@ else:
         """Release an advisory lock (Unix)."""
         fcntl.flock(f, fcntl.LOCK_UN)
 
+
 # Default path, overridable via env var for testing
 _DEFAULT_SECRETS_PATH = os.path.expanduser("~/.config/wright/mcp-secrets.json")
 
@@ -62,7 +63,9 @@ def _ensure_secrets_dir(secrets_path: str) -> None:
     try:
         os.chmod(secrets_dir, 0o700)
     except OSError as e:
-        logger.warning("failed_to_set_directory_permissions", path=secrets_dir, error=str(e))
+        logger.warning(
+            "failed_to_set_directory_permissions", path=secrets_dir, error=str(e)
+        )
 
 
 def _read_secrets_file(secrets_path: str) -> Dict[str, Dict[str, str]]:
@@ -112,7 +115,9 @@ def read_secrets(server_id: str) -> Dict[str, str]:
     all_secrets = _read_secrets_file(secrets_path)
     server_secrets = all_secrets.get(server_id, {})
     if server_secrets:
-        logger.info("credentials_loaded", server_id=server_id, var_count=len(server_secrets))
+        logger.info(
+            "credentials_loaded", server_id=server_id, var_count=len(server_secrets)
+        )
     return server_secrets
 
 
@@ -141,7 +146,9 @@ def delete_secrets(server_id: str) -> None:
         logger.info("credentials_not_found_for_delete", server_id=server_id)
 
 
-def has_credentials(server_id: str, required_vars: Optional[List[str]] = None) -> Dict[str, bool]:
+def has_credentials(
+    server_id: str, required_vars: Optional[List[str]] = None
+) -> Dict[str, bool]:
     """Check which env vars for a server are configured.
 
     Args:

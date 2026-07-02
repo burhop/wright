@@ -66,13 +66,6 @@ describe("ChatLayout", () => {
         state: "connected",
         lastChecked: Date.now(),
       },
-      {
-        serviceId: "inference",
-        name: "LLM Inference",
-        endpoint: "/api/inference/health",
-        state: "connected",
-        lastChecked: Date.now(),
-      },
     ]);
   });
 
@@ -113,13 +106,7 @@ describe("ChatLayout", () => {
         endpoint: "/api/agent/health",
         state: "disconnected",
         lastChecked: Date.now(),
-      },
-      {
-        serviceId: "inference",
-        name: "LLM Inference",
-        endpoint: "/api/inference/health",
-        state: "connected",
-        lastChecked: Date.now(),
+        error: "Hermes gateway is offline",
       },
     ]);
 
@@ -135,6 +122,7 @@ describe("ChatLayout", () => {
     expect(
       screen.getByText(/Hermes agent is not available/i),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Hermes gateway is offline/i)).toBeInTheDocument();
   });
 
   it("renders thinking indicator when streaming but no text received yet", () => {

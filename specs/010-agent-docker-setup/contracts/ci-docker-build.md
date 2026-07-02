@@ -28,7 +28,7 @@ on:
 | 2 | `docker/setup-buildx-action@v3` | Set up Docker Buildx |
 | 3 | `docker/login-action@v3` | Authenticate to Docker Hub using `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` secrets |
 | 4 | `docker/metadata-action@v5` | Generate tags: `<sha>`, `latest` (on main), `dev` (on dev) |
-| 5 | `docker/build-push-action@v6` | Build with Buildx, push to Docker Hub, cache via `type=gha` |
+| 5 | `docker/build-push-action@v7` | Build with Buildx, use GHCR-oriented metadata, cache via `type=gha`, and leave public publishing to release workflows |
 | 6 | Smoke test | Run `docker run --rm wright-agent:<sha> /entrypoint.sh echo "ok"` and verify exit 0 |
 
 ## Required Secrets

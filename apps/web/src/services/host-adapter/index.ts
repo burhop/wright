@@ -17,20 +17,24 @@ if (typeof window !== "undefined" && isDesktop()) {
     (window as any).__wright_fetch_patched = true;
     (window as any)._originalFetch = originalFetch;
 
-    window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-      let urlString = '';
-      if (typeof input === 'string') {
+    window.fetch = async (
+      input: RequestInfo | URL,
+      init?: RequestInit,
+    ): Promise<Response> => {
+      let urlString = "";
+      if (typeof input === "string") {
         urlString = input;
       } else if (input instanceof URL) {
         urlString = input.toString();
-      } else if (input && typeof input === 'object' && 'url' in input) {
+      } else if (input && typeof input === "object" && "url" in input) {
         urlString = (input as Request).url;
       }
 
-      const isApi = urlString.includes('/api/') || 
-                    urlString.startsWith('/api/') || 
-                    urlString.includes('localhost:8000') || 
-                    urlString.includes('127.0.0.1:8000');
+      const isApi =
+        urlString.includes("/api/") ||
+        urlString.startsWith("/api/") ||
+        urlString.includes("localhost:8000") ||
+        urlString.includes("127.0.0.1:8000");
 
       if (isApi) {
         return hostAdapter.fetch(input, init);

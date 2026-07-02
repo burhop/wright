@@ -1,10 +1,16 @@
 [project]
 name = "wright"
 version = "0.1.0"
-description = "A digital engineer, designer, and mechanical analyst — local-first multi-agent mechanical engineering appliance"
+description = "A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance"
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
+dependencies = [
+    "wright-workspace-service",
+]
+
+[tool.uv.sources]
+wright-workspace-service = { workspace = true }
 
 [tool.uv.workspace]
 members = [
@@ -14,6 +20,7 @@ members = [
     "packages/agent_adapters",
     "packages/tool_registry",
     "packages/data_vault",
+    "packages/workspace_service",
 ]
 
 [dependency-groups]

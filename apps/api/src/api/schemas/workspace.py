@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from typing import Any, Dict, List, Optional
 
 
-# ── File Operations ──────────────────────────────────────────────────────
+#  File Operations
 class WorkspaceNodeResponse(BaseModel):
     name: str
     path: str
@@ -53,7 +53,7 @@ class FileContentSaveResponse(BaseModel):
     success: bool
 
 
-# ── Git Operations ───────────────────────────────────────────────────────
+#  Git Operations
 class GitStatusItem(BaseModel):
     path: str
     git_status: str
@@ -114,7 +114,7 @@ class GitPushPullResponse(BaseModel):
     message: str
 
 
-# ── Workspace Config ─────────────────────────────────────────────────────
+#  Workspace Config
 class WorkspaceConfigRequest(BaseModel):
     session_id: str
     git_remote_url: Optional[str] = None
@@ -139,7 +139,7 @@ class WorkspaceConfigGetResponse(BaseModel):
     git_large_file_threshold: Optional[int] = None
 
 
-# ── Workspace Tools ──────────────────────────────────────────────────────
+#  Workspace Tools
 class WorkspaceToolsGetResponse(BaseModel):
     session_id: str
     enabled_tools: List[str]
@@ -158,7 +158,7 @@ class WorkspaceToolToggleResponse(BaseModel):
     is_enabled: bool
 
 
-# ── Workspace CRUD & Listing ─────────────────────────────────────────────
+#  Workspace CRUD & Listing
 class WorkspaceListEntry(BaseModel):
     workspace_id: str
     session_id: str
@@ -212,7 +212,7 @@ class GitMergeRequest(BaseModel):
     branch_name: str
 
 
-# ── Utility functions ────────────────────────────────────────────────────
+#  Utility functions
 def parse_enabled_tools(tools_str: Optional[str]) -> Optional[List[str]]:
     """Parse a JSON-encoded list of enabled tool names/IDs from the database."""
     if not tools_str:
@@ -275,4 +275,3 @@ class FileRunResponse(BaseModel):
     stdout: str
     stderr: str
     exit_code: int
-

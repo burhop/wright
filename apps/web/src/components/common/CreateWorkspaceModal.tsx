@@ -44,9 +44,7 @@ export function CreateWorkspaceModal({
 
     setIsSubmitting(true);
     try {
-      const workspace = await workspaceService.createWorkspace(
-        name.trim(),
-      );
+      const workspace = await workspaceService.createWorkspace(name.trim());
       setName("");
       onCreated(workspace);
     } catch (err) {
@@ -124,9 +122,7 @@ export function CreateWorkspaceModal({
               padding: "var(--space-xs)",
               lineHeight: 1,
             }}
-          >
-            ✕
-          </button>
+          ></button>
         </div>
 
         {/* Form */}

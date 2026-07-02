@@ -12,3 +12,10 @@ regexes = [
   '''on_dPlLqKAcKfwxInzX8JVqw''',
   '''iG5e4db0lzGzZmIO8oWMhl01nTaDODgAbR8IRhJpOeRFNBce''',
 ]
+
+[[allowlists]]
+description = "Deleted hackathon prototype documentation used a local placeholder bearer token, not a live secret."
+condition = "AND"
+paths = ['''docs/nous-hackathon-prototype\.md''']
+regexTarget = "secret"
+regexes = ['''wright-local-dev''']

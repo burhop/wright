@@ -48,7 +48,6 @@ export function AppShell({ children }: AppShellProps) {
   });
   const [isDragging, setIsDragging] = useState(false);
 
-
   useEffect(() => {
     webMcpService.connect();
     return () => {
@@ -70,7 +69,8 @@ export function AppShell({ children }: AppShellProps) {
       });
     };
     window.addEventListener("wright-split-toggle", handleToggle);
-    return () => window.removeEventListener("wright-split-toggle", handleToggle);
+    return () =>
+      window.removeEventListener("wright-split-toggle", handleToggle);
   }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -242,4 +242,3 @@ export function AppShell({ children }: AppShellProps) {
 }
 
 export default AppShell;
-

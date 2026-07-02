@@ -22,8 +22,8 @@ const DEFAULT_STATUSES: ServiceStatus[] = [
     lastChecked: null,
   },
   {
-    serviceId: "inference",
-    name: "LLM Inference",
+    serviceId: "llm-backend",
+    name: "LLM Backend",
     endpoint: "/api/inference/health",
     state: "unknown",
     lastChecked: null,
@@ -53,22 +53,30 @@ export function StatusBar({
           gap: "var(--space-md)",
         }}
       >
-        {statuses.map((svc) => (
-          <span
-            key={svc.serviceId}
-            data-testid={
-              svc.serviceId === "hermes-agent" && svc.state === "disconnected"
-                ? "health-error-hermes"
-                : undefined
-            }
-          >
-            <StatusDot
-              state={svc.state}
-              label={svc.name}
-              data-testid={`status-${svc.serviceId}`}
-            />
-          </span>
-        ))}
+        {statuses.map((svc) => {
+          const statusTitle = svc.error
+            ? `${svc.name}: ${svc.error}`
+            : `${svc.name}: ${svc.state}`;
+          const errorTestId =
+            svc.serviceId === "hermes-agent"
+              ? "health-error-hermes"
+              : `health-error-${svc.serviceId}`;
+          return (
+            <span
+              key={svc.serviceId}
+              data-testid={
+                svc.state === "disconnected" ? errorTestId : undefined
+              }
+            >
+              <StatusDot
+                state={svc.state}
+                label={svc.name}
+                title={statusTitle}
+                data-testid={`status-${svc.serviceId}`}
+              />
+            </span>
+          );
+        })}
       </div>
 
       {latestTrace && (

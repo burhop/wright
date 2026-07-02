@@ -58,7 +58,9 @@ class SseRunner(BaseRunner):
             )
 
             # Probe for Streamable HTTP by sending a POST initialize payload
-            logger.info("Probing endpoint %s for Streamable HTTP support...", self.sse_url)
+            logger.info(
+                "Probing endpoint %s for Streamable HTTP support...", self.sse_url
+            )
             probe_payload = {
                 "jsonrpc": "2.0",
                 "id": 1,
@@ -77,7 +79,7 @@ class SseRunner(BaseRunner):
                         "Accept": "application/json, text/event-stream",
                         "Content-Type": "application/json",
                     },
-                    timeout=10.0
+                    timeout=10.0,
                 )
 
                 if response.status_code == 200:
@@ -98,11 +100,16 @@ class SseRunner(BaseRunner):
                         except Exception:
                             pass
 
-                    if resp_data and ("result" in resp_data and "protocolVersion" in resp_data["result"]):
+                    if resp_data and (
+                        "result" in resp_data
+                        and "protocolVersion" in resp_data["result"]
+                    ):
                         self._is_streamable_http = True
                         self._session_id = response.headers.get("mcp-session-id")
                         if "result" in resp_data:
-                            self._protocol_version = str(resp_data["result"].get("protocolVersion"))
+                            self._protocol_version = str(
+                                resp_data["result"].get("protocolVersion")
+                            )
                         self._probe_response = resp_data
                         self._message_endpoint = self.sse_url
                         logger.info(
@@ -111,7 +118,9 @@ class SseRunner(BaseRunner):
                             self._session_id,
                         )
             except Exception as e:
-                logger.debug("Streamable HTTP probe failed (will fallback to legacy SSE): %s", e)
+                logger.debug(
+                    "Streamable HTTP probe failed (will fallback to legacy SSE): %s", e
+                )
 
             # Start reading task
             self._read_task = asyncio.create_task(self._connect_and_read())
@@ -241,7 +250,9 @@ class SseRunner(BaseRunner):
 
         try:
             # Post request to the message endpoint
-            response = await self.client.post(self._message_endpoint, json=payload, headers=headers)
+            response = await self.client.post(
+                self._message_endpoint, json=payload, headers=headers
+            )
             response.raise_for_status()
 
             # If the response contains the result directly, resolve immediately
@@ -267,10 +278,14 @@ class SseRunner(BaseRunner):
                                 if "id" in data and data["id"] == req_id:
                                     self._pending_requests.pop(req_id, None)
                                     if "error" in data:
-                                        raise RuntimeError(f"RPC Error: {data['error']}")
+                                        raise RuntimeError(
+                                            f"RPC Error: {data['error']}"
+                                        )
                                     return data.get("result", {})
                     except Exception as sse_err:
-                        logger.error("Failed to parse SSE response in POST request: %s", sse_err)
+                        logger.error(
+                            "Failed to parse SSE response in POST request: %s", sse_err
+                        )
         except Exception as e:
             self._pending_requests.pop(req_id, None)
             raise RuntimeError(
@@ -293,21 +308,29 @@ class SseRunner(BaseRunner):
         headers = self._prepare_headers() if self._is_streamable_http else None
 
         try:
-            response = await self.client.post(self._message_endpoint, json=payload, headers=headers)
+            response = await self.client.post(
+                self._message_endpoint, json=payload, headers=headers
+            )
             response.raise_for_status()
         except Exception as e:
             logger.error("Failed to send SSE notification %s: %s", method, e)
 
     async def _connect_and_read(self) -> None:
         if self._is_streamable_http and not self._session_id:
-            logger.info("Streamable HTTP server without session ID. Skipping background GET stream.")
+            logger.info(
+                "Streamable HTTP server without session ID. Skipping background GET stream."
+            )
             return
 
         while self.client:
             try:
-                headers = self._prepare_headers() if self._is_streamable_http else {
-                    "Accept": "text/event-stream",
-                }
+                headers = (
+                    self._prepare_headers()
+                    if self._is_streamable_http
+                    else {
+                        "Accept": "text/event-stream",
+                    }
+                )
                 async with aconnect_sse(
                     self.client, "GET", self.sse_url, headers=headers
                 ) as event_source:
@@ -363,4 +386,3 @@ class SseRunner(BaseRunner):
                     e,
                 )
                 await asyncio.sleep(5)
-

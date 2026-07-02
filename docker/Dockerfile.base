@@ -1,8 +1,8 @@
 # =============================================================================
-# Wright — Thick Base Docker Image (SKELETON)
+# Wright - Thick Base Docker Image (SKELETON)
 # =============================================================================
 # This image contains all heavy engineering dependencies that rarely change.
-# Application code is NOT baked in — it's mounted via docker-compose volumes.
+# Application code is NOT baked in - it is mounted via docker-compose volumes.
 #
 # Target Hardware: Dell GB10 / NVIDIA DGX Spark (aarch64, 128GB unified memory)
 #
@@ -24,7 +24,7 @@
 # CadQuery + Build123d (parametric CAD via Python)
 # RUN pip install cadquery build123d
 
-# PrusaSlicer CLI / CuraEngine (STL → G-code)
+# PrusaSlicer CLI / CuraEngine (STL to G-code)
 # RUN apt-get install -y prusa-slicer
 
 # --- Stage 3: Python ML stack ---
@@ -44,6 +44,6 @@
 # --- Runtime ---
 # FROM base AS runtime
 # WORKDIR /workspace
-# The /apps and /packages directories are mounted as volumes — not copied
+# The /apps and /packages directories are mounted as volumes, not copied
 # EXPOSE 8000
 # CMD ["uvicorn", "api.main:app", "--host", "127.0.0.1", "--port", "8000"]

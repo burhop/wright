@@ -53,22 +53,20 @@ async def get_global_settings():
         llm_provider = get_db_setting("llm_provider", "hermes")
         theme = get_db_setting("theme", "dark")
         api_keys_raw = get_db_setting("api_keys", "{}")
-        
+
         try:
             api_keys = json.loads(api_keys_raw)
         except Exception:
             api_keys = {}
-            
+
         return GlobalSettingsResponse(
-            llm_provider=llm_provider,
-            theme=theme,
-            api_keys=api_keys
+            llm_provider=llm_provider, theme=theme, api_keys=api_keys
         )
     except Exception as e:
         logger.exception("get_settings_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to load settings: {e}"
+            detail=f"Failed to load settings: {e}",
         )
 
 
@@ -85,5 +83,5 @@ async def save_global_settings(body: GlobalSettingsRequest):
         logger.exception("save_settings_failed", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to save settings: {e}"
+            detail=f"Failed to save settings: {e}",
         )

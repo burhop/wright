@@ -29,8 +29,6 @@ class AgentCommand:
     description: str
 
 
-
-
 @dataclass
 class AgentSessionInfo:
     """Summary of an agent session."""
@@ -55,7 +53,7 @@ class AgentChatMessage:
 
 
 class BaseAgentEngine(ABC):
-    """Abstract base for all agent adapters (Constitution §2)."""
+    """Abstract base for all agent adapters (Constitution 2)."""
 
     @abstractmethod
     async def check_health(self) -> dict:

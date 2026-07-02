@@ -47,8 +47,8 @@ Current major areas:
 
 Existing assets:
 
-- `docker/Dockerfile` builds the web frontend in a Node stage, then layers Wright
-  onto `HERMES_BASE_IMAGE=wright-hermes-only:latest`.
+- `docker/Dockerfile` builds the web frontend and a clean Hermes runtime from
+  public package sources before layering Wright into the final image.
 - Runtime exposes Wright API and static frontend on container port `8000`.
 - Hermes gateway is configured inside the container on port `8642` and is
   intended to remain internal unless explicitly exposed by an operator.

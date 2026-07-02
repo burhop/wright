@@ -13,6 +13,7 @@ This directory contains helper scripts to automate local development, manage Doc
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
 | [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, permissions, and self-healing behaviors | Docker |
+| [`production-update.sh`](#production-updatesh) | Bash | Guards operator-run production updates against stale, dirty, or unverified commits | Git, Docker, optional `gh` CLI |
 | [`fetch_ci_failures.py`](#fetch_ci_failurespy) | Python | Retrieves logs of failed GitHub Action runs to a local markdown file | Python 3, `gh` CLI |
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
 | [`patch-submodule.sh`](#patch-submodulesh) | Bash | Applies localized patches to the FreeCAD MCP submodule | Git |
@@ -150,6 +151,30 @@ Runs a local verification suite against a production Docker build to ensure envi
   ```bash
   WRIGHT_DOCKER_IMAGE=wright-agent:latest WRIGHT_DOCKER_SKIP_BUILD=1 ./scripts/docker-smoke-test.sh
   ```
+
+---
+
+### `production-update.sh`
+
+Runs a guarded production update from a checked-out repository. It fetches
+fresh refs, rejects dirty working trees by default, refuses to deploy stale
+`origin/main`, verifies the checked-out commit matches the selected branch or
+release tag, and checks required GitHub Actions when authenticated `gh` CLI
+access is available.
+
+* **Update from `origin/main`**:
+  ```bash
+  scripts/production-update.sh --pull
+  ```
+* **Deploy a release tag**:
+  ```bash
+  git checkout v0.1.0-alpha.1
+  scripts/production-update.sh --ref v0.1.0-alpha.1
+  ```
+
+The script then runs `docker compose pull` and `docker compose up -d --build`
+for `docker-compose.minimal.yml` unless another file is passed with
+`--compose-file`.
 
 ---
 

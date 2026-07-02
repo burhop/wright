@@ -34,7 +34,7 @@ test.describe("Create Session Button E2E", () => {
           workspace_id: 'ws-1',
           session_id: 'session-1',
           workspace_name: 'Test Project',
-          local_path: '/home/burhop/repos/wright',
+          local_path: '/tmp/wright-e2e-workspace',
           git_remote_url: null,
           git_username: null,
           updated_at: Math.floor(Date.now() / 1000)
@@ -50,7 +50,7 @@ test.describe("Create Session Button E2E", () => {
         body: JSON.stringify({
           success: true,
           session_id: 'session-1',
-          workspace_path: '/home/burhop/repos/wright'
+          workspace_path: '/tmp/wright-e2e-workspace'
         }),
       });
     });

@@ -39,7 +39,9 @@ export class IframeProvider implements ViewerProvider<IframeDocument> {
   readonly id = "iframe-viewer";
   private changeCallbacks = new Set<(e: ViewerDocumentChangeEvent) => void>();
 
-  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (listener) => {
+  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (
+    listener,
+  ) => {
     this.changeCallbacks.add(listener);
     return {
       dispose: () => {
@@ -48,7 +50,10 @@ export class IframeProvider implements ViewerProvider<IframeDocument> {
     };
   };
 
-  async openDocument(file: FileDescriptor, context: OpenContext): Promise<IframeDocument> {
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<IframeDocument> {
     const sessionId = context.sessionId;
     if (!sessionId) {
       throw new Error("No active session ID provided");
@@ -64,7 +69,7 @@ export class IframeProvider implements ViewerProvider<IframeDocument> {
     document: IframeDocument,
     panel: PanelHost,
     _mode: string,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
     const container = panel.container;
     container.innerHTML = "";
@@ -86,20 +91,26 @@ export class IframeProvider implements ViewerProvider<IframeDocument> {
     container.appendChild(iframe);
   }
 
-  async save(_document: IframeDocument, _token: CancellationToken): Promise<void> {}
+  async save(
+    _document: IframeDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async saveAs(
     _document: IframeDocument,
     _destination: FileDescriptor,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {}
 
-  async revert(_document: IframeDocument, _token: CancellationToken): Promise<void> {}
+  async revert(
+    _document: IframeDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async backup(
     document: IframeDocument,
     _context: BackupContext,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<BackupHandle> {
     return {
       id: "backup-" + document.uri,

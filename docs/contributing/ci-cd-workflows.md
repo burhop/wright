@@ -14,7 +14,7 @@ enabled only when credentials are configured.
 | `frontend-quality.yml` | Push or pull request to `main` or `dev` | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`. |
 | `public-alpha-safety.yml` | Push, pull request, or manual run | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan. |
 | `docker-build.yml` | Push to `main`, `dev`, or `v*` tags when Docker/app paths change; pull requests to `main` or `dev` | Builds and loads a local `wright-agent:<sha>` image, runs a non-blocking Trivy scan, and runs the Docker smoke test. It does not publish public images. |
-| `docs-deploy.yml` | Push to `main`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
+| `docs-deploy.yml` | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
 | `release.yml` | Push to tag matching `v*` | Builds and pushes release images, publishes the GitHub Release, marks alpha/beta/rc tags as prereleases, and applies the stable-only `latest` policy. |
 | `release-drafter.yml` | Push to `main` or `dev` | Updates the draft release notes from merged PR metadata. |
 | `test-windows.yml` | Push, pull request, or manual run | Runs Windows backend pytest, frontend Vitest, and Playwright E2E coverage. |
@@ -36,7 +36,7 @@ scripts/alpha-release-check.sh
 
 The frontend workflow also runs ESLint, Prettier, and TypeScript. The Python
 workflow runs Ruff and mypy in warning mode. The docs workflow builds strictly on
-pull requests but does not deploy from pull requests.
+pull requests and branch pushes but deploys only from `main`.
 
 ## Docker Smoke Contract
 

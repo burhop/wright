@@ -22,6 +22,10 @@
   color: 0075ca
   description: Documentation, examples, launch checklist, or docs site work.
 
+- name: documentation
+  color: 0075ca
+  description: Documentation-only changes, docs site updates, or examples.
+
 - name: mcp
   color: 5319e7
   description: MCP catalog, server validation, gateway, or tool integration work.
@@ -49,3 +53,27 @@
 - name: good-first-issue
   color: 7057ff
   description: Small, well-scoped task suitable for a new contributor.
+
+- name: feature
+  color: a2eeef
+  description: New capability or user-visible behavior.
+
+- name: bugfix
+  color: d73a4a
+  description: Pull request that fixes a confirmed or suspected defect.
+
+- name: maintenance
+  color: cfd3d7
+  description: Repository upkeep, cleanup, dependency hygiene, or internal maintenance.
+
+- name: chore
+  color: cfd3d7
+  description: Small maintenance change with little or no user-facing impact.
+
+- name: breaking
+  color: b60205
+  description: Breaking API, storage, workflow, or runtime change.
+
+- name: dependency
+  color: 0366d6
+  description: Dependency update or dependency-management change.

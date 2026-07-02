@@ -40,16 +40,24 @@ export function MessageComposer({
   const [mcpStatus, setMcpStatus] = useState<{
     status: string;
     message: string;
-    running_mcps?: { name: string; status: string; error_message?: string | null }[];
+    running_mcps?: {
+      name: string;
+      status: string;
+      error_message?: string | null;
+    }[];
   } | null>(null);
   const [showStatusPopup, setShowStatusPopup] = useState(false);
-  const [workspaceFiles, setWorkspaceFiles] = useState<{ name: string; path: string }[]>([]);
+  const [workspaceFiles, setWorkspaceFiles] = useState<
+    { name: string; path: string }[]
+  >([]);
 
   const fetchWorkspaceFiles = async () => {
     if (!sessionId) return;
     try {
       const tree = await workspaceService.getWorkspaceFiles(sessionId);
-      const getFilesFromTree = (node: any): { name: string; path: string }[] => {
+      const getFilesFromTree = (
+        node: any,
+      ): { name: string; path: string }[] => {
         let list: { name: string; path: string }[] = [];
         if (node.type === "file") {
           list.push({ name: node.name, path: node.path });
@@ -322,7 +330,7 @@ export function MessageComposer({
       {showMenu && (
         <CommandMenu
           commands={
-            (menuPrefix === "@" || menuPrefix === "@file ")
+            menuPrefix === "@" || menuPrefix === "@file "
               ? workspaceFiles.map((f) => ({
                   name: f.path,
                   description: "",
@@ -388,7 +396,13 @@ export function MessageComposer({
           padding: "0 2px 2px 2px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-xs)",
+          }}
+        >
           <div style={{ position: "relative" }}>
             <button
               onClick={() => setShowPlusMenu(!showPlusMenu)}
@@ -428,190 +442,262 @@ export function MessageComposer({
                   gap: "2px",
                 }}
               >
-              <button
-                onClick={() => {
-                  setMenuPrefix("/");
-                  setMenuFilter("");
-                  setMenuPosition({
-                    top:
-                      containerRef.current?.getBoundingClientRect().top ||
-                      0 - 20,
-                    left:
-                      containerRef.current?.getBoundingClientRect().left ||
-                      0 + 40,
-                  });
-                  setShowMenu(true);
-                  setShowPlusMenu(false);
-                }}
-                style={{
-                  padding: "8px",
-                  textAlign: "left",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                }}
-              >
-                ⚡ Actions
-              </button>
-              <button
-                onClick={() => {
-                  setMenuPrefix("@");
-                  setMenuFilter("");
-                  setMenuPosition({
-                    top:
-                      containerRef.current?.getBoundingClientRect().top ||
-                      0 - 20,
-                    left:
-                      containerRef.current?.getBoundingClientRect().left ||
-                      0 + 40,
-                  });
-                  setShowMenu(true);
-                  setShowPlusMenu(false);
-                }}
-                style={{
-                  padding: "8px",
-                  textAlign: "left",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                }}
-              >
-                👤 @ Mentions
-              </button>
-              <label
-                style={{
-                  padding: "8px",
-                  textAlign: "left",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                  display: "block",
-                }}
-              >
-                🖼️ Media
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  multiple
-                  onChange={async (e) => {
-                    if (e.target.files) {
-                      for (let i = 0; i < e.target.files.length; i++) {
-                        await uploadFile(e.target.files[i]);
-                      }
-                    }
+                <button
+                  onClick={() => {
+                    setMenuPrefix("/");
+                    setMenuFilter("");
+                    setMenuPosition({
+                      top:
+                        containerRef.current?.getBoundingClientRect().top ||
+                        0 - 20,
+                      left:
+                        containerRef.current?.getBoundingClientRect().left ||
+                        0 + 40,
+                    });
+                    setShowMenu(true);
                     setShowPlusMenu(false);
                   }}
-                />
-              </label>
+                  style={{
+                    padding: "8px",
+                    textAlign: "left",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                  }}
+                >
+                  Actions
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuPrefix("@");
+                    setMenuFilter("");
+                    setMenuPosition({
+                      top:
+                        containerRef.current?.getBoundingClientRect().top ||
+                        0 - 20,
+                      left:
+                        containerRef.current?.getBoundingClientRect().left ||
+                        0 + 40,
+                    });
+                    setShowMenu(true);
+                    setShowPlusMenu(false);
+                  }}
+                  style={{
+                    padding: "8px",
+                    textAlign: "left",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                  }}
+                >
+                  @ Mentions
+                </button>
+                <label
+                  style={{
+                    padding: "8px",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    borderRadius: "4px",
+                    display: "block",
+                  }}
+                >
+                  Media
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    multiple
+                    onChange={async (e) => {
+                      if (e.target.files) {
+                        for (let i = 0; i < e.target.files.length; i++) {
+                          await uploadFile(e.target.files[i]);
+                        }
+                      }
+                      setShowPlusMenu(false);
+                    }}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+
+          {mcpStatus && (
+            <div style={{ position: "relative" }}>
+              <button
+                data-testid="mcp-status-indicator"
+                onClick={() => setShowStatusPopup(!showStatusPopup)}
+                style={{
+                  height: "20px",
+                  padding: "0 8px",
+                  borderRadius: "10px",
+                  border: "none",
+                  backgroundColor:
+                    mcpStatus.status === "ok" ? "#22c55e" : "#ef4444",
+                  color: "#ffffff",
+                  fontSize: "0.65rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  transition: "background-color 0.2s",
+                }}
+                title={mcpStatus.message}
+              >
+                MCP
+              </button>
+
+              {showStatusPopup && (
+                <div
+                  data-testid="mcp-status-popup"
+                  style={{
+                    position: "absolute",
+                    bottom: "28px",
+                    left: "0",
+                    backgroundColor: "var(--color-surface)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "var(--radius-md)",
+                    padding: "var(--space-sm)",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                    zIndex: 1001,
+                    minWidth: "200px",
+                    maxWidth: "300px",
+                    fontSize: "0.75rem",
+                    color: "var(--color-primary)",
+                    textAlign: "left",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    <strong
+                      style={{
+                        color:
+                          mcpStatus.status === "ok" ? "#22c55e" : "#ef4444",
+                      }}
+                    >
+                      MCP Status:{" "}
+                      {mcpStatus.status === "ok"
+                        ? "Active"
+                        : mcpStatus.status === "mismatch"
+                          ? "Mismatch"
+                          : "Error"}
+                    </strong>
+                    <button
+                      onClick={() => setShowStatusPopup(false)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "var(--color-text-dim)",
+                        cursor: "pointer",
+                        fontSize: "0.8rem",
+                        padding: 0,
+                      }}
+                    ></button>
+                  </div>
+                  <div
+                    style={{
+                      lineHeight: "1.4",
+                      color: "var(--color-secondary)",
+                    }}
+                  >
+                    {mcpStatus.message}
+                  </div>
+                  {mcpStatus.running_mcps &&
+                    mcpStatus.running_mcps.length > 0 && (
+                      <div
+                        style={{
+                          marginTop: "12px",
+                          borderTop: "1px solid var(--color-border)",
+                          paddingTop: "8px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontWeight: "bold",
+                            marginBottom: "6px",
+                            fontSize: "0.7rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                            color: "var(--color-text-dim)",
+                          }}
+                        >
+                          Running MCP Servers ({mcpStatus.running_mcps.length})
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "6px",
+                          }}
+                        >
+                          {mcpStatus.running_mcps.map((mcp, idx) => (
+                            <div
+                              key={idx}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                gap: "8px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontWeight: 500,
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  flex: 1,
+                                }}
+                                title={mcp.name}
+                              >
+                                {mcp.name}
+                              </span>
+                              <span
+                                style={{
+                                  padding: "2px 6px",
+                                  borderRadius: "4px",
+                                  fontSize: "0.6rem",
+                                  fontWeight: "bold",
+                                  textTransform: "uppercase",
+                                  backgroundColor:
+                                    mcp.status === "active"
+                                      ? "rgba(34, 197, 94, 0.1)"
+                                      : "rgba(239, 68, 68, 0.1)",
+                                  color:
+                                    mcp.status === "active"
+                                      ? "#22c55e"
+                                      : "#ef4444",
+                                }}
+                              >
+                                {mcp.status}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {mcpStatus && (
-          <div style={{ position: "relative" }}>
-            <button
-              data-testid="mcp-status-indicator"
-              onClick={() => setShowStatusPopup(!showStatusPopup)}
-              style={{
-                height: "20px",
-                padding: "0 8px",
-                borderRadius: "10px",
-                border: "none",
-                backgroundColor: mcpStatus.status === "ok" ? "#22c55e" : "#ef4444",
-                color: "#ffffff",
-                fontSize: "0.65rem",
-                fontWeight: "bold",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                transition: "background-color 0.2s",
-              }}
-              title={mcpStatus.message}
-            >
-              MCP
-            </button>
-
-            {showStatusPopup && (
-              <div
-                data-testid="mcp-status-popup"
-                style={{
-                  position: "absolute",
-                  bottom: "28px",
-                  left: "0",
-                  backgroundColor: "var(--color-surface)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-md)",
-                  padding: "var(--space-sm)",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-                  zIndex: 1001,
-                  minWidth: "200px",
-                  maxWidth: "300px",
-                  fontSize: "0.75rem",
-                  color: "var(--color-primary)",
-                  textAlign: "left",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <strong style={{ color: mcpStatus.status === "ok" ? "#22c55e" : "#ef4444" }}>
-                    MCP Status: {mcpStatus.status === "ok" ? "Active" : mcpStatus.status === "mismatch" ? "Mismatch" : "Error"}
-                  </strong>
-                  <button
-                    onClick={() => setShowStatusPopup(false)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "var(--color-text-dim)",
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                      padding: 0,
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div style={{ lineHeight: "1.4", color: "var(--color-secondary)" }}>
-                  {mcpStatus.message}
-                </div>
-                {mcpStatus.running_mcps && mcpStatus.running_mcps.length > 0 && (
-                  <div style={{ marginTop: "12px", borderTop: "1px solid var(--color-border)", paddingTop: "8px" }}>
-                    <div style={{ fontWeight: "bold", marginBottom: "6px", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-text-dim)" }}>
-                      Running MCP Servers ({mcpStatus.running_mcps.length})
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      {mcpStatus.running_mcps.map((mcp, idx) => (
-                        <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
-                          <span style={{ fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }} title={mcp.name}>
-                            {mcp.name}
-                          </span>
-                          <span
-                            style={{
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              fontSize: "0.6rem",
-                              fontWeight: "bold",
-                              textTransform: "uppercase",
-                              backgroundColor: mcp.status === "active" ? "rgba(34, 197, 94, 0.1)" : "rgba(239, 68, 68, 0.1)",
-                              color: mcp.status === "active" ? "#22c55e" : "#ef4444",
-                            }}
-                          >
-                            {mcp.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-        <div style={{ display: "flex", gap: "var(--space-xs)", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "var(--space-xs)",
+            alignItems: "center",
+          }}
+        >
           {isStreaming && onCancel && (
             <button
               data-testid="composer-cancel"
@@ -657,11 +743,11 @@ export function MessageComposer({
               flexShrink: 0,
               borderRadius: "50%",
               backgroundColor:
-                (text.trim() || attachments.length > 0)
+                text.trim() || attachments.length > 0
                   ? "var(--color-secondary)"
                   : "var(--color-surface)",
               color:
-                (text.trim() || attachments.length > 0)
+                text.trim() || attachments.length > 0
                   ? "var(--color-neutral)"
                   : "var(--color-secondary)",
               display: "flex",
@@ -669,9 +755,7 @@ export function MessageComposer({
               justifyContent: "center",
               transition: "all 0.2s ease",
               cursor:
-                (text.trim() || attachments.length > 0)
-                  ? "pointer"
-                  : "default",
+                text.trim() || attachments.length > 0 ? "pointer" : "default",
               border: "1px solid var(--color-border)",
             }}
           >

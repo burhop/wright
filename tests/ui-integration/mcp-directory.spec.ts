@@ -35,7 +35,9 @@ test.describe('MCP Tool Registry Directory E2E Flow', () => {
 
     // Click remove link on our newly created card
     const card = page.locator('[data-testid^="server-card-"]').filter({ hasText: serverName });
+    await card.getByRole('button', { name: /Show details/ }).click();
     const removeBtn = card.getByRole('button', { name: 'Remove' });
+    await expect(removeBtn).toBeVisible();
     await removeBtn.click();
 
     // Verify card is removed from directory

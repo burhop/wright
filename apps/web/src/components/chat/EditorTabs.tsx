@@ -34,12 +34,16 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
         const ext = tab.path.split(".").pop()?.toLowerCase() || "";
 
         // Premium type icons
-        let icon = "📄";
-        if (ext === "stl" || ext === "step" || ext === "iges") icon = "🧊";
-        else if (["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)) icon = "🖼️";
-        else if (ext === "pdf") icon = "📕";
-        else if (ext === "md") icon = "📝";
-        else if (["py", "js", "ts", "tsx", "json", "scad"].includes(ext)) icon = "💻";
+        let icon = "";
+        if (ext === "stl" || ext === "step" || ext === "iges") icon = "";
+        else if (
+          ["png", "jpg", "jpeg", "svg", "gif", "webp", "bmp"].includes(ext)
+        )
+          icon = "";
+        else if (ext === "pdf") icon = "";
+        else if (ext === "md") icon = "";
+        else if (["py", "js", "ts", "tsx", "json", "scad"].includes(ext))
+          icon = "";
 
         return (
           <div
@@ -51,7 +55,9 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
               alignItems: "center",
               padding: "0 var(--space-md, 12px)",
               borderRight: "1px solid var(--color-border, #2e2e2e)",
-              borderTop: isActive ? "2px solid var(--color-primary-active, #007acc)" : "2px solid transparent",
+              borderTop: isActive
+                ? "2px solid var(--color-primary-active, #007acc)"
+                : "2px solid transparent",
               backgroundColor: isActive
                 ? "var(--color-surface, #1e1e1e)"
                 : "transparent",
@@ -69,7 +75,8 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
             }}
             onMouseEnter={(e) => {
               if (!isActive) {
-                e.currentTarget.style.backgroundColor = "var(--color-neutral-hover, rgba(255, 255, 255, 0.05))";
+                e.currentTarget.style.backgroundColor =
+                  "var(--color-neutral-hover, rgba(255, 255, 255, 0.05))";
               }
             }}
             onMouseLeave={(e) => {
@@ -78,7 +85,12 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
               }
             }}
           >
-            <span style={{ marginRight: "var(--space-sm, 6px)", fontSize: "0.9rem" }}>
+            <span
+              style={{
+                marginRight: "var(--space-sm, 6px)",
+                fontSize: "0.9rem",
+              }}
+            >
               {icon}
             </span>
             <span
@@ -132,15 +144,14 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.opacity = "1";
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                e.currentTarget.style.backgroundColor =
+                  "rgba(255, 255, 255, 0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.opacity = "0.5";
                 e.currentTarget.style.backgroundColor = "transparent";
               }}
-            >
-              ✕
-            </button>
+            ></button>
           </div>
         );
       })}

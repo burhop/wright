@@ -1,10 +1,10 @@
-# Container Manifest — Required Reading Before Taking Any Action
+# Container Manifest - Required Reading Before Taking Any Action
 
 You are operating inside a managed Docker container running the Wright
 engineering appliance. The container includes:
 
   - Wright API (FastAPI on port 8000)
-  - Hermes Agent v0.15.2 (AI agent framework)
+  - Hermes Agent (AI agent framework)
   - Hermes WebUI v0.51.135 (session manager on port 8788, internal)
   - General runtime tooling for installing and validating selected MCP servers
   - supervisord (process manager)
@@ -18,14 +18,14 @@ All agents access an external LLM API via the LLM_API_URL environment variable.
 
 ## Filesystem: What Persists and What Does Not
 
-PERSISTED (survives restart — safe to write work here):
+PERSISTED (survives restart - safe to write work here):
   /home/          your primary workspace
   /usr/local/     local software installs
   /opt/           conda, nix, self-contained runtimes
   /var/lib/       system app state
   /var/log/       logs
 
-EPHEMERAL (resets on restart — anything written here is temporary):
+EPHEMERAL (resets on restart - anything written here is temporary):
   /bin  /usr/bin  /usr/sbin  /usr/lib  /lib  /tmp
 
 ## Rules You Must Follow

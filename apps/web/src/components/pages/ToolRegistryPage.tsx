@@ -11,15 +11,15 @@ import {
 } from "../../services/workspace-service";
 
 const CATEGORY_META: Record<string, { icon: string; label: string }> = {
-  all: { icon: "🔧", label: "All Tools" },
-  local: { icon: "💻", label: "Local Servers" },
-  network: { icon: "🌐", label: "Network / Cloud" },
-  cad: { icon: "📐", label: "CAD & Modeling" },
-  simulation: { icon: "🔬", label: "Simulation / FEA" },
-  manufacturing: { icon: "🏭", label: "Manufacturing" },
-  plm: { icon: "☁️", label: "PLM / Enterprise" },
-  utilities: { icon: "⚡", label: "Web & Utilities" },
-  analysis: { icon: "📊", label: "Analysis" },
+  all: { icon: "", label: "All Tools" },
+  local: { icon: "", label: "Local Servers" },
+  network: { icon: "", label: "Network / Cloud" },
+  cad: { icon: "", label: "CAD & Modeling" },
+  simulation: { icon: "", label: "Simulation / FEA" },
+  manufacturing: { icon: "", label: "Manufacturing" },
+  plm: { icon: "", label: "PLM / Enterprise" },
+  utilities: { icon: "", label: "Web & Utilities" },
+  analysis: { icon: "", label: "Analysis" },
 };
 
 const TIER_ORDER: Record<string, number> = {
@@ -98,8 +98,12 @@ export function ToolRegistryPage() {
       (server.description || "")
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
-      server.verification_state.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      server.installability_tier.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      server.verification_state
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      server.installability_tier
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
       server.risk_level.toLowerCase().includes(searchQuery.toLowerCase()) ||
       server.host_software_required.some((dependency) =>
         dependency.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -141,7 +145,9 @@ export function ToolRegistryPage() {
   };
 
   const installedCount = servers.filter((s) => s.is_installed).length;
-  const testedCount = servers.filter((s) => s.installability_tier === "tested").length;
+  const testedCount = servers.filter(
+    (s) => s.installability_tier === "tested",
+  ).length;
   const mightWorkCount = servers.filter(
     (s) => s.installability_tier === "might_work",
   ).length;
@@ -209,7 +215,7 @@ export function ToolRegistryPage() {
                 textTransform: "uppercase",
               }}
             >
-              {servers.length} Tools · {installedCount} Active
+              {servers.length} Tools {installedCount} Active
             </span>
           </div>
           <p
@@ -298,7 +304,7 @@ export function ToolRegistryPage() {
           </span>
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {categories.map((cat) => {
-              const meta = CATEGORY_META[cat] || { icon: "🔧", label: cat };
+              const meta = CATEGORY_META[cat] || { icon: "", label: cat };
               const count = getCategoryCount(cat);
               return (
                 <button
@@ -424,7 +430,9 @@ export function ToolRegistryPage() {
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
                 <span>Tested</span>
-                <span style={{ fontWeight: 600, color: "var(--color-success)" }}>
+                <span
+                  style={{ fontWeight: 600, color: "var(--color-success)" }}
+                >
                   {testedCount}
                 </span>
               </div>
@@ -433,7 +441,9 @@ export function ToolRegistryPage() {
                 style={{ display: "flex", justifyContent: "space-between" }}
               >
                 <span>Might work</span>
-                <span style={{ fontWeight: 600, color: "var(--color-warning)" }}>
+                <span
+                  style={{ fontWeight: 600, color: "var(--color-warning)" }}
+                >
                   {mightWorkCount}
                 </span>
               </div>
@@ -478,9 +488,7 @@ export function ToolRegistryPage() {
                 color: "var(--color-text-dim)",
                 pointerEvents: "none",
               }}
-            >
-              🔍
-            </span>
+            ></span>
             <input
               type="text"
               placeholder="Search by name, description, or platform..."
@@ -587,9 +595,7 @@ export function ToolRegistryPage() {
                       fontSize: "3rem",
                       marginBottom: "var(--space-lg)",
                     }}
-                  >
-                    🔍
-                  </div>
+                  ></div>
                   <h3
                     style={{
                       fontFamily: "var(--font-ui)",

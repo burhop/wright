@@ -6,20 +6,26 @@ on:
     tags:
       - 'v*'
     paths:
+      - '.github/workflows/docker-build.yml'
       - 'docker/**'
       - 'apps/**'
       - 'packages/**'
       - 'pyproject.toml'
       - 'docker-compose.yml'
+      - 'docker-compose.minimal.yml'
   pull_request:
     branches: [main, dev]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
-  build-and-push:
+  build-and-smoke:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -31,64 +37,51 @@ jobs:
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             VERSION="${VERSION#v}"
           fi
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "revision=${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-
-      # - name: Log in to Docker Hub
-      #   # TODO: Restore this when DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets are configured.
-      #   if: github.event_name != 'pull_request'
-      #   uses: docker/login-action@v3
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "revision=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
 
       - name: Docker Metadata
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/wright-agent
+          images: ghcr.io/${{ github.repository_owner }}/wright-agent
           tags: |
             type=sha,format=long
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
             type=raw,value=${{ github.ref_name }},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
-      - name: Build and Load (Local Test)
-        uses: docker/build-push-action@v6
+      - name: Build and Load
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
           load: true
-          # platforms: linux/amd64,linux/arm64 # Uncomment to enable multi-architecture builds when arm64 solvers are fully supported
           tags: wright-agent:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ steps.prep.outputs.version }}
             REVISION=${{ steps.prep.outputs.revision }}
             CREATED=${{ steps.prep.outputs.created }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'wright-agent:${{ github.sha }}'
           format: 'table'
-          exit-code: '0' # Non-blocking diagnostic report
+          exit-code: '0'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
       - name: Run Smoke Test
-        timeout-minutes: 3
+        timeout-minutes: 5
         run: |
           set -euo pipefail
 
           IMAGE="wright-agent:${{ github.sha }}"
           CONTAINER="wright-ci-smoke"
 
-          # Start the container with a dummy LLM URL (no real LLM needed for smoke)
           docker run --rm -d --name "$CONTAINER" \
             -p 127.0.0.1:8090:8000 \
             -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
@@ -106,86 +99,78 @@ jobs:
           }
           trap cleanup EXIT
 
-
-          # Wait for Wright API health endpoint (up to 60s)
-          echo "⏳ Waiting for Wright API..."
+          echo "Waiting for Wright API..."
           for i in $(seq 1 30); do
             if curl -sf http://127.0.0.1:8090/api/health > /dev/null 2>&1; then
-              echo "✅ Wright API healthy"
+              echo "Wright API healthy"
               break
             fi
             if [ "$i" -eq 30 ]; then
-              echo "❌ Wright API did not become healthy in 60s"
+              echo "Wright API did not become healthy in 60s"
               docker logs "$CONTAINER" 2>&1 | tail -50
               exit 1
             fi
             sleep 2
           done
 
-          # Verify Hermes WebUI is reachable via the agent health proxy (up to 30s)
-          echo "⏳ Checking Hermes Agent proxy..."
-          for i in $(seq 1 15); do
-            AGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{"state":"disconnected"}')
-            AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
-            echo "   Agent state attempt $i: $AGENT_STATE"
-            if [ "$AGENT_STATE" = "connected" ]; then
-              echo "✅ Hermes Agent connected"
+          echo "Checking Hermes Agent proxy..."
+          echo "Waiting for Hermes gateway direct health..."
+          for i in $(seq 1 30); do
+            if docker exec "$CONTAINER" curl -sf http://127.0.0.1:8642/health > /dev/null 2>&1; then
+              echo "Hermes gateway direct health is ready"
               break
             fi
-            if [ "$i" -eq 15 ]; then
-              echo "❌ Hermes Agent not connected (state=$AGENT_STATE)"
-              docker logs "$CONTAINER" 2>&1 | tail -50
+            if [ "$i" -eq 30 ]; then
+              echo "Hermes gateway direct health did not become ready"
+              docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
+              docker exec "$CONTAINER" sh -lc 'tail -n 80 /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
               exit 1
             fi
             sleep 2
           done
 
+          for i in $(seq 1 45); do
+            AGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{"state":"disconnected"}')
+            AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
+            echo "Agent health attempt $i: $AGENT_HEALTH"
+            if [ "$AGENT_STATE" = "connected" ]; then
+              echo "Hermes Agent connected"
+              break
+            fi
+            if [ "$i" -eq 45 ]; then
+              echo "Hermes Agent not connected (state=$AGENT_STATE)"
+              docker logs "$CONTAINER" 2>&1 | tail -50
+              docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
+              docker exec "$CONTAINER" sh -lc 'tail -n 80 /var/log/supervisor/wright-api-stdout.log /var/log/supervisor/wright-api-stderr.log /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
+              exit 1
+            fi
+            sleep 2
+          done
 
-          # Verify workspace creation works
-          echo "⏳ Testing workspace creation..."
+          echo "Testing workspace creation..."
           WS_RESPONSE=$(curl -sf -X POST http://127.0.0.1:8090/api/workspace/create \
             -H "Content-Type: application/json" \
-            -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace"}')
+            -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace/ci-smoke-test"}')
           WS_ID=$(echo "$WS_RESPONSE" | jq -r '.workspace_id // empty')
           if [ -z "$WS_ID" ]; then
-            echo "❌ Workspace creation failed: $WS_RESPONSE"
+            echo "Workspace creation failed: $WS_RESPONSE"
             exit 1
           fi
-          echo "✅ Workspace created: $WS_ID"
+          echo "Workspace created: $WS_ID"
 
-          # Verify supervisord has both processes running (up to 10s)
-          echo "⏳ Checking supervisord processes..."
+          echo "Checking supervisord processes..."
           for i in $(seq 1 5); do
             PROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)
             echo "$PROCS"
             if echo "$PROCS" | grep -q "wright-api.*RUNNING" && echo "$PROCS" | grep -q "hermes-gateway.*RUNNING"; then
-              echo "✅ All processes running"
+              echo "All processes running"
               break
             fi
             if [ "$i" -eq 5 ]; then
-              echo "❌ Processes did not enter RUNNING state"
+              echo "Processes did not enter RUNNING state"
               exit 1
             fi
             sleep 2
           done
 
-          echo ""
-          echo "🎉 Smoke test passed!"
-
-      # - name: Build and Push (Production)
-      #   # TODO: Restore this when docker registry credentials and pushing are enabled.
-      #   if: github.event_name != 'pull_request'
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     file: docker/Dockerfile
-      #     push: true
-      #     # platforms: linux/amd64,linux/arm64 # Uncomment to enable multi-architecture builds when arm64 solvers are fully supported
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     build-args: |
-      #       VERSION=${{ steps.prep.outputs.version }}
-      #       REVISION=${{ steps.prep.outputs.revision }}
-      #       CREATED=${{ steps.prep.outputs.created }}
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
-
+          echo "Smoke test passed."

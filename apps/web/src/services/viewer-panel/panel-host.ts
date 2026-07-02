@@ -7,7 +7,9 @@ export class PanelHostImpl implements PanelHost, Disposable {
   private _active: boolean;
   private _visible: boolean;
 
-  private viewStateListeners = new Set<(e: { active: boolean; visible: boolean }) => void>();
+  private viewStateListeners = new Set<
+    (e: { active: boolean; visible: boolean }) => void
+  >();
   private disposeListeners = new Set<() => void>();
   private messageListeners = new Set<(e: unknown) => void>();
   private messageHandlerDisposable: Disposable;
@@ -23,7 +25,7 @@ export class PanelHostImpl implements PanelHost, Disposable {
     title: string,
     container: HTMLElement,
     active = true,
-    visible = true
+    visible = true,
   ) {
     this.id = id;
     this.title = title;
@@ -43,7 +45,12 @@ export class PanelHostImpl implements PanelHost, Disposable {
           }
         }
 
-        if (data && typeof data === "object" && "type" in data && data.type === "pong") {
+        if (
+          data &&
+          typeof data === "object" &&
+          "type" in data &&
+          data.type === "pong"
+        ) {
           this.handlePong();
         }
 
@@ -81,16 +88,15 @@ export class PanelHostImpl implements PanelHost, Disposable {
     }
   }
 
-  readonly onDidChangeViewState: Event<{ active: boolean; visible: boolean }> = (
-    listener
-  ) => {
-    this.viewStateListeners.add(listener);
-    return {
-      dispose: () => {
-        this.viewStateListeners.delete(listener);
-      },
+  readonly onDidChangeViewState: Event<{ active: boolean; visible: boolean }> =
+    (listener) => {
+      this.viewStateListeners.add(listener);
+      return {
+        dispose: () => {
+          this.viewStateListeners.delete(listener);
+        },
+      };
     };
-  };
 
   readonly onDidDispose: Event<void> = (listener) => {
     this.disposeListeners.add(listener);

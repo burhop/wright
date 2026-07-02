@@ -15,6 +15,27 @@ import type {
 } from "../types";
 import { workspaceService } from "../../workspace-service";
 
+const VIEWER_BACKGROUND = 0x090d16;
+const PART_MATERIAL = 0xd9f3ff;
+const PART_SPECULAR = 0x7dd3fc;
+const GRID_PRIMARY = 0x1e293b;
+const GRID_SECONDARY = 0x0d1220;
+
+const fitCameraToRadius = (camera: THREE.PerspectiveCamera, radius: number) => {
+  const safeRadius = Math.max(radius, 1);
+  const fov = THREE.MathUtils.degToRad(camera.fov);
+  const distance = (safeRadius / Math.sin(fov / 2)) * 1.35;
+  const component = distance / Math.sqrt(3);
+
+  camera.position.set(component, component, component);
+  camera.lookAt(0, 0, 0);
+  camera.near = Math.max(0.001, safeRadius / 1000);
+  camera.far = Math.max(1000, distance * 8, safeRadius * 80);
+  camera.updateProjectionMatrix();
+
+  return { distance, radius: safeRadius };
+};
+
 export interface ThreeDDocument extends ViewerDocument {
   readonly arrayBuffer: ArrayBuffer;
 }
@@ -42,7 +63,9 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
   readonly id = "threed-viewer";
   private changeCallbacks = new Set<(e: ViewerDocumentChangeEvent) => void>();
 
-  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (listener) => {
+  readonly onDidChangeDocument: Event<ViewerDocumentChangeEvent> = (
+    listener,
+  ) => {
     this.changeCallbacks.add(listener);
     return {
       dispose: () => {
@@ -51,12 +74,19 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     };
   };
 
-  async openDocument(file: FileDescriptor, context: OpenContext): Promise<ThreeDDocument> {
+  async openDocument(
+    file: FileDescriptor,
+    context: OpenContext,
+  ): Promise<ThreeDDocument> {
     const sessionId = context.sessionId;
     if (!sessionId) {
       throw new Error("No active session ID provided");
     }
-    const buffer = await workspaceService.getFileContentArrayBuffer(sessionId, file.uri, context.backupId);
+    const buffer = await workspaceService.getFileContentArrayBuffer(
+      sessionId,
+      file.uri,
+      context.backupId,
+    );
     return new ThreeDDocumentImpl(file.uri, buffer);
   }
 
@@ -68,7 +98,7 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     document: ThreeDDocument,
     panel: PanelHost,
     _mode: string,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {
     const container = panel.container;
 
@@ -79,7 +109,7 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     wrapper.style.width = "100%";
     wrapper.style.height = "100%";
     wrapper.style.position = "relative";
-    wrapper.style.backgroundColor = "#151515";
+    wrapper.style.backgroundColor = "#090d16";
 
     const canvas = window.document.createElement("canvas");
     canvas.style.display = "block";
@@ -94,27 +124,37 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     const height = container.clientHeight || 300;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x151515);
+    scene.background = new THREE.Color(VIEWER_BACKGROUND);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      width / height,
+      0.001,
+      10000,
+    );
     camera.position.set(40, 40, 40);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    const ambientLight = new THREE.AmbientLight(0x444444);
+    const ambientLight = new THREE.AmbientLight(0xb8d8f0, 0.65);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.1);
     dirLight1.position.set(1, 1, 1).normalize();
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0x555555, 0.4);
+    const dirLight2 = new THREE.DirectionalLight(0x7dd3fc, 0.45);
     dirLight2.position.set(-1, -1, -1).normalize();
     scene.add(dirLight2);
 
-    const gridHelper = new THREE.GridHelper(80, 40, 0x333333, 0x222222);
+    const gridHelper = new THREE.GridHelper(
+      80,
+      40,
+      GRID_PRIMARY,
+      GRID_SECONDARY,
+    );
     gridHelper.position.y = -10;
     scene.add(gridHelper);
 
@@ -128,8 +168,8 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
       geometry.center();
 
       material = new THREE.MeshPhongMaterial({
-        color: 0x4f46e5,
-        specular: 0x222222,
+        color: PART_MATERIAL,
+        specular: PART_SPECULAR,
         shininess: 60,
       });
 
@@ -139,28 +179,27 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
       geometry.computeBoundingSphere();
       const boundingSphere = geometry.boundingSphere;
       if (boundingSphere) {
-        const radius = boundingSphere.radius;
-        camera.position.set(radius * 2.2, radius * 2.2, radius * 2.2);
-        camera.lookAt(0, 0, 0);
+        const { radius } = fitCameraToRadius(camera, boundingSphere.radius);
         gridHelper.position.y = -radius * 1.1;
-
-        // Dynamically adjust camera near/far clipping planes based on model size
-        camera.near = Math.max(0.001, radius * 0.01);
-        camera.far = Math.max(1000, radius * 100);
-        camera.updateProjectionMatrix();
+        const gridSize = Math.max(80, radius * 4);
+        gridHelper.scale.setScalar(gridSize / 80);
       }
     } catch (err) {
-      console.error("Failed to parse STL geometry buffer in pluggable viewer", err);
+      console.error(
+        "Failed to parse STL geometry buffer in pluggable viewer",
+        err,
+      );
     }
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.maxDistance = 400;
-    
-    // Set dynamic minDistance based on bounding sphere radius if available
     const radius = geometry?.boundingSphere?.radius;
-    controls.minDistance = radius !== undefined ? Math.max(0.01, radius * 0.1) : 5;
+    const fitDistance =
+      radius !== undefined ? fitCameraToRadius(camera, radius).distance : 40;
+    controls.minDistance =
+      radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
+    controls.maxDistance = Math.max(1000, fitDistance * 12, (radius || 1) * 40);
 
     const resizeObserver = new ResizeObserver((entries) => {
       if (!entries || entries.length === 0) return;
@@ -197,20 +236,26 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
     });
   }
 
-  async save(_document: ThreeDDocument, _token: CancellationToken): Promise<void> {}
+  async save(
+    _document: ThreeDDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async saveAs(
     _document: ThreeDDocument,
     _destination: FileDescriptor,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<void> {}
 
-  async revert(_document: ThreeDDocument, _token: CancellationToken): Promise<void> {}
+  async revert(
+    _document: ThreeDDocument,
+    _token: CancellationToken,
+  ): Promise<void> {}
 
   async backup(
     document: ThreeDDocument,
     _context: BackupContext,
-    _token: CancellationToken
+    _token: CancellationToken,
   ): Promise<BackupHandle> {
     return {
       id: "backup-" + document.uri,

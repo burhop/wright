@@ -15,6 +15,7 @@ from tool_registry.db import (
 )
 from tool_registry.runners.stdio import StdioRunner
 from tool_registry.manager import McpEngine
+from tool_registry.models import EnvVarDefinition
 
 
 @pytest.fixture
@@ -115,7 +116,9 @@ def test_database_crud(temp_db_path):
 
     # Update Server
     updated = update_server(
-        temp_db_path, server_id, {"is_active": True, "status": "active", "env_vars": {"NEW_VAR": "new_val"}}
+        temp_db_path,
+        server_id,
+        {"is_active": True, "status": "active", "env_vars": {"NEW_VAR": "new_val"}},
     )
     assert updated.is_active is True
     assert updated.status == "active"
@@ -241,3 +244,33 @@ async def test_mcp_engine(temp_db_path):
     assert len(tools_after) == 0
 
     await engine.shutdown()
+
+
+@pytest.mark.asyncio
+async def test_mcp_engine_blocks_start_when_credentials_missing(
+    temp_db_path, tmp_path, monkeypatch
+):
+    monkeypatch.setenv("WRIGHT_SECRETS_PATH", str(tmp_path / "secrets.json"))
+    server = McpServer(
+        server_id="credentialed-engine",
+        name="Credentialed Engine",
+        type="stdio",
+        command=[sys.executable, "-c", "print('unused')"],
+        is_active=False,
+        status="inactive",
+        created_at=int(time.time()),
+        updated_at=int(time.time()),
+        env_vars=[
+            EnvVarDefinition(
+                name="API_TOKEN",
+                label="API token",
+                required=True,
+                secret=True,
+            )
+        ],
+    )
+    insert_server(temp_db_path, server)
+    engine = McpEngine(temp_db_path)
+
+    with pytest.raises(RuntimeError, match="missing required credentials"):
+        await engine.start_server("credentialed-engine")
