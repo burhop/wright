@@ -1,6 +1,9 @@
 # Hermes Wright Plugin
 
-This is the official Wright integration plugin for Hermes Agent. It provides a browseable catalog of engineering MCP tools and commands to start and manage the Wright stack.
+This is the official Wright integration plugin for Hermes Agent. It provides
+Hermes slash commands for starting and managing the Wright stack, and it remains
+the first-class Hermes integration while Wright's shared catalog and runtime
+contracts live in the monorepo packages.
 
 ## Directory Structure
 
@@ -8,8 +11,8 @@ This is the official Wright integration plugin for Hermes Agent. It provides a b
 hermes-plugin-wright/
 ├── plugin.yaml              # Plugin metadata manifest
 ├── __init__.py              # Registration entry point: register(ctx)
-├── catalog.yaml             # Registry database containing ~30 engineering tools
-├── catalog.py               # CatalogLoader implementation (search and filter APIs)
+├── catalog.yaml             # Hermes compatibility catalog seed
+├── catalog.py               # CatalogLoader compatibility implementation
 ├── bridge.py                # Wright FastAPI server API client bridge
 ├── schemas.py               # Pydantic validation schemas (CatalogEntry, etc.)
 ├── pyproject.toml           # Packaging and dependencies
@@ -112,6 +115,11 @@ Once loaded in Hermes, the plugin exposes the `/wright` slash command group:
 
 ## Catalog Usage
 
+`packages/tool_registry` is the long-term owner for canonical MCP catalog
+models, normalization, safety policy, validation metadata, and evidence. The
+Hermes plugin remains first-class, but plugin catalog behavior should stay in
+parity with `tool_registry` instead of becoming an independent source of truth.
+
 You can load and query the engineering tool catalog programmatically:
 
 ```python
@@ -159,4 +167,7 @@ if __name__ == "__main__":
 
 ## References
 
-For full details, designs, and distribution strategies, check the [Wright Hermes Plugin Plan](file:///home/burhop/repos/wright/docs/wright-hermes-plugin-plan.md).
+For current architecture direction, see
+[`docs/architecture/refactoring-phase-2-2026-07-01.md`](../docs/architecture/refactoring-phase-2-2026-07-01.md)
+and the MCP clean-container validation process in
+[`docs/mcp-catalog/mcp-server-testing-process.md`](../docs/mcp-catalog/mcp-server-testing-process.md).

@@ -128,18 +128,27 @@ such as `v0.1.0-alpha.1` do not move `latest`; stable tags may.
 
 ## Architecture
 
-Wright is a modular monorepo with a FastAPI gateway, React/Vite web UI, Hermes
-integration, MCP tool registry, and local workspace state.
+Wright is a modular monorepo with a FastAPI gateway, React/Vite web UI,
+agent-neutral workspace services, Hermes and future runtime adapters, an MCP
+tool registry, and local workspace state.
 
 ```mermaid
 flowchart TD
     User([User Web Browser]) -->|HTTP / WebSockets| API[FastAPI API Gateway]
-    API -->|Routing| Agent[Agent Adapters and Hermes]
-    API -->|Routing| MCP[MCP Tool Registry]
-    Agent -->|Uses| MCP
+    API -->|Thin HTTP translation| Workspace[Workspace Service]
+    Workspace -->|Runtime selection and context| Agent[Agent Adapters]
+    Workspace -->|Tool assignment and policy| MCP[MCP Tool Registry]
+    API -->|Catalog and lifecycle reads| MCP
+    Agent -->|Wright gateway protocol| MCP
     MCP -->|Selected server| Tools[CAD, CAE, CAM, calculators]
     API -->|Database and files| Vault[SQLite, LanceDB, File Vault]
 ```
+
+Hermes remains the default first-class adapter, but `.hermes.md` and
+`~/.hermes` profile behavior lives in Hermes adapter/profile code. Generic
+workspace lifecycle code delegates context materialization through
+`packages/agent_adapters` contracts so OpenClaw and future engines can plug in
+without inheriting Hermes file formats.
 
 ### Repository Structure
 
@@ -151,9 +160,10 @@ wright/
 |-- packages/
 |   |-- core/                   # Shared domain models and logging
 |   |-- agent_adapters/         # Adapter pattern for agent runtimes
+|   |-- workspace_service/      # Workspace lifecycle orchestration facade
 |   |-- tool_registry/          # MCP registry and validation logic
 |   `-- data_vault/             # SQLite, LanceDB, and filesystem vault
-|-- hermes-plugin-wright/       # Wright Hermes plugin and catalog seed data
+|-- hermes-plugin-wright/       # Wright Hermes plugin compatibility package
 |-- tests/
 |   |-- ui-integration/         # Playwright integration tests
 |   `-- e2e/                    # Smoke and system tests

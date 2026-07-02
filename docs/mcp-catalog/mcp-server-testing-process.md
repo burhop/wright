@@ -51,6 +51,40 @@ For each MCP server, work in catalog order:
    follow-up work.
 10. Reset to a clean container state before moving to the next MCP server.
 
+## Validation Plan And Evidence Seam
+
+Fast local tests may generate a `ValidationPlan`, serialize `ValidationEvidence`,
+and run the lightweight mock MCP probe runner. Those tests must use fake or local
+mock clients only; they must not start Docker, fetch packages, call external
+networks, require credentials, or install host CAD/CAE/CAM software.
+
+Clean-container execution is opt-in. A validation plan may mark
+`requires_docker`, `requires_network`, or `requires_credentials`, but those flags
+are declarations for a separate operator-invoked runner. Default API and package
+tests only preserve metadata preflight classification and evidence
+serialization.
+
+Phase 2 exposes the opt-in seam through `tool_registry.validation_cli`:
+
+```bash
+uv run python -m tool_registry.validation_cli plan <server-id> --container ubuntu-x64
+uv run python -m tool_registry.validation_cli validate <server-id> --container ubuntu-x64 --evidence-dir docs/mcp-catalog/evidence
+```
+
+The default fast test suite uses the mock executor only. The Docker executor is
+operator-invoked and writes JSON evidence plus a Markdown summary. It maps the
+`ubuntu-x64` target to the Wright clean-container image and runs direct stdio MCP
+protocol probes when the selected server has a runnable command. A skipped,
+unavailable, failed, or `partial` Docker run is not a full clean-container pass.
+Do not mark a catalog entry fully validated unless the documented
+clean-container loop actually ran and the evidence records successful
+install/start, protocol probes, safe backend probe, and gateway proxy probe
+where applicable.
+
+Evidence files must redact commands, environment variables, credentials, tool
+arguments, subprocess output, and validation notes through Wright's shared
+redaction helpers before writing JSON or Markdown artifacts.
+
 ## Ordering Policy
 
 Catalog entries must remain sorted as:

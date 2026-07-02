@@ -5,6 +5,12 @@ description = "A digital engineer, designer, and mechanical analyst - local-firs
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
+dependencies = [
+    "wright-workspace-service",
+]
+
+[tool.uv.sources]
+wright-workspace-service = { workspace = true }
 
 [tool.uv.workspace]
 members = [
@@ -14,6 +20,7 @@ members = [
     "packages/agent_adapters",
     "packages/tool_registry",
     "packages/data_vault",
+    "packages/workspace_service",
 ]
 
 [dependency-groups]

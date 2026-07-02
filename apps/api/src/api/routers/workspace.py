@@ -2,42 +2,43 @@
 Workspace router — thin HTTP handlers only.
 
 All Pydantic models are in api.schemas.workspace.
-All business logic is in core.workspace and api.services.hermes_sync.
+All business logic is in core.workspace and api.services.wright_gateway_sync.
 All handlers are decorated with @traced for OTel span creation.
 """
 
 import os
-import ntpath
 import sqlite3
-import uuid
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
 from typing import Optional
 
 from agent_adapters import BaseAgentEngine
+from agent_adapters.hermes_gateway import hermes_config_paths
 from core import WorkspaceManager
 from core.workspace import (
     get_workspace_by_session,
-    create_workspace,
     get_workspace_enabled_tools,
-    update_workspace_enabled_tools,
     get_recent_workspaces,
     get_all_workspaces,
-    create_workspace_from_dashboard,
     get_workspace_by_id,
     get_workspace_by_path,
-    is_synthetic_session_workspace,
-    update_workspace_remote_by_id,
     save_agent_context,
     load_agent_context,
-    activate_workspace,
     sync_workspace_runners,
     update_workspace_session,
 )
 from core.tracing import traced
 from api.routers.agent import get_agent_engine
 from api.config import DATABASE_PATH
+from workspace_service import (
+    WorkspaceConflictError,
+    WorkspaceInvalidRequestError,
+    WorkspaceNotFoundError,
+    WorkspaceService,
+    WorkspaceServiceError,
+    default_workspace_parent_dir,
+)
 from api.schemas.workspace import (
     WorkspaceNodeResponse,
     WorkspaceTreeResponse,
@@ -89,59 +90,40 @@ router = APIRouter()
 
 def get_default_workspace_parent_dir() -> str:
     """Return the per-user parent directory for Wright-created workspaces."""
-    home_dir = (
-        os.environ.get("WRIGHT_WORKSPACES_DIR")
-        or os.environ.get("USERPROFILE")
-        or os.environ.get("HOME")
-        or os.path.expanduser("~")
+    return default_workspace_parent_dir()
+
+
+def get_workspace_service() -> WorkspaceService:
+    return WorkspaceService(DATABASE_PATH)
+
+
+def _active_agent_id(request: Request | None = None) -> str:
+    if request is not None:
+        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+        if sync_manager and getattr(sync_manager, "active_agent", None):
+            return sync_manager.active_agent
+    return "hermes"
+
+
+def _workspace_service_http_exception(error: WorkspaceServiceError) -> HTTPException:
+    if isinstance(error, WorkspaceNotFoundError):
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))
+    if isinstance(error, (WorkspaceConflictError, WorkspaceInvalidRequestError)):
+        return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+    return HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(error)
     )
-    if ":" in home_dir or "\\" in home_dir:
-        return ntpath.join(home_dir, "wright")
-    return os.path.join(home_dir, "wright")
 
 
 async def get_workspace_dir(
-    session_id: str, engine: BaseAgentEngine = Depends(get_agent_engine)
+    session_id: str,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ) -> str:
     """Retrieve the workspace path for the given session ID, with fallback."""
-    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
-    if workspace:
-        return workspace["local_path"]
-    try:
-        workspace_path = await engine.get_session_workspace(session_id)
-    except Exception as e:
-        logger.warning(
-            "workspace_session_lookup_failed_using_local_workspace",
-            session_id=session_id,
-            error=str(e),
-        )
-        workspace_path = None
-    if not workspace_path:
-        workspace_path = os.path.join(get_default_workspace_parent_dir(), session_id)
-    os.makedirs(workspace_path, exist_ok=True)
-
-    synthetic_fallback = is_synthetic_session_workspace(
-        {
-            "session_id": session_id,
-            "local_path": workspace_path,
-            "workspace_name": os.path.basename(workspace_path),
-        }
-    )
-
-    # Check if there is an existing workspace with this local_path
-    existing = get_workspace_by_path(DATABASE_PATH, workspace_path)
-    if existing:
-        update_workspace_session(DATABASE_PATH, existing["workspace_id"], session_id)
-    elif not synthetic_fallback:
-        workspace_id = str(uuid.uuid4())
-        create_workspace(
-            DATABASE_PATH,
-            workspace_id,
-            session_id,
-            workspace_path,
-            workspace_name=os.path.basename(workspace_path),
-        )
-    return workspace_path
+    if not hasattr(service, "resolve_workspace_dir"):
+        service = get_workspace_service()
+    return await service.resolve_workspace_dir(session_id, engine)
 
 
 # ── File Operations ──────────────────────────────────────────────────────
@@ -307,59 +289,20 @@ async def save_file_content_endpoint(
 @router.post("/files/run", response_model=FileRunResponse)
 @traced("workspace.files.run")
 async def run_file_endpoint(
-    body: FileRunRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: FileRunRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-
-    # Secure path norm
-    safe_path = os.path.normpath(body.path)
-    if (
-        safe_path.startswith("..")
-        or os.path.isabs(safe_path)
-        or safe_path.startswith("/")
-    ):
-        safe_path = safe_path.lstrip("/").replace("../", "")
-
-    full_path = os.path.normpath(os.path.join(workspace_dir, safe_path))
-
-    if not os.path.exists(full_path) or not os.path.isfile(full_path):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {body.path}"
-        )
-
-    if not full_path.endswith(".py"):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only Python files (.py) are supported for running.",
-        )
-
-    import subprocess
-
     try:
-        res = subprocess.run(
-            ["python", full_path],
-            cwd=workspace_dir,
-            capture_output=True,
-            text=True,
-            timeout=10.0,
-        )
+        res = await service.execute_workspace_file(body.session_id, body.path, engine)
         return FileRunResponse(
-            success=res.returncode == 0,
+            success=res.success,
             stdout=res.stdout,
             stderr=res.stderr,
-            exit_code=res.returncode,
+            exit_code=res.exit_code,
         )
-    except subprocess.TimeoutExpired as e:
-        return FileRunResponse(
-            success=False,
-            stdout=e.stdout or "",
-            stderr=e.stderr or "Process timed out after 10.0 seconds.",
-            exit_code=-9,
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+    except WorkspaceServiceError as e:
+        raise _workspace_service_http_exception(e)
 
 
 # ── Git Operations ───────────────────────────────────────────────────────
@@ -611,28 +554,25 @@ async def get_workspace_config(
 @router.post("/config", response_model=WorkspaceConfigResponse)
 @traced("workspace.config.update")
 async def update_workspace_config(
-    body: WorkspaceConfigRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: WorkspaceConfigRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
-    if not workspace:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+    try:
+        workspace_id = await service.update_workspace_config(
+            body.session_id,
+            engine,
+            git_remote_url=body.git_remote_url,
+            git_username=body.git_username,
+            git_token=body.git_token,
+            workspace_prompt=body.workspace_prompt,
+            git_large_file_threshold=body.git_large_file_threshold,
+            agent_id=_active_agent_id(request),
         )
-    update_workspace_remote_by_id(
-        DATABASE_PATH,
-        workspace["workspace_id"],
-        body.git_remote_url,
-        body.git_username,
-        body.git_token,
-        body.workspace_prompt,
-        body.git_large_file_threshold,
-    )
-    # Write updated prompt context immediately to .hermes.md
-    from core.workspace import write_workspace_hermes_md
-
-    write_workspace_hermes_md(DATABASE_PATH, workspace_dir)
-    return WorkspaceConfigResponse(success=True, workspace_id=workspace["workspace_id"])
+        return WorkspaceConfigResponse(success=True, workspace_id=workspace_id)
+    except WorkspaceServiceError as e:
+        raise _workspace_service_http_exception(e)
 
 
 # ── Workspace Tools ──────────────────────────────────────────────────────
@@ -641,14 +581,14 @@ async def update_workspace_config(
 @router.get("/tools", response_model=WorkspaceToolsGetResponse)
 @traced("workspace.tools.list")
 async def get_workspace_tools_endpoint(
-    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    enabled = get_workspace_enabled_tools(DATABASE_PATH, session_id)
-    if enabled is None:
-        from tool_registry.db import get_servers
-
-        enabled = [s.name for s in get_servers(DATABASE_PATH) if s.is_installed]
-    return WorkspaceToolsGetResponse(session_id=session_id, enabled_tools=enabled)
+    state = service.list_workspace_tools(session_id)
+    return WorkspaceToolsGetResponse(
+        session_id=state.session_id, enabled_tools=state.enabled_tools
+    )
 
 
 @router.post("/tools/toggle", response_model=WorkspaceToolToggleResponse)
@@ -657,19 +597,10 @@ async def toggle_workspace_tool_endpoint(
     body: WorkspaceToolToggleRequest,
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
     await get_workspace_dir(body.session_id, engine)
-    current = get_workspace_enabled_tools(DATABASE_PATH, body.session_id)
-    if current is None:
-        from tool_registry.db import get_servers
-
-        current = [s.name for s in get_servers(DATABASE_PATH) if s.is_installed]
-
-    if body.is_enabled and body.server_id not in current:
-        current.append(body.server_id)
-    elif not body.is_enabled and body.server_id in current:
-        current.remove(body.server_id)
-    update_workspace_enabled_tools(DATABASE_PATH, body.session_id, current)
+    service.set_workspace_tool_enabled(body.session_id, body.server_id, body.is_enabled)
 
     # Notify gateway of tool list change so Hermes updates dynamically
     try:
@@ -732,10 +663,7 @@ async def get_workspace_mcp_status_endpoint(
 
     # 3. Read current configured mcp_servers from config.yaml
     configured_keys = set()
-    paths = [
-        os.path.expanduser("~/.hermes/profiles/wright/config.yaml"),
-        os.path.expanduser("~/.hermes/config.yaml"),
-    ]
+    paths = hermes_config_paths()
     config_loaded = False
     for path in paths:
         if os.path.exists(path):
@@ -804,77 +732,31 @@ async def get_workspace_mcp_status_endpoint(
 )
 @traced("workspace.create")
 async def create_workspace_endpoint(
-    body: WorkspaceCreateRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: WorkspaceCreateRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
     logger.info("workspace_create", name=body.name, local_path=body.local_path)
     try:
-        local_path = body.local_path
-        if not local_path:
-            from core.workspace import sanitize_workspace_name
-
-            sanitized = sanitize_workspace_name(body.name)
-            if not sanitized:
-                raise ValueError("Workspace name cannot be empty or invalid.")
-            parent_dir = get_default_workspace_parent_dir()
-            local_path = os.path.join(parent_dir, sanitized)
-
-        # Check DB for duplicate name or path
-        import sqlite3
-
-        conn = sqlite3.connect(DATABASE_PATH)
-        conn.row_factory = sqlite3.Row
-        try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM engineering_workspaces WHERE local_path = ?",
-                (local_path,),
-            )
-            if cursor.fetchone():
-                raise ValueError(
-                    f"Workspace directory path already exists: {local_path}"
-                )
-
-            cursor.execute(
-                "SELECT * FROM engineering_workspaces WHERE workspace_name = ?",
-                (body.name.strip(),),
-            )
-            if cursor.fetchone():
-                raise ValueError(f"Workspace with name '{body.name}' already exists.")
-        finally:
-            conn.close()
-
-        # Check disk for existing folder
-        if os.path.exists(local_path):
-            raise ValueError(
-                f"Workspace directory already exists on disk: {local_path}"
-            )
-
-        # Create folder and init git
-        os.makedirs(local_path, exist_ok=True)
-        WorkspaceManager(local_path)
-
-        # Create session in engine and save. If Hermes is unavailable, keep the
-        # browser workflow usable with a local placeholder session id.
-        from core.workspace import write_workspace_hermes_md
-
-        write_workspace_hermes_md(DATABASE_PATH, local_path)
-        try:
-            session_info = await engine.create_session(local_path)
-            session_id = session_info.session_id
-        except Exception as e:
-            session_id = f"wright-local-{uuid.uuid4()}"
-            logger.warning(
-                "workspace_create_agent_session_failed_using_local_session",
-                local_path=local_path,
-                session_id=session_id,
-                error=str(e),
-            )
-        ws = create_workspace_from_dashboard(
-            DATABASE_PATH, body.name, local_path, session_id
+        ws = await service.create_workspace(
+            body.name,
+            body.local_path,
+            engine,
+            agent_id=_active_agent_id(request),
         )
-        return serialize_workspace(ws)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        return WorkspaceListEntry(
+            workspace_id=ws.workspace_id,
+            session_id=ws.session_id,
+            workspace_name=ws.workspace_name,
+            local_path=ws.local_path,
+            git_remote_url=ws.git_remote_url,
+            git_username=ws.git_username,
+            enabled_tools=ws.enabled_tools,
+            updated_at=ws.updated_at,
+        )
+    except WorkspaceServiceError as e:
+        raise _workspace_service_http_exception(e)
     except Exception as e:
         logger.exception("workspace_create_failed", error=str(e))
         raise HTTPException(
@@ -957,7 +839,15 @@ async def activate_workspace_endpoint(
     else:
         local_path = workspace["local_path"]
 
-    session_id = await activate_workspace(DATABASE_PATH, session_id, local_path, engine)
+    service = get_workspace_service()
+    activation = await service.activate_workspace(
+        session_id,
+        engine,
+        local_path=local_path,
+        agent_id=_active_agent_id(request),
+    )
+    session_id = activation.session_id
+    local_path = activation.workspace_path
 
     mcp_engine = getattr(request.app.state, "mcp_engine", None)
     if mcp_engine:
@@ -1013,9 +903,15 @@ async def update_workspace_session_endpoint(
     workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
     if workspace:
         local_path = workspace["local_path"]
-        session_id = await activate_workspace(
-            DATABASE_PATH, body.session_id, local_path, engine, allow_fallback=False
+        service = get_workspace_service()
+        activation = await service.activate_workspace(
+            body.session_id,
+            engine,
+            local_path=local_path,
+            agent_id=_active_agent_id(request),
+            allow_fallback=False,
         )
+        session_id = activation.session_id
 
         mcp_engine = getattr(request.app.state, "mcp_engine", None)
         if mcp_engine:

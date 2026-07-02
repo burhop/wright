@@ -6,6 +6,11 @@ from fastapi import APIRouter, Request, HTTPException, status, Query
 from pydantic import BaseModel
 from typing import Optional
 from api.config import DATABASE_PATH
+from agent_adapters import (
+    UnsupportedAgentRuntimeError,
+    create_agent_engine,
+    default_agent_registry,
+)
 
 router = APIRouter()
 
@@ -37,6 +42,7 @@ class HealthCheckResponse(BaseModel):
 async def get_setup_status(request: Request):
     llm_api_url = None
     active_agent = "hermes"
+    registry = default_agent_registry()
 
     # 1. Check DB first
     try:
@@ -63,6 +69,11 @@ async def get_setup_status(request: Request):
         from api.config import get_llm_api_url
 
         llm_api_url = get_llm_api_url()
+
+    try:
+        active_agent = registry.resolve_provider(active_agent).name
+    except UnsupportedAgentRuntimeError:
+        active_agent = registry.default_provider().name
 
     # If active_agent in app state is different, sync it
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
@@ -95,17 +106,18 @@ async def get_setup_status(request: Request):
 async def configure_system(body: ConfigureRequest, request: Request):
     url = body.llm_api_url.strip()
     agent = body.active_agent.strip().lower()
+    registry = default_agent_registry()
+
+    try:
+        provider = registry.resolve_provider(agent)
+    except UnsupportedAgentRuntimeError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+    agent = provider.name
 
     if not url and agent != "hermes":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="LLM API URL cannot be empty.",
-        )
-
-    if agent not in ["hermes", "openclaw", "pi"]:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Unsupported agent selected.",
         )
 
     # Save to database
@@ -132,6 +144,9 @@ async def configure_system(body: ConfigureRequest, request: Request):
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:
         sync_manager.active_agent = agent
+    request.app.state.agent_engine = create_agent_engine(
+        agent, db_path=DATABASE_PATH, registry=registry
+    )
 
     return ConfigureResponse(success=True, message="System configured successfully.")
 

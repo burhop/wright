@@ -1,0 +1,20 @@
+{
+  "server_id": "mock-cad",
+  "environment": "local-mock",
+  "status": "failed",
+  "diagnostics": "API_TOKEN=abc123",
+  "missing_dependencies": ["MockCAD"],
+  "steps": [
+    {
+      "name": "initialize",
+      "status": "passed",
+      "output": "ok"
+    },
+    {
+      "name": "tools/list",
+      "status": "failed",
+      "output": "token=abc123",
+      "error": "authorization: bearer-token"
+    }
+  ]
+}

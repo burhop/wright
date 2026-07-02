@@ -5,11 +5,12 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from tool_registry import (
+    ApprovalContext,
     McpEngine,
     get_servers,
     get_tools,
 )
-from api.routers.mcp import get_mcp_engine
+from api.services.mcp_services import get_mcp_engine
 from core.workspace import get_gateway_workspace, get_workspace_enabled_tools
 
 logger = structlog.get_logger(__name__)
@@ -99,6 +100,14 @@ async def call_gateway_tool(
 
     server_key, tool_name = body.name.split("__", 1)
     db_path = engine.db_path
+    workspace = None
+    approval_context = ApprovalContext()
+    try:
+        workspace = get_gateway_workspace(db_path)
+        if workspace:
+            approval_context = ApprovalContext(workspace_id=workspace["workspace_id"])
+    except Exception:
+        pass
 
     all_servers = get_servers(db_path)
     target_server = None
@@ -120,15 +129,11 @@ async def call_gateway_tool(
     try:
         runner = engine._active_runners.get(target_server.server_id)
         if not runner or not runner.is_running():
-            workspace_dir = None
-            try:
-                workspace = get_gateway_workspace(db_path)
-                if workspace:
-                    workspace_dir = workspace["local_path"]
-            except Exception:
-                pass
+            workspace_dir = workspace["local_path"] if workspace else None
             await engine.start_server(
-                target_server.server_id, workspace_dir=workspace_dir
+                target_server.server_id,
+                workspace_dir=workspace_dir,
+                approval_context=approval_context,
             )
     except Exception as e:
         logger.exception(
@@ -147,7 +152,10 @@ async def call_gateway_tool(
     # Execute tool call
     try:
         result = await engine.call_tool(
-            target_server.server_id, tool_name, body.arguments
+            target_server.server_id,
+            tool_name,
+            body.arguments,
+            approval_context=approval_context,
         )
         return result
     except Exception as e:

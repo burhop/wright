@@ -506,7 +506,6 @@ async def activate_workspace(
                 "agent_session_missing", session_id=session_id, local_path=local_path
             )
             if not allow_fallback:
-                write_workspace_hermes_md(db_path, local_path)
                 return session_id
 
             # Find an existing session belonging to this local_path
@@ -527,7 +526,6 @@ async def activate_workspace(
             else:
                 # None found, create a new one
                 logger.info("creating_new_session_for_fallback", local_path=local_path)
-                write_workspace_hermes_md(db_path, local_path)
                 session_info = await engine.create_session(local_path)
 
             conn = sqlite3.connect(db_path)
@@ -549,11 +547,6 @@ async def activate_workspace(
         logger.warning(
             "agent_session_verify_failed", session_id=session_id, error=str(e)
         )
-
-    try:
-        write_workspace_hermes_md(db_path, local_path)
-    except Exception as e:
-        logger.warning("failed_to_write_hermes_md_on_activate", error=str(e))
 
     touch_workspace(db_path, session_id)
     set_active_gateway_session(db_path, session_id)
@@ -1290,20 +1283,22 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
     )
 
 
-def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
-    """Compile workspace MCP instructions and write them to .hermes.md in the workspace directory.
+def write_workspace_agent_context(
+    db_path: str, local_path: str, context_filename: str
+) -> None:
+    """Compile workspace MCP instructions and write them to an agent context file.
 
-    If the .hermes.md file already exists, preserves user's custom instructions outside of
+    If the context file already exists, preserves user's custom instructions outside of
     the Wright MCP instructions and Workspace Context blocks.
     """
     import os
     import re
 
-    if not os.path.exists(local_path):
+    if not os.path.exists(local_path) or not context_filename:
         return
 
     instructions = compile_workspace_mcp_instructions(db_path, local_path)
-    hermes_md_path = os.path.join(local_path, ".hermes.md")
+    context_path = os.path.join(local_path, context_filename)
 
     start_marker = "<!-- WRIGHT MCP INSTRUCTIONS START -->"
     end_marker = "<!-- WRIGHT MCP INSTRUCTIONS END -->"
@@ -1329,9 +1324,9 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
         generated_prompt_block = f"{start_prompt_marker}\n{end_prompt_marker}"
 
     existing_content = ""
-    if os.path.exists(hermes_md_path):
+    if os.path.exists(context_path):
         try:
-            with open(hermes_md_path, "r", encoding="utf-8") as f:
+            with open(context_path, "r", encoding="utf-8") as f:
                 existing_content = f.read()
         except Exception:
             pass
@@ -1370,10 +1365,12 @@ def write_workspace_hermes_md(db_path: str, local_path: str) -> None:
             new_content = generated_prompt_block
 
     try:
-        with open(hermes_md_path, "w", encoding="utf-8") as f:
+        with open(context_path, "w", encoding="utf-8") as f:
             f.write(new_content.strip() + "\n")
     except Exception as e:
-        logger.error("Failed to write .hermes.md: %s", e)
+        logger.error(
+            "Failed to write workspace agent context %s: %s", context_filename, e
+        )
 
 
 def read_application_logs(

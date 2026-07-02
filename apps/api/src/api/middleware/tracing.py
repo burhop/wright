@@ -2,8 +2,8 @@
 FastAPI middleware for automatic OpenTelemetry span creation per HTTP request.
 
 Creates a root span named by the route's semantic domain (e.g., workspace.files.list).
-Extracts X-Trace-Id header from frontend for cross-service correlation.
-Injects trace_id into request.state for downstream handler access.
+Extracts X-Trace-Id header from frontend as Wright's correlation ID.
+OpenTelemetry remains the source of trace_id/span_id.
 """
 
 import secrets
@@ -13,6 +13,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from opentelemetry import trace
 from opentelemetry.trace import StatusCode
+from core.telemetry import (
+    WRIGHT_CORRELATION_ID,
+    bind_correlation_id,
+    clear_correlation_id,
+)
 
 _tracer = trace.get_tracer("wright.api")
 
@@ -92,30 +97,22 @@ class TracingMiddleware(BaseHTTPMiddleware):
     """Creates an OTel root span for every HTTP request with semantic naming."""
 
     async def dispatch(self, request: Request, call_next):
-        # Extract or generate trace_id
-        frontend_trace_id = request.headers.get("x-trace-id")
-        if frontend_trace_id:
-            trace_id = frontend_trace_id
-        else:
-            span = trace.get_current_span()
-            if span and span.get_span_context().is_valid:
-                trace_id = f"{span.get_span_context().trace_id:032x}"
-            else:
-                trace_id = secrets.token_hex(16)
-
-        # Store trace_id in request state for downstream handlers
-        request.state.trace_id = trace_id
+        correlation_id = request.headers.get("x-trace-id") or secrets.token_hex(16)
+        request.state.correlation_id = correlation_id
+        # Compatibility: existing error responses expose this field as trace_id.
+        request.state.trace_id = correlation_id
+        bind_correlation_id(correlation_id)
 
         span_name = _resolve_span_name(request.url.path, request.method)
         start_time = time.monotonic()
 
-        with _tracer.start_as_current_span(span_name) as span:
-            span.set_attribute("http.method", request.method)
-            span.set_attribute("http.url", str(request.url))
-            span.set_attribute("http.route", request.url.path)
-            span.set_attribute("trace_id", trace_id)
+        try:
+            with _tracer.start_as_current_span(span_name) as span:
+                span.set_attribute("http.method", request.method)
+                span.set_attribute("http.url", str(request.url))
+                span.set_attribute("http.route", request.url.path)
+                span.set_attribute(WRIGHT_CORRELATION_ID, correlation_id)
 
-            try:
                 response = await call_next(request)
                 duration_ms = (time.monotonic() - start_time) * 1000
 
@@ -128,12 +125,16 @@ class TracingMiddleware(BaseHTTPMiddleware):
                     span.set_status(StatusCode.OK)
 
                 # Inject trace_id into response headers
-                response.headers["X-Trace-Id"] = trace_id
+                response.headers["X-Trace-Id"] = correlation_id
                 return response
 
-            except Exception as exc:
+        except Exception as exc:
+            with _tracer.start_as_current_span(f"{span_name}.error") as span:
                 duration_ms = (time.monotonic() - start_time) * 1000
                 span.set_attribute("http.duration_ms", round(duration_ms, 2))
+                span.set_attribute(WRIGHT_CORRELATION_ID, correlation_id)
                 span.set_status(StatusCode.ERROR, str(exc))
                 span.record_exception(exc)
-                raise
+            raise
+        finally:
+            clear_correlation_id()

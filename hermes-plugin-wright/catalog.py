@@ -1,15 +1,8 @@
 import os
-import yaml
 from typing import List, Optional
+from tool_registry.catalog_loader import load_catalog_entries, sort_catalog_entries
+
 from .schemas import CatalogEntry
-
-
-TIER_ORDER = {
-    "tested": 0,
-    "might_work": 1,
-    "blocked": 2,
-    "non_working": 3,
-}
 
 
 class CatalogLoader:
@@ -36,21 +29,11 @@ class CatalogLoader:
 
     def _load(self):
         """Loads and validates the catalog file."""
-        if not os.path.exists(self.catalog_path):
-            raise FileNotFoundError(f"Catalog file not found: {self.catalog_path}")
-
-        with open(self.catalog_path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f) or {}
-
-        servers_data = data.get("servers", [])
-        seen_ids = set()
-
-        for entry_dict in servers_data:
-            entry = CatalogEntry.model_validate(entry_dict)
-            if entry.id in seen_ids:
-                raise ValueError(f"Duplicate catalog entry ID found: {entry.id}")
-            seen_ids.add(entry.id)
-            self.entries.append(entry)
+        shared_entries = load_catalog_entries(self.catalog_path)
+        self.entries = [
+            CatalogEntry.model_validate(entry.model_dump(mode="json"))
+            for entry in shared_entries
+        ]
 
     def get_all(self) -> List[CatalogEntry]:
         """Returns all loaded catalog entries sorted by practical readiness."""
@@ -58,13 +41,7 @@ class CatalogLoader:
 
     def sorted_entries(self, entries: List[CatalogEntry]) -> List[CatalogEntry]:
         """Sort entries as tested, maybe, blocked, non-working, then by name."""
-        return sorted(
-            entries,
-            key=lambda entry: (
-                TIER_ORDER.get(entry.installability_tier, 99),
-                entry.name.lower(),
-            ),
-        )
+        return sort_catalog_entries(entries)
 
     def get_by_domain(self, domain: str) -> List[CatalogEntry]:
         """Filters catalog entries by domain taxonomy tag (case-insensitive)."""

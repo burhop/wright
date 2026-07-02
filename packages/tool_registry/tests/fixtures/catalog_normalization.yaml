@@ -1,0 +1,16 @@
+servers:
+  - id: risky
+    name: Risky Tool
+    vendor: Test
+    description: Test description
+    domains: [cad]
+    transport: stdio
+    command: [python, server.py]
+    locality: local
+    weight: light
+    risk_level: medium
+    platform_support:
+      linux_x64:
+        status: yes
+        tested: true
+        notes: tested
