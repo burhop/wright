@@ -2,8 +2,25 @@ from pathlib import Path
 import json
 import re
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def run_script(script_name: str, *args: str) -> subprocess.CompletedProcess[str]:
+    script = ROOT / "scripts" / script_name
+    command = [str(script)]
+    if sys.platform == "win32":
+        command = ["bash", str(script)]
+
+    return subprocess.run(
+        command + list(args),
+        cwd=ROOT,
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
 
 
 def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
@@ -11,25 +28,18 @@ def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
 ) -> None:
     output_dir = tmp_path / "mirror"
 
-    subprocess.run(
-        [
-            str(ROOT / "scripts/sync-hermes-plugin-mirror.sh"),
-            "--source",
-            "hermes-plugin-wright",
-            "--mirror-url",
-            "https://github.com/burhop/hermes-plugin-wright",
-            "--branch",
-            "dev",
-            "--channel",
-            "development",
-            "--output-dir",
-            str(output_dir),
-        ],
-        cwd=ROOT,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+    run_script(
+        "sync-hermes-plugin-mirror.sh",
+        "--source",
+        "hermes-plugin-wright",
+        "--mirror-url",
+        "https://github.com/burhop/hermes-plugin-wright",
+        "--branch",
+        "dev",
+        "--channel",
+        "development",
+        "--output-dir",
+        str(output_dir),
     )
 
     for path in [
@@ -76,22 +86,15 @@ def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
 
 def test_sync_dry_run_lists_mirror_files_without_writing(tmp_path: Path) -> None:
     output_dir = tmp_path / "not-created"
-    result = subprocess.run(
-        [
-            str(ROOT / "scripts/sync-hermes-plugin-mirror.sh"),
-            "--source",
-            "hermes-plugin-wright",
-            "--mirror-url",
-            "https://github.com/burhop/hermes-plugin-wright",
-            "--branch",
-            "dev",
-            "--dry-run",
-        ],
-        cwd=ROOT,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+    result = run_script(
+        "sync-hermes-plugin-mirror.sh",
+        "--source",
+        "hermes-plugin-wright",
+        "--mirror-url",
+        "https://github.com/burhop/hermes-plugin-wright",
+        "--branch",
+        "dev",
+        "--dry-run",
     )
 
     assert "plugin.yaml" in result.stdout
@@ -102,25 +105,18 @@ def test_sync_dry_run_lists_mirror_files_without_writing(tmp_path: Path) -> None
 def test_sync_stable_mirror_keeps_pypi_dependencies(tmp_path: Path) -> None:
     output_dir = tmp_path / "mirror"
 
-    subprocess.run(
-        [
-            str(ROOT / "scripts/sync-hermes-plugin-mirror.sh"),
-            "--source",
-            "hermes-plugin-wright",
-            "--mirror-url",
-            "https://github.com/burhop/hermes-plugin-wright",
-            "--branch",
-            "main",
-            "--channel",
-            "stable",
-            "--output-dir",
-            str(output_dir),
-        ],
-        cwd=ROOT,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+    run_script(
+        "sync-hermes-plugin-mirror.sh",
+        "--source",
+        "hermes-plugin-wright",
+        "--mirror-url",
+        "https://github.com/burhop/hermes-plugin-wright",
+        "--branch",
+        "main",
+        "--channel",
+        "stable",
+        "--output-dir",
+        str(output_dir),
     )
 
     pyproject_text = (output_dir / "pyproject.toml").read_text(encoding="utf-8")

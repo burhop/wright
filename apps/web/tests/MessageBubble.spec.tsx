@@ -24,6 +24,21 @@ describe("MessageBubble", () => {
     expect(boldElem).toBeNull();
   });
 
+  it("hides internal workspace context prefixes from displayed user messages", () => {
+    const userMsg: ChatMessage = {
+      id: "msg-workspace",
+      role: "user",
+      content: "[Workspace::v1: /home/burhop/wright/onshape] hello.",
+      timestamp: Date.now(),
+      traceId: null,
+    };
+
+    render(<MessageBubble message={userMsg} />);
+
+    expect(screen.getByText("hello.")).toBeInTheDocument();
+    expect(screen.queryByText(/Workspace::v1/)).not.toBeInTheDocument();
+  });
+
   it("renders an assistant message as parsed markdown correctly", () => {
     const assistantMsg: ChatMessage = {
       id: "msg2",
@@ -54,6 +69,51 @@ describe("MessageBubble", () => {
     const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(2);
     expect(items[0]).toHaveTextContent("Item 1");
+    expect(screen.queryByText(/ID:/)).not.toBeInTheDocument();
+  });
+
+  it("renders generated image MEDIA URLs as image previews", () => {
+    const assistantMsg: ChatMessage = {
+      id: "msg-media-url",
+      role: "assistant",
+      content: "Here is the render.\n\nMEDIA:https://cdn.example/render.png",
+      timestamp: Date.now(),
+      traceId: "tr-media",
+    };
+
+    render(<MessageBubble message={assistantMsg} />);
+
+    const image = screen.getByAltText("Rendered Image");
+    expect(image).toHaveAttribute("src", "https://cdn.example/render.png");
+    expect(image).toHaveStyle({ maxWidth: "100%", objectFit: "contain" });
+  });
+
+  it("constrains assistant messages and wraps long unbroken text", () => {
+    const assistantMsg: ChatMessage = {
+      id: "msg-wrap",
+      role: "assistant",
+      content:
+        "I currently see one MCP server exposed in this session: wrightgateway/jarvison-super-long-unbroken-server-identifier-without-natural-breaks",
+      timestamp: Date.now(),
+      traceId: "tr-wrap",
+    };
+
+    render(<MessageBubble message={assistantMsg} />);
+
+    const message = screen.getByTestId("message-msg-wrap");
+    const bubble = message.firstElementChild as HTMLElement;
+    const content = bubble.firstElementChild as HTMLElement;
+
+    expect(message).toHaveStyle({ minWidth: "0" });
+    expect(bubble).toHaveStyle({
+      width: "100%",
+      maxWidth: "100%",
+      boxSizing: "border-box",
+    });
+    expect(content).toHaveStyle({
+      overflowWrap: "anywhere",
+      wordBreak: "break-word",
+    });
   });
 
   it('sanitizes dangerous links in markdown to href="#"', () => {
@@ -104,6 +164,11 @@ describe("MessageBubble", () => {
       name: "/home/burhop/workspace/session-123/designs/bracket.stl",
     });
     expect(absPathBtn).toBeInTheDocument();
+    expect(absPathBtn).toHaveStyle({
+      overflowWrap: "anywhere",
+      wordBreak: "break-word",
+      whiteSpace: "normal",
+    });
 
     // Click absolute path button
     fireEvent.click(absPathBtn);

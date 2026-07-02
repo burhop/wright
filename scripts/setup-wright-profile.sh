@@ -24,7 +24,7 @@ fi
 # 3. Configure the wright profile for native API gateway
 echo "Configuring the Wright profile..."
 hermes -p wright config set API_SERVER_ENABLED true
-hermes -p wright config set API_SERVER_KEY "wright-dev-key"
+hermes -p wright config set API_SERVER_KEY "wright-local-dev-key-000000000000000000000000"
 hermes -p wright config set API_SERVER_PORT 8642
 
 # 4. Check if wright gateway is already running on port 8642

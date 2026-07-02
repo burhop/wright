@@ -56,7 +56,7 @@ docker compose up -d --build
 | `LLM_API_KEY` | No | None | Provider token. Do not paste secrets into bug reports. |
 | `LLM_API_MODEL` | No | `default` | Model id passed to the configured provider. |
 | `UI_THEME` | No | `dark` | Initial Wright UI theme. |
-| `API_SERVER_KEY` | No | `wright-dev-key` | Key for Wright-to-Hermes API server communication inside the container. |
+| `API_SERVER_KEY` | No | `wright-local-dev-key-000000000000000000000000` | Key for Wright-to-Hermes API server communication inside the container. |
 
 ## Ports
 

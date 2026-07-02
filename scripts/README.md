@@ -95,7 +95,7 @@ Resets the active developer environment by purging generated engineering workspa
 Scans tracked repository text files for obvious public-alpha leaks such as
 private key headers, OpenAI-style keys, GitHub tokens, and generic
 secret/token/password assignments. Documented placeholders such as
-`sk-your-key-here`, `${{ secrets.NAME }}`, and `wright-dev-key` are ignored.
+`sk-your-key-here`, `${{ secrets.NAME }}`, and `wright-local-dev-key-000000000000000000000000` are ignored.
 
 * **CI usage**:
   ```bash
@@ -265,7 +265,7 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
 
 * **Configuration Set**:
   - `API_SERVER_ENABLED=true`
-  - `API_SERVER_KEY=wright-dev-key`
+  - `API_SERVER_KEY=wright-local-dev-key-000000000000000000000000`
   - `API_SERVER_PORT=8642`
 * **Workflow**:
   1. Verifies the `hermes` CLI is installed.

@@ -1,12 +1,19 @@
 from pathlib import Path
+import os
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def run_help(script: str) -> str:
+    script_path = ROOT / script
+    command = [str(script_path)]
+    if sys.platform == "win32":
+        command = ["bash", str(script_path)]
+
     result = subprocess.run(
-        [str(ROOT / script), "--help"],
+        command + ["--help"],
         cwd=ROOT,
         check=True,
         text=True,
@@ -27,7 +34,8 @@ def test_release_engineering_scripts_are_executable_and_documented() -> None:
     for script in scripts:
         path = ROOT / script
         assert path.exists(), script
-        assert path.stat().st_mode & 0o111, script
+        if os.name != "nt":
+            assert path.stat().st_mode & 0o111, script
         help_text = run_help(script)
         assert "Usage:" in help_text
         assert Path(script).name in readme

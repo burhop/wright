@@ -83,6 +83,7 @@ export function WorkspaceActivityBar({
       style={{
         backgroundColor: "var(--color-surface-elevated)",
         borderRight: "1px solid var(--color-border)",
+        gridColumn: "1",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

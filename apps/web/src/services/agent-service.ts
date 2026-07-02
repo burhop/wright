@@ -12,7 +12,13 @@ export type AgentEvent =
   | { type: "stream_start"; streamId: string }
   | { type: "token"; text: string }
   | { type: "tool"; name: string; preview: string; percentage?: number }
-  | { type: "progress"; percentage: number; message: string }
+  | {
+      type: "progress";
+      percentage?: number;
+      message: string;
+      title: string;
+      detail?: string;
+    }
   | { type: "done"; session: ChatSession }
   | { type: "error"; message: string };
 
@@ -49,6 +55,74 @@ const getApiBase = () => {
   return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
 };
 const API_BASE = getApiBase();
+
+function summarizeToolCallPayload(data: any): {
+  name: string;
+  preview: string;
+} {
+  const toolCalls = Array.isArray(data?.tool_calls) ? data.tool_calls : [];
+  const firstCall = toolCalls[0] || {};
+  const fn = firstCall.function || {};
+  const name = data?.name || fn.name || firstCall.name || "Tool call";
+  const rawPreview = data?.preview || fn.arguments || firstCall.arguments || "";
+  const preview =
+    typeof rawPreview === "string"
+      ? rawPreview
+      : JSON.stringify(rawPreview ?? "");
+
+  return {
+    name,
+    preview: preview.length > 220 ? `${preview.slice(0, 217)}...` : preview,
+  };
+}
+
+function formatProgressStatus(value: unknown): string {
+  if (typeof value !== "string" || value.length === 0) return "";
+  return value.replace(/[_-]+/g, " ").replace(/^./, (c) => c.toUpperCase());
+}
+
+function summarizeProgressPayload(data: any): {
+  title: string;
+  detail?: string;
+  message: string;
+  percentage?: number;
+} {
+  const tool = data?.tool || data?.tool_name || data?.name || data?.server;
+  const status = data?.status || data?.state || data?.phase;
+  const label = data?.label || data?.title || data?.step || data?.operation;
+  const message = data?.message || data?.detail || data?.description || "";
+  const percentage =
+    typeof data?.percentage === "number"
+      ? data.percentage
+      : typeof data?.progress === "number"
+        ? data.progress
+        : undefined;
+
+  const statusText = formatProgressStatus(status);
+  let title = "Tool progress";
+  if (tool && statusText) {
+    title = `${tool}: ${statusText}`;
+  } else if (tool) {
+    title = `${tool}`;
+  } else if (label) {
+    title = `${label}`;
+  } else if (statusText) {
+    title = statusText;
+  }
+
+  const details = [label, message]
+    .filter((part) => typeof part === "string" && part.trim().length > 0)
+    .map((part) => String(part).trim());
+  const uniqueDetails = Array.from(new Set(details));
+  const detail = uniqueDetails.length > 0 ? uniqueDetails.join(" - ") : undefined;
+
+  return {
+    title,
+    detail,
+    message: detail || title,
+    percentage,
+  };
+}
 
 export class HermesAgentService {
   private activeStreams = new Map<
@@ -255,10 +329,11 @@ export class HermesAgentService {
     } else if (event === "tool") {
       try {
         const data = JSON.parse(dataStr);
+        const summary = summarizeToolCallPayload(data);
         return {
           type: "tool",
-          name: data.name,
-          preview: data.preview || "",
+          name: summary.name,
+          preview: summary.preview,
           percentage: data.percentage,
         };
       } catch (err) {
@@ -267,10 +342,13 @@ export class HermesAgentService {
     } else if (event === "progress") {
       try {
         const data = JSON.parse(dataStr);
+        const summary = summarizeProgressPayload(data);
         return {
           type: "progress",
-          percentage: data.percentage,
-          message: data.message || "",
+          percentage: summary.percentage,
+          message: summary.message,
+          title: summary.title,
+          detail: summary.detail,
         };
       } catch (err) {
         return null;

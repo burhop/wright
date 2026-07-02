@@ -1,15 +1,240 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageBubble from "./MessageBubble";
-import type { ChatMessage, ChatSession } from "../../store/types";
+import type {
+  ChatMessage,
+  ChatSession,
+  StreamActivityEntry,
+} from "../../store/types";
 
 interface ChatTranscriptProps {
   session: ChatSession | null;
   isStreaming?: boolean;
   streamedText?: string;
   activeTool?: { name: string; preview: string; percentage?: number } | null;
+  streamActivity?: StreamActivityEntry[];
   onOpenFile?: (path: string) => void;
   activeSessionId?: string;
   workspacePath?: string;
+}
+
+function formatActivityTime(timestamp: number): string {
+  return new Date(timestamp).toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function ActivityPanel({
+  isStreaming,
+  activeTool,
+  entries,
+}: {
+  isStreaming: boolean;
+  activeTool: { name: string; preview: string; percentage?: number } | null;
+  entries: StreamActivityEntry[];
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const latestEntry = entries[entries.length - 1];
+  const summary = activeTool
+    ? activeTool.name
+      ? `Using ${activeTool.name}`
+      : "Using a tool"
+    : latestEntry?.title || (isStreaming ? "Waiting for Hermes" : "Activity");
+  const detail = activeTool?.preview || latestEntry?.detail;
+  const percentage = activeTool?.percentage ?? latestEntry?.percentage;
+
+  return (
+    <div
+      data-testid="stream-activity-panel"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignSelf: "flex-start",
+        padding: "var(--space-md)",
+        backgroundColor: "var(--color-surface-subtle)",
+        border: "1px solid var(--color-border)",
+        borderRadius: "var(--radius-md)",
+        color: "var(--color-secondary)",
+        fontFamily: "var(--font-ui)",
+        fontSize: "0.8rem",
+        width: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
+        gap: "var(--space-sm)",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setExpanded((value) => !value)}
+        aria-expanded={expanded}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "var(--space-sm)",
+          width: "100%",
+          minWidth: 0,
+          padding: 0,
+          border: "none",
+          background: "transparent",
+          color: "inherit",
+          cursor: "pointer",
+          textAlign: "left",
+        }}
+      >
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-sm)",
+            minWidth: 0,
+          }}
+        >
+          <span
+            className={isStreaming ? "thinking-dot" : undefined}
+            style={
+              isStreaming
+                ? undefined
+                : {
+                    display: "inline-block",
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    backgroundColor: "var(--color-secondary)",
+                    flex: "0 0 auto",
+                  }
+            }
+          />
+          <span style={{ minWidth: 0 }}>
+            <strong style={{ color: "var(--color-primary)" }}>
+              {isStreaming ? "Working" : "Activity"}
+            </strong>
+            <span style={{ marginLeft: "0.35rem" }}>{summary}</span>
+          </span>
+        </span>
+        <span
+          style={{
+            color: "var(--color-secondary)",
+            flex: "0 0 auto",
+            fontSize: "0.75rem",
+          }}
+        >
+          {expanded ? "Hide" : "Show"}
+        </span>
+      </button>
+
+      {detail && (
+        <div
+          style={{
+            color: "var(--color-primary)",
+            fontSize: "0.75rem",
+            lineHeight: 1.35,
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
+          }}
+        >
+          {detail}
+        </div>
+      )}
+
+      {percentage !== undefined && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: "0.75rem",
+            }}
+          >
+            <span>Progress</span>
+            <span data-testid="progress-percentage">{percentage}%</span>
+          </div>
+          <div
+            style={{
+              height: "6px",
+              width: "100%",
+              backgroundColor: "var(--color-neutral)",
+              borderRadius: "3px",
+              overflow: "hidden",
+              border: "1px solid var(--color-border)",
+            }}
+          >
+            <div
+              data-testid="progress-bar"
+              style={{
+                height: "100%",
+                width: `${Math.max(0, Math.min(100, percentage))}%`,
+                backgroundColor: "var(--color-success)",
+                transition: "width 0.3s ease",
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {expanded && (
+        <div
+          data-testid="stream-activity-details"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-xs)",
+            borderTop: "1px solid var(--color-border)",
+            paddingTop: "var(--space-sm)",
+          }}
+        >
+          {entries.length === 0 ? (
+            <div>Waiting for stream activity.</div>
+          ) : (
+            entries.map((entry) => (
+              <div
+                key={entry.id}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "auto minmax(0, 1fr)",
+                  gap: "var(--space-xs)",
+                  alignItems: "baseline",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.7rem",
+                    opacity: 0.75,
+                  }}
+                >
+                  {formatActivityTime(entry.timestamp)}
+                </span>
+                <span style={{ minWidth: 0 }}>
+                  <span style={{ color: "var(--color-primary)" }}>
+                    {entry.title}
+                  </span>
+                  {entry.detail && (
+                    <span
+                      style={{
+                        display: "block",
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {entry.detail}
+                    </span>
+                  )}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function ChatTranscript({
@@ -17,6 +242,7 @@ export function ChatTranscript({
   isStreaming = false,
   streamedText = "",
   activeTool = null,
+  streamActivity = [],
   onOpenFile,
   activeSessionId,
   workspacePath,
@@ -32,7 +258,12 @@ export function ChatTranscript({
 
   useEffect(() => {
     scrollToBottom();
-  }, [session?.messages?.length, streamedText, activeTool]);
+  }, [
+    session?.messages?.length,
+    streamedText,
+    activeTool,
+    streamActivity.length,
+  ]);
 
   if (!session) {
     return (
@@ -104,90 +335,12 @@ export function ChatTranscript({
         />
       ))}
 
-      {activeTool && (
-        <div
-          data-testid="active-tool"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignSelf: "flex-start",
-            padding: "var(--space-md)",
-            backgroundColor: "var(--color-surface-subtle)",
-            border: "1px solid var(--color-border)",
-            borderRadius: "var(--radius-md)",
-            color: "var(--color-secondary)",
-            fontFamily: "var(--font-ui)",
-            fontSize: "0.85rem",
-            width: "100%",
-            maxWidth: "80%",
-            gap: "var(--space-sm)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-md)",
-            }}
-          >
-            <span style={{ display: "inline-block" }}>⚙</span>
-            <div>
-              <span
-                style={{ fontWeight: "600", color: "var(--color-primary)" }}
-              >
-                Tool: {activeTool.name}
-              </span>
-              <div
-                style={{ fontSize: "0.75rem", opacity: 0.8, marginTop: "2px" }}
-              >
-                {activeTool.preview}
-              </div>
-            </div>
-          </div>
-          {activeTool.percentage !== undefined && (
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                gap: "4px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: "0.75rem",
-                }}
-              >
-                <span>Processing...</span>
-                <span data-testid="progress-percentage">
-                  {activeTool.percentage}%
-                </span>
-              </div>
-              <div
-                style={{
-                  height: "6px",
-                  width: "100%",
-                  backgroundColor: "var(--color-neutral)",
-                  borderRadius: "3px",
-                  overflow: "hidden",
-                  border: "1px solid var(--color-border)",
-                }}
-              >
-                <div
-                  data-testid="progress-bar"
-                  style={{
-                    height: "100%",
-                    width: `${activeTool.percentage}%`,
-                    backgroundColor: "var(--color-success)",
-                    transition: "width 0.3s ease",
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
+      {(isStreaming || streamActivity.length > 0 || activeTool) && (
+        <ActivityPanel
+          isStreaming={isStreaming}
+          activeTool={activeTool}
+          entries={streamActivity}
+        />
       )}
 
       {mockStreamingMessage && (

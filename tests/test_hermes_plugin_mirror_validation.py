@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests/fixtures/hermes_plugin_mirror"
@@ -8,16 +9,25 @@ FIXTURE = ROOT / "tests/fixtures/hermes_plugin_mirror"
 
 def copy_fixture(tmp_path: Path) -> Path:
     mirror = tmp_path / "mirror"
-    shutil.copytree(FIXTURE, mirror)
+    shutil.copytree(
+        FIXTURE,
+        mirror,
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"),
+    )
     return mirror
 
 
 def run_validate(
     mirror: Path, channel: str = "stable"
 ) -> subprocess.CompletedProcess[str]:
+    script = ROOT / "scripts/validate-hermes-plugin-mirror.sh"
+    command = [str(script)]
+    if sys.platform == "win32":
+        command = ["bash", str(script)]
+
     return subprocess.run(
-        [
-            str(ROOT / "scripts/validate-hermes-plugin-mirror.sh"),
+        command
+        + [
             "--mirror-dir",
             str(mirror),
             "--channel",

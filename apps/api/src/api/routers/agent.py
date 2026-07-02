@@ -16,6 +16,8 @@ from agent_adapters import (
     default_agent_registry,
 )
 from workspace_service import WorkspaceService
+from core.workspace import get_workspace_by_session, get_workspace_enabled_tools
+from tool_registry.db import get_servers
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -39,6 +41,55 @@ def get_current_trace_id() -> str:
     if span and span.get_span_context().is_valid:
         return f"{span.get_span_context().trace_id:032x}"
     return secrets.token_hex(16)
+
+
+async def ensure_workspace_mcp_servers_active(request: Request, session_id: str) -> None:
+    """Start enabled workspace MCP servers before a chat turn begins."""
+
+    mcp_engine = getattr(request.app.state, "mcp_engine", None)
+    if not mcp_engine:
+        return
+
+    from api.config import DATABASE_PATH
+
+    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    if not workspace:
+        return
+
+    enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
+    enabled_servers = []
+    for server in get_servers(DATABASE_PATH):
+        if not server.is_installed:
+            continue
+        is_enabled = True
+        if enabled_tools is not None:
+            is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
+        if is_enabled:
+            enabled_servers.append(server)
+
+    workspace_dir = workspace["local_path"]
+    failed: list[str] = []
+    for server in enabled_servers:
+        try:
+            runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
+            if runner and runner.is_running() and server.status == "active":
+                continue
+            await mcp_engine.start_server(server.server_id, workspace_dir=workspace_dir)
+        except Exception as exc:
+            logger.exception(
+                "workspace_mcp_preflight_start_failed",
+                server=server.name,
+                session_id=session_id,
+                error=str(exc),
+            )
+            failed.append(f"{server.name}: {exc}")
+
+    if failed:
+        detail = "Failed to start workspace MCP server(s): " + "; ".join(failed)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=detail,
+        )
 
 
 #  Pydantic Request/Response Schemas
@@ -122,6 +173,14 @@ async def get_commands(engine: BaseAgentEngine = Depends(get_agent_engine)):
         CommandModel(name=c.name, description=c.description, prefix="/")
         for c in agent_cmds
     ]
+
+    wright_command = CommandModel(
+        name="wright",
+        description="Wright engineering platform: start, stop, open UI, doctor, catalog, info, install, and status",
+        prefix="/",
+    )
+    if not any(c.prefix == "/" and c.name == "wright" for c in commands):
+        commands.insert(0, wright_command)
 
     # Static @ mentions for the IDE's WebUI
     webui_mentions = [
@@ -363,13 +422,16 @@ async def chat(
     log = logger.bind(trace_id=trace_id, session_id=body.session_id)
     log.info("chat_requested")
 
-    # Sync workspace tools before chat turn
+    # Sync and activate workspace tools before chat turn. Chat should not begin
+    # until the MCP servers assigned to this workspace are available.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
     if sync_manager:
         try:
             sync_manager.sync_workspace_tools(body.session_id)
         except Exception as e:
             log.warn("Failed to sync workspace tools", error=str(e))
+
+    await ensure_workspace_mcp_servers_active(request, body.session_id)
 
     chat_request = AgentChatRequest(
         session_id=body.session_id,

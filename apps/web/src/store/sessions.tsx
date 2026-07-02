@@ -7,7 +7,7 @@ import {
   useRef,
 } from "react";
 import type { ReactNode } from "react";
-import type { ChatSession, ChatMessage } from "./types";
+import type { ChatSession, ChatMessage, StreamActivityEntry } from "./types";
 import agentService from "../services/agent-service";
 
 export interface ChatState {
@@ -15,6 +15,7 @@ export interface ChatState {
   activeSessionId: string | null;
   isStreaming: boolean;
   activeTool: { name: string; preview: string; percentage?: number } | null;
+  streamActivity: StreamActivityEntry[];
   streamedText: string;
   activeStreamId: string | null;
   promptQueue: { content: string; attachments?: string[] }[];
@@ -29,6 +30,10 @@ type ChatAction =
   | { type: "LOAD_SESSION_HISTORY"; sessionId: string; messages: ChatMessage[] }
   | { type: "UPDATE_SESSION_TITLE"; sessionId: string; title: string }
   | { type: "START_STREAMING"; streamId?: string }
+  | {
+      type: "ADD_STREAM_ACTIVITY";
+      entry: Omit<StreamActivityEntry, "id" | "timestamp">;
+    }
   | { type: "APPEND_STREAM_TOKEN"; text: string }
   | {
       type: "SET_ACTIVE_TOOL";
@@ -36,7 +41,7 @@ type ChatAction =
       preview: string;
       percentage?: number;
     }
-  | { type: "SET_TOOL_PROGRESS"; percentage: number; message: string }
+  | { type: "SET_TOOL_PROGRESS"; percentage?: number; message: string }
   | { type: "CLEAR_ACTIVE_TOOL" }
   | { type: "END_STREAMING"; finalSession?: ChatSession }
   | {
@@ -51,17 +56,76 @@ const initialState: ChatState = {
   activeSessionId: null,
   isStreaming: false,
   activeTool: null,
+  streamActivity: [],
   streamedText: "",
   activeStreamId: null,
   promptQueue: [],
 };
 
+function stripWorkspaceContext(content: string): string {
+  return (content || "")
+    .replace(/^\[Workspace::v1:[^\]]*(?:\]\s*)?/, "")
+    .trim();
+}
+
+function looksLikeToolPayload(content: string): boolean {
+  const text = (content || "").trim();
+  if (!text || !(text.startsWith("{") || text.startsWith("["))) return false;
+
+  try {
+    const payload = JSON.parse(text);
+    const toolKeys = new Set([
+      "bytes_written",
+      "dirs_created",
+      "files_modified",
+      "file_size",
+      "hint",
+      "lint",
+      "resolved_path",
+      "status",
+      "truncated",
+    ]);
+    if (payload && typeof payload === "object" && !Array.isArray(payload)) {
+      return Object.keys(payload).some((key) => toolKeys.has(key));
+    }
+    return (
+      Array.isArray(payload) &&
+      payload.every((item) => item && typeof item === "object")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function normalizeMessages(messages: ChatMessage[] = []): ChatMessage[] {
+  return messages
+    .filter(
+      (message) => message.role === "user" || message.role === "assistant",
+    )
+    .map((message) => ({
+      ...message,
+      content: stripWorkspaceContext(message.content),
+    }))
+    .filter(
+      (message) => message.content && !looksLikeToolPayload(message.content),
+    );
+}
+
+function cleanSessionTitle(title: string | undefined | null): string {
+  const cleaned = stripWorkspaceContext(title || "");
+  if (!cleaned || cleaned === "Untitled" || cleaned === "Undefined")
+    return "Untitled";
+  return cleaned.length > 30 ? `${cleaned.substring(0, 27)}...` : cleaned;
+}
+
+function titleFromMessages(messages: ChatMessage[]): string {
+  const firstUser =
+    messages.find((message) => message.role === "user") || messages[0];
+  return cleanSessionTitle(firstUser?.content || "Untitled");
+}
+
 function hasUsefulTitle(session: ChatSession): boolean {
-  return Boolean(
-    session.title &&
-    session.title !== "Untitled" &&
-    session.title !== "Undefined",
-  );
+  return Boolean(cleanSessionTitle(session.title) !== "Untitled");
 }
 
 function mergeDuplicateSession(
@@ -69,17 +133,19 @@ function mergeDuplicateSession(
   incoming: ChatSession,
 ): ChatSession {
   const title = hasUsefulTitle(incoming)
-    ? incoming.title
+    ? cleanSessionTitle(incoming.title)
     : hasUsefulTitle(existing)
-      ? existing.title
-      : incoming.title || existing.title;
+      ? cleanSessionTitle(existing.title)
+      : cleanSessionTitle(incoming.title || existing.title);
 
   return {
     ...existing,
     ...incoming,
     title,
     messages:
-      incoming.messages.length > 0 ? incoming.messages : existing.messages,
+      incoming.messages.length > 0
+        ? normalizeMessages(incoming.messages)
+        : normalizeMessages(existing.messages),
     createdAt: Math.min(existing.createdAt, incoming.createdAt),
     updatedAt: Math.max(existing.updatedAt, incoming.updatedAt),
     isActive: existing.isActive || incoming.isActive,
@@ -109,6 +175,46 @@ function dedupeSessionsById(sessions: ChatSession[]): ChatSession[] {
     .map((sessionId) => sessionsById.get(sessionId))
     .filter((session): session is ChatSession => Boolean(session));
 }
+
+function readCachedSessions(): ChatSession[] {
+  const stored = localStorage.getItem("wright-chat-sessions");
+  if (!stored) return [];
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((session) => ({
+      ...session,
+      title: cleanSessionTitle(session?.title),
+      messages: normalizeMessages(session?.messages || []),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function writeCachedSessions(visibleSessions: ChatSession[]): void {
+  const cachedSessions = readCachedSessions();
+  const mergedSessions = dedupeSessionsById([
+    ...cachedSessions,
+    ...visibleSessions,
+  ]);
+  localStorage.setItem(
+    "wright-chat-sessions",
+    JSON.stringify(mergedSessions),
+  );
+}
+
+function removeCachedSession(sessionId: string): void {
+  const cachedSessions = readCachedSessions().filter(
+    (session) => session.sessionId !== sessionId,
+  );
+  localStorage.setItem(
+    "wright-chat-sessions",
+    JSON.stringify(cachedSessions),
+  );
+}
+
 
 function getActiveSessionId(
   sessions: ChatSession[],
@@ -148,12 +254,16 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         const existingSess = state.sessions.find(
           (s) => s.sessionId === newSess.sessionId,
         );
+        const normalizedIncomingMessages = normalizeMessages(newSess.messages);
+        const normalizedExistingMessages = normalizeMessages(
+          existingSess?.messages || [],
+        );
         return {
           ...newSess,
           messages:
-            existingSess && existingSess.messages.length > 0
-              ? existingSess.messages
-              : newSess.messages,
+            normalizedIncomingMessages.length > 0
+              ? normalizedIncomingMessages
+              : normalizedExistingMessages,
           isActive: newSess.isActive || (existingSess?.isActive ?? false),
         };
       });
@@ -189,8 +299,8 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         ...action.session,
         messages:
           action.session.messages.length > 0
-            ? action.session.messages
-            : existingSession?.messages || [],
+            ? normalizeMessages(action.session.messages)
+            : normalizeMessages(existingSession?.messages || []),
         isActive: true,
       };
       newState = {
@@ -229,17 +339,15 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         ...state,
         sessions: state.sessions.map((s) => {
           if (s.sessionId === action.sessionId) {
-            const messages = [...s.messages, action.message];
+            const messages = normalizeMessages([...s.messages, action.message]);
             return {
               ...s,
               messages,
               updatedAt: Date.now(),
               title:
                 s.title === "New Engineering Session" && messages.length > 0
-                  ? messages[0].content.length > 30
-                    ? `${messages[0].content.substring(0, 27)}...`
-                    : messages[0].content
-                  : s.title,
+                  ? titleFromMessages(messages)
+                  : cleanSessionTitle(s.title),
             };
           }
           return s;
@@ -252,7 +360,11 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         ...state,
         sessions: state.sessions.map((s) =>
           s.sessionId === action.sessionId
-            ? { ...s, title: action.title, updatedAt: Date.now() }
+            ? {
+                ...s,
+                title: cleanSessionTitle(action.title),
+                updatedAt: Date.now(),
+              }
             : s,
         ),
       };
@@ -263,7 +375,22 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         ...state,
         isStreaming: true,
         streamedText: "",
+        streamActivity: action.streamId ? state.streamActivity : [],
         activeStreamId: action.streamId || null,
+      };
+      break;
+
+    case "ADD_STREAM_ACTIVITY":
+      newState = {
+        ...state,
+        streamActivity: [
+          ...state.streamActivity,
+          {
+            ...action.entry,
+            id: Math.random().toString(36).substring(7),
+            timestamp: Date.now(),
+          },
+        ].slice(-12),
       };
       break;
 
@@ -294,7 +421,11 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
               percentage: action.percentage,
               preview: action.message,
             }
-          : null,
+          : {
+              name: "Tool activity",
+              preview: action.message,
+              percentage: action.percentage,
+            },
       };
       break;
 
@@ -315,16 +446,12 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
               (!title || title === "Untitled" || title === "Undefined") &&
               action.messages.length > 0
             ) {
-              const firstMsg = action.messages[0].content;
-              title =
-                firstMsg.length > 30
-                  ? `${firstMsg.substring(0, 27)}...`
-                  : firstMsg;
+              title = titleFromMessages(normalizeMessages(action.messages));
             }
             return {
               ...s,
-              messages: action.messages,
-              title,
+              messages: normalizeMessages(action.messages),
+              title: cleanSessionTitle(title),
             };
           }
           return s;
@@ -338,6 +465,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         isStreaming: false,
         activeTool: null,
         streamedText: "",
+        streamActivity: [],
         activeStreamId: null,
         sessions: action.finalSession
           ? state.sessions.map((s) =>
@@ -371,16 +499,20 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       break;
   }
 
-  localStorage.setItem(
-    "wright-chat-sessions",
-    JSON.stringify(newState.sessions),
-  );
+  if (action.type === "DELETE_SESSION") {
+    removeCachedSession(action.sessionId);
+  } else {
+    writeCachedSessions(newState.sessions);
+  }
   return newState;
 }
 
 interface ChatContextProps {
   state: ChatState;
-  createSession: (workspace?: string) => Promise<string | undefined>;
+  createSession: (
+    workspace?: string,
+    workspaceId?: string,
+  ) => Promise<string | undefined>;
   selectSession: (sessionId: string) => Promise<void>;
   deleteSession: (sessionId: string) => Promise<void>;
   sendMessage: (
@@ -403,41 +535,29 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const refreshSessions = useCallback(async (workspaceId?: string) => {
     try {
       const compactSessions = await agentService.listSessions(workspaceId);
-      const stored = localStorage.getItem("wright-chat-sessions");
-      let localSessions: ChatSession[] = [];
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) {
-            localSessions = parsed;
-          }
-        } catch (e) {}
-      }
+      const localSessions = readCachedSessions();
 
+      const backendSessionIds = new Set(
+        compactSessions.map((session) => session.sessionId),
+      );
       const sessions: ChatSession[] = compactSessions.map((cs) => {
         const matched = Array.isArray(localSessions)
           ? localSessions.find((ls) => ls?.sessionId === cs.sessionId)
           : undefined;
 
-        let title = cs.title;
+        const normalizedMatchedMessages = normalizeMessages(
+          matched?.messages || [],
+        );
+        let title = cleanSessionTitle(cs.title);
         if (
-          (!title || title === "Untitled" || title === "Undefined") &&
+          title === "Untitled" &&
           matched &&
-          matched.title &&
-          matched.title !== "Untitled" &&
-          matched.title !== "Undefined"
+          cleanSessionTitle(matched.title) !== "Untitled"
         ) {
-          title = matched.title;
+          title = cleanSessionTitle(matched.title);
         }
-        if (
-          (!title || title === "Untitled" || title === "Undefined") &&
-          matched &&
-          matched.messages &&
-          matched.messages.length > 0
-        ) {
-          const firstMsg = matched.messages[0].content;
-          title =
-            firstMsg.length > 30 ? `${firstMsg.substring(0, 27)}...` : firstMsg;
+        if (title === "Untitled" && normalizedMatchedMessages.length > 0) {
+          title = titleFromMessages(normalizedMatchedMessages);
         }
 
         return {
@@ -445,27 +565,35 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           title,
           createdAt: cs.createdAt,
           updatedAt: cs.updatedAt,
-          messages: matched ? matched.messages : [],
+          messages: normalizedMatchedMessages,
           isActive: matched ? matched.isActive : false,
+          workspaceId: workspaceId ?? matched?.workspaceId ?? null,
+          workspacePath: matched?.workspacePath ?? null,
         };
       });
 
-      dispatch({ type: "SET_SESSIONS", sessions });
+      const locallyCachedOnlySessions = localSessions.filter((session) => {
+        if (!session?.sessionId || backendSessionIds.has(session.sessionId)) {
+          return false;
+        }
+
+        if (!workspaceId) return true;
+        return session.workspaceId === workspaceId;
+      });
+
+      dispatch({
+        type: "SET_SESSIONS",
+        sessions: dedupeSessionsById([...sessions, ...locallyCachedOnlySessions]),
+      });
     } catch (err) {
       console.error(
         "Failed to sync sessions with backend, falling back to localStorage",
         err,
       );
-      const stored = localStorage.getItem("wright-chat-sessions");
-      let fallbackSessions: ChatSession[] = [];
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) {
-            fallbackSessions = parsed;
-          }
-        } catch (e) {}
-      }
+      const fallbackSessions = readCachedSessions().filter((session) => {
+        if (!workspaceId) return true;
+        return session.workspaceId === workspaceId;
+      });
       dispatch({ type: "SET_SESSIONS", sessions: fallbackSessions });
     }
   }, []);
@@ -503,7 +631,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [state.activeSessionId]);
 
   const createSession = useCallback(
-    async (workspace?: string) => {
+    async (workspace?: string, workspaceId?: string) => {
       if (createSessionPromiseRef.current) {
         return createSessionPromiseRef.current;
       }
@@ -526,7 +654,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             session.title = `${baseName} Session ${count}`;
           }
 
-          dispatch({ type: "CREATE_SESSION", session });
+          dispatch({
+            type: "CREATE_SESSION",
+            session: {
+              ...session,
+              workspaceId: workspaceId ?? session.workspaceId ?? null,
+              workspacePath: workspace ?? session.workspacePath ?? null,
+            },
+          });
           return session.sessionId;
         } catch (err) {
           console.error("Failed to create session on backend", err);
@@ -590,6 +725,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
 
       dispatch({ type: "START_STREAMING" });
+      dispatch({
+        type: "ADD_STREAM_ACTIVITY",
+        entry: {
+          kind: "status",
+          title: "Hermes is preparing a response",
+          detail: "Waiting for the first response event.",
+        },
+      });
 
       let accumulatedText = "";
       try {
@@ -601,6 +744,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         for await (const event of stream) {
           if (event.type === "stream_start") {
             dispatch({ type: "START_STREAMING", streamId: event.streamId });
+            dispatch({
+              type: "ADD_STREAM_ACTIVITY",
+              entry: {
+                kind: "status",
+                title: "Response stream connected",
+                detail: event.streamId ? `Stream ${event.streamId}` : undefined,
+              },
+            });
           } else if (event.type === "token") {
             accumulatedText += event.text;
             dispatch({ type: "APPEND_STREAM_TOKEN", text: event.text });
@@ -611,11 +762,29 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               preview: event.preview,
               percentage: event.percentage,
             });
+            dispatch({
+              type: "ADD_STREAM_ACTIVITY",
+              entry: {
+                kind: "tool",
+                title: event.name ? `Calling ${event.name}` : "Calling a tool",
+                detail: event.preview || undefined,
+                percentage: event.percentage,
+              },
+            });
           } else if (event.type === "progress") {
             dispatch({
               type: "SET_TOOL_PROGRESS",
               percentage: event.percentage,
-              message: event.message,
+              message: event.detail || event.message,
+            });
+            dispatch({
+              type: "ADD_STREAM_ACTIVITY",
+              entry: {
+                kind: "progress",
+                title: event.title,
+                detail: event.detail,
+                percentage: event.percentage,
+              },
             });
           } else if (event.type === "done") {
             const currentSessions = JSON.parse(
@@ -662,6 +831,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             dispatch({ type: "END_STREAMING", finalSession });
           } else if (event.type === "error") {
             console.error(event.message);
+            dispatch({
+              type: "ADD_STREAM_ACTIVITY",
+              entry: {
+                kind: "error",
+                title: "Stream error",
+                detail: event.message,
+              },
+            });
             dispatch({ type: "CLEAR_ACTIVE_TOOL" });
 
             const errorMsg: ChatMessage = {

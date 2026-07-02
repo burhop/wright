@@ -14,16 +14,16 @@ const PART_SPECULAR = 0x7dd3fc;
 const GRID_PRIMARY = 0x1e293b;
 const GRID_SECONDARY = 0x0d1220;
 
-const fitCameraToRadius = (camera: THREE.PerspectiveCamera, radius: number) => {
-  const safeRadius = Math.max(radius, 1);
+export const fitCameraToRadius = (camera: THREE.PerspectiveCamera, radius: number) => {
+  const safeRadius = Math.max(radius, 0.001);
   const fov = THREE.MathUtils.degToRad(camera.fov);
   const distance = (safeRadius / Math.sin(fov / 2)) * 1.35;
   const component = distance / Math.sqrt(3);
 
   camera.position.set(component, component, component);
   camera.lookAt(0, 0, 0);
-  camera.near = Math.max(0.001, safeRadius / 1000);
-  camera.far = Math.max(1000, distance * 8, safeRadius * 80);
+  camera.near = Math.max(0.00001, safeRadius / 1000);
+  camera.far = Math.max(10, distance * 8, safeRadius * 80);
   camera.updateProjectionMatrix();
 
   return { distance, radius: safeRadius };
@@ -108,7 +108,7 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
         const { radius } = fitCameraToRadius(camera, boundingSphere.radius);
         // Adjust grid position to fit base
         gridHelper.position.y = -radius * 1.1;
-        const gridSize = Math.max(80, radius * 4);
+        const gridSize = Math.max(0.1, radius * 4);
         gridHelper.scale.setScalar(gridSize / 80);
       }
     } catch (err) {
@@ -124,7 +124,7 @@ export function ThreeDViewer({ arrayBuffer, fileName }: ThreeDViewerProps) {
       radius !== undefined ? fitCameraToRadius(camera, radius).distance : 40;
     controls.minDistance =
       radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
-    controls.maxDistance = Math.max(1000, fitDistance * 12, (radius || 1) * 40);
+    controls.maxDistance = Math.max(1, fitDistance * 12, (radius || 0.001) * 40);
 
     // 8. Handle Resizing
     const resizeObserver = new ResizeObserver((entries) => {

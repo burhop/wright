@@ -3,6 +3,7 @@ set -e
 export PATH="/opt/hermes/bin:/opt/hermes/.venv/bin:${PATH}"
 export HOME="/home/agent"
 HERMES_CLI="/opt/hermes/bin/hermes"
+DEFAULT_API_SERVER_KEY="wright-local-dev-key-000000000000000000000000"
 
 echo "=== Agent Container Starting ==="
 echo "  LLM_API_URL : ${LLM_API_URL}"
@@ -72,7 +73,7 @@ YAML
 
   "${HERMES_CLI}" -p wright config set API_SERVER_ENABLED true
   "${HERMES_CLI}" -p wright config set API_SERVER_HOST "${API_SERVER_HOST:-127.0.0.1}"
-  "${HERMES_CLI}" -p wright config set API_SERVER_KEY "${HERMES_API_KEY:-${API_SERVER_KEY:-wright-dev-key}}"
+  "${HERMES_CLI}" -p wright config set API_SERVER_KEY "${HERMES_API_KEY:-${API_SERVER_KEY:-$DEFAULT_API_SERVER_KEY}}"
   "${HERMES_CLI}" -p wright config set API_SERVER_PORT "${API_SERVER_PORT:-8642}"
 }
 

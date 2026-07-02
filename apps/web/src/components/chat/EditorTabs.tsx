@@ -1,5 +1,6 @@
 import React from "react";
 import type { EditorTab } from "../../store/viewer";
+import { CloseIcon } from "../common/Icons";
 
 interface EditorTabsProps {
   tabs: EditorTab[];
@@ -121,6 +122,9 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
             )}
 
             <button
+              type="button"
+              aria-label={`Close ${tab.name}`}
+              title={`Close ${tab.name}`}
               onClick={(e) => {
                 e.stopPropagation();
                 onCloseTab(tab.path);
@@ -131,27 +135,29 @@ export const EditorTabs: React.FC<EditorTabsProps> = ({
                 border: "none",
                 color: "inherit",
                 cursor: "pointer",
-                opacity: 0.5,
-                fontSize: "0.7rem",
+                opacity: isActive ? 0.85 : 0.65,
                 padding: "2px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "50%",
-                width: "16px",
-                height: "16px",
+                width: "18px",
+                height: "18px",
+                flexShrink: 0,
                 transition: "all 0.15s ease",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.opacity = "1";
                 e.currentTarget.style.backgroundColor =
-                  "rgba(255, 255, 255, 0.1)";
+                  "rgba(255, 255, 255, 0.12)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "0.5";
+                e.currentTarget.style.opacity = isActive ? "0.85" : "0.65";
                 e.currentTarget.style.backgroundColor = "transparent";
               }}
-            ></button>
+            >
+              <CloseIcon size={13} aria-hidden="true" />
+            </button>
           </div>
         );
       })}

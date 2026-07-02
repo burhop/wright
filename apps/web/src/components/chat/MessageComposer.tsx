@@ -19,6 +19,14 @@ interface MessageComposerProps {
   sessionId?: string;
 }
 
+function getMcpStatusTone(status: string): { label: string; color: string } {
+  if (status === "ok") return { label: "Active", color: "#22c55e" };
+  if (status === "warning" || status === "mismatch") {
+    return { label: status === "mismatch" ? "Mismatch" : "Needs attention", color: "#f59e0b" };
+  }
+  return { label: "Error", color: "#ef4444" };
+}
+
 export function MessageComposer({
   onSend,
   disabled = false,
@@ -267,6 +275,24 @@ export function MessageComposer({
     textareaRef.current?.focus();
   };
 
+  const openCommandMenu = (prefix: "/" | "@") => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    setMenuPrefix(prefix);
+    setMenuFilter("");
+    setMenuPosition({
+      top: (rect?.top ?? 0) - 20,
+      left: (rect?.left ?? 0) + 40,
+    });
+
+    if (prefix === "@" && workspaceFiles.length === 0) {
+      void fetchWorkspaceFiles();
+    }
+
+    setShowMenu(true);
+    setShowPlusMenu(false);
+    textareaRef.current?.focus();
+  };
+
   const uploadFile = async (file: File) => {
     try {
       const uploaded = await agentService.uploadFile(file);
@@ -308,6 +334,8 @@ export function MessageComposer({
     e.preventDefault();
   };
 
+  const mcpTone = mcpStatus ? getMcpStatusTone(mcpStatus.status) : null;
+
   return (
     <div
       ref={containerRef}
@@ -323,8 +351,11 @@ export function MessageComposer({
         borderRadius: "var(--radius-lg)",
         padding: "2px",
         width: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
         boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)",
         position: "relative",
+        overflow: "hidden",
       }}
     >
       {showMenu && (
@@ -372,7 +403,9 @@ export function MessageComposer({
         placeholder="Type your engineering query... (or paste an image)"
         style={{
           width: "100%",
+          minWidth: 0,
           boxSizing: "border-box",
+          display: "block",
           resize: "none",
           backgroundColor: "transparent",
           color: "var(--color-primary)",
@@ -393,7 +426,9 @@ export function MessageComposer({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: "var(--space-xs)",
           padding: "0 2px 2px 2px",
+          minWidth: 0,
         }}
       >
         <div
@@ -405,8 +440,11 @@ export function MessageComposer({
         >
           <div style={{ position: "relative" }}>
             <button
+              type="button"
+              aria-label="Add context"
+              aria-expanded={showPlusMenu}
               onClick={() => setShowPlusMenu(!showPlusMenu)}
-              title="Add Context or Media"
+              title="Add context"
               style={{
                 width: "28px",
                 height: "28px",
@@ -426,6 +464,9 @@ export function MessageComposer({
 
             {showPlusMenu && (
               <div
+                role="menu"
+                aria-label="Add context menu"
+                data-testid="composer-plus-menu"
                 style={{
                   position: "absolute",
                   bottom: "36px",
@@ -433,78 +474,129 @@ export function MessageComposer({
                   backgroundColor: "var(--color-surface)",
                   border: "1px solid var(--color-border)",
                   borderRadius: "var(--radius-md)",
-                  padding: "var(--space-xs)",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                  padding: "6px",
+                  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.28)",
                   zIndex: 1000,
-                  minWidth: "150px",
+                  minWidth: "250px",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "2px",
+                  gap: "4px",
                 }}
               >
                 <button
-                  onClick={() => {
-                    setMenuPrefix("/");
-                    setMenuFilter("");
-                    setMenuPosition({
-                      top:
-                        containerRef.current?.getBoundingClientRect().top ||
-                        0 - 20,
-                      left:
-                        containerRef.current?.getBoundingClientRect().left ||
-                        0 + 40,
-                    });
-                    setShowMenu(true);
-                    setShowPlusMenu(false);
-                  }}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => openCommandMenu("/")}
                   style={{
+                    display: "grid",
+                    gridTemplateColumns: "28px 1fr",
+                    gap: "8px",
+                    alignItems: "center",
                     padding: "8px",
                     textAlign: "left",
-                    background: "none",
+                    background: "transparent",
                     border: "none",
+                    color: "var(--color-text)",
                     cursor: "pointer",
-                    borderRadius: "4px",
+                    borderRadius: "6px",
                   }}
                 >
-                  Actions
+                  <span
+                    aria-hidden="true"
+                    style={{ color: "var(--color-primary)", fontWeight: 700 }}
+                  >
+                    /
+                  </span>
+                  <span style={{ minWidth: 0 }}>
+                    <span style={{ display: "block", fontWeight: 600 }}>
+                      Command
+                    </span>
+                    <span
+                      style={{
+                        display: "block",
+                        color: "var(--color-text-muted)",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      Run a Hermes or Wright slash command
+                    </span>
+                  </span>
                 </button>
                 <button
-                  onClick={() => {
-                    setMenuPrefix("@");
-                    setMenuFilter("");
-                    setMenuPosition({
-                      top:
-                        containerRef.current?.getBoundingClientRect().top ||
-                        0 - 20,
-                      left:
-                        containerRef.current?.getBoundingClientRect().left ||
-                        0 + 40,
-                    });
-                    setShowMenu(true);
-                    setShowPlusMenu(false);
-                  }}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => openCommandMenu("@")}
                   style={{
+                    display: "grid",
+                    gridTemplateColumns: "28px 1fr",
+                    gap: "8px",
+                    alignItems: "center",
                     padding: "8px",
                     textAlign: "left",
-                    background: "none",
+                    background: "transparent",
                     border: "none",
+                    color: "var(--color-text)",
                     cursor: "pointer",
-                    borderRadius: "4px",
+                    borderRadius: "6px",
                   }}
                 >
-                  @ Mentions
+                  <span
+                    aria-hidden="true"
+                    style={{ color: "var(--color-primary)", fontWeight: 700 }}
+                  >
+                    @
+                  </span>
+                  <span style={{ minWidth: 0 }}>
+                    <span style={{ display: "block", fontWeight: 600 }}>
+                      Workspace File
+                    </span>
+                    <span
+                      style={{
+                        display: "block",
+                        color: "var(--color-text-muted)",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      Reference a file from this workspace
+                    </span>
+                  </span>
                 </button>
                 <label
+                  role="menuitem"
                   style={{
+                    display: "grid",
+                    gridTemplateColumns: "28px 1fr",
+                    gap: "8px",
+                    alignItems: "center",
                     padding: "8px",
                     textAlign: "left",
+                    color: "var(--color-text)",
                     cursor: "pointer",
-                    borderRadius: "4px",
-                    display: "block",
+                    borderRadius: "6px",
                   }}
                 >
-                  Media
+                  <span
+                    aria-hidden="true"
+                    style={{ color: "var(--color-primary)", fontWeight: 700 }}
+                  >
+                    img
+                  </span>
+                  <span style={{ minWidth: 0 }}>
+                    <span style={{ display: "block", fontWeight: 600 }}>
+                      Image Upload
+                    </span>
+                    <span
+                      style={{
+                        display: "block",
+                        color: "var(--color-text-muted)",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      Attach screenshots or other image files
+                    </span>
+                  </span>
                   <input
+                    aria-label="Upload image"
                     type="file"
                     accept="image/*"
                     style={{ display: "none" }}
@@ -533,8 +625,7 @@ export function MessageComposer({
                   padding: "0 8px",
                   borderRadius: "10px",
                   border: "none",
-                  backgroundColor:
-                    mcpStatus.status === "ok" ? "#22c55e" : "#ef4444",
+                  backgroundColor: mcpTone?.color || "#ef4444",
                   color: "#ffffff",
                   fontSize: "0.65rem",
                   fontWeight: "bold",
@@ -581,15 +672,10 @@ export function MessageComposer({
                     <strong
                       style={{
                         color:
-                          mcpStatus.status === "ok" ? "#22c55e" : "#ef4444",
+                          mcpTone?.color || "#ef4444",
                       }}
                     >
-                      MCP Status:{" "}
-                      {mcpStatus.status === "ok"
-                        ? "Active"
-                        : mcpStatus.status === "mismatch"
-                          ? "Mismatch"
-                          : "Error"}
+                      MCP Status: {mcpTone?.label || "Unknown"}
                     </strong>
                     <button
                       onClick={() => setShowStatusPopup(false)}
@@ -671,11 +757,15 @@ export function MessageComposer({
                                   backgroundColor:
                                     mcp.status === "active"
                                       ? "rgba(34, 197, 94, 0.1)"
-                                      : "rgba(239, 68, 68, 0.1)",
+                                      : mcp.status === "error"
+                                        ? "rgba(239, 68, 68, 0.1)"
+                                        : "rgba(245, 158, 11, 0.12)",
                                   color:
                                     mcp.status === "active"
                                       ? "#22c55e"
-                                      : "#ef4444",
+                                      : mcp.status === "error"
+                                        ? "#ef4444"
+                                        : "#f59e0b",
                                 }}
                               >
                                 {mcp.status}

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as THREE from "three";
-import ThreeDViewer from "../src/components/common/ThreeDViewer";
+import ThreeDViewer, { fitCameraToRadius } from "../src/components/common/ThreeDViewer";
 
 // Mock ResizeObserver for JSDOM environment
 class MockResizeObserver {
@@ -61,11 +61,18 @@ describe("ThreeDViewer", () => {
   it("renders the canvas element and displays the file name", () => {
     render(<ThreeDViewer arrayBuffer={mockBuffer} fileName="gearbox.stl" />);
 
-    // Assert the WebGL canvas mounts in the DOM
     const canvas = screen.getByTestId("3d-canvas");
     expect(canvas).toBeInTheDocument();
-
-    // Assert the filename label displays correct text
     expect(screen.getByText("gearbox.stl")).toBeInTheDocument();
+  });
+
+  it("fits sub-unit STL models without clamping them to radius 1", () => {
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.001, 10000);
+
+    const { distance, radius } = fitCameraToRadius(camera, 0.09);
+
+    expect(radius).toBeCloseTo(0.09);
+    expect(distance).toBeLessThan(1);
+    expect(camera.far).toBeLessThan(20);
   });
 });

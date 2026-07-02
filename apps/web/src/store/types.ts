@@ -21,6 +21,17 @@ export interface ChatSession {
   createdAt: number;
   updatedAt: number;
   isActive: boolean;
+  workspaceId?: string | null;
+  workspacePath?: string | null;
+}
+
+export interface StreamActivityEntry {
+  id: string;
+  kind: "status" | "tool" | "progress" | "error";
+  title: string;
+  detail?: string;
+  percentage?: number;
+  timestamp: number;
 }
 
 export type ChatSessionCompact = Omit<ChatSession, "messages" | "isActive">;
