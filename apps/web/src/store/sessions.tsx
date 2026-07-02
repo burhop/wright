@@ -628,9 +628,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             const assistantMsg: ChatMessage = {
               id: Math.random().toString(36).substring(7),
               role: "assistant",
-              content: accumulatedText.trim(),
+              content:
+                accumulatedText.trim() ||
+                "Hermes ended the chat turn without returning a response.",
               timestamp: Date.now(),
-              traceId: "tr-" + Math.random().toString(36).substring(7),
+              traceId: accumulatedText.trim()
+                ? "tr-" + Math.random().toString(36).substring(7)
+                : null,
             };
 
             const finalSession: ChatSession = existingSession

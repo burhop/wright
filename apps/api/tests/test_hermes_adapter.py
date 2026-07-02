@@ -199,6 +199,112 @@ async def test_hermes_adapter_stream_chat_success():
 
 
 @pytest.mark.asyncio
+async def test_hermes_adapter_stream_chat_surfaces_error_chunk():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_sse = MagicMock()
+    mock_sse.event = "message"
+    mock_sse.data = (
+        '{"choices": [{"index": 0, "delta": {}, '
+        '"finish_reason": "error"}], '
+        '"error": {"message": '
+        '"HTTP 404: The model qwen36-35b-moe does not exist."}, '
+        '"hermes": {"failed": true}}'
+    )
+
+    async def mock_aiter_sse():
+        yield mock_sse
+
+    mock_event_source = MagicMock()
+    mock_event_source.aiter_sse = mock_aiter_sse
+    mock_event_source.response = MagicMock()
+    mock_event_source.response.raise_for_status = MagicMock()
+
+    class MockAconnectSse:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return mock_event_source
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    req = AgentChatRequest(session_id="session123", message="Hello")
+
+    with (
+        patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse),
+        patch.object(
+            adapter, "get_chat_history", new_callable=AsyncMock
+        ) as mock_history,
+        patch.object(
+            adapter, "get_session_workspace", new_callable=AsyncMock
+        ) as mock_workspace,
+    ):
+        mock_history.return_value = []
+        mock_workspace.return_value = None
+        events = []
+        async for event in adapter.stream_chat(req):
+            events.append(event)
+
+        assert len(events) == 1
+        assert events[0].type == "error"
+        assert events[0].data == {
+            "message": "HTTP 404: The model qwen36-35b-moe does not exist."
+        }
+
+
+@pytest.mark.asyncio
+async def test_hermes_adapter_stream_chat_rejects_empty_done():
+    adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
+
+    mock_sse = MagicMock()
+    mock_sse.event = "message"
+    mock_sse.data = "[DONE]"
+
+    async def mock_aiter_sse():
+        yield mock_sse
+
+    mock_event_source = MagicMock()
+    mock_event_source.aiter_sse = mock_aiter_sse
+    mock_event_source.response = MagicMock()
+    mock_event_source.response.raise_for_status = MagicMock()
+
+    class MockAconnectSse:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        async def __aenter__(self):
+            return mock_event_source
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    req = AgentChatRequest(session_id="session123", message="Hello")
+
+    with (
+        patch("agent_adapters.hermes.aconnect_sse", new=MockAconnectSse),
+        patch.object(
+            adapter, "get_chat_history", new_callable=AsyncMock
+        ) as mock_history,
+        patch.object(
+            adapter, "get_session_workspace", new_callable=AsyncMock
+        ) as mock_workspace,
+    ):
+        mock_history.return_value = []
+        mock_workspace.return_value = None
+        events = []
+        async for event in adapter.stream_chat(req):
+            events.append(event)
+
+        assert len(events) == 1
+        assert events[0].type == "error"
+        assert events[0].data == {
+            "message": "Hermes ended the chat turn without returning a response."
+        }
+
+
+@pytest.mark.asyncio
 async def test_hermes_adapter_get_chat_history():
     adapter = HermesAdapter("http://127.0.0.1:8642", "test-key")
 

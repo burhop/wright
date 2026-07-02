@@ -451,10 +451,23 @@ async def test_handle_doctor():
             ),
             patch("hermes_plugin_wright.commands.os.stat", mock_stat),
             patch(
+                "hermes_plugin_wright.commands._is_hermes_gateway_healthy",
+                new_callable=AsyncMock,
+            ) as mock_gateway_health,
+            patch(
+                "hermes_plugin_wright.commands._check_hermes_model_route",
+                new_callable=AsyncMock,
+            ) as mock_route_check,
+            patch(
                 "hermes_plugin_wright.commands.get_mcp_servers", new_callable=AsyncMock
             ) as mock_servers,
         ):
             mock_health.return_value = True
+            mock_gateway_health.return_value = True
+            mock_route_check.return_value = {
+                "ok": True,
+                "message": "model: hermes responded",
+            }
             mock_servers.return_value = {
                 "success": True,
                 "servers": [
@@ -463,11 +476,10 @@ async def test_handle_doctor():
                         "name": "Test MCP",
                         "is_installed": True,
                         "is_active": True,
-                        "credentials_configured": {"API_KEY": True},
+                        "credentials_configured": None,
                     },
                     {
                         "server_id": "onshape",
-                        "name": "Onshape MCP",
                         "is_installed": True,
                         "is_active": False,
                         "credentials_configured": {"ONSHAPE_API_KEY": False},
@@ -479,12 +491,56 @@ async def test_handle_doctor():
             assert "🩺 Wright Doctor" in res
             assert "Repo found" in res
             assert "API server" in res
+            assert "Hermes route" in res
+            assert "model: hermes responded" in res
             assert "Frontend build" in res
             assert "Database" in res
             assert "Secrets store" in res
             assert "mode 0600" in res
             assert "2 installed, 1 active" in res
-            assert "missing ONSHAPE_API_KEY" in res
+            assert "onshape: missing ONSHAPE_API_KEY" in res
+
+
+@pytest.mark.asyncio
+async def test_handle_doctor_reports_broken_hermes_model_route():
+    from hermes_plugin_wright.commands import handle_doctor
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with (
+            patch("hermes_plugin_wright.commands.detect_repo_dir", return_value=tmpdir),
+            patch(
+                "hermes_plugin_wright.commands.is_api_healthy", new_callable=AsyncMock
+            ) as mock_health,
+            patch(
+                "hermes_plugin_wright.commands._is_hermes_gateway_healthy",
+                new_callable=AsyncMock,
+            ) as mock_gateway_health,
+            patch(
+                "hermes_plugin_wright.commands._check_hermes_model_route",
+                new_callable=AsyncMock,
+            ) as mock_route_check,
+            patch(
+                "hermes_plugin_wright.commands.os.path.expanduser",
+                lambda p: p.replace("~", tmpdir),
+            ),
+            patch(
+                "hermes_plugin_wright.commands.get_mcp_servers", new_callable=AsyncMock
+            ) as mock_servers,
+        ):
+            mock_health.return_value = True
+            mock_gateway_health.return_value = True
+            mock_route_check.return_value = {
+                "ok": False,
+                "message": "HTTP 404: The model qwen36-35b-moe does not exist.",
+            }
+            mock_servers.return_value = {"success": True, "servers": []}
+
+            res = await handle_doctor()
+
+            assert "❌ Hermes route" in res
+            assert "qwen36-35b-moe" in res
+            assert "hermes model" in res
+            assert "hermes auth status openai-codex" in res
 
 
 def test_handle_catalog_list():

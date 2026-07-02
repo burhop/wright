@@ -81,6 +81,34 @@ def _load_mapping_file(path: str | None) -> dict[str, Any]:
         return {}
 
 
+def _completion_error_message(chunk: dict[str, Any]) -> str | None:
+    """Extract Hermes/OpenAI-compatible error details from a streamed chunk."""
+    message = ""
+
+    error = chunk.get("error")
+    if isinstance(error, dict):
+        message = str(error.get("message") or error.get("error") or "").strip()
+    elif isinstance(error, str):
+        message = error.strip()
+
+    hermes = chunk.get("hermes")
+    if not message and isinstance(hermes, dict):
+        message = str(hermes.get("error") or "").strip()
+
+    choices = chunk.get("choices")
+    finish_reason = None
+    if isinstance(choices, list) and choices:
+        first_choice = choices[0]
+        if isinstance(first_choice, dict):
+            finish_reason = first_choice.get("finish_reason")
+
+    hermes_failed = isinstance(hermes, dict) and bool(hermes.get("failed"))
+    if message or finish_reason == "error" or hermes_failed:
+        return message or "Hermes failed to produce a response."
+
+    return None
+
+
 def _unique_urls(urls: list[str]) -> list[str]:
     result = []
     for url in urls:
@@ -560,6 +588,7 @@ class HermesAdapter(BaseAgentEngine):
 
         client = httpx.AsyncClient()
         self._active_clients[session_id] = client
+        received_agent_output = False
 
         try:
             headers = {**self.headers, "X-Hermes-Session-Id": session_id}
@@ -590,19 +619,38 @@ class HermesAdapter(BaseAgentEngine):
                                 data=sse.data,
                             )
                     elif sse.data == "[DONE]":
+                        if not received_agent_output:
+                            yield AgentStreamEvent(
+                                type="error",
+                                data={
+                                    "message": (
+                                        "Hermes ended the chat turn without returning "
+                                        "a response."
+                                    )
+                                },
+                            )
+                            return
                         yield AgentStreamEvent(type="stream_end", data={})
                     else:
                         try:
                             chunk = json.loads(sse.data)
+                            error_message = _completion_error_message(chunk)
+                            if error_message:
+                                yield AgentStreamEvent(
+                                    type="error", data={"message": error_message}
+                                )
+                                return
                             choices = chunk.get("choices", [])
                             if not choices:
                                 continue
                             delta = choices[0].get("delta", {})
                             if delta.get("content"):
+                                received_agent_output = True
                                 yield AgentStreamEvent(
                                     type="token", data={"text": delta["content"]}
                                 )
                             if delta.get("tool_calls"):
+                                received_agent_output = True
                                 yield AgentStreamEvent(
                                     type="tool",
                                     data={"tool_calls": delta["tool_calls"]},

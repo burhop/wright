@@ -1,6 +1,7 @@
 """Commands module for /wright slash commands."""
 
 import asyncio
+import json
 import os
 import platform
 import signal
@@ -128,6 +129,107 @@ async def _is_hermes_gateway_healthy() -> bool:
             return response.status_code == 200
     except Exception:
         return False
+
+
+def _hermes_completion_error_message(chunk: Dict[str, Any]) -> Optional[str]:
+    error = chunk.get("error")
+    if isinstance(error, dict):
+        message = str(error.get("message") or error.get("error") or "").strip()
+        if message:
+            return message
+    elif isinstance(error, str) and error.strip():
+        return error.strip()
+
+    hermes = chunk.get("hermes")
+    if isinstance(hermes, dict):
+        message = str(hermes.get("error") or "").strip()
+        if message:
+            return message
+        if hermes.get("failed"):
+            return "Hermes failed to produce a model response."
+
+    choices = chunk.get("choices")
+    if isinstance(choices, list) and choices:
+        first_choice = choices[0]
+        if (
+            isinstance(first_choice, dict)
+            and first_choice.get("finish_reason") == "error"
+        ):
+            return "Hermes failed to produce a model response."
+
+    return None
+
+
+async def _check_hermes_model_route() -> Dict[str, Any]:
+    """Smoke-test Hermes configured chat route without caring which model it uses."""
+    payload = {
+        "model": "hermes",
+        "messages": [{"role": "user", "content": "Reply with only: ok"}],
+        "stream": True,
+        "session_id": "wright-doctor-model-route",
+        "max_tokens": 8,
+    }
+    headers = {
+        "Authorization": f"Bearer {HERMES_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            async with client.stream(
+                "POST",
+                f"{HERMES_API_BASE}/v1/chat/completions",
+                headers=headers,
+                json=payload,
+            ) as response:
+                if response.status_code != 200:
+                    body = (await response.aread()).decode("utf-8", "replace")
+                    return {
+                        "ok": False,
+                        "message": f"Hermes chat route returned HTTP {response.status_code}: {body[:200]}",
+                    }
+
+                saw_response = False
+                async for line in response.aiter_lines():
+                    line = line.strip()
+                    if not line or not line.startswith("data:"):
+                        continue
+                    data = line[5:].strip()
+                    if data == "[DONE]":
+                        if saw_response:
+                            return {"ok": True, "message": "model: hermes responded"}
+                        return {
+                            "ok": False,
+                            "message": "Hermes chat route ended without returning a response.",
+                        }
+
+                    try:
+                        chunk = json.loads(data)
+                    except json.JSONDecodeError:
+                        continue
+
+                    error_message = _hermes_completion_error_message(chunk)
+                    if error_message:
+                        return {"ok": False, "message": error_message}
+
+                    choices = chunk.get("choices")
+                    if isinstance(choices, list) and choices:
+                        first_choice = choices[0]
+                        if isinstance(first_choice, dict):
+                            delta = first_choice.get("delta")
+                            if isinstance(delta, dict) and delta.get("content"):
+                                saw_response = True
+                                return {
+                                    "ok": True,
+                                    "message": "model: hermes responded",
+                                }
+
+                return {
+                    "ok": False,
+                    "message": "Hermes chat route closed before returning a response.",
+                }
+    except Exception as exc:
+        return {"ok": False, "message": f"Hermes chat route check failed: {exc}"}
 
 
 def _gateway_log_path(repo_dir: str) -> str:
@@ -696,6 +798,15 @@ async def handle_doctor() -> str:
 
     if await _is_hermes_gateway_healthy():
         lines.append(f"  Gateway API:    healthy at {HERMES_API_BASE}")
+        route_check = await _check_hermes_model_route()
+        if route_check.get("ok"):
+            lines.append(f"  ✅ Hermes route:  {route_check.get('message')}")
+        else:
+            lines.append(f"  ❌ Hermes route:  {route_check.get('message')}")
+            lines.append(
+                "     Run `hermes model` to select a working provider/model, "
+                "or `hermes auth status openai-codex` to verify Codex auth."
+            )
     else:
         lines.append(
             f"  Gateway API:    not reachable at {HERMES_API_BASE} - run /wright start or `hermes gateway run`"
@@ -751,11 +862,12 @@ async def handle_doctor() -> str:
                 # Check for credential issues
                 cred_issues = []
                 for s in installed:
-                    creds = s.get("credentials_configured", {})
+                    creds = s.get("credentials_configured") or {}
                     missing = [k for k, v in creds.items() if not v]
                     if missing:
+                        server_name = s.get("name") or s.get("server_id") or "unnamed"
                         cred_issues.append(
-                            f"     ⚠️ {s['name']}: missing {', '.join(missing)}"
+                            f"     ⚠️ {server_name}: missing {', '.join(missing)}"
                         )
                 if cred_issues:
                     lines.append("  ⚠️ Credentials:")
