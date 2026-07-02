@@ -14,9 +14,32 @@ PLUGIN_NAME="${WRIGHT_PLUGIN_NAME:-wright}"
 PLUGIN_REPO_URL="${WRIGHT_PLUGIN_REPO_URL:-https://github.com/burhop/wright}"
 PLUGIN_REF="${WRIGHT_PLUGIN_REF:-dev}"
 PLUGIN_SUBDIR="${WRIGHT_PLUGIN_SUBDIR:-hermes-plugin-wright}"
+PLUGIN_SOURCE_MODE="${WRIGHT_PLUGIN_SOURCE_MODE:-subdir}"
 PLUGIN_IDENTIFIER_OVERRIDE="${WRIGHT_PLUGIN_IDENTIFIER:-}"
-PLUGIN_IDENTIFIER="${PLUGIN_IDENTIFIER_OVERRIDE:-${PLUGIN_REPO_URL}/tree/${PLUGIN_REF}/${PLUGIN_SUBDIR}}"
 HERMES_EXPECTED_VERSION="${WRIGHT_HERMES_EXPECTED_VERSION:-0.18.0}"
+PLUGIN_IDENTIFIER=""
+
+# Root mirror identifier pattern: ${PLUGIN_REPO_URL}/tree/${PLUGIN_REF}
+# Subdirectory identifier pattern: ${PLUGIN_REPO_URL}/tree/${PLUGIN_REF}/${PLUGIN_SUBDIR}
+build_plugin_identifier() {
+  if [ -n "$PLUGIN_IDENTIFIER_OVERRIDE" ]; then
+    printf '%s' "$PLUGIN_IDENTIFIER_OVERRIDE"
+    return
+  fi
+
+  case "$PLUGIN_SOURCE_MODE" in
+    root)
+      printf '%s/tree/%s' "$PLUGIN_REPO_URL" "$PLUGIN_REF"
+      ;;
+    subdir)
+      printf '%s/tree/%s/%s' "$PLUGIN_REPO_URL" "$PLUGIN_REF" "$PLUGIN_SUBDIR"
+      ;;
+    *)
+      log_error "WRIGHT_PLUGIN_SOURCE_MODE must be root or subdir; got $PLUGIN_SOURCE_MODE"
+      exit 2
+      ;;
+  esac
+}
 
 log_step() {
   echo -e "\n${YELLOW}$1${NC}"
@@ -28,6 +51,19 @@ log_ok() {
 
 log_error() {
   echo -e "${RED}✗ $1${NC}"
+}
+
+print_lifecycle_usage() {
+  cat <<USAGE
+Usage: $0 [--ref dev|main] [--dev] [--main] [--repo-url URL] [--subdir PATH] [--mirror-root] [--identifier IDENTIFIER]
+
+Options:
+  --mirror-root          Install from the repository root, e.g. https://github.com/burhop/hermes-plugin-wright/tree/dev.
+  --subdir PATH          Install from a monorepo subdirectory, default: hermes-plugin-wright.
+  --repo-url URL         Repository URL, default: https://github.com/burhop/wright.
+  --ref dev|main         Branch to test, default: dev.
+  --identifier VALUE     Exact Hermes plugin identifier, bypassing repo/ref/subdir construction.
+USAGE
 }
 
 configure_lifecycle_args() {
@@ -57,6 +93,19 @@ configure_lifecycle_args() {
         PLUGIN_REPO_URL="$2"
         shift 2
         ;;
+      --subdir)
+        if [ "$#" -lt 2 ]; then
+          log_error "--subdir requires a plugin subdirectory path"
+          exit 2
+        fi
+        PLUGIN_SOURCE_MODE="subdir"
+        PLUGIN_SUBDIR="$2"
+        shift 2
+        ;;
+      --mirror-root)
+        PLUGIN_SOURCE_MODE="root"
+        shift
+        ;;
       --identifier)
         if [ "$#" -lt 2 ]; then
           log_error "--identifier requires a Hermes plugin identifier"
@@ -66,11 +115,12 @@ configure_lifecycle_args() {
         shift 2
         ;;
       -h|--help)
-        echo "Usage: $0 [--ref dev|main] [--dev] [--main] [--repo-url URL] [--identifier IDENTIFIER]"
+        print_lifecycle_usage
         exit 0
         ;;
       *)
         log_error "Unknown option: $1"
+        print_lifecycle_usage >&2
         exit 2
         ;;
     esac
@@ -84,7 +134,15 @@ configure_lifecycle_args() {
       ;;
   esac
 
-  PLUGIN_IDENTIFIER="${PLUGIN_IDENTIFIER_OVERRIDE:-${PLUGIN_REPO_URL}/tree/${PLUGIN_REF}/${PLUGIN_SUBDIR}}"
+  case "$PLUGIN_SOURCE_MODE" in
+    root|subdir) ;;
+    *)
+      log_error "WRIGHT_PLUGIN_SOURCE_MODE must be root or subdir; got $PLUGIN_SOURCE_MODE"
+      exit 2
+      ;;
+  esac
+
+  PLUGIN_IDENTIFIER="$(build_plugin_identifier)"
 }
 
 ensure_docker_image() {

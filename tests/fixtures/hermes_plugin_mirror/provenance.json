@@ -1,0 +1,9 @@
+{
+  "main_repo_url": "https://github.com/burhop/wright",
+  "commit_sha": "0123456789abcdef0123456789abcdef01234567",
+  "branch": "dev",
+  "plugin_version": "1.0.0",
+  "wright_core_version": "0.1.0",
+  "wright_tool_registry_version": "0.1.0",
+  "source_paths": ["hermes-plugin-wright"]
+}

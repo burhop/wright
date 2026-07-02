@@ -46,10 +46,13 @@ class CatalogLoader:
     def get_by_domain(self, domain: str) -> List[CatalogEntry]:
         """Filters catalog entries by domain taxonomy tag (case-insensitive)."""
         normalized_domain = domain.strip().lower()
-        return self.sorted_entries([
-            entry for entry in self.entries
-            if any(d.lower() == normalized_domain for d in entry.domains)
-        ])
+        return self.sorted_entries(
+            [
+                entry
+                for entry in self.entries
+                if any(d.lower() == normalized_domain for d in entry.domains)
+            ]
+        )
 
     def search(self, query: str) -> List[CatalogEntry]:
         """Performs case-insensitive free-text search across name, description, and tags."""

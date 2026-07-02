@@ -1,0 +1,9 @@
+name: wright
+version: "1.0.0"
+description: Thin fixture for Wright Hermes plugin mirror validation.
+author: Wright Project (github.com/burhop/wright)
+license: MIT
+homepage: https://github.com/burhop/wright
+capabilities:
+  - commands
+min_hermes_version: "0.18.0"

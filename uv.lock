@@ -1685,12 +1685,14 @@ name = "wright-core"
 version = "0.1.0"
 source = { editable = "packages/core" }
 dependencies = [
+    { name = "opentelemetry-api" },
     { name = "pydantic" },
     { name = "structlog" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "opentelemetry-api", specifier = ">=1.25" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "structlog", specifier = ">=24.1" },
 ]
@@ -1722,6 +1724,7 @@ dependencies = [
     { name = "httpx" },
     { name = "httpx-sse" },
     { name = "pydantic" },
+    { name = "pyyaml" },
     { name = "wright-core" },
 ]
 
@@ -1730,6 +1733,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28" },
     { name = "httpx-sse", specifier = ">=0.4" },
     { name = "pydantic", specifier = ">=2.7" },
+    { name = "pyyaml", specifier = ">=6.0" },
     { name = "wright-core", editable = "packages/core" },
 ]
 

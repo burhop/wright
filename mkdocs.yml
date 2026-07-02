@@ -70,6 +70,7 @@ nav:
       - Pull Requests: contributing/pull-requests.md
       - Public Launch Checklist: public-launch-checklist.md
       - Alpha Release Notes Template: alpha-release-notes-template.md
+      - Hermes Plugin Mirror Release: release/hermes-plugin-mirror.md
   - API Reference: api/api-reference.md
   - MCP Tools Catalog:
       - Tool Directory: mcp-catalog/tools-list.md

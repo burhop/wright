@@ -2,7 +2,7 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test hermes-plugin-lifecycle-test alpha-release-check
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test hermes-plugin-lifecycle-test alpha-release-check python-package-build-check hermes-plugin-mirror-sync-dry-run hermes-plugin-mirror-validate hermes-plugin-root-lifecycle-test
 
 PYTHON_WORKSPACE_PATHS := apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
@@ -26,6 +26,10 @@ help:
 	@echo "  check           - Execute all local quality gates (lint + format + typecheck + test)"
 	@echo "  security-scan   - Run public-alpha, Gitleaks, and TruffleHog secret scans"
 	@echo "  alpha-release-check - Run final alpha release gates including Docker smoke"
+	@echo "  python-package-build-check - Validate Wright package metadata for PyPI/TestPyPI"
+	@echo "  hermes-plugin-mirror-sync-dry-run - Preview thin Hermes plugin mirror contents"
+	@echo "  hermes-plugin-mirror-validate - Generate and validate a local thin plugin mirror"
+	@echo "  hermes-plugin-root-lifecycle-test - Test Hermes install/update/remove from the mirror root"
 
 docker-build:
 	docker build -t wright-agent:latest -f docker/Dockerfile .
@@ -151,3 +155,20 @@ security-scan:
 alpha-release-check:
 	./scripts/alpha-release-check.sh
 
+
+python-package-build-check:
+	./scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+
+hermes-plugin-mirror-sync-dry-run:
+	./scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --dry-run
+
+hermes-plugin-mirror-validate:
+	@tmp_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/wright-plugin-mirror.XXXXXX"); \
+	trap 'rm -rf "$$tmp_dir"' EXIT; \
+	./scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir "$$tmp_dir"; \
+	./scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$$tmp_dir" --channel development
+
+hermes-plugin-root-lifecycle-test:
+	./scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+	./scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
+	./scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev

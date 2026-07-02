@@ -70,6 +70,27 @@ function SessionsHarness() {
   );
 }
 
+function ChatMessagesHarness() {
+  const { state, sendMessage } = useChat();
+  const activeSession = state.sessions.find(
+    (session) => session.sessionId === state.activeSessionId,
+  );
+
+  return (
+    <div>
+      <div data-testid="chat-active-session">{state.activeSessionId}</div>
+      <button onClick={() => sendMessage("hello")}>send hello</button>
+      <ul>
+        {(activeSession?.messages || []).map((message) => (
+          <li data-testid="chat-message" key={message.id}>
+            {message.role}:{message.content}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 describe("ChatProvider session state", () => {
   beforeEach(() => {
     vi.stubGlobal("localStorage", localStorageMock);
@@ -187,5 +208,47 @@ describe("ChatProvider session state", () => {
       expect(screen.getAllByTestId("session-row")).toHaveLength(1);
     });
     expect(screen.getByText("Test Session 1:session-2")).toBeInTheDocument();
+  });
+
+  it("shows a diagnostic instead of saving a blank assistant message", async () => {
+    vi.mocked(agentService.listSessions).mockResolvedValue([
+      {
+        sessionId: "session-1",
+        title: "Test Session",
+        createdAt: 1000,
+        updatedAt: 1000,
+      },
+    ]);
+    vi.mocked(agentService.sendMessage).mockImplementation(async function* () {
+      yield {
+        type: "done",
+        session: makeSession({
+          sessionId: "session-1",
+          title: "Test Session",
+          messages: [],
+        }),
+      };
+    });
+
+    render(
+      <ChatProvider>
+        <ChatMessagesHarness />
+      </ChatProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("chat-active-session")).toHaveTextContent(
+        "session-1",
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "send hello" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Hermes ended the chat turn/i),
+      ).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/^assistant:$/)).not.toBeInTheDocument();
   });
 });

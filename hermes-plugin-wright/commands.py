@@ -1,35 +1,43 @@
 """Commands module for /wright slash commands."""
+
 import asyncio
+import json
 import os
 import platform
-import shutil
-import sys
-import subprocess
 import signal
+import shutil
+import subprocess
+import sys
 import webbrowser
+from typing import Any, Dict, List, Optional
 from urllib.parse import quote
+
 import httpx
 import structlog
-from typing import List, Optional, Dict, Any
-
-IS_WINDOWS = platform.system() == "Windows"
 
 from .bridge import (
-    detect_repo_dir,
     check_api_health,
+    detect_repo_dir,
     get_mcp_servers,
-    register_mcp_server,
     get_workspaces,
-    get_credential_status,
+    register_mcp_server,
     WRIGHT_API_BASE,
     WRIGHT_UI_URL,
 )
 from .catalog import CatalogLoader
 
+IS_WINDOWS = platform.system() == "Windows"
+
 logger = structlog.get_logger("hermes_plugin_wright.commands")
 _HERMES_CONTEXT: Any = None
-HERMES_API_BASE = os.environ.get("HERMES_API_BASE_URL", "http://127.0.0.1:8642").rstrip("/")
-HERMES_API_KEY = os.environ.get("HERMES_API_KEY") or os.environ.get("API_SERVER_KEY") or "wright-local-dev"
+HERMES_API_BASE = os.environ.get("HERMES_API_BASE_URL", "http://127.0.0.1:8642").rstrip(
+    "/"
+)
+HERMES_API_KEY = (
+    os.environ.get("HERMES_API_KEY")
+    or os.environ.get("API_SERVER_KEY")
+    or "wright-local-dev"
+)
 
 WRIGHT_HELP_TEXT = """🔧 Wright Engineering Platform
 
@@ -53,6 +61,7 @@ Usage: /wright <command>
 
 Repo: https://github.com/burhop/wright
 """
+
 
 async def is_api_healthy() -> bool:
     """Quick health check against the Wright FastAPI server."""
@@ -98,7 +107,9 @@ def _configure_hermes_gateway_env() -> None:
     values = {
         "API_SERVER_ENABLED": "true",
         "API_SERVER_HOST": "127.0.0.1",
-        "API_SERVER_PORT": HERMES_API_BASE.rsplit(":", 1)[-1] if ":" in HERMES_API_BASE else "8642",
+        "API_SERVER_PORT": HERMES_API_BASE.rsplit(":", 1)[-1]
+        if ":" in HERMES_API_BASE
+        else "8642",
         "API_SERVER_KEY": HERMES_API_KEY,
     }
     for path in _hermes_env_paths():
@@ -120,6 +131,107 @@ async def _is_hermes_gateway_healthy() -> bool:
         return False
 
 
+def _hermes_completion_error_message(chunk: Dict[str, Any]) -> Optional[str]:
+    error = chunk.get("error")
+    if isinstance(error, dict):
+        message = str(error.get("message") or error.get("error") or "").strip()
+        if message:
+            return message
+    elif isinstance(error, str) and error.strip():
+        return error.strip()
+
+    hermes = chunk.get("hermes")
+    if isinstance(hermes, dict):
+        message = str(hermes.get("error") or "").strip()
+        if message:
+            return message
+        if hermes.get("failed"):
+            return "Hermes failed to produce a model response."
+
+    choices = chunk.get("choices")
+    if isinstance(choices, list) and choices:
+        first_choice = choices[0]
+        if (
+            isinstance(first_choice, dict)
+            and first_choice.get("finish_reason") == "error"
+        ):
+            return "Hermes failed to produce a model response."
+
+    return None
+
+
+async def _check_hermes_model_route() -> Dict[str, Any]:
+    """Smoke-test Hermes configured chat route without caring which model it uses."""
+    payload = {
+        "model": "hermes",
+        "messages": [{"role": "user", "content": "Reply with only: ok"}],
+        "stream": True,
+        "session_id": "wright-doctor-model-route",
+        "max_tokens": 8,
+    }
+    headers = {
+        "Authorization": f"Bearer {HERMES_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            async with client.stream(
+                "POST",
+                f"{HERMES_API_BASE}/v1/chat/completions",
+                headers=headers,
+                json=payload,
+            ) as response:
+                if response.status_code != 200:
+                    body = (await response.aread()).decode("utf-8", "replace")
+                    return {
+                        "ok": False,
+                        "message": f"Hermes chat route returned HTTP {response.status_code}: {body[:200]}",
+                    }
+
+                saw_response = False
+                async for line in response.aiter_lines():
+                    line = line.strip()
+                    if not line or not line.startswith("data:"):
+                        continue
+                    data = line[5:].strip()
+                    if data == "[DONE]":
+                        if saw_response:
+                            return {"ok": True, "message": "model: hermes responded"}
+                        return {
+                            "ok": False,
+                            "message": "Hermes chat route ended without returning a response.",
+                        }
+
+                    try:
+                        chunk = json.loads(data)
+                    except json.JSONDecodeError:
+                        continue
+
+                    error_message = _hermes_completion_error_message(chunk)
+                    if error_message:
+                        return {"ok": False, "message": error_message}
+
+                    choices = chunk.get("choices")
+                    if isinstance(choices, list) and choices:
+                        first_choice = choices[0]
+                        if isinstance(first_choice, dict):
+                            delta = first_choice.get("delta")
+                            if isinstance(delta, dict) and delta.get("content"):
+                                saw_response = True
+                                return {
+                                    "ok": True,
+                                    "message": "model: hermes responded",
+                                }
+
+                return {
+                    "ok": False,
+                    "message": "Hermes chat route closed before returning a response.",
+                }
+    except Exception as exc:
+        return {"ok": False, "message": f"Hermes chat route check failed: {exc}"}
+
+
 def _gateway_log_path(repo_dir: str) -> str:
     log_dir = os.path.join(repo_dir, "tmp")
     os.makedirs(log_dir, exist_ok=True)
@@ -134,12 +246,16 @@ def _start_hermes_gateway(repo_dir: str) -> Optional[str]:
     log_path = _gateway_log_path(repo_dir)
     log_file = open(log_path, "a", encoding="utf-8")
     env = os.environ.copy()
-    env.update({
-        "API_SERVER_ENABLED": "true",
-        "API_SERVER_HOST": "127.0.0.1",
-        "API_SERVER_PORT": HERMES_API_BASE.rsplit(":", 1)[-1] if ":" in HERMES_API_BASE else "8642",
-        "API_SERVER_KEY": HERMES_API_KEY,
-    })
+    env.update(
+        {
+            "API_SERVER_ENABLED": "true",
+            "API_SERVER_HOST": "127.0.0.1",
+            "API_SERVER_PORT": HERMES_API_BASE.rsplit(":", 1)[-1]
+            if ":" in HERMES_API_BASE
+            else "8642",
+            "API_SERVER_KEY": HERMES_API_KEY,
+        }
+    )
 
     popen_kwargs = {
         "cwd": repo_dir,
@@ -148,7 +264,9 @@ def _start_hermes_gateway(repo_dir: str) -> Optional[str]:
         "stderr": subprocess.STDOUT,
     }
     if IS_WINDOWS:
-        creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        creationflags = (
+            subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        )
         create_no_window = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         if create_no_window:
             creationflags |= create_no_window
@@ -158,7 +276,9 @@ def _start_hermes_gateway(repo_dir: str) -> Optional[str]:
 
     try:
         process = subprocess.Popen([hermes_path, "gateway", "run"], **popen_kwargs)
-        with open(os.path.join(repo_dir, "tmp", "hermes-gateway.pid"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(repo_dir, "tmp", "hermes-gateway.pid"), "w", encoding="utf-8"
+        ) as f:
             f.write(str(process.pid))
         return None
     except Exception as exc:
@@ -190,16 +310,14 @@ async def _ensure_hermes_gateway(repo_dir: str) -> tuple[bool, str]:
 
 def is_in_docker() -> bool:
     """Detect if executing inside a Docker container context."""
-    return os.path.exists('/.dockerenv')
+    return os.path.exists("/.dockerenv")
 
 
 def _run_npm(args: list, **kwargs) -> subprocess.CompletedProcess:
     """Run an npm command, handling Windows where npm is a .cmd file."""
     npm_path = shutil.which("npm")
     if npm_path is None:
-        raise FileNotFoundError(
-            "npm not found on PATH. Install Node.js first."
-        )
+        raise FileNotFoundError("npm not found on PATH. Install Node.js first.")
     return subprocess.run([npm_path] + args, **kwargs)
 
 
@@ -246,16 +364,18 @@ def _api_launch_command(repo_dir: str) -> List[str]:
         ]
         if uv_project:
             command.extend(["--project", uv_project])
-        command.extend([
-            "uvicorn",
-            "api.main:app",
-            "--app-dir",
-            app_dir,
-            "--host",
-            host,
-            "--port",
-            "8000",
-        ])
+        command.extend(
+            [
+                "uvicorn",
+                "api.main:app",
+                "--app-dir",
+                app_dir,
+                "--host",
+                host,
+                "--port",
+                "8000",
+            ]
+        )
         return command
 
     repo_python = _repo_venv_python(repo_dir)
@@ -287,11 +407,13 @@ def _ensure_python_workspace_synced(repo_dir: str) -> subprocess.CompletedProces
     ]
     if uv_project:
         probe.extend(["--project", uv_project])
-    probe.extend([
-        "python",
-        "-c",
-        "import api.main",
-    ])
+    probe.extend(
+        [
+            "python",
+            "-c",
+            "import api.main",
+        ]
+    )
 
     probe_proc = subprocess.run(
         probe,
@@ -366,7 +488,8 @@ def _context_debug_text() -> str:
         if obj is None:
             continue
         methods = [
-            name for name in dir(obj)
+            name
+            for name in dir(obj)
             if not name.startswith("_") and callable(getattr(obj, name, None))
         ]
         lines.append(f"{label}:")
@@ -425,7 +548,9 @@ def _newest_mtime(directory: str) -> float:
 async def handle_start() -> str:
     """Build frontend, start FastAPI, open Wright UI."""
     repo_dir_for_gateway = detect_repo_dir()
-    gateway_message = "Hermes Gateway was not checked because the Wright repo was not found."
+    gateway_message = (
+        "Hermes Gateway was not checked because the Wright repo was not found."
+    )
     if repo_dir_for_gateway:
         _, gateway_message = await _ensure_hermes_gateway(repo_dir_for_gateway)
 
@@ -479,17 +604,13 @@ async def handle_start() -> str:
         # Ensure node_modules exist
         if not os.path.exists(os.path.join(web_dir, "node_modules")):
             proc = _run_npm(
-                ["install"],
-                cwd=web_dir,
-                capture_output=True, text=True, timeout=120
+                ["install"], cwd=web_dir, capture_output=True, text=True, timeout=120
             )
             if proc.returncode != 0:
                 return f"❌ npm install failed:\n{proc.stderr[:500]}"
 
         proc = _run_npm(
-            ["run", "build"],
-            cwd=web_dir,
-            capture_output=True, text=True, timeout=120
+            ["run", "build"], cwd=web_dir, capture_output=True, text=True, timeout=120
         )
         if proc.returncode != 0:
             return f"❌ Frontend build failed:\n{proc.stderr[:500]}"
@@ -513,7 +634,9 @@ async def handle_start() -> str:
         "stderr": subprocess.STDOUT,
     }
     if IS_WINDOWS:
-        creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        creationflags = (
+            subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        )
         create_no_window = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         if create_no_window:
             creationflags |= create_no_window
@@ -642,10 +765,7 @@ async def handle_stop() -> str:
 async def handle_open(open_browser: bool = False) -> str:
     """Open the Wright UI."""
     if not await is_api_healthy():
-        return (
-            "❌ Wright is not running.\n"
-            "   Use `/wright start` to launch it first."
-        )
+        return "❌ Wright is not running.\n   Use `/wright start` to launch it first."
     if open_browser:
         if _open_browser(WRIGHT_UI_URL):
             return f"Opened Wright UI in the default browser: {WRIGHT_UI_URL}"
@@ -659,23 +779,34 @@ async def handle_open(open_browser: bool = False) -> str:
 async def handle_doctor() -> str:
     """Run a full health check of the Wright stack."""
     lines = ["🩺 Wright Doctor\n"]
-    
+
     # 1. Repo detection
     repo_dir = detect_repo_dir()
     if repo_dir:
         lines.append(f"  ✅ Repo found:     {repo_dir}")
     else:
-        lines.append("  ❌ Repo not found — set WRIGHT_REPO_DIR to your local Wright checkout")
+        lines.append(
+            "  ❌ Repo not found — set WRIGHT_REPO_DIR to your local Wright checkout"
+        )
         return "\n".join(lines)
-    
+
     # 2. FastAPI server
     if await is_api_healthy():
         lines.append("  ✅ API server:     http://localhost:8000 (healthy)")
     else:
         lines.append("  ❌ API server:     not running — use /wright start")
-    
+
     if await _is_hermes_gateway_healthy():
         lines.append(f"  Gateway API:    healthy at {HERMES_API_BASE}")
+        route_check = await _check_hermes_model_route()
+        if route_check.get("ok"):
+            lines.append(f"  ✅ Hermes route:  {route_check.get('message')}")
+        else:
+            lines.append(f"  ❌ Hermes route:  {route_check.get('message')}")
+            lines.append(
+                "     Run `hermes model` to select a working provider/model, "
+                "or `hermes auth status openai-codex` to verify Codex auth."
+            )
     else:
         lines.append(
             f"  Gateway API:    not reachable at {HERMES_API_BASE} - run /wright start or `hermes gateway run`"
@@ -687,7 +818,7 @@ async def handle_doctor() -> str:
         lines.append(f"  ✅ Frontend build: {dist_dir}")
     else:
         lines.append("  ⚠️ Frontend build: missing — /wright start will build it")
-    
+
     # 4. Database
     db_paths = [
         os.path.expanduser("~/.config/wright/wright.db"),
@@ -697,8 +828,10 @@ async def handle_doctor() -> str:
     if db_found:
         lines.append("  ✅ Database:       exists")
     else:
-        lines.append("  ⚠️ Database:       not yet created (will be created on first API start)")
-    
+        lines.append(
+            "  ⚠️ Database:       not yet created (will be created on first API start)"
+        )
+
     # 5. Secrets store
     secrets_path = os.path.expanduser("~/.config/wright/mcp-secrets.json")
     if os.path.exists(secrets_path):
@@ -706,10 +839,14 @@ async def handle_doctor() -> str:
         if perms == "600":
             lines.append(f"  ✅ Secrets store:  {secrets_path} (mode 0600)")
         else:
-            lines.append(f"  ⚠️ Secrets store:  {secrets_path} (mode 0{perms} — should be 0600)")
+            lines.append(
+                f"  ⚠️ Secrets store:  {secrets_path} (mode 0{perms} — should be 0600)"
+            )
     else:
-        lines.append("  ℹ️ Secrets store:  not yet created (created on first credential save)")
-    
+        lines.append(
+            "  ℹ️ Secrets store:  not yet created (created on first credential save)"
+        )
+
     # 6. Tool status (if API is up)
     if await is_api_healthy():
         try:
@@ -718,15 +855,20 @@ async def handle_doctor() -> str:
                 servers = res.get("servers", [])
                 installed = [s for s in servers if s.get("is_installed")]
                 active = [s for s in servers if s.get("is_active")]
-                lines.append(f"  ✅ MCP servers:    {len(installed)} installed, {len(active)} active")
-                
+                lines.append(
+                    f"  ✅ MCP servers:    {len(installed)} installed, {len(active)} active"
+                )
+
                 # Check for credential issues
                 cred_issues = []
                 for s in installed:
-                    creds = s.get("credentials_configured", {})
+                    creds = s.get("credentials_configured") or {}
                     missing = [k for k, v in creds.items() if not v]
                     if missing:
-                        cred_issues.append(f"     ⚠️ {s['name']}: missing {', '.join(missing)}")
+                        server_name = s.get("name") or s.get("server_id") or "unnamed"
+                        cred_issues.append(
+                            f"     ⚠️ {server_name}: missing {', '.join(missing)}"
+                        )
                 if cred_issues:
                     lines.append("  ⚠️ Credentials:")
                     lines.extend(cred_issues)
@@ -734,7 +876,7 @@ async def handle_doctor() -> str:
                 lines.append("  ⚠️ MCP servers:    could not query")
         except Exception:
             lines.append("  ⚠️ MCP servers:    could not query")
-    
+
     return "\n".join(lines)
 
 
@@ -746,29 +888,37 @@ async def handle_status() -> str:
             "### 🌐 Wright Status\n"
             f"* **API Connection**: 🔴 Disconnected ({WRIGHT_API_BASE})"
         )
-        
-    gateway_status = "connected" if await _is_hermes_gateway_healthy() else (
-        f"not reachable at {HERMES_API_BASE}; run `/wright start` or `hermes gateway run`"
+
+    gateway_status = (
+        "connected"
+        if await _is_hermes_gateway_healthy()
+        else (
+            f"not reachable at {HERMES_API_BASE}; run `/wright start` or `hermes gateway run`"
+        )
     )
 
     # Query workspaces and servers
     workspaces_res = await get_workspaces()
     servers_res = await get_mcp_servers()
-    
+
     # Active workspace
     active_ws = None
     if workspaces_res.get("success"):
         workspaces = workspaces_res.get("workspaces", [])
         if workspaces:
             active_ws = workspaces[0]
-            
+
     if active_ws:
-        ws_name = active_ws.get("workspace_name") or active_ws.get("session_id") or "Unnamed Workspace"
+        ws_name = (
+            active_ws.get("workspace_name")
+            or active_ws.get("session_id")
+            or "Unnamed Workspace"
+        )
         ws_path = active_ws.get("local_path", "")
         workspace_line = f"* **Active Workspace**: {ws_name} (`{ws_path}`)"
     else:
         workspace_line = "* **Active Workspace**: None"
-        
+
     # MCP Tools
     tools_lines = []
     if servers_res.get("success"):
@@ -779,7 +929,7 @@ async def handle_status() -> str:
             is_active = s.get("is_active", False)
             creds = s.get("credentials_configured") or {}
             missing_creds = [k for k, v in creds.items() if not v]
-            
+
             if missing_creds:
                 status_str = f"needs action - missing {', '.join(missing_creds)}"
                 icon = "○"
@@ -790,10 +940,10 @@ async def handle_status() -> str:
                 status_str = "inactive"
                 icon = "🔴"
             tools_lines.append(f"* {icon} **{name}** ({status_str})")
-            
+
     if not tools_lines:
         tools_lines.append("* *No MCP servers installed.*")
-        
+
     lines = [
         "### 🌐 Wright Status",
         f"* **API Connection**: ● Connected ({WRIGHT_API_BASE})",
@@ -805,6 +955,7 @@ async def handle_status() -> str:
     lines.extend(tools_lines)
     return "\n".join(lines)
 
+
 def handle_catalog_list(catalog: CatalogLoader, domain: Optional[str] = None) -> str:
     """Browse cataloged tools, optionally filtered by domain tag."""
     if domain:
@@ -813,7 +964,7 @@ def handle_catalog_list(catalog: CatalogLoader, domain: Optional[str] = None) ->
     else:
         entries = catalog.get_all()
         header = "🔧 Engineering Tools Catalog"
-        
+
     lines = [
         header,
         "",
@@ -822,9 +973,11 @@ def handle_catalog_list(catalog: CatalogLoader, domain: Optional[str] = None) ->
     ]
     for e in entries:
         lines.append(f"| `{e.id}` | {e.name} | {e.locality} | {e.weight} |")
-        
+
     lines.append("")
-    lines.append("Use `/wright install <id>` to add a tool   |   `/wright info <id>` for details")
+    lines.append(
+        "Use `/wright install <id>` to add a tool   |   `/wright info <id>` for details"
+    )
     return "\n".join(lines)
 
 
@@ -839,9 +992,11 @@ def handle_catalog_search(catalog: CatalogLoader, query: str) -> str:
     ]
     for e in entries:
         lines.append(f"| `{e.id}` | {e.name} | {e.locality} | {e.weight} |")
-        
+
     lines.append("")
-    lines.append("Use `/wright install <id>` to add a tool   |   `/wright info <id>` for details")
+    lines.append(
+        "Use `/wright install <id>` to add a tool   |   `/wright info <id>` for details"
+    )
     return "\n".join(lines)
 
 
@@ -849,11 +1004,11 @@ def handle_info(catalog: CatalogLoader, entry_id: Optional[str]) -> str:
     """Show detailed info for a single catalog entry."""
     if not entry_id:
         return "❌ Missing tool ID. Usage: `/wright info <id>`"
-    
+
     entry = next((e for e in catalog.get_all() if e.id == entry_id), None)
     if not entry:
         return f"❌ Tool '{entry_id}' not found in catalog."
-        
+
     lines = [
         f"### 🛠️ {entry.name} (`{entry.id}`)",
         f"* **Vendor**: {entry.vendor}",
@@ -871,16 +1026,22 @@ def handle_info(catalog: CatalogLoader, entry_id: Optional[str]) -> str:
         lines.append(" ".join(entry.command))
         lines.append("```")
         lines.append("")
-        
+
     if entry.env_vars:
         lines.append("#### Required Credentials")
         for v in entry.env_vars:
             req_str = "required" if v.required else "optional"
             sec_str = "secret" if v.secret else "plain"
-            lines.append(f"- **{v.name}** ({v.label}): {v.description} ({req_str}, {sec_str})")
+            lines.append(
+                f"- **{v.name}** ({v.label}): {v.description} ({req_str}, {sec_str})"
+            )
         lines.append("")
-        
-    if entry.dependencies and (entry.dependencies.system or entry.dependencies.python or entry.dependencies.node):
+
+    if entry.dependencies and (
+        entry.dependencies.system
+        or entry.dependencies.python
+        or entry.dependencies.node
+    ):
         lines.append("#### Dependencies")
         if entry.dependencies.system:
             lines.append(f"- **System**: {', '.join(entry.dependencies.system)}")
@@ -888,36 +1049,39 @@ def handle_info(catalog: CatalogLoader, entry_id: Optional[str]) -> str:
             lines.append(f"- **Python**: {', '.join(entry.dependencies.python)}")
         if entry.dependencies.node:
             lines.append(f"- **Node**: {', '.join(entry.dependencies.node)}")
-            
+
     return "\n".join(lines)
 
 
 async def handle_install(catalog: CatalogLoader, entry_id: Optional[str]) -> str:
     if not entry_id:
         return "❌ Missing tool ID. Usage: `/wright install <id>`"
-    
+
     entry = next((e for e in catalog.get_all() if e.id == entry_id), None)
     if not entry:
         return f"❌ Tool '{entry_id}' not found in catalog."
-        
+
     res = await register_mcp_server(entry)
     if res.get("success"):
         return f"✅ Successfully installed '{entry.name}' ({entry.id})."
     else:
-        return f"❌ Failed to install '{entry.name}': {res.get('error', 'Unknown error')}"
+        return (
+            f"❌ Failed to install '{entry.name}': {res.get('error', 'Unknown error')}"
+        )
+
 
 def register_commands(ctx: Any, catalog: CatalogLoader) -> None:
     """Register /wright slash commands with Hermes."""
     global _HERMES_CONTEXT
     _HERMES_CONTEXT = ctx
-    
+
     async def handle_wright(raw_args: str, **kwargs) -> str:
         args = raw_args.strip().split()
         if not args:
             return WRIGHT_HELP_TEXT
-            
+
         subcommand = args[0].lower()
-        
+
         if subcommand == "start":
             return await handle_start()
         elif subcommand == "stop":
@@ -949,5 +1113,5 @@ def register_commands(ctx: Any, catalog: CatalogLoader) -> None:
         name="wright",
         handler=handle_wright,
         description="Wright engineering platform: start, stop, open UI, browse catalog, install tools.",
-        args_hint="<subcommand> [args...]"
+        args_hint="<subcommand> [args...]",
     )
