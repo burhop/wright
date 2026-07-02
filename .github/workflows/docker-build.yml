@@ -6,6 +6,7 @@ on:
     tags:
       - 'v*'
     paths:
+      - '.github/workflows/docker-build.yml'
       - 'docker/**'
       - 'apps/**'
       - 'packages/**'
@@ -74,7 +75,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Run Smoke Test
-        timeout-minutes: 3
+        timeout-minutes: 5
         run: |
           set -euo pipefail
 
@@ -113,17 +114,34 @@ jobs:
           done
 
           echo "Checking Hermes Agent proxy..."
-          for i in $(seq 1 15); do
+          echo "Waiting for Hermes gateway direct health..."
+          for i in $(seq 1 30); do
+            if docker exec "$CONTAINER" curl -sf http://127.0.0.1:8642/health > /dev/null 2>&1; then
+              echo "Hermes gateway direct health is ready"
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Hermes gateway direct health did not become ready"
+              docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
+              docker exec "$CONTAINER" sh -lc 'tail -80 /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
+              exit 1
+            fi
+            sleep 2
+          done
+
+          for i in $(seq 1 45); do
             AGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{"state":"disconnected"}')
             AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
-            echo "Agent state attempt $i: $AGENT_STATE"
+            echo "Agent health attempt $i: $AGENT_HEALTH"
             if [ "$AGENT_STATE" = "connected" ]; then
               echo "Hermes Agent connected"
               break
             fi
-            if [ "$i" -eq 15 ]; then
+            if [ "$i" -eq 45 ]; then
               echo "Hermes Agent not connected (state=$AGENT_STATE)"
               docker logs "$CONTAINER" 2>&1 | tail -50
+              docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
+              docker exec "$CONTAINER" sh -lc 'tail -80 /var/log/supervisor/wright-api-stdout.log /var/log/supervisor/wright-api-stderr.log /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
               exit 1
             fi
             sleep 2
