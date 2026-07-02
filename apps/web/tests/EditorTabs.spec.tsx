@@ -8,7 +8,9 @@ describe("EditorTabs", () => {
 
     render(
       <EditorTabs
-        tabs={[{ name: "iPhone7Case2.stl", path: "/iPhone7Case2.stl", type: "stl" }]}
+        tabs={[
+          { name: "iPhone7Case2.stl", path: "/iPhone7Case2.stl", type: "stl" },
+        ]}
         activeTabPath="/iPhone7Case2.stl"
         onSelectTab={vi.fn()}
         onCloseTab={onCloseTab}

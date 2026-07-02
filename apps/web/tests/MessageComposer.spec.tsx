@@ -106,12 +106,16 @@ describe("MessageComposer", () => {
     fireEvent.click(screen.getByRole("button", { name: "Add context" }));
 
     expect(screen.getByTestId("composer-plus-menu")).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: /command/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: /command/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("menuitem", { name: /workspace file/i }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Upload image")).toBeInTheDocument();
-    expect(screen.getByText("Run a Hermes or Wright slash command")).toBeInTheDocument();
+    expect(
+      screen.getByText("Run a Hermes or Wright slash command"),
+    ).toBeInTheDocument();
     expect(
       screen.getByText("Reference a file from this workspace"),
     ).toBeInTheDocument();

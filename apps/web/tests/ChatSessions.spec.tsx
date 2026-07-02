@@ -112,7 +112,6 @@ function WorkspaceScopedSessionsHarness() {
   );
 }
 
-
 describe("ChatProvider session state", () => {
   beforeEach(() => {
     vi.stubGlobal("localStorage", localStorageMock);
@@ -202,9 +201,15 @@ describe("ChatProvider session state", () => {
       expect(screen.getAllByTestId("session-row")).toHaveLength(2);
     });
 
-    expect(screen.getByText("Current Hermes Session:backend-only")).toBeInTheDocument();
-    expect(screen.getByText("Earlier CAD Session:local-only")).toBeInTheDocument();
-    expect(screen.getByTestId("active-session")).toHaveTextContent("local-only");
+    expect(
+      screen.getByText("Current Hermes Session:backend-only"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Earlier CAD Session:local-only"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("active-session")).toHaveTextContent(
+      "local-only",
+    );
   });
 
   it("preserves cached messages when backend refresh returns compact sessions", async () => {
@@ -291,7 +296,9 @@ describe("ChatProvider session state", () => {
       screen.getByText("Workspace One Session:workspace-1-session"),
     ).toBeInTheDocument();
     expect(screen.queryByText(/Workspace Two Session/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Unscoped Legacy Session/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Unscoped Legacy Session/),
+    ).not.toBeInTheDocument();
 
     const cachedSessions = JSON.parse(
       localStorageMock.getItem("wright-chat-sessions") || "[]",

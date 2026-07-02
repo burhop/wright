@@ -868,7 +868,10 @@ class HermesAdapter(BaseAgentEngine):
                 renders_dir.mkdir(parents=True, exist_ok=True)
                 dest = renders_dir / source_path.name
                 if dest.exists():
-                    dest = renders_dir / f"{source_path.stem}-{int(time.time())}{source_path.suffix}"
+                    dest = (
+                        renders_dir
+                        / f"{source_path.stem}-{int(time.time())}{source_path.suffix}"
+                    )
                 shutil.copy2(source_path, dest)
                 return f"/renders/{dest.name}"
             except OSError as exc:

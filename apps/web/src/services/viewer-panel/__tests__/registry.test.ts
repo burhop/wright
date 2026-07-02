@@ -196,5 +196,4 @@ describe("ViewerRegistry", () => {
 
     expect(markdownViewer?.id).toBe("markdown-viewer");
   });
-
 });

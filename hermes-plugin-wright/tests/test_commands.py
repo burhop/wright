@@ -263,8 +263,8 @@ async def test_handle_start_success(monkeypatch):
             res = await handle_start()
             assert "🚀 Wright is running!" in res
             assert "PID:     12345" in res
-            assert mock_popen.call_count == 2
-            api_call = mock_popen.call_args_list[1]
+            assert mock_popen.call_count == 1
+            api_call = mock_popen.call_args
             command = api_call.args[0]
             assert command[:3] == [r"C:\tools\uv.exe", "run", "--project"]
             assert "api.main:app" in command

@@ -36,5 +36,4 @@ describe("AppShell", () => {
       "Workspace Content",
     );
   });
-
 });

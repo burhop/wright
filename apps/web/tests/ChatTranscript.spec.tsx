@@ -78,5 +78,4 @@ describe("ChatTranscript", () => {
     expect(screen.getByText("development: Running")).toBeInTheDocument();
     expect(screen.getByText("Creating sketch geometry")).toBeInTheDocument();
   });
-
 });

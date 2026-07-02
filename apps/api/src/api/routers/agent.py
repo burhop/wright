@@ -43,7 +43,9 @@ def get_current_trace_id() -> str:
     return secrets.token_hex(16)
 
 
-async def ensure_workspace_mcp_servers_active(request: Request, session_id: str) -> None:
+async def ensure_workspace_mcp_servers_active(
+    request: Request, session_id: str
+) -> None:
     """Start enabled workspace MCP servers before a chat turn begins."""
 
     mcp_engine = getattr(request.app.state, "mcp_engine", None)
@@ -63,7 +65,9 @@ async def ensure_workspace_mcp_servers_active(request: Request, session_id: str)
             continue
         is_enabled = True
         if enabled_tools is not None:
-            is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
+            is_enabled = (server.name in enabled_tools) or (
+                server.server_id in enabled_tools
+            )
         if is_enabled:
             enabled_servers.append(server)
 

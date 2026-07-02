@@ -286,13 +286,19 @@ describe("WorkspacePanel session selection", () => {
     fireEvent.click(await screen.findByTestId("activity-bar-docs-btn"));
 
     expect(screen.getByText("Start Here")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Wright quickstart" })).toHaveAttribute(
+    expect(
+      screen.getByRole("link", { name: "Wright quickstart" }),
+    ).toHaveAttribute(
       "href",
       "https://github.com/burhop/wright/blob/dev/docs/getting-started/quickstart-local.md",
     );
-    expect(screen.getByRole("link", { name: "Hermes plugin guide" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Hermes plugin guide" }),
+    ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Explain this workspace" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Explain this workspace" }),
+    );
 
     expect(mockSendMessage).toHaveBeenCalledWith(
       "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
@@ -308,9 +314,14 @@ describe("WorkspacePanel session selection", () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByTestId("workspace-empty-state")).toBeInTheDocument();
-    expect(screen.getByText("Wright Engineering Workspace")).toBeInTheDocument();
-    expect(screen.queryByTestId("editor-tabs-container")).not.toBeInTheDocument();
+    expect(
+      await screen.findByTestId("workspace-empty-state"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Wright Engineering Workspace"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("editor-tabs-container"),
+    ).not.toBeInTheDocument();
   });
-
 });

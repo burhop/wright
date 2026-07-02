@@ -2,7 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as THREE from "three";
-import ThreeDViewer, { fitCameraToRadius } from "../src/components/common/ThreeDViewer";
+import ThreeDViewer, {
+  fitCameraToRadius,
+} from "../src/components/common/ThreeDViewer";
 
 // Mock ResizeObserver for JSDOM environment
 class MockResizeObserver {

@@ -68,7 +68,10 @@ function preprocessContent(
       ) => {
         if (mediaToken) {
           const mediaPath = mediaToken.substring(6); // Strip "MEDIA:"
-          if (mediaPath.startsWith("http://") || mediaPath.startsWith("https://")) {
+          if (
+            mediaPath.startsWith("http://") ||
+            mediaPath.startsWith("https://")
+          ) {
             return `![Rendered Image](${mediaPath})`;
           }
 

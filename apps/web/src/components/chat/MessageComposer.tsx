@@ -22,7 +22,10 @@ interface MessageComposerProps {
 function getMcpStatusTone(status: string): { label: string; color: string } {
   if (status === "ok") return { label: "Active", color: "#22c55e" };
   if (status === "warning" || status === "mismatch") {
-    return { label: status === "mismatch" ? "Mismatch" : "Needs attention", color: "#f59e0b" };
+    return {
+      label: status === "mismatch" ? "Mismatch" : "Needs attention",
+      color: "#f59e0b",
+    };
   }
   return { label: "Error", color: "#ef4444" };
 }
@@ -671,8 +674,7 @@ export function MessageComposer({
                   >
                     <strong
                       style={{
-                        color:
-                          mcpTone?.color || "#ef4444",
+                        color: mcpTone?.color || "#ef4444",
                       }}
                     >
                       MCP Status: {mcpTone?.label || "Unknown"}

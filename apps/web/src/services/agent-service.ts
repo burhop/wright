@@ -114,7 +114,8 @@ function summarizeProgressPayload(data: any): {
     .filter((part) => typeof part === "string" && part.trim().length > 0)
     .map((part) => String(part).trim());
   const uniqueDetails = Array.from(new Set(details));
-  const detail = uniqueDetails.length > 0 ? uniqueDetails.join(" - ") : undefined;
+  const detail =
+    uniqueDetails.length > 0 ? uniqueDetails.join(" - ") : undefined;
 
   return {
     title,

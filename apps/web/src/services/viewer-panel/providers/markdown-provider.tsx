@@ -56,7 +56,9 @@ const isRelativeUrl = (url: string) =>
 
 const isWorkspaceContentUrl = (url: string) =>
   url.startsWith("/api/workspace/files/content?") ||
-  Boolean(API_BASE && url.startsWith(`${API_BASE}/api/workspace/files/content?`));
+  Boolean(
+    API_BASE && url.startsWith(`${API_BASE}/api/workspace/files/content?`),
+  );
 
 const normalizeWorkspacePath = (path: string) =>
   path.startsWith("/") ? path : `/${path}`;
@@ -140,8 +142,16 @@ const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({ document }) => {
                 return (
                   <a
                     href={safeHref}
-                    target={isWorkspaceHref || isAnchorUrl(safeHref) ? undefined : "_blank"}
-                    rel={isWorkspaceHref || isAnchorUrl(safeHref) ? undefined : "noopener noreferrer"}
+                    target={
+                      isWorkspaceHref || isAnchorUrl(safeHref)
+                        ? undefined
+                        : "_blank"
+                    }
+                    rel={
+                      isWorkspaceHref || isAnchorUrl(safeHref)
+                        ? undefined
+                        : "noopener noreferrer"
+                    }
                     {...props}
                   >
                     {children}
@@ -216,7 +226,10 @@ export class MarkdownProvider implements ViewerProvider<MarkdownDocument> {
     });
   }
 
-  async save(document: MarkdownDocument, _token: CancellationToken): Promise<void> {
+  async save(
+    document: MarkdownDocument,
+    _token: CancellationToken,
+  ): Promise<void> {
     document.markClean();
   }
 
@@ -232,7 +245,10 @@ export class MarkdownProvider implements ViewerProvider<MarkdownDocument> {
     );
   }
 
-  async revert(document: MarkdownDocument, _token: CancellationToken): Promise<void> {
+  async revert(
+    document: MarkdownDocument,
+    _token: CancellationToken,
+  ): Promise<void> {
     document.markClean();
   }
 

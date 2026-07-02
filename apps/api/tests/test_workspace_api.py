@@ -1306,7 +1306,9 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "warning"
-        assert data["message"] == "MCP server installed but not active: Inactive Test MCP"
+        assert (
+            data["message"] == "MCP server installed but not active: Inactive Test MCP"
+        )
         assert data["running_mcps"] == [
             {
                 "name": "Inactive Test MCP",

@@ -21,7 +21,10 @@ const PART_SPECULAR = 0x7dd3fc;
 const GRID_PRIMARY = 0x1e293b;
 const GRID_SECONDARY = 0x0d1220;
 
-export const fitCameraToRadius = (camera: THREE.PerspectiveCamera, radius: number) => {
+export const fitCameraToRadius = (
+  camera: THREE.PerspectiveCamera,
+  radius: number,
+) => {
   const safeRadius = Math.max(radius, 0.001);
   const fov = THREE.MathUtils.degToRad(camera.fov);
   const distance = (safeRadius / Math.sin(fov / 2)) * 1.35;
@@ -199,7 +202,11 @@ export class ThreeDProvider implements ViewerProvider<ThreeDDocument> {
       radius !== undefined ? fitCameraToRadius(camera, radius).distance : 40;
     controls.minDistance =
       radius !== undefined ? Math.max(0.01, radius * 0.02) : 1;
-    controls.maxDistance = Math.max(1, fitDistance * 12, (radius || 0.001) * 40);
+    controls.maxDistance = Math.max(
+      1,
+      fitDistance * 12,
+      (radius || 0.001) * 40,
+    );
 
     const resizeObserver = new ResizeObserver((entries) => {
       if (!entries || entries.length === 0) return;

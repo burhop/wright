@@ -199,22 +199,15 @@ function writeCachedSessions(visibleSessions: ChatSession[]): void {
     ...cachedSessions,
     ...visibleSessions,
   ]);
-  localStorage.setItem(
-    "wright-chat-sessions",
-    JSON.stringify(mergedSessions),
-  );
+  localStorage.setItem("wright-chat-sessions", JSON.stringify(mergedSessions));
 }
 
 function removeCachedSession(sessionId: string): void {
   const cachedSessions = readCachedSessions().filter(
     (session) => session.sessionId !== sessionId,
   );
-  localStorage.setItem(
-    "wright-chat-sessions",
-    JSON.stringify(cachedSessions),
-  );
+  localStorage.setItem("wright-chat-sessions", JSON.stringify(cachedSessions));
 }
-
 
 function getActiveSessionId(
   sessions: ChatSession[],
@@ -583,7 +576,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       dispatch({
         type: "SET_SESSIONS",
-        sessions: dedupeSessionsById([...sessions, ...locallyCachedOnlySessions]),
+        sessions: dedupeSessionsById([
+          ...sessions,
+          ...locallyCachedOnlySessions,
+        ]),
       });
     } catch (err) {
       console.error(

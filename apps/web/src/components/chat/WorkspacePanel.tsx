@@ -1186,7 +1186,10 @@ export function WorkspacePanel({
               <button
                 data-testid="create-session-btn"
                 onClick={async () => {
-                  const newId = await createSession(workspacePath, _workspaceId);
+                  const newId = await createSession(
+                    workspacePath,
+                    _workspaceId,
+                  );
                   if (newId) {
                     await bindSessionToWorkspace(newId);
                   }
@@ -1939,10 +1942,22 @@ export function WorkspacePanel({
                   title: "Start Here",
                   body: "Use these references when you need install help, Hermes plugin details, or MCP tool guidance.",
                   links: [
-                    ["Wright quickstart", "https://github.com/burhop/wright/blob/dev/docs/getting-started/quickstart-local.md"],
-                    ["Hermes plugin guide", "https://github.com/burhop/wright/blob/dev/docs/getting-started/hermes-plugin.md"],
-                    ["Hermes desktop notes", "https://github.com/burhop/wright/blob/dev/docs/hermes-desktop-wright.md"],
-                    ["MCP tools catalog", "https://github.com/burhop/wright/blob/dev/docs/mcp-catalog/tools-list.md"],
+                    [
+                      "Wright quickstart",
+                      "https://github.com/burhop/wright/blob/dev/docs/getting-started/quickstart-local.md",
+                    ],
+                    [
+                      "Hermes plugin guide",
+                      "https://github.com/burhop/wright/blob/dev/docs/getting-started/hermes-plugin.md",
+                    ],
+                    [
+                      "Hermes desktop notes",
+                      "https://github.com/burhop/wright/blob/dev/docs/hermes-desktop-wright.md",
+                    ],
+                    [
+                      "MCP tools catalog",
+                      "https://github.com/burhop/wright/blob/dev/docs/mcp-catalog/tools-list.md",
+                    ],
                   ],
                 },
               ].map((section) => (
@@ -2024,8 +2039,8 @@ export function WorkspacePanel({
                     lineHeight: "1.4",
                   }}
                 >
-                  Send one of these to Hermes to bootstrap the current
-                  workspace context.
+                  Send one of these to Hermes to bootstrap the current workspace
+                  context.
                 </p>
                 <div
                   style={{
@@ -2066,7 +2081,8 @@ export function WorkspacePanel({
                           !activeSessionId || state.isStreaming
                             ? "not-allowed"
                             : "pointer",
-                        opacity: !activeSessionId || state.isStreaming ? 0.55 : 1,
+                        opacity:
+                          !activeSessionId || state.isStreaming ? 0.55 : 1,
                       }}
                     >
                       {label}

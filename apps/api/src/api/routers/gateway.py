@@ -101,12 +101,10 @@ async def call_gateway_tool(
     server_key, tool_name = body.name.split("__", 1)
     db_path = engine.db_path
     workspace = None
-    enabled_tools = None
     approval_context = ApprovalContext()
     try:
         workspace = get_gateway_workspace(db_path)
         if workspace:
-            enabled_tools = get_workspace_enabled_tools(db_path, workspace["session_id"])
             approval_context = ApprovalContext(workspace_id=workspace["workspace_id"])
     except Exception:
         pass
