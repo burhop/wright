@@ -2,7 +2,7 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke alpha-release-check
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test hermes-plugin-lifecycle-test alpha-release-check
 
 PYTHON_WORKSPACE_PATHS := apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
@@ -32,6 +32,17 @@ docker-build:
 
 docker-smoke:
 	./scripts/docker-smoke-test.sh
+
+hermes-plugin-install-test:
+	./scripts/test-hermes-plugin-install.sh
+
+hermes-plugin-uninstall-test:
+	./scripts/test-hermes-plugin-uninstall.sh
+
+hermes-plugin-update-test:
+	./scripts/test-hermes-plugin-update.sh
+
+hermes-plugin-lifecycle-test: hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test
 
 docker-test:
 	@if [ ! -f docker/.env ]; then \

@@ -13,7 +13,7 @@ def test_plugin_manifest_supports_current_hermes_agent():
 
     assert manifest["name"] == "wright"
     assert "commands" in manifest["capabilities"]
-    assert Version(manifest["min_hermes_version"]) <= Version("0.17.0")
+    assert Version(manifest["min_hermes_version"]) == Version("0.18.0")
 
 
 def test_flat_directory_plugin_load_registers_wright_command(monkeypatch):

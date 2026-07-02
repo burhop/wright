@@ -42,4 +42,30 @@ def test_docker_smoke_script_keeps_gateway_process_name() -> None:
 def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
-    assert "hermes-agent==0.17.0" in dockerfile
+    assert "hermes-agent==0.18.0" in dockerfile
+
+
+def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> None:
+    makefile = read_text("Makefile")
+    readme = read_text("scripts/README.md")
+    common = read_text("scripts/hermes-plugin-lifecycle-common.sh")
+
+    for script in (
+        "test-hermes-plugin-install.sh",
+        "test-hermes-plugin-uninstall.sh",
+        "test-hermes-plugin-update.sh",
+    ):
+        script_text = read_text(f"scripts/{script}")
+        assert "hermes-plugin-lifecycle-common.sh" in script_text
+        assert script in readme
+
+    assert "hermes-plugin-lifecycle-test:" in makefile
+    assert "WRIGHT_DOCKER_IMAGE" in common
+    assert "WRIGHT_PLUGIN_REF" in common
+    assert "--ref dev|main" in common
+    assert "https://github.com/burhop/wright" in common
+    assert "tree/${PLUGIN_REF}/${PLUGIN_SUBDIR}" in common
+    assert "--ref main" in readme
+    assert "hermes plugins install" in read_text("scripts/test-hermes-plugin-install.sh")
+    assert "hermes plugins remove" in read_text("scripts/test-hermes-plugin-uninstall.sh")
+    assert "hermes plugins update" in read_text("scripts/test-hermes-plugin-update.sh")
