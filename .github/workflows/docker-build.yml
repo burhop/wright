@@ -123,7 +123,7 @@ jobs:
             if [ "$i" -eq 30 ]; then
               echo "Hermes gateway direct health did not become ready"
               docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
-              docker exec "$CONTAINER" sh -lc 'tail -80 /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
+              docker exec "$CONTAINER" sh -lc 'tail -n 80 /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
               exit 1
             fi
             sleep 2
@@ -141,7 +141,7 @@ jobs:
               echo "Hermes Agent not connected (state=$AGENT_STATE)"
               docker logs "$CONTAINER" 2>&1 | tail -50
               docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
-              docker exec "$CONTAINER" sh -lc 'tail -80 /var/log/supervisor/wright-api-stdout.log /var/log/supervisor/wright-api-stderr.log /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
+              docker exec "$CONTAINER" sh -lc 'tail -n 80 /var/log/supervisor/wright-api-stdout.log /var/log/supervisor/wright-api-stderr.log /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
               exit 1
             fi
             sleep 2
