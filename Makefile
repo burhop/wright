@@ -2,7 +2,9 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test check security-scan docker-smoke alpha-release-check
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke alpha-release-check
+
+PYTHON_WORKSPACE_PATHS := apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
 # Default target displays help
 help:
@@ -20,6 +22,7 @@ help:
 	@echo "  format          - Apply Ruff and Prettier code formatting"
 	@echo "  typecheck       - Run Mypy and TSC type check validation"
 	@echo "  test            - Run pytest and frontend vitest suites"
+	@echo "  test-external-freecad - Run opt-in FreeCAD MCP package tests"
 	@echo "  check           - Execute all local quality gates (lint + format + typecheck + test)"
 	@echo "  security-scan   - Run public-alpha, Gitleaks, and TruffleHog secret scans"
 	@echo "  alpha-release-check - Run final alpha release gates including Docker smoke"
@@ -99,31 +102,36 @@ docker-test-live:
 
 # Local Developer Targets (Non-Docker)
 lint:
-	uv run ruff check apps/api/ packages/
+	uv run ruff check $(PYTHON_WORKSPACE_PATHS)
 	npx -w apps/web eslint .
 
 format:
-	uv run ruff format apps/api/ packages/
+	uv run ruff format $(PYTHON_WORKSPACE_PATHS)
 	npx prettier --write apps/web/
 
 typecheck:
 	uv run pip install mypy --quiet
-	uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "Mypy checks failed (warning only)"
+	uv run mypy $(PYTHON_WORKSPACE_PATHS) --ignore-missing-imports || echo "Mypy checks failed (warning only)"
 	npx tsc --noEmit -p apps/web/tsconfig.app.json
 
 test:
 	uv run pytest
+	uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
 	npm run test --workspace=apps/web
 
+test-external-freecad:
+	cd packages/freecad_mcp && uv run pytest
+
 check:
-	uv run ruff check apps/api/ packages/
+	uv run ruff check $(PYTHON_WORKSPACE_PATHS)
 	npx -w apps/web eslint .
-	uv run ruff format --check apps/api/ packages/
+	uv run ruff format --check $(PYTHON_WORKSPACE_PATHS)
 	npx prettier --check apps/web/
 	uv run pip install mypy --quiet
-	uv run mypy apps/api/ packages/ --ignore-missing-imports || echo "Mypy checks failed (warning only)"
+	uv run mypy $(PYTHON_WORKSPACE_PATHS) --ignore-missing-imports || echo "Mypy checks failed (warning only)"
 	npx tsc --noEmit -p apps/web/tsconfig.app.json
 	uv run pytest
+	uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
 	npm run test --workspace=apps/web
 
 security-scan:

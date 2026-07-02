@@ -23,6 +23,17 @@ members = [
     "packages/workspace_service",
 ]
 
+[tool.pytest.ini_options]
+testpaths = [
+    "apps/api/tests",
+    "packages/agent_adapters/tests",
+    "packages/core/tests",
+    "packages/data_vault/tests",
+    "packages/tool_registry/tests",
+    "packages/workspace_service/tests",
+    "tests",
+]
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",

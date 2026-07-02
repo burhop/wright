@@ -41,6 +41,13 @@ Tests individual React components in isolation. Verifies layout rendering, event
 Validates complete page-level workflows (e.g., tool installation tabs, Git commits, file browser navigation) against a fully mocked backend API.
 *   **Command**: `npx playwright test`
 
+Tests tagged `@live` are excluded from this default mocked command. To include those tests, start the required backend first and run:
+
+```bash
+PLAYWRIGHT_INCLUDE_LIVE=1 npx playwright test
+```
+
+
 ### Tier 3: E2E System Tests (Pytest & Playwright Live)
 Executes happy-path end-to-end smoke tests against a live local server, validating SQLite database migrations, SSE websocket streams, and geometry creation.
 *   **Command**: `pytest` or `make docker-test-e2e`
@@ -105,6 +112,8 @@ On Windows PowerShell:
 ```powershell
 scripts/alpha-release-check.ps1
 ```
+
+`packages/freecad_mcp` is treated as an external package with its own Python project and dependencies. It is intentionally excluded from the root `make check` gate; run `make test-external-freecad` when validating that package specifically.
 
 For engineering MCP catalog validation, follow the clean-container workflow in
 [`docs/mcp-catalog/mcp-server-testing-process.md`](../mcp-catalog/mcp-server-testing-process.md).

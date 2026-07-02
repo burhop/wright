@@ -8,6 +8,7 @@ export default defineConfig({
   maxFailures: process.env.CI ? 1 : undefined,
   workers: process.env.CI ? 1 : undefined,
   reporter: "line",
+  grepInvert: process.env.PLAYWRIGHT_INCLUDE_LIVE ? undefined : /@live/,
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173",
     trace: process.env.CI ? "retain-on-failure" : "on-first-retry",

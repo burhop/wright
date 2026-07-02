@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Dashboard Page - Real Backend Integration', () => {
+test.describe('Dashboard Page - Real Backend Integration @live', () => {
   test('should support clicking + Create Workspace and selecting an existing workspace', async ({ page }) => {
     // Listen for browser logs and page errors
     page.on('console', msg => console.log(`[BROWSER CONSOLE] [${msg.type()}] ${msg.text()}`));
