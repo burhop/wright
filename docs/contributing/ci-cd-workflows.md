@@ -13,7 +13,7 @@ enabled only when credentials are configured.
 | `python-quality.yml` | Push or pull request to `main` or `dev` | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`. |
 | `frontend-quality.yml` | Push or pull request to `main` or `dev` | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`. |
 | `public-alpha-safety.yml` | Push, pull request, or manual run | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan. |
-| `docker-build.yml` | Push to `main`, `dev`, or `v*` tags when Docker/app paths change; pull requests to `main` or `dev` | Builds and loads a local `wright-agent:<sha>` image, runs a non-blocking Trivy scan, and runs the Docker smoke test. It does not publish public images. |
+| `docker-build.yml` | Push to `main`, `dev`, or `v*` tags when Docker/app paths change; pull requests to `main` or `dev` | Builds and loads a local `wright:<sha>` image, runs a non-blocking Trivy scan, and runs the Docker smoke test. It does not publish public images. |
 | `docs-deploy.yml` | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
 | `release.yml` | Push to tag matching `v*` | Builds and pushes release images, publishes the GitHub Release, marks alpha/beta/rc tags as prereleases, and applies the stable-only `latest` policy. |
 | `release-drafter.yml` | Push to `main` or `dev` | Updates the draft release notes from merged PR metadata. |
@@ -77,7 +77,7 @@ same fix.
 `docker-build.yml` validates the appliance image locally before any release
 publishing path is used:
 
-1. Build and load `wright-agent:<sha>` from `docker/Dockerfile`.
+1. Build and load `wright:<sha>` from `docker/Dockerfile`.
 2. Start a temporary container with placeholder `LLM_API_URL`, `LLM_API_KEY`,
    and `LLM_API_MODEL` values.
 3. Wait for `http://127.0.0.1:8090/api/health`.
@@ -98,7 +98,7 @@ images are published by `release.yml` from version tags.
 `release.yml` is the publishing path for public images and GitHub Releases.
 
 - Tags matching `v*` trigger the workflow.
-- The workflow pushes `ghcr.io/<owner>/wright-agent:<tag>` using the GitHub
+- The workflow pushes `ghcr.io/<owner>/wright:<tag>` using the GitHub
   token and `packages: write` permission.
 - Docker Hub publishing is optional. It is enabled only when
   `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
@@ -153,7 +153,7 @@ For Docker release candidates, also run the local smoke helper against the image
 you plan to publish:
 
 ```bash
-WRIGHT_DOCKER_IMAGE=wright-agent:<tag> WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
+WRIGHT_DOCKER_IMAGE=wright:<tag> WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
 ```
 
 ## Follow-Up Gaps

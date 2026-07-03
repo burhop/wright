@@ -593,7 +593,7 @@ systemctl --user restart hermes-gateway-wright
 # 1. Pull or rebuild the image
 docker build -t wright-appliance:latest -f docker/Dockerfile .
 # — or —
-docker pull ghcr.io/burhop/wright-agent:<tag>
+docker pull ghcr.io/burhop/wright:<tag>
 
 # 2. Stop the minimal compose stack (data persists in volumes)
 docker compose -f docker-compose.minimal.yml down

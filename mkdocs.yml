@@ -44,7 +44,14 @@ nav:
   - Getting Started:
       - Overview: getting-started/overview.md
       - Prerequisites: getting-started/prerequisites.md
+      - Install Matrix: getting-started/install-matrix.md
       - Docker Appliance: getting-started/quickstart-docker.md
+      - Windows 11: getting-started/windows-11.md
+      - Linux and GB10: getting-started/linux-gb10.md
+      - Hermes Desktop: getting-started/hermes-desktop.md
+      - Python Packages: getting-started/python-packages.md
+      - MCP Contributors: getting-started/mcp-contributors.md
+      - Enterprise Evaluation: getting-started/enterprise-evaluation.md
       - PC Local Setup: getting-started/quickstart-local.md
       - GB10 and DGX Workstations: getting-started/workstation-gb10-dgx.md
       - Existing Hermes Plugin: getting-started/hermes-plugin.md
@@ -71,6 +78,18 @@ nav:
       - Public Launch Checklist: public-launch-checklist.md
       - Alpha Release Notes Template: alpha-release-notes-template.md
       - Hermes Plugin Mirror Release: release/hermes-plugin-mirror.md
+  - Release:
+      - Community Release Readiness: release/community-release-readiness.md
+      - Python Packaging: release/python-packaging.md
+      - Container Publishing: release/container-publishing.md
+  - Community:
+      - Funding: community/funding.md
+      - Commercial Support: community/commercial-support.md
+      - Partner Brief: community/partner-brief.md
+      - Visibility Checklist: community/visibility-checklist.md
+      - Demo Gallery: community/demo-gallery.md
+      - Launch Indicators: community/launch-indicators.md
+      - Discord Admin: community/discord-admin.md
   - API Reference: api/api-reference.md
   - MCP Tools Catalog:
       - Tool Directory: mcp-catalog/tools-list.md

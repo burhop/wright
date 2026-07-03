@@ -159,8 +159,8 @@ def test_public_docker_docs_match_gateway_contract() -> None:
     assert "Hermes gateway on :8642 internal" in dockerfile
     assert "bring-your-own-AI" in docker_hub
     assert "does not bundle MCP-specific host software" in docker_hub
-    assert "ghcr.io/burhop/wright-agent:<tag>" in docker_hub
-    assert "<dockerhub-username>/wright-agent:<tag>" in docker_hub
+    assert "ghcr.io/burhop/wright:<tag>" in docker_hub
+    assert "burhop/wright:<tag>" in docker_hub
     assert "do not move `latest`" in docker_hub
     assert "Internal only" in docker_hub
     assert "`8642`" in docker_hub

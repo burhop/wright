@@ -18,7 +18,8 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+"></a>
   <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-22%2B-green.svg" alt="Node 22+"></a>
-  <a href="https://github.com/burhop/wright/pkgs/container/wright-agent"><img src="https://img.shields.io/badge/image-GHCR-blue" alt="GHCR image"></a>
+  <a href="https://github.com/burhop/wright/pkgs/container/wright"><img src="https://img.shields.io/badge/image-GHCR-blue" alt="GHCR image"></a>
+  <a href="https://pypi.org/project/wright-engineering/"><img src="https://img.shields.io/badge/pypi-wright--engineering-blue" alt="PyPI package"></a>
   <a href="https://github.com/burhop/wright/discussions"><img src="https://img.shields.io/badge/discussions-GitHub-orange?logo=github" alt="GitHub Discussions"></a>
   <a href="https://github.com/burhop/wright/stargazers"><img src="https://img.shields.io/github/stars/burhop/wright.svg?style=social" alt="GitHub stars"></a>
 </p>
@@ -93,8 +94,19 @@ Browse STEP, STL, G-code, and other artifacts generated during design turns.
 
 ### Docker Appliance
 
-Start the local alpha appliance with Docker Compose. This path runs Wright and
-Hermes integration services locally, then connects them to your own LLM endpoint.
+Docker is the primary end-user install path for the public alpha. Published
+release images use `burhop/wright:<tag>` on Docker Hub and
+`ghcr.io/burhop/wright:<tag>` on GHCR.
+
+With a release image and an env file:
+
+```bash
+cp docker/.env.example docker/.env
+# Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL
+docker run --rm -p 127.0.0.1:8080:8000 --env-file docker/.env burhop/wright:<tag>
+```
+
+From a source checkout while developing or before a release image is cut:
 
 ```bash
 git clone https://github.com/burhop/wright.git
@@ -120,14 +132,22 @@ For development outside Docker, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Images and Releases
 
-GHCR is Wright's default public release image registry:
+Public release images are published as:
 
 ```text
-ghcr.io/burhop/wright-agent:<tag>
+burhop/wright:<tag>
+ghcr.io/burhop/wright:<tag>
 ```
 
-Docker Hub publishing is optional and only runs when maintainers configure
-`DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets. Prerelease tags
+The public-alpha Python helper package is:
+
+```bash
+pip install wright-engineering
+wright doctor
+```
+
+Docker remains the primary end-user install path. `wright-engineering` is a
+lightweight helper/discovery package, not the full appliance. Prerelease tags
 such as `v0.1.0-alpha.1` do not move `latest`; stable tags may.
 
 ## Architecture
@@ -220,6 +240,8 @@ Looking for a place to start? Browse issues labeled
 
 - Ask usage questions in
   [GitHub Discussions](https://github.com/burhop/wright/discussions).
+- Contact maintainers for support, sponsorship, and partner questions at
+  `wright@makerengineer.com`.
 - Report reproducible bugs with
   [GitHub Issues](https://github.com/burhop/wright/issues/new/choose).
 - Report security issues privately using [SECURITY.md](SECURITY.md); do not

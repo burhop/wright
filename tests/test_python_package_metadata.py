@@ -25,27 +25,25 @@ def assert_pypi_metadata(project: dict) -> None:
         assert project["urls"][url_key].startswith("https://")
 
 
-def test_wright_core_has_pypi_ready_metadata() -> None:
-    project = read_project("packages/core/pyproject.toml")
+def test_wright_engineering_root_package_has_public_alpha_metadata() -> None:
+    project = read_project("pyproject.toml")
 
-    assert project["name"] == "wright-core"
+    assert project["name"] == "wright-engineering"
     assert project["readme"] == "README.md"
+    assert project["dependencies"] == []
+    assert project["scripts"]["wright"] == "wright_engineering.cli:main"
+    assert "Public-alpha helper CLI" in project["description"]
     assert_pypi_metadata(project)
-    assert any(dep.startswith("opentelemetry-api>=") for dep in project["dependencies"])
-    assert (ROOT / "packages/core/README.md").exists()
+    assert (ROOT / "src/wright_engineering/__init__.py").exists()
+    assert (ROOT / "src/wright_engineering/cli.py").exists()
 
 
-def test_wright_tool_registry_has_pypi_ready_metadata_and_bounded_core_dependency() -> (
-    None
-):
-    project = read_project("packages/tool_registry/pyproject.toml")
-
-    assert project["name"] == "wright-tool-registry"
-    assert project["readme"] == "README.md"
-    assert_pypi_metadata(project)
-    assert any(
-        dep.startswith("wright-core>=") and ",<" in dep
-        for dep in project["dependencies"]
+def test_component_packages_are_not_advertised_as_alpha_pypi_packages() -> None:
+    python_packages = (ROOT / "docs/getting-started/python-packages.md").read_text(
+        encoding="utf-8"
     )
-    assert any(dep.startswith("PyYAML>=") for dep in project["dependencies"])
-    assert (ROOT / "packages/tool_registry/README.md").exists()
+
+    assert "pip install wright-engineering" in python_packages
+    assert "are workspace-local for alpha" in python_packages
+    assert "https://pypi.org/project/wright-core/" not in python_packages
+    assert "https://pypi.org/project/wright-tool-registry/" not in python_packages

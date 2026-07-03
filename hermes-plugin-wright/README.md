@@ -61,10 +61,7 @@ To migrate:
 
 ## Package Dependencies
 
-Stable mirror releases depend on versioned Python packages published from the main Wright repository:
-
-- `wright-core`: https://pypi.org/project/wright-core/
-- `wright-tool-registry`: https://pypi.org/project/wright-tool-registry/
+Public alpha mirror builds use pinned Git revisions while the component package boundaries are being stabilized. The user-facing PyPI package for alpha is `wright-engineering`: https://pypi.org/project/wright-engineering/. Component packages remain workspace-local for alpha and are not advertised as public PyPI installs yet.
 
 Development mirror builds may use TestPyPI packages or pinned Git revisions while release candidates are being validated.
 

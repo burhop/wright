@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_publish_workflow_uses_trusted_publishing_and_package_inputs() -> None:
+def test_publish_workflow_uses_trusted_publishing_and_alpha_package_inputs() -> None:
     workflow = (ROOT / ".github/workflows/publish-python-packages.yml").read_text(
         encoding="utf-8"
     )
@@ -18,3 +18,8 @@ def test_publish_workflow_uses_trusted_publishing_and_package_inputs() -> None:
     assert "pypa/gh-action-pypi-publish" in workflow
     assert "repository-url: https://test.pypi.org/legacy/" in workflow
     assert "scripts/build-python-distributions.sh" in workflow
+    assert "wright-engineering" in workflow
+    assert "wright-engineering-v*" in workflow
+    assert 'package_dir="."' in workflow
+    assert "wright-core" not in workflow
+    assert "wright-tool-registry" not in workflow

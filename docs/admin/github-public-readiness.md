@@ -52,7 +52,7 @@ Protect `main` with these minimum public-alpha rules:
 - [ ] Enable GitHub Pages from the `gh-pages` branch because
   `.github/workflows/docs-deploy.yml` deploys with `mkdocs gh-deploy`.
 - [ ] Confirm docs do not deploy on pull requests; PRs should build only.
-- [ ] Configure the GHCR package `ghcr.io/burhop/wright-agent` as public before
+- [ ] Configure the GHCR package `ghcr.io/burhop/wright` as public before
   publishing alpha releases.
 - [ ] Configure Docker Hub secrets only if Docker Hub publishing is intended:
   `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.

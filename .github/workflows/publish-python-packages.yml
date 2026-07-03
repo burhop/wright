@@ -8,8 +8,7 @@ on:
         required: true
         type: choice
         options:
-          - wright-core
-          - wright-tool-registry
+          - wright-engineering
       version:
         description: Expected package version
         required: true
@@ -24,8 +23,7 @@ on:
           - pypi
   push:
     tags:
-      - 'wright-core-v*'
-      - 'wright-tool-registry-v*'
+      - 'wright-engineering-v*'
 
 permissions:
   contents: read
@@ -49,14 +47,12 @@ jobs:
             tag="${GITHUB_REF_NAME}"
             target="pypi"
             case "$tag" in
-              wright-core-v*) package="wright-core" ;;
-              wright-tool-registry-v*) package="wright-tool-registry" ;;
+              wright-engineering-v*) package="wright-engineering" ;;
               *) echo "Unsupported package tag: $tag" >&2; exit 1 ;;
             esac
           fi
           case "$package" in
-            wright-core) package_dir="packages/core" ;;
-            wright-tool-registry) package_dir="packages/tool_registry" ;;
+            wright-engineering) package_dir="." ;;
             *) echo "Unsupported package: $package" >&2; exit 1 ;;
           esac
           echo "package=$package" >> "$GITHUB_OUTPUT"

@@ -26,7 +26,7 @@ def test_docker_smoke_script_docs_include_existing_image_mode() -> None:
     readme = read_text("scripts/README.md")
 
     assert "warns and continues if `LLM_API_URL` is missing" in readme
-    assert "WRIGHT_DOCKER_IMAGE=wright-agent:latest" in readme
+    assert "WRIGHT_DOCKER_IMAGE=wright:latest" in readme
     assert "WRIGHT_DOCKER_SKIP_BUILD=1" in readme
 
 

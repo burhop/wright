@@ -2,7 +2,7 @@
 
 - Result: partial
 - Environment: windows_11_x64
-- Container: wright-agent:latest
+- Container: wright:latest
 - Follow-up required: True
 
 ## Diagnostics
