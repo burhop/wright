@@ -125,6 +125,18 @@ async def call_gateway_tool(
             detail=f"MCP Server with key prefix '{server_key}' not found.",
         )
 
+    if workspace:
+        enabled_tools = get_workspace_enabled_tools(db_path, workspace["session_id"])
+        is_workspace_enabled = enabled_tools is None or (
+            target_server.name in enabled_tools
+            or target_server.server_id in enabled_tools
+        )
+        if is_workspace_enabled:
+            approval_context = ApprovalContext(
+                workspace_id=workspace["workspace_id"],
+                workspace_approvals=set(target_server.approval_gates or []),
+            )
+
     # Start the server runner if not active
     try:
         runner = engine._active_runners.get(target_server.server_id)
