@@ -25,23 +25,6 @@ test.describe("Create Session Button E2E", () => {
       });
     });
 
-    // Mock workspace by id
-    await page.route('**/api/workspace/by-id/*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          workspace_id: 'ws-1',
-          session_id: 'session-1',
-          workspace_name: 'Test Project',
-          local_path: '/tmp/wright-e2e-workspace',
-          git_remote_url: null,
-          git_username: null,
-          updated_at: Math.floor(Date.now() / 1000)
-        }),
-      });
-    });
-
     // Mock workspace activation
     await page.route('**/api/workspace/activate', async (route) => {
       await route.fulfill({
@@ -127,6 +110,36 @@ test.describe("Create Session Button E2E", () => {
       });
     });
 
+    // Mock workspace-scoped sessions before the generic workspace route.
+    await page.route('**/api/workspace/by-id/ws-1/sessions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          sessions: [
+            { session_id: 'session-1', title: 'Session One', created_at: Date.now(), updated_at: Date.now(), message_count: 0 }
+          ]
+        }),
+      });
+    });
+
+    // Mock workspace by id
+    await page.route('**/api/workspace/by-id/ws-1', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          workspace_id: 'ws-1',
+          session_id: 'session-1',
+          workspace_name: 'Test Project',
+          local_path: '/tmp/wright-e2e-workspace',
+          git_remote_url: null,
+          git_username: null,
+          updated_at: Math.floor(Date.now() / 1000)
+        }),
+      });
+    });
+
     // Mock tool lists
     await page.route('**/api/mcp/servers', async (route) => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ servers: [] }) });
@@ -161,14 +174,14 @@ test.describe("Create Session Button E2E", () => {
       });
     });
 
-    // Intercept workspace session association update
-    let associationUpdatedPayload: any = null;
-    await page.route('**/api/workspace/by-id/ws-1/session', async (route) => {
-      associationUpdatedPayload = route.request().postDataJSON();
+    // Intercept workspace session selection.
+    let selectedSessionPayload: any = null;
+    await page.route('**/api/workspace/by-id/ws-1/session/select', async (route) => {
+      selectedSessionPayload = route.request().postDataJSON();
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true }),
+        body: JSON.stringify({ session_id: 'session-new-123' }),
       });
     });
 
@@ -184,7 +197,7 @@ test.describe("Create Session Button E2E", () => {
     // Verify session creation was triggered
     expect(sessionCreated).toBe(true);
 
-    // Verify database association update was requested with the correct session ID
-    await expect.poll(() => associationUpdatedPayload).toEqual({ session_id: 'session-new-123' });
+    // Verify the new workspace session was selected without replacing the workspace.
+    await expect.poll(() => selectedSessionPayload).toEqual({ session_id: 'session-new-123' });
   });
 });
