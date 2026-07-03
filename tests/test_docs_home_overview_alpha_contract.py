@@ -22,6 +22,7 @@ def assert_no_stale_appliance_claims(text: str) -> None:
         "complete, standalone",
         "100% offline security",
         "100% reliability",
+        "local workspace, data vault, and logs",
     ]:
         assert stale not in normalized
 
@@ -41,6 +42,26 @@ def test_docs_homepage_front_loads_alpha_byo_ai_contract() -> None:
         assert expected in home
 
     assert_no_stale_appliance_claims(home)
+
+
+def test_readme_uses_current_workspace_artifact_surface() -> None:
+    readme = squashed("README.md")
+
+    for expected in [
+        "Workspace Artifacts",
+        "workspace volume or checkout you control",
+        "SQLite and local workspace files",
+        "Placeholder package for future storage extraction",
+    ]:
+        assert expected in readme
+
+    for stale in [
+        "### File Vault",
+        "screenshot_file_vault.png",
+        "SQLite, LanceDB, File Vault",
+        "SQLite, LanceDB, and filesystem vault",
+    ]:
+        assert stale not in readme
 
 
 def test_getting_started_overview_uses_supported_alpha_paths() -> None:

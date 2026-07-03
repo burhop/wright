@@ -345,11 +345,35 @@ The commands succeeded when rerun outside the sandbox. This is not a repo code
 failure, but it is part of the Linux developer experience observed during this
 run.
 
+**Root Cause**:
+On Ubuntu 24.04+ (and newer kernels), AppArmor restricts unprivileged user namespaces by default (`kernel.apparmor_restrict_unprivileged_userns = 1`). Bubblewrap (`bwrap`) needs `net_admin` and `setpcap` to configure the loopback interface inside its network namespace. The kernel AppArmor profile `unprivileged_userns` denies these capabilities, causing `bwrap` setup to abort with the `Failed RTM_NEWADDR` error.
+
+**Resolution**:
+Define a custom AppArmor profile for `bwrap` to permit unprivileged user namespaces. Create `/etc/apparmor.d/bwrap-userns-restrict` with:
+
+```text
+abi <abi/4.0>,
+include <tunables/global>
+
+profile bwrap /usr/bin/bwrap flags=(unconfined) {
+  userns,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/bwrap>
+}
+```
+
+Then reload the AppArmor profiles:
+```bash
+sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+```
+
 Recommended prevention:
 
 - Keep project test commands independent of sandbox-specific assumptions.
 - If using Codex or another sandboxed workflow as part of validation, document
   which commands need elevated/network-capable execution.
+- Maintain setup documentation for Linux developer environments pointing to the AppArmor profile fix.
 
 ## Suggested Clean-Gate Shape
 

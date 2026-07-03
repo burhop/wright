@@ -116,3 +116,44 @@ curl http://localhost:8080/api/inference/health
 If the inference check is disconnected, verify that the workstation model server
 is listening on the host and that the `LLM_API_URL` value is reachable from the
 Wright runtime.
+
+## Troubleshooting Sandboxing (Ubuntu 24.04+)
+
+If you run sandboxed tool execution on Ubuntu 24.04+ (or newer Linux kernels that enforce AppArmor unprivileged user namespace restrictions) and encounter failures like:
+
+```text
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+```
+
+This occurs because AppArmor restricts unprivileged user namespace creation by default, blocking capabilities like `net_admin` and `setpcap` that Bubblewrap (`bwrap`) requires to configure sandbox loopback interfaces.
+
+### Resolution (AppArmor Profile)
+
+To allow Bubblewrap specifically to create unprivileged user namespaces without lowering the system-wide security posture:
+
+1. Create a dedicated AppArmor profile file at `/etc/apparmor.d/bwrap-userns-restrict`:
+
+   ```text
+   abi <abi/4.0>,
+   include <tunables/global>
+
+   profile bwrap /usr/bin/bwrap flags=(unconfined) {
+     userns,
+
+     # Site-specific additions and overrides. See local/README for details.
+     include if exists <local/bwrap>
+   }
+   ```
+
+2. Parse and reload the profile:
+
+   ```bash
+   sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+   ```
+
+3. Verify the fix:
+
+   ```bash
+   bwrap --unshare-net --dev-bind / / /usr/bin/true
+   ```
+   If successful, this command returns instantly with no output and exit code `0`.

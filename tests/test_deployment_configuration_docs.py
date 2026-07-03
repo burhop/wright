@@ -23,6 +23,8 @@ def test_deployment_config_docker_appliance_states_alpha_boundaries() -> None:
         "installed per selected MCP validation only",
         "MCP host dependencies",
         "Not bundled in the base image",
+        "workspace services",
+        "local state/files",
     ]:
         assert expected in docs
 
@@ -33,6 +35,7 @@ def test_deployment_config_docker_appliance_states_alpha_boundaries() -> None:
         "**CAD** | FreeCAD",
         "Bundled in image",
         "AppImage in image",
+        "wright-data-vault",
     ]:
         assert stale not in docs
 
@@ -58,6 +61,7 @@ def test_deployment_config_uses_current_docker_run_and_upgrade_paths() -> None:
         "docker pull ghcr.io/burhop/wright:latest",
         "docker stop wright && docker rm wright",
         "wright-appliance:latest # Run (minimal)",
+        "docker build -t wright-appliance:latest",
     ]:
         assert stale not in docs
 

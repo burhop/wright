@@ -13,7 +13,7 @@ wright/
 │   ├── core/                   # Shared domain models, workspace Git state, and logging/tracing
 │   ├── agent_adapters/         # Abstracted interfaces & adapters for LLM engines
 │   ├── tool_registry/          # Model Context Protocol (MCP) engine and execution runners
-│   └── data_vault/             # Embedded database managers (SQLite WAL, Vector RAG)
+│   └── data_vault/             # Placeholder package for future storage extraction
 ├── specs/                      # Spec-kit documentation (Spec-Driven Development)
 └── tests/                      # 3-Tier Testing suite (Vitest, pytest, Playwright E2E)
 ```

@@ -44,10 +44,10 @@ graph TD
     subgraph WrightAlpha["Alpha local or hybrid Wright appliance"]
         BE <--> |Adapter Pattern| AA[Agent Adapters: Local/Remote LLM Engines]
         BE <--> |JSON-RPC over Pipes/WebSockets| TR[TR: McpEngine / Extensible Tool Registry]
-        BE <--> |In-Process Arrow| DV[Data Vault: Vector RAG]
+        BE <--> |Workspace services| WS[Local workspace files and logs]
         BE <--> |SQL / WAL Mode| DB[(SQLite State Database)]
         
-        TR <--> |stdio / subprocess| SC[Local & Proprietary Toolchains: Siemens, PTC, Autodesk, Dassault, FreeCAD]
+        TR <--> |stdio / subprocess| SC[Selected MCP Toolchains: open-source, vendor, or local installs]
         TR <--> |webmcp / websocket| BR[Browser DOM Tools]
     end
 ```
@@ -68,7 +68,7 @@ wright/
 │   ├── core/                   # Shared domain models, workspace Git state, and logging/tracing
 │   ├── agent_adapters/         # Abstracted interfaces & adapters for LLM engines
 │   ├── tool_registry/          # Model Context Protocol (MCP) engine and execution runners
-│   └── data_vault/             # Embedded database managers (SQLite WAL, Vector RAG)
+│   └── data_vault/             # Placeholder package for future storage extraction
 ├── specs/                      # Spec-kit documentation (Spec-Driven Development)
 └── tests/                      # 3-Tier Testing suite (Vitest, pytest, Playwright E2E)
 ```

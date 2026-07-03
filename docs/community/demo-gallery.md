@@ -4,7 +4,7 @@ Planned public-alpha demo slots:
 
 ## Local Engineering Agent
 
-Show the Wright web UI, agent chat, file vault, and a BYO-AI endpoint.
+Show the Wright web UI, agent chat, workspace files/artifacts, and a BYO-AI endpoint.
 
 ## MCP Tool Registry
 
