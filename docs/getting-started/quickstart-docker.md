@@ -19,6 +19,25 @@ For deeper Hermes setup and provider configuration, see the official
 [Hermes Agent docs](https://hermes-agent.nousresearch.com/docs/) and
 [Hermes Desktop docs](https://hermes-agent.nousresearch.com/docs/user-guide/desktop).
 
+
+## Published Image Path
+
+For tagged alpha releases, Docker Hub and GHCR images use:
+
+```text
+burhop/wright:<tag>
+ghcr.io/burhop/wright:<tag>
+```
+
+Run a published image with your env file:
+
+```bash
+docker run --rm -p 127.0.0.1:8080:8000 --env-file docker/.env burhop/wright:<tag>
+```
+
+Use the source-build Compose commands below when developing locally or when a
+published release image is not available yet.
+
 ## Choose a Compose File
 
 | Path | Command | Host URL | Notes |
@@ -178,5 +197,5 @@ docker compose -f docker-compose.minimal.yml down -v
 Remove the built local image when you no longer need it:
 
 ```bash
-docker image rm wright-agent:latest
+docker image rm wright:latest
 ```

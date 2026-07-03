@@ -48,11 +48,11 @@ graph TB
             CORE["wright-core"]
             AA["wright-agent-adapters"]
             TR["wright-tool-registry"]
-            DV["wright-data-vault"]
+            WS["workspace services<br/>local state/files"]
             API --> CORE
             API --> AA
             API --> TR
-            API --> DV
+            API --> WS
         end
 
         subgraph "Wright Frontend (manual / terminal)"
@@ -129,11 +129,11 @@ graph LR
         CORE["wright-core"]
         AA["wright-agent-adapters"]
         TR["wright-tool-registry"]
-        DV["wright-data-vault"]
+        WS["workspace services<br/>local state/files"]
         API --> CORE
         API --> AA
         API --> TR
-        API --> DV
+        API --> WS
     end
 
     subgraph "Node.js Workspace (npm)"
@@ -194,7 +194,7 @@ not part of the base Docker appliance.
 
 ```mermaid
 graph TB
-    subgraph "Docker Container (wright-appliance)"
+    subgraph "Docker Container (wright)"
         direction TB
         SUPER["supervisord<br/>(process manager)"]
 
@@ -591,9 +591,9 @@ systemctl --user restart hermes-gateway-wright
 
 ```bash
 # 1. Pull or rebuild the image
-docker build -t wright-appliance:latest -f docker/Dockerfile .
+docker build -t wright:latest -f docker/Dockerfile .
 # — or —
-docker pull ghcr.io/burhop/wright-agent:<tag>
+docker pull ghcr.io/burhop/wright:<tag>
 
 # 2. Stop the minimal compose stack (data persists in volumes)
 docker compose -f docker-compose.minimal.yml down
@@ -630,13 +630,13 @@ graph TB
         CORE["wright-core<br/>Business logic"]
         AA["wright-agent-adapters<br/>LLM provider adapters"]
         TR["wright-tool-registry<br/>MCP server management"]
-        DV["wright-data-vault<br/>Storage layer"]
+        WS["workspace services<br/>local state/files"]
         WEB["apps/web<br/>React + Vite frontend"]
 
         API --> CORE
         API --> AA
         API --> TR
-        API --> DV
+        API --> WS
     end
 
     subgraph "External Dependencies"

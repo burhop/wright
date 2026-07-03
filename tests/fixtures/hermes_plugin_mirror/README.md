@@ -38,7 +38,7 @@ If you installed from the monorepo subdirectory, remove that copy and reinstall 
 - Issues: https://github.com/burhop/wright/issues
 - Documentation: https://burhop.github.io/wright/
 - Releases: https://github.com/burhop/wright/releases
-- Package wright-core: https://pypi.org/project/wright-core/
-- Package wright-tool-registry: https://pypi.org/project/wright-tool-registry/
+- Alpha PyPI package: https://pypi.org/project/wright-engineering/
+- Component packages remain workspace-local for alpha.
 - Hermes plugin usage: https://github.com/burhop/wright/blob/main/docs/getting-started/hermes-plugin.md
 - Source revision and provenance: PROVENANCE.md

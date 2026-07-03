@@ -21,6 +21,7 @@ def test_project_structure_container_strategy_matches_alpha_appliance_contract()
         "docker/Dockerfile",
         "docker-compose.minimal.yml",
         "http://localhost:8080",
+        "Placeholder package for future storage extraction",
         "Selected MCP dependencies",
         "docs/mcp-catalog/mcp-server-testing-process.md",
         "do not add MCP-specific host software to the base image",
@@ -33,6 +34,7 @@ def test_project_structure_container_strategy_matches_alpha_appliance_contract()
         "massive, system-level dependencies",
         "NVIDIA CUDA runtimes, PyTorch, FreeCAD",
         "CalculiX (FEA solver), and OpenSCAD",
+        "Embedded database managers (SQLite WAL, Vector RAG)",
     ]:
         assert stale not in project
 
@@ -50,6 +52,7 @@ def test_system_overview_states_byo_ai_and_selected_tool_boundaries() -> None:
         "Selected MCP Toolchains",
         "selected MCP host dependencies",
         "not self-contained for every CAD, CAE, CAM, or AI workflow",
+        "Local workspace files and logs",
     ]:
         assert expected in overview
 
@@ -58,6 +61,7 @@ def test_system_overview_states_byo_ai_and_selected_tool_boundaries() -> None:
         "Standalone Engineering AI-in-a-Box",
         "Local & Proprietary Toolchains: Siemens, PTC, Autodesk, Dassault, FreeCAD",
         "self-contained, powerful engineering sandbox",
+        "Data Vault: Vector RAG",
     ]:
         assert stale not in overview
 

@@ -42,8 +42,8 @@ beta, or release-candidate tag.
 4. **Release workflow** (`.github/workflows/release.yml`) - A tag matching `v*`
    triggers the publishing workflow:
    - Build the Docker image with OCI version, revision, and created labels.
-   - Push `ghcr.io/<owner>/wright-agent:<tag>` using GitHub Packages.
-   - Push `<dockerhub-username>/wright-agent:<tag>` only when
+   - Push `ghcr.io/<owner>/wright:<tag>` using GitHub Packages.
+   - Push `burhop/wright:<tag>` only when
      `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
    - Mark alpha, beta, and release-candidate tags as GitHub prereleases.
    - Apply `latest` only for stable tags. Prerelease tags must not move

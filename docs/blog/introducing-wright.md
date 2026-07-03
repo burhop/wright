@@ -61,19 +61,19 @@ flowchart TD
     API -->|Routing| MCP[McpEngine - Tool Registry]
     Agent -->|Uses| MCP
     MCP -->|Selected server| Tools[Selected MCP host dependencies]
-    API -->|Database & files| Vault[SQLite, LanceDB, and local vault]
+    API -->|State, files, and logs| LocalState[SQLite and local workspace files]
 ```
 
 ### API Gateway
 
 The FastAPI server is a routing layer for workspace management, chat turns,
-setup state, logs, file vault access, and MCP registry operations.
+setup state, logs, workspace file access, and MCP registry operations.
 
 ### Embedded Storage
 
-Wright is local-first. Runtime state is stored in embedded SQLite, semantic data
-can be stored through LanceDB, and generated artifacts live in the local file
-vault.
+Wright is local-first. Runtime state is stored in embedded SQLite, while
+generated artifacts, scripts, diagnostics, and logs live in local workspace
+files and mounted Docker volumes controlled by the operator.
 
 ### Tool Registry and MCP
 

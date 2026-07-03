@@ -26,7 +26,7 @@ def test_docker_smoke_script_docs_include_existing_image_mode() -> None:
     readme = read_text("scripts/README.md")
 
     assert "warns and continues if `LLM_API_URL` is missing" in readme
-    assert "WRIGHT_DOCKER_IMAGE=wright-agent:latest" in readme
+    assert "WRIGHT_DOCKER_IMAGE=wright:latest" in readme
     assert "WRIGHT_DOCKER_SKIP_BUILD=1" in readme
 
 
@@ -43,6 +43,19 @@ def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
     assert "hermes-agent==0.18.0" in dockerfile
+
+
+def test_dockerfile_copies_root_package_files_before_workspace_install() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+
+    readme_copy = "COPY --chown=agent:agent README.md README.md"
+    src_copy = "COPY --chown=agent:agent src/ src/"
+    workspace_install = "# Install the workspace packages."
+
+    assert readme_copy in dockerfile
+    assert src_copy in dockerfile
+    assert dockerfile.index(readme_copy) < dockerfile.index(workspace_install)
+    assert dockerfile.index(src_copy) < dockerfile.index(workspace_install)
 
 
 def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> None:

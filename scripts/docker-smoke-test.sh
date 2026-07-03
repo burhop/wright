@@ -11,7 +11,7 @@ echo -e "${YELLOW}=== Running Docker Smoke Test ===${NC}"
 
 # Define image tag. Set WRIGHT_DOCKER_IMAGE to smoke an existing image, or set
 # WRIGHT_DOCKER_SKIP_BUILD=1 to skip the local build step.
-IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright-agent:test}"
+IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright:test}"
 
 # 1. Build the production Docker image
 if [ "${WRIGHT_DOCKER_SKIP_BUILD:-0}" = "1" ]; then

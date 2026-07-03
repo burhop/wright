@@ -104,6 +104,8 @@ RUN uv sync --python 3.13 --all-packages --no-install-workspace --no-dev && \
 COPY --chown=agent:agent packages/ packages/
 COPY --chown=agent:agent apps/api/ apps/api/
 COPY --chown=agent:agent hermes-plugin-wright/ hermes-plugin-wright/
+COPY --chown=agent:agent README.md README.md
+COPY --chown=agent:agent src/ src/
 
 USER root
 

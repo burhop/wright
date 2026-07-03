@@ -43,7 +43,7 @@ def test_ci_cd_docs_match_docker_smoke_and_docs_release_contracts() -> None:
 
     for expected in [
         "does not publish public images",
-        "wright-agent:<sha>",
+        "wright:<sha>",
         "placeholder `LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL`",
         "`wright-api` and `hermes-gateway`",
         "Trivy",
@@ -66,7 +66,7 @@ def test_ci_cd_docs_describe_ghcr_default_and_optional_docker_hub() -> None:
 
     for expected in [
         "GHCR as the default registry path",
-        "ghcr.io/<owner>/wright-agent:<tag>",
+        "ghcr.io/<owner>/wright:<tag>",
         "`packages: write`",
         "Docker Hub publishing is optional",
         "`DOCKERHUB_USERNAME`",

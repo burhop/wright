@@ -74,8 +74,7 @@ if [ -f "$readme" ]; then
     "https://github.com/burhop/wright" \
     "https://github.com/burhop/wright/issues" \
     "https://github.com/burhop/wright/releases" \
-    "https://pypi.org/project/wright-core/" \
-    "https://pypi.org/project/wright-tool-registry/" \
+    "https://pypi.org/project/wright-engineering/" \
     "Hermes plugin" \
     "Provenance"; do
     grep -qi "$token" "$readme" || fail "README missing required content: $token"

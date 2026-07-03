@@ -28,7 +28,7 @@ body:
     attributes:
       label: Image tag or package version
       description: Docker image tag, release tag, package version, or branch name.
-      placeholder: "e.g. ghcr.io/burhop/wright-agent:v0.1.0-alpha.1, Docker Hub tag, or 035-alpha-release-readiness"
+      placeholder: "e.g. ghcr.io/burhop/wright:v0.1.0-alpha.1, Docker Hub tag, or 035-alpha-release-readiness"
     validations:
       required: false
 

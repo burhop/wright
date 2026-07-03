@@ -1,6 +1,6 @@
 # Hermes Plugin Mirror Release Runbook
 
-This runbook covers the thin `hermes-plugin-wright` mirror and the PyPI/TestPyPI packages used by the Wright Hermes plugin.
+This runbook covers the thin `hermes-plugin-wright` mirror and the package strategy used by the Wright Hermes plugin. For public alpha, only the user-facing `wright-engineering` package is published to PyPI/TestPyPI; component package publication for the mirror is deferred.
 
 ## Ownership
 
@@ -22,18 +22,13 @@ The mirror repository is a distribution surface only. Do not develop features di
 
 ## Package Publication Order
 
-Publish package dependencies before creating a stable mirror release:
+For public alpha, publish the root `wright-engineering` package before using the mirror in public installation docs. Component packages such as `wright-core` and `wright-tool-registry` remain workspace-local until their package names, dependency boundaries, and mirror install strategy are revisited.
 
-1. `wright-core`
-2. `wright-tool-registry`
-3. `hermes-plugin-wright` mirror release
-
-Use package-scoped tags for stable package publication:
+Use the alpha package tag when publishing the PyPI helper package:
 
 ```bash
-git tag wright-core-v0.1.0
-git tag wright-tool-registry-v0.1.0
-git push origin wright-core-v0.1.0 wright-tool-registry-v0.1.0
+git tag wright-engineering-v0.1.0-alpha.1
+git push origin wright-engineering-v0.1.0-alpha.1
 ```
 
 The `.github/workflows/publish-python-packages.yml` workflow uses PyPI Trusted Publishing through GitHub Actions OIDC. Configure pending publishers in PyPI and TestPyPI with these environments:
@@ -46,13 +41,13 @@ Require manual approval on the `pypi` GitHub environment before stable uploads.
 ## Local Package Validation
 
 ```bash
-scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+scripts/build-python-distributions.sh --dry-run .
 ```
 
 For a full local build, install `build` into the active Python environment and run:
 
 ```bash
-scripts/build-python-distributions.sh --skip-clean-install packages/core packages/tool_registry
+scripts/build-python-distributions.sh --skip-clean-install .
 ```
 
 Clean install validation is the release gate that proves package artifacts can install without a Wright monorepo checkout.
@@ -205,4 +200,4 @@ Use this section to record release candidate validation runs.
 - `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch main --channel stable --output-dir /tmp/wright-mirror-stable-final.TftFem` generated a stable mirror export.
 - `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-stable-final.TftFem --channel stable` passed.
 
-Stable customer release remains gated on publishing `wright-core` and `wright-tool-registry` to PyPI, then rerunning stable install validation against `https://github.com/burhop/hermes-plugin-wright/tree/main`. Development customer testing can use `https://github.com/burhop/hermes-plugin-wright/tree/dev`.
+Stable mirror release through `https://github.com/burhop/hermes-plugin-wright/tree/main` remains gated on a later decision about component package publication. Public alpha customer testing should use the Docker paths and the `wright-engineering` helper package; development mirror testing can use `https://github.com/burhop/hermes-plugin-wright/tree/dev`.

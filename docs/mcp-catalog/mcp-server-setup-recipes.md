@@ -10,7 +10,7 @@ Use these recipes with the clean-container validation process in
 
 ## Common Container Baseline
 
-- Start from `wright-agent:latest` on `linux/amd64`.
+- Start from `wright:latest` on `linux/amd64`.
 - Do not assume selected-server CAD/CAM/CAE software is installed.
 - Prefer newline-delimited JSON MCP probes first. Several Python/FastMCP servers
   in this catalog reject `Content-Length` framing on stdio.

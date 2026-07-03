@@ -187,7 +187,7 @@ installed globally.
 Runs a local verification suite against a production Docker build to ensure environment configuration compliance, secure file permissions, and self-healing.
 
 * **Key Checks**:
-  1. Builds the Docker image locally as `wright-agent:test`.
+  1. Builds the Docker image locally as `wright:test`.
   2. Asserts that the container user runs as the non-root `agent` user by default.
   3. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
   4. Verifies that `/entrypoint.sh` is present and executable.
@@ -199,7 +199,7 @@ Runs a local verification suite against a production Docker build to ensure envi
   ```
 * **Smoke an existing image without rebuilding**:
   ```bash
-  WRIGHT_DOCKER_IMAGE=wright-agent:latest WRIGHT_DOCKER_SKIP_BUILD=1 ./scripts/docker-smoke-test.sh
+  WRIGHT_DOCKER_IMAGE=wright:latest WRIGHT_DOCKER_SKIP_BUILD=1 ./scripts/docker-smoke-test.sh
   ```
 
 ---
@@ -225,7 +225,7 @@ Validates the standard Hermes user-plugin lifecycle in a disposable Docker conta
   make hermes-plugin-lifecycle-test
   ```
 
-By default, the scripts use `WRIGHT_DOCKER_IMAGE=wright-agent:test` and install from the public Wright Git repository on the `dev` branch: `https://github.com/burhop/wright/tree/dev/hermes-plugin-wright`. Use `--ref main` or `WRIGHT_PLUGIN_REF=main` to test the main-branch customer path; the default is `dev`.
+By default, the scripts use `WRIGHT_DOCKER_IMAGE=wright:test` and install from the public Wright Git repository on the `dev` branch: `https://github.com/burhop/wright/tree/dev/hermes-plugin-wright`. Use `--ref main` or `WRIGHT_PLUGIN_REF=main` to test the main-branch customer path; the default is `dev`.
 
 `test-hermes-plugin-update.sh` intentionally uses Hermes standard `plugins update`, which requires the installed plugin directory to be a Git checkout. This is why the script installs from GitHub instead of the local checkout. If Hermes still drops `.git` metadata for the `hermes-plugin-wright` subdirectory install, the script fails with that diagnosis so we can fix the distribution shape before users hit it.
 
@@ -233,7 +233,7 @@ Useful overrides:
 
 ```bash
 WRIGHT_DOCKER_BUILD=1 scripts/test-hermes-plugin-install.sh
-WRIGHT_DOCKER_IMAGE=wright-agent:latest WRIGHT_DOCKER_SKIP_BUILD=1 make hermes-plugin-lifecycle-test
+WRIGHT_DOCKER_IMAGE=wright:latest WRIGHT_DOCKER_SKIP_BUILD=1 make hermes-plugin-lifecycle-test
 scripts/test-hermes-plugin-update.sh --ref main
 scripts/test-hermes-plugin-install.sh --identifier file:///wright-src#hermes-plugin-wright
 WRIGHT_KEEP_TEST_HOME=1 scripts/test-hermes-plugin-uninstall.sh

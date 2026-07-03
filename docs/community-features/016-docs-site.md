@@ -43,7 +43,7 @@ Organize the docs site with these top-level sections:
    - Monorepo structure explanation (apps/, packages/)
    - Agent adapter pattern
    - Tool registry and MCP integration
-   - Data storage model (SQLite + LanceDB + File Vault)
+   - Local state and workspace file model (SQLite + mounted workspace files)
    - Observability and tracing (OpenTelemetry + Jaeger)
    - Migrate and consolidate content from: `docs/technical_analysis.md`, `docs/agent-docker-architecture.md`, `constitution.md`
 

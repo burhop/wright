@@ -29,12 +29,12 @@ def test_release_workflow_does_not_push_latest_for_prereleases() -> None:
     assert "registry: ghcr.io" in workflow
     assert "password: ${{ secrets.GITHUB_TOKEN }}" in workflow
     assert "docker_tags<<EOF" in workflow
-    assert "wright-agent:${TAG_NAME}" in workflow
-    assert "ghcr.io/${GHCR_OWNER_LC}/wright-agent:${TAG_NAME}" in workflow
+    assert "wright:${TAG_NAME}" in workflow
+    assert "ghcr.io/${GHCR_OWNER_LC}/wright:${TAG_NAME}" in workflow
     assert 'if [[ "$HAS_DOCKERHUB" == "true" ]]; then' in workflow
     assert 'if [[ "$IS_PRERELEASE" != "true" ]]; then' in workflow
-    assert "wright-agent:latest" in workflow
-    assert "ghcr.io/${GHCR_OWNER_LC}/wright-agent:latest" in workflow
+    assert "wright:latest" in workflow
+    assert "ghcr.io/${GHCR_OWNER_LC}/wright:latest" in workflow
     assert "tags: ${{ steps.tag.outputs.docker_tags }}" in workflow
     assert "if: ${{ steps.tag.outputs.has_dockerhub == 'true' }}" in workflow
 
@@ -51,8 +51,8 @@ def test_versioning_documents_alpha_tag_and_latest_policy() -> None:
         "marked as GitHub prereleases",
         "always pushed to GHCR",
         "pushed to Docker Hub when `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured",
-        "ghcr.io/burhop/wright-agent:<tag>",
-        "<dockerhub-username>/wright-agent:<tag>` when Docker Hub credentials are configured",
+        "ghcr.io/burhop/wright:<tag>",
+        "burhop/wright:<tag>` when Docker Hub credentials are configured",
         "bring-your-own-AI",
         "Docker smoke results",
         "SBOM/provenance status",
@@ -71,8 +71,8 @@ def test_alpha_release_notes_template_requires_manual_gate_status() -> None:
     for expected in [
         "Wright is bring-your-own-AI",
         "does not bundle an LLM",
-        "GHCR: `ghcr.io/burhop/wright-agent:<tag>`",
-        "Docker Hub: `<dockerhub-username>/wright-agent:<tag>`",
+        "GHCR: `ghcr.io/burhop/wright:<tag>`",
+        "Docker Hub: `burhop/wright:<tag>`",
         "`latest` updated: `yes` for stable tags only",
         "Docker appliance smoke test",
         "History secret scan",
