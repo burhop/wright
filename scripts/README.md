@@ -9,6 +9,8 @@ This directory contains helper scripts to automate local development, manage Doc
 | [`backup-volumes.sh`](#backup-volumessh) | Bash | Backs up Wright Docker volumes to local disk | Docker |
 | [`restore-volume.sh`](#restore-volumesh) | Bash | Restores a Docker volume from a saved backup | Docker |
 | [`alpha-release-check.sh`](#alpha-release-checksh-and-alpha-release-checkps1) / [`alpha-release-check.ps1`](#alpha-release-checksh-and-alpha-release-checkps1) | Bash / PowerShell | Runs the full local alpha release gate | Python 3, uv, npm, Docker |
+| [`check-dev-merge.sh`](#check-dev-mergesh) | Bash | Runs the CI-equivalent gate before merging a feature branch to `dev` | Python 3, uv, npm, Playwright |
+| [`check-prod-merge.sh`](#check-prod-mergesh) | Bash | Runs the release gate before merging `dev` to `main` | Python 3, uv, npm, Docker, Hermes |
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
@@ -19,6 +21,50 @@ This directory contains helper scripts to automate local development, manage Doc
 | [`openscad-headless.sh`](#openscad-headlesssh) | Bash | Runs OpenSCAD headlessly inside containerized environments | `xvfb-run`, OpenSCAD |
 | [`patch-submodule.sh`](#patch-submodulesh) | Bash | Applies localized patches to the FreeCAD MCP submodule | Git |
 | [`setup-wright-profile.sh`](#setup-wright-profilesh) | Bash | Provisions and configures a Hermes profile for native Wright development | `hermes` CLI |
+
+---
+
+
+### `check-dev-merge.sh`
+
+Runs the heavyweight local gate before merging a feature branch to `dev`. It is
+intended to mirror the checks that have previously caught branch integration
+drift in CI:
+
+1. `git diff --check`
+2. Ruff lint and format checks for Wright-owned Python workspaces
+3. ESLint, Prettier, TypeScript, Vitest, and frontend build checks
+4. mypy in the same warning mode used by CI
+5. Python package metadata dry-run validation
+6. Backend pytest and Hermes plugin pytest
+7. Strict docs build
+8. Playwright with `PLAYWRIGHT_INCLUDE_LIVE=1` against a temporary local API database
+
+* **Usage**:
+  ```bash
+  scripts/check-dev-merge.sh
+  make check-dev-merge
+  ```
+
+Set `SKIP_PLAYWRIGHT=1` only for a documented local browser/runtime limitation.
+
+---
+
+### `check-prod-merge.sh`
+
+Runs the release-oriented gate before merging `dev` to `main`. It includes the
+dev merge gate, public-alpha secret scans, alpha release checks, Docker smoke
+coverage, Hermes plugin mirror validation, and Hermes plugin root lifecycle
+validation.
+
+* **Usage**:
+  ```bash
+  scripts/check-prod-merge.sh
+  make check-prod-merge
+  ```
+
+Set `SKIP_HERMES_PLUGIN_LIFECYCLE=1` only for a documented local Docker/Hermes
+limitation. Do not use skip switches to bypass real failures.
 
 ---
 

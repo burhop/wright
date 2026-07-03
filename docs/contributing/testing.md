@@ -62,6 +62,24 @@ To run lint check, typecheck, pytest, and vitest suites sequentially on your hos
 make check
 ```
 
+
+`make check` is intended for the fast development loop. Before merging a feature
+branch to `dev`, run the CI-equivalent merge gate:
+
+```bash
+make check-dev-merge
+```
+
+Before merging `dev` to `main`, run the production merge gate:
+
+```bash
+make check-prod-merge
+```
+
+Keep these scripts aligned with GitHub Actions. When CI finds a failure class
+that the local gate missed, update the script and contributor documentation as
+part of the fix.
+
 ---
 
 ## 4. Public Alpha Release Gate

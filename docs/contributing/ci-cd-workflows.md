@@ -38,6 +38,40 @@ The frontend workflow also runs ESLint, Prettier, and TypeScript. The Python
 workflow runs Ruff and mypy in warning mode. The docs workflow builds strictly on
 pull requests and branch pushes but deploys only from `main`.
 
+## Local Merge Gates
+
+Routine development can use targeted tests and `make check`. Before integrating
+branches, use the heavier merge gates so local validation matches CI closely
+enough to catch formatting, mocked UI, live Playwright, docs, package metadata,
+Docker, and release drift.
+
+Feature branch to `dev`:
+
+```bash
+make check-dev-merge
+```
+
+This runs `scripts/check-dev-merge.sh`, including `git diff --check`, Ruff lint
+and format checks, ESLint, Prettier, TypeScript, mypy warning-mode checks,
+Python package metadata validation, pytest, Hermes plugin pytest, Vitest,
+frontend build, strict docs build, and Playwright with `PLAYWRIGHT_INCLUDE_LIVE=1`
+against a temporary local API database.
+
+`dev` to `main`:
+
+```bash
+make check-prod-merge
+```
+
+This runs `scripts/check-prod-merge.sh`, which includes the dev merge gate plus
+public-alpha secret scans, alpha release checks, Docker smoke coverage, Hermes
+plugin mirror validation, and Hermes plugin root lifecycle validation.
+
+Use environment skip switches only for documented local host limitations, never
+to hide a failure. If a GitHub Actions job catches a failure that the local
+merge gate missed, update the corresponding script and documentation in the
+same fix.
+
 ## Docker Smoke Contract
 
 `docker-build.yml` validates the appliance image locally before any release

@@ -2,7 +2,7 @@
 # Wright — Developer Makefile for Docker Containerization
 # =============================================================================
 
-.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check security-scan docker-smoke hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test hermes-plugin-lifecycle-test alpha-release-check python-package-build-check hermes-plugin-mirror-sync-dry-run hermes-plugin-mirror-validate hermes-plugin-root-lifecycle-test
+.PHONY: help docker-build docker-test docker-clean docker-logs docker-shell docker-test-e2e lint format typecheck test test-external-freecad check check-dev-merge check-prod-merge security-scan docker-smoke hermes-plugin-install-test hermes-plugin-uninstall-test hermes-plugin-update-test hermes-plugin-lifecycle-test alpha-release-check python-package-build-check hermes-plugin-mirror-sync-dry-run hermes-plugin-mirror-validate hermes-plugin-root-lifecycle-test
 
 PYTHON_WORKSPACE_PATHS := apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
@@ -24,6 +24,8 @@ help:
 	@echo "  test            - Run pytest and frontend vitest suites"
 	@echo "  test-external-freecad - Run opt-in FreeCAD MCP package tests"
 	@echo "  check           - Execute all local quality gates (lint + format + typecheck + test)"
+	@echo "  check-dev-merge - Run the CI-equivalent gate before merging to dev"
+	@echo "  check-prod-merge - Run the release gate before merging dev to main"
 	@echo "  security-scan   - Run public-alpha, Gitleaks, and TruffleHog secret scans"
 	@echo "  alpha-release-check - Run final alpha release gates including Docker smoke"
 	@echo "  python-package-build-check - Validate Wright package metadata for PyPI/TestPyPI"
@@ -148,6 +150,12 @@ check:
 	uv run pytest
 	uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
 	npm run test --workspace=apps/web
+
+check-dev-merge:
+	./scripts/check-dev-merge.sh
+
+check-prod-merge:
+	./scripts/check-prod-merge.sh
 
 security-scan:
 	./scripts/security-scan.sh --include-untracked
