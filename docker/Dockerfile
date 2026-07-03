@@ -137,7 +137,7 @@ RUN chmod 444 /container-manifest.md
 COPY docker/supervisord.conf /etc/supervisor/conf.d/wright.conf
 
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod 755 /entrypoint.sh
 
 RUN touch /var/log/agent-startup.log /var/log/agent-changes.log && \
     chown agent:agent /var/log/agent-startup.log /var/log/agent-changes.log && \

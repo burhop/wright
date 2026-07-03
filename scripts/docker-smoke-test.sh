@@ -60,11 +60,11 @@ else
   exit 1
 fi
 
-ENTRYPOINT_EXEC=$(docker run --rm --entrypoint test "$IMAGE_TAG" -x /entrypoint.sh && echo "yes" || echo "no")
-if [ "$ENTRYPOINT_EXEC" = "yes" ]; then
-  echo -e "${GREEN}✓ /entrypoint.sh is executable.${NC}"
+ENTRYPOINT_PERMS=$(docker run --rm --entrypoint stat "$IMAGE_TAG" -c "%a" /entrypoint.sh)
+if [ "$ENTRYPOINT_PERMS" = "755" ]; then
+  echo -e "${GREEN}✓ /entrypoint.sh has 755 permissions for script execution by agent.${NC}"
 else
-  echo -e "${RED}✗ /entrypoint.sh is not executable.${NC}"
+  echo -e "${RED}✗ /entrypoint.sh does not have 755 permissions. Found: $ENTRYPOINT_PERMS${NC}"
   exit 1
 fi
 
