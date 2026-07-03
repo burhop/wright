@@ -1,0 +1,3458 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/agent-docker-architecture/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Agent Docker Container: Architecture, Persistence, and Recovery - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agent-docker-container-architecture-persistence-and-recovery" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agent Docker Container: Architecture, Persistence, and Recovery
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-problems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Problems
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. The Problems">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-dockers-ephemeral-filesystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Docker's Ephemeral Filesystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-llm-api-url-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 LLM API URL Injection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-agent-corruption-is-inevitable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Agent Corruption is Inevitable
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-solution-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Solution Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Solution Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-llm-api-via-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 LLM API via Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-volume-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Volume Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-what-remains-ephemeral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 What Remains Ephemeral
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-filesystem-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Filesystem Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-agent-awareness-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Agent Awareness Design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Agent Awareness Design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-the-container-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 The Container Manifest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-system-prompt-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 System Prompt Injection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-per-agent-risk-profiles-and-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Per-Agent Risk Profiles and Guidance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-recovery-runbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Recovery Runbook
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Recovery Runbook">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-scenario-a-ephemeral-path-corruption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Scenario A: Ephemeral Path Corruption
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-scenario-b-broken-etc-container-starts-but-agents-cant-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Scenario B: Broken /etc — Container Starts but Agents Can't Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-scenario-c-container-will-not-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Scenario C: Container Will Not Start
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-scenario-d-cascading-volume-corruption" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Scenario D: Cascading Volume Corruption
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-scenario-e-agent-deleted-its-own-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Scenario E: Agent Deleted Its Own Work
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-backup-and-snapshot-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Backup and Snapshot Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Backup and Snapshot Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-nightly-automated-backup-host-cron" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Nightly Automated Backup (Host Cron)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-agent-triggered-pre-change-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Agent-Triggered Pre-Change Snapshots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-restore-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Restore Script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-implementation-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Implementation Files
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Implementation Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-docker-composeyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 docker-compose.yml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-entrypointsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 entrypoint.sh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-conclusions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Conclusions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Conclusions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-the-volume-strategy-is-the-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 The Volume Strategy is the Foundation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-ephemeral-corruption-is-self-healing-use-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Ephemeral Corruption Is Self-Healing — Use This
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-etc-is-the-real-danger-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 /etc is the Real Danger Zone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-agent-awareness-is-infrastructure-not-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Agent Awareness Is Infrastructure, Not Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#85-the-change-log-is-the-recovery-lifeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.5 The Change Log is the Recovery Lifeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#86-snapshots-must-precede-major-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.6 Snapshots Must Precede Major Operations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#87-recovery-must-be-practiced-before-it-is-needed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.7 Recovery Must Be Practiced Before It Is Needed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#88-accept-the-inevitable-and-design-for-speed-of-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.8 Accept the Inevitable and Design for Speed of Recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-implementation-notes-deviations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Implementation Notes &amp; Deviations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Implementation Notes &amp; Deviations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-multi-stage-production-build" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Multi-Stage Production Build
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-resolving-ubuntu-uid-1000-clash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Resolving Ubuntu UID 1000 Clash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-development-port-host-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Development Port &amp; Host Isolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-named-volume-globals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 Named Volume Globals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#95-scripts-directory-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.5 Scripts Directory Mounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="agent-docker-container-architecture-persistence-and-recovery">Agent Docker Container: Architecture, Persistence, and Recovery<a class="headerlink" href="#agent-docker-container-architecture-persistence-and-recovery" title="Permanent link">&para;</a></h1>
+<p><strong>Agents:</strong> Hermes · OpenClaw · Pi<br />
+<strong>LLM Backend:</strong> External API (URL-injected at runtime)<br />
+<strong>Document Purpose:</strong> Full system design, agent awareness requirements, and operator recovery runbook</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#1-the-problems">The Problems</a></li>
+<li><a href="#2-solution-architecture">Solution Architecture</a></li>
+<li><a href="#3-filesystem-map">Filesystem Map: What Persists and What Doesn't</a></li>
+<li><a href="#4-agent-awareness-design">Agent Awareness Design</a></li>
+<li><a href="#5-recovery-runbook">When Things Go Wrong: Recovery Runbook</a></li>
+<li><a href="#6-backup-and-snapshot-strategy">Backup and Snapshot Strategy</a></li>
+<li><a href="#7-implementation-files">Implementation Files</a></li>
+<li><a href="#8-conclusions">Conclusions</a></li>
+</ol>
+<hr />
+<h2 id="1-the-problems">1. The Problems<a class="headerlink" href="#1-the-problems" title="Permanent link">&para;</a></h2>
+<h3 id="11-dockers-ephemeral-filesystem">1.1 Docker's Ephemeral Filesystem<a class="headerlink" href="#11-dockers-ephemeral-filesystem" title="Permanent link">&para;</a></h3>
+<p>Docker images are built from stacked, read-only layers. When a container starts, Docker creates a thin <strong>writable overlay layer</strong> on top. Every file the container creates or modifies lives in this overlay. When the container <strong>stops and restarts</strong> — whether due to a reboot, a <code>docker compose restart</code>, or a crash — that overlay is discarded, and the filesystem resets to the image state.</p>
+<p>For an ordinary stateless web service, this is correct behavior. For a container where Hermes, OpenClaw, and Pi are actively managing the system — creating files, installing tools, and writing configuration — this means everything they do is silently erased on restart unless we explicitly opt specific paths out of ephemeral behavior using <strong>Docker named volumes</strong>.</p>
+<p>The risk is not just inconvenience. An agent that doesn't know which parts of its filesystem are ephemeral will install software to the wrong paths, write state to locations that vanish, and behave inconsistently across restarts in ways that are difficult to diagnose.</p>
+<h3 id="12-llm-api-url-injection">1.2 LLM API URL Injection<a class="headerlink" href="#12-llm-api-url-injection" title="Permanent link">&para;</a></h3>
+<p>All three agents share a single external LLM API endpoint. This URL (and its credentials) must be:</p>
+<ul>
+<li><strong>Not baked into the image</strong> — secrets in images are a security liability, and rebuilding the image to change an endpoint is unnecessary friction</li>
+<li><strong>Available at startup to all agents</strong> — without each needing its own configuration file</li>
+<li><strong>Easy to rotate</strong> — changing providers, pointing to a local inference server, or swapping models should require only an environment variable change and a restart</li>
+</ul>
+<h3 id="13-agent-corruption-is-inevitable">1.3 Agent Corruption is Inevitable<a class="headerlink" href="#13-agent-corruption-is-inevitable" title="Permanent link">&para;</a></h3>
+<p>Agents with full system access will eventually write to the wrong paths. This is not a failure of instruction design — it is a property of sufficiently capable agents operating in a rich, ambiguous environment. Causes include:</p>
+<ul>
+<li>Following tutorials or documentation that assume a traditional Linux install</li>
+<li>Post-install scripts that write to system paths as a side effect</li>
+<li>Resolving a problem in the most direct way rather than the architecturally correct way</li>
+<li>Logical mistakes under novel conditions</li>
+</ul>
+<p>The system must be designed so that when this happens, the path from detection to recovery is short, clear, and executable by an operator who is not a Docker expert.</p>
+<hr />
+<h2 id="2-solution-architecture">2. Solution Architecture<a class="headerlink" href="#2-solution-architecture" title="Permanent link">&para;</a></h2>
+<h3 id="21-llm-api-via-environment-variables">2.1 LLM API via Environment Variables<a class="headerlink" href="#21-llm-api-via-environment-variables" title="Permanent link">&para;</a></h3>
+<p>The API endpoint, key, and default model are passed as environment variables at container startup. They are never written into the image or into any configuration file that travels with it.</p>
+<p><strong><code>.env</code> file (host machine, excluded from version control):</strong>
+<div class="highlight"><pre><span></span><code>LLM_API_URL=https://your-llm-endpoint/v1
+LLM_API_KEY=sk-your-key-here
+LLM_API_MODEL=your-default-model
+</code></pre></div></p>
+<p>Agents read these at startup:
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">api_url</span>   <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LLM_API_URL&quot;</span><span class="p">]</span>
+<span class="n">api_key</span>   <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LLM_API_KEY&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">api_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LLM_API_MODEL&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p>Swapping the backend — changing providers, pointing to a local llama.cpp server, changing models — requires editing <code>.env</code> and running <code>docker compose restart</code>. No rebuild required.</p>
+<h3 id="22-volume-strategy">2.2 Volume Strategy<a class="headerlink" href="#22-volume-strategy" title="Permanent link">&para;</a></h3>
+<p>Named Docker volumes are mounted over every path the agents are expected to modify. Docker creates and manages these volumes on the host; they persist until explicitly deleted.</p>
+<table>
+<thead>
+<tr>
+<th>Volume Name</th>
+<th>Mount Path</th>
+<th>What It Preserves</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent_home</code></td>
+<td><code>/home/</code></td>
+<td>Agent workspaces, user configs, <code>.local</code>, <code>.config</code>, files</td>
+</tr>
+<tr>
+<td><code>agent_local</code></td>
+<td><code>/usr/local/</code></td>
+<td>pip/pipx installs, compiled tools, local binaries</td>
+</tr>
+<tr>
+<td><code>agent_opt</code></td>
+<td><code>/opt/</code></td>
+<td>conda, nix, micromamba, self-contained app installs</td>
+</tr>
+<tr>
+<td><code>agent_varlib</code></td>
+<td><code>/var/lib/</code></td>
+<td>apt package database, application state, database files</td>
+</tr>
+<tr>
+<td><code>agent_varcache</code></td>
+<td><code>/var/cache/</code></td>
+<td>apt package cache, downloaded archives</td>
+</tr>
+<tr>
+<td><code>agent_etc</code></td>
+<td><code>/etc/</code></td>
+<td>System-wide configuration changes <em>(see warning)</em></td>
+</tr>
+<tr>
+<td><code>agent_logs</code></td>
+<td><code>/var/log/</code></td>
+<td>Persistent logs, change records, corruption reports</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong><code>/etc</code> Warning:</strong> This is the highest-risk volume. A single corrupted file — <code>/etc/sudoers</code>, <code>/etc/passwd</code>, <code>/etc/resolv.conf</code> — can make the container unbootable or leave agents unable to escalate privileges. It must be volume-mounted to preserve intentional configuration, but it must also be the first volume backed up and the one treated with the most caution. See Section 5.2 for recovery.</p>
+</blockquote>
+<h3 id="23-what-remains-ephemeral">2.3 What Remains Ephemeral<a class="headerlink" href="#23-what-remains-ephemeral" title="Permanent link">&para;</a></h3>
+<p>The following paths are <strong>not</strong> volume-mounted. They are part of the image layer and <strong>reset automatically on every restart</strong>:</p>
+<div class="highlight"><pre><span></span><code>/bin        /sbin        /usr/bin      /usr/sbin
+/usr/lib    /lib         /lib64        /tmp          /run
+</code></pre></div>
+<p>This is intentional. If an agent installs a binary to <code>/usr/bin</code> or modifies a system library in <code>/usr/lib</code>, the next restart cleans it up automatically. Ephemeral-path corruption is <strong>self-healing</strong>. This is a feature — lean into it. The Docker image should contain everything the agents reliably need at startup; treat agent-driven writes as temporary unless they go to a volume path.</p>
+<hr />
+<h2 id="3-filesystem-map">3. Filesystem Map<a class="headerlink" href="#3-filesystem-map" title="Permanent link">&para;</a></h2>
+<p>This map is the single most important piece of information all three agents must internalize.</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────┐
+│                        DOCKER IMAGE LAYER                           │
+│                 (read-only baked in — RESETS ON RESTART)            │
+│                                                                     │
+│   /bin   /sbin   /usr/bin   /usr/sbin   /usr/lib   /lib   /tmp      │
+│                                                                     │
+│   ✗ Do NOT install software here expecting it to persist            │
+│   ✓ Changes here are automatically cleaned up on restart            │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                         DOCKER VOLUMES                              │
+│              (read-write — PERSIST ACROSS RESTARTS)                 │
+│                                                                     │
+│   /home/          ← PRIMARY workspace for all agents                │
+│   /usr/local/     ← pip, pipx, compiled installs                    │
+│   /opt/           ← conda, nix, self-contained runtimes             │
+│   /var/lib/       ← apt state, database files, app state            │
+│   /var/cache/     ← apt/package caches                              │
+│   /etc/           ← system config (⚠ handle with caution)           │
+│   /var/log/       ← logs, agent change records                      │
+│                                                                     │
+│   ✓ Work, installs, and configs written here survive restart        │
+│   ⚠ Corruption here requires manual recovery                        │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                     HOST READ-ONLY MOUNT                            │
+│                  (injected by operator, agents cannot modify)       │
+│                                                                     │
+│   /recovery/      ← backup scripts, recovery tools, this manifest   │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<p><strong>Software install decision tree for agents:</strong></p>
+<div class="highlight"><pre><span></span><code>Need to install a tool?
+│
+├─ Python package?
+│   └─ Use: pipx install &lt;tool&gt;  OR  pip install --user &lt;pkg&gt;
+│       Writes to: /usr/local/bin or /home/agent/.local  ✓ PERSISTED
+│
+├─ Needs conda/scientific stack?
+│   └─ Use: micromamba install -p /opt/conda
+│       Writes to: /opt/conda  ✓ PERSISTED
+│
+├─ System package (apt)?
+│   └─ Use: sudo apt install &lt;pkg&gt;   (acceptable but non-ideal)
+│       Binaries go to: /usr/bin     ✗ EPHEMERAL (lost on restart)
+│       apt state goes to: /var/lib  ✓ PERSISTED
+│       → Prefer pipx/conda alternatives when available
+│
+├─ Compiled from source?
+│   └─ Install to: /usr/local/  (./configure --prefix=/usr/local)
+│       ✓ PERSISTED
+│
+└─ NEVER: install directly to /usr/bin, /usr/lib, /bin, /lib
+    These are EPHEMERAL and will be erased on restart
+</code></pre></div>
+<hr />
+<h2 id="4-agent-awareness-design">4. Agent Awareness Design<a class="headerlink" href="#4-agent-awareness-design" title="Permanent link">&para;</a></h2>
+<h3 id="41-the-container-manifest">4.1 The Container Manifest<a class="headerlink" href="#41-the-container-manifest" title="Permanent link">&para;</a></h3>
+<p>A file <code>/container-manifest.md</code> is baked into the Docker image as a <strong>read-only, world-readable document</strong>. It is the canonical reference for what the container is, how it's structured, and what agents must and must not do. It is loaded into each agent's context at startup — either injected into the system prompt or made the first document in the context window.</p>
+<p>This is not optional documentation. It is infrastructure.</p>
+<p><strong>Key contents of <code>/container-manifest.md</code>:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Container Manifest — Required Reading Before Taking Any Action</span>
+
+You are operating inside a managed Docker container. Three agents share
+this environment: Hermes, OpenClaw, and Pi. All three access an external
+LLM API via the LLM_API_URL environment variable.
+
+<span class="gu">## Filesystem: What Persists and What Does Not</span>
+
+PERSISTED (survives restart — safe to write work here):
+  /home/          your primary workspace
+  /usr/local/     local software installs
+  /opt/           conda, nix, self-contained runtimes
+  /var/lib/       system app state
+  /var/log/       logs
+
+EPHEMERAL (resets on restart — anything written here is temporary):
+  /bin  /usr/bin  /usr/sbin  /usr/lib  /lib  /tmp
+
+<span class="gu">## Rules You Must Follow</span>
+
+<span class="k">1.</span> All work files belong in /home/agent or /home/agent/workspace
+<span class="k">2.</span> Install Python packages with pipx or pip --user, not pip (system)
+<span class="k">3.</span> Install compiled tools to /usr/local, not /usr/bin
+<span class="k">4.</span> For scientific packages, use micromamba to /opt/conda
+<span class="k">5.</span> Before any change to /etc, back up the affected file:
+   cp /etc/&lt;file&gt; /home/agent/.backups/etc/&lt;file&gt;.$(date +%s)
+<span class="k">6.</span> Log every significant system change:
+   echo &quot;$(date -u) | ACTION: &lt;what you did&gt;&quot; &gt;&gt; /var/log/agent-changes.log
+<span class="k">7.</span> If you believe you have corrupted a system file, stop further system
+   changes immediately and write a report to /var/log/corruption-report.txt
+
+<span class="gu">## Recovery</span>
+
+If you have damaged the environment, the operator will use the procedures
+in /recovery/. Do not attempt to repair critical system files unless you
+have confirmed via /var/log/agent-changes.log exactly what changed.
+</code></pre></div>
+<h3 id="42-system-prompt-injection">4.2 System Prompt Injection<a class="headerlink" href="#42-system-prompt-injection" title="Permanent link">&para;</a></h3>
+<p>Each agent must receive the manifest at startup. The entrypoint script reads it and exports it into the environment:</p>
+<p><strong><code>entrypoint.sh</code>:</strong>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CONTAINER_MANIFEST</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>/container-manifest.md<span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="k">)</span><span class="s2"> | Container started&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/agent-startup.log
+<span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+</code></pre></div></p>
+<p>Each agent's initialization code prepends it to the system prompt:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">manifest</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CONTAINER_MANIFEST&quot;</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/container-manifest.md&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+<span class="n">SYSTEM_PROMPT</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="si">{</span><span class="n">manifest</span><span class="si">}</span>
+
+<span class="s2">---</span>
+
+<span class="si">{</span><span class="n">AGENT_SPECIFIC_INSTRUCTIONS</span><span class="si">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="43-per-agent-risk-profiles-and-guidance">4.3 Per-Agent Risk Profiles and Guidance<a class="headerlink" href="#43-per-agent-risk-profiles-and-guidance" title="Permanent link">&para;</a></h3>
+<p>Each agent has a different operational profile and therefore a different risk surface:</p>
+<p><strong>Hermes</strong> (coordination, messaging, task routing)<br />
+- Risk level: <strong>Low</strong> — primarily reads and writes structured data, manages inter-agent communication<br />
+- Key guidance: Do not install communication libraries system-wide. Write all message queues, logs, and routing tables to <code>/home/hermes/</code>. Do not modify <code>/etc/hosts</code> or network configuration without explicit operator instruction.</p>
+<p><strong>OpenClaw</strong> (system operations, tool execution, environment management)<br />
+- Risk level: <strong>High</strong> — the most likely agent to install packages, modify configuration, and interact with the OS directly<br />
+- Key guidance: Treat every system-level action as potentially irreversible. Log before executing, not after. For any change to <code>/etc</code>, always create a timestamped backup in <code>/home/agent/.backups/etc/</code> first. When in doubt between a system-level and user-space solution, always choose user-space.</p>
+<p><strong>Pi</strong> (analysis, computation, data processing)<br />
+- Risk level: <strong>Medium</strong> — frequently installs data science packages; heavy <code>/tmp</code> usage<br />
+- Key guidance: All package installation via micromamba to <code>/opt/conda</code>. Do not use system pip. Write all intermediate computation outputs to <code>/home/pi/scratch/</code> rather than <code>/tmp</code> (which is ephemeral). Large datasets should go to <code>/home/pi/data/</code> to persist across sessions.</p>
+<hr />
+<h2 id="5-recovery-runbook">5. Recovery Runbook<a class="headerlink" href="#5-recovery-runbook" title="Permanent link">&para;</a></h2>
+<p>Recovery scenarios are ordered from least to most severe. Identify your scenario, then follow the steps exactly.</p>
+<hr />
+<h3 id="51-scenario-a-ephemeral-path-corruption">5.1 Scenario A: Ephemeral Path Corruption<a class="headerlink" href="#51-scenario-a-ephemeral-path-corruption" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> An agent installed a binary to <code>/usr/bin</code> or modified a library in <code>/usr/lib</code>. The tool works now but will be gone after restart. Or: the container is currently misbehaving due to a bad system binary.</p>
+<p><strong>Self-healing:</strong> Yes. These paths are image-layer. A restart resets them.</p>
+<p><strong>Recovery:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>restart
+</code></pre></div></p>
+<p>That's it. The image layer overwrites all ephemeral paths. Check <code>/var/log/agent-changes.log</code> afterward to understand what changed and update the agent's guidance if it made the same mistake twice.</p>
+<hr />
+<h3 id="52-scenario-b-broken-etc-container-starts-but-agents-cant-function">5.2 Scenario B: Broken <code>/etc</code> — Container Starts but Agents Can't Function<a class="headerlink" href="#52-scenario-b-broken-etc-container-starts-but-agents-cant-function" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Container starts, but sudo fails, DNS doesn't resolve, SSH daemon misbehaves, or some other system behavior is broken.</p>
+<p><strong>Recovery — read the change log first:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>agent<span class="w"> </span>cat<span class="w"> </span>/var/log/agent-changes.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
+</code></pre></div></p>
+<p><strong>Recovery — override entrypoint and fix manually:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>run<span class="w"> </span>--entrypoint<span class="w"> </span>/bin/bash<span class="w"> </span>agent
+<span class="c1"># You&#39;re now in a root-accessible shell</span>
+<span class="c1"># Fix the broken file:</span>
+nano<span class="w"> </span>/etc/sudoers<span class="w">         </span><span class="c1"># or whatever was corrupted</span>
+<span class="c1"># Verify the fix, then exit</span>
+<span class="nb">exit</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div></p>
+<p><strong>Recovery — restore /etc from backup:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>down
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>agent_container_agent_etc:/mnt/etc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/backups/agent-volumes/YYYY-MM-DD-HH-MM:/backup:ro<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ubuntu:24.04<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tar<span class="w"> </span>xzf<span class="w"> </span>/backup/agent_etc.tar.gz<span class="w"> </span>-C<span class="w"> </span>/mnt/etc
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div></p>
+<p><strong>Nuclear option — wipe /etc volume entirely:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>down
+docker<span class="w"> </span>volume<span class="w"> </span>rm<span class="w"> </span>agent_container_agent_etc
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+<span class="c1"># /etc will be re-initialized from the clean image layer on first start</span>
+<span class="c1"># All intentional /etc customizations are lost; must be re-applied</span>
+</code></pre></div></p>
+<hr />
+<h3 id="53-scenario-c-container-will-not-start">5.3 Scenario C: Container Will Not Start<a class="headerlink" href="#53-scenario-c-container-will-not-start" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> <code>docker compose up</code> exits immediately. <code>docker compose ps</code> shows the container in a restart loop. The entrypoint itself may be broken, or a critical <code>/etc</code> file (like <code>/etc/passwd</code>) is malformed.</p>
+<p><strong>Recovery — bypass the entrypoint entirely:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>run<span class="w"> </span>--entrypoint<span class="w"> </span>/bin/bash<span class="w"> </span>agent
+<span class="c1"># If this also fails, the image itself may be broken</span>
+<span class="c1"># Move to the next step</span>
+</code></pre></div></p>
+<p><strong>Recovery — use a rescue image with volumes attached:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Attach the broken volumes to a fresh, unrelated image for inspection</span>
+docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>agent_container_agent_etc:/mnt/etc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>agent_container_agent_home:/mnt/home<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>agent_container_agent_local:/mnt/local<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ubuntu:24.04<span class="w"> </span>bash
+
+<span class="c1"># Inside the rescue shell:</span>
+cat<span class="w"> </span>/mnt/etc/passwd<span class="w">          </span><span class="c1"># inspect for corruption</span>
+cat<span class="w"> </span>/mnt/home/agent/.backups/etc/passwd.*<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1<span class="w">   </span><span class="c1"># check backup</span>
+<span class="c1"># Repair or restore the file, then exit</span>
+<span class="nb">exit</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div></p>
+<hr />
+<h3 id="54-scenario-d-cascading-volume-corruption">5.4 Scenario D: Cascading Volume Corruption<a class="headerlink" href="#54-scenario-d-cascading-volume-corruption" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Multiple volumes are in an inconsistent state — e.g., a Python version conflict corrupted both <code>/usr/local/</code> and <code>/home/agent/.local/</code>, or a botched conda install broke <code>/opt/</code> in a way that prevents the agent runtime from loading.</p>
+<p><strong>Recovery — identify scope from change log:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start the rescue container (see 5.3)</span>
+cat<span class="w"> </span>/mnt/logs/agent-changes.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span>-B2<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span><span class="s2">&quot;</span>
+<span class="c1"># Identify which volumes were touched and in what order</span>
+</code></pre></div></p>
+<p><strong>Recovery — selective volume restore:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>down
+
+<span class="c1"># Restore only the affected volumes, leave others intact</span>
+<span class="k">for</span><span class="w"> </span>VOLUME<span class="w"> </span><span class="k">in</span><span class="w"> </span>agent_local<span class="w"> </span>agent_opt<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span><span class="s2">&quot;agent_container_</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">:/target&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span><span class="s2">&quot;/backups/agent-volumes/YYYY-MM-DD:/backup:ro&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ubuntu:24.04<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd /target &amp;&amp; tar xzf /backup/</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
+<span class="k">done</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div></p>
+<p><strong>Recovery — full restore from snapshot (last resort):</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>down
+/opt/agent/recovery/restore-all-volumes.sh<span class="w"> </span>YYYY-MM-DD-HH-MM
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div></p>
+<hr />
+<h3 id="55-scenario-e-agent-deleted-its-own-work">5.5 Scenario E: Agent Deleted Its Own Work<a class="headerlink" href="#55-scenario-e-agent-deleted-its-own-work" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> An agent deleted files from <code>/home/</code> that represent hours of work — scripts, data, configurations the agent had built up.</p>
+<p><strong>Recovery from nightly backup:</strong>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>agent_container_agent_home:/mnt/home<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/backups/agent-volumes/YYYY-MM-DD:/backup:ro<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ubuntu:24.04<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd /mnt/home &amp;&amp; tar xzf /backup/agent_home.tar.gz ./agent/path/to/deleted/files&quot;</span>
+</code></pre></div></p>
+<p><strong>Note:</strong> If the work was created after the last nightly backup and there is no pre-change snapshot, the work may be unrecoverable. This is the strongest argument for the agents themselves triggering snapshots before destructive operations (see Section 6.2).</p>
+<hr />
+<h2 id="6-backup-and-snapshot-strategy">6. Backup and Snapshot Strategy<a class="headerlink" href="#6-backup-and-snapshot-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="61-nightly-automated-backup-host-cron">6.1 Nightly Automated Backup (Host Cron)<a class="headerlink" href="#61-nightly-automated-backup-host-cron" title="Permanent link">&para;</a></h3>
+<p>Run on the <strong>host machine</strong>, not inside the container:</p>
+<p><strong><code>/opt/agent/backup-volumes.sh</code>:</strong>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/backups/agent-volumes&quot;</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d-%H-%M<span class="k">)</span>
+<span class="nv">VOLUMES</span><span class="o">=</span><span class="s2">&quot;agent_home agent_local agent_opt agent_varlib agent_varcache agent_etc agent_logs&quot;</span>
+<span class="nv">PROJECT</span><span class="o">=</span><span class="s2">&quot;agent_container&quot;</span><span class="w">   </span><span class="c1"># matches docker compose project name</span>
+
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">/</span><span class="nv">$DATE</span><span class="s2">&quot;</span>
+
+<span class="k">for</span><span class="w"> </span>VOLUME<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nv">$VOLUMES</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Backing up </span><span class="si">${</span><span class="nv">PROJECT</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">...&quot;</span>
+<span class="w">  </span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">PROJECT</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">:/source:ro&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">/</span><span class="nv">$DATE</span><span class="s2">:/backup&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ubuntu:24.04<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>tar<span class="w"> </span>czf<span class="w"> </span><span class="s2">&quot;/backup/</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span><span class="w"> </span>-C<span class="w"> </span>/source<span class="w"> </span>.
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  → Done: </span><span class="k">$(</span>du<span class="w"> </span>-sh<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/<span class="nv">$DATE</span>/<span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span>.tar.gz<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-f1<span class="k">)</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Backup complete: </span><span class="nv">$BACKUP_DIR</span><span class="s2">/</span><span class="nv">$DATE</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="k">)</span><span class="s2"> | Nightly backup complete: </span><span class="nv">$DATE</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/agent-backup.log
+
+<span class="c1"># Retain 7 days of backups</span>
+find<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP_DIR</span><span class="s2">&quot;</span><span class="w"> </span>-maxdepth<span class="w"> </span><span class="m">1</span><span class="w"> </span>-type<span class="w"> </span>d<span class="w"> </span>-mtime<span class="w"> </span>+7<span class="w"> </span>-exec<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+</code></pre></div></p>
+<p><strong>Host crontab:</strong>
+<div class="highlight"><pre><span></span><code>0 3 * * * /opt/agent/backup-volumes.sh &gt;&gt; /var/log/agent-backup.log 2&gt;&amp;1
+</code></pre></div></p>
+<h3 id="62-agent-triggered-pre-change-snapshots">6.2 Agent-Triggered Pre-Change Snapshots<a class="headerlink" href="#62-agent-triggered-pre-change-snapshots" title="Permanent link">&para;</a></h3>
+<p>The <code>/recovery/</code> directory is mounted read-only into the container (<code>./recovery:/recovery:ro</code>). Agents can invoke — but not modify — the snapshot script by calling a small shim:</p>
+<p><strong><code>/recovery/request-snapshot.sh</code> (host-side, invoked via docker exec):</strong>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">LABEL</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="s2">&quot;agent-requested&quot;</span><span class="si">}</span>
+/opt/agent/backup-volumes.sh
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="k">)</span><span class="s2"> | Pre-change snapshot: </span><span class="nv">$LABEL</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/var/log/agent-changes.log
+</code></pre></div></p>
+<p>Agents should be instructed to request a snapshot before:
+- Any bulk deletion operation
+- Any change to <code>/etc/</code>
+- Installing or removing a runtime (Python, Node, conda)
+- Any operation described as "clean up" or "reset"</p>
+<p>The instruction in the system prompt:
+<div class="highlight"><pre><span></span><code>Before any destructive or hard-to-reverse operation, write:
+  echo &quot;SNAPSHOT_REQUEST: &lt;reason&gt;&quot; &gt;&gt; /var/log/agent-changes.log
+The operator monitors this log and will trigger a snapshot.
+</code></pre></div></p>
+<p>(Fully automated agent-triggered snapshots require a host-side daemon watching that log, which can be added as an enhancement.)</p>
+<h3 id="63-restore-script">6.3 Restore Script<a class="headerlink" href="#63-restore-script" title="Permanent link">&para;</a></h3>
+<p><strong><code>/opt/agent/recovery/restore-volume.sh</code>:</strong>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">VOLUME</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="nv">$2</span>
+<span class="nv">PROJECT</span><span class="o">=</span><span class="s2">&quot;agent_container&quot;</span>
+<span class="nv">BACKUP</span><span class="o">=</span><span class="s2">&quot;/backups/agent-volumes/</span><span class="nv">$DATE</span><span class="s2">/</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">.tar.gz&quot;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BACKUP</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Error: backup not found at </span><span class="nv">$BACKUP</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Restoring </span><span class="si">${</span><span class="nv">PROJECT</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2"> from </span><span class="nv">$DATE</span><span class="s2">...&quot;</span>
+docker<span class="w"> </span>compose<span class="w"> </span>down
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">PROJECT</span><span class="si">}</span><span class="s2">_</span><span class="si">${</span><span class="nv">VOLUME</span><span class="si">}</span><span class="s2">:/target&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="nv">$BACKUP</span><span class="k">)</span><span class="s2">:/backup:ro&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ubuntu:24.04<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd /target &amp;&amp; tar xzf /backup/</span><span class="k">$(</span>basename<span class="w"> </span><span class="nv">$BACKUP</span><span class="k">)</span><span class="s2">&quot;</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Done.&quot;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="7-implementation-files">7. Implementation Files<a class="headerlink" href="#7-implementation-files" title="Permanent link">&para;</a></h2>
+<h3 id="71-dockerfile">7.1 Dockerfile<a class="headerlink" href="#71-dockerfile" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">ubuntu:24.04</span>
+
+<span class="c"># Baked-in baseline — always available, always clean on restart</span>
+<span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>curl<span class="w"> </span>wget<span class="w"> </span>git<span class="w"> </span>sudo<span class="w"> </span>python3<span class="w"> </span>python3-pip<span class="w"> </span>pipx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>vim<span class="w"> </span>nano<span class="w"> </span>htop<span class="w"> </span>jq<span class="w"> </span>ca-certificates<span class="w"> </span>gnupg<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/apt/lists/*
+
+<span class="c"># Install micromamba for conda-compatible package management to /opt</span>
+<span class="k">RUN</span><span class="w"> </span>curl<span class="w"> </span>-Ls<span class="w"> </span>https://micro.mamba.pm/api/micromamba/linux-64/latest<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="p">|</span><span class="w"> </span>tar<span class="w"> </span>-xvj<span class="w"> </span>-C<span class="w"> </span>/usr/local<span class="w"> </span>bin/micromamba
+
+<span class="c"># Create agent user with sudo access</span>
+<span class="k">RUN</span><span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>agent<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;agent ALL=(ALL) NOPASSWD:ALL&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/sudoers<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/home/agent/.backups/etc
+
+<span class="c"># Bake in the manifest — read-only, world-readable</span>
+<span class="k">COPY</span><span class="w"> </span>container-manifest.md<span class="w"> </span>/container-manifest.md
+<span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span><span class="m">444</span><span class="w"> </span>/container-manifest.md
+
+<span class="k">COPY</span><span class="w"> </span>entrypoint.sh<span class="w"> </span>/entrypoint.sh
+<span class="k">RUN</span><span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>/entrypoint.sh
+
+<span class="k">USER</span><span class="w"> </span><span class="s">agent</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/home/agent</span>
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/entrypoint.sh&quot;</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="72-docker-composeyml">7.2 docker-compose.yml<a class="headerlink" href="#72-docker-composeyml" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_container</span>
+<span class="w">    </span><span class="nt">env_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.env</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_home:/home/</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_local:/usr/local/</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_opt:/opt/</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_varlib:/var/lib/</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_varcache:/var/cache/</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_etc:/etc/</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">agent_logs:/var/log/</span>
+<span class="w">      </span><span class="c1"># Recovery tools: host-side scripts, read-only inside container</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./recovery:/recovery:ro</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;/var/log/agent-startup.log&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_home</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_local</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_opt</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_varlib</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_varcache</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_etc</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">agent_logs</span><span class="p">:</span>
+</code></pre></div>
+<h3 id="73-entrypointsh">7.3 entrypoint.sh<a class="headerlink" href="#73-entrypointsh" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Agent Container Starting ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  LLM_API_URL : </span><span class="si">${</span><span class="nv">LLM_API_URL</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  Timestamp   : </span><span class="k">$(</span>date<span class="w"> </span>-u<span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="c1"># Make the manifest available in the environment for agents to inject</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CONTAINER_MANIFEST</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>/container-manifest.md<span class="k">)</span>
+
+<span class="c1"># Ensure backup directory exists in persisted home</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/home/agent/.backups/etc
+
+<span class="c1"># Persistent startup log</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span>-u<span class="k">)</span><span class="s2"> | Container started | LLM_API_URL=</span><span class="si">${</span><span class="nv">LLM_API_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;&gt;<span class="w"> </span>/var/log/agent-startup.log
+
+<span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$@</span><span class="s2">&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="8-conclusions">8. Conclusions<a class="headerlink" href="#8-conclusions" title="Permanent link">&para;</a></h2>
+<h3 id="81-the-volume-strategy-is-the-foundation">8.1 The Volume Strategy is the Foundation<a class="headerlink" href="#81-the-volume-strategy-is-the-foundation" title="Permanent link">&para;</a></h3>
+<p>Every other component — agent awareness, recovery procedures, snapshots — depends on getting the volume strategy right. If a path the agents write to is not volume-mounted, no amount of agent instruction will prevent that work from being lost on restart. Validate the volume map before deploying agents, not after.</p>
+<h3 id="82-ephemeral-corruption-is-self-healing-use-this">8.2 Ephemeral Corruption Is Self-Healing — Use This<a class="headerlink" href="#82-ephemeral-corruption-is-self-healing-use-this" title="Permanent link">&para;</a></h3>
+<p>When OpenClaw installs a tool to <code>/usr/bin</code>, when Pi's conda bootstrap writes to <code>/usr/lib</code>, when Hermes accidentally edits a system binary — a restart fixes it. This is the Docker image layer doing its job. Design the base image to contain everything the agents reliably need at startup, and treat agent-driven changes to ephemeral paths as inherently temporary. This reframe eliminates an entire class of "corruption" events that are in fact harmless.</p>
+<h3 id="83-etc-is-the-real-danger-zone">8.3 <code>/etc</code> is the Real Danger Zone<a class="headerlink" href="#83-etc-is-the-real-danger-zone" title="Permanent link">&para;</a></h3>
+<p>All other corrupted paths either self-heal (ephemeral) or contain recoverable agent work (volumes). A corrupted <code>/etc</code> file is the one scenario that can make the container unbootable and requires operator intervention with Docker internals. OpenClaw, as the agent most likely to interact with system configuration, must treat every <code>/etc</code> modification as a high-risk operation with a mandatory pre-change backup. This should be baked into its system prompt as an absolute rule, not a guideline.</p>
+<h3 id="84-agent-awareness-is-infrastructure-not-documentation">8.4 Agent Awareness Is Infrastructure, Not Documentation<a class="headerlink" href="#84-agent-awareness-is-infrastructure-not-documentation" title="Permanent link">&para;</a></h3>
+<p>The container manifest is not a README for humans. It is a structured context injection that every agent reads before taking its first action. It must be maintained with the same discipline as a configuration file: when the volume layout changes, the manifest changes. When a new agent is added, it inherits the manifest. If the manifest is out of date, the agents are operating on incorrect information, and corruption becomes more likely.</p>
+<h3 id="85-the-change-log-is-the-recovery-lifeline">8.5 The Change Log is the Recovery Lifeline<a class="headerlink" href="#85-the-change-log-is-the-recovery-lifeline" title="Permanent link">&para;</a></h3>
+<p>In every scenario in Section 5, the first step after establishing shell access is reading <code>/var/log/agent-changes.log</code>. This log is only useful if agents write to it. It must be a standing behavioral requirement in all three agents' system prompts — not a suggestion. The log is the difference between a 10-minute recovery and a 2-hour investigation.</p>
+<h3 id="86-snapshots-must-precede-major-operations">8.6 Snapshots Must Precede Major Operations<a class="headerlink" href="#86-snapshots-must-precede-major-operations" title="Permanent link">&para;</a></h3>
+<p>Nightly backups protect against ordinary data loss. They do not protect against an agent that destroys work between backups. Pre-change snapshots — triggered by the agents themselves before bulk deletions, runtime installs, or <code>/etc</code> modifications — are the gap-filler. The agent-triggered snapshot mechanism in Section 6.2 should be treated as mandatory, not optional.</p>
+<h3 id="87-recovery-must-be-practiced-before-it-is-needed">8.7 Recovery Must Be Practiced Before It Is Needed<a class="headerlink" href="#87-recovery-must-be-practiced-before-it-is-needed" title="Permanent link">&para;</a></h3>
+<p>The five recovery scenarios in Section 5 require the operator to have a working mental model of Docker volumes, container override commands, and the project's naming conventions. This is not knowledge that comes naturally under pressure at 2 AM. Schedule a recovery drill on a copy of the container. Run Scenario C (unbootable container) in a test environment. Verify the restore script actually works. The runbook is only reliable if it has been tested.</p>
+<h3 id="88-accept-the-inevitable-and-design-for-speed-of-recovery">8.8 Accept the Inevitable and Design for Speed of Recovery<a class="headerlink" href="#88-accept-the-inevitable-and-design-for-speed-of-recovery" title="Permanent link">&para;</a></h3>
+<p>No instruction set will make Hermes, OpenClaw, or Pi perfectly safe. They are capable agents with full system access, operating under novel conditions, solving problems the designers did not anticipate. Corruption will occur. The correct response is not to over-restrict the agents — restricted agents are less useful — but to minimize recovery time. With good volumes, a tested runbook, nightly backups, and a change log, most corruption events should be resolvable in under 15 minutes without data loss.</p>
+<hr />
+<h2 id="9-implementation-notes-deviations">9. Implementation Notes &amp; Deviations<a class="headerlink" href="#9-implementation-notes-deviations" title="Permanent link">&para;</a></h2>
+<p>During the actual implementation on the <code>010-agent-docker-setup</code> branch, the following deviations and design decisions were made to ensure an alpha-compatible, clash-free, and recoverable deployment:</p>
+<h3 id="91-multi-stage-production-build">9.1 Multi-Stage Production Build<a class="headerlink" href="#91-multi-stage-production-build" title="Permanent link">&para;</a></h3>
+<p>The production <code>Dockerfile</code> was upgraded to a multi-stage build:
+1. <strong>Stage 1 (web-builder)</strong>: Uses <code>node:22-slim</code> to build the Vite frontend monorepo app (<code>apps/web</code>). This avoids polluting the final runtime image with web build-time tools.
+2. <strong>Stage 2 (Runtime)</strong>: Sets up the lean <code>ubuntu:24.04</code> base, installs Python 3.13 via the deadsnakes PPA, Node.js 22, astral <code>uv</code>, and micromamba. The built static files from Stage 1 are copied into <code>/workspace/apps/web/dist</code> where the FastAPI backend serves them.</p>
+<h3 id="92-resolving-ubuntu-uid-1000-clash">9.2 Resolving Ubuntu UID 1000 Clash<a class="headerlink" href="#92-resolving-ubuntu-uid-1000-clash" title="Permanent link">&para;</a></h3>
+<p>The official <code>ubuntu:24.04</code> Docker base image has a pre-created user named <code>ubuntu</code> with UID 1000. In order to create our <code>agent</code> user with UID 1000 (which is required to match the typical host user's UID and prevent SQLite/file write permission errors on bind-mounted/named volumes), the Dockerfile explicitly deletes the default user first:
+<div class="highlight"><pre><span></span><code><span class="k">RUN</span><span class="w"> </span>userdel<span class="w"> </span>-r<span class="w"> </span>ubuntu<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>useradd<span class="w"> </span>-m<span class="w"> </span>-u<span class="w"> </span><span class="m">1000</span><span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>agent<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;agent ALL=(ALL) NOPASSWD:ALL&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/sudoers
+</code></pre></div></p>
+<h3 id="93-development-port-host-isolation">9.3 Development Port &amp; Host Isolation<a class="headerlink" href="#93-development-port-host-isolation" title="Permanent link">&para;</a></h3>
+<p>To allow testing and debugging the Docker stack without stopping the active host development servers (running on ports <code>8000</code> and <code>5173</code>), the test container stack (<code>docker-compose.test.yml</code>) remaps host ports as follows:
+- <strong>API Server / Static Web</strong>: Mapped to host port <code>8080</code> (container port <code>8000</code>)
+- <strong>Vite Dev Server (if run)</strong>: Mapped to host port <code>5174</code> (container port <code>5173</code>)
+This fully isolates development and test environments.</p>
+<h3 id="94-named-volume-globals">9.4 Named Volume Globals<a class="headerlink" href="#94-named-volume-globals" title="Permanent link">&para;</a></h3>
+<p>All 7 named volumes are explicitly named globally to prevent Docker Compose from prefixing them with the folder/project name, ensuring clean host backup and restore scripting:
+<code>wright_home</code>, <code>wright_local</code>, <code>wright_opt</code>, <code>wright_varlib</code>, <code>wright_varcache</code>, <code>wright_etc</code>, and <code>wright_logs</code>.</p>
+<h3 id="95-scripts-directory-mounting">9.5 Scripts Directory Mounting<a class="headerlink" href="#95-scripts-directory-mounting" title="Permanent link">&para;</a></h3>
+<p>The recovery scripts directory on the host is named <code>scripts/</code> (not <code>recovery/</code>). Thus, in <code>docker-compose.test.yml</code>, the scripts are mounted to <code>/recovery</code> read-only via:
+<code>- ./scripts:/recovery:ro</code></p>
+<hr />
+<p><em>End of Document</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4328 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/mcp-catalog/engineering_mcp_research_handoff/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Engineering MCP Server Research Handoff - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#engineering-mcp-server-research-handoff" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Engineering MCP Server Research Handoff
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-verification-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Verification States
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-platform-status-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Platform Status Values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-corrected-seed-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Corrected Seed Catalog
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Corrected Seed Catalog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-high-priority-verified-or-strongly-seeded-entries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 High-priority verified or strongly seeded entries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-user-provided-catalog-reconciliation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 User-provided catalog reconciliation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-hermes-yaml-catalog-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Hermes YAML catalog variants
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-verified-source-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Verified Source Notes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Verified Source Notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zoodev-cloud-cad-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zoo.dev Cloud CAD MCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blendermcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BlenderMCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#freecad-mcp-neka-nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FreeCAD MCP — neka-nat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#freecad-mcp-copilot-contextform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FreeCAD MCP / Copilot — contextform
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kicad-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KiCad MCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rosbag-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ROSBag MCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siemens-xcelerator-developer-portal-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Siemens Xcelerator Developer Portal MCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openscad-host-openscad-mcp-seeds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenSCAD host / OpenSCAD MCP seeds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autodesk-platform-services-aps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Autodesk Platform Services / APS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creoson-ptc-creo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CREOSON / PTC Creo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onshape-api-jarvis-onshape-mcp-seed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onshape API / Jarvis OnShape MCP seed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ptc-thingworx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PTC ThingWorx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mcp-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP-UI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#webmcp-standard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WebMCP Standard
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-machine-readable-seed-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Machine-readable Seed Manifest
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-plugin-architecture-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Plugin Architecture Guidance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Plugin Architecture Guidance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-registry-schema-additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Registry schema additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-install-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Install strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-launch-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Launch strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-secret-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 Secret handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-safety-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 Safety policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-automated-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Automated Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Automated Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-universal-server-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Universal server tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-cadfile-generator-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 CAD/file generator tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-host-app-bridge-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Host-app bridge tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-platform-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Platform tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#85-machine-control-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.5 Machine-control tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-discovery-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Discovery Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-immediate-coding-agent-tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Immediate Coding-Agent Tasks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-product-recommendation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Product Recommendation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="engineering-mcp-server-research-handoff">Engineering MCP Server Research Handoff<a class="headerlink" href="#engineering-mcp-server-research-handoff" title="Permanent link">&para;</a></h1>
+<p>Generated: 2026-06-26
+Audience: Hermes / OpenClaw coding agent
+Purpose: Build a plugin-managed registry for discovering, installing, configuring, launching, testing, and safely using engineering-focused Model Context Protocol (MCP) servers.</p>
+<blockquote>
+<p>This is a corrected research handoff, not a claim that every row is a verified installable MCP server. Rows are explicitly marked as verified, user/catalog-reported, wrapper candidates, capability aliases, UI/standard infrastructure, watchlist, or excluded. Unknown platform support is intentionally recorded as <code>unknown</code>, not silently treated as supported.</p>
+</blockquote>
+<hr />
+<h2 id="1-executive-summary">1. Executive Summary<a class="headerlink" href="#1-executive-summary" title="Permanent link">&para;</a></h2>
+<p>The previous shortlist missed visible engineering MCP entries and collapsed too many categories into one bucket. The correct product artifact is a <strong>statused engineering MCP registry</strong> with source URLs, install confidence, platform compatibility, risk level, and verification status.</p>
+<p>Important corrections:</p>
+<ol>
+<li><strong>OpenSCAD MCP entries must be seeded manually.</strong> OpenSCAD Geometry, OpenSCAD Linter, Web OpenSCAD, and WebMCP-OpenSCAD should be catalog entries even if their public MCP URLs still need verification. OpenSCAD is highly valuable for deterministic, script-first CAD workflows.</li>
+<li><strong>Autodesk Product Help MCP should be treated as a documentation/help MCP.</strong> It should not be mixed with Fusion/Revit/Inventor automation servers.</li>
+<li><strong>Zoo.dev Cloud CAD MCP is a verified official MCP and should be included.</strong> It has official docs and an install path using <code>uvx zoo-mcp</code> with <code>ZOO_API_TOKEN</code>.</li>
+<li><strong>FreeCAD has multiple MCP variants.</strong> Some entries in prior catalogs are probably capability groups under a FreeCAD backend rather than separate MCP servers.</li>
+<li><strong>Wrapper candidates are not MCP servers.</strong> APIs such as Autodesk APS, Onshape, PTC ThingWorx, CREOSON, SolidWorks API/Document Manager, etc. are valuable, but should not be marked installable MCPs until wrapped or verified.</li>
+<li><strong>Platform support must be explicit by architecture.</strong> <code>Linux</code> is not enough. Track <code>windows_11_x64</code>, <code>linux_x64</code>, <code>linux_arm64</code>, <code>macos_x64</code>, and <code>macos_arm64</code> separately.</li>
+<li><strong>Machine-control integrations are safety-critical.</strong> Printer, robot, CNC, PLC, OPC UA, Modbus, MTConnect, MQTT, and Snap7 entries must default to disabled or read-only/simulation mode.</li>
+</ol>
+<p>Recommended first support tiers:</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Entries</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0 verified/installable</td>
+<td>Zoo.dev Cloud CAD MCP, BlenderMCP, FreeCAD MCP variants</td>
+</tr>
+<tr>
+<td>P0 seed, blocked on URL</td>
+<td>OpenSCAD Geometry, OpenSCAD Linter, Autodesk Product Help MCP</td>
+</tr>
+<tr>
+<td>P1 verified/community</td>
+<td>KiCad MCP, ROSBag MCP</td>
+</tr>
+<tr>
+<td>P1 wrapper candidates</td>
+<td>CREOSON / Creo, Onshape API, Autodesk APS, SolidWorks APIs, PTC ThingWorx</td>
+</tr>
+<tr>
+<td>P2/P3 safety-gated</td>
+<td>WinCC, PLC/OPC UA/Modbus/Snap7/MTConnect, printer/slicer/robot integrations</td>
+</tr>
+<tr>
+<td>Infrastructure, not engineering servers</td>
+<td>MCP-UI, WebMCP Standard, React Three Fiber/Web3D-style UI entries</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-verification-states">2. Verification States<a class="headerlink" href="#2-verification-states" title="Permanent link">&para;</a></h2>
+<p>Use these states in the registry:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+<th>Plugin behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>verified_mcp</code></td>
+<td>Primary source confirms an MCP server and install/launch path.</td>
+<td>Eligible for install manager and health check.</td>
+</tr>
+<tr>
+<td><code>verified_docs_mcp</code></td>
+<td>Primary source confirms a documentation/help MCP.</td>
+<td>Eligible for docs/search integration; read-only by default.</td>
+</tr>
+<tr>
+<td><code>community_mcp</code></td>
+<td>Community repo appears real and usable, with install docs.</td>
+<td>Eligible after safety review and platform probe.</td>
+</tr>
+<tr>
+<td><code>user_reported_url_needed</code></td>
+<td>Known from user/prior catalog, but exact URL/package not verified here.</td>
+<td>Keep in catalog; block automated install until URL is pinned.</td>
+</tr>
+<tr>
+<td><code>verified_api_wrapper_candidate</code></td>
+<td>Real engineering API/bridge exists, but no verified MCP server.</td>
+<td>Use as roadmap/custom wrapper candidate.</td>
+</tr>
+<tr>
+<td><code>capability_alias</code></td>
+<td>Entry appears to be a capability under another MCP server.</td>
+<td>Do not count as separate server unless distinct source URL exists.</td>
+</tr>
+<tr>
+<td><code>ui_or_web_standard</code></td>
+<td>Useful for Hermes UI/web-agent integration, but not an engineering MCP server.</td>
+<td>Track separately from engineering server catalog.</td>
+</tr>
+<tr>
+<td><code>watchlist</code></td>
+<td>Plausible, unverified, vendor roadmap, or safety-sensitive candidate.</td>
+<td>Keep metadata; no default install.</td>
+</tr>
+<tr>
+<td><code>excluded</code></td>
+<td>No MCP implementation, stale, unsafe, toy-only, unclear, or no engineering value.</td>
+<td>Do not expose in UI except debug/audit mode.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-platform-status-values">3. Platform Status Values<a class="headerlink" href="#3-platform-status-values" title="Permanent link">&para;</a></h2>
+<p>Use these values per OS/architecture:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>yes</code></td>
+<td>Verified support from docs or successful test.</td>
+</tr>
+<tr>
+<td><code>likely</code></td>
+<td>Strong evidence based on runtime/host availability, but not tested.</td>
+</tr>
+<tr>
+<td><code>host-dependent</code></td>
+<td>Depends primarily on desktop app, CAD license, vendor tenant, or hardware controller.</td>
+</tr>
+<tr>
+<td><code>unknown</code></td>
+<td>Cannot determine; must be tested.</td>
+</tr>
+<tr>
+<td><code>no</code></td>
+<td>Known unsupported or impractical.</td>
+</tr>
+</tbody>
+</table>
+<p>Required platform keys:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | likely | host-dependent | unknown | no&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | likely | host-dependent | unknown | no&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | likely | host-dependent | unknown | no&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | likely | host-dependent | unknown | no&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | likely | host-dependent | unknown | no&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Special note for Dell GB10 / non-Intel Linux: even when a README says “Linux,” set <code>linux_arm64</code> to <code>unknown</code> until tested. Native wheels, host-app binaries, Qt/GUI dependencies, Docker image manifests, and CAD plug-ins often fail on ARM64.</p>
+<hr />
+<h2 id="4-corrected-seed-catalog">4. Corrected Seed Catalog<a class="headerlink" href="#4-corrected-seed-catalog" title="Permanent link">&para;</a></h2>
+<h3 id="41-high-priority-verified-or-strongly-seeded-entries">4.1 High-priority verified or strongly seeded entries<a class="headerlink" href="#41-high-priority-verified-or-strongly-seeded-entries" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Canonical ID</th>
+<th>Display name</th>
+<th style="text-align: right;">Verification state</th>
+<th>Source / install URL</th>
+<th>Install / launch notes</th>
+<th>Deployment mode</th>
+<th style="text-align: right;">Windows 11 x64</th>
+<th style="text-align: right;">Linux x64</th>
+<th style="text-align: right;">Linux ARM64</th>
+<th style="text-align: right;">Risk</th>
+<th>Plugin action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zoo_cloud_cad_mcp</code></td>
+<td>Zoo.dev Cloud CAD MCP</td>
+<td style="text-align: right;"><code>verified_mcp</code></td>
+<td>https://zoo.dev/docs/developer-tools/mcp</td>
+<td><code>uvx zoo-mcp</code>; requires <code>ZOO_API_TOKEN</code>.</td>
+<td>cloud API via local MCP</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Include P0/P1; require token vault.</td>
+</tr>
+<tr>
+<td><code>blender_mcp_ahujasid</code></td>
+<td>BlenderMCP</td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/ahujasid/blender-mcp</td>
+<td><code>uvx blender-mcp</code>; requires Blender add-on, Blender 3.0+, Python 3.10+, uv.</td>
+<td>local bridge to desktop app</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Include P0/P1; disabled by default due Python execution.</td>
+</tr>
+<tr>
+<td><code>freecad_mcp_neka_nat</code></td>
+<td>FreeCAD Engineering MCP</td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/neka-nat/freecad-mcp</td>
+<td>Install FreeCAD add-on, start RPC server, configure MCP with <code>uvx freecad-mcp</code>.</td>
+<td>local bridge to desktop app</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Include P1; disabled by default due Python execution/model writes.</td>
+</tr>
+<tr>
+<td><code>freecad_mcp_contextform</code></td>
+<td>FreeCAD Copilot / FreeCAD MCP</td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/contextform/freecad-mcp</td>
+<td><code>npm install -g freecad-mcp-setup@latest</code>; <code>npx freecad-mcp-setup setup</code>.</td>
+<td>local bridge to desktop app</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Include P1; alternative FreeCAD backend.</td>
+</tr>
+<tr>
+<td><code>openscad_geometry_mcp</code></td>
+<td>OpenSCAD Geometry</td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP URL: TBD. OpenSCAD host: https://openscad.org/downloads.html</td>
+<td>Host install examples: Windows <code>winget install OpenSCAD.OpenSCAD</code>; Debian/Ubuntu <code>apt install openscad</code>; AppImage/Docker available. MCP install unknown.</td>
+<td>likely local-only or local bridge</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host likely; MCP unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Seed P0; block install until MCP URL verified.</td>
+</tr>
+<tr>
+<td><code>openscad_linter_mcp</code></td>
+<td>OpenSCAD Linter</td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP URL: TBD. OpenSCAD docs: https://openscad.org/documentation.html</td>
+<td>Exact MCP install unknown.</td>
+<td>likely local-only/docs+analysis</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host likely; MCP unknown</td>
+<td style="text-align: right;">low/medium</td>
+<td>Seed P0/P1; block install until URL verified.</td>
+</tr>
+<tr>
+<td><code>autodesk_product_help_mcp</code></td>
+<td>Autodesk Product Help MCP</td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP URL: TBD. Autodesk Help: https://help.autodesk.com/</td>
+<td>Treat as documentation/help MCP, not desktop automation.</td>
+<td>docs-only / remote likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">read-only</td>
+<td>Seed P0; verify primary Autodesk URL.</td>
+</tr>
+<tr>
+<td><code>kicad_mcp_lamaalrajih</code></td>
+<td>KiCad MCP</td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/lamaalrajih/kicad-mcp</td>
+<td>Clone, <code>make install</code>, configure Python venv / <code>main.py</code>; requires KiCad 9.0+, Python 3.10+, uv.</td>
+<td>local bridge / local project analyzer</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Include P1; read-only mode preferred.</td>
+</tr>
+<tr>
+<td><code>rosbag_mcp_binabik</code></td>
+<td>ROSBag MCP</td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/binabik-ai/mcp-rosbags</td>
+<td>Clone, create Python venv, install requirements; optional ROS 2 extras.</td>
+<td>local file analyzer</td>
+<td style="text-align: right;">maybe</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">low/medium</td>
+<td>Include P1 for offline robotics data.</td>
+</tr>
+<tr>
+<td><code>siemens_xcelerator_developer_portal_mcp</code></td>
+<td>Siemens Xcelerator Developer Portal MCP</td>
+<td style="text-align: right;"><code>verified_docs_mcp</code></td>
+<td>https://developer.siemens.com/</td>
+<td>Siemens site advertises an MCP server for developer-portal documentation, product/API discovery, and resource retrieval. Exact client config URL should be captured from “Learn more.”</td>
+<td>docs-only / remote likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">read-only</td>
+<td>Include P0/P1 docs integration once config URL pinned.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-user-provided-catalog-reconciliation">4.2 User-provided catalog reconciliation<a class="headerlink" href="#42-user-provided-catalog-reconciliation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Entry from previous research</th>
+<th>Canonical ID</th>
+<th style="text-align: right;">Reconciliation</th>
+<th>Best source / install URL found</th>
+<th style="text-align: right;">Windows 11 x64</th>
+<th style="text-align: right;">Linux x64</th>
+<th style="text-align: right;">Linux ARM64</th>
+<th style="text-align: right;">Risk</th>
+<th>Plugin action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OpenSCAD Geometry</td>
+<td><code>openscad_geometry_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP TBD; host: https://openscad.org/downloads.html</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host likely; MCP unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Seed P0; verify MCP URL.</td>
+</tr>
+<tr>
+<td>OpenSCAD Linter</td>
+<td><code>openscad_linter_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP TBD; docs: https://openscad.org/documentation.html</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host yes; MCP unknown</td>
+<td style="text-align: right;">host likely; MCP unknown</td>
+<td style="text-align: right;">low/medium</td>
+<td>Seed P0/P1; verify MCP URL.</td>
+</tr>
+<tr>
+<td>FreeCAD Engineering</td>
+<td><code>freecad_mcp_neka_nat</code> / <code>freecad_mcp_contextform</code></td>
+<td style="text-align: right;"><code>community_mcp</code> or alias</td>
+<td>https://github.com/neka-nat/freecad-mcp ; https://github.com/contextform/freecad-mcp</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Include; normalize variants.</td>
+</tr>
+<tr>
+<td>FreeCAD Copilot</td>
+<td><code>freecad_mcp_contextform</code></td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/contextform/freecad-mcp</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Include P1.</td>
+</tr>
+<tr>
+<td>FreeCAD Robust</td>
+<td><code>freecad_robust_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed only until URL exists.</td>
+</tr>
+<tr>
+<td>FreeCAD Core</td>
+<td>capability under FreeCAD backend</td>
+<td style="text-align: right;"><code>capability_alias</code></td>
+<td>https://github.com/neka-nat/freecad-mcp</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Do not count separately unless distinct URL.</td>
+</tr>
+<tr>
+<td>FreeCAD Booleans</td>
+<td>capability under FreeCAD backend</td>
+<td style="text-align: right;"><code>capability_alias</code></td>
+<td>https://github.com/contextform/freecad-mcp</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Do not count separately unless distinct URL.</td>
+</tr>
+<tr>
+<td>CAiD OpenCASCADE</td>
+<td><code>caid_opencascade_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code> / wrapper candidate</td>
+<td>TBD</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium/high</td>
+<td>Seed P2/P3; verify source.</td>
+</tr>
+<tr>
+<td>Zoo.dev Cloud CAD</td>
+<td><code>zoo_cloud_cad_mcp</code></td>
+<td style="text-align: right;"><code>verified_mcp</code></td>
+<td>https://zoo.dev/docs/developer-tools/mcp</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Include P0/P1.</td>
+</tr>
+<tr>
+<td>Onshape MCP</td>
+<td><code>onshape_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code>; API verified</td>
+<td>MCP TBD; API: https://onshape-public.github.io/docs/api-intro/</td>
+<td style="text-align: right;">likely if API-based</td>
+<td style="text-align: right;">likely if API-based</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Seed; wrapper candidate until MCP URL supplied.</td>
+</tr>
+<tr>
+<td>CalculiX Simulation</td>
+<td>FreeCAD FEM capability or standalone TBD</td>
+<td style="text-align: right;"><code>capability_alias</code> / wrapper candidate</td>
+<td>FreeCAD FEM via https://github.com/neka-nat/freecad-mcp</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium/high</td>
+<td>Model as FreeCAD capability unless separate MCP exists.</td>
+</tr>
+<tr>
+<td>Autodesk Platform Services</td>
+<td><code>autodesk_aps_api_wrapper</code></td>
+<td style="text-align: right;"><code>verified_api_wrapper_candidate</code></td>
+<td>https://aps.autodesk.com/</td>
+<td style="text-align: right;">likely API</td>
+<td style="text-align: right;">likely API</td>
+<td style="text-align: right;">likely API</td>
+<td style="text-align: right;">medium</td>
+<td>P1 custom wrapper candidate.</td>
+</tr>
+<tr>
+<td>Autodesk APS Community</td>
+<td><code>autodesk_aps_community_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Seed only.</td>
+</tr>
+<tr>
+<td>Siemens Element Design System</td>
+<td><code>siemens_element_design_system</code></td>
+<td style="text-align: right;"><code>ui_or_web_standard</code>, not engineering MCP</td>
+<td>https://developer.siemens.com/resources/design-systems/overview.html</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">read-only</td>
+<td>Do not count as engineering MCP; useful UI/docs asset.</td>
+</tr>
+<tr>
+<td>Siemens WinCC Unified</td>
+<td><code>siemens_wincc_unified_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code> / industrial wrapper candidate</td>
+<td>TBD</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">safety-critical</td>
+<td>Watchlist; default disabled.</td>
+</tr>
+<tr>
+<td>PTC ThingWorx IoT</td>
+<td><code>ptc_thingworx_wrapper</code></td>
+<td style="text-align: right;"><code>verified_api_wrapper_candidate</code></td>
+<td>https://www.ptc.com/en/products/thingworx</td>
+<td style="text-align: right;">tenant-dependent</td>
+<td style="text-align: right;">tenant-dependent</td>
+<td style="text-align: right;">tenant-dependent</td>
+<td style="text-align: right;">high/safety-critical</td>
+<td>P2 custom wrapper candidate.</td>
+</tr>
+<tr>
+<td>Autodesk Fusion 360</td>
+<td><code>autodesk_fusion_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code> / host bridge candidate</td>
+<td>MCP TBD; product/docs: https://www.autodesk.com/products/fusion-360/overview</td>
+<td style="text-align: right;">host yes Windows/macOS; MCP unknown</td>
+<td style="text-align: right;">no native desktop; browser/API possible</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed P1/P2; verify source.</td>
+</tr>
+<tr>
+<td>SolidWorks MCP (Python)</td>
+<td><code>solidworks_mcp_python</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">host-dependent likely Windows</td>
+<td style="text-align: right;">no/unknown</td>
+<td style="text-align: right;">no/unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed only.</td>
+</tr>
+<tr>
+<td>SolidWorks MCP (TypeScript)</td>
+<td><code>solidworks_mcp_typescript</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">host-dependent likely Windows</td>
+<td style="text-align: right;">no/unknown</td>
+<td style="text-align: right;">no/unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed only.</td>
+</tr>
+<tr>
+<td>SolidWorks API Docs</td>
+<td><code>solidworks_api_docs</code></td>
+<td style="text-align: right;">docs/API candidate; MCP not verified</td>
+<td>https://help.solidworks.com/</td>
+<td style="text-align: right;">likely docs</td>
+<td style="text-align: right;">likely docs</td>
+<td style="text-align: right;">likely docs</td>
+<td style="text-align: right;">read-only</td>
+<td>Include as docs candidate only if MCP wrapper exists.</td>
+</tr>
+<tr>
+<td>PTC Creo Parametric</td>
+<td><code>ptc_creo_creoson_wrapper</code></td>
+<td style="text-align: right;">wrapper candidate via CREOSON; MCP not verified</td>
+<td>https://github.com/SimplifiedLogic/creoson</td>
+<td style="text-align: right;">host-dependent likely Windows</td>
+<td style="text-align: right;">unknown/no practical desktop</td>
+<td style="text-align: right;">unknown/no practical desktop</td>
+<td style="text-align: right;">high</td>
+<td>P1 custom wrapper candidate.</td>
+</tr>
+<tr>
+<td>Rhino 3D (McNeel)</td>
+<td><code>rhino3d_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium/high</td>
+<td>Seed only.</td>
+</tr>
+<tr>
+<td>Blender 3D</td>
+<td><code>blender_mcp_ahujasid</code></td>
+<td style="text-align: right;"><code>community_mcp</code></td>
+<td>https://github.com/ahujasid/blender-mcp</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">yes</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Include P0/P1.</td>
+</tr>
+<tr>
+<td>SketchUp 3D</td>
+<td><code>sketchup_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">host-dependent</td>
+<td style="text-align: right;">unknown/browser possible</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium/high</td>
+<td>Seed only.</td>
+</tr>
+<tr>
+<td>Autodesk Revit BIM</td>
+<td><code>autodesk_revit_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code> / host bridge candidate</td>
+<td>MCP TBD; product/docs: https://www.autodesk.com/products/revit/overview</td>
+<td style="text-align: right;">host yes</td>
+<td style="text-align: right;">no native desktop</td>
+<td style="text-align: right;">no native desktop</td>
+<td style="text-align: right;">high</td>
+<td>Seed P2; Windows-only host assumption until proven otherwise.</td>
+</tr>
+<tr>
+<td>AutoCAD MCP</td>
+<td><code>autocad_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP TBD; product/docs: https://www.autodesk.com/products/autocad/overview</td>
+<td style="text-align: right;">host yes</td>
+<td style="text-align: right;">no native desktop</td>
+<td style="text-align: right;">no native desktop</td>
+<td style="text-align: right;">high</td>
+<td>Seed only.</td>
+</tr>
+<tr>
+<td>Easy-MCP-AutoCAD</td>
+<td><code>easy_mcp_autocad</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed only; verify repo.</td>
+</tr>
+<tr>
+<td>MultiCAD MCP</td>
+<td><code>multicad_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed only; verify repo.</td>
+</tr>
+<tr>
+<td>CAD-MCP Universal</td>
+<td><code>cad_mcp_universal</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>TBD</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">high</td>
+<td>Seed only; verify repo.</td>
+</tr>
+<tr>
+<td>WebMCP Standard</td>
+<td><code>webmcp_standard</code></td>
+<td style="text-align: right;"><code>ui_or_web_standard</code>, not conventional engineering MCP</td>
+<td>https://arxiv.org/abs/2508.09171</td>
+<td style="text-align: right;">browser/web</td>
+<td style="text-align: right;">browser/web</td>
+<td style="text-align: right;">browser/web</td>
+<td style="text-align: right;">low/medium</td>
+<td>Track as web-agent standard, not engineering server.</td>
+</tr>
+<tr>
+<td>MCP-UI (Shopify)</td>
+<td><code>mcp_ui</code></td>
+<td style="text-align: right;"><code>ui_or_web_standard</code>, not engineering MCP</td>
+<td>https://github.com/idosal/mcp-ui</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">likely</td>
+<td style="text-align: right;">low</td>
+<td>Use for Hermes/OpenClaw UI resources, not CAD server.</td>
+</tr>
+<tr>
+<td>Web3D MCP (React Three Fiber)</td>
+<td><code>web3d_react_three_fiber_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code> / UI candidate</td>
+<td>TBD; R3F ecosystem: https://github.com/pmndrs/react-three-fiber</td>
+<td style="text-align: right;">likely browser/web</td>
+<td style="text-align: right;">likely browser/web</td>
+<td style="text-align: right;">likely browser/web</td>
+<td style="text-align: right;">low/medium</td>
+<td>Track separately from CAD action servers.</td>
+</tr>
+<tr>
+<td>WebMCP-OpenSCAD</td>
+<td><code>webmcp_openscad</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP TBD; OpenSCAD WebAssembly note: https://openscad.org/downloads.html</td>
+<td style="text-align: right;">browser/web likely</td>
+<td style="text-align: right;">browser/web likely</td>
+<td style="text-align: right;">browser/web likely</td>
+<td style="text-align: right;">medium</td>
+<td>Seed; verify source.</td>
+</tr>
+<tr>
+<td>CREOSON Middleware</td>
+<td><code>creoson_creo_json_bridge</code></td>
+<td style="text-align: right;"><code>verified_api_wrapper_candidate</code>, non-MCP</td>
+<td>https://github.com/SimplifiedLogic/creoson</td>
+<td style="text-align: right;">host-dependent likely Windows</td>
+<td style="text-align: right;">unknown/no practical desktop</td>
+<td style="text-align: right;">unknown/no practical desktop</td>
+<td style="text-align: right;">high</td>
+<td>Strong wrapper candidate; not MCP until wrapped.</td>
+</tr>
+<tr>
+<td>Jarvis OnShape MCP</td>
+<td><code>jarvis_onshape_mcp</code></td>
+<td style="text-align: right;"><code>user_reported_url_needed</code></td>
+<td>MCP TBD; Onshape API: https://onshape-public.github.io/docs/api-intro/</td>
+<td style="text-align: right;">likely if API-based</td>
+<td style="text-align: right;">likely if API-based</td>
+<td style="text-align: right;">unknown</td>
+<td style="text-align: right;">medium</td>
+<td>Seed only until source URL supplied.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-hermes-yaml-catalog-variants">4.3 Hermes YAML catalog variants<a class="headerlink" href="#43-hermes-yaml-catalog-variants" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>YAML entry</th>
+<th>Reconciliation</th>
+<th>Recommended registry treatment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fusion 360 Python API Bridge</td>
+<td>Host bridge candidate, not verified as public MCP in this pass.</td>
+<td><code>user_reported_url_needed</code>; verify repo/package and Fusion host requirements.</td>
+</tr>
+<tr>
+<td>SolidWorks Document Manager</td>
+<td>Strong wrapper candidate, but not verified as MCP.</td>
+<td><code>verified_api_wrapper_candidate</code> if API docs/license pinned; likely Windows/licensed/API-key dependent.</td>
+</tr>
+<tr>
+<td>Zoo.dev Cloud CAD API</td>
+<td>Verified official API and verified official MCP.</td>
+<td>Alias of <code>zoo_cloud_cad_mcp</code>.</td>
+</tr>
+<tr>
+<td>Web OpenSCAD</td>
+<td>Host capability exists; MCP URL not verified.</td>
+<td>Alias/variant of OpenSCAD seed entries.</td>
+</tr>
+<tr>
+<td>React Three Fiber Web3D</td>
+<td>Visualization/UI candidate; MCP URL not verified.</td>
+<td>Track as UI/web integration, not CAD automation server.</td>
+</tr>
+<tr>
+<td>Hermes YAML Catalog</td>
+<td>Not a server.</td>
+<td>Treat as registry input source.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-verified-source-notes">5. Verified Source Notes<a class="headerlink" href="#5-verified-source-notes" title="Permanent link">&para;</a></h2>
+<h3 id="zoodev-cloud-cad-mcp">Zoo.dev Cloud CAD MCP<a class="headerlink" href="#zoodev-cloud-cad-mcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://zoo.dev/docs/developer-tools/mcp</li>
+<li>Install pattern: <code>uvx zoo-mcp</code></li>
+<li>Credential: <code>ZOO_API_TOKEN</code></li>
+<li>Deployment: local MCP server using cloud CAD/API services</li>
+<li>Risk: medium; can create/modify cloud CAD data and files depending on exposed tools</li>
+<li>Platform: likely cross-platform wherever Python/uvx works; Linux ARM64 must be tested</li>
+</ul>
+<p>Example Claude-style config:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;zoo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;zoo-mcp&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;ZOO_API_TOKEN&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${ZOO_API_TOKEN}&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>uvx<span class="w"> </span>zoo-mcp<span class="w"> </span>--help
+<span class="c1"># Then perform MCP initialize + tools/list through the Hermes MCP runner.</span>
+</code></pre></div>
+<h3 id="blendermcp">BlenderMCP<a class="headerlink" href="#blendermcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/ahujasid/blender-mcp</li>
+<li>Install pattern: <code>uvx blender-mcp</code></li>
+<li>Requires Blender add-on and Blender desktop app</li>
+<li>Risk: high; Blender Python execution and scene/file modification</li>
+<li>Platform: README documents Windows/macOS/Linux; Linux ARM64 must be tested</li>
+</ul>
+<p>Example config:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;blender&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;blender-mcp&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>uvx<span class="w"> </span>blender-mcp<span class="w"> </span>--help
+<span class="c1"># Open Blender, enable add-on, then run MCP initialize + tools/list.</span>
+<span class="c1"># Use read-only scene info as first test.</span>
+</code></pre></div>
+<h3 id="freecad-mcp-neka-nat">FreeCAD MCP — neka-nat<a class="headerlink" href="#freecad-mcp-neka-nat" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/neka-nat/freecad-mcp</li>
+<li>Install pattern: FreeCAD add-on + <code>uvx freecad-mcp</code></li>
+<li>Capabilities include CAD object/document operations, Python execution, and FEM/CalculiX-related workflows</li>
+<li>Risk: high; arbitrary Python and CAD model writes</li>
+<li>Platform: Windows/macOS/Linux documented; Linux ARM64 must be tested</li>
+</ul>
+<p>Example config:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;freecad&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;freecad-mcp&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>uvx<span class="w"> </span>freecad-mcp<span class="w"> </span>--help
+<span class="c1"># Open FreeCAD, start/enable the bridge, then MCP initialize + tools/list.</span>
+<span class="c1"># First tool call should be read-only document/session info.</span>
+</code></pre></div>
+<h3 id="freecad-mcp-copilot-contextform">FreeCAD MCP / Copilot — contextform<a class="headerlink" href="#freecad-mcp-copilot-contextform" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/contextform/freecad-mcp</li>
+<li>Install pattern: <code>npm install -g freecad-mcp-setup@latest</code>; <code>npx freecad-mcp-setup setup</code></li>
+<li>Capabilities include PartDesign, booleans, transforms, view operations, and Python execution</li>
+<li>Risk: high; arbitrary Python and model writes</li>
+<li>Platform: cross-platform claimed; Linux ARM64 must be tested</li>
+</ul>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>npx<span class="w"> </span>freecad-mcp-setup<span class="w"> </span>--help
+<span class="c1"># Then run setup, open FreeCAD, initialize MCP, list tools.</span>
+</code></pre></div>
+<h3 id="kicad-mcp">KiCad MCP<a class="headerlink" href="#kicad-mcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/lamaalrajih/kicad-mcp</li>
+<li>Install pattern: clone + <code>make install</code>; configure Python venv and <code>main.py</code></li>
+<li>Requires KiCad 9.0+, Python 3.10+, uv</li>
+<li>Risk: medium; electronics project files, exports, DRC/BOM operations, possible project writes</li>
+<li>Platform: repo claims macOS/Windows/Linux; Linux ARM64 must be tested</li>
+</ul>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/lamaalrajih/kicad-mcp
+<span class="nb">cd</span><span class="w"> </span>kicad-mcp
+make<span class="w"> </span>install
+<span class="c1"># Then run MCP initialize + tools/list.</span>
+</code></pre></div>
+<h3 id="rosbag-mcp">ROSBag MCP<a class="headerlink" href="#rosbag-mcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/binabik-ai/mcp-rosbags</li>
+<li>Install pattern: clone + Python virtualenv + requirements</li>
+<li>Use case: offline robotics log/bag analysis</li>
+<li>Risk: low/medium; reads local bag files, potentially large binary data</li>
+<li>Platform: likely best on Linux; Windows uncertain; Linux ARM64 depends on ROS/Python dependencies</li>
+</ul>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/binabik-ai/mcp-rosbags
+<span class="nb">cd</span><span class="w"> </span>mcp-rosbags
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+.<span class="w"> </span>.venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<span class="c1"># Then run server entrypoint and MCP tools/list.</span>
+</code></pre></div>
+<h3 id="siemens-xcelerator-developer-portal-mcp">Siemens Xcelerator Developer Portal MCP<a class="headerlink" href="#siemens-xcelerator-developer-portal-mcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://developer.siemens.com/</li>
+<li>The Siemens Developer Portal homepage advertises a “Siemens Xcelerator Developer Portal MCP Server” for searching documentation, discovering products/APIs, and retrieving resources.</li>
+<li>Exact “Learn more” URL and client configuration should be pinned before automated install.</li>
+<li>Risk: read-only unless future server exposes write/API actions</li>
+<li>Platform: likely remote/docs-only and cross-platform</li>
+</ul>
+<p>Health check:</p>
+<div class="highlight"><pre><span></span><code>Open the Siemens MCP documentation page, capture remote endpoint/client config, then perform MCP initialize + tools/list.
+</code></pre></div>
+<h3 id="openscad-host-openscad-mcp-seeds">OpenSCAD host / OpenSCAD MCP seeds<a class="headerlink" href="#openscad-host-openscad-mcp-seeds" title="Permanent link">&para;</a></h3>
+<ul>
+<li>OpenSCAD downloads: https://openscad.org/downloads.html</li>
+<li>OpenSCAD docs: https://openscad.org/documentation.html</li>
+<li>OpenSCAD GitHub: https://github.com/openscad/openscad</li>
+<li>MCP URLs for OpenSCAD Geometry, OpenSCAD Linter, Web OpenSCAD, and WebMCP-OpenSCAD still need to be pinned.</li>
+<li>OpenSCAD itself is unusually attractive for Linux ARM64 because host distribution options include AppImage/Docker paths, but MCP package support is unknown until tested.</li>
+</ul>
+<p>Host install examples:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows</span>
+winget<span class="w"> </span>install<span class="w"> </span>OpenSCAD.OpenSCAD
+
+<span class="c1"># Debian/Ubuntu</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>openscad
+
+<span class="c1"># Docker or AppImage options: see https://openscad.org/downloads.html</span>
+</code></pre></div>
+<p>Registry policy:</p>
+<div class="highlight"><pre><span></span><code>Do not remove OpenSCAD MCP entries merely because source URL is TBD.
+Mark them user_reported_url_needed and expose as blocked/pending verification.
+</code></pre></div>
+<h3 id="autodesk-platform-services-aps">Autodesk Platform Services / APS<a class="headerlink" href="#autodesk-platform-services-aps" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://aps.autodesk.com/</li>
+<li>Status: verified engineering API platform, not verified MCP server in this pass</li>
+<li>Use case: model derivative/viewing, design automation, data management, ACC/BIM-related workflows depending API entitlement</li>
+<li>Platform: cloud/API; client can be cross-platform</li>
+<li>Risk: medium/high depending write/export/cloud permissions</li>
+<li>Action: custom wrapper candidate or verify community APS MCP source if supplied</li>
+</ul>
+<h3 id="creoson-ptc-creo">CREOSON / PTC Creo<a class="headerlink" href="#creoson-ptc-creo" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/SimplifiedLogic/creoson</li>
+<li>Status: verified JSON bridge/middleware for Creo Parametric, not verified MCP server</li>
+<li>Use case: automate Creo via JSON calls; strong candidate for a Hermes/OpenClaw MCP wrapper</li>
+<li>Platform: host-dependent; likely Windows-centric in practical Creo deployments</li>
+<li>Risk: high; can modify CAD models and automate host app</li>
+</ul>
+<h3 id="onshape-api-jarvis-onshape-mcp-seed">Onshape API / Jarvis OnShape MCP seed<a class="headerlink" href="#onshape-api-jarvis-onshape-mcp-seed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>API source: https://onshape-public.github.io/docs/api-intro/</li>
+<li>Jarvis OnShape MCP URL: TBD</li>
+<li>Status: API verified, MCP not verified</li>
+<li>Platform: cloud/API; likely cross-platform if MCP exists</li>
+<li>Risk: medium/high depending document write access</li>
+</ul>
+<h3 id="ptc-thingworx">PTC ThingWorx<a class="headerlink" href="#ptc-thingworx" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://www.ptc.com/en/products/thingworx</li>
+<li>Status: industrial IoT platform/API candidate, not verified MCP server here</li>
+<li>Risk: high/safety-critical if connected to live assets or control loops</li>
+<li>Platform: tenant/cloud/enterprise dependent</li>
+</ul>
+<h3 id="mcp-ui">MCP-UI<a class="headerlink" href="#mcp-ui" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://github.com/idosal/mcp-ui</li>
+<li>Status: UI SDK/infrastructure, not engineering MCP server</li>
+<li>Use case: render interactive UI resources in Hermes/OpenClaw for server preview, approval, logs, inspectors, CAD thumbnails, etc.</li>
+</ul>
+<h3 id="webmcp-standard">WebMCP Standard<a class="headerlink" href="#webmcp-standard" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Source: https://arxiv.org/abs/2508.09171</li>
+<li>Status: web-agent standard/research concept, not conventional engineering MCP server</li>
+<li>Use case: possible future browser/web CAD integration strategy</li>
+</ul>
+<hr />
+<h2 id="6-machine-readable-seed-manifest">6. Machine-readable Seed Manifest<a class="headerlink" href="#6-machine-readable-seed-manifest" title="Permanent link">&para;</a></h2>
+<p>This JSON block is intentionally conservative. Entries with unknown URLs are kept because they appeared in prior research/user catalog, but automated install must be blocked until <code>source_url</code> and <code>install_methods</code> are verified.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;generated_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-06-26&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;schema_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;engineering-mcp-registry-seed-v0.2&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;platform_keys&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;windows_11_x64&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;linux_x64&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;linux_arm64&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;macos_x64&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;macos_arm64&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zoo_cloud_cad_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Zoo.dev Cloud CAD MCP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Zoo.dev Cloud CAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Zoo.dev Cloud CAD API&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;verified_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://zoo.dev/docs/developer-tools/mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;zoo-mcp&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;credentials_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ZOO_API_TOKEN&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cloud-saas&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;transport&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;stdio&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;unknown_exact&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;cloud CAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;geometry&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;file conversion&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CAD API&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx/Python expected; verify locally&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx/Python expected; verify locally&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;must test Python package/dependencies on ARM64&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx/Python expected&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx/Python expected&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx zoo-mcp --help; MCP initialize; tools/list&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;blender_mcp_ahujasid&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BlenderMCP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Blender 3D&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;community_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/ahujasid/blender-mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;blender-mcp&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host_app_addon&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;host&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Blender&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;host_software_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Blender &gt;= 3.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Python &gt;= 3.10&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;uv&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local-bridge&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;3D modeling&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;visualization&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;geometry scripting&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;security_notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Can execute Python inside Blender&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Can modify scenes/files&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Can fetch assets depending tool use&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo documents Windows&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo documents Linux&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test Blender + uv dependencies on ARM64&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo documents macOS&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;macOS supported; arch-specific test needed&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx blender-mcp --help; open Blender; enable add-on; MCP initialize; tools/list&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;freecad_mcp_neka_nat&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FreeCAD Engineering MCP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;FreeCAD Engineering&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FreeCAD Core&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CalculiX Simulation&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;community_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/neka-nat/freecad-mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;freecad-mcp&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host_app_addon&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;host&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FreeCAD&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;host_software_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;FreeCAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Python&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;uv&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local-bridge&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;CAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;geometry&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FEM&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CalculiX&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;security_notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Can execute arbitrary Python in FreeCAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Can modify CAD documents&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo documents Windows&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo documents Linux&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test FreeCAD + dependencies on ARM64&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo documents macOS&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test FreeCAD + dependencies&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uvx freecad-mcp --help; open FreeCAD bridge; MCP initialize; tools/list&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;freecad_mcp_contextform&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FreeCAD MCP / Copilot&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;FreeCAD Copilot&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FreeCAD Booleans&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;FreeCAD Robust&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;community_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/contextform/freecad-mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npm&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npm&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;install&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-g&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;freecad-mcp-setup@latest&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;freecad-mcp-setup&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;setup&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;host_software_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;FreeCAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Node.js&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Python&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local-bridge&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;CAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;booleans&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;part design&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;geometry scripting&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;security_notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Can execute Python in FreeCAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Can modify CAD documents&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo claims cross-platform&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo claims cross-platform&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test Node/Python/FreeCAD on ARM64&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repo claims cross-platform&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test host stack&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx freecad-mcp-setup --help; setup; MCP initialize; tools/list&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;openscad_geometry_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD Geometry MCP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;OpenSCAD Geometry&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Web OpenSCAD&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_reported_url_needed&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;host_reference_urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;https://openscad.org/downloads.html&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;https://github.com/openscad/openscad&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">      </span><span class="nt">&quot;host_software_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;OpenSCAD&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;script CAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CSG&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;3D printing&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;geometry generation&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD host works; MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD host works; MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD host likely; MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD host works; MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD host likely; MCP package unknown&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maybe&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;blocked until source_url/install command verified&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;openscad_linter_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenSCAD Linter MCP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;OpenSCAD Linter&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_reported_url_needed&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;host_reference_urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;https://openscad.org/documentation.html&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;script CAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;linting&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;documentation&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;low&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MCP package unknown&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MCP package unknown&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maybe&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;blocked until source_url/install command verified&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;autodesk_product_help_mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Autodesk Product Help MCP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Autodesk Help MCP&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Autodesk Product Help&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_reported_url_needed&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;host_reference_urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;https://help.autodesk.com/&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">      </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docs-only&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;documentation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CAD help&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Autodesk docs&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;read-only&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docs/remote MCP expected if URL verified&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docs/remote MCP expected if URL verified&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docs/remote MCP expected if URL verified&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docs/remote MCP expected if URL verified&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;likely&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;docs/remote MCP expected if URL verified&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;maybe&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P0&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;blocked until official MCP endpoint/client config verified&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;registry_policy&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;do_not_auto_install_states&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;user_reported_url_needed&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;verified_api_wrapper_candidate&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ui_or_web_standard&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;watchlist&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;default_disabled_risk_levels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;medium&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;high&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;safety-critical&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;require_approval_for&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;file writes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;CAD model mutation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;arbitrary code execution&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cloud upload&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;machine control&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;printer/robot/PLC/CNC actions&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="7-plugin-architecture-guidance">7. Plugin Architecture Guidance<a class="headerlink" href="#7-plugin-architecture-guidance" title="Permanent link">&para;</a></h2>
+<h3 id="71-components">7.1 Components<a class="headerlink" href="#71-components" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Hermes/OpenClaw MCP Plugin Manager
+├── Registry Loader
+│   ├── built-in seed catalog
+│   ├── user-provided YAML catalog
+│   ├── official MCP registry importer
+│   ├── GitHub/npm/PyPI/Docker discovery probes
+│   └── vendor docs / llms.txt / docs-MCP discovery
+├── Verifier
+│   ├── source URL resolver
+│   ├── package metadata extractor
+│   ├── license detector
+│   ├── platform/architecture probe
+│   ├── install dry-run probe
+│   └── MCP protocol smoke tester
+├── Installer
+│   ├── uv/uvx isolated install backend
+│   ├── npm/npx isolated install backend
+│   ├── Docker backend
+│   ├── host-app add-on backend
+│   └── remote MCP connector backend
+├── Runtime Supervisor
+│   ├── stdio process manager
+│   ├── streamable HTTP/SSE connector
+│   ├── log capture/redaction
+│   ├── restart/backoff
+│   └── port/security policy
+├── Safety Gateway
+│   ├── read-only mode enforcement
+│   ├── workspace sandboxing
+│   ├── approval prompts
+│   ├── machine-control interlocks
+│   └── secret redaction
+└── UI Layer
+    ├── server list
+    ├── platform compatibility matrix
+    ├── install/config wizard
+    ├── logs
+    ├── tool discovery view
+    ├── enable/disable toggles
+    └── approval queue
+</code></pre></div>
+<h3 id="72-registry-schema-additions">7.2 Registry schema additions<a class="headerlink" href="#72-registry-schema-additions" title="Permanent link">&para;</a></h3>
+<p>Minimum recommended schema:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;server_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;display_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;verification_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;verified_mcp | verified_docs_mcp | community_mcp | user_reported_url_needed | verified_api_wrapper_candidate | capability_alias | ui_or_web_standard | watchlist | excluded&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;install_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;domains&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;lifecycle_stage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;deployment_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;local-only | local-bridge | local-plus-network | cloud-saas | remote-mcp | docs-only | unknown&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;transport&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;stdio | sse | streamable-http | websocket | rest-bridge | custom-rpc | unknown&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;platform_support&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;windows_11_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;linux_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;linux_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;macos_x64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;macos_arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;tested&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;host_software_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;requires_gui&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;headless_ok&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | likely | unknown | no&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;credentials_required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;license_requirements&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;install_methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;example_mcp_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">  </span><span class="nt">&quot;health_check&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;data_touched&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;risk_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;read-only | low | medium | high | safety-critical&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;security_notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;default_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;approval_gates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;maturity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;official production | official preview | vendor demo/prototype | community active | community experimental | stale/exclude | unknown&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;maintenance_evidence&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;last_commit&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;latest_release&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;package_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;issue_activity&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;evidence_urls&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;software_license&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;include_in_plugin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yes | maybe | no&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;integration_priority&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;P0 | P1 | P2 | P3&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;rationale&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="73-install-strategy">7.3 Install strategy<a class="headerlink" href="#73-install-strategy" title="Permanent link">&para;</a></h3>
+<p>Use isolated installs by default.</p>
+<p>Python/uv servers:</p>
+<div class="highlight"><pre><span></span><code>~/.hermes/mcp/&lt;server_id&gt;/venv
+uvx --from &lt;package&gt; &lt;command&gt;
+# or uv tool install with pinned version once verified
+</code></pre></div>
+<p>Node servers:</p>
+<div class="highlight"><pre><span></span><code>~/.hermes/mcp/&lt;server_id&gt;/node_modules
+npm install &lt;package&gt;@&lt;pinned_version&gt;
+npx &lt;package&gt; --help
+</code></pre></div>
+<p>Docker servers:</p>
+<div class="highlight"><pre><span></span><code>image digest pinned
+architecture manifest checked before pull
+network disabled unless required
+workspace mounted read-only by default
+</code></pre></div>
+<p>Host-app bridges:</p>
+<div class="highlight"><pre><span></span><code>1. Detect host app path and version.
+2. Install MCP package in isolated environment.
+3. Install host-app add-on/extension separately.
+4. Require the user to open the host app.
+5. Perform local bridge handshake.
+6. Run read-only health check.
+</code></pre></div>
+<p>Remote/docs MCPs:</p>
+<div class="highlight"><pre><span></span><code>1. Store endpoint URL.
+2. Validate transport and auth.
+3. Run MCP initialize and tools/list.
+4. Mark all tools read-only unless write tools are explicitly documented.
+</code></pre></div>
+<h3 id="74-launch-strategy">7.4 Launch strategy<a class="headerlink" href="#74-launch-strategy" title="Permanent link">&para;</a></h3>
+<p>Stdio MCP:</p>
+<div class="highlight"><pre><span></span><code>spawn process
+capture stdout/stderr separately
+redact secrets in logs
+send MCP initialize
+call tools/list
+cache tool schema with source/version hash
+</code></pre></div>
+<p>HTTP/SSE/streamable HTTP MCP:</p>
+<div class="highlight"><pre><span></span><code>bind localhost only for local servers
+use random high port unless server requires fixed port
+reject 0.0.0.0 binding by default
+validate Origin where applicable
+perform MCP initialize
+</code></pre></div>
+<p>Host bridge:</p>
+<div class="highlight"><pre><span></span><code>start MCP server
+ensure host app is running
+verify add-on loaded
+call read-only session info
+block write tools until approval
+</code></pre></div>
+<p>Machine-control bridge:</p>
+<div class="highlight"><pre><span></span><code>simulation mode required by default
+read-only status allowed after endpoint allowlist
+write/motion/heat/print/spindle/deploy tools hidden until approval
+hardware interlock confirmation required
+</code></pre></div>
+<h3 id="75-secret-handling">7.5 Secret handling<a class="headerlink" href="#75-secret-handling" title="Permanent link">&para;</a></h3>
+<p>Rules:</p>
+<div class="highlight"><pre><span></span><code>- Never store secrets in plain JSON/YAML.
+- Use OS keychain/credential manager where possible.
+- Support environment variable indirection: ${ZOO_API_TOKEN}, ${AUTODESK_CLIENT_SECRET}, etc.
+- Redact secrets from logs, crash reports, telemetry, and tool traces.
+- Record which tools require credentials before exposing them to the model.
+- Separate read-only tokens from write-capable tokens where vendor supports scopes.
+</code></pre></div>
+<h3 id="76-safety-policy">7.6 Safety policy<a class="headerlink" href="#76-safety-policy" title="Permanent link">&para;</a></h3>
+<p>Default allowlist:</p>
+<div class="highlight"><pre><span></span><code>- docs-only MCPs
+- read-only local file analyzers
+- ROSBag offline analysis
+- KiCad read-only project inspection
+- OpenSCAD lint/read/export only after workspace approval
+</code></pre></div>
+<p>Default disabled:</p>
+<div class="highlight"><pre><span></span><code>- BlenderMCP Python execution
+- FreeCAD Python execution
+- CAD model mutation tools
+- cloud upload/export tools
+- PLM/PDM write tools
+- slicer/printer action tools
+- robot/PLC/CNC/industrial protocol tools
+- any server that can move axes, heat tools, start spindles, start prints, deploy code, or write to production systems
+</code></pre></div>
+<p>Approval gates:</p>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Required for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>workspace_write_approval</code></td>
+<td>Creating/modifying CAD, mesh, PCB, CAM, or config files.</td>
+</tr>
+<tr>
+<td><code>execute_code_approval</code></td>
+<td>Python, JS, scripts, macros, host-app command execution.</td>
+</tr>
+<tr>
+<td><code>cloud_upload_approval</code></td>
+<td>Sending files/designs to SaaS APIs.</td>
+</tr>
+<tr>
+<td><code>machine_control_approval</code></td>
+<td>Printer, CNC, robot, PLC, actuator, heater, spindle, feeder, conveyor actions.</td>
+</tr>
+<tr>
+<td><code>enterprise_write_approval</code></td>
+<td>PLM/PDM/requirements/MBSE item creation or modification.</td>
+</tr>
+<tr>
+<td><code>secrets_approval</code></td>
+<td>Supplying API keys, OAuth tokens, vendor credentials.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-automated-tests">8. Automated Tests<a class="headerlink" href="#8-automated-tests" title="Permanent link">&para;</a></h2>
+<h3 id="81-universal-server-tests">8.1 Universal server tests<a class="headerlink" href="#81-universal-server-tests" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>test_registry_entry_has_stable_id()
+test_source_url_resolves_or_state_is_url_needed()
+test_platform_constraints_match_current_host()
+test_install_dry_run_or_blocked_state()
+test_process_starts_or_remote_endpoint_connects()
+test_mcp_initialize()
+test_tools_list()
+test_tool_schema_cached_with_version()
+test_logs_redact_secrets()
+test_default_disabled_for_high_risk_servers()
+</code></pre></div>
+<h3 id="82-cadfile-generator-tests">8.2 CAD/file generator tests<a class="headerlink" href="#82-cadfile-generator-tests" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>create temporary workspace
+launch server with workspace-only access
+run read-only info/list command
+run approved sample generation if low risk
+verify outputs remain inside workspace
+verify no writes outside workspace
+verify cleanup works
+</code></pre></div>
+<h3 id="83-host-app-bridge-tests">8.3 Host-app bridge tests<a class="headerlink" href="#83-host-app-bridge-tests" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>detect host app path
+detect host app version
+verify add-on/plugin installed
+verify local bridge handshake
+run read-only session/document info
+block write/model mutation tools before approval
+</code></pre></div>
+<h3 id="84-platform-tests">8.4 Platform tests<a class="headerlink" href="#84-platform-tests" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>windows_11_x64:
+  verify command path, host app detection, process launch, MCP initialize
+
+linux_x64:
+  verify package install, shared libraries, GUI/headless constraints, MCP initialize
+
+linux_arm64:
+  verify CPU architecture compatibility, Python wheels, Node native modules, Docker manifests, host-app availability
+
+macos_x64 / macos_arm64:
+  verify codesigning/quarantine issues, host app paths, Python/Node package support
+</code></pre></div>
+<h3 id="85-machine-control-tests">8.5 Machine-control tests<a class="headerlink" href="#85-machine-control-tests" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>simulation mode must be true by default
+read-only status command only before approval
+network endpoint must be allowlisted
+write/motion/heat/print/deploy tools hidden before approval
+approval event must include exact command, target, parameters, and rollback/stop guidance
+</code></pre></div>
+<hr />
+<h2 id="9-discovery-pipeline">9. Discovery Pipeline<a class="headerlink" href="#9-discovery-pipeline" title="Permanent link">&para;</a></h2>
+<p>The registry builder should not depend on one search source.</p>
+<div class="highlight"><pre><span></span><code>1. Load human seed catalog.
+2. Load Hermes YAML catalog.
+3. Query official MCP registry.
+4. Search GitHub by exact terms and domain terms.
+5. Search npm/PyPI for package names.
+6. Search Docker Hub/container manifests for server images.
+7. Search vendor docs, marketplaces, AI registry pages, llms.txt, and docs MCP pages.
+8. Normalize aliases.
+9. Deduplicate by source URL/package/command.
+10. Assign verification state.
+11. Probe platform support.
+12. Run MCP smoke tests for verified entries.
+13. Generate registry JSON and UI catalog.
+</code></pre></div>
+<p>Search terms to preserve:</p>
+<div class="highlight"><pre><span></span><code>mcp server CAD
+mcp server FreeCAD
+mcp server Fusion
+mcp server Autodesk
+mcp server Siemens Teamcenter
+mcp server NX
+mcp server SolidWorks
+mcp server CATIA
+mcp server Creo Windchill
+mcp server Blender
+mcp server KiCad
+mcp server 3D printer
+mcp server Gmsh
+mcp server OpenFOAM
+mcp server FEA
+mcp server CFD
+mcp server BIM IFC
+mcp server ROS
+mcp server PLC
+mcp snap7
+mcp OPC UA
+OpenSCAD MCP
+OpenSCAD Geometry MCP
+OpenSCAD Linter MCP
+WebMCP OpenSCAD
+AutoCAD MCP
+Easy-MCP-AutoCAD
+Jarvis OnShape MCP
+SolidWorks MCP Python
+SolidWorks MCP TypeScript
+CREOSON MCP
+</code></pre></div>
+<hr />
+<h2 id="10-immediate-coding-agent-tasks">10. Immediate Coding-Agent Tasks<a class="headerlink" href="#10-immediate-coding-agent-tasks" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Add <code>verification_state</code> and architecture-specific <code>platform_support</code> to the Hermes registry schema.</li>
+<li>Import the current Hermes YAML catalog as <code>user_reported_url_needed</code> unless source/install evidence already exists.</li>
+<li>Add verified entries for Zoo.dev, BlenderMCP, FreeCAD MCP variants, KiCad MCP, ROSBag MCP, and Siemens Developer Portal MCP/docs entry.</li>
+<li>Add blocked seed entries for OpenSCAD Geometry, OpenSCAD Linter, Autodesk Product Help MCP, WebMCP-OpenSCAD, Jarvis OnShape MCP, AutoCAD/Fusion/SolidWorks/Rhino/SketchUp variants.</li>
+<li>Add wrapper-candidate entries for Autodesk APS, Onshape API, CREOSON, PTC ThingWorx, SolidWorks APIs, and industrial protocol adapters.</li>
+<li>Implement installer backends for <code>uvx</code>, <code>npm/npx</code>, <code>Docker</code>, <code>host_app_addon</code>, and <code>remote_mcp</code>.</li>
+<li>Implement platform probe for Windows 11 x64, Linux x64, Linux ARM64, macOS x64, macOS ARM64.</li>
+<li>Implement safety gates and default-disabled policy for high-risk and safety-critical servers.</li>
+<li>Build a UI table that shows: installable, blocked URL-needed, platform support, required host software, credentials, risk, and health-check status.</li>
+<li>Add a “report missing MCP” workflow so user-reported servers become seed entries instead of disappearing.</li>
+</ol>
+<hr />
+<h2 id="11-product-recommendation">11. Product Recommendation<a class="headerlink" href="#11-product-recommendation" title="Permanent link">&para;</a></h2>
+<p>Treat the engineering MCP ecosystem as a living registry with evidence levels, not a static list. The key design principle is:</p>
+<blockquote>
+<p>A server can be valuable enough to track even before it is safe or verified enough to install.</p>
+</blockquote>
+<p>For Hermes/OpenClaw, this means OpenSCAD MCP, Autodesk Product Help MCP, and prior-catalog variants should stay visible as blocked/pending entries until primary URLs are pinned. Conversely, strong APIs such as CREOSON, Onshape, Autodesk APS, and ThingWorx should be visible as wrapper candidates, not mislabeled as installable MCP servers.</p>
+<p>The default user experience should be:</p>
+<div class="highlight"><pre><span></span><code>Show me what exists.
+Show me what is installable on my current machine.
+Show me what is blocked and why.
+Show me what is dangerous before I enable it.
+Never hide uncertainty.
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

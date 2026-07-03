@@ -1,0 +1,2969 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/architecture/refactoring-audit-2026-07-01/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Wright Architecture Refactoring Audit - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wright-architecture-refactoring-audit" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wright Architecture Refactoring Audit
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#confirmed-direction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confirmed Direction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#top-refactoring-opportunities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top Refactoring Opportunities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Top Refactoring Opportunities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-introduce-an-agent-runtime-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduce An Agent Runtime Registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-extract-api-route-business-logic-into-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Extract API Route Business Logic Into Services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-make-wright-gateway-sync-agent-neutral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Make Wright Gateway Sync Agent-Neutral
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-unify-mcp-catalog-source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Unify MCP Catalog Source Of Truth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-implement-real-clean-container-mcp-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Implement Real Clean-Container MCP Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-split-broad-ui-components-and-move-domain-logic-out-of-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Split Broad UI Components And Move Domain Logic Out Of Views
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-move-storage-ownership-into-data_vault" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Move Storage Ownership Into data_vault
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-close-observability-and-test-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Close Observability And Test Gaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#do-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Do First
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-decisions-recorded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural Decisions Recorded
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wright-architecture-refactoring-audit">Wright Architecture Refactoring Audit<a class="headerlink" href="#wright-architecture-refactoring-audit" title="Permanent link">&para;</a></h1>
+<p>Date: 2026-07-01</p>
+<p>This report captures a repository-wide architectural review focused on
+maintainability, constitution compliance, extensibility, clean interfaces,
+documentation quality, formatting consistency, and testability.</p>
+<h2 id="confirmed-direction">Confirmed Direction<a class="headerlink" href="#confirmed-direction" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>hermes-plugin-wright</code> remains a first-class package.</li>
+<li>Use <strong>Wright gateway</strong> as the agent-neutral gateway term.</li>
+<li>OpenClaw will use the same MCP gateway protocol as Hermes.</li>
+<li>Engineering MCP validation should run locally in clean containers.</li>
+<li>Package-manager install/update flows do not need extra approval gates, but
+  must still respect catalog safety defaults, blocked/non-working metadata, and
+  offline-first failure behavior.</li>
+<li>Do not tune architecture specifically to Hermes. Hermes is one agent
+  implementation among future engines.</li>
+</ul>
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Wright has the right intended shape, but several core seams are still
+  Hermes-shaped rather than agent-neutral.</li>
+<li>API routes are not consistently thin; <code>agent.py</code>, <code>mcp.py</code>, <code>workspace.py</code>,
+  and <code>main.py</code> contain business logic, persistence, external proxying, and
+  orchestration.</li>
+<li>MCP catalog metadata is strong, but validation is mostly metadata
+  classification, not the documented clean-container protocol loop.</li>
+<li>The catalog currently has two competing sources: a large Python seed in
+  migrations and <code>hermes-plugin-wright/catalog.yaml</code>.</li>
+<li>UI tests exist, but the frontend architecture leans heavily on large
+  inline-styled components and duplicated client-side domain constants.</li>
+<li><code>data_vault</code> is effectively a placeholder while SQLite/file/log behavior
+  lives in API/core modules, weakening package ownership.</li>
+<li>System E2E coverage is missing: <code>tests/e2e</code> only contains <code>.gitkeep</code>, despite
+  the constitution requiring smoke tests.</li>
+<li>The next architectural seam should be the Wright gateway contract: Hermes and
+  OpenClaw should consume the same gateway protocol through adapter/profile
+  implementations.</li>
+</ul>
+<h2 id="top-refactoring-opportunities">Top Refactoring Opportunities<a class="headerlink" href="#top-refactoring-opportunities" title="Permanent link">&para;</a></h2>
+<h3 id="1-introduce-an-agent-runtime-registry">1. Introduce An Agent Runtime Registry<a class="headerlink" href="#1-introduce-an-agent-runtime-registry" title="Permanent link">&para;</a></h3>
+<p>Problem:
+The API boots Hermes directly and treats Hermes as the default agent.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>apps/api/src/api/main.py:14</code> imports <code>HermesAdapter</code>.</li>
+<li><code>apps/api/src/api/main.py:119</code> instantiates <code>HermesAdapter</code> in global app
+  state.</li>
+<li><code>apps/api/src/api/config.py:3</code> imports Hermes config resolution directly.</li>
+<li><code>apps/api/src/api/routers/setup.py:105</code> hardcodes supported agents as
+  <code>["hermes", "openclaw", "pi"]</code>.</li>
+<li><code>packages/core/src/core/agent_sync.py:53</code> branches on <code>self._active_agent</code>.</li>
+</ul>
+<p>Why it matters:
+OpenClaw will inherit Hermes assumptions unless the engine lifecycle, config,
+health, and sync hooks become explicit.</p>
+<p>Recommended refactor:
+Add an <code>AgentEngineRegistry</code> in <code>packages/agent_adapters</code> with provider
+metadata, config resolution, health capability flags, adapter factories, and a
+gateway profile hook. API boot should ask the registry for the active engine
+instead of importing <code>HermesAdapter</code>.</p>
+<p>Constitution principle affected:
+Agent Abstraction; Modular Monorepo Boundaries.</p>
+<p>Risk/effort estimate:
+High impact, medium effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Registry unit tests for Hermes and OpenClaw stub selection.</li>
+<li>API tests proving <code>/api/agent/active</code> switches engines without API-level
+  Hermes imports.</li>
+<li>Contract tests ensuring unknown agents fail with a typed error.</li>
+</ul>
+<h3 id="2-extract-api-route-business-logic-into-services">2. Extract API Route Business Logic Into Services<a class="headerlink" href="#2-extract-api-route-business-logic-into-services" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Route modules perform workspace creation, SQLite writes, MCP installation,
+credential handling, validation writes, Git commands, and Python execution.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>apps/api/src/api/routers/agent.py:178</code> creates sessions and workspaces.</li>
+<li><code>apps/api/src/api/routers/agent.py:212</code> writes workspace/session mapping to
+  SQLite.</li>
+<li><code>apps/api/src/api/routers/mcp.py:259</code> handles MCP install orchestration.</li>
+<li><code>apps/api/src/api/routers/mcp.py:338</code> performs validation classification and
+  follow-up writes.</li>
+<li><code>apps/api/src/api/routers/workspace.py:306</code> runs workspace Python files.</li>
+<li><code>apps/api/src/api/routers/workspace.py:790</code> creates dashboard workspaces.</li>
+</ul>
+<p>Why it matters:
+Thin routes are a constitutional requirement and are the easiest seam for
+adding future engines without rewriting HTTP handlers.</p>
+<p>Recommended refactor:
+Create service modules or package services:</p>
+<ul>
+<li><code>AgentSessionService</code></li>
+<li><code>WorkspaceService</code></li>
+<li><code>McpCatalogService</code></li>
+<li><code>McpInstallService</code></li>
+<li><code>McpValidationService</code></li>
+<li><code>CredentialService</code></li>
+<li><code>GatewayService</code></li>
+</ul>
+<p>Routes should validate request/response, delegate to services, and translate
+domain exceptions into HTTP responses.</p>
+<p>Constitution principle affected:
+Modular Monorepo Boundaries.</p>
+<p>Risk/effort estimate:
+High impact, medium-high effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Service unit tests with fake engines/registries.</li>
+<li>Route tests focused on HTTP status and response mapping.</li>
+<li>Regression tests for session creation, workspace activation, MCP install,
+  and credential save/delete.</li>
+</ul>
+<h3 id="3-make-wright-gateway-sync-agent-neutral">3. Make Wright Gateway Sync Agent-Neutral<a class="headerlink" href="#3-make-wright-gateway-sync-agent-neutral" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Gateway sync lives in Hermes-specific APIs and files, with stub behavior for
+other agents.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>apps/api/src/api/services/hermes_sync.py:1</code> is explicitly Hermes-specific.</li>
+<li><code>apps/api/src/api/services/hermes_sync.py:91</code> syncs MCP server state to
+  Hermes.</li>
+<li><code>packages/core/src/core/agent_sync.py:64</code> contains original Hermes config
+  syncing logic.</li>
+<li><code>packages/core/src/core/agent_sync.py:173</code> writes stub configs for other
+  agents.</li>
+<li><code>packages/core/src/core/workspace.py:1281</code> writes <code>.hermes.md</code> workspace
+  files.</li>
+</ul>
+<p>Why it matters:
+OpenClaw should plug into the same Wright gateway protocol, not a <code>.hermes.md</code>
+and <code>~/.hermes/config.yaml</code> workflow. Hermes can remain first-class without
+making Hermes the architecture boundary.</p>
+<p>Recommended refactor:
+Define gateway-facing contracts in <code>packages/agent_adapters</code>, for example:</p>
+<ul>
+<li><code>WrightGatewayProfile</code></li>
+<li><code>WrightGatewaySyncAdapter</code></li>
+<li><code>WorkspaceContextWriter</code></li>
+</ul>
+<p>Hermes implements these contracts in <code>hermes-plugin-wright</code> or a Hermes adapter
+module. OpenClaw later implements the same gateway protocol. Keep
+<code>hermes-plugin-wright</code> first-class, but move shared Wright gateway contract
+types out of the Hermes package.</p>
+<p>Constitution principle affected:
+Agent Abstraction; Engineering Tooling Protocol.</p>
+<p>Risk/effort estimate:
+High impact, medium effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Contract tests with fake gateway sync adapters.</li>
+<li>Hermes implementation tests for config file writes.</li>
+<li>OpenClaw stub tests proving no Hermes paths are touched.</li>
+</ul>
+<h3 id="4-unify-mcp-catalog-source-of-truth">4. Unify MCP Catalog Source Of Truth<a class="headerlink" href="#4-unify-mcp-catalog-source-of-truth" title="Permanent link">&para;</a></h3>
+<p>Problem:
+<code>apps/api</code> has a 3,000+ line migration file containing catalog seed data, while
+<code>hermes-plugin-wright/catalog.yaml</code> also carries catalog metadata.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>apps/api/src/api/database/migrate.py:24</code> defines <code>ENGINEERING_CATALOG</code>.</li>
+<li><code>apps/api/src/api/database/migrate.py:2855</code> seeds the engineering catalog.</li>
+<li><code>hermes-plugin-wright/catalog.yaml:3</code> starts a separate YAML catalog.</li>
+<li><code>hermes-plugin-wright/catalog.py:15</code> implements a separate <code>CatalogLoader</code>.</li>
+<li><code>hermes-plugin-wright/schemas.py:76</code> defines <code>CatalogEntry</code>.</li>
+</ul>
+<p>Why it matters:
+Divergent catalog schemas will cause validation, UI, and plugin behavior to
+drift.</p>
+<p>Recommended refactor:
+Keep <code>hermes-plugin-wright</code> first-class, but make the canonical catalog loader,
+normalizer, and schema live in <code>packages/tool_registry</code>. The Hermes plugin
+should consume those shared models or export its YAML through the shared
+normalizer. Keep migrations schema-focused, not catalog-data-heavy.</p>
+<p>Constitution principle affected:
+Modular Monorepo Boundaries; Documentation Quality.</p>
+<p>Risk/effort estimate:
+High impact, medium effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Golden catalog normalization tests.</li>
+<li>Migration seed tests that load from canonical catalog fixtures.</li>
+<li>Hermes plugin catalog tests that assert parity with <code>tool_registry</code> models.</li>
+</ul>
+<h3 id="5-implement-real-clean-container-mcp-validation">5. Implement Real Clean-Container MCP Validation<a class="headerlink" href="#5-implement-real-clean-container-mcp-validation" title="Permanent link">&para;</a></h3>
+<p>Problem:
+<code>classify_server()</code> checks blocked flags and local host binaries, but does not
+install per MCP, run <code>initialize</code>, <code>notifications/initialized</code>, <code>tools/list</code>,
+safe backend probe, Wright gateway proxy probe, or reset container state.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>packages/tool_registry/src/tool_registry/mcp_validation.py:54</code> checks host
+  dependencies with <code>shutil.which</code>.</li>
+<li><code>packages/tool_registry/src/tool_registry/mcp_validation.py:72</code> classifies
+  metadata.</li>
+<li><code>packages/tool_registry/src/tool_registry/mcp_validation.py:116</code> returns
+  <code>skipped</code> when no automated probe is defined.</li>
+<li><code>docs/mcp-catalog/mcp-server-testing-process.md:21</code> defines the required
+  clean-container validation loop.</li>
+</ul>
+<p>Why it matters:
+<code>tested</code> status can become ambiguous without reproducible clean-container
+evidence. Local clean-container validation is now an explicit direction.</p>
+<p>Recommended refactor:
+Add a local validation runner package with:</p>
+<ul>
+<li><code>ValidationPlan</code></li>
+<li><code>ValidationProbe</code></li>
+<li><code>ValidationEvidence</code></li>
+<li><code>CleanContainerExecutor</code></li>
+<li><code>WrightGatewayProbe</code></li>
+</ul>
+<p>Keep metadata classification as a fast preflight, not final validation. The
+runner should install only the selected MCP dependencies, run MCP protocol
+probes, run one safe backend-touching call when possible, verify Wright gateway
+proxying when applicable, and write evidence/follow-up records.</p>
+<p>Constitution principle affected:
+Container Strategy; Offline-First Mandate; Engineering Tooling Protocol.</p>
+<p>Risk/effort estimate:
+High impact, high effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Unit tests for validation plan generation.</li>
+<li>Integration test using a mock MCP server in Docker.</li>
+<li>Follow-up record snapshot tests.</li>
+<li>Local CLI smoke test that validates one known lightweight MCP candidate.</li>
+</ul>
+<h3 id="6-split-broad-ui-components-and-move-domain-logic-out-of-views">6. Split Broad UI Components And Move Domain Logic Out Of Views<a class="headerlink" href="#6-split-broad-ui-components-and-move-domain-logic-out-of-views" title="Permanent link">&para;</a></h3>
+<p>Problem:
+<code>ToolCard.tsx</code> is 1,700+ lines and owns credentials, install/update flows,
+workspace toggles, metadata labels, inline styling, and rendering.
+<code>ToolRegistryPage.tsx</code> duplicates tier/category sorting.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>apps/web/src/components/tools/ToolCard.tsx:26</code> defines the large component.</li>
+<li><code>apps/web/src/components/tools/ToolCard.tsx:106</code> owns verification display
+  metadata.</li>
+<li><code>apps/web/src/components/tools/ToolCard.tsx:217</code> handles credential
+  persistence.</li>
+<li><code>apps/web/src/components/pages/ToolRegistryPage.tsx:25</code> duplicates tier
+  ordering.</li>
+<li><code>apps/web/src/components/pages/ToolRegistryPage.tsx:95</code> performs filtering
+  and category decisions in the page.</li>
+</ul>
+<p>Why it matters:
+The MCP UI will become harder to extend as install states, validation states,
+and safety metadata grow.</p>
+<p>Recommended refactor:
+Extract focused components and a shared display model:</p>
+<ul>
+<li><code>ToolCardHeader</code></li>
+<li><code>ToolMetadataBadges</code></li>
+<li><code>CredentialPanel</code></li>
+<li><code>InstallControls</code></li>
+<li><code>WorkspaceToolPanel</code></li>
+<li><code>mcpDisplayModel</code></li>
+</ul>
+<p>Move status labels, sort order, and derived metadata into pure functions with
+unit tests.</p>
+<p>Constitution principle affected:
+UI Component Layers; Testability.</p>
+<p>Risk/effort estimate:
+Medium impact, medium effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Component tests per extracted panel.</li>
+<li>Pure function tests for sorting/filtering/status display.</li>
+<li>Playwright layout tests for long metadata, blocked entries, missing
+  credentials, and high-risk entries.</li>
+</ul>
+<h3 id="7-move-storage-ownership-into-data_vault">7. Move Storage Ownership Into <code>data_vault</code><a class="headerlink" href="#7-move-storage-ownership-into-data_vault" title="Permanent link">&para;</a></h3>
+<p>Problem:
+<code>data_vault</code> declares SQLite/LanceDB/filesystem ownership but only has an
+empty package initializer. SQLite, logs, and file vault behavior live in
+API/core.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>packages/data_vault/src/data_vault/__init__.py:1</code> documents intended storage
+  scope.</li>
+<li><code>apps/api/src/api/config.py:21</code> reads SQLite settings directly.</li>
+<li><code>packages/core/src/core/workspace.py:42</code> creates SQLite connections directly.</li>
+<li><code>packages/core/src/core/workspace.py:1368</code> reads application logs from
+  <code>apps/api/wright.log</code>.</li>
+</ul>
+<p>Why it matters:
+Storage logic is scattered, making offline behavior, migrations, tracing, and
+backup strategy harder to reason about.</p>
+<p>Recommended refactor:
+Put SQLite connection/session helpers, vault filesystem APIs, log readers, and
+eventual LanceDB clients into <code>data_vault</code>. Keep <code>core</code> domain-focused.</p>
+<p>Constitution principle affected:
+Data Storage &amp; RAG; Modular Monorepo Boundaries.</p>
+<p>Risk/effort estimate:
+Medium impact, medium effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>SQLite WAL and foreign-key tests.</li>
+<li>Vault path sanitization tests.</li>
+<li>Log-reader tests with temp files.</li>
+<li>Import-boundary tests proving API routes do not own storage implementation.</li>
+</ul>
+<h3 id="8-close-observability-and-test-gaps">8. Close Observability And Test Gaps<a class="headerlink" href="#8-close-observability-and-test-gaps" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Some packages still use stdlib logging, <code>print()</code>, string-formatted logs, and
+direct SQLite calls without traced DB spans. E2E smoke tests are absent.</p>
+<p>Evidence:</p>
+<ul>
+<li><code>packages/core/src/core/logging.py:4</code> states JSON logging is required.</li>
+<li><code>packages/core/src/core/agent_sync.py:4</code> imports stdlib <code>logging</code>.</li>
+<li><code>packages/tool_registry/src/tool_registry/manager.py:2</code> imports stdlib
+  <code>logging</code>.</li>
+<li><code>apps/api/src/api/database/migrate.py:2746</code> prints migration status.</li>
+<li><code>packages/core/src/core/tracing.py:80</code> provides traced DB helpers, but many
+  DB calls bypass them.</li>
+<li><code>tests/e2e/.gitkeep:1</code> is the only E2E file.</li>
+</ul>
+<p>Why it matters:
+The constitution requires JSON logging, trace propagation, mandatory spans, and
+system smoke tests.</p>
+<p>Recommended refactor:
+Standardize on <code>core.logging.get_logger</code>, replace direct DB calls with traced
+repositories/helpers, and add minimal E2E coverage for API health, agent
+fallback, and MCP list.</p>
+<p>Constitution principle affected:
+Observability &amp; Tracing; 3-Tier Testing.</p>
+<p>Risk/effort estimate:
+Medium impact, low-medium effort.</p>
+<p>Suggested tests or verification:</p>
+<ul>
+<li>Tests asserting logs are JSON and include <code>trace_id</code>.</li>
+<li>E2E smoke for local FastAPI backend plus mocked agent/MCP paths.</li>
+<li>Trace tests for representative SQLite reads/writes and MCP tool execution.</li>
+</ul>
+<h2 id="do-first">Do First<a class="headerlink" href="#do-first" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Add the agent registry and stop importing <code>HermesAdapter</code> from API boot code.</li>
+<li>Extract MCP install/validation/follow-up logic from
+   <code>apps/api/src/api/routers/mcp.py</code>.</li>
+<li>Choose one canonical MCP catalog source and make <code>hermes-plugin-wright</code>
+   consume the shared model while remaining first-class.</li>
+<li>Define the Wright gateway adapter/profile contracts before OpenClaw work.</li>
+<li>Add a minimal <code>tests/e2e</code> smoke suite.</li>
+</ol>
+<h2 id="avoid">Avoid<a class="headerlink" href="#avoid" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Do not make <code>.hermes.md</code>, <code>wrightgateway</code>, or Hermes config files the generic
+  extension point for all agents.</li>
+<li>Do not mark MCPs <code>tested</code> from host-local dependency checks alone.</li>
+<li>Do not add FreeCAD, OpenSCAD, Blender, SolidWorks, vendor SDKs, license
+  managers, or other MCP-specific host software to the base image just to make
+  catalog validation green.</li>
+<li>Do not let API routes grow new direct SQLite, subprocess, package-manager, or
+  file-vault behavior.</li>
+<li>Do not weaken offline-first behavior by making version checks, cloud CAD, or
+  package registries required for core workflows.</li>
+<li>Do not add package-manager approval gates beyond catalog safety defaults and
+  blocked/non-working install restrictions.</li>
+</ul>
+<h2 id="architectural-decisions-recorded">Architectural Decisions Recorded<a class="headerlink" href="#architectural-decisions-recorded" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Hermes plugin remains first-class.</li>
+<li>The generic gateway term is <strong>Wright gateway</strong>.</li>
+<li>OpenClaw will use the same MCP gateway protocol.</li>
+<li>Clean-container validation should run locally.</li>
+<li>Package-manager operations do not require additional approval gates.</li>
+</ul>
+<h2 id="open-questions">Open Questions<a class="headerlink" href="#open-questions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Which package should own the concrete Wright gateway protocol schemas:
+  <code>packages/agent_adapters</code>, <code>packages/tool_registry</code>, or a small new shared
+  package?</li>
+<li>Should local clean-container validation produce Markdown evidence, structured
+  JSON evidence, or both?</li>
+<li>Should the web UI read display metadata directly from the API, or should it
+  continue to derive labels client-side from shared constants generated from
+  backend schema?</li>
+</ul>
+<h2 id="implementation-notes">Implementation Notes<a class="headerlink" href="#implementation-notes" title="Permanent link">&para;</a></h2>
+<p>Implemented on branch <code>codex/refactoring-audit-2026-07-01</code>:</p>
+<ul>
+<li><code>packages/agent_adapters</code> now owns the agent runtime registry and Wright
+  gateway profile contracts.</li>
+<li><code>apps/api</code> no longer imports <code>HermesAdapter</code> directly during API boot.</li>
+<li><code>apps/api/src/api/routers/mcp.py</code> delegates moved MCP operations to service
+  layers while preserving route response models.</li>
+<li><code>packages/tool_registry</code> now owns shared catalog normalization and MCP
+  validation plan/evidence seams.</li>
+<li><code>hermes-plugin-wright</code> remains first-class and consumes shared catalog loading
+  through an adapter.</li>
+<li><code>tests/e2e</code> now contains offline smoke coverage for API health, default agent
+  behavior, MCP listing, and a Wright gateway happy path.</li>
+</ul>
+<p>Follow-up work remains:</p>
+<ul>
+<li>Continue extracting <code>agent.py</code> and <code>workspace.py</code> route business logic into
+  services.</li>
+<li>Decide whether the migration seed or <code>hermes-plugin-wright/catalog.yaml</code>
+  becomes the canonical catalog source after deeper parity checks.</li>
+<li>Add an operator-invoked clean-container validation runner that consumes the
+  new validation plan/evidence models.</li>
+<li>Expand frontend metadata consumption only after backend catalog boundaries are
+  stable.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

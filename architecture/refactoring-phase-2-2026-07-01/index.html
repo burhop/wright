@@ -1,0 +1,3679 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/architecture/refactoring-phase-2-2026-07-01/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Wright Architecture Refactoring Phase 2 - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wright-architecture-refactoring-phase-2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wright Architecture Refactoring Phase 2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Purpose
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implemented-phase-2-slice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implemented Phase 2 Slice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#non-negotiable-direction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-Negotiable Direction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolved-architectural-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolved Architectural Decisions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resolved Architectural Decisions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-workspace-lifecycle-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Workspace Lifecycle Ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-safety-approval-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Safety Approval Scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-clean-container-validation-entry-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Clean-Container Validation Entry Point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-ui-contract-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. UI Contract Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-hermes-compatibility-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Hermes Compatibility Window
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-catalog-source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Catalog Source Of Truth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-evidence-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Evidence Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-observability-and-telemetry-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Observability And Telemetry Contract
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-workstreams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2 Workstreams
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2 Workstreams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#workstream-a-workspace-service-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream A: Workspace Service Boundary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-b-agent-runtime-and-context-materialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream B: Agent Runtime And Context Materialization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-c-mcp-catalog-safety-and-install-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream C: MCP Catalog, Safety, And Install Policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-d-clean-container-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream D: Clean-Container Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-e-api-service-layer-completion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream E: API Service Layer Completion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-f-ui-architecture-and-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream F: UI Architecture And Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-g-observability-and-error-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream G: Observability And Error Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workstream-h-documentation-and-contributor-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workstream H: Documentation And Contributor Experience
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation Sequence
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation Sequence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-21-boundary-guards-and-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.1: Boundary Guards And Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-22-workspace-service-facade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.2: Workspace Service Facade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-23-agent-context-and-gateway-materialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.3: Agent Context And Gateway Materialization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-24-catalog-source-and-safety-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.4: Catalog Source And Safety Policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-25-clean-container-validation-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.5: Clean-Container Validation CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-26-ui-decomposition-and-generated-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.6: UI Decomposition And Generated Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-27-observability-and-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2.7: Observability And Docs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-and-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration And Rollback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#risks-and-mitigations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Risks And Mitigations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Avoid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#definition-of-done" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definition Of Done
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wright-architecture-refactoring-phase-2">Wright Architecture Refactoring Phase 2<a class="headerlink" href="#wright-architecture-refactoring-phase-2" title="Permanent link">&para;</a></h1>
+<p>Date: 2026-07-01</p>
+<p>Related documents:</p>
+<ul>
+<li><a href="../refactoring-audit-2026-07-01/">Refactoring Audit 2026-07-01</a></li>
+<li>Spec 038 Phase 2 Plan: <code>specs/038-refactoring-phase-2/plan.md</code></li>
+<li>Engineering MCP Catalog Plan: <code>specs/034-engineering-mcp-catalog/plan.md</code></li>
+<li><a href="../../mcp-catalog/mcp-server-testing-process/">MCP Server Testing Process</a></li>
+</ul>
+<h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h2>
+<p>Phase 1 established the first architectural seams: agent runtime registry,
+Wright gateway contracts, MCP service extraction, catalog normalization,
+validation plan/evidence models, and offline smoke coverage.</p>
+<p>Phase 2 hardens those seams into stable ownership boundaries. The goal is not a
+large rewrite. The goal is to make OpenClaw and future engines additive, keep
+API routes thin, make MCP catalog and validation behavior reproducible, and
+remove the remaining Hermes-shaped assumptions from generic Wright code.</p>
+<h2 id="implemented-phase-2-slice">Implemented Phase 2 Slice<a class="headerlink" href="#implemented-phase-2-slice" title="Permanent link">&para;</a></h2>
+<p>The first Phase 2 implementation adds <code>packages/workspace_service</code> as the
+workspace lifecycle facade for priority API paths: create, activate, config
+update, workspace tool assignment, file execution, and context refresh. API
+routes keep their response shapes while delegating business behavior to the
+package facade.</p>
+<p>Agent context materialization is now an <code>agent_adapters</code> contract. Hermes
+materializes <code>.hermes.md</code> through <code>agent_adapters.hermes_gateway</code>; OpenClaw is a
+selectable stub provider that does not write Hermes files. Legacy generic route
+and core activation paths no longer write <code>.hermes.md</code> directly.</p>
+<p><code>tool_registry</code> owns MCP catalog seed data, MCP safety policy decisions for
+install, start, and call boundaries, plus opt-in validation CLI seams that write
+redacted JSON evidence and Markdown summaries. Clean-container validation
+remains operator-invoked and must not be claimed as passed unless the documented
+container workflow actually runs.</p>
+<p>Frontend domain contracts are generated into
+<code>apps/web/src/types/generated/wright-contracts.ts</code> and checked by
+<code>scripts/generate-frontend-contracts.py --check</code>. The largest frontend hotspots
+also received targeted decomposition: workspace enablement moved out of
+<code>ToolCard</code>, and the workspace activity bar moved out of <code>WorkspacePanel</code>.</p>
+<p>Observability updates clarify that OpenTelemetry owns <code>trace_id</code> and <code>span_id</code>,
+while Wright owns <code>wright.correlation_id</code> and the <code>X-Trace-Id</code> response header.
+Remote telemetry export remains disabled unless explicitly opted in.</p>
+<p>The completion pass moved the large catalog seed out of API migrations into
+<code>packages/tool_registry/src/tool_registry/engineering_catalog.py</code>, added a
+<code>data_vault</code> SQLite state-store seam used by migrations and workspace service,
+and strengthened <code>DockerCleanContainerExecutor</code> so an operator-invoked run
+launches a clean container and records direct stdio MCP probe evidence. Evidence
+is marked <code>partial</code> unless Wright gateway proxy probes are also executed and
+recorded.</p>
+<h2 id="non-negotiable-direction">Non-Negotiable Direction<a class="headerlink" href="#non-negotiable-direction" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Hermes remains first-class and remains the default working adapter.</li>
+<li>Hermes is not the generic architecture boundary.</li>
+<li>OpenClaw and future engines must plug into agent-neutral contracts.</li>
+<li>API routes remain HTTP translation layers and delegate business behavior.</li>
+<li>Offline-first behavior remains the default for local development and tests.</li>
+<li>Clean-container MCP validation must not depend on MCP-specific host software
+  in the base Docker image.</li>
+<li>Catalog entries that are uncertain, blocked, partial, or follow-up-required
+  must be preserved rather than hidden.</li>
+<li>Package-manager install/update flows do not need a separate approval prompt
+  just because an installer is involved. Safety approvals are driven by catalog
+  risk, credentials, network access, and tool capability.</li>
+<li>Logging, tracing, and telemetry are part of the safety architecture, not
+  cleanup. Phase 2 work is incomplete until important workspace, agent, MCP,
+  validation, and catalog flows are observable, locally auditable, and redacted.</li>
+<li>Telemetry remains local-first by default. Remote export requires explicit
+  operator opt-in.</li>
+</ul>
+<h2 id="resolved-architectural-decisions">Resolved Architectural Decisions<a class="headerlink" href="#resolved-architectural-decisions" title="Permanent link">&para;</a></h2>
+<h3 id="1-workspace-lifecycle-ownership">1. Workspace Lifecycle Ownership<a class="headerlink" href="#1-workspace-lifecycle-ownership" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Create a dedicated <code>packages/workspace_service</code> package for workspace lifecycle
+orchestration.</p>
+<p>Rationale:
+<code>packages/core</code> has grown into a mixed package containing domain helpers,
+workspace orchestration, storage calls, logging, tracing, subprocess execution,
+and agent-specific context writing. That makes API extraction harder and keeps
+agent behavior tangled with workspace behavior.</p>
+<p>Target ownership:</p>
+<ul>
+<li><code>packages/workspace_service</code> owns workspace creation, activation, file
+  execution policy, git workflow orchestration, workspace tool assignment, and
+  workspace context refresh orchestration.</li>
+<li><code>packages/data_vault</code> owns SQLite connections, migrations-facing storage
+  helpers, vault filesystem access, local audit records, and future LanceDB
+  clients.</li>
+<li><code>packages/agent_adapters</code> owns agent runtime selection, gateway profiles,
+  adapter-specific context materialization, and agent health/session contracts.</li>
+<li><code>packages/tool_registry</code> owns MCP catalog, safety policy, install/start/call
+  policy, credential metadata, validation plans, and validation evidence.</li>
+<li><code>packages/core</code> keeps cross-cutting primitives such as logging, tracing,
+  typed errors, shared value objects, and small pure helpers.</li>
+<li><code>apps/api</code> wires dependencies and translates HTTP requests/responses only.</li>
+</ul>
+<p>Dependency rule:</p>
+<div class="highlight"><pre><span></span><code>apps/api -&gt; workspace_service -&gt; data_vault
+                           \-&gt; agent_adapters
+                           \-&gt; tool_registry
+                           \-&gt; core
+
+apps/api -&gt; agent_adapters
+apps/api -&gt; tool_registry
+apps/api -&gt; data_vault
+
+packages/* must not import apps/api
+</code></pre></div>
+<p>Phase 2 should not move every function at once. Start by introducing
+<code>workspace_service</code> as an application facade, then migrate route behavior behind
+that facade operation by operation.</p>
+<h3 id="2-safety-approval-scope">2. Safety Approval Scope<a class="headerlink" href="#2-safety-approval-scope" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Use two local approval scopes:</p>
+<ul>
+<li>Global machine approval for installing or updating a server whose catalog
+  metadata requires approval due to high/safety-critical risk, credential use,
+  remote network access, proprietary dependencies, or machine-control
+  capability.</li>
+<li>Workspace approval for enabling, starting, or calling a risky server inside a
+  specific workspace.</li>
+</ul>
+<p>Rationale:
+Install state is local-machine state, but tool use risk is usually workspace
+specific. A user may approve a server's installation once while still wanting
+per-workspace control over whether that server can operate on a given project.</p>
+<p>Rules:</p>
+<ul>
+<li><code>blocked</code> and <code>non_working</code> servers cannot be installed unless a future
+  explicit developer override mode is added.</li>
+<li>High-risk and safety-critical servers require recorded local approval before
+  install/start/call when catalog metadata says approval is required.</li>
+<li>Missing required credentials block start/call.</li>
+<li>Remote network servers require explicit catalog metadata and workspace
+  enablement.</li>
+<li>Package-manager use alone does not create an extra approval gate.</li>
+<li>Approval records are local, auditable, and offline.</li>
+</ul>
+<h3 id="3-clean-container-validation-entry-point">3. Clean-Container Validation Entry Point<a class="headerlink" href="#3-clean-container-validation-entry-point" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Expose clean-container validation primarily through a local CLI entry point,
+with API support limited to reading evidence, listing validation plans, and
+optionally requesting a queued local validation job later.</p>
+<p>Rationale:
+Docker execution, package installation, network probes, and proprietary tool
+checks are operator activities. Running them directly from a web route would
+make safety, credentials, cancellation, and logs harder to control.</p>
+<p>Target entry point:</p>
+<div class="highlight"><pre><span></span><code>wright mcp validate &lt;server-id&gt; --container ubuntu-x64 --evidence-dir docs/mcp-catalog/evidence
+</code></pre></div>
+<p>Initial implementation may live behind a Python module command before a formal
+CLI wrapper exists:</p>
+<div class="highlight"><pre><span></span><code>uv run python -m tool_registry.validation_cli validate &lt;server-id&gt;
+</code></pre></div>
+<p>Validation evidence:</p>
+<ul>
+<li>Structured JSON is canonical for automation.</li>
+<li>Markdown summaries are generated for human review and follow-up records.</li>
+<li>Evidence must record environment, install commands, protocol probes,
+  credentials redaction, safe backend probe result, gateway proxy result when
+  applicable, and follow-up recommendations.</li>
+</ul>
+<h3 id="4-ui-contract-strategy">4. UI Contract Strategy<a class="headerlink" href="#4-ui-contract-strategy" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Generate TypeScript contract types from backend/package JSON Schema for MCP
+catalog, MCP server state, validation evidence summaries, agent runtime
+metadata, and workspace service responses.</p>
+<p>Rationale:
+Hand-written TypeScript interfaces already duplicate backend defaults. Contract
+generation prevents drift as catalog metadata, risk policy, and agent providers
+evolve.</p>
+<p>Rules:</p>
+<ul>
+<li>Generated TypeScript contracts are checked into the repo for offline-first
+  builds.</li>
+<li>CI verifies generated files are current.</li>
+<li>UI display constants may remain hand-authored only when they are visual
+  presentation metadata, not domain truth.</li>
+<li>During migration, add parity tests before deleting hand-written interfaces.</li>
+</ul>
+<h3 id="5-hermes-compatibility-window">5. Hermes Compatibility Window<a class="headerlink" href="#5-hermes-compatibility-window" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Keep Hermes compatibility files, including <code>.hermes.md</code> and Hermes config
+materialization, through Phase 2 and the current alpha cycle. These files must
+be generated only by the Hermes adapter/profile implementation, never by generic
+workspace or API code.</p>
+<p>Rationale:
+Existing workspaces and the first-class Hermes plugin need continuity, but
+future agents should not inherit Hermes file names, directory layout, or config
+shape.</p>
+<p>Target context model:</p>
+<ul>
+<li>Canonical Wright workspace context lives in local storage managed by
+  <code>data_vault</code> and <code>workspace_service</code>.</li>
+<li>Agent adapters materialize provider-specific files from that canonical
+  context.</li>
+<li>Hermes materializes <code>.hermes.md</code> and <code>~/.hermes/...</code> config.</li>
+<li>OpenClaw materializes its own files later through the same adapter interface.</li>
+</ul>
+<p>Compatibility removal:
+Do not set a removal date yet. Revisit after one non-Hermes adapter can create,
+activate, receive gateway tool sync, and run smoke tests without Hermes files.</p>
+<h3 id="6-catalog-source-of-truth">6. Catalog Source Of Truth<a class="headerlink" href="#6-catalog-source-of-truth" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Move the canonical engineering MCP catalog into <code>packages/tool_registry</code> as
+packaged data, with shared Pydantic models and normalizers. The Hermes plugin
+must consume or export that shared catalog rather than maintaining an
+independent schema/source of truth.</p>
+<p>Rationale:
+Catalog state is used by the API, UI, validation tools, docs, and Hermes plugin.
+The registry package is the natural owner because it owns installability,
+validation, credentials, safety metadata, and runtime state.</p>
+<p>Rules:</p>
+<ul>
+<li>API migrations may call registry seed helpers, but must not contain large
+  catalog data blocks.</li>
+<li>User-local mutable fields, such as install state, credentials, enabled tools,
+  validation history, and local notes, must not be overwritten by catalog seed
+  refreshes.</li>
+<li><code>docs/mcp-catalog/followups</code> remains the human-readable follow-up record
+  location.</li>
+<li>Catalog YAML/JSON format must be documented and validated.</li>
+</ul>
+<h3 id="7-evidence-format">7. Evidence Format<a class="headerlink" href="#7-evidence-format" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Use both JSON and Markdown, with JSON canonical.</p>
+<p>Rationale:
+Automation needs structured evidence. Maintainers need readable summaries and
+follow-up notes.</p>
+<p>Required JSON fields:</p>
+<ul>
+<li><code>server_id</code></li>
+<li><code>catalog_version</code></li>
+<li><code>validation_started_at</code></li>
+<li><code>validation_finished_at</code></li>
+<li><code>environment</code></li>
+<li><code>container_image</code></li>
+<li><code>install_steps</code></li>
+<li><code>protocol_probes</code></li>
+<li><code>safe_backend_probe</code></li>
+<li><code>gateway_proxy_probe</code></li>
+<li><code>credential_requirements</code></li>
+<li><code>network_requirements</code></li>
+<li><code>result</code></li>
+<li><code>diagnostics</code></li>
+<li><code>follow_up_required</code></li>
+<li><code>redactions</code></li>
+</ul>
+<h3 id="8-observability-and-telemetry-contract">8. Observability And Telemetry Contract<a class="headerlink" href="#8-observability-and-telemetry-contract" title="Permanent link">&para;</a></h3>
+<p>Decision:
+Treat observability as a phase 2 release gate. Define a local-first telemetry
+contract that separates correlation IDs from OpenTelemetry trace IDs, requires
+redaction before emission, and gives every major workflow a stable event/span
+name.</p>
+<p>Rationale:
+Wright runs local agents, starts MCP servers, executes tools, and validates
+engineering integrations. Missing, inconsistent, or over-sharing telemetry is a
+safety problem, not only a debugging inconvenience. The current implementation
+has useful pieces, but the documented end-to-end model is stronger than the
+actual guarantees.</p>
+<p>Trace identity:</p>
+<ul>
+<li>OpenTelemetry owns <code>trace_id</code> and <code>span_id</code>.</li>
+<li><code>X-Trace-Id</code> becomes a Wright correlation ID unless the system later adopts
+  full W3C trace-context propagation.</li>
+<li>Logs include both <code>trace_id</code> and <code>wright.correlation_id</code> when available.</li>
+<li>API responses continue returning <code>X-Trace-Id</code> for user-visible support and
+  UI correlation.</li>
+</ul>
+<p>Local-first telemetry:</p>
+<ul>
+<li>Default exports are local only: stdout JSON logs, local rotating log file,
+  local Jaeger or equivalent OTel collector when configured, and browser-local
+  logs.</li>
+<li>No cloud telemetry, vendor collector, or remote support upload is enabled by
+  default.</li>
+<li>Remote export requires explicit operator configuration and must preserve the
+  same redaction rules.</li>
+</ul>
+<p>Required workflow spans:</p>
+<ul>
+<li><code>workspace.create</code></li>
+<li><code>workspace.activate</code></li>
+<li><code>workspace.config.update</code></li>
+<li><code>workspace.file.execute</code></li>
+<li><code>agent.runtime.select</code></li>
+<li><code>agent.context.materialize</code></li>
+<li><code>agent.chat.start</code></li>
+<li><code>agent.chat.stream</code></li>
+<li><code>mcp.catalog.seed_refresh</code></li>
+<li><code>mcp.server.install</code></li>
+<li><code>mcp.server.start</code></li>
+<li><code>mcp.server.stop</code></li>
+<li><code>mcp.tool.call</code></li>
+<li><code>mcp.safety.evaluate</code></li>
+<li><code>mcp.validation.plan</code></li>
+<li><code>mcp.validation.run</code></li>
+<li><code>mcp.validation.evidence.write</code></li>
+</ul>
+<p>Required event fields where applicable:</p>
+<ul>
+<li><code>wright.correlation_id</code></li>
+<li><code>wright.workspace_id</code></li>
+<li><code>wright.session_id</code></li>
+<li><code>wright.agent_id</code></li>
+<li><code>wright.provider_id</code></li>
+<li><code>wright.server_id</code></li>
+<li><code>wright.tool_name</code></li>
+<li><code>wright.validation_id</code></li>
+<li><code>wright.catalog_version</code></li>
+<li><code>wright.policy_decision</code></li>
+<li><code>wright.support_level</code></li>
+<li><code>duration_ms</code></li>
+<li><code>error_code</code></li>
+</ul>
+<p>Forbidden or redacted fields:</p>
+<ul>
+<li>Raw credential values.</li>
+<li>Full environment maps.</li>
+<li>Unredacted command lines that may include tokens or paths to private data.</li>
+<li>Full tool arguments when they may contain file contents, proprietary geometry,
+  customer data, or secrets.</li>
+<li>Full subprocess stdout/stderr by default.</li>
+<li>Full validation evidence payloads before redaction.</li>
+</ul>
+<p>Redaction rule:
+Every telemetry path that emits command, environment, subprocess, validation,
+credential, or tool-argument data must pass through a shared redaction helper
+before logging, span attributes, evidence writing, or UI display.</p>
+<h2 id="phase-2-workstreams">Phase 2 Workstreams<a class="headerlink" href="#phase-2-workstreams" title="Permanent link">&para;</a></h2>
+<h3 id="workstream-a-workspace-service-boundary">Workstream A: Workspace Service Boundary<a class="headerlink" href="#workstream-a-workspace-service-boundary" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Workspace lifecycle behavior is split across API routes and <code>packages/core</code>,
+with direct filesystem, SQLite, subprocess, git, and Hermes-context operations.</p>
+<p>Target:
+Create <code>packages/workspace_service</code> and route workspace operations through it.</p>
+<p>Initial service surface:</p>
+<ul>
+<li><code>create_workspace(request) -&gt; WorkspaceRecord</code></li>
+<li><code>activate_workspace(workspace_id, agent_id | None) -&gt; WorkspaceActivation</code></li>
+<li><code>update_workspace_config(workspace_id, patch) -&gt; WorkspaceConfig</code></li>
+<li><code>list_workspace_tools(workspace_id) -&gt; WorkspaceToolState</code></li>
+<li><code>set_workspace_tool_enabled(workspace_id, server_id, enabled) -&gt; WorkspaceToolState</code></li>
+<li><code>execute_workspace_file(workspace_id, path, policy) -&gt; FileExecutionResult</code></li>
+<li><code>refresh_agent_context(workspace_id, agent_id) -&gt; ContextRefreshResult</code></li>
+</ul>
+<p>Refactor order:</p>
+<ol>
+<li>Wrap existing behavior behind service methods without changing responses.</li>
+<li>Move direct route logic into service methods.</li>
+<li>Replace API imports from <code>core.workspace</code> with service facade calls.</li>
+<li>Move storage-specific code into <code>data_vault</code>.</li>
+<li>Move agent context materialization calls into <code>agent_adapters</code>.</li>
+</ol>
+<p>Acceptance gates:</p>
+<ul>
+<li>API route tests still pass without response-shape changes.</li>
+<li>No <code>packages/*</code> module imports <code>apps/api</code>.</li>
+<li>Workspace creation no longer calls <code>write_workspace_hermes_md</code> from API code.</li>
+<li>A fake non-Hermes adapter can activate a workspace without Hermes paths.</li>
+</ul>
+<h3 id="workstream-b-agent-runtime-and-context-materialization">Workstream B: Agent Runtime And Context Materialization<a class="headerlink" href="#workstream-b-agent-runtime-and-context-materialization" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Hermes paths and context files still appear in generic config, workspace, sync,
+and UI paths.</p>
+<p>Target:
+Finish the provider boundary so each agent owns its runtime config and context
+materialization.</p>
+<p>Required contracts:</p>
+<ul>
+<li><code>AgentRuntimeProvider</code></li>
+<li><code>AgentRuntimeRegistry</code></li>
+<li><code>AgentGatewayProfile</code></li>
+<li><code>AgentContextMaterializer</code></li>
+<li><code>AgentHealthProbe</code></li>
+<li><code>AgentSessionGateway</code></li>
+</ul>
+<p>Provider responsibilities:</p>
+<ul>
+<li>Resolve local/remote API settings.</li>
+<li>Create engine adapter instances.</li>
+<li>Describe gateway server profile.</li>
+<li>Materialize provider-specific context/config files.</li>
+<li>Report support level: <code>supported</code>, <code>experimental</code>, <code>stub</code>, or <code>unavailable</code>.</li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>API boot does not import Hermes-specific classes directly.</li>
+<li><code>HERMES_*</code> config names are not used by generic API code.</li>
+<li><code>core</code> and <code>workspace_service</code> call adapter contracts, not Hermes helpers.</li>
+<li>OpenClaw stub tests prove provider selection and workspace activation do not
+  touch <code>.hermes.md</code> or <code>~/.hermes</code>.</li>
+</ul>
+<h3 id="workstream-c-mcp-catalog-safety-and-install-policy">Workstream C: MCP Catalog, Safety, And Install Policy<a class="headerlink" href="#workstream-c-mcp-catalog-safety-and-install-policy" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Catalog metadata, install policy, and UI display policy are split across API
+migrations, registry services, plugin schemas, and frontend constants.</p>
+<p>Target:
+Make <code>tool_registry</code> the policy owner for catalog data, installability, safety,
+and validation state.</p>
+<p>Package responsibilities:</p>
+<ul>
+<li>Load canonical catalog packaged data.</li>
+<li>Normalize platform support and dependency metadata.</li>
+<li>Preserve partial/failed/follow-up-required entries.</li>
+<li>Decide install/start/call eligibility.</li>
+<li>Record local approvals and audit events.</li>
+<li>Export JSON Schema for API/UI/plugin contracts.</li>
+</ul>
+<p>Safety policy:</p>
+<div class="highlight"><pre><span></span><code>can_install(server, approval_context) -&gt; PolicyDecision
+can_start(server, workspace, approval_context) -&gt; PolicyDecision
+can_call_tool(server, tool, workspace, approval_context) -&gt; PolicyDecision
+</code></pre></div>
+<p>Decision fields:</p>
+<ul>
+<li><code>allowed</code></li>
+<li><code>reason</code></li>
+<li><code>required_approvals</code></li>
+<li><code>missing_credentials</code></li>
+<li><code>network_required</code></li>
+<li><code>blocked_by_catalog</code></li>
+<li><code>diagnostics</code></li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>Blocked/non-working install attempts fail in <code>tool_registry</code>, not only in UI.</li>
+<li>High/safety-critical servers requiring approval cannot start without a local
+  approval record.</li>
+<li>Missing credentials block start/call with a typed error.</li>
+<li>API migration seeding uses <code>tool_registry</code> helpers.</li>
+<li>Hermes plugin catalog loading validates against shared registry models.</li>
+</ul>
+<h3 id="workstream-d-clean-container-validation">Workstream D: Clean-Container Validation<a class="headerlink" href="#workstream-d-clean-container-validation" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Validation plans and evidence models exist, but clean-container execution is
+not yet a first-class operator workflow.</p>
+<p>Target:
+Implement an opt-in validation runner that follows the documented clean-container
+process.</p>
+<p>Components:</p>
+<ul>
+<li><code>ValidationPlanBuilder</code></li>
+<li><code>ValidationExecutor</code> protocol</li>
+<li><code>MockValidationExecutor</code></li>
+<li><code>DockerCleanContainerExecutor</code></li>
+<li><code>ValidationEvidenceWriter</code></li>
+<li><code>FollowUpRecordWriter</code></li>
+<li><code>ValidationCli</code></li>
+</ul>
+<p>Execution rules:</p>
+<ul>
+<li>Start from a clean Ubuntu/Linux x64 container per server validation.</li>
+<li>Install only dependencies required by the selected MCP candidate.</li>
+<li>Do not add MCP-specific software to the base image to make tests pass.</li>
+<li>Run MCP protocol probes: <code>initialize</code>, <code>notifications/initialized</code>,
+  <code>tools/list</code>.</li>
+<li>Run one safe backend-touching probe when credentials/software are available.</li>
+<li>Run Wright gateway proxy probe when the server is expected to be proxied.</li>
+<li>Mark host-dependent/proprietary entries as follow-up-required with clear
+  diagnostics when they cannot be validated locally.</li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>Default package/API tests do not require Docker, network, credentials, or
+  proprietary software.</li>
+<li>Mock executor can generate complete evidence fixtures.</li>
+<li>Docker executor is behind an explicit CLI flag or command.</li>
+<li>Evidence writer redacts credentials and environment secrets.</li>
+<li>Validation results never silently overwrite catalog truth without preserving
+  diagnostics.</li>
+</ul>
+<h3 id="workstream-e-api-service-layer-completion">Workstream E: API Service Layer Completion<a class="headerlink" href="#workstream-e-api-service-layer-completion" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Some API routes still perform domain work directly.</p>
+<p>Target:
+Keep route modules as request/response translators and move operations into
+package or service-layer code.</p>
+<p>Priority routes:</p>
+<ol>
+<li><code>apps/api/src/api/routers/workspace.py</code></li>
+<li><code>apps/api/src/api/routers/agent.py</code></li>
+<li><code>apps/api/src/api/routers/vault.py</code></li>
+<li>Remaining MCP endpoints not already delegated</li>
+</ol>
+<p>Route rules:</p>
+<ul>
+<li>Parse request.</li>
+<li>Call a service.</li>
+<li>Translate typed domain errors to HTTP errors.</li>
+<li>Return response model.</li>
+<li>No direct subprocess execution.</li>
+<li>No direct SQLite writes.</li>
+<li>No direct provider-specific file writes.</li>
+<li>No direct package-manager execution.</li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>Route tests cover HTTP status and response shape.</li>
+<li>Service tests cover business behavior.</li>
+<li>Import-boundary test prevents <code>packages/* -&gt; apps/api</code>.</li>
+<li>Thin-route review checklist added to contributing docs.</li>
+</ul>
+<h3 id="workstream-f-ui-architecture-and-contracts">Workstream F: UI Architecture And Contracts<a class="headerlink" href="#workstream-f-ui-architecture-and-contracts" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Large React components mix data loading, domain decisions, style details, and
+view rendering. UI types duplicate backend/package models.</p>
+<p>Target:
+Introduce generated contracts and split high-risk UI surfaces into data hooks,
+display models, and focused presentational components.</p>
+<p>Priority components:</p>
+<ul>
+<li><code>WorkspacePanel</code></li>
+<li><code>ToolCard</code></li>
+<li><code>ToolRegistryPage</code></li>
+<li><code>AddToolModal</code></li>
+<li><code>CreateWorkspaceModal</code></li>
+<li><code>FileEditor</code></li>
+<li><code>FileTree</code></li>
+</ul>
+<p>Refactor pattern:</p>
+<div class="highlight"><pre><span></span><code>services/api client -&gt; store/query hook -&gt; display model -&gt; presentational component
+</code></pre></div>
+<p>Rules:</p>
+<ul>
+<li>Domain defaults come from API/package contracts, not duplicated frontend
+  constants.</li>
+<li>Presentation labels and icons may remain frontend-owned.</li>
+<li>Interactive controls must have stable <code>data-testid</code> values.</li>
+<li>Shared controls use design tokens for color, spacing, radius, typography, and
+  focus states.</li>
+<li>Browser <code>prompt</code>, <code>confirm</code>, and <code>alert</code> should be replaced with typed modal
+  flows for important workflows.</li>
+<li>Direct <code>fetch</code> calls inside complex components should move to service modules.</li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>Generated TypeScript contracts are current.</li>
+<li>Component tests cover risk badges, credential prompts, blocked installs,
+  validation states, and workspace tool enablement.</li>
+<li>Playwright smoke covers tool registry install-blocked state and workspace
+  activation.</li>
+<li>Visual/layout tests cover long metadata and mobile width.</li>
+</ul>
+<h3 id="workstream-g-observability-and-error-model">Workstream G: Observability And Error Model<a class="headerlink" href="#workstream-g-observability-and-error-model" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Structured logging and tracing exist but are not consistently used across API,
+core, registry, validation, and runners. Current docs describe end-to-end
+observability, but implementation still has stdlib loggers, <code>print()</code> calls,
+possible trace/correlation ID confusion, unredacted command logging, and gaps in
+database/tool/validation spans.</p>
+<p>Target:
+Use one structured logging, typed error, trace identity, telemetry taxonomy, and
+redaction pattern across phase 2 seams. Observability is a release gate for
+workspace service, MCP safety, clean-container validation, and agent adapter
+materialization.</p>
+<p>Rules:</p>
+<ul>
+<li>Use <code>core.logging.get_logger</code> or the agreed structlog wrapper in packages.</li>
+<li>Do not pass arbitrary keyword fields to stdlib loggers.</li>
+<li>Do not use <code>print</code> from library or migration code except explicit CLI output.</li>
+<li>Treat <code>trace_id</code> as the OpenTelemetry trace ID and
+  <code>wright.correlation_id</code> as the user-visible/request correlation value.</li>
+<li>Preserve <code>X-Trace-Id</code> as the external correlation header until a full W3C
+  trace-context decision is made.</li>
+<li>Redact command arguments, environment values, credentials, validation
+  evidence, subprocess output, and tool arguments that may contain secrets or
+  proprietary project data.</li>
+<li>Domain services raise typed errors; API translates them.</li>
+<li>Tool starts, tool calls, validation runs, workspace activation, and agent
+  context refreshes emit traceable events.</li>
+<li>Remote telemetry export is disabled by default and requires explicit operator
+  opt-in.</li>
+<li>Browser-side logs remain local by default and must use the same correlation
+  ID when calling the API.</li>
+</ul>
+<p>Required implementation tasks:</p>
+<ul>
+<li>Add a shared telemetry field-name module or documented constants for
+  <code>wright.*</code> attributes.</li>
+<li>Add a shared redaction helper used by logging, tracing, validation evidence,
+  and UI log display.</li>
+<li>Replace stdlib logging and <code>print()</code> in touched paths with structured events.</li>
+<li>Add span wrappers for workspace service operations, agent context
+  materialization, MCP safety evaluation, MCP server start/stop, tool calls,
+  catalog refresh, and validation evidence writing.</li>
+<li>Add typed error codes that are safe to log and safe to return through API
+  errors.</li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>Regression test for the current stdlib keyword-logging failure class.</li>
+<li>Log-shape tests assert JSON output with <code>trace_id</code>,
+  <code>wright.correlation_id</code>, event name, level, timestamp, and component where
+  request context exists.</li>
+<li>Trace-propagation tests prove API responses, server logs, and UI log records
+  share the same correlation ID.</li>
+<li>Redaction tests cover command lines, env vars, validation evidence, tool
+  arguments, subprocess stdout/stderr, and credential diagnostics.</li>
+<li>Representative workspace, MCP, agent context, catalog refresh, and validation
+  flows emit required spans.</li>
+<li>Tests prove remote telemetry export is off by default.</li>
+</ul>
+<h3 id="workstream-h-documentation-and-contributor-experience">Workstream H: Documentation And Contributor Experience<a class="headerlink" href="#workstream-h-documentation-and-contributor-experience" title="Permanent link">&para;</a></h3>
+<p>Problem:
+Some documentation still frames Wright around Hermes, and some package READMEs
+do not describe current ownership boundaries.</p>
+<p>Target:
+Make docs teach the architecture Wright wants contributors to extend.</p>
+<p>Docs to update:</p>
+<ul>
+<li><code>README.md</code></li>
+<li><code>docs/architecture/agent-adapters.md</code></li>
+<li><code>docs/architecture/observability.md</code></li>
+<li><code>docs/architecture/tool-registry.md</code></li>
+<li><code>docs/architecture/system-overview.md</code></li>
+<li><code>apps/web/README.md</code></li>
+<li><code>hermes-plugin-wright/README.md</code></li>
+<li><code>docs/contributing/dev-setup.md</code></li>
+<li><code>docs/contributing/testing.md</code></li>
+</ul>
+<p>Rules:</p>
+<ul>
+<li>Hermes is described as default/first-class adapter, not the generic engine.</li>
+<li>OpenClaw is described as a future peer adapter using the same Wright gateway
+  protocol.</li>
+<li>Package ownership and import boundaries are explicit.</li>
+<li>Observability docs distinguish OpenTelemetry trace IDs from Wright
+  correlation IDs and document default-local telemetry behavior.</li>
+<li>MCP validation docs distinguish metadata preflight, mock validation, and
+  clean-container validation.</li>
+<li>Docs must not contain local <code>file://</code> paths.</li>
+</ul>
+<p>Acceptance gates:</p>
+<ul>
+<li>Docs link check passes.</li>
+<li>Search for stale Vite template text returns no app README hits.</li>
+<li>Search for local <code>file://</code> links returns no public docs hits.</li>
+<li>Architecture docs name canonical package owners.</li>
+</ul>
+<h2 id="implementation-sequence">Implementation Sequence<a class="headerlink" href="#implementation-sequence" title="Permanent link">&para;</a></h2>
+<h3 id="phase-21-boundary-guards-and-contracts">Phase 2.1: Boundary Guards And Contracts<a class="headerlink" href="#phase-21-boundary-guards-and-contracts" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Add import-boundary tests.</li>
+<li>Add JSON Schema export points for agent, MCP, validation, and workspace
+  response models.</li>
+<li>Add generated TypeScript contract pipeline in check-only mode.</li>
+<li>Add typed error base classes for workspace, registry, validation, and agent
+  domains if missing.</li>
+<li>Add telemetry event/span taxonomy constants and redaction helper interfaces
+  before adding new instrumented flows.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Boundary tests fail on <code>packages/* -&gt; apps/api</code>.</li>
+<li>Contract generation/check command runs offline.</li>
+<li>Telemetry contract tests prove event names, required fields, and forbidden
+  fields are enforced at the helper boundary.</li>
+<li>Existing tests pass.</li>
+</ul>
+<h3 id="phase-22-workspace-service-facade">Phase 2.2: Workspace Service Facade<a class="headerlink" href="#phase-22-workspace-service-facade" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Add <code>packages/workspace_service</code>.</li>
+<li>Wrap current workspace creation, activation, tool enablement, config update,
+  and file execution behind service methods.</li>
+<li>Move API route calls to the facade without response changes.</li>
+<li>Remove generic calls to Hermes context writing from route code.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Workspace API tests pass.</li>
+<li>Workspace service unit tests cover happy path and typed errors.</li>
+<li>Fake non-Hermes context materializer test passes.</li>
+<li>Workspace create, activate, config update, and file execution emit spans with
+  correlation ID, workspace ID when available, duration, and safe error codes.</li>
+</ul>
+<h3 id="phase-23-agent-context-and-gateway-materialization">Phase 2.3: Agent Context And Gateway Materialization<a class="headerlink" href="#phase-23-agent-context-and-gateway-materialization" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Add <code>AgentContextMaterializer</code> and provider support-level metadata.</li>
+<li>Move Hermes <code>.hermes.md</code> and config writes behind Hermes provider code.</li>
+<li>Add OpenClaw stub materializer that writes no Hermes files.</li>
+<li>Update UI/service metadata to read provider labels and support level.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>No generic package or API route calls Hermes writer functions.</li>
+<li>Hermes smoke still materializes expected files.</li>
+<li>OpenClaw stub smoke proves generic activation path.</li>
+<li>Agent runtime selection and context materialization emit provider/support-level
+  telemetry without logging provider secrets or full generated context content.</li>
+</ul>
+<h3 id="phase-24-catalog-source-and-safety-policy">Phase 2.4: Catalog Source And Safety Policy<a class="headerlink" href="#phase-24-catalog-source-and-safety-policy" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Move canonical catalog data to <code>tool_registry</code>.</li>
+<li>Replace API migration catalog constants with registry seed helpers.</li>
+<li>Add <code>McpSafetyPolicy</code> and local approval/audit storage.</li>
+<li>Update API and UI to use policy decisions.</li>
+<li>Keep Hermes plugin first-class through shared loader/model validation.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Catalog parity tests pass.</li>
+<li>Install/start/call safety tests pass.</li>
+<li>User-local install/credential/enabled state survives catalog refresh.</li>
+<li>UI displays policy decisions from API instead of re-deriving domain truth.</li>
+<li>Safety decisions and catalog refreshes emit structured local audit events with
+  redacted diagnostics.</li>
+</ul>
+<h3 id="phase-25-clean-container-validation-cli">Phase 2.5: Clean-Container Validation CLI<a class="headerlink" href="#phase-25-clean-container-validation-cli" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Add validation CLI/module entry point.</li>
+<li>Add mock executor and evidence fixture tests.</li>
+<li>Add Docker executor behind explicit operator invocation.</li>
+<li>Write JSON evidence and Markdown follow-up summaries.</li>
+<li>Add docs and examples for one lightweight MCP candidate.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Fast tests remain offline and Docker-free.</li>
+<li>Mock validation evidence is complete and redacted.</li>
+<li>Clean-container validation can run manually for one lightweight server.</li>
+<li>Failed/proprietary/host-dependent entries produce follow-up records.</li>
+<li>Validation CLI logs and evidence use the shared correlation/redaction model,
+  and no credentials, full env maps, or raw secret-bearing commands are emitted.</li>
+</ul>
+<h3 id="phase-26-ui-decomposition-and-generated-contracts">Phase 2.6: UI Decomposition And Generated Contracts<a class="headerlink" href="#phase-26-ui-decomposition-and-generated-contracts" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Replace duplicated MCP and agent TypeScript interfaces with generated
+  contracts.</li>
+<li>Split <code>ToolCard</code> and <code>WorkspacePanel</code> into hooks, display models, and
+  presentational components.</li>
+<li>Replace prompts/alerts in priority workflows with modals.</li>
+<li>Add missing <code>data-testid</code> values to important controls.</li>
+<li>Move inline styles toward tokenized component styles.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Vitest and Playwright smoke pass.</li>
+<li>Generated contract check passes.</li>
+<li>Tool registry and workspace panels remain layout-stable at mobile and desktop
+  widths.</li>
+<li>UI API calls preserve <code>X-Trace-Id</code> correlation, and local UI logs can be
+  matched to API logs by correlation ID.</li>
+</ul>
+<h3 id="phase-27-observability-and-docs">Phase 2.7: Observability And Docs<a class="headerlink" href="#phase-27-observability-and-docs" title="Permanent link">&para;</a></h3>
+<p>Deliverables:</p>
+<ul>
+<li>Replace remaining stdlib logging/print usage in touched paths.</li>
+<li>Implement the telemetry contract from resolved decision 8.</li>
+<li>Add redaction helpers for command/env/evidence/tool-argument/subprocess output.</li>
+<li>Add trace events around workspace activation, agent runtime selection, agent
+  context materialization, MCP safety evaluation, MCP start/call, catalog
+  refresh, validation planning, validation run, and evidence writing.</li>
+<li>Clarify <code>trace_id</code> versus <code>wright.correlation_id</code> in code, docs, and tests.</li>
+<li>Add default-off remote telemetry configuration checks.</li>
+<li>Refresh architecture and contributor docs.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Log-shape, trace/correlation propagation, redaction, and remote-export-off
+  tests pass.</li>
+<li>Docs link check passes.</li>
+<li>Architecture docs reflect package ownership and phase 2 decisions.</li>
+</ul>
+<h2 id="verification-matrix">Verification Matrix<a class="headerlink" href="#verification-matrix" title="Permanent link">&para;</a></h2>
+<p>Default local verification must remain offline:</p>
+<div class="highlight"><pre><span></span><code>uv run pytest packages/agent_adapters packages/tool_registry packages/workspace_service apps/api/tests
+npm run test --workspace=apps/web
+npm run test:e2e --workspace=apps/web
+</code></pre></div>
+<p>Targeted verification by workstream:</p>
+<ul>
+<li>Agent registry: provider selection, unknown provider typed error, OpenClaw
+  stub support-level behavior.</li>
+<li>Workspace service: create, activate, config update, tool enablement, file
+  execution policy, typed errors.</li>
+<li>Catalog: schema validation, duplicate IDs, seed refresh merge policy,
+  plugin parity.</li>
+<li>Safety: blocked install, high-risk approval, missing credentials, remote
+  network metadata, call-time enforcement.</li>
+<li>Validation: plan generation, mock execution, evidence redaction, follow-up
+  writing, optional Docker execution.</li>
+<li>UI: generated contract freshness, test IDs, credential flow, blocked install,
+  validation display, mobile layout.</li>
+<li>Observability: JSON logs, OTel trace IDs, Wright correlation IDs, required
+  span taxonomy, redacted command/env/tool/evidence fields, and default-off
+  remote telemetry.</li>
+</ul>
+<p>Manual or opt-in verification:</p>
+<div class="highlight"><pre><span></span><code>uv run python -m tool_registry.validation_cli validate &lt;server-id&gt; --container ubuntu-x64
+</code></pre></div>
+<p>This command may use Docker, network, credentials, or external package
+registries only when explicitly requested by the operator.</p>
+<h2 id="migration-and-rollback">Migration And Rollback<a class="headerlink" href="#migration-and-rollback" title="Permanent link">&para;</a></h2>
+<p>Migration strategy:</p>
+<ul>
+<li>Keep API response models stable.</li>
+<li>Add service facades before moving implementation details.</li>
+<li>Keep Hermes behavior green before introducing OpenClaw behavior.</li>
+<li>Run catalog seed in parity mode before deleting migration constants.</li>
+<li>Generate UI contracts alongside existing interfaces before switching imports.</li>
+<li>Keep Docker validation opt-in.</li>
+<li>Add telemetry helpers and tests before broad instrumentation, so later
+  workstreams do not invent incompatible field names or ad hoc redaction.</li>
+</ul>
+<p>Rollback strategy:</p>
+<ul>
+<li>Workspace service facade can delegate back to existing <code>core.workspace</code>
+  functions until each operation is migrated.</li>
+<li>Hermes provider can keep existing config/context output while generic callers
+  move to provider contracts.</li>
+<li>Catalog seeding can retain legacy migration constants behind a temporary
+  fallback until packaged catalog parity is proven.</li>
+<li>Safety policy can start in report-only mode for non-blocked entries, then
+  become enforcing after tests and UI flows are complete.</li>
+<li>Validation CLI can ship with mock executor first; Docker executor can remain
+  experimental until evidence is reliable.</li>
+<li>If telemetry instrumentation creates noise or performance issues, keep the
+  event names and redaction contract stable while reducing span detail behind
+  local configuration. Do not remove correlation, safety, or audit events.</li>
+</ul>
+<h2 id="risks-and-mitigations">Risks And Mitigations<a class="headerlink" href="#risks-and-mitigations" title="Permanent link">&para;</a></h2>
+<p>Risk:
+Moving workspace behavior into a new package may create circular dependencies.</p>
+<p>Mitigation:
+Add import-boundary tests first. Keep <code>workspace_service</code> dependent on
+<code>agent_adapters</code>, <code>tool_registry</code>, <code>data_vault</code>, and <code>core</code>; never the reverse.</p>
+<p>Risk:
+Catalog migration may overwrite local state.</p>
+<p>Mitigation:
+Define a merge policy before migration. Add tests for install state,
+credentials, workspace enabled tools, validation history, and local notes.</p>
+<p>Risk:
+Generated UI contracts may slow frontend iteration.</p>
+<p>Mitigation:
+Check generated files into the repository and add a simple freshness check.
+Keep display-only metadata frontend-owned.</p>
+<p>Risk:
+Safety policy enforcement could break existing workflows.</p>
+<p>Mitigation:
+Introduce policy decisions in API responses first, update UI flows, then enforce
+high-risk start/call gates. Continue blocking <code>blocked</code> and <code>non_working</code>
+entries immediately.</p>
+<p>Risk:
+Clean-container validation could become network/proprietary-tool dependent.</p>
+<p>Mitigation:
+Keep default tests mock-only. Use explicit CLI flags for network, credentials,
+and Docker. Record follow-up diagnostics instead of forcing green validation.</p>
+<p>Risk:
+Telemetry could leak secrets, proprietary project data, or command details while
+trying to improve debuggability.</p>
+<p>Mitigation:
+Add redaction helpers and tests before broad instrumentation. Treat raw
+credentials, full env maps, full command lines, raw tool arguments, subprocess
+output, and unredacted evidence as forbidden telemetry fields.</p>
+<p>Risk:
+Trace IDs and user-visible request IDs could diverge and make logs harder to
+join across UI, API, and local tools.</p>
+<p>Mitigation:
+Make the distinction explicit: OpenTelemetry owns <code>trace_id</code>; Wright owns
+<code>wright.correlation_id</code> and the <code>X-Trace-Id</code> header. Tests must prove API
+responses, backend logs, and UI logs share the correlation ID.</p>
+<h2 id="avoid">Avoid<a class="headerlink" href="#avoid" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Do not solve OpenClaw by copying Hermes branches and renaming variables.</li>
+<li>Do not make <code>.hermes.md</code> or <code>~/.hermes</code> part of the generic workspace model.</li>
+<li>Do not put Docker execution behind an ordinary web route by default.</li>
+<li>Do not add FreeCAD, OpenSCAD, Blender, SolidWorks, vendor SDKs, license
+  managers, or other MCP-specific host software to the base validation image.</li>
+<li>Do not let API migrations remain the long-term catalog editor.</li>
+<li>Do not re-derive backend safety policy in React components.</li>
+<li>Do not silently remove uncertain catalog entries because validation is hard.</li>
+<li>Do not introduce network-dependent tests into the default fast suite.</li>
+<li>Do not enable remote telemetry export by default.</li>
+<li>Do not log raw credentials, full environment maps, unredacted commands, raw
+  tool arguments, or full subprocess output.</li>
+<li>Do not treat <code>X-Trace-Id</code> as the OpenTelemetry trace ID unless Wright adopts
+  full W3C trace-context propagation.</li>
+</ul>
+<h2 id="definition-of-done">Definition Of Done<a class="headerlink" href="#definition-of-done" title="Permanent link">&para;</a></h2>
+<p>Phase 2 is complete when:</p>
+<ul>
+<li>A non-Hermes stub provider can create and activate a workspace through the
+  same generic API path without Hermes file/path writes.</li>
+<li>Workspace route business logic is delegated to <code>workspace_service</code>.</li>
+<li>Canonical MCP catalog data and schema live in <code>tool_registry</code>.</li>
+<li>Safety policy is enforced at install/start/call boundaries.</li>
+<li>Clean-container validation has an opt-in CLI path and produces JSON plus
+  Markdown evidence.</li>
+<li>Generated UI contracts are in use for MCP, agent, validation, and workspace
+  surfaces touched by phase 2.</li>
+<li>Priority UI workflows have stable test IDs and tokenized layout.</li>
+<li>Structured logs, correlation IDs, OpenTelemetry traces, redaction, and typed
+  errors cover workspace activation, agent runtime selection, agent context
+  materialization, catalog refresh, MCP safety decisions, MCP lifecycle, tool
+  calls, validation planning, validation runs, and evidence writing.</li>
+<li>Remote telemetry export is disabled by default and covered by tests.</li>
+<li>Docs describe Hermes as first-class but not architectural, and OpenClaw as a
+  peer adapter target.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

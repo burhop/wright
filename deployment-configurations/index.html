@@ -1,0 +1,3783 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/deployment-configurations/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Wright Deployment Configurations - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wright-deployment-configurations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wright Deployment Configurations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-development-configuration-direct-on-gb10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Development Configuration (Direct on GB10)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Development Configuration (Direct on GB10)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#component-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hermes-profile-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hermes Profile System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#startup-sequence-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Startup Sequence (Development)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-docker-appliance-simple-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Docker Appliance (Simple Users)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Docker Appliance (Simple Users)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture-diagram_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-inside-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Inside the Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-fastapi-serves-the-frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How FastAPI Serves the Frontend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#first-boot-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First Boot Sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-docker-appliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the Docker Appliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exposed-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exposed Ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filesystem-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filesystem Persistence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-plugin-install-existing-hermes-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Plugin Install (Existing Hermes Users)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Plugin Install (Existing Hermes Users)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture-diagram_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installation-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-a-uv-tool-install-with-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method A: uv tool install --with (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-b-pip-install-editable-dev-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method B: pip install (editable dev install)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-c-copy-to-plugins-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method C: Copy to plugins directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-plugin-discovery-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Plugin Discovery Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-wright-start-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What /wright start Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-install-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Install Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-embedded-desktop-configuration-hermes-desktop-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Embedded Desktop Configuration (Hermes Desktop Integration)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Embedded Desktop Configuration (Hermes Desktop Integration)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture-diagram_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#component-details_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#native-electron-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native Electron Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-process-for-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build Process for Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrade-procedures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Procedures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Upgrade Procedures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-appliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker Appliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plugin-only-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugin-Only Install
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Tree
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues-across-all-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues Across All Configurations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagnostic-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostic Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wright-deployment-configurations">Wright Deployment Configurations<a class="headerlink" href="#wright-deployment-configurations" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>A complete guide to the three ways Wright can be deployed, their architectures, dependencies, and upgrade paths.</p>
+<p>[!IMPORTANT]
+Public-alpha Docker images include the Wright API, web UI, Hermes integration,
+and general validation tooling. They do not bundle an LLM, API key, model
+weights, paid engineering backend, or MCP-specific host software such as
+FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems, license managers, or
+hardware drivers. Older diagrams in this document may describe planned or
+development-only dependency layouts; use
+<a href="../getting-started/quickstart-docker/">Quick Start: Docker Appliance</a> and
+<a href="../mcp-catalog/mcp-server-testing-process/">MCP Server Testing Process</a> as the
+current public-alpha contract.</p>
+</blockquote>
+<hr />
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Wright has four deployment configurations, each targeting a different user profile:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Configuration</th>
+<th style="text-align: left;">Target Audience</th>
+<th style="text-align: left;">Host</th>
+<th style="text-align: left;">Managed By</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Development</strong></td>
+<td style="text-align: left;">Core developers</td>
+<td style="text-align: left;">Bare-metal GB10</td>
+<td style="text-align: left;">Manual / systemd user services</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Docker Appliance</strong></td>
+<td style="text-align: left;">New / simple users</td>
+<td style="text-align: left;">Any Docker host</td>
+<td style="text-align: left;">supervisord inside container</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Plugin Install</strong></td>
+<td style="text-align: left;">Existing Hermes users</td>
+<td style="text-align: left;">Any Hermes host</td>
+<td style="text-align: left;"><code>uv tool install --with</code> or <code>pip install</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Embedded Desktop</strong></td>
+<td style="text-align: left;">Hermes Desktop users</td>
+<td style="text-align: left;">Electron Desktop shell</td>
+<td style="text-align: left;"><code>hermes-wright-panel</code> container / preload</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-development-configuration-direct-on-gb10">1. Development Configuration (Direct on GB10)<a class="headerlink" href="#1-development-configuration-direct-on-gb10" title="Permanent link">&para;</a></h2>
+<p>This is how the core team runs Wright during active development. All services run directly on the host machine, orchestrated by a mix of systemd user services and manual processes.</p>
+<h3 id="architecture-diagram">Architecture Diagram<a class="headerlink" href="#architecture-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;GB10 Host&quot;
+        subgraph &quot;Hermes Agent (systemd user service)&quot;
+            GW[&quot;hermes gateway&lt;br/&gt;wright profile&lt;br/&gt;:8642&quot;]
+            PLUGIN[&quot;hermes-plugin-wright&lt;br/&gt;(loaded via entry point)&quot;]
+            GW --&gt; PLUGIN
+        end
+
+        subgraph &quot;Wright Backend (manual / terminal)&quot;
+            API[&quot;FastAPI (uvicorn)&lt;br/&gt;:8000&quot;]
+            CORE[&quot;wright-core&quot;]
+            AA[&quot;wright-agent-adapters&quot;]
+            TR[&quot;wright-tool-registry&quot;]
+            WS[&quot;workspace services&lt;br/&gt;local state/files&quot;]
+            API --&gt; CORE
+            API --&gt; AA
+            API --&gt; TR
+            API --&gt; WS
+        end
+
+        subgraph &quot;Wright Frontend (manual / terminal)&quot;
+            VITE[&quot;Vite Dev Server&lt;br/&gt;:5173&quot;]
+        end
+
+        subgraph &quot;MCP Tool Servers&quot;
+            MCP_GW[&quot;tool_registry.gateway&lt;br/&gt;(stdio MCP server)&quot;]
+            OPENSCAD[&quot;OpenSCAD&lt;br/&gt;(headless via Xvfb)&quot;]
+            FREECAD[&quot;FreeCAD&lt;br/&gt;(AppImage)&quot;]
+        end
+
+        GW -- &quot;HTTP bridge&quot; --&gt; API
+        VITE -- &quot;proxy /api/*&quot; --&gt; API
+        API -- &quot;stdio spawn&quot; --&gt; MCP_GW
+        MCP_GW --&gt; OPENSCAD
+        MCP_GW --&gt; FREECAD
+    end
+
+    USER[&quot;Developer Browser&quot;] --&gt; VITE
+    LLM[&quot;Local LLM Server&quot;] --&gt; GW
+</code></pre></div>
+<h3 id="component-details">Component Details<a class="headerlink" href="#component-details" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Port</th>
+<th style="text-align: left;">How It's Started</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Hermes Agent</td>
+<td style="text-align: left;">v0.18.x</td>
+<td style="text-align: left;">8642 (gateway API)</td>
+<td style="text-align: left;"><code>systemctl --user start hermes-gateway-wright</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Wright FastAPI</td>
+<td style="text-align: left;">0.1.0</td>
+<td style="text-align: left;">8000</td>
+<td style="text-align: left;"><code>uv run uvicorn api.main:app --host 0.0.0.0 --port 8000</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Vite Dev Server</td>
+<td style="text-align: left;">8.x</td>
+<td style="text-align: left;">5173</td>
+<td style="text-align: left;"><code>npm run dev --workspace=apps/web -- --host</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Python</td>
+<td style="text-align: left;">3.13.x</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">System / uv managed</td>
+</tr>
+<tr>
+<td style="text-align: left;">Node.js</td>
+<td style="text-align: left;">22.x</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">System install</td>
+</tr>
+<tr>
+<td style="text-align: left;">uv</td>
+<td style="text-align: left;">0.9.x</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">System install</td>
+</tr>
+<tr>
+<td style="text-align: left;">OpenSCAD</td>
+<td style="text-align: left;">system pkg</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Spawned on-demand by tool_registry</td>
+</tr>
+<tr>
+<td style="text-align: left;">FreeCAD</td>
+<td style="text-align: left;">1.0.0 AppImage</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Spawned on-demand by tool_registry</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hermes-profile-system">Hermes Profile System<a class="headerlink" href="#hermes-profile-system" title="Permanent link">&para;</a></h3>
+<p>Wright uses Hermes <strong>profiles</strong> to isolate its configuration from other Hermes instances:</p>
+<div class="highlight"><pre><span></span><code>~/.hermes/
+├── config.yaml                    # Global Hermes config
+└── profiles/
+    └── wright/
+        ├── config.yaml            # Wright-specific overrides
+        ├── SOUL.md                # Agent persona / instructions
+        ├── sessions/              # Chat session storage
+        └── skills/                # Installed skills
+</code></pre></div>
+<p>Key settings in the wright profile (<code>~/.hermes/profiles/wright/config.yaml</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="nt">API_SERVER_ENABLED</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">API_SERVER_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wright-dev-key</span>
+<span class="nt">API_SERVER_PORT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8642</span>
+<span class="nt">model</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://your-llm-host:8000/v1</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your-model-name</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom</span>
+<span class="nt">mcp_servers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">wrightgateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv</span>
+<span class="w">    </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">run</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--project</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">/path/to/wright</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">python</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-m</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">tool_registry.gateway</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>graph LR
+    subgraph &quot;Python Workspace (uv)&quot;
+        API[&quot;wright-api&quot;]
+        CORE[&quot;wright-core&quot;]
+        AA[&quot;wright-agent-adapters&quot;]
+        TR[&quot;wright-tool-registry&quot;]
+        WS[&quot;workspace services&lt;br/&gt;local state/files&quot;]
+        API --&gt; CORE
+        API --&gt; AA
+        API --&gt; TR
+        API --&gt; WS
+    end
+
+    subgraph &quot;Node.js Workspace (npm)&quot;
+        WEB[&quot;apps/web (React + Vite)&quot;]
+    end
+
+    subgraph &quot;Separate Python Environment&quot;
+        HERMES[&quot;hermes-agent v0.18.x&quot;]
+        PLUGIN[&quot;hermes-plugin-wright v1.0.0&quot;]
+        HERMES --&gt; PLUGIN
+    end
+</code></pre></div>
+<h3 id="startup-sequence-development">Startup Sequence (Development)<a class="headerlink" href="#startup-sequence-development" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Start the Hermes gateway for the wright profile</span>
+systemctl<span class="w"> </span>--user<span class="w"> </span>start<span class="w"> </span>hermes-gateway-wright
+
+<span class="c1"># 2. Start the FastAPI backend</span>
+<span class="nb">cd</span><span class="w"> </span>~/repos/wright
+uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>api.main:app<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span>
+
+<span class="c1"># 3. Start the Vite frontend dev server</span>
+npm<span class="w"> </span>run<span class="w"> </span>dev<span class="w"> </span>--workspace<span class="o">=</span>apps/web<span class="w"> </span>--<span class="w"> </span>--host
+
+<span class="c1"># Verify:</span>
+curl<span class="w"> </span>http://127.0.0.1:8000/api/health<span class="w">   </span><span class="c1"># API health check</span>
+open<span class="w"> </span>http://127.0.0.1:5173/<span class="w">              </span><span class="c1"># Frontend UI</span>
+</code></pre></div>
+<h3 id="known-issues">Known Issues<a class="headerlink" href="#known-issues" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>[!WARNING]
+<strong>Discord Token Conflict</strong>: If another Hermes profile (e.g. <code>default</code>) is also running a gateway, the Discord bot token will be "already in use." Only one gateway profile should be active at a time.</p>
+<p>[!TIP]
+<strong>Port Contention</strong>: If port 8642 is already bound by another gateway instance, kill the conflicting process first: <code>pkill -f "hermes.*gateway"</code> then restart.</p>
+</blockquote>
+<hr />
+<h2 id="2-docker-appliance-simple-users">2. Docker Appliance (Simple Users)<a class="headerlink" href="#2-docker-appliance-simple-users" title="Permanent link">&para;</a></h2>
+<p>For users who do not have Hermes or Wright installed, the Docker appliance is
+the quickest public-alpha path for the Wright API, web UI, Hermes integration,
+and MCP catalog. The image does not bundle an LLM, model weights, paid
+engineering backend, or MCP-specific host software. Users provide an
+OpenAI-compatible endpoint and install selected MCP host dependencies only for
+the server they are validating.</p>
+<p>Selected MCP host software is installed per selected MCP validation only; it is
+not part of the base Docker appliance.</p>
+<blockquote>
+<p>[!NOTE]
+<strong>No Vite at runtime.</strong> The frontend is pre-built during the Docker image build (Stage 1) using <code>npm run build</code>. At runtime, FastAPI serves the resulting static files directly via its <code>StaticFiles</code> mount. There is no Node.js or Vite process running inside the container.</p>
+</blockquote>
+<h3 id="architecture-diagram_1">Architecture Diagram<a class="headerlink" href="#architecture-diagram_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;Docker Container (wright)&quot;
+        direction TB
+        SUPER[&quot;supervisord&lt;br/&gt;(process manager)&quot;]
+
+        subgraph &quot;Service: wright-api&quot;
+            API2[&quot;FastAPI (uvicorn)&lt;br/&gt;:8000&lt;br/&gt;+ static frontend&quot;]
+        end
+
+        subgraph &quot;Service: hermes-gateway&quot;
+            GW2[&quot;hermes -p wright gateway run&lt;br/&gt;:8642 (internal)&quot;]
+            PLUG2[&quot;hermes-plugin-wright&quot;]
+            GW2 --&gt; PLUG2
+        end
+
+        subgraph &quot;Selected MCP Host Software&quot;
+            MCPHOST[&quot;Installed per selected&lt;br/&gt;MCP validation only&quot;]
+        end
+
+        SUPER --&gt; API2
+        SUPER --&gt; GW2
+        GW2 -- &quot;HTTP bridge&quot; --&gt; API2
+    end
+
+    subgraph &quot;Persisted Volumes&quot;
+        VOL_HOME[&quot;/home/agent&lt;br/&gt;(workspace, .hermes config)&quot;]
+        VOL_LOG[&quot;/var/log&lt;br/&gt;(supervisor + app logs)&quot;]
+    end
+
+    Docker -- &quot;bind mount&quot; --&gt; VOL_HOME
+    Docker -- &quot;bind mount&quot; --&gt; VOL_LOG
+
+    USER2[&quot;User Browser&quot;] -- &quot;:8000&quot; --&gt; API2
+    LLM2[&quot;LLM API Endpoint&lt;br/&gt;(user-provided URL)&quot;] &lt;--&gt; GW2
+
+    style Docker fill:none,stroke:none
+</code></pre></div>
+<h3 id="whats-inside-the-image">What's Inside the Image<a class="headerlink" href="#whats-inside-the-image" title="Permanent link">&para;</a></h3>
+<p>The image is built in two stages from
+<a href="https://github.com/burhop/wright/blob/main/docker/Dockerfile"><code>docker/Dockerfile</code></a>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Layer</th>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Base</strong></td>
+<td style="text-align: left;">Ubuntu</td>
+<td style="text-align: left;">26.04</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Python</strong></td>
+<td style="text-align: left;">Python (deadsnakes PPA)</td>
+<td style="text-align: left;">3.13</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Node</strong></td>
+<td style="text-align: left;">Node.js (nodesource)</td>
+<td style="text-align: left;">22.x</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Package Manager</strong></td>
+<td style="text-align: left;">uv (Astral)</td>
+<td style="text-align: left;">latest</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>AI Agent</strong></td>
+<td style="text-align: left;">hermes-agent (PyPI)</td>
+<td style="text-align: left;">0.18.0</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Plugin</strong></td>
+<td style="text-align: left;">hermes-plugin-wright</td>
+<td style="text-align: left;">1.0.0 (baked in)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Process Mgr</strong></td>
+<td style="text-align: left;">supervisord</td>
+<td style="text-align: left;">system package</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Frontend</strong></td>
+<td style="text-align: left;">Pre-built static assets</td>
+<td style="text-align: left;">(built in Stage 1, served by FastAPI)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MCP host dependencies</strong></td>
+<td style="text-align: left;">Selected-server installs</td>
+<td style="text-align: left;">Not bundled in the base image</td>
+</tr>
+</tbody>
+</table>
+<h3 id="build-process">Build Process<a class="headerlink" href="#build-process" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>graph LR
+    subgraph &quot;Stage 1: web-builder&quot;
+        S1[&quot;node:26-slim&quot;]
+        S1 --&gt; NPM[&quot;npm ci&quot;]
+        NPM --&gt; BUILD[&quot;npm run build&lt;br/&gt;--workspace=apps/web&quot;]
+        BUILD --&gt; DIST[&quot;apps/web/dist/&quot;]
+    end
+
+    subgraph &quot;Stage 2: Runtime&quot;
+        S2[&quot;ubuntu:26.04&quot;]
+        S2 --&gt; SYS[&quot;apt: supervisor,&lt;br/&gt;runtime basics&quot;]
+        SYS --&gt; PY[&quot;Python 3.13&quot;]
+        PY --&gt; NODE[&quot;Node.js 22&quot;]
+        NODE --&gt; UV[&quot;uv (from ghcr)&quot;]
+        UV --&gt; HERMES_INSTALL[&quot;uv tool install&lt;br/&gt;hermes-agent==0.18.0&lt;br/&gt;--with hermes-plugin-wright&quot;]
+        HERMES_INSTALL --&gt; WSYNC[&quot;uv sync&lt;br/&gt;(wright workspace)&quot;]
+        WSYNC --&gt; COPY_DIST[&quot;COPY dist/&lt;br/&gt;(from Stage 1)&quot;]
+    end
+
+    DIST --&gt; COPY_DIST
+</code></pre></div>
+<h3 id="how-fastapi-serves-the-frontend">How FastAPI Serves the Frontend<a class="headerlink" href="#how-fastapi-serves-the-frontend" title="Permanent link">&para;</a></h3>
+<p>In production (Docker and plugin install), FastAPI detects the <code>dist/</code> directory and serves it directly. The relevant code is in
+<a href="https://github.com/burhop/wright/blob/main/apps/api/src/api/main.py"><code>apps/api/src/api/main.py</code></a>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">dist_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FRONTEND_DIST_DIR&quot;</span><span class="p">,</span> <span class="s2">&quot;/workspace/apps/web/dist&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dist_dir</span><span class="p">):</span>
+    <span class="c1"># Mount static assets (js, css, images) under /assets</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;/assets&quot;</span><span class="p">,</span> <span class="n">StaticFiles</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="n">assets_dir</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;static-assets&quot;</span><span class="p">)</span>
+
+    <span class="c1"># SPA catch-all: serve index.html for any non-API route</span>
+    <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/{full_path:path}&quot;</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">serve_spa</span><span class="p">(</span><span class="n">full_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dist_dir</span><span class="p">,</span> <span class="n">full_path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">full_path</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">real_dist</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">FileResponse</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FileResponse</span><span class="p">(</span><span class="n">index_html</span><span class="p">)</span>
+</code></pre></div>
+<p>This means:
+- <strong>API routes</strong> (<code>/api/*</code>) are handled by FastAPI routers
+- <strong>Static assets</strong> (<code>/assets/*</code>) are served directly from the built <code>dist/assets/</code> directory
+- <strong>All other routes</strong> return <code>index.html</code> for client-side SPA routing</p>
+<h3 id="first-boot-sequence">First Boot Sequence<a class="headerlink" href="#first-boot-sequence" title="Permanent link">&para;</a></h3>
+<p>On first container start, the
+<a href="https://github.com/burhop/wright/blob/main/docker/entrypoint.sh"><code>docker/entrypoint.sh</code></a>
+runs a bootstrap:</p>
+<ol>
+<li><strong>Read</strong> <code>LLM_API_URL</code>; warn and continue if it is missing</li>
+<li><strong>Export</strong> the container manifest (<code>/container-manifest.md</code>)</li>
+<li><strong>Create</strong> backup directories</li>
+<li><strong>Bootstrap Hermes</strong> (first-run only):</li>
+<li>Creates <code>~/.hermes/profiles/wright/</code> directory tree</li>
+<li>Writes <code>config.yaml</code> using <code>LLM_API_URL</code>, <code>LLM_API_KEY</code>, <code>LLM_API_MODEL</code> env vars</li>
+<li>Enables API server on port 8642</li>
+<li>Writes <code>SOUL.md</code> with Wright agent persona</li>
+<li><strong>Start supervisord</strong> → launches <code>wright-api</code> and <code>hermes-gateway</code> services</li>
+</ol>
+<h3 id="running-the-docker-appliance">Running the Docker Appliance<a class="headerlink" href="#running-the-docker-appliance" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Recommended first run</span>
+docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.minimal.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+
+<span class="c1"># Full local stack with Jaeger</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+</code></pre></div>
+<p>Open the minimal appliance at <code>http://localhost:8080</code>. The full local stack
+uses <code>http://localhost:8000</code>.</p>
+<p>For a host model server, set:</p>
+<div class="highlight"><pre><span></span><code>LLM_API_URL=http://host.docker.internal:8000/v1
+LLM_API_KEY=not-needed
+LLM_API_MODEL=local-model-name
+</code></pre></div>
+<p>On Linux, add a local compose override with
+<code>host.docker.internal:host-gateway</code> when Docker does not provide that name.</p>
+<h3 id="exposed-ports">Exposed Ports<a class="headerlink" href="#exposed-ports" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Port</th>
+<th style="text-align: left;">Service</th>
+<th style="text-align: left;">Accessible?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>8080</strong></td>
+<td style="text-align: left;">Minimal compose host port for Wright API + frontend</td>
+<td style="text-align: left;">Localhost only by default</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>8000</strong></td>
+<td style="text-align: left;">Full compose host port and container API + frontend port</td>
+<td style="text-align: left;">Localhost only by default</td>
+</tr>
+<tr>
+<td style="text-align: left;">8642</td>
+<td style="text-align: left;">Hermes Gateway API</td>
+<td style="text-align: left;">Internal only</td>
+</tr>
+</tbody>
+</table>
+<h3 id="filesystem-persistence">Filesystem Persistence<a class="headerlink" href="#filesystem-persistence" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Path</th>
+<th style="text-align: left;">Persists?</th>
+<th style="text-align: left;">Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>/home/agent</code></td>
+<td style="text-align: left;">✅ (with volume)</td>
+<td style="text-align: left;">Workspace, <code>.hermes/</code> config, sessions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/var/log</code></td>
+<td style="text-align: left;">✅ (with volume)</td>
+<td style="text-align: left;">Supervisor + app logs</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/workspace</code></td>
+<td style="text-align: left;">✅ (built into image)</td>
+<td style="text-align: left;">Wright source code</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>/tmp</code>, <code>/bin</code>, <code>/usr/bin</code></td>
+<td style="text-align: left;">❌ Ephemeral</td>
+<td style="text-align: left;">Resets on container restart</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-plugin-install-existing-hermes-users">3. Plugin Install (Existing Hermes Users)<a class="headerlink" href="#3-plugin-install-existing-hermes-users" title="Permanent link">&para;</a></h2>
+<p>For users who already have Hermes Agent running on their system, they only need to install the Wright plugin package. This registers Wright's commands and MCP catalog into their existing Hermes environment.</p>
+<blockquote>
+<p>[!NOTE]
+<strong>No Vite at runtime.</strong> When users run <code>/wright start</code>, the plugin executes <code>npm run build</code> (production build), then starts FastAPI with <code>FRONTEND_DIST_DIR</code> pointing at the built assets. FastAPI serves the static files directly — no Vite process runs.</p>
+</blockquote>
+<h3 id="architecture-diagram_2">Architecture Diagram<a class="headerlink" href="#architecture-diagram_2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;User&#39;s Existing Hermes Environment&quot;
+        HERMES3[&quot;hermes-agent (existing)&quot;]
+        PLUGIN3[&quot;hermes-plugin-wright&lt;br/&gt;(installed via pip/uv)&quot;]
+        HERMES3 --&gt; PLUGIN3
+    end
+
+    subgraph &quot;Wright Stack (started by /wright start)&quot;
+        API3[&quot;FastAPI (uvicorn)&lt;br/&gt;:8000&lt;br/&gt;+ static frontend&quot;]
+    end
+
+    PLUGIN3 -- &quot;/wright start&lt;br/&gt;(npm build + uvicorn)&quot; --&gt; API3
+    PLUGIN3 -- &quot;catalog, install, status&quot; --&gt; API3
+
+    USER3[&quot;User Browser&quot;] -- &quot;:8000&quot; --&gt; API3
+    USER3 -- &quot;chat&quot; --&gt; HERMES3
+</code></pre></div>
+<h3 id="installation-methods">Installation Methods<a class="headerlink" href="#installation-methods" title="Permanent link">&para;</a></h3>
+<h4 id="method-a-uv-tool-install-with-recommended">Method A: <code>uv tool install --with</code> (Recommended)<a class="headerlink" href="#method-a-uv-tool-install-with-recommended" title="Permanent link">&para;</a></h4>
+<p>If Hermes was installed via <code>uv tool</code>, inject the plugin into its environment:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add the plugin to the existing hermes-agent tool environment</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>hermes-agent<span class="w"> </span>--with<span class="w"> </span>hermes-plugin-wright
+
+<span class="c1"># Or if installing from a local checkout:</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>hermes-agent<span class="w"> </span>--with<span class="w"> </span>./hermes-plugin-wright/
+</code></pre></div>
+<h4 id="method-b-pip-install-editable-dev-install">Method B: <code>pip install</code> (editable dev install)<a class="headerlink" href="#method-b-pip-install-editable-dev-install" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./hermes-plugin-wright
+</code></pre></div>
+<h4 id="method-c-copy-to-plugins-directory">Method C: Copy to plugins directory<a class="headerlink" href="#method-c-copy-to-plugins-directory" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>-r<span class="w"> </span>hermes-plugin-wright/<span class="w"> </span>~/.hermes/plugins/wright
+</code></pre></div>
+<h3 id="how-plugin-discovery-works">How Plugin Discovery Works<a class="headerlink" href="#how-plugin-discovery-works" title="Permanent link">&para;</a></h3>
+<p>The plugin uses Python's <strong>entry point</strong> mechanism for automatic discovery:</p>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant H as Hermes Agent
+    participant PM as PluginManager
+    participant EP as Python Entry Points
+    participant W as hermes_plugin_wright
+
+    H-&gt;&gt;PM: startup: scan plugins
+    PM-&gt;&gt;EP: query &quot;hermes_agent.plugins&quot;
+    EP--&gt;&gt;PM: found: wright = hermes_plugin_wright
+    PM-&gt;&gt;W: call register(ctx)
+    W-&gt;&gt;W: CatalogLoader() - load catalog.yaml
+    W-&gt;&gt;W: register_commands(ctx, catalog)
+    W--&gt;&gt;PM: commands registered ✓
+    PM--&gt;&gt;H: plugin loaded ✓
+</code></pre></div>
+<p>The key entry point is defined in
+<a href="https://github.com/burhop/wright/blob/main/hermes-plugin-wright/pyproject.toml"><code>hermes-plugin-wright/pyproject.toml</code></a>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[project.entry-points.</span><span class="s2">&quot;hermes_agent.plugins&quot;</span><span class="k">]</span>
+<span class="n">wright</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;hermes_plugin_wright&quot;</span>
+</code></pre></div>
+<p>When Hermes starts, its <code>PluginManager</code> scans for all packages that declare <code>hermes_agent.plugins</code> entry points, imports each module, and calls its <code>register(ctx)</code> function.</p>
+<h3 id="what-wright-start-does">What <code>/wright start</code> Does<a class="headerlink" href="#what-wright-start-does" title="Permanent link">&para;</a></h3>
+<p>The
+<a href="https://github.com/burhop/wright/blob/main/hermes-plugin-wright/commands.py"><code>hermes-plugin-wright/commands.py</code></a>
+<code>handle_start()</code> function:</p>
+<ol>
+<li>Checks if the API is already running (skips if healthy)</li>
+<li>Detects the Wright repo path</li>
+<li>Runs <code>npm run build</code> in <code>apps/web/</code> (skips if <code>dist/</code> is fresh)</li>
+<li>Starts <code>uvicorn</code> with <code>FRONTEND_DIST_DIR</code> set to the built <code>dist/</code> directory</li>
+<li>Waits for the health check to pass</li>
+<li>Opens the browser to <code>http://localhost:8000</code></li>
+</ol>
+<p>This is a <strong>production-style</strong> startup — no Vite dev server, no HMR.</p>
+<h3 id="post-install-setup">Post-Install Setup<a class="headerlink" href="#post-install-setup" title="Permanent link">&para;</a></h3>
+<p>After installing the plugin, users need to:</p>
+<ol>
+<li>
+<p><strong>Clone the Wright repo</strong> (for the backend + frontend source):
+   <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/burhop/wright.git
+<span class="nb">cd</span><span class="w"> </span>wright
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Start Wright via the plugin's slash command</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Inside Hermes chat:</span>
+/wright<span class="w"> </span>start
+</code></pre></div>
+   This builds the frontend (production), starts uvicorn, and opens the browser.</p>
+</li>
+<li>
+<p><strong>Configure LLM endpoint</strong> in their Hermes wright profile:
+   <div class="highlight"><pre><span></span><code>hermes<span class="w"> </span>-p<span class="w"> </span>wright<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>model.base_url<span class="w"> </span>http://your-llm:8000/v1
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="4-embedded-desktop-configuration-hermes-desktop-integration">4. Embedded Desktop Configuration (Hermes Desktop Integration)<a class="headerlink" href="#4-embedded-desktop-configuration-hermes-desktop-integration" title="Permanent link">&para;</a></h2>
+<p>For users running Hermes Desktop (Electron app), Wright can be embedded directly as a sidebar panel or separate tab. The UI is built specifically for Electron, using a custom preload script for native IPC capabilities.</p>
+<h3 id="architecture-diagram_3">Architecture Diagram<a class="headerlink" href="#architecture-diagram_3" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;Hermes Desktop (Electron App)&quot;
+        direction TB
+        MAIN[&quot;Electron Main Process&lt;br/&gt;(hermes-wright-panel/panel.cjs)&quot;]
+
+        subgraph &quot;BrowserView / &lt;webview&gt;&quot;
+            PRELOAD[&quot;Preload Bridge&lt;br/&gt;(hermes-wright-panel/preload.cjs)&quot;]
+            WEB[&quot;Wright Frontend&lt;br/&gt;(dist-desktop index.html)&quot;]
+            WEB --&gt; PRELOAD
+        end
+
+        PRELOAD -- &quot;IPC (wright:readFile, etc)&quot; --&gt; MAIN
+    end
+
+    subgraph &quot;Wright Stack (started by host)&quot;
+        API4[&quot;FastAPI Backend&lt;br/&gt;:8000&quot;]
+    end
+
+    subgraph &quot;Host OS&quot;
+        OS_FS[&quot;Direct Filesystem Access&quot;]
+        OS_NOTIF[&quot;System Notifications&quot;]
+        OS_DLG[&quot;Native File Dialogs&quot;]
+    end
+
+    MAIN -- &quot;wright:api Proxy&quot; --&gt; API4
+    MAIN --&gt; OS_FS
+    MAIN --&gt; OS_NOTIF
+    MAIN --&gt; OS_DLG
+</code></pre></div>
+<h3 id="component-details_1">Component Details<a class="headerlink" href="#component-details_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Port</th>
+<th style="text-align: left;">How It's Started</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Hermes Desktop</td>
+<td style="text-align: left;">v0.18.x</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Launched by user (Electron App)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Wright Panel Manager</td>
+<td style="text-align: left;"><code>hermes-wright-panel</code></td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Loaded by Electron as a BrowserView panel</td>
+</tr>
+<tr>
+<td style="text-align: left;">Wright FastAPI</td>
+<td style="text-align: left;">0.1.0</td>
+<td style="text-align: left;">8000</td>
+<td style="text-align: left;">Started by plugin / supervisor</td>
+</tr>
+<tr>
+<td style="text-align: left;">Electron Shell</td>
+<td style="text-align: left;">32.x / 33.x</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">Managed by Hermes Desktop</td>
+</tr>
+</tbody>
+</table>
+<h3 id="native-electron-integration">Native Electron Integration<a class="headerlink" href="#native-electron-integration" title="Permanent link">&para;</a></h3>
+<p>Unlike standard browser-based deployments, the Embedded Desktop configuration enables several native features:
+1. <strong>Direct Filesystem Access</strong>: Reading and writing workspace files bypasses HTTP. It uses direct Node.js <code>fs</code> calls proxied through IPC.
+2. <strong>Native File Dialogs</strong>: File selection triggers the OS-native file dialog (via Electron's <code>dialog.showOpenDialog</code>) instead of a browser upload input.
+3. <strong>OS Notifications</strong>: Emits native desktop notifications on long-running task completions.
+4. <strong>Theme Live-Sync</strong>: Listens to theme changes on the host Hermes Desktop app and automatically updates colors and layout spacing (including a 34px titlebar padding offset).</p>
+<h3 id="build-process-for-desktop">Build Process for Desktop<a class="headerlink" href="#build-process-for-desktop" title="Permanent link">&para;</a></h3>
+<p>To run in Electron, the React frontend must be compiled with relative asset paths to support the <code>file://</code> protocol.
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>build:desktop
+</code></pre></div>
+This produces <code>apps/web/dist-desktop/</code> containing <code>index.html</code> with relative asset links (e.g. <code>./assets/...</code>).</p>
+<hr />
+<h2 id="comparison-matrix">Comparison Matrix<a class="headerlink" href="#comparison-matrix" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Development</th>
+<th style="text-align: left;">Docker Appliance</th>
+<th style="text-align: left;">Plugin Install</th>
+<th style="text-align: left;">Embedded Desktop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Target user</strong></td>
+<td style="text-align: left;">Core devs</td>
+<td style="text-align: left;">New users</td>
+<td style="text-align: left;">Hermes power users</td>
+<td style="text-align: left;">Desktop app users</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hermes version</strong></td>
+<td style="text-align: left;">v0.18.x (local)</td>
+<td style="text-align: left;">v0.18.0 (pinned in image)</td>
+<td style="text-align: left;">User's existing version</td>
+<td style="text-align: left;">User's desktop app version</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Python</strong></td>
+<td style="text-align: left;">3.13.x</td>
+<td style="text-align: left;">3.13</td>
+<td style="text-align: left;">User's existing</td>
+<td style="text-align: left;">Host system Python</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Node.js</strong></td>
+<td style="text-align: left;">22.x</td>
+<td style="text-align: left;">22.x</td>
+<td style="text-align: left;">User's existing</td>
+<td style="text-align: left;">Managed by Electron</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Frontend</strong></td>
+<td style="text-align: left;">Vite dev server (<code>:5173</code>, HMR)</td>
+<td style="text-align: left;">Pre-built static → <strong>FastAPI serves</strong></td>
+<td style="text-align: left;"><code>npm run build</code> → <strong>FastAPI serves</strong></td>
+<td style="text-align: left;">Embedded panel (<code>file://</code> or dev server)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Process manager</strong></td>
+<td style="text-align: left;">systemd + manual</td>
+<td style="text-align: left;">supervisord</td>
+<td style="text-align: left;">Manual</td>
+<td style="text-align: left;">Managed by Electron/Host</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OpenSCAD</strong></td>
+<td style="text-align: left;">Selected-server host install</td>
+<td style="text-align: left;">Selected-server install only</td>
+<td style="text-align: left;">User installs separately</td>
+<td style="text-align: left;">User installs separately</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>FreeCAD</strong></td>
+<td style="text-align: left;">Selected-server host install</td>
+<td style="text-align: left;">Selected-server install only</td>
+<td style="text-align: left;">User installs separately</td>
+<td style="text-align: left;">User installs separately</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CAD tools included?</strong></td>
+<td style="text-align: left;">No, selected MCP dependencies are explicit</td>
+<td style="text-align: left;">No, selected MCP dependencies are explicit</td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">No</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hot reload?</strong></td>
+<td style="text-align: left;">✅ Yes</td>
+<td style="text-align: left;">❌ No</td>
+<td style="text-align: left;">❌ No</td>
+<td style="text-align: left;">Optional (via dev server link)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Wright API port</strong></td>
+<td style="text-align: left;">8000</td>
+<td style="text-align: left;">8000</td>
+<td style="text-align: left;">8000</td>
+<td style="text-align: left;">8000</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hermes gateway port</strong></td>
+<td style="text-align: left;">8642</td>
+<td style="text-align: left;">8642 (internal)</td>
+<td style="text-align: left;">User's config</td>
+<td style="text-align: left;">User's config / Internal</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Frontend port</strong></td>
+<td style="text-align: left;">5173 (Vite proxy → API)</td>
+<td style="text-align: left;">8000 (FastAPI <code>StaticFiles</code>)</td>
+<td style="text-align: left;">8000 (FastAPI <code>StaticFiles</code>)</td>
+<td style="text-align: left;">N/A (<code>file://</code> protocol)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vite at runtime?</strong></td>
+<td style="text-align: left;">✅ Yes (dev server)</td>
+<td style="text-align: left;">❌ No (build-time only)</td>
+<td style="text-align: left;">❌ No (build-time only)</td>
+<td style="text-align: left;">❌ No (uses static <code>dist-desktop/</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="upgrade-procedures">Upgrade Procedures<a class="headerlink" href="#upgrade-procedures" title="Permanent link">&para;</a></h2>
+<h3 id="development-environment">Development Environment<a class="headerlink" href="#development-environment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/repos/wright
+
+<span class="c1"># 1. Pull latest source</span>
+git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+
+<span class="c1"># 2. Sync Python dependencies</span>
+uv<span class="w"> </span>sync<span class="w"> </span>--all-packages
+
+<span class="c1"># 3. Update Node dependencies</span>
+npm<span class="w"> </span>ci
+
+<span class="c1"># 4. Restart services</span>
+systemctl<span class="w"> </span>--user<span class="w"> </span>restart<span class="w"> </span>hermes-gateway-wright
+<span class="c1"># Restart API and Vite manually (or kill + re-run)</span>
+</code></pre></div>
+<h3 id="docker-appliance">Docker Appliance<a class="headerlink" href="#docker-appliance" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Pull or rebuild the image</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>wright:latest<span class="w"> </span>-f<span class="w"> </span>docker/Dockerfile<span class="w"> </span>.
+<span class="c1"># — or —</span>
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/burhop/wright:&lt;tag&gt;
+
+<span class="c1"># 2. Stop the minimal compose stack (data persists in volumes)</span>
+docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.minimal.yml<span class="w"> </span>down
+
+<span class="c1"># 3. Start with the same named volumes</span>
+docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.minimal.yml<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<blockquote>
+<p>[!IMPORTANT]
+The Hermes config at <code>/home/agent/.hermes/</code> persists across upgrades when using a Docker volume. The entrypoint script will update <code>base_url</code> if <code>LLM_API_URL</code> changes, but <strong>will not re-bootstrap</strong> if the directory already exists.</p>
+</blockquote>
+<h3 id="plugin-only-install">Plugin-Only Install<a class="headerlink" href="#plugin-only-install" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Upgrade the plugin package</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>hermes-agent<span class="w"> </span>--with<span class="w"> </span>hermes-plugin-wright<span class="w"> </span>--force-reinstall
+
+<span class="c1"># Or from local source:</span>
+pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>-e<span class="w"> </span>./hermes-plugin-wright
+
+<span class="c1"># Restart Hermes to reload plugins</span>
+hermes<span class="w"> </span>restart
+</code></pre></div>
+<hr />
+<h2 id="dependency-tree">Dependency Tree<a class="headerlink" href="#dependency-tree" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;Wright Monorepo&quot;
+        ROOT[&quot;wright (root)&lt;br/&gt;pyproject.toml&quot;]
+        API[&quot;wright-api&lt;br/&gt;FastAPI + uvicorn&quot;]
+        CORE[&quot;wright-core&lt;br/&gt;Business logic&quot;]
+        AA[&quot;wright-agent-adapters&lt;br/&gt;LLM provider adapters&quot;]
+        TR[&quot;wright-tool-registry&lt;br/&gt;MCP server management&quot;]
+        WS[&quot;workspace services&lt;br/&gt;local state/files&quot;]
+        WEB[&quot;apps/web&lt;br/&gt;React + Vite frontend&quot;]
+
+        API --&gt; CORE
+        API --&gt; AA
+        API --&gt; TR
+        API --&gt; WS
+    end
+
+    subgraph &quot;External Dependencies&quot;
+        HERMES[&quot;hermes-agent&lt;br/&gt;(PyPI, v0.18.x)&quot;]
+        PLUGIN[&quot;hermes-plugin-wright&lt;br/&gt;(local package)&quot;]
+        HERMES --&gt; PLUGIN
+
+        FASTAPI[&quot;fastapi ≥0.115&quot;]
+        UVICORN[&quot;uvicorn ≥0.30&quot;]
+        HTTPX[&quot;httpx ≥0.28&quot;]
+        STRUCT[&quot;structlog ≥24.1&quot;]
+        OTEL[&quot;opentelemetry-*&quot;]
+        PYDANTIC[&quot;pydantic ≥2.0&quot;]
+        PYYAML[&quot;pyyaml ≥6.0&quot;]
+
+        API --&gt; FASTAPI
+        API --&gt; UVICORN
+        API --&gt; HTTPX
+        API --&gt; STRUCT
+        API --&gt; OTEL
+        PLUGIN --&gt; PYDANTIC
+        PLUGIN --&gt; PYYAML
+        PLUGIN --&gt; HTTPX
+        PLUGIN --&gt; STRUCT
+    end
+
+    subgraph &quot;System Dependencies&quot;
+        OPENSCAD[&quot;OpenSCAD&quot;]
+        FREECAD[&quot;FreeCAD 1.0.0&quot;]
+        XVFB[&quot;Xvfb (virtual display)&quot;]
+        MICROMAMBA[&quot;micromamba&quot;]
+    end
+</code></pre></div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="common-issues-across-all-configurations">Common Issues Across All Configurations<a class="headerlink" href="#common-issues-across-all-configurations" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Symptom</th>
+<th style="text-align: left;">Likely Cause</th>
+<th style="text-align: left;">Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Port 8642 already in use</td>
+<td style="text-align: left;">Another Hermes gateway running</td>
+<td style="text-align: left;"><code>pkill -f "hermes.*gateway"</code> then restart</td>
+</tr>
+<tr>
+<td style="text-align: left;">Port 8000 already in use</td>
+<td style="text-align: left;">Another uvicorn instance running</td>
+<td style="text-align: left;"><code>pkill -f uvicorn</code> then restart</td>
+</tr>
+<tr>
+<td style="text-align: left;">Plugin not loading</td>
+<td style="text-align: left;">Entry point not discoverable</td>
+<td style="text-align: left;">Verify <code>pip show hermes-plugin-wright</code> returns a result</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>LLM_API_URL</code> not set</td>
+<td style="text-align: left;">Missing env var in Docker</td>
+<td style="text-align: left;">Pass <code>-e LLM_API_URL=...</code> to <code>docker run</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Frontend shows "API Unreachable"</td>
+<td style="text-align: left;">Backend not running on :8000</td>
+<td style="text-align: left;">Check <code>curl localhost:8000/api/health</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Discord "token already in use"</td>
+<td style="text-align: left;">Multiple gateway profiles active</td>
+<td style="text-align: left;">Stop all gateways, start only <code>wright</code> profile</td>
+</tr>
+</tbody>
+</table>
+<h3 id="diagnostic-commands">Diagnostic Commands<a class="headerlink" href="#diagnostic-commands" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check Hermes version and status</span>
+hermes<span class="w"> </span>--version
+hermes<span class="w"> </span>config<span class="w"> </span>env-path
+grep<span class="w"> </span>API_SERVER_PORT<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>hermes<span class="w"> </span>config<span class="w"> </span>env-path<span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="c1"># Check running processes</span>
+pgrep<span class="w"> </span>-fa<span class="w"> </span>hermes
+pgrep<span class="w"> </span>-fa<span class="w"> </span>uvicorn
+
+<span class="c1"># Docker: check supervisor status</span>
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wright<span class="w"> </span>supervisorctl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-c<span class="w"> </span>/etc/supervisor/conf.d/wright.conf<span class="w"> </span>status
+
+<span class="c1"># API health check</span>
+curl<span class="w"> </span>http://localhost:8000/api/health
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

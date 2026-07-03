@@ -1,0 +1,3253 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/viewer-spec/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Pluggable Viewer Panel API Specification (VS Code–Style) - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pluggable-viewer-panel-api-specification-vs-codestyle" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pluggable Viewer Panel API Specification (VS Code–Style)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-goals-and-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Goals and Scope
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-core-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Core Concepts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Core Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Viewer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-viewer-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Viewer Document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-panel-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Panel Host
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-viewer-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Viewer Registry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-type-system-and-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Type System and Interfaces
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Type System and Interfaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-filedescriptor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 FileDescriptor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-viewermode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 ViewerMode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-viewercapabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 ViewerCapabilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-viewerdocument" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 ViewerDocument
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-vieweredit-and-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 ViewerEdit and Events
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-panelhost" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 PanelHost
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37-viewerprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7 ViewerProvider
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#38-viewerselector-and-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.8 ViewerSelector and Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-lifecycle-and-state-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Lifecycle and State Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Lifecycle and State Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-opening-a-file-in-the-panel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Opening a File in the Panel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-multiple-views-per-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Multiple Views per Document
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-closing-and-disposal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Closing and Disposal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-dirty-state-and-undoredo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Dirty State and Undo/Redo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-viewer-implementations-for-target-content-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Viewer Implementations for Target Content Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Viewer Implementations for Target Content Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-3d-graphics-viewer-step-3mf-etc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 3D Graphics Viewer (STEP, 3MF, etc.)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-python-code-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Python Code Editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-pdf-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 PDF Viewer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-markdown-viewereditor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Markdown Viewer/Editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-plain-text-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Plain Text Viewer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-iframe-viewer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 IFrame Viewer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-adapter-pattern-for-existing-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Adapter Pattern for Existing Tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-error-handling-timeouts-and-killing-misbehaving-panels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Error Handling, Timeouts, and Killing Misbehaving Panels
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Error Handling, Timeouts, and Killing Misbehaving Panels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-isolation-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Isolation Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-panel-level-watchdog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Panel-Level Watchdog
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-disposal-and-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Disposal and Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-testing-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Testing Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Testing Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-unit-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Unit Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-integration-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Integration Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-e2e-and-regression-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 E2E and Regression Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-api-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. API Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-debugging-support-for-viewers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Debugging Support for Viewers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-security-and-sandboxing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Security and Sandboxing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-extensibility-and-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Extensibility and Versioning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-summary-for-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Summary for Implementation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="pluggable-viewer-panel-api-specification-vs-codestyle">Pluggable Viewer Panel API Specification (VS Code–Style)<a class="headerlink" href="#pluggable-viewer-panel-api-specification-vs-codestyle" title="Permanent link">&para;</a></h1>
+<h2 id="1-goals-and-scope">1. Goals and Scope<a class="headerlink" href="#1-goals-and-scope" title="Permanent link">&para;</a></h2>
+<p>This specification defines a <strong>pluggable viewer panel API</strong> for a web application, inspired by Visual Studio Code’s Custom Editor and Webview APIs.[web:31][web:32]</p>
+<p>The goal is to allow independent components (“viewers”) to render and edit heterogeneous content types (3D models, Python files, PDFs, Markdown, plain text, forms, iframes, etc.) inside a <strong>single central panel</strong> with a consistent lifecycle, messaging, and resource-management model.</p>
+<p>Out of scope:</p>
+<ul>
+<li>A full VS Code–compatible extension host.</li>
+<li>Language server integration, debugging, SCM, etc. (can be added later as separate systems).</li>
+</ul>
+<h2 id="2-core-concepts">2. Core Concepts<a class="headerlink" href="#2-core-concepts" title="Permanent link">&para;</a></h2>
+<h3 id="21-viewer">2.1 Viewer<a class="headerlink" href="#21-viewer" title="Permanent link">&para;</a></h3>
+<p>A <strong>Viewer</strong> is a pluggable component that knows how to present and optionally edit a specific kind of resource, similar to VS Code’s Custom Editors.[web:31]</p>
+<p>Examples:</p>
+<ul>
+<li><code>Step3DViewer</code> – WebGL/Three.js-based STEP/IGES/3MF viewer.</li>
+<li><code>PythonCodeEditor</code> – code editor (Monaco/CodeMirror) for Python files.</li>
+<li><code>PdfViewer</code> – adapter around an existing PDF viewer.</li>
+<li><code>MarkdownViewer</code> – live preview (or split editor) for Markdown.</li>
+<li><code>TextViewer</code> – plain text viewer/editor.</li>
+<li><code>IframeViewer</code> – sandboxed external content.</li>
+<li><code>FormViewer</code> – renders form schemas as interactive forms.</li>
+</ul>
+<h3 id="22-viewer-document">2.2 Viewer Document<a class="headerlink" href="#22-viewer-document" title="Permanent link">&para;</a></h3>
+<p>A <strong>ViewerDocument</strong> represents the underlying content model (file, stream, or composite asset), similar in spirit to VS Code’s <code>CustomDocument</code>.[web:31][web:32]</p>
+<p>Responsibilities:</p>
+<ul>
+<li>Hold URI and any in-memory state.</li>
+<li>Provide methods for save/revert/backup.</li>
+<li>Support dirty tracking and undo/redo by exposing edit events.</li>
+</ul>
+<h3 id="23-panel-host">2.3 Panel Host<a class="headerlink" href="#23-panel-host" title="Permanent link">&para;</a></h3>
+<p>The <strong>PanelHost</strong> is the center-panel instance that embeds the viewer UI, similar to VS Code’s <code>WebviewPanel</code>.[web:31][web:44][web:48]</p>
+<p>Responsibilities:</p>
+<ul>
+<li>Provide a DOM container for the viewer UI.</li>
+<li>Manage lifecycle (open, visible/hidden, dispose).</li>
+<li>Provide a messaging channel between viewer UI and the core application.</li>
+</ul>
+<h3 id="24-viewer-registry">2.4 Viewer Registry<a class="headerlink" href="#24-viewer-registry" title="Permanent link">&para;</a></h3>
+<p>The <strong>ViewerRegistry</strong> maps <code>(file, mode)</code> → <code>ViewerProvider</code> using metadata (selectors, priority), analogous to VS Code’s <code>customEditors</code> contribution point and <code>registerCustomEditorProvider</code>.[web:31][web:32]</p>
+<h2 id="3-type-system-and-interfaces">3. Type System and Interfaces<a class="headerlink" href="#3-type-system-and-interfaces" title="Permanent link">&para;</a></h2>
+<p>All interfaces below are expressed in TypeScript-like notation, but the concepts are language-agnostic.</p>
+<h3 id="31-filedescriptor">3.1 FileDescriptor<a class="headerlink" href="#31-filedescriptor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">FileDescriptor</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">                  </span><span class="c1">// internal ID</span>
+<span class="w">  </span><span class="nx">uri</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">                 </span><span class="c1">// canonical URI (URL, repo path, etc.)</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">                </span><span class="c1">// display name</span>
+<span class="w">  </span><span class="nx">extension</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">           </span><span class="c1">// e.g. &quot;py&quot;, &quot;step&quot;, &quot;pdf&quot;, &quot;md&quot;</span>
+<span class="w">  </span><span class="nx">mimeType</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">            </span><span class="c1">// e.g. &quot;application/step&quot;, &quot;text/markdown&quot;</span>
+<span class="w">  </span><span class="nx">size?</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span><span class="w">               </span><span class="c1">// bytes, optional</span>
+<span class="w">  </span><span class="nx">metadata?</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">unknown</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// domain-specific metadata</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="32-viewermode">3.2 ViewerMode<a class="headerlink" href="#32-viewermode" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kr">type</span><span class="w"> </span><span class="nx">ViewerMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;preview&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;edit&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;compare&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Modes may affect which viewer is chosen and what capabilities are exposed.</p>
+<h3 id="33-viewercapabilities">3.3 ViewerCapabilities<a class="headerlink" href="#33-viewercapabilities" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerCapabilities</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">canEdit</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span><span class="w">              </span><span class="c1">// supports editing &amp; saving</span>
+<span class="w">  </span><span class="nx">canAnnotate</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span><span class="w">          </span><span class="c1">// supports annotations/markup</span>
+<span class="w">  </span><span class="nx">supports3DControls</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span><span class="w">   </span><span class="c1">// provides orbit/pan/zoom, etc.</span>
+<span class="w">  </span><span class="nx">prefersIsolation</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span><span class="w">     </span><span class="c1">// needs iframe/webview-like isolation (e.g. untrusted HTML)</span>
+<span class="w">  </span><span class="nx">supportsMultiView</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span><span class="w">    </span><span class="c1">// safe to open multiple views per document</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="34-viewerdocument">3.4 ViewerDocument<a class="headerlink" href="#34-viewerdocument" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerDocument</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">uri</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">     </span><span class="c1">// logical document type (&quot;python&quot;, &quot;3d-step&quot;, &quot;pdf&quot;, etc.)</span>
+<span class="w">  </span><span class="nx">isDirty</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">markClean</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">dispose</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Domain documents can extend this interface for internal state.</p>
+<h3 id="35-vieweredit-and-events">3.5 ViewerEdit and Events<a class="headerlink" href="#35-vieweredit-and-events" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerEdit</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">label?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">undo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">redo</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerDocumentChangeEvent</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">document</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerDocument</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">edit?</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerEdit</span><span class="p">;</span><span class="w">         </span><span class="c1">// if provided, participates in undo/redo</span>
+<span class="p">}</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="nx">Event</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">listener</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Disposable</span><span class="p">;</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">Disposable</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">dispose</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="36-panelhost">3.6 PanelHost<a class="headerlink" href="#36-panelhost" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">PanelHost</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">title</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">container</span><span class="o">:</span><span class="w"> </span><span class="kt">HTMLElement</span><span class="p">;</span><span class="w">   </span><span class="c1">// DOM node for mounting viewer UI</span>
+
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">active</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">visible</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nx">onDidChangeViewState</span><span class="o">:</span><span class="w"> </span><span class="kt">Event</span><span class="o">&lt;</span><span class="p">{</span><span class="w"> </span><span class="nx">active</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span><span class="w"> </span><span class="nx">visible</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">}</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">onDidDispose</span><span class="o">:</span><span class="w"> </span><span class="kt">Event</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">message</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">onDidReceiveMessage</span><span class="o">:</span><span class="w"> </span><span class="kt">Event</span><span class="o">&lt;</span><span class="nx">unknown</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>PanelHost</code> abstracts the center panel instance (a tab or split view). When disposed, any viewer-specific resources must be released.</p>
+<h3 id="37-viewerprovider">3.7 ViewerProvider<a class="headerlink" href="#37-viewerprovider" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerProvider</span><span class="o">&lt;</span><span class="nx">TDocument</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">ViewerDocument</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ViewerDocument</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">    </span><span class="c1">// unique viewer type ID</span>
+
+<span class="w">  </span><span class="c1">// Document lifecycle</span>
+<span class="w">  </span><span class="nx">openDocument</span><span class="p">(</span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="kt">FileDescriptor</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">OpenContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">TDocument</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">disposeDocument</span><span class="p">(</span><span class="nx">doc</span><span class="o">:</span><span class="w"> </span><span class="kt">TDocument</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// View lifecycle: called once per panel instance</span>
+<span class="w">  </span><span class="nx">resolveViewer</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">document</span><span class="o">:</span><span class="w"> </span><span class="kt">TDocument</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">panel</span><span class="o">:</span><span class="w"> </span><span class="kt">PanelHost</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerMode</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">token</span><span class="o">:</span><span class="w"> </span><span class="kt">CancellationToken</span>
+<span class="w">  </span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Persistence</span>
+<span class="w">  </span><span class="nx">save</span><span class="p">(</span><span class="nx">document</span><span class="o">:</span><span class="w"> </span><span class="kt">TDocument</span><span class="p">,</span><span class="w"> </span><span class="nx">token</span><span class="o">:</span><span class="w"> </span><span class="kt">CancellationToken</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">saveAs</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">document</span><span class="o">:</span><span class="w"> </span><span class="kt">TDocument</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">destination</span><span class="o">:</span><span class="w"> </span><span class="kt">FileDescriptor</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">token</span><span class="o">:</span><span class="w"> </span><span class="kt">CancellationToken</span>
+<span class="w">  </span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">revert</span><span class="p">(</span><span class="nx">document</span><span class="o">:</span><span class="w"> </span><span class="kt">TDocument</span><span class="p">,</span><span class="w"> </span><span class="nx">token</span><span class="o">:</span><span class="w"> </span><span class="kt">CancellationToken</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">backup</span><span class="p">(</span>
+<span class="w">    </span><span class="nx">document</span><span class="o">:</span><span class="w"> </span><span class="kt">TDocument</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">BackupContext</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">token</span><span class="o">:</span><span class="w"> </span><span class="kt">CancellationToken</span>
+<span class="w">  </span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">BackupHandle</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Change events (dirty + undo/redo)</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">onDidChangeDocument</span><span class="o">:</span><span class="w"> </span><span class="kt">Event</span><span class="o">&lt;</span><span class="nx">ViewerDocumentChangeEvent</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Capability description</span>
+<span class="w">  </span><span class="nx">getCapabilities</span><span class="p">(</span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="kt">FileDescriptor</span><span class="p">,</span><span class="w"> </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerMode</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ViewerCapabilities</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This mirrors VS Code’s <code>CustomEditorProvider</code> and related interfaces.[web:31][web:32]</p>
+<h3 id="38-viewerselector-and-registration">3.8 ViewerSelector and Registration<a class="headerlink" href="#38-viewerselector-and-registration" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerSelectorRule</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">extension?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">           </span><span class="c1">// &quot;.py&quot;, &quot;.step&quot;, &quot;.pdf&quot;</span>
+<span class="w">  </span><span class="nx">mimeType?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">            </span><span class="c1">// content type match</span>
+<span class="w">  </span><span class="nx">pattern?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">             </span><span class="c1">// glob pattern, e.g. &quot;**/*.step&quot;</span>
+<span class="w">  </span><span class="nx">predicate</span><span class="o">?:</span><span class="w"> </span><span class="p">(</span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="kt">FileDescriptor</span><span class="p">,</span><span class="w"> </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerMode</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerContribution</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">                    </span><span class="c1">// ViewerProvider.id</span>
+<span class="w">  </span><span class="nx">label</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w">                 </span><span class="c1">// displayed in UI</span>
+<span class="w">  </span><span class="nx">selector</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerSelectorRule</span><span class="p">[];</span>
+<span class="w">  </span><span class="nx">priority</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;default&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;option&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">providerFactory</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ViewerProvider</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">interface</span><span class="w"> </span><span class="nx">ViewerRegistry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">register</span><span class="p">(</span><span class="nx">contribution</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerContribution</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Disposable</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">getViewersFor</span><span class="p">(</span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="kt">FileDescriptor</span><span class="p">,</span><span class="w"> </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerMode</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ViewerContribution</span><span class="p">[];</span>
+<span class="w">  </span><span class="nx">getDefaultViewer</span><span class="p">(</span><span class="nx">file</span><span class="o">:</span><span class="w"> </span><span class="kt">FileDescriptor</span><span class="p">,</span><span class="w"> </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="kt">ViewerMode</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ViewerContribution</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The registry is analogous to VS Code’s <code>customEditors</code> contribution point and the <code>registerCustomEditorProvider</code> call.[web:31][web:32]</p>
+<h2 id="4-lifecycle-and-state-management">4. Lifecycle and State Management<a class="headerlink" href="#4-lifecycle-and-state-management" title="Permanent link">&para;</a></h2>
+<h3 id="41-opening-a-file-in-the-panel">4.1 Opening a File in the Panel<a class="headerlink" href="#41-opening-a-file-in-the-panel" title="Permanent link">&para;</a></h3>
+<ol>
+<li>User selects a file; host resolves it to a <code>FileDescriptor</code>.</li>
+<li>Host asks <code>ViewerRegistry.getViewersFor(file, mode)</code> and chooses a <code>ViewerContribution</code> based on priority or explicit user choice.</li>
+<li>Host obtains a <code>ViewerProvider</code> instance via <code>providerFactory()</code>.</li>
+<li>Host calls <code>openDocument(file, context)</code> on the provider.</li>
+<li>Host creates a <code>PanelHost</code> instance for this tab and calls <code>resolveViewer(document, panel, mode, token)</code>.</li>
+<li>Viewer mounts its UI into <code>panel.container</code>, registers message handlers, and initializes state.</li>
+</ol>
+<p>This mirrors the <code>openCustomDocument</code> → <code>resolveCustomEditor</code> flow in VS Code.[web:31]</p>
+<h3 id="42-multiple-views-per-document">4.2 Multiple Views per Document<a class="headerlink" href="#42-multiple-views-per-document" title="Permanent link">&para;</a></h3>
+<p>If <code>ViewerCapabilities.supportsMultiView</code> is true, the host may:</p>
+<ul>
+<li>Share the same <code>ViewerDocument</code> instance across multiple <code>PanelHost</code> instances.</li>
+<li>Call <code>resolveViewer</code> once per panel while reference-counting views.</li>
+<li>Call <code>disposeDocument</code> only when the last view is closed.</li>
+</ul>
+<p>This is equivalent to VS Code’s <code>supportsMultipleEditorsPerDocument</code> option.[web:31]</p>
+<h3 id="43-closing-and-disposal">4.3 Closing and Disposal<a class="headerlink" href="#43-closing-and-disposal" title="Permanent link">&para;</a></h3>
+<p>When the user closes a tab:</p>
+<ul>
+<li>Host triggers <code>panel.onDidDispose</code>.</li>
+<li>Viewer cleans up DOM/event listeners/3D resources.</li>
+<li>Host checks if this was the last view for the document; if so, calls <code>disposeDocument</code> and then <code>document.dispose()</code>.</li>
+</ul>
+<p>This mirrors <code>WebviewPanel.dispose</code> and <code>CustomDocument.dispose</code> semantics.[web:31][web:44][web:48]</p>
+<h3 id="44-dirty-state-and-undoredo">4.4 Dirty State and Undo/Redo<a class="headerlink" href="#44-dirty-state-and-undoredo" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Viewers emit <code>onDidChangeDocument</code> events whenever:</li>
+<li>An edit that supports undo/redo is applied (with a <code>ViewerEdit</code>).</li>
+<li>Content changes in a way that affects dirtiness (without explicit edit object).</li>
+<li>Host uses these events to:</li>
+<li>Mark the associated document and tab as dirty.</li>
+<li>Push edits onto a per-document undo stack.</li>
+<li>Global undo/redo commands delegate into the document’s edit history.</li>
+</ul>
+<p>The pattern is modeled on <code>CustomDocumentEditEvent</code> and VS Code’s undo/redo integration.[web:31]</p>
+<h2 id="5-viewer-implementations-for-target-content-types">5. Viewer Implementations for Target Content Types<a class="headerlink" href="#5-viewer-implementations-for-target-content-types" title="Permanent link">&para;</a></h2>
+<p>This section outlines recommended strategies for specific viewer types, emphasizing <strong>adapters around existing tools</strong>.</p>
+<h3 id="51-3d-graphics-viewer-step-3mf-etc">5.1 3D Graphics Viewer (STEP, 3MF, etc.)<a class="headerlink" href="#51-3d-graphics-viewer-step-3mf-etc" title="Permanent link">&para;</a></h3>
+<p><strong>Goal:</strong> Embed a WebGL-based 3D viewer (Three.js, Babylon.js, <code>&lt;model-viewer&gt;</code>, or an existing STEP viewer) into a <code>PanelHost</code>.[web:15]</p>
+<p>Design:</p>
+<ul>
+<li>Implement <code>ViewerProvider&lt;ThreeDDocument&gt;</code>.</li>
+<li><code>openDocument</code>:</li>
+<li>Load model or stream.</li>
+<li>Create <code>ThreeDDocument</code> with model references, optional precomputed metadata.</li>
+<li><code>resolveViewer</code>:</li>
+<li>Mount a 3D canvas into <code>panel.container</code>.</li>
+<li>Initialize camera, controls, and scene.</li>
+<li>Wire user interactions to edits if editing is supported (e.g., transformation, annotation).</li>
+<li><code>getCapabilities</code>:</li>
+<li><code>canEdit: false</code> for pure viewer; <code>true</code> if model editing is allowed.</li>
+<li><code>supports3DControls: true</code>, <code>prefersIsolation: false</code> (unless security requires iframes).</li>
+</ul>
+<p>Where possible, use an <strong>adapter</strong> around existing 3D viewers (e.g., online STEP viewer widgets) to satisfy the <code>ViewerProvider</code> contract while delegating actual rendering.[web:9][web:15]</p>
+<h3 id="52-python-code-editor">5.2 Python Code Editor<a class="headerlink" href="#52-python-code-editor" title="Permanent link">&para;</a></h3>
+<p><strong>Goal:</strong> Wrap a code editor (Monaco, CodeMirror) inside the panel.</p>
+<p>Design:</p>
+<ul>
+<li>Implement <code>ViewerProvider&lt;TextDocumentLike&gt;</code> for <code>.py</code> (and potentially other code types).</li>
+<li>Use a <strong>text-based document</strong> type for easy diff, undo, and language tooling.</li>
+<li><code>resolveViewer</code> mounts a code editor instance into <code>panel.container</code> and syncs changes with the document model.</li>
+<li>Integrate with a separate language/intellisense subsystem (out of scope for this spec), analogous to how VS Code exposes language features via its extension APIs.[web:32]</li>
+</ul>
+<h3 id="53-pdf-viewer">5.3 PDF Viewer<a class="headerlink" href="#53-pdf-viewer" title="Permanent link">&para;</a></h3>
+<p><strong>Goal:</strong> Use a standard PDF viewer (e.g., PDF.js, browser-native) via an adapter.</p>
+<p>Design:</p>
+<ul>
+<li>Implement <code>ViewerProvider&lt;PdfDocument&gt;</code> with <code>canEdit: false</code>, <code>prefersIsolation: false | true</code> depending on security.</li>
+<li><code>openDocument</code> returns a lightweight <code>PdfDocument</code> with URI.</li>
+<li><code>resolveViewer</code> either:</li>
+<li>Mounts a PDF.js viewer component into <code>panel.container</code>; or</li>
+<li>Embeds an <code>&lt;iframe&gt;</code> pointing to a hosted PDF viewer route that implements the viewer UI.</li>
+</ul>
+<p>Prefer the adapter pattern: your provider just creates the right container and passes the resource URI/config into the existing PDF viewer.</p>
+<h3 id="54-markdown-viewereditor">5.4 Markdown Viewer/Editor<a class="headerlink" href="#54-markdown-viewereditor" title="Permanent link">&para;</a></h3>
+<p><strong>Goal:</strong> Provide preview or split view for <code>.md</code> files.</p>
+<p>Design:</p>
+<ul>
+<li>Implement <code>ViewerProvider&lt;TextDocumentLike&gt;</code> or two providers: <code>MarkdownPreviewViewer</code> (preview only) and <code>MarkdownEditorViewer</code> (edit + preview).</li>
+<li><code>getCapabilities</code> for preview: <code>canEdit: false</code>; for editor: <code>canEdit: true</code>.</li>
+<li><code>resolveViewer</code> may:</li>
+<li>Show rendered HTML on one side and editable text on the other; or</li>
+<li>Show only rendered content in preview mode.</li>
+</ul>
+<h3 id="55-plain-text-viewer">5.5 Plain Text Viewer<a class="headerlink" href="#55-plain-text-viewer" title="Permanent link">&para;</a></h3>
+<p><strong>Goal:</strong> Generic fallback for unknown text-like files.</p>
+<p>Design:</p>
+<ul>
+<li><code>ViewerProvider&lt;TextDocumentLike&gt;</code>; <code>selector</code> matches <code>text/*</code> MIME types or unknown extensions.</li>
+<li><code>getCapabilities</code>: <code>canEdit: true</code>.</li>
+</ul>
+<h3 id="56-iframe-viewer">5.6 IFrame Viewer<a class="headerlink" href="#56-iframe-viewer" title="Permanent link">&para;</a></h3>
+<p><strong>Goal:</strong> Sandbox external content or embedded tools.</p>
+<p>Design:</p>
+<ul>
+<li>Implement <code>ViewerProvider&lt;IframeDocument&gt;</code> with <code>prefersIsolation: true</code> in <code>getCapabilities</code>.</li>
+<li><code>openDocument</code> resolves a URL and config.</li>
+<li><code>resolveViewer</code> creates an <code>&lt;iframe&gt;</code> inside <code>panel.container</code> with:</li>
+<li><code>sandbox</code> attribute.</li>
+<li>CSP or URL constraints as needed.</li>
+<li>Messaging can optionally be proxied via <code>window.postMessage</code> if the iframe cooperates.</li>
+</ul>
+<p>Security: this viewer must treat content as untrusted and run with maximum isolation.</p>
+<h2 id="6-adapter-pattern-for-existing-tools">6. Adapter Pattern for Existing Tools<a class="headerlink" href="#6-adapter-pattern-for-existing-tools" title="Permanent link">&para;</a></h2>
+<p>To reuse existing viewers/editors (PDF viewer, STEP viewer, code editor widgets), implement <strong>adapters</strong> that map their APIs into <code>ViewerProvider</code> and <code>PanelHost</code> interactions:</p>
+<ul>
+<li>Map their lifecycle (<code>init</code>, <code>destroy</code>) to <code>resolveViewer</code> and <code>panel.onDidDispose</code>.</li>
+<li>Map their change events to <code>onDidChangeDocument</code>.</li>
+<li>Map their internal save/export functions to <code>save</code> / <code>saveAs</code>.</li>
+<li>Wrap any messaging they require into <code>PanelHost.postMessage</code> / <code>onDidReceiveMessage</code> or local callbacks.</li>
+</ul>
+<p>The adapter should be thin; the goal is to keep your core API stable while allowing tool replacement.</p>
+<h2 id="7-error-handling-timeouts-and-killing-misbehaving-panels">7. Error Handling, Timeouts, and Killing Misbehaving Panels<a class="headerlink" href="#7-error-handling-timeouts-and-killing-misbehaving-panels" title="Permanent link">&para;</a></h2>
+<h3 id="71-isolation-model">7.1 Isolation Model<a class="headerlink" href="#71-isolation-model" title="Permanent link">&para;</a></h3>
+<p>VS Code isolates extensions in a separate <strong>extension host process</strong> so crashes do not take down the UI.[web:52] For the web app:</p>
+<ul>
+<li>Run heavy logic (parsing, large computations, 3D processing) in <strong>Web Workers</strong> or backend services.</li>
+<li>Keep viewer UI code responsive and treat workers/services as failure-isolated components.</li>
+</ul>
+<h3 id="72-panel-level-watchdog">7.2 Panel-Level Watchdog<a class="headerlink" href="#72-panel-level-watchdog" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Track heartbeat or responsiveness per panel.</li>
+<li>Panels send periodic <code>ping</code> messages through the messaging channel.</li>
+<li>If no response within a configurable timeout, mark the panel as unresponsive.</li>
+<li>Provide user options:</li>
+<li>“Reload panel” – dispose and recreate the viewer.</li>
+<li>“Close panel” – dispose the panel.</li>
+</ul>
+<h3 id="73-disposal-and-cleanup">7.3 Disposal and Cleanup<a class="headerlink" href="#73-disposal-and-cleanup" title="Permanent link">&para;</a></h3>
+<ul>
+<li>When <code>PanelHost</code> is disposed:</li>
+<li>Immediately stop timers, animation loops (e.g., <code>requestAnimationFrame</code>), and event listeners.</li>
+<li>Release GPU resources (WebGL contexts) and large buffers.</li>
+<li>Enforce maximum memory/resource usage by tracking viewer allocations where possible.</li>
+</ul>
+<p>Similar to <code>WebviewPanel.dispose</code>, disposal must guarantee the viewer releases resources and cannot continue executing logic in the main UI.[web:44][web:48]</p>
+<h2 id="8-testing-strategy">8. Testing Strategy<a class="headerlink" href="#8-testing-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="81-unit-testing">8.1 Unit Testing<a class="headerlink" href="#81-unit-testing" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Wrap the viewer API and host API behind interfaces to enable mocking, similar to how VS Code extension tests often wrap the <code>vscode</code> module.[web:54]</li>
+<li>Unit test <code>ViewerProvider</code> implementations in isolation:</li>
+<li><code>openDocument</code> behavior for various files.</li>
+<li><code>save/revert/backup</code> logic.</li>
+<li><code>getCapabilities</code> decisions.</li>
+</ul>
+<h3 id="82-integration-testing">8.2 Integration Testing<a class="headerlink" href="#82-integration-testing" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use browser-based integration tests (e.g., Playwright, WebdriverIO) to:</li>
+<li>Open files of various types.</li>
+<li>Verify the expected viewer is chosen.</li>
+<li>Exercise interactions (editing, 3D navigation, scrolling, toolbar actions).</li>
+</ul>
+<p>This is analogous to running extension tests in a dedicated VS Code host as described in extension testing guides.[web:49][web:51]</p>
+<h3 id="83-e2e-and-regression-testing">8.3 E2E and Regression Testing<a class="headerlink" href="#83-e2e-and-regression-testing" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Maintain representative sample projects with diverse file types.</li>
+<li>Automate regression test runs on every change to viewer infrastructure.</li>
+</ul>
+<h2 id="9-api-documentation">9. API Documentation<a class="headerlink" href="#9-api-documentation" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Document the viewer API in a <strong>developer-facing guide</strong> similar in spirit to VS Code’s extension documentation.[web:43]</li>
+<li>Include:</li>
+<li>Conceptual overview (Viewer, Document, PanelHost, Registry).</li>
+<li>Reference for interfaces (<code>ViewerProvider</code>, <code>ViewerDocument</code>, <code>PanelHost</code>).</li>
+<li>“Hello World” sample viewer implementation.</li>
+<li>Cookbook for common tasks (3D viewer adapter, PDF adapter, code editor integration).</li>
+<li>Provide versioned docs and changelog to keep implementers informed of API changes.</li>
+</ul>
+<h2 id="10-debugging-support-for-viewers">10. Debugging Support for Viewers<a class="headerlink" href="#10-debugging-support-for-viewers" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Expose a “Developer Tools” entry point for viewer panels:</li>
+<li>Allow opening browser DevTools focused on the panel container.</li>
+<li>For iframes/webviews, provide a route to inspect the inner frame (similar to webview debugging in VS Code).[web:53][web:40]</li>
+<li>Provide diagnostic overlays:</li>
+<li>Show document URI, viewer type, capabilities, and last error.</li>
+</ul>
+<h2 id="11-security-and-sandboxing">11. Security and Sandboxing<a class="headerlink" href="#11-security-and-sandboxing" title="Permanent link">&para;</a></h2>
+<ul>
+<li>For viewers that render untrusted content:</li>
+<li>Use <code>IframeViewer</code> with <code>sandbox</code> attributes and strict CSP.</li>
+<li>Disallow direct DOM injection from untrusted sources.</li>
+<li>Restrict access to sensitive APIs (filesystem, network) to trusted viewers only, via explicit capabilities and server-side enforcement.</li>
+</ul>
+<h2 id="12-extensibility-and-versioning">12. Extensibility and Versioning<a class="headerlink" href="#12-extensibility-and-versioning" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The core viewer API should be <strong>semver-versioned</strong>.</li>
+<li>Provide a feature-flag or capability negotiation mechanism so viewers can adapt to new APIs without breaking.</li>
+<li>Use adapter/wrapper modules to maintain backward compatibility as APIs evolve.</li>
+</ul>
+<h2 id="13-summary-for-implementation">13. Summary for Implementation<a class="headerlink" href="#13-summary-for-implementation" title="Permanent link">&para;</a></h2>
+<p>Implementation teams should:</p>
+<ol>
+<li>Implement the <strong>ViewerRegistry</strong>, <strong>PanelHost</strong>, and base interfaces (<code>ViewerProvider</code>, <code>ViewerDocument</code>).</li>
+<li>Provide a <strong>runtime mechanism</strong> to:</li>
+<li>Register viewer contributions.</li>
+<li>Resolve a viewer for a given file and mode.</li>
+<li>Manage lifecycle, dirty state, save/revert/backup.</li>
+<li>Build initial viewer adapters for:</li>
+<li>3D (STEP, etc.).</li>
+<li>Python/editor (Monaco/CodeMirror).</li>
+<li>PDF (PDF.js or equivalent).</li>
+<li>Markdown and plain text.</li>
+<li>Iframe-based external content.</li>
+<li>Implement <strong>watchdog and disposal</strong> logic for misbehaving panels.</li>
+<li>Set up <strong>testing infrastructure</strong> (unit + integration) around the viewer APIs.</li>
+<li>Produce <strong>developer documentation</strong> and examples for building new viewers.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3394 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/dual-mode-desktop-integration/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Dual-Mode Wright UI: Standalone + Hermes Desktop Integration - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dual-mode-wright-ui-standalone-hermes-desktop-integration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dual-Mode Wright UI: Standalone + Hermes Desktop Integration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#background-research" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background &amp; Research
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Background &amp; Research">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-hermes-desktop-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Hermes Desktop Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-wright-currently-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Wright Currently Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-host-adapter-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Host Adapter" Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-flow-hermes-desktop-side" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration Flow (Hermes Desktop Side)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposed-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proposed Changes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proposed Changes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-host-adapter-abstraction-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: Host Adapter Abstraction Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1: Host Adapter Abstraction Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-appswebsrcserviceshost-adapterhost-adapterts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] apps/web/src/services/host-adapter/host-adapter.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-appswebsrcserviceshost-adapterbrowser-adapterts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] apps/web/src/services/host-adapter/browser-adapter.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-appswebsrcserviceshost-adapterdesktop-adapterts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] apps/web/src/services/host-adapter/desktop-adapter.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-appswebsrcserviceshost-adapterdetectts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] apps/web/src/services/host-adapter/detect.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-appswebsrcserviceshost-adapterindexts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] apps/web/src/services/host-adapter/index.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-refactor-existing-services-to-use-adapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Refactor Existing Services to Use Adapter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2: Refactor Existing Services to Use Adapter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modify-appswebsrcservicesapi-clientts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [MODIFY] apps/web/src/services/api-client.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-appswebsrcapptsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [MODIFY] apps/web/src/App.tsx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-appswebsrcservicesworkspace-servicets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [MODIFY] apps/web/src/services/workspace-service.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-vite-build-configuration-for-dual-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Vite Build Configuration for Dual Targets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3: Vite Build Configuration for Dual Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modify-appswebviteconfigts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [MODIFY] apps/web/vite.config.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modify-appswebpackagejson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [MODIFY] apps/web/package.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-hermes-desktop-integration-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4: Hermes Desktop Integration Package
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4: Hermes Desktop Integration Package">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#new-hermes-wright-panel-new-directory-at-repo-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] hermes-wright-panel/ (new directory at repo root)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preloadcjs-electron-preload-bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preload.cjs — Electron Preload Bridge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#panelcjs-main-process-panel-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        panel.cjs — Main-Process Panel Manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-desktop-specific-ui-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5: Desktop-Specific UI Enhancements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5: Desktop-Specific UI Enhancements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modify-appswebsrccomponentslayoutappshelltsx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [MODIFY] apps/web/src/components/layout/AppShell.tsx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-appswebsrchooksusedesktopintegrationts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [NEW] apps/web/src/hooks/useDesktopIntegration.ts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verification Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manual Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regression-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regression Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-configurations-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Configurations Update
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dual-mode-wright-ui-standalone-hermes-desktop-integration">Dual-Mode Wright UI: Standalone + Hermes Desktop Integration<a class="headerlink" href="#dual-mode-wright-ui-standalone-hermes-desktop-integration" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Implementation specification for running the Wright web UI both independently and embedded inside Hermes Desktop.</p>
+</blockquote>
+<hr />
+<h2 id="problem-statement">Problem Statement<a class="headerlink" href="#problem-statement" title="Permanent link">&para;</a></h2>
+<p>Wright currently runs as a standalone web application — a Vite/React frontend (<code>apps/web</code>) served either by the Vite dev server (<code>:5173</code>) or by FastAPI as static files (<code>:8000</code>). We need the <strong>same codebase</strong> to also work when loaded as a panel inside the <strong>Hermes Desktop</strong> Electron app, leveraging Electron's native capabilities (filesystem access, terminal, native menus, file dialogs, system notifications) while maintaining full independence for browser-only deployments.</p>
+<h2 id="design-decisions">Design Decisions<a class="headerlink" href="#design-decisions" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Decision</th>
+<th style="text-align: left;">Choice</th>
+<th style="text-align: left;">Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Integration strategy</strong></td>
+<td style="text-align: left;">Option C: <code>&lt;webview&gt;</code> with preload bridge</td>
+<td style="text-align: left;">Clean separation, Wright controls its own build/deploy, full Electron API access</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hermes code changes</strong></td>
+<td style="text-align: left;">None — do not touch <code>NousResearch/hermes-agent</code></td>
+<td style="text-align: left;">Ship as a standalone integration package that Hermes Desktop can optionally load</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Electron capabilities</strong></td>
+<td style="text-align: left;">All available</td>
+<td style="text-align: left;">Native file dialogs, system notifications, Node.js filesystem, terminal integration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="background-research">Background &amp; Research<a class="headerlink" href="#background-research" title="Permanent link">&para;</a></h2>
+<h3 id="how-hermes-desktop-works">How Hermes Desktop Works<a class="headerlink" href="#how-hermes-desktop-works" title="Permanent link">&para;</a></h3>
+<p>The Hermes Desktop app (<a href="https://github.com/NousResearch/hermes-agent/tree/main/apps/desktop">apps/desktop</a>) is an Electron application:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Layer</th>
+<th style="text-align: left;">Technology</th>
+<th style="text-align: left;">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Main Process</strong></td>
+<td style="text-align: left;"><code>electron/main.cjs</code> (~2000 lines)</td>
+<td style="text-align: left;">Manages BrowserWindow, spawns the Hermes backend, handles IPC</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Preload Bridge</strong></td>
+<td style="text-align: left;"><code>electron/preload.cjs</code></td>
+<td style="text-align: left;">Exposes <code>window.hermesDesktop</code> API to renderer via <code>contextBridge</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Renderer</strong></td>
+<td style="text-align: left;">React 19 + Vite + TailwindCSS v4</td>
+<td style="text-align: left;">The visible UI — chat, sessions, file browser, settings</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Backend</strong></td>
+<td style="text-align: left;">Python <code>hermes-agent</code> gateway</td>
+<td style="text-align: left;">Spawned as child process, communicates via JSON-RPC over WebSocket</td>
+</tr>
+</tbody>
+</table>
+<p>Key integration patterns:
+- The renderer detects Electron via <code>window.hermesDesktop</code> (injected by preload)
+- All backend communication goes through <code>window.hermesDesktop.api()</code> (IPC → main process → HTTP)
+- File system operations use <code>hermesDesktop.readFileText()</code>, <code>readDir()</code>, etc.
+- The renderer uses <code>HashRouter</code> (not <code>BrowserRouter</code>) for Electron <code>file://</code> compatibility
+- Vite config uses <code>base: './'</code> for relative asset paths in <code>file://</code> context</p>
+<h3 id="how-wright-currently-works">How Wright Currently Works<a class="headerlink" href="#how-wright-currently-works" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Layer</th>
+<th style="text-align: left;">Technology</th>
+<th style="text-align: left;">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Frontend</strong></td>
+<td style="text-align: left;">React 19 + Vite (<code>apps/web</code>)</td>
+<td style="text-align: left;">Standalone SPA with <code>BrowserRouter</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>API Client</strong></td>
+<td style="text-align: left;"><code>api-client.ts</code></td>
+<td style="text-align: left;">Direct <code>fetch()</code> to FastAPI backend</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Backend</strong></td>
+<td style="text-align: left;">FastAPI (<code>apps/api</code>) on <code>:8000</code></td>
+<td style="text-align: left;">REST API + serves static <code>dist/</code> in production</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Agent</strong></td>
+<td style="text-align: left;">Hermes gateway (<code>:8642</code>)</td>
+<td style="text-align: left;">External process, connected via plugin</td>
+</tr>
+</tbody>
+</table>
+<p>The frontend currently uses <strong>direct HTTP <code>fetch()</code> calls</strong> to <code>localhost:8000</code> via the centralized <code>apiClient</code>. This is the main coupling point.</p>
+<hr />
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<h3 id="the-host-adapter-pattern">The "Host Adapter" Pattern<a class="headerlink" href="#the-host-adapter-pattern" title="Permanent link">&para;</a></h3>
+<p>Instead of forking the codebase or creating a separate Electron app, we introduce a <strong>Host Adapter</strong> abstraction layer. The Wright UI detects its host environment at startup and binds to the appropriate adapter:</p>
+<div class="highlight"><pre><span></span><code>graph TB
+    subgraph &quot;Wright UI (apps/web)&quot;
+        APP[&quot;App.tsx&quot;]
+        SERVICES[&quot;Services Layer&lt;br/&gt;(api-client, workspace-service, etc.)&quot;]
+        ADAPTER[&quot;HostAdapter Interface&quot;]
+
+        APP --&gt; SERVICES
+        SERVICES --&gt; ADAPTER
+    end
+
+    subgraph &quot;Standalone Mode (browser)&quot;
+        BROWSER_ADAPTER[&quot;BrowserHostAdapter&quot;]
+        FETCH[&quot;fetch() → localhost:8000&quot;]
+        BROWSER_ADAPTER --&gt; FETCH
+    end
+
+    subgraph &quot;Hermes Desktop Mode (Electron)&quot;
+        DESKTOP_ADAPTER[&quot;DesktopHostAdapter&quot;]
+        IPC[&quot;window.wrightDesktop.api()&quot;]
+        PRELOAD[&quot;Electron Preload Bridge&lt;br/&gt;(hermes-wright-panel/preload.cjs)&quot;]
+        MAIN[&quot;Electron Main Process&lt;br/&gt;(hermes-wright-panel/panel.cjs)&quot;]
+        IPC --&gt; PRELOAD --&gt; MAIN
+        DESKTOP_ADAPTER --&gt; IPC
+    end
+
+    ADAPTER -.-&gt; BROWSER_ADAPTER
+    ADAPTER -.-&gt; DESKTOP_ADAPTER
+</code></pre></div>
+<h3 id="runtime-detection">Runtime Detection<a class="headerlink" href="#runtime-detection" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/services/host-adapter/detect.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">detectHostEnvironment</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;browser&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;desktop&#39;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="ow">typeof</span><span class="w"> </span><span class="nb">window</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="s1">&#39;undefined&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="s1">&#39;wrightDesktop&#39;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">window</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;desktop&#39;</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;browser&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="integration-flow-hermes-desktop-side">Integration Flow (Hermes Desktop Side)<a class="headerlink" href="#integration-flow-hermes-desktop-side" title="Permanent link">&para;</a></h3>
+<p>Since we do <strong>not</strong> modify Hermes code, the integration package (<code>hermes-wright-panel/</code>) is designed to be loaded by a downstream integrator (e.g., a custom Hermes Desktop fork, or a future Hermes plugin system). The package exports a <code>WrightPanel</code> class that:</p>
+<ol>
+<li>Creates a <code>BrowserView</code> with a custom preload script</li>
+<li>Loads Wright's <code>dist-desktop/index.html</code> (or connects to a running Wright dev server)</li>
+<li>Handles IPC between the Wright renderer and the Electron main process</li>
+<li>Proxies Wright API requests to the FastAPI backend</li>
+</ol>
+<div class="highlight"><pre><span></span><code>sequenceDiagram
+    participant HD as Hermes Desktop&lt;br/&gt;(main process)
+    participant WP as WrightPanel&lt;br/&gt;(hermes-wright-panel)
+    participant PL as Preload&lt;br/&gt;(wrightDesktop bridge)
+    participant WR as Wright Renderer&lt;br/&gt;(dist-desktop)
+    participant API as Wright FastAPI&lt;br/&gt;(:8000)
+
+    HD-&gt;&gt;WP: new WrightPanel(mainWindow, opts)
+    WP-&gt;&gt;WP: setupIpcHandlers()
+    WP-&gt;&gt;WR: createView() → loadFile(dist-desktop/index.html)
+    WR-&gt;&gt;PL: window.wrightDesktop available?
+    PL--&gt;&gt;WR: ✓ injected by contextBridge
+    WR-&gt;&gt;WR: DesktopHostAdapter activated
+    WR-&gt;&gt;PL: wrightDesktop.api({ path: &#39;/api/health&#39; })
+    PL-&gt;&gt;WP: ipcRenderer.invoke(&#39;wright:api&#39;, req)
+    WP-&gt;&gt;API: HTTP GET localhost:8000/api/health
+    API--&gt;&gt;WP: { status: &#39;ok&#39; }
+    WP--&gt;&gt;PL: response
+    PL--&gt;&gt;WR: { status: &#39;ok&#39; }
+</code></pre></div>
+<hr />
+<h2 id="proposed-changes">Proposed Changes<a class="headerlink" href="#proposed-changes" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-host-adapter-abstraction-layer">Phase 1: Host Adapter Abstraction Layer<a class="headerlink" href="#phase-1-host-adapter-abstraction-layer" title="Permanent link">&para;</a></h3>
+<p>Create the adapter layer that lets Wright's services work in both environments without conditional logic scattered through the codebase.</p>
+<hr />
+<h4 id="new-appswebsrcserviceshost-adapterhost-adapterts">[NEW] <code>apps/web/src/services/host-adapter/host-adapter.ts</code><a class="headerlink" href="#new-appswebsrcserviceshost-adapterhost-adapterts" title="Permanent link">&para;</a></h4>
+<p>The core interface that all host adapters implement:</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">FileEntry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">isDirectory</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">size?</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">SelectOptions</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">title?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">filters</span><span class="o">?:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="nx">extensions</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="p">}[];</span>
+<span class="w">  </span><span class="nx">multiple?</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">directory?</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">HostAdapter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">mode</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;browser&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;desktop&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// HTTP API proxy</span>
+<span class="w">  </span><span class="nx">fetch</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">url</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">body?</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">,</span><span class="w"> </span><span class="nx">options?</span><span class="o">:</span><span class="w"> </span><span class="kt">RequestInit</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// File system (desktop: Electron IPC, browser: HTTP to Wright API)</span>
+<span class="w">  </span><span class="nx">readFile</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">writeFile</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">content</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">listDirectory</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">FileEntry</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">selectFiles</span><span class="p">(</span><span class="nx">options?</span><span class="o">:</span><span class="w"> </span><span class="kt">SelectOptions</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Environment</span>
+<span class="w">  </span><span class="nx">getApiBaseUrl</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">getWorkspacePath</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Router type (BrowserRouter vs HashRouter for file:// protocol)</span>
+<span class="w">  </span><span class="nx">getRouterType</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;browser&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;hash&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Notifications (desktop: native OS, browser: Notification API)</span>
+<span class="w">  </span><span class="nx">notify</span><span class="p">(</span><span class="nx">title</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Terminal (desktop: node-pty via Electron, browser: not available)</span>
+<span class="w">  </span><span class="nx">hasTerminal</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Cleanup</span>
+<span class="w">  </span><span class="nx">dispose</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="new-appswebsrcserviceshost-adapterbrowser-adapterts">[NEW] <code>apps/web/src/services/host-adapter/browser-adapter.ts</code><a class="headerlink" href="#new-appswebsrcserviceshost-adapterbrowser-adapterts" title="Permanent link">&para;</a></h4>
+<p>Implements <code>HostAdapter</code> using standard browser APIs — essentially what Wright does today, packaged behind the interface. <code>fetch()</code> delegates to the existing <code>apiClient</code>. File operations go through the Wright REST API.</p>
+<h4 id="new-appswebsrcserviceshost-adapterdesktop-adapterts">[NEW] <code>apps/web/src/services/host-adapter/desktop-adapter.ts</code><a class="headerlink" href="#new-appswebsrcserviceshost-adapterdesktop-adapterts" title="Permanent link">&para;</a></h4>
+<p>Implements <code>HostAdapter</code> by delegating to <code>window.wrightDesktop</code> IPC bridge:
+- <code>fetch()</code> → <code>window.wrightDesktop.api()</code> (IPC to main process, which proxies HTTP)
+- <code>readFile()</code> → <code>window.wrightDesktop.readFile()</code> (direct Node.js fs via main process)
+- <code>listDirectory()</code> → <code>window.wrightDesktop.listDirectory()</code> (direct Node.js fs)
+- <code>selectFiles()</code> → <code>window.wrightDesktop.selectFiles()</code> (native Electron <code>dialog.showOpenDialog</code>)
+- <code>notify()</code> → <code>window.wrightDesktop.notify()</code> (native Electron <code>Notification</code>)</p>
+<p>Falls back gracefully to browser adapter if the bridge is unavailable.</p>
+<h4 id="new-appswebsrcserviceshost-adapterdetectts">[NEW] <code>apps/web/src/services/host-adapter/detect.ts</code><a class="headerlink" href="#new-appswebsrcserviceshost-adapterdetectts" title="Permanent link">&para;</a></h4>
+<p>Environment detection: checks for <code>window.wrightDesktop</code> to determine mode.</p>
+<h4 id="new-appswebsrcserviceshost-adapterindexts">[NEW] <code>apps/web/src/services/host-adapter/index.ts</code><a class="headerlink" href="#new-appswebsrcserviceshost-adapterindexts" title="Permanent link">&para;</a></h4>
+<p>Auto-detects the environment and exports a singleton adapter.</p>
+<hr />
+<h3 id="phase-2-refactor-existing-services-to-use-adapter">Phase 2: Refactor Existing Services to Use Adapter<a class="headerlink" href="#phase-2-refactor-existing-services-to-use-adapter" title="Permanent link">&para;</a></h3>
+<h4 id="modify-appswebsrcservicesapi-clientts">[MODIFY] <code>apps/web/src/services/api-client.ts</code><a class="headerlink" href="#modify-appswebsrcservicesapi-clientts" title="Permanent link">&para;</a></h4>
+<p>Replace the direct <code>fetch()</code> calls with <code>hostAdapter.fetch()</code>. In browser mode this is identical to current behavior. In desktop mode, requests route through Electron IPC.</p>
+<h4 id="modify-appswebsrcapptsx">[MODIFY] <code>apps/web/src/App.tsx</code><a class="headerlink" href="#modify-appswebsrcapptsx" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Replace <code>BrowserRouter</code> with a dynamic router selection based on <code>hostAdapter.getRouterType()</code></li>
+<li>Remove the inline <code>getApiUrl()</code> helper (moved to adapter)</li>
+<li>Add desktop-specific chrome detection (titlebar overlay awareness)</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">hostAdapter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./services/host-adapter&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">HashRouter</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react-router-dom&#39;</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">Router</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">hostAdapter</span><span class="p">.</span><span class="nx">getRouterType</span><span class="p">()</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;hash&#39;</span><span class="w"> </span>
+<span class="w">    </span><span class="o">?</span><span class="w"> </span><span class="nx">HashRouter</span><span class="w"> </span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="kt">BrowserRouter</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">Router</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="cm">/* ... existing routes ... */</span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">Router</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="modify-appswebsrcservicesworkspace-servicets">[MODIFY] <code>apps/web/src/services/workspace-service.ts</code><a class="headerlink" href="#modify-appswebsrcservicesworkspace-servicets" title="Permanent link">&para;</a></h4>
+<p>For file operations (file list, file preview), use <code>hostAdapter.listDirectory()</code> and <code>hostAdapter.readFile()</code> in desktop mode — these go through Electron's main process and bypass HTTP entirely.</p>
+<hr />
+<h3 id="phase-3-vite-build-configuration-for-dual-targets">Phase 3: Vite Build Configuration for Dual Targets<a class="headerlink" href="#phase-3-vite-build-configuration-for-dual-targets" title="Permanent link">&para;</a></h3>
+<h4 id="modify-appswebviteconfigts">[MODIFY] <code>apps/web/vite.config.ts</code><a class="headerlink" href="#modify-appswebviteconfigts" title="Permanent link">&para;</a></h4>
+<p>Add a build mode for Electron-compatible output:</p>
+<div class="highlight"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="nx">defineConfig</span><span class="p">(({</span><span class="w"> </span><span class="nx">command</span><span class="p">,</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">isDesktop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;desktop&#39;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">base</span><span class="o">:</span><span class="w"> </span><span class="kt">isDesktop</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;./&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Relative paths for file:// protocol</span>
+<span class="w">    </span><span class="nx">build</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">outDir</span><span class="o">:</span><span class="w"> </span><span class="kt">isDesktop</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;dist-desktop&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;dist&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">assetsDir</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;assets&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">define</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s1">&#39;__WRIGHT_MODE__&#39;</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">isDesktop</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">&#39;desktop&#39;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;browser&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">  </span><span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<h4 id="modify-appswebpackagejson">[MODIFY] <code>apps/web/package.json</code><a class="headerlink" href="#modify-appswebpackagejson" title="Permanent link">&para;</a></h4>
+<p>New npm script:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;scripts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;build:desktop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;tsc -b &amp;&amp; vite build --mode desktop&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="phase-4-hermes-desktop-integration-package">Phase 4: Hermes Desktop Integration Package<a class="headerlink" href="#phase-4-hermes-desktop-integration-package" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Constraint</strong>: We do NOT modify <code>NousResearch/hermes-agent</code>. This package is designed to be consumed by anyone integrating Wright into an Electron shell.</p>
+</blockquote>
+<h4 id="new-hermes-wright-panel-new-directory-at-repo-root">[NEW] <code>hermes-wright-panel/</code> (new directory at repo root)<a class="headerlink" href="#new-hermes-wright-panel-new-directory-at-repo-root" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>hermes-wright-panel/
+├── package.json            # npm package metadata
+├── preload.cjs             # Electron preload: injects window.wrightDesktop
+├── panel.cjs               # Main-process module: creates BrowserView, routes IPC
+├── types.d.ts              # TypeScript declarations for window.wrightDesktop
+└── README.md               # Integration guide
+</code></pre></div>
+<h4 id="preloadcjs-electron-preload-bridge"><code>preload.cjs</code> — Electron Preload Bridge<a class="headerlink" href="#preloadcjs-electron-preload-bridge" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">contextBridge</span><span class="p">,</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;electron&#39;</span><span class="p">);</span>
+
+<span class="nx">contextBridge</span><span class="p">.</span><span class="nx">exposeInMainWorld</span><span class="p">(</span><span class="s1">&#39;wrightDesktop&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// API proxy</span>
+<span class="w">  </span><span class="nx">api</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">request</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:api&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">request</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">// File system</span>
+<span class="w">  </span><span class="nx">readFile</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">path</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:readFile&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">writeFile</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">path</span><span class="p">,</span><span class="w"> </span><span class="nx">content</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:writeFile&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="p">,</span><span class="w"> </span><span class="nx">content</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">listDirectory</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">path</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:listDirectory&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">selectFiles</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">options</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:selectFiles&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">// Terminal</span>
+<span class="w">  </span><span class="nx">terminal</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">start</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">options</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:terminal:start&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">write</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:terminal:write&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">resize</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">size</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:terminal:resize&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">size</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">dispose</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:terminal:dispose&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">id</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">onData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">callback</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="sb">`wright:terminal:data:</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">callback</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">removeAllListeners</span><span class="p">(</span><span class="sb">`wright:terminal:data:</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">onExit</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">callback</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="sb">`wright:terminal:exit:</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">info</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">callback</span><span class="p">(</span><span class="nx">info</span><span class="p">));</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">removeAllListeners</span><span class="p">(</span><span class="sb">`wright:terminal:exit:</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">  </span><span class="p">},</span>
+
+<span class="w">  </span><span class="c1">// Notifications</span>
+<span class="w">  </span><span class="nx">notify</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">payload</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:notify&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">payload</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">// Config</span>
+<span class="w">  </span><span class="nx">getConfig</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;wright:getConfig&#39;</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">// Theme sync</span>
+<span class="w">  </span><span class="nx">onThemeChange</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">cb</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;wright:theme-changed&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">theme</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">cb</span><span class="p">(</span><span class="nx">theme</span><span class="p">));</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">removeAllListeners</span><span class="p">(</span><span class="s1">&#39;wright:theme-changed&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">});</span>
+</code></pre></div>
+<h4 id="panelcjs-main-process-panel-manager"><code>panel.cjs</code> — Main-Process Panel Manager<a class="headerlink" href="#panelcjs-main-process-panel-manager" title="Permanent link">&para;</a></h4>
+<p>Exports a <code>WrightPanel</code> class that:
+- Creates a <code>BrowserView</code> with the custom preload
+- Loads Wright's <code>dist-desktop/index.html</code> or connects to a dev server
+- Registers IPC handlers for all <code>wright:*</code> channels
+- Proxies API requests to Wright's FastAPI backend via HTTP
+- Manages <code>node-pty</code> terminal sessions
+- Shows native file dialogs via <code>dialog.showOpenDialog()</code>
+- Sends native notifications via Electron <code>Notification</code></p>
+<hr />
+<h3 id="phase-5-desktop-specific-ui-enhancements">Phase 5: Desktop-Specific UI Enhancements<a class="headerlink" href="#phase-5-desktop-specific-ui-enhancements" title="Permanent link">&para;</a></h3>
+<h4 id="modify-appswebsrccomponentslayoutappshelltsx">[MODIFY] <code>apps/web/src/components/layout/AppShell.tsx</code><a class="headerlink" href="#modify-appswebsrccomponentslayoutappshelltsx" title="Permanent link">&para;</a></h4>
+<p>When running in desktop mode:
+- Detect and respect the titlebar overlay height (34px, matching Hermes Desktop)
+- Add CSS variable <code>--titlebar-height</code> for consistent spacing
+- Optionally hide/collapse the sidebar if Wright is embedded as a panel</p>
+<h4 id="new-appswebsrchooksusedesktopintegrationts">[NEW] <code>apps/web/src/hooks/useDesktopIntegration.ts</code><a class="headerlink" href="#new-appswebsrchooksusedesktopintegrationts" title="Permanent link">&para;</a></h4>
+<p>A React hook that provides desktop-specific functionality:
+- Listening for theme changes from the Electron host
+- Syncing the Wright theme with the Hermes Desktop theme
+- Responding to window resize/panel visibility events</p>
+<hr />
+<h2 id="file-summary">File Summary<a class="headerlink" href="#file-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Phase</th>
+<th style="text-align: left;">File</th>
+<th style="text-align: left;">Action</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>apps/web/src/services/host-adapter/host-adapter.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Core adapter interface</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>apps/web/src/services/host-adapter/browser-adapter.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Browser/standalone implementation</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>apps/web/src/services/host-adapter/desktop-adapter.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Electron/desktop implementation</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>apps/web/src/services/host-adapter/detect.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Environment detection</td>
+</tr>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>apps/web/src/services/host-adapter/index.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Auto-detection + singleton export</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code>apps/web/src/services/api-client.ts</code></td>
+<td style="text-align: left;">MODIFY</td>
+<td style="text-align: left;">Use adapter instead of raw fetch</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code>apps/web/src/App.tsx</code></td>
+<td style="text-align: left;">MODIFY</td>
+<td style="text-align: left;">Dynamic router, remove getApiUrl</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code>apps/web/src/services/workspace-service.ts</code></td>
+<td style="text-align: left;">MODIFY</td>
+<td style="text-align: left;">Use adapter for file ops</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><code>apps/web/vite.config.ts</code></td>
+<td style="text-align: left;">MODIFY</td>
+<td style="text-align: left;">Add desktop build mode</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><code>apps/web/package.json</code></td>
+<td style="text-align: left;">MODIFY</td>
+<td style="text-align: left;">Add <code>build:desktop</code> script</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><code>hermes-wright-panel/package.json</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Integration package metadata</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><code>hermes-wright-panel/preload.cjs</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Electron preload bridge</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><code>hermes-wright-panel/panel.cjs</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Main-process panel manager</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><code>hermes-wright-panel/types.d.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">TypeScript declarations</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;"><code>hermes-wright-panel/README.md</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Integration guide</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;"><code>apps/web/src/components/layout/AppShell.tsx</code></td>
+<td style="text-align: left;">MODIFY</td>
+<td style="text-align: left;">Desktop chrome awareness</td>
+</tr>
+<tr>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;"><code>apps/web/src/hooks/useDesktopIntegration.ts</code></td>
+<td style="text-align: left;">NEW</td>
+<td style="text-align: left;">Desktop integration hook</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="verification-plan">Verification Plan<a class="headerlink" href="#verification-plan" title="Permanent link">&para;</a></h2>
+<h3 id="automated-tests">Automated Tests<a class="headerlink" href="#automated-tests" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Existing tests must still pass (browser mode)</span>
+npm<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--workspace<span class="o">=</span>apps/web
+
+<span class="c1"># New adapter unit tests</span>
+npx<span class="w"> </span>vitest<span class="w"> </span>run<span class="w"> </span>src/services/host-adapter/
+
+<span class="c1"># Build both targets</span>
+npm<span class="w"> </span>run<span class="w"> </span>build<span class="w"> </span>--workspace<span class="o">=</span>apps/web<span class="w">          </span><span class="c1"># Standard browser build</span>
+npm<span class="w"> </span>run<span class="w"> </span>build:desktop<span class="w"> </span>--workspace<span class="o">=</span>apps/web<span class="w">  </span><span class="c1"># Desktop build</span>
+</code></pre></div>
+<h3 id="manual-verification">Manual Verification<a class="headerlink" href="#manual-verification" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Standalone mode</strong>: Run <code>npm run dev --workspace=apps/web</code> → confirm existing functionality is unchanged</li>
+<li><strong>Production mode</strong>: Build and serve via FastAPI → confirm SPA routing works</li>
+<li><strong>Desktop adapter mock</strong>: Create a test page that injects a mock <code>window.wrightDesktop</code> object → confirm the adapter switches correctly and IPC calls are routed</li>
+<li><strong>Electron integration</strong> (Phase 4): Load <code>dist-desktop/index.html</code> in a test Electron shell with the preload script → confirm API calls work through IPC</li>
+</ol>
+<h3 id="regression-checklist">Regression Checklist<a class="headerlink" href="#regression-checklist" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] All existing Vitest tests pass</li>
+<li>[ ] All existing Playwright tests pass</li>
+<li>[ ] <code>getApiUrl()</code> callers migrated (search for direct fetch usage)</li>
+<li>[ ] <code>BrowserRouter</code> works in standalone, <code>HashRouter</code> in desktop</li>
+<li>[ ] Production build serves correctly from FastAPI</li>
+<li>[ ] Desktop build loads correctly from <code>file://</code> protocol</li>
+<li>[ ] Theme synchronization works in desktop mode</li>
+<li>[ ] Native file dialogs work in desktop mode</li>
+<li>[ ] System notifications work in desktop mode</li>
+<li>[ ] Terminal integration works in desktop mode</li>
+</ul>
+<hr />
+<h2 id="deployment-configurations-update">Deployment Configurations Update<a class="headerlink" href="#deployment-configurations-update" title="Permanent link">&para;</a></h2>
+<p>This feature adds a <strong>fourth deployment configuration</strong> to Wright:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Configuration</th>
+<th style="text-align: left;">Target Audience</th>
+<th style="text-align: left;">Host</th>
+<th style="text-align: left;">UI Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Development</td>
+<td style="text-align: left;">Core developers</td>
+<td style="text-align: left;">Bare-metal</td>
+<td style="text-align: left;">Standalone browser</td>
+</tr>
+<tr>
+<td style="text-align: left;">Docker Appliance</td>
+<td style="text-align: left;">New / simple users</td>
+<td style="text-align: left;">Docker</td>
+<td style="text-align: left;">Standalone browser</td>
+</tr>
+<tr>
+<td style="text-align: left;">Plugin Install</td>
+<td style="text-align: left;">Existing Hermes users</td>
+<td style="text-align: left;">Any Hermes host</td>
+<td style="text-align: left;">Standalone browser</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hermes Desktop</strong></td>
+<td style="text-align: left;"><strong>Desktop app users</strong></td>
+<td style="text-align: left;"><strong>Electron</strong></td>
+<td style="text-align: left;"><strong>Embedded panel</strong></td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../deployment-configurations/">deployment-configurations.md</a> for the full deployment matrix.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

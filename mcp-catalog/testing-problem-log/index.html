@@ -1,0 +1,3729 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/mcp-catalog/testing-problem-log/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>MCP Server Testing Problem Log - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#mcp-server-testing-problem-log" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              MCP Server Testing Problem Log
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Hermes Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#2026-06-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-26
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="mcp-server-testing-problem-log">MCP Server Testing Problem Log<a class="headerlink" href="#mcp-server-testing-problem-log" title="Permanent link">&para;</a></h1>
+<h2 id="2026-06-26">2026-06-26<a class="headerlink" href="#2026-06-26" title="Permanent link">&para;</a></h2>
+<p>Problem:
+  Docker Compose could not connect to the selected <code>desktop-linux</code> engine:
+  <code>open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified</code>.</p>
+<p>Solution:
+  Started the Docker service and Docker Desktop, then waited for <code>docker info</code>
+  to report a ready x86_64 engine.</p>
+<p>Result:
+  Docker reported <code>Docker ready: 28.5.1 x86_64</code>.</p>
+<p>Problem:
+  The Dockerfile included MCP-specific backend tools in the base image path:
+  OpenSCAD, Xvfb, a FreeCAD AppImage, <code>FREECAD_PATH</code>, and an OpenSCAD wrapper.
+  That does not test the user workflow because MCP dependencies would already be
+  present before the user selected a server.</p>
+<p>Solution:
+  Move to a clean base container model. MCP-specific host software is installed
+  only inside the per-MCP validation step for the selected server.</p>
+<p>Result:
+  Fixed. The clean image built successfully and a direct image smoke test showed
+  <code>openscad</code>, <code>freecadcmd</code>, and <code>openscad-headless</code> are absent from the base
+  runtime.</p>
+<p>Problem:
+  The first OpenSCAD MCP probe sent MCP messages using <code>Content-Length</code> framing.
+  The <code>openscad-mcp</code> FastMCP stdio transport rejected those lines with JSON parse
+  errors.</p>
+<p>Solution:
+  Switched the validation probe to newline-delimited JSON messages for this
+  server.</p>
+<p>Result:
+  <code>initialize</code> and <code>tools/list</code> succeeded and returned the OpenSCAD MCP server
+  metadata plus 15 tool definitions.</p>
+<p>Problem:
+  <code>validate_scad</code> returned <code>success: true</code> and no errors for <code>cube([1,1,1]);</code>,
+  but also returned <code>valid: false</code>, which is ambiguous as a pass/fail signal.</p>
+<p>Solution:
+  Used clearer backend evidence for catalog validation: <code>check_openscad</code> followed
+  by <code>export_model</code> with <code>cube([1,1,1]);</code> to <code>/tmp/wright-validation-cube.stl</code>.</p>
+<p>Result:
+  <code>check_openscad</code> reported OpenSCAD 2021.01, and <code>export_model</code> produced a
+  1449-byte STL file. OpenSCAD Geometry remains fully tested for the Intel Ubuntu
+  container path.</p>
+<p>Problem:
+  Docker Compose could build the image, but the container restarted with
+  <code>exec /entrypoint.sh: no such file or directory</code>.</p>
+<p>Solution:
+  Inspected <code>/entrypoint.sh</code> inside the built image and found CRLF bytes after
+  the shebang (<code>#!/bin/bash\r\n</code>). Updated the Dockerfile to strip carriage
+  returns from the entrypoint during image build before making it executable.</p>
+<p>Result:
+  Fixed. The Compose container recreated from the rebuilt image started
+  successfully and reached healthy state.</p>
+<p>Problem:
+  Hermes sync wrote the Wright gateway command using a developer-specific repo
+  path (<code>/home/burhop/repos/wright</code>). In the Docker container Wright lives at
+  <code>/workspace</code>, so Hermes would not be able to launch <code>wrightgateway</code> from the
+  generated config.</p>
+<p>Solution:
+  Updated Hermes sync to use <code>WRIGHT_REPO_DIR</code> when provided, otherwise the
+  detected repository root.</p>
+<p>Result:
+  Fixed. The container generated Hermes config now points <code>wrightgateway</code> at
+  <code>/workspace</code>.</p>
+<p>Problem:
+  Calling <code>/api/mcp/servers/openscad-mcp-server/install</code> discovered the MCP
+  tools during startup, then stopped the server because no workspace session was
+  provided. The stop path clears active tools, so <code>/api/mcp/tools</code> returned zero
+  OpenSCAD tools after the installed-inactive flow.</p>
+<p>Solution:
+  For gateway validation, activated the server through the Wright API and created
+  a disposable workspace. The active server path keeps discovered tools available
+  for the gateway.</p>
+<p>Result:
+  <code>/api/mcp/tools</code> returned 15 OpenSCAD tools, <code>/api/gateway/tools</code> exposed 15
+  prefixed <code>openscadgeometry__*</code> tools, and the Hermes-facing <code>wrightgateway</code>
+  MCP listed and called them successfully.</p>
+<p>Problem:
+  The first full Hermes-equivalent validation needed to prove not just the child
+  MCP server, but that Hermes can receive the MCP tool information through
+  Wright's gateway.</p>
+<p>Solution:
+  Launched the exact <code>wrightgateway</code> command from Hermes config:
+  <code>uv run --project /workspace python -m tool_registry.gateway</code>, then sent
+  <code>initialize</code>, <code>tools/list</code>, and <code>tools/call</code> messages.</p>
+<p>Result:
+  <code>wrightgateway</code> returned 15 OpenSCAD tools, <code>check_openscad</code> reported
+  OpenSCAD 2021.01, and <code>export_model</code> produced a 1449-byte STL through the
+  gateway path.</p>
+<p>Problem:
+  <code>OpenSCAD Linter</code> is seeded with command <code>uvx openscad-linter-mcp</code> and source
+  URL <code>https://github.com/topics/cad-3d</code>. In a clean Intel Ubuntu container,
+  <code>uvx</code> was not available and the equivalent <code>uv tool run openscad-linter-mcp
+  --help</code> failed because <code>openscad-linter-mcp</code> was not found in the package
+  registry. Web search did not find a specific package or repository for this
+  linter MCP.</p>
+<p>Solution:
+  Move the entry to the non-working tier instead of substituting a different
+  OpenSCAD server. Record the exact missing-package evidence and create a
+  follow-up record for source/package verification.</p>
+<p>Result:
+  <code>openscad-linter-trikos529</code> now has failed Intel Ubuntu validation evidence,
+  Linux x64 platform notes, and follow-up record
+  <code>docs/mcp-catalog/followups/openscad-linter-trikos529.md</code>.</p>
+<p>Problem:
+  <code>FreeCAD Engineering</code> was seeded with a developer-specific command pointing
+  at <code>/home/burhop/repos/wright/packages/freecad_mcp</code>, but the public upstream
+  repository is <code>https://github.com/sandraschi/freecad-mcp</code> and now supports
+  launching <code>freecad_mcp.server</code> directly.</p>
+<p>Solution:
+  Validate the public install path in a clean Intel Ubuntu container using
+  <code>uv run --with git+https://github.com/sandraschi/freecad-mcp.git python -m
+  freecad_mcp.server --mode stdio</code>, then update the catalog command to that
+  source-based launch path.</p>
+<p>Result:
+  The user-style launch initialized <code>FreeCAD MCP</code>, listed 47 tools, and exposed
+  <code>freecad_status</code>.</p>
+<p>Problem:
+  <code>FreeCAD Engineering</code> cannot be marked fully tested in the base container
+  because FreeCAD, CalculiX, OpenFOAM, and PrusaSlicer are selected-server
+  backend dependencies rather than Wright base-image dependencies.</p>
+<p>Solution:
+  Run the safe backend-touching MCP call <code>freecad_status</code> instead of installing
+  every backend into the base image.</p>
+<p>Result:
+  <code>freecad_status</code> returned <code>success:false</code> and <code>freecad_ok:false</code> without
+  crashing. This pre-FreeCAD pass proved the MCP package/protocol path but did
+  not qualify as full backend validation.</p>
+<p>Problem:
+  Fresh validation of <code>freecad-engineering-sandraschi</code> on commit
+  <code>a71f60a71987ac23a65a3bdeda5f71c8f1579efb</code> found a current CLI-path issue.
+  The server help advertises <code>--freecad-path</code>, but starting MCP with
+  <code>--freecad-path /tmp/freecadcmd</code> still left backend calls unable to find
+  FreeCAD.</p>
+<p>Solution:
+  Use <code>FREECAD_PATH=/tmp/freecadcmd</code> for the selected-server backend path,
+  because the module reads that environment variable at import time.</p>
+<p>Result:
+  With <code>--freecad-path /tmp/freecadcmd</code>, <code>create_shape</code> returned
+  <code>FreeCADCmd not found</code>. With <code>FREECAD_PATH=/tmp/freecadcmd</code>, the same tool
+  launched FreeCAD 1.1.1, proving the environment variable path is honored.</p>
+<p>Problem:
+  After installing FreeCAD 1.1.1 as a selected-server dependency in a disposable
+  Intel Ubuntu container, <code>freecad-engineering-sandraschi</code> still did not pass a
+  real backend operation. The MCP server initialized and listed 47 tools, but
+  <code>freecad_status</code> reported <code>success:false</code>/<code>freecad_ok:false</code>. Calling
+  <code>create_shape</code> for a 10 mm box returned <code>success:true</code> while stderr said
+  <code>Cannot create a mesh out of a 'Part.Solid'</code>, and no STL file was produced.</p>
+<p>Solution:
+  Verified the FreeCAD backend separately with <code>/tmp/freecadcmd -c</code>, creating a
+  684-byte STL directly. This isolates the problem to MCP server behavior rather
+  than the FreeCAD install.</p>
+<p>Result:
+  <code>freecad-engineering-sandraschi</code> is now classified as <code>non_working</code> with
+  follow-up record
+  <code>docs/mcp-catalog/followups/freecad-engineering-sandraschi.md</code>.</p>
+<p>Problem:
+  <code>FreeCAD Copilot</code> was seeded with command <code>npx freecad-mcp</code>, but npm returned
+  404 because the published installer package is <code>freecad-mcp-setup</code>, not
+  <code>freecad-mcp</code>. The actual MCP server is <code>working_bridge.py</code> after setup.</p>
+<p>Solution:
+  Validated the bridge command directly with <code>uv run --with mcp python
+  working_bridge.py</code>. Without the FreeCAD workbench socket, it initialized,
+  listed <code>check_freecad_connection</code> and <code>test_echo</code>, and returned the expected
+  message telling the user to start FreeCAD and switch to the AI Copilot
+  workbench.</p>
+<p>Result:
+  Catalog command metadata now points to the bridge script path created by the
+  upstream installer.</p>
+<p>Problem:
+  Full Linux container validation for <code>FreeCAD Copilot</code> installed FreeCAD 1.1.1,
+  Xvfb, and the AICopilot workbench. Installing the workbench to
+  <code>~/.local/share/FreeCAD/Mod/AICopilot</code> did not start the socket. FreeCAD 1.1
+  reports its user app data directory as <code>~/.local/share/FreeCAD/v1-1/</code>.</p>
+<p>Solution:
+  Installed the workbench under
+  <code>~/.local/share/FreeCAD/v1-1/Mod/AICopilot</code> and restarted FreeCAD under Xvfb.</p>
+<p>Result:
+  In the latest clean-container run, <code>/tmp/freecad_mcp.sock</code> appeared after 6
+  seconds. The bridge initialized as serverInfo <code>freecad</code> version <code>2.0.0</code>,
+  listed 7 tools, <code>check_freecad_connection</code> reported <code>FreeCAD running with AI
+  Copilot workbench</code>, and <code>test_echo</code> returned <code>Bridge received: wright
+  validation</code>.</p>
+<p>Problem:
+  The first safe backend operation for <code>FreeCAD Copilot</code>,
+  <code>part_operations(operation=box)</code>, hung until the validation timeout. The latest
+  run used <code>length=10</code>, <code>width=8</code>, <code>height=6</code>, and <code>name=WrightBox</code>, and timed
+  out after 30 seconds. FreeCAD logged <code>Event observer error: No module named
+  'PySide2'</code> plus Qt thread errors such as <code>Cannot create children for a parent
+  that is in a different thread</code> and <code>Timers cannot be started from another
+  thread</code>.</p>
+<p>Solution:
+  Record the operation hang as an MCP/workbench runtime issue rather than a
+  missing dependency, because FreeCAD, Xvfb, the workbench, and the socket were
+  all present.</p>
+<p>Result:
+  <code>freecad-copilot-contextform</code> is now classified as <code>non_working</code> with
+  follow-up record
+  <code>docs/mcp-catalog/followups/freecad-copilot-contextform.md</code>.</p>
+<p>Problem:
+  <code>AutoCAD MCP</code> was seeded as Windows/AutoCAD-only with command
+  <code>python autocad_mcp.py</code>, but the upstream repository now ships a Python
+  package with <code>python -m autocad_mcp</code> and supports a Linux-safe <code>ezdxf</code>
+  backend.</p>
+<p>Solution:
+  Validated the public git install command in a clean Intel Ubuntu container:
+  <code>AUTOCAD_MCP_BACKEND=ezdxf uv run --with
+  git+https://github.com/hvkshetry/autocad-mcp.git python -m autocad_mcp</code>.</p>
+<p>Result:
+  The user-style command initialized MCP and listed 8 tools.</p>
+<p>Problem:
+  AutoCAD desktop/File IPC behavior cannot be tested in the Intel Ubuntu
+  container because it requires a Windows AutoCAD LT 2024+ desktop host.</p>
+<p>Solution:
+  Fully validated the headless backend that does not require AutoCAD:
+  <code>AUTOCAD_MCP_BACKEND=ezdxf</code>.</p>
+<p>Result:
+  Fresh validation on commit <code>95476a33a1c246308326eb4709d6379ef2efdbc1</code>
+  passed 123 upstream tests. MCP initialized as <code>autocad-mcp</code> version
+  <code>1.26.0</code>, listed 8 tools, <code>system</code> reported ezdxf 1.4.3,
+  <code>drawing(create)</code> created <code>WrightValidation</code>, <code>entity(create_line)</code> created
+  a line, <code>drawing(info)</code> reported one entity and the <code>WrightValidation</code> layer,
+  and <code>drawing(save_as_dxf)</code> saved <code>/tmp/wright-autocad-validation.dxf</code> at
+  15561 bytes. <code>autocad-mcp-hvkshetry</code> is tested for Linux x64 headless DXF
+  generation, with the Windows AutoCAD File IPC backend explicitly untested.</p>
+<p>Problem:
+  The first AutoCAD MCP backend operation used nested arguments copied from a
+  guessed shape: <code>entity(create_line)</code> received <code>data.start/end</code>, and
+  <code>drawing(save_as_dxf)</code> received top-level <code>path</code>.</p>
+<p>Solution:
+  Read the MCP <code>tools/list</code> schemas and use the advertised shapes:
+  <code>entity(create_line)</code> takes top-level <code>x1</code>, <code>y1</code>, <code>x2</code>, and <code>y2</code>, while
+  <code>drawing(save_as_dxf)</code> takes <code>data: {"path": ...}</code>.</p>
+<p>Result:
+  The corrected MCP calls created the line, saved the DXF, and reported one
+  entity through <code>drawing(info)</code>.</p>
+<p>Problem:
+  After installing uv from PowerShell into the Ubuntu container, a chained
+  shell command temporarily failed to find <code>git</code> even though apt had installed
+  it.</p>
+<p>Solution:
+  Use absolute paths inside the container for deterministic validation:
+  <code>/usr/bin/git</code> and <code>/root/.local/bin/uv</code>.</p>
+<p>Result:
+  The source clone and all subsequent AutoCAD validation commands completed.</p>
+<p>Problem:
+  <code>Autodesk APS (Community)</code> points at
+  <code>https://github.com/petrbroz/aps-mcp-server</code>, whose README states the project
+  moved to <code>https://github.com/autodesk-platform-services/aps-mcp-server-nodejs</code>.
+  The old repo is Node/TypeScript, but the Hermes entry still described it as a
+  Python package before this validation pass.</p>
+<p>Solution:
+  Validate the real upstream install/start path in a clean Intel Ubuntu
+  container, correct the Wright metadata to the Node command, and keep the
+  community entry visible as a blocked redirect/duplicate. Prefer the official
+  Autodesk APS entry for future setup and credential validation.</p>
+<p>Result:
+  Fresh validation on commit <code>557556235e806a5d74265fcf556b9dae4206abdd</code>
+  installed <code>yarn</code> 1.22.22, ran <code>yarn install --frozen-lockfile</code>, and built
+  successfully with <code>yarn run build</code>. There is no <code>yarn test</code> script. Without
+  credentials, <code>node build/server.js</code> exited with the expected missing-variable
+  message for <code>APS_CLIENT_ID</code>, <code>APS_CLIENT_SECRET</code>, <code>APS_SA_ID</code>,
+  <code>APS_SA_EMAIL</code>, <code>APS_SA_KEY_ID</code>, and <code>APS_SA_PRIVATE_KEY</code>. With dummy APS
+  variables and a generated base64 RSA private key, MCP initialized as
+  <code>autodesk-platform-services</code> version <code>0.0.1</code>, listed 8 tools
+  (<code>get-accounts</code>, <code>get-folder-contents</code>, <code>get-issue-comments</code>,
+  <code>get-issue-root-causes</code>, <code>get-issue-types</code>, <code>get-issues</code>,
+  <code>get-item-versions</code>, and <code>get-projects</code>), and <code>get-accounts</code> reached Autodesk
+  auth and returned <code>AUTH-001</code> for the dummy client. The catalog records this as
+  blocked/superseded because upstream redirects users to the official APS MCP.</p>
+<p>Problem:
+  <code>Autodesk Platform Services</code> requires cloud credentials and a Secure Service
+  Account, which are not available in the clean Intel Ubuntu validation
+  container.</p>
+<p>Solution:
+  Validate install/startup up to the credential gate using the official repo:
+  <code>npm install</code> followed by <code>node server.js</code>.</p>
+<p>Result:
+  Fresh validation on commit <code>722591abb08c42000e9aedcabc746bbd7f413739</code>
+  installed dependencies with <code>npm install</code>. There is no <code>npm test</code> script.
+  <code>node server.js</code> exited with the expected missing-credential diagnostic for
+  <code>APS_CLIENT_ID</code>, <code>APS_CLIENT_SECRET</code>, <code>SSA_ID</code>, <code>SSA_KEY_ID</code>, and
+  <code>SSA_KEY_PATH</code>. With dummy APS variables and a generated dummy RSA PEM key,
+  MCP initialized as <code>aps-mcp-server-nodejs</code> version <code>0.0.1</code>, listed 4 tools
+  (<code>getFolderContentsTool</code>, <code>getIssueTypesTool</code>, <code>getIssuesTool</code>,
+  <code>getProjectsTool</code>), and <code>getProjectsTool</code> reached Autodesk auth and returned
+  <code>AUTH-001</code> for the dummy client. The catalog records this as
+  credential-limited <code>might_work</code>, not fully tested.</p>
+<p>Problem:
+  Installing Ubuntu's <code>npm</code> package pulled in a large dependency set and
+  exceeded the initial two-minute command timeout while <code>apt</code>/<code>dpkg</code> was still
+  running.</p>
+<p>Solution:
+  Check for active <code>apt</code>/<code>dpkg</code> processes and wait for them to finish before
+  continuing, instead of retrying package installation over an active dpkg
+  transaction.</p>
+<p>Result:
+  <code>node</code> 18.19.1, <code>npm</code> 9.2.0, and <code>git</code> 2.43.0 were available, and APS
+  validation proceeded cleanly.</p>
+<p>Problem:
+  <code>Autodesk Fusion 360</code> was seeded with command <code>python
+  fusion360_mcp_server.py</code>, but the upstream package is published as
+  <code>fusion360-mcp-server</code> with CLI command <code>fusion360-mcp-server --mode socket</code>.
+  Full backend validation requires Autodesk Fusion 360 desktop plus the
+  Fusion360MCP add-in, which cannot be installed in the Intel Ubuntu container.</p>
+<p>Solution:
+  Validate all Linux-testable layers: upstream tests, MCP mock mode, and socket
+  mode's missing-host diagnostic.</p>
+<p>Result:
+  Fresh validation on commit <code>b44b667e440da070081795cfcbfaf75de2a44251</code>
+  passed 282 upstream tests. MCP mock mode initialized as
+  <code>fusion360-mcp-server</code> version <code>1.26.0</code>, listed 85 tools, <code>ping</code> returned
+  <code>pong</code>, and <code>create_box</code> returned mock deltas when called with <code>length</code>,
+  <code>width</code>, and <code>height</code>. Socket mode initialized, listed 85 tools, and <code>ping</code>
+  returned the expected error: <code>Not connected to Fusion 360. Make sure the
+  add-in is running.</code> The catalog records this as host-dependent <code>might_work</code>,
+  not fully tested.</p>
+<p>Problem:
+  The first Fusion <code>create_box</code> probe used <code>depth</code>, but the MCP schema requires
+  <code>length</code>, <code>width</code>, and <code>height</code>.</p>
+<p>Solution:
+  Read the <code>tools/list</code> schema and rerun the mock call with
+  <code>{"length": 10, "width": 8, "height": 6}</code>.</p>
+<p>Result:
+  Mock <code>create_box</code> returned an OK response with <code>Box_mock</code> and body/mass
+  deltas.</p>
+<p>Problem:
+  <code>Fusion 360 Python API Bridge</code> was seeded with command <code>python main.py</code>, but
+  the verified repository <code>https://github.com/sockcymbal/autodesk-fusion-mcp-python</code>
+  does not contain <code>main.py</code>.</p>
+<p>Solution:
+  Clone the source in a clean Intel Ubuntu container and use the repository's
+  actual MCP script: <code>python fusion_mcp.py</code>.</p>
+<p>Result:
+  Fresh validation cloned commit <code>a3398ac5c76baa252240f301167a4cba2fe6f5b8</code>.
+  There are no upstream tests. <code>pip install -r requirements.txt</code> succeeded in a
+  Python 3.12 virtual environment.</p>
+<p>Problem:
+  <code>fusion_mcp.py</code> reads APS credentials at import time, so missing credentials
+  fail before MCP initialization.</p>
+<p>Solution:
+  Record the no-credential startup boundary, then use dummy <code>APS_CLIENT_ID</code>,
+  <code>APS_CLIENT_SECRET</code>, and <code>FUSION_ACTIVITY_ID</code> values to test MCP protocol
+  startup and the backend-touching <code>generate_cube</code> tool.</p>
+<p>Result:
+  Without APS env vars, startup exited with <code>KeyError: 'APS_CLIENT_ID'</code>. With
+  dummy APS env vars, MCP initialized as serverInfo <code>fusion</code> version <code>1.28.1</code>
+  and listed one tool, <code>generate_cube</code>.</p>
+<p>Problem:
+  <code>generate_cube</code> cannot reach the expected APS credential boundary because the
+  upstream code uses <code>httpx.BasicAuth(CLIENT_ID, CLIENT_SECRET).auth_header</code>.
+  Current <code>httpx.BasicAuth</code> does not expose <code>auth_header</code>.</p>
+<p>Solution:
+  Classify this as a code-level MCP failure and create a follow-up record for an
+  upstream fix. The likely fix is to generate the Basic auth header manually or
+  use the current httpx auth API correctly.</p>
+<p>Result:
+  <code>generate_cube</code> returned
+  <code>'BasicAuth' object has no attribute 'auth_header'</code> before any APS request.
+  <code>autodesk-fusion-mcp-python</code> is classified as <code>non_working</code> with validation
+  status <code>failed</code>, not <code>dependency_missing</code>, until the auth helper is fixed.</p>
+<p>Problem:
+  <code>Autodesk Revit BIM</code> was seeded with a <code>.NET</code> command, but the current
+  <code>revit-mcp</code> repository is a Node/TypeScript MCP server. The README also says
+  the repo is being archived in favor of
+  <code>https://github.com/mcp-servers-for-revit/mcp-servers-for-revit</code>.</p>
+<p>Solution:
+  Validate the current repository command path in a clean Intel Ubuntu
+  container at commit <code>c9ef49e4c397298d291304f822b89ba3a102e6bf</code>:
+  <code>npm install</code>, <code>npm run build</code>, and <code>node build/index.js</code>.</p>
+<p>Result:
+  The first <code>npm install</code> failed because <code>better-sqlite3</code> needed native
+  compilation and <code>make</code> was missing. Installing only the selected-server build
+  prerequisite <code>build-essential</code> fixed the install. There is no upstream
+  <code>npm test</code> script.</p>
+<p>Result:
+  The server initialized over newline-delimited JSON as <code>revit-mcp</code> version
+  <code>1.0.0</code>, listed 25 tools, and the backend probes <code>say_hello</code> and
+  <code>get_current_view_info</code> both returned the expected <code>connect to revit client
+  failed</code> diagnostic with stderr <code>connect ECONNREFUSED ::1:8080</code>. The catalog
+  records this as host-dependent <code>might_work</code>, because full validation requires
+  Revit desktop and the revit-mcp-plugin on Windows.</p>
+<p>Problem:
+  <code>Siemens Element Design System</code> was seeded as a simple <code>npx
+  @siemens/element-mcp</code> command. In a clean Intel Ubuntu container, a fresh
+  <code>npx -y @siemens/element-mcp</code> attempt failed with <code>element-mcp: not found</code>
+  before MCP startup.</p>
+<p>Solution:
+  Follow the package README's project-install flow instead of treating it as a
+  one-shot global command: create a project, run <code>npm install --save-dev
+  --save-exact @siemens/element-mcp@49.12.0-v.1.11.1</code>, then run <code>npx
+  @siemens/element-mcp</code> or <code>npx element-mcp</code>.</p>
+<p>Result:
+  The npm package installed successfully. There is no upstream test script in
+  the package. MCP initialized as <code>@siemens/element-mcp</code> version <code>1.0.0</code>, listed
+  2 tools (<code>element-search</code>, <code>element-icon-search</code>), and both tools reached the
+  backend credential boundary with <code>Embedding API error: 403 Forbidden</code>.
+  <code>element-mcp check</code> reported <code>LLM token not found. Run 'element-mcp
+  setup-token'</code>. The catalog records this as <code>might_work</code> with missing
+  <code>OPENAI_API_KEY</code>, because full validation requires a Siemens LLM token with
+  <code>llm</code> scope.</p>
+<p>Problem:
+  <code>Siemens WinCC Unified SCADA</code> points to Siemens Support Entry ID <code>110002407</code>
+  and a Windows <code>.exe</code> command, but no public installable artifact could be
+  fetched in a clean Intel Ubuntu container.</p>
+<p>Solution:
+  Verify the public support signal and package registries before attempting
+  backend tests. Public search results confirm <code>Integration of MCP Server with
+  WinCC Unified PC Runtime</code> and a login-required
+  <code>110002407_MCPServerPCRuntime_READMEOSS.zip</code>. Direct <code>curl</code> requests to the
+  support page and PDF returned HTTP 403 from Akamai. npm checks for
+  <code>wincc-unified-mcp</code> and <code>@siemens/wincc-unified-mcp</code> returned 404; PyPI
+  checks for <code>wincc-unified-mcp</code> and <code>wincc_unified_mcp</code> found no distribution.</p>
+<p>Result:
+  <code>wincc-unified-mcp.exe --help</code> failed with <code>command not found</code>; guessed
+  Siemens GitHub URLs did not resolve publicly without authentication. No MCP
+  stdio calls could be made. The catalog records the official Siemens entry as
+  <code>blocked</code> pending a Siemens Support login/license holder obtaining the
+  official artifact and validating it on Windows with WinCC Unified PC Runtime.</p>
+<p>Problem:
+  <code>PTC ThingWorx IoT Platform</code> was seeded with a local command
+  <code>ptc-thingworx-mcp</code>, but PTC's ThingWorx 10.1 documentation describes an
+  embedded product-hosted MCP endpoint instead.</p>
+<p>Solution:
+  Verify the official docs and registry/package availability. PTC documentation
+  pages for ThingWorx MCP returned HTTP 200 and describe configuring MCP clients
+  with <code>&lt;ThingWorx Server URL&gt;/mcp</code>, plus managing tools/resources/prompts with
+  the <code>MCPServices</code> resource. npm checks for <code>ptc-thingworx-mcp</code>,
+  <code>thingworx-mcp</code>, and <code>@ptc/thingworx-mcp</code> returned 404; PyPI checks for
+  <code>ptc-thingworx-mcp</code> and <code>thingworx-mcp</code> found no matching distribution.</p>
+<p>Result:
+  The local <code>ptc-thingworx-mcp --help</code> command failed with <code>command not found</code>.
+  A separate community repository, <code>doubleSlashde/thingworx-mcp-server</code>, exists
+  at commit <code>7e22ef9be1af495acf1a46101ebb17380eed86ae</code>, but it is not the
+  official PTC product-hosted MCP entry. The catalog records the official entry
+  as <code>might_work</code> / <code>dependency_missing</code> and uses <code>${THINGWORX_BASE_URL}/mcp</code>
+  as the endpoint template. Full validation requires a ThingWorx 10.1+ MCP
+  endpoint and AppKey or OAuth credentials.</p>
+<p>Problem:
+  <code>RhinoMCP</code> was seeded as <code>dotnet RhinoMcp.dll</code>, but the current upstream
+  README uses the Python package command <code>uvx rhinomcp</code> and a separate Rhino 8
+  plugin bridge started inside Rhino with the <code>mcpstart</code> command.</p>
+<p>Solution:
+  Clone <code>https://github.com/jingcheng-chen/rhinomcp</code>, inspect the server
+  package metadata, and validate the Python server path in a clean Intel Ubuntu
+  container.</p>
+<p>Result:
+  The repository cloned at commit <code>b56338a9da733d17555744ab895facdc84a80542</code>.
+  The server package is <code>rhinomcp</code> version <code>0.3.1</code>, and the catalog/API command
+  is now <code>uvx rhinomcp</code>.</p>
+<p>Problem:
+  Full Rhino backend validation requires Rhino 8 plus the RhinoMCP plugin
+  running <code>mcpstart</code>; Rhino desktop is not available in the Ubuntu container.</p>
+<p>Solution:
+  Validate the source and stdio server as far as possible: install the Python
+  package with <code>uv sync --extra dev</code>, run upstream tests, initialize MCP, list
+  tools, call read/status tools, and call one backend-touching tool to verify
+  the missing bridge diagnostic.</p>
+<p>Result:
+  Upstream Python/contract tests passed 192/192 with 12 pytest return-value
+  warnings. MCP initialized as <code>RhinoMCP</code> version <code>1.26.0</code>, listed 66 tools,
+  and <code>get_commands</code>, <code>get_document_summary</code>, and <code>create_object</code> all returned
+  the expected diagnostic: <code>Could not connect to Rhino at 127.0.0.1:1999.
+  Please start Rhino, run the Rhino command mcpstart, then retry the MCP
+  request.</code> <code>rhino-mcp</code> remains <code>might_work</code> with <code>dependency_missing</code>
+  validation until a Rhino 8 bridge host is available.</p>
+<p>Problem:
+  <code>SketchUp MCP</code> was seeded with command <code>ruby server.rb</code>, but the current
+  upstream README describes a Python MCP package command, <code>uvx sketchup-mcp</code>,
+  plus a separate SketchUp Ruby extension server.</p>
+<p>Solution:
+  Clone <code>https://github.com/mhyrr/sketchup-mcp</code> in a clean Intel Ubuntu
+  container, inspect the package metadata and README, and validate the Python
+  MCP server path from source.</p>
+<p>Result:
+  The repository cloned at commit <code>aa096f04d3d7b22a70860368f2b576343feac405</code>.
+  The package is <code>sketchup-mcp</code> version <code>0.1.17</code>, and the catalog/API command
+  is now <code>uvx sketchup-mcp</code>.</p>
+<p>Problem:
+  The repository's test-like files are not a usable upstream pytest suite.
+  <code>test_eval_ruby.py</code> is a script, and <code>examples/simple_test.py</code> imports removed
+  API <code>mcp.client.Client</code>.</p>
+<p>Solution:
+  Record the test limitation and validate via MCP stdio calls instead.</p>
+<p>Result:
+  Pytest reported no tests for <code>test_eval_ruby.py</code>, and collection failed for
+  <code>examples/simple_test.py</code> with <code>ImportError: cannot import name 'Client' from
+  'mcp.client'</code>.</p>
+<p>Problem:
+  Full SketchUp backend validation requires SketchUp desktop with the
+  SketchupMCP extension server running on port 9876, which is not available in
+  the Ubuntu container.</p>
+<p>Solution:
+  Validate the stdio server through <code>initialize</code>, <code>tools/list</code>, actual
+  read/status tool <code>get_selection</code>, and backend-touching <code>eval_ruby</code>.</p>
+<p>Result:
+  MCP initialized as <code>SketchupMCP</code> version <code>1.28.1</code> and listed 10 tools.
+  README-advertised <code>get_scene_info</code> is not present in <code>tools/list</code>.
+  <code>get_selection</code> returned <code>Error getting selection: Could not connect to
+  Sketchup. Make sure the Sketchup extension is running.</code> Backend-touching
+  <code>eval_ruby</code> returned JSON <code>success: false</code> with the same missing-extension
+  diagnostic. <code>sketchup-mcp</code> remains <code>might_work</code> with <code>dependency_missing</code>
+  validation until a SketchUp extension host is available.</p>
+<p>Problem:
+  <code>Blender 3D</code> was seeded with an underspecified command. The upstream README
+  recommends using <code>uvx</code> and pinning Python 3.11 for the MCP server.</p>
+<p>Solution:
+  Validate and store the upstream/user-facing command:
+  <code>uvx --python 3.11 blender-mcp</code>.</p>
+<p>Result:
+  Fresh validation used <code>uv</code>/<code>uvx</code> 0.11.25 from the official installer. The
+  package downloaded CPython 3.11.15, installed 37 packages, and launched the
+  MCP server successfully. Without Blender or the add-on socket, <code>initialize</code>
+  succeeded as <code>BlenderMCP</code> 1.28.1, <code>tools/list</code> returned 22 tools, and
+  <code>get_scene_info</code> plus <code>execute_blender_code</code> returned the expected diagnostic:
+  <code>Could not connect to Blender. Make sure the Blender addon is running.</code></p>
+<p>Problem:
+  Full Blender validation cannot use <code>blender -b</code> background mode. The upstream
+  add-on explicitly refuses to start in background mode because commands would
+  never execute.</p>
+<p>Solution:
+  Install Blender as a selected-server dependency in the disposable container
+  and launch a normal Blender process under Xvfb with
+  <code>xvfb-run -a blender --python /tmp/start_blendermcp.py</code>.</p>
+<p>Result:
+  Blender 4.0.2 started under Xvfb and the validation script could load the
+  add-on registration path.</p>
+<p>Problem:
+  Loading <code>addon.py</code> in Ubuntu 24.04 Blender 4.0.2 failed with
+  <code>ModuleNotFoundError: No module named 'requests'</code>. The package was not
+  installed by the Blender dependency set.</p>
+<p>Solution:
+  Install <code>python3-requests</code> as part of the selected-server Blender validation
+  setup.</p>
+<p>Result:
+  The add-on loaded, started its socket on <code>localhost:9876</code>, and the MCP server
+  connected to Blender.</p>
+<p>Problem:
+  <code>Blender 3D</code> needed a real backend-touching probe before it could be marked
+  fully tested for Linux x64.</p>
+<p>Solution:
+  With Blender, Xvfb, <code>python3-requests</code>, and the add-on socket running, call the
+  read-only MCP tool <code>get_scene_info</code>, then call the backend-mutating
+  <code>execute_blender_code</code> and verify with <code>get_object_info</code>.</p>
+<p>Result:
+  Clean Intel Ubuntu validation passed. MCP initialized, listed tools, and
+  <code>get_scene_info</code> returned the default scene containing <code>Cube</code>, <code>Light</code>, and
+  <code>Camera</code>. <code>execute_blender_code</code> created <code>WrightValidationCube</code> at
+  <code>(1.0, 2.0, 3.0)</code>, and <code>get_object_info</code> verified the cube mesh with 8
+  vertices, 12 edges, and 6 polygons. <code>blender-mcp-ahujasid</code> is now classified
+  as <code>tested</code> for Linux x64, with cloud/asset services still left for separate
+  credential/network testing.</p>
+<p>Problem:
+  <code>multiCAD MCP</code> was seeded with command <code>python multicad_mcp.py</code>, but the
+  repository README uses <code>python src/server.py</code> after <code>uv sync --dev</code> and
+  <code>pywin32</code> installation.</p>
+<p>Solution:
+  Clone <code>https://github.com/AnCode666/multiCAD-mcp</code> in a clean Intel Ubuntu
+  container and inspect the package metadata, README, and source layout.</p>
+<p>Result:
+  The repository cloned at commit <code>360ec77c970ec95a962bd4d0a3238715ee78dd7c</code>.
+  The package is <code>multiCAD-mcp</code> version <code>0.2.0</code>, and the validated entrypoint is
+  <code>python src/server.py</code>.</p>
+<p>Problem:
+  <code>multiCAD MCP</code> cannot install or start in the Intel Ubuntu container because
+  it is a Windows COM bridge. The package declares <code>pywin32&gt;=300</code>, and source
+  imports raise <code>ImportError: AutoCAD adapter requires Windows OS with COM
+  support</code> on non-Windows platforms.</p>
+<p>Solution:
+  Treat Windows, <code>pywin32</code>, Windows COM, and a supported CAD host as selected
+  MCP dependencies. Test Linux only to the dependency boundary: exact
+  <code>pip install -e '.[dev]'</code>, source install with <code>--no-deps</code> plus non-Windows
+  dependencies, upstream unit collection, and direct server startup.</p>
+<p>Result:
+  Exact <code>pip install -e '.[dev]'</code> failed because <code>pywin32&gt;=300</code> has no Linux
+  distribution. Installing the source with <code>--no-deps</code> plus non-Windows
+  dependencies succeeded, but upstream unit collection failed with
+  <code>ImportError: AutoCAD adapter requires Windows OS with COM support</code>.
+  <code>python src/server.py --help</code> and direct startup both exited before MCP
+  initialization with the same diagnostic, so no MCP <code>initialize</code> or
+  <code>tools/list</code> calls were possible in Linux. <code>multicad-mcp</code> remains
+  <code>might_work</code> with <code>dependency_missing</code> validation for Linux x64 and explicit
+  Windows/COM/CAD host requirements.</p>
+<p>Problem:
+  <code>CAD-MCP Universal</code> was originally treated like a URL-needed seed, but the
+  catalog row has a concrete source URL:
+  <code>https://github.com/daobataotie/CAD-MCP</code>. The seeded command
+  <code>python cad_mcp.py</code> did not match the repository README.</p>
+<p>Solution:
+  Clone the upstream repo in a clean Intel Ubuntu container and use the README
+  command path, <code>python src/server.py</code>.</p>
+<p>Result:
+  The catalog command now matches the repository layout. The repo was validated
+  at commit <code>352541820a56823568a90993dd773e7014205f44</code>.</p>
+<p>Problem:
+  <code>CAD-MCP Universal</code> cannot install or start in the Ubuntu container because it
+  is a Windows COM bridge. <code>requirements.txt</code> requires <code>pywin32&gt;=228</code>, and
+  <code>src/cad_controller.py</code> imports <code>win32com.client</code> and <code>pythoncom</code> at import
+  time.</p>
+<p>Solution:
+  Test dependency resolution with Python 3.12 inside the clean Intel Ubuntu
+  container. Then install only the platform-neutral dependencies and attempt
+  <code>python src/server.py</code> to capture the exact startup boundary.</p>
+<p>Result:
+  <code>pip install -r requirements.txt</code> failed with
+  <code>ERROR: Could not find a version that satisfies the requirement pywin32&gt;=228</code>
+  and <code>ERROR: No matching distribution found for pywin32&gt;=228</code>. Installing only
+  <code>mcp</code>, <code>pydantic</code>, and <code>typing</code> succeeded, but <code>python src/server.py</code> exited
+  before MCP initialization with <code>ModuleNotFoundError: No module named
+  'win32com'</code> from <code>src/cad_controller.py</code>. <code>cad-mcp-daobataotie</code> remains
+  <code>might_work</code> with <code>dependency_missing</code> validation for Linux x64 and explicit
+  Windows/CAD host requirements.</p>
+<p>Problem:
+  <code>Creo/CadQuery MCP</code> was seeded as a generic Creo desktop bridge, but the
+  verified repository is <code>https://github.com/yangkunyi/creo-mcp</code>, a Python
+  package that exposes local CadQuery code execution, optional Creo file
+  opening through CREOSON, and an optional Volcengine knowledge-base query.</p>
+<p>Solution:
+  Validate the real user command shape with <code>uvx creo-mcp --authorization ...
+  --service-resource-id ...</code>, and validate the source checkout with Python 3.12
+  plus the repository's <code>pip install -e .</code> path in a clean Intel Ubuntu
+  container.</p>
+<p>Result:
+  Fresh validation cloned commit <code>1a2f164c88c896c0b98a8edec36a7dc4e2eb06ff</code>.
+  No upstream tests were present. The catalog/API command now uses <code>uvx
+  creo-mcp --authorization ${VOLCENGINE_AUTHORIZATION} --service-resource-id
+  ${VOLCENGINE_SERVICE_RESOURCE_ID}</code>.</p>
+<p>Problem:
+  The first <code>creo-mcp</code> startup failed before MCP initialization because the
+  CadQuery/OCP stack needed a Linux OpenGL runtime library:
+  <code>ImportError: libGL.so.1: cannot open shared object file: No such file or
+  directory</code>.</p>
+<p>Solution:
+  Install <code>libgl1</code> as a selected-server runtime dependency for this MCP only.</p>
+<p>Result:
+  After <code>apt-get install -y libgl1</code>, MCP initialized as
+  <code>python-code-executor</code> version <code>1.28.1</code> and listed 3 tools:
+  <code>execute_python_code</code>, <code>open_file_in_cad</code>, and
+  <code>retrieve_from_knowledge_base</code>.</p>
+<p>Problem:
+  <code>creo-mcp</code> needed a real backend-touching operation before classification,
+  but the Intel Ubuntu container does not have Creo desktop, CREOSON, or real
+  Volcengine credentials.</p>
+<p>Solution:
+  Call a local CadQuery operation through <code>execute_python_code</code>, then call the
+  two dependency-boundary tools with dummy inputs to capture exact diagnostics:
+  <code>open_file_in_cad</code> for CREOSON/Creo and <code>retrieve_from_knowledge_base</code> for
+  Volcengine.</p>
+<p>Result:
+  <code>execute_python_code</code> exported <code>/tmp/wright_creo_box.step</code> at 15418 bytes.
+  <code>open_file_in_cad</code> returned the expected CREOSON connection-refused
+  diagnostic for <code>localhost:9056</code>. <code>retrieve_from_knowledge_base</code> reached the
+  Volcengine endpoint and returned <code>400 Client Error: Bad Request</code> with dummy
+  credentials. The entry is classified as <code>might_work</code> with validation status
+  <code>dependency_missing</code>; local CadQuery is validated, but full Creo/CREOSON and
+  Volcengine workflows require user-provided host software and credentials.</p>
+<p>Problem:
+  <code>CREOSON JSON-RPC Server</code> was listed as an MCP server with <code>java -jar
+  creoson.jar</code>, but the upstream project is a Creo JSON/JLINK bridge, not an
+  MCP protocol server.</p>
+<p>Solution:
+  Validate the source and the user-facing release ZIP in a clean Intel Ubuntu
+  container. Source cloned at commit
+  <code>1939a585a1fcc94b6c05586af92c2da00adebdb0</code>. Latest release <code>v3.0.1</code> asset
+  <code>CreosonServer-3.0.1-win64.zip</code> downloaded and unpacked.</p>
+<p>Result:
+  Source build instructions require Creo JLINK <code>text/java/pfcasync.jar</code>,
+  CreosonSetup ZIPs, Commons Codec, and Jackson jars. The release ZIP contains
+  <code>CreosonServer-3.0.0.jar</code>, support JARs, <code>creoson_run.bat</code>, and
+  <code>jshellnative.dll</code>. <code>java -jar CreosonServer-3.0.0.jar</code> failed with
+  <code>no main manifest attribute</code>. Calling the actual main class
+  <code>com.simplifiedlogic.nitro.jshell.MainServer</code> with the release JARs failed
+  with <code>NoClassDefFoundError: com/ptc/cipjava/jxthrowable</code>, the expected missing
+  Creo/JLINK Java class. No MCP <code>initialize</code> or <code>tools/list</code> calls could be
+  made because CREOSON does not implement MCP stdio/SSE. The catalog records it
+  as a blocked capability alias and keeps it as middleware for Creo MCPs.</p>
+<p>Problem:
+  <code>CAiD OpenCASCADE</code> was seeded with <code>uvx caid-mcp</code>, but the package does not
+  provide a console script. <code>uv tool run caid-mcp --help</code> installed
+  dependencies and then reported: <code>Package caid-mcp does not provide any
+  executables.</code></p>
+<p>Solution:
+  Use the upstream README launch path: clone the repository and run
+  <code>python server.py</code> from the repo environment.</p>
+<p>Result:
+  Catalog command metadata now uses <code>python server.py</code>.</p>
+<p>Problem:
+  Installing the README dependency <code>caid</code> from PyPI allowed package installation
+  after adding <code>libgl1</code>, but MCP startup and tests failed with
+  <code>ModuleNotFoundError: No module named 'caid.vector'</code>.</p>
+<p>Solution:
+  Inspect the linked CAiD source repository and install CAiD from GitHub instead
+  of the current PyPI artifact:
+  <code>uv pip install -e /tmp/CAiD</code>.</p>
+<p>Result:
+  The GitHub CAiD source includes <code>caid/vector.py</code>, imports succeeded, and the
+  MCP server could start.</p>
+<p>Problem:
+  CAiD/OCP import initially failed in the clean Intel Ubuntu container with
+  <code>ImportError: libGL.so.1: cannot open shared object file</code>.</p>
+<p>Solution:
+  Install <code>libgl1</code> as a selected-server native dependency for CAiD.</p>
+<p>Result:
+  CAiD and OCP imported successfully.</p>
+<p>Problem:
+  <code>CAiD OpenCASCADE</code> needed a real backend operation before it could be marked
+  fully tested.</p>
+<p>Solution:
+  In a clean Intel Ubuntu container, install <code>libgl1</code>, CAiD from GitHub commit
+  <code>840d9ece24499dca4d1cc6b7a7aef2b88a203f14</code>, and caid-mcp from commit
+  <code>bb863e9fe64f951fac9d59daed26254544682bc3</code>; run upstream tests and probe MCP.</p>
+<p>Result:
+  72 upstream MCP tests passed. MCP initialized, listed 107 tools, <code>create_box</code>
+  returned <code>ok:true</code> with <code>volume_mm3:480.0</code>, and scene query reported
+  <code>wright_box</code> at 10 x 8 x 6 mm. <code>caid-opencascade-dreliq9</code> is now classified
+  as <code>tested</code> for Linux x64.</p>
+<p>Problem:
+  <code>CalculiX Simulation</code> was seeded with
+  <code>https://github.com/calculix/calculix-mcp</code> and command
+  <code>uv run calculix-mcp</code>, but the research handoff described the row as a
+  FreeCAD FEM capability alias or wrapper candidate rather than a verified
+  standalone MCP server.</p>
+<p>Solution:
+  Check both the configured repository and package name in a clean Intel Ubuntu
+  container.</p>
+<p>Result:
+  <code>git clone https://github.com/calculix/calculix-mcp</code> failed with a GitHub
+  credential prompt, consistent with a missing or private repo, and
+  <code>uv tool run calculix-mcp --help</code> reported that <code>calculix-mcp</code> was not found
+  in the package registry. <code>calculix-simulation</code> is now classified as <code>blocked</code>
+  until a concrete standalone MCP source is verified. No non-working follow-up
+  record was created because this is currently not an installable MCP server.</p>
+<p>Problem:
+  <code>Easy-MCP-AutoCAD</code> was seeded with a URL-needed status and command
+  <code>python easy_mcp_autocad.py</code>, but the current catalog has a real source URL
+  and the repository README uses <code>python server.py</code>.</p>
+<p>Solution:
+  Clone <code>https://github.com/zh19980811/Easy-MCP-AutoCad</code> in a clean Intel
+  Ubuntu container and inspect the repository layout and README.</p>
+<p>Result:
+  The repository cloned at commit <code>332215b91e976c1738dfd3940e9f9770c0fd5856</code>.
+  The catalog command now uses <code>python server.py</code>.</p>
+<p>Problem:
+  <code>Easy-MCP-AutoCAD</code> cannot install or start in the Intel Ubuntu container. The
+  README requires Windows OS and AutoCAD 2018+ with COM support, and
+  <code>server.py</code> imports <code>win32com.client</code> at module import time.</p>
+<p>Solution:
+  Test both declared Python install paths with Python 3.13:
+  <code>uv pip install -r requirements.txt</code> and <code>uv pip install -e .</code>.</p>
+<p>Result:
+  Both dependency installs failed because <code>pywin32</code> has no Linux wheels.
+  A fresh check on commit <code>332215b91e976c1738dfd3940e9f9770c0fd5856</code>
+  confirmed <code>pip install -r requirements.txt</code> cannot resolve <code>pywin32</code> on
+  Linux, and <code>uv pip install -e .</code> with Python 3.13 reports that
+  <code>pywin32&gt;=309</code> only has <code>win32</code>, <code>win_amd64</code>, and <code>win_arm64</code> wheels.
+  After installing only non-Windows dependencies, direct <code>python server.py</code>
+  failed at module import with <code>ModuleNotFoundError: No module named
+  'win32com'</code>. <code>easy-mcp-autocad</code> remains <code>might_work</code> with
+  <code>dependency_missing</code> validation for Linux x64 and explicit
+  Windows/AutoCAD host requirements.</p>
+<p>Problem:
+  <code>FreeCAD Booleans</code> was seeded with command <code>uvx freecad-mcp-server</code>, but the
+  source repo <code>https://github.com/lucygoodchild/freecad-mcp-server</code> is a
+  Node/TypeScript MCP server. <code>uv tool run freecad-mcp-server --help</code> reported
+  the package was not found in the Python package registry.</p>
+<p>Solution:
+  Use the repository README path: <code>npm install</code>, <code>npm run build</code>, and
+  <code>node build/index.js</code>.</p>
+<p>Result:
+  The TypeScript server built successfully and initialized over MCP stdio,
+  listing 7 tools.</p>
+<p>Problem:
+  <code>FreeCAD Booleans</code> requires FreeCAD for backend operations. Without FreeCAD,
+  <code>list_objects</code> started backend initialization and reported <code>spawn freecad
+  ENOENT</code>.</p>
+<p>Solution:
+  Install FreeCAD as a selected-server dependency. The current Ubuntu apt
+  repository did not provide a <code>freecad</code> package, so use the FreeCAD 1.1.1
+  Linux x86_64 AppImage and symlink its extracted <code>freecadcmd</code> to
+  <code>/usr/bin/freecadcmd</code>, which the server auto-detects.</p>
+<p>Result:
+  The server detected <code>Using FreeCAD at: /usr/bin/freecadcmd</code>.</p>
+<p>Problem:
+  <code>FreeCAD Booleans</code> needed a real backend operation before being marked fully
+  tested.</p>
+<p>Solution:
+  With FreeCAD 1.1.1 AppImage available, call <code>create_box</code> for a 10 x 8 x 6 mm
+  <code>WrightBox</code>, then call <code>list_objects</code>.</p>
+<p>Result:
+  Clean Intel Ubuntu validation passed with a caveat. <code>create_box</code> reported
+  <code>SUCCESS: Created box: WrightBox with dimensions 10x8x6mm</code>, and
+  <code>list_objects</code> reported FreeCAD Part boxes. The server also writes operational
+  log lines to stdout during tool calls, which is a stdio protocol risk for
+  strict clients. <code>freecad-booleans-lucygoodchild</code> is now classified as
+  <code>tested</code> for Linux x64 with that caveat recorded.</p>
+<p>Problem:
+  <code>FreeCAD Core</code> starts as a Python MCP server, but backend operations require
+  the separate FreeCADMCP addon RPC server inside FreeCAD. Without that backend,
+  the MCP initialized and listed tools, but <code>get_objects</code> reported connection
+  refused on localhost.</p>
+<p>Solution:
+  Treat FreeCAD and the addon as selected-server dependencies. Install FreeCAD
+  1.1.1 from the Linux x86_64 AppImage, copy <code>addon/FreeCADMCP</code> into FreeCAD
+  user Mod directories, and write <code>freecad_mcp_settings.json</code> with
+  <code>auto_start_rpc: true</code> and localhost-only access.</p>
+<p>Result:
+  FreeCAD launched under Xvfb and the addon opened localhost port 9875 after 4
+  seconds.</p>
+<p>Problem:
+  In Ubuntu 24.04, <code>python3 -m pip install --break-system-packages --upgrade
+  pip uv</code> failed because the apt-managed <code>pip 24.0</code> package has no Python wheel
+  <code>RECORD</code> file and cannot be uninstalled by pip.</p>
+<p>Solution:
+  Leave system pip alone and install only the selected user-space tool with
+  <code>python3 -m pip install --break-system-packages uv</code>.</p>
+<p>Result:
+  <code>uv 0.11.25 (x86_64-unknown-linux-gnu)</code> installed successfully without
+  disturbing apt's pip package.</p>
+<p>Problem:
+  The current Ubuntu apt repository did not provide a directly installable
+  <code>freecad</code> package for this container flow.</p>
+<p>Solution:
+  Use the FreeCAD 1.1.1 Linux x86_64 AppImage as the selected-server backend
+  install path, extract it, and launch the extracted <code>usr/bin/freecad</code> under
+  Xvfb.</p>
+<p>Result:
+  <code>/tmp/freecad-appimage/squashfs-root/usr/bin/freecadcmd --version</code> reported
+  FreeCAD 1.1.1 revision <code>20260414</code>.</p>
+<p>Problem:
+  The FreeCAD 1.1.1 AppImage download from SourceForge can exceed a short
+  command timeout; the first validation command timed out while <code>curl</code> was still
+  writing the AppImage.</p>
+<p>Solution:
+  Check the container process and file state, wait for <code>curl</code> to finish, then
+  extract the completed AppImage instead of restarting the whole container.</p>
+<p>Result:
+  The AppImage completed at 783 MB, extracted successfully, and reported FreeCAD
+  1.1.1 revision <code>20260414</code>.</p>
+<p>Problem:
+  <code>FreeCAD Core</code> needed a real backend operation before it could be marked fully
+  tested.</p>
+<p>Solution:
+  In a clean Intel Ubuntu container, run <code>uv tool run freecad-mcp
+  --only-text-feedback</code>, initialize MCP, list tools, call <code>create_document</code>,
+  call <code>create_object</code> for a 10 x 8 x 6 mm <code>Part::Box</code>, then call
+  <code>get_objects</code>.</p>
+<p>Result:
+  Clean Intel Ubuntu validation passed. Repository commit
+  <code>63acb305573194a011641ab13ccfb391fe95769f</code> listed 14 tools through MCP
+  serverInfo <code>FreeCADMCP</code> version <code>1.28.1</code>; <code>list_documents</code> returned <code>[]</code>;
+  <code>create_document</code> created <code>WrightDoc</code>, <code>create_object</code> created <code>WrightBox</code>,
+  and <code>get_objects</code> reported <code>WrightBox</code> as <code>Part::Box</code> with volume <code>480.0</code>.
+  Package <code>freecad-mcp</code> was version <code>0.1.18</code>; no upstream tests were present;
+  Ubuntu's missing <code>freecad</code> apt candidate was handled by installing FreeCAD
+  1.1.1 revision <code>20260414</code> from the Linux x86_64 AppImage.
+  <code>freecad-core-nekanat</code> and Hermes alias <code>freecad-mcp-nekanat</code> are now
+  classified as <code>tested</code> for Linux x64.</p>
+<p>Problem:
+  The minimal Ubuntu container emitted locale and fontconfig warnings when
+  launching FreeCAD AppImage under Xvfb.</p>
+<p>Solution:
+  Record the warnings as non-blocking for this validation path. They did not
+  prevent RPC startup, MCP initialization, or modeling commands.</p>
+<p>Result:
+  No catalog downgrade is needed for the warnings.</p>
+<p>Problem:
+  <code>FreeCAD Robust</code> was seeded with command
+  <code>uvx freecad-addon-robust-mcp-server</code>, but the GitHub repository name is not
+  the PyPI executable path.</p>
+<p>Solution:
+  Verify the package with <code>uv tool run --from freecad-robust-mcp
+  freecad-mcp --help</code>.</p>
+<p>Result:
+  The installable package is <code>freecad-robust-mcp</code> and the executable is
+  <code>freecad-mcp</code>. The catalog command now uses
+  <code>uv tool run --from freecad-robust-mcp freecad-mcp</code>.</p>
+<p>Problem:
+  <code>FreeCAD Robust</code> requires a FreeCAD-side bridge before backend operations can
+  run. The MCP server alone is only the client side of the bridge.</p>
+<p>Solution:
+  Use the upstream source bridge script with the selected FreeCAD backend:
+  <code>freecadcmd freecad/RobustMCPBridge/freecad_mcp_bridge/blocking_bridge.py</code>.</p>
+<p>Result:
+  The bridge started in headless mode and advertised XML-RPC on localhost port
+  9875 and socket mode on localhost port 9876.</p>
+<p>Problem:
+  A raw XML-RPC <code>ping()</code> probe was not a reliable readiness check for this
+  bridge even though the TCP port was open and the bridge log reported startup.</p>
+<p>Solution:
+  Use the MCP package's own connection check:
+  <code>FREECAD_MODE=xmlrpc FREECAD_SOCKET_HOST=127.0.0.1 uv tool run --from
+  freecad-robust-mcp freecad-mcp --check</code>.</p>
+<p>Result:
+  The command reported <code>Connection successful</code>, FreeCAD version <code>1.1.1</code>, and
+  GUI availability <code>0</code>, matching the expected headless backend.</p>
+<p>Problem:
+  <code>FreeCAD Robust</code> needed a real backend operation before it could be marked
+  fully tested.</p>
+<p>Solution:
+  In a clean Intel Ubuntu container, install FreeCAD 1.1.1 AppImage, start the
+  Robust MCP Bridge with <code>freecadcmd</code>, run the MCP in XML-RPC mode, initialize
+  MCP, list tools, create a document, create a 10 x 8 x 6 mm box, and list
+  objects.</p>
+<p>Result:
+  Clean Intel Ubuntu validation passed. Repository commit
+  <code>d9a37118a8331e8739ad45fd97d027437984296f</code> initialized MCP serverInfo
+  <code>freecad-mcp</code> version <code>1.28.1</code>, listed 152 tools, created <code>WrightDoc</code>,
+  created <code>WrightBox</code> as <code>Part::Box</code> with volume <code>480.0</code>, and <code>list_objects</code>
+  returned <code>WrightBox</code>. Source package <code>freecad-robust-mcp</code> installed as
+  version <code>0.1.dev1+gd9a37118a</code>, upstream unit tests passed with 420 tests, and
+  Ubuntu's missing <code>freecad</code> apt candidate was handled by installing FreeCAD
+  1.1.1 revision <code>20260414</code> from the Linux x86_64 AppImage.
+  <code>freecad-robust-spkane</code> is now classified as <code>tested</code> for Linux x64.</p>
+<p>Problem:
+  <code>KiCad MCP</code> was seeded with command <code>uv run python main.py</code>, matching the
+  README, but that path failed in the clean Intel Ubuntu validation container.</p>
+<p>Solution:
+  Verify the package console script and use the GitHub install-style command:
+  <code>uv tool run --from git+https://github.com/lamaalrajih/kicad-mcp.git
+  kicad-mcp</code>.</p>
+<p>Result:
+  The GitHub package installed from commit
+  <code>98c9ea41cb393393a8bafd157a93e84431e00afb</code> and started the MCP server. The
+  <code>python main.py</code> path raised <code>ValueError: a coroutine was expected, got None</code>.</p>
+<p>Problem:
+  <code>KiCad MCP</code> needed basic protocol validation before testing KiCad-backed
+  operations.</p>
+<p>Solution:
+  Create a sample project directory with <code>.kicad_pro</code>, <code>.kicad_pcb</code>, and
+  <code>.kicad_sch</code> files, set <code>KICAD_SEARCH_PATHS</code>, then call <code>initialize</code>,
+  <code>tools/list</code>, <code>list_projects</code>, and <code>get_project_structure</code>.</p>
+<p>Result:
+  MCP initialized as server <code>KiCad</code> version <code>1.11.0</code>, listed 16 tools,
+  discovered sample project <code>WrightBoard</code>, and returned the sample project
+  files. Read-only project discovery works.</p>
+<p>Problem:
+  Backend-touching and analysis tools are not callable by a normal MCP client.
+  11 of 16 tools expose <code>ctx</code> as a required input property, including DRC, BOM,
+  netlist, thumbnail, and pattern-analysis tools.</p>
+<p>Solution:
+  Attempt a normal MCP client call to <code>run_drc_check</code> with only the documented
+  <code>project_path</code> argument.</p>
+<p>Result:
+  <code>run_drc_check</code> failed before KiCad CLI execution with
+  <code>Input validation error: 'ctx' is a required property</code>. <code>kicad-mcp-lamaalrajih</code>
+  is now classified as <code>non_working</code> until the tool schemas hide or inject
+  FastMCP context parameters.</p>
+<p>Problem:
+  Upstream tests fail the default validation command even without running KiCad
+  backend operations.</p>
+<p>Solution:
+  Run both the default and no-coverage forms.</p>
+<p>Result:
+  <code>uv run pytest -q</code> executed 37 tests and skipped 2, then failed the configured
+  80% coverage gate with 10.04% total coverage. <code>uv run pytest -q --no-cov</code>
+  passed with 37 passed and 2 skipped.</p>
+<p>Problem:
+  The upstream README requires KiCad 9.0+, but Ubuntu 24.04 default apt only
+  offers KiCad 7.0.11.</p>
+<p>Solution:
+  Record the backend dependency mismatch and defer full KiCad CLI validation
+  until the MCP schema issue is fixed.</p>
+<p>Result:
+  No KiCad 9 backend validation was attempted for this pass because the MCP
+  schema blocks normal calls before <code>kicad-cli</code> is reached.</p>
+<p>Problem:
+  <code>ROSBag MCP</code> was seeded with command <code>python -m mcp_rosbags</code>, but no
+  <code>mcp-rosbags</code> or <code>mcp_rosbags</code> package tool was found in the Python registry.</p>
+<p>Solution:
+  Clone the verified source repository and use the README source command path
+  with <code>PYTHONPATH</code> set to the repo <code>src</code> directory.</p>
+<p>Result:
+  The catalog command now records the source-run command <code>python src/server.py</code>.</p>
+<p>Problem:
+  The default source install failed at MCP startup after installing
+  <code>requirements.txt</code> because the current unpinned <code>rosbags</code> dependency no
+  longer exports <code>deserialize_cdr</code>.</p>
+<p>Solution:
+  Apply a selected-server dependency pin after installing requirements:
+  <code>uv pip install --reinstall rosbags==0.10.10</code>.</p>
+<p>Result:
+  The import succeeded and the server started.</p>
+<p>Problem:
+  <code>ROSBag MCP</code> needed a real bag-reading operation before it could be marked
+  fully tested.</p>
+<p>Solution:
+  Generate a small ROS 2 bag with two <code>/chatter</code> <code>std_msgs/msg/String</code> messages
+  using the <code>rosbags</code> writer, then call <code>list_bags</code>, <code>bag_info</code>, and
+  <code>get_message_at_time</code> over MCP.</p>
+<p>Result:
+  Clean Intel Ubuntu validation passed. Repository commit
+  <code>9b6b3b7a7b10d2ef004c1b50d38395d07e0b47b6</code> initialized MCP serverInfo
+  <code>rosbag-memory</code> version <code>1.28.1</code>, listed 15 tools, discovered generated bag
+  <code>wright_chatter</code>, <code>bag_info</code> reported topic <code>/chatter</code> with 2 messages over 1
+  second, and <code>get_message_at_time</code> returned <code>std_msgs/msg/String</code> data
+  <code>hello</code>. <code>rosbag-mcp-binabik</code> is now classified as <code>tested</code> for Linux x64
+  with the <code>rosbags==0.10.10</code> dependency pin recorded.</p>
+<p>Problem:
+  The next desired FEA MCP candidate was found under the research name
+  <code>Open FEM Agent</code>, but the current GitHub URL redirects to the canonical
+  OASiS repository.</p>
+<p>Solution:
+  Use <code>https://github.com/Hereon-InstituteMS/OASiS</code> as the source URL and keep
+  <code>Open FEM Agent</code> / <code>Open-FEM-agent</code> as aliases in catalog documentation.</p>
+<p>Result:
+  Clean Intel Ubuntu validation cloned commit
+  <code>117c35769c0eb00181db003e8dcdc305546b08b7</code> and installed OASiS from source
+  with <code>pip install -e .</code>.</p>
+<p>Problem:
+  OASiS exposes eight solver backends, but installing every advertised solver
+  would violate the selected-server process and pull in heavy or
+  host-specific software.</p>
+<p>Solution:
+  Install the MCP base package first, call <code>discover</code>, then install only one
+  lightweight backend for full validation: <code>pip install scikit-fem</code>.</p>
+<p>Result:
+  Base <code>discover</code> returned clear not-installed diagnostics for optional
+  backends, including FEniCSx, deal.II, FEBio, NGSolve, scikit-fem, Kratos,
+  DUNE-fem, and 4C. After installing <code>scikit-fem==12.0.2</code>, <code>discover</code> reported
+  <code>skfem</code> available while the other optional backends remained cleanly
+  diagnosed as not installed.</p>
+<p>Problem:
+  The upstream focused MCP stdio test could not run immediately after
+  <code>pip install -e .</code>.</p>
+<p>Solution:
+  Install the upstream test runner inside the selected-server virtual
+  environment: <code>pip install pytest</code>.</p>
+<p>Result:
+  <code>PYTHONPATH=src PYVISTA_OFF_SCREEN=true pytest tests/test_mcp_stdio.py -q</code>
+  passed with 5 tests.</p>
+<p>Problem:
+  OASiS needed a real backend-touching FEA call before it could be marked
+  fully tested.</p>
+<p>Solution:
+  Call <code>initialize</code>, <code>tools/list</code>, <code>discover</code>, <code>prepare_simulation</code> for
+  <code>solver=skfem</code> and <code>physics=poisson</code>, then call <code>run_simulation</code> with the
+  upstream scikit-fem Poisson smoke script.</p>
+<p>Result:
+  MCP initialized as serverInfo <code>OASiS</code> version <code>1.28.1</code>, listed 15 tools,
+  returned Poisson knowledge/pitfalls, completed the scikit-fem Poisson solve
+  in 0.46 seconds, wrote <code>result.vtu</code>, and reported
+  <code>max_phi 0.07389930610869422</code>. <code>oasis-open-fem-agent</code> is now classified as
+  <code>tested</code> for Linux x64 with scikit-fem as the validated backend.</p>
+<p>Problem:
+  <code>SolidWorks API Docs</code> was seeded as a Python/uvx command, but the verified
+  source is a Bun/TypeScript MCP server with a local documentation corpus.</p>
+<p>Solution:
+  Clone <code>https://github.com/kilwizac/solidworks-api-mcp</code>, install Bun, run
+  <code>bun install</code>, and launch from the clone with <code>bun run start</code>. Set
+  <code>SW_API_DATA_ROOT</code> only when overriding the default <code>solidworks-api</code>
+  directory.</p>
+<p>Result:
+  Catalog command is now recorded as <code>bun run start</code>. The server does not
+  require SolidWorks desktop software because it only searches local
+  documentation data.</p>
+<p>Problem:
+  The Bun installer failed in the clean Ubuntu container because <code>unzip</code> was
+  not installed.</p>
+<p>Solution:
+  Install <code>unzip</code> as a selected-server setup dependency before running
+  <code>curl -fsSL https://bun.sh/install | bash</code>.</p>
+<p>Result:
+  Bun installed successfully as version <code>1.3.14</code>.</p>
+<p>Problem:
+  Sourcing <code>/root/.bashrc</code> after installing Bun failed in the noninteractive
+  script with <code>PS1: unbound variable</code> under <code>set -u</code>.</p>
+<p>Solution:
+  Export Bun's path directly instead of sourcing the profile:
+  <code>export PATH=/root/.bun/bin:$PATH</code>.</p>
+<p>Result:
+  <code>bun install</code>, <code>bun run typecheck</code>, and <code>bun run test</code> ran successfully.</p>
+<p>Problem:
+  <code>SolidWorks API Docs</code> needed real MCP calls against the local documentation
+  corpus before it could be marked fully tested.</p>
+<p>Solution:
+  Start <code>bun run start</code> over stdio and call <code>initialize</code>, <code>tools/list</code>,
+  <code>solidworks_search_api</code>, <code>solidworks_get_interface_members</code>,
+  <code>solidworks_lookup_method</code>, and <code>solidworks_get_examples</code>.</p>
+<p>Result:
+  Clean Intel Ubuntu validation passed. Repository commit
+  <code>f5a0ccf63337187695b3461cb750977be7d860f6</code> initialized MCP serverInfo
+  <code>solidworks-mcp</code> version <code>0.1.0</code>, listed 6 tools, searched for
+  <code>OpenDoc6 model document</code>, listed 333 <code>ISldWorks</code> members, returned
+  structured docs for <code>ISldWorks.OpenDoc6</code>, and returned OpenDoc6 examples.
+  Upstream typecheck passed and upstream tests passed 40/40.
+  <code>solidworks-api-docs</code> is now classified as <code>tested</code> for Linux x64.</p>
+<p>Problem:
+  <code>onshape-mcp-hedless</code> was seeded as an SSE endpoint, but the verified source
+  repository is a Python stdio MCP server.</p>
+<p>Solution:
+  Clone <code>https://github.com/hedless/onshape-mcp</code>, install with
+  <code>pip install -e .</code>, and launch with <code>python -m onshape_mcp.server</code>.</p>
+<p>Result:
+  Catalog command is now recorded as <code>python -m onshape_mcp.server</code>, with
+  required <code>ONSHAPE_ACCESS_KEY</code> and <code>ONSHAPE_SECRET_KEY</code> environment variables.</p>
+<p>Problem:
+  Full Onshape CAD operations require cloud API credentials that are not
+  available in the validation container.</p>
+<p>Solution:
+  Validate install/start/tool-list behavior without credentials, then call a
+  real API-touching tool (<code>list_documents</code>) to confirm the credential failure
+  is clear and expected.</p>
+<p>Result:
+  Clean Intel Ubuntu validation installed commit
+  <code>54d21ccc4a5376f692cddd01959305be01e40a53</code>, initialized MCP serverInfo
+  <code>onshape-mcp</code> version <code>1.28.1</code>, listed 45 tools, and <code>list_documents</code>
+  returned <code>API returned 401. Please check your API credentials.</code>
+  <code>onshape-mcp-hedless</code> remains <code>might_work</code> with validation status
+  <code>dependency_missing</code> until credentials are available for full cloud testing.</p>
+<p>Problem:
+  Upstream tests needed the development extras, not just the runtime install.</p>
+<p>Solution:
+  Run <code>pip install -e .[dev]</code> before <code>pytest -q</code>.</p>
+<p>Result:
+  Upstream tests passed with 497 tests and 86.28% coverage.</p>
+<p>Problem:
+  <code>jarvis-onshape-mcp</code> was still classified as URL-needed/blocked in the API
+  metadata even though the catalog source URL points to a real installable
+  repository: <code>https://github.com/ReshefElisha/jarvis-onshape-mcp</code>.</p>
+<p>Solution:
+  Validate the GitHub install path in a clean Intel Ubuntu container using
+  <code>uv run --with git+https://github.com/ReshefElisha/jarvis-onshape-mcp.git
+  onshape-mcp</code>, and test the source checkout with <code>uv sync --extra dev</code>.</p>
+<p>Result:
+  Fresh validation cloned commit <code>b0e725852280ebcfda5d46a4f2ed2d0b720beace</code>.
+  The package is <code>onshape-mcp</code> version 1.2.0. Upstream tests passed 698/698
+  with 3 Pydantic deprecation warnings.</p>
+<p>Problem:
+  Full Jarvis Onshape validation requires live Onshape API credentials, which
+  are not available in the clean Intel Ubuntu validation container.</p>
+<p>Solution:
+  Use dummy <code>ONSHAPE_API_KEY</code> and <code>ONSHAPE_API_SECRET</code> values to validate MCP
+  startup, tool discovery, a local/read-only MCP call, and cloud API credential
+  boundaries.</p>
+<p>Result:
+  MCP initialized as serverInfo <code>onshape-mcp</code> version <code>1.17.0</code>, listed 69
+  tools, and <code>list_cached_images</code> returned the expected empty-cache message.
+  <code>list_documents</code> reached <code>https://cad.onshape.com/api/v6/documents</code> and
+  returned <code>API returned 401. Please check your API credentials.</code>.
+  <code>create_document</code> reached <code>https://cad.onshape.com/api/v10/documents</code> and
+  returned <code>Unauthenticated API request</code>. <code>jarvis-onshape-mcp</code> is now
+  classified as <code>might_work</code> with validation status <code>dependency_missing</code> until
+  real Onshape credentials are available.</p>
+<p>Problem:
+  <code>zoo-dev-cloud-cad</code> / <code>zoo-mcp</code> was seeded as a Node <code>npx</code> command, but the
+  verified repository is a Python/uv stdio MCP server.</p>
+<p>Solution:
+  Clone <code>https://github.com/KittyCAD/zoo-mcp</code>, install with <code>uv sync --dev</code>,
+  and use <code>uvx zoo-mcp</code> for user install/start or <code>uv run python -m zoo_mcp</code>
+  when validating from a source checkout.</p>
+<p>Result:
+  Catalog command is now recorded as <code>uvx zoo-mcp</code>, with required
+  <code>ZOO_API_TOKEN</code>.</p>
+<p>Problem:
+  Zoo MCP constructs the KittyCAD client during import, so missing credentials
+  fail before the MCP handshake instead of returning a tool-level diagnostic.</p>
+<p>Solution:
+  Validate the no-token path separately, then use a dummy <code>ZOO_API_TOKEN</code> for
+  MCP initialization, tool listing, and credential-limited backend calls.</p>
+<p>Result:
+  No-token startup failed with <code>No API token provided. Either pass token
+  parameter or set KITTYCAD_API_TOKEN or ZOO_API_TOKEN environment variable.</code>
+  With a dummy token, MCP initialized as <code>Zoo MCP Server</code> version <code>1.27.1</code>,
+  listed 30 tools, and <code>calculate_volume</code> returned a clear Zoo API
+  bad-authentication diagnostic.</p>
+<p>Problem:
+  Passing pytest marker expression <code>-m "not live"</code> through PowerShell and
+  <code>docker exec bash -lc</code> was reduced to <code>not</code>, causing pytest expression
+  parsing to fail.</p>
+<p>Solution:
+  Bypass shell quoting by invoking pytest through Python:
+  <code>uv run python -c "import pytest; raise SystemExit(pytest.main(['-q', '-m', 'not live']))"</code>.</p>
+<p>Result:
+  The intended non-live selection ran. With a dummy token, upstream produced
+  120 passed, 2 skipped, 6 deselected, and 33 failures from cloud/KCL-engine
+  operations that require valid Zoo credentials.</p>
+<p>Problem:
+  Zoo needed a Hermes-style MCP probe that showed the LLM-facing tool metadata
+  was available, not just package installation.</p>
+<p>Solution:
+  Start <code>uv run python -m zoo_mcp</code> over stdio with a dummy token and call
+  <code>initialize</code>, <code>tools/list</code>, <code>search_kcl_docs</code>, and <code>calculate_volume</code>.</p>
+<p>Result:
+  <code>search_kcl_docs</code> returned structured KCL documentation results for
+  <code>extrude</code>, proving local/read-only MCP calls work. <code>calculate_volume</code>
+  reached <code>https://api.zoo.dev</code> and returned the expected authentication
+  diagnostic. The entry remains <code>might_work</code> with validation status
+  <code>dependency_missing</code> until a real Zoo.dev API token is available.</p>
+<p>Problem:
+  <code>SolidWorks Python COM</code> installs from source in a clean Intel Ubuntu
+  container, but the server import fails before MCP initialization.</p>
+<p>Solution:
+  Record this as an upstream dependency/API break, not as a missing SolidWorks
+  host dependency. The likely upstream fix is to pin <code>pydantic-ai</code> to a
+  compatible version or update <code>src/solidworks_mcp/server.py</code> to the current
+  PydanticAI/FastMCP integration API before attempting Windows/SolidWorks COM
+  validation.</p>
+<p>Result:
+  Clean Intel Ubuntu validation cloned commit
+  <code>f0858a7b9cf8cb9a7838ddfaa91a706ef6439cab</code>, installed with
+  <code>pip install -e ".[test]"</code>, and resolved <code>pydantic-ai</code> 2.0.0, <code>fastmcp</code>
+  3.4.2, and <code>mcp</code> 1.28.1. Focused upstream tests, <code>solidworks-mcp --help</code>,
+  and <code>python -m solidworks_mcp.server</code> all failed with
+  <code>ModuleNotFoundError: No module named 'pydantic_ai.toolsets.fastmcp'</code>.
+  No MCP <code>initialize</code> or <code>tools/list</code> calls could be made. The entry is
+  classified as <code>non_working</code> / <code>failed</code>; full CAD validation also requires
+  Windows 10/11, SolidWorks, and Windows COM after the dependency mismatch is
+  fixed.</p>
+<p>Problem:
+  <code>SolidWorks TypeScript COM</code> requires Node 20+, but Ubuntu 24.04's default
+  package currently installs Node 18.</p>
+<p>Solution:
+  Install Node 20 only inside the selected-server validation container:
+  <code>npm install -g n &amp;&amp; n 20 &amp;&amp; hash -r</code>.</p>
+<p>Result:
+  Node 20.20.2 and npm 10.8.2 were active for the upstream install, build, test,
+  and MCP stdio validation.</p>
+<p>Problem:
+  The TypeScript server installs, builds, initializes, and lists tools in
+  Ubuntu, but meaningful tool calls require the Windows-only <code>winax</code> COM
+  backend.</p>
+<p>Solution:
+  Classify this as <code>might_work</code> / <code>dependency_missing</code>, not <code>tested</code>, and record
+  the exact diagnostic returned through MCP tool calls. Do not install
+  SolidWorks or Windows COM software in the shared container.</p>
+<p>Result:
+  Clean Intel Ubuntu validation cloned commit
+  <code>c50ba5867f1d1632a5f6857a2b4aa5ad9b1838b7</code>, ran <code>npm install</code>,
+  <code>npm run build</code>, and <code>USE_MOCK_SOLIDWORKS=true npm test</code>; tests passed 52/52.
+  MCP initialized as <code>solidworks-mcp-server</code> version 3.1.3 and listed 86 tools.
+  <code>generate_vba_script</code> and <code>create_part</code> both returned
+  <code>The winax native module is not available. SolidWorks COM automation requires
+  it on Windows</code>, with underlying load error
+  <code>Module did not self-register:
+  '/tmp/solidworks-mcp-ts/node_modules/winax/build/Release/node_activex.node'</code>.</p>
+<p>Problem:
+  <code>solidworks-mcp-alisamsam</code> cannot install from its documented requirements
+  file in a clean Intel Ubuntu container.</p>
+<p>Solution:
+  Record the exact failed requirement and create a follow-up for upstream
+  dependency cleanup before any Windows/SolidWorks validation. Continue only far
+  enough to confirm the next runtime boundary.</p>
+<p>Result:
+  Clean Intel Ubuntu validation cloned commit
+  <code>ee8f42a1a919af5e0fa8d1dcd24270c9983ce027</code>. <code>pip install -r
+  requirements.txt</code> failed because <code>asyncio-compat&gt;=0.1.0</code> has no matching PyPI
+  distribution. <code>pip index versions asyncio-compat</code> and <code>pip index versions
+  pywin32</code> both returned no matching distribution on Linux. After installing the
+  available runtime dependencies <code>mcp</code> and <code>python-dotenv</code>, <code>python
+  solidworks_mcp_server.py</code> failed with <code>ModuleNotFoundError: No module named
+  'win32com'</code>. No upstream tests were present, and no MCP initialization or tool
+  listing could be performed. The entry is classified as <code>non_working</code> /
+  <code>failed</code>.</p>
+<p>Problem:
+  <code>WebMCP OpenSCAD</code> is a browser-hosted WebMCP app, not a standalone CAD stdio
+  server. The MCP-B local relay can initialize over stdio, but page-provided
+  OpenSCAD tools only appear after a browser tab connects to the relay.</p>
+<p>Solution:
+  Validate the source and relay path separately in a clean Intel Ubuntu
+  container. Build the app with pnpm, serve the generated Nitro app, then probe
+  <code>npx -y @mcp-b/webmcp-local-relay@latest</code> with MCP <code>initialize</code>,
+  <code>notifications/initialized</code>, <code>tools/list</code>, <code>webmcp_list_sources</code>, and
+  <code>webmcp_list_tools</code>.</p>
+<p>Result:
+  Clean Intel Ubuntu validation cloned commit
+  <code>a3acb68578701001f0251459c75716a55aadfa10</code>. Ubuntu's default Node 18 could
+  not run pnpm 11.9.0, so validation installed Node 22.23.1 with <code>n</code> after
+  adding <code>curl</code>. <code>pnpm install --frozen-lockfile</code> succeeded. <code>pnpm test</code> found
+  no test files and exited 1 with Vite/Vitest shutdown noise, so this repo does
+  not currently provide a usable upstream test suite. <code>pnpm build</code> succeeded.
+  The served app produced a 7156-byte HTML page titled
+  <code>scad-webmcp · agent-driven parametric CAD</code> and embedded
+  <code>@mcp-b/webmcp-local-relay@latest/dist/browser/embed.js</code>. The relay MCP
+  initialized as <code>webmcp-local-relay</code> version <code>0.0.0</code>, listed 4 relay tools,
+  and returned zero sources/tools because no browser page was connected. The
+  entry is classified as <code>might_work</code> / <code>dependency_missing</code> until a browser
+  tab connected through MCP-B or native WebMCP exposes the advertised 16
+  OpenSCAD page tools.</p>
+<p>Problem:
+  <code>web3d-mcp</code> was seeded with <code>npx web3d-mcp</code>, source context from a Reddit
+  post, and UI URL <code>https://web3d-mcp.dev</code>. The package and URL do not exist in
+  the current clean Intel Ubuntu validation path.</p>
+<p>Solution:
+  Verify the catalog seed first, then map the Reddit/LobeHub listing to the
+  real source repository: <code>https://github.com/dev261004/web3d-mcp-server</code>.
+  Use the upstream local install path (<code>npm install</code>, <code>npm run build</code>,
+  <code>node dist/server.js</code>) instead of the nonexistent npm package.</p>
+<p>Result:
+  npm returned 404 for both <code>web3d-mcp</code> and <code>web3d-mcp-server</code>, and DNS could
+  not resolve <code>web3d-mcp.dev</code>. The real source cloned successfully at commit
+  <code>b6e3cb59ba243ab53be2e1b1a674e5199bfc0c6a</code>. Catalog and UI metadata now point
+  to <code>dev261004/web3d-mcp-server</code> and local stdio command <code>node dist/server.js</code>.</p>
+<p>Problem:
+  The upstream README says Node.js 18+, and build/test paths pass on Ubuntu
+  Node 18.19.1, but direct MCP startup fails before initialization.</p>
+<p>Solution:
+  Treat Node 22 as the selected-server runtime for the Wright validation path.
+  Install it inside the disposable container with <code>npm install -g n &amp;&amp; n 22</code>.</p>
+<p>Result:
+  On Node 18.19.1, <code>node dist/server.js</code> failed with
+  <code>ReferenceError: File is not defined</code> from <code>undici</code>. On Node 22.23.1, MCP
+  startup succeeded.</p>
+<p>Problem:
+  <code>web3d-mcp-server</code> uses newline-delimited JSON on stdio, while the first MCP
+  probe used <code>Content-Length</code> framing.</p>
+<p>Solution:
+  Use newline-delimited JSON messages for this server.</p>
+<p>Result:
+  MCP initialized as serverInfo <code>3d-scene-mcp</code> version <code>1.0.0</code>, listed 12 tools,
+  and the cube scene workflow passed: <code>generate_scene</code> produced scene data,
+  <code>validate_scene</code> returned <code>is_valid:true</code> with all 13 checks passed, <code>preview</code>
+  returned SVG wireframe data, and <code>generate_r3f_code</code> returned <code>SUCCESS</code> with
+  Vite/TypeScript React Three Fiber code. Upstream <code>npm test -- --runInBand</code>
+  passed 10 suites and 65 tests; <code>npm run build</code> prechecks passed 7 health
+  suites and 54 tests. npm audit still reported 33 dependency vulnerabilities,
+  which should be reviewed upstream but did not block local MCP validation.</p>
+<p>Problem:
+  The Hermes-facing Wright gateway could publish a tool list for the wrong
+  workspace because <code>/api/gateway/tools</code> selected the latest
+  <code>engineering_workspaces.updated_at</code> row. In the Nous hackathon container this
+  made Hermes intermittently report only a subset of the active MCPs even though
+  Wright showed Blender, OpenSCAD, Jarvis OnShape, and Autodesk Product Help as
+  active.</p>
+<p>Solution:
+  Pin the active Hermes gateway session in <code>system_settings</code> whenever a
+  workspace/session is activated or synced to Hermes, and resolve
+  <code>/api/gateway/tools</code> and <code>/api/gateway/call</code> from that pinned session before
+  falling back to the latest workspace row.</p>
+<p>Result:
+  Targeted tests passed for the gateway and Hermes sync paths. The running
+  <code>wright_nous_hackathon</code> container was restarted without rebuilding, the API
+  returned healthy, <code>/api/workspace/mcp-status</code> showed all four MCPs active, and
+  <code>/api/gateway/tools</code> listed 108 tools: 22 Blender, 15 OpenSCAD, 69 Jarvis
+  OnShape, and 2 Autodesk Product Help. Hermes logged a <code>tools/list_changed</code>
+  refresh followed by <code>dynamically refreshed 108 tool(s)</code>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
