@@ -58,6 +58,17 @@ if [[ "${SKIP_PLAYWRIGHT:-0}" == "1" ]]; then
   echo
   echo "==> Skipping Playwright live gate because SKIP_PLAYWRIGHT=1"
 else
+  echo
+  echo "==> Checking Playwright live gate ports"
+  if curl --fail --silent --show-error --max-time 1 http://127.0.0.1:8000/api/health >/dev/null 2>&1; then
+    echo "Port 8000 already has a Wright API server. Stop local Wright/API servers before running the merge gate."
+    exit 1
+  fi
+  if curl --fail --silent --show-error --max-time 1 http://127.0.0.1:5173 >/dev/null 2>&1; then
+    echo "Port 5173 already has a frontend dev server. Stop local Vite/Wright dev servers before running the merge gate."
+    exit 1
+  fi
+
   TMP_DB="$(mktemp "${TMPDIR:-/tmp}/wright-dev-merge.XXXXXX.db")"
   BACKEND_LOG="$(mktemp "${TMPDIR:-/tmp}/wright-dev-merge-api.XXXXXX.log")"
   echo
@@ -85,7 +96,7 @@ else
     sleep 2
   done
 
-  run env PLAYWRIGHT_INCLUDE_LIVE=1 npx playwright test
+  run env CI=1 PLAYWRIGHT_INCLUDE_LIVE=1 npx playwright test
 fi
 
 echo

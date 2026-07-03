@@ -46,7 +46,10 @@ drift in CI:
   make check-dev-merge
   ```
 
-Set `SKIP_PLAYWRIGHT=1` only for a documented local browser/runtime limitation.
+The live Playwright portion requires ports `8000` and `5173` to be free so it can
+start an isolated API database and frontend server. Stop local Wright/API/Vite
+servers before running the gate. Set `SKIP_PLAYWRIGHT=1` only for a documented
+local browser/runtime limitation.
 
 ---
 
