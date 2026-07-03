@@ -51,15 +51,32 @@ interface WorkspacePanelProps {
   onSessionChange?: (sessionId: string) => void;
 }
 
-function getSessionOptionLabel(session: {
-  title?: string | null;
-  sessionId: string;
-}): string {
-  const title =
-    typeof session.title === "string" && session.title.trim()
-      ? session.title.trim()
-      : "Untitled Session";
-  return title.length > 20 ? `${title.slice(0, 18)}...` : title;
+function cleanSessionOptionTitle(session: { title?: string | null }): string {
+  return typeof session.title === "string" && session.title.trim()
+    ? session.title.trim()
+    : "Untitled Session";
+}
+
+function truncateSessionOptionLabel(title: string): string {
+  return title.length > 24 ? `${title.slice(0, 22)}...` : title;
+}
+
+function getSessionOptionLabels(
+  sessions: Array<{ title?: string | null; sessionId: string }>,
+): Map<string, string> {
+  const counts = new Map<string, number>();
+  const labels = new Map<string, string>();
+
+  for (const session of sessions) {
+    const baseTitle = cleanSessionOptionTitle(session);
+    const key = baseTitle.toLocaleLowerCase();
+    const count = (counts.get(key) || 0) + 1;
+    counts.set(key, count);
+    const title = count === 1 ? baseTitle : `${baseTitle} (${count})`;
+    labels.set(session.sessionId, truncateSessionOptionLabel(title));
+  }
+
+  return labels;
 }
 
 export function WorkspacePanel({
@@ -91,7 +108,12 @@ export function WorkspacePanel({
   const [error, setError] = useState<string | null>(null);
 
   const routeSessionId = propSessionId || workspaceInfo?.session_id || null;
-  const activeSessionId = routeSessionId || state.activeSessionId || null;
+  const activeSessionId = state.activeSessionId || routeSessionId || null;
+  const workspaceFileSessionId = routeSessionId || activeSessionId;
+  const sessionOptionLabels = useMemo(
+    () => getSessionOptionLabels(state.sessions),
+    [state.sessions],
+  );
 
   useEffect(() => {
     if (typeof ResizeObserver === "undefined") return;
@@ -153,6 +175,17 @@ export function WorkspacePanel({
 
   const activeSession =
     state.sessions.find((s) => s.sessionId === activeSessionId) || null;
+  const activeSessionStreamState = activeSessionId
+    ? state.streamStates?.[activeSessionId]
+    : undefined;
+  const isActiveSessionStreaming = Boolean(
+    activeSessionStreamState?.isStreaming,
+  );
+  const activeSessionStreamedText =
+    activeSessionStreamState?.streamedText || "";
+  const activeSessionTool = activeSessionStreamState?.activeTool || null;
+  const activeSessionStreamActivity =
+    activeSessionStreamState?.streamActivity || [];
 
   // Load active agent on mount
   useEffect(() => {
@@ -186,9 +219,8 @@ export function WorkspacePanel({
 
   // --- Layout state persistence via localStorage ---
   const layoutKey = useMemo(
-    () =>
-      activeSessionId ? `wright-workspace-layout-${activeSessionId}` : null,
-    [activeSessionId],
+    () => (_workspaceId ? `wright-workspace-layout-${_workspaceId}` : null),
+    [_workspaceId],
   );
 
   // Read saved layout once on mount
@@ -390,6 +422,11 @@ export function WorkspacePanel({
   }, [openTabs]);
 
   const viewerContainerRef = useRef<HTMLDivElement>(null);
+  const sendMessageRef = useRef(sendMessage);
+
+  useEffect(() => {
+    sendMessageRef.current = sendMessage;
+  }, [sendMessage]);
 
   useEffect(() => {
     resetViewer();
@@ -401,16 +438,20 @@ export function WorkspacePanel({
     if (viewerContainerRef.current) {
       viewerContainerRef.current.replaceChildren();
     }
-  }, [_workspaceId, routeSessionId, resetViewer]);
+  }, [_workspaceId, resetViewer]);
 
   // Synchronise stored tabs from savedLayout on mount/initialisation
   const tabsInitialized = useRef(false);
   useEffect(() => {
     tabsInitialized.current = false;
-  }, [activeSessionId]);
+  }, [layoutKey]);
 
   useEffect(() => {
-    if (!tabsInitialized.current && savedLayout?.openTabs && activeSessionId) {
+    if (
+      !tabsInitialized.current &&
+      savedLayout?.openTabs &&
+      workspaceFileSessionId
+    ) {
       tabsInitialized.current = true;
       const syncTabs = async () => {
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
@@ -449,7 +490,7 @@ export function WorkspacePanel({
       };
       syncTabs();
     }
-  }, [savedLayout, activeSessionId, openTab, setActiveTabPath]);
+  }, [savedLayout, workspaceFileSessionId, openTab, setActiveTabPath]);
 
   // Pluggable resolution of active tab viewer
   useEffect(() => {
@@ -521,7 +562,7 @@ export function WorkspacePanel({
       try {
         if (!activeDocument) {
           activeDocument = await provider.openDocument(file, {
-            sessionId: activeSessionId || undefined,
+            sessionId: workspaceFileSessionId || undefined,
           });
         }
         if (!cancelled && viewerContainerRef.current) {
@@ -537,7 +578,7 @@ export function WorkspacePanel({
       const customEvent = e as CustomEvent;
       const { type, content } = customEvent.detail || {};
       if (type === "create-prompt" && content) {
-        sendMessage(content);
+        sendMessageRef.current(content);
       }
     };
     container?.addEventListener("viewer-message", handleViewerMessage);
@@ -553,7 +594,7 @@ export function WorkspacePanel({
       container?.removeEventListener("viewer-message", handleViewerMessage);
       container?.replaceChildren();
     };
-  }, [activeTabPath, activeSessionId, getDocument, getProvider, sendMessage]);
+  }, [activeTabPath, workspaceFileSessionId, getDocument, getProvider]);
 
   // Keep compatibility with webmcp event integration
   useEffect(() => {
@@ -644,7 +685,7 @@ export function WorkspacePanel({
 
   // Workspace Polling Loop for disk changes
   useEffect(() => {
-    if (!activeSessionId) {
+    if (!workspaceFileSessionId) {
       setWorkspaceRoot(null);
       setLoading(false);
       return;
@@ -655,7 +696,9 @@ export function WorkspacePanel({
     const fetchWorkspace = async (isInitial = false) => {
       if (isInitial) setLoading(true);
       try {
-        const tree = await workspaceService.getWorkspaceFiles(activeSessionId);
+        const tree = await workspaceService.getWorkspaceFiles(
+          workspaceFileSessionId,
+        );
         if (!isMounted) return;
         setWorkspaceRoot(tree);
         setError(null);
@@ -713,7 +756,7 @@ export function WorkspacePanel({
       isMounted = false;
       clearInterval(intervalId);
     };
-  }, [activeSessionId, reloadDocument]);
+  }, [workspaceFileSessionId, reloadDocument]);
 
   // Load settings and git data on sidebar tab activation
   useEffect(() => {
@@ -1176,7 +1219,8 @@ export function WorkspacePanel({
                       value={session.sessionId}
                       data-testid={`session-${session.sessionId}`}
                     >
-                      {getSessionOptionLabel(session)}
+                      {sessionOptionLabels.get(session.sessionId) ||
+                        "Untitled Session"}
                     </option>
                   ))
                 )}
@@ -1256,9 +1300,9 @@ export function WorkspacePanel({
             <div style={{ flex: 1, overflowY: "auto" }}>
               <ChatTranscript
                 session={activeSession}
-                isStreaming={state.isStreaming}
-                streamedText={state.streamedText}
-                activeTool={state.activeTool}
+                isStreaming={isActiveSessionStreaming}
+                streamedText={activeSessionStreamedText}
+                activeTool={activeSessionTool}
                 onOpenFile={handleFileClick}
                 activeSessionId={activeSessionId || undefined}
                 workspacePath={workspacePath || undefined}
@@ -1275,9 +1319,10 @@ export function WorkspacePanel({
               >
                 <MessageComposer
                   onSend={sendMessage}
-                  isStreaming={state.isStreaming}
+                  isStreaming={isActiveSessionStreaming}
                   onCancel={cancelActiveStream}
                   sessionId={activeSessionId || undefined}
+                  workspaceId={_workspaceId}
                 />
               </div>
             )}
@@ -2067,7 +2112,7 @@ export function WorkspacePanel({
                       key={label}
                       type="button"
                       onClick={() => sendMessage(prompt)}
-                      disabled={!activeSessionId || state.isStreaming}
+                      disabled={!activeSessionId || isActiveSessionStreaming}
                       style={{
                         backgroundColor: "var(--color-surface-subtle)",
                         color: "var(--color-primary)",
@@ -2078,11 +2123,13 @@ export function WorkspacePanel({
                         fontWeight: 600,
                         textAlign: "left",
                         cursor:
-                          !activeSessionId || state.isStreaming
+                          !activeSessionId || isActiveSessionStreaming
                             ? "not-allowed"
                             : "pointer",
                         opacity:
-                          !activeSessionId || state.isStreaming ? 0.55 : 1,
+                          !activeSessionId || isActiveSessionStreaming
+                            ? 0.55
+                            : 1,
                       }}
                     >
                       {label}
@@ -2625,7 +2672,8 @@ export function WorkspacePanel({
                     value={session.sessionId}
                     data-testid={`session-${session.sessionId}`}
                   >
-                    {getSessionOptionLabel(session)}
+                    {sessionOptionLabels.get(session.sessionId) ||
+                      "Untitled Session"}
                   </option>
                 ))
               )}
@@ -2702,10 +2750,10 @@ export function WorkspacePanel({
           <div style={{ flex: 1, overflowY: "auto" }}>
             <ChatTranscript
               session={activeSession}
-              isStreaming={state.isStreaming}
-              streamedText={state.streamedText}
-              activeTool={state.activeTool}
-              streamActivity={state.streamActivity}
+              isStreaming={isActiveSessionStreaming}
+              streamedText={activeSessionStreamedText}
+              activeTool={activeSessionTool}
+              streamActivity={activeSessionStreamActivity}
               onOpenFile={handleFileClick}
               activeSessionId={activeSessionId || undefined}
               workspacePath={workspacePath || undefined}
@@ -2722,9 +2770,10 @@ export function WorkspacePanel({
             >
               <MessageComposer
                 onSend={sendMessage}
-                isStreaming={state.isStreaming}
+                isStreaming={isActiveSessionStreaming}
                 onCancel={cancelActiveStream}
                 sessionId={activeSessionId || undefined}
+                workspaceId={_workspaceId}
               />
             </div>
           )}

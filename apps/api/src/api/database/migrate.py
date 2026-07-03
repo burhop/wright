@@ -235,6 +235,29 @@ def run_migrations():
         );
         """)
 
+        # 7b. Create workspace-agent session association table.
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS workspace_agent_sessions (
+            workspace_id TEXT NOT NULL,
+            session_id TEXT NOT NULL UNIQUE,
+            agent_id TEXT NOT NULL DEFAULT 'hermes',
+            title TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            is_archived INTEGER NOT NULL DEFAULT 0 CHECK(is_archived IN (0, 1)),
+            PRIMARY KEY (workspace_id, session_id),
+            FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id) ON DELETE CASCADE
+        );
+        """)
+        conn.execute("""
+        INSERT OR IGNORE INTO workspace_agent_sessions (
+            workspace_id, session_id, agent_id, title, created_at, updated_at, is_archived
+        )
+        SELECT workspace_id, session_id, 'hermes', workspace_name, created_at, updated_at, 0
+        FROM engineering_workspaces
+        WHERE session_id IS NOT NULL AND session_id != ''
+        """)
+
         # Check if enabled_tools column exists, add it if not (for existing databases)
         cursor = conn.cursor()
         cursor.execute("PRAGMA table_info(engineering_workspaces)")

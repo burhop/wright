@@ -148,11 +148,6 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
     setActiveTabPath(path ? normalizeEditorTabPath(path) : null);
   }, []);
 
-  React.useEffect(() => {
-    // Clear all open tabs and resource references when active session changes
-    resetViewer();
-  }, [chatState.activeSessionId, resetViewer]);
-
   const setTabDirty = useCallback((path: string, isDirty: boolean) => {
     const normalizedPath = normalizeEditorTabPath(path);
     setOpenTabs((prev) =>

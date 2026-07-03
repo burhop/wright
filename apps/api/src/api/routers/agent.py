@@ -1,4 +1,6 @@
+import asyncio
 import json
+import re
 import secrets
 from typing import Optional, List, AsyncIterator
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
@@ -16,11 +18,134 @@ from agent_adapters import (
     default_agent_registry,
 )
 from workspace_service import WorkspaceService
-from core.workspace import get_workspace_by_session, get_workspace_enabled_tools
+from core.workspace import (
+    get_workspace_by_session,
+    get_workspace_enabled_tools,
+    update_workspace_agent_session_title,
+    update_workspace_session,
+)
+from tool_registry import ApprovalContext
 from tool_registry.db import get_servers
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+
+
+class ChatStreamJob:
+    def __init__(
+        self, session_id: str, request: AgentChatRequest, engine: BaseAgentEngine
+    ):
+        self.session_id = session_id
+        self.request = request
+        self.engine = engine
+        self.events: list[tuple[str, dict]] = []
+        self.done = False
+        self.cancelled = False
+        self._condition = asyncio.Condition()
+        self._task: asyncio.Task | None = None
+
+    def start(self) -> None:
+        if self._task is None:
+            self._task = asyncio.create_task(self._run())
+
+    @property
+    def is_running(self) -> bool:
+        return self._task is not None and not self._task.done() and not self.done
+
+    async def _append(self, event_type: str, data: dict) -> None:
+        async with self._condition:
+            self.events.append((event_type, data))
+            self._condition.notify_all()
+
+    async def _finish(self) -> None:
+        async with self._condition:
+            self.done = True
+            self._condition.notify_all()
+
+    async def _run(self) -> None:
+        saw_stream_end = False
+        try:
+            async for event in self.engine.stream_chat(self.request):
+                if self.cancelled:
+                    break
+                saw_stream_end = saw_stream_end or event.type == "stream_end"
+                await self._append(event.type, event.data)
+        except asyncio.CancelledError:
+            self.cancelled = True
+            await self._append("error", {"message": "Stream cancelled by user."})
+        except Exception as exc:
+            await self._append("error", {"message": str(exc)})
+        finally:
+            if not self.cancelled and not saw_stream_end:
+                await self._append("stream_end", {})
+            await self._finish()
+
+    async def stream_from(self, index: int = 0) -> AsyncIterator[tuple[str, dict]]:
+        cursor = max(0, index)
+        while True:
+            async with self._condition:
+                while cursor >= len(self.events) and not self.done:
+                    await self._condition.wait()
+                if cursor < len(self.events):
+                    event = self.events[cursor]
+                    cursor += 1
+                elif self.done:
+                    break
+                else:
+                    continue
+            yield event
+
+    async def cancel(self) -> bool:
+        self.cancelled = True
+        if self._task and not self._task.done():
+            self._task.cancel()
+        try:
+            await self.engine.cancel_chat(self.session_id)
+        except Exception:
+            pass
+        async with self._condition:
+            self._condition.notify_all()
+        return True
+
+
+class ChatStreamRegistry:
+    def __init__(self):
+        self._jobs: dict[str, ChatStreamJob] = {}
+        self._lock = asyncio.Lock()
+
+    async def start(
+        self, request: AgentChatRequest, engine: BaseAgentEngine
+    ) -> ChatStreamJob:
+        async with self._lock:
+            existing = self._jobs.get(request.session_id)
+            if existing and existing.is_running:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="A chat turn is already running for this session.",
+                )
+            job = ChatStreamJob(request.session_id, request, engine)
+            self._jobs[request.session_id] = job
+            job.start()
+            return job
+
+    async def get(self, session_id: str) -> ChatStreamJob | None:
+        async with self._lock:
+            return self._jobs.get(session_id)
+
+    async def cancel(self, session_id: str, engine: BaseAgentEngine) -> bool:
+        async with self._lock:
+            job = self._jobs.get(session_id)
+        if job:
+            return await job.cancel()
+        return await engine.cancel_chat(session_id)
+
+
+def get_chat_stream_registry(request: Request) -> ChatStreamRegistry:
+    registry = getattr(request.app.state, "chat_stream_registry", None)
+    if registry is None:
+        registry = ChatStreamRegistry()
+        request.app.state.chat_stream_registry = registry
+    return registry
 
 
 #  Dependency injection helper
@@ -78,7 +203,14 @@ async def ensure_workspace_mcp_servers_active(
             runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
             if runner and runner.is_running() and server.status == "active":
                 continue
-            await mcp_engine.start_server(server.server_id, workspace_dir=workspace_dir)
+            await mcp_engine.start_server(
+                server.server_id,
+                workspace_dir=workspace_dir,
+                approval_context=ApprovalContext(
+                    workspace_id=workspace["workspace_id"],
+                    workspace_approvals=set(server.approval_gates or []),
+                ),
+            )
         except Exception as exc:
             logger.exception(
                 "workspace_mcp_preflight_start_failed",
@@ -135,6 +267,14 @@ class ChatRequest(BaseModel):
     session_id: str
     message: str
     attachments: Optional[List[str]] = None
+
+
+def title_from_slash_command(message: str) -> str | None:
+    match = re.match(r"^\s*/title\s+(.+)\s*$", message or "", re.IGNORECASE)
+    if not match:
+        return None
+    title = match.group(1).strip().strip("\"'“”")
+    return title or None
 
 
 class ChatHistoryMessage(BaseModel):
@@ -291,23 +431,11 @@ async def create_new_session(
 
         workspace_id = existing["workspace_id"] if existing else str(uuid.uuid4())
         if existing:
-            import time
-
-            conn = sqlite3.connect(DATABASE_PATH)
-            try:
-                conn.execute(
-                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE workspace_id = ?",
-                    (
-                        session_info.session_id,
-                        int(time.time()),
-                        existing["workspace_id"],
-                    ),
-                )
-                conn.commit()
-            finally:
-                conn.close()
+            update_workspace_session(
+                DATABASE_PATH, existing["workspace_id"], session_info.session_id
+            )
             log.info(
-                "create_session_updated_existing_workspace",
+                "create_session_associated_with_existing_workspace",
                 workspace_id=workspace_id,
                 session_id=session_info.session_id,
             )
@@ -355,14 +483,22 @@ async def list_agent_sessions(
     try:
         sessions = await engine.list_sessions()
         if workspace_id:
-            from core.workspace import get_workspace_by_id
             from api.config import DATABASE_PATH
+            from core.workspace import associate_workspace_session, get_workspace_by_id
 
             workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
             if workspace:
                 local_path = workspace["local_path"]
-                # Filter sessions where the workspace matches local_path
                 sessions = [s for s in sessions if s.workspace == local_path]
+                for session in sessions:
+                    associate_workspace_session(
+                        DATABASE_PATH,
+                        workspace_id,
+                        session.session_id,
+                        title=session.title,
+                        created_at=session.created_at,
+                        updated_at=session.updated_at,
+                    )
             else:
                 sessions = []
         log.info("list_sessions_success", count=len(sessions))
@@ -437,20 +573,32 @@ async def chat(
 
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 
+    requested_title = title_from_slash_command(body.message)
+    if requested_title:
+        from api.config import DATABASE_PATH
+
+        updated = update_workspace_agent_session_title(
+            DATABASE_PATH, body.session_id, requested_title
+        )
+        log.info("workspace_session_title_updated", updated=updated)
+
     chat_request = AgentChatRequest(
         session_id=body.session_id,
         message=body.message,
         trace_id=trace_id,
         attachments=body.attachments,
     )
+    registry = get_chat_stream_registry(request)
+    job = await registry.start(chat_request, engine)
 
     async def sse_generator() -> AsyncIterator[str]:
+        yield f"event: stream_start\ndata: {json.dumps({'stream_id': trace_id, 'session_id': body.session_id})}\n\n"
         try:
-            async for event in engine.stream_chat(chat_request):
-                log.info("chat_stream_yield_event", type=event.type)
-                yield f"event: {event.type}\ndata: {json.dumps(event.data)}\n\n"
+            async for event_type, event_data in job.stream_from(0):
+                log.info("chat_stream_yield_event", type=event_type)
+                yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
         except Exception as exc:
-            log.exception("chat_stream_failed", error=str(exc))
+            log.exception("chat_stream_attach_failed", error=str(exc))
             yield f"event: error\ndata: {json.dumps({'message': str(exc)})}\n\n"
 
     return StreamingResponse(
@@ -507,15 +655,48 @@ async def set_active_agent_endpoint(
     return ActiveAgentResponse(agent=provider.name)
 
 
+@router.get("/chat/stream")
+@traced("agent.chat.stream.attach")
+async def attach_chat_stream(
+    request: Request,
+    session_id: str = Query(...),
+    after: int = Query(0, ge=0),
+):
+    """Attach or reattach to a running or recently completed chat stream."""
+    registry = get_chat_stream_registry(request)
+    job = await registry.get(session_id)
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No stream is available for this session.",
+        )
+
+    async def sse_generator() -> AsyncIterator[str]:
+        async for event_type, event_data in job.stream_from(after):
+            yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
+
+    return StreamingResponse(
+        sse_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
+
+
 @router.post("/chat/cancel")
 @traced("agent.chat.cancel")
 async def cancel_chat_turn(
+    request: Request,
     session_id: str = Query(...),
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     """Cancel a running chat turn stream."""
     try:
-        ok = await engine.cancel_chat(session_id)
+        registry = get_chat_stream_registry(request)
+        ok = await registry.cancel(session_id, engine)
         return {"success": ok}
     except Exception as exc:
         logger.exception("chat_cancel_failed", error=str(exc))

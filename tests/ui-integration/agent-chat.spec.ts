@@ -76,7 +76,7 @@ test.describe("Agent Chat Page", () => {
     });
 
     // Mock get workspace by ID
-    await page.route("**/api/workspace/by-id/*", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -304,8 +304,34 @@ test.describe("Agent Chat Page", () => {
       });
     });
 
+    // Mock workspace-scoped sessions
+    await page.route("**/api/workspace/by-id/ws-1/sessions", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          sessions: [
+            {
+              session_id: "session-1",
+              title: "Session One",
+              created_at: Date.now(),
+              updated_at: Date.now(),
+              message_count: 0,
+            },
+            {
+              session_id: "session-2",
+              title: "Session Two",
+              created_at: Date.now(),
+              updated_at: Date.now(),
+              message_count: 0,
+            },
+          ],
+        }),
+      });
+    });
+
     // Mock workspace by ID
-    await page.route("**/api/workspace/by-id/*", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -390,11 +416,10 @@ test.describe("Agent Chat Page", () => {
       .nth(1);
     await expect(selectDropdown).toBeVisible();
 
-    // The workspace remains bound to session-1; selecting a different chat session should not reset it.
+    // Selecting a different chat session should not reset the workspace shell.
     await selectDropdown.selectOption("session-2");
 
-    // The workspace-bound selection stays stable and the workspace shell remains visible.
-    await expect(selectDropdown).toHaveValue("session-1");
+    await expect(selectDropdown).toHaveValue("session-2");
     await expect(page.getByTestId("workspace-panel")).toBeVisible();
   });
 
@@ -436,8 +461,27 @@ test.describe("Agent Chat Page", () => {
       });
     });
 
+    // Mock workspace-scoped sessions
+    await page.route("**/api/workspace/by-id/ws-1/sessions", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          sessions: [
+            {
+              session_id: "session-1",
+              title: "Session One",
+              created_at: Date.now(),
+              updated_at: Date.now(),
+              message_count: 0,
+            },
+          ],
+        }),
+      });
+    });
+
     // Mock workspace by ID
-    await page.route("**/api/workspace/by-id/*", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -514,12 +558,13 @@ test.describe("Agent Chat Page", () => {
       });
     });
 
-    // Mock MCP status endpoint returning healthy status initially
+    // Mock workspace MCP status endpoint returning healthy status initially.
     let mcpStatusPayload = {
       status: "ok",
       message: "MCP configuration is active and healthy.",
+      running_mcps: [{ name: "Jarvis OnShape MCP", status: "active" }],
     };
-    await page.route("**/api/workspace/mcp-status?*", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1/mcp-status", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -547,6 +592,7 @@ test.describe("Agent Chat Page", () => {
       status: "mismatch",
       message:
         "Tool change during session. Start a new session to apply changes.",
+      running_mcps: [{ name: "Jarvis OnShape MCP", status: "active" }],
     };
 
     // Wait for the next poll (3 seconds interval in composer) and verify color turns amber

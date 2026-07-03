@@ -82,6 +82,7 @@ function ChatMessagesHarness() {
     <div>
       <div data-testid="chat-active-session">{state.activeSessionId}</div>
       <button onClick={() => sendMessage("hello")}>send hello</button>
+      <button onClick={() => sendMessage("/title test")}>send title</button>
       <ul>
         {(activeSession?.messages || []).map((message) => (
           <li data-testid="chat-message" key={message.id}>
@@ -442,6 +443,62 @@ describe("ChatProvider session state", () => {
 
     expect(screen.queryByText(/bytes_written/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Workspace::v1/)).not.toBeInTheDocument();
+  });
+
+  it("updates the visible session title after a Hermes title command", async () => {
+    vi.mocked(agentService.listSessions)
+      .mockResolvedValueOnce([
+        {
+          sessionId: "session-1",
+          title: "Onshape Session 2",
+          createdAt: 1000,
+          updatedAt: 1000,
+        },
+      ])
+      .mockResolvedValue([
+        {
+          sessionId: "session-1",
+          title: "test",
+          createdAt: 1000,
+          updatedAt: 1001,
+        },
+      ]);
+    vi.mocked(agentService.sendMessage).mockImplementation(async function* () {
+      yield {
+        type: "token",
+        text: "Title set to “test”.",
+      };
+      yield {
+        type: "done",
+        session: makeSession({
+          sessionId: "session-1",
+          title: "test",
+          messages: [],
+        }),
+      };
+    });
+
+    render(
+      <ChatProvider>
+        <SessionsHarness />
+        <ChatMessagesHarness />
+      </ChatProvider>,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Onshape Session 2:session-1"),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "send title" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("test:session-1")).toBeInTheDocument();
+    });
+    expect(
+      screen.queryByText("Onshape Session 2:session-1"),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a diagnostic instead of saving a blank assistant message", async () => {

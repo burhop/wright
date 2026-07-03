@@ -788,6 +788,86 @@ export class WorkspaceService {
     return response.json();
   }
 
+  async getWorkspaceSessions(workspaceId: string): Promise<
+    {
+      sessionId: string;
+      title: string;
+      createdAt: number;
+      updatedAt: number;
+      messageCount: number;
+    }[]
+  > {
+    workspaceLogger.info("Fetching workspace sessions", { workspaceId });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions`,
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch workspace sessions: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return (data.sessions || []).map((session: any) => ({
+      sessionId: session.session_id,
+      title: session.title || "Untitled",
+      createdAt: session.created_at,
+      updatedAt: session.updated_at,
+      messageCount: session.message_count || 0,
+    }));
+  }
+
+  async createWorkspaceSession(workspaceId: string): Promise<{
+    sessionId: string;
+    title: string;
+    createdAt: number;
+    updatedAt: number;
+    isActive: boolean;
+  }> {
+    workspaceLogger.info("Creating workspace session", { workspaceId });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions`,
+      { method: "POST" },
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Failed to create workspace session: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return {
+      sessionId: data.session_id,
+      title: data.title || "Untitled",
+      createdAt: data.created_at,
+      updatedAt: data.created_at,
+      isActive: true,
+    };
+  }
+
+  async selectWorkspaceSession(
+    workspaceId: string,
+    sessionId: string,
+  ): Promise<string> {
+    workspaceLogger.info("Selecting workspace session", {
+      workspaceId,
+      sessionId,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/session/select`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Failed to select workspace session: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.session_id || sessionId;
+  }
+
   async getDefaultWorkspaceDir(): Promise<string> {
     workspaceLogger.info("Fetching default workspace dir");
     const response = await hostAdapter.fetch(
@@ -814,7 +894,7 @@ export class WorkspaceService {
       sessionId,
     });
     const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/session`,
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/session/select`,
       {
         method: "POST",
         headers: {
@@ -849,6 +929,26 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       throw new Error(`Failed to get MCP status: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async getWorkspaceMcpStatus(workspaceId: string): Promise<{
+    status: string;
+    message: string;
+    running_mcps?: {
+      name: string;
+      status: string;
+      error_message?: string | null;
+    }[];
+  }> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/mcp-status`,
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Failed to get workspace MCP status: ${response.statusText}`,
+      );
     }
     return response.json();
   }

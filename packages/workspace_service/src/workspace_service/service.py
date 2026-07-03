@@ -4,6 +4,7 @@ import os
 import ntpath
 import subprocess
 import uuid
+from dataclasses import replace
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -19,16 +20,21 @@ from core.logging import get_logger
 from core.redaction import redact_command, redact_text
 from core.tracing import traced
 from core.workspace import (
+    associate_workspace_session,
     create_workspace,
     create_workspace_from_dashboard,
+    get_workspace_by_id,
     get_workspace_by_path,
     get_workspace_by_session,
     get_workspace_enabled_tools,
+    get_workspace_enabled_tools_by_workspace,
+    list_workspace_agent_sessions,
     is_synthetic_session_workspace,
     sanitize_workspace_name,
     set_active_gateway_session,
     touch_workspace,
     update_workspace_enabled_tools,
+    update_workspace_enabled_tools_by_workspace,
     update_workspace_remote_by_id,
     update_workspace_session,
 )
@@ -43,6 +49,7 @@ from .models import (
     WorkspaceInvalidRequestError,
     WorkspaceNotFoundError,
     WorkspaceRecord,
+    WorkspaceSessionRecord,
     WorkspaceToolState,
 )
 
@@ -74,6 +81,39 @@ def _record_from_row(row: Mapping[str, Any]) -> WorkspaceRecord:
     )
 
 
+def _clean_session_title(title: str | None) -> str:
+    cleaned = (title or "").strip()
+    if not cleaned or cleaned in {"Untitled", "Undefined"}:
+        return "Untitled Session"
+    return cleaned
+
+
+def _unique_session_title(title: str | None, existing_titles: list[str | None]) -> str:
+    base = _clean_session_title(title)
+    existing = {_clean_session_title(item).casefold() for item in existing_titles}
+    if base.casefold() not in existing:
+        return base
+
+    index = 2
+    while f"{base} ({index})".casefold() in existing:
+        index += 1
+    return f"{base} ({index})"
+
+
+def _with_unique_session_titles(
+    records: list[WorkspaceSessionRecord],
+) -> list[WorkspaceSessionRecord]:
+    counts: dict[str, int] = {}
+    result: list[WorkspaceSessionRecord] = []
+    for record in records:
+        base = _clean_session_title(record.title)
+        key = base.casefold()
+        counts[key] = counts.get(key, 0) + 1
+        title = base if counts[key] == 1 else f"{base} ({counts[key]})"
+        result.append(replace(record, title=title))
+    return result
+
+
 class WorkspaceService:
     def __init__(
         self,
@@ -96,6 +136,28 @@ class WorkspaceService:
     async def resolve_workspace_dir(self, session_id: str, engine) -> str:
         workspace = get_workspace_by_session(self.db_path, session_id)
         if workspace:
+            try:
+                actual_workspace_path = await engine.get_session_workspace(session_id)
+            except Exception:
+                actual_workspace_path = None
+            if (
+                actual_workspace_path
+                and actual_workspace_path != workspace["local_path"]
+            ):
+                existing = get_workspace_by_path(self.db_path, actual_workspace_path)
+                if existing:
+                    update_workspace_session(
+                        self.db_path, existing["workspace_id"], session_id
+                    )
+                else:
+                    create_workspace(
+                        self.db_path,
+                        str(uuid.uuid4()),
+                        session_id,
+                        actual_workspace_path,
+                        workspace_name=os.path.basename(actual_workspace_path),
+                    )
+                return actual_workspace_path
             return workspace["local_path"]
 
         try:
@@ -193,6 +255,16 @@ class WorkspaceService:
             engine,
             allow_fallback=allow_fallback,
         )
+        if workspace:
+            update_workspace_session(
+                self.db_path, workspace["workspace_id"], active_session_id
+            )
+        else:
+            workspace = get_workspace_by_path(self.db_path, workspace_path)
+            if workspace:
+                update_workspace_session(
+                    self.db_path, workspace["workspace_id"], active_session_id
+                )
         touch_workspace(self.db_path, active_session_id)
         set_active_gateway_session(self.db_path, active_session_id)
         refreshed = self.refresh_agent_context_for_path(
@@ -241,6 +313,189 @@ class WorkspaceService:
             session_id=session_id,
         )
         return workspace["workspace_id"]
+
+    async def list_workspace_sessions(
+        self, workspace_id: str, engine, *, agent_id: str = "hermes"
+    ) -> list[WorkspaceSessionRecord]:
+        workspace = get_workspace_by_id(self.db_path, workspace_id)
+        if not workspace:
+            raise WorkspaceNotFoundError("Workspace not found")
+
+        local_records = {
+            row["session_id"]: row
+            for row in list_workspace_agent_sessions(self.db_path, workspace_id)
+        }
+        try:
+            agent_sessions = await engine.list_sessions()
+        except Exception as exc:
+            logger.warning(
+                "workspace_session_agent_list_failed",
+                workspace_id=workspace_id,
+                error=redact_text(exc),
+            )
+            agent_sessions = []
+
+        by_id: dict[str, WorkspaceSessionRecord] = {}
+        for session in agent_sessions:
+            if getattr(session, "workspace", None) != workspace["local_path"]:
+                continue
+            local_title = local_records.get(session.session_id, {}).get("title")
+            agent_title = _clean_session_title(session.title)
+            title = agent_title if agent_title != "Untitled Session" else local_title
+            associate_workspace_session(
+                self.db_path,
+                workspace_id,
+                session.session_id,
+                agent_id=agent_id,
+                title=title,
+                created_at=session.created_at,
+                updated_at=session.updated_at,
+            )
+            by_id[session.session_id] = WorkspaceSessionRecord(
+                workspace_id=workspace_id,
+                session_id=session.session_id,
+                title=title,
+                created_at=session.created_at,
+                updated_at=session.updated_at,
+                message_count=session.message_count,
+                agent_id=agent_id,
+            )
+
+        for session_id, row in local_records.items():
+            if session_id in by_id:
+                continue
+            by_id[session_id] = WorkspaceSessionRecord(
+                workspace_id=workspace_id,
+                session_id=session_id,
+                title=row.get("title"),
+                created_at=int(row.get("created_at") or 0),
+                updated_at=int(row.get("updated_at") or 0),
+                message_count=0,
+                agent_id=row.get("agent_id") or agent_id,
+            )
+
+        return _with_unique_session_titles(
+            sorted(by_id.values(), key=lambda item: item.updated_at, reverse=True)
+        )
+
+    async def create_workspace_session(
+        self, workspace_id: str, engine, *, agent_id: str = "hermes"
+    ) -> WorkspaceSessionRecord:
+        workspace = get_workspace_by_id(self.db_path, workspace_id)
+        if not workspace:
+            raise WorkspaceNotFoundError("Workspace not found")
+        session_info = await engine.create_session(workspace["local_path"])
+        existing_titles = [
+            row.get("title")
+            for row in list_workspace_agent_sessions(self.db_path, workspace_id)
+        ]
+        title = _unique_session_title(session_info.title, existing_titles)
+        update_workspace_session(self.db_path, workspace_id, session_info.session_id)
+        associate_workspace_session(
+            self.db_path,
+            workspace_id,
+            session_info.session_id,
+            agent_id=agent_id,
+            title=title,
+            created_at=session_info.created_at,
+            updated_at=session_info.updated_at,
+        )
+        self.refresh_agent_context_for_path(
+            workspace["local_path"],
+            agent_id=agent_id,
+            workspace_id=workspace_id,
+            session_id=session_info.session_id,
+        )
+        return WorkspaceSessionRecord(
+            workspace_id=workspace_id,
+            session_id=session_info.session_id,
+            title=title,
+            created_at=session_info.created_at,
+            updated_at=session_info.updated_at,
+            message_count=session_info.message_count,
+            agent_id=agent_id,
+        )
+
+    async def select_workspace_session(
+        self, workspace_id: str, session_id: str, engine, *, agent_id: str = "hermes"
+    ) -> WorkspaceActivation:
+        workspace = get_workspace_by_id(self.db_path, workspace_id)
+        if not workspace:
+            raise WorkspaceNotFoundError("Workspace not found")
+
+        owner = get_workspace_by_session(self.db_path, session_id)
+        if owner and owner["workspace_id"] != workspace_id:
+            raise WorkspaceInvalidRequestError(
+                "Session is not associated with this workspace"
+            )
+
+        known = {
+            row["session_id"]
+            for row in list_workspace_agent_sessions(self.db_path, workspace_id)
+        }
+        if session_id not in known:
+            try:
+                workspace_path = await engine.get_session_workspace(session_id)
+            except Exception:
+                workspace_path = None
+            if workspace_path != workspace["local_path"]:
+                raise WorkspaceInvalidRequestError(
+                    "Session is not associated with this workspace"
+                )
+
+        update_workspace_session(self.db_path, workspace_id, session_id)
+        active_session_id = await self._verify_agent_session(
+            session_id,
+            workspace["local_path"],
+            engine,
+            allow_fallback=False,
+        )
+        set_active_gateway_session(self.db_path, active_session_id)
+        refreshed = self.refresh_agent_context_for_path(
+            workspace["local_path"],
+            agent_id=agent_id,
+            workspace_id=workspace_id,
+            session_id=active_session_id,
+        )
+        return WorkspaceActivation(
+            success=True,
+            session_id=active_session_id,
+            workspace_path=workspace["local_path"],
+            context=refreshed,
+        )
+
+    def list_workspace_tools_by_workspace(
+        self, workspace_id: str
+    ) -> WorkspaceToolState:
+        enabled = get_workspace_enabled_tools_by_workspace(self.db_path, workspace_id)
+        if enabled is None:
+            enabled = [
+                server.name
+                for server in get_servers(self.db_path)
+                if server.is_installed
+            ]
+        workspace = get_workspace_by_id(self.db_path, workspace_id)
+        session_id = workspace.get("session_id") if workspace else workspace_id
+        return WorkspaceToolState(session_id=session_id, enabled_tools=enabled)
+
+    def set_workspace_tool_enabled_by_workspace(
+        self, workspace_id: str, server_id: str, is_enabled: bool
+    ) -> WorkspaceToolState:
+        current = get_workspace_enabled_tools_by_workspace(self.db_path, workspace_id)
+        if current is None:
+            current = [
+                server.name
+                for server in get_servers(self.db_path)
+                if server.is_installed
+            ]
+        if is_enabled and server_id not in current:
+            current.append(server_id)
+        elif not is_enabled and server_id in current:
+            current.remove(server_id)
+        update_workspace_enabled_tools_by_workspace(self.db_path, workspace_id, current)
+        workspace = get_workspace_by_id(self.db_path, workspace_id)
+        session_id = workspace.get("session_id") if workspace else workspace_id
+        return WorkspaceToolState(session_id=session_id, enabled_tools=current)
 
     def list_workspace_tools(self, session_id: str) -> WorkspaceToolState:
         enabled = get_workspace_enabled_tools(self.db_path, session_id)

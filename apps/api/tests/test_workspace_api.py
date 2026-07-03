@@ -16,6 +16,7 @@ from typing import AsyncIterator
 class MockAgentEngine(BaseAgentEngine):
     def __init__(self, workspace_path: str):
         self.workspace_path = workspace_path
+        self.test_session_title = "Test Session"
 
     async def check_health(self) -> dict:
         return {"state": "connected", "latencyMs": 1.0}
@@ -34,7 +35,7 @@ class MockAgentEngine(BaseAgentEngine):
         return [
             AgentSessionInfo(
                 session_id="test-session",
-                title="Test Session",
+                title=self.test_session_title,
                 created_at=1000,
                 updated_at=1000,
                 message_count=0,
@@ -103,7 +104,10 @@ def client(workspace_setup) -> TestClient:
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         conn.execute(
-            "DELETE FROM engineering_workspaces WHERE session_id = 'test-session'"
+            "DELETE FROM workspace_agent_sessions WHERE session_id IN ('test-session', 'mock-session', 'new-test-session', 'occupied-session')"
+        )
+        conn.execute(
+            "DELETE FROM engineering_workspaces WHERE session_id IN ('test-session', 'mock-session', 'new-test-session', 'occupied-session')"
         )
         conn.commit()
         conn.close()
@@ -112,6 +116,8 @@ def client(workspace_setup) -> TestClient:
 
     mock_engine = MockAgentEngine(workspace_setup)
     app.state.agent_engine = mock_engine
+    if hasattr(app.state, "chat_stream_registry"):
+        delattr(app.state, "chat_stream_registry")
     with TestClient(app) as c:
         yield c
 
@@ -728,10 +734,10 @@ def test_workspace_session_update_conflicts_when_session_owned_elsewhere(
             json={"session_id": "occupied-session"},
         )
 
-        assert response_update.status_code == 409
-        assert (
-            response_update.json()["message"]
-            == "Session is already associated with another workspace"
+        assert response_update.status_code == 400
+        error_body = response_update.json()
+        assert "not associated with this workspace" in (
+            error_body.get("detail") or error_body.get("message") or ""
         )
     finally:
         conn = sqlite3.connect(DATABASE_PATH)
@@ -771,6 +777,158 @@ def test_agent_sessions_filtering_by_workspace(client):
     )
     assert response_empty.status_code == 200
     assert len(response_empty.json()["sessions"]) == 0
+
+
+def test_workspace_sessions_endpoint_retains_multiple_sessions(client):
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    response_update = client.post(
+        f"/api/workspace/by-id/{workspace_id}/session",
+        json={"session_id": "new-test-session"},
+    )
+    assert response_update.status_code == 200
+
+    response_sessions = client.get(f"/api/workspace/by-id/{workspace_id}/sessions")
+    assert response_sessions.status_code == 200
+    session_ids = {s["session_id"] for s in response_sessions.json()["sessions"]}
+
+    assert "test-session" in session_ids
+    assert "mock-session" in session_ids
+    assert "new-test-session" in session_ids
+
+
+def test_workspace_sessions_endpoint_uses_current_agent_title(client):
+    from api.config import DATABASE_PATH
+    from core.workspace import associate_workspace_session
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    associate_workspace_session(
+        DATABASE_PATH,
+        workspace_id,
+        "test-session",
+        title="Old Local Title",
+        created_at=1000,
+        updated_at=1000,
+    )
+
+    response_sessions = client.get(f"/api/workspace/by-id/{workspace_id}/sessions")
+    assert response_sessions.status_code == 200
+    titles = {s["session_id"]: s["title"] for s in response_sessions.json()["sessions"]}
+
+    assert titles["test-session"] == "Test Session"
+
+
+def test_title_command_persists_workspace_session_title_when_agent_title_is_untitled(
+    client,
+):
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    client.app.state.agent_engine.test_session_title = "Untitled Session"
+
+    response_chat = client.post(
+        "/api/agent/chat",
+        json={"session_id": "test-session", "message": "/title mark"},
+    )
+    assert response_chat.status_code == 200
+
+    response_sessions = client.get(f"/api/workspace/by-id/{workspace_id}/sessions")
+    assert response_sessions.status_code == 200
+    titles = {s["session_id"]: s["title"] for s in response_sessions.json()["sessions"]}
+
+    assert titles["test-session"] == "mark"
+
+
+def test_workspace_sessions_endpoint_disambiguates_duplicate_titles(client):
+    from api.config import DATABASE_PATH
+    from core.workspace import associate_workspace_session
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    associate_workspace_session(
+        DATABASE_PATH,
+        workspace_id,
+        "duplicate-session-a",
+        title="Onshape Session 2",
+        created_at=1001,
+        updated_at=1001,
+    )
+    associate_workspace_session(
+        DATABASE_PATH,
+        workspace_id,
+        "duplicate-session-b",
+        title="Onshape Session 2",
+        created_at=1002,
+        updated_at=1002,
+    )
+
+    response_sessions = client.get(f"/api/workspace/by-id/{workspace_id}/sessions")
+    assert response_sessions.status_code == 200
+    sessions = response_sessions.json()["sessions"]
+    titles = {s["session_id"]: s["title"] for s in sessions}
+
+    assert titles["duplicate-session-b"] == "Onshape Session 2"
+    assert titles["duplicate-session-a"] == "Onshape Session 2 (2)"
+
+
+def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
+    from api.config import DATABASE_PATH
+    import json
+    import sqlite3
+    import time
+
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+
+    now = int(time.time())
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE workspace_id = ?",
+            (json.dumps(["Workspace Scoped Onshape MCP"]), workspace_id),
+        )
+        conn.execute(
+            "DELETE FROM mcp_servers WHERE server_id IN (?, ?)",
+            ("onshape-test", "other-test"),
+        )
+        conn.executemany(
+            """
+            INSERT INTO mcp_servers
+                (server_id, name, type, command, is_installed, status, created_at, updated_at)
+            VALUES (?, ?, 'stdio', '[]', 1, 'inactive', ?, ?)
+            """,
+            [
+                ("onshape-test", "Workspace Scoped Onshape MCP", now, now),
+                ("other-test", "Other Workspace MCP", now, now),
+            ],
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    response_status = client.get(f"/api/workspace/by-id/{workspace_id}/mcp-status")
+    assert response_status.status_code == 200
+    running = response_status.json()["running_mcps"]
+    assert {item["name"] for item in running} == {"Workspace Scoped Onshape MCP"}
 
 
 def test_workspace_activate_session_fallback(client):
@@ -1196,6 +1354,7 @@ async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_pat
             is_installed INTEGER NOT NULL DEFAULT 0,
             status TEXT NOT NULL DEFAULT 'inactive',
             category TEXT,
+            approval_gates TEXT,
             created_at INTEGER NOT NULL,
             updated_at INTEGER NOT NULL
         )
@@ -1217,12 +1376,18 @@ async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_pat
         conn.executemany(
             """
             INSERT INTO mcp_servers
-                (server_id, name, type, command, is_installed, status, created_at, updated_at)
-            VALUES (?, ?, 'stdio', '[]', 1, 'inactive', ?, ?)
+                (server_id, name, type, command, is_installed, status, approval_gates, created_at, updated_at)
+            VALUES (?, ?, 'stdio', '[]', 1, 'inactive', ?, ?, ?)
             """,
             [
-                ("assigned-mcp", "Assigned MCP", now, now),
-                ("unassigned-mcp", "Unassigned MCP", now, now),
+                (
+                    "assigned-mcp",
+                    "Assigned MCP",
+                    json.dumps(["workspace_write_approval"]),
+                    now,
+                    now,
+                ),
+                ("unassigned-mcp", "Unassigned MCP", None, now, now),
             ],
         )
         conn.commit()
@@ -1234,8 +1399,10 @@ async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_pat
             self.started = []
             self.stopped = []
 
-        async def start_server(self, server_id):
-            self.started.append(server_id)
+        async def start_server(
+            self, server_id, workspace_dir=None, *, approval_context=None
+        ):
+            self.started.append((server_id, workspace_dir, approval_context))
 
         async def stop_server(self, server_id):
             self.stopped.append(server_id)
@@ -1245,7 +1412,12 @@ async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_pat
     await sync_workspace_runners(db_path, "session-1", engine)
     await asyncio.sleep(0)
 
-    assert engine.started == ["assigned-mcp"]
+    assert len(engine.started) == 1
+    started_server_id, started_workspace_dir, approval_context = engine.started[0]
+    assert started_server_id == "assigned-mcp"
+    assert started_workspace_dir == workspace_dir
+    assert approval_context.workspace_id == "ws1"
+    assert approval_context.workspace_approvals == {"workspace_write_approval"}
     assert engine.stopped == ["unassigned-mcp"]
 
 
@@ -1305,14 +1477,11 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
 
         assert response.status_code == 200
         data = response.json()
-        assert data["status"] == "warning"
-        assert (
-            data["message"] == "MCP server installed but not active: Inactive Test MCP"
-        )
+        assert data["status"] == "ok"
         assert data["running_mcps"] == [
             {
                 "name": "Inactive Test MCP",
-                "status": "inactive",
+                "status": "active",
                 "error_message": None,
             }
         ]
@@ -1522,6 +1691,27 @@ def test_agent_chat_starts_enabled_workspace_mcp_servers(client, monkeypatch):
         conn.commit()
     finally:
         conn.close()
+
+
+def test_agent_chat_stream_can_be_reattached_after_completion(client):
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+
+    response_chat = client.post(
+        "/api/agent/chat",
+        json={"session_id": "test-session", "message": "hello"},
+    )
+    assert response_chat.status_code == 200
+    assert "event: token" in response_chat.text
+    assert "hello" in response_chat.text
+
+    response_attach = client.get(
+        "/api/agent/chat/stream",
+        params={"session_id": "test-session"},
+    )
+    assert response_attach.status_code == 200
+    assert "event: token" in response_attach.text
+    assert "hello" in response_attach.text
+    assert "event: stream_end" in response_attach.text
 
 
 def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):

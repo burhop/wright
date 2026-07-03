@@ -38,6 +38,17 @@ class WorkspaceRecord:
 
 
 @dataclass(frozen=True)
+class WorkspaceSessionRecord:
+    workspace_id: str
+    session_id: str
+    title: str | None
+    created_at: int
+    updated_at: int
+    message_count: int = 0
+    agent_id: str = "hermes"
+
+
+@dataclass(frozen=True)
 class WorkspaceActivation:
     success: bool
     session_id: str

@@ -9,6 +9,8 @@ const mockGetWorkspace = vi.fn();
 const mockSendMessage = vi.fn();
 const mockUpdateWorkspaceSession = vi.fn();
 const mockSelectSession = vi.fn();
+const mockGetWorkspaceMcpStatus = vi.fn();
+const mockGetWorkspaceFiles = vi.fn();
 
 vi.mock("../src/store/sessions", () => ({
   useChat: () => mockUseChat(),
@@ -39,15 +41,7 @@ vi.mock("../src/services/workspace-service", () => ({
     getWorkspace: (...args: unknown[]) => mockGetWorkspace(...args),
     updateWorkspaceSession: (...args: unknown[]) =>
       mockUpdateWorkspaceSession(...args),
-    getWorkspaceFiles: vi.fn().mockResolvedValue({
-      name: "Demo",
-      path: "/tmp/demo",
-      type: "directory",
-      size: null,
-      last_modified: Date.now(),
-      git_status: "Clean",
-      children: [],
-    }),
+    getWorkspaceFiles: (...args: unknown[]) => mockGetWorkspaceFiles(...args),
     getGitStatus: vi.fn().mockResolvedValue({
       branch_name: "main",
       is_clean: true,
@@ -64,6 +58,8 @@ vi.mock("../src/services/workspace-service", () => ({
       git_large_file_threshold: null,
     }),
     getWorkspaceTools: vi.fn().mockResolvedValue([]),
+    getWorkspaceMcpStatus: (...args: unknown[]) =>
+      mockGetWorkspaceMcpStatus(...args),
   },
   MergeConflictError: class MergeConflictError extends Error {},
 }));
@@ -74,6 +70,20 @@ describe("WorkspacePanel session selection", () => {
     mockSendMessage.mockResolvedValue(undefined);
     mockUpdateWorkspaceSession.mockResolvedValue("new-session");
     mockSelectSession.mockResolvedValue(undefined);
+    mockGetWorkspaceMcpStatus.mockResolvedValue({
+      status: "ok",
+      message: "MCP configuration is active and healthy.",
+      running_mcps: [],
+    });
+    mockGetWorkspaceFiles.mockResolvedValue({
+      name: "Demo",
+      path: "/tmp/demo",
+      type: "directory",
+      size: null,
+      last_modified: Date.now(),
+      git_status: "Clean",
+      children: [],
+    });
     mockGetWorkspace.mockResolvedValue({
       workspace_id: "workspace-1",
       workspace_name: "Demo",
@@ -121,7 +131,9 @@ describe("WorkspacePanel session selection", () => {
         ],
         activeSessionId: "new-session",
         isStreaming: false,
+        streamingSessionId: null,
         activeTool: null,
+        streamActivity: [],
         streamedText: "",
         promptQueue: [],
       },
@@ -150,6 +162,49 @@ describe("WorkspacePanel session selection", () => {
     });
     expect(screen.queryByText("old session message")).not.toBeInTheDocument();
   });
+  it("does not show another session's busy stream on the selected session", async () => {
+    const chat = mockUseChat();
+    mockUseChat.mockReturnValue({
+      ...chat,
+      state: {
+        ...chat.state,
+        activeSessionId: "new-session",
+        isStreaming: true,
+        streamingSessionId: "old-session",
+        streamedText: "still working in old session",
+        activeTool: {
+          name: "Onshape MCP",
+          preview: "Calling Onshape",
+        },
+        streamActivity: [
+          {
+            id: "activity-1",
+            kind: "tool",
+            title: "Calling Onshape MCP",
+            timestamp: Date.now(),
+          },
+        ],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("new session message")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("stream-activity-panel"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("thinking-indicator")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("still working in old session"),
+    ).not.toBeInTheDocument();
+  });
+
   it("changes only the chat session when selecting an existing session", async () => {
     const handleSessionChange = vi.fn();
 
@@ -166,6 +221,11 @@ describe("WorkspacePanel session selection", () => {
     );
 
     const selector = await screen.findByTestId("sessions-sidebar");
+    await waitFor(() => {
+      expect(mockGetWorkspaceFiles).toHaveBeenCalledWith("new-session");
+    });
+    mockGetWorkspaceFiles.mockClear();
+
     fireEvent.change(selector, { target: { value: "old-session" } });
 
     await waitFor(() => {
@@ -173,6 +233,7 @@ describe("WorkspacePanel session selection", () => {
     });
     expect(mockUpdateWorkspaceSession).not.toHaveBeenCalled();
     expect(handleSessionChange).not.toHaveBeenCalled();
+    expect(mockGetWorkspaceFiles).not.toHaveBeenCalled();
   });
 
   it("does not crash when a cached session has no title", async () => {
@@ -203,6 +264,47 @@ describe("WorkspacePanel session selection", () => {
     );
 
     expect(await screen.findByText("Untitled Session")).toBeInTheDocument();
+  });
+
+  it("disambiguates duplicate session titles in the dropdown", async () => {
+    const chatState = mockUseChat().state;
+    mockUseChat.mockReturnValue({
+      ...mockUseChat(),
+      state: {
+        ...chatState,
+        sessions: [
+          {
+            ...chatState.sessions[0],
+            sessionId: "duplicate-a",
+            title: "Onshape Session 2",
+          },
+          {
+            ...chatState.sessions[1],
+            sessionId: "duplicate-b",
+            title: "Onshape Session 2",
+          },
+        ],
+        activeSessionId: "duplicate-b",
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="duplicate-b" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    const sessionSelect = await screen.findByTestId("sessions-sidebar");
+    const optionLabels = Array.from(
+      sessionSelect.querySelectorAll("option"),
+    ).map((option) => option.textContent?.trim());
+
+    expect(optionLabels).toEqual([
+      "Onshape Session 2",
+      "Onshape Session 2 (2)",
+    ]);
   });
 
   it("shows only Hermes as selectable and OpenClaw as a disabled future option", async () => {
@@ -303,6 +405,21 @@ describe("WorkspacePanel session selection", () => {
     expect(mockSendMessage).toHaveBeenCalledWith(
       "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
     );
+  });
+
+  it("requests MCP status by workspace instead of selected session", async () => {
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(mockGetWorkspaceMcpStatus).toHaveBeenCalledWith("workspace-1");
+    });
+    expect(mockGetWorkspaceMcpStatus).not.toHaveBeenCalledWith("new-session");
   });
 
   it("shows the default workspace empty state when no tabs are open", async () => {
