@@ -38,8 +38,27 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
       });
     });
 
+    // Mock workspace-scoped sessions before the exact workspace info route.
+    await page.route("**/api/workspace/by-id/ws-1/sessions", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          sessions: [
+            {
+              session_id: "session-1",
+              title: "Default Session",
+              created_at: Date.now(),
+              updated_at: Date.now(),
+              message_count: 0,
+            },
+          ],
+        }),
+      });
+    });
+
     // Mock workspace info
-    await page.route("**/api/workspace/by-id/*", async (route) => {
+    await page.route("**/api/workspace/by-id/ws-1", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -387,7 +406,7 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     // Find and click the html file in explorer tree
     const htmlFile = page.locator('[data-testid="file-node-/sandbox.html"]');
     await expect(htmlFile).toBeVisible();
-    htmlFile.click();
+    await htmlFile.click();
 
     // Verify tab created and active
     const htmlTab = page.locator('[data-testid="editor-tab-/sandbox.html"]');
