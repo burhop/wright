@@ -107,7 +107,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-          packages-dir: dist/
+          packages-dir: dist/${{ needs.prepare.outputs.package }}/
 
   publish-pypi:
     if: ${{ needs.prepare.outputs.target == 'pypi' }}
@@ -130,4 +130,4 @@ jobs:
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: dist/
+          packages-dir: dist/${{ needs.prepare.outputs.package }}/
