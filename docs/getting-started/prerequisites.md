@@ -26,6 +26,7 @@ Ensure the following base tools are installed on your host system:
 
 ### Operating System
 *   **Linux**: Ubuntu 22.04 LTS / 24.04 LTS (Recommended), Debian 12, Fedora 40
+    *   *Note for Ubuntu 24.04+*: Default AppArmor rules restrict unprivileged user namespaces, which can cause sandboxing tools (e.g. `bwrap`) to fail. See the [GB10 Workstation Guide](workstation-gb10-dgx.md#troubleshooting-sandboxing-ubuntu-2404) for AppArmor setup instructions.
 *   **macOS**: macOS Sonoma 14+ (Compatible, though CalculiX/OpenFOAM solvers require Docker setup)
 *   **Windows**: Windows 11 with WSL2 (Ubuntu runtime)
 

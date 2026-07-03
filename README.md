@@ -84,11 +84,13 @@ View engineering tools, MCP status, and validation metadata available to agents.
 
 ![Tool Registry](docs/images/screenshot_tool_registry.png)
 
-### File Vault
+### Workspace Artifacts
 
-Browse STEP, STL, G-code, and other artifacts generated during design turns.
+Review files, generated artifacts, logs, and viewer panels inside the active
+workspace. CAD files, scripts, screenshots, and diagnostics stay local to the
+workspace volume or checkout you control.
 
-![File Vault](docs/images/screenshot_file_vault.png)
+![Workspace Artifacts](docs/images/screenshot_initial.png)
 
 ## Quick Start
 
@@ -165,7 +167,7 @@ flowchart TD
     API -->|Catalog and lifecycle reads| MCP
     Agent -->|Wright gateway protocol| MCP
     MCP -->|Selected server| Tools[CAD, CAE, CAM, calculators]
-    API -->|Database and files| Vault[SQLite, LanceDB, File Vault]
+    API -->|State, files, and logs| LocalState[SQLite and local workspace files]
 ```
 
 Hermes remains the default first-class adapter, but `.hermes.md` and
@@ -186,7 +188,7 @@ wright/
 |   |-- agent_adapters/         # Adapter pattern for agent runtimes
 |   |-- workspace_service/      # Workspace lifecycle orchestration facade
 |   |-- tool_registry/          # MCP registry and validation logic
-|   `-- data_vault/             # SQLite, LanceDB, and filesystem vault
+|   `-- data_vault/             # Placeholder package for future storage extraction
 |-- hermes-plugin-wright/       # Wright Hermes plugin compatibility package
 |-- tests/
 |   |-- ui-integration/         # Playwright integration tests

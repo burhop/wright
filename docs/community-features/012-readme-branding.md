@@ -78,7 +78,7 @@ Store screenshots under `docs/images/` and show the active product surfaces:
 
 - Agent chat interface.
 - Tool registry.
-- File vault.
+- Workspace files, artifacts, logs, and viewer panels.
 
 ## Quick Start
 

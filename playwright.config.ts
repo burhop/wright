@@ -7,7 +7,9 @@ export default defineConfig({
   retries: 0,
   maxFailures: process.env.CI ? 1 : undefined,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "line",
+  reporter: process.env.CI
+    ? [["line"], ["html", { outputFolder: "playwright-report", open: "never" }]]
+    : "line",
   grepInvert: process.env.PLAYWRIGHT_INCLUDE_LIVE ? undefined : /@live/,
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173",

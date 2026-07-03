@@ -60,7 +60,7 @@ Wright API and web UI
         +--> Agent adapters and BYO-AI model endpoint
         +--> Hermes integration
         +--> MCP tool registry
-        +--> Local workspace, data vault, and logs
+        +--> Local workspace files, state, and logs
         |
         v
 Selected MCP servers and engineering tools

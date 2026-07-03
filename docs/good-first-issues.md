@@ -49,8 +49,8 @@ This document lists draft issues that the repository maintainers can copy and pa
 
 ---
 
-## 5. [Backend] Implement API route to download Vault files as a ZIP archive
-*   **Description**: In the File Vault, users can only download files individually. We should add an endpoint `/api/vault/download-all` to download all generated artifacts as a single ZIP file.
+## 5. [Backend] Implement API route to download workspace artifacts as a ZIP archive
+*   **Description**: Workspace artifacts can be downloaded individually. Add an endpoint to download generated artifacts from the active workspace as a single ZIP file.
 *   **Difficulty**: Medium
 *   **Files to Modify**:
     *   `apps/api/src/api/routers/workspace.py`
@@ -60,11 +60,11 @@ This document lists draft issues that the repository maintainers can copy and pa
 
 ---
 
-## 6. [Testing] Add simple unit test for local RAG Fastener Database query
-*   **Description**: Add a test that mock-queries LanceDB fasteners table and validates schema return values.
+## 6. [Testing] Add simple unit test for workspace metadata query
+*   **Description**: Add a test that mock-queries workspace metadata and validates schema return values.
 *   **Difficulty**: Easy
 *   **Files to Modify**:
-    *   `packages/data_vault/tests/test_fasteners.py`
+    *   `packages/workspace_service/tests/test_workspace_metadata.py`
 *   **Expected Behavior**:
-    *   Using `pytest`, assert database retrieval handles missing/empty fasteners list correctly.
+    *   Using `pytest`, assert workspace metadata retrieval handles missing or empty records correctly.
 *   **Skills Needed**: Python, pytest
