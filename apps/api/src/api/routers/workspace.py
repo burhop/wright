@@ -642,7 +642,9 @@ async def _workspace_mcp_status_response(
             continue
         is_enabled = True
         if enabled_tools is not None:
-            is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
+            is_enabled = (server.name in enabled_tools) or (
+                server.server_id in enabled_tools
+            )
         if is_enabled:
             expected_servers.append(server)
 
@@ -652,7 +654,11 @@ async def _workspace_mcp_status_response(
     for server in expected_servers:
         effective_status = server.status
         error_message = server.error_message
-        runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id) if mcp_engine else None
+        runner = (
+            getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
+            if mcp_engine
+            else None
+        )
         if runner and runner.is_running():
             effective_status = "active"
             error_message = None
@@ -666,7 +672,9 @@ async def _workspace_mcp_status_response(
                         workspace_approvals=set(server.approval_gates or []),
                     ),
                 )
-                runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
+                runner = getattr(mcp_engine, "_active_runners", {}).get(
+                    server.server_id
+                )
                 if runner and runner.is_running():
                     effective_status = "active"
                     error_message = None
@@ -710,7 +718,8 @@ async def _workspace_mcp_status_response(
         return WorkspaceMcpStatusResponse(
             workspace_id=workspace_id,
             status="error",
-            message="Failed to start workspace MCP server(s): " + "; ".join(start_failures),
+            message="Failed to start workspace MCP server(s): "
+            + "; ".join(start_failures),
             running_mcps=running_mcps,
         )
 
@@ -729,7 +738,8 @@ async def _workspace_mcp_status_response(
         return WorkspaceMcpStatusResponse(
             workspace_id=workspace_id,
             status="warning",
-            message="MCP server installed but not active: " + ", ".join(inactive_servers),
+            message="MCP server installed but not active: "
+            + ", ".join(inactive_servers),
             running_mcps=running_mcps,
         )
 
@@ -744,7 +754,9 @@ async def _workspace_mcp_status_response(
 @router.get("/mcp-status", response_model=WorkspaceMcpStatusResponse)
 @traced("workspace.mcp-status")
 async def get_workspace_mcp_status_endpoint(
-    request: Request, session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+    request: Request,
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir),
 ):
     workspace = get_workspace_by_session(DATABASE_PATH, session_id)
     if not workspace:
@@ -831,7 +843,9 @@ async def list_workspace_sessions_endpoint(
     )
 
 
-@router.post("/by-id/{workspace_id}/sessions", response_model=WorkspaceSessionCreateResponse)
+@router.post(
+    "/by-id/{workspace_id}/sessions", response_model=WorkspaceSessionCreateResponse
+)
 @traced("workspace.sessions.create")
 async def create_workspace_session_endpoint(
     workspace_id: str,
@@ -877,7 +891,9 @@ async def select_workspace_session_endpoint(
 
         notify_gateway_tool_change()
     except Exception as e:
-        logger.warning("failed_to_notify_gateway_on_workspace_session_select", error=str(e))
+        logger.warning(
+            "failed_to_notify_gateway_on_workspace_session_select", error=str(e)
+        )
 
     return WorkspaceSessionSelectResponse(
         success=True, workspace_id=workspace_id, session_id=activation.session_id
@@ -922,7 +938,9 @@ async def toggle_workspace_tool_by_id_endpoint(
     )
 
 
-@router.get("/by-id/{workspace_id}/mcp-status", response_model=WorkspaceMcpStatusResponse)
+@router.get(
+    "/by-id/{workspace_id}/mcp-status", response_model=WorkspaceMcpStatusResponse
+)
 @traced("workspace.mcp-status-by-id")
 async def get_workspace_mcp_status_by_id_endpoint(workspace_id: str, request: Request):
     workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)

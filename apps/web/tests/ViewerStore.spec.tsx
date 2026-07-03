@@ -138,7 +138,9 @@ describe("ViewerPanelProvider tab state", () => {
     await waitFor(() => {
       expect(screen.getByTestId("tab-count")).toHaveTextContent("1");
     });
-    expect(screen.getByTestId("active-tab")).toHaveTextContent("/lessons.viewer");
+    expect(screen.getByTestId("active-tab")).toHaveTextContent(
+      "/lessons.viewer",
+    );
 
     mockUseChat.mockReturnValue({
       state: {
@@ -153,6 +155,8 @@ describe("ViewerPanelProvider tab state", () => {
     );
 
     expect(screen.getByTestId("tab-count")).toHaveTextContent("1");
-    expect(screen.getByTestId("active-tab")).toHaveTextContent("/lessons.viewer");
+    expect(screen.getByTestId("active-tab")).toHaveTextContent(
+      "/lessons.viewer",
+    );
   });
 });

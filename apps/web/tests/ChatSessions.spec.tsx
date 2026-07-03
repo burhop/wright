@@ -466,7 +466,7 @@ describe("ChatProvider session state", () => {
     vi.mocked(agentService.sendMessage).mockImplementation(async function* () {
       yield {
         type: "token",
-        text: 'Title set to “test”.',
+        text: "Title set to “test”.",
       };
       yield {
         type: "done",
@@ -486,7 +486,9 @@ describe("ChatProvider session state", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Onshape Session 2:session-1")).toBeInTheDocument();
+      expect(
+        screen.getByText("Onshape Session 2:session-1"),
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole("button", { name: "send title" }));
@@ -494,7 +496,9 @@ describe("ChatProvider session state", () => {
     await waitFor(() => {
       expect(screen.getByText("test:session-1")).toBeInTheDocument();
     });
-    expect(screen.queryByText("Onshape Session 2:session-1")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Onshape Session 2:session-1"),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a diagnostic instead of saving a blank assistant message", async () => {

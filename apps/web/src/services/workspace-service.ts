@@ -802,7 +802,9 @@ export class WorkspaceService {
       `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions`,
     );
     if (!response.ok) {
-      throw new Error(`Failed to fetch workspace sessions: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch workspace sessions: ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return (data.sessions || []).map((session: any) => ({
@@ -827,7 +829,9 @@ export class WorkspaceService {
       { method: "POST" },
     );
     if (!response.ok) {
-      throw new Error(`Failed to create workspace session: ${response.statusText}`);
+      throw new Error(
+        `Failed to create workspace session: ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return {
@@ -843,7 +847,10 @@ export class WorkspaceService {
     workspaceId: string,
     sessionId: string,
   ): Promise<string> {
-    workspaceLogger.info("Selecting workspace session", { workspaceId, sessionId });
+    workspaceLogger.info("Selecting workspace session", {
+      workspaceId,
+      sessionId,
+    });
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/session/select`,
       {
@@ -853,7 +860,9 @@ export class WorkspaceService {
       },
     );
     if (!response.ok) {
-      throw new Error(`Failed to select workspace session: ${response.statusText}`);
+      throw new Error(
+        `Failed to select workspace session: ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return data.session_id || sessionId;
@@ -937,7 +946,9 @@ export class WorkspaceService {
       `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/mcp-status`,
     );
     if (!response.ok) {
-      throw new Error(`Failed to get workspace MCP status: ${response.statusText}`);
+      throw new Error(
+        `Failed to get workspace MCP status: ${response.statusText}`,
+      );
     }
     return response.json();
   }

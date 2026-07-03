@@ -178,10 +178,14 @@ export function WorkspacePanel({
   const activeSessionStreamState = activeSessionId
     ? state.streamStates?.[activeSessionId]
     : undefined;
-  const isActiveSessionStreaming = Boolean(activeSessionStreamState?.isStreaming);
-  const activeSessionStreamedText = activeSessionStreamState?.streamedText || "";
+  const isActiveSessionStreaming = Boolean(
+    activeSessionStreamState?.isStreaming,
+  );
+  const activeSessionStreamedText =
+    activeSessionStreamState?.streamedText || "";
   const activeSessionTool = activeSessionStreamState?.activeTool || null;
-  const activeSessionStreamActivity = activeSessionStreamState?.streamActivity || [];
+  const activeSessionStreamActivity =
+    activeSessionStreamState?.streamActivity || [];
 
   // Load active agent on mount
   useEffect(() => {
@@ -443,7 +447,11 @@ export function WorkspacePanel({
   }, [layoutKey]);
 
   useEffect(() => {
-    if (!tabsInitialized.current && savedLayout?.openTabs && workspaceFileSessionId) {
+    if (
+      !tabsInitialized.current &&
+      savedLayout?.openTabs &&
+      workspaceFileSessionId
+    ) {
       tabsInitialized.current = true;
       const syncTabs = async () => {
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
@@ -688,7 +696,9 @@ export function WorkspacePanel({
     const fetchWorkspace = async (isInitial = false) => {
       if (isInitial) setLoading(true);
       try {
-        const tree = await workspaceService.getWorkspaceFiles(workspaceFileSessionId);
+        const tree = await workspaceService.getWorkspaceFiles(
+          workspaceFileSessionId,
+        );
         if (!isMounted) return;
         setWorkspaceRoot(tree);
         setError(null);
@@ -1209,7 +1219,8 @@ export function WorkspacePanel({
                       value={session.sessionId}
                       data-testid={`session-${session.sessionId}`}
                     >
-                      {sessionOptionLabels.get(session.sessionId) || "Untitled Session"}
+                      {sessionOptionLabels.get(session.sessionId) ||
+                        "Untitled Session"}
                     </option>
                   ))
                 )}
@@ -2116,7 +2127,9 @@ export function WorkspacePanel({
                             ? "not-allowed"
                             : "pointer",
                         opacity:
-                          !activeSessionId || isActiveSessionStreaming ? 0.55 : 1,
+                          !activeSessionId || isActiveSessionStreaming
+                            ? 0.55
+                            : 1,
                       }}
                     >
                       {label}
@@ -2659,7 +2672,8 @@ export function WorkspacePanel({
                     value={session.sessionId}
                     data-testid={`session-${session.sessionId}`}
                   >
-                    {sessionOptionLabels.get(session.sessionId) || "Untitled Session"}
+                    {sessionOptionLabels.get(session.sessionId) ||
+                      "Untitled Session"}
                   </option>
                 ))
               )}

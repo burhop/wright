@@ -282,7 +282,6 @@ export class HermesAgentService {
     }
   }
 
-
   private async *readSSEEvents(
     response: Response,
     sessionId: string,
@@ -326,10 +325,7 @@ export class HermesAgentService {
     }
   }
 
-  async *attachStream(
-    sessionId: string,
-    after = 0,
-  ): AsyncIterable<AgentEvent> {
+  async *attachStream(sessionId: string, after = 0): AsyncIterable<AgentEvent> {
     const response = await fetch(
       `${API_BASE}/api/agent/chat/stream?session_id=${encodeURIComponent(sessionId)}&after=${after}`,
     );

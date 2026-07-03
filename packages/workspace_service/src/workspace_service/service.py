@@ -140,7 +140,10 @@ class WorkspaceService:
                 actual_workspace_path = await engine.get_session_workspace(session_id)
             except Exception:
                 actual_workspace_path = None
-            if actual_workspace_path and actual_workspace_path != workspace["local_path"]:
+            if (
+                actual_workspace_path
+                and actual_workspace_path != workspace["local_path"]
+            ):
                 existing = get_workspace_by_path(self.db_path, actual_workspace_path)
                 if existing:
                     update_workspace_session(
@@ -253,11 +256,15 @@ class WorkspaceService:
             allow_fallback=allow_fallback,
         )
         if workspace:
-            update_workspace_session(self.db_path, workspace["workspace_id"], active_session_id)
+            update_workspace_session(
+                self.db_path, workspace["workspace_id"], active_session_id
+            )
         else:
             workspace = get_workspace_by_path(self.db_path, workspace_path)
             if workspace:
-                update_workspace_session(self.db_path, workspace["workspace_id"], active_session_id)
+                update_workspace_session(
+                    self.db_path, workspace["workspace_id"], active_session_id
+                )
         touch_workspace(self.db_path, active_session_id)
         set_active_gateway_session(self.db_path, active_session_id)
         refreshed = self.refresh_agent_context_for_path(
@@ -457,11 +464,15 @@ class WorkspaceService:
             context=refreshed,
         )
 
-    def list_workspace_tools_by_workspace(self, workspace_id: str) -> WorkspaceToolState:
+    def list_workspace_tools_by_workspace(
+        self, workspace_id: str
+    ) -> WorkspaceToolState:
         enabled = get_workspace_enabled_tools_by_workspace(self.db_path, workspace_id)
         if enabled is None:
             enabled = [
-                server.name for server in get_servers(self.db_path) if server.is_installed
+                server.name
+                for server in get_servers(self.db_path)
+                if server.is_installed
             ]
         workspace = get_workspace_by_id(self.db_path, workspace_id)
         session_id = workspace.get("session_id") if workspace else workspace_id
@@ -473,7 +484,9 @@ class WorkspaceService:
         current = get_workspace_enabled_tools_by_workspace(self.db_path, workspace_id)
         if current is None:
             current = [
-                server.name for server in get_servers(self.db_path) if server.is_installed
+                server.name
+                for server in get_servers(self.db_path)
+                if server.is_installed
             ]
         if is_enabled and server_id not in current:
             current.append(server_id)

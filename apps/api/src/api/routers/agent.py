@@ -32,7 +32,9 @@ router = APIRouter()
 
 
 class ChatStreamJob:
-    def __init__(self, session_id: str, request: AgentChatRequest, engine: BaseAgentEngine):
+    def __init__(
+        self, session_id: str, request: AgentChatRequest, engine: BaseAgentEngine
+    ):
         self.session_id = session_id
         self.request = request
         self.engine = engine
@@ -111,7 +113,9 @@ class ChatStreamRegistry:
         self._jobs: dict[str, ChatStreamJob] = {}
         self._lock = asyncio.Lock()
 
-    async def start(self, request: AgentChatRequest, engine: BaseAgentEngine) -> ChatStreamJob:
+    async def start(
+        self, request: AgentChatRequest, engine: BaseAgentEngine
+    ) -> ChatStreamJob:
         async with self._lock:
             existing = self._jobs.get(request.session_id)
             if existing and existing.is_running:
@@ -269,7 +273,7 @@ def title_from_slash_command(message: str) -> str | None:
     match = re.match(r"^\s*/title\s+(.+)\s*$", message or "", re.IGNORECASE)
     if not match:
         return None
-    title = match.group(1).strip().strip('"\'“”')
+    title = match.group(1).strip().strip("\"'“”")
     return title or None
 
 

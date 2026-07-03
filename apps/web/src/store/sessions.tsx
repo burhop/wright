@@ -53,7 +53,12 @@ type ChatAction =
       preview: string;
       percentage?: number;
     }
-  | { type: "SET_TOOL_PROGRESS"; sessionId: string; percentage?: number; message: string }
+  | {
+      type: "SET_TOOL_PROGRESS";
+      sessionId: string;
+      percentage?: number;
+      message: string;
+    }
   | { type: "CLEAR_ACTIVE_TOOL"; sessionId: string }
   | { type: "END_STREAMING"; sessionId: string; finalSession?: ChatSession }
   | {
@@ -75,7 +80,6 @@ const initialState: ChatState = {
   streamStates: {},
   promptQueue: [],
 };
-
 
 function emptyStreamState(): ChatStreamState {
   return {
@@ -104,8 +108,9 @@ function setSessionStreamState(
     (streamState) => streamState.isStreaming,
   );
   const firstStreamingId =
-    Object.entries(streamStates).find(([, streamState]) => streamState.isStreaming)?.[0] ||
-    null;
+    Object.entries(streamStates).find(
+      ([, streamState]) => streamState.isStreaming,
+    )?.[0] || null;
 
   return {
     ...state,
@@ -428,69 +433,93 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       break;
 
     case "START_STREAMING":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        isStreaming: true,
-        streamedText: action.streamId ? streamState.streamedText : "",
-        streamActivity: action.streamId ? streamState.streamActivity : [],
-        activeStreamId: action.streamId || null,
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          isStreaming: true,
+          streamedText: action.streamId ? streamState.streamedText : "",
+          streamActivity: action.streamId ? streamState.streamActivity : [],
+          activeStreamId: action.streamId || null,
+        }),
+      );
       break;
 
     case "ADD_STREAM_ACTIVITY":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        streamActivity: [
-          ...streamState.streamActivity,
-          {
-            ...action.entry,
-            id: Math.random().toString(36).substring(7),
-            timestamp: Date.now(),
-          },
-        ].slice(-12),
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          streamActivity: [
+            ...streamState.streamActivity,
+            {
+              ...action.entry,
+              id: Math.random().toString(36).substring(7),
+              timestamp: Date.now(),
+            },
+          ].slice(-12),
+        }),
+      );
       break;
 
     case "APPEND_STREAM_TOKEN":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        streamedText: streamState.streamedText + action.text,
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          streamedText: streamState.streamedText + action.text,
+        }),
+      );
       break;
 
     case "SET_ACTIVE_TOOL":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        activeTool: {
-          name: action.name,
-          preview: action.preview,
-          percentage: action.percentage,
-        },
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          activeTool: {
+            name: action.name,
+            preview: action.preview,
+            percentage: action.percentage,
+          },
+        }),
+      );
       break;
 
     case "SET_TOOL_PROGRESS":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        activeTool: streamState.activeTool
-          ? {
-              ...streamState.activeTool,
-              percentage: action.percentage,
-              preview: action.message,
-            }
-          : {
-              name: "Tool activity",
-              preview: action.message,
-              percentage: action.percentage,
-            },
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          activeTool: streamState.activeTool
+            ? {
+                ...streamState.activeTool,
+                percentage: action.percentage,
+                preview: action.message,
+              }
+            : {
+                name: "Tool activity",
+                preview: action.message,
+                percentage: action.percentage,
+              },
+        }),
+      );
       break;
 
     case "CLEAR_ACTIVE_TOOL":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        activeTool: null,
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          activeTool: null,
+        }),
+      );
       break;
 
     case "LOAD_SESSION_HISTORY":
@@ -517,14 +546,18 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       break;
 
     case "END_STREAMING":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        isStreaming: false,
-        activeTool: null,
-        streamedText: "",
-        streamActivity: [],
-        activeStreamId: null,
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          isStreaming: false,
+          activeTool: null,
+          streamedText: "",
+          streamActivity: [],
+          activeStreamId: null,
+        }),
+      );
       newState = {
         ...newState,
         sessions: action.finalSession
@@ -560,10 +593,14 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     }
 
     case "CLEAR_STREAM_ID":
-      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
-        ...streamState,
-        activeStreamId: null,
-      }));
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          activeStreamId: null,
+        }),
+      );
       break;
   }
 
@@ -784,7 +821,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           traceId: "tr-" + Math.random().toString(36).substring(7),
         };
         dispatch({ type: "ADD_MESSAGE", sessionId, message: userMsg });
-        dispatch({ type: "QUEUE_PROMPT", prompt: { sessionId, content, attachments } });
+        dispatch({
+          type: "QUEUE_PROMPT",
+          prompt: { sessionId, content, attachments },
+        });
         return;
       }
 
@@ -841,7 +881,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             });
           } else if (event.type === "token") {
             accumulatedText += event.text;
-            dispatch({ type: "APPEND_STREAM_TOKEN", sessionId, text: event.text });
+            dispatch({
+              type: "APPEND_STREAM_TOKEN",
+              sessionId,
+              text: event.text,
+            });
           } else if (event.type === "tool") {
             dispatch({
               type: "SET_ACTIVE_TOOL",
@@ -977,7 +1021,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         dispatch({ type: "END_STREAMING", sessionId });
       }
     },
-    [refreshSessions, state.activeSessionId, state.sessions, state.streamStates],
+    [
+      refreshSessions,
+      state.activeSessionId,
+      state.sessions,
+      state.streamStates,
+    ],
   );
 
   const cancelActiveStream = useCallback(async () => {

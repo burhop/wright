@@ -196,9 +196,13 @@ describe("WorkspacePanel session selection", () => {
     );
 
     expect(await screen.findByText("new session message")).toBeInTheDocument();
-    expect(screen.queryByTestId("stream-activity-panel")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("stream-activity-panel"),
+    ).not.toBeInTheDocument();
     expect(screen.queryByTestId("thinking-indicator")).not.toBeInTheDocument();
-    expect(screen.queryByText("still working in old session")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("still working in old session"),
+    ).not.toBeInTheDocument();
   });
 
   it("changes only the chat session when selecting an existing session", async () => {
@@ -297,7 +301,10 @@ describe("WorkspacePanel session selection", () => {
       sessionSelect.querySelectorAll("option"),
     ).map((option) => option.textContent?.trim());
 
-    expect(optionLabels).toEqual(["Onshape Session 2", "Onshape Session 2 (2)"]);
+    expect(optionLabels).toEqual([
+      "Onshape Session 2",
+      "Onshape Session 2 (2)",
+    ]);
   });
 
   it("shows only Hermes as selectable and OpenClaw as a disabled future option", async () => {
@@ -399,7 +406,6 @@ describe("WorkspacePanel session selection", () => {
       "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
     );
   });
-
 
   it("requests MCP status by workspace instead of selected session", async () => {
     render(

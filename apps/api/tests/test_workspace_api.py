@@ -779,8 +779,6 @@ def test_agent_sessions_filtering_by_workspace(client):
     assert len(response_empty.json()["sessions"]) == 0
 
 
-
-
 def test_workspace_sessions_endpoint_retains_multiple_sessions(client):
     client.get("/api/workspace/files", params={"session_id": "test-session"})
     response = client.get(
@@ -824,15 +822,14 @@ def test_workspace_sessions_endpoint_uses_current_agent_title(client):
 
     response_sessions = client.get(f"/api/workspace/by-id/{workspace_id}/sessions")
     assert response_sessions.status_code == 200
-    titles = {
-        s["session_id"]: s["title"]
-        for s in response_sessions.json()["sessions"]
-    }
+    titles = {s["session_id"]: s["title"] for s in response_sessions.json()["sessions"]}
 
     assert titles["test-session"] == "Test Session"
 
 
-def test_title_command_persists_workspace_session_title_when_agent_title_is_untitled(client):
+def test_title_command_persists_workspace_session_title_when_agent_title_is_untitled(
+    client,
+):
     client.get("/api/workspace/files", params={"session_id": "test-session"})
     response = client.get(
         "/api/workspace/config", params={"session_id": "test-session"}
@@ -849,10 +846,7 @@ def test_title_command_persists_workspace_session_title_when_agent_title_is_unti
 
     response_sessions = client.get(f"/api/workspace/by-id/{workspace_id}/sessions")
     assert response_sessions.status_code == 200
-    titles = {
-        s["session_id"]: s["title"]
-        for s in response_sessions.json()["sessions"]
-    }
+    titles = {s["session_id"]: s["title"] for s in response_sessions.json()["sessions"]}
 
     assert titles["test-session"] == "mark"
 
@@ -935,6 +929,7 @@ def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
     assert response_status.status_code == 200
     running = response_status.json()["running_mcps"]
     assert {item["name"] for item in running} == {"Workspace Scoped Onshape MCP"}
+
 
 def test_workspace_activate_session_fallback(client):
     from api.config import DATABASE_PATH
