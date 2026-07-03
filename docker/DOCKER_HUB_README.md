@@ -15,23 +15,28 @@ drivers. Install and validate those only for the selected MCP server.
 ## Image Names
 
 Public alpha images are always intended to be published with immutable tags on
-GHCR. Docker Hub publication uses matching tags when Docker Hub credentials are
-configured for the release workflow:
+Docker Hub and GHCR when release credentials are configured:
 
-- `ghcr.io/burhop/wright-agent:<tag>`
-- `<dockerhub-username>/wright-agent:<tag>` when Docker Hub is enabled
+- `burhop/wright:<tag>`
+- `ghcr.io/burhop/wright:<tag>`
 
 Stable tags may also move `latest`. Alpha, beta, and release-candidate tags do
 not move `latest`.
 
 ## Quick Start
 
-From a source checkout:
+With a published image and an env file:
 
 ```bash
 cp docker/.env.example docker/.env
 # Edit docker/.env and set LLM_API_URL, LLM_API_KEY, and LLM_API_MODEL.
 
+docker run --rm -p 127.0.0.1:8080:8000 --env-file docker/.env burhop/wright:<tag>
+```
+
+From a source checkout:
+
+```bash
 docker compose -f docker-compose.minimal.yml up -d --build
 ```
 
@@ -92,3 +97,11 @@ curl http://localhost:8080/api/agent/health
 
 For selected MCP server validation, follow
 `docs/mcp-catalog/mcp-server-testing-process.md` from the source repository.
+
+## Support
+
+- Docs: https://burhop.github.io/wright/
+- Issues: https://github.com/burhop/wright/issues
+- Security: https://github.com/burhop/wright/security/policy
+- Support: `wright@makerengineer.com`
+- Sponsors: https://github.com/sponsors/burhop

@@ -26,8 +26,8 @@ and should only publish when maintainer credentials are configured.
 ### Registry Presence
 
 3. **Public image names** - Document both supported public paths:
-   - `ghcr.io/burhop/wright-agent:<tag>`
-   - `<dockerhub-username>/wright-agent:<tag>` when Docker Hub publishing is
+   - `ghcr.io/burhop/wright:<tag>`
+   - `burhop/wright:<tag>` when Docker Hub publishing is
      enabled.
 
 4. **Registry descriptions** - Keep `docker/DOCKER_HUB_README.md` useful for

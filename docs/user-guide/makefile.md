@@ -9,7 +9,7 @@ Wright provides a central developer `Makefile` to handle build automation, conta
 Use these targets to build, debug, and clear the containerized appliance stack.
 
 ### `make docker-build`
-*   **Action**: Builds the production Docker image `wright-agent:latest` from `docker/Dockerfile`.
+*   **Action**: Builds the production Docker image `wright:latest` from `docker/Dockerfile`.
 *   **Purpose**: Validates production bundle layers.
 
 ### `make docker-test`

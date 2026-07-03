@@ -9,7 +9,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright-agent:test}"
+IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright:test}"
 PLUGIN_NAME="${WRIGHT_PLUGIN_NAME:-wright}"
 PLUGIN_REPO_URL="${WRIGHT_PLUGIN_REPO_URL:-https://github.com/burhop/wright}"
 PLUGIN_REF="${WRIGHT_PLUGIN_REF:-dev}"

@@ -45,7 +45,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository_owner }}/wright-agent
+          images: ghcr.io/${{ github.repository_owner }}/wright
           tags: |
             type=sha,format=long
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
@@ -57,7 +57,7 @@ jobs:
           context: .
           file: docker/Dockerfile
           load: true
-          tags: wright-agent:${{ github.sha }}
+          tags: wright:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION=${{ steps.prep.outputs.version }}
@@ -67,7 +67,7 @@ jobs:
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: 'wright-agent:${{ github.sha }}'
+          image-ref: 'wright:${{ github.sha }}'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
@@ -79,7 +79,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          IMAGE="wright-agent:${{ github.sha }}"
+          IMAGE="wright:${{ github.sha }}"
           CONTAINER="wright-ci-smoke"
 
           docker run --rm -d --name "$CONTAINER" \

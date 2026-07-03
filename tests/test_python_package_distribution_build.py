@@ -12,19 +12,14 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def test_package_build_helper_dry_run_validates_initial_packages() -> None:
+def test_package_build_helper_dry_run_validates_alpha_package() -> None:
     script = ROOT / "scripts/build-python-distributions.sh"
     command = [str(script)]
     if sys.platform == "win32":
         command = ["bash", str(script)]
 
     result = subprocess.run(
-        command
-        + [
-            "--dry-run",
-            "packages/core",
-            "packages/tool_registry",
-        ],
+        command + ["--dry-run", "."],
         cwd=ROOT,
         check=True,
         text=True,
@@ -32,6 +27,5 @@ def test_package_build_helper_dry_run_validates_initial_packages() -> None:
         stderr=subprocess.PIPE,
     )
 
-    assert "metadata ok: wright-core" in result.stdout
-    assert "metadata ok: wright-tool-registry" in result.stdout
+    assert "metadata ok: wright-engineering" in result.stdout
     assert "Dry run completed" in result.stdout

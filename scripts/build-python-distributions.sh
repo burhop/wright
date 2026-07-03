@@ -109,6 +109,7 @@ PY
 }
 
 built_wheels=()
+built_import_modules=()
 for package in "${PACKAGES[@]}"; do
   package_dir="$package"
   if [ ! -d "$package_dir" ]; then
@@ -136,6 +137,13 @@ with pathlib.Path(sys.argv[1]).open('rb') as fh:
 print(re.sub(r'[^A-Za-z0-9_.-]+', '-', data['project']['name']))
 PY
 )"
+  case "$package_name" in
+    wright-engineering) built_import_modules+=("wright_engineering") ;;
+    wright-core) built_import_modules+=("core") ;;
+    wright-tool-registry) built_import_modules+=("tool_registry") ;;
+    *) built_import_modules+=("${package_name//-/_}") ;;
+  esac
+
   out_dir="$DIST_ROOT/$package_name"
   rm -rf "$out_dir"
   mkdir -p "$out_dir"
@@ -167,9 +175,10 @@ trap 'rm -rf "$tmp_dir"' EXIT
 venv_python="$tmp_dir/venv/bin/python"
 "$venv_python" -m pip install --upgrade pip >/dev/null
 "$venv_python" -m pip install "${built_wheels[@]}"
-"$venv_python" - <<'PY'
+"$venv_python" - "${built_import_modules[@]}" <<'PY'
 import importlib
-for module_name in ("core", "tool_registry"):
+import sys
+for module_name in sys.argv[1:]:
     importlib.import_module(module_name)
 print("clean install imports ok")
 PY

@@ -72,14 +72,14 @@ jobs:
               echo "has_dockerhub=false"
             fi
             echo "docker_tags<<EOF"
-            echo "ghcr.io/${GHCR_OWNER_LC}/wright-agent:${TAG_NAME}"
+            echo "ghcr.io/${GHCR_OWNER_LC}/wright:${TAG_NAME}"
             if [[ "$HAS_DOCKERHUB" == "true" ]]; then
-              echo "${DOCKERHUB_USERNAME}/wright-agent:${TAG_NAME}"
+              echo "${DOCKERHUB_USERNAME}/wright:${TAG_NAME}"
             fi
             if [[ "$IS_PRERELEASE" != "true" ]]; then
-              echo "ghcr.io/${GHCR_OWNER_LC}/wright-agent:latest"
+              echo "ghcr.io/${GHCR_OWNER_LC}/wright:latest"
               if [[ "$HAS_DOCKERHUB" == "true" ]]; then
-                echo "${DOCKERHUB_USERNAME}/wright-agent:latest"
+                echo "${DOCKERHUB_USERNAME}/wright:latest"
               fi
             fi
             echo "EOF"
@@ -104,7 +104,7 @@ jobs:
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
-          repository: ${{ env.DOCKERHUB_USERNAME }}/wright-agent
+          repository: ${{ env.DOCKERHUB_USERNAME }}/wright
           readme-filepath: docker/DOCKER_HUB_README.md
 
       - name: Publish GitHub Release

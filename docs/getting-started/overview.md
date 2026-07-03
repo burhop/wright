@@ -13,6 +13,7 @@ MCP host dependencies explicitly.
 
 | Path | Best for | Start here |
 | --- | --- | --- |
+| Install matrix | Choose the correct alpha path by use case | [Install Matrix](install-matrix.md) |
 | Docker appliance | Fastest public-alpha trial, demos, and MCP porting from a clean container | [Quick Start: Docker Appliance](quickstart-docker.md) |
 | PC local setup | Editing the API, UI, plugin, docs, or tests on a normal development PC | [Quick Start: PC Local Setup](quickstart-local.md) |
 | GB10/DGX workstation | Running Wright beside a local model server or GPU-backed engineering tools | [Quick Start: GB10 and DGX Workstations](workstation-gb10-dgx.md) |

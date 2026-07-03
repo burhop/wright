@@ -172,5 +172,5 @@ docker compose -f docker-compose.minimal.yml down -v
 Remove a locally built image when you no longer need it:
 
 ```bash
-docker image rm wright-agent:latest
+docker image rm wright:latest
 ```

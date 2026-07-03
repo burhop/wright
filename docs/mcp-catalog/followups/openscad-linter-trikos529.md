@@ -27,7 +27,7 @@ Clean Intel Ubuntu validation failed before MCP startup.
 Command:
 
 ```bash
-docker run --rm --platform linux/amd64 --entrypoint bash wright-agent:latest -lc "set -euxo pipefail; command -v uv; uv --version; timeout 60s uv tool run openscad-linter-mcp --help"
+docker run --rm --platform linux/amd64 --entrypoint bash wright:latest -lc "set -euxo pipefail; command -v uv; uv --version; timeout 60s uv tool run openscad-linter-mcp --help"
 ```
 
 Output:

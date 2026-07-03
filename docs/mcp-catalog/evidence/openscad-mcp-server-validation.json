@@ -1,6 +1,6 @@
 {
   "catalog_version": "unknown",
-  "container_image": "wright-agent:latest",
+  "container_image": "wright:latest",
   "credential_requirements": "[REDACTED]",
   "diagnostics": "Direct MCP stdio probes completed in a clean container. Direct clean-container protocol probes ran, but Wright gateway proxy probes were not executed.",
   "environment": "windows_11_x64",

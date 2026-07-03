@@ -47,5 +47,5 @@ results, SBOM/provenance status, and any skipped MCP validation. Use
 
 Current public image names:
 
-- `ghcr.io/burhop/wright-agent:<tag>`
-- `<dockerhub-username>/wright-agent:<tag>` when Docker Hub credentials are configured
+- `ghcr.io/burhop/wright:<tag>`
+- `burhop/wright:<tag>` when Docker Hub credentials are configured

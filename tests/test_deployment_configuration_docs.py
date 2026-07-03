@@ -49,7 +49,7 @@ def test_deployment_config_uses_current_docker_run_and_upgrade_paths() -> None:
         "host.docker.internal:host-gateway",
         "**8080** | Minimal compose host port",
         "**8000** | Full compose host port",
-        "docker pull ghcr.io/burhop/wright-agent:<tag>",
+        "docker pull ghcr.io/burhop/wright:<tag>",
         "docker compose -f docker-compose.minimal.yml down",
     ]:
         assert expected in docs

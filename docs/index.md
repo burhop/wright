@@ -69,6 +69,7 @@ Selected MCP servers and engineering tools
 ## Start Here
 
 - [Getting Started Overview](getting-started/overview.md)
+- [Install Matrix](getting-started/install-matrix.md)
 - [Docker Appliance](getting-started/quickstart-docker.md)
 - [PC Local Setup](getting-started/quickstart-local.md)
 - [GB10 and DGX Workstations](getting-started/workstation-gb10-dgx.md)

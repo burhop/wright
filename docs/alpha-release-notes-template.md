@@ -13,8 +13,8 @@ or MCP-specific host software.
 
 ## Images
 
-- GHCR: `ghcr.io/burhop/wright-agent:<tag>`
-- Docker Hub: `<dockerhub-username>/wright-agent:<tag>` or `not published for
+- GHCR: `ghcr.io/burhop/wright:<tag>`
+- Docker Hub: `burhop/wright:<tag>` or `not published for
   this tag`
 - `latest` updated: `yes` for stable tags only; `no` for alpha, beta, and
   release-candidate tags
