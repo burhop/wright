@@ -17,6 +17,7 @@ interface MessageComposerProps {
   isStreaming?: boolean;
   onCancel?: () => void;
   sessionId?: string;
+  workspaceId?: string;
 }
 
 function getMcpStatusTone(status: string): { label: string; color: string } {
@@ -36,6 +37,7 @@ export function MessageComposer({
   isStreaming = false,
   onCancel,
   sessionId,
+  workspaceId,
 }: MessageComposerProps) {
   const [text, setText] = useState("");
   const [attachments, setAttachments] = useState<VaultFile[]>([]);
@@ -133,7 +135,8 @@ export function MessageComposer({
   }, [showStatusPopup]);
 
   useEffect(() => {
-    if (!sessionId) {
+    const statusKey = workspaceId || sessionId;
+    if (!statusKey) {
       setMcpStatus(null);
       return;
     }
@@ -141,7 +144,9 @@ export function MessageComposer({
     let isMounted = true;
     const fetchStatus = async () => {
       try {
-        const status = await workspaceService.getMcpStatus(sessionId);
+        const status = workspaceId
+          ? await workspaceService.getWorkspaceMcpStatus(workspaceId)
+          : await workspaceService.getMcpStatus(sessionId!);
         if (isMounted) {
           setMcpStatus(status);
         }
@@ -157,7 +162,7 @@ export function MessageComposer({
       isMounted = false;
       clearInterval(interval);
     };
-  }, [sessionId]);
+  }, [sessionId, workspaceId]);
 
   const handleSend = () => {
     if ((text.trim() || attachments.length > 0) && !disabled) {

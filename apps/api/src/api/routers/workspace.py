@@ -7,7 +7,6 @@ All handlers are decorated with @traced for OTel span creation.
 """
 
 import os
-import sqlite3
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -15,6 +14,7 @@ from typing import Optional
 
 from agent_adapters import BaseAgentEngine
 from agent_adapters.hermes_gateway import hermes_config_paths
+from tool_registry import ApprovalContext
 from core import WorkspaceManager
 from core.workspace import (
     get_workspace_by_session,
@@ -26,7 +26,6 @@ from core.workspace import (
     save_agent_context,
     load_agent_context,
     sync_workspace_runners,
-    update_workspace_session,
 )
 from core.tracing import traced
 from api.routers.agent import get_agent_engine
@@ -80,6 +79,14 @@ from api.schemas.workspace import (
     DefaultWorkspaceDirResponse,
     serialize_workspace,
     WorkspaceSessionUpdateRequest,
+    WorkspaceSessionInfo,
+    WorkspaceSessionsResponse,
+    WorkspaceSessionCreateResponse,
+    WorkspaceSessionSelectRequest,
+    WorkspaceSessionSelectResponse,
+    WorkspaceToolsByIdResponse,
+    WorkspaceToolToggleByIdRequest,
+    WorkspaceToolToggleByIdResponse,
     FileRunRequest,
     FileRunResponse,
 )
@@ -618,110 +625,133 @@ async def toggle_workspace_tool_endpoint(
     )
 
 
-@router.get("/mcp-status", response_model=WorkspaceMcpStatusResponse)
-@traced("workspace.mcp-status")
-async def get_workspace_mcp_status_endpoint(
-    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
-):
+async def _workspace_mcp_status_response(
+    *, workspace: dict, request: Request | None = None
+) -> WorkspaceMcpStatusResponse:
     import yaml
 
-    # 1. Get current workspace by session_id
-    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
-    if not workspace:
-        return WorkspaceMcpStatusResponse(
-            status="ok", message="No active workspace.", running_mcps=[]
-        )
-
-    # 2. Get currently enabled tools in the database
+    workspace_id = workspace["workspace_id"]
+    session_id = workspace["session_id"]
     enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
     from tool_registry.db import get_servers
 
     all_servers = get_servers(DATABASE_PATH)
-
-    # Active servers expected to be configured
     expected_servers = []
-    for s in all_servers:
-        if s.is_installed:
-            is_enabled = True
-            if enabled_tools is not None:
-                is_enabled = (s.name in enabled_tools) or (s.server_id in enabled_tools)
-            if is_enabled:
-                expected_servers.append(s)
+    for server in all_servers:
+        if not server.is_installed:
+            continue
+        is_enabled = True
+        if enabled_tools is not None:
+            is_enabled = (server.name in enabled_tools) or (server.server_id in enabled_tools)
+        if is_enabled:
+            expected_servers.append(server)
 
-    running_mcps = [
-        RunningMcpInfo(name=s.name, status=s.status, error_message=s.error_message)
-        for s in expected_servers
-    ]
+    mcp_engine = getattr(request.app.state, "mcp_engine", None) if request else None
+    running_mcps = []
+    start_failures: list[str] = []
+    for server in expected_servers:
+        effective_status = server.status
+        error_message = server.error_message
+        runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id) if mcp_engine else None
+        if runner and runner.is_running():
+            effective_status = "active"
+            error_message = None
+        elif mcp_engine and server.status != "error":
+            try:
+                await mcp_engine.start_server(
+                    server.server_id,
+                    workspace_dir=workspace["local_path"],
+                    approval_context=ApprovalContext(
+                        workspace_id=workspace_id,
+                        workspace_approvals=set(server.approval_gates or []),
+                    ),
+                )
+                runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
+                if runner and runner.is_running():
+                    effective_status = "active"
+                    error_message = None
+            except Exception as exc:
+                effective_status = "error"
+                error_message = str(exc)
+                start_failures.append(f"{server.name}: {exc}")
+        running_mcps.append(
+            RunningMcpInfo(
+                name=server.name, status=effective_status, error_message=error_message
+            )
+        )
 
-    # Sanitize expected server names to match config.yaml keys
     expected_keys = set()
-    for s in expected_servers:
-        key_name = "".join(c.lower() for c in s.name if c.isalnum())
-        if not key_name:
-            key_name = s.server_id
-        expected_keys.add(key_name)
+    for server in expected_servers:
+        key_name = "".join(c.lower() for c in server.name if c.isalnum())
+        expected_keys.add(key_name or server.server_id)
 
-    # 3. Read current configured mcp_servers from config.yaml
     configured_keys = set()
-    paths = hermes_config_paths()
     config_loaded = False
-    for path in paths:
+    for path in hermes_config_paths():
         if os.path.exists(path):
             try:
                 with open(path, "r") as f:
                     config = yaml.safe_load(f) or {}
-                mcp_servers = config.get("mcp_servers", {})
-                configured_keys = set(mcp_servers.keys())
+                configured_keys = set((config.get("mcp_servers") or {}).keys())
                 config_loaded = True
                 break
             except Exception:
                 pass
 
-    if not config_loaded:
-        # If no config file exists, but we expect tools, it's a mismatch
-        if expected_keys:
-            return WorkspaceMcpStatusResponse(
-                status="mismatch",
-                message="Tool change during session. Start a new session to apply changes.",
-                running_mcps=running_mcps,
-            )
+    if expected_keys and (not config_loaded or "wrightgateway" not in configured_keys):
         return WorkspaceMcpStatusResponse(
-            status="ok",
-            message="MCP configuration is active and healthy.",
-            running_mcps=running_mcps,
-        )
-
-    # 4. Check for mismatches
-    if expected_keys and "wrightgateway" not in configured_keys:
-        return WorkspaceMcpStatusResponse(
+            workspace_id=workspace_id,
             status="mismatch",
-            message="Tool change during session. Start a new session to apply changes.",
+            message="Workspace MCP tools are not connected through Wright gateway.",
             running_mcps=running_mcps,
         )
 
-    # 5. Check for broken servers
-    for s in expected_servers:
-        if s.status == "error":
-            err_msg = s.error_message or "Unknown error"
+    if start_failures:
+        return WorkspaceMcpStatusResponse(
+            workspace_id=workspace_id,
+            status="error",
+            message="Failed to start workspace MCP server(s): " + "; ".join(start_failures),
+            running_mcps=running_mcps,
+        )
+
+    for item in running_mcps:
+        if item.status == "error":
+            err_msg = item.error_message or "Unknown error"
             return WorkspaceMcpStatusResponse(
+                workspace_id=workspace_id,
                 status="error",
-                message=f"Cannot connect to MCP Server: {s.name} ({err_msg})",
+                message=f"Cannot connect to MCP Server: {item.name} ({err_msg})",
                 running_mcps=running_mcps,
             )
-    inactive_servers = [s.name for s in expected_servers if s.status != "active"]
+
+    inactive_servers = [item.name for item in running_mcps if item.status != "active"]
     if inactive_servers:
-        names = ", ".join(inactive_servers)
         return WorkspaceMcpStatusResponse(
+            workspace_id=workspace_id,
             status="warning",
-            message=f"MCP server installed but not active: {names}",
+            message="MCP server installed but not active: " + ", ".join(inactive_servers),
             running_mcps=running_mcps,
         )
 
     return WorkspaceMcpStatusResponse(
+        workspace_id=workspace_id,
         status="ok",
         message="MCP configuration is active and healthy.",
         running_mcps=running_mcps,
     )
+
+
+@router.get("/mcp-status", response_model=WorkspaceMcpStatusResponse)
+@traced("workspace.mcp-status")
+async def get_workspace_mcp_status_endpoint(
+    request: Request, session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+):
+    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    if not workspace:
+        return WorkspaceMcpStatusResponse(
+            status="ok", message="No active workspace.", running_mcps=[]
+        )
+    return await _workspace_mcp_status_response(workspace=workspace, request=request)
 
 
 # ── Workspace CRUD ───────────────────────────────────────────────────────
@@ -773,6 +803,134 @@ async def get_workspace_by_id_endpoint(workspace_id: str):
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
         )
     return serialize_workspace(ws)
+
+
+@router.get("/by-id/{workspace_id}/sessions", response_model=WorkspaceSessionsResponse)
+@traced("workspace.sessions.list")
+async def list_workspace_sessions_endpoint(
+    workspace_id: str,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    records = await service.list_workspace_sessions(
+        workspace_id, engine, agent_id=_active_agent_id(request)
+    )
+    return WorkspaceSessionsResponse(
+        workspace_id=workspace_id,
+        sessions=[
+            WorkspaceSessionInfo(
+                session_id=record.session_id,
+                title=record.title,
+                created_at=record.created_at,
+                updated_at=record.updated_at,
+                message_count=record.message_count,
+            )
+            for record in records
+        ],
+    )
+
+
+@router.post("/by-id/{workspace_id}/sessions", response_model=WorkspaceSessionCreateResponse)
+@traced("workspace.sessions.create")
+async def create_workspace_session_endpoint(
+    workspace_id: str,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        record = await service.create_workspace_session(
+            workspace_id, engine, agent_id=_active_agent_id(request)
+        )
+        return WorkspaceSessionCreateResponse(
+            workspace_id=workspace_id,
+            session_id=record.session_id,
+            title=record.title,
+            created_at=record.created_at,
+        )
+    except WorkspaceServiceError as e:
+        raise _workspace_service_http_exception(e)
+
+
+@router.post(
+    "/by-id/{workspace_id}/session/select",
+    response_model=WorkspaceSessionSelectResponse,
+)
+@traced("workspace.sessions.select")
+async def select_workspace_session_endpoint(
+    workspace_id: str,
+    body: WorkspaceSessionSelectRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    try:
+        activation = await service.select_workspace_session(
+            workspace_id, body.session_id, engine, agent_id=_active_agent_id(request)
+        )
+    except WorkspaceServiceError as e:
+        raise _workspace_service_http_exception(e)
+
+    try:
+        from api.routers.gateway import notify_gateway_tool_change
+
+        notify_gateway_tool_change()
+    except Exception as e:
+        logger.warning("failed_to_notify_gateway_on_workspace_session_select", error=str(e))
+
+    return WorkspaceSessionSelectResponse(
+        success=True, workspace_id=workspace_id, session_id=activation.session_id
+    )
+
+
+@router.get("/by-id/{workspace_id}/tools", response_model=WorkspaceToolsByIdResponse)
+@traced("workspace.tools.list_by_workspace")
+async def get_workspace_tools_by_id_endpoint(
+    workspace_id: str, service: WorkspaceService = Depends(get_workspace_service)
+):
+    state = service.list_workspace_tools_by_workspace(workspace_id)
+    return WorkspaceToolsByIdResponse(
+        workspace_id=workspace_id, enabled_tools=state.enabled_tools
+    )
+
+
+@router.post(
+    "/by-id/{workspace_id}/tools/toggle",
+    response_model=WorkspaceToolToggleByIdResponse,
+)
+@traced("workspace.tools.toggle_by_workspace")
+async def toggle_workspace_tool_by_id_endpoint(
+    workspace_id: str,
+    body: WorkspaceToolToggleByIdRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    service.set_workspace_tool_enabled_by_workspace(
+        workspace_id, body.server_id, body.is_enabled
+    )
+    try:
+        from api.routers.gateway import notify_gateway_tool_change
+
+        notify_gateway_tool_change()
+    except Exception as e:
+        logger.warning("failed_to_notify_gateway_tool_change", error=str(e))
+    return WorkspaceToolToggleByIdResponse(
+        success=True,
+        workspace_id=workspace_id,
+        server_id=body.server_id,
+        is_enabled=body.is_enabled,
+    )
+
+
+@router.get("/by-id/{workspace_id}/mcp-status", response_model=WorkspaceMcpStatusResponse)
+@traced("workspace.mcp-status-by-id")
+async def get_workspace_mcp_status_by_id_endpoint(workspace_id: str, request: Request):
+    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    return await _workspace_mcp_status_response(workspace=workspace, request=request)
 
 
 @router.post("/by-id/{workspace_id}/context/save")
@@ -892,25 +1050,18 @@ async def update_workspace_session_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
     session_id = body.session_id
-    try:
-        update_workspace_session(DATABASE_PATH, workspace_id, body.session_id)
-    except sqlite3.IntegrityError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Session is already associated with another workspace",
-        ) from exc
-
     workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
     if workspace:
-        local_path = workspace["local_path"]
         service = get_workspace_service()
-        activation = await service.activate_workspace(
-            body.session_id,
-            engine,
-            local_path=local_path,
-            agent_id=_active_agent_id(request),
-            allow_fallback=False,
-        )
+        try:
+            activation = await service.select_workspace_session(
+                workspace_id,
+                body.session_id,
+                engine,
+                agent_id=_active_agent_id(request),
+            )
+        except WorkspaceServiceError as e:
+            raise _workspace_service_http_exception(e)
         session_id = activation.session_id
 
         mcp_engine = getattr(request.app.state, "mcp_engine", None)

@@ -10,15 +10,25 @@ import type { ReactNode } from "react";
 import type { ChatSession, ChatMessage, StreamActivityEntry } from "./types";
 import agentService from "../services/agent-service";
 
-export interface ChatState {
-  sessions: ChatSession[];
-  activeSessionId: string | null;
+export interface ChatStreamState {
   isStreaming: boolean;
   activeTool: { name: string; preview: string; percentage?: number } | null;
   streamActivity: StreamActivityEntry[];
   streamedText: string;
   activeStreamId: string | null;
-  promptQueue: { content: string; attachments?: string[] }[];
+}
+
+export interface ChatState {
+  sessions: ChatSession[];
+  activeSessionId: string | null;
+  isStreaming: boolean;
+  streamingSessionId: string | null;
+  activeTool: { name: string; preview: string; percentage?: number } | null;
+  streamActivity: StreamActivityEntry[];
+  streamedText: string;
+  activeStreamId: string | null;
+  streamStates: Record<string, ChatStreamState>;
+  promptQueue: { sessionId: string; content: string; attachments?: string[] }[];
 }
 
 type ChatAction =
@@ -29,38 +39,85 @@ type ChatAction =
   | { type: "ADD_MESSAGE"; sessionId: string; message: ChatMessage }
   | { type: "LOAD_SESSION_HISTORY"; sessionId: string; messages: ChatMessage[] }
   | { type: "UPDATE_SESSION_TITLE"; sessionId: string; title: string }
-  | { type: "START_STREAMING"; streamId?: string }
+  | { type: "START_STREAMING"; sessionId: string; streamId?: string }
   | {
       type: "ADD_STREAM_ACTIVITY";
+      sessionId: string;
       entry: Omit<StreamActivityEntry, "id" | "timestamp">;
     }
-  | { type: "APPEND_STREAM_TOKEN"; text: string }
+  | { type: "APPEND_STREAM_TOKEN"; sessionId: string; text: string }
   | {
       type: "SET_ACTIVE_TOOL";
+      sessionId: string;
       name: string;
       preview: string;
       percentage?: number;
     }
-  | { type: "SET_TOOL_PROGRESS"; percentage?: number; message: string }
-  | { type: "CLEAR_ACTIVE_TOOL" }
-  | { type: "END_STREAMING"; finalSession?: ChatSession }
+  | { type: "SET_TOOL_PROGRESS"; sessionId: string; percentage?: number; message: string }
+  | { type: "CLEAR_ACTIVE_TOOL"; sessionId: string }
+  | { type: "END_STREAMING"; sessionId: string; finalSession?: ChatSession }
   | {
       type: "QUEUE_PROMPT";
-      prompt: { content: string; attachments?: string[] };
+      prompt: { sessionId: string; content: string; attachments?: string[] };
     }
-  | { type: "DEQUEUE_PROMPT" }
-  | { type: "CLEAR_STREAM_ID" };
+  | { type: "DEQUEUE_PROMPT"; sessionId: string }
+  | { type: "CLEAR_STREAM_ID"; sessionId: string };
 
 const initialState: ChatState = {
   sessions: [],
   activeSessionId: null,
   isStreaming: false,
+  streamingSessionId: null,
   activeTool: null,
   streamActivity: [],
   streamedText: "",
   activeStreamId: null,
+  streamStates: {},
   promptQueue: [],
 };
+
+
+function emptyStreamState(): ChatStreamState {
+  return {
+    isStreaming: false,
+    activeTool: null,
+    streamActivity: [],
+    streamedText: "",
+    activeStreamId: null,
+  };
+}
+
+function setSessionStreamState(
+  state: ChatState,
+  sessionId: string,
+  updater: (streamState: ChatStreamState) => ChatStreamState,
+): ChatState {
+  const current = state.streamStates[sessionId] || emptyStreamState();
+  const streamStates = {
+    ...state.streamStates,
+    [sessionId]: updater(current),
+  };
+  const activeStreamState = state.activeSessionId
+    ? streamStates[state.activeSessionId] || emptyStreamState()
+    : emptyStreamState();
+  const anyStreaming = Object.values(streamStates).some(
+    (streamState) => streamState.isStreaming,
+  );
+  const firstStreamingId =
+    Object.entries(streamStates).find(([, streamState]) => streamState.isStreaming)?.[0] ||
+    null;
+
+  return {
+    ...state,
+    streamStates,
+    isStreaming: anyStreaming,
+    streamingSessionId: firstStreamingId,
+    activeTool: activeStreamState.activeTool,
+    streamActivity: activeStreamState.streamActivity,
+    streamedText: activeStreamState.streamedText,
+    activeStreamId: activeStreamState.activeStreamId,
+  };
+}
 
 function stripWorkspaceContext(content: string): string {
   return (content || "")
@@ -122,6 +179,13 @@ function titleFromMessages(messages: ChatMessage[]): string {
   const firstUser =
     messages.find((message) => message.role === "user") || messages[0];
   return cleanSessionTitle(firstUser?.content || "Untitled");
+}
+
+function titleFromSlashCommand(content: string): string | null {
+  const match = content.trim().match(/^\/title\s+(.+)$/i);
+  if (!match) return null;
+  const title = match[1].trim().replace(/^["'“”]+|["'“”]+$/g, "");
+  return title ? cleanSessionTitle(title) : null;
 }
 
 function hasUsefulTitle(session: ChatSession): boolean {
@@ -364,53 +428,53 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       break;
 
     case "START_STREAMING":
-      newState = {
-        ...state,
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
         isStreaming: true,
-        streamedText: "",
-        streamActivity: action.streamId ? state.streamActivity : [],
+        streamedText: action.streamId ? streamState.streamedText : "",
+        streamActivity: action.streamId ? streamState.streamActivity : [],
         activeStreamId: action.streamId || null,
-      };
+      }));
       break;
 
     case "ADD_STREAM_ACTIVITY":
-      newState = {
-        ...state,
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
         streamActivity: [
-          ...state.streamActivity,
+          ...streamState.streamActivity,
           {
             ...action.entry,
             id: Math.random().toString(36).substring(7),
             timestamp: Date.now(),
           },
         ].slice(-12),
-      };
+      }));
       break;
 
     case "APPEND_STREAM_TOKEN":
-      newState = {
-        ...state,
-        streamedText: state.streamedText + action.text,
-      };
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
+        streamedText: streamState.streamedText + action.text,
+      }));
       break;
 
     case "SET_ACTIVE_TOOL":
-      newState = {
-        ...state,
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
         activeTool: {
           name: action.name,
           preview: action.preview,
           percentage: action.percentage,
         },
-      };
+      }));
       break;
 
     case "SET_TOOL_PROGRESS":
-      newState = {
-        ...state,
-        activeTool: state.activeTool
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
+        activeTool: streamState.activeTool
           ? {
-              ...state.activeTool,
+              ...streamState.activeTool,
               percentage: action.percentage,
               preview: action.message,
             }
@@ -419,14 +483,14 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
               preview: action.message,
               percentage: action.percentage,
             },
-      };
+      }));
       break;
 
     case "CLEAR_ACTIVE_TOOL":
-      newState = {
-        ...state,
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
         activeTool: null,
-      };
+      }));
       break;
 
     case "LOAD_SESSION_HISTORY":
@@ -453,20 +517,23 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       break;
 
     case "END_STREAMING":
-      newState = {
-        ...state,
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
         isStreaming: false,
         activeTool: null,
         streamedText: "",
         streamActivity: [],
         activeStreamId: null,
+      }));
+      newState = {
+        ...newState,
         sessions: action.finalSession
-          ? state.sessions.map((s) =>
+          ? newState.sessions.map((s) =>
               s.sessionId === action.finalSession!.sessionId
                 ? action.finalSession!
                 : s,
             )
-          : state.sessions,
+          : newState.sessions,
       };
       break;
 
@@ -477,18 +544,26 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       };
       break;
 
-    case "DEQUEUE_PROMPT":
+    case "DEQUEUE_PROMPT": {
+      let removed = false;
       newState = {
         ...state,
-        promptQueue: state.promptQueue.slice(1),
+        promptQueue: state.promptQueue.filter((prompt) => {
+          if (!removed && prompt.sessionId === action.sessionId) {
+            removed = true;
+            return false;
+          }
+          return true;
+        }),
       };
       break;
+    }
 
     case "CLEAR_STREAM_ID":
-      newState = {
-        ...state,
+      newState = setSessionStreamState(state, action.sessionId, (streamState) => ({
+        ...streamState,
         activeStreamId: null,
-      };
+      }));
       break;
   }
 
@@ -512,6 +587,7 @@ interface ChatContextProps {
     content: string,
     attachments?: string[],
     isQueuedExecution?: boolean,
+    targetSessionId?: string,
   ) => Promise<void>;
   refreshSessions: (workspaceId?: string) => Promise<void>;
   cancelActiveStream: () => Promise<void>;
@@ -691,12 +767,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       content: string,
       attachments?: string[],
       isQueuedExecution?: boolean,
+      targetSessionId?: string,
     ) => {
-      if (!state.activeSessionId) return;
-      const sessionId = state.activeSessionId;
+      const sessionId = targetSessionId || state.activeSessionId;
+      if (!sessionId) return;
 
+      const sessionStreamState = state.streamStates[sessionId];
+      const isSessionStreaming = Boolean(sessionStreamState?.isStreaming);
       const isSlashCommand = content.trim().startsWith("/");
-      if (!isSlashCommand && state.isStreaming) {
+      if (!isSlashCommand && isSessionStreaming) {
         const userMsg: ChatMessage = {
           id: Math.random().toString(36).substring(7),
           role: "user",
@@ -705,7 +784,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           traceId: "tr-" + Math.random().toString(36).substring(7),
         };
         dispatch({ type: "ADD_MESSAGE", sessionId, message: userMsg });
-        dispatch({ type: "QUEUE_PROMPT", prompt: { content, attachments } });
+        dispatch({ type: "QUEUE_PROMPT", prompt: { sessionId, content, attachments } });
         return;
       }
 
@@ -720,9 +799,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         dispatch({ type: "ADD_MESSAGE", sessionId, message: userMsg });
       }
 
-      dispatch({ type: "START_STREAMING" });
+      const activeSession = state.sessions.find(
+        (session) => session.sessionId === sessionId,
+      );
+      const workspaceId = activeSession?.workspaceId || undefined;
+      const requestedTitle = titleFromSlashCommand(content);
+
+      dispatch({ type: "START_STREAMING", sessionId });
       dispatch({
         type: "ADD_STREAM_ACTIVITY",
+        sessionId,
         entry: {
           kind: "status",
           title: "Hermes is preparing a response",
@@ -739,9 +825,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         );
         for await (const event of stream) {
           if (event.type === "stream_start") {
-            dispatch({ type: "START_STREAMING", streamId: event.streamId });
+            dispatch({
+              type: "START_STREAMING",
+              sessionId,
+              streamId: event.streamId,
+            });
             dispatch({
               type: "ADD_STREAM_ACTIVITY",
+              sessionId,
               entry: {
                 kind: "status",
                 title: "Response stream connected",
@@ -750,16 +841,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             });
           } else if (event.type === "token") {
             accumulatedText += event.text;
-            dispatch({ type: "APPEND_STREAM_TOKEN", text: event.text });
+            dispatch({ type: "APPEND_STREAM_TOKEN", sessionId, text: event.text });
           } else if (event.type === "tool") {
             dispatch({
               type: "SET_ACTIVE_TOOL",
+              sessionId,
               name: event.name,
               preview: event.preview,
               percentage: event.percentage,
             });
             dispatch({
               type: "ADD_STREAM_ACTIVITY",
+              sessionId,
               entry: {
                 kind: "tool",
                 title: event.name ? `Calling ${event.name}` : "Calling a tool",
@@ -770,11 +863,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           } else if (event.type === "progress") {
             dispatch({
               type: "SET_TOOL_PROGRESS",
+              sessionId,
               percentage: event.percentage,
               message: event.detail || event.message,
             });
             dispatch({
               type: "ADD_STREAM_ACTIVITY",
+              sessionId,
               entry: {
                 kind: "progress",
                 title: event.title,
@@ -824,18 +919,27 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                       : content,
                 };
 
-            dispatch({ type: "END_STREAMING", finalSession });
+            dispatch({ type: "END_STREAMING", sessionId, finalSession });
+            if (requestedTitle) {
+              dispatch({
+                type: "UPDATE_SESSION_TITLE",
+                sessionId,
+                title: requestedTitle,
+              });
+              await refreshSessions(workspaceId);
+            }
           } else if (event.type === "error") {
             console.error(event.message);
             dispatch({
               type: "ADD_STREAM_ACTIVITY",
+              sessionId,
               entry: {
                 kind: "error",
                 title: "Stream error",
                 detail: event.message,
               },
             });
-            dispatch({ type: "CLEAR_ACTIVE_TOOL" });
+            dispatch({ type: "CLEAR_ACTIVE_TOOL", sessionId });
 
             const errorMsg: ChatMessage = {
               id: Math.random().toString(36).substring(7),
@@ -864,40 +968,38 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                   updatedAt: Date.now(),
                   isActive: true,
                 };
-            dispatch({ type: "END_STREAMING", finalSession });
+            dispatch({ type: "END_STREAMING", sessionId, finalSession });
           }
         }
       } catch (err) {
         console.error("Failed to send message", err);
-        dispatch({ type: "CLEAR_ACTIVE_TOOL" });
-        dispatch({ type: "END_STREAMING" });
+        dispatch({ type: "CLEAR_ACTIVE_TOOL", sessionId });
+        dispatch({ type: "END_STREAMING", sessionId });
       }
     },
-    [state.activeSessionId, state.isStreaming],
+    [refreshSessions, state.activeSessionId, state.sessions, state.streamStates],
   );
 
   const cancelActiveStream = useCallback(async () => {
     if (!state.activeSessionId) return;
     await agentService.cancelStream(state.activeSessionId);
-    dispatch({ type: "CLEAR_STREAM_ID" });
+    dispatch({ type: "CLEAR_STREAM_ID", sessionId: state.activeSessionId });
   }, [state.activeSessionId]);
 
   useEffect(() => {
-    if (
-      !state.isStreaming &&
-      state.promptQueue.length > 0 &&
-      state.activeSessionId
-    ) {
-      const nextPrompt = state.promptQueue[0];
-      dispatch({ type: "DEQUEUE_PROMPT" });
-      sendMessage(nextPrompt.content, nextPrompt.attachments, true);
-    }
-  }, [
-    state.isStreaming,
-    state.promptQueue,
-    state.activeSessionId,
-    sendMessage,
-  ]);
+    const nextPrompt = state.promptQueue.find(
+      (prompt) => !state.streamStates[prompt.sessionId]?.isStreaming,
+    );
+    if (!nextPrompt) return;
+
+    dispatch({ type: "DEQUEUE_PROMPT", sessionId: nextPrompt.sessionId });
+    sendMessage(
+      nextPrompt.content,
+      nextPrompt.attachments,
+      true,
+      nextPrompt.sessionId,
+    );
+  }, [state.promptQueue, state.streamStates, sendMessage]);
 
   return (
     <ChatContext.Provider

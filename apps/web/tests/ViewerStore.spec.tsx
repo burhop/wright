@@ -45,6 +45,27 @@ function OpenDuplicateTabsHarness() {
   );
 }
 
+function OpenSingleTabHarness() {
+  const viewer = useViewerPanel();
+
+  useEffect(() => {
+    void viewer.openTab({
+      id: "lessons.viewer",
+      uri: "lessons.viewer",
+      name: "lessons.viewer",
+      extension: "unknown",
+      mimeType: "text/plain",
+    });
+  }, [viewer]);
+
+  return (
+    <div>
+      <span data-testid="tab-count">{viewer.openTabs.length}</span>
+      <span data-testid="active-tab">{viewer.activeTabPath}</span>
+    </div>
+  );
+}
+
 describe("ViewerPanelProvider tab state", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -105,5 +126,33 @@ describe("ViewerPanelProvider tab state", () => {
       "/specification.md",
     );
     expect(screen.getAllByText("specification.md")).toHaveLength(1);
+  });
+
+  it("keeps viewer tabs open when switching sessions in the same workspace", async () => {
+    const { rerender } = render(
+      <ViewerPanelProvider>
+        <OpenSingleTabHarness />
+      </ViewerPanelProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tab-count")).toHaveTextContent("1");
+    });
+    expect(screen.getByTestId("active-tab")).toHaveTextContent("/lessons.viewer");
+
+    mockUseChat.mockReturnValue({
+      state: {
+        activeSessionId: "session-2",
+      },
+    });
+
+    rerender(
+      <ViewerPanelProvider>
+        <OpenSingleTabHarness />
+      </ViewerPanelProvider>,
+    );
+
+    expect(screen.getByTestId("tab-count")).toHaveTextContent("1");
+    expect(screen.getByTestId("active-tab")).toHaveTextContent("/lessons.viewer");
   });
 });

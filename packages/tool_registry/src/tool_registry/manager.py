@@ -132,11 +132,14 @@ class McpEngine:
             if server.env_vars:
                 if isinstance(server.env_vars, list):
                     # New format: list of EnvVarDefinition — load values from secrets store
+                    from .secrets import value_for_credential
+
                     saved_creds = read_secrets(server_id)
                     for var_def in server.env_vars:
                         if isinstance(var_def, EnvVarDefinition):
-                            if var_def.name in saved_creds:
-                                env_vars[var_def.name] = saved_creds[var_def.name]
+                            value = value_for_credential(saved_creds, var_def.name)
+                            if value:
+                                env_vars[var_def.name] = value
                 elif isinstance(server.env_vars, dict):
                     # Old format: dict[str, str] — use directly
                     env_vars = server.env_vars.copy()

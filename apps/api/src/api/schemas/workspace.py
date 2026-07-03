@@ -189,6 +189,53 @@ class WorkspaceActivateResponse(BaseModel):
     workspace_path: str
 
 
+class WorkspaceSessionInfo(BaseModel):
+    session_id: str
+    title: Optional[str] = None
+    created_at: int
+    updated_at: int
+    message_count: int = 0
+
+
+class WorkspaceSessionsResponse(BaseModel):
+    workspace_id: str
+    sessions: List[WorkspaceSessionInfo]
+
+
+class WorkspaceSessionCreateResponse(BaseModel):
+    workspace_id: str
+    session_id: str
+    title: Optional[str] = None
+    created_at: int
+
+
+class WorkspaceSessionSelectRequest(BaseModel):
+    session_id: str
+
+
+class WorkspaceSessionSelectResponse(BaseModel):
+    success: bool
+    workspace_id: str
+    session_id: str
+
+
+class WorkspaceToolsByIdResponse(BaseModel):
+    workspace_id: str
+    enabled_tools: List[str]
+
+
+class WorkspaceToolToggleByIdRequest(BaseModel):
+    server_id: str
+    is_enabled: bool
+
+
+class WorkspaceToolToggleByIdResponse(BaseModel):
+    success: bool
+    workspace_id: str
+    server_id: str
+    is_enabled: bool
+
+
 class ContextSaveRequest(BaseModel):
     context_data: dict
 
@@ -247,6 +294,7 @@ class WorkspaceMcpStatusResponse(BaseModel):
     status: str
     message: str
     running_mcps: Optional[List[RunningMcpInfo]] = None
+    workspace_id: Optional[str] = None
 
 
 class FileBackupRequest(BaseModel):

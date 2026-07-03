@@ -180,7 +180,7 @@ export class HermesAgentService {
 
   async listSessions(workspaceId?: string): Promise<ChatSessionCompact[]> {
     const url = workspaceId
-      ? `${API_BASE}/api/agent/sessions?workspace_id=${encodeURIComponent(workspaceId)}`
+      ? `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions`
       : `${API_BASE}/api/agent/sessions`;
     const response = await fetch(url);
     if (!response.ok) {
@@ -261,41 +261,8 @@ export class HermesAgentService {
         return;
       }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let buffer = "";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        // Keep the last partial line in the buffer
-        buffer = lines.pop() || "";
-
-        let currentEvent = "";
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-
-          if (trimmed.startsWith("event:")) {
-            currentEvent = trimmed.substring(6).trim();
-          } else if (trimmed.startsWith("data:")) {
-            const dataStr = trimmed.substring(5).trim();
-            if (currentEvent) {
-              const eventYield = this.parseSSEEvent(
-                currentEvent,
-                dataStr,
-                sessionId,
-              );
-              if (eventYield) {
-                yield eventYield;
-              }
-              currentEvent = "";
-            }
-          }
-        }
+      for await (const eventYield of this.readSSEEvents(response, sessionId)) {
+        yield eventYield;
       }
     } catch (err: any) {
       if (err.name === "AbortError") {
@@ -315,12 +282,86 @@ export class HermesAgentService {
     }
   }
 
+
+  private async *readSSEEvents(
+    response: Response,
+    sessionId: string,
+  ): AsyncIterable<AgentEvent> {
+    if (!response.body) return;
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      let currentEvent = "";
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        if (trimmed.startsWith("event:")) {
+          currentEvent = trimmed.substring(6).trim();
+        } else if (trimmed.startsWith("data:")) {
+          const dataStr = trimmed.substring(5).trim();
+          if (currentEvent) {
+            const eventYield = this.parseSSEEvent(
+              currentEvent,
+              dataStr,
+              sessionId,
+            );
+            if (eventYield) {
+              yield eventYield;
+            }
+            currentEvent = "";
+          }
+        }
+      }
+    }
+  }
+
+  async *attachStream(
+    sessionId: string,
+    after = 0,
+  ): AsyncIterable<AgentEvent> {
+    const response = await fetch(
+      `${API_BASE}/api/agent/chat/stream?session_id=${encodeURIComponent(sessionId)}&after=${after}`,
+    );
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      yield {
+        type: "error",
+        message: errData.message || errData.detail || "No stream is available.",
+      };
+      return;
+    }
+    for await (const eventYield of this.readSSEEvents(response, sessionId)) {
+      yield eventYield;
+    }
+  }
+
   private parseSSEEvent(
     event: string,
     dataStr: string,
     sessionId: string,
   ): AgentEvent | null {
-    if (event === "token") {
+    if (event === "stream_start") {
+      try {
+        const data = JSON.parse(dataStr);
+        return {
+          type: "stream_start",
+          streamId: data.streamId || data.stream_id || data.id || "",
+        };
+      } catch (err) {
+        return { type: "stream_start", streamId: dataStr };
+      }
+    } else if (event === "token") {
       try {
         const data = JSON.parse(dataStr);
         return { type: "token", text: data.text };

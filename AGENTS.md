@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/039-hermes-plugin-mirror-pypi/plan.md
+at specs/040-workspace-session-model/plan.md
 <!-- SPECKIT END -->
 
 For engineering MCP server validation, follow the clean-container process in

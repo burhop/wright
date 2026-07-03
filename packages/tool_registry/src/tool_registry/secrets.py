@@ -47,6 +47,25 @@ else:
 # Default path, overridable via env var for testing
 _DEFAULT_SECRETS_PATH = os.path.expanduser("~/.config/wright/mcp-secrets.json")
 
+_CREDENTIAL_ALIASES: dict[str, tuple[str, ...]] = {
+    "ONSHAPE_API_KEY": ("ONSHAPE_ACCESS_KEY",),
+    "ONSHAPE_API_SECRET": ("ONSHAPE_SECRET_KEY",),
+    "ONSHAPE_ACCESS_KEY": ("ONSHAPE_API_KEY",),
+    "ONSHAPE_SECRET_KEY": ("ONSHAPE_API_SECRET",),
+}
+
+
+def value_for_credential(saved: Dict[str, str], name: str) -> str | None:
+    """Return a saved credential value, honoring known renamed keys."""
+    value = saved.get(name)
+    if value:
+        return value
+    for alias in _CREDENTIAL_ALIASES.get(name, ()):  # compatibility for renamed vars
+        alias_value = saved.get(alias)
+        if alias_value:
+            return alias_value
+    return None
+
 
 def _get_secrets_path() -> str:
     """Get the secrets file path, allowing override for testing."""
@@ -161,4 +180,4 @@ def has_credentials(
     if not required_vars:
         return {}
     saved = read_secrets(server_id)
-    return {var: (var in saved and bool(saved[var])) for var in required_vars}
+    return {var: bool(value_for_credential(saved, var)) for var in required_vars}

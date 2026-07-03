@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 import subprocess
@@ -84,11 +85,183 @@ def _visible_workspace_rows(rows: list[sqlite3.Row]) -> list[Dict[str, Any]]:
     ]
 
 
+def _ensure_workspace_agent_sessions_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS workspace_agent_sessions (
+            workspace_id TEXT NOT NULL,
+            session_id TEXT NOT NULL UNIQUE,
+            agent_id TEXT NOT NULL DEFAULT 'hermes',
+            title TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            is_archived INTEGER NOT NULL DEFAULT 0 CHECK(is_archived IN (0, 1)),
+            PRIMARY KEY (workspace_id, session_id),
+            FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id) ON DELETE CASCADE
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT OR IGNORE INTO workspace_agent_sessions (
+            workspace_id, session_id, agent_id, title, created_at, updated_at, is_archived
+        )
+        SELECT workspace_id, session_id, 'hermes', workspace_name, created_at, updated_at, 0
+        FROM engineering_workspaces
+        WHERE session_id IS NOT NULL AND session_id != ''
+        """
+    )
+
+
+def associate_workspace_session(
+    db_path: str,
+    workspace_id: str,
+    session_id: str,
+    *,
+    agent_id: str = "hermes",
+    title: Optional[str] = None,
+    created_at: Optional[int] = None,
+    updated_at: Optional[int] = None,
+    reassign_if_owned: bool = False,
+) -> None:
+    import time
+
+    if not workspace_id or not session_id:
+        return
+    now = int(time.time())
+    created = int(created_at or now)
+    updated = int(updated_at or created or now)
+    with _get_db_conn(db_path) as conn:
+        _ensure_workspace_agent_sessions_table(conn)
+        if reassign_if_owned:
+            conn.execute(
+                "DELETE FROM workspace_agent_sessions WHERE session_id = ?",
+                (session_id,),
+            )
+        else:
+            conn.execute(
+                """
+                DELETE FROM workspace_agent_sessions
+                WHERE session_id = ?
+                  AND workspace_id NOT IN (
+                    SELECT workspace_id FROM engineering_workspaces
+                  )
+                """,
+                (session_id,),
+            )
+        conn.execute(
+            """
+            INSERT INTO workspace_agent_sessions (
+                workspace_id, session_id, agent_id, title, created_at, updated_at, is_archived
+            ) VALUES (?, ?, ?, ?, ?, ?, 0)
+            ON CONFLICT(workspace_id, session_id) DO UPDATE SET
+                agent_id = excluded.agent_id,
+                title = COALESCE(excluded.title, workspace_agent_sessions.title),
+                updated_at = MAX(workspace_agent_sessions.updated_at, excluded.updated_at),
+                is_archived = 0
+            """,
+            (workspace_id, session_id, agent_id, title, created, updated),
+        )
+        conn.commit()
+
+
+def update_workspace_agent_session_title(
+    db_path: str, session_id: str, title: str, *, agent_id: str = "hermes"
+) -> bool:
+    import time
+
+    cleaned = (title or "").strip()
+    if not session_id or not cleaned:
+        return False
+
+    now = int(time.time())
+    with _get_db_conn(db_path) as conn:
+        _ensure_workspace_agent_sessions_table(conn)
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT workspace_id FROM workspace_agent_sessions WHERE session_id = ? AND is_archived = 0",
+            (session_id,),
+        )
+        row = cursor.fetchone()
+        workspace_id = row["workspace_id"] if row else None
+        if not workspace_id:
+            cursor.execute(
+                "SELECT workspace_id FROM engineering_workspaces WHERE session_id = ?",
+                (session_id,),
+            )
+            row = cursor.fetchone()
+            workspace_id = row["workspace_id"] if row else None
+        if not workspace_id:
+            return False
+
+        cursor.execute(
+            "SELECT created_at FROM workspace_agent_sessions WHERE workspace_id = ? AND session_id = ?",
+            (workspace_id, session_id),
+        )
+        existing = cursor.fetchone()
+        created_at = int(existing["created_at"]) if existing else now
+        conn.execute(
+            """
+            INSERT INTO workspace_agent_sessions (
+                workspace_id, session_id, agent_id, title, created_at, updated_at, is_archived
+            ) VALUES (?, ?, ?, ?, ?, ?, 0)
+            ON CONFLICT(workspace_id, session_id) DO UPDATE SET
+                agent_id = excluded.agent_id,
+                title = excluded.title,
+                updated_at = excluded.updated_at,
+                is_archived = 0
+            """,
+            (workspace_id, session_id, agent_id, cleaned, created_at, now),
+        )
+        conn.commit()
+        return True
+
+
+def list_workspace_agent_sessions(
+    db_path: str, workspace_id: str, *, include_archived: bool = False
+) -> list[Dict[str, Any]]:
+    with _get_db_conn(db_path) as conn:
+        _ensure_workspace_agent_sessions_table(conn)
+        cursor = conn.cursor()
+        if include_archived:
+            cursor.execute(
+                """
+                SELECT * FROM workspace_agent_sessions
+                WHERE workspace_id = ?
+                ORDER BY updated_at DESC, created_at DESC
+                """,
+                (workspace_id,),
+            )
+        else:
+            cursor.execute(
+                """
+                SELECT * FROM workspace_agent_sessions
+                WHERE workspace_id = ? AND is_archived = 0
+                ORDER BY updated_at DESC, created_at DESC
+                """,
+                (workspace_id,),
+            )
+        return [dict(row) for row in cursor.fetchall()]
+
+
 def get_workspace_by_session(db_path: str, session_id: str) -> Optional[Dict[str, Any]]:
     with _get_db_conn(db_path) as conn:
+        _ensure_workspace_agent_sessions_table(conn)
         cursor = conn.cursor()
         cursor.execute(
             "SELECT * FROM engineering_workspaces WHERE session_id = ?", (session_id,)
+        )
+        row = cursor.fetchone()
+        if row:
+            return dict(row)
+        cursor.execute(
+            """
+            SELECT ew.*
+            FROM engineering_workspaces ew
+            JOIN workspace_agent_sessions was ON was.workspace_id = ew.workspace_id
+            WHERE was.session_id = ? AND was.is_archived = 0
+            """,
+            (session_id,),
         )
         row = cursor.fetchone()
         return dict(row) if row else None
@@ -201,6 +374,15 @@ def create_workspace(
             ),
         )
         conn.commit()
+    associate_workspace_session(
+        db_path,
+        workspace_id,
+        session_id,
+        title=workspace_name,
+        created_at=now,
+        updated_at=now,
+        reassign_if_owned=True,
+    )
 
 
 def update_workspace_remote(
@@ -225,14 +407,16 @@ def update_workspace_remote(
         conn.commit()
 
 
-def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[str]]:
+def get_workspace_enabled_tools_by_workspace(
+    db_path: str, workspace_id: str
+) -> Optional[list[str]]:
     import json
 
     with _get_db_conn(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT enabled_tools FROM engineering_workspaces WHERE session_id = ?",
-            (session_id,),
+            "SELECT enabled_tools FROM engineering_workspaces WHERE workspace_id = ?",
+            (workspace_id,),
         )
         row = cursor.fetchone()
         if row and row["enabled_tools"] is not None:
@@ -240,6 +424,17 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
                 return json.loads(row["enabled_tools"])
             except Exception:
                 pass
+    return None
+
+
+def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[str]]:
+    workspace = get_workspace_by_session(db_path, session_id)
+    if workspace:
+        enabled_tools = get_workspace_enabled_tools_by_workspace(
+            db_path, workspace["workspace_id"]
+        )
+        if enabled_tools is not None:
+            return enabled_tools
 
     # Fallback/Default behavior when enabled_tools is NULL or invalid JSON
     # Default to enabling all installed MCP servers, EXCEPT those that require
@@ -282,8 +477,8 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
     return enabled
 
 
-def update_workspace_enabled_tools(
-    db_path: str, session_id: str, enabled_tools: list[str]
+def update_workspace_enabled_tools_by_workspace(
+    db_path: str, workspace_id: str, enabled_tools: list[str]
 ) -> None:
     import time
     import json
@@ -295,11 +490,22 @@ def update_workspace_enabled_tools(
             """
             UPDATE engineering_workspaces
             SET enabled_tools = ?, updated_at = ?
-            WHERE session_id = ?
+            WHERE workspace_id = ?
             """,
-            (tools_str, now, session_id),
+            (tools_str, now, workspace_id),
         )
         conn.commit()
+
+
+def update_workspace_enabled_tools(
+    db_path: str, session_id: str, enabled_tools: list[str]
+) -> None:
+    workspace = get_workspace_by_session(db_path, session_id)
+    if workspace:
+        update_workspace_enabled_tools_by_workspace(
+            db_path, workspace["workspace_id"], enabled_tools
+        )
+        return
 
 
 def get_recent_workspaces(db_path: str, limit: int = 5) -> list[Dict[str, Any]]:
@@ -323,15 +529,35 @@ def touch_workspace(db_path: str, session_id: str) -> None:
     import time
 
     now = int(time.time())
+    workspace = get_workspace_by_session(db_path, session_id)
     with _get_db_conn(db_path) as conn:
-        conn.execute(
-            """
-            UPDATE engineering_workspaces
-            SET updated_at = ?
-            WHERE session_id = ?
-            """,
-            (now, session_id),
-        )
+        if workspace:
+            conn.execute(
+                """
+                UPDATE engineering_workspaces
+                SET updated_at = ?
+                WHERE workspace_id = ?
+                """,
+                (now, workspace["workspace_id"]),
+            )
+            _ensure_workspace_agent_sessions_table(conn)
+            conn.execute(
+                """
+                UPDATE workspace_agent_sessions
+                SET updated_at = ?
+                WHERE workspace_id = ? AND session_id = ?
+                """,
+                (now, workspace["workspace_id"], session_id),
+            )
+        else:
+            conn.execute(
+                """
+                UPDATE engineering_workspaces
+                SET updated_at = ?
+                WHERE session_id = ?
+                """,
+                (now, session_id),
+            )
         conn.commit()
 
 
@@ -379,7 +605,18 @@ def create_workspace_from_dashboard(
             (workspace_id,),
         )
         row = cursor.fetchone()
-        return dict(row) if row else {}
+        result = dict(row) if row else {}
+    if result:
+        associate_workspace_session(
+            db_path,
+            workspace_id,
+            session_id,
+            title=name.strip(),
+            created_at=now,
+            updated_at=now,
+            reassign_if_owned=True,
+        )
+    return result
 
 
 def get_workspace_by_id(db_path: str, workspace_id: str) -> Optional[Dict[str, Any]]:
@@ -440,7 +677,7 @@ def update_workspace_remote_by_id(
 
 
 def update_workspace_session(db_path: str, workspace_id: str, session_id: str) -> None:
-    """Update the associated session_id of a workspace."""
+    """Set the default session pointer and associate the session with a workspace."""
     import time
 
     now = int(time.time())
@@ -454,6 +691,9 @@ def update_workspace_session(db_path: str, workspace_id: str, session_id: str) -
             (session_id, now, workspace_id),
         )
         conn.commit()
+    associate_workspace_session(
+        db_path, workspace_id, session_id, created_at=now, updated_at=now
+    )
 
 
 def save_agent_context(db_path: str, workspace_id: str, context_data: str) -> None:
@@ -562,6 +802,9 @@ async def sync_workspace_runners(db_path: str, session_id: str, mcp_engine) -> N
     import asyncio
 
     enabled_tools = get_workspace_enabled_tools(db_path, session_id)
+    workspace = get_workspace_by_session(db_path, session_id)
+    workspace_dir = workspace["local_path"] if workspace else None
+    workspace_id = workspace["workspace_id"] if workspace else None
 
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -583,7 +826,22 @@ async def sync_workspace_runners(db_path: str, session_id: str, mcp_engine) -> N
 
             try:
                 if is_enabled:
-                    await mcp_engine.start_server(srv_id)
+                    from tool_registry import ApprovalContext
+
+                    approval_gates = srv.get("approval_gates") or []
+                    if isinstance(approval_gates, str):
+                        try:
+                            approval_gates = json.loads(approval_gates)
+                        except json.JSONDecodeError:
+                            approval_gates = []
+                    await mcp_engine.start_server(
+                        srv_id,
+                        workspace_dir=workspace_dir,
+                        approval_context=ApprovalContext(
+                            workspace_id=workspace_id,
+                            workspace_approvals=set(approval_gates or []),
+                        ),
+                    )
                 else:
                     await mcp_engine.stop_server(srv_id)
             except Exception as err:
