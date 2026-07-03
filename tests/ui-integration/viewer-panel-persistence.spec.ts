@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', () => {
+test.describe("Pluggable Viewer Panel Persistence & Transaction History E2E", () => {
   const savePayloads: any[] = [];
   const backupPayloads: any[] = [];
   const deleteBackupPayloads: any[] = [];
@@ -11,33 +11,33 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
     deleteBackupPayloads.length = 0;
 
     // Mock setup status
-    await page.route('**/api/setup/status', async (route) => {
+    await page.route("**/api/setup/status", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ is_configured: true, theme: 'dark' }),
+        contentType: "application/json",
+        body: JSON.stringify({ is_configured: true, theme: "dark" }),
       });
     });
 
     // Mock active agent
-    await page.route('**/api/agent/active', async (route) => {
+    await page.route("**/api/agent/active", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify('hermes'),
+        contentType: "application/json",
+        body: JSON.stringify("hermes"),
       });
     });
 
     // Mock agent sessions list
-    await page.route('**/api/agent/sessions*', async (route) => {
+    await page.route("**/api/agent/sessions*", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
+        contentType: "application/json",
         body: JSON.stringify({
           sessions: [
             {
-              session_id: 'session-1',
-              title: 'Default Session',
+              session_id: "session-1",
+              title: "Default Session",
               created_at: Date.now(),
               updated_at: Date.now(),
             },
@@ -46,16 +46,35 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
       });
     });
 
-    // Mock workspace info
-    await page.route('**/api/workspace/by-id/*', async (route) => {
+    // Mock workspace-scoped sessions before the exact workspace info route.
+    await page.route("**/api/workspace/by-id/ws-1/sessions", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
+        contentType: "application/json",
         body: JSON.stringify({
-          workspace_id: 'ws-1',
-          session_id: 'session-1',
-          workspace_name: 'Test Project',
-          local_path: '/tmp/wright-e2e-workspace',
+          sessions: [
+            {
+              session_id: "session-1",
+              title: "Default Session",
+              created_at: Date.now(),
+              updated_at: Date.now(),
+              message_count: 0,
+            },
+          ],
+        }),
+      });
+    });
+
+    // Mock workspace info
+    await page.route("**/api/workspace/by-id/ws-1", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          workspace_id: "ws-1",
+          session_id: "session-1",
+          workspace_name: "Test Project",
+          local_path: "/tmp/wright-e2e-workspace",
           git_remote_url: null,
           git_username: null,
         }),
@@ -63,36 +82,36 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
     });
 
     // Mock workspace activation
-    await page.route('**/api/workspace/activate', async (route) => {
+    await page.route("**/api/workspace/activate", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
+        contentType: "application/json",
         body: JSON.stringify({
           success: true,
-          session_id: 'session-1',
-          workspace_path: '/tmp/wright-e2e-workspace',
+          session_id: "session-1",
+          workspace_path: "/tmp/wright-e2e-workspace",
         }),
       });
     });
 
     // Mock file tree list
-    await page.route('**/api/workspace/files?*', async (route) => {
+    await page.route("**/api/workspace/files?*", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
+        contentType: "application/json",
         body: JSON.stringify({
           workspace: {
-            name: 'wright',
-            path: '/',
-            type: 'directory',
+            name: "wright",
+            path: "/",
+            type: "directory",
             children: [
               {
-                name: 'script.py',
-                path: '/script.py',
-                type: 'file',
+                name: "script.py",
+                path: "/script.py",
+                type: "file",
                 size: 200,
                 last_modified: 1000,
-                git_status: 'Clean',
+                git_status: "Clean",
                 children: null,
               },
             ],
@@ -102,32 +121,32 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
     });
 
     // Mock file contents (GET) and save (PUT)
-    await page.route('**/api/workspace/files/content?*', async (route) => {
+    await page.route("**/api/workspace/files/content?*", async (route) => {
       const url = new URL(route.request().url());
-      const filePath = url.searchParams.get('path') || '';
+      const filePath = url.searchParams.get("path") || "";
 
-      if (filePath.endsWith('.py')) {
+      if (filePath.endsWith(".py")) {
         await route.fulfill({
           status: 200,
-          contentType: 'text/plain',
+          contentType: "text/plain",
           body: "print('Hello Playwright Persistence')",
         });
       } else {
         await route.fulfill({
           status: 200,
-          contentType: 'text/plain',
-          body: 'Fallback content',
+          contentType: "text/plain",
+          body: "Fallback content",
         });
       }
     });
 
-    await page.route('**/api/workspace/files/content', async (route) => {
-      if (route.request().method() === 'PUT') {
-        const body = JSON.parse(route.request().postData() || '{}');
+    await page.route("**/api/workspace/files/content", async (route) => {
+      if (route.request().method() === "PUT") {
+        const body = JSON.parse(route.request().postData() || "{}");
         savePayloads.push(body);
         await route.fulfill({
           status: 200,
-          contentType: 'application/json',
+          contentType: "application/json",
           body: JSON.stringify({ success: true }),
         });
       } else {
@@ -136,21 +155,21 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
     });
 
     // Mock backup POST and DELETE
-    await page.route('**/api/workspace/files/backup', async (route) => {
-      if (route.request().method() === 'POST') {
-        const body = JSON.parse(route.request().postData() || '{}');
+    await page.route("**/api/workspace/files/backup", async (route) => {
+      if (route.request().method() === "POST") {
+        const body = JSON.parse(route.request().postData() || "{}");
         backupPayloads.push(body);
         await route.fulfill({
           status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({ success: true, backup_id: 'mock-backup-123' }),
+          contentType: "application/json",
+          body: JSON.stringify({ success: true, backup_id: "mock-backup-123" }),
         });
-      } else if (route.request().method() === 'DELETE') {
-        const body = JSON.parse(route.request().postData() || '{}');
+      } else if (route.request().method() === "DELETE") {
+        const body = JSON.parse(route.request().postData() || "{}");
         deleteBackupPayloads.push(body);
         await route.fulfill({
           status: 200,
-          contentType: 'application/json',
+          contentType: "application/json",
           body: JSON.stringify({ success: true }),
         });
       } else {
@@ -159,24 +178,26 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
     });
 
     // Mock git status and history
-    await page.route('**/api/workspace/git/status?*', async (route) => {
+    await page.route("**/api/workspace/git/status?*", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ branch_name: 'main', changes: [] }),
+        contentType: "application/json",
+        body: JSON.stringify({ branch_name: "main", changes: [] }),
       });
     });
-    await page.route('**/api/workspace/git/history?*', async (route) => {
+    await page.route("**/api/workspace/git/history?*", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
+        contentType: "application/json",
         body: JSON.stringify({ commits: [] }),
       });
     });
   });
 
-  test('should handle dirty indicator, backup, and save on Ctrl+S shortcut', async ({ page }) => {
-    await page.goto('/workspace/ws-1');
+  test("should handle dirty indicator, backup, and save on Ctrl+S shortcut", async ({
+    page,
+  }) => {
+    await page.goto("/workspace/ws-1");
 
     // Expand root folder
     const rootFolder = page.locator('[data-testid="file-node-/"]');
@@ -202,24 +223,30 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
 
     // Verify a backup request was dispatched
     expect(backupPayloads.length).toBeGreaterThan(0);
-    expect(backupPayloads[0].path).toBe('/script.py');
-    expect(backupPayloads[0].content).toBe("print('Hello Playwright Persistence Edited')");
+    expect(backupPayloads[0].path).toBe("/script.py");
+    expect(backupPayloads[0].content).toBe(
+      "print('Hello Playwright Persistence Edited')",
+    );
 
     // Press Ctrl+S
     await textarea.focus();
-    await page.keyboard.press('Control+s');
+    await page.keyboard.press("Control+s");
 
     // Save button should hide as it is clean now
     await expect(saveButton).not.toBeVisible();
 
     // Verify save request details
     expect(savePayloads.length).toBe(1);
-    expect(savePayloads[0].path).toBe('/script.py');
-    expect(savePayloads[0].content).toBe("print('Hello Playwright Persistence Edited')");
+    expect(savePayloads[0].path).toBe("/script.py");
+    expect(savePayloads[0].content).toBe(
+      "print('Hello Playwright Persistence Edited')",
+    );
   });
 
-  test('should handle revert edits to clear dirty changes', async ({ page }) => {
-    await page.goto('/workspace/ws-1');
+  test("should handle revert edits to clear dirty changes", async ({
+    page,
+  }) => {
+    await page.goto("/workspace/ws-1");
 
     // Expand root folder
     const rootFolder = page.locator('[data-testid="file-node-/"]');
@@ -242,7 +269,7 @@ test.describe('Pluggable Viewer Panel Persistence & Transaction History E2E', ()
 
     // Undo native action or focus and press Control+z
     await textarea.focus();
-    await page.keyboard.press('Control+z');
+    await page.keyboard.press("Control+z");
 
     // Verify it reverts content and clears dirty flag (hides save button)
     await expect(saveButton).not.toBeVisible();
