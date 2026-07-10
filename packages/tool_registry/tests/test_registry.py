@@ -3,7 +3,7 @@ import sys
 import uuid
 import time
 import pytest
-import sqlite3
+from data_vault import upgrade_database
 from tool_registry.models import McpServer, McpTool
 from tool_registry.db import (
     get_servers,
@@ -22,36 +22,7 @@ from tool_registry.models import EnvVarDefinition
 def temp_db_path(tmp_path) -> str:
     db_file = tmp_path / "test_state.db"
     db_path = str(db_file)
-    conn = sqlite3.connect(db_path)
-    conn.execute("""
-    CREATE TABLE mcp_servers (
-        server_id TEXT PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE,
-        type TEXT NOT NULL CHECK(type IN ('stdio', 'sse', 'webmcp')),
-        command TEXT,
-        is_active INTEGER NOT NULL DEFAULT 0 CHECK(is_active IN (0, 1)),
-        is_installed INTEGER NOT NULL DEFAULT 0 CHECK(is_installed IN (0, 1)),
-        status TEXT NOT NULL DEFAULT 'inactive' CHECK(status IN ('active', 'inactive', 'error')),
-        error_message TEXT,
-        category TEXT NOT NULL DEFAULT 'utilities',
-        created_at INTEGER NOT NULL,
-        updated_at INTEGER NOT NULL
-    );
-    """)
-    conn.execute("""
-    CREATE TABLE mcp_tools (
-        tool_id TEXT PRIMARY KEY,
-        server_id TEXT NOT NULL,
-        name TEXT NOT NULL,
-        description TEXT,
-        input_schema TEXT NOT NULL,
-        is_enabled INTEGER NOT NULL DEFAULT 1 CHECK(is_enabled IN (0, 1)),
-        created_at INTEGER NOT NULL,
-        FOREIGN KEY (server_id) REFERENCES mcp_servers(server_id) ON DELETE CASCADE
-    );
-    """)
-    conn.commit()
-    conn.close()
+    upgrade_database(db_path)
     return db_path
 
 

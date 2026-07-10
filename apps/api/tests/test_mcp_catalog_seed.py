@@ -35,14 +35,14 @@ def test_api_seed_helper_uses_shared_catalog_normalization():
     assert set(REQUIRED_PLATFORM_KEYS).issubset(seed["platform_support"])
 
 
-def test_api_migration_uses_tool_registry_engineering_catalog():
+def test_api_migration_contains_no_catalog_behavior():
     import inspect
 
     from api.database import migrate
-    from tool_registry.engineering_catalog import ENGINEERING_CATALOG
 
-    assert migrate.ENGINEERING_CATALOG is ENGINEERING_CATALOG
-    assert "OpenSCAD Geometry" not in inspect.getsource(migrate)
+    source = inspect.getsource(migrate)
+    assert "ENGINEERING_CATALOG" not in source
+    assert "mcp_servers" not in source
 
 
 def test_fresh_engineering_catalog_seed_does_not_preinstall_mcps(tmp_path, monkeypatch):
@@ -52,6 +52,9 @@ def test_fresh_engineering_catalog_seed_does_not_preinstall_mcps(tmp_path, monke
     monkeypatch.setattr(migrate, "DATABASE_PATH", str(db_path))
 
     migrate.run_migrations()
+    from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+
+    reconcile_engineering_catalog(str(db_path))
     servers = get_servers(str(db_path))
 
     assert servers
@@ -68,6 +71,9 @@ def test_autodesk_product_help_seed_uses_official_remote_mcp_endpoint(
     monkeypatch.setattr(migrate, "DATABASE_PATH", str(db_path))
 
     migrate.run_migrations()
+    from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+
+    reconcile_engineering_catalog(str(db_path))
     autodesk_help = next(
         server
         for server in get_servers(str(db_path))
@@ -99,6 +105,9 @@ def test_migration_clears_failed_catalog_installs_including_openscad(
     monkeypatch.setattr(migrate, "DATABASE_PATH", str(db_path))
 
     migrate.run_migrations()
+    from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+
+    reconcile_engineering_catalog(str(db_path))
     with sqlite3.connect(db_path) as conn:
         conn.execute(
             """
@@ -110,7 +119,7 @@ def test_migration_clears_failed_catalog_installs_including_openscad(
         )
         conn.commit()
 
-    migrate.run_migrations()
+    reconcile_engineering_catalog(str(db_path))
     openscad = next(
         server
         for server in get_servers(str(db_path))

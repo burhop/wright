@@ -72,6 +72,8 @@ nav:
       - Local Control Plane: security/control-plane.md
       - Credential Management: security/credential-management.md
       - Container Hardening: security/container-hardening.md
+  - Operations:
+      - Database Migration and Recovery: operations/database-recovery.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
       - Spec-Kit Workflow: contributing/spec-kit.md

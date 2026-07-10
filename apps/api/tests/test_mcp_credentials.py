@@ -13,6 +13,7 @@ import os
 import stat
 import sqlite3
 import tempfile
+from data_vault import upgrade_database
 
 import pytest
 from fastapi.testclient import TestClient
@@ -212,6 +213,7 @@ def cred_test_db_path():
     )
     conn.commit()
     conn.close()
+    upgrade_database(path)
 
     yield path
 
@@ -516,24 +518,10 @@ class TestWorkspaceDefaultTools:
             ),
         )
 
-        # Create engineering_workspaces table and insert workspace row
+        # Insert a workspace row into the explicitly migrated schema.
         import sqlite3
 
         conn = sqlite3.connect(db_path)
-        conn.execute("""
-        CREATE TABLE engineering_workspaces (
-            workspace_id TEXT PRIMARY KEY,
-            session_id TEXT NOT NULL UNIQUE,
-            local_path TEXT NOT NULL,
-            git_remote_url TEXT,
-            git_username TEXT,
-            git_token TEXT,
-            enabled_tools TEXT,
-            created_at INTEGER NOT NULL,
-            updated_at INTEGER NOT NULL,
-            workspace_name TEXT
-        );
-        """)
         conn.execute(
             """
             INSERT INTO engineering_workspaces (

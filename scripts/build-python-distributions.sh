@@ -141,6 +141,7 @@ PY
     wright-engineering) built_import_modules+=("wright_engineering") ;;
     wright-core) built_import_modules+=("core") ;;
     wright-tool-registry) built_import_modules+=("tool_registry") ;;
+    wright-data-vault) built_import_modules+=("data_vault") ;;
     *) built_import_modules+=("${package_name//-/_}") ;;
   esac
 
@@ -172,7 +173,14 @@ fi
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/wright-package-install.XXXXXX")"
 trap 'rm -rf "$tmp_dir"' EXIT
 "$python_bin" -m venv "$tmp_dir/venv"
-venv_python="$tmp_dir/venv/bin/python"
+if [ -x "$tmp_dir/venv/bin/python" ]; then
+  venv_python="$tmp_dir/venv/bin/python"
+elif [ -x "$tmp_dir/venv/Scripts/python.exe" ]; then
+  venv_python="$tmp_dir/venv/Scripts/python.exe"
+else
+  echo "Unable to locate Python in clean-install virtual environment." >&2
+  exit 1
+fi
 "$venv_python" -m pip install --upgrade pip >/dev/null
 "$venv_python" -m pip install "${built_wheels[@]}"
 "$venv_python" - "${built_import_modules[@]}" <<'PY'

@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/043-secrets-container-and-provider-config/plan.md
+at specs/044-state-migrations-and-recovery/plan.md
 <!-- SPECKIT END -->
 
 

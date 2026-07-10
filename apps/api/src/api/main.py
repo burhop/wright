@@ -46,20 +46,31 @@ async def lifespan(app: FastAPI):
     # Refresh after test/deployment environment setup, before serving requests.
     app.state.security_settings = SecuritySettings.from_env()
     app.state.security_settings.validate()
-    # Run database migrations to initialize the schema and seed the catalog
+    # State must be fully migrated and verified before runtime construction.
     try:
         from api.database.migrate import run_migrations
 
         run_migrations()
-    except Exception as e:
-        logger.exception("database_migration_failed", error=str(e))
-    else:
         from api.database.secret_migration import migrate_plaintext_secrets
 
         migrate_plaintext_secrets(DATABASE_PATH)
+        from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+
+        reconcile_engineering_catalog(DATABASE_PATH)
+    except Exception as exc:
+        logger.error(
+            "database_readiness_failed",
+            error_type=type(exc).__name__,
+            error="Database lifecycle validation failed",
+        )
+        raise
 
     # Startup initializes the MCP engine only. MCP server processes are started
     # when an active workspace has those installed servers assigned to it.
+    if not hasattr(app.state, "agent_engine"):
+        app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
+    if not hasattr(app.state, "agent_sync_manager"):
+        app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
     yield
     # Shutdown: Stop active subprocesses/runners
@@ -128,10 +139,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         headers={"X-Trace-Id": trace_id},
     )
 
-
-# Instantiate and store the default agent engine in the app state.
-app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
-app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
 
 # Mount the routers
 app.include_router(workspace_router, prefix="/api/workspace", tags=["Workspace"])

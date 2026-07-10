@@ -16,27 +16,27 @@ def clean_settings(monkeypatch, tmp_path):
 
 @pytest.mark.asyncio
 async def test_settings_write_never_echoes_or_persists_api_key(client):
-    secret = "provider-secret-value"
+    credential_value = "test-secret-value"
     response = await client.post(
         "/api/settings",
         json={
             "llm_provider": "openai",
             "theme": "dark",
-            "api_keys": {"OPENAI_API_KEY": secret},
+            "api_keys": {"OPENAI_API_KEY": credential_value},
         },
     )
 
     assert response.status_code == 200
-    assert secret not in response.text
+    assert credential_value not in response.text
     read_response = await client.get("/api/settings")
     assert read_response.status_code == 200
-    assert secret not in read_response.text
+    assert credential_value not in read_response.text
     assert read_response.json()["api_keys"]["OPENAI_API_KEY"] == ""
     assert read_response.json()["api_key_status"]["OPENAI_API_KEY"] is True
 
     with sqlite3.connect(DATABASE_PATH) as connection:
         rows = connection.execute("SELECT key, value FROM system_settings").fetchall()
-    assert secret not in json.dumps(rows)
+    assert credential_value not in json.dumps(rows)
 
 
 @pytest.mark.asyncio

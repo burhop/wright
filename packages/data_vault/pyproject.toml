@@ -1,18 +1,30 @@
 [project]
 name = "wright-data-vault"
 version = "0.1.0"
-description = "RAG connectors (LanceDB), SQLite clients (WAL mode), and filesystem managers for artifact vault"
+description = "Private Wright SQLite state lifecycle, migration, backup, and recovery package"
 requires-python = ">=3.11"
-
-dependencies = [
-    "pydantic>=2.7",
-    "lancedb>=0.6",
-    "aiosqlite>=0.20",
-    "wright-core",
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Wright Project", email = "wright@example.com" }]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
-[tool.uv.sources]
-wright-core = { workspace = true }
+dependencies = []
+
+[project.scripts]
+wright-db = "data_vault.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/burhop/wright"
+Source = "https://github.com/burhop/wright/tree/dev/packages/data_vault"
+Issues = "https://github.com/burhop/wright/issues"
+Documentation = "https://burhop.github.io/wright/"
+Releases = "https://github.com/burhop/wright/releases"
 
 [build-system]
 requires = ["hatchling"]

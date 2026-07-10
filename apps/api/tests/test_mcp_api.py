@@ -2,6 +2,7 @@ import os
 import tempfile
 import pytest
 import sqlite3
+from data_vault import upgrade_database
 from fastapi.testclient import TestClient
 from api.main import app
 from tool_registry import McpEngine, McpServer, McpTool
@@ -49,6 +50,7 @@ def test_db_path() -> str:
     """)
     conn.commit()
     conn.close()
+    upgrade_database(path)
 
     yield path
 
