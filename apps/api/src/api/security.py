@@ -15,12 +15,14 @@ from starlette.responses import JSONResponse, Response
 PUBLIC_PATHS = frozenset(
     {
         "/",
+        "/api/auth/session",
         "/api/health",
         "/api/agent/health",
         "/api/inference/health",
         "/api/setup/status",
     }
 )
+SESSION_COOKIE = "wright_session"
 
 
 def _csv_env(name: str, default: str) -> tuple[str, ...]:
@@ -111,7 +113,10 @@ class ControlPlaneSecurityMiddleware(BaseHTTPMiddleware):
             and request.url.path.startswith("/api/")
             and request.url.path not in PUBLIC_PATHS
         ):
-            if not settings.token_valid(_bearer(request.headers.get("authorization"))):
+            if not settings.token_valid(
+                _bearer(request.headers.get("authorization"))
+                or request.cookies.get(SESSION_COOKIE)
+            ):
                 return JSONResponse(
                     status_code=401,
                     content={"detail": "Authentication required"},
@@ -136,6 +141,7 @@ def authorize_websocket(websocket: WebSocket, settings: SecuritySettings) -> str
     if not settings.enforced:
         return None
     token = _bearer(websocket.headers.get("authorization"))
+    token = token or websocket.cookies.get(SESSION_COOKIE)
     selected = None
     for protocol in websocket.headers.get("sec-websocket-protocol", "").split(","):
         protocol = protocol.strip()

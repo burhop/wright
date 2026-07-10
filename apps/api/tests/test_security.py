@@ -46,5 +46,14 @@ async def test_protected_api_requires_valid_bearer(client, monkeypatch):
             },
         )
         assert denied_origin.status_code == 403
+        invalid_session = await client.post(
+            "/api/auth/session", json={"token": "wrong"}
+        )
+        assert invalid_session.status_code == 401
+        session = await client.post(
+            "/api/auth/session", json={"token": "test-admin-token"}
+        )
+        assert session.status_code == 204
+        assert (await client.get("/api/settings")).status_code == 200
     finally:
         app.state.security_settings = previous

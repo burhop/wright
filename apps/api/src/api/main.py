@@ -27,6 +27,7 @@ from api.routers.gateway import router as gateway_router
 from api.middleware.tracing import TracingMiddleware
 from api.security import (
     ControlPlaneSecurityMiddleware,
+    SESSION_COOKIE,
     SecuritySettings,
     authorize_websocket,
 )
@@ -162,6 +163,33 @@ class HealthResponse(BaseModel):
     latencyMs: float
     baseUrl: str | None = None
     error: str | None = None
+
+
+class LocalSessionRequest(BaseModel):
+    token: str
+
+
+@app.post("/api/auth/session", status_code=204)
+async def create_local_session(body: LocalSessionRequest, response: Response):
+    """Exchange the configured local token for a browser-only session cookie."""
+    settings: SecuritySettings = app.state.security_settings
+    if settings.enforced and not settings.token_valid(body.token):
+        from fastapi import HTTPException
+
+        raise HTTPException(status_code=401, detail="Invalid local token")
+    response.set_cookie(
+        SESSION_COOKIE,
+        body.token,
+        httponly=True,
+        secure=os.getenv("WRIGHT_COOKIE_SECURE", "0") == "1",
+        samesite="strict",
+        path="/api",
+    )
+
+
+@app.delete("/api/auth/session", status_code=204)
+async def delete_local_session(response: Response):
+    response.delete_cookie(SESSION_COOKIE, path="/api")
 
 
 @app.get("/api/health", response_model=HealthResponse)

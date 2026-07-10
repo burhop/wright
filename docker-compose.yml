@@ -30,6 +30,7 @@ services:
       - ./scripts:/recovery:ro
     environment:
       - WRIGHT_ENV=production
+      - WRIGHT_BIND_HOST=0.0.0.0
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     restart: unless-stopped
     healthcheck:

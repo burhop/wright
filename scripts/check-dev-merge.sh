@@ -30,6 +30,13 @@ trap cleanup EXIT
 
 cd "$ROOT_DIR"
 
+PYTHON_BIN="${PYTHON:-python3}"
+if [[ -x "$ROOT_DIR/.venv/Scripts/python.exe" ]]; then
+  PYTHON_BIN="$ROOT_DIR/.venv/Scripts/python.exe"
+elif [[ -x "$ROOT_DIR/.venv/bin/python" ]]; then
+  PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+fi
+
 echo "Running Wright dev merge gate from $ROOT_DIR"
 echo "Set SKIP_PLAYWRIGHT=1 only for a documented local browser/runtime limitation."
 
@@ -38,7 +45,7 @@ run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
 run uv run ruff format --check "${PYTHON_WORKSPACE_PATHS[@]}"
 
 run npx -w apps/web eslint .
-run npx prettier --check apps/web/
+run npx prettier --check apps/web/ --end-of-line auto
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 
 run uv pip install mypy --quiet
@@ -46,7 +53,7 @@ run uv run mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
   echo "::warning::Mypy type checks failed with warning mode enabled."
 }
 
-run scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
 
 run uv run pytest
 run uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
@@ -75,6 +82,8 @@ else
   echo "==> Starting backend for Playwright live gate"
   LLM_API_URL="${LLM_API_URL:-http://127.0.0.1:8000/v1}" \
   DATABASE_PATH="$TMP_DB" \
+  WRIGHT_AUTH_MODE=compat \
+  WRIGHT_BIND_HOST=127.0.0.1 \
     uv run uvicorn api.main:app --host 127.0.0.1 --port 8000 >"$BACKEND_LOG" 2>&1 &
   BACKEND_PID=$!
 

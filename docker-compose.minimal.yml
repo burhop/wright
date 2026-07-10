@@ -29,6 +29,7 @@ services:
       - ./scripts:/recovery:ro
     environment:
       - WRIGHT_ENV=production
+      - WRIGHT_BIND_HOST=0.0.0.0
       - OTEL_EXPORTER_OTLP_ENDPOINT=        # Explicitly empty to disable remote OTLP export
     restart: unless-stopped
     healthcheck:
