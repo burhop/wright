@@ -1083,7 +1083,6 @@ def test_compile_workspace_mcp_instructions(tmp_path):
 def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     from core.workspace import WorkspaceManager
     import os
-    import tempfile
 
     # Set up local workspace directory
     workspace_dir = str(tmp_path / "local_workspace")
@@ -1091,7 +1090,7 @@ def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     manager = WorkspaceManager(workspace_dir)
 
     # 1. Create a file in local workspace's tmp folder
-    local_tmp_dir = os.path.join(workspace_dir, "tmp", "openscad-mcp")
+    local_tmp_dir = os.path.join(workspace_dir, ".wright", "tmp", "openscad-mcp")
     os.makedirs(local_tmp_dir, exist_ok=True)
     local_file_path = os.path.join(local_tmp_dir, "test.scad")
     with open(local_file_path, "w") as f:
@@ -1101,31 +1100,18 @@ def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     resolved_local = manager.sanitize_path("tmp/openscad-mcp/test.scad")
     assert resolved_local == local_file_path
 
-    # Verify that requesting "/tmp/openscad-mcp/test.scad" resolves to the local path
-    resolved_local_slash = manager.sanitize_path("/tmp/openscad-mcp/test.scad")
-    assert resolved_local_slash == local_file_path
-
-    # 2. Check system-wide fallback. We will use a tempfile in the real /tmp directory.
-    # Windows GitHub runners may not have this POSIX-style temp alias yet.
-    system_tmp_dir = os.path.abspath("/tmp")
-    os.makedirs(system_tmp_dir, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        dir=system_tmp_dir, prefix="global_test_", suffix=".scad", delete=False
-    ) as temp_global:
-        temp_global.write(b"global content")
-        global_path = temp_global.name
-
-    try:
-        # Requesting the global absolute path should resolve to the global path
-        resolved_global = manager.sanitize_path(global_path)
-        assert resolved_global == global_path
-    finally:
-        os.unlink(global_path)
+    # Absolute/global temporary paths are never workspace capabilities.
+    with pytest.raises(ValueError):
+        manager.sanitize_path("/tmp/openscad-mcp/test.scad")
 
     # 3. For a file that does not exist anywhere, requesting it should default to local
     nonexistent_path = "tmp/openscad-mcp/nonexistent.scad"
     resolved_nonexistent = manager.sanitize_path(nonexistent_path)
-    expected_local = os.path.abspath(os.path.join(workspace_dir, nonexistent_path))
+    expected_local = os.path.abspath(
+        os.path.join(
+            workspace_dir, ".wright", "tmp", "openscad-mcp", "nonexistent.scad"
+        )
+    )
     assert resolved_nonexistent == expected_local
 
 
