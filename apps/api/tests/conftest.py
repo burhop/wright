@@ -37,8 +37,10 @@ def set_testing_env(monkeypatch):
 @pytest.fixture(scope="session", autouse=True)
 def run_api_migrations():
     from api.database.migrate import run_migrations
+    from tool_registry.catalog_reconcile import reconcile_engineering_catalog
 
     run_migrations()
+    reconcile_engineering_catalog(temp_db_path)
 
     yield
 
@@ -142,8 +144,10 @@ def client(mock_agent_engine):
     """Provide a TestClient with the mock agent engine injected."""
     from httpx import ASGITransport, AsyncClient
     from api.main import app
+    from core import AgentSyncManager
 
     app.state.agent_engine = mock_agent_engine
+    app.state.agent_sync_manager = AgentSyncManager(temp_db_path)
     transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
@@ -153,8 +157,10 @@ def sync_client(mock_agent_engine):
     """Provide a synchronous TestClient for non-async tests."""
     from fastapi.testclient import TestClient
     from api.main import app
+    from core import AgentSyncManager
 
     app.state.agent_engine = mock_agent_engine
+    app.state.agent_sync_manager = AgentSyncManager(temp_db_path)
     return TestClient(app)
 
 

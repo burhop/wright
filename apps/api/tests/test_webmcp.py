@@ -4,6 +4,7 @@ import pytest
 import sqlite3
 import asyncio
 import json
+from data_vault import upgrade_database
 from fastapi.testclient import TestClient
 from api.main import app
 from tool_registry import McpEngine, McpServer
@@ -36,6 +37,7 @@ def test_db_path() -> str:
     """)
     conn.commit()
     conn.close()
+    upgrade_database(path)
 
     yield path
 

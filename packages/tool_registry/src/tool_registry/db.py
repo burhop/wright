@@ -15,41 +15,11 @@ class _ClosingConnection(sqlite3.Connection):
             self.close()
 
 
-def ensure_migrations(conn: sqlite3.Connection) -> None:
-    columns = [
-        ("image_url", "TEXT DEFAULT NULL"),
-        ("description", "TEXT DEFAULT NULL"),
-        ("source_url", "TEXT DEFAULT NULL"),
-        ("installed_version", "TEXT DEFAULT NULL"),
-        ("env_vars", "TEXT DEFAULT NULL"),
-        ("instructions", "TEXT DEFAULT NULL"),
-        ("verification_state", "TEXT DEFAULT 'user_reported_url_needed'"),
-        ("installability_tier", "TEXT DEFAULT 'might_work'"),
-        ("risk_level", "TEXT DEFAULT 'low'"),
-        ("deployment_mode", "TEXT DEFAULT 'unknown'"),
-        ("platform_support", "TEXT DEFAULT NULL"),
-        ("host_software_required", "TEXT DEFAULT NULL"),
-        ("credentials_required", "TEXT DEFAULT NULL"),
-        ("default_enabled", "INTEGER DEFAULT 1"),
-        ("approval_gates", "TEXT DEFAULT NULL"),
-        ("validation_result", "TEXT DEFAULT NULL"),
-        ("follow_up_url", "TEXT DEFAULT NULL"),
-        ("install_blocked_reason", "TEXT DEFAULT NULL"),
-    ]
-    for col_name, col_type in columns:
-        try:
-            conn.execute(f"ALTER TABLE mcp_servers ADD COLUMN {col_name} {col_type};")
-        except sqlite3.OperationalError:
-            # Column already exists
-            pass
-
-
 def _get_conn(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, factory=_ClosingConnection)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.row_factory = sqlite3.Row
-    ensure_migrations(conn)
     return conn
 
 

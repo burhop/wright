@@ -24,6 +24,15 @@ def test_client():
             ("calc-id-123", "gateway-active-server", "gateway-newer-server"),
         )
         conn.execute(
+            "DELETE FROM workspace_agent_sessions WHERE workspace_id IN (?, ?, ?, ?)",
+            (
+                "ws-123",
+                "gateway-active-ws",
+                "gateway-newer-ws",
+                "gateway-call-ws",
+            ),
+        )
+        conn.execute(
             "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?)",
             (
                 "ws-123",

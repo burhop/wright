@@ -18,7 +18,7 @@ def test_git_credentials_use_askpass_not_url_or_argv(tmp_path, monkeypatch, oper
         return subprocess.CompletedProcess(command, 0, "", "")
 
     monkeypatch.setattr(subprocess, "run", fake_run)
-    token = "tok:with/@reserved?characters"
+    token = "provider-token:with/@reserved?characters"
     remote = "https://example.test/owner/repository.git"
 
     getattr(manager, operation)(remote, "engineer", token)
@@ -37,7 +37,7 @@ def test_git_error_redacts_token(tmp_path, monkeypatch):
     monkeypatch.setattr(
         manager, "get_git_status", lambda: {"branch_name": "main", "changes": []}
     )
-    token = "token-that-must-not-leak"
+    token = "provider-token-that-must-not-leak"
 
     def fail(command, **kwargs):
         raise subprocess.CalledProcessError(1, command, stderr=f"denied {token}")

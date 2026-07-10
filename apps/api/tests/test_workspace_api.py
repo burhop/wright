@@ -104,6 +104,13 @@ def client(workspace_setup) -> TestClient:
     try:
         conn = sqlite3.connect(DATABASE_PATH)
         conn.execute(
+            """DELETE FROM workspace_agent_sessions
+            WHERE workspace_id IN (
+                SELECT workspace_id FROM engineering_workspaces
+                WHERE session_id IN ('test-session', 'mock-session', 'new-test-session', 'occupied-session')
+            )"""
+        )
+        conn.execute(
             "DELETE FROM workspace_agent_sessions WHERE session_id IN ('test-session', 'mock-session', 'new-test-session', 'occupied-session')"
         )
         conn.execute(
@@ -742,6 +749,10 @@ def test_workspace_session_update_conflicts_when_session_owned_elsewhere(
     finally:
         conn = sqlite3.connect(DATABASE_PATH)
         try:
+            conn.execute(
+                "DELETE FROM workspace_agent_sessions WHERE workspace_id = ?",
+                ("other-workspace-id",),
+            )
             conn.execute(
                 "DELETE FROM engineering_workspaces WHERE workspace_id = ?",
                 ("other-workspace-id",),

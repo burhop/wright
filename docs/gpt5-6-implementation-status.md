@@ -1,8 +1,8 @@
 # GPT-5.6 Plan Implementation Status
 
-**Baseline**: `0bceb609325a680d461bab5525d052d209e71886`
-**Branch**: `codex/043-secrets-container-and-provider-config`
-**Feature**: 043 — Secrets, Container, and Provider Configuration
+**Baseline**: `49bf248d48ccecbb9216530cf2bed8ea5b072ac3`
+**Branch**: `codex/044-state-migrations-and-recovery`
+**Feature**: 044 — State Migrations and Recovery
 **State**: review-ready — implementation and authoritative merge gate complete
 **Updated**: 2026-07-10 America/New_York
 
@@ -84,9 +84,9 @@ under each workspace's `.wright/tmp` directory.
 
 ## Exact next action
 
-Review Feature 043. Commit, push, and merge to `dev` only after explicit
-authorization for this review boundary. Do not start Feature 044 in this
-unreviewed change.
+Review and commit Feature 044, then use the standing operator authorization to
+push and merge it to `dev`. Start Feature 045 only from the resulting reviewed
+`dev` baseline in a separate feature cycle.
 
 ## Feature 043 implementation cycle
 
@@ -121,3 +121,35 @@ unreviewed change.
 | Seeded-value production scan and shell syntax checks | Passed; removed the remaining legacy default from native Hermes profile setup |
 | `D:\Program Files\Git\bin\bash.exe scripts/check-dev-merge.sh` | Passed end-to-end in 317.3 seconds; no sub-gates skipped. Existing mypy findings remain warning-only under the gate policy. |
 | `docker info` / image-runtime smoke | Not run: Docker Desktop Linux engine was unavailable (`//./pipe/dockerDesktopLinuxEngine` missing). Static contracts, shell syntax, and Compose renders passed. |
+
+## Feature 044 implementation cycle
+
+- Feature 043 merged to `dev` at `49bf248`; local and `origin/dev` matched when
+  Feature 044 branched.
+- Replaced API-owned monolithic schema/catalog mutation with data-vault-owned
+  numbered, checksummed, per-migration transactions and a durable ledger.
+- Added fresh and partial-legacy adoption, integrity/foreign-key preflight and
+  postflight, future-version/checksum refusal, stable lifecycle locking, and
+  fail-closed API startup before runtime construction.
+- Added consistent SQLite snapshots, restricted manifests, digest and schema
+  validation, displaced-state recovery, atomic restore, and corrupt-state
+  replacement from a verified backup.
+- Added internal `wright-db` status, backup, upgrade, and restore operations;
+  catalog reconciliation now runs separately and preserves unknown servers.
+
+### Feature 044 validation so far
+
+| Command | Result |
+| --- | --- |
+| Data-vault migration, interruption, backup/restore, CLI, and state-store suites | 18 passed |
+| API startup plus catalog separation/reconciliation | 12 passed |
+| Full API and tool-registry suites | 196 passed, 1 warning |
+| `scripts/benchmark-database-recovery.py --size-mib 1024 --limit-seconds 300` | Passed on Windows: 1,074,900,992 bytes; backup 11.565s; restore 22.430s; total 33.995s |
+| Data-vault and public CLI wheel/sdist build plus clean-install imports | Passed after making the shared build helper select `Scripts/python.exe` on Windows |
+| Wheel content/dependency inspection | Data-vault wheel contains migrations, backup, CLI, models, lock, and entry point; public `wright-engineering` wheel has no `Requires-Dist` entries; data-vault is `Private :: Do Not Upload` |
+| `uv run pytest -q` | 381 passed, 11 skipped, 1 existing Starlette deprecation warning |
+| `scripts/check-public-alpha-leaks.py --include-untracked` | Passed; also corrected three tracked Feature 043 placeholder literals newly visible to the scanner |
+| Ruff check/format, strict MkDocs, and `git diff --check` | Passed after formatter reconciliation; MkDocs emitted only existing informational notices |
+| First `scripts/check-dev-merge.sh` attempt | All non-browser gates passed; live Playwright had one transient cross-origin `page.evaluate(fetch)` failure in `dashboard-real.spec.ts` |
+| Live-test stabilization and reproduction | Replaced the browser-context cross-origin fetch with Playwright request context; isolated live test passed |
+| Final `D:\Program Files\Git\bin\bash.exe scripts/check-dev-merge.sh` | Passed end-to-end in 315.4 seconds with no skipped sub-gates; data-vault has zero mypy findings and existing repository findings remain warning-only under gate policy |
