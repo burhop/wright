@@ -186,9 +186,9 @@ wright/
 |-- packages/
 |   |-- core/                   # Shared domain models and logging
 |   |-- agent_adapters/         # Adapter pattern for agent runtimes
-|   |-- workspace_service/      # Workspace lifecycle orchestration facade
+|   |-- workspace_service/      # Workspace application use cases and local adapters
 |   |-- tool_registry/          # MCP registry and validation logic
-|   `-- data_vault/             # Placeholder package for future storage extraction
+|   `-- data_vault/             # SQLite lifecycle, repositories, and secret storage
 |-- hermes-plugin-wright/       # Wright Hermes plugin compatibility package
 |-- tests/
 |   |-- ui-integration/         # Playwright integration tests

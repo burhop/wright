@@ -10,7 +10,6 @@ Span naming follows the semantic hierarchy defined in spec.md:
 """
 
 import functools
-import sqlite3
 from contextlib import contextmanager
 from typing import Any
 
@@ -102,35 +101,3 @@ def traced_db(span_name: str, db_path: str, statement: str | None = None):
             span.set_status(StatusCode.ERROR, str(exc))
             span.record_exception(exc)
             raise
-
-
-def traced_query(db_path: str, query: str, params: tuple = ()) -> list[sqlite3.Row]:
-    """Execute a SELECT query with automatic OTel tracing.
-
-    Returns list of sqlite3.Row objects.
-    """
-    with traced_db("db.sqlite.query", db_path, query) as span:
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        try:
-            rows = conn.execute(query, params).fetchall()
-            span.set_attribute("db.rows_affected", len(rows))
-            return rows
-        finally:
-            conn.close()
-
-
-def traced_execute(db_path: str, statement: str, params: tuple = ()) -> int:
-    """Execute an INSERT/UPDATE/DELETE with automatic OTel tracing.
-
-    Returns number of rows affected.
-    """
-    with traced_db("db.sqlite.execute", db_path, statement) as span:
-        conn = sqlite3.connect(db_path)
-        try:
-            cursor = conn.execute(statement, params)
-            conn.commit()
-            span.set_attribute("db.rows_affected", cursor.rowcount)
-            return cursor.rowcount
-        finally:
-            conn.close()

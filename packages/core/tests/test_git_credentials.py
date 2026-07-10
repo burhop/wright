@@ -2,7 +2,7 @@ import subprocess
 
 import pytest
 
-from core.workspace import WorkspaceManager
+from workspace_service import WorkspaceManager
 
 
 @pytest.mark.parametrize("operation", ["push_remote", "pull_remote"])

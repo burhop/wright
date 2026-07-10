@@ -1,16 +1,14 @@
-"""Provider-neutral secret references and local provider composition."""
+"""Side-effect-neutral secret references, status, and provider contract."""
 
 from __future__ import annotations
 
-import os
 import re
 from dataclasses import dataclass
-from pathlib import Path
+from collections.abc import Callable
 from typing import Protocol
 
-from .atomic_secret_store import AtomicSecretStore
-
 _PART_RE = re.compile(r"^[A-Za-z0-9_.-]*$")
+_default_provider_factory: Callable[[], SecretProvider] | None = None
 
 
 @dataclass(frozen=True)
@@ -53,99 +51,22 @@ class SecretProvider(Protocol):
     def status(self, reference: CredentialReference) -> CredentialStatus: ...
 
 
-class EnvironmentSecretProvider:
-    def get(self, reference: CredentialReference) -> str | None:
-        return os.environ.get(reference.environment_name) or None
+def configure_default_secret_provider(
+    provider_or_factory: SecretProvider | Callable[[], SecretProvider],
+) -> None:
+    global _default_provider_factory
+    if callable(provider_or_factory):
+        _default_provider_factory = provider_or_factory
+    else:
+        provider = provider_or_factory
 
-    def set(self, reference: CredentialReference, value: str) -> None:
-        raise RuntimeError("Environment secrets are read-only")
+        def configured_provider() -> SecretProvider:
+            return provider
 
-    def delete(self, reference: CredentialReference) -> None:
-        raise RuntimeError("Environment secrets are read-only")
-
-    def status(self, reference: CredentialReference) -> CredentialStatus:
-        return CredentialStatus(self.get(reference) is not None, "environment")
-
-
-class MountedSecretProvider:
-    def __init__(self, directory: str | Path):
-        self.directory = Path(directory).expanduser()
-
-    def _path(self, reference: CredentialReference) -> Path:
-        return self.directory / reference.environment_name
-
-    def get(self, reference: CredentialReference) -> str | None:
-        path = self._path(reference)
-        if not path.is_file():
-            return None
-        value = path.read_text(encoding="utf-8").rstrip("\r\n")
-        return value or None
-
-    def set(self, reference: CredentialReference, value: str) -> None:
-        raise RuntimeError("Mounted secrets are read-only")
-
-    def delete(self, reference: CredentialReference) -> None:
-        raise RuntimeError("Mounted secrets are read-only")
-
-    def status(self, reference: CredentialReference) -> CredentialStatus:
-        return CredentialStatus(self.get(reference) is not None, "mounted-file")
+        _default_provider_factory = configured_provider
 
 
-class FileSecretProvider:
-    def __init__(self, path: str | Path):
-        self.store = AtomicSecretStore(path)
-
-    def get(self, reference: CredentialReference) -> str | None:
-        return self.store.read().get(reference.key)
-
-    def set(self, reference: CredentialReference, value: str) -> None:
-        if not value:
-            raise ValueError("Secret value must not be empty")
-        self.store.set_many({reference.key: value})
-
-    def delete(self, reference: CredentialReference) -> None:
-        self.store.set_many({}, {reference.key})
-
-    def status(self, reference: CredentialReference) -> CredentialStatus:
-        return CredentialStatus(self.get(reference) is not None, "fallback-file")
-
-
-class CompositeSecretProvider:
-    def __init__(
-        self,
-        providers: list[SecretProvider],
-        writable: SecretProvider,
-    ):
-        self.providers = providers
-        self.writable = writable
-
-    def get(self, reference: CredentialReference) -> str | None:
-        for provider in self.providers:
-            value = provider.get(reference)
-            if value is not None:
-                return value
-        return None
-
-    def set(self, reference: CredentialReference, value: str) -> None:
-        self.writable.set(reference, value)
-
-    def delete(self, reference: CredentialReference) -> None:
-        self.writable.delete(reference)
-
-    def status(self, reference: CredentialReference) -> CredentialStatus:
-        for provider in self.providers:
-            status = provider.status(reference)
-            if status.configured:
-                return status
-        return CredentialStatus(False, None)
-
-
-def default_secret_provider() -> CompositeSecretProvider:
-    fallback = FileSecretProvider(
-        os.environ.get("WRIGHT_SECRETS_PATH", "~/.config/wright/credentials.json")
-    )
-    mounted = MountedSecretProvider(
-        os.environ.get("WRIGHT_SECRETS_DIR", "/run/secrets/wright")
-    )
-    environment = EnvironmentSecretProvider()
-    return CompositeSecretProvider([environment, mounted, fallback], fallback)
+def default_secret_provider() -> SecretProvider:
+    if _default_provider_factory is None:
+        raise RuntimeError("Secret provider has not been configured by composition")
+    return _default_provider_factory()

@@ -25,6 +25,7 @@ from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.middleware.tracing import TracingMiddleware
+from api.composition import close_application_services, workspace_service
 from api.security import (
     ControlPlaneSecurityMiddleware,
     SESSION_COOKIE,
@@ -32,12 +33,15 @@ from api.security import (
     authorize_websocket,
 )
 from api.schemas.common import ErrorResponse, ErrorCodes
-from core.logging import configure_logging, get_logger
+from core.logging import get_logger
+from api.logging_config import configure_logging
 from tool_registry import McpEngine
-from core import AgentSyncManager
+from workspace_service import AgentSyncManager
+from data_vault import install_default_secret_provider
 
 # Configure structured JSON logging globally (Constitution Section 7)
 configure_logging()
+install_default_secret_provider()
 logger = get_logger("api.main")
 
 
@@ -72,12 +76,16 @@ async def lifespan(app: FastAPI):
     if not hasattr(app.state, "agent_sync_manager"):
         app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
-    yield
-    # Shutdown: Stop active subprocesses/runners
     try:
-        await app.state.mcp_engine.shutdown()
-    except Exception as e:
-        logger.exception("mcp_shutdown_failed", error=str(e))
+        app.state.workspace_service = workspace_service()
+        yield
+    finally:
+        # Shutdown owns every process and worker constructed during startup.
+        try:
+            await app.state.mcp_engine.shutdown()
+        except Exception as e:
+            logger.exception("mcp_shutdown_failed", error=str(e))
+        await close_application_services()
 
 
 app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)

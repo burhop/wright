@@ -13,7 +13,7 @@ from agent_adapters.hermes_gateway import (
     hermes_config_paths,
     hermes_wright_gateway_profile,
 )
-from core.workspace import (
+from workspace_service.adapters.runtime import (
     get_workspace_by_session,
     set_active_gateway_session,
 )
@@ -71,7 +71,7 @@ def write_static_gateway_config(
 
 def notify_gateway_tool_change() -> None:
     logger.info("notifying_gateway_tool_change")
-    from api.routers.gateway import notify_gateway_tool_change as notify
+    from api.notifications import notify_gateway_tool_change as notify
 
     notify()
 
@@ -83,7 +83,7 @@ def write_workspace_gateway_context(
     if not active_profile.workspace_context_filename:
         return
 
-    from core.workspace import write_workspace_agent_context
+    from workspace_service.adapters.runtime import write_workspace_agent_context
 
     write_workspace_agent_context(
         db_path, workspace_path, active_profile.workspace_context_filename

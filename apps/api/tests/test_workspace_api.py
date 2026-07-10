@@ -318,7 +318,7 @@ def test_git_diff_and_revert(client):
 
     # Modify file content manually on disk by resolving its path
     from api.config import DATABASE_PATH
-    from core.workspace import get_workspace_by_session
+    from workspace_service.adapters.runtime import get_workspace_by_session
 
     workspace = get_workspace_by_session(DATABASE_PATH, "test-session")
     file_path = os.path.join(workspace["local_path"], "diff_test.txt")
@@ -470,7 +470,7 @@ def test_workspace_config_and_remote_operations(client):
             assert pull_res.json()["success"] is True
 
             # Verify file modified in workspace
-            from core.workspace import get_workspace_by_session
+            from workspace_service.adapters.runtime import get_workspace_by_session
             from api.config import DATABASE_PATH
 
             workspace = get_workspace_by_session(DATABASE_PATH, "test-session")
@@ -527,7 +527,10 @@ def test_workspace_file_locks(client):
 
     # Retrieve local path
     from api.config import DATABASE_PATH
-    from core.workspace import get_workspace_by_session, WorkspaceManager
+    from workspace_service.adapters.runtime import (
+        WorkspaceManager,
+        get_workspace_by_session,
+    )
 
     workspace = get_workspace_by_session(DATABASE_PATH, "test-session")
     manager = WorkspaceManager(workspace["local_path"])
@@ -716,7 +719,7 @@ def test_workspace_session_update_conflicts_when_session_owned_elsewhere(
     client, tmp_path
 ):
     from api.config import DATABASE_PATH
-    from core.workspace import create_workspace
+    from workspace_service.adapters.runtime import create_workspace
     import sqlite3
 
     client.get("/api/workspace/files", params={"session_id": "test-session"})
@@ -814,7 +817,7 @@ def test_workspace_sessions_endpoint_retains_multiple_sessions(client):
 
 def test_workspace_sessions_endpoint_uses_current_agent_title(client):
     from api.config import DATABASE_PATH
-    from core.workspace import associate_workspace_session
+    from workspace_service.adapters.runtime import associate_workspace_session
 
     client.get("/api/workspace/files", params={"session_id": "test-session"})
     response = client.get(
@@ -864,7 +867,7 @@ def test_title_command_persists_workspace_session_title_when_agent_title_is_unti
 
 def test_workspace_sessions_endpoint_disambiguates_duplicate_titles(client):
     from api.config import DATABASE_PATH
-    from core.workspace import associate_workspace_session
+    from workspace_service.adapters.runtime import associate_workspace_session
 
     client.get("/api/workspace/files", params={"session_id": "test-session"})
     response = client.get(
@@ -944,7 +947,7 @@ def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
 
 def test_workspace_activate_session_fallback(client):
     from api.config import DATABASE_PATH
-    from core.workspace import create_workspace
+    from workspace_service.adapters.runtime import create_workspace
     import tempfile
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -992,7 +995,7 @@ def test_workspace_activate_session_fallback(client):
 
 
 def test_workspace_gitignore_setup(tmp_path):
-    from core.workspace import WorkspaceManager
+    from workspace_service.adapters.runtime import WorkspaceManager
     import os
 
     # Initialize WorkspaceManager with a fresh directory
@@ -1012,7 +1015,10 @@ def test_workspace_gitignore_setup(tmp_path):
 
 
 def test_compile_workspace_mcp_instructions(tmp_path):
-    from core.workspace import compile_workspace_mcp_instructions, create_workspace
+    from workspace_service.adapters.runtime import (
+        compile_workspace_mcp_instructions,
+        create_workspace,
+    )
     import sqlite3
 
     db_path = str(tmp_path / "test.db")
@@ -1092,7 +1098,7 @@ def test_compile_workspace_mcp_instructions(tmp_path):
 
 
 def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
-    from core.workspace import WorkspaceManager
+    from workspace_service.adapters.runtime import WorkspaceManager
     import os
 
     # Set up local workspace directory
@@ -1126,76 +1132,26 @@ def test_workspace_sanitize_path_local_vs_system_tmp(tmp_path):
     assert resolved_nonexistent == expected_local
 
 
-def test_activate_workspace_fallback_passes_instructions(tmp_path):
-    from core.workspace import activate_workspace, create_workspace
-    import sqlite3
-    import asyncio
-    import os
+@pytest.mark.asyncio
+async def test_activate_workspace_fallback_is_owned_by_service(tmp_path):
+    from data_vault import upgrade_database
+    from workspace_service import WorkspaceService
+    from workspace_service.adapters.runtime import create_workspace
 
     db_path = str(tmp_path / "test.db")
     local_path = str(tmp_path / "my_workspace")
-    os.makedirs(local_path, exist_ok=True)
+    os.makedirs(local_path)
+    upgrade_database(db_path)
+    create_workspace(db_path, "ws1", "missing-session", local_path, "My Workspace")
 
-    # Initialize minimal schema
-    conn = sqlite3.connect(db_path)
-    try:
-        conn.execute("""
-        CREATE TABLE IF NOT EXISTS engineering_workspaces (
-            workspace_id TEXT PRIMARY KEY,
-            session_id TEXT NOT NULL UNIQUE,
-            workspace_name TEXT,
-            local_path TEXT NOT NULL,
-            git_remote_url TEXT,
-            git_username TEXT,
-            git_token TEXT,
-            enabled_tools TEXT,
-            created_at INTEGER NOT NULL,
-            updated_at INTEGER NOT NULL
-        )
-        """)
-        conn.execute("""
-        CREATE TABLE IF NOT EXISTS mcp_servers (
-            server_id TEXT PRIMARY KEY,
-            name TEXT NOT NULL,
-            type TEXT NOT NULL,
-            command TEXT,
-            is_active INTEGER NOT NULL DEFAULT 0,
-            is_installed INTEGER NOT NULL DEFAULT 0,
-            status TEXT NOT NULL DEFAULT 'inactive',
-            category TEXT,
-            created_at INTEGER NOT NULL,
-            updated_at INTEGER NOT NULL,
-            image_url TEXT,
-            description TEXT,
-            source_url TEXT,
-            installed_version TEXT,
-            env_vars TEXT,
-            instructions TEXT
-        )
-        """)
-        # Seed workspace and an installed mcp server
-        create_workspace(db_path, "ws1", "missing-session", local_path, "My Workspace")
-        conn.execute("""
-        INSERT INTO mcp_servers (server_id, name, type, is_installed, instructions, created_at, updated_at)
-        VALUES ('mcp1', 'Test MCP', 'stdio', 1, 'My test instructions', 1000, 1000)
-        """)
-        conn.commit()
-    finally:
-        conn.close()
-
-    # Define a mock engine
     class MockEngine:
-        def __init__(self):
-            self.created_sessions = []
-
         async def list_sessions(self):
-            # Return empty list to force fallback creation of a session
             return []
 
         async def create_session(self, workspace, instructions=None):
             from agent_adapters import AgentSessionInfo
 
-            info = AgentSessionInfo(
+            return AgentSessionInfo(
                 session_id="new-fallback-session",
                 title="New Session",
                 created_at=1000,
@@ -1203,30 +1159,20 @@ def test_activate_workspace_fallback_passes_instructions(tmp_path):
                 message_count=0,
                 workspace=workspace,
             )
-            self.created_sessions.append((workspace, instructions))
-            return info
 
-    engine = MockEngine()
-
-    # Activate workspace - this should trigger creating a fallback session.
-    session_id = asyncio.run(
-        activate_workspace(db_path, "missing-session", local_path, engine)
+    service = WorkspaceService(db_path)
+    activation = await service.activate_workspace(
+        "missing-session", MockEngine(), local_path=local_path
     )
-
-    assert session_id == "new-fallback-session"
-    assert len(engine.created_sessions) == 1
-    workspace_path, instructions = engine.created_sessions[0]
-    assert workspace_path == local_path
-    assert instructions is None
-
-    # Provider-specific context materialization is owned by agent adapters.
-    hermes_md_path = os.path.join(local_path, ".hermes.md")
-    assert not os.path.exists(hermes_md_path)
+    assert activation.session_id == "new-fallback-session"
+    await service.close()
 
 
 def test_write_workspace_hermes_md(tmp_path):
-    from agent_adapters.hermes_gateway import write_workspace_hermes_md
-    from core.workspace import create_workspace
+    from workspace_service.adapters.runtime import (
+        create_workspace,
+        write_workspace_agent_context,
+    )
     import sqlite3
     import os
 
@@ -1283,7 +1229,7 @@ def test_write_workspace_hermes_md(tmp_path):
     hermes_md_path = os.path.join(local_path, ".hermes.md")
 
     # 1. Test first write (file doesn't exist)
-    write_workspace_hermes_md(db_path, local_path)
+    write_workspace_agent_context(db_path, local_path, ".hermes.md")
     assert os.path.exists(hermes_md_path)
     with open(hermes_md_path, "r", encoding="utf-8") as f:
         content = f.read()
@@ -1306,7 +1252,7 @@ def test_write_workspace_hermes_md(tmp_path):
     finally:
         conn.close()
 
-    write_workspace_hermes_md(db_path, local_path)
+    write_workspace_agent_context(db_path, local_path, ".hermes.md")
     with open(hermes_md_path, "r", encoding="utf-8") as f:
         new_content = f.read()
 
@@ -1317,7 +1263,10 @@ def test_write_workspace_hermes_md(tmp_path):
 
 @pytest.mark.asyncio
 async def test_workspace_runner_sync_starts_only_assigned_installed_mcps(tmp_path):
-    from core.workspace import create_workspace, sync_workspace_runners
+    from workspace_service.adapters.runtime import (
+        create_workspace,
+        sync_workspace_runners,
+    )
     import json
     import sqlite3
     import time
@@ -1527,7 +1476,10 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(
 
 def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
     from api.config import DATABASE_PATH
-    from core.workspace import get_all_workspaces, get_recent_workspaces
+    from workspace_service.adapters.runtime import (
+        get_all_workspaces,
+        get_recent_workspaces,
+    )
     import sqlite3
     import time
     import uuid

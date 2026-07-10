@@ -10,6 +10,15 @@ from .models import (
     UpgradeResult,
 )
 from .state_store import ClosingConnection, connect_state_db
+from .workspace_repository import WorkspaceRepository
+from .secret_provider import (
+    CompositeSecretProvider,
+    EnvironmentSecretProvider,
+    FileSecretProvider,
+    MountedSecretProvider,
+    create_default_secret_provider,
+    install_default_secret_provider,
+)
 
 __all__ = [
     "MIGRATIONS",
@@ -19,6 +28,13 @@ __all__ = [
     "DatabaseStatus",
     "RestoreResult",
     "UpgradeResult",
+    "WorkspaceRepository",
+    "CompositeSecretProvider",
+    "EnvironmentSecretProvider",
+    "FileSecretProvider",
+    "MountedSecretProvider",
+    "create_default_secret_provider",
+    "install_default_secret_provider",
     "connect_state_db",
     "create_backup",
     "database_status",

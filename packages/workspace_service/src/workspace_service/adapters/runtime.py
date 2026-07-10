@@ -1,3 +1,5 @@
+"""Concrete local workspace runtime adapter implementation."""
+
 import json
 import os
 import sqlite3
@@ -8,7 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from core.workspace_path import WorkspacePath
+from workspace_service.workspace_path import WorkspacePath
 from core.secrets import CredentialReference, default_secret_provider
 
 logger = structlog.get_logger(__name__)
@@ -756,76 +758,6 @@ def load_agent_context(db_path: str, workspace_id: str) -> Optional[Dict[str, An
         )
         row = cursor.fetchone()
         return dict(row) if row else None
-
-
-async def activate_workspace(
-    db_path: str,
-    session_id: str,
-    local_path: str,
-    engine,
-    allow_fallback: bool = True,
-) -> str:
-    """Activate a workspace: verify/create agent session, update session_id if needed.
-
-    Extracted from workspace router to keep route handlers thin.
-    Returns the (possibly updated) session_id.
-    """
-    import time
-    import sqlite3
-
-    try:
-        sessions = await engine.list_sessions()
-        session_ids = {s.session_id for s in sessions}
-        if session_id not in session_ids:
-            logger.info(
-                "agent_session_missing", session_id=session_id, local_path=local_path
-            )
-            if not allow_fallback:
-                return session_id
-
-            # Find an existing session belonging to this local_path
-            fallback_session = None
-            workspace_sessions = sorted(
-                [s for s in sessions if s.workspace == local_path],
-                key=lambda s: s.updated_at,
-                reverse=True,
-            )
-            if workspace_sessions:
-                fallback_session = workspace_sessions[0]
-                logger.info(
-                    "agent_session_fallback_found",
-                    session_id=fallback_session.session_id,
-                    local_path=local_path,
-                )
-                session_info = fallback_session
-            else:
-                # None found, create a new one
-                logger.info("creating_new_session_for_fallback", local_path=local_path)
-                session_info = await engine.create_session(local_path)
-
-            conn = sqlite3.connect(db_path)
-            try:
-                conn.execute(
-                    "UPDATE engineering_workspaces SET session_id = ?, updated_at = ? WHERE local_path = ?",
-                    (session_info.session_id, int(time.time()), local_path),
-                )
-                conn.commit()
-                logger.info(
-                    "workspace_session_updated",
-                    old_session_id=session_id,
-                    new_session_id=session_info.session_id,
-                )
-                session_id = session_info.session_id
-            finally:
-                conn.close()
-    except Exception as e:
-        logger.warning(
-            "agent_session_verify_failed", session_id=session_id, error=str(e)
-        )
-
-    touch_workspace(db_path, session_id)
-    set_active_gateway_session(db_path, session_id)
-    return session_id
 
 
 async def sync_workspace_runners(db_path: str, session_id: str, mcp_engine) -> None:

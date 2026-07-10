@@ -1,9 +1,9 @@
 # GPT-5.6 Plan Implementation Status
 
-**Baseline**: `49bf248d48ccecbb9216530cf2bed8ea5b072ac3`
-**Branch**: `codex/044-state-migrations-and-recovery`
-**Feature**: 044 — State Migrations and Recovery
-**State**: review-ready — implementation and authoritative merge gate complete
+**Baseline**: `9fd210802c28f8fccbfb96850ca35200f35b11fb`
+**Branch**: `codex/045-package-boundary-and-workspace-use-cases`
+**Feature**: 045 — Package Boundaries and Workspace Use Cases
+**State**: review-ready — implementation and requirement audit complete
 **Updated**: 2026-07-10 America/New_York
 
 ## Baseline reconciliation
@@ -84,9 +84,48 @@ under each workspace's `.wright/tmp` directory.
 
 ## Exact next action
 
-Review and commit Feature 044, then use the standing operator authorization to
-push and merge it to `dev`. Start Feature 045 only from the resulting reviewed
-`dev` baseline in a separate feature cycle.
+Complete Feature 045's manifest-driven boundary enforcement, extract workspace
+repositories/adapters/use cases, make API workspace routes transport-only, then
+run the authoritative dev merge gate before using the standing push/merge
+authorization. Feature 046 remains a separate cycle.
+
+## Feature 045 implementation cycle
+
+- Feature 044 merged to `dev` at `9fd2108`; local and `origin/dev` matched and
+  the working tree was clean when Feature 045 branched.
+- The current call graph confirms `core.workspace` still owns SQLite, files,
+  Git, processes, and reverse `tool_registry` imports; `workspace_service`
+  selects concrete agent adapters and direct storage; the workspace router
+  still performs file/Git/process work and imports another route for refresh.
+- Feature 045 maps to roadmap R2.1 and R2.2. R2.3-R2.6 remain out of scope.
+- Spec, plan, research, data model, two contracts, quickstart, tasks, and two
+  requirement-quality checklists are complete. Cross-artifact analysis mapped
+  all 23 functional requirements and 9 success criteria to 43 tasks with no
+  critical ambiguity or coverage gap.
+- Added the package-graph manifest, AST/dynamic-import/metadata fitness harness,
+  shared domain identifiers/errors/ports, workspace application ports/errors,
+  and a bounded executor as the first implementation slice.
+
+### Feature 045 validation so far
+
+| Command | Result |
+| --- | --- |
+| Package/API regression suite | Passed: 277 passed, 1 skipped, 1 warning |
+| Focused mypy over changed boundaries | Passed: 0 issues in 64 files |
+| Five-package wheel/sdist build and clean-install imports | Passed |
+| Ruff, strict MkDocs, public-alpha leak scan, and `git diff --check` | Passed |
+| Full `scripts/check-dev-merge.sh` non-browser sub-gates | Passed; Python reported 412 passed and 11 skipped. Existing broad mypy findings remain warning-only under gate policy. |
+| Full live Playwright suite | One existing dashboard test missed its fixed 5-second render timeout under suite load while the API remained healthy; all other live tests passed. |
+| Isolated failing `dashboard-real.spec.ts` test with a fresh backend | Passed: 1 test in 8.8 seconds, confirming a suite-load flake rather than a Feature 045 regression |
+
+### Feature 045 migration and rollback
+
+- API contracts and persisted workspace/session data remain compatible; clean
+  package-install tests cover the new internal dependency graph.
+- Roll back as one feature commit. Restoring only the removed `core` runtime
+  modules would recreate the forbidden reverse dependencies.
+- Exact next action after merge: begin Feature 046 for session-scoped gateway
+  lifecycle and removal of remaining process-global activation state.
 
 ## Feature 043 implementation cycle
 

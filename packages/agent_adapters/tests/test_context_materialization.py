@@ -4,6 +4,7 @@ import sqlite3
 from agent_adapters import AgentContextMaterializationRequest
 from agent_adapters.context import NoOpAgentContextMaterializer
 from agent_adapters.hermes_gateway import hermes_context_materializer
+from workspace_service.adapters.runtime import write_workspace_agent_context
 
 
 def _init_workspace_db(db_path: str, workspace_path: str) -> None:
@@ -54,7 +55,7 @@ def test_hermes_materializer_writes_hermes_context_file(tmp_path):
     db_path = str(tmp_path / "workspace.db")
     _init_workspace_db(db_path, workspace_path)
 
-    result = hermes_context_materializer().materialize(
+    result = hermes_context_materializer(write_workspace_agent_context).materialize(
         AgentContextMaterializationRequest(
             db_path=db_path,
             workspace_path=workspace_path,

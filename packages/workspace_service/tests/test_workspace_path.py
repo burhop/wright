@@ -1,6 +1,6 @@
 import pytest
 
-from core.workspace_path import WorkspacePath
+from workspace_service.workspace_path import WorkspacePath
 
 
 @pytest.mark.parametrize(
