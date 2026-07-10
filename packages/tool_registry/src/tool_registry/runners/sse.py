@@ -5,6 +5,7 @@ from typing import List, Dict, Any, Optional
 from urllib.parse import urljoin
 import httpx
 from httpx_sse import aconnect_sse, EventSource
+from core.redaction import redact_mapping, redact_text
 from .base import BaseRunner
 
 logger = logging.getLogger(__name__)
@@ -58,9 +59,7 @@ class SseRunner(BaseRunner):
             )
 
             # Probe for Streamable HTTP by sending a POST initialize payload
-            logger.info(
-                "Probing endpoint %s for Streamable HTTP support...", self.sse_url
-            )
+            logger.info("Probing MCP endpoint for Streamable HTTP support")
             probe_payload = {
                 "jsonrpc": "2.0",
                 "id": 1,
@@ -112,14 +111,11 @@ class SseRunner(BaseRunner):
                             )
                         self._probe_response = resp_data
                         self._message_endpoint = self.sse_url
-                        logger.info(
-                            "Detected Streamable HTTP support for %s (Session ID: %s)",
-                            self.sse_url,
-                            self._session_id,
-                        )
+                        logger.info("Detected Streamable HTTP support")
             except Exception as e:
                 logger.debug(
-                    "Streamable HTTP probe failed (will fallback to legacy SSE): %s", e
+                    "Streamable HTTP probe failed; falling back to legacy SSE: %s",
+                    redact_text(e),
                 )
 
             # Start reading task
@@ -133,19 +129,14 @@ class SseRunner(BaseRunner):
                     await asyncio.wait_for(self._endpoint_ready.wait(), timeout=15.0)
                 except asyncio.TimeoutError as te:
                     logger.error(
-                        "Timeout waiting for SSE 'endpoint' event from %s",
-                        self.sse_url,
+                        "Timeout waiting for SSE endpoint event",
                     )
                     await self._stop_locked()
                     raise RuntimeError(
-                        f"SSE handshake failed: Timeout waiting for 'endpoint' event from {self.sse_url}. Ensure the server is running and accessible."
+                        "SSE handshake failed: timeout waiting for endpoint event"
                     ) from te
                 except Exception as e:
-                    logger.error(
-                        "Failed to connect or establish SSE endpoint with %s: %s",
-                        self.sse_url,
-                        e,
-                    )
+                    logger.error("Failed to establish SSE endpoint: %s", redact_text(e))
                     await self._stop_locked()
                     raise RuntimeError(f"SSE handshake failed: {e}") from e
 
@@ -153,9 +144,7 @@ class SseRunner(BaseRunner):
             try:
                 await asyncio.wait_for(self._handshake(), timeout=10.0)
             except Exception as e:
-                logger.error(
-                    "Handshake failed with SSE MCP server %s: %s", self.sse_url, e
-                )
+                logger.error("SSE MCP handshake failed: %s", redact_text(e))
                 await self._stop_locked()
                 raise RuntimeError(f"MCP handshake failed: {e}") from e
 
@@ -218,8 +207,8 @@ class SseRunner(BaseRunner):
             "capabilities": {},
             "clientInfo": {"name": "wright", "version": "0.1.0"},
         }
-        init_res = await self._send_request("initialize", init_params)
-        logger.debug("Received SSE initialize response: %s", init_res)
+        await self._send_request("initialize", init_params)
+        logger.debug("SSE initialize response received")
 
         # 2. Send initialized notification (no ID)
         await self._send_notification("notifications/initialized")
@@ -233,7 +222,12 @@ class SseRunner(BaseRunner):
         # Intercept initialize if we already performed it in Streamable HTTP probe
         if method == "initialize" and self._is_streamable_http and self._probe_response:
             if "error" in self._probe_response:
-                raise RuntimeError(f"RPC Error: {self._probe_response['error']}")
+                raise RuntimeError(
+                    "RPC Error: "
+                    + redact_text(
+                        redact_mapping({"error": self._probe_response["error"]})
+                    )
+                )
             return self._probe_response.get("result", {})
 
         req_id = self._next_id
@@ -264,7 +258,12 @@ class SseRunner(BaseRunner):
                         if "id" in data and data["id"] == req_id:
                             self._pending_requests.pop(req_id, None)
                             if "error" in data:
-                                raise RuntimeError(f"RPC Error: {data['error']}")
+                                raise RuntimeError(
+                                    "RPC Error: "
+                                    + redact_text(
+                                        redact_mapping({"error": data["error"]})
+                                    )
+                                )
                             return data.get("result", {})
                     except Exception:
                         pass
@@ -279,17 +278,21 @@ class SseRunner(BaseRunner):
                                     self._pending_requests.pop(req_id, None)
                                     if "error" in data:
                                         raise RuntimeError(
-                                            f"RPC Error: {data['error']}"
+                                            "RPC Error: "
+                                            + redact_text(
+                                                redact_mapping({"error": data["error"]})
+                                            )
                                         )
                                     return data.get("result", {})
                     except Exception as sse_err:
                         logger.error(
-                            "Failed to parse SSE response in POST request: %s", sse_err
+                            "Failed to parse SSE response in POST request: %s",
+                            redact_text(sse_err),
                         )
         except Exception as e:
             self._pending_requests.pop(req_id, None)
             raise RuntimeError(
-                f"Failed to post request to message endpoint: {e}"
+                f"Failed to post request to message endpoint: {redact_text(e)}"
             ) from e
 
         # Otherwise wait for the response to arrive in the SSE stream
@@ -313,7 +316,9 @@ class SseRunner(BaseRunner):
             )
             response.raise_for_status()
         except Exception as e:
-            logger.error("Failed to send SSE notification %s: %s", method, e)
+            logger.error(
+                "Failed to send SSE notification %s: %s", method, redact_text(e)
+            )
 
     async def _connect_and_read(self) -> None:
         if self._is_streamable_http and not self._session_id:
@@ -342,10 +347,7 @@ class SseRunner(BaseRunner):
                             # The data is the endpoint URL for posting messages
                             if data_str:
                                 self._message_endpoint = urljoin(self.sse_url, data_str)
-                                logger.info(
-                                    "SSE message endpoint established: %s",
-                                    self._message_endpoint,
-                                )
+                                logger.info("SSE message endpoint established")
                                 self._endpoint_ready.set()
                         elif event_type == "message":
                             if not data_str:
@@ -354,8 +356,8 @@ class SseRunner(BaseRunner):
                                 message = json.loads(data_str)
                             except json.JSONDecodeError:
                                 logger.warning(
-                                    "Received invalid JSON message from SSE: %s",
-                                    data_str,
+                                    "Received invalid JSON message from SSE (%s bytes)",
+                                    len(data_str),
                                 )
                                 continue
 
@@ -366,7 +368,12 @@ class SseRunner(BaseRunner):
                                     if "error" in message:
                                         fut.set_exception(
                                             RuntimeError(
-                                                f"RPC Error: {message['error']}"
+                                                "RPC Error: "
+                                                + redact_text(
+                                                    redact_mapping(
+                                                        {"error": message["error"]}
+                                                    )
+                                                )
                                             )
                                         )
                                     else:
@@ -381,8 +388,7 @@ class SseRunner(BaseRunner):
                 break
             except Exception as e:
                 logger.error(
-                    "SSE stream error with %s: %s. Retrying in 5 seconds...",
-                    self.sse_url,
-                    e,
+                    "SSE stream error: %s. Retrying in 5 seconds...",
+                    redact_text(e),
                 )
                 await asyncio.sleep(5)

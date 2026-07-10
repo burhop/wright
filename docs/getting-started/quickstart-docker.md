@@ -164,10 +164,17 @@ and authentication for anything beyond a private demo network.
 
 The compose files use named volumes for:
 
-- `/home`: workspaces, `.hermes`, sessions, and user configuration.
-- `/usr/local` and `/opt`: selected tool installs and self-contained runtimes.
-- `/var/lib`: SQLite and application state.
+- `/home/agent/workspace`: user workspaces.
+- `/home/agent/.local/share/wright`: Wright SQLite and application state.
+- `/home/agent/.config/wright`: owner-only Wright configuration and fallback secrets.
+- `/home/agent/.hermes`: Hermes profiles and sessions.
 - `/var/log`: startup, supervisor, and application logs.
+
+The image root filesystem is read-only, Linux capabilities are dropped, and
+privilege escalation is disabled. System paths such as `/etc`, `/opt`, and
+`/usr/local` come from each new image rather than persisted volumes. Existing
+installations using the old broad volumes must follow
+[Container hardening and migration](../security/container-hardening.md).
 
 Use `docker compose down` to stop containers while keeping data. Use
 `docker compose down -v` only when you want to delete the named volumes.

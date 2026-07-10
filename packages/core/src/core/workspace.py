@@ -2,10 +2,14 @@ import json
 import os
 import sqlite3
 import subprocess
+import tempfile
 import structlog
+from contextlib import contextmanager
+from pathlib import Path
 from typing import Dict, Any, Optional
 
 from core.workspace_path import WorkspacePath
+from core.secrets import CredentialReference, default_secret_provider
 
 logger = structlog.get_logger(__name__)
 
@@ -370,12 +374,16 @@ def create_workspace(
                 local_path,
                 git_remote_url,
                 git_username,
-                git_token,
+                None,
                 now,
                 now,
             ),
         )
         conn.commit()
+    if git_token:
+        default_secret_provider().set(
+            CredentialReference("workspace", workspace_id, "GIT_TOKEN"), git_token
+        )
     associate_workspace_session(
         db_path,
         workspace_id,
@@ -398,15 +406,23 @@ def update_workspace_remote(
 
     now = int(time.time())
     with _get_db_conn(db_path) as conn:
+        row = conn.execute(
+            "SELECT workspace_id FROM engineering_workspaces WHERE session_id = ?",
+            (session_id,),
+        ).fetchone()
         conn.execute(
             """
             UPDATE engineering_workspaces
-            SET git_remote_url = ?, git_username = ?, git_token = ?, updated_at = ?
+            SET git_remote_url = ?, git_username = ?, git_token = NULL, updated_at = ?
             WHERE session_id = ?
             """,
-            (git_remote_url, git_username, git_token, now, session_id),
+            (git_remote_url, git_username, now, session_id),
         )
         conn.commit()
+    if row and git_token:
+        default_secret_provider().set(
+            CredentialReference("workspace", row[0], "GIT_TOKEN"), git_token
+        )
 
 
 def get_workspace_enabled_tools_by_workspace(
@@ -662,13 +678,12 @@ def update_workspace_remote_by_id(
         conn.execute(
             """
             UPDATE engineering_workspaces
-            SET git_remote_url = ?, git_username = ?, git_token = ?, workspace_prompt = ?, git_large_file_threshold = ?, updated_at = ?
+            SET git_remote_url = ?, git_username = ?, git_token = NULL, workspace_prompt = ?, git_large_file_threshold = ?, updated_at = ?
             WHERE workspace_id = ?
             """,
             (
                 git_remote_url,
                 git_username,
-                git_token,
                 workspace_prompt,
                 git_large_file_threshold,
                 now,
@@ -676,6 +691,24 @@ def update_workspace_remote_by_id(
             ),
         )
         conn.commit()
+    if git_token:
+        default_secret_provider().set(
+            CredentialReference("workspace", workspace_id, "GIT_TOKEN"), git_token
+        )
+
+
+def get_workspace_git_token(workspace_id: str) -> Optional[str]:
+    return default_secret_provider().get(
+        CredentialReference("workspace", workspace_id, "GIT_TOKEN")
+    )
+
+
+def has_workspace_git_token(workspace_id: str) -> bool:
+    return (
+        default_secret_provider()
+        .status(CredentialReference("workspace", workspace_id, "GIT_TOKEN"))
+        .configured
+    )
 
 
 def update_workspace_session(db_path: str, workspace_id: str, session_id: str) -> None:
@@ -1359,17 +1392,42 @@ class WorkspaceManager:
             logger.debug("Failed to fetch git history: %s", e)
         return commits
 
-    def _get_authenticated_url(
-        self, remote_url: str, username: Optional[str], token: Optional[str]
-    ) -> str:
-        if not remote_url:
-            return ""
-        if remote_url.startswith("/") or remote_url.startswith("file://"):
-            return remote_url
-        if username and token and remote_url.startswith("https://"):
-            stripped = remote_url[8:]
-            return f"https://{username}:{token}@{stripped}"
-        return remote_url
+    @contextmanager
+    def _git_credential_environment(
+        self, username: Optional[str], token: Optional[str]
+    ):
+        environment = os.environ.copy()
+        if not username or not token:
+            yield environment
+            return
+
+        with tempfile.TemporaryDirectory(prefix="wright-git-askpass-") as directory:
+            if os.name == "nt":
+                helper = Path(directory) / "askpass.cmd"
+                helper.write_text(
+                    "@echo off\r\n"
+                    'echo %~1 | findstr /I "username" >nul\r\n'
+                    "if %errorlevel%==0 (echo %WRIGHT_GIT_USERNAME%) else (echo %WRIGHT_GIT_TOKEN%)\r\n",
+                    encoding="utf-8",
+                )
+            else:
+                helper = Path(directory) / "askpass.sh"
+                helper.write_text(
+                    "#!/bin/sh\n"
+                    'case "$1" in *[Uu]sername*) printf "%s\\n" "$WRIGHT_GIT_USERNAME" ;; '
+                    '*) printf "%s\\n" "$WRIGHT_GIT_TOKEN" ;; esac\n',
+                    encoding="utf-8",
+                )
+                helper.chmod(0o700)
+            environment.update(
+                {
+                    "GIT_ASKPASS": str(helper),
+                    "GIT_TERMINAL_PROMPT": "0",
+                    "WRIGHT_GIT_USERNAME": username,
+                    "WRIGHT_GIT_TOKEN": token,
+                }
+            )
+            yield environment
 
     def push_remote(
         self,
@@ -1382,19 +1440,22 @@ class WorkspaceManager:
             raise ValueError("Git remote URL is not configured.")
 
         branch_name = self.get_git_status()["branch_name"]
-        authenticated_url = self._get_authenticated_url(remote_url, username, token)
-
         try:
-            subprocess.run(
-                ["git", "push", authenticated_url, branch_name],
-                cwd=self.base_dir,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
+            with self._git_credential_environment(username, token) as environment:
+                subprocess.run(
+                    ["git", "push", remote_url, branch_name],
+                    cwd=self.base_dir,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    env=environment,
+                )
         except subprocess.CalledProcessError as e:
-            logger.error("Failed to push changes: %s\nStderr: %s", e, e.stderr)
-            raise RuntimeError(f"Failed to push changes: {e.stderr.strip() or str(e)}")
+            from core.redaction import redact_text
+
+            detail = redact_text(e.stderr.strip() or str(e), [token] if token else [])
+            logger.error("git_push_failed", error=detail)
+            raise RuntimeError(f"Failed to push changes: {detail}")
 
     def pull_remote(
         self,
@@ -1407,16 +1468,16 @@ class WorkspaceManager:
             raise ValueError("Git remote URL is not configured.")
 
         branch_name = self.get_git_status()["branch_name"]
-        authenticated_url = self._get_authenticated_url(remote_url, username, token)
-
         try:
-            subprocess.run(
-                ["git", "pull", "--no-rebase", authenticated_url, branch_name],
-                cwd=self.base_dir,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
+            with self._git_credential_environment(username, token) as environment:
+                subprocess.run(
+                    ["git", "pull", "--no-rebase", remote_url, branch_name],
+                    cwd=self.base_dir,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    env=environment,
+                )
         except subprocess.CalledProcessError as e:
             # Check for merge conflicts
             conflicted_files = []
@@ -1439,8 +1500,11 @@ class WorkspaceManager:
             if conflicted_files:
                 raise MergeConflictError(conflicted_files)
 
-            logger.error("Failed to pull changes: %s\nStderr: %s", e, e.stderr)
-            raise RuntimeError(f"Failed to pull changes: {e.stderr.strip() or str(e)}")
+            from core.redaction import redact_text
+
+            detail = redact_text(e.stderr.strip() or str(e), [token] if token else [])
+            logger.error("git_pull_failed", error=detail)
+            raise RuntimeError(f"Failed to pull changes: {detail}")
 
 
 def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optional[str]:

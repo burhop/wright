@@ -314,7 +314,7 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
 
 * **Configuration Set**:
   - `API_SERVER_ENABLED=true`
-  - `API_SERVER_KEY=wright-local-dev-key-000000000000000000000000`
+  - `API_SERVER_KEY` from the required `HERMES_API_KEY` environment variable
   - `API_SERVER_PORT=8642`
 * **Workflow**:
   1. Verifies the `hermes` CLI is installed.
@@ -323,6 +323,7 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
   4. Starts the Hermes profile gateway and polls the health endpoint (`http://127.0.0.1:8642/health`) to ensure it boots successfully.
 * **Usage**:
   ```bash
+  export HERMES_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(48))')"
   ./scripts/setup-wright-profile.sh
   ```
 

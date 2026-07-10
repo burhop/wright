@@ -6,6 +6,8 @@ set -euo pipefail
 
 echo "=== Setting up Wright Hermes Profile ==="
 
+: "${HERMES_API_KEY:?Set HERMES_API_KEY to a unique local secret before running this script}"
+
 # 1. Check if hermes is installed
 if ! command -v hermes &> /dev/null; then
     echo "Error: hermes CLI is not installed or not in PATH."
@@ -24,7 +26,7 @@ fi
 # 3. Configure the wright profile for native API gateway
 echo "Configuring the Wright profile..."
 hermes -p wright config set API_SERVER_ENABLED true
-hermes -p wright config set API_SERVER_KEY "wright-local-dev-key-000000000000000000000000"
+hermes -p wright config set API_SERVER_KEY "${HERMES_API_KEY}"
 hermes -p wright config set API_SERVER_PORT 8642
 
 # 4. Check if wright gateway is already running on port 8642

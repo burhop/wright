@@ -27,6 +27,8 @@ from core.workspace import (
     save_agent_context,
     load_agent_context,
     sync_workspace_runners,
+    get_workspace_git_token,
+    has_workspace_git_token,
 )
 from core.tracing import traced
 from api.routers.agent import get_agent_engine
@@ -423,7 +425,9 @@ async def git_push_endpoint(
     mgr = WorkspaceManager(workspace_dir)
     try:
         mgr.push_remote(
-            remote_url, workspace.get("git_username"), workspace.get("git_token")
+            remote_url,
+            workspace.get("git_username"),
+            get_workspace_git_token(workspace["workspace_id"]),
         )
         return GitPushPullResponse(success=True, message="Push successful")
     except Exception as e:
@@ -454,7 +458,9 @@ async def git_pull_endpoint(
     mgr = WorkspaceManager(workspace_dir)
     try:
         mgr.pull_remote(
-            remote_url, workspace.get("git_username"), workspace.get("git_token")
+            remote_url,
+            workspace.get("git_username"),
+            get_workspace_git_token(workspace["workspace_id"]),
         )
         return JSONResponse(content={"success": True, "message": "Pull successful"})
     except MergeConflictError as e:
@@ -558,7 +564,7 @@ async def get_workspace_config(
         workspace_id=workspace["workspace_id"],
         git_remote_url=workspace.get("git_remote_url"),
         git_username=workspace.get("git_username"),
-        has_token=bool(workspace.get("git_token")),
+        has_token=has_workspace_git_token(workspace["workspace_id"]),
         workspace_path=workspace.get("local_path"),
         workspace_prompt=workspace.get("workspace_prompt"),
         git_large_file_threshold=workspace.get("git_large_file_threshold"),

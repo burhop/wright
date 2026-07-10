@@ -87,6 +87,7 @@ jobs:
             -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
             -e LLM_API_KEY="ci-test" \
             -e LLM_API_MODEL="ci-model" \
+            -e WRIGHT_API_TOKEN="ci-smoke-token" \
             "$IMAGE"
 
           cleanup() {

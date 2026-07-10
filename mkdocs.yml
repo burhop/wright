@@ -68,6 +68,10 @@ nav:
       - Tool Registry: architecture/tool-registry.md
       - Data Storage: architecture/data-storage.md
       - Observability: architecture/observability.md
+  - Security:
+      - Local Control Plane: security/control-plane.md
+      - Credential Management: security/credential-management.md
+      - Container Hardening: security/container-hardening.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
       - Spec-Kit Workflow: contributing/spec-kit.md

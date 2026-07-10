@@ -1,9 +1,9 @@
 # GPT-5.6 Plan Implementation Status
 
-**Baseline**: `edaded4f88051fe79456ddba1ce0d0859117b8d6`  
-**Branch**: `codex/042-security-control-plane-and-workspace-confinement`  
-**Feature**: 042 — Security Control Plane and Workspace Confinement  
-**State**: review-ready — Feature 042 acceptance and dev merge gate passed
+**Baseline**: `0bceb609325a680d461bab5525d052d209e71886`
+**Branch**: `codex/043-secrets-container-and-provider-config`
+**Feature**: 043 — Secrets, Container, and Provider Configuration
+**State**: review-ready — implementation and authoritative merge gate complete
 **Updated**: 2026-07-10 America/New_York
 
 ## Baseline reconciliation
@@ -20,7 +20,7 @@
 
 ## Finding state
 
-| Finding | State at baseline | Feature 042 disposition |
+| Finding | State at baseline | Roadmap disposition |
 | --- | --- | --- |
 | SEC-01 | Open: wildcard CORS, unauthenticated routers and WebSocket | In progress |
 | SEC-02 | Open: direct backup joins, global `/tmp`, lexical containment | In progress |
@@ -84,7 +84,40 @@ under each workspace's `.wright/tmp` directory.
 
 ## Exact next action
 
-Review the local Feature 042 checkpoint on
-`codex/042-security-control-plane-and-workspace-confinement`. With separate
-authorization, push it and merge it through the normal feature-to-dev process.
-Do not start Feature 043 in this unreviewed change.
+Review Feature 043. Commit, push, and merge to `dev` only after explicit
+authorization for this review boundary. Do not start Feature 044 in this
+unreviewed change.
+
+## Feature 043 implementation cycle
+
+- Feature 042 merged to `dev` at `0bceb60`; local and `origin/dev` matched when
+  Feature 043 branched.
+- Added provider-neutral references, environment/mounted/fallback providers,
+  and lock-file plus fsync/replace atomic fallback storage.
+- Settings and MCP reads expose status only; Git tokens leave SQLite and use
+  askpass rather than URLs or argv.
+- Added backup-first, verify-before-delete legacy credential migration and
+  explicit restore support with fail-closed startup.
+- Redacted MCP protocol/subprocess diagnostics and API log responses.
+- Removed sudo/universal keys; default Compose uses narrow volumes, read-only
+  rootfs, dropped capabilities, and no-new-privileges; legacy layout is
+  migration-only.
+- Added atomic merge-only YAML updates preserving unknown provider/MCP entries.
+
+### Feature 043 validation so far
+
+| Command | Result |
+| --- | --- |
+| Core provider, concurrency, redaction | 7 passed |
+| MCP credential compatibility | 33 passed, 1 warning |
+| Settings/security | 6 passed |
+| Git askpass/redaction | 3 passed |
+| MCP protocol/log redaction | 27 passed, 1 warning |
+| Secret migration plus workspace/settings regressions | 47 passed, 1 warning |
+| Container/workflow contracts | 13 passed |
+| Provider merge and Hermes sync | 5 passed |
+| Compose render: default, minimal, legacy override | Passed |
+| Focused SEC-03/SEC-04/CTR-01 regression suite | 120 passed, 1 warning |
+| Seeded-value production scan and shell syntax checks | Passed; removed the remaining legacy default from native Hermes profile setup |
+| `D:\Program Files\Git\bin\bash.exe scripts/check-dev-merge.sh` | Passed end-to-end in 317.3 seconds; no sub-gates skipped. Existing mypy findings remain warning-only under the gate policy. |
+| `docker info` / image-runtime smoke | Not run: Docker Desktop Linux engine was unavailable (`//./pipe/dockerDesktopLinuxEngine` missing). Static contracts, shell syntax, and Compose renders passed. |
