@@ -5,6 +5,8 @@ import subprocess
 import structlog
 from typing import Dict, Any, Optional
 
+from core.workspace_path import WorkspacePath
+
 logger = structlog.get_logger(__name__)
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
@@ -944,42 +946,18 @@ class WorkspaceManager:
         return False
 
     def sanitize_path(self, relative_path: str) -> str:
-        """Sanitize relative path and resolve to absolute path under base_dir or allow /tmp/ to prevent path traversal."""
-        normalized_path = relative_path.replace("\\", "/")
-        system_tmp = os.path.abspath("/tmp")
-
-        if os.path.isabs(relative_path) and _is_within_path(relative_path, system_tmp):
-            if os.path.exists(relative_path):
-                return os.path.abspath(relative_path)
-
-        # Support paths inside /tmp/ (e.g. for geometry/exports scratchpads)
-        if normalized_path.startswith("/tmp/") or normalized_path.startswith("tmp/"):
-            # Try to resolve relative to workspace base_dir first (workspace-local tmp)
-            local_resolved = os.path.abspath(
-                os.path.join(self.base_dir, normalized_path.lstrip("/"))
-            )
-            if os.path.exists(local_resolved):
-                return local_resolved
-
-            if normalized_path.startswith("tmp/"):
-                resolved = os.path.abspath("/" + normalized_path)
-            else:
-                resolved = os.path.abspath(normalized_path)
-            if _is_within_path(resolved, system_tmp):
-                if os.path.exists(resolved):
-                    return resolved
-                return local_resolved
-            else:
-                raise ValueError("Access denied: path traversal attempt detected.")
-
-        # Clean relative_path of leading/trailing slashes
-        clean_rel = relative_path.strip("/")
-        # Resolve path
-        resolved = os.path.abspath(os.path.join(self.base_dir, clean_rel))
-        # Ensure it's under base_dir
-        if not _is_within_path(resolved, self.base_dir):
-            raise ValueError("Access denied: path traversal attempt detected.")
-        return resolved
+        """Resolve a user path inside this workspace without following links."""
+        capability = WorkspacePath(self.base_dir)
+        normalized = relative_path.replace("\\", "/")
+        if normalized == "/tmp" or normalized.startswith("/tmp/"):
+            raise ValueError("Access denied: global temporary paths are not allowed")
+        # The legacy HTTP contract represents workspace-relative paths with one
+        # leading slash. Strip only that marker; UNC/double-slash stays invalid.
+        if normalized.startswith("/") and not normalized.startswith("//"):
+            normalized = normalized[1:]
+        if normalized.startswith("tmp/"):
+            return str(capability.scratch(normalized.removeprefix("tmp/")))
+        return str(capability.resolve(normalized))
 
     def write_backup(self, rel_path: str, content: bytes) -> str:
         """Write temporary backup file for unsaved edits under .git/backups/."""
@@ -995,8 +973,7 @@ class WorkspaceManager:
 
     def delete_backup(self, backup_id: str) -> None:
         """Delete temporary backup file."""
-        backups_dir = os.path.join(self.base_dir, ".git", "backups")
-        backup_path = os.path.join(backups_dir, backup_id)
+        backup_path = str(WorkspacePath(self.base_dir).backup(backup_id))
         if os.path.exists(backup_path):
             try:
                 os.remove(backup_path)
@@ -1056,8 +1033,12 @@ class WorkspaceManager:
         else:
             rel_path = _api_rel_path(abs_path, self.base_dir)
 
-        stat = os.stat(abs_path)
-        last_modified = int(stat.st_mtime)
+        path_stat = os.lstat(abs_path)
+        if os.path.islink(abs_path) or bool(
+            getattr(path_stat, "st_file_attributes", 0) & 0x400
+        ):
+            raise ValueError("Workspace tree contains a symbolic link or reparse point")
+        last_modified = int(path_stat.st_mtime)
 
         git_status = statuses.get(rel_path, "Clean")
 
@@ -1086,7 +1067,7 @@ class WorkspaceManager:
                 "name": name,
                 "path": rel_path,
                 "type": "file",
-                "size": stat.st_size,
+                "size": path_stat.st_size,
                 "last_modified": last_modified,
                 "git_status": git_status,
                 "children": None,

@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 from api.main import app
 from tool_registry import McpEngine, McpServer
 from tool_registry.db import insert_server
+from api.security import SecuritySettings
+from starlette.websockets import WebSocketDisconnect
 
 
 @pytest.fixture
@@ -76,6 +78,34 @@ def test_webmcp_websocket_connection(client):
     with client.websocket_connect("/api/webmcp/ws"):
         # Check connection is active and we can close it
         pass
+
+
+def test_webmcp_rejects_missing_token_and_bad_origin(client):
+    previous = app.state.security_settings
+    app.state.security_settings = SecuritySettings(
+        "enforced", "websocket-token", ("http://localhost:5173",), "127.0.0.1"
+    )
+    try:
+        with pytest.raises(WebSocketDisconnect):
+            with client.websocket_connect(
+                "/api/webmcp/ws", headers={"origin": "https://evil.example"}
+            ):
+                pass
+        with pytest.raises(WebSocketDisconnect):
+            with client.websocket_connect(
+                "/api/webmcp/ws", headers={"origin": "http://localhost:5173"}
+            ):
+                pass
+        with client.websocket_connect(
+            "/api/webmcp/ws",
+            headers={
+                "origin": "http://localhost:5173",
+                "authorization": "Bearer websocket-token",
+            },
+        ):
+            pass
+    finally:
+        app.state.security_settings = previous
 
 
 @pytest.mark.asyncio

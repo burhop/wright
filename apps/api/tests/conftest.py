@@ -25,6 +25,7 @@ os.close(temp_db_fd)
 
 # Set the environment variables before importing any application code
 os.environ["DATABASE_PATH"] = temp_db_path
+os.environ.setdefault("WRIGHT_AUTH_MODE", "compat")
 
 
 @pytest.fixture(autouse=True)

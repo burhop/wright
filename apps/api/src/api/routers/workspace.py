@@ -16,6 +16,7 @@ from agent_adapters import BaseAgentEngine
 from agent_adapters.hermes_gateway import hermes_config_paths
 from tool_registry import ApprovalContext
 from core import WorkspaceManager
+from core.workspace_path import WorkspacePath
 from core.workspace import (
     get_workspace_by_session,
     get_workspace_enabled_tools,
@@ -163,9 +164,15 @@ async def get_file_content(
 ):
     mgr = WorkspaceManager(workspace_dir)
     if backup_id:
-        backups_dir = os.path.join(workspace_dir, ".git", "backups")
-        abs_path = os.path.join(backups_dir, backup_id)
-        if not os.path.exists(abs_path):
+        try:
+            abs_path = str(
+                WorkspacePath(workspace_dir).backup(backup_id, must_exist=True)
+            )
+        except ValueError as error:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+            )
+        except FileNotFoundError:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Backup not found: {backup_id}",
