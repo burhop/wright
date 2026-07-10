@@ -458,7 +458,7 @@ class TestWorkspaceDefaultTools:
 
     def test_default_tools_filtering(self, cred_test_db_path):
         """Default tools list should omit installed servers with missing credentials or error status."""
-        from core.workspace import get_workspace_enabled_tools
+        from workspace_service.adapters.runtime import get_workspace_enabled_tools
         from tool_registry.db import insert_server
         from tool_registry.models import McpServer, EnvVarDefinition
         import uuid

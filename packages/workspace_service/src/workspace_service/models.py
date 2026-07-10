@@ -2,27 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from agent_adapters import AgentContextMaterializationResult
-
-
-class WorkspaceServiceError(Exception):
-    code = "workspace.error"
-
-
-class WorkspaceNotFoundError(WorkspaceServiceError):
-    code = "workspace.not_found"
-
-
-class WorkspaceConflictError(WorkspaceServiceError):
-    code = "workspace.conflict"
-
-
-class WorkspaceInvalidRequestError(WorkspaceServiceError):
-    code = "workspace.invalid_request"
-
-
-class WorkspaceExecutionError(WorkspaceServiceError):
-    code = "workspace.execution_failed"
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -53,7 +33,7 @@ class WorkspaceActivation:
     success: bool
     session_id: str
     workspace_path: str
-    context: AgentContextMaterializationResult
+    context: Any
 
 
 @dataclass(frozen=True)
@@ -73,3 +53,10 @@ class FileExecutionResult:
     stdout: str
     stderr: str
     exit_code: int
+
+
+@dataclass(frozen=True, slots=True)
+class ProcessResult:
+    exit_code: int
+    stdout: str
+    stderr: str

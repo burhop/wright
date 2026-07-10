@@ -2,7 +2,7 @@ import structlog
 from fastapi import APIRouter, Query, HTTPException, status
 from typing import Optional
 
-from core.workspace import read_application_logs
+from workspace_service.adapters.runtime import read_application_logs
 from api.schemas.logs import LogsListResponse
 from core.tracing import traced
 from core.redaction import redact_mapping, redact_text

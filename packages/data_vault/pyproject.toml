@@ -14,7 +14,10 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 
-dependencies = []
+dependencies = ["wright-core>=0.1.0,<0.2.0"]
+
+[tool.uv.sources]
+wright-core = { workspace = true }
 
 [project.scripts]
 wright-db = "data_vault.cli:main"

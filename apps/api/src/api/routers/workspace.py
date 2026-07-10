@@ -2,11 +2,10 @@
 Workspace router — thin HTTP handlers only.
 
 All Pydantic models are in api.schemas.workspace.
-All business logic is in core.workspace and api.services.wright_gateway_sync.
+All business logic is owned by workspace_service application operations.
 All handlers are decorated with @traced for OTel span creation.
 """
 
-import os
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -14,25 +13,9 @@ from typing import Optional
 
 from agent_adapters import BaseAgentEngine
 from agent_adapters.hermes_gateway import hermes_config_paths
-from tool_registry import ApprovalContext
-from core import WorkspaceManager
-from core.workspace_path import WorkspacePath
-from core.workspace import (
-    get_workspace_by_session,
-    get_workspace_enabled_tools,
-    get_recent_workspaces,
-    get_all_workspaces,
-    get_workspace_by_id,
-    get_workspace_by_path,
-    save_agent_context,
-    load_agent_context,
-    sync_workspace_runners,
-    get_workspace_git_token,
-    has_workspace_git_token,
-)
 from core.tracing import traced
 from api.routers.agent import get_agent_engine
-from api.config import DATABASE_PATH
+from api.composition import workspace_service
 from workspace_service import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
@@ -104,7 +87,7 @@ def get_default_workspace_parent_dir() -> str:
 
 
 def get_workspace_service() -> WorkspaceService:
-    return WorkspaceService(DATABASE_PATH)
+    return workspace_service()
 
 
 def _active_agent_id(request: Request | None = None) -> str:
@@ -131,8 +114,6 @@ async def get_workspace_dir(
     service: WorkspaceService = Depends(get_workspace_service),
 ) -> str:
     """Retrieve the workspace path for the given session ID, with fallback."""
-    if not hasattr(service, "resolve_workspace_dir"):
-        service = get_workspace_service()
     return await service.resolve_workspace_dir(session_id, engine)
 
 
@@ -142,17 +123,11 @@ async def get_workspace_dir(
 @router.get("/files", response_model=WorkspaceTreeResponse)
 @traced("workspace.files.list")
 async def list_workspace_files(
-    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    mgr = WorkspaceManager(workspace_dir)
-    tree = mgr.get_workspace_tree()
-    # Override root node name with the human-readable workspace name
-    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
-    if workspace:
-        display_name = workspace.get("workspace_name") or os.path.basename(
-            workspace["local_path"]
-        )
-        tree["name"] = display_name
+    tree = await service.files.tree(workspace_dir)
     return WorkspaceTreeResponse(workspace=WorkspaceNodeResponse(**tree))
 
 
@@ -163,74 +138,27 @@ async def get_file_content(
     path: str = Query(...),
     backup_id: Optional[str] = Query(None),
     workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    mgr = WorkspaceManager(workspace_dir)
-    if backup_id:
-        try:
-            abs_path = str(
-                WorkspacePath(workspace_dir).backup(backup_id, must_exist=True)
-            )
-        except ValueError as error:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
-            )
-        except FileNotFoundError:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Backup not found: {backup_id}",
-            )
-    else:
-        try:
-            abs_path = mgr.sanitize_path(path)
-        except ValueError as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-        if not os.path.isfile(abs_path):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}"
-            )
-    ext = os.path.splitext(abs_path)[1].lower()
-    binary_extensions = {
-        ".stl",
-        ".obj",
-        ".step",
-        ".stp",
-        ".iges",
-        ".igs",
-        ".3mf",
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".gif",
-        ".bmp",
-        ".pdf",
-        ".svg",
-        ".webp",
-    }
-    if ext in binary_extensions:
-        return FileResponse(abs_path, filename=os.path.basename(abs_path))
     try:
-        if backup_id:
-            try:
-                with open(abs_path, "rb") as f:
-                    content = f.read()
-            except Exception as e:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Failed to read backup: {e}",
-                )
-        else:
-            content = mgr.read_file_content(path)
-        try:
-            text = content.decode("utf-8")
-        except UnicodeDecodeError:
-            return FileResponse(abs_path, filename=os.path.basename(abs_path))
+        result = await service.files.read(workspace_dir, path, backup_id)
+        if result.binary:
+            return FileResponse(result.path, filename=result.path.name)
+        assert result.content is not None
         return JSONResponse(
-            content={"content": text, "path": path, "encoding": "utf-8"}
+            content={
+                "content": result.content.decode("utf-8"),
+                "path": path,
+                "encoding": "utf-8",
+            }
         )
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
     except FileNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"File not found: {path}"
+        label = (
+            f"Backup not found: {backup_id}" if backup_id else f"File not found: {path}"
         )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=label)
 
 
 @router.post(
@@ -238,12 +166,13 @@ async def get_file_content(
 )
 @traced("workspace.files.create")
 async def create_file_endpoint(
-    body: FileCreateRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: FileCreateRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        node = mgr.create_file_node(body.path, body.type)
+        node = await service.files.create(workspace_dir, body.path, body.type)
         return WorkspaceNodeResponse(**node)
     except (FileExistsError, ValueError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -255,10 +184,10 @@ async def delete_file_endpoint(
     session_id: str = Query(...),
     path: str = Query(...),
     workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    mgr = WorkspaceManager(workspace_dir)
     try:
-        mgr.delete_file_node(path)
+        await service.files.delete(workspace_dir, path)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     except FileNotFoundError:
         raise HTTPException(
@@ -271,12 +200,13 @@ async def delete_file_endpoint(
 @router.put("/files/move", response_model=FileMoveResponse)
 @traced("workspace.files.move")
 async def move_file_endpoint(
-    body: FileMoveRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: FileMoveRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        mgr.move_file_node(body.source_path, body.destination_path)
+        await service.files.move(workspace_dir, body.source_path, body.destination_path)
         return FileMoveResponse(
             success=True,
             source_path=body.source_path,
@@ -289,12 +219,13 @@ async def move_file_endpoint(
 @router.put("/files/content", response_model=FileContentSaveResponse)
 @traced("workspace.files.save")
 async def save_file_content_endpoint(
-    body: FileContentSaveRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: FileContentSaveRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        mgr.write_file_content(body.path, body.content.encode("utf-8"))
+        await service.files.write(workspace_dir, body.path, body.content)
         return FileContentSaveResponse(success=True)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -327,30 +258,23 @@ async def run_file_endpoint(
 @router.get("/git/status", response_model=GitStatusResponse)
 @traced("workspace.git.status")
 async def git_status_endpoint(
-    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    mgr = WorkspaceManager(workspace_dir)
-    s = mgr.get_git_status()
-    changes = []
-    for c in s["changes"]:
-        file_path = os.path.join(workspace_dir, c["path"])
-        file_size = None
-        if os.path.exists(file_path) and os.path.isfile(file_path):
-            try:
-                file_size = os.path.getsize(file_path)
-            except Exception:
-                pass
-        changes.append(
-            GitStatusItem(
-                path=c["path"],
-                git_status=c["git_status"],
-                staged=c["staged"],
-                file_size=file_size,
-            )
+    result = await service.git.status(workspace_dir)
+    changes = [
+        GitStatusItem(
+            path=c["path"],
+            git_status=c["git_status"],
+            staged=c["staged"],
+            file_size=c.get("file_size"),
         )
+        for c in result["changes"]
+    ]
     return GitStatusResponse(
-        branch_name=s["branch_name"],
-        is_clean=s["is_clean"],
+        branch_name=result["branch_name"],
+        is_clean=result["is_clean"],
         changes=changes,
     )
 
@@ -361,31 +285,33 @@ async def git_diff_endpoint(
     session_id: str = Query(...),
     path: str = Query(...),
     workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    mgr = WorkspaceManager(workspace_dir)
-    return GitDiffResponse(path=path, diff=mgr.get_git_diff(path))
+    return GitDiffResponse(path=path, diff=await service.git.diff(workspace_dir, path))
 
 
 @router.post("/git/revert", response_model=GitRevertResponse)
 @traced("workspace.git.revert")
 async def git_revert_endpoint(
-    body: GitRevertRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: GitRevertRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
-    mgr.revert_file(body.path)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
+    await service.git.revert(workspace_dir, body.path)
     return GitRevertResponse(success=True, path=body.path)
 
 
 @router.post("/git/commit", response_model=GitCommitResponse)
 @traced("workspace.git.commit")
 async def git_commit_endpoint(
-    body: GitCommitRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: GitCommitRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        result = mgr.commit_changes(body.message)
+        result = await service.git.commit(workspace_dir, body.message)
         return GitCommitResponse(success=True, **result)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -398,38 +324,29 @@ async def git_commit_endpoint(
 @router.get("/git/history", response_model=GitHistoryResponse)
 @traced("workspace.git.history")
 async def git_history_endpoint(
-    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    mgr = WorkspaceManager(workspace_dir)
-    commits = mgr.get_git_history()
+    commits = await service.git.history(workspace_dir)
     return GitHistoryResponse(commits=[GitCommitInfo(**c) for c in commits])
 
 
 @router.post("/git/push", response_model=GitPushPullResponse)
 @traced("workspace.git.push")
 async def git_push_endpoint(
-    body: GitPushPullRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: GitPushPullRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
-    if not workspace:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
-        )
-    remote_url = workspace.get("git_remote_url")
-    if not remote_url:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Git remote URL not configured",
-        )
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        mgr.push_remote(
-            remote_url,
-            workspace.get("git_username"),
-            get_workspace_git_token(workspace["workspace_id"]),
-        )
+        await service.git.push(workspace_dir)
         return GitPushPullResponse(success=True, message="Push successful")
+    except LookupError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -439,39 +356,29 @@ async def git_push_endpoint(
 @router.post("/git/pull")
 @traced("workspace.git.pull")
 async def git_pull_endpoint(
-    body: GitPushPullRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: GitPushPullRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    from core.workspace import MergeConflictError
+    from workspace_service.use_cases import GitMergeConflict
 
-    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
-    if not workspace:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
-        )
-    remote_url = workspace.get("git_remote_url")
-    if not remote_url:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Git remote URL not configured",
-        )
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        mgr.pull_remote(
-            remote_url,
-            workspace.get("git_username"),
-            get_workspace_git_token(workspace["workspace_id"]),
-        )
+        await service.git.pull(workspace_dir)
         return JSONResponse(content={"success": True, "message": "Pull successful"})
-    except MergeConflictError as e:
+    except GitMergeConflict as e:
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={
                 "success": False,
                 "message": "Merge conflicts detected",
-                "conflicted_files": e.conflicted_files,
+                "conflicted_files": list(e.files),
             },
         )
+    except LookupError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -481,29 +388,23 @@ async def git_pull_endpoint(
 @router.post("/git/branch")
 @traced("workspace.git.branch")
 async def git_branch_endpoint(
-    body: GitBranchRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: GitBranchRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    import subprocess
-
-    cmd = ["git", "checkout"]
-    if body.create:
-        cmd.extend(["-b", body.branch_name])
-    else:
-        cmd.append(body.branch_name)
-
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        res = subprocess.run(
-            cmd, cwd=workspace_dir, capture_output=True, text=True, check=True
+        message = await service.git.branch(
+            workspace_dir, body.branch_name, create=body.create
         )
         return {
             "success": True,
-            "message": res.stdout or res.stderr or "Branch checked out successfully",
+            "message": message,
         }
-    except subprocess.CalledProcessError as e:
+    except (ValueError, RuntimeError) as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Git operation failed: {e.stderr or str(e)}",
+            detail=f"Git operation failed: {e}",
         )
     except Exception as e:
         raise HTTPException(
@@ -514,33 +415,26 @@ async def git_branch_endpoint(
 @router.post("/git/merge")
 @traced("workspace.git.merge")
 async def git_merge_endpoint(
-    body: GitMergeRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: GitMergeRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    import subprocess
+    from workspace_service.use_cases import GitMergeConflict
 
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        res = subprocess.run(
-            ["git", "merge", body.branch_name],
-            cwd=workspace_dir,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        message = await service.git.merge(workspace_dir, body.branch_name)
         return {
             "success": True,
-            "message": res.stdout or res.stderr or "Branch merged successfully",
+            "message": message,
         }
-    except subprocess.CalledProcessError as e:
-        if "CONFLICT" in e.stdout or "CONFLICT" in e.stderr:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail=f"Merge conflicts detected: {e.stdout or e.stderr}",
-            )
+    except GitMergeConflict as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Git merge failed: {e.stderr or str(e)}",
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Merge conflicts detected: {e.message}",
         )
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -553,9 +447,11 @@ async def git_merge_endpoint(
 @router.get("/config", response_model=WorkspaceConfigGetResponse)
 @traced("workspace.config.get")
 async def get_workspace_config(
-    session_id: str = Query(...), workspace_dir: str = Depends(get_workspace_dir)
+    session_id: str = Query(...),
+    workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace = get_workspace_by_path(DATABASE_PATH, workspace_dir)
+    workspace = service.context.config(workspace_dir)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
@@ -564,7 +460,7 @@ async def get_workspace_config(
         workspace_id=workspace["workspace_id"],
         git_remote_url=workspace.get("git_remote_url"),
         git_username=workspace.get("git_username"),
-        has_token=has_workspace_git_token(workspace["workspace_id"]),
+        has_token=workspace["has_token"],
         workspace_path=workspace.get("local_path"),
         workspace_prompt=workspace.get("workspace_prompt"),
         git_large_file_threshold=workspace.get("git_large_file_threshold"),
@@ -619,16 +515,8 @@ async def toggle_workspace_tool_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    await get_workspace_dir(body.session_id, engine)
+    await service.resolve_workspace_dir(body.session_id, engine)
     service.set_workspace_tool_enabled(body.session_id, body.server_id, body.is_enabled)
-
-    # Notify gateway of tool list change so Hermes updates dynamically
-    try:
-        from api.routers.gateway import notify_gateway_tool_change
-
-        notify_gateway_tool_change()
-    except Exception as e:
-        logger.warning("failed_to_notify_gateway_tool_change", error=str(e))
 
     return WorkspaceToolToggleResponse(
         success=True,
@@ -639,128 +527,23 @@ async def toggle_workspace_tool_endpoint(
 
 
 async def _workspace_mcp_status_response(
-    *, workspace: dict, request: Request | None = None
+    *,
+    workspace: dict,
+    service: WorkspaceService,
+    request: Request | None = None,
 ) -> WorkspaceMcpStatusResponse:
-    import yaml
-
     workspace_id = workspace["workspace_id"]
-    session_id = workspace["session_id"]
-    enabled_tools = get_workspace_enabled_tools(DATABASE_PATH, session_id)
-    from tool_registry.db import get_servers
-
-    all_servers = get_servers(DATABASE_PATH)
-    expected_servers = []
-    for server in all_servers:
-        if not server.is_installed:
-            continue
-        is_enabled = True
-        if enabled_tools is not None:
-            is_enabled = (server.name in enabled_tools) or (
-                server.server_id in enabled_tools
-            )
-        if is_enabled:
-            expected_servers.append(server)
-
     mcp_engine = getattr(request.app.state, "mcp_engine", None) if request else None
-    running_mcps = []
-    start_failures: list[str] = []
-    for server in expected_servers:
-        effective_status = server.status
-        error_message = server.error_message
-        runner = (
-            getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
-            if mcp_engine
-            else None
-        )
-        if runner and runner.is_running():
-            effective_status = "active"
-            error_message = None
-        elif mcp_engine and server.status != "error":
-            try:
-                await mcp_engine.start_server(
-                    server.server_id,
-                    workspace_dir=workspace["local_path"],
-                    approval_context=ApprovalContext(
-                        workspace_id=workspace_id,
-                        workspace_approvals=set(server.approval_gates or []),
-                    ),
-                )
-                runner = getattr(mcp_engine, "_active_runners", {}).get(
-                    server.server_id
-                )
-                if runner and runner.is_running():
-                    effective_status = "active"
-                    error_message = None
-            except Exception as exc:
-                effective_status = "error"
-                error_message = str(exc)
-                start_failures.append(f"{server.name}: {exc}")
-        running_mcps.append(
-            RunningMcpInfo(
-                name=server.name, status=effective_status, error_message=error_message
-            )
-        )
-
-    expected_keys = set()
-    for server in expected_servers:
-        key_name = "".join(c.lower() for c in server.name if c.isalnum())
-        expected_keys.add(key_name or server.server_id)
-
-    configured_keys = set()
-    config_loaded = False
-    for path in hermes_config_paths():
-        if os.path.exists(path):
-            try:
-                with open(path, "r") as f:
-                    config = yaml.safe_load(f) or {}
-                configured_keys = set((config.get("mcp_servers") or {}).keys())
-                config_loaded = True
-                break
-            except Exception:
-                pass
-
-    if expected_keys and (not config_loaded or "wrightgateway" not in configured_keys):
-        return WorkspaceMcpStatusResponse(
-            workspace_id=workspace_id,
-            status="mismatch",
-            message="Workspace MCP tools are not connected through Wright gateway.",
-            running_mcps=running_mcps,
-        )
-
-    if start_failures:
-        return WorkspaceMcpStatusResponse(
-            workspace_id=workspace_id,
-            status="error",
-            message="Failed to start workspace MCP server(s): "
-            + "; ".join(start_failures),
-            running_mcps=running_mcps,
-        )
-
-    for item in running_mcps:
-        if item.status == "error":
-            err_msg = item.error_message or "Unknown error"
-            return WorkspaceMcpStatusResponse(
-                workspace_id=workspace_id,
-                status="error",
-                message=f"Cannot connect to MCP Server: {item.name} ({err_msg})",
-                running_mcps=running_mcps,
-            )
-
-    inactive_servers = [item.name for item in running_mcps if item.status != "active"]
-    if inactive_servers:
-        return WorkspaceMcpStatusResponse(
-            workspace_id=workspace_id,
-            status="warning",
-            message="MCP server installed but not active: "
-            + ", ".join(inactive_servers),
-            running_mcps=running_mcps,
-        )
-
+    result = await service.tools.status(
+        workspace,
+        mcp_engine=mcp_engine,
+        config_paths=hermes_config_paths(),
+    )
     return WorkspaceMcpStatusResponse(
         workspace_id=workspace_id,
-        status="ok",
-        message="MCP configuration is active and healthy.",
-        running_mcps=running_mcps,
+        status=result["status"],
+        message=result["message"],
+        running_mcps=[RunningMcpInfo(**item) for item in result["running_mcps"]],
     )
 
 
@@ -770,13 +553,16 @@ async def get_workspace_mcp_status_endpoint(
     request: Request,
     session_id: str = Query(...),
     workspace_dir: str = Depends(get_workspace_dir),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    workspace = service.lifecycle.get_by_session(session_id)
     if not workspace:
         return WorkspaceMcpStatusResponse(
             status="ok", message="No active workspace.", running_mcps=[]
         )
-    return await _workspace_mcp_status_response(workspace=workspace, request=request)
+    return await _workspace_mcp_status_response(
+        workspace=workspace, service=service, request=request
+    )
 
 
 # ── Workspace CRUD ───────────────────────────────────────────────────────
@@ -821,8 +607,10 @@ async def create_workspace_endpoint(
 
 @router.get("/by-id/{workspace_id}", response_model=WorkspaceListEntry)
 @traced("workspace.get")
-async def get_workspace_by_id_endpoint(workspace_id: str):
-    ws = get_workspace_by_id(DATABASE_PATH, workspace_id)
+async def get_workspace_by_id_endpoint(
+    workspace_id: str, service: WorkspaceService = Depends(get_workspace_service)
+):
+    ws = service.lifecycle.get_by_id(workspace_id)
     if not ws:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
@@ -899,15 +687,6 @@ async def select_workspace_session_endpoint(
     except WorkspaceServiceError as e:
         raise _workspace_service_http_exception(e)
 
-    try:
-        from api.routers.gateway import notify_gateway_tool_change
-
-        notify_gateway_tool_change()
-    except Exception as e:
-        logger.warning(
-            "failed_to_notify_gateway_on_workspace_session_select", error=str(e)
-        )
-
     return WorkspaceSessionSelectResponse(
         success=True, workspace_id=workspace_id, session_id=activation.session_id
     )
@@ -937,12 +716,6 @@ async def toggle_workspace_tool_by_id_endpoint(
     service.set_workspace_tool_enabled_by_workspace(
         workspace_id, body.server_id, body.is_enabled
     )
-    try:
-        from api.routers.gateway import notify_gateway_tool_change
-
-        notify_gateway_tool_change()
-    except Exception as e:
-        logger.warning("failed_to_notify_gateway_tool_change", error=str(e))
     return WorkspaceToolToggleByIdResponse(
         success=True,
         workspace_id=workspace_id,
@@ -955,49 +728,51 @@ async def toggle_workspace_tool_by_id_endpoint(
     "/by-id/{workspace_id}/mcp-status", response_model=WorkspaceMcpStatusResponse
 )
 @traced("workspace.mcp-status-by-id")
-async def get_workspace_mcp_status_by_id_endpoint(workspace_id: str, request: Request):
-    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+async def get_workspace_mcp_status_by_id_endpoint(
+    workspace_id: str,
+    request: Request,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspace = service.lifecycle.get_by_id(workspace_id)
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
         )
-    return await _workspace_mcp_status_response(workspace=workspace, request=request)
+    return await _workspace_mcp_status_response(
+        workspace=workspace, service=service, request=request
+    )
 
 
 @router.post("/by-id/{workspace_id}/context/save")
 @traced("workspace.context.save")
-async def save_workspace_context_endpoint(workspace_id: str, body: ContextSaveRequest):
-    import json
-
-    save_agent_context(DATABASE_PATH, workspace_id, json.dumps(body.context_data))
+async def save_workspace_context_endpoint(
+    workspace_id: str,
+    body: ContextSaveRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    service.context.save(workspace_id, body.context_data)
     return {"success": True}
 
 
 @router.get("/by-id/{workspace_id}/context/load")
 @traced("workspace.context.load")
-async def load_workspace_context_endpoint(workspace_id: str):
-    import json
-
-    ctx = load_agent_context(DATABASE_PATH, workspace_id)
+async def load_workspace_context_endpoint(
+    workspace_id: str, service: WorkspaceService = Depends(get_workspace_service)
+):
+    ctx = service.context.load(workspace_id)
     if not ctx:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No saved context found"
         )
-    try:
-        parsed = json.loads(ctx["context_data"])
-    except Exception:
-        parsed = ctx["context_data"]
-    return {
-        "workspace_id": workspace_id,
-        "context_data": parsed,
-        "updated_at": ctx.get("updated_at"),
-    }
+    return ctx
 
 
 @router.get("/recent", response_model=WorkspaceListResponse)
 @traced("workspace.list")
-async def list_recent_workspaces_endpoint():
-    workspaces = get_recent_workspaces(DATABASE_PATH, limit=5)
+async def list_recent_workspaces_endpoint(
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspaces = service.lifecycle.list_recent(limit=5)
     return WorkspaceListResponse(
         workspaces=[serialize_workspace(w) for w in workspaces]
     )
@@ -1005,8 +780,10 @@ async def list_recent_workspaces_endpoint():
 
 @router.get("/list", response_model=WorkspaceListResponse)
 @traced("workspace.list")
-async def list_all_workspaces_endpoint():
-    workspaces = get_all_workspaces(DATABASE_PATH)
+async def list_all_workspaces_endpoint(
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    workspaces = service.lifecycle.list_all()
     return WorkspaceListResponse(
         workspaces=[serialize_workspace(w) for w in workspaces]
     )
@@ -1018,17 +795,17 @@ async def activate_workspace_endpoint(
     body: WorkspaceActivateRequest,
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
     session_id = body.session_id
     logger.info("workspace_activate", session_id=session_id)
 
-    workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    workspace = service.lifecycle.get_by_session(session_id)
     if not workspace:
-        local_path = await get_workspace_dir(session_id, engine)
+        local_path = await service.resolve_workspace_dir(session_id, engine)
     else:
         local_path = workspace["local_path"]
 
-    service = get_workspace_service()
     activation = await service.activate_workspace(
         session_id,
         engine,
@@ -1038,27 +815,14 @@ async def activate_workspace_endpoint(
     session_id = activation.session_id
     local_path = activation.workspace_path
 
-    mcp_engine = getattr(request.app.state, "mcp_engine", None)
-    if mcp_engine:
-        try:
-            await sync_workspace_runners(DATABASE_PATH, session_id, mcp_engine)
-        except Exception as e:
-            logger.error("mcp_runner_sync_failed_on_activate", error=str(e))
-
-    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-    if sync_manager:
-        try:
-            sync_manager.sync_workspace_tools(session_id)
-        except Exception as e:
-            logger.error("agent_tool_sync_failed_on_activate", error=str(e))
-
-    # Notify gateway that workspace tools have changed
     try:
-        from api.routers.gateway import notify_gateway_tool_change
-
-        notify_gateway_tool_change()
+        await service.reconcile_runtime(
+            session_id,
+            mcp_engine=getattr(request.app.state, "mcp_engine", None),
+            sync_manager=getattr(request.app.state, "agent_sync_manager", None),
+        )
     except Exception as e:
-        logger.warning("failed_to_notify_gateway_workspace_activation", error=str(e))
+        logger.error("workspace_runtime_sync_failed_on_activate", error=str(e))
 
     return WorkspaceActivateResponse(
         success=True, session_id=session_id, workspace_path=local_path
@@ -1079,11 +843,11 @@ async def update_workspace_session_endpoint(
     body: WorkspaceSessionUpdateRequest,
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
     session_id = body.session_id
-    workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
+    workspace = service.lifecycle.get_by_id(workspace_id)
     if workspace:
-        service = get_workspace_service()
         try:
             activation = await service.select_workspace_session(
                 workspace_id,
@@ -1095,26 +859,16 @@ async def update_workspace_session_endpoint(
             raise _workspace_service_http_exception(e)
         session_id = activation.session_id
 
-        mcp_engine = getattr(request.app.state, "mcp_engine", None)
-        if mcp_engine:
-            try:
-                await sync_workspace_runners(DATABASE_PATH, session_id, mcp_engine)
-            except Exception as e:
-                logger.error("mcp_runner_sync_failed_on_session_update", error=str(e))
-
-        sync_manager = getattr(request.app.state, "agent_sync_manager", None)
-        if sync_manager:
-            try:
-                sync_manager.sync_workspace_tools(session_id)
-            except Exception as e:
-                logger.error("agent_tool_sync_failed_on_session_update", error=str(e))
-
         try:
-            from api.routers.gateway import notify_gateway_tool_change
-
-            notify_gateway_tool_change()
+            await service.reconcile_runtime(
+                session_id,
+                mcp_engine=getattr(request.app.state, "mcp_engine", None),
+                sync_manager=getattr(request.app.state, "agent_sync_manager", None),
+            )
         except Exception as e:
-            logger.warning("failed_to_notify_gateway_on_session_update", error=str(e))
+            logger.error(
+                "workspace_runtime_sync_failed_on_session_update", error=str(e)
+            )
 
     return {"success": True, "session_id": session_id}
 
@@ -1122,12 +876,13 @@ async def update_workspace_session_endpoint(
 @router.post("/files/backup", response_model=FileBackupResponse)
 @traced("workspace.files.backup")
 async def backup_file_content_endpoint(
-    body: FileBackupRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: FileBackupRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        backup_id = mgr.write_backup(body.path, body.content.encode("utf-8"))
+        backup_id = await service.files.backup(workspace_dir, body.path, body.content)
         return FileBackupResponse(success=True, backup_id=backup_id)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -1138,12 +893,13 @@ async def backup_file_content_endpoint(
 @router.delete("/files/backup", response_model=FileContentSaveResponse)
 @traced("workspace.files.backup.delete")
 async def delete_file_backup_endpoint(
-    body: FileBackupDeleteRequest, engine: BaseAgentEngine = Depends(get_agent_engine)
+    body: FileBackupDeleteRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace_dir = await get_workspace_dir(body.session_id, engine)
-    mgr = WorkspaceManager(workspace_dir)
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        mgr.delete_backup(body.backup_id)
+        await service.files.delete_backup(workspace_dir, body.backup_id)
         return FileContentSaveResponse(success=True)
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

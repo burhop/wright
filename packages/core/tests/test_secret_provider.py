@@ -2,8 +2,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from core.atomic_secret_store import AtomicSecretStore, SecretStoreError
-from core.secrets import CredentialReference, FileSecretProvider
+from data_vault.atomic_secret_store import AtomicSecretStore, SecretStoreError
+from core.secrets import CredentialReference
+from data_vault import FileSecretProvider
 
 
 def test_file_provider_returns_status_without_serializing_value(tmp_path):

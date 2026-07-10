@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from collections.abc import Callable
 
 from .context import (
     AgentContextMaterializationRequest,
     AgentContextMaterializationResult,
+    SupportLevel,
 )
 from .gateway import WrightGatewayProfile, build_wright_gateway_args
 
@@ -28,37 +30,32 @@ def hermes_wright_gateway_profile(repo_dir: str) -> WrightGatewayProfile:
     )
 
 
-def write_workspace_hermes_md(
-    db_path: str, workspace_path: str, context_filename: str = ".hermes.md"
-) -> None:
-    """Materialize Hermes workspace instructions into .hermes.md."""
-    from core.workspace import write_workspace_agent_context
-
-    write_workspace_agent_context(db_path, workspace_path, context_filename)
-
-
 @dataclass(frozen=True)
 class HermesContextMaterializer:
     provider_id: str = "hermes"
-    support_level: str = "supported"
+    support_level: SupportLevel = "supported"
     context_filename: str = ".hermes.md"
+    context_writer: Callable[[str, str, str], None] | None = None
 
     def materialize(
         self, request: AgentContextMaterializationRequest
     ) -> AgentContextMaterializationResult:
-        write_workspace_hermes_md(
-            request.db_path,
-            request.workspace_path,
-            self.context_filename,
-        )
+        if self.context_writer is not None:
+            self.context_writer(
+                request.db_path, request.workspace_path, self.context_filename
+            )
+        files_written: tuple[str, ...] = ()
+        context_path = os.path.join(request.workspace_path, self.context_filename)
+        if self.context_writer is not None and os.path.exists(context_path):
+            files_written = (context_path,)
         return AgentContextMaterializationResult(
             provider_id=self.provider_id,
             support_level="supported",
-            files_written=(
-                os.path.join(request.workspace_path, self.context_filename),
-            ),
+            files_written=files_written,
         )
 
 
-def hermes_context_materializer() -> HermesContextMaterializer:
-    return HermesContextMaterializer()
+def hermes_context_materializer(
+    context_writer: Callable[[str, str, str], None] | None = None,
+) -> HermesContextMaterializer:
+    return HermesContextMaterializer(context_writer=context_writer)

@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import Depends, HTTPException, Request, status
 
 from api.services.wright_gateway_sync import sync_mcp_server_to_wright_gateway
-from core.workspace import get_workspace_enabled_tools
+from workspace_service.adapters.runtime import get_workspace_enabled_tools
 from tool_registry import McpEngine
 from tool_registry import services as registry_services
 from tool_registry.services import (

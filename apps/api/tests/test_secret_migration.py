@@ -8,7 +8,8 @@ from api.database.secret_migration import (
     migrate_plaintext_secrets,
     restore_plaintext_backup,
 )
-from core.secrets import CredentialReference, FileSecretProvider
+from core.secrets import CredentialReference
+from data_vault import FileSecretProvider
 
 
 @pytest.fixture

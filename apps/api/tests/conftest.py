@@ -144,7 +144,7 @@ def client(mock_agent_engine):
     """Provide a TestClient with the mock agent engine injected."""
     from httpx import ASGITransport, AsyncClient
     from api.main import app
-    from core import AgentSyncManager
+    from workspace_service import AgentSyncManager
 
     app.state.agent_engine = mock_agent_engine
     app.state.agent_sync_manager = AgentSyncManager(temp_db_path)
@@ -157,7 +157,7 @@ def sync_client(mock_agent_engine):
     """Provide a synchronous TestClient for non-async tests."""
     from fastapi.testclient import TestClient
     from api.main import app
-    from core import AgentSyncManager
+    from workspace_service import AgentSyncManager
 
     app.state.agent_engine = mock_agent_engine
     app.state.agent_sync_manager = AgentSyncManager(temp_db_path)

@@ -1443,6 +1443,12 @@ requires-dist = [
 name = "wright-data-vault"
 version = "0.1.0"
 source = { editable = "packages/data_vault" }
+dependencies = [
+    { name = "wright-core" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "wright-core", editable = "packages/core" }]
 
 [[package]]
 name = "wright-engineering"

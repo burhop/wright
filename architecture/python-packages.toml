@@ -1,0 +1,52 @@
+schema_version = 1
+
+[surfaces.core]
+roots = ["packages/core/src/core"]
+imports_as = ["core"]
+allowed_dependencies = []
+metadata = "packages/core/pyproject.toml"
+forbidden_modules = ["os", "pathlib", "sqlite3", "subprocess", "tempfile"]
+responsibilities = ["domain values", "errors", "redaction", "telemetry contracts"]
+
+[surfaces.data_vault]
+roots = ["packages/data_vault/src/data_vault"]
+imports_as = ["data_vault"]
+allowed_dependencies = ["core"]
+metadata = "packages/data_vault/pyproject.toml"
+forbidden_modules = ["fastapi", "agent_adapters"]
+responsibilities = ["SQLite lifecycle", "repositories", "backup and restore", "secret storage"]
+
+[surfaces.tool_registry]
+roots = ["packages/tool_registry/src/tool_registry"]
+imports_as = ["tool_registry"]
+allowed_dependencies = ["core"]
+metadata = "packages/tool_registry/pyproject.toml"
+forbidden_modules = ["fastapi", "api", "agent_adapters"]
+responsibilities = ["catalog", "tool safety", "runners", "gateway capabilities"]
+
+[surfaces.agent_adapters]
+roots = ["packages/agent_adapters/src/agent_adapters"]
+imports_as = ["agent_adapters"]
+allowed_dependencies = ["core"]
+metadata = "packages/agent_adapters/pyproject.toml"
+forbidden_modules = ["fastapi", "api", "data_vault", "workspace_service"]
+responsibilities = ["agent runtime contracts", "provider context and configuration adapters"]
+
+[surfaces.workspace_service]
+roots = ["packages/workspace_service/src/workspace_service"]
+imports_as = ["workspace_service"]
+allowed_dependencies = ["core", "data_vault", "tool_registry", "agent_adapters"]
+metadata = "packages/workspace_service/pyproject.toml"
+forbidden_modules = ["fastapi", "api"]
+responsibilities = ["workspace application use cases", "workspace host adapters"]
+
+[surfaces.api]
+roots = ["apps/api/src/api"]
+imports_as = ["api"]
+allowed_dependencies = ["core", "data_vault", "tool_registry", "agent_adapters", "workspace_service"]
+metadata = "apps/api/pyproject.toml"
+forbidden_modules = []
+responsibilities = ["composition root", "HTTP and WebSocket translation"]
+
+# Exact debt entries are allowed only while Feature 045 moves their behavior. The
+# fitness test rejects wildcard entries and any entry that no longer matches.

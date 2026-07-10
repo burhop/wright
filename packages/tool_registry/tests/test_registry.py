@@ -4,6 +4,8 @@ import uuid
 import time
 import pytest
 from data_vault import upgrade_database
+from data_vault import install_default_secret_provider
+
 from tool_registry.models import McpServer, McpTool
 from tool_registry.db import (
     get_servers,
@@ -16,6 +18,8 @@ from tool_registry.db import (
 from tool_registry.runners.stdio import StdioRunner
 from tool_registry.manager import McpEngine
 from tool_registry.models import EnvVarDefinition
+
+install_default_secret_provider()
 
 
 @pytest.fixture

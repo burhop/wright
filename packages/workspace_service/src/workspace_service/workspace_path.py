@@ -1,4 +1,4 @@
-"""Workspace-confined path capability.
+"""Workspace-confined path capability owned by the workspace application.
 
 User paths are relative to one canonical workspace. Existing symbolic links and
 Windows reparse points are rejected instead of followed.

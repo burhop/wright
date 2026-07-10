@@ -142,6 +142,8 @@ PY
     wright-core) built_import_modules+=("core") ;;
     wright-tool-registry) built_import_modules+=("tool_registry") ;;
     wright-data-vault) built_import_modules+=("data_vault") ;;
+    wright-agent-adapters) built_import_modules+=("agent_adapters") ;;
+    wright-workspace-service) built_import_modules+=("workspace_service") ;;
     *) built_import_modules+=("${package_name//-/_}") ;;
   esac
 

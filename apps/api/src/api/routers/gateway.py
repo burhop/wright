@@ -1,5 +1,4 @@
 import asyncio
-from typing import Set
 import structlog
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 from fastapi.responses import StreamingResponse
@@ -11,25 +10,14 @@ from tool_registry import (
     get_tools,
 )
 from api.services.mcp_services import get_mcp_engine
-from core.workspace import get_gateway_workspace, get_workspace_enabled_tools
+from workspace_service.adapters.runtime import (
+    get_gateway_workspace,
+    get_workspace_enabled_tools,
+)
+from api.notifications import gateway_event_queues
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
-
-# Active SSE listener queues
-gateway_event_queues: Set[asyncio.Queue] = set()
-
-
-def notify_gateway_tool_change():
-    """Notify all connected gateway clients that the tool list has changed."""
-    logger.info(
-        "notifying_gateways_of_tool_change", active_queues=len(gateway_event_queues)
-    )
-    for queue in list(gateway_event_queues):
-        try:
-            queue.put_nowait("list_changed")
-        except Exception as e:
-            logger.warning("failed_to_queue_gateway_event", error=str(e))
 
 
 class GatewayCallRequest(BaseModel):

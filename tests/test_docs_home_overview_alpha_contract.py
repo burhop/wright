@@ -51,7 +51,7 @@ def test_readme_uses_current_workspace_artifact_surface() -> None:
         "Workspace Artifacts",
         "workspace volume or checkout you control",
         "SQLite and local workspace files",
-        "Placeholder package for future storage extraction",
+        "SQLite lifecycle, repositories, and secret storage",
     ]:
         assert expected in readme
 

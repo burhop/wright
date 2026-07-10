@@ -5,7 +5,8 @@ from core.telemetry import (
     bind_correlation_id,
     clear_correlation_id,
 )
-from core.logging import configure_logging, get_logger
+from api.logging_config import configure_logging
+from core.logging import get_logger
 import json
 
 

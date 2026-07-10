@@ -18,7 +18,7 @@ from agent_adapters import (
     default_agent_registry,
 )
 from workspace_service import WorkspaceService
-from core.workspace import (
+from workspace_service.adapters.runtime import (
     get_workspace_by_session,
     get_workspace_enabled_tools,
     update_workspace_agent_session_title,
@@ -391,8 +391,8 @@ async def create_new_session(
 ):
     import os
     import uuid
-    from core import WorkspaceManager
-    from core.workspace import create_workspace
+    from workspace_service import WorkspaceManager
+    from workspace_service.adapters.runtime import create_workspace
     from api.config import DATABASE_PATH
 
     trace_id = get_current_trace_id()
@@ -484,7 +484,10 @@ async def list_agent_sessions(
         sessions = await engine.list_sessions()
         if workspace_id:
             from api.config import DATABASE_PATH
-            from core.workspace import associate_workspace_session, get_workspace_by_id
+            from workspace_service.adapters.runtime import (
+                associate_workspace_session,
+                get_workspace_by_id,
+            )
 
             workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
             if workspace:

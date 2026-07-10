@@ -1,4 +1,4 @@
-"""Crash-safe, cross-process JSON storage for local Wright secrets."""
+"""Crash-safe, cross-process JSON storage owned by data_vault."""
 
 from __future__ import annotations
 
@@ -40,10 +40,10 @@ else:
     import fcntl
 
     def _lock(handle: Any) -> None:
-        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)  # type: ignore[attr-defined]
 
     def _unlock(handle: Any) -> None:
-        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)  # type: ignore[attr-defined]
 
 
 class AtomicSecretStore:

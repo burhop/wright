@@ -64,6 +64,7 @@ nav:
   - Architecture:
       - System Overview: architecture/system-overview.md
       - Project Structure: architecture/project-structure.md
+      - Python Package Boundaries: architecture/package-boundaries.md
       - Agent Adapters: architecture/agent-adapters.md
       - Tool Registry: architecture/tool-registry.md
       - Data Storage: architecture/data-storage.md

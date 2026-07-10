@@ -25,8 +25,11 @@ class AgentContextMaterializationResult:
 
 
 class AgentContextMaterializer(Protocol):
-    provider_id: str
-    support_level: SupportLevel
+    @property
+    def provider_id(self) -> str: ...
+
+    @property
+    def support_level(self) -> SupportLevel: ...
 
     def materialize(
         self, request: AgentContextMaterializationRequest

@@ -3,8 +3,9 @@ from __future__ import annotations
 import os
 import sqlite3
 
-from .logging import get_logger
-from .workspace import (
+from core.logging import get_logger
+
+from .adapters.runtime import (
     get_workspace_by_session,
     set_active_gateway_session,
 )
