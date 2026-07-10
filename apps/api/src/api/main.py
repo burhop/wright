@@ -53,6 +53,10 @@ async def lifespan(app: FastAPI):
         run_migrations()
     except Exception as e:
         logger.exception("database_migration_failed", error=str(e))
+    else:
+        from api.database.secret_migration import migrate_plaintext_secrets
+
+        migrate_plaintext_secrets(DATABASE_PATH)
 
     # Startup initializes the MCP engine only. MCP server processes are started
     # when an active workspace has those installed servers assigned to it.

@@ -1,4 +1,3 @@
-import json
 import sqlite3
 import structlog
 from fastapi import APIRouter, HTTPException, status
@@ -6,6 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from api.config import DATABASE_PATH
 from api.schemas.settings import GlobalSettingsRequest, GlobalSettingsResponse
 from core.tracing import traced
+from core.secrets import CredentialReference, default_secret_provider
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -52,15 +52,18 @@ async def get_global_settings():
     try:
         llm_provider = get_db_setting("llm_provider", "hermes")
         theme = get_db_setting("theme", "dark")
-        api_keys_raw = get_db_setting("api_keys", "{}")
-
-        try:
-            api_keys = json.loads(api_keys_raw)
-        except Exception:
-            api_keys = {}
+        provider = default_secret_provider()
+        names = ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY")
+        api_key_status = {
+            name: provider.status(CredentialReference("global", "", name)).configured
+            for name in names
+        }
 
         return GlobalSettingsResponse(
-            llm_provider=llm_provider, theme=theme, api_keys=api_keys
+            llm_provider=llm_provider,
+            theme=theme,
+            api_keys={name: "" for name in names},
+            api_key_status=api_key_status,
         )
     except Exception as e:
         logger.exception("get_settings_failed", error=str(e))
@@ -77,8 +80,17 @@ async def save_global_settings(body: GlobalSettingsRequest):
     try:
         set_db_setting("llm_provider", body.llm_provider)
         set_db_setting("theme", body.theme)
-        set_db_setting("api_keys", json.dumps(body.api_keys))
-        return {"success": True}
+        provider = default_secret_provider()
+        for name, value in body.api_keys.items():
+            if value:
+                provider.set(CredentialReference("global", "", name), value)
+        for name in body.remove_api_keys:
+            provider.delete(CredentialReference("global", "", name))
+        statuses = {
+            name: provider.status(CredentialReference("global", "", name)).configured
+            for name in set(body.api_keys) | set(body.remove_api_keys)
+        }
+        return {"success": True, "api_key_status": statuses}
     except Exception as e:
         logger.exception("save_settings_failed", error=str(e))
         raise HTTPException(

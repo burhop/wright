@@ -26,6 +26,7 @@ os.close(temp_db_fd)
 # Set the environment variables before importing any application code
 os.environ["DATABASE_PATH"] = temp_db_path
 os.environ.setdefault("WRIGHT_AUTH_MODE", "compat")
+os.environ.setdefault("WRIGHT_SECRETS_PATH", f"{temp_db_path}.secrets.json")
 
 
 @pytest.fixture(autouse=True)
@@ -47,6 +48,13 @@ def run_api_migrations():
             os.unlink(temp_db_path)
         except Exception:
             pass
+    secrets_path = f"{temp_db_path}.secrets.json"
+    for path in (secrets_path, f"{secrets_path}.lock"):
+        if os.path.exists(path):
+            try:
+                os.unlink(path)
+            except Exception:
+                pass
 
 
 # ── Mock Agent Engine ─────────────────────────────────────────────────────

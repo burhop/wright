@@ -2,3 +2,6 @@
 
 from .workspace import WorkspaceManager as WorkspaceManager
 from .agent_sync import AgentSyncManager as AgentSyncManager
+from .secrets import CredentialReference as CredentialReference
+from .secrets import CredentialStatus as CredentialStatus
+from .secrets import SecretProvider as SecretProvider

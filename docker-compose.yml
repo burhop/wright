@@ -19,15 +19,21 @@ services:
       - "127.0.0.1:8000:8000"              # FastAPI (API + static frontend) — localhost only
       - "127.0.0.1:5173:5173"              # Vite Dev server (if used in test/debug) — localhost only
     volumes:
-      - wright_home:/home/
-      - wright_local:/usr/local/
-      - wright_opt:/opt/
-      - wright_varlib:/var/lib/
-      - wright_varcache:/var/cache/
-      - wright_etc:/etc/
+      - wright_data:/home/agent/.local/share/wright
+      - wright_workspaces:/home/agent/workspace
+      - wright_config:/home/agent/.config/wright
+      - wright_hermes:/home/agent/.hermes
       - wright_logs:/var/log/
       # Recovery tools mounted read-only
       - ./scripts:/recovery:ro
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=512m
+      - /home/agent/.cache:rw,noexec,nosuid,size=512m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     environment:
       - WRIGHT_ENV=production
       - WRIGHT_BIND_HOST=0.0.0.0
@@ -55,18 +61,14 @@ services:
     restart: unless-stopped
 
 volumes:
-  wright_home:
-    name: wright_home
-  wright_local:
-    name: wright_local
-  wright_opt:
-    name: wright_opt
-  wright_varlib:
-    name: wright_varlib
-  wright_varcache:
-    name: wright_varcache
-  wright_etc:
-    name: wright_etc
+  wright_data:
+    name: wright_data
+  wright_workspaces:
+    name: wright_workspaces
+  wright_config:
+    name: wright_config
+  wright_hermes:
+    name: wright_hermes
   wright_logs:
     name: wright_logs
 

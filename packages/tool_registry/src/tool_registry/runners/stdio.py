@@ -6,6 +6,7 @@ import structlog
 import shlex
 from typing import List, Dict, Any, Optional, Union
 from opentelemetry import trace
+from core.redaction import SECRET_KEY_RE, redact_command, redact_mapping, redact_text
 from .base import BaseRunner
 
 logger = structlog.get_logger(__name__)
@@ -46,6 +47,13 @@ class StdioRunner(BaseRunner):
         self._next_id = 1
         self._lock = asyncio.Lock()
 
+    def _secret_values(self) -> list[str]:
+        return [
+            value
+            for key, value in (self.env or {}).items()
+            if value and SECRET_KEY_RE.search(key)
+        ]
+
     async def start(self) -> None:
         async with self._lock:
             if self.process is not None:
@@ -57,7 +65,11 @@ class StdioRunner(BaseRunner):
             if self.env:
                 run_env.update(self.env)
 
-            logger.info("mcp_server_spawning", command=self.command, cwd=self.cwd)
+            logger.info(
+                "mcp_server_spawning",
+                command=redact_command(self.command),
+                cwd=self.cwd,
+            )
             try:
                 self.process = await asyncio.create_subprocess_exec(
                     *self.command,
@@ -75,7 +87,9 @@ class StdioRunner(BaseRunner):
                     self.process.stderr._limit = 10 * 1024 * 1024
             except Exception as e:
                 logger.error(
-                    "mcp_server_spawn_failed", command=self.command, error=str(e)
+                    "mcp_server_spawn_failed",
+                    command=redact_command(self.command),
+                    error=redact_text(e, self._secret_values()),
                 )
                 raise RuntimeError(f"Failed to spawn subprocess: {e}") from e
 
@@ -87,7 +101,9 @@ class StdioRunner(BaseRunner):
             await asyncio.wait_for(self._handshake(), timeout=60.0)
         except Exception as e:
             logger.error(
-                "mcp_server_handshake_failed", command=self.command, error=str(e)
+                "mcp_server_handshake_failed",
+                command=redact_command(self.command),
+                error=redact_text(e, self._secret_values()),
             )
             await self.stop()
             raise RuntimeError(f"MCP handshake failed: {e}") from e
@@ -109,7 +125,7 @@ class StdioRunner(BaseRunner):
             self._pending_requests.clear()
 
             if self.process:
-                logger.info("mcp_server_stopping", command=self.command)
+                logger.info("mcp_server_stopping", command=redact_command(self.command))
                 try:
                     if self.process.stdin:
                         self.process.stdin.close()
@@ -120,7 +136,9 @@ class StdioRunner(BaseRunner):
                     # Give it a brief moment to exit cleanly
                     await asyncio.wait_for(self.process.wait(), timeout=3.0)
                 except asyncio.TimeoutError:
-                    logger.warning("mcp_server_force_killing", command=self.command)
+                    logger.warning(
+                        "mcp_server_force_killing", command=redact_command(self.command)
+                    )
                     try:
                         self.process.kill()
                     except Exception:
@@ -132,7 +150,7 @@ class StdioRunner(BaseRunner):
 
     async def list_tools(self) -> List[Dict[str, Any]]:
         with tracer.start_as_current_span("mcp.list_tools") as span:
-            span.set_attribute("mcp.command", " ".join(self.command))
+            span.set_attribute("mcp.command", redact_command(self.command))
             try:
                 response = await asyncio.wait_for(
                     self._send_request("tools/list"), timeout=60.0
@@ -152,7 +170,7 @@ class StdioRunner(BaseRunner):
     ) -> Dict[str, Any]:
         with tracer.start_as_current_span("mcp.call_tool") as span:
             span.set_attribute("mcp.tool_name", tool_name)
-            span.set_attribute("mcp.command", " ".join(self.command))
+            span.set_attribute("mcp.command", redact_command(self.command))
             try:
                 payload = {"name": tool_name, "arguments": arguments}
                 response = await asyncio.wait_for(
@@ -175,8 +193,8 @@ class StdioRunner(BaseRunner):
             "capabilities": {},
             "clientInfo": {"name": "wright", "version": "0.1.0"},
         }
-        init_res = await self._send_request("initialize", init_params)
-        logger.debug("Received initialize response: %s", init_res)
+        await self._send_request("initialize", init_params)
+        logger.debug("mcp_initialize_response_received")
 
         # 2. Send initialized notification (no ID)
         await self._send_notification("notifications/initialized")
@@ -222,7 +240,11 @@ class StdioRunner(BaseRunner):
             self.process.stdin.write(serialized.encode("utf-8"))
             await self.process.stdin.drain()
         except Exception as e:
-            logger.error("Failed to send notification %s: %s", method, e)
+            logger.error(
+                "mcp_notification_send_failed",
+                method=method,
+                error=redact_text(e, self._secret_values()),
+            )
 
     async def _read_stdout(self) -> None:
         while self.process and self.process.stdout:
@@ -235,12 +257,20 @@ class StdioRunner(BaseRunner):
                 if not line_str:
                     continue
 
-                logger.debug("StdioRunner read line: %s", line_str)
                 try:
                     message = json.loads(line_str)
                 except json.JSONDecodeError:
-                    logger.warning("Received non-JSON line on stdout: %s", line_str)
+                    logger.warning(
+                        "mcp_non_json_stdout", byte_count=len(line), redacted=True
+                    )
                     continue
+
+                logger.debug(
+                    "mcp_protocol_message_received",
+                    method=message.get("method"),
+                    has_id="id" in message,
+                    has_error="error" in message,
+                )
 
                 if "id" in message:
                     msg_id = message["id"]
@@ -248,7 +278,13 @@ class StdioRunner(BaseRunner):
                     if fut and not fut.done():
                         if "error" in message:
                             fut.set_exception(
-                                RuntimeError(f"RPC Error: {message['error']}")
+                                RuntimeError(
+                                    "RPC Error: "
+                                    + redact_text(
+                                        redact_mapping({"error": message["error"]}),
+                                        self._secret_values(),
+                                    )
+                                )
                             )
                         else:
                             fut.set_exception(
@@ -259,11 +295,16 @@ class StdioRunner(BaseRunner):
                 else:
                     # Handle notifications or requests initiated by the server if any (e.g. logMessage)
                     if message.get("method") == "notifications/message":
-                        logger.info("Server notification: %s", message.get("params"))
+                        logger.info(
+                            "mcp_server_notification", method=message.get("method")
+                        )
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("Error reading stdout: %s", e)
+                logger.error(
+                    "mcp_stdout_read_failed",
+                    error=redact_text(e, self._secret_values()),
+                )
                 break
 
     async def _read_stderr(self) -> None:
@@ -274,9 +315,15 @@ class StdioRunner(BaseRunner):
                     break
                 line_str = line.decode("utf-8").strip()
                 if line_str:
-                    logger.warning("MCP Server Stderr: %s", line_str)
+                    logger.warning(
+                        "mcp_server_stderr",
+                        output=redact_text(line_str, self._secret_values()),
+                    )
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("Error reading stderr: %s", e)
+                logger.error(
+                    "mcp_stderr_read_failed",
+                    error=redact_text(e, self._secret_values()),
+                )
                 break

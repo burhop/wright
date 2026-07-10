@@ -52,7 +52,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     bzip2 \
     ca-certificates \
     curl \
-    sudo \
     vim \
     nano \
     htop \
@@ -78,7 +77,6 @@ RUN uv pip install --python /opt/hermes/.venv/bin/python --upgrade \
 
 # Create agent user (UID 1000).
 RUN useradd -m -u 1000 -s /bin/bash agent && \
-    echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     chown -R agent:agent /home/agent
 
 # Wright workspace setup.

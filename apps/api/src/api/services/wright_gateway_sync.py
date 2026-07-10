@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import copy
 import os
 import sys
 
 import structlog
-import yaml
 
+from agent_adapters.config_merge import atomic_merge_yaml
 from agent_adapters.gateway import WrightGatewayProfile
 from agent_adapters.hermes_gateway import (
     hermes_config_paths,
@@ -35,44 +34,25 @@ def default_hermes_gateway_profile(repo_dir: str | None = None) -> WrightGateway
 def write_gateway_profile_config(
     profile: WrightGatewayProfile, config_paths: list[str]
 ) -> bool:
-    new_mcp_servers = {profile.server_name: profile.mcp_server_config()}
     config_changed = False
 
     for path in config_paths:
-        if not os.path.exists(path):
-            config_changed = True
-            try:
-                os.makedirs(os.path.dirname(path), exist_ok=True)
-                with open(path, "w") as f:
-                    yaml.safe_dump(
-                        {
-                            "mcp_servers": new_mcp_servers,
-                            "terminal": profile.terminal_config(),
-                        },
-                        f,
-                        default_flow_style=False,
-                    )
-            except Exception as e:
-                logger.error(
-                    "failed_to_write_initial_gateway_config", path=path, error=str(e)
-                )
-            continue
-
         try:
-            with open(path, "r") as f:
-                config = yaml.safe_load(f) or {}
 
-            new_config = copy.deepcopy(config)
-            new_config["mcp_servers"] = new_mcp_servers
+            def update(config: dict) -> None:
+                servers = config.get("mcp_servers")
+                if not isinstance(servers, dict):
+                    servers = {}
+                config["mcp_servers"] = {
+                    **servers,
+                    profile.server_name: profile.mcp_server_config(),
+                }
+                terminal = config.get("terminal")
+                if not isinstance(terminal, dict):
+                    terminal = {}
+                config["terminal"] = {**terminal, **profile.terminal_config()}
 
-            if "terminal" not in new_config:
-                new_config["terminal"] = {}
-            new_config["terminal"].update(profile.terminal_config())
-
-            if config != new_config:
-                config_changed = True
-                with open(path, "w") as f:
-                    yaml.safe_dump(new_config, f, default_flow_style=False)
+            config_changed = atomic_merge_yaml(path, update) or config_changed
         except Exception as e:
             logger.error("failed_to_sync_gateway_config", path=path, error=str(e))
             config_changed = True

@@ -73,7 +73,7 @@ echo -e "\n${YELLOW}Step 5: Testing basic command execution...${NC}"
 # First test: missing LLM_API_URL should warn and continue so the setup UI can
 # collect configuration.
 echo -e "Testing setup-pending warning with missing LLM_API_URL..."
-MISSING_LLM_OUTPUT=$(docker run --rm "$IMAGE_TAG" echo "ok" 2>&1)
+MISSING_LLM_OUTPUT=$(docker run --rm -e WRIGHT_API_TOKEN="ci-smoke-token" "$IMAGE_TAG" echo "ok" 2>&1)
 if [[ "$MISSING_LLM_OUTPUT" == *"Warning: LLM_API_URL environment variable is not set"* ]] && [[ "$MISSING_LLM_OUTPUT" == *"ok"* ]]; then
   echo -e "${GREEN}✓ Container warned and continued when LLM_API_URL was missing.${NC}"
 else
@@ -84,7 +84,7 @@ fi
 
 # Second test: should succeed when LLM_API_URL is provided
 echo -e "Testing execution with LLM_API_URL set..."
-if TEST_OUTPUT=$(docker run --rm -e LLM_API_URL="https://example.com/v1" "$IMAGE_TAG" echo "ok"); then
+if TEST_OUTPUT=$(docker run --rm -e WRIGHT_API_TOKEN="ci-smoke-token" -e LLM_API_URL="https://example.com/v1" "$IMAGE_TAG" echo "ok"); then
   if [[ "$TEST_OUTPUT" == *"ok"* ]]; then
     echo -e "${GREEN}✓ Basic command execution succeeded and returned 'ok'.${NC}"
   else

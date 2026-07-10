@@ -5,6 +5,7 @@ from typing import Optional
 from core.workspace import read_application_logs
 from api.schemas.logs import LogsListResponse
 from core.tracing import traced
+from core.redaction import redact_mapping, redact_text
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -32,10 +33,14 @@ async def get_logs(
             limit=limit,
             offset=offset,
         )
-        return LogsListResponse(logs=result["logs"], total=result["total"])
+        return LogsListResponse(
+            logs=[redact_mapping(event) for event in result["logs"]],
+            total=result["total"],
+        )
     except Exception as e:
-        logger.exception("fetch_logs_failed", error=str(e))
+        detail = redact_text(e)
+        logger.exception("fetch_logs_failed", error=detail)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch application logs: {e}",
+            detail=f"Failed to fetch application logs: {detail}",
         )

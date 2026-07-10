@@ -9,6 +9,7 @@ dependencies = [
     "wright-core",
     "httpx>=0.28",
     "httpx-sse>=0.4",
+    "PyYAML>=6.0",
 ]
 
 [tool.uv.sources]
