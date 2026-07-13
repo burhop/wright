@@ -16,7 +16,7 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.13.11-slim@sha256:2b9c9803c6a287cafa0a8c917211dddd23dcd2016f049690ee5219f5d3f1636e AS hermes-base
+FROM python:3.14.6-slim@sha256:b877e50bd90de10af8d82c57a022fc2e0dc731c5320d762a27986facfc3355c1 AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
