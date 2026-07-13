@@ -79,7 +79,9 @@ def test_ci_cd_docs_describe_ghcr_default_and_optional_docker_hub() -> None:
 
     assert "packages: write" in release
     assert "Log in to GHCR" in release
-    assert "has_dockerhub=false" in release
+    assert 'echo "configured=false"' in release
+    assert "Docker Hub mirror is not configured; canonical GHCR remains verified." in release
+    assert "Copy and verify the same manifest" in release
 
 
 def test_spec_tasks_record_ci_cd_docs_refresh_slice() -> None:

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "exceptions": [
+    {
+      "vulnerability_id": "PYSEC-2026-1325",
+      "package": "ecdsa",
+      "owner": "security-maintainers",
+      "rationale": "python-ecdsa treats the timing side channel as out of scope and publishes no fixed version; Wright does not use the affected signing API for release signing.",
+      "compensating_control": "Release signing uses GitHub OIDC/Sigstore; application tokens are handled by python-jose verification paths and the secret provider.",
+      "approved_by": "roadmap Feature 047 review",
+      "expires_at": "2026-09-01T00:00:00Z"
+    }
+  ]
+}

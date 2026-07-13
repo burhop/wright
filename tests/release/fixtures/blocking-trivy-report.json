@@ -1,0 +1,16 @@
+{
+  "Results": [
+    {
+      "Target": "wright",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-TEST-0001",
+          "PkgName": "example",
+          "InstalledVersion": "1",
+          "FixedVersion": "2",
+          "Severity": "HIGH"
+        }
+      ]
+    }
+  ]
+}

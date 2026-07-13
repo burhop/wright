@@ -226,6 +226,9 @@ yarn-error.log*
 
 # Playwright / E2E Testing
 test-results/
+release-evidence*.json
+*.spdx.json
+*.sarif
 playwright-report/
 blob-report/
 playwright/.cache/

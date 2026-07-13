@@ -1,0 +1,55 @@
+name: OCI pull-request validation
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - .github/workflows/docker-build.yml
+      - .github/workflows/docker-pr.yml
+      - docker/**
+      - apps/**
+      - packages/**
+      - pyproject.toml
+      - uv.lock
+      - package-lock.json
+
+permissions:
+  contents: read
+
+jobs:
+  build-smoke-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Build local amd64 validation image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: linux/amd64
+          load: true
+          push: false
+          tags: wright:pr-${{ github.sha }}
+          build-args: |
+            VERSION=pr
+            REVISION=${{ github.sha }}
+            CREATED=1970-01-01T00:00:00Z
+      - name: Smoke local image without rebuilding
+        run: WRIGHT_DOCKER_IMAGE="wright:pr-${GITHUB_SHA}" WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
+      - name: Scan local image with blocking policy
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          image-ref: wright:pr-${{ github.sha }}
+          format: json
+          output: trivy.json
+          exit-code: "0"
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+      - name: Enforce release vulnerability policy
+        run: python -c "from pathlib import Path; from scripts.release.vulnerability_policy import evaluate_report; evaluate_report(Path('trivy.json'), Path('docker/release-policy.json'))"

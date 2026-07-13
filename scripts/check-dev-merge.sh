@@ -49,11 +49,16 @@ run npx prettier --check apps/web/ --end-of-line auto
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 
 run uv pip install mypy --quiet
+run uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
 run uv run mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
   echo "::warning::Mypy type checks failed with warning mode enabled."
 }
 
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+run uv run python -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
+run uv run pytest -q tests/release
+run uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
 
 run uv run pytest
 run uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests

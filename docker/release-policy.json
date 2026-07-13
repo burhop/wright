@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "blocked_severities": ["HIGH", "CRITICAL"],
+  "ignore_unfixed": true,
+  "exceptions": []
+}

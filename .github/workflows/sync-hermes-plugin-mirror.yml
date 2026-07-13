@@ -43,12 +43,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Wright
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
 
@@ -87,7 +87,7 @@ jobs:
 
       - name: Start mirror deploy SSH agent
         if: steps.channel.outputs.publish == 'true'
-        uses: webfactory/ssh-agent@v0.9.1
+        uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
         with:
           ssh-private-key: ${{ secrets.HERMES_PLUGIN_MIRROR_SSH_KEY }}
 
@@ -135,7 +135,7 @@ jobs:
           git -C "$publish_dir" push origin "HEAD:$MIRROR_BRANCH"
 
       - name: Upload generated mirror artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           name: hermes-plugin-wright-${{ steps.channel.outputs.channel }}
           path: /tmp/hermes-plugin-wright

@@ -53,6 +53,13 @@ software to the base Docker image just to make catalog validation pass.
 
 ## Quality Gates
 
+For feature branches, `scripts/check-dev-merge.sh` is the authoritative gate
+before merge to `dev`. Release-train changes must additionally preserve the
+build-once wheel/sdist hashes, OCI candidate digest, full-SHA Action pins,
+protected environment ordering, expiring vulnerability exceptions, and the
+GitHub-Release-last contract. A dry-run rehearsal is evidence of orchestration,
+not authorization to publish.
+
 Run the relevant checks before opening a pull request:
 
 ```bash

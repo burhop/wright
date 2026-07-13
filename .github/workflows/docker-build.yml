@@ -1,177 +1,100 @@
-name: Docker Build CI
+name: OCI candidate build
 
 on:
-  push:
-    branches: [main, dev]
-    tags:
-      - 'v*'
-    paths:
-      - '.github/workflows/docker-build.yml'
-      - 'docker/**'
-      - 'apps/**'
-      - 'packages/**'
-      - 'pyproject.toml'
-      - 'docker-compose.yml'
-      - 'docker-compose.minimal.yml'
-  pull_request:
-    branches: [main, dev]
-
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      push-candidate:
+        required: true
+        type: boolean
+    outputs:
+      digest:
+        value: ${{ jobs.build-candidate.outputs.digest }}
+      image:
+        value: ${{ jobs.build-candidate.outputs.image }}
 permissions:
   contents: read
-  packages: read
 
 jobs:
-  build-and-smoke:
+  build-candidate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.image.outputs.name }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Prepare OCI Build Args
-        id: prep
-        run: |
-          VERSION="${{ github.ref_name }}"
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VERSION="${VERSION#v}"
-          fi
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "revision=${{ github.sha }}" >> "$GITHUB_OUTPUT"
-          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
-
-      - name: Docker Metadata
-        id: meta
-        uses: docker/metadata-action@v6
+      - name: Checkout reviewed source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
-          images: ghcr.io/${{ github.repository_owner }}/wright
-          tags: |
-            type=sha,format=long
-            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
-            type=raw,value=${{ github.ref_name }},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-
-      - name: Build and Load
-        uses: docker/build-push-action@v7
+          persist-credentials: false
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Resolve canonical image
+        id: image
+        shell: bash
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/wright" >> "$GITHUB_OUTPUT"
+      - name: Log in to canonical registry for release candidate
+        if: ${{ inputs.push-candidate }}
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build the candidate exactly once
+        id: build
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
           context: .
           file: docker/Dockerfile
-          load: true
-          tags: wright:${{ github.sha }}
-          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+          push: ${{ inputs.push-candidate }}
+          load: ${{ ! inputs.push-candidate }}
+          tags: ${{ steps.image.outputs.name }}:candidate-${{ github.sha }}
+          provenance: mode=max
+          sbom: true
           build-args: |
-            VERSION=${{ steps.prep.outputs.version }}
-            REVISION=${{ steps.prep.outputs.revision }}
-            CREATED=${{ steps.prep.outputs.created }}
-
-      - name: Run Trivy Vulnerability Scanner
-        uses: aquasecurity/trivy-action@v0.36.0
+            VERSION=${{ inputs.version }}
+            REVISION=${{ github.sha }}
+            CREATED=1970-01-01T00:00:00Z
+      - name: Smoke exact candidate
+        env:
+          IMAGE: ${{ inputs.push-candidate && format('{0}@{1}', steps.image.outputs.name, steps.build.outputs.digest) || format('{0}:candidate-{1}', steps.image.outputs.name, github.sha) }}
+        run: WRIGHT_DOCKER_IMAGE="$IMAGE" WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
+      - name: Scan exact candidate with blocking policy
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
         with:
-          image-ref: 'wright:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
+          image-ref: ${{ inputs.push-candidate && format('{0}@{1}', steps.image.outputs.name, steps.build.outputs.digest) || format('{0}:candidate-{1}', steps.image.outputs.name, github.sha) }}
+          format: json
+          output: trivy.json
+          exit-code: "0"
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Run Smoke Test
-        timeout-minutes: 5
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+      - name: Enforce vulnerability exceptions
+        run: python -c "from pathlib import Path; from scripts.release.vulnerability_policy import evaluate_report; evaluate_report(Path('trivy.json'), Path('docker/release-policy.json'))"
+      - name: Attest pushed candidate digest
+        if: ${{ inputs.push-candidate }}
+        uses: actions/attest@f6bf1532d7d6793fce74eac584813a8eee607999 # v4
+        with:
+          subject-name: ${{ steps.image.outputs.name }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+      - name: Record candidate evidence
+        shell: bash
         run: |
-          set -euo pipefail
-
-          IMAGE="wright:${{ github.sha }}"
-          CONTAINER="wright-ci-smoke"
-
-          docker run --rm -d --name "$CONTAINER" \
-            -p 127.0.0.1:8090:8000 \
-            -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
-            -e LLM_API_KEY="ci-test" \
-            -e LLM_API_MODEL="ci-model" \
-            -e WRIGHT_API_TOKEN="ci-smoke-token" \
-            "$IMAGE"
-
-          cleanup() {
-            EXIT_CODE=$?
-            if [ $EXIT_CODE -ne 0 ]; then
-              echo "=== Docker Logs on Failure (Exit Code $EXIT_CODE) ==="
-              docker logs "$CONTAINER" 2>&1
-            fi
-            docker rm -f "$CONTAINER" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          echo "Waiting for Wright API..."
-          for i in $(seq 1 30); do
-            if curl -sf http://127.0.0.1:8090/api/health > /dev/null 2>&1; then
-              echo "Wright API healthy"
-              break
-            fi
-            if [ "$i" -eq 30 ]; then
-              echo "Wright API did not become healthy in 60s"
-              docker logs "$CONTAINER" 2>&1 | tail -50
-              exit 1
-            fi
-            sleep 2
-          done
-
-          echo "Checking Hermes Agent proxy..."
-          echo "Waiting for Hermes gateway direct health..."
-          for i in $(seq 1 30); do
-            if docker exec "$CONTAINER" curl -sf http://127.0.0.1:8642/health > /dev/null 2>&1; then
-              echo "Hermes gateway direct health is ready"
-              break
-            fi
-            if [ "$i" -eq 30 ]; then
-              echo "Hermes gateway direct health did not become ready"
-              docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
-              docker exec "$CONTAINER" sh -lc 'tail -n 80 /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
-              exit 1
-            fi
-            sleep 2
-          done
-
-          for i in $(seq 1 45); do
-            AGENT_HEALTH=$(curl -sf http://127.0.0.1:8090/api/agent/health || echo '{"state":"disconnected"}')
-            AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
-            echo "Agent health attempt $i: $AGENT_HEALTH"
-            if [ "$AGENT_STATE" = "connected" ]; then
-              echo "Hermes Agent connected"
-              break
-            fi
-            if [ "$i" -eq 45 ]; then
-              echo "Hermes Agent not connected (state=$AGENT_STATE)"
-              docker logs "$CONTAINER" 2>&1 | tail -50
-              docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true
-              docker exec "$CONTAINER" sh -lc 'tail -n 80 /var/log/supervisor/wright-api-stdout.log /var/log/supervisor/wright-api-stderr.log /var/log/supervisor/hermes-gateway-stdout.log /var/log/supervisor/hermes-gateway-stderr.log' 2>&1 || true
-              exit 1
-            fi
-            sleep 2
-          done
-
-          echo "Testing workspace creation..."
-          WS_RESPONSE=$(curl -sf -X POST http://127.0.0.1:8090/api/workspace/create \
-            -H "Content-Type: application/json" \
-            -d '{"name":"CI Smoke Test","local_path":"/home/agent/workspace/ci-smoke-test"}')
-          WS_ID=$(echo "$WS_RESPONSE" | jq -r '.workspace_id // empty')
-          if [ -z "$WS_ID" ]; then
-            echo "Workspace creation failed: $WS_RESPONSE"
-            exit 1
-          fi
-          echo "Workspace created: $WS_ID"
-
-          echo "Checking supervisord processes..."
-          for i in $(seq 1 5); do
-            PROCS=$(docker exec "$CONTAINER" supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1)
-            echo "$PROCS"
-            if echo "$PROCS" | grep -q "wright-api.*RUNNING" && echo "$PROCS" | grep -q "hermes-gateway.*RUNNING"; then
-              echo "All processes running"
-              break
-            fi
-            if [ "$i" -eq 5 ]; then
-              echo "Processes did not enter RUNNING state"
-              exit 1
-            fi
-            sleep 2
-          done
-
-          echo "Smoke test passed."
+          mkdir -p oci-evidence
+          cp trivy.json docker/release-policy.json docker/dependency-inventory.md oci-evidence/
+          printf '%s\n' '${{ steps.build.outputs.digest }}' > oci-evidence/digest.txt
+          printf '%s\n' 'linux/amd64' > oci-evidence/platforms.txt
+      - name: Upload candidate evidence
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: oci-candidate-evidence
+          path: oci-evidence
+          if-no-files-found: error

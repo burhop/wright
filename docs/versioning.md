@@ -36,9 +36,16 @@ must stay in sync with this version number.
 Wright automates package builds and image publication:
 
 1. **Tag Push**: Pushing a tag matching `v*` (e.g. `v0.1.0` or `v0.1.0-alpha.1`) triggers the Automated Release workflow.
-2. **Build and Tag**: The workflow builds the container image and tags it with the exact version tag.
+2. **Build Once**: The workflow builds one Python candidate set and one OCI
+   candidate digest, then tests those exact subjects.
 3. **Latest Policy**: Stable tags also update `latest`. Prerelease tags containing `-alpha`, `-beta`, or `-rc` do not update `latest`.
-4. **Publishing**: The tagged container is always pushed to GHCR. It is also pushed to Docker Hub when `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured. A GitHub Release is published containing generated notes. Prerelease tags are marked as GitHub prereleases.
+4. **Publishing**: Exact Python files pass through TestPyPI before protected
+   PyPI promotion. The tested OCI digest is promoted in GHCR and optionally
+   copied byte-identically to Docker Hub. Post-publication verification and
+   versioned docs precede the GitHub Release, which is published last.
+
+A rehearsal or static workflow check is not a successful production release.
+Retries with different hashes or digests require a new patch version.
 
 Alpha releases must continue to state that Wright is alpha and bring-your-own-AI.
 They should include known manual gates, untested architectures, Docker smoke

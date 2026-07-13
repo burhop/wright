@@ -93,6 +93,9 @@ nav:
       - Community Release Readiness: release/community-release-readiness.md
       - Python Packaging: release/python-packaging.md
       - Container Publishing: release/container-publishing.md
+      - Artifact Topology: release/artifact-topology.md
+      - Release Runbook: release/release-runbook.md
+      - Release Recovery: release/release-recovery.md
   - Community:
       - Funding: community/funding.md
       - Commercial Support: community/commercial-support.md

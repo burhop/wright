@@ -8,6 +8,13 @@ We take the security of Wright seriously. If you believe you have found a securi
 
 ## Supported Versions
 
+Release candidates are blocked on fixable High/Critical image findings unless
+a reviewed exception names the finding, owner, rationale, compensating control,
+and expiry. Python dependency audit exceptions follow the same expiring model.
+Published Python files and OCI version/SHA references are immutable: security
+corrections use a new patch version, with PyPI yanking or OCI quarantine and
+mutable-alias restoration applied only under the release recovery runbook.
+
 Only the latest active development release is supported for security updates. We do not maintain security backports for older versions at this stage of development.
 
 | Version | Supported |

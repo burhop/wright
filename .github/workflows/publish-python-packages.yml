@@ -1,133 +1,120 @@
 name: publish-python-packages
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      package:
-        description: Package to publish
-        required: true
-        type: choice
-        options:
-          - wright-engineering
-      version:
-        description: Expected package version
+      artifact-name:
         required: true
         type: string
-      target:
-        description: Package index target
+      package:
         required: true
-        default: testpypi
-        type: choice
-        options:
-          - testpypi
-          - pypi
-  push:
-    tags:
-      - 'wright-engineering-v*'
+        type: string
+      version:
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
-  prepare:
+  verify-candidate:
     runs-on: ubuntu-latest
-    outputs:
-      package: ${{ steps.meta.outputs.package }}
-      package-dir: ${{ steps.meta.outputs.package_dir }}
-      target: ${{ steps.meta.outputs.target }}
+    permissions:
+      contents: read
     steps:
-      - name: Resolve package metadata
-        id: meta
+      - name: Download the build-once candidate
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: dist
+      - name: Verify package identity and recorded hashes
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            package="${{ inputs.package }}"
-            target="${{ inputs.target }}"
-          else
-            tag="${GITHUB_REF_NAME}"
-            target="pypi"
-            case "$tag" in
-              wright-engineering-v*) package="wright-engineering" ;;
-              *) echo "Unsupported package tag: $tag" >&2; exit 1 ;;
-            esac
-          fi
-          case "$package" in
-            wright-engineering) package_dir="." ;;
-            *) echo "Unsupported package: $package" >&2; exit 1 ;;
-          esac
-          echo "package=$package" >> "$GITHUB_OUTPUT"
-          echo "package_dir=$package_dir" >> "$GITHUB_OUTPUT"
-          echo "target=$target" >> "$GITHUB_OUTPUT"
-
-  build:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
+          set -euo pipefail
+          test "${{ inputs.package }}" = "wright-engineering"
+          test "$(find dist -maxdepth 1 -name '*.whl' | wc -l)" = 1
+          test "$(find dist -maxdepth 1 -name '*.tar.gz' | wc -l)" = 1
+          (cd dist && sha256sum --check SHA256SUMS)
+          python - <<'PY'
+          import pathlib, re
+          files = [p.name for p in pathlib.Path("dist").iterdir() if p.suffix == ".whl" or p.name.endswith(".tar.gz")]
+          expected = "${{ inputs.version }}".replace("-alpha.", "a").replace("-beta.", "b").replace("-rc.", "rc")
+          if not all(re.search(rf"wright[_-]engineering-{re.escape(expected)}", name) for name in files):
+              raise SystemExit(f"candidate filenames do not match version {expected}: {files}")
+          PY
+      - name: Re-upload verified immutable candidate
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
-          persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.13'
-
-      - name: Install build frontend
-        run: python -m pip install --upgrade build
-
-      - name: Validate and build package
-        run: scripts/build-python-distributions.sh --skip-clean-install --dist-root dist/python-packages "${{ needs.prepare.outputs.package-dir }}"
-
-      - name: Upload package distributions
-        uses: actions/upload-artifact@v5
-        with:
-          name: python-package-distributions
-          path: dist/python-packages/**
+          name: verified-python-candidate
+          path: dist
+          if-no-files-found: error
 
   publish-testpypi:
-    if: ${{ needs.prepare.outputs.target == 'testpypi' }}
-    needs:
-      - prepare
-      - build
+    needs: verify-candidate
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/${{ needs.prepare.outputs.package }}
+      url: https://test.pypi.org/p/${{ inputs.package }}
     permissions:
       id-token: write
     steps:
-      - name: Download package distributions
-        uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
-          name: python-package-distributions
-          path: dist/
-
-      - name: Publish distribution to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+          name: verified-python-candidate
+          path: dist
+      - run: (cd dist && sha256sum --check SHA256SUMS)
+      - name: Publish exact files to TestPyPI
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-          packages-dir: dist/
+          packages-dir: dist
+          skip-existing: true
 
+  verify-testpypi:
+    needs: publish-testpypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - name: Install and smoke TestPyPI subject
+        run: |
+          python -m pip install --index-url https://test.pypi.org/simple/ --no-deps "${{ inputs.package }}==${{ inputs.version }}"
+          wright --version
+          wright doctor
   publish-pypi:
-    if: ${{ needs.prepare.outputs.target == 'pypi' }}
-    needs:
-      - prepare
-      - build
+    needs: verify-testpypi
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/${{ needs.prepare.outputs.package }}
+      url: https://pypi.org/p/${{ inputs.package }}
     permissions:
       id-token: write
     steps:
-      - name: Download package distributions
-        uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
-          name: python-package-distributions
-          path: dist/
+          name: verified-python-candidate
+          path: dist
+      - run: (cd dist && sha256sum --check SHA256SUMS)
+      - name: Publish the same files to PyPI
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # release/v1
+        with:
+          packages-dir: dist
+          skip-existing: true
 
-      - name: Publish distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+  verify-pypi:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          packages-dir: dist/
+          python-version: "3.13"
+      - name: Install and smoke PyPI subject
+        run: |
+          python -m pip install --no-deps "${{ inputs.package }}==${{ inputs.version }}"
+          wright --version
+          wright doctor

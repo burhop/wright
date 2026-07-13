@@ -108,7 +108,7 @@ print(f"metadata ok: {name} {project.get('version')}")
 PY
 }
 
-built_wheels=()
+built_artifacts=()
 built_import_modules=()
 for package in "${PACKAGES[@]}"; do
   package_dir="$package"
@@ -159,7 +159,33 @@ PY
     echo "Expected both wheel and source distribution in $out_dir" >&2
     exit 1
   fi
-  built_wheels+=("$wheel")
+  built_artifacts+=("$wheel" "$sdist")
+
+  "$python_bin" - "$ROOT_DIR" "$wheel" "$sdist" <<'PY'
+from __future__ import annotations
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+sys.path.insert(0, str(root))
+from scripts.release.python_artifacts import artifact_evidence
+
+artifacts = []
+for value in sys.argv[2:]:
+    path = pathlib.Path(value)
+    evidence, manifest = artifact_evidence(path)
+    artifacts.append(evidence)
+    path.with_name(path.name + ".contents.txt").write_text(
+        manifest, encoding="utf-8", newline="\n"
+    )
+checksum_path = pathlib.Path(sys.argv[2]).parent / "SHA256SUMS"
+checksum_path.write_text(
+    "".join(f"{item.sha256}  {item.filename}\n" for item in artifacts),
+    encoding="utf-8",
+    newline="\n",
+)
+print("artifact content and hashes ok")
+PY
 done
 
 if [ "$DRY_RUN" = "1" ]; then
@@ -174,23 +200,29 @@ fi
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/wright-package-install.XXXXXX")"
 trap 'rm -rf "$tmp_dir"' EXIT
-"$python_bin" -m venv "$tmp_dir/venv"
-if [ -x "$tmp_dir/venv/bin/python" ]; then
-  venv_python="$tmp_dir/venv/bin/python"
-elif [ -x "$tmp_dir/venv/Scripts/python.exe" ]; then
-  venv_python="$tmp_dir/venv/Scripts/python.exe"
-else
-  echo "Unable to locate Python in clean-install virtual environment." >&2
-  exit 1
-fi
-"$venv_python" -m pip install --upgrade pip >/dev/null
-"$venv_python" -m pip install "${built_wheels[@]}"
-"$venv_python" - "${built_import_modules[@]}" <<'PY'
+artifact_index=0
+for artifact in "${built_artifacts[@]}"; do
+  artifact_index=$((artifact_index + 1))
+  venv_dir="$tmp_dir/venv-$artifact_index"
+  "$python_bin" -m venv "$venv_dir"
+  if [ -x "$venv_dir/bin/python" ]; then
+    venv_python="$venv_dir/bin/python"
+  elif [ -x "$venv_dir/Scripts/python.exe" ]; then
+    venv_python="$venv_dir/Scripts/python.exe"
+  else
+    echo "Unable to locate Python in clean-install virtual environment." >&2
+    exit 1
+  fi
+  "$venv_python" -m pip install --upgrade pip >/dev/null
+  "$venv_python" -m pip install "$artifact"
+  module_index=$(((artifact_index - 1) / 2))
+  "$venv_python" - "${built_import_modules[$module_index]}" <<'PY'
 import importlib
 import sys
 for module_name in sys.argv[1:]:
     importlib.import_module(module_name)
 print("clean install imports ok")
 PY
+done
 
 echo "Built and validated distributions in $DIST_ROOT."

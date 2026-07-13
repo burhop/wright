@@ -126,4 +126,83 @@ echo -e "\n--- Scenario E: File Restore from Backup ---"
 echo -e "Validation command: scripts/backup-volumes.sh && scripts/restore-volume.sh wright_logs <timestamp>"
 echo -e "This was verified successfully during Phase 8 testing."
 
+# 7. Start the exact candidate and prove both the API and Hermes gateway are
+# healthy. This must consume IMAGE_TAG; it must never trigger a rebuild.
+echo -e "\n${YELLOW}Step 7: Testing API and Hermes gateway readiness...${NC}"
+SMOKE_CONTAINER="wright-exact-candidate-smoke-$$"
+docker run --rm -d --name "$SMOKE_CONTAINER" \
+  -p 127.0.0.1:8090:8000 \
+  -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
+  -e LLM_API_KEY="ci-test" \
+  -e LLM_API_MODEL="ci-model" \
+  -e WRIGHT_API_TOKEN="ci-smoke-token" \
+  "$IMAGE_TAG" >/dev/null
+
+cleanup_smoke() {
+  docker rm -f "$SMOKE_CONTAINER" >/dev/null 2>&1 || true
+}
+trap cleanup_smoke EXIT
+
+for attempt in $(seq 1 45); do
+  if curl --fail --silent --max-time 2 http://127.0.0.1:8090/api/health >/dev/null 2>&1; then
+    break
+  fi
+  if [ "$attempt" -eq 45 ]; then
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Wright API did not become ready.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 30); do
+  PROCESS_STATUS=$(docker exec "$SMOKE_CONTAINER" \
+    supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true)
+  if echo "$PROCESS_STATUS" | grep -q "wright-api.*RUNNING" && \
+     echo "$PROCESS_STATUS" | grep -q "hermes-gateway.*RUNNING"; then
+    echo -e "${GREEN}âœ“ API and Hermes gateway are running in the exact candidate.${NC}"
+    break
+  fi
+  if [ "$attempt" -eq 30 ]; then
+    echo "$PROCESS_STATUS" >&2
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Required supervised services did not become ready.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 45); do
+  AGENT_HEALTH=$(curl --fail --silent --max-time 2 \
+    http://127.0.0.1:8090/api/agent/health 2>/dev/null || echo '{"state":"disconnected"}')
+  AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
+  echo "Agent health attempt $attempt: $AGENT_HEALTH"
+  if [ "$AGENT_STATE" = "connected" ]; then
+    break
+  fi
+  if [ "$attempt" -eq 45 ]; then
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Wright agent did not connect to the Hermes gateway.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 30); do
+  if docker exec "$SMOKE_CONTAINER" \
+    curl --fail --silent --max-time 2 http://127.0.0.1:8642/health >/dev/null 2>&1; then
+    echo -e "${GREEN}âœ“ Hermes gateway direct health is ready.${NC}"
+    break
+  fi
+  if [ "$attempt" -eq 30 ]; then
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Hermes gateway direct health did not become ready.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+cleanup_smoke
+trap - EXIT
+
 echo -e "\n${GREEN}=== ALL SMOKE AND RECOVERY TESTS PASSED ===${NC}"

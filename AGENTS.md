@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/046-gateway-service-and-mcp-2025-11-25/plan.md
+at specs/047-python-oci-release-train/plan.md
 <!-- SPECKIT END -->
 
 

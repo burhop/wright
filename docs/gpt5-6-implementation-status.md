@@ -1,5 +1,23 @@
 # GPT-5.6 Plan Implementation Status
 
+## Feature 047 implementation cycle
+
+- **Baseline**: `b6c6703d05c9333762a073664ae81fd07215ce7d`; local and `origin/dev` matched before branching.
+- **Branch**: `codex/047-python-oci-release-train`.
+- **Roadmap**: R3.1-R3.7. Features 048-051 remain out of scope.
+- **State**: review-ready — implementation, requirement audit, and authoritative dev merge gate complete; exact OCI runtime validation remains delegated to CI because the local Linux engine is unavailable.
+- **Artifact topology**: `wright-engineering` is the sole public Python distribution; all internal packages, including the not-yet-thinned Hermes plugin, are `Private :: Do Not Upload`. Docker remains the full appliance; GHCR is canonical and Docker Hub is an optional byte-identical manifest mirror.
+- **Python evidence**: final gate wheel is 11,066 bytes and sdist is 12,317 bytes. The sdist contains 10 intentional packaging/source files (public source, README, license, metadata, and Hatch's VCS manifest); no apps, internal packages, specs, workflows, tests, screenshots, sandbox assets, caches, outputs, or secrets. Wheel and sdist independently installed and ran from `C:\tmp` on Python 3.11.14, 3.12.11, 3.13.5, and 3.14.2 with no source-tree/private-package access.
+- **Release evidence**: two no-publication rehearsals produced identical SHA-256 `ec25cf8559ce498abb3f984ed6f5bc84f5d2a05978412cd6483959f0e8dd5f5d`; every stage recorded `external_mutation=false`.
+- **Workflow evidence**: checksum-verified actionlint 1.7.10 passed every workflow. All third-party Actions are pinned to full upstream commit SHAs. Python publication downloads one recorded candidate through TestPyPI verification and protected PyPI; OCI builds one amd64 candidate, smokes/scans/attests its digest, promotes without rebuilding, optionally mirrors the same manifest, verifies, deploys docs, and publishes GitHub Release last.
+- **Supply-chain evidence**: root Docker bases/tools use resolved digests/versions/checksums; Node 24 LTS replaces Node 26 Current; micromamba 2.5.0 archive SHA-256 was independently resolved as `cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6`; no `apt-get upgrade` remains. Dependency review, CodeQL, Python/npm audits, private plugin lint/package tests, and an 85% ratcheted release-code coverage gate are configured.
+- **Focused validation**: 50 release/legacy contract tests passed with one platform skip before the dependency-policy addition; current Feature 047 suite is 34 passed. Focused mypy passes 14 source files with zero findings. Hermes lint passed and 82 plugin tests passed in 132.53 seconds. npm audit reported zero vulnerabilities. pip-audit reported only `PYSEC-2026-1325` in `ecdsa` with no fixed version; a documented expiring exception ends 2026-09-01 and is enforced by code.
+- **Container host limitation**: `docker buildx imagetools inspect` resolved the pinned upstream manifests, but `docker info` cannot connect because `//./pipe/dockerDesktopLinuxEngine` is absent. The exact local Docker build/smoke/scan therefore requires CI or a running Linux engine; Dockerfile policy, checksum, shell, workflow, and smoke contracts pass locally. This is a host limitation, not a claimed image pass.
+- **Migration/rollback**: existing 0.1.0 remains immutable. A corrected public artifact uses a later patch only after protected release approval. Identical retries resume; differing hashes/digests require a patch. PyPI corrections may be yanked under documented criteria. OCI immutable version/SHA refs never move; quarantine bad digests and restore mutable aliases only to previously verified digests.
+- **External prerequisites**: repository administrators must configure/protect `testpypi`, `pypi`, `release`, and `dockerhub` environments and Trusted Publishers. Feature 047 does not claim these external settings exist and performs no publication.
+- **Final merge gate**: `scripts/check-dev-merge.sh` reached its own terminal `Dev merge gate passed.` line. Results include 496 Python passed/12 skipped, 82 Hermes passed, 24 frontend files/99 tests passed, production frontend build, strict MkDocs, focused 87.21% release-code coverage, focused mypy with zero findings, clean wheel/sdist builds and installs, and 38 live Playwright passed. The log contains expected mocked/browser fallback diagnostics but no failed gate.
+- **Exact next action**: commit/push/merge Feature 047 under standing authorization while preserving `docs/gpt5-6plan.md`; then start Feature 048 in a new cycle.
+
 ## Feature 046 implementation cycle
 
 - **Baseline**: `89466673430023a48795046c2aa41b2ebb77745c`; local and `origin/dev` matched before branching.

@@ -8,6 +8,7 @@ license = "MIT"
 authors = [{ name = "Wright Project", email = "wright@example.com" }]
 keywords = ["wright", "engineering", "local-first", "telemetry"]
 classifiers = [
+    "Private :: Do Not Upload",
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",

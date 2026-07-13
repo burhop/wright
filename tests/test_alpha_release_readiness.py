@@ -145,10 +145,12 @@ def test_active_ui_tests_do_not_use_developer_home_paths() -> None:
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")
+    smoke = read_text("scripts/docker-smoke-test.sh")
 
     assert "npm run test --workspace=apps/web" in frontend
     assert "npm run build --workspace=apps/web" in frontend
-    assert "hermes-gateway.*RUNNING" in docker
+    assert "WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh" in docker
+    assert "hermes-gateway.*RUNNING" in smoke
     assert "hermes-webui.*RUNNING" not in docker
 
 

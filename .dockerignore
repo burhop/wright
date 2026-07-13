@@ -16,6 +16,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 test-results/
+dist/
+release-evidence*.json
+*.spdx.json
+*.sarif
 playwright-report/
 blob-report/
 playwright/.cache/

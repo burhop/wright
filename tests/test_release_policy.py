@@ -12,31 +12,29 @@ def test_release_workflow_marks_alpha_beta_rc_as_prereleases() -> None:
     workflow = read_text(".github/workflows/release.yml")
 
     assert "packages: write" in workflow
-    assert "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}" in workflow
-    assert "DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}" in workflow
-    assert "Classify Release Tag" in workflow
-    assert "is_prerelease=$IS_PRERELEASE" in workflow
-    assert "has_dockerhub=false" in workflow
+    assert "environment: release" in workflow
+    assert "environment: dockerhub" in workflow
+    assert "rehearsal=$REHEARSAL" in workflow
     assert "-(alpha|beta|rc)" in workflow
-    assert "prerelease: ${{ steps.tag.outputs.is_prerelease == 'true' }}" in workflow
+    assert (
+        "prerelease: ${{ needs.preflight-and-python-build.outputs.prerelease == 'true' }}"
+        in workflow
+    )
+    assert "Publish GitHub Release only after every verification" in workflow
 
 
 def test_release_workflow_does_not_push_latest_for_prereleases() -> None:
     workflow = read_text(".github/workflows/release.yml")
 
-    assert "if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}" in workflow
-    assert "Log in to GHCR" in workflow
-    assert "registry: ghcr.io" in workflow
-    assert "password: ${{ secrets.GITHUB_TOKEN }}" in workflow
-    assert "docker_tags<<EOF" in workflow
-    assert "wright:${TAG_NAME}" in workflow
-    assert "ghcr.io/${GHCR_OWNER_LC}/wright:${TAG_NAME}" in workflow
-    assert 'if [[ "$HAS_DOCKERHUB" == "true" ]]; then' in workflow
-    assert 'if [[ "$IS_PRERELEASE" != "true" ]]; then' in workflow
-    assert "wright:latest" in workflow
-    assert "ghcr.io/${GHCR_OWNER_LC}/wright:latest" in workflow
-    assert "tags: ${{ steps.tag.outputs.docker_tags }}" in workflow
-    assert "if: ${{ steps.tag.outputs.has_dockerhub == 'true' }}" in workflow
+    assert "Promote tested digest without rebuilding" in workflow
+    assert 'if [[ "$PRERELEASE" != true ]]; then' in workflow
+    assert (
+        'docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE@$DIGEST"'
+        in workflow
+    )
+    assert "Copy and verify the same manifest" in workflow
+    assert 'docker buildx imagetools create --tag "$DEST" "$SOURCE"' in workflow
+    assert "docker/build-push-action@" not in workflow
 
 
 def test_versioning_documents_alpha_tag_and_latest_policy() -> None:
@@ -48,9 +46,9 @@ def test_versioning_documents_alpha_tag_and_latest_policy() -> None:
         "v0.1.0-beta.1",
         "v0.1.0-rc.1",
         "Prerelease tags containing `-alpha`, `-beta`, or `-rc` do not update `latest`.",
-        "marked as GitHub prereleases",
-        "always pushed to GHCR",
-        "pushed to Docker Hub when `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured",
+        "GitHub Release, which is published last",
+        "tested OCI digest is promoted in GHCR",
+        "optionally copied byte-identically to Docker Hub",
         "ghcr.io/burhop/wright:<tag>",
         "burhop/wright:<tag>` when Docker Hub credentials are configured",
         "bring-your-own-AI",
@@ -58,6 +56,7 @@ def test_versioning_documents_alpha_tag_and_latest_policy() -> None:
         "SBOM/provenance status",
         "skipped MCP validation",
         "docs/alpha-release-notes-template.md",
+        "rehearsal or static workflow check is not a successful production release",
     ]:
         assert expected in versioning_squashed
 

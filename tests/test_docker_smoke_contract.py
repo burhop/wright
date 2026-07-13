@@ -32,11 +32,13 @@ def test_docker_smoke_script_docs_include_existing_image_mode() -> None:
 
 def test_docker_smoke_script_keeps_gateway_process_name() -> None:
     workflow = read_text(".github/workflows/docker-build.yml")
+    smoke = read_text("scripts/docker-smoke-test.sh")
 
-    assert "hermes-gateway.*RUNNING" in workflow
+    assert "WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh" in workflow
+    assert "hermes-gateway" in smoke
     assert "hermes-webui.*RUNNING" not in workflow
-    assert "Hermes gateway direct health is ready" in workflow
-    assert "Agent health attempt" in workflow
+    assert "Hermes gateway direct health is ready" in smoke
+    assert "Agent health attempt" in smoke
 
 
 def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
@@ -79,6 +81,10 @@ def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> N
     assert "https://github.com/burhop/wright" in common
     assert "tree/${PLUGIN_REF}/${PLUGIN_SUBDIR}" in common
     assert "--ref main" in readme
-    assert "hermes plugins install" in read_text("scripts/test-hermes-plugin-install.sh")
-    assert "hermes plugins remove" in read_text("scripts/test-hermes-plugin-uninstall.sh")
+    assert "hermes plugins install" in read_text(
+        "scripts/test-hermes-plugin-install.sh"
+    )
+    assert "hermes plugins remove" in read_text(
+        "scripts/test-hermes-plugin-uninstall.sh"
+    )
     assert "hermes plugins update" in read_text("scripts/test-hermes-plugin-update.sh")

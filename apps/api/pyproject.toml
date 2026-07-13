@@ -3,6 +3,7 @@ name = "wright-api"
 version = "0.1.0"
 description = "FastAPI application - zero business logic, routing only"
 requires-python = ">=3.11"
+classifiers = ["Private :: Do Not Upload"]
 
 dependencies = [
     "fastapi>=0.115",

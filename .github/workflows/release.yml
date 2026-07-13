@@ -1,117 +1,291 @@
-name: release
+name: unified release train
 
 on:
   push:
     tags:
-      - 'v*'
+      - v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Version tag to rehearse (must match root metadata)
+        required: true
+        default: v0.1.0
+        type: string
+
+concurrency:
+  group: release-${{ github.ref_name || inputs.tag }}
+  cancel-in-progress: false
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 jobs:
-  release:
+  preflight-and-python-build:
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      rehearsal: ${{ steps.version.outputs.rehearsal }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Prepare OCI Build Args
-        id: prep
-        run: |
-          VERSION="${{ github.ref_name }}"
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VERSION="${VERSION#v}"
-          fi
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "revision=${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-
-      - name: Log in to Docker Hub
-        if: ${{ env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != '' }}
-        uses: docker/login-action@v3
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
-          username: ${{ env.DOCKERHUB_USERNAME }}
-          password: ${{ env.DOCKERHUB_TOKEN }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - name: Resolve and validate release identity
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          REHEARSAL=false
+          if [[ "${GITHUB_EVENT_NAME}" == workflow_dispatch ]]; then
+            TAG="${{ inputs.tag }}"
+            REHEARSAL=true
+          fi
+          VERSION="${TAG#v}"
+          uv run python scripts/release-preflight.py --dry-run --tag "$TAG" --source-commit "$GITHUB_SHA" --output release-evidence.json
+          {
+            echo "version=$VERSION"
+            echo "tag=$TAG"
+            echo "rehearsal=$REHEARSAL"
+            [[ "$VERSION" =~ -(alpha|beta|rc)\. ]] && echo "prerelease=true" || echo "prerelease=false"
+          } >> "$GITHUB_OUTPUT"
+      - name: Build and validate wheel and sdist once
+        run: |
+          python -m pip install build twine check-wheel-contents
+          scripts/build-python-distributions.sh --dist-root dist/build-once .
+          mkdir -p dist/candidate
+          find dist/build-once -type f \( -name '*.whl' -o -name '*.tar.gz' \) -exec cp {} dist/candidate/ \;
+          python -m twine check --strict dist/candidate/*
+          check-wheel-contents dist/candidate/*.whl
+          (cd dist/candidate && sha256sum * > SHA256SUMS)
+      - name: Upload immutable Python candidate
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: python-candidate
+          path: dist/candidate
+          if-no-files-found: error
 
+  python-install-matrix:
+    needs: preflight-and-python-build
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: python-candidate
+          path: dist
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Independently install and smoke wheel
+        run: |
+          (cd dist && sha256sum --check SHA256SUMS)
+          python -m venv wheel-venv
+          wheel-venv/bin/pip install --no-deps dist/*.whl
+          (cd /tmp && "$GITHUB_WORKSPACE/wheel-venv/bin/wright" --version && "$GITHUB_WORKSPACE/wheel-venv/bin/wright" doctor)
+      - name: Independently install and smoke sdist
+        run: |
+          python -m venv sdist-venv
+          sdist-venv/bin/pip install --no-deps dist/*.tar.gz
+          (cd /tmp && "$GITHUB_WORKSPACE/sdist-venv/bin/wright" --version && "$GITHUB_WORKSPACE/sdist-venv/bin/wright" doctor)
+
+  oci-candidate:
+    needs: preflight-and-python-build
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      version: ${{ needs.preflight-and-python-build.outputs.version }}
+      push-candidate: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    secrets: inherit
+
+  publish-python:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, python-install-matrix, oci-candidate]
+    uses: ./.github/workflows/publish-python-packages.yml
+    with:
+      artifact-name: python-candidate
+      package: wright-engineering
+      version: ${{ needs.preflight-and-python-build.outputs.version }}
+    permissions:
+      contents: read
+      id-token: write
+    secrets: inherit
+
+  promote-oci:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, oci-candidate, publish-python]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Classify Release Tag
-        id: tag
+      - name: Promote tested digest without rebuilding
         env:
-          GHCR_OWNER: ${{ github.repository_owner }}
+          IMAGE: ${{ needs.oci-candidate.outputs.image }}
+          DIGEST: ${{ needs.oci-candidate.outputs.digest }}
+          TAG: ${{ needs.preflight-and-python-build.outputs.tag }}
+          PRERELEASE: ${{ needs.preflight-and-python-build.outputs.prerelease }}
         run: |
-          TAG_NAME="${GITHUB_REF#refs/tags/}"
-          IS_PRERELEASE=false
-          GHCR_OWNER_LC="$(echo "$GHCR_OWNER" | tr '[:upper:]' '[:lower:]')"
-          HAS_DOCKERHUB=false
-
-          if [[ "$TAG_NAME" =~ -(alpha|beta|rc)(\.|[0-9]|$) ]]; then
-            IS_PRERELEASE=true
+          docker buildx imagetools create --tag "$IMAGE:$TAG" "$IMAGE@$DIGEST"
+          docker buildx imagetools inspect "$IMAGE:$TAG" | grep -F "$DIGEST"
+          if [[ "$PRERELEASE" != true ]]; then
+            docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE@$DIGEST"
           fi
 
-          {
-            echo "tag_name=$TAG_NAME"
-            echo "is_prerelease=$IS_PRERELEASE"
-            if [[ -n "${DOCKERHUB_USERNAME:-}" && -n "${DOCKERHUB_TOKEN:-}" ]]; then
-              echo "has_dockerhub=true"
-              HAS_DOCKERHUB=true
-            else
-              echo "has_dockerhub=false"
-            fi
-            echo "docker_tags<<EOF"
-            echo "ghcr.io/${GHCR_OWNER_LC}/wright:${TAG_NAME}"
-            if [[ "$HAS_DOCKERHUB" == "true" ]]; then
-              echo "${DOCKERHUB_USERNAME}/wright:${TAG_NAME}"
-            fi
-            if [[ "$IS_PRERELEASE" != "true" ]]; then
-              echo "ghcr.io/${GHCR_OWNER_LC}/wright:latest"
-              if [[ "$HAS_DOCKERHUB" == "true" ]]; then
-                echo "${DOCKERHUB_USERNAME}/wright:latest"
-              fi
-            fi
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: docker/Dockerfile
-          push: true
-          # platforms: linux/amd64,linux/arm64 # Uncomment to enable multi-architecture builds when arm64 solvers are fully supported
-          tags: ${{ steps.tag.outputs.docker_tags }}
-          build-args: |
-            VERSION=${{ steps.prep.outputs.version }}
-            REVISION=${{ steps.prep.outputs.revision }}
-            CREATED=${{ steps.prep.outputs.created }}
-
-      - name: Sync Docker Hub Description
-        if: ${{ steps.tag.outputs.has_dockerhub == 'true' }}
-        uses: peter-evans/dockerhub-description@v4
+  mirror-dockerhub:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, oci-candidate, promote-oci]
+    runs-on: ubuntu-latest
+    environment: dockerhub
+    permissions:
+      contents: read
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Classify optional mirror
+        id: mirror
+        shell: bash
+        run: |
+          if [[ -n "$DOCKERHUB_USERNAME" && -n "$DOCKERHUB_TOKEN" ]]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Docker Hub mirror is not configured; canonical GHCR remains verified."
+          fi
+      - if: ${{ steps.mirror.outputs.configured == 'true' }}
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
-          repository: ${{ env.DOCKERHUB_USERNAME }}/wright
-          readme-filepath: docker/DOCKER_HUB_README.md
+      - name: Copy and verify the same manifest
+        if: ${{ steps.mirror.outputs.configured == 'true' }}
+        env:
+          SOURCE: ${{ needs.oci-candidate.outputs.image }}@${{ needs.oci-candidate.outputs.digest }}
+          DEST: ${{ env.DOCKERHUB_USERNAME }}/wright:${{ needs.preflight-and-python-build.outputs.tag }}
+          DIGEST: ${{ needs.oci-candidate.outputs.digest }}
+        run: |
+          docker buildx imagetools create --tag "$DEST" "$SOURCE"
+          docker buildx imagetools inspect "$DEST" | grep -F "$DIGEST"
 
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v3
+  rehearsal:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal == 'true' }}
+    needs: [preflight-and-python-build, python-install-matrix, oci-candidate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
-          tag_name: ${{ steps.tag.outputs.tag_name }}
-          name: Release ${{ steps.tag.outputs.tag_name }}
+          persist-credentials: false
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: python-candidate
+          path: dist
+      - name: Prove terminal dry-run with no public mutation
+        run: uv run python scripts/release-rehearsal.py --dry-run --tag "${{ needs.preflight-and-python-build.outputs.tag }}" --python-dist dist --output rehearsal
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: release-rehearsal-evidence
+          path: rehearsal
+
+  post-publish-verification:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, oci-candidate, publish-python, promote-oci, mirror-dockerhub]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: python-candidate
+          path: dist
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Log in to GHCR for verification
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify canonical immutable digest and package
+        run: |
+          docker buildx imagetools inspect "${{ needs.oci-candidate.outputs.image }}@${{ needs.oci-candidate.outputs.digest }}"
+          python -m pip install --no-deps "wright-engineering==${{ needs.preflight-and-python-build.outputs.version }}"
+          wright --version
+      - name: Assemble exact-subject release evidence
+        run: |
+          python scripts/assemble-release-evidence.py \
+            --mode release \
+            --tag "${{ needs.preflight-and-python-build.outputs.tag }}" \
+            --source-commit "${{ github.sha }}" \
+            --python-dist dist \
+            --oci-repository "${{ needs.oci-candidate.outputs.image }}" \
+            --oci-digest "${{ needs.oci-candidate.outputs.digest }}" \
+            --approval testpypi \
+            --approval pypi \
+            --approval release \
+            --output final-evidence/release-evidence.json
+          python scripts/verify-release-evidence.py final-evidence/release-evidence.json
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: final-release-evidence
+          path: final-evidence
+          if-no-files-found: error
+
+  deploy-versioned-docs:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, post-publish-verification]
+    uses: ./.github/workflows/docs-deploy.yml
+    with:
+      deploy: true
+    permissions:
+      contents: write
+
+  publish-github-release-last:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, post-publish-verification, deploy-versioned-docs]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: final-release-evidence
+          path: final-evidence
+      - name: Publish GitHub Release only after every verification
+        uses: softprops/action-gh-release@7c4723f7a335432393329f8f1c564994ce50185d # v3
+        with:
+          tag_name: ${{ needs.preflight-and-python-build.outputs.tag }}
           draft: false
-          prerelease: ${{ steps.tag.outputs.is_prerelease == 'true' }}
+          prerelease: ${{ needs.preflight-and-python-build.outputs.prerelease == 'true' }}
           generate_release_notes: true
+          files: final-evidence/release-evidence.json
