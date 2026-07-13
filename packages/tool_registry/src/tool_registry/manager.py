@@ -12,6 +12,8 @@ from .runners.stdio import StdioRunner
 from .runners.sse import SseRunner
 from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials
+from .lifecycle import McpLifecycleCoordinator
+from .lifecycle_adapters import DatabaseLifecycleAdapter
 
 logger = get_logger(__name__)
 
@@ -22,6 +24,12 @@ class McpEngine:
     def __init__(self, db_path: str):
         self.db_path = db_path
         self._active_runners: Dict[str, BaseRunner] = {}
+        self._lifecycle_adapter = DatabaseLifecycleAdapter(db_path)
+        self.lifecycle = McpLifecycleCoordinator(
+            self._lifecycle_adapter.build_runner,
+            publish_tools=self._lifecycle_adapter.publish_tools,
+            publish_status=self._lifecycle_adapter.publish_status,
+        )
         self._webmcp_connections: Set[Any] = set()
         self._pending_webmcp_calls: Dict[str, asyncio.Future] = {}
 
@@ -56,6 +64,38 @@ class McpEngine:
             logger.error("webmcp_message_process_failed", error=redact_text(e))
 
     async def start_server(
+        self,
+        server_id: str,
+        workspace_dir: Optional[str] = None,
+        *,
+        approval_context: ApprovalContext | None = None,
+    ) -> McpServer:
+        server = get_server(self.db_path, server_id)
+        if not server:
+            raise ValueError(f"Server with ID {server_id} does not exist.")
+        if server.type == "webmcp":
+            return await self._start_server_legacy(
+                server_id,
+                workspace_dir,
+                approval_context=approval_context,
+            )
+        try:
+            await self.lifecycle.start(
+                server_id,
+                workspace_path=workspace_dir,
+                approval_context=approval_context,
+            )
+            runner = self.lifecycle.runner_for(server_id)
+            if runner is not None:
+                self._active_runners[server_id] = runner
+            return get_server(self.db_path, server_id)
+        except Exception:
+            updated = get_server(self.db_path, server_id)
+            if updated is not None and updated.status == "error":
+                return updated
+            raise
+
+    async def _start_server_legacy(
         self,
         server_id: str,
         workspace_dir: Optional[str] = None,
@@ -309,6 +349,16 @@ class McpEngine:
             return updated
 
     async def stop_server(self, server_id: str, update_db: bool = True) -> McpServer:
+        server = get_server(self.db_path, server_id)
+        if server and server.type == "webmcp":
+            return await self._stop_server_legacy(server_id, update_db=update_db)
+        await self.lifecycle.stop(server_id)
+        self._active_runners.pop(server_id, None)
+        return get_server(self.db_path, server_id)
+
+    async def _stop_server_legacy(
+        self, server_id: str, update_db: bool = True
+    ) -> McpServer:
         """Stop an active MCP server runner and update DB state."""
         runner = self._active_runners.pop(server_id, None)
         if runner:
@@ -415,11 +465,11 @@ class McpEngine:
             finally:
                 self._pending_webmcp_calls.pop(call_id, None)
 
-        runner = self._active_runners.get(server_id)
-        if not runner or not runner.is_running():
-            raise RuntimeError(f"MCP server '{server.name}' is not currently active.")
-
-        return await runner.call_tool(tool_name, arguments)
+        return await self.lifecycle.call_tool(
+            server_id,
+            tool_name,
+            arguments,
+        )
 
     async def sync_active_servers(self) -> None:
         """Sync and restart all servers configured as active in the database."""
@@ -443,11 +493,5 @@ class McpEngine:
 
     async def shutdown(self) -> None:
         """Shutdown all active runners on cleanup."""
-        active_ids = list(self._active_runners.keys())
-        for sid in active_ids:
-            try:
-                await self.stop_server(sid, update_db=False)
-            except Exception as e:
-                logger.error(
-                    "mcp_shutdown_stop_failed", server_id=sid, error=redact_text(e)
-                )
+        await self.lifecycle.shutdown()
+        self._active_runners.clear()

@@ -67,6 +67,7 @@ nav:
       - Python Package Boundaries: architecture/package-boundaries.md
       - Agent Adapters: architecture/agent-adapters.md
       - Tool Registry: architecture/tool-registry.md
+      - Gateway Service: architecture/gateway-service.md
       - Data Storage: architecture/data-storage.md
       - Observability: architecture/observability.md
   - Security:
@@ -75,6 +76,9 @@ nav:
       - Container Hardening: security/container-hardening.md
   - Operations:
       - Database Migration and Recovery: operations/database-recovery.md
+      - MCP Gateway: operations/mcp-gateway.md
+  - Integrations:
+      - Codex MCP Compatibility: integrations/codex-mcp-compatibility.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
       - Spec-Kit Workflow: contributing/spec-kit.md

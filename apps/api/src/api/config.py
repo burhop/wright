@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 from urllib.parse import urlparse
 from agent_adapters import resolve_agent_api_settings
 
@@ -91,6 +92,50 @@ DATABASE_PATH = os.getenv(
         "state.db",
     ),
 )
+
+
+@dataclass(frozen=True)
+class McpTransportSettings:
+    maximum_body_bytes: int = 1_048_576
+    maximum_concurrency: int = 16
+    requests_per_minute: int = 120
+    operation_timeout_seconds: float = 30.0
+    maximum_timeout_seconds: float = 120.0
+    session_idle_timeout_seconds: float = 1800.0
+
+    @classmethod
+    def from_env(cls) -> "McpTransportSettings":
+        settings = cls(
+            maximum_body_bytes=int(os.getenv("WRIGHT_MCP_MAX_BODY_BYTES", "1048576")),
+            maximum_concurrency=int(os.getenv("WRIGHT_MCP_MAX_CONCURRENCY", "16")),
+            requests_per_minute=int(os.getenv("WRIGHT_MCP_REQUESTS_PER_MINUTE", "120")),
+            operation_timeout_seconds=float(os.getenv("WRIGHT_MCP_TIMEOUT", "30")),
+            maximum_timeout_seconds=float(os.getenv("WRIGHT_MCP_MAX_TIMEOUT", "120")),
+            session_idle_timeout_seconds=float(
+                os.getenv("WRIGHT_MCP_SESSION_IDLE_TIMEOUT", "1800")
+            ),
+        )
+        if (
+            min(
+                settings.maximum_body_bytes,
+                settings.maximum_concurrency,
+                settings.requests_per_minute,
+            )
+            <= 0
+        ):
+            raise RuntimeError(
+                "MCP body, concurrency, and rate limits must be positive"
+            )
+        if (
+            not 0
+            < settings.operation_timeout_seconds
+            <= settings.maximum_timeout_seconds
+        ):
+            raise RuntimeError("MCP operation timeout must not exceed its maximum")
+        if settings.session_idle_timeout_seconds <= 0:
+            raise RuntimeError("MCP session idle timeout must be positive")
+        return settings
+
 
 # Dynamically resolve and set default OPENSCAD_PATH for headless execution
 API_DIR = os.path.dirname(os.path.abspath(__file__))

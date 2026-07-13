@@ -195,6 +195,34 @@ MIGRATIONS: tuple[Migration, ...] = (
             )"""),
         ),
     ),
+    Migration(
+        4,
+        "gateway_audit",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS gateway_audit_events (
+                event_id TEXT PRIMARY KEY,
+                occurred_at INTEGER NOT NULL,
+                correlation_id TEXT NOT NULL,
+                request_id TEXT,
+                session_id TEXT NOT NULL,
+                principal_id TEXT NOT NULL,
+                workspace_id TEXT NOT NULL,
+                operation TEXT NOT NULL,
+                server_id TEXT,
+                target_name TEXT,
+                allowed INTEGER NOT NULL CHECK(allowed IN (0, 1)),
+                reason_code TEXT NOT NULL,
+                outcome TEXT NOT NULL,
+                duration_ms INTEGER NOT NULL,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id) ON DELETE CASCADE
+            )"""),
+            sql(
+                "CREATE INDEX IF NOT EXISTS idx_gateway_audit_session "
+                "ON gateway_audit_events(session_id, occurred_at)"
+            ),
+        ),
+    ),
 )
 
 

@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from agent_adapters import create_agent_engine
 from api.config import (
     DATABASE_PATH,
+    McpTransportSettings,
     get_llm_health_url,
 )
 from api.routers.agent import router as agent_router
@@ -25,7 +26,12 @@ from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.middleware.tracing import TracingMiddleware
-from api.composition import close_application_services, workspace_service
+from api.composition import (
+    build_api_gateway_service,
+    close_application_services,
+    workspace_service,
+)
+from api.mcp_transport import AuthenticatedMcpTransport, McpTransportMount
 from api.security import (
     ControlPlaneSecurityMiddleware,
     SESSION_COOKIE,
@@ -76,13 +82,24 @@ async def lifespan(app: FastAPI):
     if not hasattr(app.state, "agent_sync_manager"):
         app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
+    await app.state.mcp_engine.sync_active_servers()
+    mcp_settings = McpTransportSettings.from_env()
+    app.state.gateway_service = build_api_gateway_service(
+        DATABASE_PATH, app.state.mcp_engine, mcp_settings
+    )
+    app.state.mcp_transport = AuthenticatedMcpTransport(
+        app.state.gateway_service,
+        mcp_settings,
+        app.state.security_settings,
+    )
     try:
         app.state.workspace_service = workspace_service()
-        yield
+        async with app.state.mcp_transport.run():
+            yield
     finally:
         # Shutdown owns every process and worker constructed during startup.
         try:
-            await app.state.mcp_engine.shutdown()
+            await app.state.gateway_service.shutdown()
         except Exception as e:
             logger.exception("mcp_shutdown_failed", error=str(e))
         await close_application_services()
@@ -157,6 +174,12 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+app.add_route(
+    "/mcp",
+    McpTransportMount(),
+    methods=["GET", "POST", "DELETE"],
+    name="mcp-transport",
+)
 
 
 @app.websocket("/api/webmcp/ws")

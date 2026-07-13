@@ -171,6 +171,25 @@ def test_workspace_router_contains_transport_translation_only():
     assert violations == []
 
 
+def test_gateway_service_and_infrastructure_composition_have_one_owner():
+    assert (
+        ROOT / "packages/tool_registry/src/tool_registry/gateway_service.py"
+    ).is_file()
+    assert (ROOT / "packages/tool_registry/src/tool_registry/mcp_server.py").is_file()
+    composition = (ROOT / "apps/api/src/api/composition.py").read_text("utf-8")
+    assert "GatewayRepository" in composition
+    assert "GatewayService" in composition
+    for path in (
+        ROOT / "packages/tool_registry/src/tool_registry/gateway_service.py",
+        ROOT / "packages/tool_registry/src/tool_registry/mcp_server.py",
+    ):
+        targets = {
+            _top_level(item.target) for item in _imports(path.read_text("utf-8"))
+        }
+        assert "api" not in targets
+        assert "data_vault" not in targets
+
+
 def test_removed_core_workspace_and_global_activation_do_not_return():
     assert not (ROOT / "packages/core/src/core/workspace.py").exists()
     assert not (ROOT / "packages/core/src/core/agent_sync.py").exists()

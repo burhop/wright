@@ -1,0 +1,388 @@
+{
+  "$defs": {
+    "DependencySpec": {
+      "properties": {
+        "system": {
+          "items": {
+            "type": "string"
+          },
+          "title": "System",
+          "type": "array"
+        },
+        "python": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Python",
+          "type": "array"
+        },
+        "node": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Node",
+          "type": "array"
+        }
+      },
+      "title": "DependencySpec",
+      "type": "object"
+    },
+    "EnvVarDefinition": {
+      "description": "Metadata about an environment variable an MCP server needs.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "secret": {
+          "default": false,
+          "title": "Secret",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ],
+      "title": "EnvVarDefinition",
+      "type": "object"
+    },
+    "PlatformSupportRecord": {
+      "properties": {
+        "status": {
+          "default": "unknown",
+          "enum": [
+            "yes",
+            "likely",
+            "host-dependent",
+            "unknown",
+            "no"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "tested": {
+          "default": false,
+          "title": "Tested",
+          "type": "boolean"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "title": "PlatformSupportRecord",
+      "type": "object"
+    },
+    "ValidationSummary": {
+      "properties": {
+        "status": {
+          "default": "not_tested",
+          "enum": [
+            "passed",
+            "dependency_missing",
+            "blocked",
+            "failed",
+            "skipped",
+            "not_tested"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "default": "Not yet validated in this environment",
+          "title": "Message",
+          "type": "string"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment"
+        },
+        "missing_dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Dependencies",
+          "type": "array"
+        },
+        "validated_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validated At"
+        },
+        "evidence_status": {
+          "default": "unverified",
+          "enum": [
+            "recorded",
+            "partial",
+            "unverified"
+          ],
+          "title": "Evidence Status",
+          "type": "string"
+        }
+      },
+      "title": "ValidationSummary",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "vendor": {
+      "title": "Vendor",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "domains": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Domains",
+      "type": "array"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "transport": {
+      "enum": [
+        "stdio",
+        "sse",
+        "webmcp"
+      ],
+      "title": "Transport",
+      "type": "string"
+    },
+    "command": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "title": "Command"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Url"
+    },
+    "image_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Image Url"
+    },
+    "locality": {
+      "enum": [
+        "local",
+        "remote"
+      ],
+      "title": "Locality",
+      "type": "string"
+    },
+    "weight": {
+      "enum": [
+        "light",
+        "medium",
+        "heavy"
+      ],
+      "title": "Weight",
+      "type": "string"
+    },
+    "env_vars": {
+      "items": {
+        "$ref": "#/$defs/EnvVarDefinition"
+      },
+      "title": "Env Vars",
+      "type": "array"
+    },
+    "dependencies": {
+      "$ref": "#/$defs/DependencySpec"
+    },
+    "aliases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "verification_state": {
+      "default": "user_reported_url_needed",
+      "enum": [
+        "verified_mcp",
+        "verified_docs_mcp",
+        "community_mcp",
+        "user_reported_url_needed",
+        "verified_api_wrapper_candidate",
+        "capability_alias",
+        "ui_or_web_standard",
+        "watchlist",
+        "excluded"
+      ],
+      "title": "Verification State",
+      "type": "string"
+    },
+    "installability_tier": {
+      "default": "might_work",
+      "enum": [
+        "tested",
+        "might_work",
+        "blocked",
+        "non_working"
+      ],
+      "title": "Installability Tier",
+      "type": "string"
+    },
+    "risk_level": {
+      "default": "low",
+      "enum": [
+        "read-only",
+        "low",
+        "medium",
+        "high",
+        "safety-critical"
+      ],
+      "title": "Risk Level",
+      "type": "string"
+    },
+    "deployment_mode": {
+      "default": "unknown",
+      "title": "Deployment Mode",
+      "type": "string"
+    },
+    "platform_support": {
+      "additionalProperties": {
+        "$ref": "#/$defs/PlatformSupportRecord"
+      },
+      "title": "Platform Support",
+      "type": "object"
+    },
+    "host_software_required": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Host Software Required",
+      "type": "array"
+    },
+    "credentials_required": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Credentials Required",
+      "type": "array"
+    },
+    "default_enabled": {
+      "default": true,
+      "title": "Default Enabled",
+      "type": "boolean"
+    },
+    "approval_gates": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Approval Gates",
+      "type": "array"
+    },
+    "validation_result": {
+      "$ref": "#/$defs/ValidationSummary"
+    },
+    "follow_up_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Follow Up Url"
+    },
+    "install_blocked_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Install Blocked Reason"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "vendor",
+    "description",
+    "domains",
+    "transport",
+    "command",
+    "locality",
+    "weight"
+  ],
+  "title": "CatalogEntry",
+  "type": "object"
+}

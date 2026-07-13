@@ -66,6 +66,8 @@ class ValidationSummary(BaseModel):
     message: str = "Not yet validated in this environment"
     environment: Optional[str] = None
     missing_dependencies: List[str] = Field(default_factory=list)
+    validated_at: Optional[str] = None
+    evidence_status: Literal["recorded", "partial", "unverified"] = "unverified"
 
 
 def default_platform_support() -> dict[str, PlatformSupportRecord]:

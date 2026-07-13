@@ -84,6 +84,20 @@ class ValidationSummary(BaseModel):
     message: str = "Not yet validated in this environment"
     environment: Optional[str] = None
     missing_dependencies: list[str] = Field(default_factory=list)
+    validated_at: Optional[str] = None
+    evidence_status: Literal["recorded", "partial", "unverified"] = "unverified"
+
+    @model_validator(mode="after")
+    def require_pass_evidence(self) -> "ValidationSummary":
+        if self.status == "passed" and (
+            not self.environment
+            or not self.validated_at
+            or self.evidence_status != "recorded"
+        ):
+            raise ValueError(
+                "passed validation requires environment, validated_at, and recorded evidence"
+            )
+        return self
 
 
 def default_platform_support_dict() -> dict[str, dict[str, Any]]:
@@ -102,12 +116,16 @@ def validation_summary_dict(
     message: str = "Not yet validated in this environment",
     environment: str | None = None,
     missing_dependencies: list[str] | None = None,
+    validated_at: str | None = None,
+    evidence_status: str = "unverified",
 ) -> dict[str, Any]:
     return {
         "status": status,
         "message": message,
         "environment": environment,
         "missing_dependencies": missing_dependencies or [],
+        "validated_at": validated_at,
+        "evidence_status": evidence_status,
     }
 
 

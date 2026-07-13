@@ -22,6 +22,17 @@ from .secrets import read_secrets, write_secrets, delete_secrets, has_credential
 from .manager import McpEngine
 from .safety import ApprovalContext, McpSafetyPolicy, PolicyDecision
 from .engineering_catalog import ENGINEERING_CATALOG
+from .gateway_models import (
+    GatewayError,
+    GatewayErrorCode,
+    GatewayRequest,
+    GatewayResource,
+    GatewaySessionContext,
+    GatewayTool,
+    GatewayToolResult,
+    RequestState,
+    SessionState,
+)
 
 __all__ = [
     "McpServer",
@@ -49,4 +60,13 @@ __all__ = [
     "McpSafetyPolicy",
     "PolicyDecision",
     "ENGINEERING_CATALOG",
+    "GatewayError",
+    "GatewayErrorCode",
+    "GatewayRequest",
+    "GatewayResource",
+    "GatewaySessionContext",
+    "GatewayTool",
+    "GatewayToolResult",
+    "RequestState",
+    "SessionState",
 ]

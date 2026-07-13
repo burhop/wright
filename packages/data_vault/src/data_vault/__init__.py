@@ -11,6 +11,7 @@ from .models import (
 )
 from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
+from .gateway_repository import GatewayBindingError, GatewayRepository
 from .secret_provider import (
     CompositeSecretProvider,
     EnvironmentSecretProvider,
@@ -29,6 +30,8 @@ __all__ = [
     "RestoreResult",
     "UpgradeResult",
     "WorkspaceRepository",
+    "GatewayBindingError",
+    "GatewayRepository",
     "CompositeSecretProvider",
     "EnvironmentSecretProvider",
     "FileSecretProvider",

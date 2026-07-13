@@ -1,310 +1,155 @@
-import pytest
+from __future__ import annotations
+
+import uuid
 import sqlite3
-import asyncio
+
+import pytest
 from fastapi.testclient import TestClient
+
+from api.config import DATABASE_PATH
 from api.main import app
+from data_vault.secret_provider import FileSecretProvider
+from data_vault.workspace_repository import WorkspaceRepository
 from tool_registry import McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
 
 
 @pytest.fixture
-def test_client():
-    """Fixture that enters TestClient context manager to trigger lifespan startup."""
-    with TestClient(app) as c:
-        yield c
-    db_path = app.state.mcp_engine.db_path
-    conn = sqlite3.connect(db_path)
-    try:
-        conn.execute(
-            "DELETE FROM mcp_tools WHERE server_id IN (?, ?, ?)",
-            ("calc-id-123", "gateway-active-server", "gateway-newer-server"),
+def legacy_client(monkeypatch):
+    monkeypatch.setenv("WRIGHT_LEGACY_GATEWAY", "1")
+    with TestClient(app, base_url="http://localhost") as client:
+        yield client
+
+
+@pytest.fixture(autouse=True)
+def cleanup_gateway_test_rows():
+    yield
+    with sqlite3.connect(DATABASE_PATH) as connection:
+        connection.execute(
+            "DELETE FROM gateway_audit_events WHERE workspace_id LIKE 'workspace-%'"
         )
-        conn.execute(
-            "DELETE FROM mcp_servers WHERE server_id IN (?, ?, ?)",
-            ("calc-id-123", "gateway-active-server", "gateway-newer-server"),
+        connection.execute("DELETE FROM mcp_tools WHERE server_id LIKE 'calc-%'")
+        connection.execute("DELETE FROM mcp_servers WHERE server_id LIKE 'calc-%'")
+        connection.execute(
+            "DELETE FROM workspace_agent_sessions WHERE workspace_id LIKE 'workspace-%'"
         )
-        conn.execute(
-            "DELETE FROM workspace_agent_sessions WHERE workspace_id IN (?, ?, ?, ?)",
-            (
-                "ws-123",
-                "gateway-active-ws",
-                "gateway-newer-ws",
-                "gateway-call-ws",
-            ),
+        connection.execute(
+            "DELETE FROM engineering_workspaces WHERE workspace_id LIKE 'workspace-%'"
         )
-        conn.execute(
-            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?)",
-            (
-                "ws-123",
-                "gateway-active-ws",
-                "gateway-newer-ws",
-                "gateway-call-ws",
-            ),
-        )
-        conn.execute(
-            "DELETE FROM system_settings WHERE key = 'active_gateway_session_id'"
-        )
-        conn.commit()
-    finally:
-        conn.close()
 
 
-def test_gateway_tools_endpoint(test_client):
-    # Pre-seed a default server
-    db_path = app.state.mcp_engine.db_path
-
-    server = McpServer(
-        server_id="calc-id-123",
-        name="Calcul mesh",
-        type="stdio",
-        command=["uv", "run", "calc"],
-        is_active=True,
-        is_installed=True,
-        status="active",
-        created_at=1000,
-        updated_at=1000,
-    )
-    insert_server(db_path, server)
-
-    # Pre-seed a tool
-    tool = McpTool(
-        tool_id="calc-id-123:mesh_calc",
-        server_id="calc-id-123",
-        name="mesh_calc",
-        description="Calculate mesh",
-        input_schema={"type": "object"},
-        is_enabled=True,
-        created_at=1000,
-    )
-    insert_tools(db_path, [tool])
-
-    # Pre-seed active workspace in database
-    conn = sqlite3.connect(db_path)
-    conn.execute(
-        """
-        INSERT INTO engineering_workspaces (
-            workspace_id, workspace_name, local_path, session_id, enabled_tools, created_at, updated_at
-        ) VALUES ('ws-123', 'Test Workspace', '/tmp/ws', 'session-123', '["Calcul mesh"]', 1000, 2000)
-        """
-    )
-    conn.commit()
-    conn.close()
-
-    # Query gateway tools
-    response = test_client.get("/api/gateway/tools")
-    assert response.status_code == 200
-    data = response.json()
-    assert "tools" in data
-    assert len(data["tools"]) == 1
-    assert data["tools"][0]["name"] == "calculmesh__mesh_calc"
-    assert data["tools"][0]["description"] == "Calculate mesh"
-
-
-def test_mcp_router_uses_generic_wright_gateway_sync():
-    from api.routers import mcp
-    from api.services import mcp_services
-
-    assert "sync_mcp_server_to_hermes" not in vars(mcp)
-    assert "sync_mcp_server_to_wright_gateway" not in vars(mcp)
-    assert (
-        mcp_services.sync_mcp_server_to_wright_gateway.__module__
-        == "api.services.wright_gateway_sync"
-    )
-
-
-def test_gateway_tools_prefers_pinned_active_session(test_client):
-    db_path = app.state.mcp_engine.db_path
-    active_server_id = "gateway-active-server"
-    newer_server_id = "gateway-newer-server"
-
-    conn = sqlite3.connect(db_path)
-    try:
-        conn.execute(
-            "DELETE FROM mcp_tools WHERE server_id IN (?, ?)",
-            (active_server_id, newer_server_id),
-        )
-        conn.execute(
-            "DELETE FROM mcp_servers WHERE server_id IN (?, ?)",
-            (active_server_id, newer_server_id),
-        )
-        conn.execute(
-            "DELETE FROM engineering_workspaces WHERE session_id IN (?, ?)",
-            ("gateway-active-session", "gateway-newer-session"),
-        )
-        conn.execute(
-            "DELETE FROM system_settings WHERE key = 'active_gateway_session_id'"
-        )
-        conn.commit()
-    finally:
-        conn.close()
-
+def _seed(tmp_path):
+    suffix = uuid.uuid4().hex
+    server_id = f"calc-{suffix}"
+    workspace_id = f"workspace-{suffix}"
+    session_id = f"session-{suffix}"
+    workspace = tmp_path / workspace_id
+    workspace.mkdir()
     insert_server(
-        db_path,
+        DATABASE_PATH,
         McpServer(
-            server_id=active_server_id,
-            name="Active CAD",
+            server_id=server_id,
+            name=f"Calculation {suffix}",
             type="stdio",
-            command=["uv", "run", "active-cad"],
-            is_active=True,
+            command=["uv", "run", "calc"],
+            is_active=False,
             is_installed=True,
-            status="active",
-            created_at=1000,
-            updated_at=1000,
-        ),
-    )
-    insert_server(
-        db_path,
-        McpServer(
-            server_id=newer_server_id,
-            name="Newer CAD",
-            type="stdio",
-            command=["uv", "run", "newer-cad"],
-            is_active=True,
-            is_installed=True,
-            status="active",
+            status="inactive",
             created_at=1000,
             updated_at=1000,
         ),
     )
     insert_tools(
-        db_path,
+        DATABASE_PATH,
         [
             McpTool(
-                tool_id=f"{active_server_id}:active_tool",
-                server_id=active_server_id,
-                name="active_tool",
-                description="Active session tool",
+                tool_id=f"{server_id}:mesh_calc",
+                server_id=server_id,
+                name="mesh_calc",
+                description="Calculate mesh",
                 input_schema={"type": "object"},
                 is_enabled=True,
                 created_at=1000,
-            ),
-            McpTool(
-                tool_id=f"{newer_server_id}:newer_tool",
-                server_id=newer_server_id,
-                name="newer_tool",
-                description="Newer workspace tool",
-                input_schema={"type": "object"},
-                is_enabled=True,
-                created_at=1000,
-            ),
+            )
         ],
     )
-
-    conn = sqlite3.connect(db_path)
-    try:
-        conn.execute(
-            """
-            INSERT INTO engineering_workspaces (
-                workspace_id, workspace_name, local_path, session_id, enabled_tools, created_at, updated_at
-            ) VALUES
-                ('gateway-active-ws', 'Active Workspace', '/tmp/active-ws', 'gateway-active-session', '["Active CAD"]', 1000, 2000),
-                ('gateway-newer-ws', 'Newer Workspace', '/tmp/newer-ws', 'gateway-newer-session', '["Newer CAD"]', 1000, 3000)
-            """
+    WorkspaceRepository(
+        DATABASE_PATH, secrets=FileSecretProvider(tmp_path / "secrets.json")
+    ).create(
+        workspace_id,
+        session_id,
+        str(workspace),
+        workspace_name="Gateway",
+    )
+    with sqlite3.connect(DATABASE_PATH) as connection:
+        connection.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE workspace_id = ?",
+            (f'["{server_id}"]', workspace_id),
         )
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO system_settings (key, value)
-            VALUES ('active_gateway_session_id', 'gateway-active-session')
-            """
-        )
-        conn.commit()
-    finally:
-        conn.close()
+    return server_id, session_id, workspace_id, str(workspace)
 
-    response = test_client.get("/api/gateway/tools")
 
+def _headers(session_id, workspace_id):
+    return {
+        "X-Wright-Session-Id": session_id,
+        "X-Wright-Workspace-Id": workspace_id,
+    }
+
+
+def test_legacy_gateway_is_disabled_by_default(sync_client) -> None:
+    response = sync_client.get("/api/gateway/tools")
+    assert response.status_code == 404
+
+
+def test_legacy_gateway_requires_and_uses_explicit_binding(
+    legacy_client, tmp_path
+) -> None:
+    server_id, session_id, workspace_id, _ = _seed(tmp_path)
+    assert legacy_client.get("/api/gateway/tools").status_code == 400
+
+    response = legacy_client.get(
+        "/api/gateway/tools", headers=_headers(session_id, workspace_id)
+    )
     assert response.status_code == 200
-    tool_names = [tool["name"] for tool in response.json()["tools"]]
-    assert "activecad__active_tool" in tool_names
-    assert "newercad__newer_tool" not in tool_names
+    names = [item["name"] for item in response.json()["tools"]]
+    assert f"{server_id}__mesh_calc" in names
 
-
-def test_gateway_call_endpoint_passes_workspace_policy_context(
-    test_client, monkeypatch
-):
-    # Pre-seed default server and tool first
-    db_path = app.state.mcp_engine.db_path
-
-    server = McpServer(
-        server_id="calc-id-123",
-        name="Calcul mesh",
-        type="stdio",
-        command=["uv", "run", "calc"],
-        is_active=True,
-        is_installed=True,
-        status="active",
-        created_at=1000,
-        updated_at=1000,
+    foreign = legacy_client.get(
+        "/api/gateway/tools", headers=_headers(session_id, "foreign")
     )
-    insert_server(db_path, server)
+    assert foreign.status_code in {400, 409}
 
-    tool = McpTool(
-        tool_id="calc-id-123:mesh_calc",
-        server_id="calc-id-123",
-        name="mesh_calc",
-        description="Calculate mesh",
-        input_schema={"type": "object"},
-        is_enabled=True,
-        created_at=1000,
-    )
-    insert_tools(db_path, [tool])
 
-    conn = sqlite3.connect(db_path)
-    try:
-        conn.execute(
-            """
-            INSERT INTO engineering_workspaces (
-                workspace_id, workspace_name, local_path, session_id, enabled_tools, created_at, updated_at
-            ) VALUES ('gateway-call-ws', 'Call Workspace', '/tmp/gateway-call-ws', 'gateway-call-session', '["Calcul mesh"]', 1000, 2000)
-            """
-        )
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO system_settings (key, value)
-            VALUES ('active_gateway_session_id', 'gateway-call-session')
-            """
-        )
-        conn.commit()
-    finally:
-        conn.close()
-
+def test_legacy_call_delegates_to_gateway_service(
+    legacy_client, tmp_path, monkeypatch
+) -> None:
+    server_id, session_id, workspace_id, workspace_path = _seed(tmp_path)
     captured = {}
 
-    async def fake_start_server(
-        server_id, workspace_dir=None, *, approval_context=None
-    ):
-        captured["start"] = (server_id, workspace_dir, approval_context)
-        return server
+    async def start(server, workspace_dir=None, *, approval_context=None):
+        captured["start"] = (server, workspace_dir, approval_context)
 
-    async def fake_call_tool(server_id, tool_name, arguments, *, approval_context=None):
-        captured["call"] = (server_id, tool_name, arguments, approval_context)
-        return {}
+    async def call(server, tool, arguments, *, approval_context=None):
+        captured["call"] = (server, tool, arguments, approval_context)
+        return {"ok": True}
 
-    monkeypatch.setattr(app.state.mcp_engine, "start_server", fake_start_server)
-    monkeypatch.setattr(app.state.mcp_engine, "call_tool", fake_call_tool)
-
-    # Test calling a tool via the gateway mock runner
-    payload = {"name": "calculmesh__mesh_calc", "arguments": {"test": "val"}}
-    response = test_client.post("/api/gateway/call", json=payload)
+    monkeypatch.setattr(app.state.mcp_engine, "start_server", start)
+    monkeypatch.setattr(app.state.mcp_engine, "call_tool", call)
+    response = legacy_client.post(
+        "/api/gateway/call",
+        headers=_headers(session_id, workspace_id),
+        json={"name": f"{server_id}__mesh_calc", "arguments": {}},
+    )
     assert response.status_code == 200
-    assert response.json() == {}
-    assert captured["start"][1] == "/tmp/gateway-call-ws"
-    assert captured["start"][2].workspace_id == "gateway-call-ws"
-    assert captured["call"][3].workspace_id == "gateway-call-ws"
+    assert response.json()["structuredContent"] == {"ok": True}
+    assert captured["start"][1] == workspace_path
+    assert captured["call"][3].workspace_id == workspace_id
 
 
-@pytest.mark.asyncio
-async def test_gateway_events_generator():
-    from api.routers.gateway import event_generator
+def test_mcp_router_uses_generic_wright_gateway_sync():
+    from api.services import mcp_services
 
-    queue = asyncio.Queue()
-    gen = event_generator(queue)
-
-    # First yield should be the connection event
-    first_event = await gen.__anext__()
-    assert first_event == "data: connected\n\n"
-
-    # Put an event in the queue and get it
-    await queue.put("list_changed")
-    second_event = await gen.__anext__()
-    assert second_event == "data: list_changed\n\n"
+    assert (
+        mcp_services.sync_mcp_server_to_wright_gateway.__module__
+        == "api.services.wright_gateway_sync"
+    )

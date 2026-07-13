@@ -15,7 +15,6 @@ from agent_adapters.hermes_gateway import (
 )
 from workspace_service.adapters.runtime import (
     get_workspace_by_session,
-    set_active_gateway_session,
 )
 from tool_registry import McpServer
 
@@ -110,8 +109,6 @@ def sync_workspace_tools_to_wright_gateway(
     workspace = get_workspace_by_session(db_path, session_id)
     if not workspace:
         return
-    set_active_gateway_session(db_path, session_id)
-
     workspace_path = workspace["local_path"]
     tmp_dir = os.path.join(workspace_path, "tmp")
     os.makedirs(tmp_dir, exist_ok=True)

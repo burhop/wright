@@ -15,6 +15,7 @@ def offline_api_client(tmp_path, monkeypatch):
     monkeypatch.setenv("WRIGHT_TESTING", "1")
     monkeypatch.setenv("DATABASE_PATH", db_path)
     monkeypatch.setenv("WRIGHT_SECRETS_PATH", str(tmp_path / "secrets.json"))
+    monkeypatch.setenv("WRIGHT_LEGACY_GATEWAY", "1")
 
     from api import main
     from api.database import migrate
@@ -63,34 +64,29 @@ def gateway_smoke_seed(offline_api_client, tmp_path):
         ],
     )
 
+    from data_vault.secret_provider import FileSecretProvider
+    from data_vault.workspace_repository import WorkspaceRepository
+
+    WorkspaceRepository(
+        db_path, secrets=FileSecretProvider(tmp_path / "gateway-secrets.json")
+    ).create(
+        "smoke-workspace",
+        "smoke-session",
+        str(workspace_path),
+        workspace_name="Smoke Workspace",
+    )
     with sqlite3.connect(db_path) as conn:
         conn.execute(
-            """
-            INSERT INTO engineering_workspaces (
-                workspace_id, workspace_name, local_path, session_id, enabled_tools,
-                created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                "smoke-workspace",
-                "Smoke Workspace",
-                str(workspace_path),
-                "smoke-session",
-                json.dumps(["Smoke Gateway"]),
-                1000,
-                1000,
-            ),
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE workspace_id = ?",
+            (json.dumps([server.server_id]), "smoke-workspace"),
         )
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO system_settings (key, value)
-            VALUES ('active_gateway_session_id', 'smoke-session')
-            """
-        )
-        conn.commit()
 
     return {
         "db_path": db_path,
         "server_id": server.server_id,
-        "tool_name": "smokegateway__ping",
+        "tool_name": "smoke-gateway-server__ping",
+        "headers": {
+            "X-Wright-Session-Id": "smoke-session",
+            "X-Wright-Workspace-Id": "smoke-workspace",
+        },
     }

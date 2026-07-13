@@ -54,6 +54,10 @@ testpaths = [
     "packages/workspace_service/tests",
     "tests",
 ]
+markers = [
+    "gateway: provider-neutral GatewayService contract and isolation tests",
+    "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
+]
 
 [dependency-groups]
 dev = [

@@ -1,6 +1,7 @@
 import os
 from typing import List, Optional
 from tool_registry.catalog_loader import load_catalog_entries, sort_catalog_entries
+from tool_registry.canonical_catalog import load_canonical_entries
 
 from .schemas import CatalogEntry
 
@@ -10,6 +11,7 @@ class CatalogLoader:
 
     def __init__(self, catalog_path: Optional[str] = None):
         """Initializes the loader. Loads catalog from path or default location."""
+        use_canonical = catalog_path is None
         if catalog_path is None:
             package_catalog_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), "catalog.yaml"
@@ -25,7 +27,13 @@ class CatalogLoader:
 
         self.catalog_path = catalog_path
         self.entries: List[CatalogEntry] = []
-        self._load()
+        if use_canonical:
+            self.entries = [
+                CatalogEntry.model_validate(entry.model_dump(mode="json"))
+                for entry in load_canonical_entries()
+            ]
+        else:
+            self._load()
 
     def _load(self):
         """Loads and validates the catalog file."""

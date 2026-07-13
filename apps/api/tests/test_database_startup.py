@@ -79,6 +79,9 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         async def shutdown(self):
             events.append("shutdown")
 
+        async def sync_active_servers(self):
+            events.append("reconcile")
+
     monkeypatch.setattr(main, "McpEngine", FakeMcpEngine)
     isolated_app = SimpleNamespace(state=SimpleNamespace())
 
@@ -92,6 +95,7 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         "agent",
         "sync",
         "mcp",
+        "reconcile",
         "serving",
         "shutdown",
     ]

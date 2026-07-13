@@ -1,5 +1,20 @@
 # GPT-5.6 Plan Implementation Status
 
+## Feature 046 implementation cycle
+
+- **Baseline**: `89466673430023a48795046c2aa41b2ebb77745c`; local and `origin/dev` matched before branching.
+- **Branch**: `codex/046-gateway-service-and-mcp-2025-11-25`.
+- **Roadmap**: R1.6, R2.3, R2.4, and R4.1–R4.3. Features 047–051 remain out of scope.
+- **State**: review-ready — implementation, requirement audit, clean artifact validation, real Codex evidence, and authoritative merge gate complete.
+- **Current compatibility evidence**: Codex CLI 0.144.1 on Windows; MCP protocol target 2025-11-25; official stable SDK resolved to `mcp 1.28.1` under `<2`.
+- **Closed findings**: official SDK handlers replace hand-written protocol framing; STDIO and authenticated `/mcp` use immutable explicit bindings; transport sessions are unique even when clients share a workspace-agent session; no production caller reads or writes recent/global gateway selection; the one-release REST/SSE and launcher seam defaults off and delegates to `GatewayService`.
+- **Implemented checkpoint**: provider-neutral discovery/call/resources/management, conservative schemas and reviewed annotations, append-only redacted audit, protocol cancellation/timeouts, scoped list-change notifications, generation-safe runner lifecycle, 42-entry packaged catalog with dated evidence and byte-identical plugin projection, serialized SDK STDIO, authenticated Origin/DNS-rebinding-protected Streamable HTTP, body/rate/concurrency limits, production API composition, and shutdown/reconciliation.
+- **Validation so far**: SDK server 4 passed; real/parallel STDIO 4 passed including partial input and EOF; 100-trial two-session isolation and 100-response/notification stress 2 passed; HTTP authentication/binding/reconnect/limit contracts 4 passed; explicit legacy/workspace regressions 35 passed with 1 unrelated skip; official SDK HTTP plus legacy E2E 2 passed; catalog/plugin parity 48 passed; wheel/sdist resource build passed. The ephemeral real Codex harness passed with `codex-cli 0.144.1`, `gpt-5.6-sol`, Windows x64, and observed `wright__workspace_status` plus exact workspace/session output.
+- **Migration/rollback**: migration v4 adds only the append-only `gateway_audit_events` table; existing workspace/session/tool rows remain compatible and catalog aliases retain legacy IDs. Roll back the complete Feature 046 commit/image to Feature 045; no reverse data migration is required. `WRIGHT_LEGACY_GATEWAY=1` is a one-release caller migration aid, not an authorization rollback.
+- **Final verification**: final `scripts/check-dev-merge.sh` passed all configured sub-gates without skips in 441 seconds, including 473 Python tests, frontend lint/type/unit/build checks, strict docs and live Playwright. Focused mypy passed 17 Feature 046 production files with zero findings; the gate's repository-wide warning-mode mypy reports only duplicate test `conftest` module discovery. Core/tool-registry wheel and sdist candidates installed and imported successfully in a clean environment. The completion audit proves FR-001–FR-028 and SC-001–SC-009.
+- **Remaining risks**: Codex host evidence is Windows x64 only; Linux/macOS Codex compatibility is not claimed. Feature 049 still owns removal of the optional Hermes compatibility seam.
+- **Exact next action**: commit and merge Feature 046 to `dev` under standing authorization, preserving the operator-owned `docs/gpt5-6plan.md`; then begin Feature 047 in a new cycle.
+
 **Baseline**: `9fd210802c28f8fccbfb96850ca35200f35b11fb`
 **Branch**: `codex/045-package-boundary-and-workspace-use-cases`
 **Feature**: 045 — Package Boundaries and Workspace Use Cases

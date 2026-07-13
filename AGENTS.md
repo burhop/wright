@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/045-package-boundary-and-workspace-use-cases/plan.md
+at specs/046-gateway-service-and-mcp-2025-11-25/plan.md
 <!-- SPECKIT END -->
 
 

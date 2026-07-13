@@ -1,200 +1,118 @@
-import asyncio
-import structlog
-from fastapi import APIRouter, Depends, Request, HTTPException, status
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from tool_registry import (
-    ApprovalContext,
-    McpEngine,
-    get_servers,
-    get_tools,
-)
-from api.services.mcp_services import get_mcp_engine
-from workspace_service.adapters.runtime import (
-    get_gateway_workspace,
-    get_workspace_enabled_tools,
-)
-from api.notifications import gateway_event_queues
+from __future__ import annotations
 
-logger = structlog.get_logger(__name__)
+import json
+import os
+import uuid
+
+from fastapi import APIRouter, Header, HTTPException, Request
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
+
+from tool_registry.gateway_models import GatewayError, SessionState
+
 router = APIRouter()
 
 
 class GatewayCallRequest(BaseModel):
     name: str
-    arguments: dict = {}
+    arguments: dict = Field(default_factory=dict)
+
+
+def _bound_service(
+    request: Request,
+    session_id: str | None,
+    workspace_id: str | None,
+):
+    if os.getenv("WRIGHT_LEGACY_GATEWAY") != "1":
+        raise HTTPException(status_code=404, detail="Legacy gateway is disabled")
+    if not session_id or not workspace_id:
+        raise HTTPException(
+            status_code=400,
+            detail="X-Wright-Session-Id and X-Wright-Workspace-Id are required",
+        )
+    service = request.app.state.gateway_service
+    try:
+        context = service.open_session(
+            session_id=session_id,
+            principal_id="local-admin",
+            workspace_id=workspace_id,
+            transport="legacy",
+        )
+        if context.state is SessionState.CREATED:
+            service.initialize_session(
+                session_id,
+                protocol_version="2025-11-25",
+                client_name="wright-legacy-gateway",
+                client_version="one-release-compatibility",
+                client_capabilities={},
+            )
+    except GatewayError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="Invalid gateway binding") from exc
+    return service
 
 
 @router.get("/tools")
-async def list_gateway_tools(engine: McpEngine = Depends(get_mcp_engine)):
-    """Return consolidated list of enabled tools for the active workspace session."""
-    db_path = engine.db_path
-    workspace = get_gateway_workspace(db_path)
-
-    if not workspace:
-        return {"tools": []}
-
-    session_id = workspace["session_id"]
-    enabled_tools = get_workspace_enabled_tools(db_path, session_id)
-
-    all_servers = get_servers(db_path)
-    tools_response = []
-
-    for server in all_servers:
-        if not server.is_installed:
-            continue
-
-        # Check if server is enabled
-        is_enabled = True
-        if enabled_tools is not None:
-            is_enabled = (server.name in enabled_tools) or (
-                server.server_id in enabled_tools
-            )
-
-        if not is_enabled:
-            continue
-
-        key_name = "".join(c.lower() for c in server.name if c.isalnum())
-        if not key_name:
-            key_name = server.server_id
-
-        server_tools = get_tools(db_path, server.server_id)
-        for tool in server_tools:
-            if not tool.is_enabled:
-                continue
-
-            prefixed_name = f"{key_name}__{tool.name}"
-            tools_response.append(
-                {
-                    "name": prefixed_name,
-                    "description": tool.description,
-                    "inputSchema": tool.input_schema,
-                }
-            )
-
-    return {"tools": tools_response}
+async def list_gateway_tools(
+    request: Request,
+    session_id: str | None = Header(None, alias="X-Wright-Session-Id"),
+    workspace_id: str | None = Header(None, alias="X-Wright-Workspace-Id"),
+):
+    service = _bound_service(request, session_id, workspace_id)
+    return {
+        "tools": [
+            {
+                "name": tool.name,
+                "description": tool.description,
+                "inputSchema": dict(tool.input_schema),
+                "outputSchema": (
+                    dict(tool.output_schema) if tool.output_schema is not None else None
+                ),
+                "annotations": dict(tool.annotations),
+            }
+            for tool in service.list_tools(session_id)
+        ]
+    }
 
 
 @router.post("/call")
 async def call_gateway_tool(
-    body: GatewayCallRequest, engine: McpEngine = Depends(get_mcp_engine)
+    body: GatewayCallRequest,
+    request: Request,
+    session_id: str | None = Header(None, alias="X-Wright-Session-Id"),
+    workspace_id: str | None = Header(None, alias="X-Wright-Workspace-Id"),
 ):
-    """Execute a prefixed tool call on the corresponding child MCP server runner."""
-    if "__" not in body.name:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid prefixed tool name: {body.name}",
-        )
-
-    server_key, tool_name = body.name.split("__", 1)
-    db_path = engine.db_path
-    workspace = None
-    approval_context = ApprovalContext()
+    service = _bound_service(request, session_id, workspace_id)
     try:
-        workspace = get_gateway_workspace(db_path)
-        if workspace:
-            approval_context = ApprovalContext(workspace_id=workspace["workspace_id"])
-    except Exception:
-        pass
-
-    all_servers = get_servers(db_path)
-    target_server = None
-    for server in all_servers:
-        key_name = "".join(c.lower() for c in server.name if c.isalnum())
-        if not key_name:
-            key_name = server.server_id
-        if key_name == server_key:
-            target_server = server
-            break
-
-    if not target_server:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"MCP Server with key prefix '{server_key}' not found.",
+        result = await service.call_tool(
+            session_id, str(uuid.uuid4()), body.name, body.arguments
         )
-
-    if workspace:
-        enabled_tools = get_workspace_enabled_tools(db_path, workspace["session_id"])
-        is_workspace_enabled = enabled_tools is None or (
-            target_server.name in enabled_tools
-            or target_server.server_id in enabled_tools
-        )
-        if is_workspace_enabled:
-            approval_context = ApprovalContext(
-                workspace_id=workspace["workspace_id"],
-                workspace_approvals=set(target_server.approval_gates or []),
-            )
-
-    # Start the server runner if not active
-    try:
-        runner = engine._active_runners.get(target_server.server_id)
-        if not runner or not runner.is_running():
-            workspace_dir = workspace["local_path"] if workspace else None
-            await engine.start_server(
-                target_server.server_id,
-                workspace_dir=workspace_dir,
-                approval_context=approval_context,
-            )
-    except Exception as e:
-        logger.exception(
-            "gateway_start_server_failed", server=target_server.name, error=str(e)
-        )
+    except GatewayError as exc:
         return {
             "isError": True,
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"Failed to start MCP Server '{target_server.name}': {e}",
-                }
-            ],
+            "content": [{"type": "text", "text": str(exc)}],
+            "structuredContent": {"error": exc.code.value},
         }
-
-    # Execute tool call
-    try:
-        result = await engine.call_tool(
-            target_server.server_id,
-            tool_name,
-            body.arguments,
-            approval_context=approval_context,
-        )
-        return result
-    except Exception as e:
-        logger.exception("gateway_call_tool_failed", tool=tool_name, error=str(e))
-        return {
-            "isError": True,
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"Error calling tool '{tool_name}' on '{target_server.name}': {e}",
-                }
-            ],
-        }
-
-
-async def event_generator(queue: asyncio.Queue):
-    try:
-        yield "data: connected\n\n"
-        while True:
-            event = await queue.get()
-            yield f"data: {event}\n\n"
-            queue.task_done()
-    except asyncio.CancelledError:
-        pass
-    finally:
-        gateway_event_queues.discard(queue)
+    return {
+        "isError": result.is_error,
+        "content": list(result.content),
+        "structuredContent": result.structured_content,
+    }
 
 
 @router.get("/events")
-async def stream_gateway_events(request: Request):
-    """SSE endpoint for forwarding tool configuration/workspace changes to the gateway client."""
-    queue = asyncio.Queue()
-    gateway_event_queues.add(queue)
-    return StreamingResponse(
-        event_generator(queue),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-        },
-    )
+async def stream_gateway_events(
+    request: Request,
+    session_id: str | None = Header(None, alias="X-Wright-Session-Id"),
+    workspace_id: str | None = Header(None, alias="X-Wright-Workspace-Id"),
+):
+    service = _bound_service(request, session_id, workspace_id)
+    context = service._session(session_id)
+
+    async def events():
+        yield "data: connected\n\n"
+        async for event in service.notifier.subscribe(context):
+            yield f"data: {json.dumps({'event': event})}\n\n"
+
+    return StreamingResponse(events(), media_type="text/event-stream")

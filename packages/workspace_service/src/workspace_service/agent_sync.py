@@ -5,16 +5,13 @@ import sqlite3
 
 from core.logging import get_logger
 
-from .adapters.runtime import (
-    get_workspace_by_session,
-    set_active_gateway_session,
-)
+from .adapters.runtime import get_workspace_by_session
 
 logger = get_logger(__name__)
 
 
 class AgentSyncManager:
-    """Persist active agent selection and workspace gateway activation state."""
+    """Persist active agent selection and synchronize explicit workspace context."""
 
     def __init__(self, db_path: str):
         self.db_path = db_path
@@ -46,7 +43,6 @@ class AgentSyncManager:
             )
             return
 
-        set_active_gateway_session(self.db_path, session_id)
         logger.info(
             "agent_workspace_sync_recorded",
             agent=self._active_agent,

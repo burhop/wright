@@ -110,7 +110,7 @@ class ControlPlaneSecurityMiddleware(BaseHTTPMiddleware):
         if (
             settings.enforced
             and request.method != "OPTIONS"
-            and request.url.path.startswith("/api/")
+            and (request.url.path.startswith("/api/") or request.url.path == "/mcp")
             and request.url.path not in PUBLIC_PATHS
         ):
             if not settings.token_valid(

@@ -45,6 +45,7 @@ class McpApiService:
             self.engine, server_id, is_active
         )
         sync_mcp_server_to_wright_gateway(updated)
+        self._notify_gateway_changes()
         return updated
 
     async def install_server(self, server_id: str, session_id: str | None = None):
@@ -55,6 +56,7 @@ class McpApiService:
             is_server_enabled_for_session=self._server_enabled_for_session(session_id),
         )
         self._sync_workspace_tools(result.sync_session_id)
+        self._notify_gateway_changes(result.sync_session_id)
         return result.server
 
     async def uninstall_server(self, server_id: str, session_id: str | None = None):
@@ -62,6 +64,7 @@ class McpApiService:
             self.engine, server_id, session_id=session_id
         )
         self._sync_workspace_tools(result.sync_session_id)
+        self._notify_gateway_changes(result.sync_session_id)
         return result.server
 
     async def delete_server(self, server_id: str):
@@ -69,13 +72,16 @@ class McpApiService:
             self.engine, server_id
         )
         sync_mcp_server_to_wright_gateway(server)
+        self._notify_gateway_changes()
         return server
 
     def list_tools(self):
         return registry_services.list_registered_tools(self.db_path)
 
     def set_tool_enabled(self, tool_id: str, is_enabled: bool):
-        return registry_services.set_tool_enabled(self.db_path, tool_id, is_enabled)
+        result = registry_services.set_tool_enabled(self.db_path, tool_id, is_enabled)
+        self._notify_gateway_changes()
+        return result
 
     def validate_server(self, server_id: str):
         return registry_services.validate_registered_server(self.db_path, server_id)
@@ -128,6 +134,18 @@ class McpApiService:
         sync_manager = getattr(self.app_state, "agent_sync_manager", None)
         if sync_manager:
             sync_manager.sync_workspace_tools(session_id)
+
+    def _notify_gateway_changes(self, session_id: str | None = None) -> None:
+        gateway = getattr(self.app_state, "gateway_service", None)
+        if gateway is None:
+            return
+        workspace_id = None
+        if session_id:
+            service = getattr(self.app_state, "workspace_service", None)
+            repository = getattr(service, "repository", None)
+            workspace = repository.get_by_session(session_id) if repository else None
+            workspace_id = workspace.get("workspace_id") if workspace else None
+        gateway.publish_list_changes(workspace_id=workspace_id)
 
 
 def get_mcp_api_service(

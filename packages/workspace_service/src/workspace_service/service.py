@@ -314,7 +314,6 @@ class WorkspaceService:
                     workspace["workspace_id"], active_session_id
                 )
         self.repository.touch(active_session_id)
-        self.repository.set_active_gateway_session(active_session_id)
         refreshed = self.refresh_agent_context_for_path(
             workspace_path,
             agent_id=agent_id,
@@ -498,7 +497,6 @@ class WorkspaceService:
             engine,
             allow_fallback=False,
         )
-        self.repository.set_active_gateway_session(active_session_id)
         refreshed = self.refresh_agent_context_for_path(
             workspace["local_path"],
             agent_id=agent_id,

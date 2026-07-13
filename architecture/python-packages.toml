@@ -22,7 +22,7 @@ imports_as = ["tool_registry"]
 allowed_dependencies = ["core"]
 metadata = "packages/tool_registry/pyproject.toml"
 forbidden_modules = ["fastapi", "api", "agent_adapters"]
-responsibilities = ["catalog", "tool safety", "runners", "gateway capabilities"]
+responsibilities = ["catalog", "tool safety", "runners", "provider-neutral gateway service", "MCP protocol transports"]
 
 [surfaces.agent_adapters]
 roots = ["packages/agent_adapters/src/agent_adapters"]
@@ -46,7 +46,7 @@ imports_as = ["api"]
 allowed_dependencies = ["core", "data_vault", "tool_registry", "agent_adapters", "workspace_service"]
 metadata = "apps/api/pyproject.toml"
 forbidden_modules = []
-responsibilities = ["composition root", "HTTP and WebSocket translation"]
+responsibilities = ["composition root", "HTTP and WebSocket translation", "authenticated MCP transport mounting"]
 
 # Exact debt entries are allowed only while Feature 045 moves their behavior. The
 # fitness test rejects wildcard entries and any entry that no longer matches.
