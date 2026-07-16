@@ -1,7 +1,9 @@
 import asyncio
+from contextlib import suppress
 import json
 import re
 import secrets
+import time
 from typing import Optional, List, AsyncIterator
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
@@ -9,6 +11,7 @@ from pydantic import BaseModel
 import structlog
 from opentelemetry import trace
 from core.tracing import traced
+from api.config import api_mcp_autostart_enabled
 
 from agent_adapters import (
     BaseAgentEngine,
@@ -31,9 +34,44 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
+_CAD_PROGRESS_LABELS = {
+    "cad_create_part_from_recipe": "Creating a new Solid Edge part",
+    "cad_create_assembly_from_recipe": "Creating a new Solid Edge assembly",
+    "cad_create_sheet_metal_from_recipe": "Creating a new Solid Edge sheet-metal part",
+    "cad_execute_solid_edge_native_design_v2": "Building the Solid Edge design",
+    "cad_execute_solid_edge_observed_native_design_v2": "Building the visible Solid Edge design",
+    "cad_export_document": "Exporting the Solid Edge document",
+    "cad_export_screenshot_views": "Capturing Solid Edge views",
+    "cad_rebuild_document": "Rebuilding the Solid Edge document",
+}
+
+
+def _friendly_progress_data(data: dict, elapsed_seconds: float) -> dict:
+    """Add stable, user-facing phase information to backend tool progress."""
+    result = dict(data)
+    tool = str(result.get("tool") or "")
+    short_name = tool.rsplit("__", 1)[-1]
+    label = _CAD_PROGRESS_LABELS.get(short_name)
+    if label:
+        status_value = str(result.get("status") or "running")
+        if status_value == "completed":
+            label = f"{label} finished"
+        result["label"] = label
+        result["phase"] = "solid_edge_creation"
+        result["message"] = (
+            f"{label}. The new document is being kept visible in Solid Edge."
+        )
+    result["elapsedSeconds"] = round(max(0.0, elapsed_seconds), 1)
+    return result
+
+
 class ChatStreamJob:
     def __init__(
-        self, session_id: str, request: AgentChatRequest, engine: BaseAgentEngine
+        self,
+        session_id: str,
+        request: AgentChatRequest,
+        engine: BaseAgentEngine,
+        heartbeat_seconds: float = 10.0,
     ):
         self.session_id = session_id
         self.request = request
@@ -43,6 +81,9 @@ class ChatStreamJob:
         self.cancelled = False
         self._condition = asyncio.Condition()
         self._task: asyncio.Task | None = None
+        self._started_at = 0.0
+        self._heartbeat_seconds = heartbeat_seconds
+        self._current_progress_label = "Planning and preparing the requested work"
 
     def start(self) -> None:
         if self._task is None:
@@ -62,20 +103,62 @@ class ChatStreamJob:
             self.done = True
             self._condition.notify_all()
 
+    async def _emit_heartbeats(self) -> None:
+        while True:
+            await asyncio.sleep(self._heartbeat_seconds)
+            elapsed = time.monotonic() - self._started_at
+            await self._append(
+                "progress",
+                {
+                    "status": "running",
+                    "phase": "agent_work",
+                    "label": self._current_progress_label,
+                    "message": f"{self._current_progress_label}. Still working.",
+                    "elapsedSeconds": round(elapsed, 1),
+                    "heartbeat": True,
+                },
+            )
+
     async def _run(self) -> None:
         saw_stream_end = False
+        self._started_at = time.monotonic()
+        await self._append(
+            "progress",
+            {
+                "status": "running",
+                "phase": "planning",
+                "label": self._current_progress_label,
+                "message": "Planning the requested work and preparing the required tools.",
+                "elapsedSeconds": 0.0,
+            },
+        )
+        heartbeat_task = asyncio.create_task(self._emit_heartbeats())
         try:
             async for event in self.engine.stream_chat(self.request):
                 if self.cancelled:
                     break
                 saw_stream_end = saw_stream_end or event.type == "stream_end"
-                await self._append(event.type, event.data)
+                event_data = event.data
+                if event.type == "progress":
+                    event_data = _friendly_progress_data(
+                        event.data, time.monotonic() - self._started_at
+                    )
+                    if event_data.get("status") == "running":
+                        self._current_progress_label = str(
+                            event_data.get("label") or self._current_progress_label
+                        )
+                    elif event_data.get("status") == "completed":
+                        self._current_progress_label = "Finishing the result"
+                await self._append(event.type, event_data)
         except asyncio.CancelledError:
             self.cancelled = True
             await self._append("error", {"message": "Stream cancelled by user."})
         except Exception as exc:
             await self._append("error", {"message": str(exc)})
         finally:
+            heartbeat_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await heartbeat_task
             if not self.cancelled and not saw_stream_end:
                 await self._append("stream_end", {})
             await self._finish()
@@ -172,6 +255,9 @@ async def ensure_workspace_mcp_servers_active(
     request: Request, session_id: str
 ) -> None:
     """Start enabled workspace MCP servers before a chat turn begins."""
+
+    if not api_mcp_autostart_enabled():
+        return
 
     mcp_engine = getattr(request.app.state, "mcp_engine", None)
     if not mcp_engine:

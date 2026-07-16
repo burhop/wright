@@ -3,11 +3,13 @@ from __future__ import annotations
 import argparse
 import asyncio
 import os
+import sys
 from pathlib import Path
 
 from api.composition import build_api_gateway_service
 from api.config import DATABASE_PATH, McpTransportSettings
 from api.database.migrate import run_migrations
+from api.logging_config import configure_logging
 from tool_registry import McpEngine
 from tool_registry.catalog_reconcile import reconcile_engineering_catalog
 from tool_registry.gateway_notifications import GatewayNotificationHub
@@ -70,6 +72,8 @@ async def _serve(values: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    # stdout belongs exclusively to MCP JSON-RPC framing.
+    configure_logging(stream=sys.stderr)
     asyncio.run(_serve(_arguments()))
 
 

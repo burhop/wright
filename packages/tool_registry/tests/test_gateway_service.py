@@ -168,6 +168,9 @@ async def test_structured_call_uses_bound_workspace_and_audits() -> None:
     assert lifecycle.calls[0][3] == {"workspace_id": "w1"}
     executed = next(event for event in audit.events if event["outcome"] == "succeeded")
     assert executed["workspace_id"] == "w1"
+    assert executed["metadata"]["response_bytes"] > 0
+    assert executed["metadata"]["argument_count"] == 1
+    assert any(event["outcome"] == "started" for event in audit.events)
 
 
 @pytest.mark.asyncio
