@@ -52,7 +52,7 @@ no proposed work is silently presented as completed.
 | Release/package checks | Passed: 36 tests, 87.53% focused coverage, exact wheel/sdist build and clean installs |
 | Documentation | Strict MkDocs build passed |
 | Live browser gate | Passed: 38 Playwright tests |
-| GitHub PR #44 checks | Pending the final pushed commit |
+| GitHub PR #44 checks | Passed on final SHA `918e784`; merged to `dev` as `fa5baba` |
 | SolidEdgeMCP STL provider tests | Passed: 1272 tests/34 skipped plus the live STL regression in 5 seconds |
 
 ## Catalog and live-host boundary
