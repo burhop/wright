@@ -65,7 +65,7 @@ jobs:
           check-wheel-contents dist/candidate/*.whl
           (cd dist/candidate && sha256sum * > SHA256SUMS)
       - name: Upload immutable Python candidate
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: python-candidate
           path: dist/candidate
@@ -208,7 +208,7 @@ jobs:
           path: dist
       - name: Prove terminal dry-run with no public mutation
         run: uv run python scripts/release-rehearsal.py --dry-run --tag "${{ needs.preflight-and-python-build.outputs.tag }}" --python-dist dist --output rehearsal
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-rehearsal-evidence
           path: rehearsal
@@ -254,7 +254,7 @@ jobs:
             --approval release \
             --output final-evidence/release-evidence.json
           python scripts/verify-release-evidence.py final-evidence/release-evidence.json
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: final-release-evidence
           path: final-evidence
