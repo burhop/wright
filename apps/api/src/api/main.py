@@ -81,7 +81,13 @@ async def lifespan(app: FastAPI):
     if not hasattr(app.state, "agent_engine"):
         app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
     if not hasattr(app.state, "agent_sync_manager"):
-        app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
+        from api.services.wright_gateway_sync import (
+            sync_workspace_tools_to_wright_gateway,
+        )
+
+        app.state.agent_sync_manager = AgentSyncManager(
+            DATABASE_PATH, sync_workspace_tools_to_wright_gateway
+        )
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
     if api_mcp_autostart_enabled():
         await app.state.mcp_engine.sync_active_servers()

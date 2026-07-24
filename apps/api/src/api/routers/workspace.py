@@ -499,7 +499,6 @@ async def update_workspace_config(
 @traced("workspace.tools.list")
 async def get_workspace_tools_endpoint(
     session_id: str = Query(...),
-    workspace_dir: str = Depends(get_workspace_dir),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     state = service.list_workspace_tools(session_id)

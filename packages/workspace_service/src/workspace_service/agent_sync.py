@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 import os
 import sqlite3
+from collections.abc import Awaitable, Callable
 
 from core.logging import get_logger
 
@@ -13,8 +15,15 @@ logger = get_logger(__name__)
 class AgentSyncManager:
     """Persist active agent selection and synchronize explicit workspace context."""
 
-    def __init__(self, db_path: str):
+    def __init__(
+        self,
+        db_path: str,
+        workspace_sync: Callable[[str, str], bool] | None = None,
+    ):
         self.db_path = db_path
+        self._workspace_sync = workspace_sync
+        self._gateway_restart_required = False
+        self._gateway_refresh_lock = asyncio.Lock()
         self._active_agent = "hermes"
         self._load_active_agent()
 
@@ -28,7 +37,7 @@ class AgentSyncManager:
         logger.info("agent_active_runtime_selected", agent=self._active_agent)
         self._save_active_agent()
 
-    def sync_workspace_tools(self, session_id: str) -> None:
+    def sync_workspace_tools(self, session_id: str) -> bool:
         """Record the active workspace for agent-neutral gateway/catalog sync.
 
         Provider-specific profile files are materialized by agent adapter/profile
@@ -41,7 +50,13 @@ class AgentSyncManager:
                 agent=self._active_agent,
                 session_id=session_id,
             )
-            return
+            return self._gateway_restart_required
+
+        if self._active_agent == "hermes" and self._workspace_sync is not None:
+            self._gateway_restart_required = (
+                bool(self._workspace_sync(session_id, self.db_path))
+                or self._gateway_restart_required
+            )
 
         logger.info(
             "agent_workspace_sync_recorded",
@@ -49,6 +64,21 @@ class AgentSyncManager:
             session_id=session_id,
             workspace_id=workspace.get("workspace_id"),
         )
+        return self._gateway_restart_required
+
+    def mark_gateway_refreshed(self) -> None:
+        self._gateway_restart_required = False
+
+    async def refresh_gateway_if_needed(
+        self, refresh: Callable[[], Awaitable[None]]
+    ) -> bool:
+        """Run at most one pending gateway refresh across concurrent chat turns."""
+        async with self._gateway_refresh_lock:
+            if not self._gateway_restart_required:
+                return False
+            await refresh()
+            self.mark_gateway_refreshed()
+            return True
 
     def _load_active_agent(self) -> None:
         if not os.path.exists(self.db_path):

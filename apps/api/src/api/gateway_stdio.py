@@ -38,7 +38,9 @@ async def _serve(values: argparse.Namespace) -> None:
     run_migrations()
     reconcile_engineering_catalog(DATABASE_PATH)
     engine = McpEngine(DATABASE_PATH)
-    await engine.sync_active_servers()
+    # The explicit gateway binding is the source of the child workspace. Do not
+    # eagerly start persisted "active" servers without it; GatewayService starts
+    # the selected child lazily on the first authorized call with workspace_path.
     settings = McpTransportSettings.from_env()
     service = build_api_gateway_service(DATABASE_PATH, engine, settings)
     service.notifier = GatewayNotificationHub()

@@ -1,8 +1,11 @@
 import asyncio
 from contextlib import suppress
 import json
+import os
 import re
 import secrets
+import shutil
+import subprocess
 import time
 from typing import Optional, List, AsyncIterator
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
@@ -63,6 +66,38 @@ def _friendly_progress_data(data: dict, elapsed_seconds: float) -> dict:
         )
     result["elapsedSeconds"] = round(max(0.0, elapsed_seconds), 1)
     return result
+
+
+def _restart_hermes_gateway_process() -> None:
+    executable = shutil.which("hermes")
+    if not executable:
+        raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
+    completed = subprocess.run(
+        [executable, "gateway", "restart"],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        creationflags=creationflags,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError("Hermes gateway restart failed after workspace rebinding")
+
+
+async def _refresh_hermes_gateway(engine: BaseAgentEngine) -> None:
+    """Reload Hermes' persistent MCP connection after an explicit rebind."""
+    await asyncio.to_thread(_restart_hermes_gateway_process)
+    deadline = time.monotonic() + 45.0
+    while time.monotonic() < deadline:
+        try:
+            health = await engine.check_health()
+            if str(health.get("state") or "").lower() == "connected":
+                return
+        except Exception:
+            pass
+        await asyncio.sleep(0.25)
+    raise RuntimeError("Hermes gateway did not become ready after workspace rebinding")
 
 
 class ChatStreamJob:
@@ -148,7 +183,9 @@ class ChatStreamJob:
                             event_data.get("label") or self._current_progress_label
                         )
                     elif event_data.get("status") == "completed":
-                        self._current_progress_label = "Finishing the result"
+                        completed_label = event_data.get("label")
+                        if completed_label:
+                            self._current_progress_label = str(completed_label)
                 await self._append(event.type, event_data)
         except asyncio.CancelledError:
             self.cancelled = True
@@ -654,11 +691,30 @@ async def chat(
     # Sync and activate workspace tools before chat turn. Chat should not begin
     # until the MCP servers assigned to this workspace are available.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    gateway_restart_required = False
     if sync_manager:
         try:
-            sync_manager.sync_workspace_tools(body.session_id)
+            gateway_restart_required = bool(
+                sync_manager.sync_workspace_tools(body.session_id)
+            )
         except Exception as e:
             log.warn("Failed to sync workspace tools", error=str(e))
+
+    if (
+        gateway_restart_required
+        and sync_manager
+        and getattr(sync_manager, "active_agent", "") == "hermes"
+    ):
+        try:
+            await sync_manager.refresh_gateway_if_needed(
+                lambda: _refresh_hermes_gateway(engine)
+            )
+        except Exception as exc:
+            log.exception("workspace_gateway_rebind_failed", error=str(exc))
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=str(exc),
+            ) from exc
 
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 

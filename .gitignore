@@ -251,6 +251,7 @@ vault/
 *.db-wal
 *.db-shm
 *.db-journal
+*.lifecycle.lock
 
 # LanceDB vector database runtime data
 *.lance/

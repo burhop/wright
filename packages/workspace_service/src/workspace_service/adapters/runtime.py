@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import sqlite3
 import subprocess
 import tempfile
@@ -17,6 +18,9 @@ logger = structlog.get_logger(__name__)
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
 SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
+HERMES_NATIVE_SESSION_PATTERN = re.compile(
+    r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE
+)
 
 
 class _ClosingConnection(sqlite3.Connection):
@@ -75,9 +79,12 @@ def is_synthetic_session_workspace(row: Dict[str, Any]) -> bool:
     basename = os.path.basename(local_path)
     workspace_name = str(row.get("workspace_name") or "").strip()
 
-    synthetic_id = session_id.startswith(
-        SYNTHETIC_SESSION_PREFIXES
-    ) or basename.startswith(SYNTHETIC_SESSION_PREFIXES)
+    synthetic_id = (
+        session_id.startswith(SYNTHETIC_SESSION_PREFIXES)
+        or basename.startswith(SYNTHETIC_SESSION_PREFIXES)
+        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(session_id))
+        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(basename))
+    )
     if not synthetic_id:
         return False
 
@@ -1500,9 +1507,8 @@ def compile_workspace_mcp_instructions(db_path: str, local_path: str) -> Optiona
                 srv["server_id"] in enabled_tools
             )
         if is_enabled and srv.get("instructions"):
-            active_instructions.append(
-                f"## {srv['name']} Instructions\n{srv['instructions']}"
-            )
+            materialized = str(srv["instructions"]).replace("{workspace}", local_path)
+            active_instructions.append(f"## {srv['name']} Instructions\n{materialized}")
 
     global_rules = (
         "## Global Workspace Rules\n"
