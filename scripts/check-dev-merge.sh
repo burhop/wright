@@ -48,7 +48,7 @@ run npx -w apps/web eslint .
 run npx prettier --check apps/web/ --end-of-line auto
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 
-run uv pip install mypy --quiet
+run uv pip install mypy build --quiet
 run uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
 run uv run mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
   echo "::warning::Mypy type checks failed with warning mode enabled."
@@ -88,6 +88,7 @@ else
   LLM_API_URL="${LLM_API_URL:-http://127.0.0.1:8000/v1}" \
   DATABASE_PATH="$TMP_DB" \
   WRIGHT_AUTH_MODE=compat \
+  WRIGHT_API_MCP_AUTOSTART=1 \
   WRIGHT_BIND_HOST=127.0.0.1 \
     uv run uvicorn api.main:app --host 127.0.0.1 --port 8000 >"$BACKEND_LOG" 2>&1 &
   BACKEND_PID=$!

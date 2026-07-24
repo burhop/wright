@@ -19,6 +19,34 @@ from .secrets import has_credentials, read_secrets, value_for_credential
 
 logger = get_logger(__name__)
 
+SOLID_EDGE_ALLOWED_ROOTS_ENV = "CADMCP_SOLID_EDGE_ALLOWED_ROOTS"
+
+
+def _workspace_scoped_environment(
+    server: Any, environment: dict[str, str], workspace_path: str | None
+) -> dict[str, str]:
+    """Add the exact bound workspace to SolidEdgeMCP's narrow file allowlist."""
+    result = dict(environment)
+    identity = (
+        f"{getattr(server, 'name', '')} {getattr(server, 'source_url', '')}".lower()
+    )
+    if not workspace_path or not (
+        "solid edge" in identity or "solidedgemcp" in identity
+    ):
+        return result
+
+    existing = [
+        item.strip()
+        for item in result.get(SOLID_EDGE_ALLOWED_ROOTS_ENV, "").split(os.pathsep)
+        if item.strip()
+    ]
+    canonical_workspace = os.path.abspath(workspace_path)
+    normalized = {os.path.normcase(os.path.abspath(item)) for item in existing}
+    if os.path.normcase(canonical_workspace) not in normalized:
+        existing.append(canonical_workspace)
+    result[SOLID_EDGE_ALLOWED_ROOTS_ENV] = os.pathsep.join(existing)
+    return result
+
 
 class MockRunner(BaseRunner):
     def __init__(self, command: Any = None) -> None:
@@ -78,7 +106,11 @@ class DatabaseLifecycleAdapter:
         if server.type == "stdio":
             if not server.command:
                 raise ValueError("Command configuration is required for stdio server.")
-            env = self._environment(server_id, server.env_vars)
+            env = _workspace_scoped_environment(
+                server,
+                self._environment(server_id, server.env_vars),
+                workspace_path,
+            )
             command = self._headless_command(server, server.command)
             return StdioRunner(command, env=env, cwd=workspace_path)
         if server.type == "sse":

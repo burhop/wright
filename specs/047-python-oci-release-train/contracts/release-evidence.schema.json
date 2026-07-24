@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://burhop.github.io/wright/schemas/release-evidence-v1.json",
+  "title": "Wright Release Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "release_identity", "python_artifacts", "python_install_evidence", "oci_candidate", "oci_gate_evidence", "promotions", "approvals", "verification_results", "skipped_optional_stages", "stage_results", "status"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mode": {"enum": ["dry-run", "release"]},
+    "release_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "python_version", "tag", "source_commit"],
+      "properties": {
+        "version": {"type": "string", "pattern": "^(?:0|[1-9][0-9]*)\\.[0-9]+\\.[0-9]+(?:-(?:alpha|beta|rc)\\.[0-9]+)?$"},
+        "python_version": {"type": "string", "minLength": 1},
+        "tag": {"type": "string", "pattern": "^v"},
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "python_artifacts": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["filename", "kind", "sha256", "content_manifest_sha256"],
+        "properties": {
+          "filename": {"type": "string"},
+          "kind": {"enum": ["wheel", "sdist"]},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "content_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "oci_candidate": {
+      "type": ["object", "null"],
+      "properties": {
+        "repository": {"type": "string"},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "platforms": {"const": ["linux/amd64"]}
+      },
+      "required": ["repository", "digest", "platforms"]
+    },
+    "python_install_evidence": {"type": "array"},
+    "oci_gate_evidence": {"type": ["object", "null"]},
+    "promotions": {"type": "array"},
+    "approvals": {"type": "array"},
+    "verification_results": {"type": "array"},
+    "skipped_optional_stages": {"type": "array", "items": {"type": "string"}},
+    "stage_results": {"type": "array", "items": {"type": "object"}},
+    "status": {"enum": ["preflight", "candidates_built", "candidates_verified", "test_index_verified", "approved", "promoted", "post_verified", "docs_verified", "release_ready", "failed", "quarantined"]}
+  }
+}

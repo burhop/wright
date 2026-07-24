@@ -19,6 +19,21 @@ def get_ui_theme() -> str:
     return os.getenv("UI_THEME", "dark")
 
 
+def api_mcp_autostart_enabled() -> bool:
+    """Whether the HTTP API may own MCP subprocess lifecycles.
+
+    Set ``WRIGHT_API_MCP_AUTOSTART=0`` when a stdio gateway such as Hermes is
+    the sole MCP owner. This prevents UI status polling from spawning a second
+    process for the same host application.
+    """
+    return os.getenv("WRIGHT_API_MCP_AUTOSTART", "1").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+
+
 def get_llm_health_url() -> str:
     """Dynamically get LLM health URL from the database system_settings or env var."""
     import sqlite3

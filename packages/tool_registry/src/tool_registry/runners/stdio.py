@@ -4,6 +4,7 @@ import os
 import subprocess
 import structlog
 import shlex
+import time
 from typing import List, Dict, Any, Optional, Union
 from opentelemetry import trace
 from core.redaction import SECRET_KEY_RE, redact_command, redact_mapping, redact_text
@@ -23,6 +24,13 @@ def _subprocess_kwargs() -> Dict[str, Any]:
         return {}
 
     return {"creationflags": creationflags}
+
+
+def _slow_call_threshold_ms() -> float:
+    try:
+        return max(0.0, float(os.getenv("WRIGHT_MCP_SLOW_CALL_MS", "2000")))
+    except ValueError:
+        return 2000.0
 
 
 class StdioRunner(BaseRunner):
@@ -216,14 +224,58 @@ class StdioRunner(BaseRunner):
             payload["params"] = params
 
         serialized = json.dumps(payload) + "\n"
+        request_bytes = len(serialized.encode("utf-8"))
+        tool_name = str((params or {}).get("name") or "") or None
+        started = time.perf_counter()
+        logger.info(
+            "mcp_request_started",
+            request_id=req_id,
+            method=method,
+            tool_name=tool_name,
+            request_bytes=request_bytes,
+            child_pid=self.process.pid if self.process else None,
+        )
         try:
             self.process.stdin.write(serialized.encode("utf-8"))
             await self.process.stdin.drain()
         except Exception as e:
             self._pending_requests.pop(req_id, None)
             raise RuntimeError(f"Failed to write request to stdin: {e}") from e
+        try:
+            result = await fut
+        except BaseException as exc:
+            logger.warning(
+                "mcp_request_failed",
+                request_id=req_id,
+                method=method,
+                tool_name=tool_name,
+                duration_ms=round((time.perf_counter() - started) * 1000, 2),
+                error_type=type(exc).__name__,
+                child_pid=self.process.pid if self.process else None,
+            )
+            raise
 
-        return await fut
+        duration_ms = round((time.perf_counter() - started) * 1000, 2)
+        response_bytes = len(
+            json.dumps(result, sort_keys=True, default=str).encode("utf-8")
+        )
+        event = (
+            "mcp_request_slow"
+            if duration_ms >= _slow_call_threshold_ms()
+            else "mcp_request_completed"
+        )
+        log = logger.warning if event == "mcp_request_slow" else logger.info
+        log(
+            event,
+            request_id=req_id,
+            method=method,
+            tool_name=tool_name,
+            duration_ms=duration_ms,
+            request_bytes=request_bytes,
+            response_bytes=response_bytes,
+            child_pid=self.process.pid if self.process else None,
+        )
+        return result
 
     async def _send_notification(
         self, method: str, params: Optional[Dict[str, Any]] = None

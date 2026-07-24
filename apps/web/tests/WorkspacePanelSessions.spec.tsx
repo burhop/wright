@@ -11,6 +11,8 @@ const mockUpdateWorkspaceSession = vi.fn();
 const mockSelectSession = vi.fn();
 const mockGetWorkspaceMcpStatus = vi.fn();
 const mockGetWorkspaceFiles = vi.fn();
+const mockGetWorkspaceTools = vi.fn();
+const mockGetWorkspaceToolsById = vi.fn();
 
 vi.mock("../src/store/sessions", () => ({
   useChat: () => mockUseChat(),
@@ -57,7 +59,11 @@ vi.mock("../src/services/workspace-service", () => ({
       workspace_prompt: null,
       git_large_file_threshold: null,
     }),
-    getWorkspaceTools: vi.fn().mockResolvedValue([]),
+    getWorkspaceTools: (...args: unknown[]) => mockGetWorkspaceTools(...args),
+    getWorkspaceToolsById: (...args: unknown[]) =>
+      mockGetWorkspaceToolsById(...args),
+    toggleWorkspaceTool: vi.fn().mockResolvedValue(true),
+    toggleWorkspaceToolById: vi.fn().mockResolvedValue(true),
     getWorkspaceMcpStatus: (...args: unknown[]) =>
       mockGetWorkspaceMcpStatus(...args),
   },
@@ -84,6 +90,8 @@ describe("WorkspacePanel session selection", () => {
       git_status: "Clean",
       children: [],
     });
+    mockGetWorkspaceTools.mockResolvedValue([]);
+    mockGetWorkspaceToolsById.mockResolvedValue([]);
     mockGetWorkspace.mockResolvedValue({
       workspace_id: "workspace-1",
       workspace_name: "Demo",
@@ -162,6 +170,34 @@ describe("WorkspacePanel session selection", () => {
     });
     expect(screen.queryByText("old session message")).not.toBeInTheDocument();
   });
+
+  it("loads MCP selection by workspace ID instead of the global session", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ servers: [] }),
+      }),
+    );
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-mcp-btn"));
+
+    await waitFor(() => {
+      expect(mockGetWorkspaceToolsById).toHaveBeenCalledWith("workspace-1");
+    });
+    expect(mockGetWorkspaceTools).not.toHaveBeenCalled();
+
+    vi.unstubAllGlobals();
+  });
+
   it("does not show another session's busy stream on the selected session", async () => {
     const chat = mockUseChat();
     mockUseChat.mockReturnValue({

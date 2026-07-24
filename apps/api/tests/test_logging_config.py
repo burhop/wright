@@ -8,6 +8,7 @@ from core.telemetry import (
 from api.logging_config import configure_logging
 from core.logging import get_logger
 import json
+import sys
 
 
 def test_remote_telemetry_export_is_disabled_by_default():
@@ -38,3 +39,14 @@ def test_json_logs_include_correlation_and_otel_trace_fields(capsys):
     assert entry["event"] == "shape_check"
     assert entry["trace_id"] == "no-active-span"
     assert entry[WRIGHT_CORRELATION_ID] == "corr-123"
+
+
+def test_stdio_logging_can_be_routed_to_stderr(capsys):
+    configure_logging(stream=sys.stderr)
+    get_logger("test.stdio").info("protocol_safe")
+
+    captured = capsys.readouterr()
+    # Do not leave structlog bound to pytest's soon-to-close capture stream.
+    configure_logging(stream=sys.__stdout__)
+    assert captured.out == ""
+    assert json.loads(captured.err.strip().splitlines()[-1])["event"] == "protocol_safe"

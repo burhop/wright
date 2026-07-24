@@ -18,6 +18,14 @@ export interface ChatStreamState {
   activeStreamId: string | null;
 }
 
+export interface QueuedPrompt {
+  id: string;
+  sessionId: string;
+  content: string;
+  attachments?: string[];
+  mode: "queue" | "steer";
+}
+
 export interface ChatState {
   sessions: ChatSession[];
   activeSessionId: string | null;
@@ -28,7 +36,7 @@ export interface ChatState {
   streamedText: string;
   activeStreamId: string | null;
   streamStates: Record<string, ChatStreamState>;
-  promptQueue: { sessionId: string; content: string; attachments?: string[] }[];
+  promptQueue: QueuedPrompt[];
 }
 
 type ChatAction =
@@ -63,9 +71,9 @@ type ChatAction =
   | { type: "END_STREAMING"; sessionId: string; finalSession?: ChatSession }
   | {
       type: "QUEUE_PROMPT";
-      prompt: { sessionId: string; content: string; attachments?: string[] };
+      prompt: QueuedPrompt;
     }
-  | { type: "DEQUEUE_PROMPT"; sessionId: string }
+  | { type: "DEQUEUE_PROMPT"; promptId: string }
   | { type: "CLEAR_STREAM_ID"; sessionId: string };
 
 const initialState: ChatState = {
@@ -573,24 +581,21 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "QUEUE_PROMPT":
       newState = {
         ...state,
-        promptQueue: [...state.promptQueue, action.prompt],
+        promptQueue:
+          action.prompt.mode === "steer"
+            ? [action.prompt, ...state.promptQueue]
+            : [...state.promptQueue, action.prompt],
       };
       break;
 
-    case "DEQUEUE_PROMPT": {
-      let removed = false;
+    case "DEQUEUE_PROMPT":
       newState = {
         ...state,
-        promptQueue: state.promptQueue.filter((prompt) => {
-          if (!removed && prompt.sessionId === action.sessionId) {
-            removed = true;
-            return false;
-          }
-          return true;
-        }),
+        promptQueue: state.promptQueue.filter(
+          (prompt) => prompt.id !== action.promptId,
+        ),
       };
       break;
-    }
 
     case "CLEAR_STREAM_ID":
       newState = setSessionStreamState(
@@ -628,6 +633,7 @@ interface ChatContextProps {
   ) => Promise<void>;
   refreshSessions: (workspaceId?: string) => Promise<void>;
   cancelActiveStream: () => Promise<void>;
+  steerMessage: (content: string, attachments?: string[]) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -637,6 +643,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const createSessionPromiseRef = useRef<Promise<string | undefined> | null>(
     null,
   );
+  const steeringSessionsRef = useRef<Set<string>>(new Set());
 
   const refreshSessions = useCallback(async (workspaceId?: string) => {
     try {
@@ -811,33 +818,28 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       const sessionStreamState = state.streamStates[sessionId];
       const isSessionStreaming = Boolean(sessionStreamState?.isStreaming);
-      const isSlashCommand = content.trim().startsWith("/");
-      if (!isSlashCommand && isSessionStreaming) {
-        const userMsg: ChatMessage = {
-          id: Math.random().toString(36).substring(7),
-          role: "user",
-          content,
-          timestamp: Date.now(),
-          traceId: "tr-" + Math.random().toString(36).substring(7),
-        };
-        dispatch({ type: "ADD_MESSAGE", sessionId, message: userMsg });
+      if (!isQueuedExecution && isSessionStreaming) {
         dispatch({
           type: "QUEUE_PROMPT",
-          prompt: { sessionId, content, attachments },
+          prompt: {
+            id: `queued-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+            sessionId,
+            content,
+            attachments,
+            mode: "queue",
+          },
         });
         return;
       }
 
-      if (!isQueuedExecution) {
-        const userMsg: ChatMessage = {
-          id: Math.random().toString(36).substring(7),
-          role: "user",
-          content,
-          timestamp: Date.now(),
-          traceId: "tr-" + Math.random().toString(36).substring(7),
-        };
-        dispatch({ type: "ADD_MESSAGE", sessionId, message: userMsg });
-      }
+      const userMsg: ChatMessage = {
+        id: Math.random().toString(36).substring(7),
+        role: "user",
+        content,
+        timestamp: Date.now(),
+        traceId: "tr-" + Math.random().toString(36).substring(7),
+      };
+      dispatch({ type: "ADD_MESSAGE", sessionId, message: userMsg });
 
       const activeSession = state.sessions.find(
         (session) => session.sessionId === sessionId,
@@ -973,6 +975,23 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               await refreshSessions(workspaceId);
             }
           } else if (event.type === "error") {
+            const wasSteered =
+              event.message === "Stream cancelled by user." &&
+              steeringSessionsRef.current.delete(sessionId);
+            if (wasSteered) {
+              dispatch({
+                type: "ADD_STREAM_ACTIVITY",
+                sessionId,
+                entry: {
+                  kind: "status",
+                  title: "Current turn stopped for steering",
+                  detail: "Starting the steering instruction next.",
+                },
+              });
+              dispatch({ type: "CLEAR_ACTIVE_TOOL", sessionId });
+              dispatch({ type: "END_STREAMING", sessionId });
+              continue;
+            }
             console.error(event.message);
             dispatch({
               type: "ADD_STREAM_ACTIVITY",
@@ -1035,13 +1054,44 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "CLEAR_STREAM_ID", sessionId: state.activeSessionId });
   }, [state.activeSessionId]);
 
+  const steerMessage = useCallback(
+    async (content: string, attachments?: string[]) => {
+      const sessionId = state.activeSessionId;
+      if (!sessionId || (!content.trim() && !attachments?.length)) return;
+
+      if (!state.streamStates[sessionId]?.isStreaming) {
+        await sendMessage(content, attachments);
+        return;
+      }
+
+      dispatch({
+        type: "QUEUE_PROMPT",
+        prompt: {
+          id: `steer-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+          sessionId,
+          content,
+          attachments,
+          mode: "steer",
+        },
+      });
+
+      steeringSessionsRef.current.add(sessionId);
+      const cancelled = await agentService.cancelStream(sessionId);
+      if (!cancelled) {
+        steeringSessionsRef.current.delete(sessionId);
+      }
+      dispatch({ type: "CLEAR_STREAM_ID", sessionId });
+    },
+    [sendMessage, state.activeSessionId, state.streamStates],
+  );
+
   useEffect(() => {
     const nextPrompt = state.promptQueue.find(
       (prompt) => !state.streamStates[prompt.sessionId]?.isStreaming,
     );
     if (!nextPrompt) return;
 
-    dispatch({ type: "DEQUEUE_PROMPT", sessionId: nextPrompt.sessionId });
+    dispatch({ type: "DEQUEUE_PROMPT", promptId: nextPrompt.id });
     sendMessage(
       nextPrompt.content,
       nextPrompt.attachments,
@@ -1060,6 +1110,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         sendMessage,
         refreshSessions,
         cancelActiveStream,
+        steerMessage,
       }}
     >
       {children}

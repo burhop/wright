@@ -3,11 +3,14 @@ from __future__ import annotations
 import json
 import os
 import uuid
+from collections import Counter
 
-from fastapi import APIRouter, Header, HTTPException, Request
+from fastapi import APIRouter, Header, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from api.config import DATABASE_PATH
+from data_vault import GatewayRepository
 from tool_registry.gateway_models import GatewayError, SessionState
 
 router = APIRouter()
@@ -16,6 +19,65 @@ router = APIRouter()
 class GatewayCallRequest(BaseModel):
     name: str
     arguments: dict = Field(default_factory=dict)
+
+
+@router.get("/diagnostics")
+async def gateway_diagnostics(
+    session_id: str,
+    limit: int = Query(100, ge=1, le=1000),
+):
+    """Return redacted, persisted MCP timings for one bound session."""
+    rows = GatewayRepository(DATABASE_PATH).list_audit(session_id)[-limit:]
+    events = []
+    terminal_by_request: set[str] = set()
+    started_by_request: dict[str, dict] = {}
+    terminal_outcomes = {"succeeded", "failed", "timed_out", "cancelled", "denied"}
+    for row in rows:
+        event = dict(row)
+        try:
+            event["metadata"] = json.loads(event.pop("metadata_json", "{}"))
+        except (TypeError, json.JSONDecodeError):
+            event["metadata"] = {}
+        request_id = str(event.get("request_id") or "")
+        if request_id and event.get("outcome") == "started":
+            started_by_request[request_id] = event
+        if request_id and event.get("outcome") in terminal_outcomes:
+            terminal_by_request.add(request_id)
+        events.append(event)
+
+    completed = [
+        event
+        for event in events
+        if event.get("operation") == "tool.call"
+        and event.get("outcome") in terminal_outcomes
+    ]
+    durations = [int(event.get("duration_ms") or 0) for event in completed]
+    slowest = sorted(
+        completed,
+        key=lambda event: int(event.get("duration_ms") or 0),
+        reverse=True,
+    )[:10]
+    active = [
+        event
+        for request_id, event in started_by_request.items()
+        if request_id not in terminal_by_request
+    ]
+    return {
+        "session_id": session_id,
+        "summary": {
+            "completed_calls": len(completed),
+            "active_calls": len(active),
+            "total_duration_ms": sum(durations),
+            "average_duration_ms": (
+                round(sum(durations) / len(durations), 2) if durations else 0
+            ),
+            "maximum_duration_ms": max(durations, default=0),
+            "outcomes": dict(Counter(event["outcome"] for event in completed)),
+        },
+        "active": active,
+        "slowest": slowest,
+        "events": events,
+    }
 
 
 def _bound_service(

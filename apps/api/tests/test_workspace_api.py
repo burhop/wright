@@ -631,6 +631,47 @@ def test_workspace_tools_endpoints(client):
     assert "OpenSCAD Geometry" not in tools
 
 
+def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
+    client, tmp_path, monkeypatch
+):
+    from api.config import DATABASE_PATH
+    import sqlite3
+
+    session_id = "20260719_194559_339f6f"
+    fallback_path = tmp_path / session_id
+    monkeypatch.setenv("WRIGHT_WORKSPACES_DIR", str(tmp_path))
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute(
+            "DELETE FROM workspace_agent_sessions WHERE session_id = ?",
+            (session_id,),
+        )
+        conn.execute(
+            "DELETE FROM engineering_workspaces WHERE session_id = ?",
+            (session_id,),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    response = client.get("/api/workspace/tools", params={"session_id": session_id})
+
+    assert response.status_code == 200
+    assert "enabled_tools" in response.json()
+    assert not fallback_path.exists()
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        row = conn.execute(
+            "SELECT workspace_id FROM engineering_workspaces WHERE session_id = ?",
+            (session_id,),
+        ).fetchone()
+    finally:
+        conn.close()
+    assert row is None
+
+
 def test_workspace_recent_and_list(client):
     # Ensure test-session exists by listing files first
     client.get("/api/workspace/files", params={"session_id": "test-session"})
@@ -1504,6 +1545,13 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
         ),
         (
             str(uuid.uuid4()),
+            "20260719_194559_339f6f",
+            "20260719_194559_339f6f",
+            os.path.join(workspace_setup, "20260719_194559_339f6f"),
+            now + 2,
+        ),
+        (
+            str(uuid.uuid4()),
             "wright-local-real-session",
             "Demo",
             os.path.join(workspace_setup, "demo"),
@@ -1535,13 +1583,15 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
 
         assert "api_1782845491_1094a132" not in recent_names
         assert "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8" not in recent_names
+        assert "20260719_194559_339f6f" not in recent_names
         assert "api_1782845491_1094a132" not in all_names
         assert "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8" not in all_names
+        assert "20260719_194559_339f6f" not in all_names
         assert "Demo" in recent_names
         assert "Demo" in all_names
     finally:
         conn.execute(
-            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?)",
+            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?)",
             tuple(row[0] for row in rows),
         )
         conn.commit()

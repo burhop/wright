@@ -89,6 +89,7 @@ export function WorkspacePanel({
     createSession,
     selectSession,
     sendMessage,
+    steerMessage,
     refreshSessions,
     cancelActiveStream,
   } = useChat();
@@ -186,6 +187,11 @@ export function WorkspacePanel({
   const activeSessionTool = activeSessionStreamState?.activeTool || null;
   const activeSessionStreamActivity =
     activeSessionStreamState?.streamActivity || [];
+  const activeSessionQueuedPrompts = activeSessionId
+    ? (state.promptQueue ?? []).filter(
+        (prompt) => prompt.sessionId === activeSessionId,
+      )
+    : [];
 
   // Load active agent on mount
   useEffect(() => {
@@ -1047,7 +1053,7 @@ export function WorkspacePanel({
   };
 
   const fetchMcpData = useCallback(async () => {
-    if (!activeSessionId) return;
+    if (!_workspaceId && !activeSessionId) return;
     setMcpLoading(true);
     try {
       const serversRes = await fetch(getApiUrl("/api/mcp/servers"));
@@ -1056,15 +1062,16 @@ export function WorkspacePanel({
         setMcpServers(data.servers || []);
       }
 
-      const enabledList =
-        await workspaceService.getWorkspaceTools(activeSessionId);
+      const enabledList = _workspaceId
+        ? await workspaceService.getWorkspaceToolsById(_workspaceId)
+        : await workspaceService.getWorkspaceTools(activeSessionId!);
       setEnabledTools(enabledList || []);
     } catch (err) {
       console.error("Failed to load compact MCP list", err);
     } finally {
       setMcpLoading(false);
     }
-  }, [activeSessionId]);
+  }, [_workspaceId, activeSessionId]);
 
   useEffect(() => {
     if (activeSidebar === "marketplace") {
@@ -1073,19 +1080,28 @@ export function WorkspacePanel({
   }, [activeSidebar, fetchMcpData]);
 
   const handleToggleMcpTool = async (
-    serverName: string,
+    serverId: string,
     currentlyEnabled: boolean,
   ) => {
-    if (!activeSessionId) return;
+    if (!_workspaceId && !activeSessionId) return;
     try {
-      await workspaceService.toggleWorkspaceTool(
-        activeSessionId,
-        serverName,
-        !currentlyEnabled,
-      );
+      if (_workspaceId) {
+        await workspaceService.toggleWorkspaceToolById(
+          _workspaceId,
+          serverId,
+          !currentlyEnabled,
+        );
+      } else {
+        await workspaceService.toggleWorkspaceTool(
+          activeSessionId!,
+          serverId,
+          !currentlyEnabled,
+        );
+      }
       // Re-fetch enabled tools list
-      const enabledList =
-        await workspaceService.getWorkspaceTools(activeSessionId);
+      const enabledList = _workspaceId
+        ? await workspaceService.getWorkspaceToolsById(_workspaceId)
+        : await workspaceService.getWorkspaceTools(activeSessionId!);
       setEnabledTools(enabledList || []);
     } catch (err) {
       console.error("Failed to toggle MCP tool", err);
@@ -1319,10 +1335,12 @@ export function WorkspacePanel({
               >
                 <MessageComposer
                   onSend={sendMessage}
+                  onSteer={steerMessage}
                   isStreaming={isActiveSessionStreaming}
                   onCancel={cancelActiveStream}
                   sessionId={activeSessionId || undefined}
                   workspaceId={_workspaceId}
+                  queuedPrompts={activeSessionQueuedPrompts}
                 />
               </div>
             )}
@@ -1499,7 +1517,7 @@ export function WorkspacePanel({
                           type="checkbox"
                           checked={isEnabled}
                           onChange={() =>
-                            handleToggleMcpTool(server.name, isEnabled)
+                            handleToggleMcpTool(server.server_id, isEnabled)
                           }
                           style={{ cursor: "pointer" }}
                         />
@@ -2770,10 +2788,12 @@ export function WorkspacePanel({
             >
               <MessageComposer
                 onSend={sendMessage}
+                onSteer={steerMessage}
                 isStreaming={isActiveSessionStreaming}
                 onCancel={cancelActiveStream}
                 sessionId={activeSessionId || undefined}
                 workspaceId={_workspaceId}
+                queuedPrompts={activeSessionQueuedPrompts}
               />
             </div>
           )}

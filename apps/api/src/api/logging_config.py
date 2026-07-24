@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 import sys
+from typing import TextIO
 
 import structlog
 
 from core.telemetry import current_trace_fields
 
 
-class _StdoutLogger:
+class _StreamLogger:
+    def __init__(self, stream: TextIO) -> None:
+        self.stream = stream
+
     def msg(self, message: str) -> None:
-        sys.stdout.write(message + "\n")
-        sys.stdout.flush()
+        self.stream.write(message + "\n")
+        self.stream.flush()
 
     log = msg
     debug = msg
@@ -23,9 +27,12 @@ class _StdoutLogger:
     fatal = msg
 
 
-class _StdoutLoggerFactory:
+class _StreamLoggerFactory:
+    def __init__(self, stream: TextIO) -> None:
+        self.stream = stream
+
     def __call__(self, *args, **kwargs):
-        return _StdoutLogger()
+        return _StreamLogger(self.stream)
 
 
 def _add_trace_fields(logger, method_name, event_dict):
@@ -33,8 +40,13 @@ def _add_trace_fields(logger, method_name, event_dict):
     return event_dict
 
 
-def configure_logging() -> None:
-    """Configure JSON stdout logging without import-time filesystem effects."""
+def configure_logging(*, stream: TextIO | None = None) -> None:
+    """Configure JSON logging without import-time filesystem effects.
+
+    HTTP processes use stdout. Stdio protocol servers must pass stderr so
+    diagnostics never corrupt their JSON-RPC stdout channel.
+    """
+    output = stream or sys.stdout
     structlog.configure(
         processors=[
             structlog.contextvars.merge_contextvars,
@@ -48,6 +60,6 @@ def configure_logging() -> None:
         ],
         wrapper_class=structlog.make_filtering_bound_logger(0),
         context_class=dict,
-        logger_factory=_StdoutLoggerFactory(),
+        logger_factory=_StreamLoggerFactory(output),
         cache_logger_on_first_use=True,
     )

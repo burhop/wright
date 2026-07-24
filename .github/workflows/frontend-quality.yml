@@ -79,6 +79,7 @@ jobs:
       - name: Start backend server
         run: |
           LLM_API_URL="http://127.0.0.1:8000/v1" \
+          WRIGHT_AUTH_MODE="compat" \
           DATABASE_PATH="${RUNNER_TEMP}/wright-ci.db" \
           uv run uvicorn api.main:app --host 127.0.0.1 --port 8000 \
             >"${RUNNER_TEMP}/wright-api.out.log" \

@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from api.config import DATABASE_PATH
 from api.main import app
 from data_vault.secret_provider import FileSecretProvider
+from data_vault import GatewayRepository
 from data_vault.workspace_repository import WorkspaceRepository
 from tool_registry import McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
@@ -153,3 +154,33 @@ def test_mcp_router_uses_generic_wright_gateway_sync():
         mcp_services.sync_mcp_server_to_wright_gateway.__module__
         == "api.services.wright_gateway_sync"
     )
+
+
+def test_gateway_diagnostics_summarize_persisted_timings(sync_client, tmp_path) -> None:
+    server_id, session_id, workspace_id, _ = _seed(tmp_path)
+    GatewayRepository(DATABASE_PATH).record_audit(
+        {
+            "correlation_id": "diagnostic-correlation",
+            "request_id": "diagnostic-request",
+            "session_id": session_id,
+            "principal_id": "local-admin",
+            "workspace_id": workspace_id,
+            "operation": "tool.call",
+            "server_id": server_id,
+            "target_name": "mesh_calc",
+            "allowed": True,
+            "reason_code": "allowed",
+            "outcome": "succeeded",
+            "duration_ms": 1250,
+            "metadata": {"response_bytes": 4096},
+        }
+    )
+
+    response = sync_client.get(
+        "/api/gateway/diagnostics", params={"session_id": session_id}
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["summary"]["completed_calls"] == 1
+    assert body["summary"]["maximum_duration_ms"] == 1250
+    assert body["slowest"][0]["metadata"]["response_bytes"] == 4096

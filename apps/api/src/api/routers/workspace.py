@@ -14,6 +14,7 @@ from typing import Optional
 from agent_adapters import BaseAgentEngine
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
+from api.config import api_mcp_autostart_enabled
 from api.routers.agent import get_agent_engine
 from api.composition import workspace_service
 from workspace_service import (
@@ -498,7 +499,6 @@ async def update_workspace_config(
 @traced("workspace.tools.list")
 async def get_workspace_tools_endpoint(
     session_id: str = Query(...),
-    workspace_dir: str = Depends(get_workspace_dir),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     state = service.list_workspace_tools(session_id)
@@ -533,7 +533,11 @@ async def _workspace_mcp_status_response(
     request: Request | None = None,
 ) -> WorkspaceMcpStatusResponse:
     workspace_id = workspace["workspace_id"]
-    mcp_engine = getattr(request.app.state, "mcp_engine", None) if request else None
+    mcp_engine = (
+        getattr(request.app.state, "mcp_engine", None)
+        if request and api_mcp_autostart_enabled()
+        else None
+    )
     result = await service.tools.status(
         workspace,
         mcp_engine=mcp_engine,
@@ -818,7 +822,11 @@ async def activate_workspace_endpoint(
     try:
         await service.reconcile_runtime(
             session_id,
-            mcp_engine=getattr(request.app.state, "mcp_engine", None),
+            mcp_engine=(
+                getattr(request.app.state, "mcp_engine", None)
+                if api_mcp_autostart_enabled()
+                else None
+            ),
             sync_manager=getattr(request.app.state, "agent_sync_manager", None),
         )
     except Exception as e:
@@ -862,7 +870,11 @@ async def update_workspace_session_endpoint(
         try:
             await service.reconcile_runtime(
                 session_id,
-                mcp_engine=getattr(request.app.state, "mcp_engine", None),
+                mcp_engine=(
+                    getattr(request.app.state, "mcp_engine", None)
+                    if api_mcp_autostart_enabled()
+                    else None
+                ),
                 sync_manager=getattr(request.app.state, "agent_sync_manager", None),
             )
         except Exception as e:

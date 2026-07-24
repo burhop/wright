@@ -57,3 +57,11 @@ def test_makefile_exposes_mirror_and_package_validation_targets() -> None:
         "hermes-plugin-root-lifecycle-test:",
     ]:
         assert target in makefile
+
+
+def test_dev_merge_gate_bootstraps_package_build_frontend() -> None:
+    gate = (ROOT / "scripts" / "check-dev-merge.sh").read_text(encoding="utf-8")
+
+    assert "uv pip install mypy build --quiet" in gate
+    assert "scripts/build-python-distributions.sh --dist-root" in gate
+    assert "WRIGHT_API_MCP_AUTOSTART=1" in gate

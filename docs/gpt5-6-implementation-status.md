@@ -1,5 +1,17 @@
 # GPT-5.6 Plan Implementation Status
 
+## Feature 048 implementation cycle
+
+- **Baseline**: `7aa085a`; local and `origin/dev` matched before the feature branch.
+- **Branch**: `048-solid-edge-creation-visibility`.
+- **State**: review-ready for the reconciled production-test stabilization scope.
+- **Delivered scope**: creation-oriented Solid Edge gateway projection, canonical new-visible-document guidance, immediate and elapsed chat progress, busy-turn steering, Hermes-owned MCP lifecycle behavior, workspace gateway rebinding, protected bridge authentication, and Linux CI portability.
+- **Scope reconciliation**: the original immutable-profile, artifact-binding, provider-neutral progress/diagnostics services, benchmark scripts, and 20-run live evidence are explicitly deferred and are not represented as complete.
+- **CI repair**: the Playwright backend now selects compatibility authentication explicitly; API tests use a private temporary directory for fallback secrets instead of attempting to chmod the shared Linux temp directory.
+- **Evidence**: see `specs/048-solid-edge-creation-visibility/checklists/completion-audit.md`.
+- **Final merge gate**: `scripts/check-dev-merge.sh` passed end to end on 2026-07-24: 516 Python passed/12 skipped, 82 Hermes tests passed, 24 frontend files/103 tests passed, production build and strict MkDocs passed, release coverage reached 87.53%, exact Python artifacts built and clean-installed, and all 38 live Playwright tests passed. Repository-wide mypy retains its pre-existing duplicate-test-`conftest` warning under the gate's documented warning mode.
+- **Exact next action**: obtain green PR #44 checks and merge to `dev`.
+
 ## Feature 047 implementation cycle
 
 - **Baseline**: `b6c6703d05c9333762a073664ae81fd07215ce7d`; local and `origin/dev` matched before branching.

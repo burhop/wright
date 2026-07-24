@@ -1,123 +1,78 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('LLM Setup Flow', () => {
-  let isConfiguredMock = false;
+test.describe("Global Settings Flow", () => {
+  let savedSettings: Record<string, unknown> | null;
 
   test.beforeEach(async ({ page }) => {
-    isConfiguredMock = false;
+    savedSettings = null;
 
-    // Mock setup status
-    await page.route('**/api/setup/status', async (route) => {
+    // App startup still reads setup status for the active theme, but setup
+    // status no longer gates access to the dashboard or settings page.
+    await page.route("**/api/setup/status", async (route) => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
+        contentType: "application/json",
         body: JSON.stringify({
-          is_configured: isConfiguredMock,
-          llm_api_url: isConfiguredMock ? 'http://127.0.0.1:8000/api/health' : null,
-          active_agent: 'hermes',
-          theme: 'dark'
+          is_configured: false,
+          llm_api_url: null,
+          active_agent: "hermes",
+          theme: "dark",
         }),
       });
     });
 
-    // Mock setup health check
-    await page.route('**/api/setup/health*', async (route) => {
-      const url = new URL(route.request().url());
-      const targetUrl = url.searchParams.get('url') || '';
-      if (targetUrl.includes('invalid')) {
+    await page.route("**/api/settings", async (route) => {
+      if (route.request().method() === "GET") {
         await route.fulfill({
           status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({ status: 'unhealthy', latency_ms: 0.0, error: 'Connection Error' }),
+          contentType: "application/json",
+          body: JSON.stringify({
+            llm_provider: "hermes",
+            theme: "dark",
+            api_keys: {},
+          }),
         });
-      } else {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({ status: 'healthy', latency_ms: 10.5 }),
-        });
+        return;
       }
-    });
 
-    // Mock setup configure
-    await page.route('**/api/setup/configure', async (route) => {
-      isConfiguredMock = true;
+      savedSettings = route.request().postDataJSON();
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ success: true, message: 'System configured successfully.' }),
-      });
-    });
-
-    // Mock resetting
-    await page.route('**/api/setup/reset', async (route) => {
-      isConfiguredMock = false;
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ success: true, message: 'Setup reset successfully.' }),
-      });
-    });
-
-    // Mock basic dashboard dependencies
-    await page.route('**/api/workspace/recent', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ workspaces: [] }),
-      });
-    });
-
-    await page.route('**/api/agent/sessions', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ sessions: [] }),
-      });
-    });
-
-    await page.route('**/api/logs*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ logs: [] }),
+        contentType: "application/json",
+        body: JSON.stringify({ success: true }),
       });
     });
   });
 
-  test('should display setup page when unconfigured, test health status, and complete configuration to unlock dashboard', async ({ page }) => {
-    // 1. Visit the app base URL
-    await page.goto('/');
+  test("loads and saves LLM, theme, and credential preferences", async ({
+    page,
+  }) => {
+    await page.goto("/settings");
 
-    // 2. Expect welcome layout & fields to be visible
-    await expect(page.locator('h1')).toContainText('Welcome to Wright');
-    await expect(page.locator('input[placeholder="e.g. http://localhost:8000"]')).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Global Settings",
+    );
+    await expect(page.getByTestId("settings-llm-provider")).toHaveValue(
+      "hermes",
+    );
+    await expect(page.getByTestId("settings-theme")).toHaveValue("dark");
 
-    // 3. Verify agent selection (Hermes is active, others are disabled)
-    const hermesCard = page.locator('strong:has-text("Hermes")');
-    await expect(hermesCard).toBeVisible();
+    await page.getByTestId("settings-llm-provider").selectOption("openai");
+    await page.getByTestId("settings-theme").selectOption("light");
+    await page.getByTestId("settings-api-key-openai").fill("sk-test-value");
+    await page.getByTestId("settings-save-btn").click();
 
-    // 4. Fill in an invalid URL to trigger validation error
-    const urlInput = page.locator('input[placeholder="e.g. http://localhost:8000"]');
-    await urlInput.fill('http://invalid-host-name-test:8000');
-
-    // Wait for the debounced connection status to show Disconnected error
-    await expect(page.locator('text=Disconnected')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('text=Connection Error')).toBeVisible();
-
-    // 5. Fill in a working URL (the internal API's health check is running on container port 8000)
-    const checkURL = 'http://127.0.0.1:8000/api/health';
-    await urlInput.fill(checkURL);
-
-    // Wait for the debounced connection check to return healthy
-    await expect(page.locator('text=Connected').filter({ hasNotText: 'Disconnected' })).toBeVisible({ timeout: 10000 });
-
-    // 6. Submit the setup configuration
-    const nextBtn = page.locator('button:has-text("Next")');
-    await expect(nextBtn).toBeEnabled();
-    await nextBtn.click();
-
-    // 7. Verify redirection to Dashboard
-    await expect(page.getByTestId('nav-dashboard')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId("settings-message-banner")).toContainText(
+      "Global settings successfully updated!",
+    );
+    await expect
+      .poll(() => savedSettings)
+      .toMatchObject({
+        llm_provider: "openai",
+        theme: "light",
+        api_keys: {
+          OPENAI_API_KEY: "sk-test-value",
+        },
+      });
   });
 });

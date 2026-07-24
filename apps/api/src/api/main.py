@@ -15,6 +15,7 @@ from agent_adapters import create_agent_engine
 from api.config import (
     DATABASE_PATH,
     McpTransportSettings,
+    api_mcp_autostart_enabled,
     get_llm_health_url,
 )
 from api.routers.agent import router as agent_router
@@ -80,9 +81,16 @@ async def lifespan(app: FastAPI):
     if not hasattr(app.state, "agent_engine"):
         app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
     if not hasattr(app.state, "agent_sync_manager"):
-        app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
+        from api.services.wright_gateway_sync import (
+            sync_workspace_tools_to_wright_gateway,
+        )
+
+        app.state.agent_sync_manager = AgentSyncManager(
+            DATABASE_PATH, sync_workspace_tools_to_wright_gateway
+        )
     app.state.mcp_engine = McpEngine(DATABASE_PATH)
-    await app.state.mcp_engine.sync_active_servers()
+    if api_mcp_autostart_enabled():
+        await app.state.mcp_engine.sync_active_servers()
     mcp_settings = McpTransportSettings.from_env()
     app.state.gateway_service = build_api_gateway_service(
         DATABASE_PATH, app.state.mcp_engine, mcp_settings

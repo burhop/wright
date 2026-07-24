@@ -228,6 +228,20 @@ class GatewayService:
             now + self.maximum_timeout,
         )
         request.transition(RequestState.RUNNING)
+        audit_metadata = {
+            "timeout_ms": int(bounded * 1000),
+            "argument_count": len(arguments),
+        }
+        self._audit(
+            session,
+            request_id,
+            tool,
+            True,
+            decision.reason_code,
+            "started",
+            now,
+            metadata=audit_metadata,
+        )
 
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
@@ -259,16 +273,37 @@ class GatewayService:
                         f"Invalid output from tool: {name}",
                     ) from exc
             request.transition(RequestState.SUCCEEDED)
+            result_text = _result_text(structured)
             self._audit(
-                session, request_id, tool, True, decision.reason_code, "succeeded", now
+                session,
+                request_id,
+                tool,
+                True,
+                decision.reason_code,
+                "succeeded",
+                now,
+                metadata={
+                    **audit_metadata,
+                    "response_bytes": len(result_text.encode("utf-8")),
+                    "result_key_count": len(structured),
+                },
             )
             return GatewayToolResult(
-                content=({"type": "text", "text": _result_text(structured)},),
+                content=({"type": "text", "text": result_text},),
                 structured_content=structured,
             )
         except TimeoutError:
             request.transition(RequestState.TIMED_OUT)
-            self._audit(session, request_id, tool, True, "timeout", "timed_out", now)
+            self._audit(
+                session,
+                request_id,
+                tool,
+                True,
+                "timeout",
+                "timed_out",
+                now,
+                metadata=audit_metadata,
+            )
             raise GatewayError(
                 GatewayErrorCode.TIMEOUT, f"Tool call timed out: {name}"
             ) from None
@@ -385,6 +420,7 @@ class GatewayService:
         started: float,
         *,
         operation: str = "tool.call",
+        metadata: Mapping[str, Any] | None = None,
     ) -> None:
         duration = 0 if started == 0 else int((time.monotonic() - started) * 1000)
         self.audit.record(
@@ -401,6 +437,7 @@ class GatewayService:
                 "reason_code": reason_code,
                 "outcome": outcome,
                 "duration_ms": duration,
+                "metadata": dict(metadata or {}),
             }
         )
 

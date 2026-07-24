@@ -5,7 +5,7 @@ Feature 047 validates one `linux/amd64` appliance. Multi-architecture indexes ar
 | Input | Pin | Verification/update rule |
 | --- | --- | --- |
 | Node web builder | `node:24.17.0-slim@sha256:862263c...` | Node 24 LTS; resolve the official index digest and rerun frontend plus exact-image smoke before updating. |
-| Python/Hermes base | `python:3.13.11-slim@sha256:2b9c980...` | Official image index; validate amd64 manifest, Python runtime, API/Hermes smoke, scan, and licenses. |
+| Python/Hermes base | `python:3.13.14-slim@sha256:6771159...` | Official image index; validate amd64 manifest, Python runtime, API/Hermes smoke, scan, and licenses. |
 | uv binary | `ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023...` | Official Astral image index; copy only `/uv`; verify version in image inventory. |
 | micromamba | `2.5.0`, SHA-256 `cec496f2...103b6` | Download the versioned linux-64 archive and fail the build on checksum or architecture mismatch. |
 | Python workspace | committed `uv.lock` | `uv sync` must use the lock and dependency audit must pass. |
