@@ -1,31 +1,32 @@
-# Quickstart: Solid Edge Creation Visibility
+# Quickstart: Solid Edge Production-Test Stabilization
 
 ## 1. Fast contract rehearsal
 
-Use fake agent/lifecycle/provider adapters. No real Solid Edge process, network access, credentials, Docker, or external installation is permitted in this tier.
+Use fake agent/lifecycle/provider adapters. No real Solid Edge process,
+credentials, Docker, or external installation is needed for this tier.
 
 ```powershell
 uv run pytest -q `
-  packages/tool_registry/tests/test_solid_edge_creation_profile.py `
+  packages/tool_registry/tests/test_gateway_policy.py `
   packages/tool_registry/tests/test_gateway_service.py `
-  packages/tool_registry/tests/test_gateway_diagnostics.py `
-  packages/agent_adapters/tests/test_progress.py `
+  packages/tool_registry/tests/test_lifecycle_adapters.py `
+  packages/workspace_service/tests/test_agent_sync.py `
   apps/api/tests/test_agent_stream_progress.py `
+  apps/api/tests/test_config.py `
   apps/api/tests/test_gateway_api.py `
+  apps/api/tests/test_hermes_sync.py `
   apps/api/tests/test_logging_config.py `
-  apps/api/tests/test_mcp_runtime_ownership.py
+  apps/api/tests/test_workspace_api.py
 ```
 
 Expected evidence:
 
-- the profile lists only reviewed creation/validation/follow-up operations;
-- direct inspection calls are denied without child execution;
-- invalid paths, overwrite, visibility, closure, and document-mode inputs fail before mutation;
-- planning is the first event and heartbeat gaps are bounded;
-- reconnect replays ordered progress/result/completion events;
-- started and terminal audit records pair correctly and remain redacted;
-- external ownership produces zero API lifecycle calls;
-- STDIO diagnostics never appear in protocol stdout.
+- Solid Edge inspection and inventory tools are absent and denied;
+- planning is the first event and elapsed heartbeats continue during delay;
+- a completed tool does not produce a misleading creation heartbeat;
+- external ownership produces no API lifecycle calls;
+- workspace rebinding is serialized and failure is actionable; and
+- protected bridge requests preserve authentication.
 
 ## 2. Hermes bridge rehearsal
 
@@ -82,9 +83,11 @@ Run separate cases for:
 
 Each failure must be actionable, terminal, and free of inspection/recovery calls. Reconnect must replay progress, result/error, and completion in order. Polling must leave the child-process count at one.
 
-## 7. Performance evidence
+## 7. Deferred performance evidence
 
-Run at least 20 bounded simple-part trials on the target workstation and record per trial:
+The original draft proposed at least 20 bounded simple-part trials. That
+percentage-based evidence is follow-up work and is not claimed by this merge.
+When the follow-up is scheduled, record per trial:
 
 - first-status latency;
 - geometry-start latency;
@@ -94,7 +97,9 @@ Run at least 20 bounded simple-part trials on the target workstation and record 
 - subprocess count;
 - phase totals and attribution ratio.
 
-The batch passes when it meets SC-001 through SC-008 in [spec.md](spec.md). Preserve redacted evidence under `test-results/solid-edge-creation-visibility/`; generated outputs and evidence scratch data remain ignored and are not release artifacts.
+Preserve redacted evidence under
+`test-results/solid-edge-creation-visibility/`; generated outputs and evidence
+scratch data remain ignored and are not release artifacts.
 
 ## 8. Repository gates
 

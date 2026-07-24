@@ -77,8 +77,10 @@ nav:
   - Operations:
       - Database Migration and Recovery: operations/database-recovery.md
       - MCP Gateway: operations/mcp-gateway.md
+      - Solid Edge Diagnostics: operations/solid-edge-diagnostics.md
   - Integrations:
       - Codex MCP Compatibility: integrations/codex-mcp-compatibility.md
+      - Solid Edge Creation: integrations/solid-edge-creation.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
       - Spec-Kit Workflow: contributing/spec-kit.md

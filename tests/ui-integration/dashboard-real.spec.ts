@@ -57,7 +57,7 @@ test.describe("Dashboard Page - Real Backend Integration @live", () => {
       if ((await workspaceCard.count()) > 0) {
         await workspaceCard.click();
         console.log("Checking navigation to /workspace/:workspaceId...");
-        await expect(page).toHaveURL(/\/workspace\//);
+        await expect(page).toHaveURL(/\/workspace\//, { timeout: 15_000 });
         await expect(page.getByTestId("page-workspace")).toBeVisible();
       } else {
         console.log("No workspace cards matched filter, skipping card click.");

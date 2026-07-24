@@ -35,6 +35,9 @@ os.environ.setdefault("WRIGHT_SECRETS_PATH", f"{temp_db_path}.secrets.json")
 @pytest.fixture(autouse=True)
 def set_testing_env(monkeypatch):
     monkeypatch.setenv("WRIGHT_TESTING", "1")
+    # API contract tests exercise the default API-owned lifecycle unless an
+    # individual test explicitly selects Hermes/external ownership.
+    monkeypatch.setenv("WRIGHT_API_MCP_AUTOSTART", "1")
 
 
 @pytest.fixture(scope="session", autouse=True)

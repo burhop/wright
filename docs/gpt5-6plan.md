@@ -8,6 +8,17 @@
 
 This plan is based on the checked-out source, fetched upstream refs, published artifacts, local verification, and primary-source product documentation. It does not authorize implementation, publication, or a release.
 
+## Feature 048 scope reconciliation
+
+Feature 048's merge scope is the production-test stabilization already present
+on `048-solid-edge-creation-visibility`: creation-oriented Solid Edge gateway
+projection, visible new-document agent guidance, timely chat progress,
+Hermes-owned lifecycle behavior, authenticated bridge calls, and reliable
+workspace rebinding. The larger immutable profile, artifact-binding,
+diagnostics aggregation, and 20-trial benchmark design is deferred to a
+follow-up feature. The detailed evidence and non-claims are recorded in the
+Feature 048 completion audit.
+
 ## 1. Executive verdict
 
 Wright has a credible foundation: a uv monorepo, FastAPI/Pydantic boundaries, SQLite-first storage, agent adapter contracts, server-side MCP safety decisions, offline test seams, clean-container MCP evidence rules, and strong community scaffolding. Specs 037 and 038 established useful transition points and their focused tests are healthy.

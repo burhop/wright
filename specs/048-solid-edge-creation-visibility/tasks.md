@@ -6,7 +6,33 @@
 
 **Tests**: Required by the feature specification. Write policy, stream, transport, ownership, and live-smoke tests before completing the corresponding implementation tasks. The current uncommitted prototype is not authoritative evidence until these tasks pass.
 
-**Organization**: Tasks are grouped by user story so each priority can be implemented and verified as an explicit increment.
+**Organization**: The checked merge-scope list below is authoritative for the
+production-test stabilization delivered by this branch. The original
+full-architecture task design is retained afterward as a deferred backlog; its
+unchecked boxes are not claims about the narrower merge scope.
+
+## Reconciled Merge Scope (2026-07-24)
+
+- [x] M001 Project a reviewed creation-oriented Solid Edge tool set and deny hidden direct calls.
+- [x] M002 Add canonical one-call, new-document, visible-result Hermes guidance.
+- [x] M003 Emit immediate planning progress, friendly Solid Edge labels, and elapsed heartbeats.
+- [x] M004 Preserve reconnectable in-process progress and terminal events.
+- [x] M005 Queue or steer prompts submitted while a chat turn is busy.
+- [x] M006 Prevent API MCP lifecycle actions when Hermes is the configured owner.
+- [x] M007 Rebind the Hermes gateway when the active workspace changes.
+- [x] M008 Propagate Wright bearer authentication from the Hermes bridge.
+- [x] M009 Cover gateway policy, progress, ownership, workspace sync, and bridge behavior.
+- [x] M010 Stabilize Linux CI authentication and private secret-store test paths.
+- [x] M011 Document setup, progress, failure recovery, scope, and deferred work.
+- [x] M012 Pass the authoritative dev merge gate; require green PR checks before merge.
+
+## Deferred Original Full-Architecture Backlog
+
+The following draft tasks describe the immutable profile, provider-neutral
+progress and diagnostics services, created-artifact binding, benchmark tooling,
+and 20-run Windows evidence that were intentionally moved out of this merge.
+They remain available for a follow-up specification and have not been silently
+marked complete.
 
 ## Phase 1: Setup (Shared Infrastructure)
 

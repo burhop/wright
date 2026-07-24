@@ -4,9 +4,37 @@
 
 **Created**: 2026-07-16
 
-**Status**: Draft
+**Status**: Implemented production-test slice; broader architecture deferred
 
 **Input**: User description: "Make Solid Edge MCP use creation-only workflows, keep generated geometry visible in Solid Edge, provide timely phase and elapsed progress updates, instrument end-to-end latency, and prevent expensive or unintended inspection calls during creation tasks."
+
+## Scope Reconciliation (2026-07-24)
+
+The branch delivers the bounded production-test stabilization needed for the
+Hermes/Wright/SolidEdgeMCP workflow:
+
+- creation-oriented Solid Edge tool projection and fail-closed direct calls;
+- canonical new-document, visible-result recipe guidance;
+- immediate planning status, user-facing CAD labels, and elapsed heartbeats;
+- resumable in-process chat results and busy-turn prompt steering;
+- one-owner behavior when Hermes owns the MCP subprocess;
+- authenticated Hermes-to-Wright API reads and workspace rebinding; and
+- CI coverage for the Linux authentication and secret-store environment.
+
+The original draft also proposed a new immutable profile model, a separate
+progress package, a diagnostics aggregation service, created-artifact binding,
+an executable 20-trial benchmark harness, and stored live acceptance evidence.
+Those architectural and measurement extensions are intentionally deferred.
+They are not represented as completed by this branch and must be specified and
+reviewed as follow-up work before their associated success percentages can be
+claimed.
+
+For this merge, FR-001, FR-005, FR-007 through FR-012, FR-016 through FR-019,
+and the deterministic portions of SC-002, SC-007, and SC-008 are in scope.
+Requirements that depend on provider-side artifact enforcement, the proposed
+diagnostics service, or 20 live trials remain follow-up requirements. The
+authoritative evidence mapping is in
+`checklists/completion-audit.md`.
 
 ## User Scenarios & Testing *(mandatory)*
 
