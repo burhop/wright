@@ -13,11 +13,17 @@ import { workspaceService } from "../../services/workspace-service";
 
 interface MessageComposerProps {
   onSend: (message: string, attachments?: string[]) => void;
+  onSteer?: (message: string, attachments?: string[]) => void;
   disabled?: boolean;
   isStreaming?: boolean;
   onCancel?: () => void;
   sessionId?: string;
   workspaceId?: string;
+  queuedPrompts?: {
+    id: string;
+    content: string;
+    mode: "queue" | "steer";
+  }[];
 }
 
 function getMcpStatusTone(status: string): { label: string; color: string } {
@@ -33,11 +39,13 @@ function getMcpStatusTone(status: string): { label: string; color: string } {
 
 export function MessageComposer({
   onSend,
+  onSteer,
   disabled = false,
   isStreaming = false,
   onCancel,
   sessionId,
   workspaceId,
+  queuedPrompts = [],
 }: MessageComposerProps) {
   const [text, setText] = useState("");
   const [attachments, setAttachments] = useState<VaultFile[]>([]);
@@ -164,9 +172,11 @@ export function MessageComposer({
     };
   }, [sessionId, workspaceId]);
 
-  const handleSend = () => {
+  const submitWith = (
+    handler: (message: string, attachments?: string[]) => void,
+  ) => {
     if ((text.trim() || attachments.length > 0) && !disabled) {
-      onSend(
+      handler(
         text.trim(),
         attachments.map((a) => a.file_id),
       );
@@ -175,6 +185,11 @@ export function MessageComposer({
       setShowMenu(false);
       setShowPlusMenu(false);
     }
+  };
+
+  const handleSend = () => submitWith(onSend);
+  const handleSteer = () => {
+    if (onSteer) submitWith(onSteer);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -400,6 +415,45 @@ export function MessageComposer({
         </div>
       )}
 
+      {queuedPrompts.length > 0 && (
+        <div
+          data-testid="composer-queue-status"
+          role="status"
+          aria-live="polite"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            minWidth: 0,
+            padding: "5px 8px",
+            borderRadius: "var(--radius-md)",
+            backgroundColor: "rgba(56, 189, 248, 0.1)",
+            color: "var(--color-primary)",
+            fontSize: "0.72rem",
+          }}
+        >
+          <span style={{ fontWeight: 700, flexShrink: 0 }}>
+            {queuedPrompts.length === 1
+              ? queuedPrompts[0].mode === "steer"
+                ? "Steering next"
+                : "Queued next"
+              : `${queuedPrompts.length} queued`}
+          </span>
+          <span
+            title={queuedPrompts[0].content}
+            style={{
+              minWidth: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            {queuedPrompts[0].content}
+          </span>
+        </div>
+      )}
+
       <textarea
         ref={textareaRef}
         data-testid="composer-input"
@@ -408,7 +462,11 @@ export function MessageComposer({
         onChange={handleTextChange}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
-        placeholder="Type your engineering query... (or paste an image)"
+        placeholder={
+          isStreaming
+            ? "Type a prompt to queue, or choose Steer..."
+            : "Type your engineering query... (or paste an image)"
+        }
         style={{
           width: "100%",
           minWidth: 0,
@@ -830,15 +888,42 @@ export function MessageComposer({
             </button>
           )}
 
+          {isStreaming && onSteer && (text.trim() || attachments.length > 0) && (
+            <button
+              type="button"
+              data-testid="composer-steer"
+              onClick={handleSteer}
+              title="Stop the current turn and run this instruction next"
+              aria-label="Steer current turn"
+              style={{
+                height: "28px",
+                padding: "0 9px",
+                flexShrink: 0,
+                borderRadius: "14px",
+                backgroundColor: "rgba(245, 158, 11, 0.14)",
+                color: "#f59e0b",
+                fontSize: "0.7rem",
+                fontWeight: 700,
+                cursor: "pointer",
+                border: "1px solid rgba(245, 158, 11, 0.45)",
+              }}
+            >
+              Steer
+            </button>
+          )}
+
           <button
             data-testid="composer-send"
+            type="button"
             onClick={handleSend}
             disabled={!text.trim() && attachments.length === 0}
+            aria-label={isStreaming ? "Queue prompt" : "Send prompt"}
+            title={isStreaming ? "Queue prompt for the next turn" : "Send prompt"}
             style={{
-              width: "28px",
+              width: isStreaming ? "62px" : "28px",
               height: "28px",
               flexShrink: 0,
-              borderRadius: "50%",
+              borderRadius: isStreaming ? "14px" : "50%",
               backgroundColor:
                 text.trim() || attachments.length > 0
                   ? "var(--color-secondary)"
@@ -856,6 +941,11 @@ export function MessageComposer({
               border: "1px solid var(--color-border)",
             }}
           >
+            {isStreaming && (
+              <span style={{ fontSize: "0.7rem", fontWeight: 700, marginRight: "4px" }}>
+                Queue
+              </span>
+            )}
             <svg
               width="14"
               height="14"

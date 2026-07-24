@@ -89,6 +89,7 @@ export function WorkspacePanel({
     createSession,
     selectSession,
     sendMessage,
+    steerMessage,
     refreshSessions,
     cancelActiveStream,
   } = useChat();
@@ -186,6 +187,9 @@ export function WorkspacePanel({
   const activeSessionTool = activeSessionStreamState?.activeTool || null;
   const activeSessionStreamActivity =
     activeSessionStreamState?.streamActivity || [];
+  const activeSessionQueuedPrompts = activeSessionId
+    ? state.promptQueue.filter((prompt) => prompt.sessionId === activeSessionId)
+    : [];
 
   // Load active agent on mount
   useEffect(() => {
@@ -1329,10 +1333,12 @@ export function WorkspacePanel({
               >
                 <MessageComposer
                   onSend={sendMessage}
+                  onSteer={steerMessage}
                   isStreaming={isActiveSessionStreaming}
                   onCancel={cancelActiveStream}
                   sessionId={activeSessionId || undefined}
                   workspaceId={_workspaceId}
+                  queuedPrompts={activeSessionQueuedPrompts}
                 />
               </div>
             )}
@@ -2780,10 +2786,12 @@ export function WorkspacePanel({
             >
               <MessageComposer
                 onSend={sendMessage}
+                onSteer={steerMessage}
                 isStreaming={isActiveSessionStreaming}
                 onCancel={cancelActiveStream}
                 sessionId={activeSessionId || undefined}
                 workspaceId={_workspaceId}
+                queuedPrompts={activeSessionQueuedPrompts}
               />
             </div>
           )}

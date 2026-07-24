@@ -73,7 +73,7 @@ function SessionsHarness() {
 }
 
 function ChatMessagesHarness() {
-  const { state, sendMessage } = useChat();
+  const { state, sendMessage, steerMessage } = useChat();
   const activeSession = state.sessions.find(
     (session) => session.sessionId === state.activeSessionId,
   );
@@ -83,6 +83,13 @@ function ChatMessagesHarness() {
       <div data-testid="chat-active-session">{state.activeSessionId}</div>
       <button onClick={() => sendMessage("hello")}>send hello</button>
       <button onClick={() => sendMessage("/title test")}>send title</button>
+      <button onClick={() => steerMessage("use the upper face")}>
+        steer upper face
+      </button>
+      <div data-testid="prompt-queue-size">{state.promptQueue.length}</div>
+      <div data-testid="prompt-queue-order">
+        {state.promptQueue.map((prompt) => prompt.content).join("|")}
+      </div>
       <ul>
         {(activeSession?.messages || []).map((message) => (
           <li data-testid="chat-message" key={message.id}>
@@ -498,6 +505,136 @@ describe("ChatProvider session state", () => {
     });
     expect(
       screen.queryByText("Onshape Session 2:session-1"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("queues every busy submission, including slash commands", async () => {
+    vi.mocked(agentService.listSessions).mockResolvedValue([
+      {
+        sessionId: "session-1",
+        title: "Test Session",
+        createdAt: 1000,
+        updatedAt: 1000,
+      },
+    ]);
+
+    let finishFirstTurn = () => {};
+    const firstTurn = new Promise<void>((resolve) => {
+      finishFirstTurn = resolve;
+    });
+    vi.mocked(agentService.sendMessage)
+      .mockImplementationOnce(async function* () {
+        await firstTurn;
+        yield {
+          type: "done",
+          session: makeSession({ sessionId: "session-1" }),
+        };
+      })
+      .mockImplementationOnce(async function* () {
+        yield {
+          type: "done",
+          session: makeSession({ sessionId: "session-1", title: "test" }),
+        };
+      });
+
+    render(
+      <ChatProvider>
+        <ChatMessagesHarness />
+      </ChatProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("chat-active-session")).toHaveTextContent(
+        "session-1",
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "send hello" }));
+    await waitFor(() => {
+      expect(agentService.sendMessage).toHaveBeenCalledTimes(1);
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "send title" }));
+
+    expect(screen.getByTestId("prompt-queue-size")).toHaveTextContent("1");
+    expect(screen.getByTestId("prompt-queue-order")).toHaveTextContent(
+      "/title test",
+    );
+    expect(agentService.sendMessage).toHaveBeenCalledTimes(1);
+
+    finishFirstTurn();
+    await waitFor(() => {
+      expect(agentService.sendMessage).toHaveBeenCalledTimes(2);
+    });
+    expect(vi.mocked(agentService.sendMessage).mock.calls[1]?.[1]).toBe(
+      "/title test",
+    );
+  });
+
+  it("prioritizes a steering prompt, cancels the current turn, then drains the queue", async () => {
+    vi.mocked(agentService.listSessions).mockResolvedValue([
+      {
+        sessionId: "session-1",
+        title: "Test Session",
+        createdAt: 1000,
+        updatedAt: 1000,
+      },
+    ]);
+
+    let cancelFirstTurn = () => {};
+    const cancelled = new Promise<void>((resolve) => {
+      cancelFirstTurn = resolve;
+    });
+    vi.mocked(agentService.cancelStream).mockImplementation(async () => {
+      cancelFirstTurn();
+      return true;
+    });
+    vi.mocked(agentService.sendMessage)
+      .mockImplementationOnce(async function* () {
+        await cancelled;
+        yield { type: "error", message: "Stream cancelled by user." };
+      })
+      .mockImplementation(async function* () {
+        yield {
+          type: "done",
+          session: makeSession({ sessionId: "session-1" }),
+        };
+      });
+
+    render(
+      <ChatProvider>
+        <ChatMessagesHarness />
+      </ChatProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("chat-active-session")).toHaveTextContent(
+        "session-1",
+      );
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "send hello" }));
+    await waitFor(() => {
+      expect(agentService.sendMessage).toHaveBeenCalledTimes(1);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "send title" }));
+    fireEvent.click(screen.getByRole("button", { name: "steer upper face" }));
+
+    await waitFor(() => {
+      expect(agentService.cancelStream).toHaveBeenCalledWith("session-1");
+      expect(agentService.sendMessage).toHaveBeenCalledTimes(3);
+    });
+
+    const sentMessages = vi
+      .mocked(agentService.sendMessage)
+      .mock.calls.map((call) => call[1]);
+    expect(sentMessages).toEqual([
+      "hello",
+      "use the upper face",
+      "/title test",
+    ]);
+    expect(
+      screen.queryByText("assistant:Stream cancelled by user."),
     ).not.toBeInTheDocument();
   });
 

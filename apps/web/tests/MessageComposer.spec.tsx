@@ -77,6 +77,40 @@ describe("MessageComposer", () => {
     expect(handleCancel).toHaveBeenCalledTimes(1);
   });
 
+  it("shows queued prompts and exposes separate queue and steer actions", () => {
+    const handleSend = vi.fn();
+    const handleSteer = vi.fn();
+    render(
+      <MessageComposer
+        onSend={handleSend}
+        onSteer={handleSteer}
+        isStreaming={true}
+        queuedPrompts={[
+          {
+            id: "queued-1",
+            content: "Check the second mounting face",
+            mode: "queue",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId("composer-queue-status")).toHaveTextContent(
+      "Queued next",
+    );
+    expect(screen.getByText("Check the second mounting face")).toBeInTheDocument();
+
+    const input = screen.getByTestId("composer-input");
+    fireEvent.change(input, { target: { value: "Use the upper face instead" } });
+
+    expect(screen.getByRole("button", { name: "Queue prompt" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Steer current turn" }));
+
+    expect(handleSteer).toHaveBeenCalledWith("Use the upper face instead", []);
+    expect(handleSend).not.toHaveBeenCalled();
+    expect(input).toHaveValue("");
+  });
+
   it("triggers workspace file autocomplete when '@' is typed", async () => {
     const handleSend = vi.fn();
     render(<MessageComposer onSend={handleSend} sessionId="test-session" />);
