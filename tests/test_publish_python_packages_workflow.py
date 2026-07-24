@@ -21,7 +21,7 @@ def test_publish_workflow_uses_exact_candidate_and_protected_trusted_publishing(
     assert "name: testpypi" in workflow
     assert (
         workflow.count(
-            "pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b"
+            "pypa/gh-action-pypi-publish@ba38be9e461d3875417946c167d0b5f3d385a247"
         )
         == 2
     )
