@@ -10,11 +10,7 @@ import {
 } from "../common/Icons";
 
 export type WorkspaceSidebarId =
-  | "marketplace"
-  | "files"
-  | "git"
-  | "settings"
-  | "docs";
+  "marketplace" | "files" | "git" | "settings" | "docs";
 
 interface WorkspaceActivityBarProps {
   activeSidebar: WorkspaceSidebarId;
