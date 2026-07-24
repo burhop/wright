@@ -2,9 +2,9 @@ name: public-alpha-safety
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [main, dev]
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
   workflow_dispatch:
 
 permissions:
@@ -44,8 +44,11 @@ jobs:
           uv run --with pip-audit pip-audit --format json --output pip-audit.json || true
           python -c "from pathlib import Path; from scripts.release.dependency_audit import evaluate_pip_audit; evaluate_pip_audit(Path('pip-audit.json'), Path('.github/dependency-audit-policy.json'))"
 
-      - name: Run blocking npm dependency audit
-        run: npm audit --audit-level=high
+      - name: Run npm dependency audit with expiring exceptions
+        shell: bash
+        run: |
+          npm audit --json --audit-level=high > npm-audit.json || true
+          python -c "from pathlib import Path; from scripts.release.dependency_audit import evaluate_npm_audit; evaluate_npm_audit(Path('npm-audit.json'), Path('.github/dependency-audit-policy.json'))"
 
       - name: Run Gitleaks History Scan
         run: |

@@ -18,9 +18,7 @@ logger = structlog.get_logger(__name__)
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
 SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
-HERMES_NATIVE_SESSION_PATTERN = re.compile(
-    r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE
-)
+HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
 
 
 class _ClosingConnection(sqlite3.Connection):

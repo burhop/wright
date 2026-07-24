@@ -98,12 +98,18 @@ describe("MessageComposer", () => {
     expect(screen.getByTestId("composer-queue-status")).toHaveTextContent(
       "Queued next",
     );
-    expect(screen.getByText("Check the second mounting face")).toBeInTheDocument();
+    expect(
+      screen.getByText("Check the second mounting face"),
+    ).toBeInTheDocument();
 
     const input = screen.getByTestId("composer-input");
-    fireEvent.change(input, { target: { value: "Use the upper face instead" } });
+    fireEvent.change(input, {
+      target: { value: "Use the upper face instead" },
+    });
 
-    expect(screen.getByRole("button", { name: "Queue prompt" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Queue prompt" }),
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Steer current turn" }));
 
     expect(handleSteer).toHaveBeenCalledWith("Use the upper face instead", []);

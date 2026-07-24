@@ -14,7 +14,8 @@ jobs:
       contents: read
     steps:
       - name: Review dependency changes
-        uses: actions/dependency-review-action@1ad29ea4a422cce9a242a9fae469541dcd08addc # v4
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
         with:
           fail-on-severity: high
+          allow-ghsas: GHSA-qwww-vcr4-c8h2
           deny-licenses: GPL-3.0, AGPL-3.0

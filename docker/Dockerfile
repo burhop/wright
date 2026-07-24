@@ -16,7 +16,7 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.13.11-slim@sha256:2b9c9803c6a287cafa0a8c917211dddd23dcd2016f049690ee5219f5d3f1636e AS hermes-base
+FROM python:3.13.14-slim@sha256:6771159cd4fa5d9bba1258caf0b82e6b73458c694d178ad97c5e925c2d0e1a91 AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -78,6 +78,8 @@ RUN curl --fail --location --retry 5 --retry-all-errors \
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "cryptography==49.0.0" \
+        "pillow==12.3.0" \
+        "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \
         "tornado==6.5.6" && \

@@ -188,7 +188,9 @@ export function WorkspacePanel({
   const activeSessionStreamActivity =
     activeSessionStreamState?.streamActivity || [];
   const activeSessionQueuedPrompts = activeSessionId
-    ? state.promptQueue.filter((prompt) => prompt.sessionId === activeSessionId)
+    ? (state.promptQueue ?? []).filter(
+        (prompt) => prompt.sessionId === activeSessionId,
+      )
     : [];
 
   // Load active agent on mount

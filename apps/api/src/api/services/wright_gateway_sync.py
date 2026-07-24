@@ -111,8 +111,7 @@ def _gateway_binding_session(
     candidates = [
         binding[0]
         for path in config_paths
-        if (binding := _configured_gateway_binding(path))
-        and binding[1] == workspace_id
+        if (binding := _configured_gateway_binding(path)) and binding[1] == workspace_id
     ]
     persisted_session_id = get_active_gateway_session(db_path)
     if persisted_session_id:

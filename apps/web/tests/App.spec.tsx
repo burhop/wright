@@ -19,7 +19,9 @@ vi.mock("../src/store/tools", () => ({
   ToolsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 vi.mock("../src/store/viewer", () => ({
-  ViewerPanelProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  ViewerPanelProvider: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 describe("App startup", () => {

@@ -888,29 +888,31 @@ export function MessageComposer({
             </button>
           )}
 
-          {isStreaming && onSteer && (text.trim() || attachments.length > 0) && (
-            <button
-              type="button"
-              data-testid="composer-steer"
-              onClick={handleSteer}
-              title="Stop the current turn and run this instruction next"
-              aria-label="Steer current turn"
-              style={{
-                height: "28px",
-                padding: "0 9px",
-                flexShrink: 0,
-                borderRadius: "14px",
-                backgroundColor: "rgba(245, 158, 11, 0.14)",
-                color: "#f59e0b",
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                cursor: "pointer",
-                border: "1px solid rgba(245, 158, 11, 0.45)",
-              }}
-            >
-              Steer
-            </button>
-          )}
+          {isStreaming &&
+            onSteer &&
+            (text.trim() || attachments.length > 0) && (
+              <button
+                type="button"
+                data-testid="composer-steer"
+                onClick={handleSteer}
+                title="Stop the current turn and run this instruction next"
+                aria-label="Steer current turn"
+                style={{
+                  height: "28px",
+                  padding: "0 9px",
+                  flexShrink: 0,
+                  borderRadius: "14px",
+                  backgroundColor: "rgba(245, 158, 11, 0.14)",
+                  color: "#f59e0b",
+                  fontSize: "0.7rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  border: "1px solid rgba(245, 158, 11, 0.45)",
+                }}
+              >
+                Steer
+              </button>
+            )}
 
           <button
             data-testid="composer-send"
@@ -918,7 +920,9 @@ export function MessageComposer({
             onClick={handleSend}
             disabled={!text.trim() && attachments.length === 0}
             aria-label={isStreaming ? "Queue prompt" : "Send prompt"}
-            title={isStreaming ? "Queue prompt for the next turn" : "Send prompt"}
+            title={
+              isStreaming ? "Queue prompt for the next turn" : "Send prompt"
+            }
             style={{
               width: isStreaming ? "62px" : "28px",
               height: "28px",
@@ -942,7 +946,13 @@ export function MessageComposer({
             }}
           >
             {isStreaming && (
-              <span style={{ fontSize: "0.7rem", fontWeight: 700, marginRight: "4px" }}>
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  fontWeight: 700,
+                  marginRight: "4px",
+                }}
+              >
                 Queue
               </span>
             )}
