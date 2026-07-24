@@ -49,6 +49,7 @@ def hermes_wright_gateway_profile(
     *,
     session_id: str | None = None,
     workspace_id: str | None = None,
+    terminal_cwd: str | None = None,
 ) -> WrightGatewayProfile:
     if (session_id is None) != (workspace_id is None):
         raise ValueError(
@@ -64,7 +65,8 @@ def hermes_wright_gateway_profile(
         server_name="wrightgateway",
         command="uv",
         args=args,
-        terminal_cwd=repo_dir,
+        terminal_cwd=terminal_cwd or repo_dir,
+        gateway_project_dir=repo_dir,
         workspace_context_filename=".hermes.md",
     )
 

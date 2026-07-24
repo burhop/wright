@@ -144,6 +144,9 @@ def test_workspace_sync_writes_exact_gateway_binding(tmp_path):
         "--principal-id",
         "local-admin",
     ]
+    config = yaml.safe_load(config_path.read_text())
+    assert config["terminal"]["cwd"] == str(workspace_path)
+    assert gateway["args"][2] == "/wright"
 
 
 def test_workspace_sync_reuses_binding_for_another_session_in_same_workspace(tmp_path):
@@ -182,3 +185,6 @@ def test_workspace_sync_reuses_binding_for_another_session_in_same_workspace(tmp
         "--principal-id",
         "local-admin",
     ]
+    config = yaml.safe_load(config_path.read_text())
+    assert config["terminal"]["cwd"] == str(workspace_path)
+    assert gateway["args"][2] == "/wright"

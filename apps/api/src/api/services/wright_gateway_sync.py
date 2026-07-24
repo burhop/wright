@@ -197,6 +197,9 @@ def sync_workspace_tools_to_wright_gateway(
     active_profile = profile or default_hermes_gateway_profile()
     active_config_paths = config_paths or hermes_config_paths()
     if active_profile.provider_name == "hermes":
+        gateway_project_dir = (
+            active_profile.gateway_project_dir or active_profile.terminal_cwd
+        )
         binding_session_id = _gateway_binding_session(
             db_path,
             session_id,
@@ -204,9 +207,10 @@ def sync_workspace_tools_to_wright_gateway(
             active_config_paths,
         )
         active_profile = hermes_wright_gateway_profile(
-            active_profile.terminal_cwd,
+            gateway_project_dir,
             session_id=binding_session_id,
             workspace_id=str(workspace["workspace_id"]),
+            terminal_cwd=workspace_path,
         )
         set_active_gateway_session(db_path, binding_session_id)
 

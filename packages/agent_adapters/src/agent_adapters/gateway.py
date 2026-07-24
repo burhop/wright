@@ -46,6 +46,7 @@ class WrightGatewayProfile:
     command: str
     args: list[str]
     terminal_cwd: str
+    gateway_project_dir: str | None = None
     display_name: str = "Wright gateway"
     protocol: str = WRIGHT_GATEWAY_PROTOCOL
     workspace_context_filename: str | None = None

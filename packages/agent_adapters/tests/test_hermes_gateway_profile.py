@@ -42,13 +42,16 @@ def test_hermes_config_paths_include_active_windows_and_wright_profile(
 
 def test_hermes_gateway_profile_can_bind_exact_workspace_session():
     profile = hermes_wright_gateway_profile(
-        "/workspace", session_id="session-1", workspace_id="workspace-1"
+        "/wright",
+        session_id="session-1",
+        workspace_id="workspace-1",
+        terminal_cwd="/workspace/project",
     )
 
     assert profile.args == [
         "run",
         "--project",
-        "/workspace",
+        "/wright",
         "python",
         "-m",
         "api.gateway_stdio",
@@ -59,3 +62,5 @@ def test_hermes_gateway_profile_can_bind_exact_workspace_session():
         "--principal-id",
         "local-admin",
     ]
+    assert profile.gateway_project_dir == "/wright"
+    assert profile.terminal_config() == {"cwd": "/workspace/project"}
