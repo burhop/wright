@@ -56,8 +56,8 @@ jobs:
           push: ${{ inputs.push-candidate }}
           load: ${{ ! inputs.push-candidate }}
           tags: ${{ steps.image.outputs.name }}:candidate-${{ github.sha }}
-          provenance: mode=max
-          sbom: true
+          provenance: ${{ inputs.push-candidate && 'mode=max' || 'false' }}
+          sbom: ${{ inputs.push-candidate }}
           build-args: |
             VERSION=${{ inputs.version }}
             REVISION=${{ github.sha }}
