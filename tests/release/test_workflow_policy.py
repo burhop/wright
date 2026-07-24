@@ -36,3 +36,5 @@ def test_release_rehearsal_has_no_publish_jobs() -> None:
     release = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
     assert "rehearsal != 'true'" in release
     assert "Prove terminal dry-run with no public mutation" in release
+    assert release.count("uses: astral-sh/setup-uv@") == 2
+    assert release.count('version: "0.9.26"') >= 2
