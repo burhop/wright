@@ -13,15 +13,18 @@ offline while still proving startup does not depend on HermesAdapter imports.
 """
 
 import os
+import shutil
 import tempfile
 import time
 import uuid
 
 import pytest
 
-# Create a temporary SQLite database for the test session
-temp_db_fd, temp_db_path = tempfile.mkstemp(suffix="-test.db")
-os.close(temp_db_fd)
+# Create a private temporary directory for the test database and fallback
+# secret store. The secret store intentionally restricts its parent directory,
+# which must never be the shared system temporary directory itself.
+temp_db_dir = tempfile.mkdtemp(prefix="wright-api-tests-")
+temp_db_path = os.path.join(temp_db_dir, "state-test.db")
 
 # Set the environment variables before importing any application code
 os.environ["DATABASE_PATH"] = temp_db_path
@@ -57,6 +60,7 @@ def run_api_migrations():
                 os.unlink(path)
             except Exception:
                 pass
+    shutil.rmtree(temp_db_dir, ignore_errors=True)
 
 
 # ── Mock Agent Engine ─────────────────────────────────────────────────────

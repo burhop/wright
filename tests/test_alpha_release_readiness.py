@@ -107,6 +107,7 @@ def test_frontend_quality_runs_linux_playwright_e2e() -> None:
     assert "playwright-e2e:" in workflow
     assert "runs-on: ubuntu-latest" in workflow
     assert "uv run uvicorn api.main:app" in workflow
+    assert 'WRIGHT_AUTH_MODE="compat"' in workflow
     assert "http://127.0.0.1:8000/api/health" in workflow
     assert "npx playwright test" in workflow
     assert "Backend process exited before becoming ready" in workflow
