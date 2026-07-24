@@ -27,6 +27,12 @@ def test_oci_workflow_scans_smokes_and_attests_same_digest_without_rebuild() -> 
     workflow = (ROOT / ".github/workflows/docker-build.yml").read_text(encoding="utf-8")
     release = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
     assert workflow.count("docker/build-push-action@") == 1
+    assert "load: ${{ ! inputs.push-candidate }}" in workflow
+    assert (
+        "provenance: ${{ inputs.push-candidate && 'mode=max' || 'false' }}"
+        in workflow
+    )
+    assert "sbom: ${{ inputs.push-candidate }}" in workflow
     assert "WRIGHT_DOCKER_SKIP_BUILD=1" in workflow
     assert "steps.build.outputs.digest" in workflow
     assert "evaluate_report" in workflow
