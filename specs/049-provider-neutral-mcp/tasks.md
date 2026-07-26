@@ -122,7 +122,7 @@
 - [X] T036 Run runtime-source identifier audits plus Python/TypeScript lint, formatting, and type checks
 - [X] T037 Run `scripts/check-dev-merge.sh`; if a host limitation blocks a specific phase, record the exact limitation and run the equivalent isolated gate
 - [X] T038 Perform the optional Windows live compatibility smoke only if the matching external SolidEdgeMCP neutral contract and host application are available; record a precise skip reason otherwise in `specs/049-provider-neutral-mcp/removal-inventory.md`
-- [ ] T039 Review the complete diff, mark every completed task `[X]`, commit the intentional scope, push `049-provider-neutral-mcp`, and open a draft pull request targeting `dev`
+- [X] T039 Review the complete diff, mark every completed task `[X]`, commit the intentional scope, push `049-provider-neutral-mcp`, and open a draft pull request targeting `dev`
 
 ---
 
