@@ -144,6 +144,7 @@ async def register_mcp_server(entry: CatalogEntry) -> Dict[str, Any]:
         "env_vars": [v.model_dump() for v in entry.env_vars]
         if entry.env_vars
         else None,
+        "launch_env": entry.launch_env,
     }
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:

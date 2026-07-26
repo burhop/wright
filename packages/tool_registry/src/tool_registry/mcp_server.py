@@ -84,13 +84,34 @@ def create_mcp_server(
     @server.call_tool(validate_input=True)
     async def call_tool(name: str, arguments: dict[str, Any]) -> types.CallToolResult:
         await ensure_initialized()
-        request_id = str(server.request_context.request_id)
+        request_context = server.request_context
+        request_id = str(request_context.request_id)
+        progress_token = (
+            request_context.meta.progressToken
+            if request_context.meta is not None
+            else None
+        )
+
+        async def relay_progress(update) -> None:
+            if progress_token is None:
+                return
+            await request_context.session.send_progress_notification(
+                progress_token,
+                float(update["progress"]),
+                (float(update["total"]) if update.get("total") is not None else None),
+                str(update["message"]) if update.get("message") is not None else None,
+                related_request_id=request_id,
+            )
+
         try:
             result = await service.call_tool(
                 gateway_session_id,
                 request_id,
                 name,
                 arguments,
+                progress_callback=(
+                    relay_progress if progress_token is not None else None
+                ),
             )
         except GatewayError as error:
             return types.CallToolResult(
@@ -148,7 +169,7 @@ def initialization_options(server: Server):
 def _mcp_tool(tool) -> types.Tool:
     annotations = dict(tool.annotations)
     sdk_annotations = types.ToolAnnotations(
-        title=annotations.get("title"),
+        title=tool.title or annotations.get("title"),
         readOnlyHint=annotations.get("readOnlyHint"),
         destructiveHint=annotations.get("destructiveHint"),
         idempotentHint=annotations.get("idempotentHint"),
@@ -165,7 +186,7 @@ def _mcp_tool(tool) -> types.Tool:
         _meta={
             "wright/serverId": tool.server_id,
             "wright/toolName": tool.tool_name,
-            "wright/approvalGates": annotations.get("approval_gates", []),
+            "wright/approvalGates": sorted(tool.required_approvals),
             "wright/provenance": dict(tool.provenance),
             "wright/safetyReviewed": True,
         },

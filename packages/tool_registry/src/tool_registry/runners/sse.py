@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 import httpx
 from httpx_sse import aconnect_sse, EventSource
 from core.redaction import redact_mapping, redact_text
-from .base import BaseRunner
+from .base import BaseRunner, ProgressCallback
 
 logger = logging.getLogger(__name__)
 
@@ -187,7 +187,11 @@ class SseRunner(BaseRunner):
             raise TimeoutError("List tools request timed out after 60 seconds.")
 
     async def call_tool(
-        self, tool_name: str, arguments: Dict[str, Any]
+        self,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        *,
+        progress_callback: ProgressCallback | None = None,
     ) -> Dict[str, Any]:
         try:
             payload = {"name": tool_name, "arguments": arguments}

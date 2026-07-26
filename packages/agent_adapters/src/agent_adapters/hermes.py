@@ -24,15 +24,9 @@ logger = structlog.get_logger(__name__)
 
 WRIGHT_SYSTEM_HINT = (
     "You are running inside Wright with MCP tools exposed through the "
-    "wrightgateway. For Solid Edge creation requests, use the workspace path "
-    "from the [Workspace::v1: ...] prefix as the output directory. For a "
-    "rectangular block, do not search files, read gateway resources, run a "
-    "terminal command, inspect existing documents, or validate first. Call "
-    "cad.create_part_from_recipe exactly once with providerId=solid_edge, "
-    "visible=true, closeAfterSave=false, recipe mode=commit, units=mm, "
-    "document=new, then create_sketch on the top plane with a "
-    "centered_rectangle and extrude with direction=positive_normal. If that "
-    "call fails, report its exact actionable error and stop without retries. "
+    "wrightgateway. Select tools from their advertised descriptions and schemas, "
+    "and use the workspace path from the [Workspace::v1: ...] prefix when a tool "
+    "requires an explicit workspace or output location. "
     "For Onshape requests, do not ask the user for document, "
     "workspace, or element IDs when they provided a document or part name. "
     "First use jarvisonshapemcp__search_documents or "

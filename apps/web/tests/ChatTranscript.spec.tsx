@@ -56,12 +56,12 @@ describe("ChatTranscript", () => {
       screen.getByText("Calling jarvisonshapemcp__list_documents"),
     ).toBeInTheDocument();
   });
-  it("renders Hermes progress titles with tool and status details", () => {
+  it("renders generic advertised progress titles and messages", () => {
     const entries: StreamActivityEntry[] = [
       {
         id: "activity-1",
         kind: "progress",
-        title: "development: Running",
+        title: "Create geometry",
         detail: "Creating sketch geometry",
         timestamp: 1000,
       },
@@ -75,7 +75,7 @@ describe("ChatTranscript", () => {
       />,
     );
 
-    expect(screen.getByText("development: Running")).toBeInTheDocument();
+    expect(screen.getByText("Create geometry")).toBeInTheDocument();
     expect(screen.getByText("Creating sketch geometry")).toBeInTheDocument();
   });
 });

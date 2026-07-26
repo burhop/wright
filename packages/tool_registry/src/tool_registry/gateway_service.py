@@ -28,6 +28,7 @@ from .gateway_ports import (
     GatewayNotifierPort,
     GatewayWorkspacePort,
 )
+from .runners.base import ProgressCallback
 
 SUPPORTED_PROTOCOL_VERSION = "2025-11-25"
 
@@ -178,6 +179,7 @@ class GatewayService:
         *,
         timeout: float | None = None,
         client_approval_hint: bool = False,
+        progress_callback: ProgressCallback | None = None,
     ) -> GatewayToolResult:
         session = self._session(session_id)
         tool = next(
@@ -251,21 +253,48 @@ class GatewayService:
                 workspace_path=session.workspace_path,
                 approval_context={"workspace_id": session.workspace_id},
             )
+            if progress_callback is None:
+                return await self.lifecycle.call_tool(
+                    tool.server_id,
+                    tool.tool_name,
+                    arguments,
+                    approval_context={"workspace_id": session.workspace_id},
+                )
+
+            async def forward_progress(update: Mapping[str, Any]) -> None:
+                callback_result = progress_callback(
+                    {
+                        **dict(update),
+                        "server": tool.server_id,
+                        "tool": tool.name,
+                        "title": tool.title or tool.description or tool.tool_name,
+                        "correlationId": request.correlation_id,
+                        "status": "running",
+                    }
+                )
+                if callback_result is not None:
+                    await callback_result
+
             return await self.lifecycle.call_tool(
                 tool.server_id,
                 tool.tool_name,
                 arguments,
                 approval_context={"workspace_id": session.workspace_id},
+                progress_callback=forward_progress,
             )
 
         task = asyncio.create_task(execute())
         key = (session_id, request_id)
         self._requests[key] = (request, task)
         try:
-            result = await asyncio.wait_for(task, bounded)
-            structured = dict(result)
+            raw_result = dict(await asyncio.wait_for(task, bounded))
+            content, structured, is_error = _normalize_child_result(raw_result)
             if tool.output_schema is not None:
                 try:
+                    if structured is None:
+                        raise ValidationError(
+                            "Child omitted structuredContent required by outputSchema"
+                        )
                     validate(instance=structured, schema=dict(tool.output_schema))
                 except ValidationError as exc:
                     raise GatewayError(
@@ -273,7 +302,7 @@ class GatewayService:
                         f"Invalid output from tool: {name}",
                     ) from exc
             request.transition(RequestState.SUCCEEDED)
-            result_text = _result_text(structured)
+            result_text = _result_text(structured or raw_result)
             self._audit(
                 session,
                 request_id,
@@ -285,12 +314,13 @@ class GatewayService:
                 metadata={
                     **audit_metadata,
                     "response_bytes": len(result_text.encode("utf-8")),
-                    "result_key_count": len(structured),
+                    "result_key_count": len(structured or {}),
                 },
             )
             return GatewayToolResult(
-                content=({"type": "text", "text": result_text},),
+                content=content or ({"type": "text", "text": result_text},),
                 structured_content=structured,
+                is_error=is_error,
             )
         except TimeoutError:
             request.transition(RequestState.TIMED_OUT)
@@ -446,3 +476,23 @@ def _result_text(result: Mapping[str, Any]) -> str:
     import json
 
     return json.dumps(result, sort_keys=True, default=str)
+
+
+def _normalize_child_result(
+    result: Mapping[str, Any],
+) -> tuple[tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, bool]:
+    is_transport_envelope = any(
+        key in result for key in ("content", "structuredContent", "isError")
+    )
+    if not is_transport_envelope:
+        return (), dict(result), False
+
+    raw_content = result.get("content")
+    content = (
+        tuple(item for item in raw_content if isinstance(item, Mapping))
+        if isinstance(raw_content, list)
+        else ()
+    )
+    raw_structured = result.get("structuredContent")
+    structured = dict(raw_structured) if isinstance(raw_structured, Mapping) else None
+    return content, structured, bool(result.get("isError"))

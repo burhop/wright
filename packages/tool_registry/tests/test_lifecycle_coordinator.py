@@ -98,3 +98,25 @@ async def test_shutdown_is_bounded_and_rejects_new_starts() -> None:
     assert coordinator.owned_task_count() == 0
     with pytest.raises(RuntimeError, match="shutting down"):
         await coordinator.start("cad")
+
+
+@pytest.mark.asyncio
+async def test_unrelated_servers_keep_distinct_workspace_bindings() -> None:
+    bindings: dict[str, str | None] = {}
+
+    def factory(server_id: str, workspace_path: str | None, approval_context):
+        bindings[server_id] = workspace_path
+        return FakeRunner(server_id)
+
+    coordinator = McpLifecycleCoordinator(factory)
+    await asyncio.gather(
+        coordinator.start("alpha", workspace_path="/workspace/alpha"),
+        coordinator.start("beta", workspace_path="/workspace/beta"),
+    )
+
+    assert bindings == {
+        "alpha": "/workspace/alpha",
+        "beta": "/workspace/beta",
+    }
+    assert coordinator.live_runner_count() == 2
+    await coordinator.shutdown()

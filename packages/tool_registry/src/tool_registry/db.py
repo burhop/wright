@@ -133,6 +133,7 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         source_url=_row_value(row, "source_url"),
         installed_version=_row_value(row, "installed_version"),
         env_vars=env_vars,
+        launch_env=_parse_json(_row_value(row, "launch_env"), {}),
         instructions=_row_value(row, "instructions"),
         verification_state=_row_value(
             row, "verification_state", "user_reported_url_needed"
@@ -164,8 +165,11 @@ def _row_to_tool(row: sqlite3.Row) -> McpTool:
         tool_id=row["tool_id"],
         server_id=row["server_id"],
         name=row["name"],
+        title=_row_value(row, "title"),
         description=row["description"],
         input_schema=input_schema,
+        output_schema=_parse_json(_row_value(row, "output_schema"), None),
+        annotations=_parse_json(_row_value(row, "annotations"), {}),
         is_enabled=bool(row["is_enabled"]),
         created_at=row["created_at"],
     )
@@ -200,12 +204,12 @@ def insert_server(db_path: str, server: McpServer) -> None:
             """
             INSERT INTO mcp_servers (
                 server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at,
-                image_url, description, source_url, installed_version, env_vars, instructions,
+                image_url, description, source_url, installed_version, env_vars, launch_env, instructions,
                 verification_state, installability_tier, risk_level, deployment_mode,
                 platform_support, host_software_required, credentials_required,
                 default_enabled, approval_gates, validation_result, follow_up_url,
                 install_blocked_reason
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -224,6 +228,7 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.source_url,
                 server.installed_version,
                 _serialize_env_vars(server.env_vars),
+                _serialize_json(server.launch_env),
                 server.instructions,
                 server.verification_state,
                 server.installability_tier,
@@ -280,6 +285,7 @@ def update_server(
             set_clauses.append("default_enabled = ?")
             params.append(1 if value else 0)
         elif key in (
+            "launch_env",
             "platform_support",
             "host_software_required",
             "credentials_required",
@@ -347,15 +353,19 @@ def insert_tools(db_path: str, tools: List[McpTool]) -> None:
             conn.execute(
                 """
                 INSERT OR REPLACE INTO mcp_tools (
-                    tool_id, server_id, name, description, input_schema, is_enabled, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    tool_id, server_id, name, title, description, input_schema,
+                    output_schema, annotations, is_enabled, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     tool.tool_id,
                     tool.server_id,
                     tool.name,
+                    tool.title,
                     tool.description,
                     json.dumps(tool.input_schema),
+                    _serialize_json(tool.output_schema),
+                    _serialize_json(tool.annotations),
                     1 if tool.is_enabled else 0,
                     tool.created_at,
                 ),

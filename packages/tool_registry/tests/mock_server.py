@@ -36,11 +36,17 @@ def main():
                         "tools": [
                             {
                                 "name": "test_tool",
+                                "title": "Test Tool",
                                 "description": "A test tool",
                                 "inputSchema": {
                                     "type": "object",
                                     "properties": {"val": {"type": "string"}},
                                     "required": ["val"],
+                                },
+                                "outputSchema": {"type": "object"},
+                                "annotations": {
+                                    "title": "Test Tool",
+                                    "readOnlyHint": True,
                                 },
                             }
                         ]
@@ -48,6 +54,30 @@ def main():
                 }
             elif method == "tools/call":
                 args = params.get("arguments", {})
+                progress_token = (params.get("_meta") or {}).get("progressToken")
+                if progress_token is not None:
+                    for token, progress, message in (
+                        (progress_token, 1, "Preparing"),
+                        (progress_token, 0.5, "Stale"),
+                        ("unknown-token", 2, "Wrong request"),
+                        (progress_token, 2, "Completed"),
+                    ):
+                        sys.stdout.write(
+                            json.dumps(
+                                {
+                                    "jsonrpc": "2.0",
+                                    "method": "notifications/progress",
+                                    "params": {
+                                        "progressToken": token,
+                                        "progress": progress,
+                                        "total": 2,
+                                        "message": message,
+                                    },
+                                }
+                            )
+                            + "\n"
+                        )
+                        sys.stdout.flush()
                 res = {
                     "jsonrpc": "2.0",
                     "id": req_id,

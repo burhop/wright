@@ -8,6 +8,7 @@ from typing import Any, Protocol
 
 from core.logging import get_logger  # type: ignore[import-untyped]
 from core.redaction import redact_text  # type: ignore[import-untyped]
+from .runners.base import ProgressCallback
 
 logger = get_logger(__name__)
 
@@ -20,7 +21,11 @@ class Runner(Protocol):
     async def list_tools(self) -> list[dict[str, Any]]: ...
 
     async def call_tool(
-        self, tool_name: str, arguments: Mapping[str, Any]
+        self,
+        tool_name: str,
+        arguments: Mapping[str, Any],
+        *,
+        progress_callback: ProgressCallback | None = None,
     ) -> dict[str, Any]: ...
 
     def is_running(self) -> bool: ...
@@ -144,6 +149,7 @@ class McpLifecycleCoordinator:
         arguments: Mapping[str, Any],
         *,
         timeout: float | None = None,
+        progress_callback: ProgressCallback | None = None,
     ) -> dict[str, Any]:
         slot = await self._slot(server_id)
         async with slot.lock:
@@ -151,8 +157,17 @@ class McpLifecycleCoordinator:
             generation = slot.generation
             if runner is None or not runner.is_running():
                 raise RuntimeError(f"MCP server '{server_id}' is not active")
+        operation = (
+            runner.call_tool(tool_name, arguments)
+            if progress_callback is None
+            else runner.call_tool(
+                tool_name,
+                arguments,
+                progress_callback=progress_callback,
+            )
+        )
         result = await asyncio.wait_for(
-            runner.call_tool(tool_name, arguments),
+            operation,
             min(timeout or self._operation_timeout, self._operation_timeout),
         )
         if not self._current(slot, generation):

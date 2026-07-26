@@ -223,6 +223,16 @@ MIGRATIONS: tuple[Migration, ...] = (
             ),
         ),
     ),
+    Migration(
+        5,
+        "provider_neutral_mcp_contract",
+        (
+            add_column("mcp_servers", "launch_env", "TEXT"),
+            add_column("mcp_tools", "title", "TEXT"),
+            add_column("mcp_tools", "output_schema", "TEXT"),
+            add_column("mcp_tools", "annotations", "TEXT"),
+        ),
+    ),
 )
 
 

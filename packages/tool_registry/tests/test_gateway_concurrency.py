@@ -1,11 +1,34 @@
 from __future__ import annotations
 
+import asyncio
 import anyio
 import pytest
 from mcp import ClientSession
 
 from tool_registry.mcp_stdio import StdioGatewayBinding, run_mcp_streams
 from test_gateway_service import service
+
+
+@pytest.mark.asyncio
+async def test_concurrent_sessions_keep_calls_bound_to_their_own_workspace() -> None:
+    gateway, lifecycle, _ = service()
+
+    results = await asyncio.gather(
+        *(
+            gateway.call_tool(
+                "s1" if index % 2 == 0 else "s2",
+                f"request-{index}",
+                "cad__run" if index % 2 == 0 else "fea__run",
+                {"index": index},
+            )
+            for index in range(100)
+        )
+    )
+
+    assert [result.structured_content["workspace"] for result in results] == [
+        "w1" if index % 2 == 0 else "w2" for index in range(100)
+    ]
+    assert {call[3]["workspace_id"] for call in lifecycle.calls} == {"w1", "w2"}
 
 
 @pytest.mark.asyncio

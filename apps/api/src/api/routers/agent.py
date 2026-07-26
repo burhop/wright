@@ -22,6 +22,7 @@ from agent_adapters import (
     UnsupportedAgentRuntimeError,
     create_agent_engine,
     default_agent_registry,
+    GenericProgressProjector,
 )
 from workspace_service import WorkspaceService
 from workspace_service.adapters.runtime import (
@@ -35,37 +36,6 @@ from tool_registry.db import get_servers
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
-
-
-_CAD_PROGRESS_LABELS = {
-    "cad_create_part_from_recipe": "Creating a new Solid Edge part",
-    "cad_create_assembly_from_recipe": "Creating a new Solid Edge assembly",
-    "cad_create_sheet_metal_from_recipe": "Creating a new Solid Edge sheet-metal part",
-    "cad_execute_solid_edge_native_design_v2": "Building the Solid Edge design",
-    "cad_execute_solid_edge_observed_native_design_v2": "Building the visible Solid Edge design",
-    "cad_export_document": "Exporting the Solid Edge document",
-    "cad_export_screenshot_views": "Capturing Solid Edge views",
-    "cad_rebuild_document": "Rebuilding the Solid Edge document",
-}
-
-
-def _friendly_progress_data(data: dict, elapsed_seconds: float) -> dict:
-    """Add stable, user-facing phase information to backend tool progress."""
-    result = dict(data)
-    tool = str(result.get("tool") or "")
-    short_name = tool.rsplit("__", 1)[-1]
-    label = _CAD_PROGRESS_LABELS.get(short_name)
-    if label:
-        status_value = str(result.get("status") or "running")
-        if status_value == "completed":
-            label = f"{label} finished"
-        result["label"] = label
-        result["phase"] = "solid_edge_creation"
-        result["message"] = (
-            f"{label}. The new document is being kept visible in Solid Edge."
-        )
-    result["elapsedSeconds"] = round(max(0.0, elapsed_seconds), 1)
-    return result
 
 
 def _restart_hermes_gateway_process() -> None:
@@ -118,7 +88,7 @@ class ChatStreamJob:
         self._task: asyncio.Task | None = None
         self._started_at = 0.0
         self._heartbeat_seconds = heartbeat_seconds
-        self._current_progress_label = "Planning and preparing the requested work"
+        self._progress = GenericProgressProjector()
 
     def start(self) -> None:
         if self._task is None:
@@ -144,14 +114,7 @@ class ChatStreamJob:
             elapsed = time.monotonic() - self._started_at
             await self._append(
                 "progress",
-                {
-                    "status": "running",
-                    "phase": "agent_work",
-                    "label": self._current_progress_label,
-                    "message": f"{self._current_progress_label}. Still working.",
-                    "elapsedSeconds": round(elapsed, 1),
-                    "heartbeat": True,
-                },
+                self._progress.heartbeat(elapsed_seconds=elapsed),
             )
 
     async def _run(self) -> None:
@@ -159,13 +122,7 @@ class ChatStreamJob:
         self._started_at = time.monotonic()
         await self._append(
             "progress",
-            {
-                "status": "running",
-                "phase": "planning",
-                "label": self._current_progress_label,
-                "message": "Planning the requested work and preparing the required tools.",
-                "elapsedSeconds": 0.0,
-            },
+            self._progress.start(),
         )
         heartbeat_task = asyncio.create_task(self._emit_heartbeats())
         try:
@@ -175,17 +132,13 @@ class ChatStreamJob:
                 saw_stream_end = saw_stream_end or event.type == "stream_end"
                 event_data = event.data
                 if event.type == "progress":
-                    event_data = _friendly_progress_data(
-                        event.data, time.monotonic() - self._started_at
+                    projected = self._progress.project(
+                        event.data,
+                        elapsed_seconds=time.monotonic() - self._started_at,
                     )
-                    if event_data.get("status") == "running":
-                        self._current_progress_label = str(
-                            event_data.get("label") or self._current_progress_label
-                        )
-                    elif event_data.get("status") == "completed":
-                        completed_label = event_data.get("label")
-                        if completed_label:
-                            self._current_progress_label = str(completed_label)
+                    if projected is None:
+                        continue
+                    event_data = projected
                 await self._append(event.type, event_data)
         except asyncio.CancelledError:
             self.cancelled = True

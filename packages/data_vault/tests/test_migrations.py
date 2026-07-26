@@ -65,6 +65,37 @@ def test_upgrade_is_idempotent(tmp_path):
     assert second.starting_version == second.ending_version == len(MIGRATIONS)
 
 
+def test_provider_neutral_mcp_columns_are_added_without_losing_rows(tmp_path):
+    path = tmp_path / "pre-provider-neutral.db"
+    upgrade_database(path, migrations=MIGRATIONS[:-1])
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            """INSERT INTO mcp_servers
+            (server_id, name, type, command, created_at, updated_at)
+            VALUES ('existing', 'Existing', 'stdio', '[\"server\"]', 1, 1)"""
+        )
+        connection.execute(
+            """INSERT INTO mcp_tools
+            (tool_id, server_id, name, input_schema, created_at)
+            VALUES ('existing:tool', 'existing', 'tool', '{}', 1)"""
+        )
+        connection.commit()
+
+    result = upgrade_database(path)
+
+    assert result.applied == ({"version": 5, "name": "provider_neutral_mcp_contract"},)
+    with sqlite3.connect(path) as connection:
+        server = connection.execute(
+            "SELECT name, launch_env FROM mcp_servers WHERE server_id='existing'"
+        ).fetchone()
+        tool = connection.execute(
+            """SELECT name, title, output_schema, annotations FROM mcp_tools
+            WHERE tool_id='existing:tool'"""
+        ).fetchone()
+    assert server == ("Existing", None)
+    assert tool == ("tool", None, None, None)
+
+
 def test_complete_unversioned_feature_043_shape_is_adopted(tmp_path):
     path = tmp_path / "feature-043.db"
     upgrade_database(path)

@@ -90,6 +90,7 @@ class CatalogEntry(BaseModel):
     locality: Literal["local", "remote"]
     weight: Literal["light", "medium", "heavy"]
     env_vars: List[EnvVarDefinition] = Field(default_factory=list)
+    launch_env: dict[str, str] = Field(default_factory=dict)
     dependencies: DependencySpec = Field(default_factory=DependencySpec)
     aliases: List[str] = Field(default_factory=list)
     verification_state: VerificationState = "user_reported_url_needed"

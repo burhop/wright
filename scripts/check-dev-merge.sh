@@ -30,11 +30,14 @@ trap cleanup EXIT
 
 cd "$ROOT_DIR"
 
-PYTHON_BIN="${PYTHON:-python3}"
-if [[ -x "$ROOT_DIR/.venv/Scripts/python.exe" ]]; then
+if [[ -n "${PYTHON:-}" ]]; then
+  PYTHON_BIN="$PYTHON"
+elif [[ -x "$ROOT_DIR/.venv/Scripts/python.exe" ]]; then
   PYTHON_BIN="$ROOT_DIR/.venv/Scripts/python.exe"
 elif [[ -x "$ROOT_DIR/.venv/bin/python" ]]; then
   PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+else
+  PYTHON_BIN="python3"
 fi
 
 echo "Running Wright dev merge gate from $ROOT_DIR"
@@ -61,7 +64,9 @@ run uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
 
 run uv run pytest
-run uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
+run uv run --isolated --reinstall-package hermes-plugin-wright \
+  --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx \
+  pytest hermes-plugin-wright/tests
 run npm run test --workspace=apps/web
 run npm run build --workspace=apps/web
 run uv run --with mkdocs-material mkdocs build --strict

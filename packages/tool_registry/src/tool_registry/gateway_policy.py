@@ -6,26 +6,6 @@ from typing import Any, Mapping
 from .gateway_models import GatewaySessionContext, GatewayTool
 
 
-SOLID_EDGE_CREATION_TOOLS = frozenset(
-    {
-        "cad.validate_recipe",
-        "cad.create_part_from_recipe",
-        "cad.validate_sheet_metal_recipe",
-        "cad.create_sheet_metal_from_recipe",
-        "cad.validate_assembly_recipe",
-        "cad.create_assembly_from_recipe",
-        "cad.rebuild_document",
-        "cad.export_document",
-        "cad.export_screenshot_views",
-    }
-)
-
-
-def _is_solid_edge_tool(tool: GatewayTool) -> bool:
-    source = str(tool.provenance.get("source_url") or "").lower()
-    return "solidedgemcp" in source or "solid-edge-mcp" in source
-
-
 @dataclass(frozen=True, slots=True)
 class GatewayPolicyDecision:
     allowed: bool
@@ -47,15 +27,6 @@ class GatewayPolicy:
             return GatewayPolicyDecision(
                 False, "missing_workspace", "Workspace required"
             )
-        if (
-            _is_solid_edge_tool(tool)
-            and tool.tool_name not in SOLID_EDGE_CREATION_TOOLS
-        ):
-            return GatewayPolicyDecision(
-                False,
-                "solid_edge_creation_profile_hidden",
-                "Tool is outside the Solid Edge creation profile",
-            )
         return GatewayPolicyDecision(True, "workspace_authorized", "Tool is visible")
 
     def can_call(
@@ -70,8 +41,7 @@ class GatewayPolicy:
         visibility = self.can_list(session, tool)
         if not visibility.allowed:
             return visibility
-        annotations = dict(tool.annotations)
-        required = {str(value) for value in annotations.get("approval_gates", [])}
+        required = set(tool.required_approvals)
         granted = workspace_approvals or set()
         missing = sorted(required - granted)
         if missing:

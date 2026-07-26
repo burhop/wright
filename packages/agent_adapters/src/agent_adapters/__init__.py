@@ -30,6 +30,7 @@ from .context import (
     AgentContextMaterializer,
     NoOpAgentContextMaterializer,
 )
+from .progress import GenericProgressProjector
 
 __all__ = [
     "BaseAgentEngine",
@@ -54,4 +55,5 @@ __all__ = [
     "AgentContextMaterializationResult",
     "AgentContextMaterializer",
     "NoOpAgentContextMaterializer",
+    "GenericProgressProjector",
 ]
