@@ -110,6 +110,7 @@ def register_server(
         source_url=body.source_url,
         installed_version=body.installed_version,
         env_vars=body.env_vars,
+        launch_env=body.launch_env,
         instructions=body.instructions,
         verification_state=body.verification_state,
         installability_tier=body.installability_tier,

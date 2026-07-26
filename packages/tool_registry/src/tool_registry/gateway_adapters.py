@@ -7,6 +7,7 @@ from .db import get_servers, get_tools
 from .gateway_models import GatewayResource, GatewaySessionContext, GatewayTool
 from .manager import McpEngine
 from .safety import ApprovalContext
+from .runners.base import ProgressCallback
 
 
 class DatabaseGatewayWorkspace:
@@ -48,13 +49,6 @@ class DatabaseGatewayCatalog:
         )
         if server is None:
             return ()
-        annotations = {
-            "readOnlyHint": server.risk_level == "low",
-            "destructiveHint": server.risk_level in {"high", "critical"},
-            "idempotentHint": False,
-            "openWorldHint": bool(server.credentials_required),
-            "approval_gates": list(server.approval_gates),
-        }
         return tuple(
             GatewayTool(
                 name=f"{server_id}__{tool.name}",
@@ -62,8 +56,10 @@ class DatabaseGatewayCatalog:
                 tool_name=tool.name,
                 description=tool.description or "",
                 input_schema=tool.input_schema,
-                output_schema={"type": "object"},
-                annotations=annotations,
+                title=tool.title,
+                output_schema=tool.output_schema,
+                annotations=tool.annotations,
+                required_approvals=frozenset(server.approval_gates),
                 provenance={
                     "server_id": server.server_id,
                     "source_url": server.source_url,
@@ -99,12 +95,21 @@ class EngineGatewayLifecycle:
         arguments: Mapping[str, Any],
         *,
         approval_context: Any,
+        progress_callback: ProgressCallback | None = None,
     ) -> Mapping[str, Any]:
+        if progress_callback is None:
+            return await self.engine.call_tool(
+                server_id,
+                tool_name,
+                dict(arguments),
+                approval_context=_approval_context(approval_context),
+            )
         return await self.engine.call_tool(
             server_id,
             tool_name,
             dict(arguments),
             approval_context=_approval_context(approval_context),
+            progress_callback=progress_callback,
         )
 
     async def shutdown(self) -> None:

@@ -7,7 +7,7 @@ from core.logging import get_logger
 from core.redaction import redact_command, redact_mapping, redact_text
 from .models import McpServer, McpTool
 from .db import get_server, get_servers, update_server, insert_tools, clear_server_tools
-from .runners.base import BaseRunner
+from .runners.base import BaseRunner, ProgressCallback
 from .runners.stdio import StdioRunner
 from .runners.sse import SseRunner
 from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
@@ -157,7 +157,11 @@ class McpEngine:
                     return []
 
                 async def call_tool(
-                    self, tool_name: str, arguments: Dict[str, Any]
+                    self,
+                    tool_name: str,
+                    arguments: Dict[str, Any],
+                    *,
+                    progress_callback: ProgressCallback | None = None,
                 ) -> Dict[str, Any]:
                     return {}
 
@@ -298,8 +302,12 @@ class McpEngine:
                         tool_id=f"{server_id}:{name}",
                         server_id=server_id,
                         name=name,
+                        title=t.get("title")
+                        or (t.get("annotations") or {}).get("title"),
                         description=t.get("description"),
                         input_schema=t.get("inputSchema", {}),
+                        output_schema=t.get("outputSchema"),
+                        annotations=t.get("annotations") or {},
                         is_enabled=True,
                         created_at=now,
                     )
@@ -401,6 +409,7 @@ class McpEngine:
         arguments: Dict[str, Any],
         *,
         approval_context: ApprovalContext | None = None,
+        progress_callback: ProgressCallback | None = None,
     ) -> Dict[str, Any]:
         """Invoke a tool on an active MCP server."""
         server = get_server(self.db_path, server_id)
@@ -475,6 +484,7 @@ class McpEngine:
             server_id,
             tool_name,
             arguments,
+            progress_callback=progress_callback,
         )
 
     async def sync_active_servers(self) -> None:

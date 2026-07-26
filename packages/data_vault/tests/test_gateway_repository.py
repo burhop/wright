@@ -8,6 +8,7 @@ from data_vault import (
     upgrade_database,
 )
 from data_vault.secret_provider import FileSecretProvider
+from data_vault.migrations import MIGRATIONS
 from data_vault.workspace_repository import WorkspaceRepository
 
 
@@ -71,4 +72,4 @@ def test_gateway_audit_is_append_only_scoped_and_redacted(tmp_path) -> None:
     assert json.loads(rows[0]["metadata_json"])["token"] == "[REDACTED]"
     assert repository.list_audit("foreign") == []
 
-    assert database_status(db_path).current_version == 4
+    assert database_status(db_path).current_version == len(MIGRATIONS)

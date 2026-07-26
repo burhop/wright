@@ -62,6 +62,33 @@ def test_load_catalog_entries_normalizes_and_converts_to_seed(tmp_path):
     assert seed["platform_support"]["linux_x64"]["tested"] is True
 
 
+def test_catalog_preserves_trusted_launch_environment(tmp_path):
+    catalog_file = tmp_path / "catalog.yaml"
+    catalog_file.write_text(
+        """
+servers:
+  - id: workspace-aware
+    name: Workspace Aware
+    vendor: Test
+    description: Test
+    domains: [cad]
+    transport: stdio
+    command: [server, --root, "{workspace.path}"]
+    launch_env:
+      SERVER_WORKSPACE: "{workspace.path}"
+    locality: local
+    weight: light
+""",
+        encoding="utf-8",
+    )
+
+    entry = load_catalog_entries(catalog_file)[0]
+    seed = catalog_entry_to_mcp_seed(entry)
+
+    assert seed["command"] == ["server", "--root", "{workspace.path}"]
+    assert seed["launch_env"] == {"SERVER_WORKSPACE": "{workspace.path}"}
+
+
 def test_duplicate_catalog_ids_are_rejected(tmp_path):
     catalog_file = tmp_path / "catalog.yaml"
     catalog_file.write_text(

@@ -4,23 +4,23 @@ Use this sequence when a Hermes/Wright Solid Edge request is slow or fails.
 
 ## Check ownership first
 
-For Hermes-driven sessions, confirm `WRIGHT_API_MCP_AUTOSTART=0`. Wright status
-polling must not start another SolidEdgeMCP process. A single Hermes-owned
-process should serve the session.
+For Hermes-driven sessions, confirm `WRIGHT_API_MCP_AUTOSTART=0` and that Hermes
+is configured with `wrightgateway`. Do not configure a second direct child
+entry for the same executable. A Wright-managed child should have one process
+owned by the gateway lifecycle.
 
 ## Interpret progress
 
-- **Planning and preparing** means the agent has not begun a Solid Edge tool
-  call yet.
-- **Creating or building the Solid Edge design** means a provider operation is
-  active.
-- **Exporting or capturing views** identifies post-creation output work.
-- Repeated elapsed messages are heartbeats and indicate that the turn is still
-  alive.
+- **Planning request** means the agent has not reported a child tool call yet.
+- A server-authored message is relayed as-is with its advertised server, tool,
+  title, progress, total, and correlation fields when available.
+- A tool-name fallback means the server supplied no title or message; it does
+  not prove what the desktop application is doing.
+- Repeated elapsed messages marked as heartbeats indicate only that the turn is
+  still alive.
 
-If a completed tool is followed by a long final response, the heartbeat keeps
-the completed operation label and does not claim that Solid Edge is still
-creating geometry.
+After a terminal tool event, later heartbeats return to "Working on request"
+and do not claim that the completed operation is still active.
 
 ## Workspace and authentication failures
 
@@ -30,6 +30,9 @@ creating geometry.
   `WRIGHT_API_TOKEN`.
 - Output paths must be absolute, under the active workspace, and included in
   `CADMCP_SOLID_EDGE_ALLOWED_ROOTS`.
+- An `invalid_launch_template` error means the trusted record contains an
+  unsupported placeholder, uses a placeholder in a string command, or lacks a
+  bound workspace. Only `{workspace.path}` is supported.
 
 ## Safe recovery
 
@@ -38,7 +41,8 @@ to recover a failed creation request. Correct the reported authentication,
 workspace, path, recipe, or provider error and then submit a fresh
 new-document request.
 
-The current branch preserves existing redacted gateway audit and subprocess
-logs. The separately proposed phase-attribution diagnostics service and
-percentage-based 20-trial benchmark are follow-up work and are not claimed by
-this release.
+Gateway audit and subprocess logs remain redacted and provider-neutral. For a
+rollback, restore the prior server record and matching Wright build; do not
+delete the additive database columns. A live Windows compatibility smoke is
+optional and must be recorded as skipped when the matching external server or
+desktop application is unavailable.

@@ -108,6 +108,7 @@ def load_engineering_catalog() -> list[dict[str, Any]]:
                     for item in seed["env_vars"]
                 ]
             )
+        seed["launch_env"] = json.dumps(seed.get("launch_env", {}))
         result.append(seed)
     result.sort(key=tier_sort_key)
     return result

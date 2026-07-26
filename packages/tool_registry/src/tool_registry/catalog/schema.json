@@ -257,6 +257,13 @@
       "title": "Env Vars",
       "type": "array"
     },
+    "launch_env": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Launch Env",
+      "type": "object"
+    },
     "dependencies": {
       "$ref": "#/$defs/DependencySpec"
     },

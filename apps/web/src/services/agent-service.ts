@@ -18,6 +18,13 @@ export type AgentEvent =
       message: string;
       title: string;
       detail?: string;
+      server?: string;
+      tool?: string;
+      status?: string;
+      progress?: number;
+      total?: number;
+      correlationId?: string;
+      heartbeat?: boolean;
     }
   | { type: "done"; session: ChatSession }
   | { type: "error"; message: string };
@@ -81,36 +88,50 @@ function formatProgressStatus(value: unknown): string {
   return value.replace(/[_-]+/g, " ").replace(/^./, (c) => c.toUpperCase());
 }
 
-function summarizeProgressPayload(data: any): {
+export function summarizeProgressPayload(data: any): {
   title: string;
   detail?: string;
   message: string;
   percentage?: number;
+  server?: string;
+  tool?: string;
+  status?: string;
+  progress?: number;
+  total?: number;
+  correlationId?: string;
+  heartbeat?: boolean;
 } {
-  const tool = data?.tool || data?.tool_name || data?.name || data?.server;
+  const server = data?.server || data?.server_id;
+  const tool = data?.tool || data?.tool_name || data?.name;
   const status = data?.status || data?.state || data?.phase;
-  const label = data?.label || data?.title || data?.step || data?.operation;
+  const label = data?.title || data?.label || data?.step || data?.operation;
   const message = data?.message || data?.detail || data?.description || "";
+  const progress =
+    typeof data?.progress === "number" ? data.progress : undefined;
+  const total = typeof data?.total === "number" ? data.total : undefined;
   const percentage =
     typeof data?.percentage === "number"
       ? data.percentage
-      : typeof data?.progress === "number"
-        ? data.progress
+      : progress !== undefined && total !== undefined && total > 0
+        ? Math.round((progress / total) * 100)
         : undefined;
 
   const statusText = formatProgressStatus(status);
   let title = "Tool progress";
-  if (tool && statusText) {
+  if (label) {
+    title = `${label}`;
+  } else if (tool && statusText) {
     title = `${tool}: ${statusText}`;
   } else if (tool) {
     title = `${tool}`;
-  } else if (label) {
-    title = `${label}`;
   } else if (statusText) {
     title = statusText;
   }
 
-  const details = [label, message]
+  const identity = [server, tool]
+    .filter((part) => typeof part === "string" && part.trim().length > 0)
+    .join(" / ");
+  const details = [identity, message]
     .filter((part) => typeof part === "string" && part.trim().length > 0)
     .map((part) => String(part).trim());
   const uniqueDetails = Array.from(new Set(details));
@@ -122,6 +143,18 @@ function summarizeProgressPayload(data: any): {
     detail,
     message: detail || title,
     percentage,
+    server: typeof server === "string" ? server : undefined,
+    tool: typeof tool === "string" ? tool : undefined,
+    status: typeof status === "string" ? status : undefined,
+    progress,
+    total,
+    correlationId:
+      typeof data?.correlationId === "string"
+        ? data.correlationId
+        : typeof data?.correlation_id === "string"
+          ? data.correlation_id
+          : undefined,
+    heartbeat: data?.heartbeat === true || undefined,
   };
 }
 
@@ -387,6 +420,13 @@ export class HermesAgentService {
           message: summary.message,
           title: summary.title,
           detail: summary.detail,
+          server: summary.server,
+          tool: summary.tool,
+          status: summary.status,
+          progress: summary.progress,
+          total: summary.total,
+          correlationId: summary.correlationId,
+          heartbeat: summary.heartbeat,
         };
       } catch (err) {
         return null;

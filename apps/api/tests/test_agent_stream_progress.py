@@ -6,7 +6,6 @@ import pytest
 from agent_adapters import AgentChatRequest, AgentStreamEvent
 from api.routers.agent import (
     ChatStreamJob,
-    _friendly_progress_data,
     _restart_hermes_gateway_process,
 )
 
@@ -17,7 +16,9 @@ class _SlowEngine:
         yield AgentStreamEvent(
             type="progress",
             data={
-                "tool": ("mcp__wrightgateway__server__cad_create_part_from_recipe"),
+                "server": "geometry",
+                "tool": "geometry__create",
+                "title": "Create geometry",
                 "status": "running",
             },
         )
@@ -29,27 +30,14 @@ class _CompletedThenSlowEngine:
         yield AgentStreamEvent(
             type="progress",
             data={
-                "tool": "mcp__wrightgateway__server__cad_create_part_from_recipe",
+                "server": "geometry",
+                "tool": "geometry__create",
+                "title": "Create geometry",
                 "status": "completed",
             },
         )
         await asyncio.sleep(0.03)
         yield AgentStreamEvent(type="stream_end", data={})
-
-
-def test_friendly_progress_data_describes_visible_solid_edge_creation():
-    data = _friendly_progress_data(
-        {
-            "tool": "mcp__wrightgateway__server__cad_create_part_from_recipe",
-            "status": "running",
-        },
-        12.34,
-    )
-
-    assert data["label"] == "Creating a new Solid Edge part"
-    assert data["phase"] == "solid_edge_creation"
-    assert data["elapsedSeconds"] == 12.3
-    assert "visible in Solid Edge" in data["message"]
 
 
 def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
@@ -78,9 +66,9 @@ async def test_chat_stream_emits_planning_and_elapsed_heartbeat_progress():
     events = [event async for event in job.stream_from()]
     progress = [data for event_type, data in events if event_type == "progress"]
 
-    assert progress[0]["phase"] == "planning"
+    assert progress[0]["title"] == "Planning request"
     assert any(item.get("heartbeat") for item in progress)
-    assert any(item.get("phase") == "solid_edge_creation" for item in progress)
+    assert any(item.get("tool") == "geometry__create" for item in progress)
 
 
 @pytest.mark.asyncio
@@ -92,9 +80,9 @@ async def test_completed_tool_heartbeat_does_not_claim_the_turn_is_finishing():
     job.start()
 
     events = [event async for event in job.stream_from()]
-    labels = [
-        data.get("label", "") for event_type, data in events if event_type == "progress"
-    ]
+    progress = [data for event_type, data in events if event_type == "progress"]
 
-    assert "Finishing the result" not in labels
-    assert any(label == "Creating a new Solid Edge part finished" for label in labels)
+    assert any(item.get("title") == "Create geometry" for item in progress)
+    assert all("Solid Edge" not in item.get("message", "") for item in progress)
+    heartbeats = [item for item in progress if item.get("heartbeat")]
+    assert all(item["title"] == "Working on request" for item in heartbeats)

@@ -143,6 +143,7 @@ async def test_register_mcp_server(monkeypatch):
         domains=["cad"],
         transport="stdio",
         command=["python", "test.py"],
+        launch_env={"SERVER_ROOT": "{workspace.path}"},
         locality="local",
         weight="light",
     )
@@ -162,6 +163,7 @@ async def test_register_mcp_server(monkeypatch):
     payload = json.loads(request.content)
     assert payload["name"] == "Test Tool"
     assert payload["type"] == "stdio"
+    assert payload["launch_env"] == {"SERVER_ROOT": "{workspace.path}"}
 
 
 @respx.mock

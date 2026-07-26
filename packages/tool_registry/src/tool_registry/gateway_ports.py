@@ -5,6 +5,7 @@ from typing import Any, Mapping, Protocol
 
 from .gateway_models import GatewayResource, GatewaySessionContext, GatewayTool
 from .models import McpServer
+from .runners.base import ProgressCallback
 
 
 class GatewayWorkspacePort(Protocol):
@@ -47,6 +48,7 @@ class GatewayLifecyclePort(Protocol):
         arguments: Mapping[str, Any],
         *,
         approval_context: Any,
+        progress_callback: ProgressCallback | None = None,
     ) -> Mapping[str, Any]: ...
 
     async def shutdown(self) -> None: ...

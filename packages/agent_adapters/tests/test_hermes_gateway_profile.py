@@ -2,6 +2,7 @@ from agent_adapters.hermes_gateway import (
     hermes_config_paths,
     hermes_wright_gateway_profile,
 )
+from agent_adapters.hermes import WRIGHT_SYSTEM_HINT
 
 
 def test_hermes_gateway_profile_preserves_wrightgateway_key():
@@ -64,3 +65,12 @@ def test_hermes_gateway_profile_can_bind_exact_workspace_session():
     ]
     assert profile.gateway_project_dir == "/wright"
     assert profile.terminal_config() == {"cwd": "/workspace/project"}
+
+
+def test_wright_system_hint_has_no_solid_edge_tool_recipe():
+    lowered = WRIGHT_SYSTEM_HINT.lower()
+
+    assert "solid edge" not in lowered
+    assert "providerid=solid_edge" not in lowered
+    assert "cad.create_part_from_recipe" not in lowered
+    assert "advertised descriptions and schemas" in lowered

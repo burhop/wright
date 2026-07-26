@@ -43,11 +43,13 @@ def test_pydantic_models():
         created_at=123,
         updated_at=456,
         env_vars={"KEY": "VAL"},
+        launch_env={"WORKSPACE_ROOT": "{workspace.path}"},
     )
     assert server.name == "Test CLI"
     assert server.command == ["uv", "run", "cli"]
     assert server.is_active is True
     assert server.env_vars == {"KEY": "VAL"}
+    assert server.launch_env == {"WORKSPACE_ROOT": "{workspace.path}"}
 
     tool = McpTool(
         tool_id="test-id:tool",
@@ -55,11 +57,17 @@ def test_pydantic_models():
         name="tool",
         description="test desc",
         input_schema={"type": "object"},
+        title="Test Tool",
+        output_schema={"type": "object"},
+        annotations={"readOnlyHint": True},
         is_enabled=True,
         created_at=123,
     )
     assert tool.name == "tool"
     assert tool.input_schema == {"type": "object"}
+    assert tool.title == "Test Tool"
+    assert tool.output_schema == {"type": "object"}
+    assert tool.annotations == {"readOnlyHint": True}
 
 
 def test_database_crud(temp_db_path):
@@ -75,6 +83,7 @@ def test_database_crud(temp_db_path):
         created_at=int(time.time()),
         updated_at=int(time.time()),
         env_vars={"MY_ENV_VAR": "my_val"},
+        launch_env={"WORKSPACE_ROOT": "{workspace.path}"},
     )
     insert_server(temp_db_path, server)
 
@@ -85,6 +94,7 @@ def test_database_crud(temp_db_path):
     assert fetched.command == ["python", "test.py"]
     assert fetched.is_active is False
     assert fetched.env_vars == {"MY_ENV_VAR": "my_val"}
+    assert fetched.launch_env == {"WORKSPACE_ROOT": "{workspace.path}"}
 
     # Get Servers list
     servers = get_servers(temp_db_path)
@@ -94,15 +104,62 @@ def test_database_crud(temp_db_path):
     updated = update_server(
         temp_db_path,
         server_id,
-        {"is_active": True, "status": "active", "env_vars": {"NEW_VAR": "new_val"}},
+        {
+            "is_active": True,
+            "status": "active",
+            "env_vars": {"NEW_VAR": "new_val"},
+            "launch_env": {"ROOT": "{workspace.path}"},
+        },
     )
     assert updated.is_active is True
     assert updated.status == "active"
     assert updated.env_vars == {"NEW_VAR": "new_val"}
+    assert updated.launch_env == {"ROOT": "{workspace.path}"}
 
     # Delete Server
     assert delete_server(temp_db_path, server_id) is True
     assert get_server(temp_db_path, server_id) is None
+
+
+def test_database_round_trips_complete_advertised_tool_metadata(temp_db_path):
+    server = McpServer(
+        server_id="tool-metadata-server",
+        name="Tool Metadata Server",
+        type="stdio",
+        command=["server"],
+        is_active=False,
+        status="inactive",
+        created_at=1,
+        updated_at=1,
+    )
+    insert_server(temp_db_path, server)
+    from tool_registry.db import insert_tools
+
+    insert_tools(
+        temp_db_path,
+        [
+            McpTool(
+                tool_id="tool-metadata-server:inspect",
+                server_id="tool-metadata-server",
+                name="inspect",
+                title="Inspect Model",
+                description="Inspect a model",
+                input_schema={"type": "object"},
+                output_schema={"type": "object", "required": ["result"]},
+                annotations={"readOnlyHint": True, "destructiveHint": False},
+                is_enabled=True,
+                created_at=1,
+            )
+        ],
+    )
+
+    fetched = get_tools(temp_db_path, "tool-metadata-server")[0]
+    assert fetched.title == "Inspect Model"
+    assert fetched.output_schema == {"type": "object", "required": ["result"]}
+    assert fetched.annotations == {
+        "readOnlyHint": True,
+        "destructiveHint": False,
+    }
 
 
 def test_database_persists_catalog_metadata(temp_db_path):
@@ -219,6 +276,12 @@ async def test_mcp_engine(temp_db_path):
         "type": "object",
         "properties": {"val": {"type": "string"}},
         "required": ["val"],
+    }
+    assert tools[0].title == "Test Tool"
+    assert tools[0].output_schema == {"type": "object"}
+    assert tools[0].annotations == {
+        "title": "Test Tool",
+        "readOnlyHint": True,
     }
 
     # Call tool through Engine

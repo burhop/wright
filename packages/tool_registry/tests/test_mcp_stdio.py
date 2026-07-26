@@ -45,6 +45,41 @@ async def test_explicit_stdio_binding_and_eof_cleanup() -> None:
 
 
 @pytest.mark.asyncio
+async def test_stdio_relays_child_progress_with_the_outer_request_token() -> None:
+    gateway, _, _ = service()
+    binding = StdioGatewayBinding("progress", "stdio:progress", "w1")
+    gateway.workspaces.bindings["progress"] = (
+        "stdio:progress",
+        "w1",
+        "/workspace/one",
+    )
+    client_write, server_read = anyio.create_memory_object_stream(10)
+    server_write, client_read = anyio.create_memory_object_stream(10)
+    updates: list[tuple[float, float | None, str | None]] = []
+
+    async def on_progress(progress, total, message) -> None:
+        updates.append((progress, total, message))
+
+    async with anyio.create_task_group() as group:
+        group.start_soon(
+            run_mcp_streams,
+            gateway,
+            binding,
+            server_read,
+            server_write,
+        )
+        async with ClientSession(client_read, client_write) as client:
+            await client.initialize()
+            result = await client.call_tool(
+                "cad__run", {}, progress_callback=on_progress
+            )
+            assert not result.isError
+        await client_write.aclose()
+
+    assert updates == [(1.0, 2.0, "Child update")]
+
+
+@pytest.mark.asyncio
 async def test_stdio_rejects_missing_explicit_workspace_binding() -> None:
     gateway, _, _ = service()
     client_write, server_read = anyio.create_memory_object_stream(1)

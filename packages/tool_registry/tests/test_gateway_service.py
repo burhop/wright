@@ -62,6 +62,7 @@ class Catalog:
                 updated_at=now,
             ),
         ]
+        self.output_schema = {"type": "object"}
 
     def servers(self):
         return self._servers
@@ -74,7 +75,7 @@ class Catalog:
                 tool_name="run",
                 description=f"Run {server_id}",
                 input_schema={"type": "object"},
-                output_schema={"type": "object"},
+                output_schema=self.output_schema,
             )
         ]
 
@@ -93,17 +94,35 @@ class Lifecycle:
     def __init__(self) -> None:
         self.calls = []
         self.gate: asyncio.Event | None = None
+        self.result = None
 
     async def ensure_started(self, server_id, *, workspace_path, approval_context):
         return None
 
-    async def call_tool(self, server_id, tool_name, arguments, *, approval_context):
+    async def call_tool(
+        self,
+        server_id,
+        tool_name,
+        arguments,
+        *,
+        approval_context,
+        progress_callback=None,
+    ):
         if self.gate:
             await self.gate.wait()
+        if progress_callback is not None:
+            callback_result = progress_callback(
+                {"progress": 1.0, "total": 2.0, "message": "Child update"}
+            )
+            if callback_result is not None:
+                await callback_result
         self.calls.append(
             (server_id, tool_name, dict(arguments), dict(approval_context))
         )
-        return {"server": server_id, "workspace": approval_context["workspace_id"]}
+        return self.result or {
+            "server": server_id,
+            "workspace": approval_context["workspace_id"],
+        }
 
     async def shutdown(self):
         return None
@@ -174,6 +193,54 @@ async def test_structured_call_uses_bound_workspace_and_audits() -> None:
 
 
 @pytest.mark.asyncio
+async def test_call_forwards_generic_correlated_progress() -> None:
+    instance, _, _ = service()
+    updates: list[dict] = []
+
+    await instance.call_tool(
+        "s1",
+        "progress-request",
+        "cad__run",
+        {},
+        progress_callback=lambda update: updates.append(dict(update)),
+    )
+
+    assert len(updates) == 1
+    assert updates[0] == {
+        "progress": 1.0,
+        "total": 2.0,
+        "message": "Child update",
+        "server": "cad",
+        "tool": "cad__run",
+        "title": "Run cad",
+        "correlationId": updates[0]["correlationId"],
+        "status": "running",
+    }
+    assert updates[0]["correlationId"]
+
+
+@pytest.mark.asyncio
+async def test_call_validates_and_preserves_child_structured_content() -> None:
+    instance, lifecycle, _ = service()
+    instance.catalog.output_schema = {
+        "type": "object",
+        "required": ["result"],
+        "properties": {"result": {"type": "string"}},
+    }
+    lifecycle.result = {
+        "content": [{"type": "text", "text": "Created"}],
+        "structuredContent": {"result": "ok"},
+        "isError": False,
+    }
+
+    result = await instance.call_tool("s1", "structured", "cad__run", {})
+
+    assert result.content == ({"type": "text", "text": "Created"},)
+    assert result.structured_content == {"result": "ok"}
+    assert result.is_error is False
+
+
+@pytest.mark.asyncio
 async def test_foreign_tool_and_cancellation_are_denied() -> None:
     instance, lifecycle, _ = service()
     with pytest.raises(GatewayError, match="Unknown or disabled"):
@@ -186,6 +253,19 @@ async def test_foreign_tool_and_cancellation_are_denied() -> None:
     assert instance.cancel("s1", "owned", "operator") is True
     with pytest.raises(asyncio.CancelledError):
         await call
+
+
+@pytest.mark.asyncio
+async def test_configured_timeout_cancels_only_the_owned_request() -> None:
+    instance, lifecycle, _ = service()
+    lifecycle.gate = asyncio.Event()
+
+    with pytest.raises(GatewayError) as caught:
+        await instance.call_tool("s1", "slow", "cad__run", {}, timeout=0.01)
+
+    assert caught.value.code.value == "timeout"
+    assert ("s1", "slow") not in instance._requests
+    assert instance.cancel("s2", "slow", "foreign") is False
 
 
 def test_existing_session_cannot_be_rebound() -> None:

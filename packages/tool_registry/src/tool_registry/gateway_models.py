@@ -192,8 +192,10 @@ class GatewayTool:
     tool_name: str
     description: str
     input_schema: Mapping[str, Any]
+    title: str | None = None
     output_schema: Mapping[str, Any] | None = None
     annotations: Mapping[str, Any] = field(default_factory=dict)
+    required_approvals: frozenset[str] = field(default_factory=frozenset)
     provenance: Mapping[str, Any] = field(default_factory=dict)
 
 

@@ -19,6 +19,48 @@ Use these recipes with the clean-container validation process in
 - For GUI-backed FreeCAD workbench tests, install Xvfb only inside the
   disposable validation container.
 
+## Generic Local-Server Workspace Binding
+
+Wright-managed STDIO servers may opt into the authenticated workspace through
+trusted launch configuration. The only placeholder is `{workspace.path}`. Put
+it in one command-array element or in a non-secret `launch_env` value:
+
+```yaml
+command:
+  - example-mcp
+  - --allowed-root
+  - "{workspace.path}"
+launch_env: {}
+```
+
+```yaml
+command:
+  - example-mcp
+launch_env:
+  EXAMPLE_ALLOWED_ROOTS: "{workspace.path}"
+```
+
+Wright resolves the selected workspace to an absolute canonical path and
+passes it literally without shell evaluation. String commands cannot contain
+placeholders because their argument boundaries are ambiguous. Unknown
+placeholders and missing workspace bindings fail before subprocess creation.
+`launch_env` is administrator-controlled non-secret configuration; credentials
+continue to use `env_vars` definitions and Wright's secret provider.
+
+The current external SolidEdgeMCP contract can use the same generic mechanism
+without a runtime plugin:
+
+```yaml
+command:
+  - C:\path\to\SolidEdgeMCP.exe
+launch_env:
+  CADMCP_SOLID_EDGE_ALLOWED_ROOTS: "{workspace.path}"
+```
+
+The variable name above belongs to that server's configuration data. Wright's
+launcher does not recognize the product, variable name, or tool names. When the
+external server adds a neutral command-line binding, change only this record.
+
 ## OpenSCAD Geometry (`openscad-mcp-server`)
 
 Source: https://github.com/quellant/openscad-mcp

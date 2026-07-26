@@ -10,42 +10,15 @@ from typing import Any
 from core.logging import get_logger  # type: ignore[import-untyped]
 
 from .db import clear_server_tools, get_server, insert_tools, update_server
+from .launch_templates import render_launch_configuration
 from .models import EnvVarDefinition, McpTool
-from .runners.base import BaseRunner
+from .runners.base import BaseRunner, ProgressCallback
 from .runners.sse import SseRunner
 from .runners.stdio import StdioRunner
 from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials, read_secrets, value_for_credential
 
 logger = get_logger(__name__)
-
-SOLID_EDGE_ALLOWED_ROOTS_ENV = "CADMCP_SOLID_EDGE_ALLOWED_ROOTS"
-
-
-def _workspace_scoped_environment(
-    server: Any, environment: dict[str, str], workspace_path: str | None
-) -> dict[str, str]:
-    """Add the exact bound workspace to SolidEdgeMCP's narrow file allowlist."""
-    result = dict(environment)
-    identity = (
-        f"{getattr(server, 'name', '')} {getattr(server, 'source_url', '')}".lower()
-    )
-    if not workspace_path or not (
-        "solid edge" in identity or "solidedgemcp" in identity
-    ):
-        return result
-
-    existing = [
-        item.strip()
-        for item in result.get(SOLID_EDGE_ALLOWED_ROOTS_ENV, "").split(os.pathsep)
-        if item.strip()
-    ]
-    canonical_workspace = os.path.abspath(workspace_path)
-    normalized = {os.path.normcase(os.path.abspath(item)) for item in existing}
-    if os.path.normcase(canonical_workspace) not in normalized:
-        existing.append(canonical_workspace)
-    result[SOLID_EDGE_ALLOWED_ROOTS_ENV] = os.pathsep.join(existing)
-    return result
 
 
 class MockRunner(BaseRunner):
@@ -63,7 +36,11 @@ class MockRunner(BaseRunner):
         return []
 
     async def call_tool(
-        self, tool_name: str, arguments: Mapping[str, Any]
+        self,
+        tool_name: str,
+        arguments: Mapping[str, Any],
+        *,
+        progress_callback: ProgressCallback | None = None,
     ) -> dict[str, Any]:
         return {}
 
@@ -109,12 +86,14 @@ class DatabaseLifecycleAdapter:
         if server.type == "stdio":
             if not server.command:
                 raise ValueError("Command configuration is required for stdio server.")
-            env = _workspace_scoped_environment(
-                server,
-                self._environment(server_id, server.env_vars),
+            command, launch_env = render_launch_configuration(
+                server.command,
+                server.launch_env,
                 workspace_path,
+                server_id=server_id,
             )
-            command = self._headless_command(server, server.command)
+            env = {**self._environment(server_id, server.env_vars), **launch_env}
+            command = self._headless_command(server, command)
             return StdioRunner(
                 command,
                 env=env,
@@ -137,8 +116,11 @@ class DatabaseLifecycleAdapter:
                 tool_id=f"{server_id}:{tool['name']}",
                 server_id=server_id,
                 name=str(tool["name"]),
+                title=tool.get("title") or (tool.get("annotations") or {}).get("title"),
                 description=tool.get("description"),
                 input_schema=tool.get("inputSchema", {}),
+                output_schema=tool.get("outputSchema"),
+                annotations=tool.get("annotations") or {},
                 is_enabled=True,
                 created_at=now,
             )

@@ -1,14 +1,17 @@
 import asyncio
 import json
+import inspect
+import math
 import os
 import subprocess
 import structlog
 import shlex
 import time
+import uuid
 from typing import List, Dict, Any, Optional, Union
 from opentelemetry import trace
 from core.redaction import SECRET_KEY_RE, redact_command, redact_mapping, redact_text
-from .base import BaseRunner
+from .base import BaseRunner, ProgressCallback
 
 logger = structlog.get_logger(__name__)
 tracer = trace.get_tracer(__name__)
@@ -56,6 +59,10 @@ class StdioRunner(BaseRunner):
         self._read_task: Optional[asyncio.Task] = None
         self._stderr_task: Optional[asyncio.Task] = None
         self._pending_requests: Dict[Union[int, str], asyncio.Future] = {}
+        self._progress_callbacks: dict[
+            str | int, tuple[ProgressCallback, float | None]
+        ] = {}
+        self._request_progress_tokens: dict[int | str, int | str] = {}
         self._next_id = 1
         self._lock = asyncio.Lock()
 
@@ -135,6 +142,8 @@ class StdioRunner(BaseRunner):
                 if not fut.done():
                     fut.set_exception(RuntimeError("Runner stopped."))
             self._pending_requests.clear()
+            self._progress_callbacks.clear()
+            self._request_progress_tokens.clear()
 
             if self.process:
                 logger.info("mcp_server_stopping", command=redact_command(self.command))
@@ -178,18 +187,37 @@ class StdioRunner(BaseRunner):
                 raise
 
     async def call_tool(
-        self, tool_name: str, arguments: Dict[str, Any]
+        self,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        *,
+        progress_callback: ProgressCallback | None = None,
     ) -> Dict[str, Any]:
         with tracer.start_as_current_span("mcp.call_tool") as span:
             span.set_attribute("mcp.tool_name", tool_name)
             span.set_attribute("mcp.command", redact_command(self.command))
             try:
-                payload = {"name": tool_name, "arguments": arguments}
-                response = await asyncio.wait_for(
-                    self._send_request("tools/call", payload),
-                    timeout=self.operation_timeout,
-                )
-                return response
+                payload: dict[str, Any] = {
+                    "name": tool_name,
+                    "arguments": arguments,
+                }
+                progress_token: str | None = None
+                if progress_callback is not None:
+                    progress_token = f"wright-{uuid.uuid4().hex}"
+                    payload["_meta"] = {"progressToken": progress_token}
+                    self._progress_callbacks[progress_token] = (
+                        progress_callback,
+                        None,
+                    )
+                try:
+                    response = await asyncio.wait_for(
+                        self._send_request("tools/call", payload),
+                        timeout=self.operation_timeout,
+                    )
+                    return response
+                finally:
+                    if progress_token is not None:
+                        self._progress_callbacks.pop(progress_token, None)
             except asyncio.TimeoutError as e:
                 span.record_exception(e)
                 raise TimeoutError(
@@ -224,6 +252,9 @@ class StdioRunner(BaseRunner):
 
         fut = asyncio.get_running_loop().create_future()
         self._pending_requests[req_id] = fut
+        progress_token = ((params or {}).get("_meta") or {}).get("progressToken")
+        if progress_token in self._progress_callbacks:
+            self._request_progress_tokens[req_id] = progress_token
 
         payload = {"jsonrpc": "2.0", "id": req_id, "method": method}
         if params is not None:
@@ -246,10 +277,17 @@ class StdioRunner(BaseRunner):
             await self.process.stdin.drain()
         except Exception as e:
             self._pending_requests.pop(req_id, None)
+            token = self._request_progress_tokens.pop(req_id, None)
+            if token is not None:
+                self._progress_callbacks.pop(token, None)
             raise RuntimeError(f"Failed to write request to stdin: {e}") from e
         try:
             result = await fut
         except BaseException as exc:
+            self._pending_requests.pop(req_id, None)
+            token = self._request_progress_tokens.pop(req_id, None)
+            if token is not None:
+                self._progress_callbacks.pop(token, None)
             logger.warning(
                 "mcp_request_failed",
                 request_id=req_id,
@@ -332,6 +370,9 @@ class StdioRunner(BaseRunner):
 
                 if "id" in message:
                     msg_id = message["id"]
+                    progress_token = self._request_progress_tokens.pop(msg_id, None)
+                    if progress_token is not None:
+                        self._progress_callbacks.pop(progress_token, None)
                     fut = self._pending_requests.pop(msg_id, None)
                     if fut and not fut.done():
                         if "error" in message:
@@ -351,8 +392,11 @@ class StdioRunner(BaseRunner):
                                 message["result"]
                             )
                 else:
+                    method = message.get("method")
+                    if method == "notifications/progress":
+                        await self._handle_progress_notification(message.get("params"))
                     # Handle notifications or requests initiated by the server if any (e.g. logMessage)
-                    if message.get("method") == "notifications/message":
+                    elif method == "notifications/message":
                         logger.info(
                             "mcp_server_notification", method=message.get("method")
                         )
@@ -364,6 +408,45 @@ class StdioRunner(BaseRunner):
                     error=redact_text(e, self._secret_values()),
                 )
                 break
+
+    async def _handle_progress_notification(self, params: Any) -> None:
+        if not isinstance(params, dict):
+            logger.warning("mcp_progress_ignored", reason="invalid_params")
+            return
+        token = params.get("progressToken")
+        try:
+            registered = self._progress_callbacks.get(token)
+        except TypeError:
+            registered = None
+        if registered is None:
+            logger.warning("mcp_progress_ignored", reason="unknown_token")
+            return
+        callback, previous = registered
+        progress = _finite_number(params.get("progress"))
+        total = _finite_number(params.get("total"), optional=True)
+        if progress is None:
+            logger.warning("mcp_progress_ignored", reason="invalid_progress")
+            return
+        if total is not None and total <= 0:
+            logger.warning("mcp_progress_ignored", reason="invalid_total")
+            return
+        if previous is not None and progress < previous:
+            logger.warning("mcp_progress_ignored", reason="decreasing_progress")
+            return
+        self._progress_callbacks[token] = (callback, progress)
+        message = params.get("message")
+        bounded_message = None if message is None else str(message)[:512]
+        update: dict[str, Any] = {"progress": progress}
+        if total is not None:
+            update["total"] = total
+        if bounded_message is not None:
+            update["message"] = bounded_message
+        try:
+            result = callback(update)
+            if inspect.isawaitable(result):
+                await result
+        except Exception:
+            logger.warning("mcp_progress_callback_failed")
 
     async def _read_stderr(self) -> None:
         while self.process and self.process.stderr:
@@ -385,3 +468,12 @@ class StdioRunner(BaseRunner):
                     error=redact_text(e, self._secret_values()),
                 )
                 break
+
+
+def _finite_number(value: Any, *, optional: bool = False) -> float | None:
+    if value is None and optional:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    number = float(value)
+    return number if math.isfinite(number) else None
