@@ -73,12 +73,13 @@ Protect `main` with these minimum public-alpha rules:
 - [ ] Mypy is intentionally warning-only during the first public-alpha hardening
   window. Promote it to blocking after the package typing baseline is fixed and
   tracked in a dedicated issue.
-- [ ] Trivy high/critical findings are intentionally non-blocking in
-  `docker-build.yml` during public alpha while the base image is still moving.
-  Create or keep a tracking issue to decide when high/critical image findings
-  become blocking.
-- [ ] Release notes must call out SBOM/provenance status, skipped MCP
-  validation, and any known high/critical vulnerability findings.
+- [ ] Keep Trivy report collection followed by the blocking vulnerability
+  policy in both `docker-pr.yml` and the reusable `docker-build.yml`. Any
+  exception must be explicit, reviewed, and time-bounded in
+  `docker/release-policy.json`.
+- [ ] Confirm release-tag candidates publish digest-bound SBOM/provenance and
+  attestation evidence. Release notes must also call out skipped MCP validation
+  and any policy exceptions.
 
 ## Repository Metadata Notes
 

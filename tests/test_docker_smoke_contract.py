@@ -44,7 +44,21 @@ def test_docker_smoke_script_keeps_gateway_process_name() -> None:
 def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
-    assert "hermes-agent==0.18.0" in dockerfile
+    assert "python:3.13.13-slim@sha256:" in dockerfile
+    assert "hermes-agent==0.19.0" in dockerfile
+
+
+def test_docker_smoke_checks_final_hermes_dependency_consistency() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
+
+
+def test_docker_smoke_does_not_require_host_jq() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert "jq -r" not in smoke
+    assert "json.load(sys.stdin)" in smoke
 
 
 def test_dockerfile_copies_root_package_files_before_workspace_install() -> None:
@@ -76,6 +90,7 @@ def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> N
 
     assert "hermes-plugin-lifecycle-test:" in makefile
     assert "WRIGHT_DOCKER_IMAGE" in common
+    assert 'WRIGHT_HERMES_EXPECTED_VERSION:-0.19.0' in common
     assert "WRIGHT_PLUGIN_REF" in common
     assert "--ref dev|main" in common
     assert "https://github.com/burhop/wright" in common

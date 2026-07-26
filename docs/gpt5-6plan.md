@@ -417,7 +417,7 @@ Hermes remains optional and first-class. The stable Hermes path is Hermes consum
 ### 9.3 Hermes-specific corrections
 
 - Upgrade Docker from Hermes 0.17.0 to the chosen supported release only after clean wheel/plugin/runtime tests.
-- Add hermes plugins enable wright to current 0.18.x installation documentation.
+- Add hermes plugins enable wright to current 0.19.x installation documentation.
 - Verify the current entry-point contract from a built wheel, not a flat source directory.
 - Do not rely on custom manifest keys such as min_hermes_version unless the current Hermes loader enforces them; enforce compatibility in dependency metadata, runtime checks, and CI.
 - Replace the token/fingerprint-only openai-codex health check with an explicit capability/readiness probe.

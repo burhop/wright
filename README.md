@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/burhop/wright/actions/workflows/python-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/python-quality.yml/badge.svg?branch=main" alt="Production Python CI"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml/badge.svg?branch=main" alt="Production Frontend CI"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/docker-build.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg?branch=main" alt="Production Docker Build"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/docker-pr.yml"><img src="https://github.com/burhop/wright/actions/workflows/docker-pr.yml/badge.svg" alt="OCI Pull Request Validation"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml/badge.svg?branch=main" alt="Production Docs"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml/badge.svg?branch=main" alt="Production Security Scan"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/release.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/release.yml/badge.svg?branch=main" alt="Production Release"></a>

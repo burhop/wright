@@ -72,8 +72,9 @@ Gaps and release risks:
 - NVIDIA GPU passthrough, DGX Spark/GB10 assumptions, CUDA driver requirements,
   and `--gpus all` examples need explicit public-alpha documentation before
   advertising workstation images.
-- GHCR/Docker Hub publication policy is partial. Release workflow pushes Docker
-  Hub tags, Docker CI builds locally, and registry credential TODOs remain.
+- GHCR is the canonical registry. The release train promotes a tested candidate
+  digest to GHCR; Docker Hub is an optional same-manifest mirror when its
+  protected credentials are configured.
 
 ## CI and Test Audit
 
@@ -81,25 +82,29 @@ Existing gates:
 
 - `python-quality.yml`: uv sync, Ruff lint, Ruff format check, warning-mode mypy,
   and `uv run pytest`.
-- `frontend-quality.yml`: npm install, ESLint, Prettier check, and TypeScript
-  typecheck.
-- `docker-build.yml`: Docker build/load, Trivy diagnostic scan, API/Hermes smoke
-  test, workspace creation test, and supervisor process check.
-- `docs-deploy.yml`: deploys MkDocs on `main`; it does not currently build docs
-  on PRs.
-- `test-windows.yml`: Windows backend pytest, frontend Vitest, and Playwright.
-- `release.yml`: Docker Hub push, Docker Hub README sync, GitHub release.
+- `frontend-quality.yml`: npm install, ESLint, Prettier, TypeScript, Vitest,
+  production build, and Linux Playwright against a live API.
+- `docker-pr.yml`: path-scoped PR image build, final dependency consistency,
+  API/Hermes smoke, Trivy report, and blocking vulnerability policy.
+- `docker-build.yml`: reusable build-once OCI candidate workflow with exact
+  subject smoke/scan/evidence plus optional digest push, SBOM, provenance, and
+  attestation.
+- `docs-deploy.yml`: strict MkDocs build on PRs and branch pushes; deploys only
+  from `main` or an authorized release call.
+- `test-windows.yml`: Windows backend pytest and frontend Vitest.
+- `public-alpha-safety.yml`, `dependency-review.yml`, and `codeql.yml`: history
+  leak scans, audited dependencies/licenses, and Python/JavaScript analysis.
+- `release.yml`: no-mutation rehearsal or tagged build-once publication through
+  TestPyPI, PyPI, GHCR, optional Docker Hub, versioned docs, and GitHub Release.
 
 Gaps and release risks:
 
-- Frontend CI does not run `npm run test --workspace=apps/web` or
-  `npm run build --workspace=apps/web`.
-- Docs build/link validation is not part of pull request checks.
-- Secret scanning/history leak checks are not represented as a workflow.
-- Docker vulnerability scanning is non-blocking, which is acceptable for early
-  alpha only if documented as diagnostic.
-- Release workflow marks every tag release as non-prerelease; alpha tags should
-  be explicitly prerelease or separately documented.
+- The public appliance remains `linux/amd64`; arm64 needs a native smoke
+  contract before multi-architecture publication.
+- Manual rehearsals intentionally skip protected public publication and cannot
+  prove registry/package/docs side effects; real tags remain approval-gated.
+- Docker Hub is optional and cannot be considered part of the canonical release
+  guarantee when credentials are absent.
 
 ## Documentation Audit
 
