@@ -21,14 +21,20 @@ logger = get_logger(__name__)
 class McpEngine:
     """Manager class coordinating the lifecycle, database status, and JSON-RPC dispatch of active MCP servers."""
 
-    def __init__(self, db_path: str):
+    def __init__(self, db_path: str, *, operation_timeout: float = 30.0):
+        if operation_timeout <= 0:
+            raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
         self._active_runners: Dict[str, BaseRunner] = {}
-        self._lifecycle_adapter = DatabaseLifecycleAdapter(db_path)
+        self._lifecycle_adapter = DatabaseLifecycleAdapter(
+            db_path,
+            operation_timeout=operation_timeout,
+        )
         self.lifecycle = McpLifecycleCoordinator(
             self._lifecycle_adapter.build_runner,
             publish_tools=self._lifecycle_adapter.publish_tools,
             publish_status=self._lifecycle_adapter.publish_status,
+            operation_timeout=operation_timeout,
         )
         self._webmcp_connections: Set[Any] = set()
         self._pending_webmcp_calls: Dict[str, asyncio.Future] = {}

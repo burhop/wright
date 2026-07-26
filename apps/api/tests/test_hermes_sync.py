@@ -98,6 +98,52 @@ def test_generic_wright_gateway_config_writer_uses_profile(tmp_path):
     assert config["terminal"] == {"cwd": "/workspace"}
 
 
+def test_gateway_config_writer_preserves_operator_runtime_fields(tmp_path):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "mcp_servers": {
+                    "wrightgateway": {
+                        "command": "stale-command",
+                        "args": ["stale-argument"],
+                        "env": {
+                            "WRIGHT_MCP_TIMEOUT": "130",
+                            "WRIGHT_MCP_MAX_TIMEOUT": "180",
+                        },
+                        "enabled": True,
+                        "tools": {"include": ["wright__workspace_status"]},
+                        "timeout": 180,
+                        "connect_timeout": 30,
+                        "url": "https://stale.invalid/mcp",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    profile = wright_gateway_sync.default_hermes_gateway_profile("/workspace")
+
+    changed = wright_gateway_sync.write_gateway_profile_config(
+        profile, [str(config_path)]
+    )
+
+    assert changed is True
+    gateway = yaml.safe_load(config_path.read_text())["mcp_servers"]["wrightgateway"]
+    assert gateway == {
+        "command": "uv",
+        "args": profile.args,
+        "env": {
+            "WRIGHT_MCP_TIMEOUT": "130",
+            "WRIGHT_MCP_MAX_TIMEOUT": "180",
+        },
+        "enabled": True,
+        "tools": {"include": ["wright__workspace_status"]},
+        "timeout": 180,
+        "connect_timeout": 30,
+    }
+
+
 def test_workspace_gateway_context_uses_profile_filename(tmp_path):
     workspace_path = tmp_path / "workspace"
     workspace_path.mkdir()
