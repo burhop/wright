@@ -26,6 +26,13 @@ logger = structlog.get_logger(__name__)
 
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.abspath(os.path.join(_CURRENT_DIR, *[".."] * 5))
+_PRESERVED_GATEWAY_CONFIG_KEYS = (
+    "env",
+    "enabled",
+    "tools",
+    "timeout",
+    "connect_timeout",
+)
 
 
 def default_hermes_gateway_profile(repo_dir: str | None = None) -> WrightGatewayProfile:
@@ -46,9 +53,22 @@ def write_gateway_profile_config(
                 servers = config.get("mcp_servers")
                 if not isinstance(servers, dict):
                     servers = {}
+                existing_gateway = servers.get(profile.server_name)
+                preserved_gateway = (
+                    {
+                        key: existing_gateway[key]
+                        for key in _PRESERVED_GATEWAY_CONFIG_KEYS
+                        if key in existing_gateway
+                    }
+                    if isinstance(existing_gateway, dict)
+                    else {}
+                )
                 config["mcp_servers"] = {
                     **servers,
-                    profile.server_name: profile.mcp_server_config(),
+                    profile.server_name: {
+                        **preserved_gateway,
+                        **profile.mcp_server_config(),
+                    },
                 }
                 terminal = config.get("terminal")
                 if not isinstance(terminal, dict):

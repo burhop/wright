@@ -41,13 +41,17 @@ class StdioRunner(BaseRunner):
         command: Union[List[str], str],
         env: Optional[Dict[str, str]] = None,
         cwd: Optional[str] = None,
+        operation_timeout: float = 60.0,
     ):
+        if operation_timeout <= 0:
+            raise ValueError("operation_timeout must be positive")
         if isinstance(command, str):
             self.command = shlex.split(command)
         else:
             self.command = [str(c) for c in command]
         self.env = env
         self.cwd = cwd
+        self.operation_timeout = operation_timeout
         self.process: Optional[asyncio.subprocess.Process] = None
         self._read_task: Optional[asyncio.Task] = None
         self._stderr_task: Optional[asyncio.Task] = None
@@ -182,13 +186,15 @@ class StdioRunner(BaseRunner):
             try:
                 payload = {"name": tool_name, "arguments": arguments}
                 response = await asyncio.wait_for(
-                    self._send_request("tools/call", payload), timeout=60.0
+                    self._send_request("tools/call", payload),
+                    timeout=self.operation_timeout,
                 )
                 return response
             except asyncio.TimeoutError as e:
                 span.record_exception(e)
                 raise TimeoutError(
-                    f"Call to tool '{tool_name}' timed out after 60 seconds."
+                    f"Call to tool '{tool_name}' timed out after "
+                    f"{self.operation_timeout:g} seconds."
                 )
             except Exception as e:
                 span.record_exception(e)

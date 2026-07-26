@@ -10,10 +10,13 @@ from api.composition import build_api_gateway_service
 from api.config import DATABASE_PATH, McpTransportSettings
 from api.database.migrate import run_migrations
 from api.logging_config import configure_logging
+from core.logging import get_logger
 from tool_registry import McpEngine
 from tool_registry.catalog_reconcile import reconcile_engineering_catalog
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.mcp_stdio import StdioGatewayBinding, serve_stdio
+
+logger = get_logger(__name__)
 
 
 def _arguments() -> argparse.Namespace:
@@ -37,11 +40,21 @@ def _arguments() -> argparse.Namespace:
 async def _serve(values: argparse.Namespace) -> None:
     run_migrations()
     reconcile_engineering_catalog(DATABASE_PATH)
-    engine = McpEngine(DATABASE_PATH)
+    settings = McpTransportSettings.from_env()
+    engine = McpEngine(
+        DATABASE_PATH,
+        operation_timeout=settings.operation_timeout_seconds,
+    )
+    logger.info(
+        "mcp_gateway_runtime_configured",
+        operation_timeout_seconds=settings.operation_timeout_seconds,
+        maximum_timeout_seconds=settings.maximum_timeout_seconds,
+        lifecycle_operation_timeout_seconds=engine.lifecycle._operation_timeout,
+        adapter_operation_timeout_seconds=(engine._lifecycle_adapter.operation_timeout),
+    )
     # The explicit gateway binding is the source of the child workspace. Do not
     # eagerly start persisted "active" servers without it; GatewayService starts
     # the selected child lazily on the first authorized call with workspace_path.
-    settings = McpTransportSettings.from_env()
     service = build_api_gateway_service(DATABASE_PATH, engine, settings)
     service.notifier = GatewayNotificationHub()
     probe_task = None

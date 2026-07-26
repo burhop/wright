@@ -72,8 +72,11 @@ class MockRunner(BaseRunner):
 
 
 class DatabaseLifecycleAdapter:
-    def __init__(self, db_path: str) -> None:
+    def __init__(self, db_path: str, *, operation_timeout: float = 30.0) -> None:
+        if operation_timeout <= 0:
+            raise ValueError("operation_timeout must be positive")
         self.db_path = db_path
+        self.operation_timeout = operation_timeout
 
     def build_runner(
         self,
@@ -112,7 +115,12 @@ class DatabaseLifecycleAdapter:
                 workspace_path,
             )
             command = self._headless_command(server, server.command)
-            return StdioRunner(command, env=env, cwd=workspace_path)
+            return StdioRunner(
+                command,
+                env=env,
+                cwd=workspace_path,
+                operation_timeout=self.operation_timeout,
+            )
         if server.type == "sse":
             if not server.command or not isinstance(server.command, str):
                 raise ValueError("Valid SSE URL string is required for sse server.")

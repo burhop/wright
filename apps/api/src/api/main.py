@@ -88,10 +88,13 @@ async def lifespan(app: FastAPI):
         app.state.agent_sync_manager = AgentSyncManager(
             DATABASE_PATH, sync_workspace_tools_to_wright_gateway
         )
-    app.state.mcp_engine = McpEngine(DATABASE_PATH)
+    mcp_settings = McpTransportSettings.from_env()
+    app.state.mcp_engine = McpEngine(
+        DATABASE_PATH,
+        operation_timeout=mcp_settings.operation_timeout_seconds,
+    )
     if api_mcp_autostart_enabled():
         await app.state.mcp_engine.sync_active_servers()
-    mcp_settings = McpTransportSettings.from_env()
     app.state.gateway_service = build_api_gateway_service(
         DATABASE_PATH, app.state.mcp_engine, mcp_settings
     )
