@@ -199,6 +199,13 @@ Runs a local verification suite against a production Docker build to ensure envi
   5. Verifies that `/entrypoint.sh` is present and executable.
   6. Validates setup-pending behavior (warns and continues if `LLM_API_URL` is missing, succeeds when provided).
   7. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
+
+Host-side JSON and dependency assertions honor an explicit `PYTHON`
+interpreter, then fall back to `python3`, `python`, or `py -3`. This keeps the
+production gate on the same validated interpreter in Git Bash and CI. The
+script also keeps every absolute Docker argument as a literal in-container path
+when run through Git for Windows.
+
 * **Usage**:
   ```bash
   ./scripts/docker-smoke-test.sh

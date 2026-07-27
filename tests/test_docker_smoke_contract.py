@@ -68,6 +68,16 @@ def test_docker_smoke_does_not_require_host_jq() -> None:
     assert "json.load(sys.stdin)" in smoke
 
 
+def test_docker_smoke_respects_explicit_host_python() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert "export MSYS_NO_PATHCONV=1" in smoke
+    assert 'PYTHON_CMD=("$PYTHON")' in smoke
+    assert smoke.count('"${PYTHON_CMD[@]}"') == 2
+    assert "scripts/reconcile_hermes_pip_check.py" in smoke
+    assert '"${PYTHON_CMD[@]}" -c' in smoke
+
+
 def test_dockerfile_copies_root_package_files_before_workspace_install() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
