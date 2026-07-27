@@ -16,13 +16,17 @@ from workspace_service.workspace_path import WorkspacePath
     ],
 )
 def test_rejects_traversal_absolute_windows_and_unc_paths(tmp_path, unsafe):
-    capability = WorkspacePath(tmp_path / "workspace", create=True)
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    capability = WorkspacePath(workspace)
     with pytest.raises(ValueError):
         capability.resolve(unsafe)
 
 
 def test_scratch_is_workspace_local(tmp_path):
-    capability = WorkspacePath(tmp_path / "workspace", create=True)
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    capability = WorkspacePath(workspace)
     assert (
         capability.scratch("render/out.stl")
         == capability.root / ".wright" / "tmp" / "render" / "out.stl"
@@ -30,7 +34,9 @@ def test_scratch_is_workspace_local(tmp_path):
 
 
 def test_rejects_symlink_escape(tmp_path):
-    capability = WorkspacePath(tmp_path / "workspace", create=True)
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    capability = WorkspacePath(workspace)
     outside = tmp_path / "outside"
     outside.mkdir()
     link = capability.root / "linked"
@@ -43,7 +49,9 @@ def test_rejects_symlink_escape(tmp_path):
 
 
 def test_backup_ids_are_fixed_format(tmp_path):
-    capability = WorkspacePath(tmp_path / "workspace", create=True)
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    capability = WorkspacePath(workspace)
     valid = "a" * 64
     assert capability.backup(valid) == capability.root / ".git" / "backups" / valid
     for invalid in ("../outside", "A" * 64, "a" * 63, "/" + valid):
@@ -51,11 +59,10 @@ def test_backup_ids_are_fixed_format(tmp_path):
             capability.backup(invalid)
 
 
-def test_existing_workspace_is_required_unless_creation_is_explicit(tmp_path):
+def test_capability_construction_does_not_create_workspace(tmp_path):
     workspace = tmp_path / "workspace"
 
-    with pytest.raises(FileNotFoundError):
-        WorkspacePath(workspace)
+    capability = WorkspacePath(workspace)
 
-    capability = WorkspacePath(workspace, create=True)
     assert capability.root == workspace.resolve()
+    assert not workspace.exists()

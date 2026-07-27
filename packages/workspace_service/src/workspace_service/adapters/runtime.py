@@ -851,6 +851,8 @@ class WorkspaceManager:
             logger.info(
                 "Initialized local Git repository in workspace %s", self.base_dir
             )
+        except (FileNotFoundError, NotADirectoryError) as error:
+            raise FileNotFoundError(self.base_dir) from error
         except Exception as e:
             logger.error(
                 "Failed to initialize Git repository in workspace %s: %s",

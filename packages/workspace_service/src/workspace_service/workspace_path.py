@@ -14,13 +14,11 @@ BACKUP_ID = re.compile(r"^[0-9a-f]{64}$")
 
 
 class WorkspacePath:
-    def __init__(self, root: str | os.PathLike[str], *, create: bool = False):
-        raw_root = Path(root).absolute()
-        if create:
-            raw_root.mkdir(parents=True, exist_ok=True)
-        self.root = raw_root.resolve(strict=True)
-        if not self.root.is_dir():
-            raise ValueError("Workspace root must be a directory")
+    def __init__(self, root: str | os.PathLike[str]):
+        # Root creation and authorization belong to WorkspaceService's managed
+        # workspace factory. This capability only canonicalizes an already
+        # authorized root and never probes or mutates a caller-provided path.
+        self.root = Path(os.path.realpath(os.path.abspath(root)))
 
     @staticmethod
     def _validate_relative(user_path: str) -> tuple[str, ...]:
