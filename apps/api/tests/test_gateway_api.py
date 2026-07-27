@@ -13,6 +13,7 @@ from data_vault import GatewayRepository
 from data_vault.workspace_repository import WorkspaceRepository
 from tool_registry import McpServer, McpTool
 from tool_registry.db import insert_server, insert_tools
+from tool_registry.gateway_models import GatewayError, GatewayErrorCode
 
 
 @pytest.fixture
@@ -145,6 +146,30 @@ def test_legacy_call_delegates_to_gateway_service(
     assert response.json()["structuredContent"] == {"ok": True}
     assert captured["start"][1] == workspace_path
     assert captured["call"][3].workspace_id == workspace_id
+
+
+def test_legacy_call_does_not_expose_gateway_exception_details(
+    legacy_client, tmp_path, monkeypatch
+) -> None:
+    server_id, session_id, workspace_id, _ = _seed(tmp_path)
+    sensitive_detail = r"Traceback: secret-token at D:\private\server.py:42"
+
+    async def fail_call(*args, **kwargs):
+        raise GatewayError(GatewayErrorCode.INTERNAL, sensitive_detail)
+
+    monkeypatch.setattr(app.state.gateway_service, "call_tool", fail_call)
+    response = legacy_client.post(
+        "/api/gateway/call",
+        headers=_headers(session_id, workspace_id),
+        json={"name": f"{server_id}__mesh_calc", "arguments": {}},
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["isError"] is True
+    assert body["structuredContent"] == {"error": "internal"}
+    assert body["content"][0]["text"] == "Gateway request failed (internal)."
+    assert sensitive_detail not in response.text
 
 
 def test_mcp_router_uses_generic_wright_gateway_sync():

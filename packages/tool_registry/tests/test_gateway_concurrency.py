@@ -20,6 +20,9 @@ async def test_concurrent_sessions_keep_calls_bound_to_their_own_workspace() -> 
                 f"request-{index}",
                 "cad__run" if index % 2 == 0 else "fea__run",
                 {"index": index},
+                # This test verifies cross-session isolation under fan-out, not
+                # the 100 ms timeout boundary exercised separately below.
+                timeout=1.0,
             )
             for index in range(100)
         )

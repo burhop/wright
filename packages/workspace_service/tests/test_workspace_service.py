@@ -1,7 +1,9 @@
 import os
 import sqlite3
+from types import SimpleNamespace
 
 import pytest
+import workspace_service.service as service_module
 
 from agent_adapters import AgentSessionInfo
 from workspace_service import (
@@ -94,6 +96,18 @@ def test_default_workspace_parent_prefers_userprofile():
     )
 
 
+def test_default_workspace_parent_honors_explicit_root():
+    assert (
+        default_workspace_parent_dir(
+            {
+                "WRIGHT_WORKSPACES_DIR": r"D:\Engineering\Wright",
+                "USERPROFILE": r"C:\Users\Engineer",
+            }
+        )
+        == r"D:\Engineering\Wright"
+    )
+
+
 @pytest.mark.asyncio
 async def test_create_workspace_uses_facade_and_materializes_hermes_context(
     tmp_path, db_path
@@ -115,10 +129,20 @@ async def test_create_workspace_uses_facade_and_materializes_hermes_context(
 async def test_create_workspace_rejects_existing_path(tmp_path, db_path):
     workspace_path = tmp_path / "existing"
     workspace_path.mkdir()
-    service = WorkspaceService(db_path)
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
 
     with pytest.raises(WorkspaceConflictError):
         await service.create_workspace("Existing", str(workspace_path), FakeEngine())
+
+
+@pytest.mark.asyncio
+async def test_create_workspace_rejects_nonmanaged_explicit_path(tmp_path, db_path):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+
+    with pytest.raises(WorkspaceInvalidRequestError, match="managed path"):
+        await service.create_workspace(
+            "Managed Workspace", str(tmp_path / "somewhere-else"), FakeEngine()
+        )
 
 
 @pytest.mark.asyncio
@@ -148,9 +172,9 @@ async def test_execute_workspace_file_uses_policy_and_returns_output(tmp_path, d
     service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
     engine = FakeEngine()
     record = await service.create_workspace(
-        "Run Workspace", str(tmp_path / "run"), engine
+        "Run Workspace", str(tmp_path / "run-workspace"), engine
     )
-    script = tmp_path / "run" / "hello.py"
+    script = tmp_path / "run-workspace" / "hello.py"
     script.write_text("print('hello from service')\n", encoding="utf-8")
 
     result = await service.execute_workspace_file(
@@ -166,9 +190,77 @@ async def test_execute_workspace_file_rejects_non_python(tmp_path, db_path):
     service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
     engine = FakeEngine()
     record = await service.create_workspace(
-        "Run Workspace", str(tmp_path / "run"), engine
+        "Run Workspace", str(tmp_path / "run-workspace"), engine
     )
-    (tmp_path / "run" / "notes.txt").write_text("hello", encoding="utf-8")
+    (tmp_path / "run-workspace" / "notes.txt").write_text("hello", encoding="utf-8")
 
     with pytest.raises(WorkspaceInvalidRequestError):
         await service.execute_workspace_file(record.session_id, "/notes.txt", engine)
+
+
+@pytest.mark.asyncio
+async def test_resolve_workspace_uses_persisted_binding_when_agent_disagrees(
+    tmp_path, db_path
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Bound Workspace", str(tmp_path / "bound-workspace"), engine
+    )
+    engine.sessions[0] = AgentSessionInfo(
+        session_id=record.session_id,
+        title="Fake",
+        created_at=1,
+        updated_at=2,
+        message_count=0,
+        workspace=str(tmp_path / "agent-controlled-path"),
+    )
+
+    resolved = await service.resolve_workspace_dir(record.session_id, engine)
+
+    assert resolved == record.local_path
+    assert (
+        service.repository.get_by_session(record.session_id)["local_path"]
+        == record.local_path
+    )
+
+
+@pytest.mark.asyncio
+async def test_execute_workspace_file_rejects_traversal(tmp_path, db_path):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Safe Workspace", str(tmp_path / "safe-workspace"), engine
+    )
+    (tmp_path / "outside.py").write_text("print('outside')\n", encoding="utf-8")
+
+    with pytest.raises(WorkspaceInvalidRequestError, match="inside the workspace"):
+        await service.execute_workspace_file(record.session_id, "../outside.py", engine)
+
+
+@pytest.mark.asyncio
+async def test_execute_workspace_file_uses_static_command_and_stdin_path(
+    tmp_path, db_path, monkeypatch
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Command Workspace", str(tmp_path / "command-workspace"), engine
+    )
+    script = tmp_path / "command-workspace" / "hello.py"
+    script.write_text("print('hello')\n", encoding="utf-8")
+    captured = {}
+
+    def fake_run(command, **kwargs):
+        captured["command"] = command
+        captured.update(kwargs)
+        return SimpleNamespace(returncode=0, stdout="hello\n", stderr="")
+
+    monkeypatch.setattr(service_module.subprocess, "run", fake_run)
+
+    result = await service.execute_workspace_file(record.session_id, "hello.py", engine)
+
+    assert result.success is True
+    assert str(script.resolve()) not in captured["command"]
+    assert captured["input"].strip() == str(script.resolve())
+    assert captured["cwd"] == record.local_path

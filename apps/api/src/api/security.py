@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hmac
+import hashlib
 import ipaddress
 import os
 from dataclasses import dataclass
@@ -88,6 +89,19 @@ class SecuritySettings:
             and hmac.compare_digest(candidate, self.api_token)
         )
 
+    def browser_session_token(self) -> str | None:
+        if not self.api_token:
+            return None
+        return hmac.new(
+            self.api_token.encode("utf-8"),
+            b"wright-browser-session-v1",
+            hashlib.sha256,
+        ).hexdigest()
+
+    def browser_session_valid(self, candidate: str | None) -> bool:
+        expected = self.browser_session_token()
+        return bool(expected and candidate and hmac.compare_digest(candidate, expected))
+
 
 def _bearer(value: str | None) -> str | None:
     if not value:
@@ -113,9 +127,11 @@ class ControlPlaneSecurityMiddleware(BaseHTTPMiddleware):
             and (request.url.path.startswith("/api/") or request.url.path == "/mcp")
             and request.url.path not in PUBLIC_PATHS
         ):
-            if not settings.token_valid(
-                _bearer(request.headers.get("authorization"))
-                or request.cookies.get(SESSION_COOKIE)
+            bearer = _bearer(request.headers.get("authorization"))
+            browser_session = request.cookies.get(SESSION_COOKIE)
+            if not (
+                settings.token_valid(bearer)
+                or settings.browser_session_valid(browser_session)
             ):
                 return JSONResponse(
                     status_code=401,
@@ -141,7 +157,7 @@ def authorize_websocket(websocket: WebSocket, settings: SecuritySettings) -> str
     if not settings.enforced:
         return None
     token = _bearer(websocket.headers.get("authorization"))
-    token = token or websocket.cookies.get(SESSION_COOKIE)
+    browser_session = websocket.cookies.get(SESSION_COOKIE)
     selected = None
     for protocol in websocket.headers.get("sec-websocket-protocol", "").split(","):
         protocol = protocol.strip()
@@ -149,6 +165,8 @@ def authorize_websocket(websocket: WebSocket, settings: SecuritySettings) -> str
             token = protocol.removeprefix("wright.bearer.")
             selected = protocol
             break
-    if not settings.token_valid(token):
+    if not (
+        settings.token_valid(token) or settings.browser_session_valid(browser_session)
+    ):
         raise HTTPException(status_code=401, detail="Authentication required")
     return selected

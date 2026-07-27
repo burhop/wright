@@ -60,6 +60,13 @@ protected environment ordering, expiring vulnerability exceptions, and the
 GitHub-Release-last contract. A dry-run rehearsal is evidence of orchestration,
 not authorization to publish.
 
+The dev gate runs a focused security regression tranche before the complete
+test suite. Changes that move request-controlled data into cookies, filesystem
+operations, process execution, or error responses must extend those regression
+tests. GitHub CodeQL remains the whole-program data-flow authority: new CodeQL
+alerts block promotion even when the local gate is green, and the local gate
+must be updated whenever CI exposes a security path it did not cover.
+
 Run the relevant checks before opening a pull request:
 
 ```bash

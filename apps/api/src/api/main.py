@@ -230,14 +230,16 @@ async def create_local_session(body: LocalSessionRequest, response: Response):
         from fastapi import HTTPException
 
         raise HTTPException(status_code=401, detail="Invalid local token")
-    response.set_cookie(
-        SESSION_COOKIE,
-        body.token,
-        httponly=True,
-        secure=os.getenv("WRIGHT_COOKIE_SECURE", "0") == "1",
-        samesite="strict",
-        path="/api",
-    )
+    browser_session = settings.browser_session_token()
+    if browser_session is not None:
+        response.set_cookie(
+            SESSION_COOKIE,
+            browser_session,
+            httponly=True,
+            secure=os.getenv("WRIGHT_COOKIE_SECURE", "0") == "1",
+            samesite="strict",
+            path="/api",
+        )
 
 
 @app.delete("/api/auth/session", status_code=204)
