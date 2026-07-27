@@ -16,13 +16,13 @@ from workspace_service.workspace_path import WorkspacePath
     ],
 )
 def test_rejects_traversal_absolute_windows_and_unc_paths(tmp_path, unsafe):
-    capability = WorkspacePath(tmp_path / "workspace")
+    capability = WorkspacePath(tmp_path / "workspace", create=True)
     with pytest.raises(ValueError):
         capability.resolve(unsafe)
 
 
 def test_scratch_is_workspace_local(tmp_path):
-    capability = WorkspacePath(tmp_path / "workspace")
+    capability = WorkspacePath(tmp_path / "workspace", create=True)
     assert (
         capability.scratch("render/out.stl")
         == capability.root / ".wright" / "tmp" / "render" / "out.stl"
@@ -30,7 +30,7 @@ def test_scratch_is_workspace_local(tmp_path):
 
 
 def test_rejects_symlink_escape(tmp_path):
-    capability = WorkspacePath(tmp_path / "workspace")
+    capability = WorkspacePath(tmp_path / "workspace", create=True)
     outside = tmp_path / "outside"
     outside.mkdir()
     link = capability.root / "linked"
@@ -43,9 +43,19 @@ def test_rejects_symlink_escape(tmp_path):
 
 
 def test_backup_ids_are_fixed_format(tmp_path):
-    capability = WorkspacePath(tmp_path / "workspace")
+    capability = WorkspacePath(tmp_path / "workspace", create=True)
     valid = "a" * 64
     assert capability.backup(valid) == capability.root / ".git" / "backups" / valid
     for invalid in ("../outside", "A" * 64, "a" * 63, "/" + valid):
         with pytest.raises(ValueError, match="backup ID"):
             capability.backup(invalid)
+
+
+def test_existing_workspace_is_required_unless_creation_is_explicit(tmp_path):
+    workspace = tmp_path / "workspace"
+
+    with pytest.raises(FileNotFoundError):
+        WorkspacePath(workspace)
+
+    capability = WorkspacePath(workspace, create=True)
+    assert capability.root == workspace.resolve()

@@ -63,6 +63,16 @@ run uv run pytest -q tests/release
 run uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
 
+# Keep the request-to-cookie, request-to-filesystem/process, and exception-to-response
+# regression boundaries visible as a dedicated gate. GitHub CodeQL remains the
+# whole-program data-flow authority, while these tests provide an equivalent local
+# behavioral check for the security paths that previously escaped this script.
+run uv run pytest -q \
+  apps/api/tests/test_security.py \
+  apps/api/tests/test_gateway_api.py \
+  packages/workspace_service/tests/test_workspace_path.py \
+  packages/workspace_service/tests/test_workspace_service.py
+
 run uv run pytest
 run uv run --isolated --reinstall-package hermes-plugin-wright \
   --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx \

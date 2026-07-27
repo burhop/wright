@@ -121,6 +121,16 @@ def client(workspace_setup) -> TestClient:
     except Exception:
         pass
 
+    from workspace_service.adapters.runtime import create_workspace
+
+    create_workspace(
+        DATABASE_PATH,
+        "test-workspace",
+        "test-session",
+        workspace_setup,
+        "Test Workspace",
+    )
+
     mock_engine = MockAgentEngine(workspace_setup)
     app.state.agent_engine = mock_engine
     if hasattr(app.state, "chat_stream_registry"):
@@ -1488,7 +1498,7 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
 
 
 def test_create_workspace_uses_local_session_when_agent_unavailable(
-    client, workspace_setup
+    client, workspace_setup, monkeypatch
 ):
     class FailingCreateSessionEngine(MockAgentEngine):
         async def create_session(
@@ -1498,12 +1508,13 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(
 
     original_engine = app.state.agent_engine
     app.state.agent_engine = FailingCreateSessionEngine(workspace_setup)
+    monkeypatch.setenv("WRIGHT_WORKSPACES_DIR", workspace_setup)
     local_path = os.path.join(workspace_setup, "local-fallback-workspace")
 
     try:
         response = client.post(
             "/api/workspace/create",
-            json={"name": "Local Fallback Workspace", "local_path": local_path},
+            json={"name": "Local Fallback Workspace"},
         )
     finally:
         app.state.agent_engine = original_engine
@@ -1511,7 +1522,7 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(
     assert response.status_code == 201
     data = response.json()
     assert data["session_id"].startswith("wright-local-")
-    assert data["local_path"] == local_path
+    assert os.path.samefile(data["local_path"], local_path)
     assert os.path.isdir(local_path)
 
 
@@ -1618,12 +1629,17 @@ def test_workspace_files_uses_local_dir_when_agent_lookup_fails(
     finally:
         app.state.agent_engine = original_engine
 
+    import uuid
+
+    fallback_slug = uuid.uuid5(uuid.NAMESPACE_URL, f"wright-session:{session_id}").hex
     expected_path = os.path.join(
         workspace_router.get_default_workspace_parent_dir(),
-        session_id,
+        f"session-{fallback_slug}",
     )
     assert response.status_code == 200
     assert os.path.isdir(expected_path)
+    listed = client.get("/api/workspace/list").json()["workspaces"]
+    assert expected_path not in {workspace["local_path"] for workspace in listed}
 
 
 def test_agent_chat_starts_enabled_workspace_mcp_servers(client, monkeypatch):

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-import os
 import ntpath
+import os
+from pathlib import Path
 import subprocess
+import sys
 import uuid
-from dataclasses import replace
 from collections.abc import Callable, Mapping
+from dataclasses import replace
 from typing import Any
 
 from agent_adapters import (
@@ -18,25 +20,23 @@ from agent_adapters.openclaw import openclaw_context_materializer
 from core.logging import get_logger
 from core.redaction import redact_command, redact_text
 from core.tracing import traced
+from data_vault import WorkspaceRepository, create_default_secret_provider
+from data_vault.workspace_repository import sanitize_workspace_name
+from tool_registry.db import get_servers
+
+from .adapters import LocalProcessRunner, LocalWorkspaceFiles, LocalWorkspaceGit
 from .adapters.runtime import (
     WorkspaceManager,
     get_workspace_enabled_tools,
-    write_workspace_agent_context,
     sync_workspace_runners,
+    write_workspace_agent_context,
 )
-from data_vault import WorkspaceRepository, create_default_secret_provider
-from data_vault.workspace_repository import (
-    is_synthetic_session_workspace,
-    sanitize_workspace_name,
-)
-from tool_registry.db import get_servers
-
 from .errors import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
     WorkspaceNotFoundError,
 )
-from .adapters import LocalProcessRunner, LocalWorkspaceFiles, LocalWorkspaceGit
+from .executor import BoundedExecutor
 from .models import (
     FileExecutionPolicy,
     FileExecutionResult,
@@ -45,7 +45,7 @@ from .models import (
     WorkspaceSessionRecord,
     WorkspaceToolState,
 )
-from .executor import BoundedExecutor
+from .ports import WorkspaceNotifier
 from .use_cases import (
     WorkspaceContextUseCases,
     WorkspaceFileUseCases,
@@ -53,7 +53,7 @@ from .use_cases import (
     WorkspaceLifecycleUseCases,
     WorkspaceToolUseCases,
 )
-from .ports import WorkspaceNotifier
+from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
 
@@ -71,11 +71,11 @@ class _NoopNotifier:
 
 def default_workspace_parent_dir(env: Mapping[str, str] | None = None) -> str:
     source = env or os.environ
+    configured_root = source.get("WRIGHT_WORKSPACES_DIR")
+    if configured_root:
+        return configured_root
     home_dir = (
-        source.get("WRIGHT_WORKSPACES_DIR")
-        or source.get("USERPROFILE")
-        or source.get("HOME")
-        or os.path.expanduser("~")
+        source.get("USERPROFILE") or source.get("HOME") or os.path.expanduser("~")
     )
     if ":" in home_dir or "\\" in home_dir:
         return ntpath.join(home_dir, "wright")
@@ -189,51 +189,80 @@ class WorkspaceService:
                 actual_workspace_path
                 and actual_workspace_path != workspace["local_path"]
             ):
-                existing = self.repository.get_by_path(actual_workspace_path)
-                if existing:
-                    self.repository.update_session(existing["workspace_id"], session_id)
-                else:
-                    self.repository.create(
-                        str(uuid.uuid4()),
-                        session_id,
-                        actual_workspace_path,
-                        workspace_name=os.path.basename(actual_workspace_path),
-                    )
-                return actual_workspace_path
+                logger.warning(
+                    "workspace_agent_path_mismatch_ignored",
+                    session_id=session_id,
+                    persisted_path=workspace["local_path"],
+                    agent_path=actual_workspace_path,
+                )
             return workspace["local_path"]
 
         try:
-            workspace_path = await engine.get_session_workspace(session_id)
+            reported_workspace_path = await engine.get_session_workspace(session_id)
         except Exception as exc:
             logger.warning(
                 "workspace_session_lookup_failed_using_local_workspace",
                 session_id=session_id,
                 error=redact_text(exc),
             )
-            workspace_path = None
-
-        if not workspace_path:
-            workspace_path = os.path.join(self.parent_dir_provider(), session_id)
-        os.makedirs(workspace_path, exist_ok=True)
-
-        synthetic_fallback = is_synthetic_session_workspace(
-            {
-                "session_id": session_id,
-                "local_path": workspace_path,
-                "workspace_name": os.path.basename(workspace_path),
-            }
-        )
-        existing = self.repository.get_by_path(workspace_path)
-        if existing:
-            self.repository.update_session(existing["workspace_id"], session_id)
-        elif not synthetic_fallback:
-            self.repository.create(
-                str(uuid.uuid4()),
-                session_id,
-                workspace_path,
-                workspace_name=os.path.basename(workspace_path),
+            reported_workspace_path = None
+        if reported_workspace_path:
+            logger.warning(
+                "unbound_agent_workspace_ignored",
+                session_id=session_id,
+                agent_path=reported_workspace_path,
             )
+
+        fallback_slug = uuid.uuid5(
+            uuid.NAMESPACE_URL, f"wright-session:{session_id}"
+        ).hex
+        workspace_path = self._managed_workspace_path(f"session-{fallback_slug}")
+        WorkspacePath(workspace_path, create=True)
         return workspace_path
+
+    def _managed_workspace_path(
+        self, workspace_name: str, requested_path: str | None = None
+    ) -> str:
+        sanitized = sanitize_workspace_name(workspace_name)
+        if not sanitized:
+            raise WorkspaceInvalidRequestError(
+                "Workspace name cannot be empty or invalid."
+            )
+        root = Path(self.parent_dir_provider()).expanduser().resolve(strict=False)
+        managed = (root / sanitized).resolve(strict=False)
+        if managed.parent != root:
+            raise WorkspaceInvalidRequestError(
+                "Workspace path must remain inside the configured Wright workspace root."
+            )
+        if requested_path is not None:
+            requested_identity = requested_path.rstrip("/\\")
+            managed_identity = str(managed).rstrip("/\\")
+            if os.name == "nt":
+                requested_identity = requested_identity.replace("/", "\\").casefold()
+                managed_identity = managed_identity.replace("/", "\\").casefold()
+            if requested_identity != managed_identity:
+                raise WorkspaceInvalidRequestError(
+                    "Explicit workspace path must match the managed path derived from its name."
+                )
+        return str(managed)
+
+    def _workspace_file(self, workspace_path: str, requested_path: str) -> Path:
+        normalized = requested_path.replace("\\", "/")
+        if normalized.startswith("/") and not normalized.startswith("//"):
+            normalized = normalized[1:]
+        try:
+            candidate = WorkspacePath(workspace_path).resolve(
+                normalized, must_exist=True
+            )
+        except (FileNotFoundError, ValueError) as exc:
+            raise WorkspaceInvalidRequestError(
+                "Requested file must be a regular file inside the workspace."
+            ) from exc
+        if not candidate.is_file():
+            raise WorkspaceInvalidRequestError(
+                "Requested file must be a regular file inside the workspace."
+            )
+        return candidate
 
     async def close(self) -> None:
         await self.executor.close()
@@ -250,17 +279,10 @@ class WorkspaceService:
     async def create_workspace(
         self, name: str, local_path: str | None, engine, *, agent_id: str = "hermes"
     ) -> WorkspaceRecord:
-        workspace_path = local_path
-        if not workspace_path:
-            sanitized = sanitize_workspace_name(name)
-            if not sanitized:
-                raise WorkspaceInvalidRequestError(
-                    "Workspace name cannot be empty or invalid."
-                )
-            workspace_path = os.path.join(self.parent_dir_provider(), sanitized)
+        workspace_path = self._managed_workspace_path(name, local_path)
 
         self._ensure_workspace_available(name, workspace_path)
-        os.makedirs(workspace_path, exist_ok=True)
+        WorkspacePath(workspace_path, create=True)
         WorkspaceManager(workspace_path)
 
         try:
@@ -552,24 +574,18 @@ class WorkspaceService:
         policy: FileExecutionPolicy | None = None,
     ) -> FileExecutionResult:
         workspace_path = await self.resolve_workspace_dir(session_id, engine)
-        safe_path = os.path.normpath(path)
-        if (
-            safe_path.startswith("..")
-            or os.path.isabs(safe_path)
-            or safe_path.startswith("/")
-            or safe_path.startswith("\\")
-        ):
-            safe_path = safe_path.lstrip("/\\").replace("../", "").replace("..\\", "")
-        full_path = os.path.normpath(os.path.join(workspace_path, safe_path))
-        if not os.path.exists(full_path) or not os.path.isfile(full_path):
-            raise WorkspaceNotFoundError(f"File not found: {path}")
-        if not full_path.endswith(".py"):
+        full_path = self._workspace_file(workspace_path, path)
+        if full_path.suffix.casefold() != ".py":
             raise WorkspaceInvalidRequestError(
                 "Only Python files (.py) are supported for running."
             )
 
         timeout = (policy or FileExecutionPolicy()).timeout_seconds
-        command = ["python", full_path]
+        command = [
+            sys.executable,
+            "-c",
+            "import runpy,sys; runpy.run_path(sys.stdin.readline().rstrip('\\n'), run_name='__main__')",
+        ]
         logger.info(
             "workspace_file_execute",
             command=redact_command(command),
@@ -581,6 +597,7 @@ class WorkspaceService:
                 cwd=workspace_path,
                 capture_output=True,
                 text=True,
+                input=f"{full_path}\n",
                 timeout=timeout,
             )
             return FileExecutionResult(

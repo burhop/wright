@@ -10,10 +10,13 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from api.config import DATABASE_PATH
+from core.logging import get_logger
+from core.redaction import redact_text
 from data_vault import GatewayRepository
 from tool_registry.gateway_models import GatewayError, SessionState
 
 router = APIRouter()
+logger = get_logger(__name__)
 
 
 class GatewayCallRequest(BaseModel):
@@ -151,9 +154,19 @@ async def call_gateway_tool(
             session_id, str(uuid.uuid4()), body.name, body.arguments
         )
     except GatewayError as exc:
+        logger.warning(
+            "legacy_gateway_call_failed",
+            error_code=exc.code.value,
+            error=redact_text(exc),
+        )
         return {
             "isError": True,
-            "content": [{"type": "text", "text": str(exc)}],
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Gateway request failed ({exc.code.value}).",
+                }
+            ],
             "structuredContent": {"error": exc.code.value},
         }
     return {

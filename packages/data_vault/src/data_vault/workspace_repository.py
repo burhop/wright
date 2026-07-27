@@ -228,8 +228,6 @@ class WorkspaceRepository:
     ) -> dict[str, Any]:
         if not os.path.isabs(local_path):
             raise ValueError("local_path must be an absolute path")
-        if not os.path.isdir(local_path):
-            raise ValueError(f"Directory does not exist: {local_path}")
         cleaned = name.strip()
         if not cleaned:
             raise ValueError("Workspace name must not be empty")

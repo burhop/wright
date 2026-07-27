@@ -19,6 +19,19 @@ def test_security_settings_reject_wildcard_and_insecure_remote_bind():
         ).validate()
 
 
+def test_browser_session_token_is_derived_and_separately_validated():
+    settings = SecuritySettings(
+        "enforced", "test-admin-token", ("http://localhost:5173",), "127.0.0.1"
+    )
+
+    browser_token = settings.browser_session_token()
+
+    assert browser_token
+    assert browser_token != settings.api_token
+    assert settings.browser_session_valid(browser_token)
+    assert not settings.browser_session_valid(settings.api_token)
+
+
 @pytest.mark.asyncio
 async def test_protected_api_requires_valid_bearer(client, monkeypatch):
     from api.main import app
@@ -54,6 +67,9 @@ async def test_protected_api_requires_valid_bearer(client, monkeypatch):
             "/api/auth/session", json={"token": "test-admin-token"}
         )
         assert session.status_code == 204
+        cookie_header = session.headers["set-cookie"]
+        assert "test-admin-token" not in cookie_header
+        assert app.state.security_settings.browser_session_token() in cookie_header
         assert (await client.get("/api/settings")).status_code == 200
     finally:
         app.state.security_settings = previous

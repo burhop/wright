@@ -15,9 +15,10 @@ BACKUP_ID = re.compile(r"^[0-9a-f]{64}$")
 
 
 class WorkspacePath:
-    def __init__(self, root: str | os.PathLike[str]):
+    def __init__(self, root: str | os.PathLike[str], *, create: bool = False):
         raw_root = Path(root).absolute()
-        raw_root.mkdir(parents=True, exist_ok=True)
+        if create:
+            raw_root.mkdir(parents=True, exist_ok=True)
         self.root = raw_root.resolve(strict=True)
         if not self.root.is_dir():
             raise ValueError("Workspace root must be a directory")
