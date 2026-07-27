@@ -53,6 +53,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl \
+    libssl3t64 \
+    openssl \
+    openssl-provider-legacy \
     vim \
     nano \
     htop \
@@ -76,11 +79,14 @@ RUN curl --fail --location --retry 5 --retry-all-errors \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
-# Hermes exactly pins cryptography and Pillow; retain those upstream versions
-# so the final environment remains dependency-consistent. The exact-image
-# smoke gate runs `uv pip check`, and the OCI workflows separately enforce the
-# blocking vulnerability policy.
+# Hermes 0.19.0 exactly pins older cryptography and Pillow releases. Wright
+# installs the security-fixed releases below and the exact-image smoke gate
+# runs `uv pip check`, accepting only those two version-specific metadata
+# conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
+# independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
+        "cryptography==49.0.0" \
+        "pillow==12.3.0" \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
         "starlette==1.3.1" \

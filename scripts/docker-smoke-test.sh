@@ -31,10 +31,14 @@ else
   exit 1
 fi
 
-echo -e "Testing final Hermes environment dependency consistency..."
-docker run --rm --entrypoint uv "$IMAGE_TAG" \
-  pip check --python /opt/hermes/.venv/bin/python
-echo -e "${GREEN}✓ Hermes environment dependencies are consistent.${NC}"
+echo -e "Testing final Hermes environment dependency contract..."
+PIP_CHECK_EXIT=0
+PIP_CHECK_OUTPUT=$(docker run --rm --entrypoint uv "$IMAGE_TAG" \
+  pip check --python /opt/hermes/.venv/bin/python 2>&1) || PIP_CHECK_EXIT=$?
+printf '%s\n' "$PIP_CHECK_OUTPUT"
+printf '%s\n' "$PIP_CHECK_OUTPUT" | python3 \
+  scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
+echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
 
 # 3. Check container-manifest.md existence and permissions
 echo -e "\n${YELLOW}Step 3: Checking container-manifest.md...${NC}"

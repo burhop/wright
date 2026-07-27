@@ -10,7 +10,8 @@ Feature 047 validates one `linux/amd64` appliance. Multi-architecture indexes ar
 | uv binary | `ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023...` | Official Astral image index; copy only `/uv`; verify version in image inventory. |
 | micromamba | `2.5.0`, SHA-256 `cec496f2...103b6` | Download the versioned linux-64 archive and fail the build on checksum or architecture mismatch. |
 | Python workspace | committed `uv.lock` | `uv sync` must use the lock and dependency audit must pass. |
-| Hermes runtime patches | exact non-conflicting versions in `docker/Dockerfile` | Do not replace Hermes' exact `cryptography` or Pillow requirements independently. Changes require `uv pip check`, vulnerability-policy, and Hermes smoke evidence. |
+| Hermes security reconciliation | `cryptography==49.0.0`, `Pillow==12.3.0` | Hermes 0.19.0 metadata exactly pins vulnerable `cryptography==46.0.7` and `Pillow==12.2.0`. Run raw `uv pip check`, then accept only those two exact version conflicts with `scripts/reconcile_hermes_pip_check.py`; any other mismatch fails. Remove the reconciliation when Hermes publishes compatible secure pins. |
+| Hermes runtime patches | exact versions in `docker/Dockerfile` | Changes require `uv pip check` reconciliation, blocking vulnerability-policy, gateway smoke, and public plugin lifecycle evidence. |
 
 The Dockerfile contains no `apt-get upgrade`, moving `latest` input, or unchecked binary download. Release workflows build the candidate once, store its digest, and direct all smoke, scan, SBOM, provenance, tag promotion, and optional mirror verification at that digest.
 

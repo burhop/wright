@@ -84,7 +84,7 @@ Existing gates:
   and `uv run pytest`.
 - `frontend-quality.yml`: npm install, ESLint, Prettier, TypeScript, Vitest,
   production build, and Linux Playwright against a live API.
-- `docker-pr.yml`: path-scoped PR image build, final dependency consistency,
+- `docker-pr.yml`: path-scoped PR image build, strict dependency reconciliation,
   API/Hermes smoke, Trivy report, and blocking vulnerability policy.
 - `docker-build.yml`: reusable build-once OCI candidate workflow with exact
   subject smoke/scan/evidence plus optional digest push, SBOM, provenance, and

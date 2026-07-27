@@ -85,8 +85,10 @@ validates the build-once release candidate and optionally pushes that candidate
 for a real release. Both call `scripts/docker-smoke-test.sh` against the exact
 image without rebuilding it:
 
-1. Confirm the image runs as the unprivileged `agent` user and require
-   `uv pip check` to pass for the final Hermes environment.
+1. Confirm the image runs as the unprivileged `agent` user and run raw
+   `uv pip check`. Hermes 0.19.0 exactly pins vulnerable cryptography and Pillow
+   versions, so `scripts/reconcile_hermes_pip_check.py` accepts only Wright's
+   exact two security-version overrides; any other conflict fails.
 2. Validate the immutable manifest, entrypoint, basic execution, and ephemeral
    recovery behavior.
 3. Start a temporary container with placeholder `LLM_API_URL`, `LLM_API_KEY`,
