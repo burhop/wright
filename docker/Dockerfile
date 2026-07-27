@@ -16,7 +16,7 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.14.6-slim@sha256:cea0e6040540fb2b965b6e7fb5ffa00871e632eef63719f0ea54bca189ce14a6 AS hermes-base
+FROM python:3.13.13-slim@sha256:aa938a849bcb82dce8f49480f056ab82bf5c1c3ebc294f0430f37b6820e7f286 AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -30,9 +30,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a54a05ea56ed03a934d00fe9fbeded4b /uv /usr/local/bin/uv
 
-RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3 && \
+RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
-        hermes-agent==0.18.0 aiohttp==3.13.3 && \
+        hermes-agent==0.19.0 aiohttp==3.13.3 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv
@@ -53,6 +53,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl \
+    libssl3t64 \
+    openssl \
+    openssl-provider-legacy \
     vim \
     nano \
     htop \
@@ -76,6 +79,11 @@ RUN curl --fail --location --retry 5 --retry-all-errors \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
+# Hermes 0.19.0 exactly pins older cryptography and Pillow releases. Wright
+# installs the security-fixed releases below and the exact-image smoke gate
+# runs `uv pip check`, accepting only those two version-specific metadata
+# conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
+# independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
         "cryptography==49.0.0" \
         "pillow==12.3.0" \

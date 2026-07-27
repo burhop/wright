@@ -31,6 +31,15 @@ else
   exit 1
 fi
 
+echo -e "Testing final Hermes environment dependency contract..."
+PIP_CHECK_EXIT=0
+PIP_CHECK_OUTPUT=$(docker run --rm --entrypoint uv "$IMAGE_TAG" \
+  pip check --python /opt/hermes/.venv/bin/python 2>&1) || PIP_CHECK_EXIT=$?
+printf '%s\n' "$PIP_CHECK_OUTPUT"
+printf '%s\n' "$PIP_CHECK_OUTPUT" | python3 \
+  scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
+echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
+
 # 3. Check container-manifest.md existence and permissions
 echo -e "\n${YELLOW}Step 3: Checking container-manifest.md...${NC}"
 MANIFEST_EXISTS=$(docker run --rm --entrypoint test "$IMAGE_TAG" -f /container-manifest.md && echo "yes" || echo "no")
@@ -175,7 +184,8 @@ done
 for attempt in $(seq 1 45); do
   AGENT_HEALTH=$(curl --fail --silent --max-time 2 \
     http://127.0.0.1:8090/api/agent/health 2>/dev/null || echo '{"state":"disconnected"}')
-  AGENT_STATE=$(echo "$AGENT_HEALTH" | jq -r '.state // "unknown"')
+  AGENT_STATE=$(printf '%s' "$AGENT_HEALTH" | python3 -c \
+    'import json, sys; print(json.load(sys.stdin).get("state", "unknown"))')
   echo "Agent health attempt $attempt: $AGENT_HEALTH"
   if [ "$AGENT_STATE" = "connected" ]; then
     break
