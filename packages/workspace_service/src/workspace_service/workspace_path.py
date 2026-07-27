@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import os
 import re
-import stat
 from pathlib import Path, PureWindowsPath
 
 BACKUP_ID = re.compile(r"^[0-9a-f]{64}$")
@@ -50,34 +49,30 @@ class WorkspacePath:
             )
         return parts
 
-    @staticmethod
-    def _is_link_or_reparse(path: Path) -> bool:
-        info = path.lstat()
-        return stat.S_ISLNK(info.st_mode) or bool(
-            getattr(info, "st_file_attributes", 0)
-            & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
-        )
-
     def resolve(self, user_path: str, *, must_exist: bool = False) -> Path:
         parts = self._validate_relative(user_path)
-        candidate = self.root.joinpath(*parts)
-        try:
-            if os.path.commonpath(
-                (os.path.normcase(str(self.root)), os.path.normcase(str(candidate)))
-            ) != os.path.normcase(str(self.root)):
-                raise ValueError("Access denied: path escapes workspace")
-        except ValueError as error:
-            raise ValueError("Access denied: path escapes workspace") from error
-        # Containment must be established before any filesystem probe. Besides
-        # preventing traversal, this ordering ensures link checks never receive
-        # an unvalidated path expression.
-        current = self.root
-        for part in parts:
-            current = current / part
-            if os.path.lexists(current) and self._is_link_or_reparse(current):
-                raise ValueError(
-                    "Access denied: symbolic links and reparse points are not allowed"
-                )
+        root = os.path.normpath(str(self.root))
+        root_identity = os.path.normcase(root)
+        root_prefix = root_identity.rstrip("\\/") + os.sep
+        lexical = os.path.normpath(os.path.join(root, *parts))
+        lexical_identity = os.path.normcase(lexical)
+        if not lexical_identity.startswith(root_prefix):
+            raise ValueError("Access denied: path escapes workspace")
+
+        # realpath resolves every existing link or Windows reparse point in the
+        # chain. Rejecting any difference preserves a link-free capability while
+        # the explicit prefix guard gives filesystem operations a normalized,
+        # workspace-confined path.
+        resolved = os.path.realpath(lexical)
+        resolved_identity = os.path.normcase(resolved)
+        if not resolved_identity.startswith(root_prefix):
+            raise ValueError("Access denied: path escapes workspace")
+        if resolved_identity != lexical_identity:
+            raise ValueError(
+                "Access denied: symbolic links and reparse points are not allowed"
+            )
+
+        candidate = Path(resolved)
         if must_exist and not candidate.exists():
             raise FileNotFoundError(user_path)
         return candidate

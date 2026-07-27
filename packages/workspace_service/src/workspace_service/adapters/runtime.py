@@ -5,6 +5,7 @@ import os
 import re
 import sqlite3
 import subprocess
+import sys
 import tempfile
 import structlog
 from contextlib import contextmanager
@@ -840,43 +841,48 @@ class WorkspaceManager:
         self._paths = WorkspacePath(base_dir)
         self.base_dir = str(self._paths.root)
 
-        # Initialize Git repository if not already present
-        git_dir = self._paths.resolve(".git")
-        # The root is an existing canonical WorkspacePath and the child is a
-        # fixed server-owned literal, not a client-supplied path.
-        # codeql[py/path-injection]
-        if not git_dir.exists():
-            try:
-                subprocess.run(
-                    ["git", "init"], cwd=self.base_dir, capture_output=True, check=True
-                )
-                logger.info(
-                    "Initialized local Git repository in workspace %s", self.base_dir
-                )
-            except Exception as e:
-                logger.error(
-                    "Failed to initialize Git repository in workspace %s: %s",
-                    self.base_dir,
-                    e,
-                )
+        # `git init` is idempotent, so initialization needs no path existence
+        # probe. The workspace path is passed only as a process capability (cwd),
+        # while every command argument remains server-owned and fixed.
+        try:
+            subprocess.run(
+                ["git", "init"], cwd=self.base_dir, capture_output=True, check=True
+            )
+            logger.info(
+                "Initialized local Git repository in workspace %s", self.base_dir
+            )
+        except Exception as e:
+            logger.error(
+                "Failed to initialize Git repository in workspace %s: %s",
+                self.base_dir,
+                e,
+            )
 
-        # Auto-generate .gitignore if not present
-        gitignore_path = self._paths.resolve(".gitignore")
-        # The root is an existing canonical WorkspacePath and the child is a
-        # fixed server-owned literal, not a client-supplied path.
-        # codeql[py/path-injection]
-        if not gitignore_path.exists():
-            try:
-                # codeql[py/path-injection]
-                with open(gitignore_path, "w") as f:
-                    f.write("# Auto-generated .gitignore for Engineering Workspace\n")
-                    f.write("*.log\n")
-                    f.write("*.tmp\n")
-                    f.write("tmp/\n")
-                    f.write("/tmp/\n")
-                logger.info("Created default .gitignore in %s", gitignore_path)
-            except Exception as e:
-                logger.error("Failed to create .gitignore in %s: %s", gitignore_path, e)
+        # Create the fixed-name default without probing a path derived from the
+        # workspace identifier. Exclusive mode preserves an existing user file.
+        gitignore_script = (
+            "from pathlib import Path\n"
+            "try:\n"
+            "    with Path('.gitignore').open('x', encoding='utf-8', newline='\\n') as f:\n"
+            "        f.write('# Auto-generated .gitignore for Engineering Workspace\\n'"
+            "+ '*.log\\n*.tmp\\ntmp/\\n/tmp/\\n')\n"
+            "except FileExistsError:\n"
+            "    pass\n"
+        )
+        try:
+            subprocess.run(
+                [sys.executable, "-c", gitignore_script],
+                cwd=self.base_dir,
+                capture_output=True,
+                check=True,
+                text=True,
+            )
+        except Exception as e:
+            logger.error(
+                "Failed to create default .gitignore in workspace %s: %s",
+                self.base_dir,
+                e,
+            )
 
     def _get_lock_path(self, rel_path: str) -> str:
         import hashlib

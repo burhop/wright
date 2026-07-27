@@ -1066,6 +1066,19 @@ def test_workspace_gitignore_setup(tmp_path):
     assert "/tmp/\n" in content
 
 
+def test_workspace_gitignore_setup_preserves_existing_file(tmp_path):
+    from workspace_service.adapters.runtime import WorkspaceManager
+
+    workspace_dir = tmp_path / "existing_workspace"
+    workspace_dir.mkdir()
+    gitignore_path = workspace_dir / ".gitignore"
+    gitignore_path.write_text("custom-entry\n", encoding="utf-8")
+
+    WorkspaceManager(str(workspace_dir))
+
+    assert gitignore_path.read_text(encoding="utf-8") == "custom-entry\n"
+
+
 def test_compile_workspace_mcp_instructions(tmp_path):
     from workspace_service.adapters.runtime import (
         compile_workspace_mcp_instructions,
