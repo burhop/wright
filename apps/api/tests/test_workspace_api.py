@@ -1514,7 +1514,7 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(
     try:
         response = client.post(
             "/api/workspace/create",
-            json={"name": "Local Fallback Workspace", "local_path": local_path},
+            json={"name": "Local Fallback Workspace"},
         )
     finally:
         app.state.agent_engine = original_engine
@@ -1522,7 +1522,7 @@ def test_create_workspace_uses_local_session_when_agent_unavailable(
     assert response.status_code == 201
     data = response.json()
     assert data["session_id"].startswith("wright-local-")
-    assert os.path.normcase(data["local_path"]) == os.path.normcase(local_path)
+    assert os.path.samefile(data["local_path"], local_path)
     assert os.path.isdir(local_path)
 
 

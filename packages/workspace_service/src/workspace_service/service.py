@@ -235,11 +235,12 @@ class WorkspaceService:
                 "Workspace path must remain inside the configured Wright workspace root."
             )
         if requested_path is not None:
-            requested = Path(requested_path).expanduser()
-            if (
-                not requested.is_absolute()
-                or requested.resolve(strict=False) != managed
-            ):
+            requested_identity = requested_path.rstrip("/\\")
+            managed_identity = str(managed).rstrip("/\\")
+            if os.name == "nt":
+                requested_identity = requested_identity.replace("/", "\\").casefold()
+                managed_identity = managed_identity.replace("/", "\\").casefold()
+            if requested_identity != managed_identity:
                 raise WorkspaceInvalidRequestError(
                     "Explicit workspace path must match the managed path derived from its name."
                 )
