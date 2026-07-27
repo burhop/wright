@@ -61,13 +61,6 @@ class WorkspacePath:
     def resolve(self, user_path: str, *, must_exist: bool = False) -> Path:
         parts = self._validate_relative(user_path)
         candidate = self.root.joinpath(*parts)
-        current = self.root
-        for part in parts:
-            current = current / part
-            if os.path.lexists(current) and self._is_link_or_reparse(current):
-                raise ValueError(
-                    "Access denied: symbolic links and reparse points are not allowed"
-                )
         try:
             if os.path.commonpath(
                 (os.path.normcase(str(self.root)), os.path.normcase(str(candidate)))
@@ -75,6 +68,16 @@ class WorkspacePath:
                 raise ValueError("Access denied: path escapes workspace")
         except ValueError as error:
             raise ValueError("Access denied: path escapes workspace") from error
+        # Containment must be established before any filesystem probe. Besides
+        # preventing traversal, this ordering ensures link checks never receive
+        # an unvalidated path expression.
+        current = self.root
+        for part in parts:
+            current = current / part
+            if os.path.lexists(current) and self._is_link_or_reparse(current):
+                raise ValueError(
+                    "Access denied: symbolic links and reparse points are not allowed"
+                )
         if must_exist and not candidate.exists():
             raise FileNotFoundError(user_path)
         return candidate

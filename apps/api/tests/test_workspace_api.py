@@ -1049,12 +1049,13 @@ def test_workspace_gitignore_setup(tmp_path):
     from workspace_service.adapters.runtime import WorkspaceManager
     import os
 
-    # Initialize WorkspaceManager with a fresh directory
-    workspace_dir = str(tmp_path / "new_workspace")
-    WorkspaceManager(workspace_dir)
+    # WorkspaceService owns root creation; the manager initializes an existing root.
+    workspace_dir = tmp_path / "new_workspace"
+    workspace_dir.mkdir()
+    WorkspaceManager(str(workspace_dir))
 
     # Check if .gitignore was created
-    gitignore_path = os.path.join(workspace_dir, ".gitignore")
+    gitignore_path = os.path.join(str(workspace_dir), ".gitignore")
     assert os.path.exists(gitignore_path)
 
     # Read gitignore content

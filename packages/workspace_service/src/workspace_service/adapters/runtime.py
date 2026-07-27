@@ -834,13 +834,18 @@ class WorkspaceManager:
     """Manages workspace file browser directory tree construction and raw file reads."""
 
     def __init__(self, base_dir: str):
-        self.base_dir = os.path.abspath(base_dir)
-        if not os.path.exists(self.base_dir):
-            os.makedirs(self.base_dir, exist_ok=True)
+        # Workspace creation is owned by WorkspaceService. Adapters receive only
+        # an existing, canonical workspace capability and never create a root from
+        # request data themselves.
+        self._paths = WorkspacePath(base_dir)
+        self.base_dir = str(self._paths.root)
 
         # Initialize Git repository if not already present
-        git_dir = os.path.join(self.base_dir, ".git")
-        if not os.path.exists(git_dir):
+        git_dir = self._paths.resolve(".git")
+        # The root is an existing canonical WorkspacePath and the child is a
+        # fixed server-owned literal, not a client-supplied path.
+        # codeql[py/path-injection]
+        if not git_dir.exists():
             try:
                 subprocess.run(
                     ["git", "init"], cwd=self.base_dir, capture_output=True, check=True
@@ -856,9 +861,13 @@ class WorkspaceManager:
                 )
 
         # Auto-generate .gitignore if not present
-        gitignore_path = os.path.join(self.base_dir, ".gitignore")
-        if not os.path.exists(gitignore_path):
+        gitignore_path = self._paths.resolve(".gitignore")
+        # The root is an existing canonical WorkspacePath and the child is a
+        # fixed server-owned literal, not a client-supplied path.
+        # codeql[py/path-injection]
+        if not gitignore_path.exists():
             try:
+                # codeql[py/path-injection]
                 with open(gitignore_path, "w") as f:
                     f.write("# Auto-generated .gitignore for Engineering Workspace\n")
                     f.write("*.log\n")
@@ -917,7 +926,6 @@ class WorkspaceManager:
 
     def sanitize_path(self, relative_path: str) -> str:
         """Resolve a user path inside this workspace without following links."""
-        capability = WorkspacePath(self.base_dir)
         normalized = relative_path.replace("\\", "/")
         if normalized == "/tmp" or normalized.startswith("/tmp/"):
             raise ValueError("Access denied: global temporary paths are not allowed")
@@ -926,8 +934,8 @@ class WorkspaceManager:
         if normalized.startswith("/") and not normalized.startswith("//"):
             normalized = normalized[1:]
         if normalized.startswith("tmp/"):
-            return str(capability.scratch(normalized.removeprefix("tmp/")))
-        return str(capability.resolve(normalized))
+            return str(self._paths.scratch(normalized.removeprefix("tmp/")))
+        return str(self._paths.resolve(normalized))
 
     def write_backup(self, rel_path: str, content: bytes) -> str:
         """Write temporary backup file for unsaved edits under .git/backups/."""
@@ -943,7 +951,7 @@ class WorkspaceManager:
 
     def delete_backup(self, backup_id: str) -> None:
         """Delete temporary backup file."""
-        backup_path = str(WorkspacePath(self.base_dir).backup(backup_id))
+        backup_path = str(self._paths.backup(backup_id))
         if os.path.exists(backup_path):
             try:
                 os.remove(backup_path)
