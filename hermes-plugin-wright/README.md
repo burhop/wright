@@ -16,7 +16,7 @@ hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/main 
 hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable
 ```
 
-The development channel tracks Wright's `dev` flow and may use TestPyPI packages or pinned Git revisions during pre-release testing. Stable users should use the main branch once package dependencies are published on PyPI.
+The development channel tracks Wright's `dev` flow. The stable channel tracks reviewed Wright production releases.
 
 ## Update
 
@@ -61,9 +61,9 @@ To migrate:
 
 ## Package Dependencies
 
-Public alpha mirror builds use pinned Git revisions while the component package boundaries are being stabilized. The user-facing PyPI package for alpha is `wright-engineering`: https://pypi.org/project/wright-engineering/. Component packages remain workspace-local for alpha and are not advertised as public PyPI installs yet.
+The Hermes plugin is self-contained: it ships its catalog and schema with the mirror and depends only on public third-party Python packages. It does not install `wright-core`, `wright-tool-registry`, or any other private Wright component package. Both mirror channels use the same public dependency policy.
 
-Development mirror builds may use TestPyPI packages or pinned Git revisions while release candidates are being validated.
+The user-facing PyPI package is `wright-engineering`: https://pypi.org/project/wright-engineering/. Component packages remain workspace-local for alpha and are not advertised as public PyPI installs.
 
 ## Main Wright Links
 

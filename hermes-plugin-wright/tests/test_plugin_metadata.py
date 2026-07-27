@@ -57,4 +57,25 @@ def test_plugin_dependency_policy_is_mirror_release_ready():
         project = tomllib.load(fh)["project"]
 
     deps = project["dependencies"]
-    assert any(dep.startswith("wright-tool-registry>=") and ",<" in dep for dep in deps)
+    assert deps == [
+        "pyyaml>=6.0",
+        "pydantic>=2.0",
+        "httpx>=0.27",
+        "structlog>=24.0",
+    ]
+    assert not any(dep.startswith("wright-") for dep in deps)
+
+
+def test_plugin_runtime_does_not_import_private_wright_packages():
+    plugin_dir = Path(__file__).resolve().parents[1]
+
+    for module_name in [
+        "__init__.py",
+        "bridge.py",
+        "catalog.py",
+        "commands.py",
+        "schemas.py",
+    ]:
+        source = (plugin_dir / module_name).read_text(encoding="utf-8")
+        assert "from tool_registry" not in source
+        assert "import tool_registry" not in source

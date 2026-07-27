@@ -134,7 +134,7 @@ except ModuleNotFoundError:
     import tomli as tomllib
 with pathlib.Path(sys.argv[1]).open('rb') as fh:
     data = tomllib.load(fh)
-print(re.sub(r'[^A-Za-z0-9_.-]+', '-', data['project']['name']))
+print(re.sub(r'[^A-Za-z0-9_.-]+', '-', data['project']['name']), end="")
 PY
 )"
   case "$package_name" in

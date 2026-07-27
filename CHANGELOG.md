@@ -4,6 +4,16 @@ All notable changes to the Wright project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-07-27
+
+### Added
+- Provider-neutral MCP discovery and runtime integration, including current Hermes Agent 0.19 support.
+- Protected release gates for PyPI, GHCR, optional Docker Hub mirroring, provenance, and post-publication verification.
+
+### Fixed
+- Made the stable Hermes plugin mirror self-contained so it no longer depends on unpublished Wright component packages.
+- Hardened workspace/session separation, concurrent Hermes sessions, prompt queueing and steering, and production path validation.
+
 ## [0.1.0] - 2026-06-05
 
 ### Added

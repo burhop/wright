@@ -11,8 +11,9 @@ def test_provenance_template_lists_source_and_dependency_versions() -> None:
         "Source branch:",
         "Source commit:",
         "Plugin version:",
-        "wright-core version:",
-        "wright-tool-registry version:",
+        "wright-core source version:",
+        "wright-tool-registry catalog source version:",
+        "not runtime dependencies",
         "provenance.json",
         "40-character main repository commit SHA",
     ]:

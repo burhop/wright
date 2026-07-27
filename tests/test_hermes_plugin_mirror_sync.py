@@ -70,14 +70,9 @@ def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
     assert not (output_dir / "packages").exists()
     pyproject_text = (output_dir / "pyproject.toml").read_text(encoding="utf-8")
     assert "[tool.uv.sources]" not in pyproject_text
-    assert re.search(
-        r"wright-core @ git\+https://github\.com/burhop/wright\.git@[0-9a-f]{40}#subdirectory=packages/core",
-        pyproject_text,
-    )
-    assert re.search(
-        r"wright-tool-registry @ git\+https://github\.com/burhop/wright\.git@[0-9a-f]{40}#subdirectory=packages/tool_registry",
-        pyproject_text,
-    )
+    assert "git+https://github.com/burhop/wright.git" not in pyproject_text
+    assert "wright-tool-registry" not in pyproject_text
+    assert "wright-core" not in pyproject_text
 
     provenance = json.loads(
         (output_dir / "provenance.json").read_text(encoding="utf-8")
@@ -109,7 +104,7 @@ def test_sync_dry_run_lists_mirror_files_without_writing(tmp_path: Path) -> None
     assert not output_dir.exists()
 
 
-def test_sync_stable_mirror_keeps_pypi_dependencies(tmp_path: Path) -> None:
+def test_sync_stable_mirror_is_self_contained(tmp_path: Path) -> None:
     output_dir = tmp_path / "mirror"
 
     run_script(
@@ -129,4 +124,5 @@ def test_sync_stable_mirror_keeps_pypi_dependencies(tmp_path: Path) -> None:
     pyproject_text = (output_dir / "pyproject.toml").read_text(encoding="utf-8")
     assert "[tool.uv.sources]" not in pyproject_text
     assert "git+https://github.com/burhop/wright.git" not in pyproject_text
-    assert "wright-tool-registry>=0.1.0,<0.2.0" in pyproject_text
+    assert "wright-tool-registry" not in pyproject_text
+    assert "wright-core" not in pyproject_text
