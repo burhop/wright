@@ -1,5 +1,5 @@
 import json
-import sqlite3
+from data_vault import upgrade_database
 
 from tool_registry import McpServer
 from tool_registry.db import insert_server
@@ -8,37 +8,7 @@ from tool_registry.validation_executor import ValidationExecutionUnavailable
 
 
 def _init_db(path):
-    conn = sqlite3.connect(path)
-    try:
-        conn.execute("""
-        CREATE TABLE mcp_servers (
-            server_id TEXT PRIMARY KEY,
-            name TEXT NOT NULL UNIQUE,
-            type TEXT NOT NULL,
-            command TEXT,
-            is_active INTEGER NOT NULL DEFAULT 0,
-            is_installed INTEGER NOT NULL DEFAULT 0,
-            status TEXT NOT NULL DEFAULT 'inactive',
-            error_message TEXT,
-            category TEXT NOT NULL DEFAULT 'utilities',
-            created_at INTEGER NOT NULL,
-            updated_at INTEGER NOT NULL
-        )
-        """)
-        conn.execute("""
-        CREATE TABLE mcp_tools (
-            tool_id TEXT PRIMARY KEY,
-            server_id TEXT NOT NULL,
-            name TEXT NOT NULL,
-            description TEXT,
-            input_schema TEXT NOT NULL,
-            is_enabled INTEGER NOT NULL DEFAULT 1,
-            created_at INTEGER NOT NULL
-        )
-        """)
-        conn.commit()
-    finally:
-        conn.close()
+    upgrade_database(path)
 
 
 def test_validation_cli_mock_executor_writes_evidence(tmp_path):

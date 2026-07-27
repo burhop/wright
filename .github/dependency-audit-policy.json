@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "exceptions": [
+    {
+      "vulnerability_id": "PYSEC-2026-1325",
+      "package": "ecdsa",
+      "owner": "security-maintainers",
+      "rationale": "python-ecdsa treats the timing side channel as out of scope and publishes no fixed version; Wright does not use the affected signing API for release signing.",
+      "compensating_control": "Release signing uses GitHub OIDC/Sigstore; application tokens are handled by python-jose verification paths and the secret provider.",
+      "approved_by": "roadmap Feature 047 review",
+      "expires_at": "2026-09-01T00:00:00Z"
+    },
+    {
+      "vulnerability_id": "GHSA-qwww-vcr4-c8h2",
+      "package": "react-router",
+      "owner": "security-maintainers",
+      "rationale": "The upstream advisory has no patched React Router release. Wright is a browser-only SPA and does not enable React Server Components or React Router server actions, which are required for the affected request path.",
+      "compensating_control": "Wright routes client-side with BrowserRouter and sends mutations only through explicit Wright API calls. Security maintainers will update React Router when an upstream fixed release is available.",
+      "approved_by": "repository maintainer request in PR #44",
+      "expires_at": "2026-08-24T00:00:00Z"
+    }
+  ]
+}

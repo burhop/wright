@@ -66,6 +66,7 @@ class McpServer(BaseModel):
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
     env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
+    launch_env: dict[str, str] = Field(default_factory=dict)
     instructions: Optional[str] = None
     # Dynamic field populated by API  indicates which env vars have saved values
     credentials_configured: Optional[dict[str, bool]] = None
@@ -93,6 +94,7 @@ class McpServerCreate(BaseModel):
     source_url: Optional[str] = None
     installed_version: Optional[str] = None
     env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
+    launch_env: dict[str, str] = Field(default_factory=dict)
     instructions: Optional[str] = None
     verification_state: VerificationState = "user_reported_url_needed"
     installability_tier: InstallabilityTier = "might_work"
@@ -113,6 +115,7 @@ class McpServerUpdate(BaseModel):
     status: Optional[Literal["active", "inactive", "error"]] = None
     error_message: Optional[str] = None
     env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None
+    launch_env: Optional[dict[str, str]] = None
     instructions: Optional[str] = None
     verification_state: Optional[VerificationState] = None
     installability_tier: Optional[InstallabilityTier] = None
@@ -132,7 +135,10 @@ class McpTool(BaseModel):
     tool_id: str
     server_id: str
     name: str
+    title: Optional[str] = None
     description: Optional[str] = None
     input_schema: dict = Field(default_factory=dict)
+    output_schema: Optional[dict] = None
+    annotations: dict = Field(default_factory=dict)
     is_enabled: bool
     created_at: int

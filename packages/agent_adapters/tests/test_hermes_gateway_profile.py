@@ -2,6 +2,7 @@ from agent_adapters.hermes_gateway import (
     hermes_config_paths,
     hermes_wright_gateway_profile,
 )
+from agent_adapters.hermes import WRIGHT_SYSTEM_HINT
 
 
 def test_hermes_gateway_profile_preserves_wrightgateway_key():
@@ -23,8 +24,53 @@ def test_hermes_gateway_profile_preserves_wrightgateway_key():
     assert profile.workspace_context_filename == ".hermes.md"
 
 
-def test_hermes_config_paths_are_hermes_specific():
+def test_hermes_config_paths_include_active_windows_and_wright_profile(
+    monkeypatch, tmp_path
+):
+    hermes_home = tmp_path / "home"
+    local_app_data = tmp_path / "local"
+    monkeypatch.setenv("HERMES_HOME", str(hermes_home))
+    monkeypatch.setenv("LOCALAPPDATA", str(local_app_data))
+    monkeypatch.delenv("HERMES_CONFIG_PATH", raising=False)
+    monkeypatch.delenv("HERMES_PROFILE", raising=False)
+
     paths = hermes_config_paths()
 
-    assert paths
-    assert all(".hermes" in path for path in paths)
+    assert str(local_app_data / "hermes" / "config.yaml") in paths
+    assert str(hermes_home / "profiles" / "wright" / "config.yaml") in paths
+    assert str(hermes_home / "config.yaml") in paths
+
+
+def test_hermes_gateway_profile_can_bind_exact_workspace_session():
+    profile = hermes_wright_gateway_profile(
+        "/wright",
+        session_id="session-1",
+        workspace_id="workspace-1",
+        terminal_cwd="/workspace/project",
+    )
+
+    assert profile.args == [
+        "run",
+        "--project",
+        "/wright",
+        "python",
+        "-m",
+        "api.gateway_stdio",
+        "--session-id",
+        "session-1",
+        "--workspace-id",
+        "workspace-1",
+        "--principal-id",
+        "local-admin",
+    ]
+    assert profile.gateway_project_dir == "/wright"
+    assert profile.terminal_config() == {"cwd": "/workspace/project"}
+
+
+def test_wright_system_hint_has_no_solid_edge_tool_recipe():
+    lowered = WRIGHT_SYSTEM_HINT.lower()
+
+    assert "solid edge" not in lowered
+    assert "providerid=solid_edge" not in lowered
+    assert "cad.create_part_from_recipe" not in lowered
+    assert "advertised descriptions and schemas" in lowered

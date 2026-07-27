@@ -7,7 +7,7 @@
 # =============================================================================
 
 # Stage 1: Build the Vite frontend
-FROM node:26-slim AS web-builder
+FROM node:24.17.0-slim@sha256:862263c612aa437e3037674b85419622a9d93bff80aa1eee5398dfe686375532 AS web-builder
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
@@ -16,7 +16,7 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.13-slim AS hermes-base
+FROM python:3.13.13-slim@sha256:aa938a849bcb82dce8f49480f056ab82bf5c1c3ebc294f0430f37b6820e7f286 AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -28,10 +28,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a54a05ea56ed03a934d00fe9fbeded4b /uv /usr/local/bin/uv
 
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
-    uv pip install --python /opt/hermes/.venv/bin/python hermes-agent==0.18.0 aiohttp && \
+    uv pip install --python /opt/hermes/.venv/bin/python \
+        hermes-agent==0.19.0 aiohttp==3.13.3 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv
@@ -48,11 +49,13 @@ ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
 
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
 # Node.js, and uv come from the Hermes base image.
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl \
-    sudo \
+    libssl3t64 \
+    openssl \
+    openssl-provider-legacy \
     vim \
     nano \
     htop \
@@ -61,24 +64,37 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-# micromamba supports dynamic MCP package/dependency installation.
+# micromamba supports dynamic MCP package/dependency installation. Feature 047
+# deliberately ships only the validated amd64 appliance until a native arm64
+# runtime smoke exists.
+ARG TARGETARCH
+ARG MICROMAMBA_VERSION=2.5.0
+ARG MICROMAMBA_SHA256=cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6
 RUN curl --fail --location --retry 5 --retry-all-errors \
         --output /tmp/micromamba.tar.bz2 \
-        https://micro.mamba.pm/api/micromamba/linux-64/latest && \
+        "https://micro.mamba.pm/api/micromamba/linux-64/${MICROMAMBA_VERSION}" && \
+    test "${TARGETARCH:-amd64}" = "amd64" && \
+    echo "${MICROMAMBA_SHA256}  /tmp/micromamba.tar.bz2" | sha256sum --check --strict && \
     tar -xjf /tmp/micromamba.tar.bz2 -C /usr/local bin/micromamba && \
     rm -f /tmp/micromamba.tar.bz2
 
 # Keep the inherited Hermes runtime patched for public-alpha image scans.
-RUN uv pip install --python /opt/hermes/.venv/bin/python --upgrade \
-        "cryptography>=49.0.0" \
-        "python-multipart>=0.0.32" \
-        "starlette>=1.3.1" \
-        "tornado>=6.5.6" && \
+# Hermes 0.19.0 exactly pins older cryptography and Pillow releases. Wright
+# installs the security-fixed releases below and the exact-image smoke gate
+# runs `uv pip check`, accepting only those two version-specific metadata
+# conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
+# independently blocking for all non-exempt fixable High/Critical findings.
+RUN uv pip install --python /opt/hermes/.venv/bin/python \
+        "cryptography==49.0.0" \
+        "pillow==12.3.0" \
+        "pyasn1==0.6.4" \
+        "python-multipart==0.0.32" \
+        "starlette==1.3.1" \
+        "tornado==6.5.6" && \
     rm -rf /root/.cache/uv /home/agent/.cache/uv
 
 # Create agent user (UID 1000).
 RUN useradd -m -u 1000 -s /bin/bash agent && \
-    echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     chown -R agent:agent /home/agent
 
 # Wright workspace setup.

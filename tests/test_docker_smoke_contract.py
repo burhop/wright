@@ -28,21 +28,54 @@ def test_docker_smoke_script_docs_include_existing_image_mode() -> None:
     assert "warns and continues if `LLM_API_URL` is missing" in readme
     assert "WRIGHT_DOCKER_IMAGE=wright:latest" in readme
     assert "WRIGHT_DOCKER_SKIP_BUILD=1" in readme
+    assert "reconcile_hermes_pip_check.py" in readme
 
 
 def test_docker_smoke_script_keeps_gateway_process_name() -> None:
     workflow = read_text(".github/workflows/docker-build.yml")
+    smoke = read_text("scripts/docker-smoke-test.sh")
 
-    assert "hermes-gateway.*RUNNING" in workflow
+    assert "WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh" in workflow
+    assert "hermes-gateway" in smoke
     assert "hermes-webui.*RUNNING" not in workflow
-    assert "Hermes gateway direct health is ready" in workflow
-    assert "Agent health attempt" in workflow
+    assert "Hermes gateway direct health is ready" in smoke
+    assert "Agent health attempt" in smoke
 
 
 def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
-    assert "hermes-agent==0.18.0" in dockerfile
+    assert "python:3.13.13-slim@sha256:" in dockerfile
+    assert "hermes-agent==0.19.0" in dockerfile
+
+
+def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert '"cryptography==49.0.0"' in dockerfile
+    assert '"pillow==12.3.0"' in dockerfile
+    assert "libssl3t64" in dockerfile
+    assert "openssl-provider-legacy" in dockerfile
+    assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
+    assert "reconcile_hermes_pip_check.py" in smoke
+
+
+def test_docker_smoke_does_not_require_host_jq() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert "jq -r" not in smoke
+    assert "json.load(sys.stdin)" in smoke
+
+
+def test_docker_smoke_respects_explicit_host_python() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert "export MSYS_NO_PATHCONV=1" in smoke
+    assert 'PYTHON_CMD=("$PYTHON")' in smoke
+    assert smoke.count('"${PYTHON_CMD[@]}"') == 2
+    assert "scripts/reconcile_hermes_pip_check.py" in smoke
+    assert '"${PYTHON_CMD[@]}" -c' in smoke
 
 
 def test_dockerfile_copies_root_package_files_before_workspace_install() -> None:
@@ -74,11 +107,16 @@ def test_hermes_plugin_lifecycle_scripts_are_documented_and_docker_backed() -> N
 
     assert "hermes-plugin-lifecycle-test:" in makefile
     assert "WRIGHT_DOCKER_IMAGE" in common
+    assert "WRIGHT_HERMES_EXPECTED_VERSION:-0.19.0" in common
     assert "WRIGHT_PLUGIN_REF" in common
     assert "--ref dev|main" in common
     assert "https://github.com/burhop/wright" in common
     assert "tree/${PLUGIN_REF}/${PLUGIN_SUBDIR}" in common
     assert "--ref main" in readme
-    assert "hermes plugins install" in read_text("scripts/test-hermes-plugin-install.sh")
-    assert "hermes plugins remove" in read_text("scripts/test-hermes-plugin-uninstall.sh")
+    assert "hermes plugins install" in read_text(
+        "scripts/test-hermes-plugin-install.sh"
+    )
+    assert "hermes plugins remove" in read_text(
+        "scripts/test-hermes-plugin-uninstall.sh"
+    )
     assert "hermes plugins update" in read_text("scripts/test-hermes-plugin-update.sh")

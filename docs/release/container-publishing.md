@@ -1,23 +1,34 @@
 # Container Publishing
 
-Wright's alpha appliance image names are:
+Wright's canonical alpha appliance identity is:
 
 ```text
-burhop/wright:<tag>
-ghcr.io/burhop/wright:<tag>
+ghcr.io/burhop/wright@sha256:<digest>
 ```
 
-Docker Hub is enabled for alpha through the repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`. GHCR remains the GitHub-native registry path and must continue to work without Docker Hub credentials.
+GHCR is canonical. Docker Hub is an optional byte-identical manifest mirror
+using protected `dockerhub` credentials; it never rebuilds the image.
 
 ## Tag Policy
 
-- Release tags publish immutable matching image tags.
+- Release and SHA tags point to the already-tested immutable digest.
 - Prerelease tags such as `v0.1.0-alpha.1`, `v0.1.0-beta.1`, and `v0.1.0-rc.1` do not move `latest`.
-- Stable tags may move `latest` after release review.
+- Stable tags may move `latest` only after post-promotion verification.
 
 ## Platform Policy
 
-`linux/amd64` is the smoked alpha target. `linux/arm64`, GPU-enabled workflows, and NVIDIA Container Toolkit assumptions are deferred until the release workflow builds and validates those variants.
+`linux/amd64` is the only released target. `linux/arm64`, GPU-enabled workflows,
+and NVIDIA Container Toolkit assumptions are deferred until every binary input
+is architecture-aware and the exact digest passes a native arm64 smoke test.
+
+## Build-once evidence
+
+The release train pins base/tool inputs, builds one candidate, records its
+digest, blocks fixable High/Critical findings unless a reviewed unexpired
+exception applies, and binds smoke, inventory, SPDX SBOM, provenance,
+promotion, mirror, and verification to that digest. GitHub Release publication
+is last. See [Release Runbook](release-runbook.md) and
+[Release Recovery](release-recovery.md).
 
 ## Public Listing Requirements
 

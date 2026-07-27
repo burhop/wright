@@ -226,6 +226,10 @@ yarn-error.log*
 
 # Playwright / E2E Testing
 test-results/
+release-evidence*.json
+!specs/047-python-oci-release-train/contracts/release-evidence.schema.json
+*.spdx.json
+*.sarif
 playwright-report/
 blob-report/
 playwright/.cache/
@@ -248,6 +252,7 @@ vault/
 *.db-wal
 *.db-shm
 *.db-journal
+*.lifecycle.lock
 
 # LanceDB vector database runtime data
 *.lance/

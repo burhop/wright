@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
+from collections.abc import Awaitable, Callable, Mapping
 from typing import List, Dict, Any
+
+
+ProgressCallback = Callable[[Mapping[str, Any]], Awaitable[None] | None]
 
 
 class BaseRunner(ABC):
@@ -29,7 +33,11 @@ class BaseRunner(ABC):
 
     @abstractmethod
     async def call_tool(
-        self, tool_name: str, arguments: Dict[str, Any]
+        self,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        *,
+        progress_callback: ProgressCallback | None = None,
     ) -> Dict[str, Any]:
         """Invoke a tool exposed by the MCP server.
 

@@ -41,6 +41,10 @@ def test_security_scan_scripts_use_pinned_scanner_images() -> None:
         assert "check-public-alpha-leaks.py" in script
         assert ".gitleaks.toml" in script
 
+    assert 'DOCKER_ROOT_DIR="$(cygpath -w "$ROOT_DIR")"' in bash_script
+    assert 'MSYS_NO_PATHCONV=1 docker run' in bash_script
+    assert '-v "$DOCKER_ROOT_DIR:/repo"' in bash_script
+
     assert "scripts/security-scan.sh --include-untracked" in alpha_bash
     assert "scripts/security-scan.ps1 -IncludeUntracked" in alpha_powershell
     assert "git diff --check" in alpha_bash

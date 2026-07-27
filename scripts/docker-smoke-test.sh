@@ -7,11 +7,30 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Every absolute path passed to Docker below is an in-container path. Prevent
+# Git for Windows from rewriting values such as /opt/hermes or /entrypoint.sh
+# before the Windows Docker client receives them.
+export MSYS_NO_PATHCONV=1
+
 echo -e "${YELLOW}=== Running Docker Smoke Test ===${NC}"
 
 # Define image tag. Set WRIGHT_DOCKER_IMAGE to smoke an existing image, or set
 # WRIGHT_DOCKER_SKIP_BUILD=1 to skip the local build step.
 IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright:test}"
+
+PYTHON_CMD=()
+if [ -n "${PYTHON:-}" ]; then
+  PYTHON_CMD=("$PYTHON")
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON_CMD=(python3)
+elif command -v python >/dev/null 2>&1; then
+  PYTHON_CMD=(python)
+elif command -v py >/dev/null 2>&1; then
+  PYTHON_CMD=(py -3)
+else
+  echo -e "${RED}No Python interpreter is available for host-side smoke assertions.${NC}"
+  exit 1
+fi
 
 # 1. Build the production Docker image
 if [ "${WRIGHT_DOCKER_SKIP_BUILD:-0}" = "1" ]; then
@@ -30,6 +49,15 @@ else
   echo -e "${RED}✗ Container does not run as 'agent' user. Found: $AGENT_USER_EXISTS${NC}"
   exit 1
 fi
+
+echo -e "Testing final Hermes environment dependency contract..."
+PIP_CHECK_EXIT=0
+PIP_CHECK_OUTPUT=$(docker run --rm --entrypoint uv "$IMAGE_TAG" \
+  pip check --python /opt/hermes/.venv/bin/python 2>&1) || PIP_CHECK_EXIT=$?
+printf '%s\n' "$PIP_CHECK_OUTPUT"
+printf '%s\n' "$PIP_CHECK_OUTPUT" | "${PYTHON_CMD[@]}" \
+  scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
+echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
 
 # 3. Check container-manifest.md existence and permissions
 echo -e "\n${YELLOW}Step 3: Checking container-manifest.md...${NC}"
@@ -73,7 +101,7 @@ echo -e "\n${YELLOW}Step 5: Testing basic command execution...${NC}"
 # First test: missing LLM_API_URL should warn and continue so the setup UI can
 # collect configuration.
 echo -e "Testing setup-pending warning with missing LLM_API_URL..."
-MISSING_LLM_OUTPUT=$(docker run --rm "$IMAGE_TAG" echo "ok" 2>&1)
+MISSING_LLM_OUTPUT=$(docker run --rm -e WRIGHT_API_TOKEN="ci-smoke-token" "$IMAGE_TAG" echo "ok" 2>&1)
 if [[ "$MISSING_LLM_OUTPUT" == *"Warning: LLM_API_URL environment variable is not set"* ]] && [[ "$MISSING_LLM_OUTPUT" == *"ok"* ]]; then
   echo -e "${GREEN}✓ Container warned and continued when LLM_API_URL was missing.${NC}"
 else
@@ -84,7 +112,7 @@ fi
 
 # Second test: should succeed when LLM_API_URL is provided
 echo -e "Testing execution with LLM_API_URL set..."
-if TEST_OUTPUT=$(docker run --rm -e LLM_API_URL="https://example.com/v1" "$IMAGE_TAG" echo "ok"); then
+if TEST_OUTPUT=$(docker run --rm -e WRIGHT_API_TOKEN="ci-smoke-token" -e LLM_API_URL="https://example.com/v1" "$IMAGE_TAG" echo "ok"); then
   if [[ "$TEST_OUTPUT" == *"ok"* ]]; then
     echo -e "${GREEN}✓ Basic command execution succeeded and returned 'ok'.${NC}"
   else
@@ -125,5 +153,85 @@ fi
 echo -e "\n--- Scenario E: File Restore from Backup ---"
 echo -e "Validation command: scripts/backup-volumes.sh && scripts/restore-volume.sh wright_logs <timestamp>"
 echo -e "This was verified successfully during Phase 8 testing."
+
+# 7. Start the exact candidate and prove both the API and Hermes gateway are
+# healthy. This must consume IMAGE_TAG; it must never trigger a rebuild.
+echo -e "\n${YELLOW}Step 7: Testing API and Hermes gateway readiness...${NC}"
+SMOKE_CONTAINER="wright-exact-candidate-smoke-$$"
+docker run --rm -d --name "$SMOKE_CONTAINER" \
+  -p 127.0.0.1:8090:8000 \
+  -e LLM_API_URL="https://ci-placeholder.example.com/v1" \
+  -e LLM_API_KEY="ci-test" \
+  -e LLM_API_MODEL="ci-model" \
+  -e WRIGHT_API_TOKEN="ci-smoke-token" \
+  "$IMAGE_TAG" >/dev/null
+
+cleanup_smoke() {
+  docker rm -f "$SMOKE_CONTAINER" >/dev/null 2>&1 || true
+}
+trap cleanup_smoke EXIT
+
+for attempt in $(seq 1 45); do
+  if curl --fail --silent --max-time 2 http://127.0.0.1:8090/api/health >/dev/null 2>&1; then
+    break
+  fi
+  if [ "$attempt" -eq 45 ]; then
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Wright API did not become ready.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 30); do
+  PROCESS_STATUS=$(docker exec "$SMOKE_CONTAINER" \
+    supervisorctl -c /etc/supervisor/conf.d/wright.conf status 2>&1 || true)
+  if echo "$PROCESS_STATUS" | grep -q "wright-api.*RUNNING" && \
+     echo "$PROCESS_STATUS" | grep -q "hermes-gateway.*RUNNING"; then
+    echo -e "${GREEN}âœ“ API and Hermes gateway are running in the exact candidate.${NC}"
+    break
+  fi
+  if [ "$attempt" -eq 30 ]; then
+    echo "$PROCESS_STATUS" >&2
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Required supervised services did not become ready.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 45); do
+  AGENT_HEALTH=$(curl --fail --silent --max-time 2 \
+    http://127.0.0.1:8090/api/agent/health 2>/dev/null || echo '{"state":"disconnected"}')
+  AGENT_STATE=$(printf '%s' "$AGENT_HEALTH" | "${PYTHON_CMD[@]}" -c \
+    'import json, sys; print(json.load(sys.stdin).get("state", "unknown"))')
+  echo "Agent health attempt $attempt: $AGENT_HEALTH"
+  if [ "$AGENT_STATE" = "connected" ]; then
+    break
+  fi
+  if [ "$attempt" -eq 45 ]; then
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Wright agent did not connect to the Hermes gateway.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+for attempt in $(seq 1 30); do
+  if docker exec "$SMOKE_CONTAINER" \
+    curl --fail --silent --max-time 2 http://127.0.0.1:8642/health >/dev/null 2>&1; then
+    echo -e "${GREEN}âœ“ Hermes gateway direct health is ready.${NC}"
+    break
+  fi
+  if [ "$attempt" -eq 30 ]; then
+    docker logs "$SMOKE_CONTAINER" >&2
+    echo -e "${RED}âœ— Hermes gateway direct health did not become ready.${NC}"
+    exit 1
+  fi
+  sleep 2
+done
+
+cleanup_smoke
+trap - EXIT
 
 echo -e "\n${GREEN}=== ALL SMOKE AND RECOVERY TESTS PASSED ===${NC}"

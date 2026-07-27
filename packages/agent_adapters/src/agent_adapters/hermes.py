@@ -24,7 +24,10 @@ logger = structlog.get_logger(__name__)
 
 WRIGHT_SYSTEM_HINT = (
     "You are running inside Wright with MCP tools exposed through the "
-    "wrightgateway. For Onshape requests, do not ask the user for document, "
+    "wrightgateway. Select tools from their advertised descriptions and schemas, "
+    "and use the workspace path from the [Workspace::v1: ...] prefix when a tool "
+    "requires an explicit workspace or output location. "
+    "For Onshape requests, do not ask the user for document, "
     "workspace, or element IDs when they provided a document or part name. "
     "First use jarvisonshapemcp__search_documents or "
     "jarvisonshapemcp__list_documents to find the document. If there are "

@@ -15,16 +15,16 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           enable-cache: true
-          version: "latest"
+          version: "0.9.26"
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.13"
 
@@ -37,9 +37,16 @@ jobs:
       - name: Check Formatting with Ruff
         run: uv run ruff format --check apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service
 
+      - name: Lint and package-test optional Hermes integration
+        run: |
+          uv run ruff check hermes-plugin-wright
+          uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
+          uv build --package hermes-plugin-wright --wheel --out-dir dist/private-package-check
+
       - name: Type Check with mypy
         run: |
           uv pip install mypy
+          uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
           uv run mypy apps/api packages/core packages/agent_adapters packages/tool_registry packages/data_vault packages/workspace_service --ignore-missing-imports || echo "::warning::Mypy type checks failed with warning mode enabled."
 
       - name: Validate Python package distributions
@@ -52,3 +59,41 @@ jobs:
 
       - name: Run Tests with pytest
         run: uv run pytest
+
+      - name: Enforce ratcheted release-code coverage
+        run: uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+
+  public-package-matrix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Build once for this isolated matrix job
+        run: python -m pip install build && python -m build --wheel --sdist --outdir dist
+      - name: Independently install and smoke wheel and sdist
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib, subprocess, sys, tempfile, venv
+          artifacts = [*pathlib.Path("dist").glob("*.whl"), *pathlib.Path("dist").glob("*.tar.gz")]
+          if len(artifacts) != 2:
+              raise SystemExit(f"expected wheel and sdist, found {artifacts}")
+          for artifact in artifacts:
+              with tempfile.TemporaryDirectory() as value:
+                  root = pathlib.Path(value)
+                  venv.EnvBuilder(with_pip=True).create(root)
+                  python = root / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
+                  subprocess.check_call([python, "-m", "pip", "install", "--no-deps", artifact.resolve()])
+                  subprocess.check_call([python, "-c", "from wright_engineering.cli import main; raise SystemExit(main(['doctor']))"], cwd=root)
+          PY

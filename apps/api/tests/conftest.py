@@ -13,30 +13,40 @@ offline while still proving startup does not depend on HermesAdapter imports.
 """
 
 import os
+import shutil
 import tempfile
 import time
 import uuid
 
 import pytest
 
-# Create a temporary SQLite database for the test session
-temp_db_fd, temp_db_path = tempfile.mkstemp(suffix="-test.db")
-os.close(temp_db_fd)
+# Create a private temporary directory for the test database and fallback
+# secret store. The secret store intentionally restricts its parent directory,
+# which must never be the shared system temporary directory itself.
+temp_db_dir = tempfile.mkdtemp(prefix="wright-api-tests-")
+temp_db_path = os.path.join(temp_db_dir, "state-test.db")
 
 # Set the environment variables before importing any application code
 os.environ["DATABASE_PATH"] = temp_db_path
+os.environ.setdefault("WRIGHT_AUTH_MODE", "compat")
+os.environ.setdefault("WRIGHT_SECRETS_PATH", f"{temp_db_path}.secrets.json")
 
 
 @pytest.fixture(autouse=True)
 def set_testing_env(monkeypatch):
     monkeypatch.setenv("WRIGHT_TESTING", "1")
+    # API contract tests exercise the default API-owned lifecycle unless an
+    # individual test explicitly selects Hermes/external ownership.
+    monkeypatch.setenv("WRIGHT_API_MCP_AUTOSTART", "1")
 
 
 @pytest.fixture(scope="session", autouse=True)
 def run_api_migrations():
     from api.database.migrate import run_migrations
+    from tool_registry.catalog_reconcile import reconcile_engineering_catalog
 
     run_migrations()
+    reconcile_engineering_catalog(temp_db_path)
 
     yield
 
@@ -46,6 +56,14 @@ def run_api_migrations():
             os.unlink(temp_db_path)
         except Exception:
             pass
+    secrets_path = f"{temp_db_path}.secrets.json"
+    for path in (secrets_path, f"{secrets_path}.lock"):
+        if os.path.exists(path):
+            try:
+                os.unlink(path)
+            except Exception:
+                pass
+    shutil.rmtree(temp_db_dir, ignore_errors=True)
 
 
 # ── Mock Agent Engine ─────────────────────────────────────────────────────
@@ -133,8 +151,10 @@ def client(mock_agent_engine):
     """Provide a TestClient with the mock agent engine injected."""
     from httpx import ASGITransport, AsyncClient
     from api.main import app
+    from workspace_service import AgentSyncManager
 
     app.state.agent_engine = mock_agent_engine
+    app.state.agent_sync_manager = AgentSyncManager(temp_db_path)
     transport = ASGITransport(app=app)
     return AsyncClient(transport=transport, base_url="http://testserver")
 
@@ -144,8 +164,10 @@ def sync_client(mock_agent_engine):
     """Provide a synchronous TestClient for non-async tests."""
     from fastapi.testclient import TestClient
     from api.main import app
+    from workspace_service import AgentSyncManager
 
     app.state.agent_engine = mock_agent_engine
+    app.state.agent_sync_manager = AgentSyncManager(temp_db_path)
     return TestClient(app)
 
 

@@ -20,9 +20,14 @@ def test_ci_cd_docs_list_current_workflows_and_pr_gates() -> None:
         "python-quality.yml",
         "frontend-quality.yml",
         "public-alpha-safety.yml",
+        "codeql.yml",
+        "dependency-review.yml",
+        "docker-pr.yml",
         "docker-build.yml",
         "docs-deploy.yml",
+        "sync-hermes-plugin-mirror.yml",
         "release.yml",
+        "publish-python-packages.yml",
         "release-drafter.yml",
         "test-windows.yml",
         "uv sync --all-packages --all-groups",
@@ -43,11 +48,14 @@ def test_ci_cd_docs_match_docker_smoke_and_docs_release_contracts() -> None:
 
     for expected in [
         "does not publish public images",
-        "wright:<sha>",
+        "wright:pr-<sha>",
         "placeholder `LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL`",
         "`wright-api` and `hermes-gateway`",
         "Trivy",
         "exit code `0`",
+        "blocking vulnerability policy",
+        "`uv pip check`",
+        "reusable `docker-build.yml`",
         "docs workflow builds strictly on pull requests and branch pushes",
         "deploys GitHub Pages only for non-PR `main` builds",
     ]:
@@ -79,7 +87,9 @@ def test_ci_cd_docs_describe_ghcr_default_and_optional_docker_hub() -> None:
 
     assert "packages: write" in release
     assert "Log in to GHCR" in release
-    assert "has_dockerhub=false" in release
+    assert 'echo "configured=false"' in release
+    assert "Docker Hub mirror is not configured; canonical GHCR remains verified." in release
+    assert "Copy and verify the same manifest" in release
 
 
 def test_spec_tasks_record_ci_cd_docs_refresh_slice() -> None:

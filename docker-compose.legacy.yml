@@ -1,0 +1,28 @@
+# Migration-only override for one release. Do not use for new installations.
+# Attach this file only while exporting data from the pre-043 broad volume layout.
+services:
+  agent:
+    read_only: false
+    cap_drop: []
+    security_opt: []
+    volumes:
+      - wright_home:/home/
+      - wright_local:/usr/local/
+      - wright_opt:/opt/
+      - wright_varlib:/var/lib/
+      - wright_varcache:/var/cache/
+      - wright_etc:/etc/
+
+volumes:
+  wright_home:
+    external: true
+  wright_local:
+    external: true
+  wright_opt:
+    external: true
+  wright_varlib:
+    external: true
+  wright_varcache:
+    external: true
+  wright_etc:
+    external: true

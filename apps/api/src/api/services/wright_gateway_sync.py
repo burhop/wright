@@ -2,19 +2,21 @@
 
 from __future__ import annotations
 
-import copy
 import os
 import sys
+from pathlib import Path
 
 import structlog
 import yaml
 
+from agent_adapters.config_merge import atomic_merge_yaml
 from agent_adapters.gateway import WrightGatewayProfile
 from agent_adapters.hermes_gateway import (
     hermes_config_paths,
     hermes_wright_gateway_profile,
 )
-from core.workspace import (
+from workspace_service.adapters.runtime import (
+    get_active_gateway_session,
     get_workspace_by_session,
     set_active_gateway_session,
 )
@@ -24,6 +26,13 @@ logger = structlog.get_logger(__name__)
 
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 _REPO_ROOT = os.path.abspath(os.path.join(_CURRENT_DIR, *[".."] * 5))
+_PRESERVED_GATEWAY_CONFIG_KEYS = (
+    "env",
+    "enabled",
+    "tools",
+    "timeout",
+    "connect_timeout",
+)
 
 
 def default_hermes_gateway_profile(repo_dir: str | None = None) -> WrightGatewayProfile:
@@ -35,44 +44,38 @@ def default_hermes_gateway_profile(repo_dir: str | None = None) -> WrightGateway
 def write_gateway_profile_config(
     profile: WrightGatewayProfile, config_paths: list[str]
 ) -> bool:
-    new_mcp_servers = {profile.server_name: profile.mcp_server_config()}
     config_changed = False
 
     for path in config_paths:
-        if not os.path.exists(path):
-            config_changed = True
-            try:
-                os.makedirs(os.path.dirname(path), exist_ok=True)
-                with open(path, "w") as f:
-                    yaml.safe_dump(
-                        {
-                            "mcp_servers": new_mcp_servers,
-                            "terminal": profile.terminal_config(),
-                        },
-                        f,
-                        default_flow_style=False,
-                    )
-            except Exception as e:
-                logger.error(
-                    "failed_to_write_initial_gateway_config", path=path, error=str(e)
-                )
-            continue
-
         try:
-            with open(path, "r") as f:
-                config = yaml.safe_load(f) or {}
 
-            new_config = copy.deepcopy(config)
-            new_config["mcp_servers"] = new_mcp_servers
+            def update(config: dict) -> None:
+                servers = config.get("mcp_servers")
+                if not isinstance(servers, dict):
+                    servers = {}
+                existing_gateway = servers.get(profile.server_name)
+                preserved_gateway = (
+                    {
+                        key: existing_gateway[key]
+                        for key in _PRESERVED_GATEWAY_CONFIG_KEYS
+                        if key in existing_gateway
+                    }
+                    if isinstance(existing_gateway, dict)
+                    else {}
+                )
+                config["mcp_servers"] = {
+                    **servers,
+                    profile.server_name: {
+                        **preserved_gateway,
+                        **profile.mcp_server_config(),
+                    },
+                }
+                terminal = config.get("terminal")
+                if not isinstance(terminal, dict):
+                    terminal = {}
+                config["terminal"] = {**terminal, **profile.terminal_config()}
 
-            if "terminal" not in new_config:
-                new_config["terminal"] = {}
-            new_config["terminal"].update(profile.terminal_config())
-
-            if config != new_config:
-                config_changed = True
-                with open(path, "w") as f:
-                    yaml.safe_dump(new_config, f, default_flow_style=False)
+            config_changed = atomic_merge_yaml(path, update) or config_changed
         except Exception as e:
             logger.error("failed_to_sync_gateway_config", path=path, error=str(e))
             config_changed = True
@@ -91,9 +94,57 @@ def write_static_gateway_config(
 
 def notify_gateway_tool_change() -> None:
     logger.info("notifying_gateway_tool_change")
-    from api.routers.gateway import notify_gateway_tool_change as notify
+    from api.notifications import notify_gateway_tool_change as notify
 
     notify()
+
+
+def _configured_gateway_binding(config_path: str) -> tuple[str, str] | None:
+    """Read an exact Wright gateway session/workspace binding from Hermes config."""
+    path = Path(config_path).expanduser()
+    if not path.exists():
+        return None
+    try:
+        config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        gateway = config.get("mcp_servers", {}).get("wrightgateway", {})
+        args = gateway.get("args", [])
+        if not isinstance(args, list):
+            return None
+        session_index = args.index("--session-id") + 1
+        workspace_index = args.index("--workspace-id") + 1
+        session_id = str(args[session_index]).strip()
+        workspace_id = str(args[workspace_index]).strip()
+        if session_id and workspace_id:
+            return session_id, workspace_id
+    except (OSError, ValueError, IndexError, TypeError, AttributeError, yaml.YAMLError):
+        return None
+    return None
+
+
+def _gateway_binding_session(
+    db_path: str,
+    requested_session_id: str,
+    workspace_id: str,
+    config_paths: list[str],
+) -> str:
+    """Keep a live gateway binding stable across chats in the same workspace."""
+    candidates = [
+        binding[0]
+        for path in config_paths
+        if (binding := _configured_gateway_binding(path)) and binding[1] == workspace_id
+    ]
+    persisted_session_id = get_active_gateway_session(db_path)
+    if persisted_session_id:
+        candidates.append(persisted_session_id)
+
+    for candidate_session_id in candidates:
+        candidate_workspace = get_workspace_by_session(db_path, candidate_session_id)
+        if (
+            candidate_workspace
+            and str(candidate_workspace.get("workspace_id")) == workspace_id
+        ):
+            return candidate_session_id
+    return requested_session_id
 
 
 def write_workspace_gateway_context(
@@ -103,7 +154,7 @@ def write_workspace_gateway_context(
     if not active_profile.workspace_context_filename:
         return
 
-    from core.workspace import write_workspace_agent_context
+    from workspace_service.adapters.runtime import write_workspace_agent_context
 
     write_workspace_agent_context(
         db_path, workspace_path, active_profile.workspace_context_filename
@@ -123,15 +174,14 @@ def sync_workspace_tools_to_wright_gateway(
     session_id: str,
     db_path: str,
     profile: WrightGatewayProfile | None = None,
-) -> None:
-    if "pytest" in sys.modules:
-        return
+    config_paths: list[str] | None = None,
+) -> bool:
+    if "pytest" in sys.modules and config_paths is None:
+        return False
 
     workspace = get_workspace_by_session(db_path, session_id)
     if not workspace:
-        return
-    set_active_gateway_session(db_path, session_id)
-
+        return False
     workspace_path = workspace["local_path"]
     tmp_dir = os.path.join(workspace_path, "tmp")
     os.makedirs(tmp_dir, exist_ok=True)
@@ -164,11 +214,30 @@ def sync_workspace_tools_to_wright_gateway(
         logger.warning("failed_to_update_gateway_gitignore", error=str(e))
 
     active_profile = profile or default_hermes_gateway_profile()
+    active_config_paths = config_paths or hermes_config_paths()
+    if active_profile.provider_name == "hermes":
+        gateway_project_dir = (
+            active_profile.gateway_project_dir or active_profile.terminal_cwd
+        )
+        binding_session_id = _gateway_binding_session(
+            db_path,
+            session_id,
+            str(workspace["workspace_id"]),
+            active_config_paths,
+        )
+        active_profile = hermes_wright_gateway_profile(
+            gateway_project_dir,
+            session_id=binding_session_id,
+            workspace_id=str(workspace["workspace_id"]),
+            terminal_cwd=workspace_path,
+        )
+        set_active_gateway_session(db_path, binding_session_id)
 
     try:
         write_workspace_gateway_context(db_path, workspace_path, active_profile)
     except Exception as e:
         logger.warning("failed_to_write_workspace_context", error=str(e))
 
-    write_static_gateway_config(active_profile)
+    changed = write_gateway_profile_config(active_profile, active_config_paths)
     notify_gateway_tool_change()
+    return changed

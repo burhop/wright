@@ -66,6 +66,8 @@ class ValidationSummary(BaseModel):
     message: str = "Not yet validated in this environment"
     environment: Optional[str] = None
     missing_dependencies: List[str] = Field(default_factory=list)
+    validated_at: Optional[str] = None
+    evidence_status: Literal["recorded", "partial", "unverified"] = "unverified"
 
 
 def default_platform_support() -> dict[str, PlatformSupportRecord]:
@@ -88,6 +90,7 @@ class CatalogEntry(BaseModel):
     locality: Literal["local", "remote"]
     weight: Literal["light", "medium", "heavy"]
     env_vars: List[EnvVarDefinition] = Field(default_factory=list)
+    launch_env: dict[str, str] = Field(default_factory=dict)
     dependencies: DependencySpec = Field(default_factory=DependencySpec)
     aliases: List[str] = Field(default_factory=list)
     verification_state: VerificationState = "user_reported_url_needed"

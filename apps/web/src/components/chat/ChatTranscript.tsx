@@ -40,7 +40,7 @@ function ActivityPanel({
     ? activeTool.name
       ? `Using ${activeTool.name}`
       : "Using a tool"
-    : latestEntry?.title || (isStreaming ? "Waiting for Hermes" : "Activity");
+    : latestEntry?.title || (isStreaming ? "Waiting for agent" : "Activity");
   const detail = activeTool?.preview || latestEntry?.detail;
   const percentage = activeTool?.percentage ?? latestEntry?.percentage;
 

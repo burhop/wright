@@ -14,7 +14,8 @@ This directory contains helper scripts to automate local development, manage Doc
 | [`cleanup-workspaces.py`](#cleanup-workspacespy) | Python | Truncates database tables and cleans workspace directories | Python 3, SQLite |
 | [`check-public-alpha-leaks.py`](#check-public-alpha-leakspy) | Python | Scans tracked text files for obvious public-alpha secret leaks | Python 3, Git |
 | [`security-scan.sh`](#security-scansh-and-security-scanps1) / [`security-scan.ps1`](#security-scansh-and-security-scanps1) | Bash / PowerShell | Runs public-alpha, Gitleaks, and TruffleHog secret scans | Python 3, Docker |
-| [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, permissions, and self-healing behaviors | Docker |
+| [`docker-smoke-test.sh`](#docker-smoke-testsh) | Bash | Validates Docker build, Hermes dependencies, permissions, and self-healing behaviors | Docker, Python 3 |
+| `reconcile_hermes_pip_check.py` | Python | Accepts only the two reviewed Hermes 0.19 security-version conflicts from raw `uv pip check` output | Python 3 |
 | [`test-hermes-plugin-install.sh`](#hermes-plugin-lifecycle-scripts) / [`test-hermes-plugin-uninstall.sh`](#hermes-plugin-lifecycle-scripts) / [`test-hermes-plugin-update.sh`](#hermes-plugin-lifecycle-scripts) | Bash | Validates Hermes plugin install, uninstall, and update paths in Docker | Docker |
 | [`production-update.sh`](#production-updatesh) | Bash | Guards operator-run production updates against stale, dirty, or unverified commits | Git, Docker, optional `gh` CLI |
 | [`fetch_ci_failures.py`](#fetch_ci_failurespy) | Python | Retrieves logs of failed GitHub Action runs to a local markdown file | Python 3, `gh` CLI |
@@ -169,7 +170,10 @@ Runs the full local public-alpha secret scanning gate:
 3. TruffleHog history scan with `ghcr.io/trufflesecurity/trufflehog:3.95.7`
 
 The wrappers use Docker images, so Gitleaks and TruffleHog do not need to be
-installed globally.
+installed globally. When invoked from Git for Windows, the Bash wrapper passes
+Docker Desktop an explicit Windows bind source and disables MSYS argument
+conversion so both the host mount and literal in-container `/repo` paths remain
+correct.
 
 * **Bash usage**:
   ```bash
@@ -189,10 +193,19 @@ Runs a local verification suite against a production Docker build to ensure envi
 * **Key Checks**:
   1. Builds the Docker image locally as `wright:test`.
   2. Asserts that the container user runs as the non-root `agent` user by default.
-  3. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
-  4. Verifies that `/entrypoint.sh` is present and executable.
-  5. Validates setup-pending behavior (warns and continues if `LLM_API_URL` is missing, succeeds when provided).
-  6. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
+  3. Runs raw `uv pip check`; only the exact Hermes 0.19 cryptography/Pillow
+     security overrides are reconciled, and every other conflict fails.
+  4. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
+  5. Verifies that `/entrypoint.sh` is present and executable.
+  6. Validates setup-pending behavior (warns and continues if `LLM_API_URL` is missing, succeeds when provided).
+  7. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
+
+Host-side JSON and dependency assertions honor an explicit `PYTHON`
+interpreter, then fall back to `python3`, `python`, or `py -3`. This keeps the
+production gate on the same validated interpreter in Git Bash and CI. The
+script also keeps every absolute Docker argument as a literal in-container path
+when run through Git for Windows.
+
 * **Usage**:
   ```bash
   ./scripts/docker-smoke-test.sh
@@ -314,7 +327,7 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
 
 * **Configuration Set**:
   - `API_SERVER_ENABLED=true`
-  - `API_SERVER_KEY=wright-local-dev-key-000000000000000000000000`
+  - `API_SERVER_KEY` from the required `HERMES_API_KEY` environment variable
   - `API_SERVER_PORT=8642`
 * **Workflow**:
   1. Verifies the `hermes` CLI is installed.
@@ -323,6 +336,7 @@ Provisions a custom, dedicated configuration profile named `wright` inside the l
   4. Starts the Hermes profile gateway and polls the health endpoint (`http://127.0.0.1:8642/health`) to ensure it boots successfully.
 * **Usage**:
   ```bash
+  export HERMES_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(48))')"
   ./scripts/setup-wright-profile.sh
   ```
 
@@ -335,6 +349,12 @@ These helpers support the thin `hermes-plugin-wright` mirror and the PyPI/TestPy
 | `build-python-distributions.sh` | Bash | Validates `wright-core` and `wright-tool-registry` package metadata, builds source/wheel artifacts, and optionally performs clean install/import checks | Python 3, `build`, pip |
 | `sync-hermes-plugin-mirror.sh` | Bash | Exports only allowlisted plugin files from `hermes-plugin-wright/` into a root-level mirror directory and writes provenance | Git, Python 3 |
 | `validate-hermes-plugin-mirror.sh` | Bash | Validates mirror required files, prohibited paths, README links, provenance, and dependency policy | Bash, Python 3 |
+
+Both mirror scripts honor an explicit `PYTHON` interpreter and otherwise select
+a working `python3`, `python`, or `py -3` command. This prevents Git for Windows
+from accepting the non-functional Microsoft Store `python3` alias during the
+production merge gate. The Make target also stops immediately if mirror
+generation fails, so validation cannot continue against a partial export.
 
 * Validate package metadata without building artifacts:
   ```bash
@@ -361,3 +381,8 @@ These helpers support the thin `hermes-plugin-wright` mirror and the PyPI/TestPy
   ```
 
 The root mirror identifier is `https://github.com/burhop/hermes-plugin-wright/tree/dev` for development testing and `https://github.com/burhop/hermes-plugin-wright/tree/main` for stable customer testing. Use `--mirror-root` when validating the mirror repository itself; use the default subdirectory mode only when intentionally testing the legacy monorepo path.
+
+On Git for Windows, the shared lifecycle helper converts only the host-side
+bind-mount sources to Windows paths and disables further MSYS argument
+rewriting. Container paths such as `/bin/bash`, `/tmp/hermes-home`, and
+`/wright-src` therefore reach Docker unchanged.

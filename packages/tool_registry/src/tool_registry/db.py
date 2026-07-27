@@ -15,41 +15,11 @@ class _ClosingConnection(sqlite3.Connection):
             self.close()
 
 
-def ensure_migrations(conn: sqlite3.Connection) -> None:
-    columns = [
-        ("image_url", "TEXT DEFAULT NULL"),
-        ("description", "TEXT DEFAULT NULL"),
-        ("source_url", "TEXT DEFAULT NULL"),
-        ("installed_version", "TEXT DEFAULT NULL"),
-        ("env_vars", "TEXT DEFAULT NULL"),
-        ("instructions", "TEXT DEFAULT NULL"),
-        ("verification_state", "TEXT DEFAULT 'user_reported_url_needed'"),
-        ("installability_tier", "TEXT DEFAULT 'might_work'"),
-        ("risk_level", "TEXT DEFAULT 'low'"),
-        ("deployment_mode", "TEXT DEFAULT 'unknown'"),
-        ("platform_support", "TEXT DEFAULT NULL"),
-        ("host_software_required", "TEXT DEFAULT NULL"),
-        ("credentials_required", "TEXT DEFAULT NULL"),
-        ("default_enabled", "INTEGER DEFAULT 1"),
-        ("approval_gates", "TEXT DEFAULT NULL"),
-        ("validation_result", "TEXT DEFAULT NULL"),
-        ("follow_up_url", "TEXT DEFAULT NULL"),
-        ("install_blocked_reason", "TEXT DEFAULT NULL"),
-    ]
-    for col_name, col_type in columns:
-        try:
-            conn.execute(f"ALTER TABLE mcp_servers ADD COLUMN {col_name} {col_type};")
-        except sqlite3.OperationalError:
-            # Column already exists
-            pass
-
-
 def _get_conn(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, factory=_ClosingConnection)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.row_factory = sqlite3.Row
-    ensure_migrations(conn)
     return conn
 
 
@@ -163,6 +133,7 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         source_url=_row_value(row, "source_url"),
         installed_version=_row_value(row, "installed_version"),
         env_vars=env_vars,
+        launch_env=_parse_json(_row_value(row, "launch_env"), {}),
         instructions=_row_value(row, "instructions"),
         verification_state=_row_value(
             row, "verification_state", "user_reported_url_needed"
@@ -194,8 +165,11 @@ def _row_to_tool(row: sqlite3.Row) -> McpTool:
         tool_id=row["tool_id"],
         server_id=row["server_id"],
         name=row["name"],
+        title=_row_value(row, "title"),
         description=row["description"],
         input_schema=input_schema,
+        output_schema=_parse_json(_row_value(row, "output_schema"), None),
+        annotations=_parse_json(_row_value(row, "annotations"), {}),
         is_enabled=bool(row["is_enabled"]),
         created_at=row["created_at"],
     )
@@ -230,12 +204,12 @@ def insert_server(db_path: str, server: McpServer) -> None:
             """
             INSERT INTO mcp_servers (
                 server_id, name, type, command, is_active, is_installed, status, error_message, category, created_at, updated_at,
-                image_url, description, source_url, installed_version, env_vars, instructions,
+                image_url, description, source_url, installed_version, env_vars, launch_env, instructions,
                 verification_state, installability_tier, risk_level, deployment_mode,
                 platform_support, host_software_required, credentials_required,
                 default_enabled, approval_gates, validation_result, follow_up_url,
                 install_blocked_reason
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -254,6 +228,7 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 server.source_url,
                 server.installed_version,
                 _serialize_env_vars(server.env_vars),
+                _serialize_json(server.launch_env),
                 server.instructions,
                 server.verification_state,
                 server.installability_tier,
@@ -310,6 +285,7 @@ def update_server(
             set_clauses.append("default_enabled = ?")
             params.append(1 if value else 0)
         elif key in (
+            "launch_env",
             "platform_support",
             "host_software_required",
             "credentials_required",
@@ -377,15 +353,19 @@ def insert_tools(db_path: str, tools: List[McpTool]) -> None:
             conn.execute(
                 """
                 INSERT OR REPLACE INTO mcp_tools (
-                    tool_id, server_id, name, description, input_schema, is_enabled, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    tool_id, server_id, name, title, description, input_schema,
+                    output_schema, annotations, is_enabled, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     tool.tool_id,
                     tool.server_id,
                     tool.name,
+                    tool.title,
                     tool.description,
                     json.dumps(tool.input_schema),
+                    _serialize_json(tool.output_schema),
+                    _serialize_json(tool.annotations),
                     1 if tool.is_enabled else 0,
                     tool.created_at,
                 ),

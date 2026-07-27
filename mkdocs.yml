@@ -64,10 +64,23 @@ nav:
   - Architecture:
       - System Overview: architecture/system-overview.md
       - Project Structure: architecture/project-structure.md
+      - Python Package Boundaries: architecture/package-boundaries.md
       - Agent Adapters: architecture/agent-adapters.md
       - Tool Registry: architecture/tool-registry.md
+      - Gateway Service: architecture/gateway-service.md
       - Data Storage: architecture/data-storage.md
       - Observability: architecture/observability.md
+  - Security:
+      - Local Control Plane: security/control-plane.md
+      - Credential Management: security/credential-management.md
+      - Container Hardening: security/container-hardening.md
+  - Operations:
+      - Database Migration and Recovery: operations/database-recovery.md
+      - MCP Gateway: operations/mcp-gateway.md
+      - Solid Edge Diagnostics: operations/solid-edge-diagnostics.md
+  - Integrations:
+      - Codex MCP Compatibility: integrations/codex-mcp-compatibility.md
+      - Solid Edge Creation: integrations/solid-edge-creation.md
   - Contributing:
       - Development Setup: contributing/dev-setup.md
       - Spec-Kit Workflow: contributing/spec-kit.md
@@ -82,6 +95,9 @@ nav:
       - Community Release Readiness: release/community-release-readiness.md
       - Python Packaging: release/python-packaging.md
       - Container Publishing: release/container-publishing.md
+      - Artifact Topology: release/artifact-topology.md
+      - Release Runbook: release/release-runbook.md
+      - Release Recovery: release/release-recovery.md
   - Community:
       - Funding: community/funding.md
       - Commercial Support: community/commercial-support.md

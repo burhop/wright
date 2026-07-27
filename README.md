@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/burhop/wright/actions/workflows/python-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/python-quality.yml/badge.svg?branch=main" alt="Production Python CI"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/frontend-quality.yml/badge.svg?branch=main" alt="Production Frontend CI"></a>
-  <a href="https://github.com/burhop/wright/actions/workflows/docker-build.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docker-build.yml/badge.svg?branch=main" alt="Production Docker Build"></a>
+  <a href="https://github.com/burhop/wright/actions/workflows/docker-pr.yml"><img src="https://github.com/burhop/wright/actions/workflows/docker-pr.yml/badge.svg" alt="OCI Pull Request Validation"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/docs-deploy.yml/badge.svg?branch=main" alt="Production Docs"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/public-alpha-safety.yml/badge.svg?branch=main" alt="Production Security Scan"></a>
   <a href="https://github.com/burhop/wright/actions/workflows/release.yml?query=branch%3Amain"><img src="https://github.com/burhop/wright/actions/workflows/release.yml/badge.svg?branch=main" alt="Production Release"></a>
@@ -186,9 +186,9 @@ wright/
 |-- packages/
 |   |-- core/                   # Shared domain models and logging
 |   |-- agent_adapters/         # Adapter pattern for agent runtimes
-|   |-- workspace_service/      # Workspace lifecycle orchestration facade
+|   |-- workspace_service/      # Workspace application use cases and local adapters
 |   |-- tool_registry/          # MCP registry and validation logic
-|   `-- data_vault/             # Placeholder package for future storage extraction
+|   `-- data_vault/             # SQLite lifecycle, repositories, and secret storage
 |-- hermes-plugin-wright/       # Wright Hermes plugin compatibility package
 |-- tests/
 |   |-- ui-integration/         # Playwright integration tests

@@ -109,7 +109,8 @@ async def test_check_api_health():
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_get_mcp_servers():
+async def test_get_mcp_servers(monkeypatch):
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "wright-test-token")
     mock_servers = [
         {
             "server_id": "test-id",
@@ -118,18 +119,22 @@ async def test_get_mcp_servers():
             "is_active": True,
         }
     ]
-    respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers").mock(
+    route = respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers").mock(
         return_value=httpx.Response(200, json={"servers": mock_servers})
     )
     result = await get_mcp_servers()
     assert result["success"] is True
     assert len(result["servers"]) == 1
     assert result["servers"][0]["name"] == "Test Server"
+    assert (
+        route.calls.last.request.headers["Authorization"] == "Bearer wright-test-token"
+    )
 
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_register_mcp_server():
+async def test_register_mcp_server(monkeypatch):
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "wright-test-token")
     entry = CatalogEntry(
         id="test-tool",
         name="Test Tool",
@@ -138,6 +143,7 @@ async def test_register_mcp_server():
         domains=["cad"],
         transport="stdio",
         command=["python", "test.py"],
+        launch_env={"SERVER_ROOT": "{workspace.path}"},
         locality="local",
         weight="light",
     )
@@ -151,11 +157,13 @@ async def test_register_mcp_server():
 
     # Check that payload contains serialized entry details
     request = route.calls.last.request
+    assert request.headers["Authorization"] == "Bearer wright-test-token"
     import json
 
     payload = json.loads(request.content)
     assert payload["name"] == "Test Tool"
     assert payload["type"] == "stdio"
+    assert payload["launch_env"] == {"SERVER_ROOT": "{workspace.path}"}
 
 
 @respx.mock
@@ -189,24 +197,32 @@ async def test_register_webmcp_server_omits_empty_command():
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_get_workspaces():
+async def test_get_workspaces(monkeypatch):
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "wright-test-token")
     mock_workspaces = [
         {"id": "ws-1", "name": "Workspace 1", "local_path": "/path/to/ws"}
     ]
-    respx.get(f"{WRIGHT_API_BASE}/api/workspace/list").mock(
+    route = respx.get(f"{WRIGHT_API_BASE}/api/workspace/list").mock(
         return_value=httpx.Response(200, json={"workspaces": mock_workspaces})
     )
     result = await get_workspaces()
     assert result["success"] is True
     assert len(result["workspaces"]) == 1
+    assert (
+        route.calls.last.request.headers["Authorization"] == "Bearer wright-test-token"
+    )
 
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_get_credential_status():
-    respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers/test-id/credentials").mock(
+async def test_get_credential_status(monkeypatch):
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "wright-test-token")
+    route = respx.get(f"{WRIGHT_API_BASE}/api/mcp/servers/test-id/credentials").mock(
         return_value=httpx.Response(200, json={"credentials": {"API_KEY": True}})
     )
     result = await get_credential_status("test-id")
     assert result["success"] is True
     assert result["credentials"]["API_KEY"] is True
+    assert (
+        route.calls.last.request.headers["Authorization"] == "Bearer wright-test-token"
+    )

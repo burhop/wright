@@ -83,6 +83,7 @@ def openclaw_wright_gateway_profile(repo_dir: str) -> WrightGatewayProfile:
         command="uv",
         args=build_wright_gateway_args(repo_dir),
         terminal_cwd=repo_dir,
+        gateway_project_dir=repo_dir,
     )
 
 

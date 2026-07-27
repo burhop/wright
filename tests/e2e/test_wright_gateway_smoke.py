@@ -1,20 +1,21 @@
 def test_wright_gateway_happy_path_smoke(offline_api_client, gateway_smoke_seed):
-    list_response = offline_api_client.get("/api/gateway/tools")
+    list_response = offline_api_client.get(
+        "/api/gateway/tools", headers=gateway_smoke_seed["headers"]
+    )
 
     assert list_response.status_code == 200
     tools = list_response.json()["tools"]
-    assert tools == [
-        {
-            "name": gateway_smoke_seed["tool_name"],
-            "description": "Ping smoke tool",
-            "inputSchema": {"type": "object"},
-        }
-    ]
+    tool = next(
+        item for item in tools if item["name"] == gateway_smoke_seed["tool_name"]
+    )
+    assert tool["description"] == "Ping smoke tool"
+    assert tool["inputSchema"] == {"type": "object"}
 
     call_response = offline_api_client.post(
         "/api/gateway/call",
+        headers=gateway_smoke_seed["headers"],
         json={"name": gateway_smoke_seed["tool_name"], "arguments": {"ping": True}},
     )
 
     assert call_response.status_code == 200
-    assert call_response.json() == {}
+    assert call_response.json()["structuredContent"] == {}

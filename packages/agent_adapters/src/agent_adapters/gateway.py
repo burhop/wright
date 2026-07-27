@@ -17,6 +17,28 @@ def build_wright_gateway_args(repo_dir: str) -> list[str]:
     ]
 
 
+def build_bound_wright_gateway_args(
+    repo_dir: str, session_id: str, workspace_id: str
+) -> list[str]:
+    """Build the explicit, immutable binding required by the STDIO gateway."""
+    if not session_id.strip() or not workspace_id.strip():
+        raise ValueError("Wright gateway binding requires session and workspace IDs")
+    return [
+        "run",
+        "--project",
+        repo_dir,
+        "python",
+        "-m",
+        "api.gateway_stdio",
+        "--session-id",
+        session_id,
+        "--workspace-id",
+        workspace_id,
+        "--principal-id",
+        "local-admin",
+    ]
+
+
 @dataclass(frozen=True)
 class WrightGatewayProfile:
     provider_name: str
@@ -24,6 +46,7 @@ class WrightGatewayProfile:
     command: str
     args: list[str]
     terminal_cwd: str
+    gateway_project_dir: str | None = None
     display_name: str = "Wright gateway"
     protocol: str = WRIGHT_GATEWAY_PROTOCOL
     workspace_context_filename: str | None = None

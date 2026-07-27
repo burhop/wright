@@ -10,6 +10,14 @@ WRIGHT_API_BASE = "http://127.0.0.1:8000"
 WRIGHT_UI_URL = "http://127.0.0.1:8000/"
 
 
+def _wright_auth_headers() -> Dict[str, str]:
+    """Return the bearer header required by Wright's protected API routes."""
+    token = os.environ.get("WRIGHT_API_TOKEN", "").strip()
+    if not token:
+        return {}
+    return {"Authorization": f"Bearer {token}"}
+
+
 def _is_wright_repo(directory: str) -> bool:
     """Check if a directory looks like the Wright repo root."""
     api_dir = os.path.join(directory, "api")
@@ -102,7 +110,10 @@ async def get_mcp_servers() -> Dict[str, Any]:
     """Retrieves list of registered MCP servers via GET /api/mcp/servers."""
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            r = await client.get(f"{WRIGHT_API_BASE}/api/mcp/servers")
+            r = await client.get(
+                f"{WRIGHT_API_BASE}/api/mcp/servers",
+                headers=_wright_auth_headers(),
+            )
             r.raise_for_status()
             data = r.json()
             return {
@@ -133,10 +144,15 @@ async def register_mcp_server(entry: CatalogEntry) -> Dict[str, Any]:
         "env_vars": [v.model_dump() for v in entry.env_vars]
         if entry.env_vars
         else None,
+        "launch_env": entry.launch_env,
     }
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            r = await client.post(f"{WRIGHT_API_BASE}/api/mcp/servers", json=payload)
+            r = await client.post(
+                f"{WRIGHT_API_BASE}/api/mcp/servers",
+                headers=_wright_auth_headers(),
+                json=payload,
+            )
             r.raise_for_status()
             data = r.json()
             return {
@@ -154,7 +170,10 @@ async def get_workspaces() -> Dict[str, Any]:
     """Retrieves list of workspaces via GET /api/workspace/list."""
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            r = await client.get(f"{WRIGHT_API_BASE}/api/workspace/list")
+            r = await client.get(
+                f"{WRIGHT_API_BASE}/api/workspace/list",
+                headers=_wright_auth_headers(),
+            )
             r.raise_for_status()
             data = r.json()
             return {
@@ -173,7 +192,8 @@ async def get_credential_status(server_id: str) -> Dict[str, Any]:
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             r = await client.get(
-                f"{WRIGHT_API_BASE}/api/mcp/servers/{server_id}/credentials"
+                f"{WRIGHT_API_BASE}/api/mcp/servers/{server_id}/credentials",
+                headers=_wright_auth_headers(),
             )
             r.raise_for_status()
             data = r.json()

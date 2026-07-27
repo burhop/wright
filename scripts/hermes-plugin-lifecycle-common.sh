@@ -16,7 +16,7 @@ PLUGIN_REF="${WRIGHT_PLUGIN_REF:-dev}"
 PLUGIN_SUBDIR="${WRIGHT_PLUGIN_SUBDIR:-hermes-plugin-wright}"
 PLUGIN_SOURCE_MODE="${WRIGHT_PLUGIN_SOURCE_MODE:-subdir}"
 PLUGIN_IDENTIFIER_OVERRIDE="${WRIGHT_PLUGIN_IDENTIFIER:-}"
-HERMES_EXPECTED_VERSION="${WRIGHT_HERMES_EXPECTED_VERSION:-0.18.0}"
+HERMES_EXPECTED_VERSION="${WRIGHT_HERMES_EXPECTED_VERSION:-0.19.0}"
 PLUGIN_IDENTIFIER=""
 
 # Root mirror identifier pattern: ${PLUGIN_REPO_URL}/tree/${PLUGIN_REF}
@@ -181,17 +181,26 @@ cleanup_hermes_home() {
 
 run_in_hermes_container() {
   local hermes_home="$1"
+  local docker_hermes_home="$hermes_home"
+  local docker_root_dir="$ROOT_DIR"
   shift
 
-  docker run --rm \
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*)
+      docker_hermes_home="$(cygpath -w "$hermes_home")"
+      docker_root_dir="$(cygpath -w "$ROOT_DIR")"
+      ;;
+  esac
+
+  MSYS_NO_PATHCONV=1 docker run --rm \
     --entrypoint /bin/bash \
     -e HOME=/home/agent \
     -e HERMES_HOME=/tmp/hermes-home \
     -e WRIGHT_PLUGIN_NAME="$PLUGIN_NAME" \
     -e WRIGHT_PLUGIN_IDENTIFIER="$PLUGIN_IDENTIFIER" \
     -e WRIGHT_HERMES_EXPECTED_VERSION="$HERMES_EXPECTED_VERSION" \
-    -v "$hermes_home:/tmp/hermes-home" \
-    -v "$ROOT_DIR:/wright-src:ro" \
+    -v "$docker_hermes_home:/tmp/hermes-home" \
+    -v "$docker_root_dir:/wright-src:ro" \
     "$IMAGE_TAG" \
     -c "$*"
 }

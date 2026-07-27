@@ -5,6 +5,7 @@ description = "Wright engineering MCP catalog for Hermes Agent"
 authors = [{name = "Wright Project", email = "wright@example.com"}]
 license = {text = "MIT"}
 requires-python = ">=3.11"
+classifiers = ["Private :: Do Not Upload"]
 dependencies = [
     "pyyaml>=6.0",
     "pydantic>=2.0",

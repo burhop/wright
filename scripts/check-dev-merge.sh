@@ -30,6 +30,16 @@ trap cleanup EXIT
 
 cd "$ROOT_DIR"
 
+if [[ -n "${PYTHON:-}" ]]; then
+  PYTHON_BIN="$PYTHON"
+elif [[ -x "$ROOT_DIR/.venv/Scripts/python.exe" ]]; then
+  PYTHON_BIN="$ROOT_DIR/.venv/Scripts/python.exe"
+elif [[ -x "$ROOT_DIR/.venv/bin/python" ]]; then
+  PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+else
+  PYTHON_BIN="python3"
+fi
+
 echo "Running Wright dev merge gate from $ROOT_DIR"
 echo "Set SKIP_PLAYWRIGHT=1 only for a documented local browser/runtime limitation."
 
@@ -38,18 +48,36 @@ run uv run ruff check "${PYTHON_WORKSPACE_PATHS[@]}"
 run uv run ruff format --check "${PYTHON_WORKSPACE_PATHS[@]}"
 
 run npx -w apps/web eslint .
-run npx prettier --check apps/web/
+run npx prettier --check apps/web/ --end-of-line auto
 run npx tsc --noEmit -p apps/web/tsconfig.app.json
 
-run uv pip install mypy --quiet
+run uv pip install mypy build --quiet
+run uv run mypy scripts/release src/wright_engineering --ignore-missing-imports
 run uv run mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
   echo "::warning::Mypy type checks failed with warning mode enabled."
 }
 
-run scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
+run uv run python -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
+run uv run pytest -q tests/release
+run uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
+
+# Keep the request-to-cookie, request-to-filesystem/process, and exception-to-response
+# regression boundaries visible as a dedicated gate. GitHub CodeQL remains the
+# whole-program data-flow authority, while these tests provide an equivalent local
+# behavioral check for the security paths that previously escaped this script.
+run uv run pytest -q \
+  apps/api/tests/test_security.py \
+  apps/api/tests/test_gateway_api.py \
+  packages/workspace_service/tests/test_files.py \
+  packages/workspace_service/tests/test_workspace_path.py \
+  packages/workspace_service/tests/test_workspace_service.py
 
 run uv run pytest
-run uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
+run uv run --isolated --reinstall-package hermes-plugin-wright \
+  --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx \
+  pytest hermes-plugin-wright/tests
 run npm run test --workspace=apps/web
 run npm run build --workspace=apps/web
 run uv run --with mkdocs-material mkdocs build --strict
@@ -75,6 +103,9 @@ else
   echo "==> Starting backend for Playwright live gate"
   LLM_API_URL="${LLM_API_URL:-http://127.0.0.1:8000/v1}" \
   DATABASE_PATH="$TMP_DB" \
+  WRIGHT_AUTH_MODE=compat \
+  WRIGHT_API_MCP_AUTOSTART=1 \
+  WRIGHT_BIND_HOST=127.0.0.1 \
     uv run uvicorn api.main:app --host 127.0.0.1 --port 8000 >"$BACKEND_LOG" 2>&1 &
   BACKEND_PID=$!
 

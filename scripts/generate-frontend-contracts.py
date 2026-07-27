@@ -56,10 +56,7 @@ export interface ValidationEvidence {
 }
 
 export type AgentSupportLevel =
-  | "supported"
-  | "experimental"
-  | "stub"
-  | "unavailable";
+  "supported" | "experimental" | "stub" | "unavailable";
 
 export interface AgentRuntimeProviderContract {
   name: string;

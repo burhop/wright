@@ -2,9 +2,23 @@ import pytest
 import os
 import tempfile
 import yaml
+from importlib.resources import files
 from hermes_plugin_wright.catalog import CatalogLoader
 from hermes_plugin_wright.schemas import CatalogEntry
 from tool_registry.catalog_loader import load_catalog_entries
+
+
+def test_plugin_catalog_is_generated_from_canonical_packaged_resource():
+    canonical = (
+        files("tool_registry.catalog")
+        .joinpath("engineering-catalog.yaml")
+        .read_text("utf-8")
+    )
+    projection = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "catalog.yaml"
+    )
+    with open(projection, encoding="utf-8") as stream:
+        assert stream.read() == canonical
 
 
 def test_default_catalog_loads():

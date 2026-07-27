@@ -242,8 +242,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         type: normalizedFile.extension,
         isDirty: false,
         last_modified: normalizedFile.metadata?.last_modified as
-          | number
-          | undefined,
+          number | undefined,
       };
 
       setOpenTabs((prev) => dedupeEditorTabs([...prev, newTab]));
@@ -410,8 +409,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
             ? {
                 ...t,
                 last_modified: normalizedFile.metadata?.last_modified as
-                  | number
-                  | undefined,
+                  number | undefined,
               }
             : t,
         ),

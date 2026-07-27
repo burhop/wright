@@ -59,6 +59,26 @@ def test_launch_checklist_is_published_and_release_gate_is_documented() -> None:
     assert "uv run --with mkdocs-material mkdocs build --strict" in testing
 
 
+def test_exact_artifact_runbooks_are_published_and_honest() -> None:
+    mkdocs = read_text("mkdocs.yml")
+    topology = read_text("docs/release/artifact-topology.md")
+    runbook = read_text("docs/release/release-runbook.md")
+    recovery = read_text("docs/release/release-recovery.md")
+
+    for expected in [
+        "release/artifact-topology.md",
+        "release/release-runbook.md",
+        "release/release-recovery.md",
+    ]:
+        assert expected in mkdocs
+    assert "`wright-engineering`" in topology
+    assert "`wright-core`" in topology
+    assert "TestPyPI" in runbook and "GitHub Release last" in runbook
+    assert "rehearsal" in runbook and "do not create tags" in runbook
+    assert "Never overwrite PyPI files" in recovery
+    assert "digest already recorded as verified" in recovery.lower()
+
+
 def test_docs_links_that_broke_strict_build_are_no_longer_doc_relative() -> None:
     deployment = read_text("docs/deployment-configurations.md")
     plan = read_text("docs/wright-hermes-plugin-plan.md")

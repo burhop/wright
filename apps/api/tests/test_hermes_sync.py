@@ -5,6 +5,7 @@ import yaml
 from agent_adapters.openclaw import openclaw_wright_gateway_profile
 from api.services import hermes_sync
 from api.services import wright_gateway_sync
+from workspace_service.adapters.runtime import associate_workspace_session
 
 
 def _create_workspace_context_db(tmp_path, local_path):
@@ -58,12 +59,11 @@ def _create_workspace_context_db(tmp_path, local_path):
 
 def test_static_hermes_config_uses_runtime_repo_dir(tmp_path, monkeypatch):
     hermes_root = tmp_path / ".hermes"
-
-    def fake_expanduser(path: str) -> str:
-        return path.replace("~/.hermes", str(hermes_root))
-
     monkeypatch.setenv("WRIGHT_REPO_DIR", "/workspace")
-    monkeypatch.setattr(hermes_sync.os.path, "expanduser", fake_expanduser)
+    monkeypatch.setenv("HERMES_HOME", str(hermes_root))
+    monkeypatch.delenv("LOCALAPPDATA", raising=False)
+    monkeypatch.delenv("HERMES_CONFIG_PATH", raising=False)
+    monkeypatch.delenv("HERMES_PROFILE", raising=False)
 
     changed = hermes_sync._write_static_hermes_config()
 
@@ -98,6 +98,52 @@ def test_generic_wright_gateway_config_writer_uses_profile(tmp_path):
     assert config["terminal"] == {"cwd": "/workspace"}
 
 
+def test_gateway_config_writer_preserves_operator_runtime_fields(tmp_path):
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "mcp_servers": {
+                    "wrightgateway": {
+                        "command": "stale-command",
+                        "args": ["stale-argument"],
+                        "env": {
+                            "WRIGHT_MCP_TIMEOUT": "130",
+                            "WRIGHT_MCP_MAX_TIMEOUT": "180",
+                        },
+                        "enabled": True,
+                        "tools": {"include": ["wright__workspace_status"]},
+                        "timeout": 180,
+                        "connect_timeout": 30,
+                        "url": "https://stale.invalid/mcp",
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    profile = wright_gateway_sync.default_hermes_gateway_profile("/workspace")
+
+    changed = wright_gateway_sync.write_gateway_profile_config(
+        profile, [str(config_path)]
+    )
+
+    assert changed is True
+    gateway = yaml.safe_load(config_path.read_text())["mcp_servers"]["wrightgateway"]
+    assert gateway == {
+        "command": "uv",
+        "args": profile.args,
+        "env": {
+            "WRIGHT_MCP_TIMEOUT": "130",
+            "WRIGHT_MCP_MAX_TIMEOUT": "180",
+        },
+        "enabled": True,
+        "tools": {"include": ["wright__workspace_status"]},
+        "timeout": 180,
+        "connect_timeout": 30,
+    }
+
+
 def test_workspace_gateway_context_uses_profile_filename(tmp_path):
     workspace_path = tmp_path / "workspace"
     workspace_path.mkdir()
@@ -118,3 +164,73 @@ def test_workspace_gateway_context_uses_profile_filename(tmp_path):
     )
 
     assert {path.name for path in workspace_path.iterdir()} == existing_files
+
+
+def test_workspace_sync_writes_exact_gateway_binding(tmp_path):
+    workspace_path = tmp_path / "workspace"
+    workspace_path.mkdir()
+    db_path = _create_workspace_context_db(tmp_path, workspace_path)
+    config_path = tmp_path / "config.yaml"
+
+    changed = wright_gateway_sync.sync_workspace_tools_to_wright_gateway(
+        "session1",
+        db_path,
+        profile=wright_gateway_sync.default_hermes_gateway_profile("/wright"),
+        config_paths=[str(config_path)],
+    )
+
+    assert changed is True
+    gateway = yaml.safe_load(config_path.read_text())["mcp_servers"]["wrightgateway"]
+    assert gateway["args"][-7:] == [
+        "api.gateway_stdio",
+        "--session-id",
+        "session1",
+        "--workspace-id",
+        "ws1",
+        "--principal-id",
+        "local-admin",
+    ]
+    config = yaml.safe_load(config_path.read_text())
+    assert config["terminal"]["cwd"] == str(workspace_path)
+    assert gateway["args"][2] == "/wright"
+
+
+def test_workspace_sync_reuses_binding_for_another_session_in_same_workspace(tmp_path):
+    workspace_path = tmp_path / "workspace"
+    workspace_path.mkdir()
+    db_path = _create_workspace_context_db(tmp_path, workspace_path)
+    config_path = tmp_path / "config.yaml"
+    profile = wright_gateway_sync.default_hermes_gateway_profile("/wright")
+
+    assert (
+        wright_gateway_sync.sync_workspace_tools_to_wright_gateway(
+            "session1",
+            db_path,
+            profile=profile,
+            config_paths=[str(config_path)],
+        )
+        is True
+    )
+    associate_workspace_session(db_path, "ws1", "session2")
+
+    changed = wright_gateway_sync.sync_workspace_tools_to_wright_gateway(
+        "session2",
+        db_path,
+        profile=profile,
+        config_paths=[str(config_path)],
+    )
+
+    assert changed is False
+    gateway = yaml.safe_load(config_path.read_text())["mcp_servers"]["wrightgateway"]
+    assert gateway["args"][-7:] == [
+        "api.gateway_stdio",
+        "--session-id",
+        "session1",
+        "--workspace-id",
+        "ws1",
+        "--principal-id",
+        "local-admin",
+    ]
+    config = yaml.safe_load(config_path.read_text())
+    assert config["terminal"]["cwd"] == str(workspace_path)
+    assert gateway["args"][2] == "/wright"

@@ -107,6 +107,7 @@ def test_frontend_quality_runs_linux_playwright_e2e() -> None:
     assert "playwright-e2e:" in workflow
     assert "runs-on: ubuntu-latest" in workflow
     assert "uv run uvicorn api.main:app" in workflow
+    assert 'WRIGHT_AUTH_MODE="compat"' in workflow
     assert "http://127.0.0.1:8000/api/health" in workflow
     assert "npx playwright test" in workflow
     assert "Backend process exited before becoming ready" in workflow
@@ -145,10 +146,12 @@ def test_active_ui_tests_do_not_use_developer_home_paths() -> None:
 def test_ci_runs_frontend_tests_build_and_correct_docker_smoke_process() -> None:
     frontend = read_text(".github/workflows/frontend-quality.yml")
     docker = read_text(".github/workflows/docker-build.yml")
+    smoke = read_text("scripts/docker-smoke-test.sh")
 
     assert "npm run test --workspace=apps/web" in frontend
     assert "npm run build --workspace=apps/web" in frontend
-    assert "hermes-gateway.*RUNNING" in docker
+    assert "WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh" in docker
+    assert "hermes-gateway.*RUNNING" in smoke
     assert "hermes-webui.*RUNNING" not in docker
 
 

@@ -1,0 +1,21 @@
+name: dependency review
+
+on:
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4
+        with:
+          fail-on-severity: high
+          allow-ghsas: GHSA-qwww-vcr4-c8h2
+          deny-licenses: GPL-3.0, AGPL-3.0

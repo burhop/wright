@@ -3,14 +3,31 @@ name = "wright-workspace-service"
 version = "0.1.0"
 description = "Workspace lifecycle orchestration facade for Wright"
 requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Wright Project", email = "wright@example.com" }]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 
 dependencies = [
     "pydantic>=2.7",
-    "wright-core",
-    "wright-agent-adapters",
-    "wright-data-vault",
-    "wright-tool-registry",
+    "wright-core>=0.1.0,<0.2.0",
+    "wright-agent-adapters>=0.1.0,<0.2.0",
+    "wright-data-vault>=0.1.0,<0.2.0",
+    "wright-tool-registry>=0.1.0,<0.2.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/burhop/wright"
+Source = "https://github.com/burhop/wright/tree/dev/packages/workspace_service"
+Issues = "https://github.com/burhop/wright/issues"
+Documentation = "https://burhop.github.io/wright/"
+Releases = "https://github.com/burhop/wright/releases"
 
 [tool.uv.sources]
 wright-core = { workspace = true }

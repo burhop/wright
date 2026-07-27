@@ -1,7 +1,12 @@
 import asyncio
+from contextlib import suppress
 import json
+import os
 import re
 import secrets
+import shutil
+import subprocess
+import time
 from typing import Optional, List, AsyncIterator
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
@@ -9,6 +14,7 @@ from pydantic import BaseModel
 import structlog
 from opentelemetry import trace
 from core.tracing import traced
+from api.config import api_mcp_autostart_enabled
 
 from agent_adapters import (
     BaseAgentEngine,
@@ -16,9 +22,10 @@ from agent_adapters import (
     UnsupportedAgentRuntimeError,
     create_agent_engine,
     default_agent_registry,
+    GenericProgressProjector,
 )
 from workspace_service import WorkspaceService
-from core.workspace import (
+from workspace_service.adapters.runtime import (
     get_workspace_by_session,
     get_workspace_enabled_tools,
     update_workspace_agent_session_title,
@@ -31,9 +38,45 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
+def _restart_hermes_gateway_process() -> None:
+    executable = shutil.which("hermes")
+    if not executable:
+        raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
+    completed = subprocess.run(
+        [executable, "gateway", "restart"],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        creationflags=creationflags,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError("Hermes gateway restart failed after workspace rebinding")
+
+
+async def _refresh_hermes_gateway(engine: BaseAgentEngine) -> None:
+    """Reload Hermes' persistent MCP connection after an explicit rebind."""
+    await asyncio.to_thread(_restart_hermes_gateway_process)
+    deadline = time.monotonic() + 45.0
+    while time.monotonic() < deadline:
+        try:
+            health = await engine.check_health()
+            if str(health.get("state") or "").lower() == "connected":
+                return
+        except Exception:
+            pass
+        await asyncio.sleep(0.25)
+    raise RuntimeError("Hermes gateway did not become ready after workspace rebinding")
+
+
 class ChatStreamJob:
     def __init__(
-        self, session_id: str, request: AgentChatRequest, engine: BaseAgentEngine
+        self,
+        session_id: str,
+        request: AgentChatRequest,
+        engine: BaseAgentEngine,
+        heartbeat_seconds: float = 10.0,
     ):
         self.session_id = session_id
         self.request = request
@@ -43,6 +86,9 @@ class ChatStreamJob:
         self.cancelled = False
         self._condition = asyncio.Condition()
         self._task: asyncio.Task | None = None
+        self._started_at = 0.0
+        self._heartbeat_seconds = heartbeat_seconds
+        self._progress = GenericProgressProjector()
 
     def start(self) -> None:
         if self._task is None:
@@ -62,20 +108,47 @@ class ChatStreamJob:
             self.done = True
             self._condition.notify_all()
 
+    async def _emit_heartbeats(self) -> None:
+        while True:
+            await asyncio.sleep(self._heartbeat_seconds)
+            elapsed = time.monotonic() - self._started_at
+            await self._append(
+                "progress",
+                self._progress.heartbeat(elapsed_seconds=elapsed),
+            )
+
     async def _run(self) -> None:
         saw_stream_end = False
+        self._started_at = time.monotonic()
+        await self._append(
+            "progress",
+            self._progress.start(),
+        )
+        heartbeat_task = asyncio.create_task(self._emit_heartbeats())
         try:
             async for event in self.engine.stream_chat(self.request):
                 if self.cancelled:
                     break
                 saw_stream_end = saw_stream_end or event.type == "stream_end"
-                await self._append(event.type, event.data)
+                event_data = event.data
+                if event.type == "progress":
+                    projected = self._progress.project(
+                        event.data,
+                        elapsed_seconds=time.monotonic() - self._started_at,
+                    )
+                    if projected is None:
+                        continue
+                    event_data = projected
+                await self._append(event.type, event_data)
         except asyncio.CancelledError:
             self.cancelled = True
             await self._append("error", {"message": "Stream cancelled by user."})
         except Exception as exc:
             await self._append("error", {"message": str(exc)})
         finally:
+            heartbeat_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await heartbeat_task
             if not self.cancelled and not saw_stream_end:
                 await self._append("stream_end", {})
             await self._finish()
@@ -172,6 +245,9 @@ async def ensure_workspace_mcp_servers_active(
     request: Request, session_id: str
 ) -> None:
     """Start enabled workspace MCP servers before a chat turn begins."""
+
+    if not api_mcp_autostart_enabled():
+        return
 
     mcp_engine = getattr(request.app.state, "mcp_engine", None)
     if not mcp_engine:
@@ -391,8 +467,8 @@ async def create_new_session(
 ):
     import os
     import uuid
-    from core import WorkspaceManager
-    from core.workspace import create_workspace
+    from workspace_service import WorkspaceManager
+    from workspace_service.adapters.runtime import create_workspace
     from api.config import DATABASE_PATH
 
     trace_id = get_current_trace_id()
@@ -484,7 +560,10 @@ async def list_agent_sessions(
         sessions = await engine.list_sessions()
         if workspace_id:
             from api.config import DATABASE_PATH
-            from core.workspace import associate_workspace_session, get_workspace_by_id
+            from workspace_service.adapters.runtime import (
+                associate_workspace_session,
+                get_workspace_by_id,
+            )
 
             workspace = get_workspace_by_id(DATABASE_PATH, workspace_id)
             if workspace:
@@ -565,11 +644,30 @@ async def chat(
     # Sync and activate workspace tools before chat turn. Chat should not begin
     # until the MCP servers assigned to this workspace are available.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    gateway_restart_required = False
     if sync_manager:
         try:
-            sync_manager.sync_workspace_tools(body.session_id)
+            gateway_restart_required = bool(
+                sync_manager.sync_workspace_tools(body.session_id)
+            )
         except Exception as e:
             log.warn("Failed to sync workspace tools", error=str(e))
+
+    if (
+        gateway_restart_required
+        and sync_manager
+        and getattr(sync_manager, "active_agent", "") == "hermes"
+    ):
+        try:
+            await sync_manager.refresh_gateway_if_needed(
+                lambda: _refresh_hermes_gateway(engine)
+            )
+        except Exception as exc:
+            log.exception("workspace_gateway_rebind_failed", error=str(exc))
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=str(exc),
+            ) from exc
 
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 

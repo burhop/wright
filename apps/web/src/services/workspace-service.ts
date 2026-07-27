@@ -657,6 +657,25 @@ export class WorkspaceService {
     return data.enabled_tools;
   }
 
+  async getWorkspaceToolsById(workspaceId: string): Promise<string[]> {
+    workspaceLogger.info("Fetching workspace tools by workspace ID", {
+      workspaceId,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/tools`,
+    );
+    if (!response.ok) {
+      workspaceLogger.error("Failed to fetch workspace tools by workspace ID", {
+        status: response.status,
+      });
+      throw new Error(
+        `Failed to fetch workspace tools: ${response.statusText}`,
+      );
+    }
+    const data = await response.json();
+    return data.enabled_tools;
+  }
+
   async toggleWorkspaceTool(
     sessionId: string,
     serverId: string,
@@ -683,6 +702,39 @@ export class WorkspaceService {
     );
     if (!response.ok) {
       workspaceLogger.error("Failed to toggle workspace tool", {
+        status: response.status,
+      });
+      throw new Error(`Failed to toggle tool: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.success;
+  }
+
+  async toggleWorkspaceToolById(
+    workspaceId: string,
+    serverId: string,
+    isEnabled: boolean,
+  ): Promise<boolean> {
+    workspaceLogger.info("Toggling workspace tool by workspace ID", {
+      workspaceId,
+      serverId,
+      isEnabled,
+    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/tools/toggle`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          server_id: serverId,
+          is_enabled: isEnabled,
+        }),
+      },
+    );
+    if (!response.ok) {
+      workspaceLogger.error("Failed to toggle workspace tool by workspace ID", {
         status: response.status,
       });
       throw new Error(`Failed to toggle tool: ${response.statusText}`);

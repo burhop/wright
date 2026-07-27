@@ -14,6 +14,8 @@ from pydantic import BaseModel
 from agent_adapters import create_agent_engine
 from api.config import (
     DATABASE_PATH,
+    McpTransportSettings,
+    api_mcp_autostart_enabled,
     get_llm_health_url,
 )
 from api.routers.agent import router as agent_router
@@ -25,47 +27,107 @@ from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.middleware.tracing import TracingMiddleware
+from api.composition import (
+    build_api_gateway_service,
+    close_application_services,
+    workspace_service,
+)
+from api.mcp_transport import AuthenticatedMcpTransport, McpTransportMount
+from api.security import (
+    ControlPlaneSecurityMiddleware,
+    SESSION_COOKIE,
+    SecuritySettings,
+    authorize_websocket,
+)
 from api.schemas.common import ErrorResponse, ErrorCodes
-from core.logging import configure_logging, get_logger
+from core.logging import get_logger
+from api.logging_config import configure_logging
 from tool_registry import McpEngine
-from core import AgentSyncManager
+from workspace_service import AgentSyncManager
+from data_vault import install_default_secret_provider
 
 # Configure structured JSON logging globally (Constitution Section 7)
 configure_logging()
+install_default_secret_provider()
 logger = get_logger("api.main")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Run database migrations to initialize the schema and seed the catalog
+    # Refresh after test/deployment environment setup, before serving requests.
+    app.state.security_settings = SecuritySettings.from_env()
+    app.state.security_settings.validate()
+    # State must be fully migrated and verified before runtime construction.
     try:
         from api.database.migrate import run_migrations
 
         run_migrations()
-    except Exception as e:
-        logger.exception("database_migration_failed", error=str(e))
+        from api.database.secret_migration import migrate_plaintext_secrets
+
+        migrate_plaintext_secrets(DATABASE_PATH)
+        from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+
+        reconcile_engineering_catalog(DATABASE_PATH)
+    except Exception as exc:
+        logger.error(
+            "database_readiness_failed",
+            error_type=type(exc).__name__,
+            error="Database lifecycle validation failed",
+        )
+        raise
 
     # Startup initializes the MCP engine only. MCP server processes are started
     # when an active workspace has those installed servers assigned to it.
-    app.state.mcp_engine = McpEngine(DATABASE_PATH)
-    yield
-    # Shutdown: Stop active subprocesses/runners
+    if not hasattr(app.state, "agent_engine"):
+        app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
+    if not hasattr(app.state, "agent_sync_manager"):
+        from api.services.wright_gateway_sync import (
+            sync_workspace_tools_to_wright_gateway,
+        )
+
+        app.state.agent_sync_manager = AgentSyncManager(
+            DATABASE_PATH, sync_workspace_tools_to_wright_gateway
+        )
+    mcp_settings = McpTransportSettings.from_env()
+    app.state.mcp_engine = McpEngine(
+        DATABASE_PATH,
+        operation_timeout=mcp_settings.operation_timeout_seconds,
+    )
+    if api_mcp_autostart_enabled():
+        await app.state.mcp_engine.sync_active_servers()
+    app.state.gateway_service = build_api_gateway_service(
+        DATABASE_PATH, app.state.mcp_engine, mcp_settings
+    )
+    app.state.mcp_transport = AuthenticatedMcpTransport(
+        app.state.gateway_service,
+        mcp_settings,
+        app.state.security_settings,
+    )
     try:
-        await app.state.mcp_engine.shutdown()
-    except Exception as e:
-        logger.exception("mcp_shutdown_failed", error=str(e))
+        app.state.workspace_service = workspace_service()
+        async with app.state.mcp_transport.run():
+            yield
+    finally:
+        # Shutdown owns every process and worker constructed during startup.
+        try:
+            await app.state.gateway_service.shutdown()
+        except Exception as e:
+            logger.exception("mcp_shutdown_failed", error=str(e))
+        await close_application_services()
 
 
 app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
+app.state.security_settings = SecuritySettings.from_env()
 
-# Enable CORS for frontend development
+# Allow only explicitly configured frontend origins.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=list(app.state.security_settings.allowed_origins),
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Trace-Id"],
 )
+app.add_middleware(ControlPlaneSecurityMiddleware)
 
 # Add OpenTelemetry tracing middleware (Constitution Section 7)
 app.add_middleware(TracingMiddleware)
@@ -114,10 +176,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-# Instantiate and store the default agent engine in the app state.
-app.state.agent_engine = create_agent_engine(db_path=DATABASE_PATH)
-app.state.agent_sync_manager = AgentSyncManager(DATABASE_PATH)
-
 # Mount the routers
 app.include_router(workspace_router, prefix="/api/workspace", tags=["Workspace"])
 app.include_router(agent_router, prefix="/api/agent", tags=["Agent"])
@@ -127,11 +185,18 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+app.add_route(
+    "/mcp",
+    McpTransportMount(),
+    methods=["GET", "POST", "DELETE"],
+    name="mcp-transport",
+)
 
 
 @app.websocket("/api/webmcp/ws")
 async def webmcp_websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
+    selected_protocol = authorize_websocket(websocket, app.state.security_settings)
+    await websocket.accept(subprotocol=selected_protocol)
     mcp_engine = app.state.mcp_engine
     await mcp_engine.register_webmcp_connection(websocket)
     try:
@@ -151,6 +216,35 @@ class HealthResponse(BaseModel):
     latencyMs: float
     baseUrl: str | None = None
     error: str | None = None
+
+
+class LocalSessionRequest(BaseModel):
+    token: str
+
+
+@app.post("/api/auth/session", status_code=204)
+async def create_local_session(body: LocalSessionRequest, response: Response):
+    """Exchange the configured local token for a browser-only session cookie."""
+    settings: SecuritySettings = app.state.security_settings
+    if settings.enforced and not settings.token_valid(body.token):
+        from fastapi import HTTPException
+
+        raise HTTPException(status_code=401, detail="Invalid local token")
+    browser_session = settings.browser_session_token()
+    if browser_session is not None:
+        response.set_cookie(
+            SESSION_COOKIE,
+            browser_session,
+            httponly=True,
+            secure=os.getenv("WRIGHT_COOKIE_SECURE", "0") == "1",
+            samesite="strict",
+            path="/api",
+        )
+
+
+@app.delete("/api/auth/session", status_code=204)
+async def delete_local_session(response: Response):
+    response.delete_cookie(SESSION_COOKIE, path="/api")
 
 
 @app.get("/api/health", response_model=HealthResponse)

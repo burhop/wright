@@ -22,6 +22,7 @@ def normalize_mcp_seed_entry(
     merged.setdefault("credentials_required", [])
     merged.setdefault("default_enabled", True)
     merged.setdefault("approval_gates", [])
+    merged.setdefault("launch_env", {})
     merged.setdefault("validation_result", validation_summary_dict())
     merged.setdefault("follow_up_url", None)
     merged.setdefault("install_blocked_reason", None)
@@ -48,6 +49,7 @@ def catalog_entry_to_mcp_seed(entry: CatalogEntry) -> dict[str, Any]:
             "description": entry.description,
             "source_url": entry.source_url,
             "env_vars": entry.env_vars,
+            "launch_env": entry.launch_env,
             "instructions": None,
             "installed_version": None,
             "verification_state": entry.verification_state,

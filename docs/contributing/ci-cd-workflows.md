@@ -1,10 +1,11 @@
 # GitHub Workflows and CI/CD Pipeline
 
-This guide describes the current public-alpha CI/CD workflows for Wright. The
-release posture is local-first and alpha-safe: pull requests validate source,
-docs, leak scanning, and container smoke behavior; public image publishing
-happens from release tags, with GHCR as the default registry path and Docker Hub
-enabled only when credentials are configured.
+This guide describes the current public-alpha CI/CD workflows for Wright. Pull
+requests validate source, docs, dependencies, leak scanning, and exact container
+behavior. Release candidates are built once by a reusable workflow and promoted
+by digest. Public package, image, documentation, and GitHub Release publication
+happens only from release tags, with GHCR as the default registry path and
+Docker Hub enabled only when credentials are configured.
 
 ## Workflow Overview
 
@@ -12,17 +13,23 @@ enabled only when credentials are configured.
 | --- | --- | --- |
 | `python-quality.yml` | Push or pull request to `main` or `dev` | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`. |
 | `frontend-quality.yml` | Push or pull request to `main` or `dev` | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`. |
+| `test-windows.yml` | Push or pull request to `main` or `dev`, or manual run | Runs backend pytest and frontend Vitest on `windows-latest`; live Playwright remains in the Linux frontend workflow. |
 | `public-alpha-safety.yml` | Push, pull request, or manual run | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan. |
-| `docker-build.yml` | Push to `main`, `dev`, or `v*` tags when Docker/app paths change; pull requests to `main` or `dev` | Builds and loads a local `wright:<sha>` image, runs a non-blocking Trivy scan, and runs the Docker smoke test. It does not publish public images. |
+| `codeql.yml` | Push or pull request to `main` or `dev`, plus weekly schedule | Runs CodeQL for Python and JavaScript/TypeScript. |
+| `dependency-review.yml` | Pull request to `main` or `dev` | Blocks high-severity dependency changes and denied licenses except for reviewed allowlisted advisories. |
+| `docker-pr.yml` | Pull request to `main` or `dev` when container/application inputs change | Builds and loads `wright:pr-<sha>`, runs the exact-image smoke contract, collects a Trivy report, and enforces the blocking vulnerability policy. It does not publish public images. |
+| `docker-build.yml` | Reusable `workflow_call` from `release.yml` | Builds one amd64 OCI candidate, smokes and scans that exact subject, enforces vulnerability policy, records evidence, and optionally pushes and attests the candidate digest. |
 | `docs-deploy.yml` | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
-| `release.yml` | Push to tag matching `v*` | Builds and pushes release images, publishes the GitHub Release, marks alpha/beta/rc tags as prereleases, and applies the stable-only `latest` policy. |
+| `sync-hermes-plugin-mirror.yml` | Relevant push to `main` or `dev`, or manual run | Generates and validates the thin Hermes plugin mirror, records provenance, and publishes the selected mirror branch when enabled. |
 | `release-drafter.yml` | Push to `main` or `dev` | Updates the draft release notes from merged PR metadata. |
-| `test-windows.yml` | Push, pull request, or manual run | Runs Windows backend pytest, frontend Vitest, and Playwright E2E coverage. |
+| `release.yml` | Push to tag matching `v*`, or manual rehearsal | Builds immutable Python and OCI candidates, installs and smokes them, then publishes/promotes/verifies only for a real tag. Manual dispatch is a no-public-mutation rehearsal. |
+| `publish-python-packages.yml` | Reusable `workflow_call` from `release.yml` | Verifies the immutable Python artifact, publishes it to TestPyPI and PyPI through protected environments, and installs the published subject after each stage. |
 
 ## Pull Request Gates
 
-Pull requests to `main` or `dev` run the source, docs, public-alpha safety, and
-Docker smoke gates that matter most for public-alpha drift:
+Pull requests to `main` or `dev` run source, frontend, Windows, docs, CodeQL,
+dependency, and public-alpha safety gates. When container or application inputs
+change, `docker-pr.yml` also builds and validates the exact PR image:
 
 ```bash
 uv run pytest
@@ -30,13 +37,12 @@ npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 mkdocs build --strict
 python scripts/check-public-alpha-leaks.py
-scripts/security-scan.sh --include-untracked
-scripts/alpha-release-check.sh
 ```
 
 The frontend workflow also runs ESLint, Prettier, and TypeScript. The Python
 workflow runs Ruff and mypy in warning mode. The docs workflow builds strictly on
-pull requests and branch pushes but deploys only from `main`.
+pull requests and branch pushes but deploys only from `main`. The Docker PR gate
+does not publish public images.
 
 ## Local Merge Gates
 
@@ -74,38 +80,56 @@ same fix.
 
 ## Docker Smoke Contract
 
-`docker-build.yml` validates the appliance image locally before any release
-publishing path is used:
+`docker-pr.yml` validates local PR images. The reusable `docker-build.yml`
+validates the build-once release candidate and optionally pushes that candidate
+for a real release. Both call `scripts/docker-smoke-test.sh` against the exact
+image without rebuilding it:
 
-1. Build and load `wright:<sha>` from `docker/Dockerfile`.
-2. Start a temporary container with placeholder `LLM_API_URL`, `LLM_API_KEY`,
+1. Confirm the image runs as the unprivileged `agent` user and run raw
+   `uv pip check`. Hermes 0.19.0 exactly pins vulnerable cryptography and Pillow
+   versions, so `scripts/reconcile_hermes_pip_check.py` accepts only Wright's
+   exact two security-version overrides; any other conflict fails.
+2. Validate the immutable manifest, entrypoint, basic execution, and ephemeral
+   recovery behavior.
+3. Start a temporary container with placeholder `LLM_API_URL`, `LLM_API_KEY`,
    and `LLM_API_MODEL` values.
-3. Wait for `http://127.0.0.1:8090/api/health`.
-4. Check Hermes through `http://127.0.0.1:8090/api/agent/health`.
-5. Create a workspace through `/api/workspace/create`.
-6. Require both `wright-api` and `hermes-gateway` to be `RUNNING` in
+4. Wait for `http://127.0.0.1:8090/api/health` and require Wright to report the
+   Hermes connection through `http://127.0.0.1:8090/api/agent/health`.
+5. Require both `wright-api` and `hermes-gateway` to be `RUNNING` in
    supervisord.
+6. Probe the Hermes gateway directly on its internal port `8642`.
 
-The Trivy scan in this workflow is diagnostic for alpha and uses exit code `0`.
-Treat critical findings as release-review input even though the CI job does not
-fail on them yet.
+The Trivy action uses exit code `0` so its JSON report is always available to
+the next step. `scripts.release.vulnerability_policy.evaluate_report` then
+applies the blocking vulnerability policy and fails on non-exempt, fixable High
+or Critical findings. Scanner collection is non-terminal; policy enforcement is
+blocking.
 
-The workflow's public registry push step is intentionally disabled. Release
-images are published by `release.yml` from version tags.
+The PR workflow never logs in to a registry or publishes an image. The reusable
+candidate workflow pushes only when called by a real tagged release.
 
 ## Release Publishing
 
-`release.yml` is the publishing path for public images and GitHub Releases.
+`release.yml` is the single publishing path for Python packages, public images,
+versioned documentation, and GitHub Releases.
 
-- Tags matching `v*` trigger the workflow.
-- The workflow pushes `ghcr.io/<owner>/wright:<tag>` using the GitHub
-  token and `packages: write` permission.
+- A manual dispatch is a release rehearsal: it builds, installs, smokes, scans,
+  and records evidence without publishing or promoting public artifacts.
+- Tags matching `v*` trigger the publication path.
+- The reusable OCI workflow builds one candidate and pushes it to GHCR by
+  digest with max provenance, an SBOM, and a GitHub artifact attestation.
+- The release workflow promotes that tested digest to
+  `ghcr.io/<owner>/wright:<tag>` using the GitHub token and `packages: write`
+  permission; it never rebuilds during promotion.
+- The immutable Python candidate is published through TestPyPI and PyPI
+  protected environments and installed after each publication stage.
 - Docker Hub publishing is optional. It is enabled only when
   `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
 - Alpha, beta, and release-candidate tags such as `v0.1.0-alpha.1`,
   `v0.1.0-beta.1`, and `v0.1.0-rc.1` are marked as GitHub prereleases.
 - Stable tags update `latest`; prerelease tags do not update `latest`.
-- Docker Hub description sync runs only when Docker Hub credentials are present.
+- Post-publish verification, release evidence, versioned docs, and the GitHub
+  Release run after package and image publication; the GitHub Release is last.
 
 Use `docs/alpha-release-notes-template.md` before publishing a prerelease so the
 release notes capture Docker smoke results, skipped MCP validation,
@@ -159,8 +183,9 @@ WRIGHT_DOCKER_IMAGE=wright:<tag> WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke
 ## Follow-Up Gaps
 
 - Branch push workflows do not publish public images.
-- Multi-architecture image publishing is still commented until `linux/arm64`
-  support is built and smoked.
-- SBOM/provenance publication is documented in release notes but not yet
-  automated.
-- Trivy remains non-blocking during alpha.
+- The supported public appliance is still `linux/amd64`; `linux/arm64` requires
+  a native build-and-smoke contract before multi-architecture publication.
+- A rehearsal intentionally cannot prove external TestPyPI, PyPI, GHCR tag
+  promotion, optional Docker Hub, docs publication, or GitHub Release side
+  effects. Those remain protected real-tag operations.
+- Docker Hub remains an optional mirror; GHCR is canonical.
