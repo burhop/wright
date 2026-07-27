@@ -1,9 +1,17 @@
-import os
+from pathlib import Path
 from typing import List, Optional
-from tool_registry.catalog_loader import load_catalog_entries, sort_catalog_entries
-from tool_registry.canonical_catalog import load_canonical_entries
+
+import yaml
 
 from .schemas import CatalogEntry
+
+
+TIER_ORDER = {
+    "tested": 0,
+    "might_work": 1,
+    "blocked": 2,
+    "non_working": 3,
+}
 
 
 class CatalogLoader:
@@ -11,37 +19,33 @@ class CatalogLoader:
 
     def __init__(self, catalog_path: Optional[str] = None):
         """Initializes the loader. Loads catalog from path or default location."""
-        use_canonical = catalog_path is None
         if catalog_path is None:
-            package_catalog_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "catalog.yaml"
-            )
-            workspace_catalog_path = os.path.join(
-                os.getcwd(), "hermes-plugin-wright", "catalog.yaml"
-            )
-            catalog_path = (
-                workspace_catalog_path
-                if os.path.exists(workspace_catalog_path)
-                else package_catalog_path
-            )
+            catalog_path = str(Path(__file__).resolve().with_name("catalog.yaml"))
 
         self.catalog_path = catalog_path
         self.entries: List[CatalogEntry] = []
-        if use_canonical:
-            self.entries = [
-                CatalogEntry.model_validate(entry.model_dump(mode="json"))
-                for entry in load_canonical_entries()
-            ]
-        else:
-            self._load()
+        self._load()
 
     def _load(self):
         """Loads and validates the catalog file."""
-        shared_entries = load_catalog_entries(self.catalog_path)
-        self.entries = [
-            CatalogEntry.model_validate(entry.model_dump(mode="json"))
-            for entry in shared_entries
-        ]
+        path = Path(self.catalog_path)
+        if not path.exists():
+            raise FileNotFoundError(f"Catalog file not found: {path}")
+
+        with path.open("r", encoding="utf-8") as stream:
+            document = yaml.safe_load(stream) or {}
+        if not isinstance(document, dict) or not isinstance(
+            document.get("servers", []), list
+        ):
+            raise ValueError("Catalog document must contain a servers list")
+
+        seen_ids: set[str] = set()
+        for raw_entry in document.get("servers", []):
+            entry = CatalogEntry.model_validate(raw_entry)
+            if entry.id in seen_ids:
+                raise ValueError(f"Duplicate catalog entry ID found: {entry.id}")
+            seen_ids.add(entry.id)
+            self.entries.append(entry)
 
     def get_all(self) -> List[CatalogEntry]:
         """Returns all loaded catalog entries sorted by practical readiness."""
@@ -49,7 +53,13 @@ class CatalogLoader:
 
     def sorted_entries(self, entries: List[CatalogEntry]) -> List[CatalogEntry]:
         """Sort entries as tested, maybe, blocked, non-working, then by name."""
-        return sort_catalog_entries(entries)
+        return sorted(
+            entries,
+            key=lambda entry: (
+                TIER_ORDER.get(entry.installability_tier, 99),
+                entry.name.lower(),
+            ),
+        )
 
     def get_by_domain(self, domain: str) -> List[CatalogEntry]:
         """Filters catalog entries by domain taxonomy tag (case-insensitive)."""

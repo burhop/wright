@@ -91,15 +91,13 @@ def test_validator_rejects_missing_readme_links(tmp_path: Path) -> None:
     assert "README missing required content" in result.stderr
 
 
-def test_validator_rejects_development_unpinned_git_dependencies(
-    tmp_path: Path,
-) -> None:
+def test_validator_rejects_development_git_dependencies(tmp_path: Path) -> None:
     mirror = copy_fixture(tmp_path)
     pyproject = mirror / "pyproject.toml"
     pyproject.write_text(
         pyproject.read_text(encoding="utf-8").replace(
-            '"wright-tool-registry>=0.1.0,<0.2.0",',
-            '"wright-tool-registry @ git+https://github.com/burhop/wright.git@dev#subdirectory=packages/tool_registry",',
+            '    "structlog>=24.0",',
+            '    "structlog @ git+https://github.com/example/structlog.git@dev",',
         ),
         encoding="utf-8",
     )
@@ -107,5 +105,24 @@ def test_validator_rejects_development_unpinned_git_dependencies(
     result = run_validate(mirror, "development")
 
     assert result.returncode != 0
-    assert "development pyproject must pin wright-core" in result.stderr
-    assert "development pyproject must pin wright-tool-registry" in result.stderr
+    assert (
+        "development mirror pyproject must not contain Git dependencies"
+        in result.stderr
+    )
+
+
+def test_validator_rejects_private_wright_dependencies(tmp_path: Path) -> None:
+    mirror = copy_fixture(tmp_path)
+    pyproject = mirror / "pyproject.toml"
+    pyproject.write_text(
+        pyproject.read_text(encoding="utf-8").replace(
+            '    "structlog>=24.0",',
+            '    "structlog>=24.0",\n    "wright-tool-registry>=0.1.0,<0.2.0",',
+        ),
+        encoding="utf-8",
+    )
+
+    result = run_validate(mirror, "stable")
+
+    assert result.returncode != 0
+    assert "must not depend on private Wright component packages" in result.stderr

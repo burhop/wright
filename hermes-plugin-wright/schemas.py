@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Union, Literal
+from copy import deepcopy
+from typing import List, Literal, Optional, Union
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 VerificationState = Literal[
@@ -34,6 +36,34 @@ REQUIRED_PLATFORM_KEYS = (
     "macos_arm64",
 )
 
+DEFAULT_PLATFORM_SUPPORT = {
+    "windows_11_x64": {
+        "status": "unknown",
+        "tested": False,
+        "notes": "not tested",
+    },
+    "linux_x64": {
+        "status": "unknown",
+        "tested": False,
+        "notes": "first container target; not yet tested",
+    },
+    "linux_arm64": {
+        "status": "unknown",
+        "tested": False,
+        "notes": "not tested; Linux x64 support does not imply ARM64 support",
+    },
+    "macos_x64": {
+        "status": "unknown",
+        "tested": False,
+        "notes": "not tested",
+    },
+    "macos_arm64": {
+        "status": "unknown",
+        "tested": False,
+        "notes": "not tested",
+    },
+}
+
 
 class EnvVarDefinition(BaseModel):
     """Metadata about an environment variable an MCP server needs.
@@ -60,6 +90,15 @@ class PlatformSupportRecord(BaseModel):
     tested: bool = False
     notes: str = ""
 
+    @field_validator("status", mode="before")
+    @classmethod
+    def normalize_yaml_boolean_status(cls, value):
+        if value is True:
+            return "yes"
+        if value is False:
+            return "no"
+        return value
+
 
 class ValidationSummary(BaseModel):
     status: ValidationStatus = "not_tested"
@@ -69,9 +108,24 @@ class ValidationSummary(BaseModel):
     validated_at: Optional[str] = None
     evidence_status: Literal["recorded", "partial", "unverified"] = "unverified"
 
+    @model_validator(mode="after")
+    def require_pass_evidence(self) -> "ValidationSummary":
+        if self.status == "passed" and (
+            not self.environment
+            or not self.validated_at
+            or self.evidence_status != "recorded"
+        ):
+            raise ValueError(
+                "passed validation requires environment, validated_at, and recorded evidence"
+            )
+        return self
+
 
 def default_platform_support() -> dict[str, PlatformSupportRecord]:
-    return {key: PlatformSupportRecord() for key in REQUIRED_PLATFORM_KEYS}
+    return {
+        key: PlatformSupportRecord.model_validate(value)
+        for key, value in deepcopy(DEFAULT_PLATFORM_SUPPORT).items()
+    }
 
 
 class CatalogEntry(BaseModel):
@@ -107,3 +161,14 @@ class CatalogEntry(BaseModel):
     validation_result: ValidationSummary = Field(default_factory=ValidationSummary)
     follow_up_url: Optional[str] = None
     install_blocked_reason: Optional[str] = None
+
+    @model_validator(mode="after")
+    def normalize_defaults(self) -> "CatalogEntry":
+        support = default_platform_support()
+        support.update(self.platform_support)
+        self.platform_support = support
+
+        if self.risk_level in {"medium", "high", "safety-critical"}:
+            self.default_enabled = False
+
+        return self

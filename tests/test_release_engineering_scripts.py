@@ -82,3 +82,11 @@ def test_dev_merge_gate_bootstraps_package_build_frontend() -> None:
     assert "uv pip install mypy build --quiet" in gate
     assert "scripts/build-python-distributions.sh --dist-root" in gate
     assert "WRIGHT_API_MCP_AUTOSTART=1" in gate
+
+
+def test_package_builder_emits_shell_values_without_windows_carriage_returns() -> None:
+    script = (ROOT / "scripts" / "build-python-distributions.sh").read_text(
+        encoding="utf-8"
+    )
+
+    assert "data['project']['name']), end=\"\")" in script

@@ -131,17 +131,14 @@ copy_file() {
 }
 
 copy_pyproject_without_workspace_sources() {
-  "${PYTHON_CMD[@]}" - "$SOURCE_DIR/pyproject.toml" "$OUTPUT_DIR/pyproject.toml" "$CHANNEL" "$commit_sha" <<'PYPROJECT_REWRITE'
+  "${PYTHON_CMD[@]}" - "$SOURCE_DIR/pyproject.toml" "$OUTPUT_DIR/pyproject.toml" <<'PYPROJECT_REWRITE'
 from __future__ import annotations
 
 from pathlib import Path
-import re
 import sys
 
 source = Path(sys.argv[1])
 output = Path(sys.argv[2])
-channel = sys.argv[3]
-commit_sha = sys.argv[4]
 
 lines = source.read_text(encoding="utf-8").splitlines(keepends=True)
 filtered: list[str] = []
@@ -156,17 +153,6 @@ for line in lines:
         filtered.append(line)
 
 text = "".join(filtered)
-if channel == "development":
-    if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
-        raise SystemExit("development mirror requires a full source commit SHA")
-    replacement = (
-        f'    "wright-core @ git+https://github.com/burhop/wright.git@{commit_sha}#subdirectory=packages/core",\n'
-        f'    "wright-tool-registry @ git+https://github.com/burhop/wright.git@{commit_sha}#subdirectory=packages/tool_registry",\n'
-    )
-    text, count = re.subn(r'    "wright-tool-registry[^"\n]+",\n', replacement, text, count=1)
-    if count != 1:
-        raise SystemExit("could not rewrite wright-tool-registry dependency")
-
 output.write_text(text, encoding="utf-8")
 PYPROJECT_REWRITE
 }
@@ -236,8 +222,7 @@ cat > "$OUTPUT_DIR/provenance.json" <<JSON
 }
 JSON
 
-if [ ! -f "$OUTPUT_DIR/PROVENANCE.md" ]; then
-  cat > "$OUTPUT_DIR/PROVENANCE.md" <<EOF_PROVENANCE
+cat > "$OUTPUT_DIR/PROVENANCE.md" <<EOF_PROVENANCE
 # Provenance
 
 Main repository: https://github.com/burhop/wright
@@ -246,9 +231,10 @@ Source branch: $BRANCH
 Source commit: $commit_sha
 Generated at: $generated_at
 Plugin version: $plugin_version
-wright-core version: $core_version
-wright-tool-registry version: $tool_registry_version
+wright-core source version: $core_version
+wright-tool-registry catalog source version: $tool_registry_version
+
+The source versions identify generated mirror inputs, not runtime dependencies.
 EOF_PROVENANCE
-fi
 
 echo "Generated mirror files in $OUTPUT_DIR"
