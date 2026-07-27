@@ -170,7 +170,10 @@ Runs the full local public-alpha secret scanning gate:
 3. TruffleHog history scan with `ghcr.io/trufflesecurity/trufflehog:3.95.7`
 
 The wrappers use Docker images, so Gitleaks and TruffleHog do not need to be
-installed globally.
+installed globally. When invoked from Git for Windows, the Bash wrapper passes
+Docker Desktop an explicit Windows bind source and disables MSYS argument
+conversion so both the host mount and literal in-container `/repo` paths remain
+correct.
 
 * **Bash usage**:
   ```bash
