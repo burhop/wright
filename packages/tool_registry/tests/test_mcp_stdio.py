@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import suppress
 import json
 import os
 import subprocess
@@ -126,6 +127,7 @@ async def test_stdio_serializes_one_hundred_concurrent_results() -> None:
 
 @pytest.mark.asyncio
 async def test_real_stdio_accepts_partial_frame_and_closes_on_eof(tmp_path) -> None:
+    timeout_seconds = 30
     database = tmp_path / "state.db"
     workspace = tmp_path / "workspace"
     workspace.mkdir()
@@ -158,30 +160,48 @@ async def test_real_stdio_accepts_partial_frame_and_closes_on_eof(tmp_path) -> N
         text=True,
         encoding="utf-8",
     )
-    assert process.stdin is not None and process.stdout is not None
-    request = json.dumps(
-        {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {
-                "protocolVersion": "2025-11-25",
-                "capabilities": {},
-                "clientInfo": {"name": "partial", "version": "1"},
-            },
-        }
+    assert (
+        process.stdin is not None
+        and process.stdout is not None
+        and process.stderr is not None
     )
-    midpoint = len(request) // 2
-    process.stdin.write(request[:midpoint])
-    process.stdin.flush()
-    await asyncio.sleep(0.05)
-    assert process.poll() is None
-    process.stdin.write(request[midpoint:] + "\n")
-    process.stdin.flush()
-    response = await asyncio.wait_for(
-        asyncio.to_thread(process.stdout.readline), timeout=10
-    )
-    assert json.loads(response)["result"]["protocolVersion"] == "2025-11-25"
-    process.stdin.close()
-    await asyncio.wait_for(asyncio.to_thread(process.wait), timeout=10)
-    assert process.returncode == 0
+    try:
+        request = json.dumps(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2025-11-25",
+                    "capabilities": {},
+                    "clientInfo": {"name": "partial", "version": "1"},
+                },
+            }
+        )
+        midpoint = len(request) // 2
+        process.stdin.write(request[:midpoint])
+        process.stdin.flush()
+        await asyncio.sleep(0.05)
+        assert process.poll() is None
+        process.stdin.write(request[midpoint:] + "\n")
+        process.stdin.flush()
+        response = await asyncio.wait_for(
+            asyncio.to_thread(process.stdout.readline), timeout=timeout_seconds
+        )
+        assert json.loads(response)["result"]["protocolVersion"] == "2025-11-25"
+        process.stdin.close()
+        await asyncio.wait_for(asyncio.to_thread(process.wait), timeout=timeout_seconds)
+        assert process.returncode == 0
+    finally:
+        if not process.stdin.closed:
+            with suppress(OSError):
+                process.stdin.close()
+        if process.poll() is None:
+            process.terminate()
+            try:
+                await asyncio.wait_for(asyncio.to_thread(process.wait), timeout=5)
+            except TimeoutError:
+                process.kill()
+                await asyncio.to_thread(process.wait)
+        process.stdout.close()
+        process.stderr.close()

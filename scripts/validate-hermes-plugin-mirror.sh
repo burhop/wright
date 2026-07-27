@@ -1,6 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
+PYTHON_CMD=()
+if [ -n "${PYTHON:-}" ]; then
+  PYTHON_CMD=("$PYTHON")
+elif command -v python3 >/dev/null 2>&1 && python3 --version >/dev/null 2>&1; then
+  PYTHON_CMD=(python3)
+elif command -v python >/dev/null 2>&1 && python --version >/dev/null 2>&1; then
+  PYTHON_CMD=(python)
+elif command -v py >/dev/null 2>&1 && py -3 --version >/dev/null 2>&1; then
+  PYTHON_CMD=(py -3)
+else
+  echo "Could not find a working Python interpreter. Set PYTHON explicitly." >&2
+  exit 1
+fi
+
 usage() {
   cat <<'USAGE'
 Usage: scripts/validate-hermes-plugin-mirror.sh --mirror-dir DIR [--channel stable|development]
@@ -95,7 +109,7 @@ if [ -f "$pyproject" ]; then
 fi
 
 if [ -f "$MIRROR_DIR/provenance.json" ]; then
-  python3 - "$MIRROR_DIR/provenance.json" <<'PY' || fail "provenance.json must include a full 40-character commit_sha"
+  "${PYTHON_CMD[@]}" - "$MIRROR_DIR/provenance.json" <<'PY' || fail "provenance.json must include a full 40-character commit_sha"
 import json, re, sys
 with open(sys.argv[1], encoding="utf-8") as fh:
     data = json.load(fh)

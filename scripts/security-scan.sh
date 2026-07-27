@@ -9,6 +9,14 @@ SKIP_TRUFFLEHOG=0
 GITLEAKS_IMAGE="${GITLEAKS_IMAGE:-ghcr.io/gitleaks/gitleaks:v8.30.1}"
 TRUFFLEHOG_IMAGE="${TRUFFLEHOG_IMAGE:-ghcr.io/trufflesecurity/trufflehog:3.95.7}"
 
+# Git for Windows rewrites POSIX-looking arguments before invoking Windows
+# executables. Give Docker Desktop an explicit Windows bind source and disable
+# conversion so both the host path and in-container /repo paths stay correct.
+DOCKER_ROOT_DIR="$ROOT_DIR"
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) DOCKER_ROOT_DIR="$(cygpath -w "$ROOT_DIR")" ;;
+esac
+
 usage() {
   cat <<'USAGE'
 Usage: scripts/security-scan.sh [--include-untracked] [--skip-gitleaks] [--skip-trufflehog]
@@ -66,8 +74,8 @@ fi
 if [ "$SKIP_GITLEAKS" != "1" ]; then
   echo
   echo "== Gitleaks history scan =="
-  docker run --rm \
-    -v "$ROOT_DIR:/repo" \
+  MSYS_NO_PATHCONV=1 docker run --rm \
+    -v "$DOCKER_ROOT_DIR:/repo" \
     "$GITLEAKS_IMAGE" \
     git /repo \
     --config /repo/.gitleaks.toml \
@@ -79,8 +87,8 @@ fi
 if [ "$SKIP_TRUFFLEHOG" != "1" ]; then
   echo
   echo "== TruffleHog history scan =="
-  docker run --rm \
-    -v "$ROOT_DIR:/repo" \
+  MSYS_NO_PATHCONV=1 docker run --rm \
+    -v "$DOCKER_ROOT_DIR:/repo" \
     -w /repo \
     "$TRUFFLEHOG_IMAGE" \
     git file:///repo \

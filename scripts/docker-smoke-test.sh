@@ -7,11 +7,30 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Every absolute path passed to Docker below is an in-container path. Prevent
+# Git for Windows from rewriting values such as /opt/hermes or /entrypoint.sh
+# before the Windows Docker client receives them.
+export MSYS_NO_PATHCONV=1
+
 echo -e "${YELLOW}=== Running Docker Smoke Test ===${NC}"
 
 # Define image tag. Set WRIGHT_DOCKER_IMAGE to smoke an existing image, or set
 # WRIGHT_DOCKER_SKIP_BUILD=1 to skip the local build step.
 IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright:test}"
+
+PYTHON_CMD=()
+if [ -n "${PYTHON:-}" ]; then
+  PYTHON_CMD=("$PYTHON")
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON_CMD=(python3)
+elif command -v python >/dev/null 2>&1; then
+  PYTHON_CMD=(python)
+elif command -v py >/dev/null 2>&1; then
+  PYTHON_CMD=(py -3)
+else
+  echo -e "${RED}No Python interpreter is available for host-side smoke assertions.${NC}"
+  exit 1
+fi
 
 # 1. Build the production Docker image
 if [ "${WRIGHT_DOCKER_SKIP_BUILD:-0}" = "1" ]; then
@@ -36,7 +55,7 @@ PIP_CHECK_EXIT=0
 PIP_CHECK_OUTPUT=$(docker run --rm --entrypoint uv "$IMAGE_TAG" \
   pip check --python /opt/hermes/.venv/bin/python 2>&1) || PIP_CHECK_EXIT=$?
 printf '%s\n' "$PIP_CHECK_OUTPUT"
-printf '%s\n' "$PIP_CHECK_OUTPUT" | python3 \
+printf '%s\n' "$PIP_CHECK_OUTPUT" | "${PYTHON_CMD[@]}" \
   scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
 echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
 
@@ -184,7 +203,7 @@ done
 for attempt in $(seq 1 45); do
   AGENT_HEALTH=$(curl --fail --silent --max-time 2 \
     http://127.0.0.1:8090/api/agent/health 2>/dev/null || echo '{"state":"disconnected"}')
-  AGENT_STATE=$(printf '%s' "$AGENT_HEALTH" | python3 -c \
+  AGENT_STATE=$(printf '%s' "$AGENT_HEALTH" | "${PYTHON_CMD[@]}" -c \
     'import json, sys; print(json.load(sys.stdin).get("state", "unknown"))')
   echo "Agent health attempt $attempt: $AGENT_HEALTH"
   if [ "$AGENT_STATE" = "connected" ]; then

@@ -19,6 +19,20 @@ USAGE
 }
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PYTHON_CMD=()
+if [ -n "${PYTHON:-}" ]; then
+  PYTHON_CMD=("$PYTHON")
+elif command -v python3 >/dev/null 2>&1 && python3 --version >/dev/null 2>&1; then
+  PYTHON_CMD=(python3)
+elif command -v python >/dev/null 2>&1 && python --version >/dev/null 2>&1; then
+  PYTHON_CMD=(python)
+elif command -v py >/dev/null 2>&1 && py -3 --version >/dev/null 2>&1; then
+  PYTHON_CMD=(py -3)
+else
+  echo "Could not find a working Python interpreter. Set PYTHON explicitly." >&2
+  exit 1
+fi
+
 SOURCE_DIR="$ROOT_DIR/hermes-plugin-wright"
 MIRROR_URL=""
 BRANCH=""
@@ -117,7 +131,7 @@ copy_file() {
 }
 
 copy_pyproject_without_workspace_sources() {
-  python3 - "$SOURCE_DIR/pyproject.toml" "$OUTPUT_DIR/pyproject.toml" "$CHANNEL" "$commit_sha" <<'PYPROJECT_REWRITE'
+  "${PYTHON_CMD[@]}" - "$SOURCE_DIR/pyproject.toml" "$OUTPUT_DIR/pyproject.toml" "$CHANNEL" "$commit_sha" <<'PYPROJECT_REWRITE'
 from __future__ import annotations
 
 from pathlib import Path
@@ -186,20 +200,20 @@ if [ ! -f "$OUTPUT_DIR/LICENSE" ] && [ ! -f "$OUTPUT_DIR/LICENSE.md" ]; then
 fi
 
 generated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-plugin_version="$(python3 - "$SOURCE_DIR/plugin.yaml" <<'PY'
+plugin_version="$("${PYTHON_CMD[@]}" - "$SOURCE_DIR/plugin.yaml" <<'PY'
 import re, sys
 text=open(sys.argv[1], encoding='utf-8').read()
 match=re.search(r'^version:\s*["\']?([^"\'\n]+)', text, re.M)
 print(match.group(1).strip() if match else 'unknown')
 PY
 )"
-core_version="$(python3 - "$ROOT_DIR/packages/core/pyproject.toml" <<'PY'
+core_version="$("${PYTHON_CMD[@]}" - "$ROOT_DIR/packages/core/pyproject.toml" <<'PY'
 import sys, tomllib
 with open(sys.argv[1], 'rb') as fh:
     print(tomllib.load(fh)['project']['version'])
 PY
 )"
-tool_registry_version="$(python3 - "$ROOT_DIR/packages/tool_registry/pyproject.toml" <<'PY'
+tool_registry_version="$("${PYTHON_CMD[@]}" - "$ROOT_DIR/packages/tool_registry/pyproject.toml" <<'PY'
 import sys, tomllib
 with open(sys.argv[1], 'rb') as fh:
     print(tomllib.load(fh)['project']['version'])
