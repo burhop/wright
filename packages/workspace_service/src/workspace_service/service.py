@@ -216,12 +216,17 @@ class WorkspaceService:
         fallback_slug = uuid.uuid5(
             uuid.NAMESPACE_URL, f"wright-session:{session_id}"
         ).hex
-        workspace_path = self._managed_workspace_path(f"session-{fallback_slug}")
-        WorkspacePath(workspace_path, create=True)
+        workspace_path = self._managed_workspace_path(
+            f"session-{fallback_slug}", create=True
+        )
         return workspace_path
 
     def _managed_workspace_path(
-        self, workspace_name: str, requested_path: str | None = None
+        self,
+        workspace_name: str,
+        requested_path: str | None = None,
+        *,
+        create: bool = False,
     ) -> str:
         sanitized = sanitize_workspace_name(workspace_name)
         if not sanitized:
@@ -244,6 +249,8 @@ class WorkspaceService:
                 raise WorkspaceInvalidRequestError(
                     "Explicit workspace path must match the managed path derived from its name."
                 )
+        if create:
+            managed.mkdir(parents=True, exist_ok=True)
         return str(managed)
 
     def _workspace_file(self, workspace_path: str, requested_path: str) -> Path:
@@ -282,7 +289,7 @@ class WorkspaceService:
         workspace_path = self._managed_workspace_path(name, local_path)
 
         self._ensure_workspace_available(name, workspace_path)
-        WorkspacePath(workspace_path, create=True)
+        workspace_path = self._managed_workspace_path(name, local_path, create=True)
         WorkspaceManager(workspace_path)
 
         try:
