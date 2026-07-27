@@ -67,7 +67,7 @@ jobs:
           IMAGE: ${{ inputs.push-candidate && format('{0}@{1}', steps.image.outputs.name, steps.build.outputs.digest) || format('{0}:candidate-{1}', steps.image.outputs.name, github.sha) }}
         run: WRIGHT_DOCKER_IMAGE="$IMAGE" WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
       - name: Scan exact candidate with blocking policy
-        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ inputs.push-candidate && format('{0}@{1}', steps.image.outputs.name, steps.build.outputs.digest) || format('{0}:candidate-{1}', steps.image.outputs.name, github.sha) }}
           format: json
