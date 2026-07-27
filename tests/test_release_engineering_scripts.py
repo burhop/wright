@@ -58,6 +58,23 @@ def test_makefile_exposes_mirror_and_package_validation_targets() -> None:
     ]:
         assert target in makefile
 
+    mirror_target = makefile.split("hermes-plugin-mirror-validate:", 1)[1].split(
+        "hermes-plugin-root-lifecycle-test:", 1
+    )[0]
+    assert "set -e;" in mirror_target
+
+
+def test_mirror_scripts_respect_explicit_python_interpreter() -> None:
+    for script_name, expected_uses in [
+        ("sync-hermes-plugin-mirror.sh", 4),
+        ("validate-hermes-plugin-mirror.sh", 1),
+    ]:
+        script = (ROOT / "scripts" / script_name).read_text(encoding="utf-8")
+
+        assert 'PYTHON_CMD=("$PYTHON")' in script
+        assert script.count('"${PYTHON_CMD[@]}" -') == expected_uses
+        assert "python3 - " not in script
+
 
 def test_dev_merge_gate_bootstraps_package_build_frontend() -> None:
     gate = (ROOT / "scripts" / "check-dev-merge.sh").read_text(encoding="utf-8")

@@ -171,7 +171,8 @@ hermes-plugin-mirror-sync-dry-run:
 	./scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --dry-run
 
 hermes-plugin-mirror-validate:
-	@tmp_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/wright-plugin-mirror.XXXXXX"); \
+	@set -e; \
+	tmp_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/wright-plugin-mirror.XXXXXX"); \
 	trap 'rm -rf "$$tmp_dir"' EXIT; \
 	./scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir "$$tmp_dir"; \
 	./scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$$tmp_dir" --channel development

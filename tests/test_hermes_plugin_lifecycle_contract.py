@@ -17,6 +17,17 @@ def test_lifecycle_common_supports_root_mirror_install_identifiers() -> None:
     assert "WRIGHT_PLUGIN_SOURCE_MODE" in common
 
 
+def test_lifecycle_common_preserves_container_paths_in_git_bash() -> None:
+    common = read_text("scripts/hermes-plugin-lifecycle-common.sh")
+
+    assert 'docker_hermes_home="$(cygpath -w "$hermes_home")"' in common
+    assert 'docker_root_dir="$(cygpath -w "$ROOT_DIR")"' in common
+    assert "MSYS_NO_PATHCONV=1 docker run" in common
+    assert "--entrypoint /bin/bash" in common
+    assert '-v "$docker_hermes_home:/tmp/hermes-home"' in common
+    assert '-v "$docker_root_dir:/wright-src:ro"' in common
+
+
 def test_lifecycle_scripts_document_root_mirror_usage() -> None:
     readme = read_text("scripts/README.md")
     makefile = read_text("Makefile")

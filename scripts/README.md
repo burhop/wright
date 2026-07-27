@@ -350,6 +350,12 @@ These helpers support the thin `hermes-plugin-wright` mirror and the PyPI/TestPy
 | `sync-hermes-plugin-mirror.sh` | Bash | Exports only allowlisted plugin files from `hermes-plugin-wright/` into a root-level mirror directory and writes provenance | Git, Python 3 |
 | `validate-hermes-plugin-mirror.sh` | Bash | Validates mirror required files, prohibited paths, README links, provenance, and dependency policy | Bash, Python 3 |
 
+Both mirror scripts honor an explicit `PYTHON` interpreter and otherwise select
+a working `python3`, `python`, or `py -3` command. This prevents Git for Windows
+from accepting the non-functional Microsoft Store `python3` alias during the
+production merge gate. The Make target also stops immediately if mirror
+generation fails, so validation cannot continue against a partial export.
+
 * Validate package metadata without building artifacts:
   ```bash
   scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
@@ -375,3 +381,8 @@ These helpers support the thin `hermes-plugin-wright` mirror and the PyPI/TestPy
   ```
 
 The root mirror identifier is `https://github.com/burhop/hermes-plugin-wright/tree/dev` for development testing and `https://github.com/burhop/hermes-plugin-wright/tree/main` for stable customer testing. Use `--mirror-root` when validating the mirror repository itself; use the default subdirectory mode only when intentionally testing the legacy monorepo path.
+
+On Git for Windows, the shared lifecycle helper converts only the host-side
+bind-mount sources to Windows paths and disables further MSYS argument
+rewriting. Container paths such as `/bin/bash`, `/tmp/hermes-home`, and
+`/wright-src` therefore reach Docker unchanged.
