@@ -65,12 +65,12 @@ class WorkspacePath:
         # workspace-confined path.
         resolved = os.path.realpath(lexical)
         resolved_identity = os.path.normcase(resolved)
-        if not resolved_identity.startswith(root_prefix):
-            raise ValueError("Access denied: path escapes workspace")
         if resolved_identity != lexical_identity:
             raise ValueError(
                 "Access denied: symbolic links and reparse points are not allowed"
             )
+        if not resolved_identity.startswith(root_prefix):
+            raise ValueError("Access denied: path escapes workspace")
 
         candidate = Path(resolved)
         if must_exist and not candidate.exists():
