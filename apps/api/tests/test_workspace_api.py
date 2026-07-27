@@ -1049,12 +1049,13 @@ def test_workspace_gitignore_setup(tmp_path):
     from workspace_service.adapters.runtime import WorkspaceManager
     import os
 
-    # Initialize WorkspaceManager with a fresh directory
-    workspace_dir = str(tmp_path / "new_workspace")
-    WorkspaceManager(workspace_dir)
+    # WorkspaceService owns root creation; the manager initializes an existing root.
+    workspace_dir = tmp_path / "new_workspace"
+    workspace_dir.mkdir()
+    WorkspaceManager(str(workspace_dir))
 
     # Check if .gitignore was created
-    gitignore_path = os.path.join(workspace_dir, ".gitignore")
+    gitignore_path = os.path.join(str(workspace_dir), ".gitignore")
     assert os.path.exists(gitignore_path)
 
     # Read gitignore content
@@ -1063,6 +1064,19 @@ def test_workspace_gitignore_setup(tmp_path):
 
     assert "tmp/\n" in content
     assert "/tmp/\n" in content
+
+
+def test_workspace_gitignore_setup_preserves_existing_file(tmp_path):
+    from workspace_service.adapters.runtime import WorkspaceManager
+
+    workspace_dir = tmp_path / "existing_workspace"
+    workspace_dir.mkdir()
+    gitignore_path = workspace_dir / ".gitignore"
+    gitignore_path.write_text("custom-entry\n", encoding="utf-8")
+
+    WorkspaceManager(str(workspace_dir))
+
+    assert gitignore_path.read_text(encoding="utf-8") == "custom-entry\n"
 
 
 def test_compile_workspace_mcp_instructions(tmp_path):

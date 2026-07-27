@@ -8,6 +8,11 @@ from workspace_service.adapters.runtime import WorkspaceManager
 from workspace_service.use_cases.files import WorkspaceFileUseCases
 
 
+def test_workspace_manager_requires_an_existing_root(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        WorkspaceManager(str(tmp_path / "missing-workspace"))
+
+
 @pytest.mark.asyncio
 async def test_file_use_cases_preserve_tree_text_binary_and_mutations(tmp_path):
     db_path = str(tmp_path / "unused.db")

@@ -5,6 +5,7 @@ import os
 import re
 import sqlite3
 import subprocess
+import sys
 import tempfile
 import structlog
 from contextlib import contextmanager
@@ -834,40 +835,54 @@ class WorkspaceManager:
     """Manages workspace file browser directory tree construction and raw file reads."""
 
     def __init__(self, base_dir: str):
-        self.base_dir = os.path.abspath(base_dir)
-        if not os.path.exists(self.base_dir):
-            os.makedirs(self.base_dir, exist_ok=True)
+        # Workspace creation is owned by WorkspaceService. Adapters receive only
+        # an existing, canonical workspace capability and never create a root from
+        # request data themselves.
+        self._paths = WorkspacePath(base_dir)
+        self.base_dir = str(self._paths.root)
 
-        # Initialize Git repository if not already present
-        git_dir = os.path.join(self.base_dir, ".git")
-        if not os.path.exists(git_dir):
-            try:
-                subprocess.run(
-                    ["git", "init"], cwd=self.base_dir, capture_output=True, check=True
-                )
-                logger.info(
-                    "Initialized local Git repository in workspace %s", self.base_dir
-                )
-            except Exception as e:
-                logger.error(
-                    "Failed to initialize Git repository in workspace %s: %s",
-                    self.base_dir,
-                    e,
-                )
+        # `git init` is idempotent, so initialization needs no path existence
+        # probe. The workspace path is passed only as a process capability (cwd),
+        # while every command argument remains server-owned and fixed.
+        try:
+            subprocess.run(
+                ["git", "init"], cwd=self.base_dir, capture_output=True, check=True
+            )
+            logger.info(
+                "Initialized local Git repository in workspace %s", self.base_dir
+            )
+        except Exception as e:
+            logger.error(
+                "Failed to initialize Git repository in workspace %s: %s",
+                self.base_dir,
+                e,
+            )
 
-        # Auto-generate .gitignore if not present
-        gitignore_path = os.path.join(self.base_dir, ".gitignore")
-        if not os.path.exists(gitignore_path):
-            try:
-                with open(gitignore_path, "w") as f:
-                    f.write("# Auto-generated .gitignore for Engineering Workspace\n")
-                    f.write("*.log\n")
-                    f.write("*.tmp\n")
-                    f.write("tmp/\n")
-                    f.write("/tmp/\n")
-                logger.info("Created default .gitignore in %s", gitignore_path)
-            except Exception as e:
-                logger.error("Failed to create .gitignore in %s: %s", gitignore_path, e)
+        # Create the fixed-name default without probing a path derived from the
+        # workspace identifier. Exclusive mode preserves an existing user file.
+        gitignore_script = (
+            "from pathlib import Path\n"
+            "try:\n"
+            "    with Path('.gitignore').open('x', encoding='utf-8', newline='\\n') as f:\n"
+            "        f.write('# Auto-generated .gitignore for Engineering Workspace\\n'"
+            "+ '*.log\\n*.tmp\\ntmp/\\n/tmp/\\n')\n"
+            "except FileExistsError:\n"
+            "    pass\n"
+        )
+        try:
+            subprocess.run(
+                [sys.executable, "-c", gitignore_script],
+                cwd=self.base_dir,
+                capture_output=True,
+                check=True,
+                text=True,
+            )
+        except Exception as e:
+            logger.error(
+                "Failed to create default .gitignore in workspace %s: %s",
+                self.base_dir,
+                e,
+            )
 
     def _get_lock_path(self, rel_path: str) -> str:
         import hashlib
@@ -917,7 +932,6 @@ class WorkspaceManager:
 
     def sanitize_path(self, relative_path: str) -> str:
         """Resolve a user path inside this workspace without following links."""
-        capability = WorkspacePath(self.base_dir)
         normalized = relative_path.replace("\\", "/")
         if normalized == "/tmp" or normalized.startswith("/tmp/"):
             raise ValueError("Access denied: global temporary paths are not allowed")
@@ -926,8 +940,8 @@ class WorkspaceManager:
         if normalized.startswith("/") and not normalized.startswith("//"):
             normalized = normalized[1:]
         if normalized.startswith("tmp/"):
-            return str(capability.scratch(normalized.removeprefix("tmp/")))
-        return str(capability.resolve(normalized))
+            return str(self._paths.scratch(normalized.removeprefix("tmp/")))
+        return str(self._paths.resolve(normalized))
 
     def write_backup(self, rel_path: str, content: bytes) -> str:
         """Write temporary backup file for unsaved edits under .git/backups/."""
@@ -943,7 +957,7 @@ class WorkspaceManager:
 
     def delete_backup(self, backup_id: str) -> None:
         """Delete temporary backup file."""
-        backup_path = str(WorkspacePath(self.base_dir).backup(backup_id))
+        backup_path = str(self._paths.backup(backup_id))
         if os.path.exists(backup_path):
             try:
                 os.remove(backup_path)

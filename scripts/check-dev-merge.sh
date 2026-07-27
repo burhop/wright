@@ -70,6 +70,7 @@ run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "
 run uv run pytest -q \
   apps/api/tests/test_security.py \
   apps/api/tests/test_gateway_api.py \
+  packages/workspace_service/tests/test_files.py \
   packages/workspace_service/tests/test_workspace_path.py \
   packages/workspace_service/tests/test_workspace_service.py
 
