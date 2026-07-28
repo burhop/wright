@@ -483,7 +483,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "structlog" },
-    { name = "wright-tool-registry" },
 ]
 
 [package.metadata]
@@ -492,7 +491,6 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "structlog", specifier = ">=24.0" },
-    { name = "wright-tool-registry", editable = "packages/tool_registry" },
 ]
 
 [[package]]
@@ -1713,7 +1711,7 @@ requires-dist = [{ name = "wright-core", editable = "packages/core" }]
 
 [[package]]
 name = "wright-engineering"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 
 [package.dev-dependencies]

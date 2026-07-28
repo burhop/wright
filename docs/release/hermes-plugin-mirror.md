@@ -17,18 +17,18 @@ The mirror repository is a distribution surface only. Do not develop features di
 
 | Channel | Mirror branch | Dependency policy | User |
 | --- | --- | --- | --- |
-| Development | `dev` | TestPyPI packages or pinned Git revisions | Maintainers and early testers |
-| Stable | `main` | Versioned PyPI releases only | Customer testers and stable users |
+| Development | `dev` | Self-contained plugin with public third-party dependencies | Maintainers and early testers |
+| Stable | `main` | Self-contained plugin with public third-party dependencies | Customer testers and stable users |
 
 ## Package Publication Order
 
-For public alpha, publish the root `wright-engineering` package before using the mirror in public installation docs. Component packages such as `wright-core` and `wright-tool-registry` remain workspace-local until their package names, dependency boundaries, and mirror install strategy are revisited.
+The root `wright-engineering` package and the Hermes plugin mirror are separate distribution surfaces. Component packages such as `wright-core` and `wright-tool-registry` remain workspace-local; the mirror must not depend on them. Its catalog, schemas, and loader ship in the mirror itself.
 
-Use the alpha package tag when publishing the PyPI helper package:
+Use the product release tag when publishing the PyPI helper package and container:
 
 ```bash
-git tag wright-engineering-v0.1.0-alpha.1
-git push origin wright-engineering-v0.1.0-alpha.1
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 The `.github/workflows/publish-python-packages.yml` workflow uses PyPI Trusted Publishing through GitHub Actions OIDC. Configure pending publishers in PyPI and TestPyPI with these environments:
@@ -99,7 +99,7 @@ scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$tmp_dir" --channel devel
 scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$tmp_dir" --channel stable
 ```
 
-Stable validation must fail if the mirror has workspace-only dependencies, unpinned Git dependencies, missing README links, missing provenance, prohibited paths, or missing root-level plugin files.
+Stable and development validation must fail if the mirror has workspace-only dependencies, Git dependencies, private Wright component dependencies, missing README links, missing provenance, prohibited paths, or missing root-level plugin files.
 
 ## Hermes Lifecycle Validation
 
@@ -170,7 +170,7 @@ Use this section to record release candidate validation runs.
 - Added read-write deploy key `wright mirror sync` to the mirror and stored `HERMES_PLUGIN_MIRROR_SSH_KEY` as a `burhop/wright` Actions secret.
 - Published mirror `dev` and `main` branches. `git ls-remote --heads https://github.com/burhop/hermes-plugin-wright dev main` returned both branch heads.
 - Published a second generated `dev` commit and verified an existing clone updated with `git pull --ff-only` from `31d0115` to `66981ff`, proving generated updates preserve branch history.
-- Development mirror dependencies are rewritten to pinned Git references until PyPI packages are published; stable mirror dependencies remain PyPI-only.
+- Development and stable mirror dependencies are public third-party packages only; the plugin ships its own catalog loader and schemas.
 - `scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
 - `scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
 - `scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
@@ -200,4 +200,4 @@ Use this section to record release candidate validation runs.
 - `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch main --channel stable --output-dir /tmp/wright-mirror-stable-final.TftFem` generated a stable mirror export.
 - `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-stable-final.TftFem --channel stable` passed.
 
-Stable mirror release through `https://github.com/burhop/hermes-plugin-wright/tree/main` remains gated on a later decision about component package publication. Public alpha customer testing should use the Docker paths and the `wright-engineering` helper package; development mirror testing can use `https://github.com/burhop/hermes-plugin-wright/tree/dev`.
+Stable mirror release through `https://github.com/burhop/hermes-plugin-wright/tree/main` is independent of component package publication. Before announcing it, validate a clean install and lifecycle against the supported Hermes release.
