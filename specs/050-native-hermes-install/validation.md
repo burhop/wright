@@ -117,6 +117,12 @@ The second found a hosted-Windows `System32` Docker leak into the clean harness
 and a platform-specific mypy reference. Each defect received a focused
 regression and was fixed before the next run.
 
+A later terminal rerun exposed a short-lived Windows process sampling race in
+the harness: the parent exited between `poll()` and `psutil` descendant
+inspection. The audit now tolerates only that process-gone sampling boundary,
+retains forbidden-child detection, and has a deterministic regression for the
+exact race.
+
 All checks on commit `467eab8` passed on 2026-07-28: Python quality and 85%
 coverage, Python 3.11-3.14 wheel/sdist matrices on Linux and Windows, Windows
 backend/frontend suites, native base isolation on Linux/Windows/macOS, native

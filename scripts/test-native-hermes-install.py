@@ -171,14 +171,18 @@ class CommandAudit:
                 raise HarnessError(f"command timed out: {Path(rendered[0]).name}")
             try:
                 import psutil
-
-                for child in psutil.Process(process.pid).children(recursive=True):
+            except ImportError:
+                children = []
+            else:
+                try:
+                    children = psutil.Process(process.pid).children(recursive=True)
+                except (psutil.Error, OSError):
+                    children = []
+                for child in children:
                     try:
                         self._record(child.exe())
                     except (psutil.Error, OSError):
                         continue
-            except (ImportError, OSError):
-                pass
             time.sleep(0.01)
         stdout, stderr = process.communicate()
         completed = subprocess.CompletedProcess(

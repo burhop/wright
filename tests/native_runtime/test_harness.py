@@ -3,7 +3,9 @@ from __future__ import annotations
 import importlib.util
 import os
 from pathlib import Path
+import subprocess
 import sys
+from types import SimpleNamespace
 
 import pytest
 
@@ -84,6 +86,42 @@ def test_subprocess_audit_fails_if_forbidden_executable_is_observed() -> None:
     audit._record("python")
     audit._record("git.exe")
     assert audit.forbidden == {"git.exe"}
+
+
+def test_subprocess_audit_tolerates_parent_exit_during_child_sampling(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class ProcessGone(Exception):
+        pass
+
+    class ExitedProcess:
+        pid = 42
+        returncode = 0
+
+        def __init__(self) -> None:
+            self._polls = iter((None, 0))
+
+        def poll(self) -> int | None:
+            return next(self._polls)
+
+        def communicate(self) -> tuple[str, str]:
+            return "", ""
+
+    fake_psutil = SimpleNamespace(
+        Error=ProcessGone,
+        Process=lambda _pid: (_ for _ in ()).throw(ProcessGone()),
+    )
+    monkeypatch.setitem(sys.modules, "psutil", fake_psutil)
+    monkeypatch.setattr(subprocess, "Popen", lambda *_args, **_kwargs: ExitedProcess())
+    monkeypatch.setattr("time.sleep", lambda _seconds: None)
+
+    completed = HARNESS.CommandAudit().run(
+        [sys.executable, "-c", "pass"],
+        cwd=tmp_path,
+        env={},
+    )
+
+    assert completed.returncode == 0
 
 
 def test_wheel_version_is_exact_and_rejects_non_wright_artifact(tmp_path: Path) -> None:
