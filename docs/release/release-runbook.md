@@ -4,7 +4,7 @@ This runbook describes the prepared release train. Feature 047 authorizes rehear
 
 ## External prerequisites
 
-Repository administrators must configure protected `testpypi`, `pypi`, `release`, and `dockerhub` environments with tag restrictions and required reviewers. PyPI and TestPyPI use separate OIDC Trusted Publisher records for `.github/workflows/publish-python-packages.yml`. Do not store PyPI tokens.
+Repository administrators must configure protected `testpypi`, `pypi`, `release`, and `dockerhub` environments with tag restrictions and required reviewers. PyPI and TestPyPI use separate OIDC Trusted Publisher records for the top-level `.github/workflows/release.yml`, with environments `pypi` and `testpypi` respectively. Keep the PyPI publishing action in that top-level workflow because PyPI does not support reusable workflows as Trusted Publisher identities. Do not store PyPI tokens.
 
 ## Rehearsal
 
