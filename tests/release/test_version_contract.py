@@ -27,6 +27,6 @@ def test_product_version_rejects_unsupported_identity(value: str) -> None:
 
 
 def test_tag_must_match_root_version() -> None:
-    assert validate_release_version(ROOT, tag="v0.1.2").python == "0.1.2"
+    assert validate_release_version(ROOT, tag="v0.1.3").python == "0.1.3"
     with pytest.raises(ReleaseIdentityError):
-        validate_release_version(ROOT, tag="v0.1.1")
+        validate_release_version(ROOT, tag="v0.1.2")
