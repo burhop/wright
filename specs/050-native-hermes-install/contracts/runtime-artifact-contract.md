@@ -87,4 +87,3 @@ wright doctor
 They MUST NOT import FastAPI, Uvicorn, MCP, application packages, or other
 runtime-only dependencies. Runtime modules may import those dependencies only in
 the isolated child process.
-

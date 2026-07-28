@@ -30,4 +30,3 @@ def test_tracked_shell_scripts_are_lf_normalized() -> None:
 def test_gitattributes_keeps_shell_scripts_lf_normalized() -> None:
     attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
     assert "*.sh text eol=lf" in attributes.splitlines()
-

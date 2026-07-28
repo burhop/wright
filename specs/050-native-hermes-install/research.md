@@ -226,4 +226,3 @@ Windows checkout conversion must not make them unexecutable.
 
 - Continue manually emulating scripts: rejected because it hides a recurring
   cross-platform contributor failure.
-

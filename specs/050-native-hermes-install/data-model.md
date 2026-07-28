@@ -191,4 +191,3 @@ Extension of the existing release evidence for one native subject.
 
 The final GitHub Release requires a passing native evidence subject and the
 existing passing Docker/Python/documentation evidence.
-

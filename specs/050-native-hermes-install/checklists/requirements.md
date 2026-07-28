@@ -34,4 +34,3 @@
 - Validation completed on 2026-07-28 after one review pass.
 - Package naming remains a planning decision, but the product requirement is unambiguous: exactly one complete managed native runtime artifact with a clear public role.
 - The user's attached goal pre-authorizes continuous Spec Kit phase execution on the feature branch while retaining separate merge authorization.
-

@@ -1,7 +1,7 @@
 # Validation: Native Hermes Installation
 
-**Date**: 2026-07-28  
-**Branch**: `050-native-hermes-install`  
+**Date**: 2026-07-28
+**Branch**: `050-native-hermes-install`
 **Status**: Local implementation and candidate validation are green; production
 native release remains blocked by the released Hermes interface.
 

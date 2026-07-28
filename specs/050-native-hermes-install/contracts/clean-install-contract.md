@@ -80,4 +80,3 @@ support; exact runner architecture is recorded.
 - Runtime dependencies exist only in the Wright environment.
 - User data retention/deletion counts are exact.
 - Candidate and installed artifact identities match.
-

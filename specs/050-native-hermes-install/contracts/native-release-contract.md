@@ -83,4 +83,3 @@ Releases, production docs, or the stable Hermes channel.
 - Docker recovery remains the existing digest/alias process and is never replaced
   by native recovery.
 - GitHub Release stays absent or draft until both distribution paths verify.
-

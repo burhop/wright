@@ -1,2 +1,5 @@
 # Force LF line endings for shell scripts so they run correctly in bash/Docker
 *.sh text eol=lf
+
+# Generated Vite bundles include shader source with significant whitespace.
+src/wright_engineering/static/web/** -whitespace

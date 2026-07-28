@@ -95,4 +95,3 @@ Hermes' real public interface.
 - Credentials remain in Hermes/package-manager credential facilities and are
   neither passed to Wright logs nor release evidence.
 - Install output is redacted and bounded.
-

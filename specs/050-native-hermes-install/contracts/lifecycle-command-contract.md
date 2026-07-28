@@ -99,4 +99,3 @@ services are reported separately from core native readiness.
 public behavior but use the active packaged API. Catalog commands that require a
 running API either start it through the lifecycle contract or return an explicit
 start instruction; they never fall back to repository detection.
-
