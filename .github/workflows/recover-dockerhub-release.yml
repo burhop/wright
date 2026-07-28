@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
   packages: read
 
 env:
@@ -117,7 +117,22 @@ jobs:
           name: dockerhub-recovery-${{ inputs.tag }}-${{ github.run_id }}
           path: recovery-evidence
           if-no-files-found: error
-      - name: Attach recovery evidence to the existing GitHub Release
+          retention-days: 90
+      - name: Confirm immutable release and record recovery location
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "$TAG" "$EVIDENCE_FILE"
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMMUTABLE="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq '.immutable // false')"
+          test "$IMMUTABLE" = true || {
+            echo "::error::Expected finalized GitHub Release $TAG to be immutable."
+            exit 1
+          }
+          {
+            echo "### Docker Hub recovery complete"
+            echo
+            echo "The finalized GitHub Release is immutable and was intentionally not modified."
+            echo "Recovery evidence is retained by this protected workflow run in artifact:"
+            echo "\`dockerhub-recovery-${TAG}-${GITHUB_RUN_ID}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
