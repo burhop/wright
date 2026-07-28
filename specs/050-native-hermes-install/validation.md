@@ -113,8 +113,10 @@ fixture and candidate are not substituted for that production evidence.
 - T086: GitHub must complete the monolithic dev gate without local live-process
   and output-pipe limitations.
 - T087: production gate intentionally fails the real Hermes capability probe.
-- T088-T090: completion audit, commit/push, PR, and green-check monitoring remain
-  in progress.
+- T088: completion audit remains blocked by the open production-evidence tasks.
+- T089: complete; the Spec Kit commit hook ran, the worktree was verified clean,
+  and `050-native-hermes-install` was pushed to origin.
+- T090: PR creation and green-check monitoring remain in progress.
 
 The feature must not be described as production-native-ready, merged, or
 released until every open task is resolved. Docker remains a mandatory,
