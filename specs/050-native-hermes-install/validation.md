@@ -10,10 +10,10 @@ native release remains blocked by the released Hermes interface.
 - Distribution: `wright-engineering==0.1.5`
 - Wheel: `wright_engineering-0.1.5-py3-none-any.whl`
 - Wheel SHA-256:
-  `cb5dedb37b99e0bc58bff25026bd6f1d52adf713ae7ec120bffd09f0b083b33e`
+  `069d20587cb73552bbe1be28f3e03f0153b68413dd1283e4c8f0a39427a506d4`
 - Source archive: `wright_engineering-0.1.5.tar.gz`
 - Source archive SHA-256:
-  `ae35da5dd3c59f303dcd5aff573ecc014e26c31cff618ea4d82b62baea0f7529`
+  `c2c32290caaa3b2021f1982890bcf0de15cd9697d0c7a715865f520101719e7f`
 - Bundled modules in both archives: `wright_engineering`, `api`, `core`,
   `agent_adapters`, `tool_registry`, `data_vault`, and `workspace_service`
 - Final local Docker subject:
@@ -25,6 +25,13 @@ policy. A clean Windows base-plugin fixture installed the exact wheel above from
 an external wheelhouse. It discovered the `wright` command and `pre_remove`
 hook with only `wright-engineering`, `packaging`, and `pip` in the Hermes base
 environment. The fixture reported source isolation and no forbidden executable.
+
+The first PR package-matrix run exposed a Windows-to-Linux line-ending mismatch
+between `icons.svg` and its byte-addressed UI manifest. The builder now
+normalizes text assets to LF before hashing, writes the manifest with explicit
+LF bytes, and marks the generated tree as non-text in Git. The regression suite
+and rebuilt wheel/source archive validate that the recorded manifest hash is the
+hash of the exact packaged bytes on every platform.
 
 ## Completed validation
 

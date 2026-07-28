@@ -20,6 +20,16 @@ PACKAGED_WEB = ROOT / "src" / "wright_engineering" / "static" / "web"
 RUNTIME_EXTRA_LOCK = ROOT / "src" / "wright_engineering" / "runtime-extra-lock.json"
 FORBIDDEN_PARTS = {"node_modules", ".git", ".env", "src"}
 FORBIDDEN_SUFFIXES = {".map", ".key", ".pem", ".token", ".sqlite", ".db"}
+TEXT_ASSET_SUFFIXES = {
+    ".css",
+    ".html",
+    ".js",
+    ".json",
+    ".svg",
+    ".txt",
+    ".webmanifest",
+    ".xml",
+}
 
 
 class CandidateBuildError(RuntimeError):
@@ -95,14 +105,33 @@ def inspect_web_dist(source: Path) -> list[dict[str, object]]:
     return entries
 
 
-def stage_frontend(entries: Iterable[dict[str, object]]) -> str:
+def normalize_text_assets(root: Path) -> None:
+    """Make manifest-addressed text assets byte-stable across build hosts."""
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or path.suffix.lower() not in TEXT_ASSET_SUFFIXES:
+            continue
+        payload = path.read_bytes()
+        normalized = payload.replace(b"\r\n", b"\n")
+        if normalized != payload:
+            path.write_bytes(normalized)
+
+
+def write_asset_manifest(
+    destination: Path, entries: Iterable[dict[str, object]]
+) -> str:
+    manifest = {"schema_version": 1, "files": list(entries)}
+    encoded = json.dumps(manifest, sort_keys=True, indent=2) + "\n"
+    destination.write_text(encoded, encoding="utf-8", newline="\n")
+    return sha256_file(destination)
+
+
+def stage_frontend() -> str:
     if PACKAGED_WEB.exists():
         shutil.rmtree(PACKAGED_WEB)
     shutil.copytree(WEB_DIST, PACKAGED_WEB)
-    manifest = {"schema_version": 1, "files": list(entries)}
-    encoded = json.dumps(manifest, sort_keys=True, indent=2) + "\n"
-    (PACKAGED_WEB / "asset-manifest.json").write_text(encoded, encoding="utf-8")
-    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+    normalize_text_assets(PACKAGED_WEB)
+    entries = inspect_web_dist(PACKAGED_WEB)
+    return write_asset_manifest(PACKAGED_WEB / "asset-manifest.json", entries)
 
 
 def stage_runtime_extra_lock() -> str:
@@ -164,8 +193,7 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if not args.skip_frontend_build:
         build_frontend()
-    web_entries = inspect_web_dist(WEB_DIST)
-    web_manifest_hash = stage_frontend(web_entries)
+    web_manifest_hash = stage_frontend()
     runtime_extra_lock_hash = stage_runtime_extra_lock()
     artifacts = build_distributions(args.output)
 
