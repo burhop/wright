@@ -109,6 +109,22 @@ No previous stable public native Wright wheel exists, so the real published
 install/update/rollback/uninstall/purge sequence cannot yet be exercised. The
 fixture and candidate are not substituted for that production evidence.
 
+## Pull request and CI
+
+Draft PR [#79](https://github.com/burhop/wright/pull/79) targets `dev` and remains
+unmerged. The first check run found a Windows-to-Linux UI-manifest byte mismatch.
+The second found a hosted-Windows `System32` Docker leak into the clean harness
+and a platform-specific mypy reference. Each defect received a focused
+regression and was fixed before the next run.
+
+All checks on commit `467eab8` passed on 2026-07-28: Python quality and 85%
+coverage, Python 3.11-3.14 wheel/sdist matrices on Linux and Windows, Windows
+backend/frontend suites, native base isolation on Linux/Windows/macOS, native
+lifecycle and required aggregate, Playwright, frontend quality, docs,
+dependency review, leak scan, CodeQL for Python and JavaScript/TypeScript, and
+OCI build/smoke/scan. The docs deployment job was correctly skipped for a pull
+request. No merge was performed.
+
 ## Open task audit
 
 - T023: real subprocess-audited first start awaits the released Hermes package
@@ -116,14 +132,12 @@ fixture and candidate are not substituted for that production evidence.
 - T073: released Hermes `python-distribution-v1` capability is absent.
 - T084: complete published previous-stable-to-candidate lifecycle is blocked by
   the two facts above.
-- T085: GitHub must execute the restricted history and pip advisory scans.
-- T086: GitHub must complete the monolithic dev gate without local live-process
-  and output-pipe limitations.
 - T087: production gate intentionally fails the real Hermes capability probe.
-- T088: completion audit remains blocked by the open production-evidence tasks.
+- T088: completion audit remains blocked by T023, T073, T084, and T087.
 - T089: complete; the Spec Kit commit hook ran, the worktree was verified clean,
   and `050-native-hermes-install` was pushed to origin.
-- T090: PR creation and green-check monitoring remain in progress.
+- T090: complete; PR #79 is open against `dev`, all checks are green, and the PR
+  remains unmerged.
 
 The feature must not be described as production-native-ready, merged, or
 released until every open task is resolved. Docker remains a mandatory,

@@ -246,12 +246,12 @@ findings, and deliver a clean feature branch and green PR without merging.
 - [X] T082 [P] Run frontend Vitest/build and packaged UI/Playwright integration, recording results in `specs/050-native-hermes-install/validation.md`
 - [X] T083 [P] Run provider-neutral MCP, workspace/session, gateway/rebinding suites plus `scripts/docker-smoke-test.sh` while retaining the separate server process in `docs/mcp-catalog/mcp-server-testing-process.md`, recording results in `specs/050-native-hermes-install/validation.md`
 - [ ] T084 Run the complete candidate clean-install/update/rollback/uninstall/purge matrix with no forbidden tools or acceptance skips and record artifact identities/results in `specs/050-native-hermes-install/validation.md`
-- [ ] T085 Run secret, dependency, artifact, and workflow policy scans and record results in `specs/050-native-hermes-install/validation.md`
-- [ ] T086 Run `scripts/check-dev-merge.sh` without native acceptance skips and remediate every failure
+- [X] T085 Run secret, dependency, artifact, and workflow policy scans and record results in `specs/050-native-hermes-install/validation.md`
+- [X] T086 Run `scripts/check-dev-merge.sh` without native acceptance skips and remediate every failure
 - [ ] T087 Run `scripts/check-prod-merge.sh` without native acceptance skips and remediate every failure
 - [ ] T088 Verify all tasks are `[X]`, all requirements have evidence, no unexpected worktree changes exist, and update `specs/050-native-hermes-install/validation.md` with the completion audit
 - [X] T089 Execute the configured Spec Kit after-implement commit hook from repository root `D:/repos/wright`, verify a clean worktree, and push `050-native-hermes-install` to origin
-- [ ] T090 From repository root `D:/repos/wright`, open a pull request from `050-native-hermes-install` to `dev`, monitor every required GitHub check, remediate failures, and stop only when all checks are green without merging
+- [X] T090 From repository root `D:/repos/wright`, open a pull request from `050-native-hermes-install` to `dev`, monitor every required GitHub check, remediate failures, and stop only when all checks are green without merging
 
 ---
 
