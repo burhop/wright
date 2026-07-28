@@ -24,7 +24,9 @@ publication or rebuild the OCI image. Dispatch
 release tag and the GHCR digest recorded in `release-evidence.json`. The
 recovery validates the tag commit and retained evidence, copies that exact
 digest to the version tag and stable `latest`, verifies both publicly, and
-attaches separate recovery evidence to the existing GitHub Release.
+retains separate recovery evidence as an artifact of the protected workflow
+run. Finalized GitHub Releases are immutable, so recovery intentionally does
+not modify the existing release; the evidence records the workflow run URL.
 
 ## GitHub Release and documentation
 

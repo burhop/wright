@@ -61,5 +61,9 @@ def test_docker_hub_recovery_never_rebuilds_or_republishes_python() -> None:
     assert "gh release download" in recovery
     assert "docker buildx imagetools create" in recovery
     assert "dockerhub-recovery-${TAG#v}-${GITHUB_RUN_ID}.json" in recovery
+    assert "retention-days: 90" in recovery
+    assert "Expected finalized GitHub Release $TAG to be immutable" in recovery
+    assert "The finalized GitHub Release is immutable" in recovery
+    assert "gh release upload" not in recovery
     assert "docker/build-push-action@" not in recovery
     assert "gh-action-pypi-publish@" not in recovery
