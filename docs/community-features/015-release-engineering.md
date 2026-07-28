@@ -21,7 +21,7 @@ pre-release marked, and clear about what was tested.
 2. **Version source of truth** - Keep the version number aligned across:
    - Python: root `pyproject.toml`.
    - Git: annotated tags such as `v0.1.0-alpha.1`.
-   - Containers: GHCR and optional Docker Hub image tags.
+   - Containers: required GHCR and Docker Hub image tags.
 
 ### Changelog and Release Notes
 
@@ -43,8 +43,8 @@ beta, or release-candidate tag.
    triggers the publishing workflow:
    - Build the Docker image with OCI version, revision, and created labels.
    - Push `ghcr.io/<owner>/wright:<tag>` using GitHub Packages.
-   - Push `burhop/wright:<tag>` only when
-     `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
+   - Require `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, then push and verify
+     `burhop/wright:<tag>` from the tested GHCR digest.
    - Mark alpha, beta, and release-candidate tags as GitHub prereleases.
    - Apply `latest` only for stable tags. Prerelease tags must not move
      `latest`.
@@ -80,7 +80,8 @@ beta, or release-candidate tag.
 - Do not imply production readiness for public alpha releases.
 - Do not claim Wright bundles an LLM, hosted provider account, API key, paid
   engineering backend, or MCP-specific host software.
-- GHCR must remain publishable without Docker Hub secrets.
-- Docker Hub publishing must remain optional.
+- GHCR remains the canonical source digest, but Docker Hub publishing is
+  required for a completed production release.
+- Missing Docker Hub credentials or digest divergence must stop the release.
 - Release automation must not deploy beyond publishing release artifacts.
 - Release notes must name manual gates, skipped validation, and known limits.

@@ -474,7 +474,7 @@ flowchart TD
 ### 10.3 Container policy
 
 - Canonical image: ghcr.io/burhop/wright.
-- Optional byte-identical mirror: burhop/wright on Docker Hub.
+- Required byte-identical distribution: burhop/wright on Docker Hub.
 - Immutable tags: version and git SHA. Mutable latest only moves after stable verification.
 - Build and push SHA candidates first; smoke and scan by digest; promote without rebuilding.
 - Start with linux/amd64. Add linux/arm64 only after:

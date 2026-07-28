@@ -6,7 +6,7 @@ This page records the public-alpha release posture for Wright. It keeps install,
 
 | Surface | Alpha decision | Status |
 | --- | --- | --- |
-| Docker Hub | `burhop/wright:<tag>` | Enabled for alpha releases when Docker Hub secrets are present. |
+| Docker Hub | `burhop/wright:<tag>` | Required, protected, and digest-verified for every production release. |
 | GHCR | `ghcr.io/burhop/wright:<tag>` | Enabled by the release workflow. |
 | PyPI | `wright-engineering` | Single alpha helper package. |
 | Component packages | Not published for alpha | Existing package names collide or need a dependency plan. |

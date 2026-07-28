@@ -52,10 +52,10 @@ Dockerized gitleaks and trufflehog history scans.
 
 ## 3. Docker and Release Metadata
 
-- [ ] Confirm image names and registries: GHCR and/or Docker Hub.
+- [ ] Confirm required image names and registries: GHCR and Docker Hub.
 - [ ] Confirm the release workflow has `packages: write` permission for GHCR.
-- [ ] Confirm Docker Hub credentials are configured only if Docker Hub publishing
-  is enabled; GHCR must remain publishable without Docker Hub secrets.
+- [ ] Confirm required Docker Hub credentials are configured and that both the
+  version tag and stable `latest` resolve to the tested GHCR digest.
 - [ ] Confirm tag policy for alpha images, immutable version tags, SHA tags, and
   any `latest` behavior.
 - [ ] Confirm linux/amd64 and linux/arm64 support claims match actual builds and

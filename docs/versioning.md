@@ -40,8 +40,8 @@ Wright automates package builds and image publication:
    candidate digest, then tests those exact subjects.
 3. **Latest Policy**: Stable tags also update `latest`. Prerelease tags containing `-alpha`, `-beta`, or `-rc` do not update `latest`.
 4. **Publishing**: Exact Python files pass through TestPyPI before protected
-   PyPI promotion. The tested OCI digest is promoted in GHCR and optionally
-   copied byte-identically to Docker Hub. Post-publication verification and
+   PyPI promotion. The tested OCI digest is promoted in GHCR and copied
+   byte-identically to required Docker Hub distribution. Post-publication verification and
    versioned docs precede the GitHub Release, which is published last.
 
 A rehearsal or static workflow check is not a successful production release.
@@ -55,4 +55,8 @@ results, SBOM/provenance status, and any skipped MCP validation. Use
 Current public image names:
 
 - `ghcr.io/burhop/wright:<tag>`
-- `burhop/wright:<tag>` when Docker Hub credentials are configured
+- `burhop/wright:<tag>`
+
+A merge to `main` is not a completed production release. The matching unique
+version tag must complete TestPyPI, PyPI, GHCR, Docker Hub, versioned docs, and
+GitHub Release publication before maintainers report the release as done.

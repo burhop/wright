@@ -24,12 +24,15 @@ The rehearsal rejects credentials and performs no TestPyPI, PyPI, registry, docu
 4. Publish the recorded Python files to TestPyPI and install/smoke that version.
 5. Obtain protected approval.
 6. Publish the same Python files to PyPI and promote the tested OCI digest in GHCR.
-7. If configured, copy the same OCI manifest to Docker Hub and verify digest identity.
+7. Copy the same OCI manifest to Docker Hub and verify the version tag and, for
+   stable releases, `latest` resolve to the tested digest.
 8. Perform post-publication package, digest, and attestation verification.
 9. Deploy versioned documentation.
 10. Publish the GitHub Release last.
 
-Any required failure stops later jobs. An absent optional Docker Hub mirror must be recorded as skipped; a configured mirror that diverges is a failure.
+Any failure stops later jobs. Missing Docker Hub credentials, authentication
+failure, an absent tag, or digest divergence makes the production release
+incomplete.
 
 ## Consumer verification
 
@@ -38,6 +41,7 @@ python -m pip install --no-deps wright-engineering==VERSION
 wright --version
 wright doctor
 docker pull ghcr.io/burhop/wright@sha256:DIGEST
+docker pull burhop/wright:TAG
 gh attestation verify oci://ghcr.io/burhop/wright@sha256:DIGEST -R burhop/wright
 ```
 

@@ -22,7 +22,7 @@ def test_release_engineering_brief_matches_alpha_release_policy() -> None:
         "docs/alpha-release-notes-template.md",
         "ghcr.io/<owner>/wright:<tag>",
         "burhop/wright:<tag>",
-        "Docker Hub publishing must remain optional",
+        "Docker Hub publishing is required for a completed production release",
         "latest is stable-only",
         "bring-your-own-AI",
         "MCP-specific host software",
@@ -43,8 +43,8 @@ def test_docker_distribution_brief_matches_registry_and_dependency_policy() -> N
     brief = squashed("docs/community-features/017-docker-distribution.md")
 
     for expected in [
-        "GHCR is the default registry path",
-        "Docker Hub remains optional",
+        "GHCR is the canonical registry path",
+        "Docker Hub is required for a completed production release",
         "ghcr.io/burhop/wright:<tag>",
         "burhop/wright:<tag>",
         "docker-compose.minimal.yml",

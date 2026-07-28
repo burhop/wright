@@ -9,8 +9,11 @@ on:
       tag:
         description: Version tag to rehearse (must match root metadata)
         required: true
-        default: v0.1.4
+        default: v0.1.5
         type: string
+
+env:
+  DOCKERHUB_IMAGE: burhop/wright
 
 concurrency:
   group: release-${{ github.ref_name || inputs.tag }}
@@ -277,30 +280,42 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
-      - name: Classify optional mirror
-        id: mirror
+      - name: Require Docker Hub release credentials
         shell: bash
         run: |
-          if [[ -n "$DOCKERHUB_USERNAME" && -n "$DOCKERHUB_TOKEN" ]]; then
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "Docker Hub mirror is not configured; canonical GHCR remains verified."
-          fi
-      - if: ${{ steps.mirror.outputs.configured == 'true' }}
+          set -euo pipefail
+          test -n "$DOCKERHUB_USERNAME" || {
+            echo "::error::DOCKERHUB_USERNAME is required for every production release."
+            exit 1
+          }
+          test -n "$DOCKERHUB_TOKEN" || {
+            echo "::error::DOCKERHUB_TOKEN is required for every production release."
+            exit 1
+          }
+          [[ "$DOCKERHUB_TOKEN" =~ ^dckr_pat_[A-Za-z0-9_-]+$ ]] || {
+            echo "::error::DOCKERHUB_TOKEN must contain the raw one-time dckr_pat_ value, without quotes, whitespace, or the token display name."
+            exit 1
+          }
+      - name: Log in to Docker Hub
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ env.DOCKERHUB_TOKEN }}
-      - name: Copy and verify the same manifest
-        if: ${{ steps.mirror.outputs.configured == 'true' }}
+      - name: Copy and verify the same manifest in Docker Hub
         env:
           SOURCE: ${{ needs.oci-candidate.outputs.image }}@${{ needs.oci-candidate.outputs.digest }}
-          DEST: ${{ env.DOCKERHUB_USERNAME }}/wright:${{ needs.preflight-and-python-build.outputs.tag }}
+          DEST_VERSION: ${{ env.DOCKERHUB_IMAGE }}:${{ needs.preflight-and-python-build.outputs.tag }}
+          DEST_LATEST: ${{ env.DOCKERHUB_IMAGE }}:latest
           DIGEST: ${{ needs.oci-candidate.outputs.digest }}
+          PRERELEASE: ${{ needs.preflight-and-python-build.outputs.prerelease }}
         run: |
-          docker buildx imagetools create --tag "$DEST" "$SOURCE"
-          docker buildx imagetools inspect "$DEST" | grep -F "$DIGEST"
+          set -euo pipefail
+          docker buildx imagetools create --tag "$DEST_VERSION" "$SOURCE"
+          docker buildx imagetools inspect "$DEST_VERSION" | grep -F "$DIGEST"
+          if [[ "$PRERELEASE" != true ]]; then
+            docker buildx imagetools create --tag "$DEST_LATEST" "$SOURCE"
+            docker buildx imagetools inspect "$DEST_LATEST" | grep -F "$DIGEST"
+          fi
 
   rehearsal:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal == 'true' }}
@@ -353,6 +368,17 @@ jobs:
           docker buildx imagetools inspect "${{ needs.oci-candidate.outputs.image }}@${{ needs.oci-candidate.outputs.digest }}"
           python -m pip install --no-deps "wright-engineering==${{ needs.preflight-and-python-build.outputs.version }}"
           wright --version
+      - name: Independently verify required public Docker Hub tags
+        env:
+          TAG: ${{ needs.preflight-and-python-build.outputs.tag }}
+          DIGEST: ${{ needs.oci-candidate.outputs.digest }}
+          PRERELEASE: ${{ needs.preflight-and-python-build.outputs.prerelease }}
+        run: |
+          set -euo pipefail
+          docker buildx imagetools inspect "$DOCKERHUB_IMAGE:$TAG" | grep -F "$DIGEST"
+          if [[ "$PRERELEASE" != true ]]; then
+            docker buildx imagetools inspect "$DOCKERHUB_IMAGE:latest" | grep -F "$DIGEST"
+          fi
       - name: Assemble exact-subject release evidence
         run: |
           python scripts/assemble-release-evidence.py \
@@ -362,9 +388,12 @@ jobs:
             --python-dist dist \
             --oci-repository "${{ needs.oci-candidate.outputs.image }}" \
             --oci-digest "${{ needs.oci-candidate.outputs.digest }}" \
+            --promotion-destination "${{ needs.oci-candidate.outputs.image }}" \
+            --promotion-destination "docker.io/${{ env.DOCKERHUB_IMAGE }}" \
             --approval testpypi \
             --approval pypi \
             --approval release \
+            --approval dockerhub \
             --output final-evidence/release-evidence.json
           python scripts/verify-release-evidence.py final-evidence/release-evidence.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
