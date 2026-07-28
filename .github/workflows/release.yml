@@ -9,7 +9,7 @@ on:
       tag:
         description: Version tag to rehearse (must match root metadata)
         required: true
-        default: v0.1.1
+        default: v0.1.2
         type: string
 
 concurrency:

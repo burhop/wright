@@ -102,7 +102,7 @@ PY
 
   "${HERMES_CLI}" -p wright config set API_SERVER_ENABLED true
   "${HERMES_CLI}" -p wright config set API_SERVER_HOST "${API_SERVER_HOST:-127.0.0.1}"
-  "${HERMES_CLI}" -p wright config set API_SERVER_KEY "${HERMES_API_KEY}"
+  "${HERMES_CLI}" -p wright config set API_SERVER_KEY -- "${HERMES_API_KEY}"
   "${HERMES_CLI}" -p wright config set API_SERVER_PORT "${API_SERVER_PORT:-8642}"
 }
 
