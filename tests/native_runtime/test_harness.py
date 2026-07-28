@@ -51,6 +51,9 @@ def test_clean_child_environment_removes_source_and_forbidden_tools(
     assert "PYTHONPATH" not in environment
     assert "WRIGHT_REPO_DIR" not in environment
     assert environment["HERMES_PLUGIN_INSTALL_CAPABILITY"] == "python-distribution-v1"
+    assert environment["PATH"] == str(
+        plugin / ("Scripts" if os.name == "nt" else "bin")
+    )
     HARNESS.assert_forbidden_tools_inaccessible(environment)
 
 

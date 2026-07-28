@@ -143,7 +143,7 @@ class ProcessManager:
                 stdout=output,
                 stderr=subprocess.STDOUT,
                 creationflags=(
-                    subprocess.CREATE_NEW_PROCESS_GROUP
+                    getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
                     | getattr(subprocess, "CREATE_NO_WINDOW", 0)
                 ),
             )

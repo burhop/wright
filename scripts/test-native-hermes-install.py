@@ -100,17 +100,9 @@ def clean_child_environment(
             "SSL_CERT_DIR",
         }
     }
-    system_paths: list[str] = []
-    if os.name == "nt":
-        system_root = Path(keep.get("SYSTEMROOT", r"C:\Windows"))
-        system_paths.extend(
-            str(item)
-            for item in (system_root / "System32", system_root)
-            if item.is_dir()
-        )
     keep.update(
         {
-            "PATH": os.pathsep.join([str(_scripts(plugin_environment)), *system_paths]),
+            "PATH": str(_scripts(plugin_environment)),
             "HERMES_HOME": str(hermes_home),
             "HERMES_VERSION_OVERRIDE": "0.19.0",
             "HERMES_PLUGIN_INSTALL_CAPABILITY": "python-distribution-v1",
