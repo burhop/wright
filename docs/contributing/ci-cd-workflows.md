@@ -22,8 +22,7 @@ Docker Hub enabled only when credentials are configured.
 | `docs-deploy.yml` | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
 | `sync-hermes-plugin-mirror.yml` | Relevant push to `main` or `dev`, or manual run | Generates and validates the thin Hermes plugin mirror, records provenance, and publishes the selected mirror branch when enabled. |
 | `release-drafter.yml` | Push to `main` or `dev` | Updates the draft release notes from merged PR metadata. |
-| `release.yml` | Push to tag matching `v*`, or manual rehearsal | Builds immutable Python and OCI candidates, installs and smokes them, then publishes/promotes/verifies only for a real tag. Manual dispatch is a no-public-mutation rehearsal. |
-| `publish-python-packages.yml` | Reusable `workflow_call` from `release.yml` | Verifies the immutable Python artifact, publishes it to TestPyPI and PyPI through protected environments, and installs the published subject after each stage. |
+| `release.yml` | Push to tag matching `v*`, or manual rehearsal | Builds immutable Python and OCI candidates, installs and smokes them, then publishes/promotes/verifies only for a real tag. The PyPI actions run directly here so OIDC and package attestations share the same trusted workflow identity. Manual dispatch is a no-public-mutation rehearsal. |
 
 ## Pull Request Gates
 
@@ -122,7 +121,9 @@ versioned documentation, and GitHub Releases.
   `ghcr.io/<owner>/wright:<tag>` using the GitHub token and `packages: write`
   permission; it never rebuilds during promotion.
 - The immutable Python candidate is published through TestPyPI and PyPI
-  protected environments and installed after each publication stage.
+  protected environments and installed after each publication stage. Those
+  publishing actions remain directly in `release.yml` because PyPI Trusted
+  Publishing cannot use a reusable workflow as its publisher identity.
 - Docker Hub publishing is optional. It is enabled only when
   `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
 - Alpha, beta, and release-candidate tags such as `v0.1.0-alpha.1`,

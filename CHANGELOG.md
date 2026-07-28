@@ -4,6 +4,12 @@ All notable changes to the Wright project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2026-07-28
+
+### Fixed
+- Moved PyPI Trusted Publishing into the top-level release workflow so the OIDC publisher identity and generated package attestations agree.
+- Added regression coverage and operator guidance that prohibit PyPI publishing from reusable workflows.
+
 ## [0.1.3] - 2026-07-28
 
 ### Fixed

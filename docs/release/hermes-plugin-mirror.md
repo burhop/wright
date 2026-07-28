@@ -27,11 +27,11 @@ The root `wright-engineering` package and the Hermes plugin mirror are separate 
 Use the product release tag when publishing the PyPI helper package and container:
 
 ```bash
-git tag v0.1.3
-git push origin v0.1.3
+git tag v0.1.4
+git push origin v0.1.4
 ```
 
-The `.github/workflows/publish-python-packages.yml` workflow uses PyPI Trusted Publishing through GitHub Actions OIDC. Configure pending publishers in PyPI and TestPyPI with these environments:
+The top-level `.github/workflows/release.yml` workflow uses PyPI Trusted Publishing through GitHub Actions OIDC. Configure project publishers for `release.yml` in PyPI and TestPyPI with these environments:
 
 - `testpypi` for TestPyPI publication
 - `pypi` for stable PyPI publication
