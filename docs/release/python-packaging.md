@@ -32,14 +32,17 @@ Docker remains the primary end-user install path for running the Wright applianc
 
 PyPI and TestPyPI use Trusted Publishing through GitHub Actions OIDC. Do not add PyPI API tokens to GitHub secrets.
 
-Configured pending publishers:
+Configured project publishers:
 
 | Index | Project | GitHub owner/repo | Workflow | Environment |
 | --- | --- | --- | --- | --- |
-| TestPyPI | `wright-engineering` | `burhop/wright` | `publish-python-packages.yml` | `testpypi` |
-| PyPI | `wright-engineering` | `burhop/wright` | `publish-python-packages.yml` | `pypi` |
+| TestPyPI | `wright-engineering` | `burhop/wright` | `release.yml` | `testpypi` |
+| PyPI | `wright-engineering` | `burhop/wright` | `release.yml` | `pypi` |
 
 The `testpypi`, `pypi`, and `release` environments require protected review.
+The PyPI publishing action must remain directly in the top-level `release.yml`;
+PyPI Trusted Publishing does not support using a reusable workflow as the
+publisher identity. The reusable OCI build is unaffected by this restriction.
 The build-once wheel and source archive are identified by SHA-256, installed
 from TestPyPI first, and then passed unchanged to PyPI. Identical retries may
 resume; different hashes require a new patch version.

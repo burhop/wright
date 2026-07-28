@@ -27,7 +27,6 @@ def test_ci_cd_docs_list_current_workflows_and_pr_gates() -> None:
         "docs-deploy.yml",
         "sync-hermes-plugin-mirror.yml",
         "release.yml",
-        "publish-python-packages.yml",
         "release-drafter.yml",
         "test-windows.yml",
         "uv sync --all-packages --all-groups",
