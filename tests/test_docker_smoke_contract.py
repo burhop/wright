@@ -22,6 +22,17 @@ def test_docker_smoke_script_matches_entrypoint_llm_contract() -> None:
     assert "Warning: LLM_API_URL environment variable is not set" in entrypoint
 
 
+def test_hermes_api_key_is_safe_when_it_starts_with_option_prefix() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+    entrypoint = read_text("docker/entrypoint.sh")
+    profile_setup = read_text("scripts/setup-wright-profile.sh")
+
+    assert 'HERMES_API_KEY="-ci-smoke-leading-hyphen"' in smoke
+    assert 'config set API_SERVER_KEY -- "${HERMES_API_KEY}"' in entrypoint
+    assert 'config set API_SERVER_KEY -- "${HERMES_API_KEY}"' in profile_setup
+    assert "Container failed while testing setup-pending startup" in smoke
+
+
 def test_docker_smoke_script_docs_include_existing_image_mode() -> None:
     readme = read_text("scripts/README.md")
 
