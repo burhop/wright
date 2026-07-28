@@ -54,8 +54,9 @@ Protect `main` with these minimum public-alpha rules:
 - [ ] Confirm docs do not deploy on pull requests; PRs should build only.
 - [ ] Configure the GHCR package `ghcr.io/burhop/wright` as public before
   publishing alpha releases.
-- [ ] Configure Docker Hub secrets only if Docker Hub publishing is intended:
-  `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+- [ ] Configure required Docker Hub secrets `DOCKERHUB_USERNAME` and
+  `DOCKERHUB_TOKEN` at repository scope or in the protected `dockerhub`
+  environment. Use the raw read/write token value, not its display name.
 
 ## Security Settings
 

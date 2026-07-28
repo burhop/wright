@@ -31,9 +31,9 @@ The README must front-load these truths:
    - Python and Node versions
    - GitHub stars
    - Community/discussion links
-3. GHCR is the default registry path for release images. Docker Hub remains
-   optional, so Docker Hub pull badges should appear only when that publishing
-   path is actively configured and documented.
+3. GHCR is the canonical registry path for release images. Docker Hub is
+   required for completed production releases, and registry badges must remain
+   tied to verified published tags.
 4. Social preview images should use the Wright logo and concise alpha-aware
    messaging, not claims of completed production reliability.
 
@@ -134,5 +134,5 @@ missing MCP dependencies, and incomplete workflows are expected.
   README branding brief.
 - Do not claim production readiness, bundled model access, bundled paid
   engineering backends, or universal local execution.
-- Keep registry language aligned with release policy: GHCR default, Docker Hub
-  optional, and stable-only `latest`.
+- Keep registry language aligned with release policy: GHCR canonical, Docker
+  Hub required for completed releases, and stable-only `latest`.

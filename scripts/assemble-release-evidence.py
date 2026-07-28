@@ -29,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--python-dist", type=Path, required=True)
     parser.add_argument("--oci-repository")
     parser.add_argument("--oci-digest")
+    parser.add_argument("--promotion-destination", action="append", default=[])
     parser.add_argument("--approval", action="append", default=[])
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -51,12 +52,14 @@ def main(argv: list[str] | None = None) -> int:
             "sbom": "attached",
             "provenance": "verified",
         }
-        promotions.append(
+        destinations = args.promotion_destination or [args.oci_repository]
+        promotions.extend(
             {
-                "destination": args.oci_repository,
+                "destination": destination,
                 "source_digest": args.oci_digest,
                 "resolved_digest": args.oci_digest,
             }
+            for destination in destinations
         )
     else:
         skipped.append("OCI evidence unavailable in this local rehearsal")

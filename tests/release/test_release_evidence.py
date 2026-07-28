@@ -74,3 +74,29 @@ def test_oci_gate_and_promotion_subjects_must_match_candidate() -> None:
     )
     with pytest.raises(EvidenceError, match="preserve"):
         evidence.validate()
+
+
+def test_multiple_registry_promotions_preserve_one_candidate_digest() -> None:
+    digest = "sha256:" + "d" * 64
+    evidence = ReleaseEvidence(
+        release_identity=IDENTITY,
+        oci_candidate=OciCandidate("ghcr.io/burhop/wright", digest),
+        oci_gate_evidence={"candidate_digest": digest},
+        promotions=[
+            {
+                "destination": destination,
+                "source_digest": digest,
+                "resolved_digest": digest,
+            }
+            for destination in (
+                "ghcr.io/burhop/wright",
+                "docker.io/burhop/wright",
+            )
+        ],
+    )
+
+    evidence.validate()
+    assert [item["destination"] for item in evidence.promotions] == [
+        "ghcr.io/burhop/wright",
+        "docker.io/burhop/wright",
+    ]

@@ -18,9 +18,20 @@ Keep immutable version and SHA references for audit. Mark the bad digest quarant
 
 If Docker Hub resolves to a different manifest, hold the GitHub Release as draft, quarantine the mirror reference, and recopy from the canonical GHCR digest only after credentials/repository ownership are revalidated. Canonical GHCR evidence remains authoritative.
 
+If PyPI and GHCR already passed but Docker Hub did not, do not rerun Python
+publication or rebuild the OCI image. Dispatch
+`.github/workflows/recover-dockerhub-release.yml` from `main` with the existing
+release tag and the GHCR digest recorded in `release-evidence.json`. The
+recovery validates the tag commit and retained evidence, copies that exact
+digest to the version tag and stable `latest`, verifies both publicly, and
+attaches separate recovery evidence to the existing GitHub Release.
+
 ## GitHub Release and documentation
 
-Keep the GitHub Release absent or draft until package, canonical image, configured mirror, attestations, and versioned documentation are verified. If a terminal job fails, resume only after all evidence subjects remain identical.
+Keep the GitHub Release absent or draft until package, canonical image, required
+Docker Hub distribution, attestations, and versioned documentation are
+verified. If a terminal job fails, resume only after all evidence subjects
+remain identical.
 
 ## Evidence retention
 

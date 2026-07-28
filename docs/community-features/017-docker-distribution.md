@@ -1,8 +1,8 @@
 # Feature Brief: Docker Distribution Polish
 
 Improve Wright's container metadata, registry presence, and release confidence
-for public alpha. GHCR is the default registry path. Docker Hub remains optional
-and should only publish when maintainer credentials are configured.
+for public alpha. GHCR is the canonical registry path. Docker Hub is required
+for a completed production release and consumes the same tested manifest.
 
 ## What to build
 
@@ -27,8 +27,7 @@ and should only publish when maintainer credentials are configured.
 
 3. **Public image names** - Document both supported public paths:
    - `ghcr.io/burhop/wright:<tag>`
-   - `burhop/wright:<tag>` when Docker Hub publishing is
-     enabled.
+   - `burhop/wright:<tag>` for every production release.
 
 4. **Registry descriptions** - Keep `docker/DOCKER_HUB_README.md` useful for
    Docker Hub and reusable for GHCR package descriptions:
@@ -44,10 +43,10 @@ and should only publish when maintainer credentials are configured.
    - Selected MCP dependencies are installed per server following the
      clean-container validation process.
 
-5. **Docker Hub sync** - `release.yml` should run
-   `peter-evans/dockerhub-description` only when `DOCKERHUB_USERNAME` and
-   `DOCKERHUB_TOKEN` exist. GHCR release publishing must not depend on Docker
-   Hub secrets.
+5. **Docker Hub sync** - `release.yml` must require
+   `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`, copy the exact tested GHCR
+   manifest, and verify the version tag plus stable `latest`. Missing or invalid
+   credentials stop the release.
 
 ### Compose Examples
 
@@ -86,7 +85,8 @@ choice.
   engineering backends, or MCP-specific host software.
 - Do not add MCP-specific host software to the base image just to make catalog
   validation pass.
-- Docker Hub must remain optional; GHCR is the default release registry.
+- Docker Hub is required for a completed production release; GHCR remains the
+  canonical source digest.
 - Prerelease tags must not move `latest`.
 - Multi-architecture support must not be advertised beyond what release CI
   builds and smokes.

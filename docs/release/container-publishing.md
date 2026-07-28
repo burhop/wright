@@ -6,14 +6,17 @@ Wright's canonical alpha appliance identity is:
 ghcr.io/burhop/wright@sha256:<digest>
 ```
 
-GHCR is canonical. Docker Hub is an optional byte-identical manifest mirror
-using protected `dockerhub` credentials; it never rebuilds the image.
+GHCR is canonical. Docker Hub is a required byte-identical distribution target
+using protected `dockerhub` credentials; it never rebuilds the image. A
+production release is incomplete if either registry tag is missing or resolves
+to a different digest.
 
 ## Tag Policy
 
 - Release and SHA tags point to the already-tested immutable digest.
 - Prerelease tags such as `v0.1.0-alpha.1`, `v0.1.0-beta.1`, and `v0.1.0-rc.1` do not move `latest`.
 - Stable tags may move `latest` only after post-promotion verification.
+- Stable releases update and verify `latest` in both GHCR and Docker Hub.
 
 ## Platform Policy
 

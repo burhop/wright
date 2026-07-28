@@ -67,15 +67,15 @@ def test_ci_cd_docs_match_docker_smoke_and_docs_release_contracts() -> None:
     assert "pushes the image to Docker Hub with both the `latest`" not in docs
 
 
-def test_ci_cd_docs_describe_ghcr_default_and_optional_docker_hub() -> None:
+def test_ci_cd_docs_describe_two_required_release_registries() -> None:
     docs = squashed("docs/contributing/ci-cd-workflows.md")
     release = read_text(".github/workflows/release.yml")
 
     for expected in [
-        "GHCR as the default registry path",
+        "GHCR as the canonical registry path",
         "ghcr.io/<owner>/wright:<tag>",
         "`packages: write`",
-        "Docker Hub publishing is optional",
+        "Docker Hub publishing is required",
         "`DOCKERHUB_USERNAME`",
         "`DOCKERHUB_TOKEN`",
         "marked as GitHub prereleases",
@@ -86,9 +86,9 @@ def test_ci_cd_docs_describe_ghcr_default_and_optional_docker_hub() -> None:
 
     assert "packages: write" in release
     assert "Log in to GHCR" in release
-    assert 'echo "configured=false"' in release
-    assert "Docker Hub mirror is not configured; canonical GHCR remains verified." in release
-    assert "Copy and verify the same manifest" in release
+    assert 'echo "configured=false"' not in release
+    assert "Require Docker Hub release credentials" in release
+    assert "Copy and verify the same manifest in Docker Hub" in release
 
 
 def test_spec_tasks_record_ci_cd_docs_refresh_slice() -> None:

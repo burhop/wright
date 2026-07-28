@@ -1,0 +1,123 @@
+name: recover verified release to Docker Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing Wright release tag to recover
+        required: true
+        type: string
+      expected_digest:
+        description: Verified GHCR digest from release evidence (sha256:...)
+        required: true
+        type: string
+
+concurrency:
+  group: dockerhub-recovery-${{ inputs.tag }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: read
+
+env:
+  GHCR_IMAGE: ghcr.io/burhop/wright
+  DOCKERHUB_IMAGE: burhop/wright
+
+jobs:
+  recover-dockerhub:
+    runs-on: ubuntu-latest
+    environment: dockerhub
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      TAG: ${{ inputs.tag }}
+      EXPECTED_DIGEST: ${{ inputs.expected_digest }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Require reviewed main workflow and Docker Hub credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/main || {
+            echo "::error::Run Docker Hub recovery only from the reviewed main branch."
+            exit 1
+          }
+          test -n "$DOCKERHUB_USERNAME" || {
+            echo "::error::DOCKERHUB_USERNAME is required."
+            exit 1
+          }
+          test -n "$DOCKERHUB_TOKEN" || {
+            echo "::error::DOCKERHUB_TOKEN is required."
+            exit 1
+          }
+          [[ "$DOCKERHUB_TOKEN" =~ ^dckr_pat_[A-Za-z0-9_-]+$ ]] || {
+            echo "::error::DOCKERHUB_TOKEN must contain the raw one-time dckr_pat_ value, without quotes, whitespace, or the token display name."
+            exit 1
+          }
+      - name: Download and validate retained release evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release download "$TAG" --pattern release-evidence.json --dir retained-evidence
+          TAG_COMMIT="$(git rev-list -n 1 "$TAG")"
+          python scripts/validate-dockerhub-recovery.py \
+            --evidence retained-evidence/release-evidence.json \
+            --tag "$TAG" \
+            --tag-commit "$TAG_COMMIT" \
+            --expected-digest "$EXPECTED_DIGEST" \
+            --source-repository "$GHCR_IMAGE"
+      - name: Log in to GHCR
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+      - name: Copy and verify the retained manifest without rebuilding
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE="$GHCR_IMAGE@$EXPECTED_DIGEST"
+          VERSION_DEST="$DOCKERHUB_IMAGE:$TAG"
+          docker buildx imagetools inspect "$SOURCE" | grep -F "$EXPECTED_DIGEST"
+          docker buildx imagetools create --tag "$VERSION_DEST" "$SOURCE"
+          docker buildx imagetools inspect "$VERSION_DEST" | grep -F "$EXPECTED_DIGEST"
+          LATEST_UPDATED=false
+          if [[ ! "$TAG" =~ -(alpha|beta|rc)\. ]]; then
+            docker buildx imagetools create --tag "$DOCKERHUB_IMAGE:latest" "$SOURCE"
+            docker buildx imagetools inspect "$DOCKERHUB_IMAGE:latest" | grep -F "$EXPECTED_DIGEST"
+            LATEST_UPDATED=true
+          fi
+          mkdir -p recovery-evidence
+          EVIDENCE_FILE="recovery-evidence/dockerhub-recovery-${TAG#v}-${GITHUB_RUN_ID}.json"
+          jq -n \
+            --arg tag "$TAG" \
+            --arg source "$SOURCE" \
+            --arg destination "$VERSION_DEST" \
+            --arg digest "$EXPECTED_DIGEST" \
+            --arg run_url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --argjson latest_updated "$LATEST_UPDATED" \
+            '{schema_version: 1, tag: $tag, source: $source, destination: $destination, digest: $digest, latest_updated: $latest_updated, workflow_run_url: $run_url, result: "passed"}' \
+            > "$EVIDENCE_FILE"
+          echo "EVIDENCE_FILE=$EVIDENCE_FILE" >> "$GITHUB_ENV"
+      - name: Retain Docker Hub recovery evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dockerhub-recovery-${{ inputs.tag }}-${{ github.run_id }}
+          path: recovery-evidence
+          if-no-files-found: error
+      - name: Attach recovery evidence to the existing GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "$EVIDENCE_FILE"
