@@ -29,8 +29,7 @@ def test_oci_workflow_scans_smokes_and_attests_same_digest_without_rebuild() -> 
     assert workflow.count("docker/build-push-action@") == 1
     assert "load: ${{ ! inputs.push-candidate }}" in workflow
     assert (
-        "provenance: ${{ inputs.push-candidate && 'mode=max' || 'false' }}"
-        in workflow
+        "provenance: ${{ inputs.push-candidate && 'mode=max' || 'false' }}" in workflow
     )
     assert "sbom: ${{ inputs.push-candidate }}" in workflow
     assert "WRIGHT_DOCKER_SKIP_BUILD=1" in workflow
@@ -42,4 +41,4 @@ def test_oci_workflow_scans_smokes_and_attests_same_digest_without_rebuild() -> 
         'docker buildx imagetools create --tag "$IMAGE:$TAG" "$IMAGE@$DIGEST"'
         in release
     )
-    assert 'docker buildx imagetools create --tag "$DEST" "$SOURCE"' in release
+    assert 'docker buildx imagetools create --tag "$DEST_VERSION" "$SOURCE"' in release

@@ -1,6 +1,6 @@
 [project]
 name = "wright-engineering"
-version = "0.1.4"
+version = "0.1.5"
 description = "Public-alpha helper CLI for the Wright local-first engineering appliance"
 requires-python = ">=3.11"
 readme = "README.md"

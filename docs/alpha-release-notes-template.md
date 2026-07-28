@@ -14,8 +14,7 @@ or MCP-specific host software.
 ## Images
 
 - GHCR: `ghcr.io/burhop/wright:<tag>`
-- Docker Hub: `burhop/wright:<tag>` or `not published for
-  this tag`
+- Docker Hub: `burhop/wright:<tag>` (required and digest-verified)
 - `latest` updated: `yes` for stable tags only; `no` for alpha, beta, and
   release-candidate tags
 

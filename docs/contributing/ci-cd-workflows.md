@@ -4,8 +4,8 @@ This guide describes the current public-alpha CI/CD workflows for Wright. Pull
 requests validate source, docs, dependencies, leak scanning, and exact container
 behavior. Release candidates are built once by a reusable workflow and promoted
 by digest. Public package, image, documentation, and GitHub Release publication
-happens only from release tags, with GHCR as the default registry path and
-Docker Hub enabled only when credentials are configured.
+happens only from release tags, with GHCR as the canonical registry path and
+Docker Hub as a required byte-identical distribution target.
 
 ## Workflow Overview
 
@@ -124,8 +124,9 @@ versioned documentation, and GitHub Releases.
   protected environments and installed after each publication stage. Those
   publishing actions remain directly in `release.yml` because PyPI Trusted
   Publishing cannot use a reusable workflow as its publisher identity.
-- Docker Hub publishing is optional. It is enabled only when
-  `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` are configured.
+- Docker Hub publishing is required. Missing `DOCKERHUB_USERNAME` or
+  `DOCKERHUB_TOKEN`, failed authentication, failed copy, or digest divergence
+  blocks every later release job.
 - Alpha, beta, and release-candidate tags such as `v0.1.0-alpha.1`,
   `v0.1.0-beta.1`, and `v0.1.0-rc.1` are marked as GitHub prereleases.
 - Stable tags update `latest`; prerelease tags do not update `latest`.
@@ -141,10 +142,14 @@ architecture status, and SBOM/provenance status.
 GHCR publishing uses the built-in GitHub token. The release workflow needs
 `packages: write`, which is declared in `.github/workflows/release.yml`.
 
-Docker Hub is optional. Configure these only if Docker Hub publishing is wanted:
+Every production release requires these Docker Hub credentials:
 
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN`
+
+Store them as GitHub Actions secrets at repository scope or in the protected
+`dockerhub` environment. The token must be the raw Docker Hub access-token
+value with read/write permission, not the token's display name.
 
 Pull requests never publish images or sync registry descriptions.
 
@@ -187,6 +192,9 @@ WRIGHT_DOCKER_IMAGE=wright:<tag> WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke
 - The supported public appliance is still `linux/amd64`; `linux/arm64` requires
   a native build-and-smoke contract before multi-architecture publication.
 - A rehearsal intentionally cannot prove external TestPyPI, PyPI, GHCR tag
-  promotion, optional Docker Hub, docs publication, or GitHub Release side
+  promotion, required Docker Hub distribution, docs publication, or GitHub Release side
   effects. Those remain protected real-tag operations.
-- Docker Hub remains an optional mirror; GHCR is canonical.
+- A production release is incomplete until PyPI, GHCR, Docker Hub, versioned
+  docs, and the GitHub Release have all passed. Merging to `main` is not by
+  itself a completed release; the matching unique version tag must finish the
+  entire protected release train.

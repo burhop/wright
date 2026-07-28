@@ -4,6 +4,13 @@ All notable changes to the Wright project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-07-28
+
+### Fixed
+- Made Docker Hub publication, stable `latest` promotion, and public digest verification mandatory for every production release.
+- Added exact-digest Docker Hub recovery for already-verified releases without rebuilding containers or republishing immutable Python artifacts.
+- Extended release evidence and operator guidance to record both required container registries.
+
 ## [0.1.4] - 2026-07-28
 
 ### Fixed

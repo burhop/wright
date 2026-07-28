@@ -33,7 +33,8 @@ def test_release_workflow_does_not_push_latest_for_prereleases() -> None:
         in workflow
     )
     assert "Copy and verify the same manifest" in workflow
-    assert 'docker buildx imagetools create --tag "$DEST" "$SOURCE"' in workflow
+    assert 'docker buildx imagetools create --tag "$DEST_VERSION" "$SOURCE"' in workflow
+    assert 'docker buildx imagetools create --tag "$DEST_LATEST" "$SOURCE"' in workflow
     assert "docker/build-push-action@" not in workflow
 
 
@@ -48,9 +49,9 @@ def test_versioning_documents_alpha_tag_and_latest_policy() -> None:
         "Prerelease tags containing `-alpha`, `-beta`, or `-rc` do not update `latest`.",
         "GitHub Release, which is published last",
         "tested OCI digest is promoted in GHCR",
-        "optionally copied byte-identically to Docker Hub",
+        "copied byte-identically to required Docker Hub distribution",
         "ghcr.io/burhop/wright:<tag>",
-        "burhop/wright:<tag>` when Docker Hub credentials are configured",
+        "burhop/wright:<tag>",
         "bring-your-own-AI",
         "Docker smoke results",
         "SBOM/provenance status",

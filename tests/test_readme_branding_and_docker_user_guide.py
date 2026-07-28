@@ -21,8 +21,8 @@ def test_readme_branding_brief_matches_public_alpha_contract() -> None:
         "does not bundle an LLM",
         "docker compose -f docker-compose.minimal.yml up -d --build",
         "http://localhost:8080",
-        "GHCR is the default registry path",
-        "Docker Hub remains optional",
+        "GHCR is the canonical registry path",
+        "Docker Hub is required for completed production releases",
         "MCP-specific host software",
         "docs/mcp-catalog/mcp-server-testing-process.md",
     ]:

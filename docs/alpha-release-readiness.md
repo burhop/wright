@@ -73,8 +73,8 @@ Gaps and release risks:
   and `--gpus all` examples need explicit public-alpha documentation before
   advertising workstation images.
 - GHCR is the canonical registry. The release train promotes a tested candidate
-  digest to GHCR; Docker Hub is an optional same-manifest mirror when its
-  protected credentials are configured.
+  digest to GHCR and must copy and verify the same manifest in Docker Hub before
+  the release can complete.
 
 ## CI and Test Audit
 
@@ -95,7 +95,7 @@ Existing gates:
 - `public-alpha-safety.yml`, `dependency-review.yml`, and `codeql.yml`: history
   leak scans, audited dependencies/licenses, and Python/JavaScript analysis.
 - `release.yml`: no-mutation rehearsal or tagged build-once publication through
-  TestPyPI, PyPI, GHCR, optional Docker Hub, versioned docs, and GitHub Release.
+  TestPyPI, PyPI, GHCR, required Docker Hub, versioned docs, and GitHub Release.
 
 Gaps and release risks:
 
@@ -103,8 +103,8 @@ Gaps and release risks:
   contract before multi-architecture publication.
 - Manual rehearsals intentionally skip protected public publication and cannot
   prove registry/package/docs side effects; real tags remain approval-gated.
-- Docker Hub is optional and cannot be considered part of the canonical release
-  guarantee when credentials are absent.
+- Docker Hub credentials and successful byte-identical publication are required;
+  missing or invalid credentials block the production release.
 
 ## Documentation Audit
 
