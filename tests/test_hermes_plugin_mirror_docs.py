@@ -9,6 +9,9 @@ def test_release_runbook_documents_channels_publication_and_migration() -> None:
 
     for expected in [
         "Hermes Plugin Mirror Release Runbook",
+        "legacy",
+        "migration",
+        "cannot satisfy native",
         "Development",
         "Stable",
         "wright-core",

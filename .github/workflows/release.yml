@@ -67,7 +67,8 @@ jobs:
           scripts/build-python-distributions.sh --dist-root dist/build-once .
           mkdir -p dist/candidate
           find dist/build-once -type f \( -name '*.whl' -o -name '*.tar.gz' \) -exec cp {} dist/candidate/ \;
-          python -m twine check --strict dist/candidate/*
+          find dist/build-once -type f -name 'native-build-evidence.json' -exec cp {} dist/candidate/native-build-evidence.json \;
+          python -m twine check --strict dist/candidate/*.whl dist/candidate/*.tar.gz
           check-wheel-contents dist/candidate/*.whl
           (cd dist/candidate && sha256sum * > SHA256SUMS)
       - name: Upload immutable Python candidate
@@ -239,6 +240,64 @@ jobs:
           wright --version
           wright doctor
 
+  verify-released-hermes-capability:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, verify-pypi]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      HERMES_PACKAGE_PLUGIN_VERSION: ${{ vars.HERMES_PACKAGE_PLUGIN_VERSION }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - name: Require the recorded released Hermes package-plugin version
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HERMES_PACKAGE_PLUGIN_VERSION" || {
+            echo "::error::No released Hermes version with python-distribution-v1 is recorded."
+            exit 1
+          }
+          python -m pip install "hermes-agent==$HERMES_PACKAGE_PLUGIN_VERSION"
+          python -c "from scripts.release.hermes_capability import require_released_package_capability; print(require_released_package_capability())"
+
+  activate-stable-hermes-channel:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: [preflight-and-python-build, verify-pypi, verify-released-hermes-capability]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: verified-python-candidate
+          path: dist
+      - name: Activate the exact immutable version on the stable Hermes channel
+        env:
+          HERMES_PACKAGE_CHANNEL_URL: ${{ vars.HERMES_PACKAGE_CHANNEL_URL }}
+          HERMES_PACKAGE_CHANNEL_TOKEN: ${{ secrets.HERMES_PACKAGE_CHANNEL_TOKEN }}
+        run: |
+          python scripts/activate-hermes-package-channel.py \
+            --channel stable \
+            --distribution wright-engineering \
+            --version "${{ needs.preflight-and-python-build.outputs.version }}" \
+            --wheel dist/*.whl \
+            --output hermes-channel-evidence.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: stable-hermes-channel-evidence
+          path: hermes-channel-evidence.json
+          if-no-files-found: error
+
   promote-oci:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
     needs: [preflight-and-python-build, oci-candidate, verify-pypi]
@@ -317,6 +376,47 @@ jobs:
             docker buildx imagetools inspect "$DEST_LATEST" | grep -F "$DIGEST"
           fi
 
+  native-published-lifecycle:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs:
+      - preflight-and-python-build
+      - activate-stable-hermes-channel
+      - verify-released-hermes-capability
+      - mirror-dockerhub
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-14]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    env:
+      HERMES_PACKAGE_PLUGIN_VERSION: ${{ vars.HERMES_PACKAGE_PLUGIN_VERSION }}
+      PREVIOUS_NATIVE_WRIGHT_VERSION: ${{ vars.PREVIOUS_NATIVE_WRIGHT_VERSION }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - name: Install released Hermes and verify the published native lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HERMES_PACKAGE_PLUGIN_VERSION"
+          test -n "$PREVIOUS_NATIVE_WRIGHT_VERSION"
+          python -m pip install psutil "hermes-agent==$HERMES_PACKAGE_PLUGIN_VERSION"
+          python scripts/test-published-native-hermes.py \
+            --version "${{ needs.preflight-and-python-build.outputs.version }}" \
+            --previous-version "$PREVIOUS_NATIVE_WRIGHT_VERSION" \
+            --evidence "native-published-${RUNNER_OS}-${RUNNER_ARCH}.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: native-published-${{ runner.os }}-${{ runner.arch }}
+          path: native-published-*.json
+          if-no-files-found: error
+
   rehearsal:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal == 'true' }}
     needs: [preflight-and-python-build, python-install-matrix, oci-candidate]
@@ -335,7 +435,13 @@ jobs:
           name: python-candidate
           path: dist
       - name: Prove terminal dry-run with no public mutation
-        run: uv run python scripts/release-rehearsal.py --dry-run --tag "${{ needs.preflight-and-python-build.outputs.tag }}" --python-dist dist --output rehearsal
+        run: |
+          uv run python scripts/release-rehearsal.py \
+            --dry-run \
+            --tag "${{ needs.preflight-and-python-build.outputs.tag }}" \
+            --python-dist dist \
+            --native-build-evidence dist/native-build-evidence.json \
+            --output rehearsal
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-rehearsal-evidence
@@ -343,7 +449,7 @@ jobs:
 
   post-publish-verification:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
-    needs: [preflight-and-python-build, oci-candidate, verify-pypi, promote-oci, mirror-dockerhub]
+    needs: [preflight-and-python-build, oci-candidate, verify-pypi, promote-oci, mirror-dockerhub, native-published-lifecycle]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -356,6 +462,15 @@ jobs:
         with:
           name: python-candidate
           path: dist
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: stable-hermes-channel-evidence
+          path: native-evidence/channel
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: native-published-*
+          path: native-evidence/platforms
+          merge-multiple: true
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
       - name: Log in to GHCR for verification
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
@@ -394,6 +509,16 @@ jobs:
             --approval pypi \
             --approval release \
             --approval dockerhub \
+            --native-build-evidence dist/native-build-evidence.json \
+            --native-lifecycle-evidence native-evidence/platforms/native-published-Linux-X64.json \
+            --native-lifecycle-evidence native-evidence/platforms/native-published-Windows-X64.json \
+            --native-lifecycle-evidence native-evidence/platforms/native-published-macOS-ARM64.json \
+            --hermes-version "${{ vars.HERMES_PACKAGE_PLUGIN_VERSION }}" \
+            --hermes-install-interface "hermes plugins install-package" \
+            --hermes-capability-source released \
+            --stable-hermes-channel stable \
+            --stable-hermes-verification-url "${{ vars.HERMES_PACKAGE_CHANNEL_URL }}" \
+            --native-public-verification native-evidence/platforms/native-published-Linux-X64.json \
             --output final-evidence/release-evidence.json
           python scripts/verify-release-evidence.py final-evidence/release-evidence.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -413,7 +538,7 @@ jobs:
 
   publish-github-release-last:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
-    needs: [preflight-and-python-build, post-publish-verification, deploy-versioned-docs]
+    needs: [preflight-and-python-build, post-publish-verification, native-published-lifecycle, mirror-dockerhub, deploy-versioned-docs]
     runs-on: ubuntu-latest
     environment: release
     permissions:

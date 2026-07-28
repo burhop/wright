@@ -1,6 +1,7 @@
 from email.message import Message
 from io import BytesIO
 import json
+from urllib.error import URLError
 
 import pytest
 
@@ -52,7 +53,10 @@ def test_stdio_bridge_forwards_binding_and_reuses_transport_session(
     sink = BytesIO()
     assert (
         mcp_bridge.serve_stdio(
-            workspace=mcp_bridge.Path("workspace-id"), stdin=source, stdout=sink
+            workspace=mcp_bridge.Path("workspace-path"),
+            workspace_id="workspace-id",
+            stdin=source,
+            stdout=sink,
         )
         == 0
     )
@@ -77,3 +81,32 @@ def test_event_stream_response_extracts_last_data_event() -> None:
         )
         == b'{"id":1}'
     )
+
+
+def test_empty_response_and_invalid_input_fail_without_leaking_details(
+    monkeypatch,
+) -> None:
+    assert mcp_bridge._response_payload("application/json", b"") is None
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "test-secret-value")
+    with pytest.raises(mcp_bridge.McpBridgeError, match="invalid JSON"):
+        mcp_bridge.serve_stdio(
+            workspace=mcp_bridge.Path("workspace"),
+            stdin=BytesIO(b"not-json\n"),
+            stdout=BytesIO(),
+        )
+
+
+def test_transport_failure_is_bounded(monkeypatch) -> None:
+    monkeypatch.setenv("WRIGHT_API_TOKEN", "test-secret-value")
+
+    def unavailable(*_args, **_kwargs):
+        raise URLError("sensitive upstream detail")
+
+    monkeypatch.setattr(mcp_bridge, "urlopen", unavailable)
+    with pytest.raises(mcp_bridge.McpBridgeError, match="URLError") as captured:
+        mcp_bridge.serve_stdio(
+            workspace=mcp_bridge.Path("workspace"),
+            stdin=BytesIO(b'{"jsonrpc":"2.0","id":1,"method":"ping"}\n'),
+            stdout=BytesIO(),
+        )
+    assert "sensitive upstream detail" not in str(captured.value)

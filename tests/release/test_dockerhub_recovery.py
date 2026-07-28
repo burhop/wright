@@ -31,6 +31,7 @@ def _write_release_evidence(path: Path) -> None:
             },
         ],
         status="post_verified",
+        schema_version=1,
     ).write(path)
 
 

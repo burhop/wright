@@ -20,10 +20,10 @@ def test_getting_started_nav_publishes_all_supported_alpha_paths() -> None:
         "Docker Appliance: getting-started/quickstart-docker.md",
         "PC Local Setup: getting-started/quickstart-local.md",
         "GB10 and DGX Workstations: getting-started/workstation-gb10-dgx.md",
-        "Existing Hermes Plugin: getting-started/hermes-plugin.md",
-        "[Quick Start: PC Local Setup](quickstart-local.md)",
-        "[Quick Start: GB10 and DGX Workstations](workstation-gb10-dgx.md)",
-        "[Quick Start: Existing Hermes Plugin](hermes-plugin.md)",
+        "Native Wright for Hermes: getting-started/hermes-plugin.md",
+        "[Native Hermes](hermes-plugin.md)",
+        "[PC development](quickstart-local.md)",
+        "[GB10/DGX workstation](workstation-gb10-dgx.md)",
     ]:
         assert expected in mkdocs or expected in overview
 
@@ -75,22 +75,31 @@ def test_workstation_path_keeps_gpu_and_mcp_boundaries_explicit() -> None:
         assert expected in workstation
 
 
-def test_hermes_plugin_path_documents_existing_hermes_flow() -> None:
+def test_hermes_plugin_path_documents_native_package_flow() -> None:
     hermes = squashed("docs/getting-started/hermes-plugin.md")
 
     for expected in [
-        "uv tool install hermes-agent --with ./hermes-plugin-wright/",
-        "pip install -e ./hermes-plugin-wright",
-        "API_SERVER_PORT=8642",
-        "HERMES_API_BASE_URL",
-        "LLM_API_URL",
+        "hermes plugins install-package wright-engineering==<version> --enable",
+        "python-distribution-v1",
+        "production_native_available",
+        "HERMES_HOME/wright/runtimes",
         "/wright start",
         "/wright status",
-        "/wright catalog cad",
-        "../hermes-desktop-wright.md",
+        "/wright doctor",
+        "/wright update <exact-version>",
+        "/wright rollback <exact-version>",
+        "/wright uninstall",
+        "/wright purge",
         "bring-your-own-AI",
     ]:
         assert expected in hermes
+
+    for stale in [
+        "uv tool install hermes-agent --with ./hermes-plugin-wright/",
+        "pip install -e ./hermes-plugin-wright",
+        "WRIGHT_REPO_DIR=",
+    ]:
+        assert stale not in hermes
 
 
 def test_spec_tasks_record_install_path_documentation_slice() -> None:

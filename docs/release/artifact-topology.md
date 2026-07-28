@@ -1,12 +1,13 @@
 # Wright Artifact Topology
 
-Wright has one product version and three intentionally different delivery surfaces.
+Wright has one product version and intentionally separate, jointly mandatory
+delivery surfaces.
 
 | Surface | Role | Public identity | Support boundary |
 | --- | --- | --- | --- |
-| Python | Lightweight CLI, diagnostics, configuration dry-run, appliance status, and direct MCP STDIO bridge | `wright-engineering` | No appliance runtime or workspace-private dependencies |
+| Native Hermes/Python | Complete application wheel: thin Hermes entry point plus isolated runtime extra, packaged API/UI/catalog/gateway | `wright-engineering` | Primary user path; requires released `python-distribution-v1` and full platform lifecycle evidence |
 | OCI | Complete local Wright appliance | `ghcr.io/burhop/wright@sha256:<digest>` and byte-identical `burhop/wright:<tag>` | `linux/amd64`; both registries required for a completed release |
-| Integrations | Codex and optional Hermes packaging | Versioned release assets/packages in their owning features | Consume public CLI/API/MCP contracts only |
+| Legacy integration | One-release Git-plugin migration delegate | `burhop/hermes-plugin-wright` mirror | Cannot satisfy native release evidence |
 
 `wright-core`, `wright-tool-registry`, `wright-workspace-service`, `wright-agent-adapters`, `wright-data-vault`, and `wright-api` are private monorepo distributions. They are marked `Private :: Do Not Upload`, are absent from public publication workflows, and must never be resolved from public indexes. The `wright` and `wright-core` names on PyPI belong to other projects.
 
@@ -14,7 +15,13 @@ The root `pyproject.toml` version is authoritative. A release tag, Python metada
 
 ## Exact-artifact rule
 
-- Build the wheel and sdist once. Record filenames, safe content manifests, and SHA-256 hashes. TestPyPI and PyPI consume those bytes.
+- Build the complete wheel and sdist once. Record filenames, safe content
+  manifests, UI/compatibility/runtime-extra hashes, and SHA-256 hashes. Candidate
+  tests, TestPyPI, PyPI, Hermes channel activation, and public native lifecycle
+  verification consume those bytes.
 - Build the `linux/amd64` OCI candidate once. Record its digest. Smoke, scan, inventory, SBOM, provenance, GHCR promotion, and required Docker Hub distribution consume that digest.
 - A retry with the same identity and same subjects may resume. Different subjects require a new patch version.
-- A dry-run rehearsal proves local identity and ordering only. It is not a production release.
+- A dry-run rehearsal or package-plugin fixture proves local identity and
+  ordering only. It is not released-Hermes production evidence.
+- Native Hermes and OCI/Docker are both terminal. Neither may be skipped because
+  the other passed.

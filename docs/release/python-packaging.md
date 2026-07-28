@@ -10,23 +10,32 @@ The ideal package name `wright` is unavailable on PyPI. Existing component names
 
 ## What `wright-engineering` Is
 
-`wright-engineering` is the sole public Wright Python distribution. It is a
-lightweight CLI, diagnostics/configuration client, appliance status client, and
-direct MCP STDIO bridge. It does not contain the full appliance or depend on
-workspace-private packages. Supported Python versions are 3.11 through 3.14,
-and both the wheel and source archive must clean-install independently.
+`wright-engineering` is the sole public Wright Python distribution and contains
+the complete native application: dependency-light Hermes entry point, lifecycle
+bootstrap, packaged API/UI, canonical catalog, provider-neutral gateway, and a
+bounded `runtime` extra. Internal module sources are bundled into this wheel; it
+does not resolve workspace-private distributions from public indexes. Supported
+Python versions are 3.11 through 3.14, and both the wheel and source archive must
+produce equivalent policy-controlled application contents.
 
 It exposes commands such as:
 
 ```bash
-pip install wright-engineering
+python -m pip install wright-engineering==<version>  # release diagnosis only
 wright doctor
 wright appliance status --api-url http://127.0.0.1:8000
 wright config --dry-run
 wright mcp serve --stdio --api-url http://127.0.0.1:8000 --workspace WORKSPACE_ID
 ```
 
-Docker remains the primary end-user install path for running the Wright appliance.
+The normal user install is performed by a released Hermes
+`python-distribution-v1` interface, not by a manual pip command. Docker remains
+the mandatory turnkey appliance path for every release.
+
+The base dependency set stays small enough for Hermes plugin import. Runtime
+dependencies are declared only in `wright-engineering[runtime]` and locked in
+the packaged `runtime-extra-lock.json`. The release build records that lock, UI
+manifest, compatibility contract, wheel/sdist content manifests, and hashes.
 
 ## Trusted Publishing
 
@@ -49,7 +58,8 @@ resume; different hashes require a new patch version.
 
 ## Deferred Component Packages
 
-These packages stay workspace-local for alpha and are not promised as PyPI installs:
+These packages stay private and are never native runtime dependencies from a
+public index:
 
 - `wright-core`
 - `wright-tool-registry`

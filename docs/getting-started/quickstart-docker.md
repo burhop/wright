@@ -1,8 +1,9 @@
 # Quick Start: Docker Appliance
 
-Wright's Docker appliance is the fastest public-alpha path for trying the API,
-web UI, Hermes integration, and engineering MCP catalog from a clean container.
-It is intended for testing, MCP porting, demos, and early developer feedback.
+Wright's Docker appliance is the mandatory turnkey path for a working API, web
+UI, Hermes integration, and engineering MCP catalog with no source build. It is
+published for every production release independently of the primary native
+Hermes path.
 
 Wright is bring-your-own-AI. The image does not bundle an LLM, model weights, API
 key, hosted provider, or paid engineering backend. Configure an
@@ -35,8 +36,8 @@ Run a published image with your env file:
 docker run --rm -p 127.0.0.1:8080:8000 --env-file docker/.env burhop/wright:<tag>
 ```
 
-Use the source-build Compose commands below when developing locally or when a
-published release image is not available yet.
+Source-build Compose commands below are for contributors. Third-party users
+should use a published immutable release tag.
 
 ## Choose a Compose File
 

@@ -1,0 +1,22 @@
+{
+  "contract_version": 1,
+  "plugin_version": "0.1.5",
+  "runtime_specifier": ">=0.1.4,<=0.1.5",
+  "hermes_specifier": ">=0.19,<1",
+  "python_specifier": ">=3.11,<3.15",
+  "platforms": [
+    "windows-x86_64",
+    "linux-x86_64",
+    "macos-x86_64",
+    "macos-arm64"
+  ],
+  "data_schema": {
+    "min": 0,
+    "max": 5
+  },
+  "plugin_install_capability": "python-distribution-v1",
+  "released_hermes_version": null,
+  "production_native_available": false,
+  "previous_native_version": null,
+  "release_blocker": "No released Hermes version currently exposes the required immutable Python package-plugin lifecycle. Hermes 0.18.2 is Git-only."
+}

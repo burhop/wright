@@ -27,6 +27,7 @@ def serve_stdio(
     workspace: Path,
     api_url: str = "http://127.0.0.1:8000",
     session_id: str = "wright-engineering",
+    workspace_id: str | None = None,
     token_env: str = "WRIGHT_API_TOKEN",
     stdin: BinaryIO | None = None,
     stdout: BinaryIO | None = None,
@@ -41,7 +42,7 @@ def serve_stdio(
         )
     transport_session: str | None = None
     endpoint = f"{api_url.rstrip('/')}/mcp"
-    workspace_identity = str(workspace)
+    workspace_identity = workspace_id or str(workspace)
     for raw_line in source:
         if not raw_line.strip():
             continue

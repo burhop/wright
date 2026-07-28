@@ -74,6 +74,48 @@ class OciCandidate:
             raise EvidenceError("Feature 047 release candidates are linux/amd64 only")
 
 
+@dataclass(frozen=True, slots=True)
+class HermesCapabilityEvidence:
+    version: str
+    capability: str
+    install_interface: str
+    source: str
+
+    def validate(self) -> None:
+        if not self.version or not self.install_interface:
+            raise EvidenceError("Hermes capability evidence is incomplete")
+        if self.capability != "python-distribution-v1":
+            raise EvidenceError("Hermes lacks the required package-plugin capability")
+        if self.source not in {"fixture", "released"}:
+            raise EvidenceError("Hermes capability source must be fixture or released")
+
+
+@dataclass(frozen=True, slots=True)
+class NativeCandidate:
+    distribution: str
+    plugin_version: str
+    runtime_version: str
+    wheel_filename: str
+    wheel_sha256: str
+    compatibility_sha256: str
+    ui_manifest_sha256: str
+    runtime_extra_lock_sha256: str
+
+    def validate(self) -> None:
+        if self.distribution != "wright-engineering":
+            raise EvidenceError("native candidate must be wright-engineering")
+        if self.plugin_version != self.runtime_version:
+            raise EvidenceError("plugin and runtime candidate versions must match")
+        for name, value in (
+            ("wheel", self.wheel_sha256),
+            ("compatibility", self.compatibility_sha256),
+            ("UI manifest", self.ui_manifest_sha256),
+            ("runtime-extra lock", self.runtime_extra_lock_sha256),
+        ):
+            if not SHA256_RE.fullmatch(value):
+                raise EvidenceError(f"invalid {name} SHA-256")
+
+
 @dataclass(slots=True)
 class ReleaseEvidence:
     release_identity: ReleaseIdentity
@@ -82,16 +124,23 @@ class ReleaseEvidence:
     python_install_evidence: list[dict[str, Any]] = field(default_factory=list)
     oci_candidate: OciCandidate | None = None
     oci_gate_evidence: dict[str, Any] | None = None
+    native_candidate: NativeCandidate | None = None
+    hermes_capability: HermesCapabilityEvidence | None = None
+    native_platform_results: list[dict[str, Any]] = field(default_factory=list)
+    stable_hermes_channel: dict[str, Any] | None = None
+    native_public_verification: dict[str, Any] | None = None
     promotions: list[dict[str, Any]] = field(default_factory=list)
     approvals: list[dict[str, Any]] = field(default_factory=list)
     verification_results: list[dict[str, Any]] = field(default_factory=list)
     skipped_optional_stages: list[str] = field(default_factory=list)
     stage_results: list[dict[str, Any]] = field(default_factory=list)
     status: str = "preflight"
-    schema_version: int = 1
+    schema_version: int = 2
 
     def validate(self) -> None:
         self.release_identity.validate()
+        if self.schema_version not in {1, 2}:
+            raise EvidenceError("unsupported release evidence schema version")
         if self.status not in (*STAGES, "failed", "quarantined"):
             raise EvidenceError(f"unknown release status: {self.status}")
         kinds = {artifact.kind for artifact in self.python_artifacts}
@@ -118,6 +167,26 @@ class ReleaseEvidence:
                     raise EvidenceError(
                         "OCI promotion must preserve the candidate digest"
                     )
+        if self.native_candidate is not None:
+            self.native_candidate.validate()
+        if self.hermes_capability is not None:
+            self.hermes_capability.validate()
+        observed_platforms: set[str] = set()
+        for result in self.native_platform_results:
+            platform = str(result.get("platform", ""))
+            if not platform or platform in observed_platforms:
+                raise EvidenceError("native platform results must be named and unique")
+            observed_platforms.add(platform)
+            if result.get("status") != "passed":
+                raise EvidenceError(f"native platform did not pass: {platform}")
+            if result.get("forbidden_executables") != []:
+                raise EvidenceError(
+                    f"native platform invoked a forbidden executable: {platform}"
+                )
+            if result.get("source_isolation") is not True:
+                raise EvidenceError(
+                    f"native platform lacked source isolation: {platform}"
+                )
         observed: list[str] = []
         for result in self.stage_results:
             stage = str(result.get("stage", ""))
@@ -133,6 +202,50 @@ class ReleaseEvidence:
                     raise EvidenceError(
                         "dry-run evidence cannot record external mutation"
                     )
+        elif self.schema_version >= 2 and self.status in {
+            "promoted",
+            "post_verified",
+            "docs_verified",
+            "release_ready",
+        }:
+            if self.oci_candidate is None or self.oci_gate_evidence is None:
+                raise EvidenceError(
+                    "production evidence requires mandatory Docker evidence"
+                )
+            if self.native_candidate is None or self.hermes_capability is None:
+                raise EvidenceError(
+                    "production evidence requires native candidate evidence"
+                )
+            if self.hermes_capability.source != "released":
+                raise EvidenceError("production evidence requires released Hermes")
+            if not self.native_platform_results:
+                raise EvidenceError(
+                    "production evidence requires native platform results"
+                )
+            if self.stable_hermes_channel is None:
+                raise EvidenceError(
+                    "production evidence requires stable Hermes channel evidence"
+                )
+            if self.native_public_verification is None:
+                raise EvidenceError(
+                    "production evidence requires public native lifecycle evidence"
+                )
+            required_lifecycle = {
+                "install",
+                "start",
+                "status",
+                "doctor",
+                "stop",
+                "update",
+                "rollback",
+                "uninstall",
+                "purge",
+            }
+            if (
+                set(self.native_public_verification.get("lifecycle", []))
+                != required_lifecycle
+            ):
+                raise EvidenceError("public native lifecycle evidence is incomplete")
 
     def to_dict(self) -> dict[str, Any]:
         self.validate()
@@ -167,6 +280,15 @@ class ReleaseEvidence:
             if raw.get("oci_candidate")
             else None,
             oci_gate_evidence=raw.get("oci_gate_evidence"),
+            native_candidate=NativeCandidate(**raw["native_candidate"])
+            if raw.get("native_candidate")
+            else None,
+            hermes_capability=HermesCapabilityEvidence(**raw["hermes_capability"])
+            if raw.get("hermes_capability")
+            else None,
+            native_platform_results=list(raw.get("native_platform_results", [])),
+            stable_hermes_channel=raw.get("stable_hermes_channel"),
+            native_public_verification=raw.get("native_public_verification"),
             promotions=list(raw.get("promotions", [])),
             approvals=list(raw.get("approvals", [])),
             verification_results=list(raw.get("verification_results", [])),

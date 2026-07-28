@@ -252,6 +252,14 @@ async def check_api_health():
     return HealthResponse(state="connected", latencyMs=1.5)
 
 
+@app.get("/api/runtime/identity")
+async def runtime_identity():
+    """Return non-secret process identity used by the native lifecycle challenge."""
+    from wright_engineering.runtime.server import runtime_identity_payload
+
+    return runtime_identity_payload()
+
+
 @app.get("/api/agent/health", response_model=HealthResponse)
 async def check_agent_health():
     res = await app.state.agent_engine.check_health()
@@ -398,7 +406,15 @@ async def proxy_onshape_path(path: str, request: Request):
 
 # Serve frontend static files in production if the dist directory exists
 
-dist_dir = os.environ.get("FRONTEND_DIST_DIR", "/workspace/apps/web/dist")
+if "FRONTEND_DIST_DIR" in os.environ:
+    dist_dir = os.environ["FRONTEND_DIST_DIR"]
+else:
+    try:
+        from wright_engineering.runtime.server import packaged_static_path
+
+        dist_dir = str(packaged_static_path())
+    except Exception:
+        dist_dir = "/workspace/apps/web/dist"
 if os.path.exists(dist_dir):
     # Mount static assets (js, css, images) under /assets
     assets_dir = os.path.join(dist_dir, "assets")

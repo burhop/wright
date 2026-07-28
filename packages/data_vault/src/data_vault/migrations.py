@@ -245,6 +245,27 @@ def validate_definitions(migrations: Sequence[Migration] = MIGRATIONS) -> None:
         raise DatabaseCompatibilityError("Migration names must be unique")
 
 
+def schema_bounds(
+    migrations: Sequence[Migration] = MIGRATIONS,
+) -> tuple[int, int]:
+    """Return the inclusive schemas this runtime can initialize or open."""
+    validate_definitions(migrations)
+    return 0, len(migrations)
+
+
+def require_schema_compatible(
+    schema_version: int,
+    *,
+    minimum: int,
+    maximum: int,
+) -> None:
+    if not minimum <= schema_version <= maximum:
+        raise DatabaseCompatibilityError(
+            f"Database schema {schema_version} is outside supported range "
+            f"{minimum}..{maximum}"
+        )
+
+
 def _integrity(connection: sqlite3.Connection) -> None:
     row = connection.execute("PRAGMA quick_check").fetchone()
     if not row or str(row[0]).lower() != "ok":

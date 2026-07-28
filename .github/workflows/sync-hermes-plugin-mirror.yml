@@ -1,4 +1,10 @@
-name: sync-hermes-plugin-mirror
+name: legacy Hermes Git-plugin migration mirror
+
+# Migration-only compatibility for Hermes 0.18 and older Git-plugin installs.
+# This workflow is never native release evidence and cannot activate the
+# package-based stable Hermes channel.
+env:
+  LEGACY_MIGRATION_ONLY: "true"
 
 on:
   workflow_dispatch:
@@ -82,6 +88,7 @@ jobs:
 
       - name: README/provenance validation summary
         run: |
+          test "$LEGACY_MIGRATION_ONLY" = true
           echo "Mirror README and provenance validation passed for ${{ steps.channel.outputs.channel }}."
           cat /tmp/hermes-plugin-wright/provenance.json
 

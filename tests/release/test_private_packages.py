@@ -11,7 +11,10 @@ def test_wright_engineering_is_the_only_publishable_distribution() -> None:
     ]
     assert public["name"] == "wright-engineering"
     assert "Private :: Do Not Upload" not in public["classifiers"]
-    assert public["dependencies"] == []
+    assert public["dependencies"] == ["packaging>=24,<27"]
+    runtime = public["optional-dependencies"]["runtime"]
+    assert runtime
+    assert not any(dependency.startswith("wright-") for dependency in runtime)
 
     internal = [
         ROOT / "apps/api/pyproject.toml",

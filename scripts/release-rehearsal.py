@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -8,7 +9,13 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from scripts.release.evidence import ReleaseEvidence, ReleaseIdentity, ReleaseMode  # noqa: E402
+from scripts.release.evidence import (  # noqa: E402
+    HermesCapabilityEvidence,
+    NativeCandidate,
+    ReleaseEvidence,
+    ReleaseIdentity,
+    ReleaseMode,
+)
 from scripts.release.python_artifacts import artifact_evidence  # noqa: E402
 from scripts.release.version import validate_release_version  # noqa: E402
 
@@ -21,6 +28,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--tag", required=True)
     parser.add_argument("--python-dist", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--native-build-evidence", type=Path)
+    parser.add_argument(
+        "--native-lifecycle-evidence", type=Path, action="append", default=[]
+    )
     args = parser.parse_args(argv)
     version = validate_release_version(ROOT, tag=args.tag)
     source_commit = subprocess.check_output(
@@ -37,6 +48,33 @@ def main(argv: list[str] | None = None) -> int:
         evidence, manifest = artifact_evidence(path)
         artifacts.append(evidence)
         manifests[path.name] = manifest
+    native_candidate = None
+    native_results: list[dict[str, object]] = []
+    if args.native_build_evidence:
+        native_build = json.loads(args.native_build_evidence.read_text(encoding="utf-8"))
+        wheel = next(
+            item for item in native_build["artifacts"] if item["filename"].endswith(".whl")
+        )
+        native_candidate = NativeCandidate(
+            native_build["distribution"],
+            native_build["version"],
+            native_build["version"],
+            wheel["filename"],
+            wheel["sha256"],
+            native_build["compatibility_sha256"],
+            native_build["ui_manifest_sha256"],
+            native_build["runtime_extra_lock_sha256"],
+        )
+    for path in args.native_lifecycle_evidence:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        native_results.append(
+            {
+                "platform": payload["platform"],
+                "status": payload["status"],
+                "forbidden_executables": payload["forbidden_executables"],
+                "source_isolation": payload["source_isolation"],
+            }
+        )
     evidence = ReleaseEvidence(
         mode=ReleaseMode.DRY_RUN,
         release_identity=ReleaseIdentity(
@@ -47,6 +85,39 @@ def main(argv: list[str] | None = None) -> int:
             {"python": value, "wheel": "passed", "sdist": "passed"}
             for value in ("3.11", "3.12", "3.13", "3.14")
         ],
+        native_candidate=native_candidate,
+        hermes_capability=HermesCapabilityEvidence(
+            "candidate-fixture",
+            "python-distribution-v1",
+            "local candidate fixture",
+            "fixture",
+        )
+        if native_candidate
+        else None,
+        native_platform_results=native_results,
+        stable_hermes_channel={
+            "channel": "isolated-rehearsal",
+            "version": version.python,
+            "verification_url": "local://no-mutation",
+        }
+        if native_candidate
+        else None,
+        native_public_verification={
+            "lifecycle": [
+                "install",
+                "start",
+                "status",
+                "doctor",
+                "stop",
+                "update",
+                "rollback",
+                "uninstall",
+                "purge",
+            ],
+            "simulated": True,
+        }
+        if native_candidate
+        else None,
         verification_results=[{"python": "passed"}, {"oci": "simulated"}],
         skipped_optional_stages=[
             "public registries, documentation, and GitHub Release"

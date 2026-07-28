@@ -1,4 +1,21 @@
-# Virtual Mechanical Engineer Constitution v1.0.0
+<!--
+Sync Impact Report
+- Version change: 1.0.0 -> 2.0.0
+- Modified principles:
+  - Serving & Execution / Container Strategy -> Production Distribution Strategy
+- Added sections: none
+- Removed sections: none
+- Templates:
+  - .specify/templates/plan-template.md: validated; no structural change required
+  - .specify/templates/spec-template.md: validated; no structural change required
+  - .specify/templates/tasks-template.md: validated; no structural change required
+- Runtime guidance pending implementation evidence:
+  - README.md: update primary installation claims in Feature 050
+  - docs/getting-started/install-matrix.md: add verified native Hermes path in Feature 050
+  - docs/getting-started/hermes-plugin.md: replace repository-based instructions in Feature 050
+- Deferred placeholders: none
+-->
+# Virtual Mechanical Engineer Constitution v2.0.0
 
 ## 1. Architectural Foundation
 * **Framework**: The backend API MUST be implemented using the strictly typed FastAPI framework to ensure native Pydantic data validation and fast local execution.
@@ -6,7 +23,23 @@
 * **Offline-First Mandate**: The entire appliance MUST be capable of running fully air-gapped. No core functionality may rely on an external cloud API without a graceful local fallback.
 
 ## 2. Serving & Execution
-* **Container Strategy (Thick Base / Thin Code)**: Production and development environments MUST utilize a heavy base Docker image (containing CUDA, PyTorch, FreeCAD, CalculiX). Application logic (`/apps` and `/packages`) MUST be mounted as live volumes to allow instant iteration without container rebuilds.
+* **Production Distribution Strategy**: Wright MUST ship and verify both the
+  native Hermes installation and the Docker appliance for every production
+  release. Native Hermes MUST be the primary installation path for Hermes users
+  and MUST NOT require Docker, Git, a source checkout, Node.js/npm, or a
+  frontend build on the user machine. Docker MUST remain a complete turnkey
+  isolated path and a mandatory release artifact; a release is incomplete when
+  either required distribution path fails its acceptance gates.
+* **Container Strategy (Thick Base / Thin Code)**: The Docker production and
+  development profiles MUST use the heavy base image containing the approved
+  CUDA, PyTorch, FreeCAD, and CalculiX stack. Application logic (`/apps` and
+  `/packages`) MUST remain mountable as live volumes for container-based
+  iteration without rebuilding the base image. MCP-specific host software MUST
+  NOT be added to the base image solely to satisfy catalog validation.
+* **Native Runtime Isolation**: Hermes MUST manage a versioned Wright runtime
+  isolated from the Hermes process. Native installation MUST use prebuilt,
+  versioned application and UI artifacts, preserve user data across ordinary
+  upgrades, and provide tested rollback and uninstall behavior.
 * **Agent Abstraction**: LLM agents (Hermes, Qwen, openclaw, PI) MUST NOT be hardcoded into the API. They MUST be integrated via an Adapter Pattern (`BaseAgentEngine`) to allow hot-swapping of models and frameworks.
 
 ## 3. Data Storage & RAG (100% Embedded)
@@ -48,6 +81,14 @@
 * **Manual Gating**: After completing any major lifecycle command or tool generation, agents MUST stop and wait for explicit human review.
 
 ## Governance
-Amendments to this constitution require a documented proposal, review, and approval from the project maintainers. All pull requests and AI-generated code must verify compliance with these principles.
+Amendments to this constitution require a documented proposal, review, and
+approval from the project maintainers. Version changes follow semantic
+versioning: MAJOR for incompatible principle redefinitions or removals, MINOR
+for new principles or materially expanded guidance, and PATCH for clarifying
+wording without changed obligations. Every feature plan MUST evaluate all
+principles before design and after contracts are complete. Every pull request
+and AI-generated change MUST identify applicable gates, and release changes
+MUST update the authoritative merge-gate scripts when new CI failures expose a
+missing local gate.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-02
+**Version**: 2.0.0 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-07-28

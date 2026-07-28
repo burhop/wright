@@ -77,6 +77,40 @@ def test_exact_artifact_runbooks_are_published_and_honest() -> None:
     assert "rehearsal" in runbook and "do not create tags" in runbook
     assert "Never overwrite PyPI files" in recovery
     assert "digest already recorded as verified" in recovery.lower()
+    assert "released-Hermes" in recovery
+    assert "Native Hermes and Docker are independent mandatory" in recovery
+    assert "GitHub Release last" in runbook
+    assert "python-distribution-v1" in runbook
+
+
+def test_public_docs_make_native_primary_docker_mandatory_and_package_roles_exact() -> None:
+    readme = read_text("README.md")
+    overview = read_text("docs/getting-started/overview.md")
+    matrix = read_text("docs/getting-started/install-matrix.md")
+    native = read_text("docs/getting-started/hermes-plugin.md")
+    packages = read_text("docs/getting-started/python-packages.md")
+    readiness = read_text("docs/release/community-release-readiness.md")
+    combined = "\n".join((readme, overview, matrix, native, packages, readiness))
+
+    assert "Native Hermes (Primary User Path)" in readme
+    assert "mandatory turnkey" in combined
+    assert "python-distribution-v1" in combined
+    assert "production_native_available" in combined
+    assert "current released Hermes 0.18.2" in readme
+    assert "no Git, Docker" in combined
+    assert "manual Python package" in combined
+    assert "one complete public application distribution" in readme
+    assert "/wright uninstall" in native
+    assert "/wright purge <confirmation-code>" in native
+    assert "External workspaces" in overview
+    assert "legacy Git-plugin mirror" in combined
+
+    for stale in (
+        "Docker remains the primary end-user install path",
+        "lightweight helper/discovery package",
+        "This package is a helper and discovery surface",
+    ):
+        assert stale not in combined
 
 
 def test_docs_links_that_broke_strict_build_are_no_longer_doc_relative() -> None:

@@ -40,7 +40,7 @@ jobs:
       - name: Lint and package-test optional Hermes integration
         run: |
           uv run ruff check hermes-plugin-wright
-          uv run --package hermes-plugin-wright pytest hermes-plugin-wright/tests
+          uv run --package hermes-plugin-wright --with PyYAML python -m pytest hermes-plugin-wright/tests
           uv build --package hermes-plugin-wright --wheel --out-dir dist/private-package-check
 
       - name: Type Check with mypy
@@ -58,10 +58,12 @@ jobs:
           git config --global user.name "CI Test Runner"
 
       - name: Run Tests with pytest
-        run: uv run pytest
+        run: |
+          uv run python -m pytest -q tests/native_runtime tests/release/test_native_workflow_policy.py
+          uv run python -m pytest
 
       - name: Enforce ratcheted release-code coverage
-        run: uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+        run: uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 
   public-package-matrix:
     strategy:
@@ -79,8 +81,11 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: ${{ matrix.python }}
-      - name: Build once for this isolated matrix job
-        run: python -m pip install build && python -m build --wheel --sdist --outdir dist
+      - name: Build complete native artifact for this isolated matrix job
+        run: |
+          python -m pip install build
+          python -m build --wheel --sdist --outdir dist
+          python -c "from pathlib import Path; from scripts.release.python_artifacts import validate_native_distribution; [validate_native_distribution(p) for p in Path('dist').iterdir() if p.suffix == '.whl' or p.name.endswith('.tar.gz')]"
       - name: Independently install and smoke wheel and sdist
         shell: bash
         run: |

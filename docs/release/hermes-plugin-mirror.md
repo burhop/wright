@@ -1,6 +1,12 @@
 # Hermes Plugin Mirror Release Runbook
 
-This runbook covers the thin `hermes-plugin-wright` mirror and the package strategy used by the Wright Hermes plugin. For public alpha, only the user-facing `wright-engineering` package is published to PyPI/TestPyPI; component package publication for the mirror is deferred.
+This runbook covers the legacy `hermes-plugin-wright` Git mirror. It is retained
+for one migration window for Hermes 0.18 and older installations. It cannot
+satisfy native package installation, platform evidence, stable-channel
+activation, or production release completion.
+
+The one public `wright-engineering` distribution is now the complete application
+artifact consumed by package-capable Hermes. Component packages remain private.
 
 ## Ownership
 
@@ -17,12 +23,15 @@ The mirror repository is a distribution surface only. Do not develop features di
 
 | Channel | Mirror branch | Dependency policy | User |
 | --- | --- | --- | --- |
-| Development | `dev` | Self-contained plugin with public third-party dependencies | Maintainers and early testers |
-| Stable | `main` | Self-contained plugin with public third-party dependencies | Customer testers and stable users |
+| Development | `dev` | Legacy Git migration delegate | Maintainers migrating old tests |
+| Stable | `main` | Frozen legacy Git migration delegate | Existing Hermes 0.18 users only |
 
 ## Package Publication Order
 
-The root `wright-engineering` package and the Hermes plugin mirror are separate distribution surfaces. Component packages such as `wright-core` and `wright-tool-registry` remain workspace-local; the mirror must not depend on them. Its catalog, schemas, and loader ship in the mirror itself.
+The root `wright-engineering` package is the only public application
+distribution. Component packages such as `wright-core` and
+`wright-tool-registry` remain workspace-local. The mirror delegates to the exact
+public application version and must not be described as the native install.
 
 Use the product release tag when publishing the PyPI helper package and container:
 
@@ -121,9 +130,12 @@ scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.
 
 The update validation must confirm the installed plugin directory contains `.git` metadata.
 
-## Customer Commands
+## Legacy migration commands
 
-Stable install:
+These commands apply only to an already chosen Hermes 0.18 migration path. New
+users must not be directed here as the normal Wright install.
+
+Legacy stable install:
 
 ```bash
 hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/main --enable
@@ -201,3 +213,7 @@ Use this section to record release candidate validation runs.
 - `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-stable-final.TftFem --channel stable` passed.
 
 Stable mirror release through `https://github.com/burhop/hermes-plugin-wright/tree/main` is independent of component package publication. Before announcing it, validate a clean install and lifecycle against the supported Hermes release.
+
+Mirror validation or publication never produces native release evidence. Native
+production requires the released package-plugin interface and the public
+`wright-engineering` lifecycle described in the main release runbook.

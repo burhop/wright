@@ -19,6 +19,16 @@ run scripts/check-dev-merge.sh
 run scripts/security-scan.sh --include-untracked
 run scripts/alpha-release-check.sh
 run make hermes-plugin-mirror-validate
+run uv run python -c "from scripts.release.hermes_capability import require_released_package_capability; require_released_package_capability()"
+
+if grep -q -- '--base-only' .github/workflows/release.yml; then
+  echo "Production release workflow must run the full published native lifecycle, not base-only acceptance."
+  exit 1
+fi
+run uv run pytest -q \
+  tests/release/test_native_release_evidence.py \
+  tests/release/test_native_workflow_policy.py \
+  tests/release/test_native_release_rehearsal.py
 
 if [[ "${SKIP_HERMES_PLUGIN_LIFECYCLE:-0}" == "1" ]]; then
   echo

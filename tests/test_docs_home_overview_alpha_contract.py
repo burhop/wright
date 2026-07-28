@@ -72,9 +72,9 @@ def test_getting_started_overview_uses_supported_alpha_paths() -> None:
         "does not bundle an LLM",
         "Choose Your Alpha Path",
         "Docker appliance",
-        "PC local setup",
+        "PC development",
         "GB10/DGX workstation",
-        "Existing Hermes plugin",
+        "Native Hermes",
         "selected MCP host dependencies",
         "MCP-specific host software",
     ]:

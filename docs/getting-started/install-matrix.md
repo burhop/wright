@@ -1,14 +1,24 @@
 # Install Matrix
 
-Choose the path that matches what you are trying to do.
-
-| Use case | Recommended first path | Verification | Limits |
+| Use case | Recommended path | Verification | Boundary |
 | --- | --- | --- | --- |
-| Curious user or demo | Docker appliance from `burhop/wright:<tag>` or source checkout while alpha images are being cut | Open `http://localhost:8080` and call `/api/health` | BYO-AI; selected tools installed separately. |
-| Windows 11 laptop | Docker Desktop with Linux containers | Browser reaches Wright on localhost | Not a Windows desktop container. |
-| Linux workstation or Dell GB10-class system | Docker Engine or local checkout beside a model server | API health and model endpoint reachable from container | `linux/arm64` and GPU profiles require explicit validation. |
-| Hermes Desktop user | Hermes Desktop/CLI plus Wright plugin or local appliance | `/wright status` and Wright health endpoints respond | Desktop packaging is separate from the appliance. |
-| Python developer | `pip install wright-engineering` for helper CLI, source checkout for development | `wright doctor` prints alpha guidance | Component packages are not public PyPI packages for alpha. |
-| MCP/tool contributor | Docker appliance plus clean-container MCP validation process | `initialize`, `tools/list`, and one safe backend probe pass | Do not add MCP-specific host software to the base image. |
-| Enterprise evaluator | Docker appliance, security docs, release notes, and support contact | Local health checks plus review of BYO-AI/security posture | Public alpha; no production SLA implied. |
-| Sponsor/customer/partner | README, funding docs, and `wright@makerengineer.com` | Sponsorship/contact path works | Org/fiscal host and NVIDIA Inception are deferred. |
+| Existing Hermes user | [Native Hermes](hermes-plugin.md) after the compatibility page names a released package-capable Hermes | `/wright start`, `/wright status`, `/wright doctor` and the displayed local UI URL | Currently blocked by released Hermes 0.18.2 being Git-only. Do not substitute a checkout. |
+| Turnkey trial or third-party evaluator | Published Docker image `burhop/wright:<tag>` | Open `http://localhost:8080`; `/api/health` succeeds | BYO-AI and selected MCP host dependencies remain external. |
+| Windows 11 | Native Hermes once Windows x64 public lifecycle evidence is green, or Docker Desktop | Native lifecycle evidence or container health | No Git/Node/npm requirement for native users. |
+| Ubuntu 22.04/24.04 x64 | Native Hermes once Linux x64 evidence is green, or Docker Engine | Native lifecycle evidence or container health | Other architectures are not implied. |
+| macOS Sonoma 14+ | Native Hermes only after the recorded architecture passes | Native lifecycle evidence | Docker/CAD solver limitations remain tool-specific. |
+| Python contributor | Source checkout and [contributor workflow](https://github.com/burhop/wright/blob/main/CONTRIBUTING.md) | Dev merge gate | Manual `pip install wright-engineering` is artifact diagnosis, not the user install. |
+| MCP contributor | Either runtime plus the clean selected-server process | MCP initialize, tools/list, safe backend probe, gateway proxy | Never add MCP-specific hosts to the base package/image for catalog optics. |
+
+## Availability is evidence-driven
+
+The packaged compatibility contract is
+`src/wright_engineering/compatibility.json`. A platform is supported publicly
+only when production evidence records the released Hermes version, exact Wright
+wheel hash, runtime-extra lock, platform/architecture, full lifecycle result,
+source isolation, and zero forbidden executables. Fixture-only or skipped runs
+do not make a platform supported.
+
+At this feature-candidate stage, `production_native_available` is `false` and
+`released_hermes_version` is `null`. Docker publication remains mandatory and
+independent.
