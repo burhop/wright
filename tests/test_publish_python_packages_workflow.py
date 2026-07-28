@@ -26,6 +26,13 @@ def test_publish_workflow_uses_exact_candidate_and_protected_trusted_publishing(
         == 2
     )
     assert "repository-url: https://test.pypi.org/legacy/" in workflow
+    assert workflow.count("Verify hashes and stage only distributions") == 2
+    assert workflow.count("cp dist/*.whl dist/*.tar.gz publish-dist/") == 2
+    assert workflow.count("packages-dir: publish-dist") == 2
+    assert "packages-dir: dist\n" not in workflow
+    assert workflow.count(
+        'test "$(find publish-dist -maxdepth 1 -type f | wc -l)" = 2'
+    ) == 2
     assert "wright-engineering" in workflow
     assert (
         workflow.index("publish-testpypi:")
