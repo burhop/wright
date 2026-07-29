@@ -1,8 +1,10 @@
+from pathlib import Path
 from types import SimpleNamespace
 from urllib.parse import unquote
 
 import pytest
 from starlette.requests import Request
+from starlette.staticfiles import StaticFiles
 
 from api.main import _resolve_spa_asset, proxy_onshape, proxy_onshape_path
 
@@ -21,12 +23,14 @@ class _FailingAsyncClient:
         raise RuntimeError("sentinel C:\\private\\onshape-token.txt")
 
 
-def _request(trace_id: str = "trace-main-123") -> Request:
+def _request(
+    trace_id: str = "trace-main-123", path: str = "/api/proxy/onshape"
+) -> Request:
     return Request(
         {
             "type": "http",
             "method": "GET",
-            "path": "/api/proxy/onshape",
+            "path": path,
             "query_string": b"",
             "headers": [],
             "state": {"trace_id": trace_id},
@@ -55,13 +59,21 @@ async def test_onshape_proxy_failure_is_generic_and_trace_bearing(monkeypatch, p
     assert "onshape-token" not in body
 
 
-def test_spa_asset_resolver_accepts_regular_file_inside_root(tmp_path):
+@pytest.mark.asyncio
+async def test_spa_asset_resolver_accepts_regular_file_inside_root(tmp_path):
     dist = tmp_path / "dist"
     asset = dist / "assets" / "app.js"
     asset.parent.mkdir(parents=True)
     asset.write_text("console.log('ok')", encoding="utf-8")
 
-    assert _resolve_spa_asset(dist, "assets/app.js") == asset.resolve()
+    response = await _resolve_spa_asset(
+        StaticFiles(directory=dist),
+        "assets/app.js",
+        _request(path="/assets/app.js"),
+    )
+
+    assert response is not None
+    assert Path(response.path).resolve() == asset.resolve()
 
 
 @pytest.mark.parametrize(
@@ -71,7 +83,8 @@ def test_spa_asset_resolver_accepts_regular_file_inside_root(tmp_path):
         "%2e%2e%2foutside.txt",
     ],
 )
-def test_spa_asset_resolver_rejects_plain_and_encoded_traversal(
+@pytest.mark.asyncio
+async def test_spa_asset_resolver_rejects_plain_and_encoded_traversal(
     tmp_path, requested_path
 ):
     dist = tmp_path / "dist"
@@ -79,10 +92,17 @@ def test_spa_asset_resolver_rejects_plain_and_encoded_traversal(
     outside = tmp_path / "outside.txt"
     outside.write_text("secret", encoding="utf-8")
 
-    assert _resolve_spa_asset(dist, unquote(requested_path)) is None
+    decoded = unquote(requested_path)
+    assert (
+        await _resolve_spa_asset(
+            StaticFiles(directory=dist), decoded, _request(path=f"/{decoded}")
+        )
+        is None
+    )
 
 
-def test_spa_asset_resolver_rejects_absolute_and_sibling_prefix_paths(tmp_path):
+@pytest.mark.asyncio
+async def test_spa_asset_resolver_rejects_absolute_and_sibling_prefix_paths(tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     sibling = tmp_path / "dist-evil"
@@ -90,11 +110,25 @@ def test_spa_asset_resolver_rejects_absolute_and_sibling_prefix_paths(tmp_path):
     secret = sibling / "secret.txt"
     secret.write_text("secret", encoding="utf-8")
 
-    assert _resolve_spa_asset(dist, str(secret.resolve())) is None
-    assert _resolve_spa_asset(dist, "../dist-evil/secret.txt") is None
+    static_files = StaticFiles(directory=dist)
+    assert (
+        await _resolve_spa_asset(
+            static_files, str(secret.resolve()), _request(path="/absolute")
+        )
+        is None
+    )
+    assert (
+        await _resolve_spa_asset(
+            static_files,
+            "../dist-evil/secret.txt",
+            _request(path="/../dist-evil/secret.txt"),
+        )
+        is None
+    )
 
 
-def test_spa_asset_resolver_rejects_symlink_to_outside_root(tmp_path):
+@pytest.mark.asyncio
+async def test_spa_asset_resolver_rejects_symlink_to_outside_root(tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     outside = tmp_path / "outside.txt"
@@ -105,4 +139,11 @@ def test_spa_asset_resolver_rejects_symlink_to_outside_root(tmp_path):
     except OSError as exc:
         pytest.skip(f"Host does not permit symlink creation: {exc}")
 
-    assert _resolve_spa_asset(dist, "linked.txt") is None
+    assert (
+        await _resolve_spa_asset(
+            StaticFiles(directory=dist),
+            "linked.txt",
+            _request(path="/linked.txt"),
+        )
+        is None
+    )

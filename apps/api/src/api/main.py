@@ -2,7 +2,6 @@ import time
 import httpx
 import os
 from contextlib import asynccontextmanager
-from pathlib import Path
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
@@ -424,17 +423,16 @@ async def proxy_onshape_path(path: str, request: Request):
         )
 
 
-def _resolve_spa_asset(dist_root: Path, full_path: str) -> Path | None:
-    """Return a regular file contained by the canonical frontend root."""
-    canonical_root = dist_root.resolve()
-    candidate = (canonical_root / full_path).resolve()
+async def _resolve_spa_asset(
+    static_files: StaticFiles, full_path: str, request: Request
+) -> Response | None:
+    """Delegate containment and regular-file validation to Starlette."""
     try:
-        candidate.relative_to(canonical_root)
-    except ValueError:
+        return await static_files.get_response(full_path, request.scope)
+    except StarletteHTTPException as exc:
+        if exc.status_code != 404:
+            raise
         return None
-    if not candidate.is_file():
-        return None
-    return candidate
 
 
 # Serve frontend static files in production if the dist directory exists
@@ -457,12 +455,14 @@ if os.path.exists(dist_dir):
     # SPA catch-all: serve index.html for any non-API route so client-side
     # routing works for paths like /tool-registry, /workspace/*, etc.
     index_html = os.path.join(dist_dir, "index.html")
+    spa_static_files = StaticFiles(directory=dist_dir)
 
     @app.get("/{full_path:path}")
-    async def serve_spa(full_path: str):
-        file_path = _resolve_spa_asset(Path(dist_dir), full_path)
-        if full_path and file_path is not None:
-            return FileResponse(file_path)
+    async def serve_spa(full_path: str, request: Request):
+        if full_path:
+            response = await _resolve_spa_asset(spa_static_files, full_path, request)
+            if response is not None:
+                return response
         # Otherwise serve the SPA entry point
         return FileResponse(index_html)
 else:
