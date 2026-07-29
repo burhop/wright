@@ -6,6 +6,7 @@ import urllib.request
 import urllib.error
 import json
 import shlex
+from urllib.parse import quote, urlsplit
 from typing import Optional, Union, List, Tuple
 import structlog
 from .models import McpServer
@@ -13,6 +14,12 @@ from .models import McpServer
 logger = structlog.get_logger(__name__)
 
 VERSION_REGEX = re.compile(r"(\d+\.\d+\.\d+(?:\.\d+)?[a-zA-Z0-9\-\.]*)")
+PYTHON_PACKAGE_REGEX = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,212}[A-Za-z0-9])?$")
+NPM_PACKAGE_REGEX = re.compile(r"^[a-z0-9][a-z0-9._~-]*$")
+NPM_VERSION_REGEX = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]*$")
+GITHUB_REPOSITORY_PATH_REGEX = re.compile(
+    r"^/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git(?:@[A-Za-z0-9._/-]+)?$"
+)
 
 
 def _subprocess_kwargs() -> dict:
@@ -38,6 +45,61 @@ def parse_command(command: Optional[Union[List[str], str]]) -> List[str]:
         return []
 
 
+def _python_package_name(value: str) -> Optional[str]:
+    return value if PYTHON_PACKAGE_REGEX.fullmatch(value) else None
+
+
+def _npm_package_name(value: str) -> Optional[str]:
+    package = value
+    if value.startswith("@"):
+        slash = value.find("/")
+        if slash <= 1:
+            return None
+        scope = value[1:slash]
+        name_and_version = value[slash + 1 :]
+        if "@" in name_and_version:
+            name, version = name_and_version.rsplit("@", 1)
+            if not NPM_VERSION_REGEX.fullmatch(version):
+                return None
+        else:
+            name = name_and_version
+        if not NPM_PACKAGE_REGEX.fullmatch(scope) or not NPM_PACKAGE_REGEX.fullmatch(
+            name
+        ):
+            return None
+        package = f"@{scope}/{name}"
+    else:
+        if "@" in value:
+            name, version = value.rsplit("@", 1)
+            if not NPM_VERSION_REGEX.fullmatch(version):
+                return None
+        else:
+            name = value
+        if not NPM_PACKAGE_REGEX.fullmatch(name):
+            return None
+        package = name
+    return package
+
+
+def _is_github_vcs_requirement(value: str) -> bool:
+    if not value.startswith("git+"):
+        return False
+    try:
+        parsed = urlsplit(value[4:])
+        port = parsed.port
+    except ValueError:
+        return False
+    if parsed.scheme not in {"https", "ssh"} or parsed.hostname != "github.com":
+        return False
+    if parsed.password or parsed.query or parsed.fragment or port is not None:
+        return False
+    if parsed.scheme == "https" and parsed.username:
+        return False
+    if parsed.scheme == "ssh" and parsed.username not in {None, "git"}:
+        return False
+    return bool(GITHUB_REPOSITORY_PATH_REGEX.fullmatch(parsed.path))
+
+
 def get_package_info(cmd: List[str]) -> Tuple[Optional[str], Optional[str]]:
     """
     Returns (package_manager, package_name)
@@ -50,43 +112,48 @@ def get_package_info(cmd: List[str]) -> Tuple[Optional[str], Optional[str]]:
     # 1. uvx
     if first == "uvx":
         if len(cmd) > 1:
-            return "uvx", cmd[1]
+            return "uvx", _python_package_name(cmd[1])
 
     # 2. uv run
     if first == "uv" and len(cmd) > 1 and cmd[1] == "run":
-        # Find package name
         idx = 2
-        package = None
         while idx < len(cmd):
             if cmd[idx] == "--with":
+                if idx + 1 >= len(cmd):
+                    return "uv", None
+                requirement = cmd[idx + 1]
+                if not (
+                    _is_github_vcs_requirement(requirement)
+                    or _python_package_name(requirement)
+                ):
+                    return "uv", None
                 idx += 2
             elif cmd[idx].startswith("-"):
                 idx += 1
             else:
-                package = cmd[idx]
                 break
-        if package:
-            # If package starts with a git URL, e.g. git+https://..., extract package name at the end
-            if "github.com" in package or ".git" in package:
-                # If there's an executable cmd at the end of the run command, that's the tool
-                # e.g., ["uv", "run", "--with", "git+...", "openscad-mcp"] -> openscad-mcp
-                if len(cmd) > idx:
-                    package = cmd[-1]
-            return "uv", package
+        if idx < len(cmd):
+            package = cmd[idx]
+            if package in {"python", "python3"}:
+                if idx + 2 < len(cmd) and cmd[idx + 1] == "-m":
+                    return "python", _python_package_name(cmd[idx + 2])
+                return "python", None
+            return "uv", _python_package_name(package)
+        return "uv", None
 
     # 3. python / python3
     if first in ("python", "python3"):
         if "-m" in cmd:
             idx = cmd.index("-m")
             if idx + 1 < len(cmd):
-                return "pip", cmd[idx + 1]
+                return "pip", _python_package_name(cmd[idx + 1])
         # Check if the last arg is a python script, maybe we can run pip show on it? Usually not applicable.
         return "python", None
 
     # 4. pip / pip3
     if first in ("pip", "pip3"):
         if len(cmd) > 2 and cmd[1] in ("install", "show"):
-            return "pip", cmd[2]
+            return "pip", _python_package_name(cmd[2])
         return "pip", None
 
     # 5. npx / npm
@@ -104,14 +171,17 @@ def get_package_info(cmd: List[str]) -> Tuple[Optional[str], Optional[str]]:
                 package = cmd[idx]
                 break
         if package:
-            return "npm", package
+            return "npm", _npm_package_name(package)
 
     return "unknown", None
 
 
 def fetch_pypi_latest(package: str) -> Optional[str]:
+    package = _python_package_name(package) or ""
+    if not package:
+        return None
     try:
-        url = f"https://pypi.org/pypi/{package}/json"
+        url = f"https://pypi.org/pypi/{quote(package, safe='')}/json"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=5.0) as response:
             data = json.loads(response.read().decode())
@@ -124,8 +194,11 @@ def fetch_pypi_latest(package: str) -> Optional[str]:
 
 
 def fetch_npm_latest(package: str) -> Optional[str]:
+    package = _npm_package_name(package) or ""
+    if not package:
+        return None
     try:
-        url = f"https://registry.npmjs.org/{package}/latest"
+        url = f"https://registry.npmjs.org/{quote(package, safe='')}/latest"
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=5.0) as response:
             data = json.loads(response.read().decode())
@@ -140,6 +213,9 @@ def fetch_npm_latest(package: str) -> Optional[str]:
 
 
 async def get_pip_installed(package: str) -> Optional[str]:
+    package = _python_package_name(package) or ""
+    if not package:
+        return None
     try:
         proc = await asyncio.create_subprocess_exec(
             "pip",
@@ -160,6 +236,9 @@ async def get_pip_installed(package: str) -> Optional[str]:
 
 
 async def get_npm_installed(package: str) -> Optional[str]:
+    package = _npm_package_name(package) or ""
+    if not package:
+        return None
     try:
         proc = await asyncio.create_subprocess_exec(
             "npm",
@@ -223,6 +302,8 @@ async def check_server_version(server: McpServer) -> dict:
 
     if not pm or pm == "unknown":
         return {"error": "unsupported_package_manager"}
+    if not package:
+        return {"error": "package_name_not_found"}
 
     # Mocking for testing
     if package in ("calculix-mcp", "calc", "dummy-pkg", "openscad-mcp"):

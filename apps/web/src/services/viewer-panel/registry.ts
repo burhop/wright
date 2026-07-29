@@ -13,6 +13,37 @@ import { IframeProvider } from "./providers/iframe-provider";
 import { ImageProvider } from "./providers/image-provider";
 import { MarkdownProvider } from "./providers/markdown-provider";
 
+const REGEX_META_CHARACTERS = new Set([
+  "\\",
+  "^",
+  "$",
+  ".",
+  "+",
+  "(",
+  ")",
+  "[",
+  "]",
+  "{",
+  "}",
+  "|",
+]);
+
+function globPatternToRegExp(pattern: string): RegExp {
+  let source = "^";
+  for (const character of pattern) {
+    if (character === "*") {
+      source += ".*";
+    } else if (character === "?") {
+      source += ".";
+    } else if (REGEX_META_CHARACTERS.has(character)) {
+      source += `\\${character}`;
+    } else {
+      source += character;
+    }
+  }
+  return new RegExp(`${source}$`, "i");
+}
+
 export class ViewerRegistry {
   private static instance: ViewerRegistry | null = null;
   private contributions: Map<string, ViewerContribution> = new Map();
@@ -61,12 +92,7 @@ export class ViewerRegistry {
           break;
         }
         if (rule.pattern) {
-          // Glob pattern matcher (simple regex helper)
-          const regexStr = rule.pattern
-            .replace(/\./g, "\\.")
-            .replace(/\*/g, ".*")
-            .replace(/\?/g, ".");
-          const regex = new RegExp(`^${regexStr}$`, "i");
+          const regex = globPatternToRegExp(rule.pattern);
           if (regex.test(file.uri)) {
             matched = true;
             break;

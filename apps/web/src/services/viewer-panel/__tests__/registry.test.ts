@@ -123,6 +123,75 @@ describe("ViewerRegistry", () => {
     expect(viewers2.length).toBe(0);
   });
 
+  it("treats every regex metacharacter except glob tokens literally", () => {
+    registry.register({
+      id: "literal-pattern",
+      label: "Literal Pattern",
+      selector: [{ pattern: "**/literal/[name](draft)+^${value}.txt" }],
+      priority: "default",
+      providerFactory: dummyProviderFactory("literal-pattern"),
+    });
+
+    const viewers = registry.getViewersFor(
+      {
+        id: "literal",
+        uri: "/workspace/literal/[name](draft)+^${value}.txt",
+        name: "[name](draft)+^${value}.txt",
+        extension: "txt",
+        mimeType: "text/plain",
+      },
+      "preview",
+    );
+
+    expect(viewers.map((viewer) => viewer.id)).toEqual(["literal-pattern"]);
+  });
+
+  it("preserves backslashes and supported question-mark wildcards", () => {
+    registry.register({
+      id: "windows-pattern",
+      label: "Windows Pattern",
+      selector: [{ pattern: "C:\\models\\part?.step" }],
+      priority: "default",
+      providerFactory: dummyProviderFactory("windows-pattern"),
+    });
+
+    const viewers = registry.getViewersFor(
+      {
+        id: "windows",
+        uri: "C:\\models\\part1.step",
+        name: "part1.step",
+        extension: "step",
+        mimeType: "application/step",
+      },
+      "preview",
+    );
+
+    expect(viewers.map((viewer) => viewer.id)).toEqual(["windows-pattern"]);
+  });
+
+  it("does not throw for malformed-looking literal patterns", () => {
+    registry.register({
+      id: "bracket-pattern",
+      label: "Bracket Pattern",
+      selector: [{ pattern: "[" }],
+      priority: "default",
+      providerFactory: dummyProviderFactory("bracket-pattern"),
+    });
+
+    expect(() =>
+      registry.getViewersFor(
+        {
+          id: "bracket",
+          uri: "[",
+          name: "[",
+          extension: "",
+          mimeType: "text/plain",
+        },
+        "preview",
+      ),
+    ).not.toThrow();
+  });
+
   it("should sort by priority", () => {
     const optionViewer: ViewerContribution = {
       id: "editor-option",

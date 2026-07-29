@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sqlite3
 from types import SimpleNamespace
 
@@ -143,6 +144,89 @@ async def test_create_workspace_rejects_nonmanaged_explicit_path(tmp_path, db_pa
         await service.create_workspace(
             "Managed Workspace", str(tmp_path / "somewhere-else"), FakeEngine()
         )
+
+
+def test_authorize_session_workspace_accepts_registered_existing_path(
+    tmp_path, db_path
+):
+    managed_root = tmp_path / "managed"
+    workspace = tmp_path / "explicit-workspace"
+    workspace.mkdir()
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(managed_root))
+    service.repository.create(
+        "workspace-1", "session-1", str(workspace), workspace_name="Explicit"
+    )
+
+    authorized = service.authorize_session_workspace(str(workspace))
+
+    assert authorized.path == str(workspace.resolve())
+    assert authorized.workspace_id == "workspace-1"
+    assert authorized.created is False
+
+
+def test_authorize_session_workspace_rejects_unregistered_path_without_creating(
+    tmp_path, db_path
+):
+    managed_root = tmp_path / "managed"
+    requested = managed_root / "caller-selected"
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(managed_root))
+
+    with pytest.raises(WorkspaceInvalidRequestError, match="registered"):
+        service.authorize_session_workspace(str(requested))
+
+    assert not requested.exists()
+
+
+def test_authorize_session_workspace_rejects_registered_missing_directory(
+    tmp_path, db_path
+):
+    missing = tmp_path / "missing"
+    service = WorkspaceService(
+        db_path, parent_dir_provider=lambda: str(tmp_path / "managed")
+    )
+    service.repository.create(
+        "workspace-1", "session-1", str(missing), workspace_name="Missing"
+    )
+
+    with pytest.raises(WorkspaceInvalidRequestError, match="existing"):
+        service.authorize_session_workspace(str(missing))
+
+    assert not missing.exists()
+
+
+def test_authorize_session_workspace_rejects_symlink_alias(tmp_path, db_path):
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    alias = tmp_path / "alias"
+    try:
+        alias.symlink_to(workspace, target_is_directory=True)
+    except OSError as exc:
+        pytest.skip(f"host cannot create symlinks: {exc}")
+    service = WorkspaceService(
+        db_path, parent_dir_provider=lambda: str(tmp_path / "managed")
+    )
+    service.repository.create(
+        "workspace-1", "session-1", str(workspace), workspace_name="Workspace"
+    )
+
+    with pytest.raises(WorkspaceInvalidRequestError, match="registered"):
+        service.authorize_session_workspace(str(alias))
+
+
+def test_authorize_session_workspace_generates_managed_path_when_omitted(
+    tmp_path, db_path
+):
+    managed_root = tmp_path / "managed"
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(managed_root))
+
+    authorized = service.authorize_session_workspace(None)
+
+    generated = Path(authorized.path)
+    assert authorized.workspace_id is None
+    assert authorized.created is True
+    assert generated.is_dir()
+    assert generated.parent == managed_root.resolve()
+    assert generated.name.startswith("session-")
 
 
 @pytest.mark.asyncio

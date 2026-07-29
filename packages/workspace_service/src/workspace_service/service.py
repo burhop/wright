@@ -7,7 +7,7 @@ import subprocess
 import sys
 import uuid
 from collections.abc import Callable, Mapping
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import Any
 
 from agent_adapters import (
@@ -56,6 +56,13 @@ from .use_cases import (
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
+
+
+@dataclass(frozen=True)
+class SessionWorkspaceAuthorization:
+    path: str
+    workspace_id: str | None
+    created: bool
 
 
 class _NoopNotifier:
@@ -220,6 +227,55 @@ class WorkspaceService:
             f"session-{fallback_slug}", create=True
         )
         return workspace_path
+
+    def authorize_session_workspace(
+        self, requested_path: str | None
+    ) -> SessionWorkspaceAuthorization:
+        """Resolve a request to registered storage or create a generated managed path."""
+
+        if requested_path:
+            if "\x00" in requested_path:
+                raise WorkspaceInvalidRequestError(
+                    "Session workspace must reference a registered workspace."
+                )
+            workspace = self.repository.get_by_path(requested_path)
+            if not workspace:
+                raise WorkspaceInvalidRequestError(
+                    "Session workspace must reference a registered workspace."
+                )
+            registered = Path(str(workspace["local_path"])).expanduser()
+            if not registered.is_absolute():
+                raise WorkspaceInvalidRequestError(
+                    "Registered workspace path must be absolute."
+                )
+            try:
+                canonical = registered.resolve(strict=True)
+            except (FileNotFoundError, OSError) as exc:
+                raise WorkspaceInvalidRequestError(
+                    "Session workspace must reference an existing directory."
+                ) from exc
+            if not canonical.is_dir():
+                raise WorkspaceInvalidRequestError(
+                    "Session workspace must reference an existing directory."
+                )
+            lexical = registered.absolute()
+            if os.path.normcase(str(lexical)) != os.path.normcase(str(canonical)):
+                raise WorkspaceInvalidRequestError(
+                    "Session workspace aliases are not permitted."
+                )
+            return SessionWorkspaceAuthorization(
+                path=str(canonical),
+                workspace_id=str(workspace["workspace_id"]),
+                created=False,
+            )
+
+        workspace_name = f"session-{uuid.uuid4().hex}"
+        managed = self._managed_workspace_path(workspace_name, create=True)
+        return SessionWorkspaceAuthorization(
+            path=managed,
+            workspace_id=None,
+            created=True,
+        )
 
     def _managed_workspace_path(
         self,

@@ -2,6 +2,7 @@ import time
 import httpx
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
@@ -320,7 +321,7 @@ async def check_inference_health():
 
 
 @app.get("/api/proxy/onshape", response_class=HTMLResponse)
-async def proxy_onshape():
+async def proxy_onshape(request: Request):
     try:
         async with httpx.AsyncClient() as client:
             headers = {
@@ -350,10 +351,18 @@ async def proxy_onshape():
             html = html.replace("top.location", "self.location")
 
             return HTMLResponse(content=html, status_code=response.status_code)
-    except Exception as e:
-        logger.error(f"Failed to proxy onshape: {e}")
-        return HTMLResponse(
-            content=f"<h3>Failed to connect to Onshape</h3><p>{e}</p>", status_code=502
+    except Exception as exc:
+        trace_id = _get_trace_id(request)
+        logger.exception(
+            "onshape_proxy_failed",
+            trace_id=trace_id,
+            error=str(exc),
+        )
+        return Response(
+            content=f"Failed to connect to Onshape. Trace ID: {trace_id}",
+            status_code=502,
+            media_type="text/plain",
+            headers={"X-Trace-Id": trace_id},
         )
 
 
@@ -399,9 +408,33 @@ async def proxy_onshape_path(path: str, request: Request):
                 media_type=content_type,
                 status_code=response.status_code,
             )
-    except Exception as e:
-        logger.error(f"Failed to proxy onshape path {path}: {e}")
-        return Response(content=f"Error: {e}", status_code=502)
+    except Exception as exc:
+        trace_id = _get_trace_id(request)
+        logger.exception(
+            "onshape_proxy_path_failed",
+            trace_id=trace_id,
+            path=path,
+            error=str(exc),
+        )
+        return Response(
+            content=f"Failed to connect to Onshape. Trace ID: {trace_id}",
+            status_code=502,
+            media_type="text/plain",
+            headers={"X-Trace-Id": trace_id},
+        )
+
+
+def _resolve_spa_asset(dist_root: Path, full_path: str) -> Path | None:
+    """Return a regular file contained by the canonical frontend root."""
+    canonical_root = dist_root.resolve()
+    candidate = (canonical_root / full_path).resolve()
+    try:
+        candidate.relative_to(canonical_root)
+    except ValueError:
+        return None
+    if not candidate.is_file():
+        return None
+    return candidate
 
 
 # Serve frontend static files in production if the dist directory exists
@@ -427,15 +460,8 @@ if os.path.exists(dist_dir):
 
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
-        # If the requested file exists in dist, serve it directly
-        # Guard against path traversal (CWE-22)
-        file_path = os.path.realpath(os.path.join(dist_dir, full_path))
-        real_dist = os.path.realpath(dist_dir)
-        if (
-            full_path
-            and os.path.isfile(file_path)
-            and file_path.startswith(real_dist + os.sep)
-        ):
+        file_path = _resolve_spa_asset(Path(dist_dir), full_path)
+        if full_path and file_path is not None:
             return FileResponse(file_path)
         # Otherwise serve the SPA entry point
         return FileResponse(index_html)
