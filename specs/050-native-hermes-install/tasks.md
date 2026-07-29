@@ -279,8 +279,8 @@ findings, and deliver a clean feature branch and green PR without merging.
 - [X] T092 Run `scripts/check-dev-merge.sh` without native acceptance skips and remediate every failure
 - [X] T093 Run `scripts/check-prod-merge.sh` without native acceptance skips and remediate every failure
 - [X] T094 Verify implementation and local-validation tasks T001-T093 are `[X]`, all requirements have evidence, no unexpected worktree changes exist, and update `specs/050-native-hermes-install/validation.md` with the completion audit
-- [ ] T095 Execute the configured Spec Kit after-implement commit hook from repository root `D:/repos/wright`, verify a clean worktree, and push `050-native-hermes-install` to origin
-- [ ] T096 On pull request #79 from `050-native-hermes-install` to `dev`, monitor every required GitHub check, remediate failures, and stop only when all checks are green without merging
+- [X] T095 Execute the configured Spec Kit after-implement commit hook from repository root `D:/repos/wright`, verify a clean worktree, and push `050-native-hermes-install` to origin
+- [X] T096 On pull request #79 from `050-native-hermes-install` to `dev`, monitor every required GitHub check, remediate failures, and stop only when all checks are green without merging
 
 ---
 

@@ -3,7 +3,8 @@
 **Date**: 2026-07-29
 **Branch**: `050-native-hermes-install`
 **Status**: Local implementation, exact-candidate lifecycle, development gate,
-and production gate are green. Commit/push and pull-request CI remain pending.
+production gate, feature-branch delivery, and pull-request CI are green. No
+merge into `dev` or `main` has been authorized or performed.
 
 ## Delivered scope
 
@@ -85,7 +86,7 @@ Hermes development plugin through Hermes 0.19.0 successfully.
 | Release contracts | 81 passed. |
 | Native/release focused suite | 124 passed, 3 platform/external-fixture skips. |
 | Coverage gate | 185 passed, 3 skips; 85.15%, above the required 85%. |
-| Full Python regression | 746 tests collected; suite passed. The two legacy OpenClaw stub assertions are in-memory future-seam regression coverage and invoke no OpenClaw product. |
+| Full Python regression | 746 tests collected; suite passed. No OpenClaw package or product was installed or invoked; OpenClaw is outside this release scope. |
 | Frontend | ESLint, Prettier, TypeScript, 25 Vitest files / 105 tests, and production build passed. |
 | Browser integration | Complete Playwright integration suite passed with deterministic settings API coverage. |
 | Documentation | `mkdocs build --strict` passed. |
@@ -94,6 +95,7 @@ Hermes development plugin through Hermes 0.19.0 successfully.
 | Docker | Build, non-root/permission contracts, Hermes dependency reconciliation, recovery, Wright API, connected agent, and direct gateway health passed. |
 | Hermes adapter | Local mirror generation/validation and real root install/update/remove passed. |
 | Workflow/release policy | Native evidence, no-PR-publication, terminal dependency, and rehearsal checks passed. |
+| Pull request #79 | All required checks passed on implementation commit `9ad17f1`, including the GitHub Advanced Security CodeQL gate, both CodeQL language analyses, native platform/lifecycle jobs, Python matrices, Windows tests, frontend/Playwright, OCI build/smoke/scan, docs, dependency review, and leak scan. |
 
 `scripts/check-dev-merge.sh` passed without `SKIP_PLAYWRIGHT` or any native
 acceptance skip. `scripts/check-prod-merge.sh` then passed end to end without
@@ -112,6 +114,21 @@ run:
    targets only wrapped existing scripts. The authoritative gate now invokes
    the mirror and Hermes lifecycle scripts directly and has a regression test.
 
+Pull-request CI found and verified three additional hosted-runner issues:
+
+1. A Windows-behavior unit test changed global `os.name` on Linux, causing
+   `pathlib` to construct unsupported Windows paths. The plugin now exposes a
+   module-local platform predicate that the test can patch safely.
+2. The real Hermes Git-plugin lifecycle used temporary storage on a different
+   Windows volume from `HERMES_HOME`, which exposed Hermes 0.19's cross-volume
+   handling of read-only Git pack files. The acceptance harness now provides a
+   same-volume manager temporary directory without modifying Hermes.
+3. GitHub Advanced Security identified a caller-derived filesystem probe used
+   only to distinguish a missing Git executable from a missing workspace root.
+   Git availability is now resolved independently and the redundant path probe
+   is removed. The workspace-service suite passed with 39 tests and one
+   platform skip, and the CodeQL security gate then passed.
+
 The broader repository mypy invocation still reports the pre-existing duplicate
 `conftest` module warning in its documented warning-only mode. Strict typing for
 the changed release/runtime surface is green. The Vite chunk-size and MkDocs
@@ -119,18 +136,22 @@ future-version notices are non-failing upstream advisories.
 
 ## Delivery state
 
-- Spec Kit completion audit: complete. Tasks T001-T093 are implemented and
-  locally evidenced; the only remaining tasks are commit/push and final PR CI.
+- Spec Kit completion audit: complete. Tasks T001-T096 are implemented and
+  evidenced.
 - Worktree audit: all modified, removed, and added paths belong to the native
   manager installation, its release gates, documentation, or regression tests.
   Generated candidate, lifecycle, mirror, and Docker outputs remain ignored.
 - Local feature implementation: complete.
 - Exact artifact and real-manager validation: complete.
 - Development and production merge gates: complete and green.
-- Feature commit and push: pending.
-- Pull request #79 CI on the final commit: pending.
+- Feature commits and Spec Kit delivery record: committed and pushed on
+  `050-native-hermes-install`.
+- Pull request #79: open as a draft against `dev`, mergeable, and green. All
+  required checks passed on the implementation head; the final Spec Kit-only
+  bookkeeping head is also monitored before completion is reported.
 - Merge into `dev` or `main`: not authorized and not performed.
 
-The feature is ready for the Spec Kit completion audit, commit, push, and final
-pull-request CI remediation. It must not be described as delivered to `dev` or
-production until the final PR checks pass and a separate merge is authorized.
+The feature branch is ready for review and a separately authorized merge into
+`dev`. It must not be described as delivered to `dev`, `main`, or production
+until the corresponding merge and downstream release train are separately
+authorized and verified.
