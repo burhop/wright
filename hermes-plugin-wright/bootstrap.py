@@ -158,7 +158,7 @@ def ensure_bootstrap() -> Path:
 
 def _prepare_adapter_removal(plugin_root: Path | None = None) -> None:
     """Clear Windows read-only Git pack bits that Hermes 0.19 cannot remove."""
-    if os.name != "nt":
+    if not _is_windows():
         return
     root = (plugin_root or Path(__file__).resolve().parent).resolve(strict=False)
     metadata = root / ".git"
@@ -170,9 +170,13 @@ def _prepare_adapter_removal(plugin_root: Path | None = None) -> None:
             for name in (*directories, *filenames):
                 path = current_path / name
                 if not path.is_symlink():
-                    path.chmod(stat.S_IREAD | stat.S_IWRITE)
+                    path.chmod(path.stat().st_mode | stat.S_IWRITE)
     except OSError as exc:
         raise BootstrapError("adapter_removal_prepare_failed") from exc
+
+
+def _is_windows() -> bool:
+    return os.name == "nt"
 
 
 def invoke_lifecycle(command: str, argument: str | None = None) -> dict[str, object]:

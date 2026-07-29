@@ -75,7 +75,7 @@ def test_windows_adapter_removal_clears_read_only_git_pack_files(
     index = pack / "candidate.idx"
     index.write_bytes(b"index")
     index.chmod(stat.S_IREAD)
-    monkeypatch.setattr(module.os, "name", "nt")
+    monkeypatch.setattr(module, "_is_windows", lambda: True)
     try:
         module._prepare_adapter_removal(plugin)
     finally:
