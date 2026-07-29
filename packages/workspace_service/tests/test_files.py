@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import shutil
 
 import pytest
 
@@ -21,10 +22,10 @@ def test_workspace_manager_allows_file_workspace_when_git_is_unavailable(
     workspace = tmp_path / "workspace"
     workspace.mkdir()
     real_run = subprocess.run
+    monkeypatch.setattr(shutil, "which", lambda command: None)
 
     def run_without_git(command, *args, **kwargs):
-        if command == ["git", "init"]:
-            raise FileNotFoundError("git")
+        assert command[0] != "git"
         return real_run(command, *args, **kwargs)
 
     monkeypatch.setattr(subprocess, "run", run_without_git)
