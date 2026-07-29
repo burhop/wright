@@ -31,6 +31,7 @@ from .context import (
     NoOpAgentContextMaterializer,
 )
 from .progress import GenericProgressProjector
+from .health_probe import HealthProbeResult, probe_health
 
 __all__ = [
     "BaseAgentEngine",
@@ -56,4 +57,6 @@ __all__ = [
     "AgentContextMaterializer",
     "NoOpAgentContextMaterializer",
     "GenericProgressProjector",
+    "HealthProbeResult",
+    "probe_health",
 ]

@@ -1,12 +1,16 @@
 import asyncio
+import json
 from types import SimpleNamespace
 
 import pytest
+from starlette.requests import Request
 
 from agent_adapters import AgentChatRequest, AgentStreamEvent
 from api.routers.agent import (
+    ChatRequest,
     ChatStreamJob,
     _restart_hermes_gateway_process,
+    chat,
 )
 
 
@@ -38,6 +42,25 @@ class _CompletedThenSlowEngine:
         )
         await asyncio.sleep(0.03)
         yield AgentStreamEvent(type="stream_end", data={})
+
+
+class _FailingEngine:
+    async def stream_chat(self, request):
+        if False:
+            yield
+        raise RuntimeError("sentinel C:\\private\\agent-token.txt")
+
+
+class _AttachFailureJob:
+    async def stream_from(self, index=0):
+        if False:
+            yield
+        raise RuntimeError("sentinel C:\\private\\attach-token.txt")
+
+
+class _AttachFailureRegistry:
+    async def start(self, request, engine):
+        return _AttachFailureJob()
 
 
 def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
@@ -86,3 +109,62 @@ async def test_completed_tool_heartbeat_does_not_claim_the_turn_is_finishing():
     assert all("Solid Edge" not in item.get("message", "") for item in progress)
     heartbeats = [item for item in progress if item.get("heartbeat")]
     assert all(item["title"] == "Working on request" for item in heartbeats)
+
+
+@pytest.mark.asyncio
+async def test_chat_job_failure_emits_generic_trace_bearing_error():
+    request = AgentChatRequest(
+        session_id="session-1",
+        message="Create a part",
+        trace_id="trace-job-123",
+    )
+    job = ChatStreamJob("session-1", request, _FailingEngine())
+    job.start()
+
+    events = [event async for event in job.stream_from()]
+    errors = [data for event_type, data in events if event_type == "error"]
+
+    assert errors == [
+        {
+            "message": "Agent response stream failed.",
+            "trace_id": "trace-job-123",
+        }
+    ]
+    assert "sentinel" not in json.dumps(events)
+
+
+@pytest.mark.asyncio
+async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch):
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/agent/chat",
+            "headers": [],
+            "app": SimpleNamespace(state=SimpleNamespace()),
+        }
+    )
+
+    async def no_mcp_activation(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(
+        "api.routers.agent.ensure_workspace_mcp_servers_active",
+        no_mcp_activation,
+    )
+    monkeypatch.setattr(
+        "api.routers.agent.get_chat_stream_registry",
+        lambda request: _AttachFailureRegistry(),
+    )
+
+    response = await chat(
+        ChatRequest(session_id="session-1", message="Create a part"),
+        request,
+        _FailingEngine(),
+    )
+    chunks = [chunk async for chunk in response.body_iterator]
+    body = "".join(chunks)
+
+    assert "Agent response stream failed." in body
+    assert '"trace_id"' in body
+    assert "sentinel" not in body

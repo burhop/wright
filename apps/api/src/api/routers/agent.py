@@ -2,7 +2,6 @@ import asyncio
 from contextlib import suppress
 import json
 import os
-import re
 import secrets
 import shutil
 import subprocess
@@ -24,7 +23,7 @@ from agent_adapters import (
     default_agent_registry,
     GenericProgressProjector,
 )
-from workspace_service import WorkspaceService
+from workspace_service import WorkspaceInvalidRequestError, WorkspaceService
 from workspace_service.adapters.runtime import (
     get_workspace_by_session,
     get_workspace_enabled_tools,
@@ -144,7 +143,20 @@ class ChatStreamJob:
             self.cancelled = True
             await self._append("error", {"message": "Stream cancelled by user."})
         except Exception as exc:
-            await self._append("error", {"message": str(exc)})
+            trace_id = self.request.trace_id or "unknown"
+            logger.exception(
+                "chat_stream_job_failed",
+                trace_id=trace_id,
+                session_id=self.session_id,
+                error=str(exc),
+            )
+            await self._append(
+                "error",
+                {
+                    "message": "Agent response stream failed.",
+                    "trace_id": trace_id,
+                },
+            )
         finally:
             heartbeat_task.cancel()
             with suppress(asyncio.CancelledError):
@@ -345,12 +357,19 @@ class ChatRequest(BaseModel):
     attachments: Optional[List[str]] = None
 
 
+MAX_SESSION_TITLE_LENGTH = 200
+
+
 def title_from_slash_command(message: str) -> str | None:
-    match = re.match(r"^\s*/title\s+(.+)\s*$", message or "", re.IGNORECASE)
-    if not match:
+    text = (message or "").lstrip()
+    command = "/title"
+    if text[: len(command)].casefold() != command:
         return None
-    title = match.group(1).strip().strip("\"'“”")
-    return title or None
+    remainder = text[len(command) :]
+    if not remainder or not remainder[0].isspace():
+        return None
+    title = remainder.strip().strip("\"'“”")
+    return title[:MAX_SESSION_TITLE_LENGTH] or None
 
 
 class ChatHistoryMessage(BaseModel):
@@ -465,7 +484,6 @@ async def create_new_session(
     request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
 ):
-    import os
     import uuid
     from workspace_service import WorkspaceManager
     from workspace_service.adapters.runtime import create_workspace
@@ -476,39 +494,19 @@ async def create_new_session(
     log.info("create_session_requested")
 
     try:
-        workspace_path = body.workspace
-        if not workspace_path:
-            # Generate a unique workspace directory name
-            workspace_uuid = str(uuid.uuid4())
-            home_dir = os.environ.get("HOME", "/home/agent")
-            workspace_path = os.path.join(home_dir, "workspace", workspace_uuid)
-
-        os.makedirs(workspace_path, exist_ok=True)
-        # Instantiate WorkspaceManager to automatically run git init
-        WorkspaceManager(workspace_path)
+        workspace_service = WorkspaceService(DATABASE_PATH)
+        authorization = workspace_service.authorize_session_workspace(body.workspace)
+        workspace_path = authorization.path
+        if authorization.created:
+            WorkspaceManager(workspace_path)
 
         session_info = await engine.create_session(workspace_path)
         log.info("create_session_success", session_id=session_info.session_id)
 
-        # Save mapping to local SQLite (reusing existing workspace if the path matches)
-        import sqlite3
-
-        conn = sqlite3.connect(DATABASE_PATH)
-        conn.row_factory = sqlite3.Row
-        try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM engineering_workspaces WHERE local_path = ?",
-                (workspace_path,),
-            )
-            existing = cursor.fetchone()
-        finally:
-            conn.close()
-
-        workspace_id = existing["workspace_id"] if existing else str(uuid.uuid4())
-        if existing:
+        workspace_id = authorization.workspace_id or str(uuid.uuid4())
+        if authorization.workspace_id:
             update_workspace_session(
-                DATABASE_PATH, existing["workspace_id"], session_info.session_id
+                DATABASE_PATH, authorization.workspace_id, session_info.session_id
             )
             log.info(
                 "create_session_associated_with_existing_workspace",
@@ -526,7 +524,7 @@ async def create_new_session(
 
         sync_manager = getattr(request.app.state, "agent_sync_manager", None)
         agent_id = getattr(sync_manager, "active_agent", "hermes")
-        WorkspaceService(DATABASE_PATH).refresh_agent_context_for_path(
+        workspace_service.refresh_agent_context_for_path(
             workspace_path,
             agent_id=agent_id,
             workspace_id=workspace_id,
@@ -538,6 +536,14 @@ async def create_new_session(
             title=session_info.title,
             created_at=session_info.created_at,
         )
+    except WorkspaceInvalidRequestError as exc:
+        log.info("create_session_workspace_rejected", reason=str(exc))
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except HTTPException:
+        raise
     except Exception as exc:
         log.exception("create_session_failed", error=str(exc))
         raise HTTPException(
@@ -697,7 +703,7 @@ async def chat(
                 yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
         except Exception as exc:
             log.exception("chat_stream_attach_failed", error=str(exc))
-            yield f"event: error\ndata: {json.dumps({'message': str(exc)})}\n\n"
+            yield f"event: error\ndata: {json.dumps({'message': 'Agent response stream failed.', 'trace_id': trace_id})}\n\n"
 
     return StreamingResponse(
         sse_generator(),

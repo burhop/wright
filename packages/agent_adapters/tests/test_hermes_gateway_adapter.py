@@ -105,6 +105,7 @@ async def test_llm_backend_health_checks_configured_provider(monkeypatch, tmp_pa
     assert result["state"] == "connected"
     assert result["baseUrl"] == "http://llm.local/v1"
     assert llm_route.called
+    assert llm_route.call_count == 1
     assert llm_route.calls.last.request.headers["authorization"] == "Bearer test-key"
 
 

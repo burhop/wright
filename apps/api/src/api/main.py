@@ -320,7 +320,7 @@ async def check_inference_health():
 
 
 @app.get("/api/proxy/onshape", response_class=HTMLResponse)
-async def proxy_onshape():
+async def proxy_onshape(request: Request):
     try:
         async with httpx.AsyncClient() as client:
             headers = {
@@ -350,10 +350,18 @@ async def proxy_onshape():
             html = html.replace("top.location", "self.location")
 
             return HTMLResponse(content=html, status_code=response.status_code)
-    except Exception as e:
-        logger.error(f"Failed to proxy onshape: {e}")
-        return HTMLResponse(
-            content=f"<h3>Failed to connect to Onshape</h3><p>{e}</p>", status_code=502
+    except Exception as exc:
+        trace_id = _get_trace_id(request)
+        logger.exception(
+            "onshape_proxy_failed",
+            trace_id=trace_id,
+            error=str(exc),
+        )
+        return Response(
+            content=f"Failed to connect to Onshape. Trace ID: {trace_id}",
+            status_code=502,
+            media_type="text/plain",
+            headers={"X-Trace-Id": trace_id},
         )
 
 
@@ -399,9 +407,32 @@ async def proxy_onshape_path(path: str, request: Request):
                 media_type=content_type,
                 status_code=response.status_code,
             )
-    except Exception as e:
-        logger.error(f"Failed to proxy onshape path {path}: {e}")
-        return Response(content=f"Error: {e}", status_code=502)
+    except Exception as exc:
+        trace_id = _get_trace_id(request)
+        logger.exception(
+            "onshape_proxy_path_failed",
+            trace_id=trace_id,
+            path=path,
+            error=str(exc),
+        )
+        return Response(
+            content=f"Failed to connect to Onshape. Trace ID: {trace_id}",
+            status_code=502,
+            media_type="text/plain",
+            headers={"X-Trace-Id": trace_id},
+        )
+
+
+async def _resolve_spa_asset(
+    static_files: StaticFiles, full_path: str, request: Request
+) -> Response | None:
+    """Delegate containment and regular-file validation to Starlette."""
+    try:
+        return await static_files.get_response(full_path, request.scope)
+    except StarletteHTTPException as exc:
+        if exc.status_code != 404:
+            raise
+        return None
 
 
 # Serve frontend static files in production if the dist directory exists
@@ -424,19 +455,14 @@ if os.path.exists(dist_dir):
     # SPA catch-all: serve index.html for any non-API route so client-side
     # routing works for paths like /tool-registry, /workspace/*, etc.
     index_html = os.path.join(dist_dir, "index.html")
+    spa_static_files = StaticFiles(directory=dist_dir)
 
     @app.get("/{full_path:path}")
-    async def serve_spa(full_path: str):
-        # If the requested file exists in dist, serve it directly
-        # Guard against path traversal (CWE-22)
-        file_path = os.path.realpath(os.path.join(dist_dir, full_path))
-        real_dist = os.path.realpath(dist_dir)
-        if (
-            full_path
-            and os.path.isfile(file_path)
-            and file_path.startswith(real_dist + os.sep)
-        ):
-            return FileResponse(file_path)
+    async def serve_spa(full_path: str, request: Request):
+        if full_path:
+            response = await _resolve_spa_asset(spa_static_files, full_path, request)
+            if response is not None:
+                return response
         # Otherwise serve the SPA entry point
         return FileResponse(index_html)
 else:

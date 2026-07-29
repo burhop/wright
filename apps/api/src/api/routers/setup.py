@@ -1,5 +1,3 @@
-import time
-import httpx
 import sqlite3
 import os
 from fastapi import APIRouter, Request, HTTPException, status, Query
@@ -10,6 +8,7 @@ from agent_adapters import (
     UnsupportedAgentRuntimeError,
     create_agent_engine,
     default_agent_registry,
+    probe_health,
 )
 
 router = APIRouter()
@@ -153,35 +152,17 @@ async def configure_system(body: ConfigureRequest, request: Request):
 
 @router.get("/health", response_model=HealthCheckResponse)
 async def check_custom_health(url: str = Query(..., description="LLM URL to test")):
-    url = url.strip()
-    if not url:
-        return HealthCheckResponse(
-            status="unhealthy", latency_ms=0.0, error="URL is empty"
-        )
+    from api.config import get_llm_api_url, get_llm_health_url
 
-    urls_to_try = [url]
-    # If it doesn't end with /health, try appending it as a fallback
-    if not url.endswith("/health") and not url.endswith("/health/"):
-        base_url = url[:-1] if url.endswith("/") else url
-        urls_to_try.append(f"{base_url}/health")
-
-    last_error = None
-    start_time = time.perf_counter()
-
-    for test_url in urls_to_try:
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(test_url, timeout=5.0)
-                latency = (time.perf_counter() - start_time) * 1000.0
-                if response.status_code == 200:
-                    return HealthCheckResponse(status="healthy", latency_ms=latency)
-                else:
-                    last_error = f"HTTP {response.status_code}: {response.text[:100]}"
-        except Exception as e:
-            last_error = str(e)
-
-    latency = (time.perf_counter() - start_time) * 1000.0
-    return HealthCheckResponse(status="unhealthy", latency_ms=latency, error=last_error)
+    result = await probe_health(
+        url,
+        trusted_local_origins=(get_llm_api_url(), get_llm_health_url()),
+    )
+    return HealthCheckResponse(
+        status=result.status,
+        latency_ms=result.latency_ms,
+        error=result.error,
+    )
 
 
 @router.delete("/reset", response_model=ConfigureResponse)
