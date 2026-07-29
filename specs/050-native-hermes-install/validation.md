@@ -10,10 +10,10 @@ native release remains blocked by the released Hermes interface.
 - Distribution: `wright-engineering==0.1.5`
 - Wheel: `wright_engineering-0.1.5-py3-none-any.whl`
 - Wheel SHA-256:
-  `069d20587cb73552bbe1be28f3e03f0153b68413dd1283e4c8f0a39427a506d4`
+  `8a35f052e62ba12a35d542cef3cec9677094ab7c9cd3dda09a1582135feeb46f`
 - Source archive: `wright_engineering-0.1.5.tar.gz`
 - Source archive SHA-256:
-  `c2c32290caaa3b2021f1982890bcf0de15cd9697d0c7a715865f520101719e7f`
+  `55d72cae8da10b5a02608529935b303526d32ea82641a9861fe04031ab0e4b78`
 - Bundled modules in both archives: `wright_engineering`, `api`, `core`,
   `agent_adapters`, `tool_registry`, `data_vault`, and `workspace_service`
 - Final local Docker subject:
@@ -123,7 +123,7 @@ inspection. The audit now tolerates only that process-gone sampling boundary,
 retains forbidden-child detection, and has a deterministic regression for the
 exact race.
 
-All checks on commit `467eab8` passed on 2026-07-28: Python quality and 85%
+All checks on commit `af203ec` passed on 2026-07-28: Python quality and 85%
 coverage, Python 3.11-3.14 wheel/sdist matrices on Linux and Windows, Windows
 backend/frontend suites, native base isolation on Linux/Windows/macOS, native
 lifecycle and required aggregate, Playwright, frontend quality, docs,
