@@ -62,6 +62,30 @@ def test_clean_child_environment_removes_source_and_forbidden_tools(
     HARNESS.assert_forbidden_tools_inaccessible(environment)
 
 
+def test_hermes_install_temp_stays_on_the_test_home_volume(tmp_path: Path) -> None:
+    hermes_home = tmp_path / "hermes-home"
+    test_root = tmp_path / ".hermes-home-acceptance"
+
+    environment = HARNESS.hermes_install_environment(
+        hermes_home=hermes_home,
+        test_root=test_root,
+        base_environment={
+            "PYTHONPATH": "source-leak",
+            "WRIGHT_REPO_DIR": "source-leak",
+            "KEEP": "value",
+        },
+    )
+
+    expected_temp = str(test_root / "manager-temp")
+    assert environment["HERMES_HOME"] == str(hermes_home)
+    assert {environment[name] for name in ("TEMP", "TMP", "TMPDIR")} == {
+        expected_temp
+    }
+    assert environment["KEEP"] == "value"
+    assert "PYTHONPATH" not in environment
+    assert "WRIGHT_REPO_DIR" not in environment
+
+
 def test_source_checkout_leak_is_rejected(tmp_path: Path) -> None:
     isolated = tmp_path / "isolated"
     isolated.mkdir()

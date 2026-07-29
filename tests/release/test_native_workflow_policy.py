@@ -34,6 +34,8 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
     assert "--hermes-home" in workflow
     assert "--plugin-source hermes-plugin-wright" in workflow
     assert "hermes-agent==0.19.0" in workflow
+    lifecycle = workflow[workflow.index("native-lifecycle-contract:") :]
+    assert '"mcp>=1.27.2,<2"' in lifecycle
 
 
 def test_production_release_keeps_native_docker_docs_and_release_terminal() -> None:

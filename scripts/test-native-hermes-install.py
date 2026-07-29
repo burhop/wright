@@ -123,6 +123,24 @@ def clean_child_environment(
     return keep
 
 
+def hermes_install_environment(
+    *,
+    hermes_home: Path,
+    test_root: Path,
+    base_environment: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    """Keep Hermes' Git staging directory on the plugin destination volume."""
+    environment = dict(base_environment or os.environ)
+    environment.pop("PYTHONPATH", None)
+    environment.pop("WRIGHT_REPO_DIR", None)
+    manager_temp = test_root / "manager-temp"
+    manager_temp.mkdir(parents=True, exist_ok=True)
+    environment["HERMES_HOME"] = str(hermes_home)
+    for variable in ("TEMP", "TMP", "TMPDIR"):
+        environment[variable] = str(manager_temp)
+    return environment
+
+
 def assert_forbidden_tools_inaccessible(environment: Mapping[str, str]) -> None:
     for executable in FORBIDDEN_EXECUTABLES:
         if shutil.which(executable, path=environment.get("PATH", "")):
@@ -528,9 +546,10 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
     cwd = test_root / "source-isolated-cwd"
     cwd.mkdir()
     audit = CommandAudit()
-    install_env = dict(os.environ)
-    install_env.pop("PYTHONPATH", None)
-    install_env.pop("WRIGHT_REPO_DIR", None)
+    install_env = hermes_install_environment(
+        hermes_home=hermes_home,
+        test_root=test_root,
+    )
     adapter_source = args.plugin_source or repository_root / "hermes-plugin-wright"
     adapter_repo, adapter_identity = _make_adapter_subject(
         audit,
@@ -538,7 +557,6 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
         test_root / "adapter-subject",
         env=install_env,
     )
-    install_env["HERMES_HOME"] = str(hermes_home)
     audit.run(
         [args.hermes_command, "plugins", "install", adapter_repo.as_uri(), "--enable"],
         cwd=cwd,

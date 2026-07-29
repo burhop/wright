@@ -126,7 +126,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install psutil "hermes-agent==0.19.0"
+          python -m pip install psutil "hermes-agent==0.19.0" "mcp>=1.27.2,<2"
           npm install --global "@openai/codex@0.144.1"
           candidate=$(find dist/native-candidate -maxdepth 1 -name '*.whl' -print -quit)
           predecessor=$(find dist/native-predecessor -maxdepth 1 -name '*.whl' -print -quit)
