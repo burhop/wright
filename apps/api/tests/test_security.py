@@ -40,8 +40,15 @@ async def test_protected_api_requires_valid_bearer(client, monkeypatch):
     app.state.security_settings = SecuritySettings(
         "enforced", "test-admin-token", ("http://localhost:5173",), "127.0.0.1"
     )
+    monkeypatch.setenv("WRIGHT_RUNTIME_CHALLENGE", "health-challenge")
+    monkeypatch.setenv("WRIGHT_RUNTIME_ID", "runtime-1")
+    monkeypatch.setenv("WRIGHT_RUNTIME_INSTANCE_ID", "instance-1")
+    monkeypatch.setenv("WRIGHT_RUNTIME_OPERATION_ID", "operation-1")
     try:
         assert (await client.get("/api/health")).status_code == 200
+        identity = await client.get("/api/runtime/identity")
+        assert identity.status_code == 200
+        assert identity.json()["runtime_id"] == "runtime-1"
         assert (await client.get("/api/settings")).status_code == 401
         wrong = await client.get(
             "/api/settings", headers={"Authorization": "Bearer wrong"}
@@ -71,5 +78,34 @@ async def test_protected_api_requires_valid_bearer(client, monkeypatch):
         assert "test-admin-token" not in cookie_header
         assert app.state.security_settings.browser_session_token() in cookie_header
         assert (await client.get("/api/settings")).status_code == 200
+    finally:
+        app.state.security_settings = previous
+
+
+@pytest.mark.asyncio
+async def test_native_loopback_navigation_establishes_browser_session(client):
+    from api.main import app
+
+    previous = app.state.security_settings
+    app.state.security_settings = SecuritySettings(
+        "enforced",
+        "native-admin-token",
+        ("http://127.0.0.1:8000",),
+        "127.0.0.1",
+        native_runtime=True,
+    )
+    try:
+        response = await client.get(
+            "/", headers={"Host": "127.0.0.1:8000", "Sec-Fetch-Mode": "navigate"}
+        )
+        assert response.status_code == 200
+        assert "wright_session=" in response.headers["set-cookie"]
+        assert "native-admin-token" not in response.headers["set-cookie"]
+        assert (await client.get("/api/settings")).status_code == 200
+
+        rejected = await client.get(
+            "/", headers={"Host": "rebind.example", "Sec-Fetch-Mode": "navigate"}
+        )
+        assert "set-cookie" not in rejected.headers
     finally:
         app.state.security_settings = previous

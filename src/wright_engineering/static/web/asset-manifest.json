@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "path": "assets/index-CT7td4dr.js",
+      "sha256": "b5decbab3f57b3de529a6e88d8e58300d4379a1272e8b3b937633f6b2fa1f6e6",
+      "size": 1274091
+    },
+    {
+      "path": "assets/index-D3wY7_Ji.css",
+      "sha256": "44080f3cd05046b7e0ca67fa4a9e82ebee1920a5f4588a7e47c285299ff9ecd1",
+      "size": 10841
+    },
+    {
+      "path": "favicon.svg",
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66",
+      "size": 9522
+    },
+    {
+      "path": "icons.svg",
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a",
+      "size": 5031
+    },
+    {
+      "path": "index.html",
+      "sha256": "2ef969d02d6487e8da30b5588ad04215fe82094566083c2ff50112b27dd5bfbf",
+      "size": 917
+    },
+    {
+      "path": "third-party-licenses-web.txt",
+      "sha256": "7520ece9b008f9671ab9857937625e31eb51a9efc50351cc90620ed1e7c51a1b",
+      "size": 190715
+    }
+  ],
+  "schema_version": 1
+}

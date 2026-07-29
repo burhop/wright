@@ -39,7 +39,9 @@ jobs:
           git config --global user.name "CI Test Runner"
 
       - name: Run pytest
-        run: uv run pytest
+        run: |
+          uv run python -m pytest -q tests/native_runtime
+          uv run python -m pytest
 
   frontend-tests:
     name: Frontend Tests (Windows)

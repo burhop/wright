@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import dataclass
 from collections.abc import Callable
 from pathlib import Path
@@ -13,6 +14,7 @@ from .context import (
 from .gateway import (
     WrightGatewayProfile,
     build_bound_wright_gateway_args,
+    build_installed_wright_gateway_args,
     build_wright_gateway_args,
 )
 
@@ -45,7 +47,7 @@ def hermes_config_paths() -> list[str]:
 
 
 def hermes_wright_gateway_profile(
-    repo_dir: str,
+    repo_dir: str | None = None,
     *,
     session_id: str | None = None,
     workspace_id: str | None = None,
@@ -55,18 +57,34 @@ def hermes_wright_gateway_profile(
         raise ValueError(
             "Hermes gateway binding requires both session and workspace IDs"
         )
-    args = (
-        build_bound_wright_gateway_args(repo_dir, session_id, workspace_id)
-        if session_id is not None and workspace_id is not None
-        else build_wright_gateway_args(repo_dir)
-    )
+    if repo_dir is None:
+        workspace_path = terminal_cwd or os.environ.get("WRIGHT_WORKSPACE_ROOT", "")
+        if not workspace_path:
+            raise ValueError("Installed Wright gateway requires a workspace path")
+        native_session = session_id or "wright-native"
+        native_workspace = workspace_id or "wright-native"
+        args = build_installed_wright_gateway_args(
+            workspace_path, native_session, native_workspace
+        )
+        command = sys.executable
+        gateway_project_dir = None
+        resolved_terminal_cwd = workspace_path
+    else:
+        args = (
+            build_bound_wright_gateway_args(repo_dir, session_id, workspace_id)
+            if session_id is not None and workspace_id is not None
+            else build_wright_gateway_args(repo_dir)
+        )
+        command = "uv"
+        gateway_project_dir = repo_dir
+        resolved_terminal_cwd = terminal_cwd or repo_dir
     return WrightGatewayProfile(
         provider_name="hermes",
         server_name="wrightgateway",
-        command="uv",
+        command=command,
         args=args,
-        terminal_cwd=terminal_cwd or repo_dir,
-        gateway_project_dir=repo_dir,
+        terminal_cwd=resolved_terminal_cwd,
+        gateway_project_dir=gateway_project_dir,
         workspace_context_filename=".hermes.md",
     )
 

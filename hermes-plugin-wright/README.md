@@ -1,85 +1,65 @@
-# Wright Hermes Plugin Mirror
+# Wright Hermes Git Plugin
 
-This is the official thin Wright Hermes plugin mirror for the main Wright project: https://github.com/burhop/wright.
-
-The mirror exists so Hermes users can install, update, and remove the Wright plugin through the standard Hermes plugin lifecycle. Development, issues, roadmap, full documentation, and broader Wright source code remain in the main repository.
+This directory is the official production thin adapter between released Hermes
+and the manager-neutral Wright runtime. It is mirrored at
+`https://github.com/burhop/hermes-plugin-wright`; Wright's monorepo remains the
+source of truth.
 
 ## Stable Install
 
-```bash
-hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/main --enable
-```
+Hermes installs and updates the adapter with its real Git plugin commands:
 
-## Development Install
-
-```bash
-hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable
-```
-
-The development channel tracks Wright's `dev` flow. The stable channel tracks reviewed Wright production releases.
-
-## Update
-
-```bash
+```text
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 hermes plugins update wright
 ```
 
-The mirror keeps `plugin.yaml` at the repository root so Hermes installs the plugin directory as a Git checkout. That is what makes the standard update command work.
+Git is a Hermes adapter prerequisite. The plugin itself imports only Python's
+standard library, resolves a Wright-owned `WRIGHT_HOME` (default `~/.wright`),
+installs the exact `wright-engineering` application artifact into an isolated
+bootstrap environment, and projects `/wright` commands to Wright's public
+lifecycle CLI. The Wright runtime never imports into the Hermes process.
 
-## Remove
+After installation:
 
-```bash
+```text
+/wright start
+/wright status
+/wright doctor
+/wright stop
+/wright update
+/wright rollback
+```
+
+## Update and removal
+
+Hermes retains the adapter's `plugin.yaml` and `.git` metadata so its standard update command can fetch and verify the current mirror commit. Wright runtime updates remain separate `/wright update` operations.
+
+Hermes 0.19 has no plugin pre-remove callback. Safely remove Wright with:
+
+```text
+/wright uninstall
 hermes plugins remove wright
 ```
 
-You can reinstall from either the stable or development install command after removal.
+Normal uninstall preserves `WRIGHT_HOME/data`. To delete Wright-owned data,
+request `/wright purge`, inspect the disclosed path and confirmation code, then
+repeat the command with that code before removing the adapter.
+
+## Development validation
+
+Feature and pull-request validation uses an isolated local Git repository and
+candidate wheelhouse. Do not install an unreleased branch as a production
+substitute. The release train verifies the mirror commit, its generated
+`PROVENANCE.md`, and the exact compatible
+[`wright-engineering`](https://pypi.org/project/wright-engineering/) artifact.
 
 ## Migration From the Monorepo Subdirectory
 
-Older Wright testing instructions installed from the main monorepo subdirectory:
+Remove an older subdirectory-installed adapter and reinstall from the stable
+root mirror shown above. Component packages remain workspace-local development
+projects; their application modules ship inside the one public Wright runtime.
 
-```text
-https://github.com/burhop/wright/tree/dev/hermes-plugin-wright
-```
-
-That layout can install, but Hermes may copy only the subdirectory into the plugin folder. Without the plugin directory's own `.git` metadata, `hermes plugins update wright` cannot perform a normal Git update.
-
-To migrate:
-
-1. Remove the old plugin:
-   ```bash
-   hermes plugins remove wright
-   ```
-2. Install from this mirror root:
-   ```bash
-   hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable
-   ```
-3. Confirm update works:
-   ```bash
-   hermes plugins update wright
-   ```
-
-## Package Dependencies
-
-The Hermes plugin is self-contained: it ships its catalog and schema with the mirror and depends only on public third-party Python packages. It does not install `wright-core`, `wright-tool-registry`, or any other private Wright component package. Both mirror channels use the same public dependency policy.
-
-The user-facing PyPI package is `wright-engineering`: https://pypi.org/project/wright-engineering/. Component packages remain workspace-local for alpha and are not advertised as public PyPI installs.
-
-## Main Wright Links
-
-- Main repository: https://github.com/burhop/wright
-- Issues and support: https://github.com/burhop/wright/issues
-- Documentation: https://burhop.github.io/wright/
-- Releases: https://github.com/burhop/wright/releases
-- Hermes setup guide: https://github.com/burhop/wright/blob/main/docs/getting-started/hermes-plugin.md
-- Release runbook: https://github.com/burhop/wright/blob/main/docs/release/hermes-plugin-mirror.md
-
-## Provenance
-
-Each mirrored release records the main Wright source revision and package versions in `PROVENANCE.md` and `provenance.json` generated by the mirror sync workflow.
-
-For this source copy, see [PROVENANCE.md](PROVENANCE.md).
-
-## Slash Commands
-
-Once loaded, the plugin exposes the `/wright` command group for starting Wright, opening the UI, checking status, browsing the engineering MCP catalog, and installing cataloged tools.
+- Source: <https://github.com/burhop/wright>
+- Issues: <https://github.com/burhop/wright/issues>
+- Releases: <https://github.com/burhop/wright/releases>

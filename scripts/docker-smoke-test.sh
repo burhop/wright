@@ -21,6 +21,11 @@ IMAGE_TAG="${WRIGHT_DOCKER_IMAGE:-wright:test}"
 PYTHON_CMD=()
 if [ -n "${PYTHON:-}" ]; then
   PYTHON_CMD=("$PYTHON")
+elif command -v uv >/dev/null 2>&1; then
+  # Prefer the repository environment selected by uv. On Windows, Git Bash can
+  # report the Microsoft Store `python3.exe` app-execution alias as present even
+  # though invoking it only prints the "Python was not found" message.
+  PYTHON_CMD=(uv run --no-sync python)
 elif command -v python3 >/dev/null 2>&1; then
   PYTHON_CMD=(python3)
 elif command -v python >/dev/null 2>&1; then

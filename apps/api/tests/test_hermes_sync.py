@@ -57,9 +57,11 @@ def _create_workspace_context_db(tmp_path, local_path):
     return db_path
 
 
-def test_static_hermes_config_uses_runtime_repo_dir(tmp_path, monkeypatch):
+def test_static_hermes_config_uses_installed_native_gateway(tmp_path, monkeypatch):
     hermes_root = tmp_path / ".hermes"
-    monkeypatch.setenv("WRIGHT_REPO_DIR", "/workspace")
+    workspace_root = tmp_path / "workspaces"
+    monkeypatch.setenv("WRIGHT_NATIVE_RUNTIME", "1")
+    monkeypatch.setenv("WRIGHT_WORKSPACE_ROOT", str(workspace_root))
     monkeypatch.setenv("HERMES_HOME", str(hermes_root))
     monkeypatch.delenv("LOCALAPPDATA", raising=False)
     monkeypatch.delenv("HERMES_CONFIG_PATH", raising=False)
@@ -74,14 +76,20 @@ def test_static_hermes_config_uses_runtime_repo_dir(tmp_path, monkeypatch):
     gateway = config["mcp_servers"]["wrightgateway"]
 
     assert gateway["args"] == [
-        "run",
-        "--project",
-        "/workspace",
-        "python",
         "-m",
-        "tool_registry.gateway",
+        "wright_engineering.cli",
+        "mcp",
+        "serve",
+        "--stdio",
+        "--workspace",
+        str(workspace_root),
+        "--session-id",
+        "wright-native",
+        "--workspace-id",
+        "wright-native",
     ]
-    assert config["terminal"]["cwd"] == "/workspace"
+    assert gateway["command"] != "uv"
+    assert config["terminal"]["cwd"] == str(workspace_root)
 
 
 def test_generic_wright_gateway_config_writer_uses_profile(tmp_path):

@@ -3,6 +3,12 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PYTHON_WORKSPACE_PATHS=(
+  src/wright_engineering
+  scripts/release
+  scripts/build-native-runtime.py
+  scripts/test-native-hermes-install.py
+  scripts/test-published-native-hermes.py
+  scripts/activate-hermes-package-channel.py
   apps/api
   packages/core
   packages/agent_adapters
@@ -59,25 +65,32 @@ run uv run mypy "${PYTHON_WORKSPACE_PATHS[@]}" --ignore-missing-imports || {
 
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
 run uv run python -c "from pathlib import Path; from scripts.release.workflow_policy import validate_scoped_workflows; validate_scoped_workflows(Path('.'))"
-run uv run pytest -q tests/release
-run uv run --with pytest-cov pytest -q tests/release --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
+run uv run python -m pytest -q tests/release
+run uv run python -m pytest -q \
+  tests/native_runtime \
+  tests/release/test_native_release_evidence.py \
+  tests/release/test_native_release_rehearsal.py \
+  tests/release/test_native_workflow_policy.py \
+  tests/test_public_python_distribution.py
+run uv run --with pytest-cov python -m pytest -q tests/release tests/native_runtime --cov=scripts.release --cov=wright_engineering --cov-report=term --cov-fail-under=85
 run env PYTHON="$PYTHON_BIN" scripts/build-python-distributions.sh --dist-root "$ROOT_DIR/dist/dev-merge-python" .
+run uv run python -c "from pathlib import Path; from scripts.release.python_artifacts import validate_native_distribution; artifacts=[p for p in Path('dist/dev-merge-python').rglob('*') if p.suffix == '.whl' or p.name.endswith('.tar.gz')]; assert len(artifacts) == 2; [validate_native_distribution(p) for p in artifacts]"
 
 # Keep the request-to-cookie, request-to-filesystem/process, and exception-to-response
 # regression boundaries visible as a dedicated gate. GitHub CodeQL remains the
 # whole-program data-flow authority, while these tests provide an equivalent local
 # behavioral check for the security paths that previously escaped this script.
-run uv run pytest -q \
+run uv run python -m pytest -q \
   apps/api/tests/test_security.py \
   apps/api/tests/test_gateway_api.py \
   packages/workspace_service/tests/test_files.py \
   packages/workspace_service/tests/test_workspace_path.py \
   packages/workspace_service/tests/test_workspace_service.py
 
-run uv run pytest
+run uv run python -m pytest
 run uv run --isolated --reinstall-package hermes-plugin-wright \
-  --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx \
-  pytest hermes-plugin-wright/tests
+  --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx --with PyYAML \
+  python -m pytest hermes-plugin-wright/tests
 run npm run test --workspace=apps/web
 run npm run build --workspace=apps/web
 run uv run --with mkdocs-material mkdocs build --strict

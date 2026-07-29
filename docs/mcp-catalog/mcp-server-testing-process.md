@@ -7,14 +7,20 @@ CAE, or vendor backend into the base image.
 
 ## Base Container Boundary
 
-The base Docker image is a Wright runtime and validation harness. It may include
-general Wright dependencies such as Python, Node.js, uv, Hermes, the Wright
-plugin, the API, and the web build.
+The base Docker image is a Wright runtime and validation harness. The native
+Hermes wheel is a second runtime boundary containing Wright's packaged API, UI,
+catalog, and provider-neutral gateway. Neither boundary includes selected MCP
+host applications merely to make catalog validation pass.
 
 The base image must not include MCP-specific host software such as OpenSCAD,
 FreeCAD, Blender, Rhino, SolidWorks, Fusion 360, OpenFOAM, CalculiX, vendor SDKs,
 license managers, or hardware drivers unless that software is itself part of
 Wright's core runtime.
+
+The same rule applies to the public `wright-engineering[runtime]` extra: it may
+contain general protocol/client dependencies, but not CAD/CAE/CAM hosts, vendor
+SDKs, license managers, hardware drivers, or provider-specific profiles. Those
+belong to the selected MCP installation and its recorded platform prerequisites.
 
 ## Per-MCP Validation Loop
 

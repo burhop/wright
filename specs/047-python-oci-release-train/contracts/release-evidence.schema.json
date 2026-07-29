@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://burhop.github.io/wright/schemas/release-evidence-v1.json",
+  "$id": "https://burhop.github.io/wright/schemas/release-evidence-v3.json",
   "title": "Wright Release Evidence",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "mode", "release_identity", "python_artifacts", "python_install_evidence", "oci_candidate", "oci_gate_evidence", "promotions", "approvals", "verification_results", "skipped_optional_stages", "stage_results", "status"],
+  "required": ["schema_version", "mode", "release_identity", "python_artifacts", "python_install_evidence", "oci_candidate", "oci_gate_evidence", "native_candidate", "manager_adapters", "native_platform_results", "manager_adapter_channels", "native_public_verification", "promotions", "approvals", "verification_results", "skipped_optional_stages", "stage_results", "status"],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"const": 3},
     "mode": {"enum": ["dry-run", "release"]},
     "release_identity": {
       "type": "object",
@@ -45,11 +45,60 @@
     },
     "python_install_evidence": {"type": "array"},
     "oci_gate_evidence": {"type": ["object", "null"]},
+    "native_candidate": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["distribution", "runtime_version", "wheel_filename", "wheel_sha256", "compatibility_sha256", "ui_manifest_sha256", "runtime_extra_lock_sha256"],
+      "properties": {
+        "distribution": {"const": "wright-engineering"},
+        "runtime_version": {"type": "string"},
+        "wheel_filename": {"type": "string", "pattern": "\\.whl$"},
+        "wheel_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "compatibility_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "ui_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "runtime_extra_lock_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "manager_adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["manager_id", "manager_version", "adapter_protocol", "install_interface", "immutable_identity", "source"],
+        "properties": {
+          "manager_id": {"enum": ["hermes", "codex"]},
+          "manager_version": {"type": "string", "minLength": 1},
+          "adapter_protocol": {"enum": ["hermes-git-plugin-v1", "mcp-v1"]},
+          "install_interface": {"enum": ["git", "mcp-config"]},
+          "immutable_identity": {"type": "string", "minLength": 1},
+          "source": {"enum": ["fixture", "released"]}
+        }
+      }
+    },
+    "native_platform_results": {"type": "array", "items": {"type": "object"}},
+    "manager_adapter_channels": {"type": "array", "items": {"type": "object"}},
+    "native_public_verification": {"type": ["object", "null"]},
     "promotions": {"type": "array"},
     "approvals": {"type": "array"},
     "verification_results": {"type": "array"},
     "skipped_optional_stages": {"type": "array", "items": {"type": "string"}},
     "stage_results": {"type": "array", "items": {"type": "object"}},
     "status": {"enum": ["preflight", "candidates_built", "candidates_verified", "test_index_verified", "approved", "promoted", "post_verified", "docs_verified", "release_ready", "failed", "quarantined"]}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "release"}, "status": {"enum": ["promoted", "post_verified", "docs_verified", "release_ready"]}}, "required": ["mode", "status"]},
+      "then": {
+        "properties": {
+          "oci_candidate": {"type": "object"},
+          "oci_gate_evidence": {"type": "object"},
+          "native_candidate": {"type": "object"},
+          "manager_adapters": {"minItems": 2, "maxItems": 2},
+          "native_platform_results": {"minItems": 1},
+          "manager_adapter_channels": {"minItems": 2, "maxItems": 2},
+          "native_public_verification": {"type": "object"}
+        }
+      }
+    }
+  ]
 }

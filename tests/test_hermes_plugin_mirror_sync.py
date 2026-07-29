@@ -52,11 +52,8 @@ def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
     for path in [
         "plugin.yaml",
         "__init__.py",
-        "bridge.py",
-        "catalog.py",
-        "catalog.yaml",
+        "bootstrap.py",
         "commands.py",
-        "schemas.py",
         "pyproject.toml",
         "README.md",
         "LICENSE",
@@ -65,6 +62,9 @@ def test_sync_exports_allowlisted_root_plugin_files_and_provenance(
         "provenance.json",
     ]:
         assert (output_dir / path).exists(), path
+
+    for removed in ("bridge.py", "catalog.py", "catalog.yaml", "schemas.py"):
+        assert not (output_dir / removed).exists(), removed
 
     assert not (output_dir / "apps").exists()
     assert not (output_dir / "packages").exists()

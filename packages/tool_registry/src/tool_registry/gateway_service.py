@@ -86,6 +86,7 @@ class GatewayService:
                 existing.principal_id != principal_id
                 or existing.workspace_id != workspace_id
                 or existing.transport != transport
+                or existing.binding_session_id != str(resolved_binding["session_id"])
             ):
                 raise GatewayError(
                     GatewayErrorCode.INVALID_BINDING,
@@ -98,6 +99,7 @@ class GatewayService:
             workspace_id=str(resolved_binding["workspace_id"]),
             workspace_path=str(resolved_binding["workspace_path"]),
             transport=transport,
+            binding_session_id=str(resolved_binding["session_id"]),
         )
         self._sessions[session_id] = context
         return context

@@ -60,6 +60,7 @@ class GatewaySessionContext:
     workspace_id: str
     workspace_path: str
     transport: str
+    binding_session_id: str | None = None
     protocol_version: str | None = None
     client_name: str | None = None
     client_version: str | None = None
@@ -110,6 +111,7 @@ class GatewaySessionContext:
             workspace_id=self.workspace_id,
             workspace_path=self.workspace_path,
             transport=self.transport,
+            binding_session_id=self.binding_session_id,
             protocol_version=protocol_version,
             client_name=client_name,
             client_version=client_version,
@@ -138,6 +140,7 @@ class GatewaySessionContext:
             workspace_id=self.workspace_id,
             workspace_path=self.workspace_path,
             transport=self.transport,
+            binding_session_id=self.binding_session_id,
             protocol_version=self.protocol_version,
             client_name=self.client_name,
             client_version=self.client_version,

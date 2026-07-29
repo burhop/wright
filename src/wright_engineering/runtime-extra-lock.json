@@ -1,0 +1,23 @@
+{
+  "distribution": "wright-engineering",
+  "requirements": [
+    "PyYAML>=6,<7",
+    "fastapi>=0.115,<1",
+    "httpx-sse>=0.4,<1",
+    "httpx>=0.28,<1",
+    "jsonschema>=4.26,<5",
+    "mcp>=1.27.2,<2",
+    "opentelemetry-api>=1.25,<2",
+    "opentelemetry-exporter-otlp>=1.25,<2",
+    "opentelemetry-sdk>=1.25,<2",
+    "passlib[bcrypt]>=1.7,<2",
+    "pydantic>=2.7,<3",
+    "python-jose[cryptography]>=3.3,<4",
+    "python-multipart>=0.0.32,<1",
+    "structlog>=24.1,<27",
+    "uvicorn[standard]>=0.30,<1"
+  ],
+  "schema_version": 1,
+  "uv_lock_sha256": "2c00192c257d33920162e1df8c7a9d59fff1890624dd8b9aa26199e72cc7cea5",
+  "version": "0.1.6"
+}

@@ -1,4 +1,23 @@
-# Virtual Mechanical Engineer Constitution v1.0.0
+<!--
+Sync Impact Report
+- Version change: 2.0.0 -> 3.0.0
+- Modified principles:
+  - Production Distribution Strategy (Hermes-only prerequisites -> manager-owned prerequisites)
+  - Native Runtime Isolation (Hermes-owned runtime -> Wright-owned manager-neutral runtime)
+  - Agent Abstraction (explicit Codex and OpenClaw installation adapters)
+- Added sections: none
+- Removed sections: none
+- Templates:
+  - .specify/templates/plan-template.md: validated; no structural change required
+  - .specify/templates/spec-template.md: validated; no structural change required
+  - .specify/templates/tasks-template.md: validated; no structural change required
+- Runtime guidance pending implementation evidence:
+  - README.md: describe the shared Wright runtime and manager-specific adapters
+  - docs/getting-started/install-matrix.md: document Hermes, Codex, and OpenClaw prerequisites separately
+  - docs/getting-started/hermes-plugin.md: document the supported Hermes Git plugin path
+- Deferred placeholders: none
+-->
+# Virtual Mechanical Engineer Constitution v3.0.0
 
 ## 1. Architectural Foundation
 * **Framework**: The backend API MUST be implemented using the strictly typed FastAPI framework to ensure native Pydantic data validation and fast local execution.
@@ -6,8 +25,36 @@
 * **Offline-First Mandate**: The entire appliance MUST be capable of running fully air-gapped. No core functionality may rely on an external cloud API without a graceful local fallback.
 
 ## 2. Serving & Execution
-* **Container Strategy (Thick Base / Thin Code)**: Production and development environments MUST utilize a heavy base Docker image (containing CUDA, PyTorch, FreeCAD, CalculiX). Application logic (`/apps` and `/packages`) MUST be mounted as live volumes to allow instant iteration without container rebuilds.
-* **Agent Abstraction**: LLM agents (Hermes, Qwen, openclaw, PI) MUST NOT be hardcoded into the API. They MUST be integrated via an Adapter Pattern (`BaseAgentEngine`) to allow hot-swapping of models and frameworks.
+* **Production Distribution Strategy**: Wright MUST ship and verify the shared
+  native Wright runtime, every agent-manager adapter it publicly claims as
+  supported, and the Docker appliance for every production release. Hermes is
+  the primary native path for Hermes users; Codex, OpenClaw, and future managers
+  MUST consume the same Wright runtime and MCP service through their own thin
+  adapters. An adapter MAY rely on prerequisites of its manager's documented
+  installation mechanism, such as Git for Hermes or Node.js/npm for OpenClaw.
+  After an adapter is installed, Wright runtime installation, startup, and
+  operation MUST NOT require a Wright source checkout, `WRIGHT_REPO_DIR`, a
+  frontend build, or Docker. Docker MUST remain a complete turnkey isolated path
+  and a mandatory release artifact; a release is incomplete when any claimed
+  native adapter or the Docker path fails its acceptance gates.
+* **Container Strategy (Thick Base / Thin Code)**: The Docker production and
+  development profiles MUST use the heavy base image containing the approved
+  CUDA, PyTorch, FreeCAD, and CalculiX stack. Application logic (`/apps` and
+  `/packages`) MUST remain mountable as live volumes for container-based
+  iteration without rebuilding the base image. MCP-specific host software MUST
+  NOT be added to the base image solely to satisfy catalog validation.
+* **Native Runtime Isolation**: Wright MUST manage one versioned runtime and
+  stable data root independently of Hermes, Codex, OpenClaw, or any other agent
+  manager. Manager adapters MUST invoke the public Wright lifecycle and MCP
+  contracts rather than importing application dependencies into the manager
+  process. Native installation MUST use prebuilt, versioned application and UI
+  artifacts, preserve user data across ordinary upgrades, and provide tested
+  rollback and uninstall behavior.
+* **Agent Abstraction**: LLM agents and managers (Hermes, Codex, OpenClaw, Qwen,
+  and Pi) MUST NOT be hardcoded into the API or native lifecycle core. They MUST
+  integrate through adapter contracts (`BaseAgentEngine`, manager installation
+  adapters, and the provider-neutral Wright MCP service) so installation rules,
+  model frameworks, and session behavior remain independently replaceable.
 
 ## 3. Data Storage & RAG (100% Embedded)
 * **Zero-Server Databases**: The system MUST NOT rely on background database servers (e.g., standalone PostgreSQL or Qdrant containers) to conserve GPU/CPU resources for local inference.
@@ -48,6 +95,14 @@
 * **Manual Gating**: After completing any major lifecycle command or tool generation, agents MUST stop and wait for explicit human review.
 
 ## Governance
-Amendments to this constitution require a documented proposal, review, and approval from the project maintainers. All pull requests and AI-generated code must verify compliance with these principles.
+Amendments to this constitution require a documented proposal, review, and
+approval from the project maintainers. Version changes follow semantic
+versioning: MAJOR for incompatible principle redefinitions or removals, MINOR
+for new principles or materially expanded guidance, and PATCH for clarifying
+wording without changed obligations. Every feature plan MUST evaluate all
+principles before design and after contracts are complete. Every pull request
+and AI-generated change MUST identify applicable gates, and release changes
+MUST update the authoritative merge-gate scripts when new CI failures expose a
+missing local gate.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-02
+**Version**: 3.0.0 | **Ratified**: 2026-06-02 | **Last Amended**: 2026-07-29

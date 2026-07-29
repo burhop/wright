@@ -1,120 +1,86 @@
-# Quick Start: Existing Hermes Plugin
+# Native Wright for Hermes
 
-Use this path when you already run Hermes Desktop or Hermes CLI and want Wright
-as a Hermes slash-command plugin. This is the most direct route for Hermes users
-who want `/wright start`, `/wright status`, and the engineering MCP catalog
-without learning Docker first.
+Hermes is Wright's primary manager path. Wright remains bring-your-own-AI and
+does not modify Hermes itself.
 
-Wright is alpha software and bring-your-own-AI. The plugin does not bundle an
-LLM, model weights, provider credentials, paid engineering tools, or
-MCP-specific host software. Configure your Hermes model provider and Wright's
-`LLM_API_URL`, `LLM_API_KEY`, and `LLM_API_MODEL` values for the endpoint you
-want to use.
+## Prerequisite and install
 
-## Prerequisites
+Hermes installs plugins from Git, so Git must be available to Hermes during
+adapter install, update, and removal. Install the production thin adapter with
+Hermes' documented command:
 
-- Hermes Desktop or Hermes CLI installed.
-- Wright available on disk.
-- `uv`, Python 3.11 or newer, Node.js 22 or newer, and npm available to the user
-  running Hermes.
-- Hermes API server enabled when you want Wright to show a connected Hermes
-  status.
-
-## Install the Plugin
-
-From the Wright repository root, install the Hermes Agent CLI with the local
-Wright plugin package:
-
-```bash
-uv tool install hermes-agent --with ./hermes-plugin-wright/
+```text
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 ```
 
-For editable development inside an existing Python environment:
+The adapter is standard-library-only at import time. It stores no Wright
+application code in Hermes state; `/wright start` resolves the exact compatible
+`wright-engineering` artifact into Wright-owned `WRIGHT_HOME` (default
+`~/.wright`). No Wright checkout, `WRIGHT_REPO_DIR`, Docker, Node.js, npm, or
+manual Python package command is required.
 
-```bash
-pip install -e ./hermes-plugin-wright
-```
-
-Hermes Desktop may load plugins from application data instead of a profile
-plugin folder. For Windows Desktop paths and cache behavior, see
-[Wright with Hermes Desktop](../hermes-desktop-wright.md).
-
-## Enable the Hermes API Server
-
-Use Hermes' normal configuration path, or set these environment values for the
-same user that runs Hermes:
-
-```bash
-export API_SERVER_ENABLED=true
-export API_SERVER_HOST=127.0.0.1
-export API_SERVER_PORT=8642
-export API_SERVER_KEY=wright-local-dev
-```
-
-PowerShell:
-
-```powershell
-setx API_SERVER_ENABLED true
-setx API_SERVER_HOST 127.0.0.1
-setx API_SERVER_PORT 8642
-setx API_SERVER_KEY wright-local-dev
-```
-
-Wright resolves Hermes through Hermes' own env file when possible. Use
-`HERMES_API_BASE_URL` only for non-standard deployments:
-
-```bash
-export HERMES_API_BASE_URL=http://127.0.0.1:8642
-export HERMES_API_KEY=wright-local-dev
-```
-
-Start the gateway if it is not already running:
-
-```bash
-hermes gateway run
-```
-
-## Configure Wright's LLM Status
-
-Set Wright's inference endpoint separately from the Hermes API server:
-
-```bash
-export LLM_API_URL=http://127.0.0.1:8001/v1
-export LLM_API_KEY=not-needed
-export LLM_API_MODEL=local-model-name
-```
-
-The Wright UI may still open if inference is disconnected, but the LLM status
-light will remain red until that endpoint is reachable.
-
-## Run Wright from Hermes
-
-In Hermes:
+## First start and diagnostics
 
 ```text
 /wright start
 /wright status
-/wright catalog cad
+/wright doctor
 ```
 
-The `/wright start` command builds the web assets, starts the FastAPI server with
-`uv run uvicorn`, and opens the Wright UI. `/wright status` checks the Wright API,
-workspace, Hermes connection, and active MCP tool status.
+`/wright start` creates or reuses the contained runtime, launches the packaged
+API/UI, and returns its local URL. It does not build frontend assets or invoke
+Git after the Hermes adapter phase. `/wright status` is read-only. `/wright
+doctor` reports compatibility, contained paths, process identity, API/UI
+health, data permissions, and bounded remediation without printing credentials.
 
-Useful direct checks:
+## Operate, update, and roll back
 
-```bash
-curl http://127.0.0.1:8000/api/health
-curl http://127.0.0.1:8000/api/agent/health
-curl http://127.0.0.1:8000/api/inference/health
+```text
+/wright stop
+/wright start
+hermes plugins update wright
+/wright update <exact-version>
+/wright rollback <exact-version>
 ```
 
-## Selected MCP Tools
+Hermes updates the thin adapter through Git. Wright updates its own runtime
+independently: it stages and checks the exact artifact and data migration before
+stopping a healthy predecessor. Rollback is allowed only when packaged schema
+bounds permit it. If health cannot be restored, Wright reports
+`recovery_required` instead of claiming success.
 
-Use `/wright catalog`, `/wright info <id>`, and `/wright install <id>` to inspect
-and register MCP servers. Install selected MCP host dependencies only when the
-catalog entry says they are required and you are validating that server.
+## Uninstall and purge
 
-Do not add MCP-specific host software to the base Docker image or a shared
-workstation image just to make the catalog look complete. Record validation
-results and setup recipes under `docs/mcp-catalog/`.
+Hermes has no pre-remove callback, so users who want Wright runtime code removed
+must run the lifecycle command before removing the adapter:
+
+```text
+/wright uninstall
+hermes plugins remove wright
+```
+
+`/wright uninstall` preserves `WRIGHT_HOME/data`, configuration, catalog
+choices, and external workspaces. Reinstalling the adapter can reopen them.
+
+Purge is deliberately separate:
+
+```text
+/wright purge
+/wright purge <confirmation-code>
+```
+
+The first command discloses the one Wright-owned data path and a confirmation
+code bound to that path and installation identity. Only the second exact command
+deletes it. Broad roots, symlinks, manager configuration, and external
+workspaces are refused.
+
+## Offline operation and MCP servers
+
+Online install/update resolves exact wheels and hashes into Wright's cache. An
+offline start may reuse only a complete cache matching the manifest; a missing
+or mismatched artifact fails before activation. Wright never falls back to a
+checkout or mutable `latest` runtime.
+
+The canonical catalog and provider-neutral gateway are included. CAD/CAE/CAM
+host applications, licenses, drivers, and credentials remain prerequisites of
+the selected MCP server, not the Wright or Hermes base installation.
