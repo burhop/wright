@@ -54,7 +54,8 @@ def test_mcp_cli_forwards_explicit_workspace_identity(monkeypatch, tmp_path) -> 
 def test_no_command_reports_both_supported_distribution_paths(capsys) -> None:
     assert main([]) == 0
     output = capsys.readouterr().out
-    assert "Hermes python-distribution-v1" in output
+    assert "Hermes Git plugin" in output
+    assert "Codex uses direct MCP" in output
     assert "burhop/wright" in output
     assert "ghcr.io/burhop/wright" in output
 

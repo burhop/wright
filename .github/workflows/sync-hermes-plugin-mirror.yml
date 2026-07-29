@@ -1,10 +1,10 @@
-name: legacy Hermes Git-plugin migration mirror
+name: Wright Hermes Git adapter mirror
 
-# Migration-only compatibility for Hermes 0.18 and older Git-plugin installs.
-# This workflow is never native release evidence and cannot activate the
-# package-based stable Hermes channel.
+# Publishes the production thin adapter consumed by Hermes' real Git plugin
+# interface. The immutable mirror commit is one mandatory release subject; it
+# does not replace the separately published Wright runtime evidence.
 env:
-  LEGACY_MIGRATION_ONLY: "true"
+  PRODUCTION_HERMES_ADAPTER: "true"
 
 on:
   workflow_dispatch:
@@ -34,8 +34,6 @@ on:
     branches: [ dev, main ]
     paths:
       - 'hermes-plugin-wright/**'
-      - 'packages/core/**'
-      - 'packages/tool_registry/**'
       - 'scripts/sync-hermes-plugin-mirror.sh'
       - 'scripts/validate-hermes-plugin-mirror.sh'
       - 'scripts/test-hermes-plugin-*.sh'
@@ -76,9 +74,6 @@ jobs:
             echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Validate package metadata
-        run: scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry
-
       - name: Generate mirror
         run: |
           scripts/sync-hermes-plugin-mirror.sh             --source hermes-plugin-wright             --mirror-url https://github.com/burhop/hermes-plugin-wright             --branch "${{ steps.channel.outputs.ref }}"             --channel "${{ steps.channel.outputs.channel }}"             --output-dir /tmp/hermes-plugin-wright
@@ -88,7 +83,7 @@ jobs:
 
       - name: README/provenance validation summary
         run: |
-          test "$LEGACY_MIGRATION_ONLY" = true
+          test "$PRODUCTION_HERMES_ADAPTER" = true
           echo "Mirror README and provenance validation passed for ${{ steps.channel.outputs.channel }}."
           cat /tmp/hermes-plugin-wright/provenance.json
 

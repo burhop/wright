@@ -16,11 +16,11 @@ from wright_engineering.runtime.state import LifecycleBusy, ManifestStore, State
 
 
 def _manifest(layout: NativeLayout) -> Manifest:
-    return Manifest.create(layout.hermes_home, layout.data)
+    return Manifest.create(layout.wright_home, layout.data)
 
 
 def test_manifest_round_trip_is_atomic_and_snapshot_is_retained(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     store = ManifestStore(layout)
     manifest = _manifest(layout)
     store.save(manifest)
@@ -33,7 +33,7 @@ def test_manifest_round_trip_is_atomic_and_snapshot_is_retained(tmp_path: Path) 
 
 
 def test_corrupt_manifest_fails_closed_and_preserves_evidence(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     store = ManifestStore(layout)
     store.save(_manifest(layout))
     store.manifest_path.write_text("{not-json", encoding="utf-8")
@@ -45,7 +45,7 @@ def test_corrupt_manifest_fails_closed_and_preserves_evidence(tmp_path: Path) ->
 
 
 def test_lock_contention_reports_active_operation(tmp_path: Path) -> None:
-    store = ManifestStore(NativeLayout.from_hermes_home(tmp_path / "hermes"))
+    store = ManifestStore(NativeLayout.from_wright_home(tmp_path / "wright-home"))
     with store.lock(operation_id="first", timeout=0.1):
         with pytest.raises(LifecycleBusy) as exc:
             with store.lock(operation_id="second", timeout=0.05):
@@ -54,7 +54,7 @@ def test_lock_contention_reports_active_operation(tmp_path: Path) -> None:
 
 
 def test_invalid_transition_and_runtime_reference_are_rejected(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     manifest = _manifest(layout)
     with pytest.raises(ValueError, match="invalid_transition"):
         manifest.transition(LifecycleState.HEALTHY)
@@ -65,7 +65,7 @@ def test_invalid_transition_and_runtime_reference_are_rejected(tmp_path: Path) -
 
 
 def test_interrupted_operation_remains_durable(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     store = ManifestStore(layout)
     manifest = _manifest(layout)
     manifest.transition(LifecycleState.INSTALLING)

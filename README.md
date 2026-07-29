@@ -64,9 +64,8 @@ engineering toolchains still require explicit configuration.
 - Deterministic CAD, CAE, CAM, and calculation tool actuation through adapters.
 - Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,
   and general validation tooling.
-- A complete native Hermes application candidate with a packaged UI and managed
-  runtime lifecycle. Public activation is blocked until a released Hermes
-  exposes the required Python package-plugin lifecycle.
+- A manager-neutral packaged runtime with a production Hermes Git adapter and
+  a direct MCP profile for Codex. OpenClaw integration remains future work.
 - BYO-AI configuration for local or hosted OpenAI-compatible endpoints.
 
 The Docker appliance is not a complete CAD/CAE/CAM workstation and does not
@@ -99,23 +98,13 @@ workspace volume or checkout you control.
 
 ### Native Hermes (Primary User Path)
 
-Native Hermes is Wright's primary installation design: Hermes installs the
-single public `wright-engineering` distribution and `/wright start`
-automatically creates Wright's contained runtime. The user needs no Git, Docker,
-Node.js, npm, Wright checkout, `WRIGHT_REPO_DIR`, or manual Python package
-command.
-
-This path is not public yet. The current released Hermes 0.19.0 plugin command
-clones Git repositories and cannot install, update, roll back, or remove an
-immutable Python distribution. Wright's production gate therefore remains
-closed until the compatibility contract names a released Hermes version with
-`python-distribution-v1`.
-
-Once that release exists, the supported install will use its documented command
-in this form:
+Hermes is Wright's primary manager path. Hermes uses Git for plugin installation,
+so Git is its one adapter prerequisite; Wright itself does not require Docker,
+Node.js, npm, a Wright checkout, `WRIGHT_REPO_DIR`, or a manual Python package
+command. Install the thin production adapter through Hermes:
 
 ```text
-hermes plugins install-package wright-engineering==<version> --enable
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 ```
 
 Then use `/wright start`, `/wright status`, `/wright doctor`, `/wright stop`,
@@ -172,10 +161,10 @@ ghcr.io/burhop/wright:<tag>
 ```
 
 `wright-engineering` is the one complete public application distribution used
-by Hermes for both its thin plugin entry point and Wright's isolated runtime
-extra. It is not a second end-user installation path and it has no dependency on
-private `wright-*` packages. Internal component distributions and the legacy
-Git plugin mirror are development/migration surfaces only.
+by every supported manager adapter. The Hermes repository is a standard-library-only
+Git adapter; Codex connects directly through an MCP profile. Neither adapter
+duplicates Wright lifecycle or application code, and the public wheel
+has no dependency on private `wright-*` packages.
 
 Every production release requires both the published native Hermes lifecycle
 and byte-identical Docker publication to GHCR and Docker Hub. Prerelease tags

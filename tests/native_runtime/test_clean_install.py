@@ -9,7 +9,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_native_install_and_start_modules_never_name_forbidden_executables() -> None:
     paths = [
-        ROOT / "src/wright_engineering/hermes_plugin/commands.py",
+        ROOT / "hermes-plugin-wright/bootstrap.py",
+        ROOT / "hermes-plugin-wright/commands.py",
         ROOT / "src/wright_engineering/runtime/artifacts.py",
         ROOT / "src/wright_engineering/runtime/installer.py",
         ROOT / "src/wright_engineering/runtime/lifecycle.py",

@@ -19,9 +19,9 @@ def test_purge_requires_path_bound_confirmation_and_deletes_only_owned_data(
     external = tmp_path / "external-workspace" / "part.step"
     external.parent.mkdir()
     external.write_text("external", encoding="utf-8")
-    hermes_config = runtime.layout.hermes_home / "config.yaml"
-    hermes_config.parent.mkdir(parents=True, exist_ok=True)
-    hermes_config.write_text("unrelated", encoding="utf-8")
+    manager_config = tmp_path / "hermes" / "config.yaml"
+    manager_config.parent.mkdir(parents=True, exist_ok=True)
+    manager_config.write_text("unrelated", encoding="utf-8")
 
     preview = runtime.purge()
     assert not preview.ok and preview.code == "purge_confirmation_required"
@@ -33,7 +33,7 @@ def test_purge_requires_path_bound_confirmation_and_deletes_only_owned_data(
     assert result.ok
     assert not runtime.layout.data.exists()
     assert external.read_text(encoding="utf-8") == "external"
-    assert hermes_config.read_text(encoding="utf-8") == "unrelated"
+    assert manager_config.read_text(encoding="utf-8") == "unrelated"
 
 
 def test_purge_refuses_symlinked_owned_data(tmp_path: Path) -> None:
@@ -59,7 +59,7 @@ def test_purge_manager_rejects_broad_or_ambiguous_scope(tmp_path: Path) -> None:
     manager = PurgeManager(runtime.layout)
     for unsafe in (
         runtime.layout.root,
-        runtime.layout.hermes_home,
+        runtime.layout.wright_home.parent,
         tmp_path / "external",
     ):
         with pytest.raises(LayoutError):

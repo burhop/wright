@@ -4,9 +4,9 @@
 
 - Public distribution: `wright-engineering`.
 - Product version: exact normalized root version.
-- Base installation: thin Hermes entry point, lifecycle bootstrap, compatibility
-  metadata, existing dependency-safe CLI diagnostics, and packaged application
-  code/resources; it imports without runtime dependencies.
+- Base installation: manager-neutral lifecycle bootstrap, compatibility metadata,
+  dependency-safe CLI/MCP entry points, and packaged application code/resources;
+  the separate Hermes Git adapter imports none of this code into Hermes.
 - Runtime installation: the same exact distribution with the `runtime` extra in
   a Wright-owned isolated environment.
 - Internal `wright-*` project distributions remain private and are never runtime
@@ -16,7 +16,7 @@
 
 The wheel MUST contain:
 
-- `wright_engineering` plugin/lifecycle/runtime modules;
+- `wright_engineering` lifecycle/runtime/manager-profile modules;
 - `api`, `core`, `agent_adapters`, `tool_registry`, `data_vault`, and
   `workspace_service` package modules;
 - canonical engineering MCP catalog and required schema/resource files;
@@ -79,11 +79,12 @@ These imports and operations MUST work after base-only install:
 
 ```text
 import wright_engineering
-import wright_engineering.hermes_plugin
+import wright_engineering.manager_profiles
 wright --version
 wright doctor
 ```
 
-They MUST NOT import FastAPI, Uvicorn, MCP, application packages, or other
-runtime-only dependencies. Runtime modules may import those dependencies only in
-the isolated child process.
+They MUST NOT import FastAPI, Uvicorn, application packages, or other
+runtime-only dependencies. The provider-neutral MCP bridge may load only when
+the explicit MCP command runs. Runtime modules may import application
+dependencies only in the isolated child process.

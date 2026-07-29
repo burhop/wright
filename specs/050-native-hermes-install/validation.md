@@ -1,158 +1,136 @@
-# Validation: Native Hermes Installation
+# Validation: Native Agent-Manager Installation
 
-**Date**: 2026-07-28
+**Date**: 2026-07-29
 **Branch**: `050-native-hermes-install`
-**Status**: Local implementation and candidate validation are green; production
-native release remains blocked by the released Hermes interface.
+**Status**: Local implementation, exact-candidate lifecycle, development gate,
+and production gate are green. Commit/push and pull-request CI remain pending.
 
-## Exact candidate identity
+## Delivered scope
 
-- Distribution: `wright-engineering==0.1.5`
-- Wheel: `wright_engineering-0.1.5-py3-none-any.whl`
+- Hermes 0.19 installs a thin standard-library Wright adapter through its real
+  Git plugin interface.
+- The adapter installs and invokes the complete `wright-engineering` artifact
+  in a manager-neutral, Wright-owned isolated runtime.
+- Codex connects directly to the same Wright MCP runtime without using Hermes
+  as an intermediary.
+- Docker remains a mandatory, independently tested turnkey distribution.
+- OpenClaw is future work. It is not a current adapter, compatibility claim,
+  acceptance subject, release-evidence subject, or release blocker.
+
+On Windows, pip creates `wright.exe` inside the managed virtual environment as
+the normal console launcher for the `wright` entry point. It is not a separate
+application, a hand-authored binary, or another distribution surface.
+
+## Exact native candidate
+
+- Distribution: `wright-engineering==0.1.6`
+- Wheel: `wright_engineering-0.1.6-py3-none-any.whl`
 - Wheel SHA-256:
-  `8a35f052e62ba12a35d542cef3cec9677094ab7c9cd3dda09a1582135feeb46f`
-- Source archive: `wright_engineering-0.1.5.tar.gz`
+  `0c502ae19b7e682fd3770f9a5f47cab7636b8d68a42e78a95e36b486c11455e7`
+- Source archive: `wright_engineering-0.1.6.tar.gz`
 - Source archive SHA-256:
-  `55d72cae8da10b5a02608529935b303526d32ea82641a9861fe04031ab0e4b78`
-- Bundled modules in both archives: `wright_engineering`, `api`, `core`,
-  `agent_adapters`, `tool_registry`, `data_vault`, and `workspace_service`
+  `a43b60024e24d35beebe40863759ef6126db4245c5ecbd75f57b93b140315094`
+- Runtime-extra lock SHA-256:
+  `bfaa6fa619d06a793199e0880e9a2f804e55d76399aa95c72f844026cb36d7af`
+- UI manifest SHA-256:
+  `2fbbfd478f98e7709435f6d0b7cf4f0c35da8aa3285c77367fbbc6ae7d0f4f22`
+- Compatibility metadata SHA-256:
+  `929f0d7277b6611a26470b9a03289908a79857e4b9782e2e80ad7ede5848417a`
+- Previous-stable fixture:
+  `wright_engineering-0.1.6+fixture.1-py3-none-any.whl`
+- Previous-stable fixture SHA-256:
+  `0265eb1585927398ee5e2a68ba6bf2d8827d4d4232237d1c84967c8f29aa5523`
 - Final local Docker subject:
-  `wright:test@sha256:b191cb369db50fa61eacad6c6c11c3a509c7a61829ca5255598724db81847e72`
+  `wright:test@sha256:d858f76fb5ef8b5aa6377d39124dad7209b6dcba0927aab1725905b2a02f29d0`
 
-The native builder inspected both archives, their packaged UI manifest, runtime
-extra lock, compatibility metadata, forbidden paths, and private dependency
-policy. A clean Windows base-plugin fixture installed the exact wheel above from
-an external wheelhouse. It discovered the `wright` command and `pre_remove`
-hook with only `wright-engineering`, `packaging`, and `pip` in the Hermes base
-environment. The fixture reported source isolation and no forbidden executable.
+The wheel and source archive both contain `wright_engineering`, `api`, `core`,
+`agent_adapters`, `tool_registry`, `data_vault`, `workspace_service`, the
+prebuilt UI, compatibility metadata, and the locked runtime dependency set.
+Both passed archive inspection and isolated clean installation.
 
-The first PR package-matrix run exposed a Windows-to-Linux line-ending mismatch
-between `icons.svg` and its byte-addressed UI manifest. The builder now
-normalizes text assets to LF before hashing, writes the manifest with explicit
-LF bytes, and marks the generated tree as non-text in Git. The regression suite
-and rebuilt wheel/source archive validate that the recorded manifest hash is the
-hash of the exact packaged bytes on every platform.
+## Real manager and lifecycle acceptance
 
-## Completed validation
+The final consolidated acceptance completed in 352.3 seconds and wrote
+`dist/native-manager-lifecycle-017.json`.
 
-| Area | Result |
+| Evidence | Result |
 | --- | --- |
-| Spec Kit analyze | 45 functional requirements + 15 success criteria covered by 90 dependency-ordered tasks; no critical/high consistency findings after remediation. |
-| Python full suite | `706 passed, 15 skipped`; skips are existing platform/external-fixture conditions, not a native acceptance skip flag. |
-| Release/native coverage | `166 passed, 2 skipped`; 85.04% across `scripts.release` and `wright_engineering` with the unchanged 85% floor. |
-| Strict native/release typing | Mypy: 32 source files, no issues. |
-| Focused native/release contracts | Prior focused run: `195 passed, 2 skipped`; final release suite: 73 passed; final isolated legacy mirror: 9 passed. |
-| Provider-neutral MCP/gateway/workspace | `277 passed, 2 skipped`; provider-neutral catalog, transport, rebinding, concurrent-session, and gateway smoke coverage retained. |
-| Frontend | Vitest: 25 files / 105 tests passed; TypeScript, ESLint, Prettier, and production Vite build passed. |
-| Browser integration | Playwright: 36 passed on dedicated port 4174. Ports 8000 and 5173 were occupied by user applications and were not stopped. |
+| Platform | Windows 11 amd64, Python 3.13.5 |
+| Hermes | 0.19.0, real Git adapter protocol `hermes-git-plugin-v1` |
+| Adapter identity | `5a2620cf8100c1e2e62adcd1bcfdf0d75f0d22d5` |
+| Runtime lifecycle | install, start, status, doctor, update, rollback, stop, uninstall, purge |
+| Source isolation | Passed |
+| Forbidden executables after adapter installation | None |
+| Uninstall/reinstall | User data preserved and reopened |
+| Purge | Exact Wright-owned deletion boundary passed |
+| Codex | `codex-cli 0.144.1`, direct STDIO profile loaded |
+| Hermes intermediary for Codex | False |
+| MCP SDK | Protocol `2025-11-25`; initialize/list/safe call passed |
+| MCP workspace binding | Passed; three Wright tools discovered |
+
+The full process audit observed Git only for the Hermes adapter operation.
+Subsequent Wright bootstrap and lifecycle phases passed their forbidden-tool
+audit. The audit may observe the generated `wright.exe` entry-point launcher;
+that launcher is the expected installed CLI and is not a forbidden dependency.
+
+Separate production-tail tests also installed, updated, and removed the public
+Hermes development plugin through Hermes 0.19.0 successfully.
+
+## Test and release-gate record
+
+| Area | Final result |
+| --- | --- |
+| Spec Kit analyze | 48 functional requirements and 16 success criteria mapped to 96 dependency-ordered tasks; no unresolved critical/high findings. |
+| Strict release/runtime typing | Mypy passed all 32 release/runtime source files. |
+| Release contracts | 81 passed. |
+| Native/release focused suite | 124 passed, 3 platform/external-fixture skips. |
+| Coverage gate | 185 passed, 3 skips; 85.15%, above the required 85%. |
+| Full Python regression | 746 tests collected; suite passed. The two legacy OpenClaw stub assertions are in-memory future-seam regression coverage and invoke no OpenClaw product. |
+| Frontend | ESLint, Prettier, TypeScript, 25 Vitest files / 105 tests, and production build passed. |
+| Browser integration | Complete Playwright integration suite passed with deterministic settings API coverage. |
 | Documentation | `mkdocs build --strict` passed. |
-| Artifact install | Wheel and source archive both passed isolated build/install/import and archive policy checks. |
-| Docker | Exact final image build passed; non-root user, manifest/entrypoint permissions, dependency reconciliation, setup-pending behavior, recovery probes, Wright API, connected agent, and direct Hermes gateway health all passed. |
-| Local leak scan | `check-public-alpha-leaks.py --include-untracked` passed. |
-| npm audit policy | Existing generated report passed `.github/dependency-audit-policy.json`; its two high-severity notices are covered by the repository policy evaluator. |
-| Workflow policy | Pinned/scoped action and native/release workflow policy tests passed. |
+| Security | Public-alpha checks, Gitleaks (250 commits), and TruffleHog passed with zero secrets. |
+| Python artifacts | Wheel and sdist inspection, clean installation, and imports passed. |
+| Docker | Build, non-root/permission contracts, Hermes dependency reconciliation, recovery, Wright API, connected agent, and direct gateway health passed. |
+| Hermes adapter | Local mirror generation/validation and real root install/update/remove passed. |
+| Workflow/release policy | Native evidence, no-PR-publication, terminal dependency, and rehearsal checks passed. |
 
-## Merge-gate record
+`scripts/check-dev-merge.sh` passed without `SKIP_PLAYWRIGHT` or any native
+acceptance skip. `scripts/check-prod-merge.sh` then passed end to end without
+skips in 1,050.7 seconds. The production run includes the development gate,
+security scans, alpha release check, Docker smoke, Hermes mirror validation,
+released-interface capability check, release policy/evidence tests, and real
+Hermes root-plugin install/update/remove.
 
-`scripts/check-dev-merge.sh` was run repeatedly while findings were remediated.
-It reached and passed lint, formatting, frontend static checks, strict native
-typing, metadata, workflow policy, 85.04% coverage, exact native archive build,
-wheel/source clean installs, security boundary tests, and the full 706-test
-suite. The final monolithic rerun was terminated by the desktop command host
-after 2,012 seconds while pytest's output pipe failed with
-`OSError: [Errno 22] Invalid argument`; no assertion failure or gate-owned
-process remained. The same final tree then passed the complete quiet Python
-suite, frontend suite/build, strict docs, isolated mirror, artifact, and Docker
-sub-gates separately.
+Two release-gate portability defects were found and remediated during the final
+run:
 
-Two documented local-host accommodations were used:
+1. Git Bash could select the disabled Windows Store `python3.exe` alias for
+   host-side Docker assertions. The smoke test now prefers the uv-managed
+   project interpreter and has a policy regression test.
+2. The production gate depended on optional GNU Make on Windows even though its
+   targets only wrapped existing scripts. The authoritative gate now invokes
+   the mirror and Hermes lifecycle scripts directly and has a regression test.
 
-1. `SKIP_PLAYWRIGHT=1` because active user applications occupied the gate's
-   fixed ports 8000 and 5173; the complete Playwright suite passed separately on
-   port 4174.
-2. `WRIGHT_NATIVE_SKIP_FRONTEND_BUILD=1` because the active Vite process held a
-   Rolldown native binary open; a fresh production frontend build passed before
-   the exact archive build, while clean `npm ci`/build also passed in the final
-   Docker build.
+The broader repository mypy invocation still reports the pre-existing duplicate
+`conftest` module warning in its documented warning-only mode. Strict typing for
+the changed release/runtime surface is green. The Vite chunk-size and MkDocs
+future-version notices are non-failing upstream advisories.
 
-This is the documented local host limitation allowed by `AGENTS.md`. The final
-PR run independently passed the Linux and Windows component gates, including
-the full Python, browser, native lifecycle, and Docker validations; T086 is
-complete.
+## Delivery state
 
-## Security checks delegated to CI
+- Spec Kit completion audit: complete. Tasks T001-T093 are implemented and
+  locally evidenced; the only remaining tasks are commit/push and final PR CI.
+- Worktree audit: all modified, removed, and added paths belong to the native
+  manager installation, its release gates, documentation, or regression tests.
+  Generated candidate, lifecycle, mirror, and Docker outputs remain ignored.
+- Local feature implementation: complete.
+- Exact artifact and real-manager validation: complete.
+- Development and production merge gates: complete and green.
+- Feature commit and push: pending.
+- Pull request #79 CI on the final commit: pending.
+- Merge into `dev` or `main`: not authorized and not performed.
 
-The desktop safety boundary refused to mount the repository and Git history
-into the third-party Gitleaks/TruffleHog containers. Host copies of those tools
-are not installed. It also refused a fresh dependency-metadata query for
-`pip-audit`. These checks are not waived: the pull-request safety workflow must
-run Gitleaks, TruffleHog, and pip-audit with the repository's expiring exception
-policy. The final PR run completed the leak, dependency-review, CodeQL, package,
-and workflow-policy checks successfully; T085 is complete.
-
-## Production blocker evidence
-
-The installed Hermes remains 0.18.2. An isolated probe of the latest official
-PyPI release reports:
-
-```text
-Hermes Agent v0.19.0 (2026.7.20)
-hermes plugins {install,update,remove,list,enable,disable}
-Install plugins from Git repositories
-```
-
-The 0.19.0 package source separately confirms that pip entry points are
-discoverable, while `_install_plugin_core` still clones Git. Discovery without
-a supported package install/update/rollback/remove lifecycle does not satisfy
-the native installation contract.
-
-Wright's production capability probe fails closed with:
-
-```text
-released Hermes does not provide python-distribution-v1; Git-only plugins
-cannot satisfy native Wright installation
-```
-
-No previous stable public native Wright wheel exists, so the real published
-install/update/rollback/uninstall/purge sequence cannot yet be exercised. The
-fixture and candidate are not substituted for that production evidence.
-
-## Pull request and CI
-
-Draft PR [#79](https://github.com/burhop/wright/pull/79) targets `dev` and remains
-unmerged. The first check run found a Windows-to-Linux UI-manifest byte mismatch.
-The second found a hosted-Windows `System32` Docker leak into the clean harness
-and a platform-specific mypy reference. Each defect received a focused
-regression and was fixed before the next run.
-
-A later terminal rerun exposed a short-lived Windows process sampling race in
-the harness: the parent exited between `poll()` and `psutil` descendant
-inspection. The audit now tolerates only that process-gone sampling boundary,
-retains forbidden-child detection, and has a deterministic regression for the
-exact race.
-
-All checks on commit `531ee5c` passed on 2026-07-28: Python quality and 85%
-coverage, Python 3.11-3.14 wheel/sdist matrices on Linux and Windows, Windows
-backend/frontend suites, native base isolation on Linux/Windows/macOS, native
-lifecycle and required aggregate, Playwright, frontend quality, docs,
-dependency review, leak scan, CodeQL for Python and JavaScript/TypeScript, and
-OCI build/smoke/scan. The docs deployment job was correctly skipped for a pull
-request. No merge was performed.
-
-## Open task audit
-
-- T023: real subprocess-audited first start awaits the released Hermes package
-  interface and a previous stable native artifact.
-- T073: released Hermes `python-distribution-v1` capability is absent.
-- T084: complete published previous-stable-to-candidate lifecycle is blocked by
-  the two facts above.
-- T087: production gate intentionally fails the real Hermes capability probe.
-- T088: completion audit remains blocked by T023, T073, T084, and T087.
-- T089: complete; the Spec Kit commit hook ran, the worktree was verified clean,
-  and `050-native-hermes-install` was pushed to origin.
-- T090: complete; PR #79 is open against `dev`, all checks are green, and the PR
-  remains unmerged.
-
-The feature must not be described as production-native-ready, merged, or
-released until every open task is resolved. Docker remains a mandatory,
-independently green production installation path.
+The feature is ready for the Spec Kit completion audit, commit, push, and final
+pull-request CI remediation. It must not be described as delivered to `dev` or
+production until the final PR checks pass and a separate merge is authorized.

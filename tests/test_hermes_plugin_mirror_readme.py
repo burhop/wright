@@ -9,11 +9,10 @@ def test_mirror_readme_has_customer_lifecycle_sections_and_links() -> None:
     squashed = " ".join(text.split())
 
     for expected in [
-        "official thin Wright Hermes plugin mirror",
+        "official production thin adapter",
         "Stable Install",
-        "Development Install",
-        "hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/main --enable",
-        "hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable",
+        "Development validation",
+        "hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable",
         "hermes plugins update wright",
         "hermes plugins remove wright",
         "Migration From the Monorepo Subdirectory",

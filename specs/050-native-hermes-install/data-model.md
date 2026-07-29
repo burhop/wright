@@ -1,17 +1,18 @@
-# Data Model: Native Hermes Installation
+# Data Model: Native Agent-Manager Installation
 
 ## 1. Installation Manifest
 
-Durable source of truth for one Hermes profile's Wright installation. It is
-stored outside every versioned runtime and updated atomically.
+Durable source of truth for one Wright installation shared by manager adapters.
+It is stored outside every versioned runtime and every manager-owned directory,
+and is updated atomically.
 
 ### Fields
 
 | Field | Type | Rules |
 | --- | --- | --- |
 | `schema_version` | integer | Positive; readers reject unsupported future versions |
-| `installation_id` | UUID string | Generated once per Hermes profile |
-| `hermes_home` | absolute path | Canonical parent used to validate all owned paths |
+| `installation_id` | UUID string | Generated once per Wright-owned home |
+| `wright_home` | absolute path | Canonical Wright-owned root used to validate all managed paths |
 | `data_root` | absolute path | Stable across upgrades and runtime rollback |
 | `active_runtime_id` | string or null | Must reference a healthy installed runtime |
 | `predecessor_runtime_id` | string or null | Must reference a retained compatible runtime |
@@ -65,8 +66,8 @@ One exact `wright-engineering[runtime]` installation in an isolated environment.
 | `environment_path` | absolute path | Must be a direct contained child of `runtimes` |
 | `python_version` | string | Supported runtime interpreter version |
 | `platform_tag` | string | Evidence-backed OS/architecture tag |
-| `plugin_compatibility` | specifier string | Must admit the loaded plugin version |
-| `hermes_compatibility` | specifier string | Must admit the running Hermes version |
+| `runtime_compatibility` | specifier string | Must admit the invoking adapter's requested runtime version |
+| `adapter_protocol` | string | Public lifecycle/MCP protocol understood by the runtime |
 | `data_schema_min`, `data_schema_max` | integer | Inclusive schema range the runtime can open |
 | `installed_at`, `verified_at` | UTC timestamp | `verified_at` set only after artifact and import checks |
 | `status` | enum | `staged`, `verified`, `active`, `predecessor`, `failed`, `removable` |
@@ -88,13 +89,12 @@ importing runtime dependencies.
 | Field | Type | Rules |
 | --- | --- | --- |
 | `contract_version` | integer | Schema for compatibility metadata |
-| `plugin_version` | normalized version | Must equal public product version for this design |
+| `runtime_version` | normalized version | Must equal the public product version for this design |
 | `runtime_specifier` | version specifier | Compatible runtime versions |
-| `hermes_specifier` | version specifier | Includes only Hermes releases with package lifecycle support |
 | `python_specifier` | version specifier | Matches package metadata |
 | `platforms` | list | Each entry has executable clean-install evidence |
 | `data_schema` | min/max integers | Range supported by the runtime |
-| `plugin_install_capability` | string | Exact Hermes capability identifier/version |
+| `manager_protocols` | map | Manager ID to supported thin-adapter protocol and optional host version range |
 
 Compatibility is checked before install, before activation, and by doctor. A
 missing or malformed contract fails closed.
@@ -107,7 +107,7 @@ Crash-recoverable intent for one mutating lifecycle request.
 | --- | --- | --- |
 | `operation_id` | UUID string | Correlation ID for logs and child process |
 | `kind` | enum | `install`, `start`, `stop`, `update`, `rollback`, `uninstall`, `purge` |
-| `requested_by` | string | Redacted Hermes session/profile identity |
+| `requested_by` | string | Redacted manager/adapter/session identity |
 | `started_at` | UTC timestamp | Written before first side effect |
 | `from_state`, `target_state` | lifecycle state | Must be a valid transition |
 | `candidate_runtime_id` | string or null | Used for install/update/rollback |
@@ -160,13 +160,13 @@ Resolved paths that lifecycle deletion is permitted to manage.
 
 | Category | Default location | Normal uninstall | Explicit purge |
 | --- | --- | --- | --- |
-| Runtime environments | `<HERMES_HOME>/wright/runtimes` | Delete | Delete |
-| Runtime cache/wheelhouse | `<HERMES_HOME>/wright/cache` | Delete | Delete |
-| Process/log state | `<HERMES_HOME>/wright/state`, `logs` | Delete after terminal record | Delete |
-| SQLite/config/secrets | `<HERMES_HOME>/wright/data` | Preserve | Delete after confirmation |
-| Default managed workspaces | `<HERMES_HOME>/wright/data/workspaces` | Preserve | Delete after confirmation |
+| Runtime environments | `<WRIGHT_HOME>/runtimes` | Delete | Delete |
+| Runtime cache/wheelhouse | `<WRIGHT_HOME>/cache` | Delete | Delete |
+| Process/log state | `<WRIGHT_HOME>/state`, `logs` | Delete after terminal record | Delete |
+| SQLite/config/secrets | `<WRIGHT_HOME>/data` | Preserve | Delete after confirmation |
+| Default managed workspaces | `<WRIGHT_HOME>/data/workspaces` | Preserve | Delete after confirmation |
 | External workspaces | Any path outside owned root | Preserve | Never delete |
-| Hermes configuration/data | Outside Wright child root | Preserve | Never delete |
+| Hermes and Codex configuration/data | Outside `WRIGHT_HOME` | Preserve | Never delete |
 
 Every deletion target is resolved without following an untrusted symlink and
 must remain beneath the expected Wright-owned root. Broad roots, home itself,
@@ -179,15 +179,34 @@ Extension of the existing release evidence for one native subject.
 | Field | Type | Rules |
 | --- | --- | --- |
 | `product_version`, `source_commit` | string | Match root release identity |
-| `plugin_artifact` | artifact evidence | Base wheel filename/hash/content manifest |
+| `manager_adapters` | map of adapter evidence | Hermes Git identity and each other publicly claimed adapter artifact/profile |
 | `runtime_artifact` | artifact evidence | Same distribution identity plus runtime-extra lock evidence |
 | `compatibility_contract_hash` | hash | Exact installed contract |
-| `hermes_version` | version | Released version used for public verification |
+| `manager_versions` | map | Released manager versions used for public verification |
 | `platform_results` | list | One result per claimed native platform |
 | `lifecycle_results` | map | install/start/update/rollback/uninstall/purge result IDs |
-| `forbidden_dependency_probe` | result | Proves no Git/Docker/Node/npm/source dependency |
-| `stable_channel` | identity | Published Hermes channel/subject identity |
+| `prerequisite_probe` | result | Proves manager prerequisites are used only by their adapter phase |
+| `stable_channels` | map | Published manager adapter and runtime identities |
 | `result` | enum | `passed` or `failed`; missing evidence is failure |
 
-The final GitHub Release requires a passing native evidence subject and the
-existing passing Docker/Python/documentation evidence.
+The final GitHub Release requires a passing Wright runtime subject, every
+publicly claimed manager-adapter subject, and the existing passing
+Docker/Python/documentation evidence.
+
+## 9. Manager Adapter Profile
+
+Description of one external manager's supported integration without importing
+that manager into Wright lifecycle core.
+
+| Field | Type | Rules |
+| --- | --- | --- |
+| `manager_id` | string | Stable identifier such as the currently supported `hermes` or `codex`; future adapters define additional identifiers when delivered |
+| `adapter_protocol` | string | Versioned lifecycle/MCP projection contract |
+| `install_source` | enum | `git`, `plugin`, `marketplace`, `npm`, `mcp-config`, or release archive |
+| `prerequisites` | list | Documented manager-owned prerequisites only |
+| `mcp_transport` | enum | `stdio` or `streamable-http` |
+| `runtime_home` | path reference | Always resolves to `WRIGHT_HOME`, never manager state |
+| `claimed_support` | boolean | True only with real host and packaged-runtime evidence |
+
+Manager adapter removal never implies Wright data purge. Adapter-specific
+configuration is outside Wright's deletion scope.

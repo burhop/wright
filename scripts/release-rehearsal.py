@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.release.evidence import (  # noqa: E402
-    HermesCapabilityEvidence,
+    ManagerAdapterEvidence,
     NativeCandidate,
     ReleaseEvidence,
     ReleaseIdentity,
@@ -51,13 +51,16 @@ def main(argv: list[str] | None = None) -> int:
     native_candidate = None
     native_results: list[dict[str, object]] = []
     if args.native_build_evidence:
-        native_build = json.loads(args.native_build_evidence.read_text(encoding="utf-8"))
+        native_build = json.loads(
+            args.native_build_evidence.read_text(encoding="utf-8")
+        )
         wheel = next(
-            item for item in native_build["artifacts"] if item["filename"].endswith(".whl")
+            item
+            for item in native_build["artifacts"]
+            if item["filename"].endswith(".whl")
         )
         native_candidate = NativeCandidate(
             native_build["distribution"],
-            native_build["version"],
             native_build["version"],
             wheel["filename"],
             wheel["sha256"],
@@ -86,23 +89,44 @@ def main(argv: list[str] | None = None) -> int:
             for value in ("3.11", "3.12", "3.13", "3.14")
         ],
         native_candidate=native_candidate,
-        hermes_capability=HermesCapabilityEvidence(
-            "candidate-fixture",
-            "python-distribution-v1",
-            "local candidate fixture",
-            "fixture",
-        )
-        if native_candidate
-        else None,
+        manager_adapters=(
+            [
+                ManagerAdapterEvidence(
+                    "hermes",
+                    "0.19.0",
+                    "hermes-git-plugin-v1",
+                    "git",
+                    "local-git-candidate",
+                    "fixture",
+                ),
+                ManagerAdapterEvidence(
+                    "codex",
+                    "candidate",
+                    "mcp-v1",
+                    "mcp-config",
+                    "local-codex-profile",
+                    "fixture",
+                ),
+            ]
+            if native_candidate
+            else []
+        ),
         native_platform_results=native_results,
-        stable_hermes_channel={
-            "channel": "isolated-rehearsal",
-            "version": version.python,
-            "verification_url": "local://no-mutation",
-        }
-        if native_candidate
-        else None,
+        manager_adapter_channels=(
+            [
+                {
+                    "manager_id": manager_id,
+                    "channel": "isolated-rehearsal",
+                    "version": version.python,
+                    "verification_url": "local://no-mutation",
+                }
+                for manager_id in ("hermes", "codex")
+            ]
+            if native_candidate
+            else []
+        ),
         native_public_verification={
+            "release_mode": "upgrade",
             "lifecycle": [
                 "install",
                 "start",

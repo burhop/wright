@@ -3,6 +3,8 @@ import subprocess
 import sys
 
 from scripts.release.evidence import (
+    ManagerAdapterEvidence,
+    NativeCandidate,
     OciCandidate,
     ReleaseEvidence,
     ReleaseIdentity,
@@ -16,11 +18,70 @@ COMMIT = "a" * 40
 
 
 def _write_release_evidence(path: Path) -> None:
+    digest = "a" * 64
+    adapters = [
+        ManagerAdapterEvidence(
+            "hermes",
+            "0.19.0",
+            "hermes-git-plugin-v1",
+            "git",
+            "git:" + COMMIT,
+            "released",
+        ),
+        ManagerAdapterEvidence(
+            "codex",
+            "current",
+            "mcp-v1",
+            "mcp-config",
+            "wright:" + COMMIT + ":codex",
+            "released",
+        ),
+    ]
     ReleaseEvidence(
         mode=ReleaseMode.RELEASE,
         release_identity=ReleaseIdentity("0.1.4", "0.1.4", "v0.1.4", COMMIT),
         oci_candidate=OciCandidate("ghcr.io/burhop/wright", DIGEST),
         oci_gate_evidence={"candidate_digest": DIGEST},
+        native_candidate=NativeCandidate(
+            "wright-engineering",
+            "0.1.4",
+            "wright_engineering-0.1.4-py3-none-any.whl",
+            digest,
+            digest,
+            digest,
+            digest,
+        ),
+        manager_adapters=adapters,
+        native_platform_results=[
+            {
+                "platform": "linux-x86_64",
+                "status": "passed",
+                "forbidden_executables": [],
+                "source_isolation": True,
+            }
+        ],
+        manager_adapter_channels=[
+            {
+                "manager_id": adapter.manager_id,
+                "immutable_identity": adapter.immutable_identity,
+                "channel": "stable",
+            }
+            for adapter in adapters
+        ],
+        native_public_verification={
+            "release_mode": "upgrade",
+            "lifecycle": [
+                "install",
+                "start",
+                "status",
+                "doctor",
+                "stop",
+                "update",
+                "rollback",
+                "uninstall",
+                "purge",
+            ],
+        },
         verification_results=[{"python": "passed"}, {"oci": "passed"}],
         stage_results=[
             {"stage": "preflight", "result": "passed", "external_mutation": True},
@@ -31,7 +92,7 @@ def _write_release_evidence(path: Path) -> None:
             },
         ],
         status="post_verified",
-        schema_version=1,
+        schema_version=3,
     ).write(path)
 
 

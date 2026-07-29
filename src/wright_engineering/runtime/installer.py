@@ -52,7 +52,15 @@ class RuntimeInstaller:
             f"wright-engineering[runtime] @ {artifact.path.as_uri()}",
         ]
         if artifact.channel in {SourceChannel.LOCAL_CANDIDATE, SourceChannel.TEST}:
-            command.extend(["--no-index", "--find-links", str(artifact.path.parent)])
+            configured = os.environ.get("WRIGHT_RUNTIME_WHEELHOUSE", "").strip()
+            wheelhouse = (
+                Path(configured).expanduser().resolve(strict=True)
+                if configured
+                else artifact.path.parent
+            )
+            if not wheelhouse.is_dir():
+                raise InstallerError("runtime_wheelhouse_invalid")
+            command.extend(["--no-index", "--find-links", str(wheelhouse)])
         return command
 
     def install(self, artifact: RuntimeArtifact, runtime_id: str) -> Path:

@@ -53,12 +53,12 @@ class RuntimeArtifact:
 
 class ArtifactResolver:
     def resolve_environment(self) -> RuntimeArtifact | None:
-        """Resolve the immutable artifact handed to Wright by Hermes.
+        """Resolve the immutable artifact handed to Wright by a manager adapter.
 
-        The package-plugin boundary is intentionally explicit: Wright never
-        searches a checkout or asks Git for source.  Candidate fixtures and a
-        compatible released Hermes set these values after they have resolved
-        and verified the package subject.
+        The adapter boundary is intentionally explicit: Wright never searches a
+        checkout or asks Git for source. Candidate fixtures and released manager
+        adapters set these values after resolving and verifying the package
+        subject.
         """
         path = os.environ.get("WRIGHT_RUNTIME_ARTIFACT", "").strip()
         if not path:

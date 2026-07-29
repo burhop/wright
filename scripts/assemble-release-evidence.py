@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.release.evidence import (  # noqa: E402
     OciCandidate,
-    HermesCapabilityEvidence,
+    ManagerAdapterEvidence,
     NativeCandidate,
     ReleaseEvidence,
     ReleaseIdentity,
@@ -35,13 +35,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--promotion-destination", action="append", default=[])
     parser.add_argument("--approval", action="append", default=[])
     parser.add_argument("--native-build-evidence", type=Path)
-    parser.add_argument("--native-lifecycle-evidence", type=Path, action="append", default=[])
-    parser.add_argument("--hermes-version")
-    parser.add_argument("--hermes-capability", default="python-distribution-v1")
-    parser.add_argument("--hermes-install-interface")
-    parser.add_argument("--hermes-capability-source", choices=("fixture", "released"))
-    parser.add_argument("--stable-hermes-channel")
-    parser.add_argument("--stable-hermes-verification-url")
+    parser.add_argument(
+        "--native-lifecycle-evidence", type=Path, action="append", default=[]
+    )
+    parser.add_argument(
+        "--manager-adapter-evidence", type=Path, action="append", default=[]
+    )
+    parser.add_argument(
+        "--manager-adapter-channel", type=Path, action="append", default=[]
+    )
     parser.add_argument("--native-public-verification", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -57,17 +59,20 @@ def main(argv: list[str] | None = None) -> int:
     skipped: list[str] = []
     native_candidate = None
     native_results: list[dict[str, object]] = []
-    hermes_capability = None
-    stable_channel = None
+    manager_adapters: list[ManagerAdapterEvidence] = []
+    manager_channels: list[dict[str, object]] = []
     native_public = None
     if args.native_build_evidence:
-        native_build = json.loads(args.native_build_evidence.read_text(encoding="utf-8"))
+        native_build = json.loads(
+            args.native_build_evidence.read_text(encoding="utf-8")
+        )
         wheel = next(
-            item for item in native_build["artifacts"] if item["filename"].endswith(".whl")
+            item
+            for item in native_build["artifacts"]
+            if item["filename"].endswith(".whl")
         )
         native_candidate = NativeCandidate(
             distribution=native_build["distribution"],
-            plugin_version=native_build["version"],
             runtime_version=native_build["version"],
             wheel_filename=wheel["filename"],
             wheel_sha256=wheel["sha256"],
@@ -87,19 +92,15 @@ def main(argv: list[str] | None = None) -> int:
                 "lifecycle": payload["lifecycle"],
             }
         )
-    if args.hermes_version and args.hermes_install_interface and args.hermes_capability_source:
-        hermes_capability = HermesCapabilityEvidence(
-            args.hermes_version,
-            args.hermes_capability,
-            args.hermes_install_interface,
-            args.hermes_capability_source,
+    for path in args.manager_adapter_evidence:
+        manager_adapters.append(
+            ManagerAdapterEvidence(**json.loads(path.read_text(encoding="utf-8")))
         )
-    if args.stable_hermes_channel and args.stable_hermes_verification_url:
-        stable_channel = {
-            "channel": args.stable_hermes_channel,
-            "version": version.python,
-            "verification_url": args.stable_hermes_verification_url,
-        }
+    for path in args.manager_adapter_channel:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError("manager adapter channel evidence must be an object")
+        manager_channels.append(payload)
     if args.native_public_verification:
         native_public = json.loads(
             args.native_public_verification.read_text(encoding="utf-8")
@@ -137,9 +138,9 @@ def main(argv: list[str] | None = None) -> int:
         oci_candidate=candidate,
         oci_gate_evidence=gates,
         native_candidate=native_candidate,
-        hermes_capability=hermes_capability,
+        manager_adapters=manager_adapters,
         native_platform_results=native_results,
-        stable_hermes_channel=stable_channel,
+        manager_adapter_channels=manager_channels,
         native_public_verification=native_public,
         promotions=promotions,
         approvals=[{"environment": item} for item in args.approval],

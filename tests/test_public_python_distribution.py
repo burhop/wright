@@ -20,9 +20,7 @@ def test_one_public_distribution_carries_the_complete_native_application() -> No
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     metadata = project["project"]
     assert metadata["name"] == "wright-engineering"
-    assert metadata["entry-points"]["hermes_agent.plugins"] == {
-        "wright": "wright_engineering.hermes_plugin:register"
-    }
+    assert "hermes_agent.plugins" not in metadata.get("entry-points", {})
     runtime = metadata["optional-dependencies"]["runtime"]
     normalized = {
         item.split("[", 1)[0].split("<", 1)[0].split(">", 1)[0] for item in runtime
@@ -41,6 +39,8 @@ def test_one_public_distribution_carries_the_complete_native_application() -> No
         "packages/data_vault/src/data_vault",
         "packages/workspace_service/src/workspace_service",
     }.issubset(wheel_packages)
+    assert (ROOT / "hermes-plugin-wright/bootstrap.py").is_file()
+    assert (ROOT / "integrations/codex/config.toml.example").is_file()
 
 
 def test_all_workspace_component_distributions_remain_private() -> None:

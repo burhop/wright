@@ -11,7 +11,7 @@ def test_wright_engineering_is_the_only_publishable_distribution() -> None:
     ]
     assert public["name"] == "wright-engineering"
     assert "Private :: Do Not Upload" not in public["classifiers"]
-    assert public["dependencies"] == ["packaging>=24,<27"]
+    assert public["dependencies"] == ["packaging>=24,<27", "psutil>=6,<8"]
     runtime = public["optional-dependencies"]["runtime"]
     assert runtime
     assert not any(dependency.startswith("wright-") for dependency in runtime)
@@ -39,6 +39,8 @@ def test_publication_workflows_never_name_private_distributions() -> None:
         "wright-agent-adapters",
         "wright-workspace-service",
         "wright-api",
-        "hermes-plugin-wright",
     ):
         assert forbidden not in workflows
+
+    assert "pip install hermes-plugin-wright" not in workflows
+    assert "twine upload" not in workflows

@@ -63,15 +63,15 @@ class FakeProcessManager:
 
 
 def _artifact(tmp_path: Path) -> RuntimeArtifact:
-    wheel = tmp_path / "wright_engineering-0.1.5-py3-none-any.whl"
+    wheel = tmp_path / "wright_engineering-0.1.6-py3-none-any.whl"
     wheel.write_bytes(b"wheel")
-    return RuntimeArtifact.from_local(wheel, "0.1.5", SourceChannel.LOCAL_CANDIDATE)
+    return RuntimeArtifact.from_local(wheel, "0.1.6", SourceChannel.LOCAL_CANDIDATE)
 
 
 def test_start_automatically_installs_then_reuses_healthy_runtime(
     tmp_path: Path,
 ) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     installer = FakeInstaller(layout)
     processes = FakeProcessManager()
     lifecycle = NativeLifecycle(
@@ -79,8 +79,8 @@ def test_start_automatically_installs_then_reuses_healthy_runtime(
         installer=installer,  # type: ignore[arg-type]
         process_manager=processes,  # type: ignore[arg-type]
         health_probe=lambda _: True,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
 
     first = lifecycle.start(artifact=_artifact(tmp_path))
@@ -93,14 +93,14 @@ def test_start_automatically_installs_then_reuses_healthy_runtime(
 
 
 def test_failed_install_is_actionable_and_never_healthy(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
         installer=FakeInstaller(layout, fail=True),  # type: ignore[arg-type]
         process_manager=FakeProcessManager(),  # type: ignore[arg-type]
         health_probe=lambda _: True,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
     result = lifecycle.start(artifact=_artifact(tmp_path))
     assert not result.ok
@@ -110,14 +110,14 @@ def test_failed_install_is_actionable_and_never_healthy(tmp_path: Path) -> None:
 
 
 def test_failed_health_never_reports_candidate_active(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
         installer=FakeInstaller(layout),  # type: ignore[arg-type]
         process_manager=FakeProcessManager(),  # type: ignore[arg-type]
         health_probe=lambda _: False,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
     result = lifecycle.start(artifact=_artifact(tmp_path))
     assert not result.ok
@@ -125,20 +125,41 @@ def test_failed_health_never_reports_candidate_active(tmp_path: Path) -> None:
     assert lifecycle.store.load().lifecycle_state is LifecycleState.FAILED
 
 
-def test_start_fails_closed_for_git_only_hermes_capability(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+def test_start_fails_closed_for_unsupported_manager_protocol(tmp_path: Path) -> None:
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
         installer=FakeInstaller(layout),  # type: ignore[arg-type]
         process_manager=FakeProcessManager(),  # type: ignore[arg-type]
         health_probe=lambda _: True,
-        hermes_version="0.18.2",
-        plugin_capability="git-plugin-v1",
+        manager_id="hermes",
+        manager_version="0.19.0",
+        adapter_protocol="invented-package-plugin-v1",
     )
     result = lifecycle.start(artifact=_artifact(tmp_path))
     assert not result.ok
     assert result.code == "compatibility_failed"
-    assert result.details["compatibility_code"] in {
-        "hermes_incompatible",
-        "plugin_capability_incompatible",
-    }
+    assert result.details["compatibility_code"] == "manager_protocol_incompatible"
+
+
+def test_runtime_environment_roots_secret_storage_in_wright_home(tmp_path: Path) -> None:
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
+    lifecycle = NativeLifecycle(
+        layout,
+        installer=FakeInstaller(layout),  # type: ignore[arg-type]
+        process_manager=FakeProcessManager(),  # type: ignore[arg-type]
+        manager_id="codex",
+        adapter_protocol="mcp-v1",
+    )
+
+    environment = lifecycle._runtime_environment()
+
+    assert environment["WRIGHT_SECRETS_PATH"] == str(
+        layout.data / "credentials.json"
+    )
+    assert environment["WRIGHT_SECRETS_DIR"] == str(layout.data / "secrets.d")
+    assert environment["WRIGHT_AUTH_MODE"] == "enforced"
+    assert len(environment["WRIGHT_API_TOKEN"]) == 64
+    assert layout.control_plane_token.read_text(encoding="utf-8") == environment[
+        "WRIGHT_API_TOKEN"
+    ]

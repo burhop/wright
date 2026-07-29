@@ -1,8 +1,7 @@
-# Quickstart: Native Hermes Candidate Validation
+# Quickstart: Native Agent-Manager Candidate Validation
 
-This quickstart validates locally built artifacts. It does not publish to a
-public registry or claim that the current Git-only Hermes installer satisfies
-the production contract.
+This quickstart validates locally built artifacts and thin manager adapters. It
+does not publish to a public registry or manager marketplace.
 
 ## 1. Confirm the feature context
 
@@ -21,9 +20,9 @@ uv run --package hermes-plugin-wright python -m pytest -q hermes-plugin-wright/t
 npm run test --workspace=apps/web
 ```
 
-These tests must include lifecycle state, path containment, compatibility,
-process identity, update/rollback, uninstall/purge, package contents, and command
-projection. Test tasks are written before their implementation tasks.
+The tests cover manager-neutral layout/state, compatibility, process identity,
+runtime update/rollback, uninstall/purge, package contents, the stdlib-only
+Hermes bootstrap, and the Codex MCP profile.
 
 ## 3. Build the candidate once
 
@@ -33,61 +32,60 @@ uv run python scripts/build-native-runtime.py \
   --evidence dist/native-candidate/evidence.json
 ```
 
-The builder runs the locked frontend build, places only inspected static output
-inside the distribution, builds one wheel and one source archive, verifies their
-contents, and writes hashes. Do not run this command from the user installation
-path; Node/npm are build-time CI tools only.
+The builder runs the locked frontend build, packages only inspected static
+output, and writes wheel/source hashes. Node/npm are build-time tools only.
 
-## 4. Prove base plugin isolation
+## 4. Prove the real Hermes adapter boundary
 
 ```bash
 python -m pip download --only-binary=:all: \
   --dest dist/native-wheelhouse \
-  'dist/native-candidate/wright_engineering-0.1.5-py3-none-any.whl[runtime]'
+  'dist/native-candidate/wright_engineering-0.1.6-py3-none-any.whl[runtime]'
 TEMP_ROOT="$(mktemp -d)"
 uv run python scripts/test-native-hermes-install.py \
-  --wheel dist/native-candidate/wright_engineering-0.1.5-py3-none-any.whl \
+  --wheel dist/native-candidate/wright_engineering-0.1.6-py3-none-any.whl \
   --wheelhouse dist/native-wheelhouse \
   --hermes-home "$TEMP_ROOT/hermes-home" \
+  --wright-home "$TEMP_ROOT/wright-home" \
+  --plugin-source hermes-plugin-wright \
   --evidence dist/native-base-local.json \
   --base-only
 ```
 
-The clean Hermes environment installs the base wheel through the package-plugin
-fixture. It must discover the `wright` entry point while FastAPI, Uvicorn, MCP,
-and private Wright distributions remain absent from the Hermes environment.
+The harness installs the adapter through released Hermes' real Git plugin
+command. Plugin import remains standard-library-only. After installation, the
+harness removes Git from the audited runtime PATH.
 
-## 5. Run the complete clean lifecycle
+## 5. Run the complete Wright lifecycle
 
 ```bash
 uv run python scripts/test-native-hermes-install.py \
-  --wheel dist/native-candidate/wright_engineering-0.1.5-py3-none-any.whl \
-  --previous-wheel <previous-stable-wheel> \
+  --wheel dist/native-candidate/wright_engineering-0.1.6-py3-none-any.whl \
+  --previous-wheel <previous-stable-or-lower-immutable-candidate-wheel> \
   --wheelhouse dist/native-wheelhouse \
   --hermes-home "$TEMP_ROOT/hermes-lifecycle" \
+  --wright-home "$TEMP_ROOT/wright-lifecycle" \
+  --plugin-source hermes-plugin-wright \
   --evidence dist/native-lifecycle-local.json
 ```
 
-The harness must:
+The harness must install/start/status/doctor/stop/update/rollback/uninstall,
+remove/reinstall the Hermes adapter, preserve/reopen user data, and perform the
+separately confirmed purge. Git may appear only in the Hermes adapter
+install/update phase; no Wright lifecycle phase may invoke it.
 
-1. install and enable the plugin through the Hermes package-plugin contract;
-2. run `/wright start` and observe automatic isolated runtime installation;
-3. verify challenged API/UI identity, Hermes connection, MCP transport, and catalog;
-4. create/reopen a workspace and exercise multiple Hermes sessions;
-5. stop and restart;
-6. update from the previous stable public version;
-7. exercise successful and refused rollback cases;
-8. uninstall while preserving data;
-9. reinstall and recover the workspace;
-10. explicitly purge and prove no out-of-scope deletion;
-11. fail if any forbidden executable or source import is observed.
+## 6. Prove the direct Codex MCP profile
 
-## 6. Run platform acceptance
+```bash
+uv run python -m pytest -q \
+  tests/native_runtime/test_manager_profiles.py \
+  tests/native_runtime/test_mcp_bridge.py
+```
 
-Run the same base and complete lifecycle commands on every platform in
-`src/wright_engineering/compatibility.json`. Pull-request CI creates a separate
-platform-local wheelhouse and evidence file on Linux, Windows, and macOS. A
-platform is not publicly supported until its complete native result is green.
+The Codex profile launches the same installed Wright STDIO bridge or connects to
+the same Streamable HTTP endpoint. It does not route through Hermes or store
+Wright data beneath manager state. OpenClaw is future work and is not part of
+this validation.
 
 ## 7. Run existing regressions
 
@@ -97,9 +95,9 @@ npm run test --workspace=apps/web
 npm run build --workspace=apps/web
 ```
 
-Engineering MCP server catalog validation remains the separate clean-container
-process in `docs/mcp-catalog/mcp-server-testing-process.md`; do not add host MCP
-software to native or Docker base installations.
+Engineering MCP catalog validation remains the separate clean-container process
+in `docs/mcp-catalog/mcp-server-testing-process.md`; do not add host MCP software
+to native or Docker base installations.
 
 ## 8. Run merge gates
 
@@ -108,21 +106,17 @@ scripts/check-dev-merge.sh
 scripts/check-prod-merge.sh
 ```
 
-Native acceptance has no skip flag. A documented local host limitation may move
-one platform execution to CI, but CI must pass it before the pull request is
-green. Production release behavior is not complete until real released Hermes
-public-artifact verification replaces the fixture evidence.
+Native acceptance has no skip flag. Production verification consumes the
+published Hermes Git tag, published Wright artifact, and every other publicly
+claimed manager-adapter identity.
 
-## Expected user experience after release
-
-The final public documentation will use the exact package-plugin command exposed
-by the compatible Hermes release, followed by:
+## Expected Hermes experience
 
 ```text
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 /wright start
 ```
 
-The command must install and start Wright without repository detection, Git,
-Docker, Node/npm, manual Python package commands, or a frontend build. The
-current `hermes plugins install owner/repo` Git path is a legacy migration path,
-not this acceptance subject.
+Git is an explicit Hermes prerequisite. `/wright start` installs and starts the
+packaged Wright runtime without repository detection, Docker, Node/npm, manual
+Python package commands, or a frontend build.

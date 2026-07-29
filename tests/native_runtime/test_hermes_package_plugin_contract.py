@@ -3,15 +3,13 @@ from __future__ import annotations
 import shutil
 import subprocess
 
-import pytest
-
 from scripts.release.hermes_capability import (
-    probe_hermes_package_capability,
-    require_released_package_capability,
+    probe_hermes_git_plugin_interface,
+    require_released_git_plugin_interface,
 )
 
 
-CURRENT_GIT_ONLY_HELP = """Install plugins from Git repositories.
+CURRENT_GIT_HELP = """Install plugins from Git repositories.
 install  Install a plugin from a Git URL or owner/repo
 update   Pull latest changes for an installed plugin
 remove   Remove an installed plugin
@@ -25,46 +23,32 @@ def _runner(outputs: list[str]):
     return run
 
 
-def test_current_git_only_hermes_interface_is_rejected() -> None:
-    result = probe_hermes_package_capability(
-        runner=_runner(["Hermes Agent v0.19.0\n", CURRENT_GIT_ONLY_HELP])
+def test_current_hermes_git_interface_is_the_supported_adapter_boundary() -> None:
+    result = require_released_git_plugin_interface(
+        runner=_runner(["Hermes Agent v0.19.0\n", CURRENT_GIT_HELP])
     )
     assert result.version == "0.19.0"
-    assert result.git_only
-    assert not result.supported
-    assert result.capability is None
-
-    with pytest.raises(RuntimeError, match="Git-only"):
-        require_released_package_capability(
-            runner=_runner(["Hermes Agent v0.19.0\n", CURRENT_GIT_ONLY_HELP])
-        )
-
-
-def test_required_package_interface_is_accepted_only_when_complete() -> None:
-    package_help = " ".join(
-        (
-            "Install plugins from immutable Python distributions.",
-            "install-package",
-            "update-package",
-            "rollback-package",
-            "remove-package",
-        )
-    )
-    result = require_released_package_capability(
-        runner=_runner(["Hermes Agent v0.20.0\n", package_help])
-    )
     assert result.supported
-    assert result.capability == "python-distribution-v1"
+    assert result.adapter_protocol == "hermes-git-plugin-v1"
+    assert result.install_interface == "git"
+    assert result.commands == ("install", "update", "remove")
 
 
-def test_installed_known_git_only_hermes_is_not_mistaken_for_package_capable() -> None:
+def test_incomplete_git_interface_fails_closed() -> None:
+    result = probe_hermes_git_plugin_interface(
+        runner=_runner(["Hermes Agent v0.19.0\n", "install from Git\n"])
+    )
+    assert not result.supported
+
+
+def test_installed_hermes_uses_the_same_real_interface_when_available() -> None:
     executable = shutil.which("hermes")
     if executable is None:
-        result = probe_hermes_package_capability(
-            runner=_runner(["Hermes Agent v0.19.0\n", CURRENT_GIT_ONLY_HELP])
+        result = probe_hermes_git_plugin_interface(
+            runner=_runner(["Hermes Agent v0.19.0\n", CURRENT_GIT_HELP])
         )
     else:
-        result = probe_hermes_package_capability(executable)
+        result = probe_hermes_git_plugin_interface(executable)
     if result.version in {"0.18.2", "0.19.0"}:
-        assert result.git_only
-        assert not result.supported
+        assert result.adapter_protocol == "hermes-git-plugin-v1"
+        assert result.install_interface == "git"

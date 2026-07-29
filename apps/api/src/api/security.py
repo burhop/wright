@@ -18,6 +18,7 @@ PUBLIC_PATHS = frozenset(
         "/",
         "/api/auth/session",
         "/api/health",
+        "/api/runtime/identity",
         "/api/agent/health",
         "/api/inference/health",
         "/api/setup/status",
@@ -40,6 +41,7 @@ class SecuritySettings:
     api_token: str | None
     allowed_origins: tuple[str, ...]
     bind_host: str
+    native_runtime: bool = False
 
     @classmethod
     def from_env(cls) -> "SecuritySettings":
@@ -55,6 +57,7 @@ class SecuritySettings:
                 "http://127.0.0.1:5173,http://localhost:5173",
             ),
             bind_host=os.getenv("WRIGHT_BIND_HOST", "127.0.0.1"),
+            native_runtime=os.getenv("WRIGHT_NATIVE_RUNTIME") == "1",
         )
 
     @property
@@ -103,6 +106,40 @@ class SecuritySettings:
         return bool(expected and candidate and hmac.compare_digest(candidate, expected))
 
 
+def _host_name(value: str) -> str:
+    value = value.strip().lower()
+    if value.startswith("["):
+        return value[1:].partition("]")[0]
+    return value.rsplit(":", 1)[0]
+
+
+def _loopback_host(value: str) -> bool:
+    host = _host_name(value)
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def native_browser_bootstrap_allowed(
+    request: Request, settings: SecuritySettings
+) -> bool:
+    """Allow the packaged loopback UI to receive a derived HttpOnly session."""
+    if not (settings.native_runtime and settings.enforced and settings.api_token):
+        return False
+    if request.method != "GET" or request.url.path != "/":
+        return False
+    if not _loopback_host(request.headers.get("host", "")):
+        return False
+    client_host = request.client.host if request.client else ""
+    if client_host and not _loopback_host(client_host):
+        return False
+    fetch_mode = request.headers.get("sec-fetch-mode")
+    return fetch_mode in {None, "navigate"}
+
+
 def _bearer(value: str | None) -> str | None:
     if not value:
         return None
@@ -139,7 +176,19 @@ class ControlPlaneSecurityMiddleware(BaseHTTPMiddleware):
                     headers={"WWW-Authenticate": "Bearer"},
                 )
             request.state.principal_role = "admin"
-        return await call_next(request)
+        response = await call_next(request)
+        if native_browser_bootstrap_allowed(request, settings):
+            browser_session = settings.browser_session_token()
+            if browser_session is not None:
+                response.set_cookie(
+                    SESSION_COOKIE,
+                    browser_session,
+                    httponly=True,
+                    secure=os.getenv("WRIGHT_COOKIE_SECURE", "0") == "1",
+                    samesite="strict",
+                    path="/api",
+                )
+        return response
 
 
 def require_admin(request: Request) -> None:

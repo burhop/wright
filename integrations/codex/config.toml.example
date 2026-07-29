@@ -1,0 +1,9 @@
+[mcp_servers.wright]
+command = "wright"
+args = ["mcp", "serve", "--stdio", "--workspace", "<absolute-workspace>", "--api-url", "http://127.0.0.1:8000", "--session-id", "<wright-session-id>", "--workspace-id", "<wright-workspace-id>"]
+startup_timeout_sec = 30
+
+[mcp_servers.wright.env]
+WRIGHT_HOME = "<wright-home>"
+WRIGHT_MANAGER_ID = "codex"
+WRIGHT_MANAGER_PROTOCOL = "mcp-v1"

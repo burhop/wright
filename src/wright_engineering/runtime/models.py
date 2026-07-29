@@ -80,8 +80,8 @@ class RuntimeInstallation:
     environment_path: str
     python_version: str
     platform_tag: str
-    plugin_compatibility: str
-    hermes_compatibility: str
+    runtime_specifier: str
+    manager_protocols: dict[str, str]
     data_schema_min: int
     data_schema_max: int
     installed_at: str
@@ -92,6 +92,10 @@ class RuntimeInstallation:
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> RuntimeInstallation:
         copy = dict(value)
+        if "runtime_specifier" not in copy and "plugin_compatibility" in copy:
+            copy["runtime_specifier"] = copy.pop("plugin_compatibility")
+        if "manager_protocols" not in copy and "hermes_compatibility" in copy:
+            copy["manager_protocols"] = {"hermes": copy.pop("hermes_compatibility")}
         copy["source_channel"] = SourceChannel(copy["source_channel"])
         copy["status"] = RuntimeStatus(copy["status"])
         return cls(**copy)
@@ -109,6 +113,8 @@ class RuntimeInstallation:
             raise ValueError("runtime_environment_not_absolute")
         if self.data_schema_min < 0 or self.data_schema_max < self.data_schema_min:
             raise ValueError("runtime_schema_range_invalid")
+        if not self.runtime_specifier or not self.manager_protocols:
+            raise ValueError("runtime_compatibility_missing")
 
 
 @dataclass(slots=True)
@@ -178,11 +184,11 @@ class LifecycleResult:
 
 @dataclass(slots=True)
 class Manifest:
-    SCHEMA_VERSION: ClassVar[int] = 1
+    SCHEMA_VERSION: ClassVar[int] = 2
 
     schema_version: int
     installation_id: str
-    hermes_home: str
+    wright_home: str
     data_root: str
     active_runtime_id: str | None
     predecessor_runtime_id: str | None
@@ -281,12 +287,12 @@ class Manifest:
     }
 
     @classmethod
-    def create(cls, hermes_home: Path, data_root: Path) -> Manifest:
+    def create(cls, wright_home: Path, data_root: Path) -> Manifest:
         now = utc_now()
         return cls(
             schema_version=cls.SCHEMA_VERSION,
             installation_id=str(uuid4()),
-            hermes_home=str(hermes_home.resolve()),
+            wright_home=str(wright_home.resolve()),
             data_root=str(data_root.resolve()),
             active_runtime_id=None,
             predecessor_runtime_id=None,
@@ -304,6 +310,12 @@ class Manifest:
     def from_dict(cls, value: dict[str, Any]) -> Manifest:
         try:
             copy = dict(value)
+            if "wright_home" not in copy and "hermes_home" in copy:
+                copy["wright_home"] = str(
+                    (Path(copy.pop("hermes_home")) / "wright").resolve()
+                )
+            if copy.get("schema_version") == 1:
+                copy["schema_version"] = cls.SCHEMA_VERSION
             copy["lifecycle_state"] = LifecycleState(copy["lifecycle_state"])
             operation = copy.get("current_operation")
             copy["current_operation"] = (
@@ -341,7 +353,7 @@ class Manifest:
         if self.schema_version != self.SCHEMA_VERSION:
             raise ValueError("manifest_schema_version_unsupported")
         if (
-            not Path(self.hermes_home).is_absolute()
+            not Path(self.wright_home).is_absolute()
             or not Path(self.data_root).is_absolute()
         ):
             raise ValueError("manifest_path_not_absolute")

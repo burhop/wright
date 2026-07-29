@@ -27,13 +27,13 @@ class StopProcessManager:
 
 
 def _running_lifecycle(tmp_path: Path, manager: StopProcessManager) -> NativeLifecycle:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
         process_manager=manager,  # type: ignore[arg-type]
         health_probe=lambda _: True,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
     runtime_path = layout.runtime_path("runtime-1")
     executable = runtime_path / "Scripts" / "python.exe"
@@ -50,8 +50,8 @@ def _running_lifecycle(tmp_path: Path, manager: StopProcessManager) -> NativeLif
         environment_path=str(runtime_path),
         python_version="3.12.11",
         platform_tag="windows-x86_64",
-        plugin_compatibility="==0.1.5",
-        hermes_compatibility=">=0.19,<1",
+        runtime_specifier="==0.1.5",
+        manager_protocols={"cli": "wright-lifecycle-v1"},
         data_schema_min=1,
         data_schema_max=1,
         installed_at=utc_now(),

@@ -9,12 +9,12 @@ from wright_engineering.runtime.lifecycle import NativeLifecycle
 def test_competing_session_receives_lifecycle_busy_with_operation_id(
     tmp_path: Path,
 ) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
         lock_timeout=0.02,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
     with lifecycle.store.lock(operation_id="session-one", timeout=0.1):
         result = lifecycle.start(requested_by="session-two")
@@ -24,11 +24,11 @@ def test_competing_session_receives_lifecycle_busy_with_operation_id(
 
 
 def test_status_remains_available_while_mutation_lock_is_held(tmp_path: Path) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
     with lifecycle.store.lock(operation_id="session-one", timeout=0.1):
         result = lifecycle.status()

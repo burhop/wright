@@ -25,6 +25,7 @@ def test_gateway_session_requires_explicit_immutable_binding() -> None:
         workspace_id="w1",
         workspace_path="/workspace/a",
         transport="stdio",
+        binding_session_id="workspace-session-1",
     )
     initialized = session.initialized(
         protocol_version="2025-11-25",
@@ -37,6 +38,7 @@ def test_gateway_session_requires_explicit_immutable_binding() -> None:
     assert session.state is SessionState.CREATED
     assert active.state is SessionState.ACTIVE
     assert active.workspace_id == "w1"
+    assert active.binding_session_id == "workspace-session-1"
     with pytest.raises(TypeError):
         active.client_capabilities["foreign"] = {}  # type: ignore[index]
     with pytest.raises(GatewayError, match="exactly once"):

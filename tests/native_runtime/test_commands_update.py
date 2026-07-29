@@ -2,35 +2,26 @@ from __future__ import annotations
 
 import asyncio
 
-from wright_engineering.hermes_plugin.commands import handle_wright
-from wright_engineering.runtime.models import LifecycleResult, LifecycleState, utc_now
+from .adapter_support import load_adapter_commands
 
 
-def result(command: str) -> LifecycleResult:
-    now = utc_now()
-    return LifecycleResult(
-        operation_id="op",
-        command=command,
-        ok=True,
-        state=LifecycleState.STOPPED,
-        code="ok",
-        summary=f"{command} complete",
-        started_at=now,
-        finished_at=now,
-    )
+COMMANDS = load_adapter_commands()
 
 
-class FakeLifecycle:
-    def update(self, version=None):
-        return result("update")
-
-    def rollback(self, version=None):
-        return result("rollback")
+def _invoke(command: str, argument: str | None) -> dict[str, object]:
+    return {
+        "ok": True,
+        "code": "ok",
+        "summary": f"{command} complete",
+        "details": {"argument": argument},
+        "remediation": [],
+    }
 
 
 def test_update_and_rollback_commands_project_results() -> None:
-    runtime = FakeLifecycle()
-    assert "update complete" in asyncio.run(handle_wright("update", lifecycle=runtime))  # type: ignore[arg-type]
+    assert "update complete" in asyncio.run(
+        COMMANDS.handle_wright("update 0.1.5", invoker=_invoke)
+    )
     assert "rollback complete" in asyncio.run(
-        handle_wright("rollback", lifecycle=runtime)
-    )  # type: ignore[arg-type]
+        COMMANDS.handle_wright("rollback", invoker=_invoke)
+    )

@@ -20,22 +20,23 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.13"
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: "22"
-          cache: npm
       - name: Build the reviewed native Python subject once
         run: |
           python -m pip install build
           python scripts/build-native-runtime.py \
             --output dist/native-candidate \
             --evidence dist/native-candidate-evidence.json
+          wheel=$(find dist/native-candidate -maxdepth 1 -name '*.whl' -print -quit)
+          python scripts/build-native-predecessor-fixture.py \
+            --wheel "$wheel" \
+            --output dist/native-predecessor
       - name: Upload immutable candidate and build evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: native-hermes-candidate
           path: |
             dist/native-candidate
+            dist/native-predecessor
             dist/native-candidate-evidence.json
           if-no-files-found: error
 
@@ -65,11 +66,11 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: ${{ matrix.python }}
-      - name: Prepare the platform-local dependency wheelhouse
+      - name: Prepare released Hermes and the platform-local dependency wheelhouse
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install psutil
+          python -m pip install psutil "hermes-agent==0.19.0"
           python - <<'PY'
           import pathlib, subprocess, sys
           wheel = next(pathlib.Path("dist/native-candidate").glob("*.whl"))
@@ -77,10 +78,11 @@ jobs:
           wheelhouse.mkdir()
           subprocess.check_call([
               sys.executable, "-m", "pip", "download", "--only-binary=:all:",
-              "--dest", str(wheelhouse), f"{wheel.resolve()}[runtime]",
+              "--dest", str(wheelhouse),
+              f"wright-engineering[runtime] @ {wheel.resolve().as_uri()}",
           ])
           PY
-      - name: Prove clean base install and Hermes entry-point isolation
+      - name: Prove real Hermes Git adapter install and post-adapter isolation
         shell: bash
         run: |
           set -euo pipefail
@@ -89,6 +91,7 @@ jobs:
             --wheel "$wheel" \
             --wheelhouse dist/platform-wheelhouse \
             --hermes-home "$RUNNER_TEMP/hermes-native-candidate" \
+            --plugin-source hermes-plugin-wright \
             --evidence "dist/native-base-${RUNNER_OS}.json" \
             --base-only
       - name: Upload platform evidence
@@ -110,8 +113,42 @@ jobs:
       - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           version: "0.9.26"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: native-hermes-candidate
+          path: dist
       - name: Run native lifecycle, failure, preservation, and policy contracts
         run: uv run --isolated --all-packages --all-groups python -m pytest -q tests/native_runtime tests/release/test_native_release_evidence.py tests/release/test_native_workflow_policy.py
+      - name: Prove first-release update and rollback with two immutable candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install psutil "hermes-agent==0.19.0"
+          npm install --global "@openai/codex@0.144.1"
+          candidate=$(find dist/native-candidate -maxdepth 1 -name '*.whl' -print -quit)
+          predecessor=$(find dist/native-predecessor -maxdepth 1 -name '*.whl' -print -quit)
+          python - <<'PY'
+          import pathlib, subprocess, sys
+          wheel = next(pathlib.Path("dist/native-candidate").glob("*.whl"))
+          wheelhouse = pathlib.Path("dist/lifecycle-wheelhouse")
+          wheelhouse.mkdir()
+          subprocess.check_call([
+              sys.executable, "-m", "pip", "download", "--only-binary=:all:",
+              "--dest", str(wheelhouse),
+              f"wright-engineering[runtime] @ {wheel.resolve().as_uri()}",
+          ])
+          PY
+          python scripts/test-native-hermes-install.py \
+            --wheel "$candidate" \
+            --previous-wheel "$predecessor" \
+            --wheelhouse dist/lifecycle-wheelhouse \
+            --hermes-home "$RUNNER_TEMP/hermes-native-lifecycle" \
+            --wright-home "$RUNNER_TEMP/wright-native-lifecycle" \
+            --plugin-source hermes-plugin-wright \
+            --evidence dist/native-lifecycle.json
 
   native-candidate-required:
     if: ${{ always() }}

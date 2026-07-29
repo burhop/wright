@@ -490,14 +490,8 @@ wheels = [
 
 [[package]]
 name = "hermes-plugin-wright"
-version = "1.1.0"
+version = "1.2.0"
 source = { editable = "hermes-plugin-wright" }
-dependencies = [
-    { name = "wright-engineering" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "wright-engineering", editable = "." }]
 
 [[package]]
 name = "httpcore"
@@ -1754,10 +1748,11 @@ requires-dist = [{ name = "wright-core", editable = "packages/core" }]
 
 [[package]]
 name = "wright-engineering"
-version = "0.1.5"
+version = "0.1.6"
 source = { editable = "." }
 dependencies = [
     { name = "packaging" },
+    { name = "psutil" },
 ]
 
 [package.optional-dependencies]
@@ -1771,7 +1766,6 @@ runtime = [
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
     { name = "passlib", extra = ["bcrypt"] },
-    { name = "psutil" },
     { name = "pydantic" },
     { name = "python-jose", extra = ["cryptography"] },
     { name = "python-multipart" },
@@ -1801,7 +1795,7 @@ requires-dist = [
     { name = "opentelemetry-sdk", marker = "extra == 'runtime'", specifier = ">=1.25,<2" },
     { name = "packaging", specifier = ">=24,<27" },
     { name = "passlib", extras = ["bcrypt"], marker = "extra == 'runtime'", specifier = ">=1.7,<2" },
-    { name = "psutil", marker = "extra == 'runtime'", specifier = ">=6,<8" },
+    { name = "psutil", specifier = ">=6,<8" },
     { name = "pydantic", marker = "extra == 'runtime'", specifier = ">=2.7,<3" },
     { name = "python-jose", extras = ["cryptography"], marker = "extra == 'runtime'", specifier = ">=3.3,<4" },
     { name = "python-multipart", marker = "extra == 'runtime'", specifier = ">=0.0.32,<1" },

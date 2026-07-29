@@ -14,7 +14,7 @@ def test_plugin_manifest_supports_current_hermes_agent():
     assert manifest["name"] == "wright"
     assert "commands" in manifest["capabilities"]
     assert Version(manifest["min_hermes_version"]) == Version("0.19.0")
-    assert manifest["deprecated"] is True
+    assert manifest["deprecated"] is False
 
 
 def test_flat_directory_plugin_load_registers_wright_command(monkeypatch):
@@ -47,7 +47,7 @@ def test_flat_directory_plugin_load_registers_wright_command(monkeypatch):
                 sys.modules.pop(name, None)
 
 
-def test_plugin_dependency_policy_is_mirror_release_ready():
+def test_plugin_dependency_policy_is_stdlib_only():
     try:
         import tomllib
     except ModuleNotFoundError:  # pragma: no cover
@@ -58,13 +58,13 @@ def test_plugin_dependency_policy_is_mirror_release_ready():
         project = tomllib.load(fh)["project"]
 
     deps = project["dependencies"]
-    assert deps == ["wright-engineering==0.1.5"]
+    assert deps == []
 
 
 def test_plugin_runtime_does_not_import_private_wright_packages():
     plugin_dir = Path(__file__).resolve().parents[1]
 
-    for module_name in ["__init__.py", "bridge.py", "commands.py"]:
+    for module_name in ["__init__.py", "bootstrap.py", "commands.py"]:
         source = (plugin_dir / module_name).read_text(encoding="utf-8")
         assert "from tool_registry" not in source
         assert "import tool_registry" not in source

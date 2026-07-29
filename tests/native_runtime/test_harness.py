@@ -35,6 +35,7 @@ def test_harness_requires_exact_candidate_wheel_and_evidence_paths() -> None:
     )
     assert args.wheel == Path("candidate.whl")
     assert args.previous_wheel is None
+    assert args.hermes_command == "hermes"
     assert not args.base_only
 
 
@@ -52,7 +53,9 @@ def test_clean_child_environment_removes_source_and_forbidden_tools(
     )
     assert "PYTHONPATH" not in environment
     assert "WRIGHT_REPO_DIR" not in environment
-    assert environment["HERMES_PLUGIN_INSTALL_CAPABILITY"] == "python-distribution-v1"
+    assert environment["WRIGHT_MANAGER_ID"] == "hermes"
+    assert environment["WRIGHT_MANAGER_PROTOCOL"] == "hermes-git-plugin-v1"
+    assert environment["WRIGHT_HOME"] == str(tmp_path / "wright-home")
     assert environment["PATH"] == str(
         plugin / ("Scripts" if os.name == "nt" else "bin")
     )
@@ -130,3 +133,14 @@ def test_wheel_version_is_exact_and_rejects_non_wright_artifact(tmp_path: Path) 
     assert HARNESS.wheel_version(candidate) == "0.1.5"
     with pytest.raises(HARNESS.HarnessError, match="not a Wright wheel"):
         HARNESS.wheel_version(tmp_path / "other-0.1.5-py3-none-any.whl")
+
+
+def test_json_result_accepts_pretty_manager_output() -> None:
+    completed = subprocess.CompletedProcess(
+        ["manager"],
+        0,
+        '{\n  "ok": true,\n  "profile": "wright"\n}\n',
+        "",
+    )
+
+    assert HARNESS._json_result(completed) == {"ok": True, "profile": "wright"}

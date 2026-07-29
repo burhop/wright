@@ -1,15 +1,14 @@
-"""One-release compatibility delegate for legacy Git-installed Wright users."""
+"""Production Wright adapter for Hermes' Git plugin interface."""
 
 from __future__ import annotations
 
-try:
-    from wright_engineering.hermes_plugin import register
-except ImportError as exc:  # pragma: no cover - exercised in legacy installs
-    raise RuntimeError(
-        "This legacy Wright plugin mirror now delegates to the public "
-        "wright-engineering distribution. Install Wright through Hermes' "
-        "supported package-plugin channel and retry."
-    ) from exc
+from typing import Any
+
+
+def register(ctx: Any) -> None:
+    from .commands import register_commands
+
+    register_commands(ctx)
 
 
 __all__ = ["register"]

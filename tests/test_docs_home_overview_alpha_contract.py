@@ -68,7 +68,7 @@ def test_getting_started_overview_uses_supported_alpha_paths() -> None:
     overview = squashed("docs/getting-started/overview.md")
 
     for expected in [
-        "Wright is alpha software and bring-your-own-AI",
+        "It is alpha software and bring-your-own-AI",
         "does not bundle an LLM",
         "Choose Your Alpha Path",
         "Docker appliance",

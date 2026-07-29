@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
+from importlib.resources import files
 from pathlib import Path
 
 from wright_engineering.runtime.artifacts import RuntimeArtifact
+from wright_engineering.runtime.compatibility import CompatibilityPolicy
 from wright_engineering.runtime.layout import NativeLayout
 from wright_engineering.runtime.lifecycle import NativeLifecycle
 from wright_engineering.runtime.models import (
@@ -84,15 +87,22 @@ def lifecycle(
     health_probe=None,
     migration_manager=None,
 ) -> NativeLifecycle:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
+    compatibility = replace(
+        CompatibilityPolicy.load(
+            Path(str(files("wright_engineering").joinpath("compatibility.json")))
+        ),
+        runtime_specifier=">=0.1.4,<=0.1.6",
+    )
     return NativeLifecycle(
         layout,
         installer=installer or FakeInstaller(layout),  # type: ignore[arg-type]
         process_manager=process_manager or FakeProcessManager(),  # type: ignore[arg-type]
         health_probe=health_probe or (lambda _: True),
         migration_manager=migration_manager,
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        compatibility=compatibility,
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
     )
 
 
@@ -120,8 +130,8 @@ def seed_runtime(
         environment_path=str(environment),
         python_version="3.12.11",
         platform_tag="windows-x86_64",
-        plugin_compatibility=f"=={version}",
-        hermes_compatibility=">=0.19,<1",
+        runtime_specifier=f"=={version}",
+        manager_protocols={"cli": "wright-lifecycle-v1"},
         data_schema_min=data_schema_min,
         data_schema_max=data_schema_max,
         installed_at=utc_now(),

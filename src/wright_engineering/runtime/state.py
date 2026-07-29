@@ -36,7 +36,7 @@ class ManifestStore:
         if not self.manifest_path.exists():
             if not create:
                 raise StateError("manifest_missing")
-            return Manifest.create(self.layout.hermes_home, self.layout.data)
+            return Manifest.create(self.layout.wright_home, self.layout.data)
         try:
             payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
             manifest = Manifest.from_dict(payload)

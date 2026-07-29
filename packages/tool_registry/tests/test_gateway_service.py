@@ -279,6 +279,21 @@ def test_existing_session_cannot_be_rebound() -> None:
         )
 
 
+def test_transport_session_preserves_distinct_workspace_binding_session() -> None:
+    instance, _, _ = service()
+
+    context = instance.open_session(
+        session_id="transport-1",
+        binding_session_id="s1",
+        principal_id="p1",
+        workspace_id="w1",
+        transport="streamable_http",
+    )
+
+    assert context.session_id == "transport-1"
+    assert context.binding_session_id == "s1"
+
+
 def test_unsupported_protocol_fails_with_stable_error() -> None:
     instance, _, _ = service()
     instance.workspaces.bindings["unsupported"] = ("p3", "w1", "/workspace/one")

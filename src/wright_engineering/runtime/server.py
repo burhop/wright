@@ -26,6 +26,8 @@ def prepare_runtime_environment(
     layout: NativeLayout,
     *,
     static_path: Path | None = None,
+    bind_host: str = "127.0.0.1",
+    port: int = 8000,
     environment: MutableMapping[str, str] | None = None,
 ) -> dict[str, str]:
     layout.ensure()
@@ -38,7 +40,18 @@ def prepare_runtime_environment(
         "DATABASE_PATH": str(layout.data / "wright.db"),
         "FRONTEND_DIST_DIR": str(static),
         "WRIGHT_WORKSPACE_ROOT": str(layout.workspaces),
+        "WRIGHT_WORKSPACES_DIR": str(layout.workspaces),
         "WRIGHT_LOG_DIR": str(layout.logs),
+        "WRIGHT_BIND_HOST": bind_host,
+        "WRIGHT_ALLOWED_ORIGINS": ",".join(
+            dict.fromkeys(
+                (
+                    f"http://{bind_host}:{port}",
+                    f"http://127.0.0.1:{port}",
+                    f"http://localhost:{port}",
+                )
+            )
+        ),
     }
     target_environment = os.environ if environment is None else environment
     target_environment.update(values)
@@ -65,11 +78,12 @@ def serve(
     data_root: Path,
     static_path: Path | None = None,
 ) -> None:
-    hermes_home = data_root.parent.parent
-    layout = NativeLayout.from_hermes_home(hermes_home)
+    layout = NativeLayout.from_wright_home(data_root.parent)
     if data_root.resolve(strict=False) != layout.data:
         raise ServerBootstrapError("data_root_outside_layout")
-    prepare_runtime_environment(layout, static_path=static_path)
+    prepare_runtime_environment(
+        layout, static_path=static_path, bind_host=host, port=port
+    )
     import uvicorn
 
     uvicorn.run("api.main:app", host=host, port=port, log_config=None)

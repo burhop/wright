@@ -78,12 +78,15 @@ def test_exact_artifact_runbooks_are_published_and_honest() -> None:
     assert "Never overwrite PyPI files" in recovery
     assert "digest already recorded as verified" in recovery.lower()
     assert "released-Hermes" in recovery
-    assert "Native Hermes and Docker are independent mandatory" in recovery
+    assert "Native manager paths and Docker are independent mandatory" in recovery
     assert "GitHub Release last" in runbook
-    assert "python-distribution-v1" in runbook
+    assert "real Git interface" in runbook
+    assert "Codex" in runbook
 
 
-def test_public_docs_make_native_primary_docker_mandatory_and_package_roles_exact() -> None:
+def test_public_docs_make_native_primary_docker_mandatory_and_package_roles_exact() -> (
+    None
+):
     readme = read_text("README.md")
     overview = read_text("docs/getting-started/overview.md")
     matrix = read_text("docs/getting-started/install-matrix.md")
@@ -94,21 +97,23 @@ def test_public_docs_make_native_primary_docker_mandatory_and_package_roles_exac
 
     assert "Native Hermes (Primary User Path)" in readme
     assert "mandatory turnkey" in combined
-    assert "python-distribution-v1" in combined
-    assert "production_native_available" in combined
-    assert "current released Hermes 0.19.0" in readme
-    assert "no Git, Docker" in combined
+    assert "hermes plugins install" in combined
+    assert "direct MCP" in combined
+    assert "Git is" in combined
+    assert "no checkout, Docker" in combined
     assert "manual Python package" in combined
     assert "one complete public application distribution" in readme
     assert "/wright uninstall" in native
     assert "/wright purge <confirmation-code>" in native
     assert "External workspaces" in overview
-    assert "legacy Git-plugin mirror" in combined
+    assert "production thin adapter" in combined
 
     for stale in (
         "Docker remains the primary end-user install path",
         "lightweight helper/discovery package",
         "This package is a helper and discovery surface",
+        "python-distribution-v1",
+        "production_native_available",
     ):
         assert stale not in combined
 

@@ -2,23 +2,21 @@
 
 | Use case | Recommended path | Verification | Boundary |
 | --- | --- | --- | --- |
-| Existing Hermes user | [Native Hermes](hermes-plugin.md) after the compatibility page names a released package-capable Hermes | `/wright start`, `/wright status`, `/wright doctor` and the displayed local UI URL | Currently blocked by released Hermes 0.19.0 being Git-only. Do not substitute a checkout. |
-| Turnkey trial or third-party evaluator | Published Docker image `burhop/wright:<tag>` | Open `http://localhost:8080`; `/api/health` succeeds | BYO-AI and selected MCP host dependencies remain external. |
-| Windows 11 | Native Hermes once Windows x64 public lifecycle evidence is green, or Docker Desktop | Native lifecycle evidence or container health | No Git/Node/npm requirement for native users. |
-| Ubuntu 22.04/24.04 x64 | Native Hermes once Linux x64 evidence is green, or Docker Engine | Native lifecycle evidence or container health | Other architectures are not implied. |
-| macOS Sonoma 14+ | Native Hermes only after the recorded architecture passes | Native lifecycle evidence | Docker/CAD solver limitations remain tool-specific. |
-| Python contributor | Source checkout and [contributor workflow](https://github.com/burhop/wright/blob/main/CONTRIBUTING.md) | Dev merge gate | Manual `pip install wright-engineering` is artifact diagnosis, not the user install. |
-| MCP contributor | Either runtime plus the clean selected-server process | MCP initialize, tools/list, safe backend probe, gateway proxy | Never add MCP-specific hosts to the base package/image for catalog optics. |
+| Hermes user | [Native Hermes](hermes-plugin.md) | `/wright start`, `/wright status`, `/wright doctor` | Git is a Hermes adapter prerequisite; Wright runtime commands need no checkout, Docker, or Node/npm. |
+| Codex user | [Direct Codex MCP](codex.md) | `codex mcp get wright` and MCP initialize/list | Hermes is not in the path. |
+| OpenClaw user | Future integration | Not currently verified or supported | OpenClaw is not part of this release gate. |
+| Turnkey evaluator | Published Docker image `burhop/wright:<tag>` | Open `http://localhost:8080`; `/api/health` succeeds | BYO-AI and selected MCP hosts remain external. |
+| Windows 11 | Hermes, Codex, or Docker Desktop after its recorded Windows x64 evidence is green | Manager lifecycle/MCP evidence or container health | No unrecorded architecture claim. |
+| Ubuntu 22.04/24.04 | Hermes, Codex, or Docker Engine after its recorded Linux x64 evidence is green | Manager lifecycle/MCP evidence or container health | Other architectures are not implied. |
+| macOS Sonoma 14+ | Hermes or Codex after its recorded x64/arm64 run passes | Manager lifecycle/MCP evidence | CAD solver limits remain tool-specific. |
+| Python contributor | Source checkout and contributor workflow | Dev merge gate | Manual package installation is for development or diagnosis. |
+| MCP contributor | Any runtime plus the clean selected-server process | initialize, tools/list, safe backend probe, gateway proxy | Never add MCP-specific hosts to the base package/image for catalog optics. |
 
 ## Availability is evidence-driven
 
-The packaged compatibility contract is
-`src/wright_engineering/compatibility.json`. A platform is supported publicly
-only when production evidence records the released Hermes version, exact Wright
-wheel hash, runtime-extra lock, platform/architecture, full lifecycle result,
-source isolation, and zero forbidden executables. Fixture-only or skipped runs
-do not make a platform supported.
-
-At this feature-candidate stage, `production_native_available` is `false` and
-`released_hermes_version` is `null`. Docker publication remains mandatory and
-independent.
+`src/wright_engineering/compatibility.json` records runtime and manager protocol
+compatibility. Production evidence records each released adapter identity, the
+exact Wright wheel hash, runtime-extra lock, platform/architecture, lifecycle or
+MCP result, source isolation, and forbidden-executable audit. Fixture-only or
+skipped runs do not make a platform supported. Docker publication to both GHCR
+and Docker Hub remains mandatory and independent.

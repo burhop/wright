@@ -18,8 +18,25 @@ echo "Use only documented SKIP_* overrides for local host limitations, never to 
 run scripts/check-dev-merge.sh
 run scripts/security-scan.sh --include-untracked
 run scripts/alpha-release-check.sh
-run make hermes-plugin-mirror-validate
-run uv run python -c "from scripts.release.hermes_capability import require_released_package_capability; require_released_package_capability()"
+
+mirror_dir="$(mktemp -d "${TMPDIR:-/tmp}/wright-plugin-mirror.XXXXXX")"
+cleanup_mirror() {
+  rm -rf "$mirror_dir"
+}
+trap cleanup_mirror EXIT
+run scripts/sync-hermes-plugin-mirror.sh \
+  --source hermes-plugin-wright \
+  --mirror-url https://github.com/burhop/hermes-plugin-wright \
+  --branch dev \
+  --channel development \
+  --output-dir "$mirror_dir"
+run scripts/validate-hermes-plugin-mirror.sh \
+  --mirror-dir "$mirror_dir" \
+  --channel development
+cleanup_mirror
+trap - EXIT
+
+run uv run python -c "from scripts.release.hermes_capability import require_released_git_plugin_interface; require_released_git_plugin_interface()"
 
 if grep -q -- '--base-only' .github/workflows/release.yml; then
   echo "Production release workflow must run the full published native lifecycle, not base-only acceptance."
@@ -34,7 +51,18 @@ if [[ "${SKIP_HERMES_PLUGIN_LIFECYCLE:-0}" == "1" ]]; then
   echo
   echo "==> Skipping Hermes plugin root lifecycle gate because SKIP_HERMES_PLUGIN_LIFECYCLE=1"
 else
-  run make hermes-plugin-root-lifecycle-test
+  run scripts/test-hermes-plugin-install.sh \
+    --mirror-root \
+    --repo-url https://github.com/burhop/hermes-plugin-wright \
+    --ref dev
+  run scripts/test-hermes-plugin-update.sh \
+    --mirror-root \
+    --repo-url https://github.com/burhop/hermes-plugin-wright \
+    --ref dev
+  run scripts/test-hermes-plugin-uninstall.sh \
+    --mirror-root \
+    --repo-url https://github.com/burhop/hermes-plugin-wright \
+    --ref dev
 fi
 
 echo

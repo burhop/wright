@@ -19,7 +19,7 @@ SUPPORT_EMAIL = "wright@makerengineer.com"
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="wright",
-        description="Wright native Hermes application and appliance diagnostics.",
+        description="Wright managed native application and appliance diagnostics.",
     )
     parser.add_argument(
         "--version",
@@ -61,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
     serve.add_argument("--workspace-id", default="wright-engineering")
     serve.add_argument("--token-env", default="WRIGHT_API_TOKEN")
     native = subcommands.add_parser(
-        "native", help="Operate the managed native Hermes runtime."
+        "native", help="Operate the manager-neutral native Wright runtime."
     )
     native.add_argument(
         "native_command",
@@ -86,8 +86,8 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     if args.command is None:
-        print("Wright native Hermes application")
-        print("Primary install: Hermes python-distribution-v1 (release-gated)")
+        print("Wright managed native application")
+        print("Primary manager path: Hermes Git plugin; Codex uses direct MCP")
         print(f"Docker Hub image: {DOCKER_IMAGE}:<tag>")
         print(f"GHCR image: {GHCR_IMAGE}:<tag>")
         print(f"Docs: {DOCS_URL}")

@@ -1,97 +1,95 @@
-# Hermes Package Plugin Contract
+# Hermes Git Plugin Contract
 
 ## Purpose
 
-Define the Hermes capability Wright requires for a native, no-Git install. This
-is an external compatibility boundary, not an invitation for Wright to modify
-Hermes core at runtime.
+Bind Wright to the released Hermes plugin interface without asking Wright to
+modify Hermes or invent new Hermes commands. Hermes owns Git plugin
+installation and command registration. Wright owns its isolated runtime
+lifecycle.
 
-## Required Hermes capability
+## Released Hermes interface
 
-Hermes MUST expose a supported, documented plugin lifecycle that accepts an
-immutable Python distribution reference or local candidate artifact and manages
-an entry point in the `hermes_agent.plugins` group.
-
-The illustrative CLI below names the behavior; the final spelling is whatever a
-released Hermes version documents and the compatibility fixture implements:
+The supported production path uses the released CLI verbatim:
 
 ```text
-hermes plugins install-package wright-engineering==<version> --enable
-hermes plugins update-package wright-engineering==<version>
-hermes plugins remove-package wright-engineering
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
+hermes plugins update wright
+hermes plugins remove wright
 ```
 
-Wright documentation MUST use the released interface verbatim. It MUST NOT
-silently map these operations to a Git clone.
+Git is a documented prerequisite of this Hermes phase. Because released Hermes
+does not accept a ref selector for install, verification compares the installed
+clone's HEAD with the recorded mirror commit and its provenance with the Wright
+release commit before running the adapter.
 
-## Install request
+## Adapter import contract
 
-Inputs:
+The Git checkout contains `plugin.yaml`, `__init__.py`, `commands.py`, and a
+standard-library-only bootstrap. Loading and registering `/wright`:
 
-- exact distribution and version, or an exact local wheel for candidate tests;
-- approved index/channel (`local_candidate`, `test`, or `stable`);
-- enable/disable decision;
-- optional expected SHA-256;
-- non-interactive mode for test and desktop orchestration.
+- imports no `wright_engineering`, FastAPI, MCP, or application module;
+- performs no network, package installation, process start, or filesystem
+  mutation;
+- registers only documented commands supported by Hermes 0.19;
+- stores no secrets and reads no Wright repository path.
 
-Required behavior:
+## Runtime bootstrap
 
-1. Resolve only the requested distribution/version/channel.
-2. Verify index policy, filename, normalized version, and expected hash when
-   supplied.
-3. Install the base distribution without its `runtime` extra into Hermes'
-   managed Python environment.
-4. Discover exactly one `hermes_agent.plugins` entry named `wright`.
-5. Enable it only when explicitly requested.
-6. Return a machine-readable installed distribution/version/entry-point result.
-7. Roll back the plugin environment or leave the previous plugin usable on
-   failure.
-8. Invoke no Git executable and consume no repository source.
+On the first `/wright start`, the adapter:
+
+1. resolves a safe `WRIGHT_HOME` independent of `HERMES_HOME`;
+2. creates or reuses a contained versioned bootstrap environment;
+3. obtains one exact compatible `wright-engineering` wheel from the configured
+   stable/test/local channel using the current Python interpreter;
+4. verifies normalized version and recorded hash/provenance;
+5. invokes `wright native start` in a subprocess with the exact artifact
+   identity supplied through bounded environment values;
+6. returns Wright's structured lifecycle result through a concise Hermes
+   projection.
+
+The user never issues a Python package command. After the Hermes Git operation
+finishes, Wright bootstrap, start, status, update, rollback, uninstall, purge,
+and MCP operation do not invoke Git or consume the adapter checkout as
+application source.
 
 ## Update and rollback
 
-- Update MUST stage and validate the candidate before replacing the active
-  entry point.
-- The previous plugin version MUST remain recoverable until Wright's runtime
-  compatibility and health checks complete.
-- Hermes MUST expose an exact-version rollback or equivalent transactional
-  restoration used by the acceptance test.
-- A plugin update MUST NOT delete `HERMES_HOME/wright/data` or external
-  workspaces.
+`hermes plugins update wright` updates only the thin adapter. `/wright update
+[version]` and `/wright rollback [version]` manage exact Wright runtime
+artifacts independently under `WRIGHT_HOME`. A Git adapter update must not
+delete Wright runtime or user data.
+
+Hermes adapter recovery restores a previously verified mirror commit through
+the release process. Wright runtime rollback uses the retained runtime
+predecessor and data-schema policy; neither silently rolls back user data.
 
 ## Remove
 
-- Remove MUST disable the entry point before deleting package files.
-- Hermes MUST invoke a bounded Wright pre-remove callback or an equivalent
-  documented lifecycle handshake so Wright can stop its process and remove
-  managed runtime code while preserving data by default.
-- Callback failure MUST produce an honest incomplete removal result; it MUST NOT
-  claim that Wright is fully removed while a managed process or runtime remains.
-- Explicit data purge is a separate Wright operation and is never implied by
-  plugin removal.
+Released Hermes 0.19 exposes no plugin-removal callback. Wright MUST NOT
+register or depend on an imaginary `pre_remove` hook. The safe removal sequence
+is:
 
-## Compatibility handshake
+```text
+/wright uninstall
+hermes plugins remove wright
+```
 
-Before registering commands, Wright reads the Hermes version and a stable
-capability identifier. Registration fails closed with an update instruction if:
+The first command removes Wright-managed executable/runtime state and preserves
+user data. The second removes only the Hermes adapter checkout. Explicit purge
+remains a separate confirmation-bound Wright command.
 
-- the Hermes version is outside the packaged specifier;
-- package install/update/remove capability is absent;
-- lifecycle callbacks required for safe uninstall are absent; or
-- the installed distribution metadata is inconsistent.
+## Candidate acceptance
 
-## Candidate fixture
-
-Pull-request tests may use a small fixture implementing this exact contract, but
-the fixture is not production evidence. Production release verification MUST use
-the minimum released Hermes version and the published Wright artifact through
-Hermes' real public interface.
+Pull-request validation installs the adapter using a real Hermes 0.19 process
+from a temporary immutable Git repository/ref, points its bootstrap at a local
+candidate wheelhouse, then removes Git from the audited runtime PATH. Production
+verification repeats the flow with the published adapter commit and PyPI wheel.
 
 ## Security
 
-- No arbitrary package specifiers supplied by an LLM are accepted.
-- Index URLs and local artifacts are operator/test configuration, never chat
-  content.
-- Credentials remain in Hermes/package-manager credential facilities and are
-  neither passed to Wright logs nor release evidence.
-- Install output is redacted and bounded.
+- Package version/channel inputs come from signed release configuration or test
+  fixtures, never untrusted chat text.
+- Bootstrap commands are argument arrays with no shell evaluation.
+- Index credentials remain in package-manager facilities and are redacted from
+  output and evidence.
+- Adapter paths, `HERMES_HOME`, and Codex state are outside Wright purge scope.

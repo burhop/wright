@@ -1,4 +1,4 @@
-"""Hermes-owned orchestration of Wright's isolated native runtime."""
+"""Manager-neutral orchestration of Wright's isolated native runtime."""
 
 from __future__ import annotations
 
@@ -16,13 +16,14 @@ from pathlib import Path
 from typing import Callable, Mapping
 from uuid import uuid4
 
-from wright_engineering.hermes_plugin.compatibility import (
+from wright_engineering.runtime.compatibility import (
     CompatibilityError,
     CompatibilityPolicy,
     current_platform_tag,
 )
 
 from .artifacts import ArtifactResolver, RuntimeArtifact
+from .auth import ensure_control_plane_token
 from .diagnostics import bounded_details, core_checks_ok, run_named_probes, safe_probe
 from .installer import RuntimeInstaller
 from .layout import NativeLayout
@@ -71,8 +72,9 @@ class NativeLifecycle:
         process_manager: ProcessManager | None = None,
         health_probe: HealthProbe | None = None,
         compatibility: CompatibilityPolicy | None = None,
-        hermes_version: str | None = None,
-        plugin_capability: str | None = None,
+        manager_id: str | None = None,
+        manager_version: str | None = None,
+        adapter_protocol: str | None = None,
         status_probes: Mapping[str, Callable[[], object]] | None = None,
         doctor_probes: Mapping[str, Callable[[], object]] | None = None,
         lock_timeout: float = 5.0,
@@ -89,13 +91,12 @@ class NativeLifecycle:
         self.compatibility = compatibility or CompatibilityPolicy.load(
             Path(str(files("wright_engineering").joinpath("compatibility.json")))
         )
-        self.hermes_version = (
-            hermes_version
-            or os.environ.get("HERMES_VERSION_OVERRIDE")
-            or self._hermes_version()
+        self.manager_id = manager_id or os.environ.get("WRIGHT_MANAGER_ID", "cli")
+        self.manager_version = manager_version or os.environ.get(
+            "WRIGHT_MANAGER_VERSION"
         )
-        self.plugin_capability = plugin_capability or os.environ.get(
-            "HERMES_PLUGIN_INSTALL_CAPABILITY", ""
+        self.adapter_protocol = adapter_protocol or os.environ.get(
+            "WRIGHT_MANAGER_PROTOCOL", "wright-lifecycle-v1"
         )
         self.status_probes = dict(status_probes or {})
         self.doctor_probes = dict(doctor_probes or {})
@@ -117,7 +118,7 @@ class NativeLifecycle:
     def start(
         self,
         *,
-        requested_by: str = "hermes",
+        requested_by: str | None = None,
         artifact: RuntimeArtifact | None = None,
     ) -> LifecycleResult:
         operation_id = str(uuid4())
@@ -143,17 +144,17 @@ class NativeLifecycle:
                     else (
                         manifest.runtimes[manifest.active_runtime_id].version
                         if manifest.active_runtime_id
-                        else self.compatibility.plugin_version
+                        else self.compatibility.runtime_version
                     )
                 )
                 self.compatibility.require_compatible(
-                    plugin_version=self._plugin_version(),
                     runtime_version=runtime_version,
-                    hermes_version=self.hermes_version,
                     python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
                     platform_tag=current_platform_tag(),
                     data_schema=1,
-                    capability=self.plugin_capability,
+                    manager_id=self.manager_id,
+                    manager_version=self.manager_version,
+                    adapter_protocol=self.adapter_protocol,
                 )
                 if (
                     manifest.lifecycle_state is LifecycleState.HEALTHY
@@ -190,11 +191,14 @@ class NativeLifecycle:
                             "No compatible managed Wright runtime is installed.",
                             started_at,
                             remediation=[
-                                "Install Wright through Hermes' supported package plugin interface."
+                                "Install or update Wright through the supported adapter for this manager."
                             ],
                         )
                     manifest = self._install_locked(
-                        manifest, artifact, operation_id, requested_by
+                        manifest,
+                        artifact,
+                        operation_id,
+                        requested_by or self.manager_id,
                     )
 
                 active_runtime_id = manifest.active_runtime_id
@@ -205,7 +209,7 @@ class NativeLifecycle:
                 manifest.current_operation = OperationRecord(
                     operation_id=operation_id,
                     kind=OperationKind.START,
-                    requested_by=requested_by,
+                    requested_by=requested_by or self.manager_id,
                     started_at=started_at,
                     from_state=LifecycleState.STOPPED,
                     target_state=LifecycleState.HEALTHY,
@@ -237,7 +241,7 @@ class NativeLifecycle:
                         operation_id=operation_id,
                         host=self.host,
                         port=self.port,
-                        environment={"HERMES_HOME": str(self.layout.hermes_home)},
+                        environment=self._runtime_environment(),
                         log_handle=log_handle,
                     )
                 manifest.process = identity
@@ -296,11 +300,11 @@ class NativeLifecycle:
                 "start",
                 False,
                 ResultCode.COMPATIBILITY_FAILED,
-                "This Hermes, plugin, runtime, or platform combination is not supported.",
+                "This manager adapter, runtime, Python, or platform combination is not supported.",
                 started_at,
                 details={"compatibility_code": exc.code},
                 remediation=[
-                    "Install a released Hermes version that supports Python package plugins."
+                    "Use a supported manager adapter protocol and Wright runtime version."
                 ],
             )
         except LifecycleBusy as exc:
@@ -358,7 +362,9 @@ class NativeLifecycle:
                 finished_at=utc_now(),
             )
         details: dict[str, object] = {
-            "plugin_version": self._plugin_version(),
+            "runtime_distribution_version": self._distribution_version(),
+            "manager_id": self.manager_id,
+            "adapter_protocol": self.adapter_protocol,
             "state": manifest.lifecycle_state.value,
             "data_root": manifest.data_root,
             "active_runtime": manifest.active_runtime_id,
@@ -375,16 +381,16 @@ class NativeLifecycle:
             runtime_version = (
                 manifest.runtimes[manifest.active_runtime_id].version
                 if manifest.active_runtime_id
-                else self.compatibility.plugin_version
+                else self.compatibility.runtime_version
             )
             self.compatibility.require_compatible(
-                plugin_version=self._plugin_version(),
                 runtime_version=runtime_version,
-                hermes_version=self.hermes_version,
                 python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
                 platform_tag=current_platform_tag(),
                 data_schema=1,
-                capability=self.plugin_capability,
+                manager_id=self.manager_id,
+                manager_version=self.manager_version,
+                adapter_protocol=self.adapter_protocol,
             )
             compatibility = {"ok": True, "code": "compatible"}
         except CompatibilityError as exc:
@@ -415,7 +421,7 @@ class NativeLifecycle:
             )
         details.update(
             run_named_probes(
-                ("hermes", "mcp", "catalog", "configuration", "workspaces"),
+                ("manager", "mcp", "catalog", "configuration", "workspaces"),
                 self.status_probes,
             )
         )
@@ -451,7 +457,7 @@ class NativeLifecycle:
             "ui": {"ok": bool(status.details.get("ui_healthy"))},
             "data_permissions": {"ok": self._data_permissions_ready()},
             "backup": safe_probe("backup", self.doctor_probes.get("backup")),
-            "hermes": status.details.get("hermes", {"ok": False}),
+            "manager": status.details.get("manager", {"ok": False}),
             "mcp": status.details.get("mcp", {"ok": False}),
             "catalog": status.details.get("catalog", {"ok": False}),
             "configuration": status.details.get("configuration", {"ok": False}),
@@ -489,7 +495,7 @@ class NativeLifecycle:
             finished_at=utc_now(),
         )
 
-    def stop(self, *, requested_by: str = "hermes") -> LifecycleResult:
+    def stop(self, *, requested_by: str | None = None) -> LifecycleResult:
         operation_id = str(uuid4())
         started_at = utc_now()
         try:
@@ -541,7 +547,7 @@ class NativeLifecycle:
                 manifest.current_operation = OperationRecord(
                     operation_id=operation_id,
                     kind=OperationKind.STOP,
-                    requested_by=requested_by,
+                    requested_by=requested_by or self.manager_id,
                     started_at=started_at,
                     from_state=from_state,
                     target_state=LifecycleState.STOPPED,
@@ -602,7 +608,7 @@ class NativeLifecycle:
         version: str | None = None,
         *,
         artifact: RuntimeArtifact | None = None,
-        requested_by: str = "hermes",
+        requested_by: str | None = None,
     ) -> LifecycleResult:
         operation_id = str(uuid4())
         started_at = utc_now()
@@ -619,7 +625,9 @@ class NativeLifecycle:
                         "update_artifact_required",
                         "An exact approved Wright update artifact is required.",
                         started_at,
-                        remediation=["Retry through Hermes' package update interface."],
+                        remediation=[
+                            "Retry through the supported Wright manager adapter."
+                        ],
                     )
                 if version and version != artifact.version:
                     return self._result(
@@ -658,13 +666,13 @@ class NativeLifecycle:
                         persist=False,
                     )
                 self.compatibility.require_compatible(
-                    plugin_version=self._plugin_version(),
                     runtime_version=artifact.version,
-                    hermes_version=self.hermes_version,
                     python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
                     platform_tag=current_platform_tag(),
                     data_schema=self.migration_manager.current_schema(self.layout.data),
-                    capability=self.plugin_capability,
+                    manager_id=self.manager_id,
+                    manager_version=self.manager_version,
+                    adapter_protocol=self.adapter_protocol,
                 )
                 origin_state = manifest.lifecycle_state
                 was_running = (
@@ -677,7 +685,7 @@ class NativeLifecycle:
                 manifest.current_operation = OperationRecord(
                     operation_id=operation_id,
                     kind=OperationKind.UPDATE,
-                    requested_by=requested_by,
+                    requested_by=requested_by or self.manager_id,
                     started_at=started_at,
                     from_state=origin_state,
                     target_state=LifecycleState.HEALTHY
@@ -829,7 +837,7 @@ class NativeLifecycle:
         self,
         version: str | None = None,
         *,
-        requested_by: str = "hermes",
+        requested_by: str | None = None,
     ) -> LifecycleResult:
         operation_id = str(uuid4())
         started_at = utc_now()
@@ -865,7 +873,7 @@ class NativeLifecycle:
                         "No retained compatible rollback runtime is available.",
                         started_at,
                         remediation=[
-                            "Install an exact approved version through Hermes update."
+                            "Install an exact approved version through the Wright lifecycle."
                         ],
                     )
                 current = manifest.runtimes[current_id]
@@ -898,7 +906,7 @@ class NativeLifecycle:
                 manifest.current_operation = OperationRecord(
                     operation_id=operation_id,
                     kind=OperationKind.ROLLBACK,
-                    requested_by=requested_by,
+                    requested_by=requested_by or self.manager_id,
                     started_at=started_at,
                     from_state=origin_state,
                     target_state=LifecycleState.HEALTHY
@@ -979,7 +987,7 @@ class NativeLifecycle:
                 persist=False,
             )
 
-    def uninstall(self, *, requested_by: str = "hermes") -> LifecycleResult:
+    def uninstall(self, *, requested_by: str | None = None) -> LifecycleResult:
         operation_id = str(uuid4())
         started_at = utc_now()
         try:
@@ -1035,7 +1043,7 @@ class NativeLifecycle:
                 manifest.current_operation = OperationRecord(
                     operation_id=operation_id,
                     kind=OperationKind.UNINSTALL,
-                    requested_by=requested_by,
+                    requested_by=requested_by or self.manager_id,
                     started_at=started_at,
                     from_state=origin_state,
                     target_state=LifecycleState.NOT_INSTALLED,
@@ -1064,7 +1072,9 @@ class NativeLifecycle:
                     "Wright runtime code was removed and user data was preserved.",
                     started_at,
                     details={"preserved_data": str(self.layout.data)},
-                    remediation=["Reinstall through Hermes to reopen preserved data."],
+                    remediation=[
+                        "Reinstall through a supported manager adapter to reopen preserved data."
+                    ],
                 )
         except LifecycleBusy as exc:
             manifest = self.store.load()
@@ -1099,7 +1109,7 @@ class NativeLifecycle:
         self,
         confirmation: str | None = None,
         *,
-        requested_by: str = "hermes",
+        requested_by: str | None = None,
     ) -> LifecycleResult:
         operation_id = str(uuid4())
         started_at = utc_now()
@@ -1182,7 +1192,7 @@ class NativeLifecycle:
                 manifest.current_operation = OperationRecord(
                     operation_id=operation_id,
                     kind=OperationKind.PURGE,
-                    requested_by=requested_by,
+                    requested_by=requested_by or self.manager_id,
                     started_at=started_at,
                     from_state=LifecycleState.STOPPED,
                     target_state=LifecycleState.NOT_INSTALLED,
@@ -1310,8 +1320,11 @@ class NativeLifecycle:
             environment_path=str(environment.resolve()),
             python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
             platform_tag=current_platform_tag(),
-            plugin_compatibility=self.compatibility.runtime_specifier,
-            hermes_compatibility=self.compatibility.hermes_specifier,
+            runtime_specifier=self.compatibility.runtime_specifier,
+            manager_protocols={
+                manager_id: protocol.adapter_protocol
+                for manager_id, protocol in self.compatibility.manager_protocols.items()
+            },
             data_schema_min=self.compatibility.data_schema_min,
             data_schema_max=self.compatibility.data_schema_max,
             installed_at=utc_now(),
@@ -1346,7 +1359,7 @@ class NativeLifecycle:
                 operation_id=operation_id,
                 host=self.host,
                 port=self.port,
-                environment={"HERMES_HOME": str(self.layout.hermes_home)},
+                environment=self._runtime_environment(),
                 log_handle=log_handle,
             )
         if not self.health_probe(identity):
@@ -1412,20 +1425,26 @@ class NativeLifecycle:
         }
 
     @staticmethod
-    def _plugin_version() -> str:
+    def _distribution_version() -> str:
         try:
             return distribution_version("wright-engineering")
         except Exception:
             return "unknown"
 
-    @staticmethod
-    def _hermes_version() -> str:
-        for name in ("hermes-agent", "hermes_agent"):
-            try:
-                return distribution_version(name)
-            except Exception:
-                continue
-        return "0"
+    def _runtime_environment(self) -> dict[str, str]:
+        api_token = ensure_control_plane_token(self.layout)
+        values = {
+            "WRIGHT_HOME": str(self.layout.wright_home),
+            "WRIGHT_SECRETS_PATH": str(self.layout.data / "credentials.json"),
+            "WRIGHT_SECRETS_DIR": str(self.layout.data / "secrets.d"),
+            "WRIGHT_AUTH_MODE": "enforced",
+            "WRIGHT_API_TOKEN": api_token,
+            "WRIGHT_MANAGER_ID": self.manager_id,
+            "WRIGHT_MANAGER_PROTOCOL": self.adapter_protocol,
+        }
+        if self.manager_version:
+            values["WRIGHT_MANAGER_VERSION"] = self.manager_version
+        return values
 
     @staticmethod
     def _probe_health(identity: ProcessIdentity) -> bool:

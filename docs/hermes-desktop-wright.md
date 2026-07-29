@@ -1,25 +1,15 @@
 # Wright with Hermes Desktop
 
-Hermes Desktop uses the same native package-plugin contract as Hermes CLI. There
-is no separate Wright Desktop bundle, copied plugin folder, source checkout, or
-frontend build for a normal user.
+Hermes Desktop uses the same production Git adapter as Hermes CLI. Wright does
+not modify Hermes, copy files into Desktop by hand, or require a source checkout.
 
-## Current status
-
-Native activation is intentionally blocked while the released Hermes line is
-Git-only. The Wright compatibility contract currently records
-`production_native_available: false`. Continue to use the mandatory Docker
-appliance for a turnkey public build; use the legacy Git mirror only to migrate
-an existing older test installation, not as proof of native support.
-
-When a released Hermes version provides `python-distribution-v1`, install the
-exact Wright version through Hermes:
+Install and enable the adapter through Hermes:
 
 ```text
-hermes plugins install-package wright-engineering==<version> --enable
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 ```
 
-Restart Desktop if it does not reload newly installed entry points, then use:
+Restart Desktop if it does not rescan newly installed plugins, then run:
 
 ```text
 /wright start
@@ -27,28 +17,24 @@ Restart Desktop if it does not reload newly installed entry points, then use:
 /wright doctor
 ```
 
-The first start creates the contained runtime automatically and returns the UI
-URL. Configuration and data live under the active `HERMES_HOME/wright` boundary,
-not under a repository.
+Git is required by Hermes for adapter installation and update. Wright's runtime
+and retained data live under `WRIGHT_HOME` (default `~/.wright`), not under
+Hermes state or a repository. The first start creates the contained runtime and
+returns the UI URL.
 
-## Hermes gateway
+Wright's LLM status is separate from the Hermes gateway. Configure the chosen
+local or hosted OpenAI-compatible endpoint through approved Hermes or Wright
+configuration; credentials never belong in logs, artifacts, or release
+evidence.
 
-Wright connects to Hermes through Hermes' configured local API/gateway. Enable
-that feature in Hermes using the documentation for the released compatible
-version. Wright reads Hermes-owned configuration and does not copy or rewrite
-Desktop plugin directories. If `/wright status` reports Hermes disconnected,
-check the Hermes gateway itself before changing Wright data.
+Hermes exposes no pre-remove hook. To remove runtime code as well as the
+adapter, use:
 
-## LLM status
+```text
+/wright uninstall
+hermes plugins remove wright
+```
 
-The Wright LLM status is separate from the Hermes gateway. Configure a local or
-hosted OpenAI-compatible endpoint in the normal Wright setup UI or approved
-configuration. Credentials are not included in logs, diagnostics, package
-artifacts, or release evidence.
-
-## Removal
-
-Use `/wright uninstall` before package removal when the released Hermes does not
-automatically invoke the registered pre-remove hook. This stops the verified
-process and removes runtime code while preserving data. Use `/wright purge` only
-when you intend to delete the disclosed Wright data path permanently.
+Default uninstall preserves `WRIGHT_HOME/data`. Use `/wright purge` and then
+`/wright purge <confirmation-code>` only when you intend to delete the exact
+disclosed Wright-owned data path.

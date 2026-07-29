@@ -1,12 +1,13 @@
-# Research: Native Hermes Installation
+# Research: Native Agent-Manager Installation
 
 ## Decision 1: Use `wright-engineering` as the one public application distribution
 
 **Decision**: Repurpose `wright-engineering` from a helper-only wheel into the
-complete Wright application distribution. It contains the Hermes entry point,
-all Wright Python modules, the canonical MCP catalog, and release-built UI. The
-base dependency set remains safe for Hermes to import; a `runtime` extra declares
-the full isolated application environment.
+complete Wright application distribution. It contains all Wright Python
+modules, the canonical MCP catalog, manager-profile contracts, and release-built
+UI. A `runtime` extra declares the full isolated application environment. Thin
+manager adapters are separate integration artifacts and do not create a second
+Wright runtime distribution.
 
 **Rationale**: Wright's release train already treats the root product version and
 `wright-engineering` hashes as the Python release identity. One distribution
@@ -15,47 +16,60 @@ lets the plugin install the exact same version into an isolated runtime.
 
 **Alternatives considered**:
 
-- Publish `hermes-plugin-wright` and a separate runtime package: rejected because
-  it creates two public identities, compatibility and promotion surfaces.
+- Publish a second application runtime under `hermes-plugin-wright`: rejected
+  because it creates two runtime identities, compatibility, and promotion
+  surfaces. The Git plugin remains a thin adapter with its own immutable adapter
+  identity, not an application distribution.
 - Publish every internal package: rejected because those packages are private
   implementation boundaries and would greatly expand public compatibility.
 - Keep the helper package and download a repository archive: rejected because it
   retains the ambiguous package role and risks repository-layout dependencies.
 
-## Decision 2: Require a package-based Hermes plugin lifecycle
+## Decision 2: Use each manager's real installation interface
 
-**Decision**: Native Wright requires a Hermes version that can install, update,
-roll back, and remove a Python distribution exposing the
-`hermes_agent.plugins` entry point without Git. The candidate identifier and
-exact interface are bound in the Hermes package-plugin contract. Stable Wright
-publication remains blocked until a released Hermes version passes that contract.
+**Decision**: Hermes installs the thin Wright adapter through its supported Git
+plugin command. The adapter is standard-library-only and bootstraps the exact
+`wright-engineering` application artifact into Wright-owned storage; it never
+imports application dependencies into Hermes. Codex uses its own MCP
+configuration surface and connects directly to the same Wright MCP service
+rather than routing through Hermes. OpenClaw is deferred to future work.
 
-**Rationale**: Hermes 0.19.0 and current official documentation accept only Git
-URLs or `owner/repo` in `hermes plugins install`, even though the loader can
-discover pip entry points. That cannot meet the explicit no-Git requirement.
+**Rationale**: Hermes 0.19.0 explicitly installs plugins from Git. Git is a
+Hermes prerequisite and is therefore valid during the adapter-install/update
+phase. Codex can bundle MCP configuration. Making Wright core emulate manager
+installers would couple independent products. OpenClaw research is retained as
+future design input only, not as a current support claim.
 
 **Primary evidence**:
 
 - [Hermes CLI commands](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/reference/cli-commands.md)
 - [Hermes plugin discovery](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/plugins.md)
-- Released Hermes 0.19.0 `plugins_cmd.py`: `_install_plugin_core` resolves Git and
-  fails when no Git executable is available.
+- Released Hermes 0.19.0 `plugins_cmd.py`: `_install_plugin_core` clones Git and
+  `plugins update` performs `git pull`.
+- [Codex MCP configuration](https://developers.openai.com/codex/mcp/) and plugin
+  packaging document bundled MCP server configuration.
+- [OpenClaw plugin CLI](https://github.com/openclaw/openclaw/blob/main/docs/cli/plugins.md)
+  and [MCP CLI](https://github.com/openclaw/openclaw/blob/main/docs/cli/mcp.md)
+  document npm/ClawHub/Git plugin sources and STDIO/HTTP MCP profiles.
 
 **Alternatives considered**:
 
-- Continue the existing Git mirror: rejected because install invokes Git and
-  update is `git pull`.
-- Hide a curl or package-manager bootstrap in documentation: rejected because it
-  is outside the supported Hermes plugin lifecycle and shifts work to the user.
+- Require new Hermes package commands: rejected because Hermes is a third-party
+  product and Wright must use its released interface.
+- Copy Hermes behavior into Codex/OpenClaw adapters: rejected because their
+  documented installation and MCP surfaces differ.
 - Bundle Wright into Hermes core: rejected because Wright should remain a plugin
   and would couple independent release schedules.
 
 ## Decision 3: Isolate the application runtime by version
 
-**Decision**: The Hermes-loaded plugin uses only the standard library plus a
-small version parser. It installs `wright-engineering[runtime]==<exact version>`
-into `HERMES_HOME/wright/runtimes/<version>-<python>-<platform>` and launches the
-runtime executable from there.
+**Decision**: The Hermes-loaded Git adapter uses only the standard library. It
+downloads and installs an exact `wright-engineering` bootstrap into a contained
+Wright environment, then invokes the public Wright lifecycle. Wright installs
+`wright-engineering[runtime]==<exact version>` into
+`WRIGHT_HOME/runtimes/<version>-<python>-<platform>`. Codex invokes the same
+lifecycle/MCP entry points without importing runtime dependencies into its
+process.
 
 **Rationale**: Hermes and Wright have large, independently evolving dependency
 graphs. Separate environments prevent resolver collisions, allow exact rollback,
@@ -91,11 +105,11 @@ Build-once evidence binds UI bytes to the application wheel.
 
 ## Decision 5: Separate versioned runtime, lifecycle state, and user data
 
-**Decision**: Under the resolved Hermes home, Wright owns `wright/runtimes`,
-`wright/state`, `wright/logs`, `wright/cache`, and `wright/data`. Runtime versions
-are disposable. The lifecycle manifest and locks live in `state`; SQLite,
-secrets, configuration, and default workspaces live in `data`; external
-workspaces remain outside purge scope.
+**Decision**: Under the resolved `WRIGHT_HOME`, Wright owns `runtimes`, `state`,
+`logs`, `cache`, and `data`. Runtime versions are disposable. The lifecycle
+manifest and locks live in `state`; SQLite, secrets, configuration, and default
+workspaces live in `data`; external workspaces and all manager-owned state remain
+outside purge scope.
 
 **Rationale**: Update and uninstall must never couple executable removal to user
 data. A single contained root also makes deletion policy testable.
@@ -104,8 +118,9 @@ data. A single contained root also makes deletion policy testable.
 
 - Store data inside each runtime: rejected because update/uninstall would risk
   data loss.
-- Reuse arbitrary current working directories: rejected because multiple Hermes
-  sessions and desktop launches have unstable working directories.
+- Store data below `HERMES_HOME`, Codex state, or OpenClaw state: rejected because
+  it prevents one runtime from serving several managers and makes manager removal
+  a data-deletion risk.
 
 ## Decision 6: Use an atomic manifest plus an inter-process lifecycle lock
 
@@ -163,10 +178,12 @@ support that should be reused.
 
 ## Decision 9: Normal uninstall preserves data; purge is a separate contained operation
 
-**Decision**: Native plugin uninstall stops Wright and removes versioned runtime,
-cache, and process/lifecycle artifacts but preserves `wright/data` and external
-workspaces. Purge is explicit, reports resolved paths, rejects symlinks and roots
-outside Wright ownership, and never follows external workspace paths.
+**Decision**: Wright's explicit uninstall command stops Wright and removes
+versioned runtime, cache, and process/lifecycle artifacts while preserving
+`WRIGHT_HOME/data` and external workspaces. Removing a manager adapter removes
+only that adapter. Purge is explicit, reports resolved paths, rejects symlinks
+and roots outside Wright ownership, and never follows external workspace or
+manager-owned paths.
 
 **Rationale**: Safe default removal and deliberate data destruction match the
 product requirement and make reinstall recovery possible.
@@ -179,11 +196,12 @@ product requirement and make reinstall recovery possible.
 
 ## Decision 10: Validate candidates without production publication
 
-**Decision**: Pull requests build a wheel with the UI, create a local simple index
-or wheelhouse, and feed that exact candidate to the Hermes package-plugin fixture
-on clean platform runners. Tests shadow or remove forbidden executables and scan
-subprocess events. Production verification repeats the same lifecycle against
-published immutable artifacts.
+**Decision**: Pull requests build a wheel with the UI and install the real Hermes
+Git adapter from an immutable local Git subject. The adapter bootstraps the exact
+candidate from a local wheelhouse, after which Git is removed from PATH and the
+complete Wright lifecycle runs. Codex contract tests load its native MCP profile
+shape against the same packaged bridge. Production verification
+uses the published Hermes Git tag and published runtime artifact.
 
 **Rationale**: PR tests must exercise real packaging while remaining incapable of
 publishing stable artifacts. Release tests must not fall back to repository code.
@@ -197,10 +215,12 @@ publishing stable artifacts. Release tests must not fall back to repository code
 ## Decision 11: Make native evidence terminal in the unified release train
 
 **Decision**: The unified workflow builds the application candidate once, tests
-the base plugin and runtime extra, publishes the exact files through existing
-protected Python stages, publishes/activates the stable Hermes channel, and runs
-public install/update/rollback/uninstall verification. Final evidence and GitHub
-Release jobs require both native and Docker terminal verification.
+the real Hermes Git adapter plus the runtime extra and manager-neutral MCP
+profiles, publishes the exact files through existing protected Python stages,
+tags the immutable Hermes adapter subject, and runs public adapter/install and
+Wright lifecycle verification. The claimed Codex adapter becomes terminal
+release subjects when their production packages are introduced. Final evidence
+and GitHub Release jobs require every claimed native adapter plus Docker.
 
 **Rationale**: Native Hermes is the majority path and Docker is a required
 alternative; neither may be optional or merely warning-level.
@@ -226,3 +246,23 @@ Windows checkout conversion must not make them unexecutable.
 
 - Continue manually emulating scripts: rejected because it hides a recurring
   cross-platform contributor failure.
+
+## Decision 13: Separate manager adapters from agent engines
+
+**Decision**: Manager installation/profile adapters are distinct from Wright's
+`BaseAgentEngine` chat adapters. Manager adapters install or connect to Wright
+and project the public lifecycle/MCP contract. `BaseAgentEngine` remains the
+runtime abstraction used when the Wright UI itself hosts an agent conversation.
+
+**Rationale**: Codex can consume Wright's MCP service without Wright hosting its
+chat runtime. The same separation preserves a future OpenClaw seam without
+making OpenClaw part of this delivery. Conflating installation, MCP hosting, and
+chat-engine selection would reproduce the Hermes coupling this clarification
+removes.
+
+**Alternatives considered**:
+
+- Add manager-specific branches to `NativeLifecycle`: rejected because lifecycle
+  state does not depend on the invoking manager.
+- Treat every MCP client as a `BaseAgentEngine`: rejected because an external MCP
+  host need not expose Wright's internal chat/session API.

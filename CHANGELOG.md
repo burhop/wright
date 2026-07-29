@@ -4,6 +4,16 @@ All notable changes to the Wright project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.6] - 2026-07-29
+
+### Added
+- Added the first complete manager-neutral native Wright runtime, a production Hermes Git adapter, and a direct Codex MCP profile. OpenClaw remains future work.
+- Added exact manager-adapter identities and native lifecycle evidence to the mandatory Python and Docker release train.
+
+### Changed
+- Moved native lifecycle state and retained data to Wright-owned `WRIGHT_HOME` instead of manager-owned directories.
+- Reserved Git for Hermes adapter installation/update while keeping Wright runtime operation source-independent.
+
 ## [0.1.5] - 2026-07-28
 
 ### Fixed

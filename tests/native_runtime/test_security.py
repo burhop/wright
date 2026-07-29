@@ -1,6 +1,17 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
+import pytest
+
 from wright_engineering.runtime.diagnostics import bounded_details, redact
+from wright_engineering.runtime.auth import (
+    ControlPlaneTokenError,
+    ensure_control_plane_token,
+    read_control_plane_token,
+)
+from wright_engineering.runtime.layout import NativeLayout
 from wright_engineering.runtime.logging import LifecycleLogger
 
 
@@ -45,3 +56,34 @@ def test_structured_lifecycle_log_has_operation_id_and_no_secret(tmp_path) -> No
     assert '"operation_id": "op-123"' in content
     assert "test-secret-value" not in content
     assert "hunter2" not in content
+
+
+def test_managed_control_plane_token_is_stable_contained_and_private(
+    tmp_path: Path,
+) -> None:
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
+
+    first = ensure_control_plane_token(layout)
+    second = ensure_control_plane_token(layout)
+
+    assert first == second
+    assert len(first) == 64
+    assert read_control_plane_token(layout) == first
+    assert layout.control_plane_token.parent == layout.data
+    assert layout.control_plane_token.read_text(encoding="utf-8") == first
+    if os.name != "nt":
+        assert layout.control_plane_token.stat().st_mode & 0o077 == 0
+
+
+def test_managed_control_plane_token_rejects_symlink(tmp_path: Path) -> None:
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
+    layout.ensure()
+    outside = tmp_path / "outside-token"
+    outside.write_text("a" * 64, encoding="utf-8")
+    try:
+        layout.control_plane_token.symlink_to(outside)
+    except (OSError, NotImplementedError):
+        pytest.skip("symlinks are unavailable on this host")
+
+    with pytest.raises(ControlPlaneTokenError, match="symlink"):
+        ensure_control_plane_token(layout)

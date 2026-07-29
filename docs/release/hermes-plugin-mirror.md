@@ -1,85 +1,33 @@
-# Hermes Plugin Mirror Release Runbook
+# Hermes Git Adapter Mirror Release Runbook
 
-This runbook covers the legacy `hermes-plugin-wright` Git mirror. It is retained
-for one migration window for Hermes 0.18 and older installations. It cannot
-satisfy native package installation, platform evidence, stable-channel
-activation, or production release completion.
+`https://github.com/burhop/hermes-plugin-wright` is Wright's production thin
+adapter for Hermes' released Git plugin interface. It is not a second Wright
+runtime and cannot replace PyPI, platform lifecycle, or Docker evidence.
 
-The one public `wright-engineering` distribution is now the complete application
-artifact consumed by package-capable Hermes. Component packages remain private.
+The main Wright repository is the source of truth. The mirror is generated from
+`hermes-plugin-wright/`; do not develop features directly in it.
 
-## Ownership
+## Channels
 
-The main Wright repository remains the source of truth:
+| Channel | Mirror branch | Use |
+| --- | --- | --- |
+| Development | `dev` | Wright integration and pull-request testing |
+| Stable | `main` | Production Hermes installations |
 
-- Source: https://github.com/burhop/wright
-- Issues: https://github.com/burhop/wright/issues
-- Documentation: https://burhop.github.io/wright/
-- Releases: https://github.com/burhop/wright/releases
+The adapter is standard-library-only at import time. It resolves the exact
+public `wright-engineering` version into `WRIGHT_HOME`; private component
+packages such as `wright-core` and `wright-tool-registry` are neither bundled
+nor installed from an index.
 
-The mirror repository is a distribution surface only. Do not develop features directly in the mirror.
+## Automation and credentials
 
-## Release Channels
+`.github/workflows/sync-hermes-plugin-mirror.yml` generates, validates, and
+publishes the matching mirror branch. Configure a read-write deploy key on the
+mirror and store its private key as `HERMES_PLUGIN_MIRROR_SSH_KEY` in Wright.
+PyPI publication remains separate and uses Trusted Publishing through the
+`testpypi` and `pypi` environments.
 
-| Channel | Mirror branch | Dependency policy | User |
-| --- | --- | --- | --- |
-| Development | `dev` | Legacy Git migration delegate | Maintainers migrating old tests |
-| Stable | `main` | Frozen legacy Git migration delegate | Existing Hermes 0.18 users only |
-
-## Package Publication Order
-
-The root `wright-engineering` package is the only public application
-distribution. Component packages such as `wright-core` and
-`wright-tool-registry` remain workspace-local. The mirror delegates to the exact
-public application version and must not be described as the native install.
-
-Use the product release tag when publishing the PyPI helper package and container:
-
-```bash
-git tag v0.1.5
-git push origin v0.1.5
-```
-
-The top-level `.github/workflows/release.yml` workflow uses PyPI Trusted Publishing through GitHub Actions OIDC. Configure project publishers for `release.yml` in PyPI and TestPyPI with these environments:
-
-- `testpypi` for TestPyPI publication
-- `pypi` for stable PyPI publication
-
-Require manual approval on the `pypi` GitHub environment before stable uploads.
-
-## Local Package Validation
-
-```bash
-scripts/build-python-distributions.sh --dry-run .
-```
-
-For a full local build, install `build` into the active Python environment and run:
-
-```bash
-scripts/build-python-distributions.sh --skip-clean-install .
-```
-
-Clean install validation is the release gate that proves package artifacts can install without a Wright monorepo checkout.
-
-## Mirror Update Automation
-
-The mirror repository is https://github.com/burhop/hermes-plugin-wright. It is updated from the main Wright repository by `.github/workflows/sync-hermes-plugin-mirror.yml`.
-
-Required GitHub setup:
-
-- Add a read-write deploy key named `wright mirror sync` to `burhop/hermes-plugin-wright`.
-- Store the private key as the `HERMES_PLUGIN_MIRROR_SSH_KEY` Actions secret on `burhop/wright`.
-
-Publishing behavior:
-
-- Pushes to the Wright `dev` branch generate, validate, and publish the mirror `dev` branch.
-- Pushes to the Wright `main` branch generate, validate, and publish the mirror `main` branch.
-- Manual workflow dispatch can validate without publishing, or publish when `publish` is set to true.
-- The workflow clones an existing mirror branch before committing generated files, so branch history is preserved for Hermes update compatibility. It does not force-push unrelated orphan history.
-
-## Mirror Generation
-
-Preview mirror contents:
+## Local generation and validation
 
 ```bash
 scripts/sync-hermes-plugin-mirror.sh \
@@ -87,11 +35,7 @@ scripts/sync-hermes-plugin-mirror.sh \
   --mirror-url https://github.com/burhop/hermes-plugin-wright \
   --branch dev \
   --dry-run
-```
 
-Generate a local development mirror:
-
-```bash
 tmp_dir=$(mktemp -d)
 scripts/sync-hermes-plugin-mirror.sh \
   --source hermes-plugin-wright \
@@ -99,121 +43,49 @@ scripts/sync-hermes-plugin-mirror.sh \
   --branch dev \
   --channel development \
   --output-dir "$tmp_dir"
+scripts/validate-hermes-plugin-mirror.sh \
+  --mirror-dir "$tmp_dir" \
+  --channel development
 ```
 
-## Mirror Validation
+Stable validation uses `--branch main --channel stable`. Validation rejects
+workspace-only dependencies, Git dependencies in the adapter package metadata,
+private Wright component dependencies, missing provenance, prohibited paths,
+and missing root plugin files.
 
-```bash
-scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$tmp_dir" --channel development
-scripts/validate-hermes-plugin-mirror.sh --mirror-dir "$tmp_dir" --channel stable
-```
+## Production identity
 
-Stable and development validation must fail if the mirror has workspace-only dependencies, Git dependencies, private Wright component dependencies, missing README links, missing provenance, prohibited paths, or missing root-level plugin files.
+Hermes accepts a repository URL but does not select an immutable Git ref during
+install. The release workflow therefore must:
 
-## Hermes Lifecycle Validation
+1. resolve the mirror `main` commit;
+2. run `hermes plugins install` with the repository URL;
+3. verify the installed `.git` `HEAD` equals that commit;
+4. verify `provenance.json` names the Wright release commit;
+5. repeat the identity check after `hermes plugins update wright`;
+6. only then run the Wright lifecycle.
 
-Development mirror path:
+Any mismatch is a release failure, not a warning.
 
-```bash
-scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
-scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
-scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev
-```
+## User Lifecycle and Migration Guidance
 
-Stable mirror path:
+The migration path uses the same production root mirror.
 
-```bash
-scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref main
-scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref main
-scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref main
-```
+Install or migrate to the stable root mirror:
 
-The update validation must confirm the installed plugin directory contains `.git` metadata.
-
-## Legacy migration commands
-
-These commands apply only to an already chosen Hermes 0.18 migration path. New
-users must not be directed here as the normal Wright install.
-
-Legacy stable install:
-
-```bash
-hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/main --enable
-```
-
-Development install:
-
-```bash
-hermes plugins install https://github.com/burhop/hermes-plugin-wright/tree/dev --enable
-```
-
-Update:
-
-```bash
+```text
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
 hermes plugins update wright
 ```
 
-Remove:
+Hermes provides no pre-remove hook. To remove Wright runtime code while
+preserving data, then remove the adapter:
 
-```bash
+```text
+/wright uninstall
 hermes plugins remove wright
 ```
 
-## Migration Guidance
-
-If a user installed from `https://github.com/burhop/wright/tree/dev/hermes-plugin-wright`, ask them to remove that plugin and reinstall from the mirror root. Subdirectory installs can lack plugin-directory `.git` metadata, which prevents standard Hermes updates.
-
-## Validation Results
-
-Use this section to record release candidate validation runs.
-
-### US1 Mirror Lifecycle
-
-2026-07-02 local validation passed:
-
-- `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --dry-run` listed only allowlisted plugin, test, metadata, license, README, and provenance files.
-- `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch dev --channel development --output-dir /tmp/wright-mirror-dev.pY8s1V` generated a development mirror export.
-- `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-dev.pY8s1V --channel development` passed.
-- `uv run pytest ... tests/test_hermes_plugin_mirror_sync.py tests/test_hermes_plugin_mirror_validation.py tests/test_hermes_plugin_lifecycle_contract.py ...` passed as part of the 151-test release suite.
-
-2026-07-02 GitHub mirror lifecycle validation passed:
-
-- Created public mirror repository `https://github.com/burhop/hermes-plugin-wright` and set `main` as the default branch.
-- Added read-write deploy key `wright mirror sync` to the mirror and stored `HERMES_PLUGIN_MIRROR_SSH_KEY` as a `burhop/wright` Actions secret.
-- Published mirror `dev` and `main` branches. `git ls-remote --heads https://github.com/burhop/hermes-plugin-wright dev main` returned both branch heads.
-- Published a second generated `dev` commit and verified an existing clone updated with `git pull --ff-only` from `31d0115` to `66981ff`, proving generated updates preserve branch history.
-- Development and stable mirror dependencies are public third-party packages only; the plugin ships its own catalog loader and schemas.
-- `scripts/test-hermes-plugin-install.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
-- `scripts/test-hermes-plugin-update.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
-- `scripts/test-hermes-plugin-uninstall.sh --mirror-root --repo-url https://github.com/burhop/hermes-plugin-wright --ref dev` passed in the Hermes 0.18 Docker image.
-
-### US2 Package Build and Clean Install
-
-2026-07-02 validation passed:
-
-- `scripts/build-python-distributions.sh --dry-run packages/core packages/tool_registry` passed metadata validation for `wright-core 0.1.0` and `wright-tool-registry 0.1.0`.
-- `scripts/build-python-distributions.sh --dist-root /tmp/wright-python-dist packages/core packages/tool_registry` built source distributions and wheels, installed both wheels in an isolated environment, and imported `core` and `tool_registry` successfully.
-- The clean-install gate exposed missing `opentelemetry-api` and `PyYAML` package dependencies; both are now declared and covered by `tests/test_python_package_metadata.py`.
-
-### US3 Documentation and Link Validation
-
-2026-07-02 validation passed:
-
-- `uv run pytest ... tests/test_hermes_plugin_mirror_readme.py tests/test_hermes_plugin_mirror_provenance.py tests/test_hermes_plugin_mirror_docs.py` passed as part of the 151-test release suite.
-- `scripts/validate-hermes-plugin-mirror.sh --mirror-dir tests/fixtures/hermes_plugin_mirror --channel stable` passed, including README and provenance checks.
-
-### Final Release Gate
-
-2026-07-02 validation passed for the development mirror lifecycle and stable mirror content gates:
-
-- `uv run ruff check ...` passed for package, plugin, and release-engineering Python surfaces.
-- `uv run ruff format --check ...` passed for the same surfaces.
-- `uv run pytest packages/core/tests packages/tool_registry/tests hermes-plugin-wright/tests tests/test_release_engineering_scripts.py tests/test_hermes_plugin_mirror_sync.py tests/test_hermes_plugin_mirror_validation.py tests/test_hermes_plugin_lifecycle_contract.py tests/test_python_package_metadata.py tests/test_python_package_distribution_build.py tests/test_publish_python_packages_workflow.py tests/test_sync_hermes_plugin_mirror_workflow.py tests/test_hermes_plugin_mirror_readme.py tests/test_hermes_plugin_mirror_provenance.py tests/test_hermes_plugin_mirror_docs.py` passed: 151 tests in 101.29 seconds.
-- `scripts/sync-hermes-plugin-mirror.sh --source hermes-plugin-wright --mirror-url https://github.com/burhop/hermes-plugin-wright --branch main --channel stable --output-dir /tmp/wright-mirror-stable-final.TftFem` generated a stable mirror export.
-- `scripts/validate-hermes-plugin-mirror.sh --mirror-dir /tmp/wright-mirror-stable-final.TftFem --channel stable` passed.
-
-Stable mirror release through `https://github.com/burhop/hermes-plugin-wright/tree/main` is independent of component package publication. Before announcing it, validate a clean install and lifecycle against the supported Hermes release.
-
-Mirror validation or publication never produces native release evidence. Native
-production requires the released package-plugin interface and the public
-`wright-engineering` lifecycle described in the main release runbook.
+An older subdirectory install from the Wright monorepo should be removed and
+reinstalled from the mirror root so standard Hermes updates retain `.git`
+metadata. `/wright purge` remains a separately confirmed Wright operation.

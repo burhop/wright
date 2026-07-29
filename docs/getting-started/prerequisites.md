@@ -1,42 +1,51 @@
 # Prerequisites
 
-Wright has two production distribution paths with different prerequisites.
+Wright's runtime is manager-neutral. Each manager adapter owns its own small set
+of prerequisites.
 
-## Native Hermes user
+## Hermes
 
-The native path requires only a released Hermes version named by Wright's
-compatibility contract and a supported Python runtime managed by Hermes. Wright
-itself must not require the user to install Git, Docker, Node.js, npm, uv, clone
-a repository, set `WRIGHT_REPO_DIR`, or run a Python package command.
+- A released Hermes version satisfying the packaged compatibility contract.
+- Git, because `hermes plugins install`, `update`, and `remove` use Hermes' Git
+  plugin interface.
+- Network access to the adapter repository and PyPI for first install/update.
 
-Public support begins only after clean production evidence passes on the exact
-platform and architecture. The intended matrix is Windows 11 x64, Ubuntu
-22.04/24.04 x64, and macOS Sonoma 14+ on recorded x64/arm64 runners where both
-Hermes and Wright claim support. At present no released Hermes version has the
-required `python-distribution-v1`, so native production availability is false.
+After the adapter is installed, Wright lifecycle commands do not invoke Git,
+Docker, Node.js, npm, uv, or a source checkout. A complete verified cache can be
+used offline; missing or mismatched artifacts fail before activation.
 
-Online install/update needs access to the approved Python package index. Offline
-start can use a complete previously verified cache; an incomplete cache fails
-before activation.
+## Codex
 
-## Docker appliance user
+- Codex with MCP server support.
+- An installed `wright-engineering[runtime]` command or a running Wright HTTP
+  service.
+
+Codex connects directly over STDIO or Streamable HTTP. Hermes and Git are not
+Codex runtime prerequisites.
+
+## OpenClaw
+
+OpenClaw integration is future work. It is not a prerequisite, supported
+installation path, or release gate for this version of Wright.
+
+## Supported platform evidence
+
+Public native support is claimed only after clean evidence passes on Windows 11
+x64, Ubuntu 22.04/24.04 x64, and macOS Sonoma 14+ on each recorded x64 or arm64
+runner where Wright and the chosen manager both claim support.
+
+## Docker appliance
 
 - Docker Engine 24+ or Docker Desktop with Compose v2.20+.
-- 4 CPU cores, 16 GB RAM, and 20 GB free disk as a practical alpha baseline.
-- Network access for the selected image registry and any configured model/MCP
-  endpoints.
+- 4 CPU cores, 16 GB RAM, and 20 GB free disk as an alpha baseline.
+- Network access for the image registry and configured model/MCP endpoints.
 
-Docker remains a mandatory turnkey release artifact even after native Hermes is
-available.
+Docker is a mandatory turnkey release artifact even though native managers are
+supported.
 
-## Contributor
+## Contributors and external engineering tools
 
 Source development additionally uses Git, Python 3.11-3.14, uv, Node.js 22,
-npm, and Docker for container gates. These are contributor tools, not native
-user prerequisites. See [CONTRIBUTING.md](https://github.com/burhop/wright/blob/main/CONTRIBUTING.md).
-
-## External engineering tools
-
-FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems, license managers,
-drivers, credentials, and hardware remain selected-MCP prerequisites. They are
-not part of the base native runtime or Docker image.
+npm, and Docker. FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems,
+license managers, drivers, credentials, and hardware remain selected-MCP
+prerequisites; they are not part of the base native runtime or Docker image.

@@ -21,6 +21,7 @@ def test_getting_started_nav_publishes_all_supported_alpha_paths() -> None:
         "PC Local Setup: getting-started/quickstart-local.md",
         "GB10 and DGX Workstations: getting-started/workstation-gb10-dgx.md",
         "Native Wright for Hermes: getting-started/hermes-plugin.md",
+        "Wright for Codex: getting-started/codex.md",
         "[Native Hermes](hermes-plugin.md)",
         "[PC development](quickstart-local.md)",
         "[GB10/DGX workstation](workstation-gb10-dgx.md)",
@@ -75,14 +76,15 @@ def test_workstation_path_keeps_gpu_and_mcp_boundaries_explicit() -> None:
         assert expected in workstation
 
 
-def test_hermes_plugin_path_documents_native_package_flow() -> None:
+def test_hermes_plugin_path_documents_real_git_adapter_flow() -> None:
     hermes = squashed("docs/getting-started/hermes-plugin.md")
 
     for expected in [
-        "hermes plugins install-package wright-engineering==<version> --enable",
-        "python-distribution-v1",
-        "production_native_available",
-        "HERMES_HOME/wright/runtimes",
+        "hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable",
+        "Git must be available",
+        "WRIGHT_HOME",
+        "hermes plugins update wright",
+        "hermes plugins remove wright",
         "/wright start",
         "/wright status",
         "/wright doctor",
@@ -98,8 +100,20 @@ def test_hermes_plugin_path_documents_native_package_flow() -> None:
         "uv tool install hermes-agent --with ./hermes-plugin-wright/",
         "pip install -e ./hermes-plugin-wright",
         "WRIGHT_REPO_DIR=",
+        "plugins install-package",
+        "python-distribution-v1",
     ]:
         assert stale not in hermes
+
+
+def test_codex_path_is_direct_and_openclaw_is_explicitly_deferred() -> None:
+    codex = squashed("docs/getting-started/codex.md")
+    prerequisites = squashed("docs/getting-started/prerequisites.md")
+
+    assert "codex mcp add wright --env WRIGHT_HOME=<wright-home> -- wright mcp serve --stdio" in codex
+    assert "Hermes is not installed or invoked" in codex
+    assert "OpenClaw integration is future work" in prerequisites
+    assert "not a prerequisite, supported installation path, or release gate" in prerequisites
 
 
 def test_spec_tasks_record_install_path_documentation_slice() -> None:

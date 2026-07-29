@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 from typing import BinaryIO
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 
@@ -36,12 +37,24 @@ def serve_stdio(
     source = stdin or sys.stdin.buffer
     sink = stdout or sys.stdout.buffer
     token = os.environ.get(token_env)
+    if not token and token_env == "WRIGHT_API_TOKEN":
+        try:
+            from .runtime.auth import read_control_plane_token
+            from .runtime.layout import NativeLayout
+
+            token = read_control_plane_token(NativeLayout.discover())
+        except Exception:
+            token = None
     if not token:
         raise McpBridgeError(
             f"required bearer token environment variable is not set: {token_env}"
         )
     transport_session: str | None = None
     endpoint = f"{api_url.rstrip('/')}/mcp"
+    parsed_endpoint = urlsplit(endpoint)
+    if parsed_endpoint.scheme not in {"http", "https"} or not parsed_endpoint.netloc:
+        raise McpBridgeError("Wright MCP API URL is invalid")
+    origin = f"{parsed_endpoint.scheme}://{parsed_endpoint.netloc}"
     workspace_identity = workspace_id or str(workspace)
     for raw_line in source:
         if not raw_line.strip():
@@ -57,7 +70,7 @@ def serve_stdio(
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
             "Accept": "application/json, text/event-stream",
-            "Origin": "http://127.0.0.1",
+            "Origin": origin,
             "MCP-Protocol-Version": protocol,
             "X-Wright-Session-Id": session_id,
             "X-Wright-Workspace-Id": workspace_identity,

@@ -1,25 +1,25 @@
 # Python Distribution Role
 
-`wright-engineering` is Wright's one public Python distribution. It contains the
-thin Hermes entry point, native lifecycle bootstrap, complete packaged API/UI,
-canonical MCP catalog, provider-neutral gateway, and a bounded `runtime` extra.
+`wright-engineering` is Wright's one public Python distribution. It contains
+the manager-neutral lifecycle, packaged API/UI, canonical MCP catalog,
+provider-neutral gateway, direct MCP profile generator, and bounded `runtime`
+extra.
 
-Normal users do not run `pip install` themselves. A released package-capable
-Hermes resolves the exact version, installs the base entry point in its managed
-environment, and lets `/wright start` install the same exact distribution's
-runtime extra into Wright's contained environment.
+The thin Hermes Git adapter installs the exact compatible distribution into
+Wright-owned state. Codex users may install it with their normal
+Python environment tool or connect to an already running Wright HTTP endpoint.
+Manager adapters never contain a second copy of Wright application logic.
 
-Manual artifact installation is reserved for release verification and package
-diagnosis:
+Manual artifact installation remains useful for a direct manager environment,
+release verification, and package diagnosis:
 
 ```bash
-python -m pip install wright-engineering==<version>
+python -m pip install 'wright-engineering[runtime]==<version>'
 wright --version
 wright doctor
 ```
 
 Internal distributions such as `wright-core`, `wright-tool-registry`,
-`wright-data-vault`, `wright-agent-adapters`, `wright-workspace-service`,
-`wright-api`, and `hermes-plugin-wright` are private development/migration
-surfaces. The public runtime has no dependency on them from an index; their
-modules are bundled into the one application wheel.
+`wright-data-vault`, `wright-agent-adapters`, `wright-workspace-service`, and
+`wright-api` are private development surfaces. The public runtime has no index
+dependency on them; their modules are bundled into the application wheel.

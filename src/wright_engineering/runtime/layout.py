@@ -1,4 +1,4 @@
-"""Canonical Wright-owned paths beneath a Hermes profile."""
+"""Canonical manager-neutral Wright-owned paths."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ _RUNTIME_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 
 @dataclass(frozen=True, slots=True)
 class NativeLayout:
-    hermes_home: Path
+    wright_home: Path
     root: Path
     runtimes: Path
     cache: Path
@@ -27,13 +27,13 @@ class NativeLayout:
     workspaces: Path
 
     @classmethod
-    def from_hermes_home(cls, hermes_home: str | os.PathLike[str]) -> NativeLayout:
-        home = Path(hermes_home).expanduser().resolve(strict=False)
+    def from_wright_home(cls, wright_home: str | os.PathLike[str]) -> NativeLayout:
+        home = Path(wright_home).expanduser().resolve(strict=False)
         if not home.is_absolute() or home == Path(home.anchor):
-            raise LayoutError("hermes_home_unsafe")
-        root = home / "wright"
+            raise LayoutError("wright_home_unsafe")
+        root = home
         return cls(
-            hermes_home=home,
+            wright_home=home,
             root=root,
             runtimes=root / "runtimes",
             cache=root / "cache",
@@ -44,13 +44,18 @@ class NativeLayout:
         )
 
     @classmethod
+    def from_hermes_home(cls, hermes_home: str | os.PathLike[str]) -> NativeLayout:
+        """Migrate callers that supplied a Hermes profile to its former Wright root."""
+        return cls.from_wright_home(Path(hermes_home) / "wright")
+
+    @classmethod
     def discover(
-        cls, hermes_home: str | os.PathLike[str] | None = None
+        cls, wright_home: str | os.PathLike[str] | None = None
     ) -> NativeLayout:
-        if hermes_home is None:
-            configured = os.environ.get("HERMES_HOME", "").strip()
-            hermes_home = configured or Path.home() / ".hermes"
-        return cls.from_hermes_home(hermes_home)
+        if wright_home is None:
+            configured = os.environ.get("WRIGHT_HOME", "").strip()
+            wright_home = configured or Path.home() / ".wright"
+        return cls.from_wright_home(wright_home)
 
     @property
     def manifest(self) -> Path:
@@ -59,6 +64,10 @@ class NativeLayout:
     @property
     def lock_file(self) -> Path:
         return self.state / "lifecycle.lock"
+
+    @property
+    def control_plane_token(self) -> Path:
+        return self.data / "control-plane.token"
 
     def ensure(self) -> None:
         for directory in (
@@ -90,7 +99,6 @@ class NativeLayout:
         candidate_resolved = candidate.resolve(strict=False)
         if candidate_resolved in {
             Path(candidate_resolved.anchor),
-            self.hermes_home,
             self.root,
         }:
             raise LayoutError("broad_root_refused")

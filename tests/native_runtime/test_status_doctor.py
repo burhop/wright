@@ -9,9 +9,9 @@ from wright_engineering.runtime.models import LifecycleState
 
 def _lifecycle(tmp_path: Path, **kwargs) -> NativeLifecycle:
     return NativeLifecycle(
-        NativeLayout.from_hermes_home(tmp_path / "hermes"),
-        hermes_version="0.19.0",
-        plugin_capability="python-distribution-v1",
+        NativeLayout.from_wright_home(tmp_path / "wright-home"),
+        manager_id="cli",
+        adapter_protocol="wright-lifecycle-v1",
         **kwargs,
     )
 
@@ -20,7 +20,7 @@ def test_status_is_read_only_and_reports_required_surfaces(tmp_path: Path) -> No
     lifecycle = _lifecycle(
         tmp_path,
         status_probes={
-            "hermes": lambda: {"ok": True},
+            "manager": lambda: {"ok": True},
             "mcp": lambda: {"ok": True, "transport": "streamable-http"},
             "catalog": lambda: {"ok": True, "entries": 45},
             "configuration": lambda: {"ok": True},
@@ -34,13 +34,15 @@ def test_status_is_read_only_and_reports_required_surfaces(tmp_path: Path) -> No
     assert result.state is LifecycleState.NOT_INSTALLED
     assert not lifecycle.store.manifest_path.exists()
     assert {
-        "plugin_version",
+        "runtime_distribution_version",
+        "manager_id",
+        "adapter_protocol",
         "state",
         "compatibility",
         "data_root",
         "api_healthy",
         "ui_healthy",
-        "hermes",
+        "manager",
         "mcp",
         "catalog",
         "configuration",
@@ -52,7 +54,7 @@ def test_doctor_distinguishes_core_checks_and_external_services(tmp_path: Path) 
     lifecycle = _lifecycle(
         tmp_path,
         status_probes={
-            "hermes": lambda: {"ok": True},
+            "manager": lambda: {"ok": True},
             "mcp": lambda: {"ok": True},
             "catalog": lambda: {"ok": True},
             "configuration": lambda: {"ok": True},

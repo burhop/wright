@@ -75,25 +75,40 @@ class OciCandidate:
 
 
 @dataclass(frozen=True, slots=True)
-class HermesCapabilityEvidence:
-    version: str
-    capability: str
+class ManagerAdapterEvidence:
+    manager_id: str
+    manager_version: str
+    adapter_protocol: str
     install_interface: str
+    immutable_identity: str
     source: str
 
     def validate(self) -> None:
-        if not self.version or not self.install_interface:
-            raise EvidenceError("Hermes capability evidence is incomplete")
-        if self.capability != "python-distribution-v1":
-            raise EvidenceError("Hermes lacks the required package-plugin capability")
+        if not all(
+            (
+                self.manager_id,
+                self.manager_version,
+                self.adapter_protocol,
+                self.install_interface,
+                self.immutable_identity,
+            )
+        ):
+            raise EvidenceError("manager adapter evidence is incomplete")
+        expected = {
+            "hermes": ("hermes-git-plugin-v1", "git"),
+            "codex": ("mcp-v1", "mcp-config"),
+        }
+        if self.manager_id not in expected:
+            raise EvidenceError(f"unsupported manager adapter: {self.manager_id}")
+        if (self.adapter_protocol, self.install_interface) != expected[self.manager_id]:
+            raise EvidenceError(f"manager adapter protocol mismatch: {self.manager_id}")
         if self.source not in {"fixture", "released"}:
-            raise EvidenceError("Hermes capability source must be fixture or released")
+            raise EvidenceError("manager adapter source must be fixture or released")
 
 
 @dataclass(frozen=True, slots=True)
 class NativeCandidate:
     distribution: str
-    plugin_version: str
     runtime_version: str
     wheel_filename: str
     wheel_sha256: str
@@ -104,8 +119,6 @@ class NativeCandidate:
     def validate(self) -> None:
         if self.distribution != "wright-engineering":
             raise EvidenceError("native candidate must be wright-engineering")
-        if self.plugin_version != self.runtime_version:
-            raise EvidenceError("plugin and runtime candidate versions must match")
         for name, value in (
             ("wheel", self.wheel_sha256),
             ("compatibility", self.compatibility_sha256),
@@ -125,9 +138,9 @@ class ReleaseEvidence:
     oci_candidate: OciCandidate | None = None
     oci_gate_evidence: dict[str, Any] | None = None
     native_candidate: NativeCandidate | None = None
-    hermes_capability: HermesCapabilityEvidence | None = None
+    manager_adapters: list[ManagerAdapterEvidence] = field(default_factory=list)
     native_platform_results: list[dict[str, Any]] = field(default_factory=list)
-    stable_hermes_channel: dict[str, Any] | None = None
+    manager_adapter_channels: list[dict[str, Any]] = field(default_factory=list)
     native_public_verification: dict[str, Any] | None = None
     promotions: list[dict[str, Any]] = field(default_factory=list)
     approvals: list[dict[str, Any]] = field(default_factory=list)
@@ -135,11 +148,11 @@ class ReleaseEvidence:
     skipped_optional_stages: list[str] = field(default_factory=list)
     stage_results: list[dict[str, Any]] = field(default_factory=list)
     status: str = "preflight"
-    schema_version: int = 2
+    schema_version: int = 3
 
     def validate(self) -> None:
         self.release_identity.validate()
-        if self.schema_version not in {1, 2}:
+        if self.schema_version != 3:
             raise EvidenceError("unsupported release evidence schema version")
         if self.status not in (*STAGES, "failed", "quarantined"):
             raise EvidenceError(f"unknown release status: {self.status}")
@@ -169,8 +182,12 @@ class ReleaseEvidence:
                     )
         if self.native_candidate is not None:
             self.native_candidate.validate()
-        if self.hermes_capability is not None:
-            self.hermes_capability.validate()
+        observed_managers: set[str] = set()
+        for adapter in self.manager_adapters:
+            adapter.validate()
+            if adapter.manager_id in observed_managers:
+                raise EvidenceError("manager adapter identities must be unique")
+            observed_managers.add(adapter.manager_id)
         observed_platforms: set[str] = set()
         for result in self.native_platform_results:
             platform = str(result.get("platform", ""))
@@ -202,7 +219,7 @@ class ReleaseEvidence:
                     raise EvidenceError(
                         "dry-run evidence cannot record external mutation"
                     )
-        elif self.schema_version >= 2 and self.status in {
+        elif self.status in {
             "promoted",
             "post_verified",
             "docs_verified",
@@ -212,40 +229,62 @@ class ReleaseEvidence:
                 raise EvidenceError(
                     "production evidence requires mandatory Docker evidence"
                 )
-            if self.native_candidate is None or self.hermes_capability is None:
+            if self.native_candidate is None or not self.manager_adapters:
                 raise EvidenceError(
                     "production evidence requires native candidate evidence"
                 )
-            if self.hermes_capability.source != "released":
-                raise EvidenceError("production evidence requires released Hermes")
+            required_managers = {"hermes", "codex"}
+            if observed_managers != required_managers:
+                raise EvidenceError(
+                    "production evidence requires Hermes and Codex adapters"
+                )
+            if any(adapter.source != "released" for adapter in self.manager_adapters):
+                raise EvidenceError(
+                    "production evidence requires released manager adapters"
+                )
             if not self.native_platform_results:
                 raise EvidenceError(
                     "production evidence requires native platform results"
                 )
-            if self.stable_hermes_channel is None:
+            channel_managers = {
+                str(channel.get("manager_id"))
+                for channel in self.manager_adapter_channels
+            }
+            if channel_managers != required_managers:
                 raise EvidenceError(
-                    "production evidence requires stable Hermes channel evidence"
+                    "production evidence requires manager adapter channel evidence"
                 )
             if self.native_public_verification is None:
                 raise EvidenceError(
                     "production evidence requires public native lifecycle evidence"
                 )
-            required_lifecycle = {
+            base_lifecycle = {
                 "install",
                 "start",
                 "status",
                 "doctor",
                 "stop",
-                "update",
-                "rollback",
                 "uninstall",
                 "purge",
             }
-            if (
-                set(self.native_public_verification.get("lifecycle", []))
-                != required_lifecycle
-            ):
+            observed_lifecycle = set(
+                self.native_public_verification.get("lifecycle", [])
+            )
+            release_mode = self.native_public_verification.get("release_mode")
+            required_lifecycle = set(base_lifecycle)
+            if release_mode == "upgrade":
+                required_lifecycle.update({"update", "rollback"})
+            elif release_mode != "initial_native_release":
+                raise EvidenceError("public native release mode is missing")
+            if observed_lifecycle != required_lifecycle:
                 raise EvidenceError("public native lifecycle evidence is incomplete")
+            if (
+                release_mode == "initial_native_release"
+                and self.native_public_verification.get("previous_stable") is not None
+            ):
+                raise EvidenceError(
+                    "initial native release cannot claim a public predecessor"
+                )
 
     def to_dict(self) -> dict[str, Any]:
         self.validate()
@@ -283,11 +322,12 @@ class ReleaseEvidence:
             native_candidate=NativeCandidate(**raw["native_candidate"])
             if raw.get("native_candidate")
             else None,
-            hermes_capability=HermesCapabilityEvidence(**raw["hermes_capability"])
-            if raw.get("hermes_capability")
-            else None,
+            manager_adapters=[
+                ManagerAdapterEvidence(**item)
+                for item in raw.get("manager_adapters", [])
+            ],
             native_platform_results=list(raw.get("native_platform_results", [])),
-            stable_hermes_channel=raw.get("stable_hermes_channel"),
+            manager_adapter_channels=list(raw.get("manager_adapter_channels", [])),
             native_public_verification=raw.get("native_public_verification"),
             promotions=list(raw.get("promotions", [])),
             approvals=list(raw.get("approvals", [])),

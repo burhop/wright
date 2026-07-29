@@ -25,7 +25,7 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
     static = tmp_path / "static"
     static.mkdir()
     (static / "index.html").write_text("<html>Wright</html>", encoding="utf-8")
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
 
     environment: dict[str, str] = {}
     values = prepare_runtime_environment(
@@ -34,6 +34,8 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
 
     assert values["DATABASE_PATH"] == str(layout.data / "wright.db")
     assert values["FRONTEND_DIST_DIR"] == str(static.resolve())
+    assert values["WRIGHT_WORKSPACE_ROOT"] == str(layout.workspaces)
+    assert values["WRIGHT_WORKSPACES_DIR"] == str(layout.workspaces)
     assert environment == values
     assert layout.workspaces.is_dir()
 
@@ -59,7 +61,7 @@ def test_packaged_static_path_exists_and_missing_asset_fails(
 def test_prepare_and_identity_fail_closed_on_missing_inputs(
     monkeypatch, tmp_path: Path
 ) -> None:
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     with pytest.raises(ServerBootstrapError, match="packaged_ui_missing"):
         prepare_runtime_environment(
             layout, static_path=tmp_path / "missing", environment={}
@@ -72,8 +74,7 @@ def test_prepare_and_identity_fail_closed_on_missing_inputs(
 def test_serve_enforces_data_containment_and_starts_uvicorn(
     monkeypatch, tmp_path: Path
 ) -> None:
-    hermes_home = tmp_path / "hermes"
-    layout = NativeLayout.from_hermes_home(hermes_home)
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     static = tmp_path / "static"
     static.mkdir()
     (static / "index.html").write_text("<html>Wright</html>", encoding="utf-8")

@@ -32,12 +32,16 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
     assert "native-candidate-required" in workflow
     assert "--wheelhouse dist/platform-wheelhouse" in workflow
     assert "--hermes-home" in workflow
+    assert "--plugin-source hermes-plugin-wright" in workflow
+    assert "hermes-agent==0.19.0" in workflow
 
 
 def test_production_release_keeps_native_docker_docs_and_release_terminal() -> None:
     release = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
     assert "native-published-lifecycle" in release
-    assert "activate-stable-hermes-channel" in release
+    assert "verify-manager-adapters" in release
+    assert "hermes-git-plugin-v1" in release
+    assert "manager-adapter-evidence" in release
     assert "mirror-dockerhub" in release
     assert "deploy-versioned-docs" in release
     assert "publish-github-release-last" in release
@@ -55,14 +59,14 @@ def test_ordinary_python_and_windows_workflows_include_native_contracts() -> Non
     assert "tests/native_runtime" in windows
 
 
-def test_git_plugin_mirror_is_explicitly_legacy_and_not_release_evidence() -> None:
+def test_git_plugin_mirror_is_production_adapter_but_not_runtime_evidence() -> None:
     mirror = (ROOT / ".github/workflows/sync-hermes-plugin-mirror.yml").read_text(
         encoding="utf-8"
     )
     release = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
-    assert "LEGACY_MIGRATION_ONLY" in mirror
-    assert "never native release evidence" in mirror
-    assert "sync-hermes-plugin-mirror" not in release
+    assert "PRODUCTION_HERMES_ADAPTER" in mirror
+    assert "does not replace" in mirror
+    assert "hermes-plugin-wright" in release
 
 
 def test_merge_gates_have_mandatory_native_acceptance_without_skip_flag() -> None:
@@ -71,7 +75,23 @@ def test_merge_gates_have_mandatory_native_acceptance_without_skip_flag() -> Non
     contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
     assert "tests/native_runtime" in dev
     assert "validate_native_distribution" in dev
-    assert "require_released_package_capability" in prod
+    assert "require_released_git_plugin_interface" in prod
     assert "test_native_release_evidence.py" in prod
+    assert "scripts/sync-hermes-plugin-mirror.sh" in prod
+    assert "scripts/validate-hermes-plugin-mirror.sh" in prod
+    assert "scripts/test-hermes-plugin-install.sh" in prod
+    assert "scripts/test-hermes-plugin-update.sh" in prod
+    assert "scripts/test-hermes-plugin-uninstall.sh" in prod
+    assert "run make" not in prod
     assert "SKIP_NATIVE" not in dev + prod
     assert "no skip flag" in contributing
+
+
+def test_docker_smoke_prefers_project_python_over_windows_store_alias() -> None:
+    smoke = (ROOT / "scripts/docker-smoke-test.sh").read_text(encoding="utf-8")
+    uv_python = "elif command -v uv"
+    python3_fallback = "elif command -v python3"
+    assert uv_python in smoke
+    assert python3_fallback in smoke
+    assert smoke.index(uv_python) < smoke.index(python3_fallback)
+    assert "PYTHON_CMD=(uv run --no-sync python)" in smoke

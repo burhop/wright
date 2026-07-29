@@ -53,7 +53,7 @@ class NativeArtifactInspection:
 
 REQUIRED_NATIVE_PATHS = (
     "wright_engineering/__init__.py",
-    "wright_engineering/hermes_plugin/__init__.py",
+    "wright_engineering/manager_profiles.py",
     "wright_engineering/runtime/lifecycle.py",
     "api/main.py",
     "core/__init__.py",

@@ -7,7 +7,7 @@ import tomllib
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_legacy_mirror_packages_only_the_migration_delegate_surface() -> None:
+def test_git_adapter_packages_only_the_bootstrap_surface() -> None:
     with (PLUGIN_ROOT / "pyproject.toml").open("rb") as handle:
         project = tomllib.load(handle)
 
@@ -15,7 +15,7 @@ def test_legacy_mirror_packages_only_the_migration_delegate_surface() -> None:
     assert set(included) == {
         "__init__.py",
         "plugin.yaml",
-        "bridge.py",
+        "bootstrap.py",
         "commands.py",
     }
     assert not {"catalog.py", "catalog.yaml", "schemas.py"} & set(included)

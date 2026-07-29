@@ -81,7 +81,7 @@ def _complete_native_wheel(path: Path, *, private_dependency: bool = False) -> N
     }
     required = {
         "wright_engineering/__init__.py": b"",
-        "wright_engineering/hermes_plugin/__init__.py": b"",
+        "wright_engineering/manager_profiles.py": b"",
         "wright_engineering/runtime/lifecycle.py": b"",
         "api/main.py": b"",
         "core/__init__.py": b"",

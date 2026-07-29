@@ -8,7 +8,7 @@ import pytest
 
 from scripts.release.evidence import (
     EvidenceError,
-    HermesCapabilityEvidence,
+    ManagerAdapterEvidence,
     NativeCandidate,
     OciCandidate,
     PythonArtifact,
@@ -34,6 +34,22 @@ LIFECYCLE = [
 ]
 
 
+def _adapters(source: str = "released") -> list[ManagerAdapterEvidence]:
+    return [
+        ManagerAdapterEvidence(
+            "hermes",
+            "0.19.0",
+            "hermes-git-plugin-v1",
+            "git",
+            "git:0123456789abcdef0123456789abcdef01234567",
+            source,
+        ),
+        ManagerAdapterEvidence(
+            "codex", "2026.07", "mcp-v1", "mcp-config", "codex-profile:0.1.5", source
+        ),
+    ]
+
+
 def _production_evidence() -> ReleaseEvidence:
     return ReleaseEvidence(
         mode=ReleaseMode.RELEASE,
@@ -47,19 +63,13 @@ def _production_evidence() -> ReleaseEvidence:
         native_candidate=NativeCandidate(
             "wright-engineering",
             "0.1.5",
-            "0.1.5",
             "wright_engineering-0.1.5-py3-none-any.whl",
             SHA,
             SHA,
             SHA,
             SHA,
         ),
-        hermes_capability=HermesCapabilityEvidence(
-            "0.19.0",
-            "python-distribution-v1",
-            "hermes plugins install-package",
-            "released",
-        ),
+        manager_adapters=_adapters(),
         native_platform_results=[
             {
                 "platform": "ubuntu-24.04-x64",
@@ -68,12 +78,18 @@ def _production_evidence() -> ReleaseEvidence:
                 "source_isolation": True,
             }
         ],
-        stable_hermes_channel={
-            "channel": "stable",
-            "version": "0.1.5",
-            "verification_url": "https://example.invalid/wright/stable/0.1.5",
+        manager_adapter_channels=[
+            {
+                "manager_id": item.manager_id,
+                "immutable_identity": item.immutable_identity,
+            }
+            for item in _adapters()
+        ],
+        native_public_verification={
+            "release_mode": "upgrade",
+            "lifecycle": LIFECYCLE,
+            "wheel_sha256": SHA,
         },
-        native_public_verification={"lifecycle": LIFECYCLE, "wheel_sha256": SHA},
         stage_results=[
             {"stage": "preflight", "external_mutation": True},
             {"stage": "promoted", "external_mutation": True},
@@ -91,6 +107,7 @@ def test_native_release_evidence_round_trips_and_satisfies_schema(
     evidence.write(path)
     loaded = ReleaseEvidence.read(path)
     assert loaded.native_candidate == evidence.native_candidate
+    assert loaded.manager_adapters == evidence.manager_adapters
     schema = json.loads(
         (
             ROOT
@@ -104,16 +121,23 @@ def test_native_release_evidence_round_trips_and_satisfies_schema(
     "field",
     [
         "native_candidate",
-        "hermes_capability",
+        "manager_adapters",
         "native_platform_results",
-        "stable_hermes_channel",
+        "manager_adapter_channels",
         "native_public_verification",
     ],
 )
 def test_production_release_rejects_missing_native_evidence(field: str) -> None:
     evidence = _production_evidence()
-    setattr(evidence, field, [] if field == "native_platform_results" else None)
-    with pytest.raises(EvidenceError, match="native|Hermes|stable|public"):
+    setattr(
+        evidence,
+        field,
+        []
+        if field
+        in {"manager_adapters", "native_platform_results", "manager_adapter_channels"}
+        else None,
+    )
+    with pytest.raises(EvidenceError, match="native|manager|public"):
         evidence.validate()
 
 
@@ -130,10 +154,29 @@ def test_schema_rejects_omitted_native_field() -> None:
         Draft202012Validator(schema).validate(payload)
 
 
-def test_fixture_hermes_cannot_become_production_evidence() -> None:
+def test_fixture_manager_adapters_cannot_become_production_evidence() -> None:
     evidence = _production_evidence()
-    evidence.hermes_capability = HermesCapabilityEvidence(
-        "candidate", "python-distribution-v1", "fixture", "fixture"
-    )
-    with pytest.raises(EvidenceError, match="released Hermes"):
+    evidence.manager_adapters = _adapters("fixture")
+    with pytest.raises(EvidenceError, match="released manager adapters"):
+        evidence.validate()
+
+
+def test_initial_native_release_requires_no_public_predecessor() -> None:
+    evidence = _production_evidence()
+    evidence.native_public_verification = {
+        "release_mode": "initial_native_release",
+        "previous_stable": None,
+        "lifecycle": [
+            "install",
+            "start",
+            "status",
+            "doctor",
+            "stop",
+            "uninstall",
+            "purge",
+        ],
+    }
+    evidence.validate()
+    evidence.native_public_verification["previous_stable"] = {"version": "0.1.5"}
+    with pytest.raises(EvidenceError, match="cannot claim a public predecessor"):
         evidence.validate()

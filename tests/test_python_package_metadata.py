@@ -30,10 +30,10 @@ def test_wright_engineering_root_package_has_public_alpha_metadata() -> None:
 
     assert project["name"] == "wright-engineering"
     assert project["readme"] == "README.md"
-    assert project["dependencies"] == ["packaging>=24,<27"]
+    assert project["dependencies"] == ["packaging>=24,<27", "psutil>=6,<8"]
     assert project["optional-dependencies"]["runtime"]
     assert project["scripts"]["wright"] == "wright_engineering.cli:main"
-    assert "Complete native Hermes application" in project["description"]
+    assert "manager-neutral application" in project["description"]
     assert_pypi_metadata(project)
     assert (ROOT / "src/wright_engineering/__init__.py").exists()
     assert (ROOT / "src/wright_engineering/cli.py").exists()
@@ -45,7 +45,8 @@ def test_component_packages_are_not_advertised_as_alpha_pypi_packages() -> None:
     )
 
     assert "wright-engineering" in python_packages
-    assert "Normal users do not run `pip install`" in python_packages
-    assert "are private development/migration" in python_packages
+    assert "one public Python distribution" in python_packages
+    assert "Codex users may install it" in python_packages
+    assert "are private development surfaces" in python_packages
     assert "https://pypi.org/project/wright-core/" not in python_packages
     assert "https://pypi.org/project/wright-tool-registry/" not in python_packages

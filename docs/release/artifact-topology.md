@@ -1,27 +1,30 @@
 # Wright Artifact Topology
 
-Wright has one product version and intentionally separate, jointly mandatory
-delivery surfaces.
+Wright has one product version and separate, jointly required delivery surfaces.
 
-| Surface | Role | Public identity | Support boundary |
+| Surface | Role | Public identity | Release evidence |
 | --- | --- | --- | --- |
-| Native Hermes/Python | Complete application wheel: thin Hermes entry point plus isolated runtime extra, packaged API/UI/catalog/gateway | `wright-engineering` | Primary user path; requires released `python-distribution-v1` and full platform lifecycle evidence |
-| OCI | Complete local Wright appliance | `ghcr.io/burhop/wright@sha256:<digest>` and byte-identical `burhop/wright:<tag>` | `linux/amd64`; both registries required for a completed release |
-| Legacy integration | One-release Git-plugin migration delegate | `burhop/hermes-plugin-wright` mirror | Cannot satisfy native release evidence |
+| Wright runtime | Complete manager-neutral application, UI, catalog, gateway, lifecycle, and MCP profiles | `wright-engineering` wheel/sdist | Exact filename, SHA-256, runtime lock, clean install, and lifecycle |
+| Hermes adapter | Standard-library-only projection from Hermes' real Git plugin interface to Wright lifecycle | `burhop/hermes-plugin-wright` Git commit | Released Hermes version, mirror commit and provenance, install/update/remove, `/wright` lifecycle |
+| Codex adapter | Direct STDIO or Streamable HTTP MCP profile | Versioned Wright profile at the release commit | Profile identity and MCP initialize/list/call |
+| OCI appliance | Turnkey local Wright appliance | `ghcr.io/burhop/wright@sha256:<digest>` and `burhop/wright:<tag>` | Same tested manifest digest in both registries |
 
-`wright-core`, `wright-tool-registry`, `wright-workspace-service`, `wright-agent-adapters`, `wright-data-vault`, and `wright-api` are private monorepo distributions. They are marked `Private :: Do Not Upload`, are absent from public publication workflows, and must never be resolved from public indexes. The `wright` and `wright-core` names on PyPI belong to other projects.
+`wright-core`, `wright-tool-registry`, `wright-workspace-service`,
+`wright-agent-adapters`, `wright-data-vault`, and `wright-api` are private
+monorepo distributions. They are not resolved from public indexes. The `wright`
+and `wright-core` names on PyPI belong to other projects.
 
-The root `pyproject.toml` version is authoritative. A release tag, Python metadata, OCI labels/tags, changelog, and release evidence must agree before candidate construction.
+## Exact-subject rule
 
-## Exact-artifact rule
-
-- Build the complete wheel and sdist once. Record filenames, safe content
-  manifests, UI/compatibility/runtime-extra hashes, and SHA-256 hashes. Candidate
-  tests, TestPyPI, PyPI, Hermes channel activation, and public native lifecycle
-  verification consume those bytes.
-- Build the `linux/amd64` OCI candidate once. Record its digest. Smoke, scan, inventory, SBOM, provenance, GHCR promotion, and required Docker Hub distribution consume that digest.
-- A retry with the same identity and same subjects may resume. Different subjects require a new patch version.
-- A dry-run rehearsal or package-plugin fixture proves local identity and
-  ordering only. It is not released-Hermes production evidence.
-- Native Hermes and OCI/Docker are both terminal. Neither may be skipped because
-  the other passed.
+- Build the public wheel and sdist once and retain their content manifests and
+  hashes through TestPyPI, PyPI, and native manager verification.
+- Verify the Hermes mirror's installed Git commit and provenance source commit
+  before running Wright. Hermes does not select a Git ref, so post-clone
+  identity verification is mandatory.
+- Codex evidence names the Wright release commit and verifies the
+  direct MCP contract without Hermes.
+- Build the OCI candidate once; GHCR and Docker Hub must resolve to that tested
+  digest.
+- A retry may resume only with identical subjects. A different subject requires
+  a new patch version.
+- Native manager paths and Docker are both terminal release requirements.

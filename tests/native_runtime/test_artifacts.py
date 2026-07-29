@@ -52,11 +52,11 @@ def test_channel_policy_rejects_mutable_or_unapproved_sources(tmp_path: Path) ->
 
 
 def test_install_command_uses_exact_runtime_extra_and_no_source_tools(
-    tmp_path: Path,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     wheel = _wheel(tmp_path)
     artifact = RuntimeArtifact.from_local(wheel, "0.1.5", SourceChannel.LOCAL_CANDIDATE)
-    layout = NativeLayout.from_hermes_home(tmp_path / "hermes")
+    layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     installer = RuntimeInstaller(layout, python_executable=Path("python"))
     command = installer.install_command(artifact, layout.runtime_path("runtime-id"))
     rendered = " ".join(str(part) for part in command).lower()
@@ -65,3 +65,10 @@ def test_install_command_uses_exact_runtime_extra_and_no_source_tools(
     assert str(wheel.parent.resolve()) in command
     assert not any(tool in rendered for tool in ("git ", "docker", "npm", "node"))
     assert "--no-deps" not in command
+
+    wheelhouse = tmp_path / "complete-wheelhouse"
+    wheelhouse.mkdir()
+    monkeypatch.setenv("WRIGHT_RUNTIME_WHEELHOUSE", str(wheelhouse))
+    command = installer.install_command(artifact, layout.runtime_path("runtime-id"))
+    assert str(wheelhouse.resolve()) in command
+    assert str(wheel.parent.resolve()) not in command
