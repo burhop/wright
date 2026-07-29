@@ -96,7 +96,7 @@ def test_public_docs_make_native_primary_docker_mandatory_and_package_roles_exac
     assert "mandatory turnkey" in combined
     assert "python-distribution-v1" in combined
     assert "production_native_available" in combined
-    assert "current released Hermes 0.18.2" in readme
+    assert "current released Hermes 0.19.0" in readme
     assert "no Git, Docker" in combined
     assert "manual Python package" in combined
     assert "one complete public application distribution" in readme

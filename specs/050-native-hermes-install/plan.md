@@ -19,7 +19,7 @@ explicit purge behavior.
 
 Wright will require a Hermes release whose supported plugin lifecycle can
 install, update, and remove Python entry-point plugins without Git. Current
-Hermes 0.18.2 discovers entry-point plugins but its installer only clones Git
+Hermes 0.19.0 discovers entry-point plugins but its installer only clones Git
 repositories. Wright MUST fail its stable release gate until the required Hermes
 capability is available and passes the published-artifact acceptance suite; the
 legacy Git mirror is migration-only and cannot satisfy native acceptance.

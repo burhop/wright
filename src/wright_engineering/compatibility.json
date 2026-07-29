@@ -18,5 +18,5 @@
   "released_hermes_version": null,
   "production_native_available": false,
   "previous_native_version": null,
-  "release_blocker": "No released Hermes version currently exposes the required immutable Python package-plugin lifecycle. Hermes 0.18.2 is Git-only."
+  "release_blocker": "No released Hermes version currently exposes the required immutable Python package-plugin lifecycle. Hermes 0.19.0 is Git-only."
 }

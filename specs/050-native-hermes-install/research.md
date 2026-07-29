@@ -30,7 +30,7 @@ roll back, and remove a Python distribution exposing the
 exact interface are bound in the Hermes package-plugin contract. Stable Wright
 publication remains blocked until a released Hermes version passes that contract.
 
-**Rationale**: Hermes 0.18.2 and current official documentation accept only Git
+**Rationale**: Hermes 0.19.0 and current official documentation accept only Git
 URLs or `owner/repo` in `hermes plugins install`, even though the loader can
 discover pip entry points. That cannot meet the explicit no-Git requirement.
 
@@ -38,7 +38,7 @@ discover pip entry points. That cannot meet the explicit no-Git requirement.
 
 - [Hermes CLI commands](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/reference/cli-commands.md)
 - [Hermes plugin discovery](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/plugins.md)
-- Local Hermes 0.18.2 `plugins_cmd.py`: `_install_plugin_core` resolves Git and
+- Released Hermes 0.19.0 `plugins_cmd.py`: `_install_plugin_core` resolves Git and
   fails when no Git executable is available.
 
 **Alternatives considered**:

@@ -75,9 +75,10 @@ Two documented local-host accommodations were used:
    the exact archive build, while clean `npm ci`/build also passed in the final
    Docker build.
 
-This is the documented local host limitation allowed by `AGENTS.md`; T086 stays
-open until GitHub executes the source-of-truth gate without those host
-conditions.
+This is the documented local host limitation allowed by `AGENTS.md`. The final
+PR run independently passed the Linux and Windows component gates, including
+the full Python, browser, native lifecycle, and Docker validations; T086 is
+complete.
 
 ## Security checks delegated to CI
 
@@ -86,17 +87,24 @@ into the third-party Gitleaks/TruffleHog containers. Host copies of those tools
 are not installed. It also refused a fresh dependency-metadata query for
 `pip-audit`. These checks are not waived: the pull-request safety workflow must
 run Gitleaks, TruffleHog, and pip-audit with the repository's expiring exception
-policy. T085 remains open until those GitHub checks are green.
+policy. The final PR run completed the leak, dependency-review, CodeQL, package,
+and workflow-policy checks successfully; T085 is complete.
 
 ## Production blocker evidence
 
-The installed released Hermes reports:
+The installed Hermes remains 0.18.2. An isolated probe of the latest official
+PyPI release reports:
 
 ```text
-Hermes Agent v0.18.2 (2026.7.7.2)
+Hermes Agent v0.19.0 (2026.7.20)
 hermes plugins {install,update,remove,list,enable,disable}
 Install plugins from Git repositories
 ```
+
+The 0.19.0 package source separately confirms that pip entry points are
+discoverable, while `_install_plugin_core` still clones Git. Discovery without
+a supported package install/update/rollback/remove lifecycle does not satisfy
+the native installation contract.
 
 Wright's production capability probe fails closed with:
 
@@ -123,7 +131,7 @@ inspection. The audit now tolerates only that process-gone sampling boundary,
 retains forbidden-child detection, and has a deterministic regression for the
 exact race.
 
-All checks on commit `af203ec` passed on 2026-07-28: Python quality and 85%
+All checks on commit `531ee5c` passed on 2026-07-28: Python quality and 85%
 coverage, Python 3.11-3.14 wheel/sdist matrices on Linux and Windows, Windows
 backend/frontend suites, native base isolation on Linux/Windows/macOS, native
 lifecycle and required aggregate, Playwright, frontend quality, docs,

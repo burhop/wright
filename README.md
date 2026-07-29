@@ -105,7 +105,7 @@ automatically creates Wright's contained runtime. The user needs no Git, Docker,
 Node.js, npm, Wright checkout, `WRIGHT_REPO_DIR`, or manual Python package
 command.
 
-This path is not public yet. The current released Hermes 0.18.2 plugin command
+This path is not public yet. The current released Hermes 0.19.0 plugin command
 clones Git repositories and cannot install, update, roll back, or remove an
 immutable Python distribution. Wright's production gate therefore remains
 closed until the compatibility contract names a released Hermes version with

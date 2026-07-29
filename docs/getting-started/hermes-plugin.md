@@ -12,7 +12,7 @@ model endpoint and credentials through Hermes using its supported setup flow.
 Do not advertise this path as released until
 `src/wright_engineering/compatibility.json` sets
 `production_native_available` to `true` and names a
-`released_hermes_version`. The currently verified Hermes 0.18.2 interface says
+`released_hermes_version`. The currently verified Hermes 0.19.0 interface says
 it installs plugins from Git repositories; it does not satisfy Wright's required
 `python-distribution-v1` package install/update/rollback/remove contract.
 
