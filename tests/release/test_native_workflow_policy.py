@@ -33,6 +33,13 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
     assert "--wheelhouse dist/platform-wheelhouse" in workflow
     assert "--hermes-home" in workflow
     assert "--plugin-source hermes-plugin-wright" in workflow
+    platform_matrix = workflow[
+        workflow.index("native-base-platform-matrix:") : workflow.index(
+            "native-lifecycle-contract:"
+        )
+    ]
+    assert "--runtime-smoke" in platform_matrix
+    assert "--base-only" not in platform_matrix
     assert "hermes-agent==0.19.0" in workflow
     lifecycle = workflow[workflow.index("native-lifecycle-contract:") :]
     assert '"mcp>=1.27.2,<2"' in lifecycle
