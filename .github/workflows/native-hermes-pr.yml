@@ -82,7 +82,7 @@ jobs:
               f"wright-engineering[runtime] @ {wheel.resolve().as_uri()}",
           ])
           PY
-      - name: Prove real Hermes Git adapter install and post-adapter isolation
+      - name: Prove real Hermes native runtime lifecycle and post-adapter isolation
         shell: bash
         run: |
           set -euo pipefail
@@ -92,13 +92,13 @@ jobs:
             --wheelhouse dist/platform-wheelhouse \
             --hermes-home "$RUNNER_TEMP/hermes-native-candidate" \
             --plugin-source hermes-plugin-wright \
-            --evidence "dist/native-base-${RUNNER_OS}.json" \
-            --base-only
+            --evidence "dist/native-runtime-smoke-${RUNNER_OS}.json" \
+            --runtime-smoke
       - name: Upload platform evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: native-base-${{ runner.os }}-${{ runner.arch }}
-          path: dist/native-base-*.json
+          name: native-runtime-smoke-${{ runner.os }}-${{ runner.arch }}
+          path: dist/native-runtime-smoke-*.json
           if-no-files-found: error
 
   native-lifecycle-contract:

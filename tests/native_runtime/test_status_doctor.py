@@ -5,6 +5,14 @@ from pathlib import Path
 from wright_engineering.runtime.layout import NativeLayout
 from wright_engineering.runtime.lifecycle import NativeLifecycle
 from wright_engineering.runtime.models import LifecycleState
+from wright_engineering.runtime.process import ProcessError
+
+from .support import seed_runtime
+
+
+class IdentityFailureProcessManager:
+    def require_identity(self, *args, **kwargs) -> None:
+        raise ProcessError("process_executable_outside_runtime")
 
 
 def _lifecycle(tmp_path: Path, **kwargs) -> NativeLifecycle:
@@ -85,3 +93,18 @@ def test_status_redacts_probe_secrets(tmp_path: Path) -> None:
         status_probes={"configuration": lambda: {"ok": False, "token": "leak"}},
     )
     assert "leak" not in repr(lifecycle.status().to_dict())
+
+
+def test_status_reports_safe_process_identity_failure_code(tmp_path: Path) -> None:
+    lifecycle = _lifecycle(
+        tmp_path,
+        process_manager=IdentityFailureProcessManager(),  # type: ignore[arg-type]
+    )
+    seed_runtime(lifecycle, version="0.1.8", runtime_id="runtime-1", running=True)
+
+    result = lifecycle.status()
+
+    assert result.details["process_owned"] is False
+    assert (
+        result.details["process_identity_code"] == "process_executable_outside_runtime"
+    )

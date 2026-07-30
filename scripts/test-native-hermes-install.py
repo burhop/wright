@@ -58,6 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--hermes-version", default="0.19.0")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--base-only", action="store_true")
+    parser.add_argument("--runtime-smoke", action="store_true")
     return parser
 
 
@@ -281,7 +282,10 @@ def _adapter_lifecycle(
     )
     result = _json_result(completed)
     if require_ok and result.get("ok") is not True:
-        raise HarnessError(f"native {command} failed: {result.get('code')}")
+        raise HarnessError(
+            f"native {command} failed: "
+            + json.dumps(result, sort_keys=True, separators=(",", ":"))
+        )
     return result
 
 
@@ -534,7 +538,9 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
     repository_root = Path(__file__).resolve().parents[1]
     wheel = args.wheel.resolve(strict=True)
     previous = args.previous_wheel.resolve(strict=True) if args.previous_wheel else None
-    if not args.base_only and previous is None:
+    if args.base_only and args.runtime_smoke:
+        raise HarnessError("--base-only and --runtime-smoke are mutually exclusive")
+    if not args.base_only and not args.runtime_smoke and previous is None:
         raise HarnessError("full lifecycle evidence requires --previous-wheel")
     hermes_home = args.hermes_home.resolve(strict=False)
     if hermes_home.exists():
@@ -613,6 +619,30 @@ def run_harness(args: argparse.Namespace) -> dict[str, object]:
     for command in ("start", "status", "doctor"):
         _adapter_lifecycle(audit, plugin_dir, command, cwd=cwd, env=active)
         lifecycle.append(command)
+    if args.runtime_smoke:
+        for command in ("stop", "uninstall"):
+            _adapter_lifecycle(audit, plugin_dir, command, cwd=cwd, env=active)
+            lifecycle.append(command)
+        return {
+            "schema_version": 2,
+            "status": "passed",
+            "mode": "real-hermes-git-adapter-runtime-smoke",
+            "platform": f"{platform.system().lower()}-{platform.release()}",
+            "architecture": platform.machine().lower(),
+            "python": platform.python_version(),
+            "hermes_version": args.hermes_version,
+            "adapter_protocol": "hermes-git-plugin-v1",
+            "adapter_identity": adapter_identity,
+            "candidate": {
+                "filename": wheel.name,
+                "version": wheel_version(wheel),
+                "sha256": sha256_file(wheel),
+            },
+            "source_isolation": True,
+            "forbidden_executables": sorted(audit.forbidden),
+            "observed_executables": sorted(set(audit.executables)),
+            "lifecycle": lifecycle,
+        }
     data_root = Path(environment["WRIGHT_HOME"]) / "data"
     data_root.mkdir(parents=True, exist_ok=True)
     preserved = data_root / "preserved.txt"

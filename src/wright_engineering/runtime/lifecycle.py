@@ -41,7 +41,7 @@ from .models import (
     RuntimeStatus,
     utc_now,
 )
-from .process import ProcessManager
+from .process import ProcessError, ProcessManager
 from .purge import PurgeManager
 from .state import LifecycleBusy, ManifestStore, StateError
 
@@ -407,7 +407,11 @@ class NativeLifecycle:
                         expected_runtime_id=runtime.runtime_id,
                     )
                     process_owned = True
+                except ProcessError as exc:
+                    details["process_identity_code"] = str(exc)
+                    process_owned = False
                 except Exception:
+                    details["process_identity_code"] = "process_identity_unavailable"
                     process_owned = False
             healthy = process_owned and self.health_probe(manifest.process)
             details.update(

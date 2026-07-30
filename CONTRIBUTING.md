@@ -56,8 +56,10 @@ software to the base Docker image just to make catalog validation pass.
 For feature branches, `scripts/check-dev-merge.sh` is the authoritative gate
 before merge to `dev`. The native Hermes candidate checks are mandatory and
 have no skip flag: they validate the complete wheel, base/runtime isolation,
-source isolation, forbidden executables, lifecycle behavior, and every claimed
-platform. Release-train changes must additionally preserve the build-once
+source isolation, forbidden executables, and start/status/doctor/stop/uninstall
+runtime behavior on every claimed platform. The full update, rollback, purge,
+and manager-profile lifecycle remains an additional Linux contract.
+Release-train changes must additionally preserve the build-once
 wheel/sdist hashes, runtime-extra lock, released-Hermes capability and stable
 channel ordering, OCI candidate digest, mandatory Docker Hub mirror, full-SHA
 Action pins, protected environment ordering, expiring vulnerability exceptions,
