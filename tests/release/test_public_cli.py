@@ -101,7 +101,7 @@ class _FakeLifecycle:
         return _LifecycleResult(ok=True, command="status")
 
     def update(self, version):
-        assert version == "0.1.6"
+        assert version == "0.1.7"
         return _LifecycleResult(ok=False, command="update")
 
 
@@ -109,7 +109,7 @@ class _FakeLifecycle:
     ("arguments", "expected_code", "expected_command"),
     [
         (["native", "status"], 0, "status"),
-        (["native", "update", "0.1.6"], 1, "update"),
+        (["native", "update", "0.1.7"], 1, "update"),
     ],
 )
 def test_native_cli_dispatches_no_argument_and_versioned_commands(

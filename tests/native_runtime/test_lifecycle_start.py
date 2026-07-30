@@ -63,9 +63,9 @@ class FakeProcessManager:
 
 
 def _artifact(tmp_path: Path) -> RuntimeArtifact:
-    wheel = tmp_path / "wright_engineering-0.1.6-py3-none-any.whl"
+    wheel = tmp_path / "wright_engineering-0.1.7-py3-none-any.whl"
     wheel.write_bytes(b"wheel")
-    return RuntimeArtifact.from_local(wheel, "0.1.6", SourceChannel.LOCAL_CANDIDATE)
+    return RuntimeArtifact.from_local(wheel, "0.1.7", SourceChannel.LOCAL_CANDIDATE)
 
 
 def test_start_automatically_installs_then_reuses_healthy_runtime(
