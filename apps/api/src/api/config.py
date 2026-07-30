@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass
 from urllib.parse import urlparse
 from agent_adapters import resolve_agent_api_settings
+from workspace_service.config import WorkspaceSurfaceSettings
 
 # Hermes Native API port and base URL configuration for the 'wright' profile
 _HERMES_API_SETTINGS = resolve_agent_api_settings("hermes")
@@ -32,6 +33,12 @@ def api_mcp_autostart_enabled() -> bool:
         "no",
         "off",
     }
+
+
+def get_workspace_surface_settings() -> WorkspaceSurfaceSettings:
+    """Read default-off Workspace Surfaces flags and bounded policy settings."""
+
+    return WorkspaceSurfaceSettings.from_env()
 
 
 def get_llm_health_url() -> str:

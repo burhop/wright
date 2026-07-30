@@ -1,7 +1,7 @@
 [project]
 name = "wright-data-vault"
 version = "0.1.0"
-description = "Private Wright SQLite state lifecycle, migration, backup, and recovery package"
+description = "Private Wright SQLite and Workspace Surfaces persistence, migration, backup, and recovery package"
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"

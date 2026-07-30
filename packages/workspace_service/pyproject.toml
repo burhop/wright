@@ -1,7 +1,7 @@
 [project]
 name = "wright-workspace-service"
 version = "0.1.0"
-description = "Workspace lifecycle orchestration facade for Wright"
+description = "Workspace lifecycle and Workspace Surfaces application services for Wright"
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"

@@ -20,16 +20,16 @@
 
 **Purpose**: Prepare package exports, locked dependencies, configuration, fixtures, and test projects without changing existing viewer behavior.
 
-- [ ] T001 Add version-pinned `@modelcontextprotocol/ext-apps`, `dompurify`, `plotly.js-dist-min`, and required type packages to `apps/web/package.json` and `apps/web/package-lock.json`, recording license/provenance review inputs in `docs/security/dependency-review.md` (FR-014, FR-028, FR-051)
-- [ ] T002 Add the installed public `wright` package and package-data entries for schemas/renderer assets to `pyproject.toml`, `src/wright/__init__.py`, and wheel-content assertions in `tests/packaging/test_wheel_contents.py` (FR-010, FR-017, FR-051)
-- [ ] T003 [P] Add surface feature flags, preview-host/domain settings, bootstrap TTL, and every version-1 runtime/proxy/retention default from `specs/053-workspace-surfaces/policy-defaults.md` to `packages/workspace_service/src/workspace_service/config.py`, `apps/api/src/api/config.py`, and `.env.example` (FR-025, FR-027, FR-036, FR-043)
-- [ ] T004 [P] Create package export scaffolding in `packages/core/src/core/surfaces/__init__.py`, `packages/workspace_service/src/workspace_service/surfaces/__init__.py`, `packages/tool_registry/src/tool_registry/ui/__init__.py`, and `apps/web/src/services/surfaces/index.ts` (FR-001, FR-053)
-- [ ] T005 [P] Copy/version the approved JSON/OpenAPI contracts into production package data under `packages/core/src/core/surfaces/schemas/` and add checksum drift validation in `tests/contract/workspace_surfaces/test_schema_sync.py` (FR-053)
-- [ ] T006 [P] Create reference and hostile fixture roots under `examples/workspace-surfaces/` and `tests/fixtures/workspace_surfaces/` with README ownership rules in both directories (FR-055)
-- [ ] T007 [P] Add `workspace_surfaces` pytest markers/extras and cross-platform fixture discovery to `pyproject.toml` and `tests/conftest.py` (FR-052, SC-010)
-- [ ] T008 [P] Add Chromium, Firefox, WebKit, and desktop-surface project definitions with explicit feature detection to `playwright.config.ts` and `tests/ui-integration/playwright.workspace-surfaces.ts` (FR-032, FR-052, SC-010)
-- [ ] T009 Update the enforced dependency graph and package metadata for any new public imports in `architecture/python-packages.toml`, `packages/core/pyproject.toml`, `packages/data_vault/pyproject.toml`, `packages/workspace_service/pyproject.toml`, and their README files (FR-053)
-- [ ] T010 Run and record setup-only lock, import-boundary, schema-sync, and package-manifest checks in `specs/053-workspace-surfaces/evidence/setup.md` before foundational implementation (FR-051, FR-053)
+- [X] T001 Add version-pinned `@modelcontextprotocol/ext-apps`, `dompurify`, `plotly.js-dist-min`, and required type packages to `apps/web/package.json` and `apps/web/package-lock.json`, recording license/provenance review inputs in `docs/security/dependency-review.md` (FR-014, FR-028, FR-051)
+- [X] T002 Add the installed public `wright` package and package-data entries for schemas/renderer assets to `pyproject.toml`, `src/wright/__init__.py`, and wheel-content assertions in `tests/packaging/test_wheel_contents.py` (FR-010, FR-017, FR-051)
+- [X] T003 [P] Add surface feature flags, preview-host/domain settings, bootstrap TTL, and every version-1 runtime/proxy/retention default from `specs/053-workspace-surfaces/policy-defaults.md` to `packages/workspace_service/src/workspace_service/config.py`, `apps/api/src/api/config.py`, and `.env.example` (FR-025, FR-027, FR-036, FR-043)
+- [X] T004 [P] Create package export scaffolding in `packages/core/src/core/surfaces/__init__.py`, `packages/workspace_service/src/workspace_service/surfaces/__init__.py`, `packages/tool_registry/src/tool_registry/ui/__init__.py`, and `apps/web/src/services/surfaces/index.ts` (FR-001, FR-053)
+- [X] T005 [P] Copy/version the approved JSON/OpenAPI contracts into production package data under `packages/core/src/core/surfaces/schemas/` and add checksum drift validation in `tests/contract/workspace_surfaces/test_schema_sync.py` (FR-053)
+- [X] T006 [P] Create reference and hostile fixture roots under `examples/workspace-surfaces/` and `tests/fixtures/workspace_surfaces/` with README ownership rules in both directories (FR-055)
+- [X] T007 [P] Add `workspace_surfaces` pytest markers/extras and cross-platform fixture discovery to `pyproject.toml` and `tests/conftest.py` (FR-052, SC-010)
+- [X] T008 [P] Add Chromium, Firefox, WebKit, and desktop-surface project definitions with explicit feature detection to `playwright.config.ts` and `tests/ui-integration/playwright.workspace-surfaces.ts` (FR-032, FR-052, SC-010)
+- [X] T009 Update the enforced dependency graph and package metadata for any new public imports in `architecture/python-packages.toml`, `packages/core/pyproject.toml`, `packages/data_vault/pyproject.toml`, `packages/workspace_service/pyproject.toml`, and their README files (FR-053)
+- [X] T010 Run and record setup-only lock, import-boundary, schema-sync, and package-manifest checks in `specs/053-workspace-surfaces/evidence/setup.md` before foundational implementation (FR-051, FR-053)
 
 ---
 

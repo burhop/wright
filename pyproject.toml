@@ -42,6 +42,13 @@ runtime = [
     "jsonschema>=4.26,<5",
     "python-multipart>=0.0.32,<1",
 ]
+workspace-surfaces-test = [
+    "build>=1.2,<2",
+    "check-wheel-contents==0.6.3",
+    "hatchling>=1.27,<2",
+    "jsonschema>=4.26,<5",
+    "pytest>=8.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/burhop/wright"
@@ -82,11 +89,13 @@ markers = [
     "gateway: provider-neutral GatewayService contract and isolation tests",
     "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
     "release: exact-artifact release identity, supply-chain, and recovery contracts",
+    "workspace_surfaces: Workspace Surfaces contract, lifecycle, security, and presentation tests",
 ]
 
 [dependency-groups]
 dev = [
     "build>=1.2,<2",
+    "hatchling>=1.27,<2",
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "respx>=0.22",
@@ -103,7 +112,11 @@ build-backend = "hatchling.build"
 ignore = ["W009"]
 
 [tool.hatch.build.targets.wheel]
+# Hatchling includes non-Python data beneath these package roots. This carries
+# `core/surfaces/schemas/**` and `wright_engineering/static/web/**`; the archive
+# assertions in tests/packaging/test_wheel_contents.py guard both resource sets.
 packages = [
+    "src/wright",
     "src/wright_engineering",
     "apps/api/src/api",
     "packages/core/src/core",
@@ -115,6 +128,7 @@ packages = [
 
 [tool.hatch.build.targets.sdist]
 include = [
+    "/src/wright",
     "/src/wright_engineering",
     "/apps/api/src/api",
     "/packages/core/src/core",

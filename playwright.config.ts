@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { workspaceSurfaceProjects } from "./tests/ui-integration/playwright.workspace-surfaces";
 
 export default defineConfig({
   testDir: "./tests/ui-integration",
@@ -20,6 +21,7 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
+    ...workspaceSurfaceProjects,
   ],
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined

@@ -2,6 +2,9 @@
 
 `wright-core` contains only side-effect-neutral domain identifiers, value
 objects, error taxonomy, redaction, telemetry context, and shared protocols.
+Workspace Surfaces adds only neutral descriptors, lifecycle values, stable
+errors, telemetry contracts, and versioned schemas here; it adds no renderer,
+runtime, persistence, or transport behavior.
 It does not own SQLite queries, filesystem mutation, subprocess execution,
 workspace orchestration, provider configuration, or imports of higher-level
 packages.

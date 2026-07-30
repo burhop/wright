@@ -1,0 +1,10 @@
+{
+  "contractVersion": 1,
+  "source": "specs/053-workspace-surfaces/contracts",
+  "files": {
+    "display-envelope.schema.json": "7184987bb040cd24ea2b9749b08b50bdcaf368f9c7df7aafbd30780e4ae930bc",
+    "live-app-manifest.schema.json": "0cc11b1a2c29599e402a0568c994959e09373131d4e1594d05dd550454f42dd2",
+    "surface-message.schema.json": "7aab04be66de3fe4bd3a20678fe700ed4ad87aebd4bd9cbaec1542604805f67b",
+    "workspace-surfaces.openapi.yaml": "58eac225183af7dc87dfda2703b634483e1cbb77f4621f9f5cc84711fe7d676e"
+  }
+}
