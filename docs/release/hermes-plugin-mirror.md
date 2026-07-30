@@ -14,6 +14,12 @@ The main Wright repository is the source of truth. The mirror is generated from
 | Development | `dev` | Wright integration and pull-request testing |
 | Stable | `main` | Production Hermes installations |
 
+The public mirror repository's default branch must be `main`. Hermes installs
+the bare repository URL and therefore follows that default; setting it to
+`dev` silently installs the development adapter even when release evidence
+correctly records the stable `main` commit. Both the local production gate and
+the release preflight reject any other default branch before publication.
+
 The adapter is standard-library-only at import time. It resolves the exact
 public `wright-engineering` version into `WRIGHT_HOME`; private component
 packages such as `wright-core` and `wright-tool-registry` are neither bundled
@@ -58,12 +64,13 @@ and missing root plugin files.
 Hermes accepts a repository URL but does not select an immutable Git ref during
 install. The release workflow therefore must:
 
-1. resolve the mirror `main` commit;
-2. run `hermes plugins install` with the repository URL;
-3. verify the installed `.git` `HEAD` equals that commit;
-4. verify `provenance.json` names the Wright release commit;
-5. repeat the identity check after `hermes plugins update wright`;
-6. only then run the Wright lifecycle.
+1. verify the mirror repository default branch is `main` before publication;
+2. resolve the mirror `main` commit;
+3. run `hermes plugins install` with the repository URL;
+4. verify the installed `.git` `HEAD` equals that commit;
+5. verify `provenance.json` names the Wright release commit;
+6. repeat the identity check after `hermes plugins update wright`;
+7. only then run the Wright lifecycle.
 
 Any mismatch is a release failure, not a warning.
 

@@ -109,7 +109,7 @@ def test_bootstrap_builds_venv_at_final_path_for_working_console_scripts(
     monkeypatch.setattr(
         module,
         "_install_target",
-        lambda: ("wright-engineering==0.1.7", []),
+        lambda: ("wright-engineering==0.1.8", []),
     )
     try:
         assert module.ensure_bootstrap() == python
