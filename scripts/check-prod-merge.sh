@@ -16,6 +16,12 @@ echo "This includes the dev merge gate plus release, Docker, and Hermes plugin m
 echo "Use only documented SKIP_* overrides for local host limitations, never to hide a failure."
 
 run scripts/check-dev-merge.sh
+wheel_path="$(find "$ROOT_DIR/dist/dev-merge-python" -type f -name '*.whl' -print -quit)"
+if [[ -z "$wheel_path" ]]; then
+  echo "Production wheel content check could not find the dev-gate wheel."
+  exit 1
+fi
+run uv run --with check-wheel-contents==0.6.3 check-wheel-contents "$wheel_path"
 run scripts/security-scan.sh --include-untracked
 run scripts/alpha-release-check.sh
 

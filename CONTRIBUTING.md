@@ -67,6 +67,10 @@ of orchestration, not authorization to publish.
 Before merging `dev` to `main`, run `scripts/check-prod-merge.sh`. Production is
 not complete until published native Hermes and Docker paths both have terminal
 evidence; the legacy Git-plugin mirror cannot substitute for native evidence.
+The production gate also runs `check-wheel-contents` against the exact wheel
+built by the dev gate. Wright intentionally ships a self-contained wheel with
+multiple reviewed top-level package roots, so only `W009` is suppressed in the
+root packaging configuration; all other wheel-content findings remain fatal.
 
 The dev gate runs a focused security regression tranche before the complete
 test suite. Changes that move request-controlled data into cookies, filesystem

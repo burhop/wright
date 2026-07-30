@@ -9,7 +9,7 @@ on:
       tag:
         description: Version tag to rehearse (must match root metadata)
         required: true
-        default: v0.1.6
+        default: v0.1.7
         type: string
 
 env:
@@ -63,7 +63,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - name: Build and validate wheel and sdist once
         run: |
-          python -m pip install build twine check-wheel-contents
+          python -m pip install build twine check-wheel-contents==0.6.3
           scripts/build-python-distributions.sh --dist-root dist/build-once .
           mkdir -p dist/candidate
           find dist/build-once -type f \( -name '*.whl' -o -name '*.tar.gz' \) -exec cp {} dist/candidate/ \;
