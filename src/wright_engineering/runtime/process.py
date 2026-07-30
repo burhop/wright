@@ -7,6 +7,7 @@ import hmac
 import os
 import secrets
 import subprocess
+import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -93,7 +94,22 @@ class ProcessManager:
             raise ProcessError("process_start_mismatch")
         executable = observed.executable_path.resolve(strict=False)
         runtime = runtime_path.resolve(strict=False)
-        if not executable.is_relative_to(runtime):
+        if identity.launcher_path is not None:
+            launcher = Path(identity.launcher_path).resolve(strict=False)
+        elif sys.platform == "darwin":
+            launcher = runtime / "bin" / "python"
+            if not launcher.is_file():
+                raise ProcessError("process_launcher_not_found")
+        else:
+            launcher = executable
+        if not launcher.is_relative_to(runtime):
+            code = (
+                "process_launcher_outside_runtime"
+                if identity.launcher_path is not None
+                else "process_executable_outside_runtime"
+            )
+            raise ProcessError(code)
+        if not executable.is_relative_to(runtime) and sys.platform != "darwin":
             raise ProcessError("process_executable_outside_runtime")
         if executable != Path(identity.executable_path).resolve(strict=False):
             raise ProcessError("process_executable_mismatch")
@@ -119,8 +135,8 @@ class ProcessManager:
     ) -> tuple[subprocess.Popen[bytes], ProcessIdentity, str]:
         if not command:
             raise ProcessError("process_command_missing")
-        executable = Path(command[0]).resolve(strict=False)
-        if not executable.is_relative_to(runtime_path.resolve(strict=False)):
+        launcher = Path(command[0]).resolve(strict=False)
+        if not launcher.is_relative_to(runtime_path.resolve(strict=False)):
             raise ProcessError("process_executable_outside_runtime")
         challenge = secrets.token_urlsafe(32)
         instance_id = str(uuid4())
@@ -182,6 +198,7 @@ class ProcessManager:
             instance_id=instance_id,
             challenge_hash=hashlib.sha256(challenge.encode("utf-8")).hexdigest(),
             operation_id=operation_id,
+            launcher_path=str(launcher),
         )
         return process, identity, challenge
 
