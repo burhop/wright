@@ -57,8 +57,16 @@ def test_workspace_repository_filters_synthetic_rows_and_updates_session(tmp_pat
     repository = WorkspaceRepository(db_path, secrets=MemorySecrets())
     real = tmp_path / "real"
     synthetic = tmp_path / "local-session-123"
+    api_synthetic = tmp_path / "api_1782845491_1094a132"
+    uuid_synthetic = tmp_path / "482f544c-a15b-4c51-aa80-c6a44b3298ce"
+    hermes_synthetic = tmp_path / "20260719_194559_339f6f"
+    generic_synthetic = tmp_path / "session-1"
     real.mkdir()
     synthetic.mkdir()
+    api_synthetic.mkdir()
+    uuid_synthetic.mkdir()
+    hermes_synthetic.mkdir()
+    generic_synthetic.mkdir()
     repository.create("real", "session-real", str(real), workspace_name="Real")
     repository.create(
         "synthetic",
@@ -66,7 +74,32 @@ def test_workspace_repository_filters_synthetic_rows_and_updates_session(tmp_pat
         str(synthetic),
         workspace_name="local-session-123",
     )
+    repository.create(
+        "api-synthetic",
+        "api_1782845491_1094a132",
+        str(api_synthetic),
+        workspace_name="api_1782845491_1094a132",
+    )
+    repository.create(
+        "uuid-synthetic",
+        "482f544c-a15b-4c51-aa80-c6a44b3298ce",
+        str(uuid_synthetic),
+        workspace_name="482f544c-a15b-4c51-aa80-c6a44b3298ce",
+    )
+    repository.create(
+        "hermes-synthetic",
+        "20260719_194559_339f6f",
+        str(hermes_synthetic),
+        workspace_name="20260719_194559_339f6f",
+    )
+    repository.create(
+        "generic-synthetic",
+        "session-1",
+        str(generic_synthetic),
+        workspace_name="session-1",
+    )
 
     assert [row["workspace_id"] for row in repository.list_all()] == ["real"]
+    assert [row["workspace_id"] for row in repository.list_recent(limit=10)] == ["real"]
     repository.update_session("real", "session-next")
     assert repository.get_by_session("session-next")["workspace_id"] == "real"

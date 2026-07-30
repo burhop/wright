@@ -20,7 +20,12 @@ logger = structlog.get_logger(__name__)
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
 SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
+UUID_SESSION_PATTERN = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
 HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
+GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
 
 
 class _ClosingConnection(sqlite3.Connection):
@@ -79,11 +84,13 @@ def is_synthetic_session_workspace(row: Dict[str, Any]) -> bool:
     basename = os.path.basename(local_path)
     workspace_name = str(row.get("workspace_name") or "").strip()
 
-    synthetic_id = (
-        session_id.startswith(SYNTHETIC_SESSION_PREFIXES)
-        or basename.startswith(SYNTHETIC_SESSION_PREFIXES)
-        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(session_id))
-        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(basename))
+    synthetic_id = any(
+        token.startswith(SYNTHETIC_SESSION_PREFIXES)
+        or bool(UUID_SESSION_PATTERN.fullmatch(token))
+        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
+        or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
+        for token in (session_id, basename, workspace_name)
+        if token
     )
     if not synthetic_id:
         return False

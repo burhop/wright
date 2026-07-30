@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import uuid
 from collections.abc import Mapping
@@ -14,7 +15,13 @@ from core.secrets import CredentialReference, SecretProvider
 from .state_store import connect_state_db
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
-SYNTHETIC_SESSION_PREFIXES = ("local-", "local-session-")
+SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-", "local-", "local-session-")
+UUID_SESSION_PATTERN = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
+HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
+GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
 
 
 def sanitize_workspace_name(name: str) -> str:
@@ -28,11 +35,20 @@ def is_synthetic_session_workspace(row: Mapping[str, Any]) -> bool:
     session_id = str(row.get("session_id") or "").strip()
     local_path = str(row.get("local_path") or "").rstrip("/\\")
     basename = os.path.basename(local_path)
-    display_name = str(row.get("workspace_name") or "").strip() or basename
-    synthetic = session_id.startswith(
-        SYNTHETIC_SESSION_PREFIXES
-    ) or basename.startswith(SYNTHETIC_SESSION_PREFIXES)
-    return synthetic and display_name in {session_id, basename}
+    workspace_name = str(row.get("workspace_name") or "").strip()
+    synthetic = any(
+        token.startswith(SYNTHETIC_SESSION_PREFIXES)
+        or bool(UUID_SESSION_PATTERN.fullmatch(token))
+        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
+        or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
+        for token in (session_id, basename, workspace_name)
+        if token
+    )
+    if not synthetic:
+        return False
+
+    display_name = workspace_name or basename
+    return display_name in {session_id, basename}
 
 
 class WorkspaceRepository:

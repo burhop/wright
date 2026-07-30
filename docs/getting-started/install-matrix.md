@@ -7,7 +7,7 @@
 | OpenClaw user | Future integration | Not currently verified or supported | OpenClaw is not part of this release gate. |
 | Turnkey evaluator | Published Docker image `burhop/wright:<tag>` | Open `http://localhost:8080`; `/api/health` succeeds | BYO-AI and selected MCP hosts remain external. |
 | Windows 11 | Hermes, Codex, or Docker Desktop after its recorded Windows x64 evidence is green | Manager lifecycle/MCP evidence or container health | No unrecorded architecture claim. |
-| Ubuntu 22.04/24.04 | Hermes, Codex, or Docker Engine after its recorded Linux x64 evidence is green | Manager lifecycle/MCP evidence or container health | Other architectures are not implied. |
+| Ubuntu 22.04/24.04 | Hermes, Codex, or Docker Engine after its recorded Linux x64/arm64 evidence is green | Manager lifecycle/MCP evidence or container health | Other architectures are not implied. |
 | macOS Sonoma 14+ | Hermes or Codex after its recorded x64/arm64 run passes | Manager lifecycle/MCP evidence | CAD solver limits remain tool-specific. |
 | Python contributor | Source checkout and contributor workflow | Dev merge gate | Manual package installation is for development or diagnosis. |
 | MCP contributor | Any runtime plus the clean selected-server process | initialize, tools/list, safe backend probe, gateway proxy | Never add MCP-specific hosts to the base package/image for catalog optics. |

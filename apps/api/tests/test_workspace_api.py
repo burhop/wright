@@ -1,8 +1,10 @@
+import asyncio
 import os
 import tempfile
 import pytest
 from fastapi.testclient import TestClient
 from api.main import app
+from api.routers.agent import ChatStreamRegistry
 from agent_adapters import (
     BaseAgentEngine,
     AgentSessionInfo,
@@ -161,6 +163,46 @@ def test_list_workspace_files(client):
     assert len(designs_node["children"]) == 1
     assert designs_node["children"][0]["name"] == "bracket.stl"
     assert designs_node["children"][0]["path"] == "/designs/bracket.stl"
+
+
+@pytest.mark.asyncio
+async def test_chat_stream_registry_queues_turns_for_same_session(workspace_setup):
+    class SlowAgentEngine(MockAgentEngine):
+        def __init__(self, workspace_path: str):
+            super().__init__(workspace_path)
+            self.first_turn_started = asyncio.Event()
+            self.release_first_turn = asyncio.Event()
+            self.started_messages: list[str] = []
+
+        async def stream_chat(
+            self, request: AgentChatRequest
+        ) -> AsyncIterator[AgentStreamEvent]:
+            self.started_messages.append(request.message)
+            if request.message == "first":
+                self.first_turn_started.set()
+                await self.release_first_turn.wait()
+            yield AgentStreamEvent(type="token", data={"text": request.message})
+
+    registry = ChatStreamRegistry()
+    engine = SlowAgentEngine(workspace_setup)
+    first_request = AgentChatRequest(session_id="test-session", message="first")
+    second_request = AgentChatRequest(session_id="test-session", message="second")
+
+    first_job = await registry.start(first_request, engine)
+    await asyncio.wait_for(engine.first_turn_started.wait(), timeout=1)
+
+    second_task = asyncio.create_task(registry.start(second_request, engine))
+    await asyncio.sleep(0)
+    assert not second_task.done()
+
+    engine.release_first_turn.set()
+    first_events = [event async for event in first_job.stream_from(0)]
+    assert ("token", {"text": "first"}) in first_events
+
+    second_job = await asyncio.wait_for(second_task, timeout=1)
+    second_events = [event async for event in second_job.stream_from(0)]
+    assert ("token", {"text": "second"}) in second_events
+    assert engine.started_messages == ["first", "second"]
 
 
 def test_default_workspace_parent_prefers_userprofile(monkeypatch):
@@ -1577,6 +1619,20 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
         ),
         (
             str(uuid.uuid4()),
+            "482f544c-a15b-4c51-aa80-c6a44b3298ce",
+            "482f544c-a15b-4c51-aa80-c6a44b3298ce",
+            os.path.join(workspace_setup, "482f544c-a15b-4c51-aa80-c6a44b3298ce"),
+            now + 4,
+        ),
+        (
+            str(uuid.uuid4()),
+            "session-1",
+            "session-1",
+            os.path.join(workspace_setup, "session-1"),
+            now + 3,
+        ),
+        (
+            str(uuid.uuid4()),
             "wright-local-real-session",
             "Demo",
             os.path.join(workspace_setup, "demo"),
@@ -1609,14 +1665,18 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
         assert "api_1782845491_1094a132" not in recent_names
         assert "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8" not in recent_names
         assert "20260719_194559_339f6f" not in recent_names
+        assert "482f544c-a15b-4c51-aa80-c6a44b3298ce" not in recent_names
+        assert "session-1" not in recent_names
         assert "api_1782845491_1094a132" not in all_names
         assert "wright-local-e373b404-48ce-4ce8-960f-59d1e4e25fa8" not in all_names
         assert "20260719_194559_339f6f" not in all_names
+        assert "482f544c-a15b-4c51-aa80-c6a44b3298ce" not in all_names
+        assert "session-1" not in all_names
         assert "Demo" in recent_names
         assert "Demo" in all_names
     finally:
         conn.execute(
-            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?)",
+            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?, ?, ?)",
             tuple(row[0] for row in rows),
         )
         conn.commit()

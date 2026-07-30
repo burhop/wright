@@ -62,7 +62,7 @@ def test_runtime_and_real_hermes_git_protocol_are_accepted(tmp_path: Path) -> No
         ("adapter_protocol", "python-distribution-v1", "manager_protocol_incompatible"),
         ("manager_id", "unknown", "manager_unsupported"),
         ("python_version", "3.10.14", "python_incompatible"),
-        ("platform_tag", "linux-arm64", "platform_incompatible"),
+        ("platform_tag", "linux-riscv64", "platform_incompatible"),
         ("data_schema", 4, "data_schema_incompatible"),
     ],
 )

@@ -97,6 +97,11 @@ class ChatStreamJob:
     def is_running(self) -> bool:
         return self._task is not None and not self._task.done() and not self.done
 
+    async def wait_done(self) -> None:
+        async with self._condition:
+            while not self.done:
+                await self._condition.wait()
+
     async def _append(self, event_type: str, data: dict) -> None:
         async with self._condition:
             self.events.append((event_type, data))
@@ -201,17 +206,27 @@ class ChatStreamRegistry:
     async def start(
         self, request: AgentChatRequest, engine: BaseAgentEngine
     ) -> ChatStreamJob:
-        async with self._lock:
-            existing = self._jobs.get(request.session_id)
-            if existing and existing.is_running:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="A chat turn is already running for this session.",
-                )
-            job = ChatStreamJob(request.session_id, request, engine)
-            self._jobs[request.session_id] = job
-            job.start()
-            return job
+        queued_since: float | None = None
+        while True:
+            async with self._lock:
+                existing = self._jobs.get(request.session_id)
+                if not existing or not existing.is_running:
+                    job = ChatStreamJob(request.session_id, request, engine)
+                    self._jobs[request.session_id] = job
+                    job.start()
+                    if queued_since is not None:
+                        wait_ms = int((time.monotonic() - queued_since) * 1000)
+                        logger.info(
+                            "chat_turn_dequeued",
+                            session_id=request.session_id,
+                            queued_ms=wait_ms,
+                        )
+                    return job
+
+            if queued_since is None:
+                queued_since = time.monotonic()
+                logger.info("chat_turn_queued", session_id=request.session_id)
+            await existing.wait_done()
 
     async def get(self, session_id: str) -> ChatStreamJob | None:
         async with self._lock:
