@@ -32,9 +32,16 @@
 
 ## Decision 6: FreeCAD Source
 
-**Decision**: Install the FreeCAD 1.1.1 AppImage and use the pinned `neka-nat/freecad-mcp` source from the clean-container validation notes.
+**Decision**: Install the FreeCAD 1.1.1 AppImage for Linux amd64 and use the
+arm64 system FreeCAD package for the Linux arm64 bundle. Both platform bundles
+use the pinned `neka-nat/freecad-mcp` source from the clean-container
+validation notes.
 
-**Rationale**: That path passed real backend object-creation validation in the repo's MCP catalog evidence. Other FreeCAD candidates either failed backend operations or are heavier alternatives.
+**Rationale**: The AppImage path passed real backend object-creation validation
+in the repo's MCP catalog evidence and avoids package-version drift in the Linux
+amd64 image. That AppImage is x86_64-only, so the Linux arm64 image uses a
+platform-native distro package path instead of trying to run x86_64 application
+assets on GB10-class hosts.
 
 ## Decision 7: BREP Source
 

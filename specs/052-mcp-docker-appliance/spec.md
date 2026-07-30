@@ -6,7 +6,7 @@
 
 **Status**: Implemented
 
-**Input**: Create a Spec Kit-driven MCP-enabled Wright Docker appliance derived from the existing Hermes + Wright container. Preserve the current Docker access pattern, avoid corrupting local Wright/Hermes state, install a curated license-compatible MCP/application bundle from pinned repositories or package registries, test it through Docker and Playwright, and document it for engineers.
+**Input**: Create a Spec Kit-driven managed Docker image family: the existing Hermes + Wright appliance, a Linux amd64 MCP appliance, a Linux arm64 MCP appliance for GB10-class machines, and a Windows-host MCP runtime image. Preserve the current Docker access pattern, avoid corrupting local Wright/Hermes state, install curated license-compatible MCP/application bundles from pinned repositories or package registries, test through Docker and Playwright where the host platform supports it, and document it for engineers.
 
 ## User Scenarios & Testing
 
@@ -56,6 +56,25 @@ A mechanical/design engineer follows a short guide to run the image, open Wright
 
 **Independent Test**: A new engineer can run the guide without reading Dockerfile internals.
 
+### User Story 5 - Manage Platform-Specific Images (Priority: P2)
+
+A maintainer can build and explain four managed image profiles: standard Wright,
+Linux amd64 MCP, Linux arm64 MCP, and Windows amd64 MCP runtime.
+
+**Independent Test**: Inspect `docker/image-family.yaml`, run bundle validation
+for each platform bundle, and run the platform build script for the current
+host or document the concrete host limitation.
+
+**Acceptance Scenarios**:
+
+1. The existing standard Wright image remains separately buildable.
+2. The Linux amd64 MCP image uses the x86_64 FreeCAD AppImage bundle.
+3. The Linux arm64 MCP image uses arm64-compatible install paths and does not
+   attempt to run x86_64 AppImage assets.
+4. The Windows image profile is buildable from a Windows 11 host in Windows
+   container mode and persists its data/workspace/config/log directories.
+5. The Windows image profile does not imply Solid Edge itself is redistributed.
+
 ## Requirements
 
 - **FR-001**: Provide a separate MCP-enabled Docker image flavor derived from the existing Hermes + Wright appliance.
@@ -77,6 +96,10 @@ A mechanical/design engineer follows a short guide to run the image, open Wright
 - **FR-017**: Provide Docker smoke validation for Wright health, Hermes health, generated config, generated compliance files, local tool binaries/wrappers, and expected bundle statuses.
 - **FR-018**: Provide Playwright UI coverage that can open Wright, create/select a workspace, and submit a prompt covering bundled MCP health.
 - **FR-019**: Document run commands, ports, credentials, remote access, included tools, verification prompts, cleanup, and third-party license evidence for engineers.
+- **FR-020**: Define a managed image-family manifest covering standard Wright, Linux amd64 MCP, Linux arm64 MCP, and Windows amd64 MCP runtime profiles.
+- **FR-021**: Provide a Linux arm64 MCP bundle that avoids x86_64-only FreeCAD AppImage assets.
+- **FR-022**: Provide host-specific build/run scripts for Linux/GB10 and Windows PCs.
+- **FR-023**: Ensure every managed image profile has documented persistent data, workspace, config, Hermes/profile, and log paths.
 
 ## Key Entities
 
@@ -85,6 +108,7 @@ A mechanical/design engineer follows a short guide to run the image, open Wright
 - **MCP Server Entry**: MCP launch/config record such as `openscad-mcp`, `freecad-mcp`, `brep-mcp`, `solid-edge-mcp`, or `playwright-mcp`.
 - **Third-Party Compliance Profile**: Reusable policy record for permissive, GPL runtime, LGPL runtime, or internal reviewed source obligations.
 - **MCP Appliance Image**: Docker artifact derived from the standard appliance with the reviewed bundle installed.
+- **Managed Image Profile**: Platform-specific image record with Dockerfile, platform, bundle, image tag, and persisted paths.
 - **Validation Workspace**: Fresh workspace used by Docker and Playwright validation.
 
 ## Success Criteria
@@ -95,10 +119,13 @@ A mechanical/design engineer follows a short guide to run the image, open Wright
 - **SC-004**: Generated third-party compliance artifacts include GPL/LGPL runtime source-access and no-warranty evidence.
 - **SC-005**: The documented compose path leaves standard Wright appliance volumes unchanged.
 - **SC-006**: Playwright can submit a bundle-health prompt through the Wright UI against a running MCP appliance.
+- **SC-007**: The image-family manifest lists exactly four managed image profiles with persisted paths.
+- **SC-008**: The Linux arm64 bundle validates independently and contains no x86_64-only FreeCAD AppImage install path.
 
 ## Assumptions
 
 - The standard Wright Docker appliance remains the baseline for ports, entrypoint behavior, supervisor services, and environment-file usage.
 - Build-time installation is preferred so engineers do not need first-run dependency downloads.
 - SolidEdgeMCP source is configured at image build time from a pinned GitHub ref; at the current ref the server targets Windows/Solid Edge and is not runnable inside the Linux appliance.
+- Windows Docker builds require a Windows host with Docker Desktop switched to Windows container mode; Linux image builds require Linux container mode or compatible emulation.
 - Remote/LAN access is opt-in for trusted engineering test networks only.

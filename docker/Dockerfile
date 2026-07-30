@@ -64,17 +64,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-# micromamba supports dynamic MCP package/dependency installation. Feature 047
-# deliberately ships only the validated amd64 appliance until a native arm64
-# runtime smoke exists.
+# micromamba supports dynamic MCP package/dependency installation. Keep the
+# archive URL/checksum architecture-specific so native GB10/arm64 builds do not
+# accidentally download the linux-64 artifact.
 ARG TARGETARCH
 ARG MICROMAMBA_VERSION=2.5.0
-ARG MICROMAMBA_SHA256=cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6
-RUN curl --fail --location --retry 5 --retry-all-errors \
+ARG MICROMAMBA_AMD64_SHA256=cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6
+ARG MICROMAMBA_ARM64_SHA256=6ec1517c8c89c875a8fa93f9c66abd4fe3dd147341376bdc37b57c526bc13e44
+RUN set -eux; \
+    case "${TARGETARCH:-amd64}" in \
+      amd64) micromamba_arch="linux-64"; micromamba_sha="${MICROMAMBA_AMD64_SHA256}" ;; \
+      arm64) micromamba_arch="linux-aarch64"; micromamba_sha="${MICROMAMBA_ARM64_SHA256}" ;; \
+      *) echo "Unsupported Docker TARGETARCH for micromamba: ${TARGETARCH}" >&2; exit 1 ;; \
+    esac; \
+    curl --fail --location --retry 5 --retry-all-errors \
         --output /tmp/micromamba.tar.bz2 \
-        "https://micro.mamba.pm/api/micromamba/linux-64/${MICROMAMBA_VERSION}" && \
-    test "${TARGETARCH:-amd64}" = "amd64" && \
-    echo "${MICROMAMBA_SHA256}  /tmp/micromamba.tar.bz2" | sha256sum --check --strict && \
+        "https://micro.mamba.pm/api/micromamba/${micromamba_arch}/${MICROMAMBA_VERSION}"; \
+    echo "${micromamba_sha}  /tmp/micromamba.tar.bz2" | sha256sum --check --strict; \
     tar -xjf /tmp/micromamba.tar.bz2 -C /usr/local bin/micromamba && \
     rm -f /tmp/micromamba.tar.bz2
 

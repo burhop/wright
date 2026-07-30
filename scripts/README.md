@@ -224,8 +224,9 @@ image as `wright:mcp-test`, validates the MCP bundle, starts the container with
 fresh runtime state, and checks Wright API health, Hermes gateway supervision,
 generated MCP config, generated compliance artifacts, and local tool/wrapper
 presence for OpenSCAD, FreeCAD, BREP, SolidEdgeMCP, and Playwright.
-The default Docker platform is `linux/amd64`, matching the current appliance
-release constraint.
+The default Docker platform is `linux/amd64`; set
+`WRIGHT_MCP_DOCKER_PLATFORM=linux/arm64` to smoke the arm64 bundle on GB10-class
+hosts.
 
 * **Usage**:
   ```bash
@@ -242,6 +243,53 @@ Bundle-only validation:
 python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
 python docker/mcp/generate-config.py docker/mcp-bundle.yaml --output-dir /tmp/wright-mcp-generated
 ```
+
+---
+
+### `docker-image-family-build.sh` / `docker-image-family-build.ps1`
+
+Builds managed Wright image profiles from `docker/image-family.yaml`.
+
+* **Linux/GB10 arm64**:
+  ```bash
+  ./scripts/docker-image-family-build.sh linux-arm64
+  ```
+* **Linux amd64**:
+  ```bash
+  ./scripts/docker-image-family-build.sh linux-amd64
+  ```
+* **Windows host**:
+  ```powershell
+  pwsh -File scripts/docker-image-family-build.ps1 -Profile windows-amd64
+  ```
+
+The Windows profile must be built from Docker Desktop in Windows container
+mode. It honors `WRIGHT_SOLIDEDGE_MCP_GIT_URL`, exact
+`WRIGHT_SOLIDEDGE_MCP_GIT_REF`, and optional
+`WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL` for nonstandard archive sources. Private
+GitHub MCP sources require `GITHUB_TOKEN` or a valid `gh auth login`; Linux MCP
+builds pass that token as a BuildKit `github_token` secret. Linux profiles
+should be built from Linux container mode.
+
+---
+
+### `docker-mcp-run.sh` / `docker-mcp-run-windows.ps1`
+
+Runs a built MCP image with platform-specific named volumes so Wright data,
+workspaces, config, Hermes profile data, and logs survive container recreation.
+
+* **Linux arm64**:
+  ```bash
+  WRIGHT_API_TOKEN=change-this ./scripts/docker-mcp-run.sh linux-arm64
+  ```
+* **Linux amd64**:
+  ```bash
+  WRIGHT_API_TOKEN=change-this ./scripts/docker-mcp-run.sh linux-amd64
+  ```
+* **Windows MCP runtime**:
+  ```powershell
+  pwsh -File scripts/docker-mcp-run-windows.ps1
+  ```
 
 ---
 

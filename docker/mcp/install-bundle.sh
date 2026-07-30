@@ -94,16 +94,17 @@ install_system_packages() {
   fi
 }
 
-clone_exact() {
-  local url="$1"
-  local ref="$2"
-  local target="$3"
-  mkdir -p "$(dirname "$target")"
-  if [ ! -d "$target/.git" ]; then
-    git clone "$url" "$target"
+link_system_app_binaries() {
+  if command -v freecadcmd >/dev/null 2>&1; then
+    ln -sf "$(command -v freecadcmd)" "$BIN_DIR/freecadcmd"
+  elif command -v FreeCADCmd >/dev/null 2>&1; then
+    ln -sf "$(command -v FreeCADCmd)" "$BIN_DIR/freecadcmd"
   fi
-  git -C "$target" fetch --depth 1 origin "$ref" || git -C "$target" fetch origin "$ref"
-  git -C "$target" checkout --detach "$ref"
+  if command -v freecad >/dev/null 2>&1; then
+    ln -sf "$(command -v freecad)" "$BIN_DIR/freecad"
+  elif command -v FreeCAD >/dev/null 2>&1; then
+    ln -sf "$(command -v FreeCAD)" "$BIN_DIR/freecad"
+  fi
 }
 
 install_release_assets() {
@@ -143,25 +144,62 @@ import json
 import os
 import subprocess
 import sys
+from pathlib import Path
+
+
+def git_environment():
+    env = os.environ.copy()
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    token_file = env.get("WRIGHT_MCP_GITHUB_TOKEN_FILE", "")
+    if token_file and Path(token_file).is_file():
+        askpass = Path("/tmp/wright-mcp-git-askpass.sh")
+        askpass.write_text(
+            "#!/usr/bin/env sh\n"
+            "case \"$1\" in\n"
+            "  *Username*) printf '%s\\n' x-access-token ;;\n"
+            "  *) cat \"$WRIGHT_MCP_GITHUB_TOKEN_FILE\" ;;\n"
+            "esac\n",
+            encoding="utf-8",
+        )
+        askpass.chmod(0o700)
+        env["GIT_ASKPASS"] = str(askpass)
+    return env
+
+
+def clone_exact(url, ref, target):
+    target_path = Path(target)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    env = git_environment()
+    try:
+        if not (target_path / ".git").is_dir():
+            subprocess.run(["git", "clone", url, str(target_path)], env=env, check=True)
+        try:
+            subprocess.run(
+                ["git", "-C", str(target_path), "fetch", "--depth", "1", "origin", ref],
+                env=env,
+                check=True,
+            )
+        except subprocess.CalledProcessError:
+            subprocess.run(
+                ["git", "-C", str(target_path), "fetch", "origin", ref],
+                env=env,
+                check=True,
+            )
+        subprocess.run(
+            ["git", "-C", str(target_path), "checkout", "--detach", ref],
+            env=env,
+            check=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(
+            f"Failed to clone exact Git source {url}@{ref}. "
+            "If this is a private GitHub repository, set GITHUB_TOKEN or repair "
+            "`gh auth login` before running the Docker build so the helper can "
+            "mount a BuildKit github_token secret."
+        ) from exc
 
 for source in json.loads(os.environ["SOURCES_JSON"]):
-    subprocess.run(
-        [
-            "bash",
-            "-lc",
-            "clone_exact() { "
-            "local url=\"$1\" ref=\"$2\" target=\"$3\"; "
-            "mkdir -p \"$(dirname \"$target\")\"; "
-            "[ -d \"$target/.git\" ] || git clone \"$url\" \"$target\"; "
-            "git -C \"$target\" fetch --depth 1 origin \"$ref\" || git -C \"$target\" fetch origin \"$ref\"; "
-            "git -C \"$target\" checkout --detach \"$ref\"; "
-            "}; clone_exact \"$0\" \"$1\" \"$2\"",
-            source["url"],
-            source["ref"],
-            source["target"],
-        ],
-        check=True,
-    )
+    clone_exact(source["url"], source["ref"], source["target"])
 PY
 }
 
@@ -173,6 +211,59 @@ import json
 import os
 import subprocess
 import sys
+from pathlib import Path
+
+
+def git_environment():
+    env = os.environ.copy()
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    token_file = env.get("WRIGHT_MCP_GITHUB_TOKEN_FILE", "")
+    if token_file and Path(token_file).is_file():
+        askpass = Path("/tmp/wright-mcp-git-askpass.sh")
+        askpass.write_text(
+            "#!/usr/bin/env sh\n"
+            "case \"$1\" in\n"
+            "  *Username*) printf '%s\\n' x-access-token ;;\n"
+            "  *) cat \"$WRIGHT_MCP_GITHUB_TOKEN_FILE\" ;;\n"
+            "esac\n",
+            encoding="utf-8",
+        )
+        askpass.chmod(0o700)
+        env["GIT_ASKPASS"] = str(askpass)
+    return env
+
+
+def clone_exact(url, ref, target):
+    target_path = Path(target)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    env = git_environment()
+    try:
+        if not (target_path / ".git").is_dir():
+            subprocess.run(["git", "clone", url, str(target_path)], env=env, check=True)
+        try:
+            subprocess.run(
+                ["git", "-C", str(target_path), "fetch", "--depth", "1", "origin", ref],
+                env=env,
+                check=True,
+            )
+        except subprocess.CalledProcessError:
+            subprocess.run(
+                ["git", "-C", str(target_path), "fetch", "origin", ref],
+                env=env,
+                check=True,
+            )
+        subprocess.run(
+            ["git", "-C", str(target_path), "checkout", "--detach", ref],
+            env=env,
+            check=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise SystemExit(
+            f"Failed to clone configured Git source {url}@{ref} into {target}. "
+            "If this is a private GitHub repository, set GITHUB_TOKEN or repair "
+            "`gh auth login` before running the Docker build so the helper can "
+            "mount a BuildKit github_token secret."
+        ) from exc
 
 for source in json.loads(os.environ["SOURCES_JSON"]):
     url = os.environ.get(source["url_env"], "").strip() or str(source.get("default_url", "")).strip()
@@ -185,23 +276,7 @@ for source in json.loads(os.environ["SOURCES_JSON"]):
             file=sys.stderr,
         )
         continue
-    subprocess.run(
-        [
-            "bash",
-            "-lc",
-            "clone_exact() { "
-            "local url=\"$1\" ref=\"$2\" target=\"$3\"; "
-            "mkdir -p \"$(dirname \"$target\")\"; "
-            "[ -d \"$target/.git\" ] || git clone \"$url\" \"$target\"; "
-            "git -C \"$target\" fetch --depth 1 origin \"$ref\" || git -C \"$target\" fetch origin \"$ref\"; "
-            "git -C \"$target\" checkout --detach \"$ref\"; "
-            "}; clone_exact \"$0\" \"$1\" \"$2\"",
-            url,
-            ref,
-            target,
-        ],
-        check=True,
-    )
+    clone_exact(url, ref, target)
 PY
 }
 
@@ -395,6 +470,7 @@ SH
 }
 
 install_system_packages
+link_system_app_binaries
 install_release_assets
 install_git_sources
 install_configured_git_sources

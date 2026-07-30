@@ -6,7 +6,7 @@
 
 ## Summary
 
-Create an MCP-enabled Wright Docker appliance as a separate image flavor derived from the existing Hermes + Wright container. Preserve the standard appliance's UI/API access pattern, entrypoint, and supervisor contract while adding a manifest-driven MCP bundle, build-time source/license/compliance validation, generated runtime configuration, separate default MCP volumes, Docker smoke checks, Playwright prompt coverage, and engineer-facing quickstart documentation. The corrected initial bundle installs OpenSCAD, FreeCAD, BREP CAD tooling, and Playwright locally, and configures OpenSCAD MCP, FreeCAD MCP, BREP MCP, SolidEdgeMCP, and Playwright MCP. OpenCAD is skipped, and BREP is not represented by CAiD/OpenCASCADE.
+Create a managed Docker image family around the existing Hermes + Wright container: the standard appliance, a Linux amd64 MCP appliance, a Linux arm64 MCP appliance for GB10-class hosts, and a Windows amd64 MCP runtime image. Preserve the standard appliance's UI/API access pattern, entrypoint, and supervisor contract while adding manifest-driven platform MCP bundles, build-time source/license/compliance validation, generated runtime configuration, separate default MCP volumes, Docker smoke checks, Playwright prompt coverage, and engineer-facing quickstart documentation. The corrected Linux bundle installs OpenSCAD, FreeCAD, BREP CAD tooling, and Playwright locally, and configures OpenSCAD MCP, FreeCAD MCP, BREP MCP, SolidEdgeMCP, and Playwright MCP. OpenCAD is skipped, and BREP is not represented by CAiD/OpenCASCADE.
 
 ## Technical Context
 
@@ -18,7 +18,7 @@ Create an MCP-enabled Wright Docker appliance as a separate image flavor derived
 
 **Testing**: Focused unit tests for bundle parsing/license/source pin/compliance checks/config generation; shell/static tests for Dockerfile and compose behavior; Docker MCP smoke/integration test; Playwright UI workflow against a running MCP appliance; existing `scripts/docker-smoke-test.sh`; `scripts/check-dev-merge.sh` before merge or documented host limitation
 
-**Target Platform**: Linux Docker appliance, initially `linux/amd64` in parity with current image constraints; Solid Edge itself is not installed in Linux, while SolidEdgeMCP source is cloned from a pinned GitHub ref and its wrapper reports the current Windows/Solid Edge runtime limitation.
+**Target Platform**: Managed Docker image family covering the existing `linux/amd64` standard appliance, Linux MCP appliances for `linux/amd64` and `linux/arm64`, and a Windows amd64 MCP runtime profile. Solid Edge itself is not installed in Linux, while SolidEdgeMCP source is cloned from a pinned GitHub ref and its Linux wrapper reports the current Windows/Solid Edge runtime limitation.
 
 **Project Type**: Modular monorepo with Docker appliance, Python API/packages, TypeScript frontend, and documentation
 
@@ -26,7 +26,7 @@ Create an MCP-enabled Wright Docker appliance as a separate image flavor derived
 
 **Constraints**: Preserve the non-MCP Docker appliance; do not add MCP-specific host software to the base non-MCP image; fail closed on unpinned sources, unknown licenses, unsupported obligations, or missing third-party compliance artifacts; allow GPL/LGPL runtime components only through reusable redistribution compliance profiles; avoid mutating local Wright/Hermes host setup; do not redistribute Solid Edge desktop/vendor assets in Linux images; remote/LAN binding is opt-in; no merge to `dev` or `main` during this feature
 
-**Scale/Scope**: One MCP image flavor, one manifest schema, four local applications, five MCP servers, one engineer quickstart, one smoke/integration test path, and one Playwright prompt workflow
+**Scale/Scope**: Four managed image profiles, one manifest schema, platform-specific MCP bundle files, Linux four-application/five-MCP bundle, Windows MCP runtime metadata, one engineer quickstart, one image-family guide, one smoke/integration test path, and one Playwright prompt workflow
 
 ## Constitution Check
 

@@ -99,6 +99,27 @@ Validation rules:
 - Standard appliance behavior remains unchanged.
 - MCP compose defaults must not reuse standard volume names.
 
+## Managed Image Profile
+
+- `id`: `wright-standard`, `wright-mcp-linux-amd64`,
+  `wright-mcp-linux-arm64`, or `wright-mcp-windows-amd64`
+- `image`: local/published image tag
+- `dockerfile`: Dockerfile used to build the profile
+- `platform`: Docker platform such as `linux/amd64`, `linux/arm64`, or
+  `windows/amd64`
+- `kind`: standard Wright appliance, MCP appliance, or Windows MCP runtime
+- `bundle`: platform bundle file when applicable
+- `persisted_paths`: directories that must be backed by Docker volumes or host
+  bind mounts
+
+Validation rules:
+
+- The image family must declare the four managed profiles.
+- Every profile must have persisted paths for data, workspace, config, Hermes
+  or profile state, and logs.
+- Linux arm64 must not depend on x86_64-only application assets.
+- Windows profiles must not claim Solid Edge redistribution.
+
 ## Validation Workspace
 
 - `workspace_id`: fresh workspace identity

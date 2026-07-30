@@ -59,6 +59,11 @@ WRIGHT_SOLIDEDGE_MCP_GIT_URL=https://github.com/burhop/SolidEdgeMCP.git
 WRIGHT_SOLIDEDGE_MCP_GIT_REF=2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
 ```
 
+For private GitHub MCP sources, build with `GITHUB_TOKEN` in the host
+environment or a valid `gh auth login`. The Docker helpers mount the token as a
+BuildKit secret named `github_token`; never model private-source credentials as
+bundle fields or Docker build args.
+
 The generated launch environment uses:
 
 ```yaml

@@ -153,6 +153,8 @@ An experimental MCP-enabled appliance flavor is documented in the
 [MCP Docker quickstart](docs/getting-started/quickstart-docker-mcp.md). It keeps
 the same Wright UI access pattern but uses separate default volumes and a
 reviewed MCP bundle.
+The managed platform image matrix is documented in the
+[Docker image family guide](docs/getting-started/docker-image-family.md).
 
 For development outside Docker, see [CONTRIBUTING.md](CONTRIBUTING.md).
 

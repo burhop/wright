@@ -9,7 +9,29 @@ CONTAINER_NAME="${WRIGHT_MCP_CONTAINER:-wright-mcp-smoke-$$}"
 HOST_PORT="${WRIGHT_MCP_HOST_PORT:-18080}"
 SKIP_BUILD="${WRIGHT_MCP_SKIP_BUILD:-0}"
 DOCKER_PLATFORM="${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}"
+if [ -n "${WRIGHT_MCP_BUNDLE_FILE:-}" ]; then
+  BUNDLE_FILE="$WRIGHT_MCP_BUNDLE_FILE"
+elif [ "$DOCKER_PLATFORM" = "linux/arm64" ]; then
+  BUNDLE_FILE="mcp-bundle.linux-arm64.yaml"
+else
+  BUNDLE_FILE="mcp-bundle.yaml"
+fi
 PYTHON_BIN="${PYTHON:-python3}"
+DOCKER_SECRET_ARGS=()
+
+configure_github_secret() {
+  local token
+  if [ -n "${GITHUB_TOKEN:-}" ]; then
+    DOCKER_SECRET_ARGS=(--secret id=github_token,env=GITHUB_TOKEN)
+    return 0
+  fi
+  if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    if token="$(gh auth token 2>/dev/null)" && [ -n "$token" ]; then
+      export GITHUB_TOKEN="$token"
+      DOCKER_SECRET_ARGS=(--secret id=github_token,env=GITHUB_TOKEN)
+    fi
+  fi
+}
 
 cleanup() {
   docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -37,12 +59,15 @@ run_json() {
 }
 
 if [ "$SKIP_BUILD" != "1" ]; then
+  configure_github_secret
   docker build --platform "$DOCKER_PLATFORM" -t "$BASE_IMAGE_TAG" -f docker/Dockerfile .
   docker build \
+    "${DOCKER_SECRET_ARGS[@]}" \
     --platform "$DOCKER_PLATFORM" \
     -t "$IMAGE_TAG" \
     -f docker/Dockerfile.mcp \
     --build-arg "WRIGHT_BASE_IMAGE=$BASE_IMAGE_TAG" \
+    --build-arg "WRIGHT_MCP_BUNDLE_FILE=$BUNDLE_FILE" \
     --build-arg "WRIGHT_SOLIDEDGE_MCP_GIT_URL=${WRIGHT_SOLIDEDGE_MCP_GIT_URL:-https://github.com/burhop/SolidEdgeMCP.git}" \
     --build-arg "WRIGHT_SOLIDEDGE_MCP_GIT_REF=${WRIGHT_SOLIDEDGE_MCP_GIT_REF:-2aad5bd24df6ce1ac9578ad35c4da7ac241b5330}" \
     .

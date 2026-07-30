@@ -5,6 +5,9 @@ MCP bundle installed. You still open Wright in a browser and use the same
 API/token workflow as the standard container, but this flavor starts with CAD
 and browser-control MCPs already configured.
 
+For the full managed image matrix, including Linux arm64 and Windows-host
+builds, see [Docker image family](docker-image-family.md).
+
 ## What This Image Includes
 
 - OpenSCAD plus OpenSCAD MCP.
@@ -34,6 +37,10 @@ or test a newer reviewed commit, set both build-time variables:
 export WRIGHT_SOLIDEDGE_MCP_GIT_URL=https://github.com/burhop/SolidEdgeMCP.git
 export WRIGHT_SOLIDEDGE_MCP_GIT_REF=2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
 ```
+
+If that repository is private, export `GITHUB_TOKEN` with read access before
+building, or sign in with `gh auth login`. The Docker helpers pass the token as
+a BuildKit secret named `github_token`; do not put tokens in Docker build args.
 
 The ref must be exact. Do not use `main`, `dev`, or another floating branch for
 a distributed trial image.

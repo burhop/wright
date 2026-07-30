@@ -26,6 +26,9 @@ host software to the base image just to make catalog validation pass.
 | Full local stack | `docker compose up -d --build` | `http://localhost:8000` | Adds Jaeger tracing. |
 | Test/dev stack | `docker compose -f docker-compose.test.yml up -d --build` | `http://localhost:8080` | Bind-mounts source for iteration. |
 
+The managed standard, Linux amd64 MCP, Linux arm64 MCP, and Windows MCP runtime
+image profiles are listed in the [Docker image family guide](../getting-started/docker-image-family.md).
+
 The minimal compose file maps `127.0.0.1:8080:8000`, keeping the service bound
 to localhost by default. The Hermes gateway port remains internal to the
 container unless you deliberately create a local override.

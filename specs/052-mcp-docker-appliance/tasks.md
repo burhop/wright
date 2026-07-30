@@ -38,6 +38,16 @@
 - [X] T022 Update maintainer bundle documentation.
 - [X] T023 Update spec, research, data model, contracts, quickstart, and checklist to the corrected scope.
 
+## Phase 6: Managed Image Family
+
+- [X] T024 Add `docker/image-family.yaml` with standard, Linux amd64 MCP, Linux arm64 MCP, and Windows amd64 MCP runtime profiles.
+- [X] T025 Add Linux arm64 MCP bundle using arm64-compatible FreeCAD install metadata.
+- [X] T026 Update base Dockerfile micromamba install for native linux/amd64 and linux/arm64 builds.
+- [X] T027 Add Linux/Windows image-family build and run scripts with persistent volume mappings.
+- [X] T028 Add Windows MCP runtime Dockerfile and bundle metadata for SolidEdgeMCP, BREP MCP, and Playwright MCP.
+- [X] T029 Update engineer/maintainer docs for the four-image matrix and Windows host constraints.
+- [X] T030 Add tests for image-family manifest, platform bundles, arm64 FreeCAD path, and Windows scaffolding.
+
 ## Validation Evidence
 
 - [X] `python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml`
@@ -45,3 +55,8 @@
 - [X] `bash -n scripts/docker-mcp-smoke-test.sh`
 - [X] `bash -n docker/mcp/install-bundle.sh`
 - [X] `UV_CACHE_DIR=/tmp/wright-uv-cache uv run pytest tests/docker/test_mcp_bundle.py`
+
+## Host-Limited Validation
+
+- `WRIGHT_MCP_DOCKER_PLATFORM=linux/arm64 WRIGHT_MCP_DOCKER_IMAGE=wright:mcp-linux-arm64 WRIGHT_DOCKER_IMAGE=wright:standard-linux-arm64 WRIGHT_MCP_CONTAINER=wright-mcp-smoke-arm64 bash scripts/docker-mcp-smoke-test.sh` built the native arm64 standard image and reached MCP image installation. It installed the arm64 Debian FreeCAD/OpenSCAD package path, then stopped cloning private `https://github.com/burhop/SolidEdgeMCP.git` because this host's `gh` tokens are invalid and no `GITHUB_TOKEN` was exported. The Dockerfile and helper scripts now support a BuildKit `github_token` secret for private configured Git sources; rerun after `GITHUB_TOKEN` or `gh auth login` is repaired.
+- `pwsh` is not installed on this Linux host, so the Windows PowerShell build/run scripts were covered by static tests but not executed locally.

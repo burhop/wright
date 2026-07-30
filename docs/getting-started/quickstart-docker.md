@@ -48,6 +48,9 @@ should use a published immutable release tag.
 | Full local stack | `docker compose up -d --build` | `http://localhost:8000` | Adds Jaeger tracing on localhost. |
 | Test/dev stack | `docker compose -f docker-compose.test.yml up -d --build` | `http://localhost:8080` | Bind-mounts source for iteration. |
 
+See [Docker image family](docker-image-family.md) for the managed standard,
+Linux amd64 MCP, Linux arm64 MCP, and Windows MCP runtime image profiles.
+
 All checked-in compose files bind host ports to `127.0.0.1` by default. That is
 the safe local-first setting.
 

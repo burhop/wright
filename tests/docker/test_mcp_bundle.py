@@ -62,6 +62,32 @@ def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> 
     assert "caid" not in serialized
 
 
+def test_arm64_bundle_uses_platform_native_freecad_source() -> None:
+    bundle = yaml.safe_load(read_text("docker/mcp-bundle.linux-arm64.yaml"))
+    apps = {entry["id"]: entry for entry in bundle["applications"]}
+
+    assert bundle["bundle_id"] == "wright-mcp-appliance-linux-arm64"
+    assert bundle["base_image"] == "wright:standard-linux-arm64"
+    assert apps["freecad"]["source"]["type"] == "apt"
+    assert "freecad" in apps["freecad"]["install"]["system_packages"]
+    assert "release_assets" not in apps["freecad"]["install"]
+    assert "Linux-x86_64" not in yaml.safe_dump(apps["freecad"])
+    assert "AppImage" not in yaml.safe_dump(apps["freecad"])
+
+
+def test_windows_bundle_declares_windows_runnable_mcp_subset_and_solid_edge_boundary() -> None:
+    bundle = yaml.safe_load(read_text("docker/mcp-bundle.windows-amd64.yaml"))
+    applications = {entry["id"]: entry for entry in bundle["applications"]}
+    servers = {entry["id"]: entry for entry in bundle["mcp_servers"]}
+
+    assert bundle["bundle_id"] == "wright-mcp-appliance-windows-amd64"
+    assert applications["solid-edge"]["availability"] == "windows_only"
+    assert applications["solid-edge"]["compliance_profile"]["id"] == "blocked"
+    assert servers["solid-edge-mcp"]["mcp_source"]["default_url"] == "https://github.com/burhop/SolidEdgeMCP.git"
+    assert servers["solid-edge-mcp"]["mcp_source"]["default_ref"] == "2aad5bd24df6ce1ac9578ad35c4da7ac241b5330"
+    assert "C:/wright/workspace" in yaml.safe_dump(servers["solid-edge-mcp"])
+
+
 def test_validator_accepts_default_bundle() -> None:
     verifier = load_module(VERIFY_PATH, "verify_bundle_default")
     result = verifier.validate_bundle_file(ROOT / "docker" / "mcp-bundle.yaml")
@@ -69,6 +95,17 @@ def test_validator_accepts_default_bundle() -> None:
     assert result["ok"] is True
     assert {item["status"] for item in result["applications"]} == {"accepted"}
     assert {item["status"] for item in result["mcp_servers"]} == {"accepted"}
+
+
+@pytest.mark.parametrize(
+    "bundle_name",
+    ["mcp-bundle.yaml", "mcp-bundle.linux-arm64.yaml", "mcp-bundle.windows-amd64.yaml"],
+)
+def test_validator_accepts_managed_platform_bundles(bundle_name: str) -> None:
+    verifier = load_module(VERIFY_PATH, f"verify_bundle_{bundle_name.replace('.', '_')}")
+    result = verifier.validate_bundle_file(ROOT / "docker" / bundle_name)
+
+    assert result["ok"] is True
 
 
 def test_validator_accepts_allowed_pinned_permissive_fixture() -> None:
@@ -135,15 +172,20 @@ def test_generate_config_outputs_hermes_config_and_compliance_artifacts(tmp_path
 def test_dockerfile_mcp_derives_from_existing_appliance_contract_and_adds_node_runtime() -> None:
     dockerfile = read_text("docker/Dockerfile.mcp")
 
+    assert "# syntax=docker/dockerfile:1.7" in dockerfile
     assert "ARG WRIGHT_BASE_IMAGE=wright:test" in dockerfile
     assert "FROM ${WRIGHT_BASE_IMAGE}" in dockerfile
     assert "FROM node:24.17.0-slim" in dockerfile
     assert "COPY --from=node-runtime" in dockerfile
+    assert "WRIGHT_MCP_BUNDLE_FILE" in dockerfile
+    assert "mcp-bundle*.yaml" in dockerfile
     assert "WRIGHT_SOLIDEDGE_MCP_GIT_URL" in dockerfile
     assert "https://github.com/burhop/SolidEdgeMCP.git" in dockerfile
     assert "2aad5bd24df6ce1ac9578ad35c4da7ac241b5330" in dockerfile
     assert "verify-bundle.py" in dockerfile
     assert "generate-config.py" in dockerfile
+    assert "--mount=type=secret,id=github_token" in dockerfile
+    assert "WRIGHT_MCP_GITHUB_TOKEN_FILE=/run/secrets/github_token" in dockerfile
     assert "COPY docker/entrypoint.sh /entrypoint.sh" in dockerfile
     assert "chmod 755 /entrypoint.sh" in dockerfile
     assert "chmod a+r /etc/supervisor/conf.d/wright.conf" in dockerfile
@@ -164,12 +206,15 @@ def test_mcp_install_is_manifest_driven_and_uses_build_time_caches() -> None:
         "/tmp/wright-mcp-uv-cache",
         "npm install --global",
         "playwright install --with-deps",
+        "link_system_app_binaries",
         "default_url",
         "SolidEdgeMcpServer",
         "not runnable inside this Linux appliance",
         "freecad-mcp-wrapped",
         "solid-edge-mcp",
         "WRIGHT_SOLIDEDGE_MCP_GIT_URL",
+        "WRIGHT_MCP_GITHUB_TOKEN_FILE",
+        "GIT_ASKPASS",
     ):
         assert expected in script
     assert "brep-caid-opencascade" not in script
@@ -181,21 +226,27 @@ def test_base_dockerfile_normalizes_supervisor_config_permissions() -> None:
 
     assert "COPY docker/supervisord.conf /etc/supervisor/conf.d/wright.conf" in dockerfile
     assert "chmod 444 /etc/supervisor/conf.d/wright.conf" in dockerfile
+    assert "linux-aarch64" in dockerfile
+    assert "MICROMAMBA_ARM64_SHA256=6ec1517c8c89c875a8fa93f9c66abd4fe3dd147341376bdc37b57c526bc13e44" in dockerfile
 
 
 def test_compose_mcp_uses_separate_volume_names_and_same_port_contract() -> None:
     compose = read_text("docker-compose.mcp.yml")
 
+    assert "image: ${WRIGHT_MCP_IMAGE:-wright:mcp-linux-amd64}" in compose
     assert "127.0.0.1:8080:8000" in compose
     assert "platform: ${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}" in compose
+    assert "WRIGHT_MCP_BUNDLE_FILE: ${WRIGHT_MCP_BUNDLE_FILE:-mcp-bundle.yaml}" in compose
     assert "WRIGHT_SOLIDEDGE_MCP_GIT_URL: ${WRIGHT_SOLIDEDGE_MCP_GIT_URL:-https://github.com/burhop/SolidEdgeMCP.git}" in compose
     assert "WRIGHT_SOLIDEDGE_MCP_GIT_REF: ${WRIGHT_SOLIDEDGE_MCP_GIT_REF:-2aad5bd24df6ce1ac9578ad35c4da7ac241b5330}" in compose
+    assert "github_token" in compose
+    assert "environment: GITHUB_TOKEN" in compose
     for volume in (
-        "wright_mcp_data",
-        "wright_mcp_workspaces",
-        "wright_mcp_config",
-        "wright_mcp_hermes",
-        "wright_mcp_logs",
+        "${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp}_data",
+        "${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp}_workspaces",
+        "${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp}_config",
+        "${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp}_hermes",
+        "${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp}_logs",
     ):
         assert volume in compose
     assert "wright_hermes:/home/agent/.hermes" not in compose
@@ -217,6 +268,8 @@ def test_smoke_script_covers_services_entries_and_local_tooling() -> None:
         "WRIGHT_MCP_DOCKER_IMAGE",
         "WRIGHT_MCP_SKIP_BUILD",
         "WRIGHT_MCP_DOCKER_PLATFORM",
+        "WRIGHT_MCP_BUNDLE_FILE",
+        "github_token",
         "show_container_diagnostics",
         "docker inspect -f '{{.State.Running}}'",
         "wright-api-stderr.log",
@@ -231,6 +284,42 @@ def test_smoke_script_covers_services_entries_and_local_tooling() -> None:
         "command -v playwright-mcp",
     ):
         assert expected in smoke
+
+
+def test_image_family_declares_four_managed_images_with_persisted_paths() -> None:
+    family = yaml.safe_load(read_text("docker/image-family.yaml"))
+    images = {entry["id"]: entry for entry in family["images"]}
+
+    assert set(images) == {
+        "wright-standard",
+        "wright-mcp-linux-amd64",
+        "wright-mcp-linux-arm64",
+        "wright-mcp-windows-amd64",
+    }
+    assert images["wright-mcp-linux-amd64"]["platform"] == "linux/amd64"
+    assert images["wright-mcp-linux-arm64"]["platform"] == "linux/arm64"
+    assert images["wright-mcp-windows-amd64"]["platform"] == "windows/amd64"
+    for image in images.values():
+        assert image["persisted_paths"]
+
+
+def test_platform_build_scripts_cover_linux_arm64_and_windows_host_paths() -> None:
+    shell = read_text("scripts/docker-image-family-build.sh")
+    powershell = read_text("scripts/docker-image-family-build.ps1")
+    windows_run = read_text("scripts/docker-mcp-run-windows.ps1")
+    windows_dockerfile = read_text("docker/Dockerfile.windows.mcp")
+
+    assert "mcp-bundle.linux-arm64.yaml" in shell
+    assert "linux/arm64" in shell
+    assert "docker/Dockerfile.windows.mcp" in powershell
+    assert "windows-amd64" in powershell
+    assert "github_token" in shell
+    assert "github_token" in powershell
+    assert "WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL" in powershell
+    assert "WRIGHT_SOLIDEDGE_MCP_GIT_REF=$solidEdgeRef" in powershell
+    assert "C:\\wright\\workspace" in windows_run
+    assert "WRIGHT_SOLIDEDGE_MCP_GIT_URL" in windows_dockerfile
+    assert "WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL" in windows_dockerfile
 
 
 def test_docs_link_mcp_quickstart_from_existing_guides() -> None:

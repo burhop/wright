@@ -14,6 +14,10 @@ To install the internal SolidEdgeMCP source during the build, pass:
 --build-arg WRIGHT_SOLIDEDGE_MCP_GIT_REF=2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
 ```
 
+For private GitHub MCP repositories, export `GITHUB_TOKEN` with read access or
+repair `gh auth login` before building. The helper scripts mount it as the
+BuildKit `github_token` secret so credentials do not enter image layers.
+
 The default build already uses those values. At that ref, SolidEdgeMCP targets
 Windows/Solid Edge, so the Linux wrapper reports the platform limitation.
 

@@ -25,7 +25,8 @@ OpenSCAD:
 
 FreeCAD:
 
-- FreeCAD AppImage extraction provides `freecad` and `freecadcmd` wrappers.
+- FreeCAD provides `freecad` and `freecadcmd` wrappers through the amd64
+  AppImage extraction path or the arm64 system package path.
 - `freecad-mcp-wrapped` can start the FreeCAD backend under Xvfb.
 - LGPL runtime redistribution materials are present.
 

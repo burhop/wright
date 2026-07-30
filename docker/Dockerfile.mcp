@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 # =============================================================================
 # Wright MCP Appliance Container - Derived Image Flavor
 # =============================================================================
@@ -10,9 +11,10 @@
 # only the reviewed MCP bundle assets plus selected MCP host software.
 # =============================================================================
 
+ARG WRIGHT_BASE_IMAGE=wright:test
+
 FROM node:24.17.0-slim@sha256:862263c612aa437e3037674b85419622a9d93bff80aa1eee5398dfe686375532 AS node-runtime
 
-ARG WRIGHT_BASE_IMAGE=wright:test
 FROM ${WRIGHT_BASE_IMAGE}
 
 USER root
@@ -30,6 +32,7 @@ ENV WRIGHT_MCP_BUNDLE=/opt/wright/mcp/mcp-bundle.yaml
 ENV WRIGHT_MCP_GENERATED_DIR=/opt/wright/mcp/generated
 ENV WRIGHT_MCP_HERMES_CONFIG=/opt/wright/mcp/generated/hermes-mcp.generated.yaml
 ENV WRIGHT_MCP_STATUS=/opt/wright/mcp/generated/mcp-bundle-status.json
+ARG WRIGHT_MCP_BUNDLE_FILE=mcp-bundle.yaml
 ARG WRIGHT_SOLIDEDGE_MCP_GIT_URL=https://github.com/burhop/SolidEdgeMCP.git
 ARG WRIGHT_SOLIDEDGE_MCP_GIT_REF=2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
 ENV WRIGHT_SOLIDEDGE_MCP_GIT_URL=${WRIGHT_SOLIDEDGE_MCP_GIT_URL}
@@ -45,12 +48,15 @@ RUN sed -i 's/\r$//' /entrypoint.sh && \
     mkdir -p /opt/wright/mcp/generated /opt/wright/mcp/bin /opt/wright/mcp/src /opt/wright/mcp/venvs && \
     chown -R agent:agent /opt/wright
 
-COPY docker/mcp-bundle.yaml /opt/wright/mcp/mcp-bundle.yaml
+COPY docker/mcp-bundle*.yaml /opt/wright/mcp/bundles/
 COPY docker/mcp-bundle.schema.json /opt/wright/mcp/mcp-bundle.schema.json
 COPY docker/mcp/ /opt/wright/mcp/
 COPY docker/container-manifest.mcp.md /container-manifest.mcp.md
 
-RUN chmod 755 /opt/wright/mcp/verify-bundle.py \
+RUN --mount=type=secret,id=github_token,required=false \
+    export WRIGHT_MCP_GITHUB_TOKEN_FILE=/run/secrets/github_token && \
+    cp "/opt/wright/mcp/bundles/${WRIGHT_MCP_BUNDLE_FILE}" /opt/wright/mcp/mcp-bundle.yaml && \
+    chmod 755 /opt/wright/mcp/verify-bundle.py \
         /opt/wright/mcp/generate-config.py \
         /opt/wright/mcp/install-bundle.sh && \
     /opt/hermes/.venv/bin/python /opt/wright/mcp/verify-bundle.py \

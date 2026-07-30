@@ -1,0 +1,196 @@
+schema_version: 1
+bundle_id: wright-mcp-appliance-windows-amd64
+base_image: wright:mcp-windows-amd64
+default_license_policy:
+  allowed:
+    - MIT
+    - Apache-2.0
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - ISC
+  supported_profiles:
+    - permissive
+    - internal-reviewed-source
+    - blocked
+generated_outputs:
+  status: C:/wright/mcp/generated/mcp-bundle-status.json
+  licenses: C:/wright/mcp/generated/licenses
+
+applications:
+  - id: brep
+    display_name: BREP CAD
+    category: brep
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: brepjs-cad
+      version: 0.103.0
+      repository: https://github.com/andymai/brepjs
+      ref: 2cfc880f517e82cfc4bbafed36ce55afa27daa12
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - brepjs-cad@0.103.0
+    health_probe:
+      kind: command
+      command:
+        - brep
+        - --help
+    docs_summary: BREP CAD authoring through brepjs-cad on Windows.
+
+  - id: solid-edge
+    display_name: Solid Edge
+    category: cad
+    availability: windows_only
+    source:
+      type: external
+      license: Proprietary
+      source_reference: Solid Edge must be installed and licensed on the Windows host; it is not redistributed by Wright.
+    compliance_profile:
+      id: blocked
+    docs_summary: External Windows desktop CAD application, not included in the image.
+
+  - id: playwright
+    display_name: Playwright
+    category: browser-automation
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: playwright
+      version: 1.62.0
+      repository: https://github.com/microsoft/playwright
+      ref: e3950d9c140d007bd52853b45813c6274b24e36f
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - playwright@1.62.0
+      playwright_browsers:
+        - chromium
+    health_probe:
+      kind: command
+      command:
+        - playwright
+        - --version
+    docs_summary: Browser automation runtime for Windows MCP validation.
+
+mcp_servers:
+  - id: brep-mcp
+    display_name: BREP MCP
+    application_id: brep
+    availability: local_enabled
+    mcp_source:
+      type: package
+      registry: npm
+      name: brepjs-cad
+      version: 0.103.0
+      repository: https://github.com/andymai/brepjs
+      ref: 2cfc880f517e82cfc4bbafed36ce55afa27daa12
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - brepjs-cad@0.103.0
+    launch:
+      command:
+        - brep-mcp
+      env:
+        BREP_WORKSPACE: C:/wright/workspace
+    workspace_binding:
+      required: true
+      env:
+        BREP_WORKSPACE: "{workspace.path}"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - run_program
+    docs_summary: BREP MCP server shipped by brepjs-cad.
+
+  - id: solid-edge-mcp
+    display_name: SolidEdgeMCP
+    application_id: solid-edge
+    availability: local_enabled
+    mcp_source:
+      type: configured_git
+      url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
+      ref_env: WRIGHT_SOLIDEDGE_MCP_GIT_REF
+      default_url: https://github.com/burhop/SolidEdgeMCP.git
+      default_ref: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+      default_target: C:/wright/mcp/src/SolidEdgeMCP
+      license: Internal-Use-Only
+      source_reference: https://github.com/burhop/SolidEdgeMCP.git at commit 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.
+    compliance_profile:
+      id: internal-reviewed-source
+      source_access: SolidEdgeMCP GitHub repository at the configured exact ref.
+      redistribution_scope: internal engineering trial image only unless repository licensing says otherwise.
+    install:
+      configured_git_sources:
+        - url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
+          ref_env: WRIGHT_SOLIDEDGE_MCP_GIT_REF
+          default_url: https://github.com/burhop/SolidEdgeMCP.git
+          default_ref: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+          target: C:/wright/mcp/src/SolidEdgeMCP
+      dotnet_projects:
+        - project: C:/wright/mcp/src/SolidEdgeMCP/src/SolidEdgeMcpServer/SolidEdgeMcpServer.csproj
+          output: C:/wright/mcp/apps/SolidEdgeMCP
+    launch:
+      command:
+        - C:/wright/mcp/apps/SolidEdgeMCP/SolidEdgeMcpServer.exe
+        - --allowed-root
+        - C:/wright/workspace
+        - --tool-mode
+        - creation
+      env:
+        CADMCP_SOLID_EDGE_ALLOWED_ROOTS: C:/wright/workspace
+    workspace_binding:
+      required: true
+      env:
+        CADMCP_SOLID_EDGE_ALLOWED_ROOTS: "{workspace.path}"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - cad.get_status
+        - cad.validate_recipe
+        - cad.create_part_from_recipe
+    docs_summary: SolidEdgeMCP built for Windows; Solid Edge itself must be installed/licensed outside Wright redistribution.
+
+  - id: playwright-mcp
+    display_name: Playwright MCP
+    application_id: playwright
+    availability: local_enabled
+    mcp_source:
+      type: package
+      registry: npm
+      name: "@playwright/mcp"
+      version: 0.0.78
+      repository: https://github.com/microsoft/playwright-mcp
+      ref: 5f8fc00210b27b4407c375b59cda4838045d429c
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - "@playwright/mcp@0.0.78"
+    launch:
+      command:
+        - playwright-mcp
+        - --browser
+        - chromium
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: C:/wright/mcp/playwright-browsers
+    workspace_binding:
+      required: true
+      env:
+        PLAYWRIGHT_MCP_WORKSPACE: "{workspace.path}"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - browser_navigate
+        - browser_snapshot
+    docs_summary: Playwright MCP for Windows-host browser automation.

@@ -1,0 +1,55 @@
+schema_version: 1
+family: wright-managed-images
+images:
+  - id: wright-standard
+    image: wright:standard-linux-amd64
+    dockerfile: docker/Dockerfile
+    platform: linux/amd64
+    kind: wright-appliance
+    bundle: null
+    persisted_paths:
+      - /home/agent/.local/share/wright
+      - /home/agent/workspace
+      - /home/agent/.config/wright
+      - /home/agent/.hermes
+      - /var/log
+    status: existing
+  - id: wright-mcp-linux-amd64
+    image: wright:mcp-linux-amd64
+    dockerfile: docker/Dockerfile.mcp
+    platform: linux/amd64
+    kind: wright-mcp-appliance
+    bundle: mcp-bundle.yaml
+    persisted_paths:
+      - /home/agent/.local/share/wright
+      - /home/agent/workspace
+      - /home/agent/.config/wright
+      - /home/agent/.hermes
+      - /var/log
+    status: buildable-on-amd64-or-emulated-host
+  - id: wright-mcp-linux-arm64
+    image: wright:mcp-linux-arm64
+    dockerfile: docker/Dockerfile.mcp
+    platform: linux/arm64
+    kind: wright-mcp-appliance
+    bundle: mcp-bundle.linux-arm64.yaml
+    persisted_paths:
+      - /home/agent/.local/share/wright
+      - /home/agent/workspace
+      - /home/agent/.config/wright
+      - /home/agent/.hermes
+      - /var/log
+    status: buildable-on-arm64-or-emulated-host
+  - id: wright-mcp-windows-amd64
+    image: wright:mcp-windows-amd64
+    dockerfile: docker/Dockerfile.windows.mcp
+    platform: windows/amd64
+    kind: windows-mcp-runtime
+    bundle: mcp-bundle.windows-amd64.yaml
+    persisted_paths:
+      - C:/wright/data
+      - C:/wright/workspace
+      - C:/wright/config
+      - C:/wright/hermes
+      - C:/wright/logs
+    status: windows-host-build-required
