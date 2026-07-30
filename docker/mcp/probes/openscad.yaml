@@ -1,0 +1,12 @@
+id: openscad-mcp
+application_id: openscad
+kind: local_mcp_application
+health:
+  expected_tools:
+    - check_openscad
+    - export_model
+prompt:
+  text: Create a 10 mm OpenSCAD cube, export an STL, and save both files in the workspace.
+  expected_artifacts:
+    - model.scad
+    - model.stl

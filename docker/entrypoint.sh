@@ -106,8 +106,57 @@ PY
   "${HERMES_CLI}" -p wright config set API_SERVER_PORT "${API_SERVER_PORT:-8642}"
 }
 
+materialize_mcp_bundle_config() {
+  local generated_config="${WRIGHT_MCP_HERMES_CONFIG:-}"
+  local generated_status="${WRIGHT_MCP_STATUS:-}"
+  if [ -z "${generated_config}" ] || [ ! -f "${generated_config}" ]; then
+    return 0
+  fi
+
+  export WRIGHT_MCP_GENERATED_CONFIG="${generated_config}"
+  export WRIGHT_MCP_PROFILE_CONFIG="${HERMES_HOME}/profiles/wright/config.yaml"
+  /opt/hermes/.venv/bin/python <<'PY'
+import os
+import pathlib
+import tempfile
+import yaml
+
+source = pathlib.Path(os.environ["WRIGHT_MCP_GENERATED_CONFIG"])
+path = pathlib.Path(os.environ["WRIGHT_MCP_PROFILE_CONFIG"])
+generated = yaml.safe_load(source.read_text(encoding="utf-8")) or {}
+if not isinstance(generated, dict):
+    raise SystemExit("generated MCP configuration must be a mapping")
+generated_servers = generated.get("mcp_servers")
+if not isinstance(generated_servers, dict):
+    raise SystemExit("generated MCP configuration must include mcp_servers")
+existing = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+if not isinstance(existing, dict):
+    raise SystemExit("Hermes profile configuration must be a mapping")
+servers = existing.get("mcp_servers")
+if not isinstance(servers, dict):
+    servers = {}
+for name, config in generated_servers.items():
+    servers[name] = config
+existing["mcp_servers"] = servers
+with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as handle:
+    yaml.safe_dump(existing, handle, sort_keys=False)
+    handle.flush()
+    os.fsync(handle.fileno())
+    temporary = handle.name
+os.replace(temporary, path)
+PY
+
+  mkdir -p /home/agent/.config/wright
+  cp --no-preserve=mode,ownership "${generated_config}" /home/agent/.config/wright/mcp-bundle.generated.yaml
+  if [ -n "${generated_status}" ] && [ -f "${generated_status}" ]; then
+    cp --no-preserve=mode,ownership "${generated_status}" /home/agent/.config/wright/mcp-bundle-status.json
+  fi
+  echo "MCP bundle configuration materialized."
+}
+
 ensure_wright_profile
 write_hermes_config
+materialize_mcp_bundle_config
 
 if [ ! -f "${HERMES_HOME}/profiles/wright/SOUL.md" ]; then
   # Write SOUL.md with Wright agent instructions

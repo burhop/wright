@@ -1,0 +1,65 @@
+# =============================================================================
+# Wright MCP Appliance Compose Overlay
+# =============================================================================
+# Usage:
+#   docker compose -f docker-compose.mcp.yml up -d --build
+#
+# This file intentionally uses separate volume names from docker-compose.minimal.yml.
+# =============================================================================
+
+services:
+  agent:
+    platform: ${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp
+      args:
+        WRIGHT_BASE_IMAGE: ${WRIGHT_BASE_IMAGE:-wright:test}
+        WRIGHT_SOLIDEDGE_MCP_GIT_URL: ${WRIGHT_SOLIDEDGE_MCP_GIT_URL:-https://github.com/burhop/SolidEdgeMCP.git}
+        WRIGHT_SOLIDEDGE_MCP_GIT_REF: ${WRIGHT_SOLIDEDGE_MCP_GIT_REF:-2aad5bd24df6ce1ac9578ad35c4da7ac241b5330}
+    container_name: wright_agent_mcp
+    env_file:
+      - docker/.env
+    ports:
+      # Default mapping is 127.0.0.1:8080:8000. Set WRIGHT_MCP_BIND=0.0.0.0 only for trusted LAN tests.
+      - "${WRIGHT_MCP_BIND:-127.0.0.1}:8080:8000"
+    volumes:
+      - wright_mcp_data:/home/agent/.local/share/wright
+      - wright_mcp_workspaces:/home/agent/workspace
+      - wright_mcp_config:/home/agent/.config/wright
+      - wright_mcp_hermes:/home/agent/.hermes
+      - wright_mcp_logs:/var/log/
+      - ./scripts:/recovery:ro
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=512m
+      - /home/agent/.cache:rw,noexec,nosuid,size=512m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - WRIGHT_ENV=production
+      - WRIGHT_BIND_HOST=0.0.0.0
+      - WRIGHT_MCP_HERMES_CONFIG=/opt/wright/mcp/generated/hermes-mcp.generated.yaml
+      - WRIGHT_MCP_STATUS=/opt/wright/mcp/generated/mcp-bundle-status.json
+      - OTEL_EXPORTER_OTLP_ENDPOINT=
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  wright_mcp_data:
+    name: wright_mcp_data
+  wright_mcp_workspaces:
+    name: wright_mcp_workspaces
+  wright_mcp_config:
+    name: wright_mcp_config
+  wright_mcp_hermes:
+    name: wright_mcp_hermes
+  wright_mcp_logs:
+    name: wright_mcp_logs

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Wright MCP appliance bundle",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "bundle_id", "applications", "mcp_servers"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "bundle_id": {"type": "string", "minLength": 1},
+    "base_image": {"type": "string"},
+    "default_license_policy": {"type": "object"},
+    "generated_outputs": {"type": "object"},
+    "applications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "display_name",
+          "availability",
+          "source",
+          "compliance_profile",
+          "install",
+          "health_probe"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+          "display_name": {"type": "string", "minLength": 1},
+          "category": {"type": "string"},
+          "availability": {"$ref": "#/$defs/availability"},
+          "source": {"type": "object"},
+          "compliance_profile": {"type": "object"},
+          "install": {"type": "object"},
+          "health_probe": {"type": "object"}
+        }
+      }
+    },
+    "mcp_servers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "display_name",
+          "availability",
+          "mcp_source",
+          "compliance_profile",
+          "install",
+          "launch",
+          "health_probe"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+          "display_name": {"type": "string", "minLength": 1},
+          "application_id": {
+            "anyOf": [{"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"}, {"type": "null"}]
+          },
+          "availability": {"$ref": "#/$defs/availability"},
+          "mcp_source": {"type": "object"},
+          "compliance_profile": {"type": "object"},
+          "install": {"type": "object"},
+          "launch": {"type": "object"},
+          "workspace_binding": {"type": "object"},
+          "health_probe": {"type": "object"},
+          "prompt_probe": {"type": "object"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "availability": {
+      "type": "string",
+      "enum": ["local_enabled", "blocked_pending_review", "remote_only", "windows_only"]
+    }
+  }
+}

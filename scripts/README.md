@@ -217,6 +217,34 @@ when run through Git for Windows.
 
 ---
 
+### `docker-mcp-smoke-test.sh`
+
+Builds the standard Wright image as `wright:test`, derives the MCP appliance
+image as `wright:mcp-test`, validates the MCP bundle, starts the container with
+fresh runtime state, and checks Wright API health, Hermes gateway supervision,
+generated MCP config, generated compliance artifacts, and local tool/wrapper
+presence for OpenSCAD, FreeCAD, BREP, SolidEdgeMCP, and Playwright.
+The default Docker platform is `linux/amd64`, matching the current appliance
+release constraint.
+
+* **Usage**:
+  ```bash
+  ./scripts/docker-mcp-smoke-test.sh
+  ```
+* **Smoke an existing MCP image without rebuilding**:
+  ```bash
+  WRIGHT_MCP_DOCKER_IMAGE=wright:mcp-test WRIGHT_MCP_SKIP_BUILD=1 ./scripts/docker-mcp-smoke-test.sh
+  ```
+
+Bundle-only validation:
+
+```bash
+python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
+python docker/mcp/generate-config.py docker/mcp-bundle.yaml --output-dir /tmp/wright-mcp-generated
+```
+
+---
+
 ### Hermes Plugin Lifecycle Scripts
 
 Validates the standard Hermes user-plugin lifecycle in a disposable Docker container with an isolated `HERMES_HOME`. These scripts exercise Hermes Git-managed plugin path under `~/.hermes/plugins`, not the plugin that is baked into the Wright Docker appliance with `uv pip install`.

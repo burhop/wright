@@ -1,0 +1,72 @@
+# =============================================================================
+# Wright MCP Appliance Container - Derived Image Flavor
+# =============================================================================
+# Build the standard Wright image first, then derive this image from it:
+#
+#   docker build -t wright:test -f docker/Dockerfile .
+#   docker build -t wright:mcp-test -f docker/Dockerfile.mcp --build-arg WRIGHT_BASE_IMAGE=wright:test .
+#
+# This flavor preserves the standard entrypoint/supervisor contract and adds
+# only the reviewed MCP bundle assets plus selected MCP host software.
+# =============================================================================
+
+FROM node:24.17.0-slim@sha256:862263c612aa437e3037674b85419622a9d93bff80aa1eee5398dfe686375532 AS node-runtime
+
+ARG WRIGHT_BASE_IMAGE=wright:test
+FROM ${WRIGHT_BASE_IMAGE}
+
+USER root
+
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx && \
+    node --version && npm --version
+
+COPY docker/entrypoint.sh /entrypoint.sh
+
+ENV WRIGHT_MCP_ROOT=/opt/wright/mcp
+ENV WRIGHT_MCP_BUNDLE=/opt/wright/mcp/mcp-bundle.yaml
+ENV WRIGHT_MCP_GENERATED_DIR=/opt/wright/mcp/generated
+ENV WRIGHT_MCP_HERMES_CONFIG=/opt/wright/mcp/generated/hermes-mcp.generated.yaml
+ENV WRIGHT_MCP_STATUS=/opt/wright/mcp/generated/mcp-bundle-status.json
+ARG WRIGHT_SOLIDEDGE_MCP_GIT_URL=https://github.com/burhop/SolidEdgeMCP.git
+ARG WRIGHT_SOLIDEDGE_MCP_GIT_REF=2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+ENV WRIGHT_SOLIDEDGE_MCP_GIT_URL=${WRIGHT_SOLIDEDGE_MCP_GIT_URL}
+ENV WRIGHT_SOLIDEDGE_MCP_GIT_REF=${WRIGHT_SOLIDEDGE_MCP_GIT_REF}
+
+RUN sed -i 's/\r$//' /entrypoint.sh && \
+    chmod 755 /entrypoint.sh && \
+    chmod a+r /etc/supervisor/conf.d/wright.conf && \
+    test -x /entrypoint.sh && \
+    su agent -c 'test -r /etc/supervisor/conf.d/wright.conf' && \
+    test -f /container-manifest.md && \
+    test -x /opt/hermes/.venv/bin/python && \
+    mkdir -p /opt/wright/mcp/generated /opt/wright/mcp/bin /opt/wright/mcp/src /opt/wright/mcp/venvs && \
+    chown -R agent:agent /opt/wright
+
+COPY docker/mcp-bundle.yaml /opt/wright/mcp/mcp-bundle.yaml
+COPY docker/mcp-bundle.schema.json /opt/wright/mcp/mcp-bundle.schema.json
+COPY docker/mcp/ /opt/wright/mcp/
+COPY docker/container-manifest.mcp.md /container-manifest.mcp.md
+
+RUN chmod 755 /opt/wright/mcp/verify-bundle.py \
+        /opt/wright/mcp/generate-config.py \
+        /opt/wright/mcp/install-bundle.sh && \
+    /opt/hermes/.venv/bin/python /opt/wright/mcp/verify-bundle.py \
+        /opt/wright/mcp/mcp-bundle.yaml \
+        --json-output /opt/wright/mcp/generated/mcp-bundle-validation.json && \
+    /opt/wright/mcp/install-bundle.sh /opt/wright/mcp/mcp-bundle.yaml && \
+    /opt/hermes/.venv/bin/python /opt/wright/mcp/generate-config.py \
+        /opt/wright/mcp/mcp-bundle.yaml \
+        --output-dir /opt/wright/mcp/generated && \
+    rm -rf /home/agent/.cache/uv /root/.cache/uv /tmp/wright-mcp-uv-cache && \
+    chmod -R a+rX /opt/wright/mcp/generated /container-manifest.mcp.md && \
+    chown -R agent:agent /home/agent && \
+    chown -R agent:agent /opt/wright
+
+LABEL org.opencontainers.image.title="Wright MCP Appliance" \
+      org.opencontainers.image.description="Wright Docker appliance flavor with a reviewed MCP/application bundle" \
+      org.opencontainers.image.licenses="MIT AND Apache-2.0 AND GPL-2.0-or-later AND LGPL-2.1-or-later"
+
+USER agent

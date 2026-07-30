@@ -1,0 +1,14 @@
+id: freecad-mcp
+application_id: freecad
+kind: local_mcp_application
+health:
+  expected_tools:
+    - list_documents
+    - create_document
+    - create_object
+    - get_objects
+prompt:
+  text: Create a FreeCAD document with a 10 mm by 8 mm by 6 mm box named WrightBox and report its volume.
+  expected_result_contains:
+    - WrightBox
+    - "480"

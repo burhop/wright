@@ -149,6 +149,11 @@ The default `docker-compose.yml` also starts Jaeger and maps Wright to
 [Docker deployment guide](docs/user-guide/docker.md) for LAN access, local model
 server, persistent volume, and cleanup examples.
 
+An experimental MCP-enabled appliance flavor is documented in the
+[MCP Docker quickstart](docs/getting-started/quickstart-docker-mcp.md). It keeps
+the same Wright UI access pattern but uses separate default volumes and a
+reviewed MCP bundle.
+
 For development outside Docker, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Images and Releases

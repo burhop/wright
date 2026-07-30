@@ -44,6 +44,7 @@ should use a published immutable release tag.
 | Path | Command | Host URL | Notes |
 | --- | --- | --- | --- |
 | Minimal alpha appliance | `docker compose -f docker-compose.minimal.yml up -d --build` | `http://localhost:8080` | Recommended first run; Wright only. |
+| MCP appliance flavor | `docker compose -f docker-compose.mcp.yml up -d --build` | `http://localhost:8080` | Experimental MCP bundle with separate volumes; see [MCP Docker quickstart](quickstart-docker-mcp.md). |
 | Full local stack | `docker compose up -d --build` | `http://localhost:8000` | Adds Jaeger tracing on localhost. |
 | Test/dev stack | `docker compose -f docker-compose.test.yml up -d --build` | `http://localhost:8080` | Bind-mounts source for iteration. |
 

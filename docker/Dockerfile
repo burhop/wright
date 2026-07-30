@@ -153,6 +153,7 @@ COPY docker/container-manifest.md /container-manifest.md
 RUN chmod 444 /container-manifest.md
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/wright.conf
+RUN chmod 444 /etc/supervisor/conf.d/wright.conf
 
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod 755 /entrypoint.sh

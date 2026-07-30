@@ -1,0 +1,52 @@
+schema_version: 1
+bundle_id: fixture-allowed
+base_image: wright:test
+applications:
+  - id: allowed-app
+    display_name: Allowed App
+    category: code-cad
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: allowed-app
+      version: 1.0.0
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - allowed-app@1.0.0
+    health_probe:
+      kind: command
+      command:
+        - allowed-app
+        - --version
+mcp_servers:
+  - id: allowed-tool
+    display_name: Allowed Tool
+    application_id: allowed-app
+    availability: local_enabled
+    mcp_source:
+      type: git
+      url: https://github.com/example/allowed-tool
+      ref: 0123456789abcdef0123456789abcdef01234567
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      python_tools:
+        - git+https://github.com/example/allowed-tool.git@0123456789abcdef0123456789abcdef01234567
+    launch:
+      command:
+        - allowed-tool
+      env: {}
+    health_probe:
+      kind: command
+      command:
+        - allowed-tool
+        - --version
+    prompt_probe:
+      prompt: Create a small cube.
+      expected_artifacts:
+        - cube.stl

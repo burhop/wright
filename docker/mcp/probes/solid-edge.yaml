@@ -1,0 +1,15 @@
+id: solid-edge-mcp
+application_id: null
+kind: configured_internal_mcp
+health:
+  expected_tools:
+    - cad.validate_recipe
+    - cad.create_part_from_recipe
+prompt:
+  text: Create a 20 mm by 20 mm by 10 mm Solid Edge part in the workspace.
+  expected_result_contains:
+    - solid_edge
+    - outputPath
+notes:
+  - Solid Edge itself is not redistributed in this Linux image.
+  - Set WRIGHT_SOLIDEDGE_MCP_GIT_URL and WRIGHT_SOLIDEDGE_MCP_GIT_REF to install the internal SolidEdgeMCP source during image build.

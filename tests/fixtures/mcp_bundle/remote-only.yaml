@@ -1,0 +1,44 @@
+schema_version: 1
+bundle_id: fixture-remote-only
+base_image: wright:test
+applications:
+  - id: local-app
+    display_name: Local App
+    category: utilities
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: local-app
+      version: 1.0.0
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - local-app@1.0.0
+    health_probe:
+      kind: command
+      command:
+        - local-app
+        - --version
+mcp_servers:
+  - id: remote-server
+    display_name: Remote Server
+    application_id: null
+    availability: remote_only
+    mcp_source:
+      type: external
+      url: https://example.test/remote-server
+      ref: remote-managed
+      license: external
+    compliance_profile:
+      id: remote-only
+    remote:
+      reason: Managed outside the Linux image.
+    health_probe:
+      kind: unavailable
+      expected_status: remote_only
+    prompt_probe:
+      prompt: Run remote workflow.
+      expected_status: remote_only

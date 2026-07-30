@@ -1,0 +1,13 @@
+# MCP appliance generated artifacts
+mcp/generated/
+mcp/work/
+mcp/cache/
+mcp/licenses/generated/
+mcp-bundle.generated.*
+mcp-bundle-status.json
+
+# Local env overrides
+.env
+.env.*
+!.env.example
+
