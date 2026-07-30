@@ -92,7 +92,7 @@ def lifecycle(
         CompatibilityPolicy.load(
             Path(str(files("wright_engineering").joinpath("compatibility.json")))
         ),
-        runtime_specifier=">=0.1.4,<=0.1.6",
+        runtime_specifier=">=0.1.4,<=0.1.7",
     )
     return NativeLifecycle(
         layout,
