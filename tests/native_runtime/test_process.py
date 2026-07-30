@@ -83,6 +83,31 @@ def test_identity_requires_pid_start_runtime_and_contained_executable(
         )
 
 
+def test_macos_framework_executable_requires_managed_launcher(
+    tmp_path: Path, monkeypatch
+) -> None:
+    runtime = tmp_path / "runtime"
+    launcher = runtime / "bin" / "python"
+    launcher.parent.mkdir(parents=True)
+    launcher.write_bytes(b"")
+    framework = tmp_path / "Python.framework" / "Python"
+    identity = _identity(runtime)
+    identity.launcher_path = str(launcher.resolve())
+    identity.executable_path = str(framework.resolve())
+    observation = ProcessObservation(identity.pid, identity.started_at, framework)
+    monkeypatch.setattr("wright_engineering.runtime.process.sys.platform", "darwin")
+
+    ProcessManager(FakeInspector(observation)).require_identity(
+        identity, runtime, expected_runtime_id="runtime-1"
+    )
+
+    identity.launcher_path = str((tmp_path / "outside" / "python").resolve())
+    with pytest.raises(ProcessError, match="process_launcher_outside_runtime"):
+        ProcessManager(FakeInspector(observation)).require_identity(
+            identity, runtime, expected_runtime_id="runtime-1"
+        )
+
+
 def test_pid_reuse_and_challenge_mismatch_block_signals(tmp_path: Path) -> None:
     runtime = tmp_path / "runtime"
     identity = _identity(runtime)
@@ -148,6 +173,7 @@ def test_launch_records_observed_os_identity(monkeypatch, tmp_path: Path) -> Non
 
     assert identity.started_at == observation.started_at
     assert identity.executable_path == str(executable.resolve(strict=False))
+    assert identity.launcher_path == str(executable.resolve(strict=False))
 
 
 def test_launch_terminates_when_os_identity_is_unavailable(

@@ -1463,6 +1463,7 @@ class NativeLifecycle:
                     payload = json.load(response)
                 return bool(
                     payload.get("product") == "wright"
+                    and payload.get("pid") == identity.pid
                     and payload.get("runtime_id") == identity.runtime_id
                     and payload.get("instance_id") == identity.instance_id
                     and payload.get("challenge_hash") == identity.challenge_hash

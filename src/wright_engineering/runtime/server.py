@@ -64,6 +64,7 @@ def runtime_identity_payload() -> dict[str, Any]:
         raise ServerBootstrapError("runtime_challenge_missing")
     return {
         "product": "wright",
+        "pid": os.getpid(),
         "runtime_id": os.environ.get("WRIGHT_RUNTIME_ID", ""),
         "instance_id": os.environ.get("WRIGHT_RUNTIME_INSTANCE_ID", ""),
         "operation_id": os.environ.get("WRIGHT_RUNTIME_OPERATION_ID", ""),
