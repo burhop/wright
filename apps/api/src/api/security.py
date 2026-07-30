@@ -17,6 +17,7 @@ PUBLIC_PATHS = frozenset(
     {
         "/",
         "/api/auth/session",
+        "/api/auth/session/status",
         "/api/health",
         "/api/runtime/identity",
         "/api/agent/health",

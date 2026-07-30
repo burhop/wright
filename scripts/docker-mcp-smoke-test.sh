@@ -25,7 +25,7 @@ configure_github_secret() {
     DOCKER_SECRET_ARGS=(--secret id=github_token,env=GITHUB_TOKEN)
     return 0
   fi
-  if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  if command -v gh >/dev/null 2>&1; then
     if token="$(gh auth token 2>/dev/null)" && [ -n "$token" ]; then
       export GITHUB_TOKEN="$token"
       DOCKER_SECRET_ARGS=(--secret id=github_token,env=GITHUB_TOKEN)
@@ -88,10 +88,11 @@ docker run --rm --platform "$DOCKER_PLATFORM" --entrypoint sh "$IMAGE_TAG" -c '
   test -x /opt/wright/mcp/bin/freecadcmd &&
   command -v brep >/dev/null &&
   command -v brep-mcp >/dev/null &&
+  test -x /opt/wright/mcp/bin/brep-mcp-wrapped &&
   command -v playwright >/dev/null &&
   command -v playwright-mcp >/dev/null &&
-  test -x /opt/wright/mcp/bin/freecad-mcp-wrapped &&
-  test -x /opt/wright/mcp/bin/solid-edge-mcp
+  grep -R "@playwright/mcp/node_modules/playwright-core" /opt/wright/mcp/playwright-browsers/.links >/dev/null &&
+  test -x /opt/wright/mcp/bin/freecad-mcp-wrapped
 '
 
 docker run -d \
@@ -152,14 +153,22 @@ for key in ("openscad", "freecad", "brep", "playwright"):
     if actual != "accepted":
         raise SystemExit(f"{key} application status mismatch: {actual} != accepted")
 
-for key in ("openscad-mcp", "freecad-mcp", "brep-mcp", "solid-edge-mcp", "playwright-mcp"):
+expected_servers = {
+    "openscad-mcp": "accepted",
+    "freecad-mcp": "accepted",
+    "brep-mcp": "accepted",
+    "solid-edge-mcp": "blocked",
+    "playwright-mcp": "accepted",
+}
+
+for key, expected in expected_servers.items():
     actual = servers.get(key, {}).get("status")
-    if actual != "accepted":
-        raise SystemExit(f"{key} MCP status mismatch: {actual} != accepted")
+    if actual != expected:
+        raise SystemExit(f"{key} MCP status mismatch: {actual} != {expected}")
 PY
 
 docker exec "$CONTAINER_NAME" test -f /home/agent/.config/wright/mcp-bundle-status.json
-for server in openscad-mcp freecad-mcp brep-mcp solid-edge-mcp playwright-mcp; do
+for server in openscad-mcp freecad-mcp brep-mcp playwright-mcp; do
   docker exec "$CONTAINER_NAME" grep -q "$server" /home/agent/.hermes/profiles/wright/config.yaml
 done
 

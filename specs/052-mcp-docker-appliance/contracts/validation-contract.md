@@ -25,8 +25,8 @@ OpenSCAD:
 
 FreeCAD:
 
-- FreeCAD provides `freecad` and `freecadcmd` wrappers through the amd64
-  AppImage extraction path or the arm64 system package path.
+- FreeCAD provides `freecad` and `freecadcmd` wrappers through the amd64 or
+  arm64 AppImage extraction path.
 - `freecad-mcp-wrapped` can start the FreeCAD backend under Xvfb.
 - LGPL runtime redistribution materials are present.
 
@@ -37,14 +37,19 @@ BREP:
 
 SolidEdgeMCP:
 
-- `solid-edge-mcp` wrapper is present.
-- If internal Git source build args are supplied, the source is cloned at the exact ref and installed.
+- Linux bundle status reports `solid-edge-mcp` as blocked, and generated Linux
+  Hermes config does not include it.
+- Windows runtime builds publish SolidEdgeMCP from the exact configured GitHub
+  ref.
 - Solid Edge desktop/vendor assets are not redistributed.
 
 Playwright:
 
 - `playwright` and `playwright-mcp` are present.
 - Chromium browser assets are installed under the MCP image cache.
+- The MCP image cache also records the `@playwright/mcp` browser registry link
+  so `browser_navigate` can launch the browser revision expected by the pinned
+  MCP package.
 
 ## Failure Reporting
 

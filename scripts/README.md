@@ -197,7 +197,7 @@ Runs a local verification suite against a production Docker build to ensure envi
      security overrides are reconciled, and every other conflict fails.
   4. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
   5. Verifies that `/entrypoint.sh` is present and executable.
-  6. Validates setup-pending behavior (warns and continues if `LLM_API_URL` is missing, succeeds when provided).
+  6. Validates setup-pending behavior (warns and continues if no LLM provider is configured, succeeds when one is provided).
   7. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
 
 Host-side JSON and dependency assertions honor an explicit `PYTHON`

@@ -250,7 +250,7 @@ mcp_servers:
         - brepjs-cad@0.103.0
     launch:
       command:
-        - /usr/local/bin/brep-mcp
+        - /opt/wright/mcp/bin/brep-mcp-wrapped
       env:
         BREP_WORKSPACE: /home/agent/workspace
     workspace_binding:
@@ -267,12 +267,12 @@ mcp_servers:
         - bracket.brep.ts
         - bracket.step
         - report.json
-    docs_summary: BREP MCP server shipped by brepjs-cad.
+    docs_summary: BREP MCP server shipped by brepjs-cad, launched through Wright's file-backed CLI compatibility wrapper for the pinned package build.
 
   - id: solid-edge-mcp
     display_name: SolidEdgeMCP
     application_id: null
-    availability: local_enabled
+    availability: blocked_pending_review
     mcp_source:
       type: configured_git
       url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
@@ -283,38 +283,9 @@ mcp_servers:
       license: Internal-Use-Only
       source_reference: https://github.com/burhop/SolidEdgeMCP.git at commit 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.
     compliance_profile:
-      id: internal-reviewed-source
-      source_access: SolidEdgeMCP Git repository configured by WRIGHT_SOLIDEDGE_MCP_GIT_URL and WRIGHT_SOLIDEDGE_MCP_GIT_REF, defaulting to https://github.com/burhop/SolidEdgeMCP.git at commit 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.
-      redistribution_scope: internal engineering trial image only unless repository licensing says otherwise.
-    install:
-      configured_git_sources:
-        - url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
-          ref_env: WRIGHT_SOLIDEDGE_MCP_GIT_REF
-          default_url: https://github.com/burhop/SolidEdgeMCP.git
-          default_ref: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
-          target: /opt/wright/mcp/src/SolidEdgeMCP
-      wrappers:
-        - solid-edge-mcp
-    launch:
-      command:
-        - /opt/wright/mcp/bin/solid-edge-mcp
-      env:
-        CADMCP_SOLID_EDGE_ALLOWED_ROOTS: /home/agent/workspace
-    workspace_binding:
-      required: true
-      env:
-        CADMCP_SOLID_EDGE_ALLOWED_ROOTS: "{workspace.path}"
-    health_probe:
-      kind: mcp
-      expected_tools:
-        - cad.validate_recipe
-        - cad.create_part_from_recipe
-    prompt_probe:
-      prompt: Create a 20 mm by 20 mm by 10 mm Solid Edge part in the workspace.
-      expected_result_contains:
-        - solid_edge
-        - outputPath
-    docs_summary: SolidEdgeMCP source is cloned into the image from the pinned GitHub ref; the current server project targets Windows/Solid Edge and the Linux wrapper reports that platform limitation.
+      id: blocked
+      reason: Current SolidEdgeMCP ref targets Windows/Solid Edge COM automation and is not runnable inside the Linux appliance.
+    docs_summary: SolidEdgeMCP is intentionally not installed in Linux images until a Linux-runnable target exists; use the Windows image for this MCP.
 
   - id: playwright-mcp
     display_name: Playwright MCP
@@ -333,6 +304,8 @@ mcp_servers:
     install:
       npm_tools:
         - "@playwright/mcp@0.0.78"
+      playwright_mcp_browsers:
+        - chrome-for-testing
     launch:
       command:
         - /usr/local/bin/playwright-mcp

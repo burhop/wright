@@ -46,7 +46,8 @@ def test_bundle_manifest_schema_declares_required_fields() -> None:
 def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> None:
     bundle = yaml.safe_load(read_text("docker/mcp-bundle.yaml"))
     application_ids = {entry["id"] for entry in bundle["applications"]}
-    server_ids = {entry["id"] for entry in bundle["mcp_servers"]}
+    servers = {entry["id"]: entry for entry in bundle["mcp_servers"]}
+    server_ids = set(servers)
     serialized = yaml.safe_dump(bundle).lower()
 
     assert application_ids == {"openscad", "freecad", "brep", "playwright"}
@@ -60,6 +61,7 @@ def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> 
     assert "opencad" not in serialized
     assert "opencascade" not in serialized
     assert "caid" not in serialized
+    assert servers["playwright-mcp"]["install"]["playwright_mcp_browsers"] == ["chrome-for-testing"]
 
 
 def test_arm64_bundle_uses_platform_native_freecad_source() -> None:
@@ -68,11 +70,14 @@ def test_arm64_bundle_uses_platform_native_freecad_source() -> None:
 
     assert bundle["bundle_id"] == "wright-mcp-appliance-linux-arm64"
     assert bundle["base_image"] == "wright:standard-linux-arm64"
-    assert apps["freecad"]["source"]["type"] == "apt"
-    assert "freecad" in apps["freecad"]["install"]["system_packages"]
-    assert "release_assets" not in apps["freecad"]["install"]
+    assert apps["freecad"]["source"]["type"] == "github_release"
+    assert "Linux-aarch64" in apps["freecad"]["source"]["url"]
+    assert "freecad" not in apps["freecad"]["install"]["system_packages"]
+    assert apps["freecad"]["install"]["release_assets"]
     assert "Linux-x86_64" not in yaml.safe_dump(apps["freecad"])
-    assert "AppImage" not in yaml.safe_dump(apps["freecad"])
+    assert "Linux-aarch64" in yaml.safe_dump(apps["freecad"])
+    servers = {entry["id"]: entry for entry in bundle["mcp_servers"]}
+    assert servers["playwright-mcp"]["install"]["playwright_mcp_browsers"] == ["chrome-for-testing"]
 
 
 def test_windows_bundle_declares_windows_runnable_mcp_subset_and_solid_edge_boundary() -> None:
@@ -85,6 +90,8 @@ def test_windows_bundle_declares_windows_runnable_mcp_subset_and_solid_edge_boun
     assert applications["solid-edge"]["compliance_profile"]["id"] == "blocked"
     assert servers["solid-edge-mcp"]["mcp_source"]["default_url"] == "https://github.com/burhop/SolidEdgeMCP.git"
     assert servers["solid-edge-mcp"]["mcp_source"]["default_ref"] == "2aad5bd24df6ce1ac9578ad35c4da7ac241b5330"
+    assert servers["brep-mcp"]["launch"]["command"] == ["node", "C:/wright/mcp/bin/brep-mcp-wrapped.cjs"]
+    assert servers["playwright-mcp"]["install"]["playwright_mcp_browsers"] == ["chrome-for-testing"]
     assert "C:/wright/workspace" in yaml.safe_dump(servers["solid-edge-mcp"])
 
 
@@ -94,7 +101,14 @@ def test_validator_accepts_default_bundle() -> None:
 
     assert result["ok"] is True
     assert {item["status"] for item in result["applications"]} == {"accepted"}
-    assert {item["status"] for item in result["mcp_servers"]} == {"accepted"}
+    server_status = {item["id"]: item["status"] for item in result["mcp_servers"]}
+    assert server_status == {
+        "openscad-mcp": "accepted",
+        "freecad-mcp": "accepted",
+        "brep-mcp": "accepted",
+        "solid-edge-mcp": "blocked",
+        "playwright-mcp": "accepted",
+    }
 
 
 @pytest.mark.parametrize(
@@ -206,11 +220,15 @@ def test_mcp_install_is_manifest_driven_and_uses_build_time_caches() -> None:
         "/tmp/wright-mcp-uv-cache",
         "npm install --global",
         "playwright install --with-deps",
+        "playwright_mcp_browsers",
+        "playwright-mcp install-browser --with-deps",
         "link_system_app_binaries",
         "default_url",
         "SolidEdgeMcpServer",
         "not runnable inside this Linux appliance",
         "freecad-mcp-wrapped",
+        "brep-mcp-wrapped",
+        "brep-mcp-launcher.cjs",
         "solid-edge-mcp",
         "WRIGHT_SOLIDEDGE_MCP_GIT_URL",
         "WRIGHT_MCP_GITHUB_TOKEN_FILE",
@@ -281,9 +299,24 @@ def test_smoke_script_covers_services_entries_and_local_tooling() -> None:
         "solid-edge-mcp",
         "playwright-mcp",
         "command -v brep",
+        "brep-mcp-wrapped",
         "command -v playwright-mcp",
+        "@playwright/mcp/node_modules/playwright-core",
     ):
         assert expected in smoke
+
+
+def test_brep_mcp_launcher_wraps_pinned_package_without_editing_it() -> None:
+    launcher = read_text("docker/mcp/brep-mcp-launcher.cjs")
+
+    assert "BREPJS_CAD_ROOT" in launcher
+    assert "APPDATA" in launcher
+    assert "npm_config_prefix" in launcher
+    assert "dist\", \"mcp\", \"server.cjs" in launcher
+    assert "dist\", \"cli\", \"main.js" in launcher
+    assert "global.URL" in launcher
+    assert "url.fileURLToPath" in launcher
+    assert "require(mcpEntry)" in launcher
 
 
 def test_image_family_declares_four_managed_images_with_persisted_paths() -> None:
@@ -320,6 +353,8 @@ def test_platform_build_scripts_cover_linux_arm64_and_windows_host_paths() -> No
     assert "C:\\wright\\workspace" in windows_run
     assert "WRIGHT_SOLIDEDGE_MCP_GIT_URL" in windows_dockerfile
     assert "WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL" in windows_dockerfile
+    assert "brep-mcp-wrapped.cjs" in windows_dockerfile
+    assert "playwright-mcp install-browser chrome-for-testing" in windows_dockerfile
 
 
 def test_docs_link_mcp_quickstart_from_existing_guides() -> None:

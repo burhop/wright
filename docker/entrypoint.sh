@@ -16,9 +16,9 @@ export WRIGHT_API_TOKEN
 echo "=== Agent Container Starting ==="
 echo "  Timestamp   : $(date -u)"
 
-# 1. Validate LLM_API_URL
-if [ -z "${LLM_API_URL}" ]; then
-  echo "Warning: LLM_API_URL environment variable is not set. Please configure it via the Setup Web UI." >&2
+# 1. Validate LLM provider seed
+if [ -z "${LLM_API_URL}" ] && [ -z "${WRIGHT_LLM_PROVIDER}" ] && [ -z "${WRIGHT_LLM_CONFIG_FILE}" ]; then
+  echo "Warning: no LLM provider is configured. Use the Setup Web UI, WRIGHT_LLM_CONFIG_FILE, or WRIGHT_LLM_PROVIDER." >&2
 fi
 
 # 2. Export CONTAINER_MANIFEST
@@ -65,21 +65,6 @@ except FileNotFoundError:
     existing = {}
 if not isinstance(existing, dict):
     raise SystemExit("Hermes configuration must be a mapping")
-url = os.environ.get("LLM_API_URL") or "http://localhost:8000/v1"
-model = os.environ.get("LLM_API_MODEL") or "default"
-key = os.environ.get("LLM_API_KEY") or "NotNeeded"
-existing["model"] = {
-    "base_url": url,
-    "context_length": 131072,
-    "default": model,
-    "provider": "custom",
-}
-providers = existing.get("custom_providers")
-if not isinstance(providers, list):
-    providers = []
-owned = {"api_key": key, "base_url": url, "model": model, "name": "wright-llm"}
-providers = [item for item in providers if not isinstance(item, dict) or item.get("name") != "wright-llm"]
-existing["custom_providers"] = [*providers, owned]
 existing.setdefault("toolsets", ["hermes-cli"])
 existing["terminal"] = {
     **(existing.get("terminal") if isinstance(existing.get("terminal"), dict) else {}),
@@ -104,6 +89,25 @@ PY
   "${HERMES_CLI}" -p wright config set API_SERVER_HOST "${API_SERVER_HOST:-127.0.0.1}"
   "${HERMES_CLI}" -p wright config set API_SERVER_KEY -- "${HERMES_API_KEY}"
   "${HERMES_CLI}" -p wright config set API_SERVER_PORT "${API_SERVER_PORT:-8642}"
+}
+
+apply_llm_provider_seed() {
+  local profile_config="${HERMES_HOME}/profiles/wright/config.yaml"
+  local profile_auth="${HERMES_HOME}/profiles/wright/auth.json"
+  local status_path="/home/agent/.config/wright/llm-provider-status.json"
+  local python_cmd=("/workspace/.venv/bin/python")
+  if [ ! -x "${python_cmd[0]}" ]; then
+    python_cmd=(/usr/local/bin/uv run --project /workspace python)
+  fi
+
+  if "${python_cmd[@]}" -m agent_adapters.llm_seed \
+      --config-path "${profile_config}" \
+      --auth-path "${profile_auth}" \
+      --status-path "${status_path}"; then
+    echo "LLM provider seed processed."
+  else
+    echo "Warning: failed to apply LLM provider seed. Continuing so the Setup Web UI can repair it." >&2
+  fi
 }
 
 materialize_mcp_bundle_config() {
@@ -156,6 +160,7 @@ PY
 
 ensure_wright_profile
 write_hermes_config
+apply_llm_provider_seed
 materialize_mcp_bundle_config
 
 if [ ! -f "${HERMES_HOME}/profiles/wright/SOUL.md" ]; then

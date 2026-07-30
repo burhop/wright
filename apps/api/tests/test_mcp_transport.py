@@ -6,6 +6,8 @@ from fastapi.testclient import TestClient
 
 from api.config import DATABASE_PATH
 from api.main import app
+from api.mcp_transport import _allowed_transport_hosts
+from api.security import SecuritySettings
 from data_vault.secret_provider import FileSecretProvider
 from data_vault.workspace_repository import WorkspaceRepository
 
@@ -168,3 +170,19 @@ def test_streamable_http_is_covered_by_control_plane_authentication(
             assert denied.status_code == 403
     finally:
         app.state.security_settings = previous
+
+
+def test_streamable_http_allows_configured_public_origin_host() -> None:
+    settings = SecuritySettings(
+        mode="enforced",
+        api_token="remote-token",
+        allowed_origins=("http://192.168.1.163:18181",),
+        bind_host="0.0.0.0",
+    )
+
+    allowed_hosts = _allowed_transport_hosts(settings)
+
+    assert "192.168.1.163" in allowed_hosts
+    assert "192.168.1.163:18181" in allowed_hosts
+    assert "192.168.1.163:*" in allowed_hosts
+    assert "0.0.0.0:*" not in allowed_hosts

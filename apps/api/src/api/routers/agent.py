@@ -306,7 +306,7 @@ async def ensure_workspace_mcp_servers_active(
             runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
             if runner and runner.is_running() and server.status == "active":
                 continue
-            await mcp_engine.start_server(
+            started_server = await mcp_engine.start_server(
                 server.server_id,
                 workspace_dir=workspace_dir,
                 approval_context=ApprovalContext(
@@ -314,6 +314,16 @@ async def ensure_workspace_mcp_servers_active(
                     workspace_approvals=set(server.approval_gates or []),
                 ),
             )
+            if started_server is not None and (
+                getattr(started_server, "status", None) == "error"
+                or getattr(started_server, "is_active", True) is False
+            ):
+                reason = (
+                    getattr(started_server, "error_message", None)
+                    or getattr(started_server, "status", None)
+                    or "server did not become active"
+                )
+                raise RuntimeError(str(reason))
         except Exception as exc:
             logger.exception(
                 "workspace_mcp_preflight_start_failed",

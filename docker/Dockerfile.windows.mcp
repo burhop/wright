@@ -27,6 +27,7 @@ ENV NODE_VERSION=${NODE_VERSION}
 ENV WRIGHT_SOLIDEDGE_MCP_GIT_URL=${WRIGHT_SOLIDEDGE_MCP_GIT_URL}
 ENV WRIGHT_SOLIDEDGE_MCP_GIT_REF=${WRIGHT_SOLIDEDGE_MCP_GIT_REF}
 ENV PLAYWRIGHT_BROWSERS_PATH=C:\wright\mcp\playwright-browsers
+ENV BREPJS_CAD_ROOT=C:/Users/ContainerAdministrator/AppData/Roaming/npm/node_modules/brepjs-cad
 ENV PATH="C:\node;C:\Users\ContainerAdministrator\AppData\Roaming\npm;${PATH}"
 
 RUN New-Item -ItemType Directory -Force `
@@ -36,15 +37,19 @@ RUN New-Item -ItemType Directory -Force `
       C:\wright\hermes, `
       C:\wright\logs, `
       C:\wright\mcp\apps, `
+      C:\wright\mcp\bin, `
       C:\wright\mcp\generated, `
       C:\wright\mcp\src | Out-Null
+
+COPY docker/mcp/brep-mcp-launcher.cjs C:/wright/mcp/bin/brep-mcp-wrapped.cjs
 
 ADD https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-win-x64.zip C:/wright/mcp/src/node.zip
 RUN Expand-Archive C:\wright\mcp\src\node.zip C:\wright\mcp\src\node; `
     Move-Item "C:\wright\mcp\src\node\node-v${env:NODE_VERSION}-win-x64" C:\node; `
     npm --version; `
     npm install --global brepjs-cad@0.103.0 playwright@1.62.0 @playwright/mcp@0.0.78; `
-    playwright install chromium
+    playwright install chromium; `
+    playwright-mcp install-browser chrome-for-testing
 
 ADD ${WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL} C:/wright/mcp/src/SolidEdgeMCP.zip
 RUN Expand-Archive C:\wright\mcp\src\SolidEdgeMCP.zip C:\wright\mcp\src; `

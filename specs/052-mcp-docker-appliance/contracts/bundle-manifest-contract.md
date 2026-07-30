@@ -60,7 +60,8 @@ mcp_servers:
 - `remote_only`: generated status points to external setup requirements.
 - `windows_only`: generated status cannot run inside the Linux container.
 
-The default bundle should not include blocked entries.
+Generated Hermes config must exclude blocked entries. Linux bundles may keep a
+blocked SolidEdgeMCP metadata entry so the platform boundary remains visible.
 
 ## License And Compliance Semantics
 
@@ -83,7 +84,8 @@ Supported compliance profiles:
 
 ## SolidEdgeMCP
 
-SolidEdgeMCP uses `internal-reviewed-source` and a configured Git source:
+Windows SolidEdgeMCP uses `internal-reviewed-source` and a configured Git
+source:
 
 ```yaml
 mcp_source:
@@ -92,9 +94,8 @@ mcp_source:
   ref_env: WRIGHT_SOLIDEDGE_MCP_GIT_REF
 ```
 
-The Docker build may skip cloning if those values are absent, but distributable
-trial builds that claim SolidEdgeMCP installed must supply both values with an
-exact ref.
+Distributable Windows trial builds that claim SolidEdgeMCP installed must
+supply both values with an exact ref.
 
 The default source values are:
 
@@ -104,5 +105,5 @@ default_ref: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
 ```
 
 At that ref, `src/SolidEdgeMcpServer/SolidEdgeMcpServer.csproj` targets
-`net10.0-windows`, so the Linux appliance clones source and installs a wrapper
-that reports the platform limitation.
+`net10.0-windows`, so Linux bundles keep SolidEdgeMCP blocked until a
+Linux-runnable server target exists.

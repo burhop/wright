@@ -28,12 +28,9 @@ intentionally want to share state between appliance flavors.
 ## Included Applications And MCPs
 
 The local application bundle installs OpenSCAD, FreeCAD, BREP CAD tooling, and
-Playwright. The local MCP bundle includes OpenSCAD MCP, FreeCAD MCP, BREP MCP,
-SolidEdgeMCP, and Playwright MCP.
+Playwright. The local Linux MCP bundle includes OpenSCAD MCP, FreeCAD MCP,
+BREP MCP, and Playwright MCP.
 
-Solid Edge itself is not redistributed in this Linux image. SolidEdgeMCP source
-is cloned from the pinned `burhop/SolidEdgeMCP` GitHub ref unless overridden by
-`WRIGHT_SOLIDEDGE_MCP_GIT_URL` and `WRIGHT_SOLIDEDGE_MCP_GIT_REF`. The current
-server project targets Windows/Solid Edge, so the Linux wrapper reports that
-platform limitation while preserving the generic Wright
-`CADMCP_SOLID_EDGE_ALLOWED_ROOTS={workspace.path}` contract.
+Solid Edge itself is not redistributed in this Linux image. SolidEdgeMCP is a
+Windows-owned MCP runtime in this image family, and Linux bundle metadata keeps
+that entry blocked until a Linux-runnable server target exists.

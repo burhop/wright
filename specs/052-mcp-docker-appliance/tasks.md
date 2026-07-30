@@ -27,9 +27,9 @@
 
 ## Phase 4: Validation
 
-- [X] T017 Update Docker MCP smoke script for OpenSCAD, FreeCAD, BREP, SolidEdgeMCP, and Playwright.
-- [X] T018 Update Playwright UI integration prompt for the corrected bundle.
-- [X] T019 Add probe definitions for the five MCP servers.
+- [X] T017 Update Docker MCP smoke script for OpenSCAD, FreeCAD, BREP, Playwright, and blocked Linux SolidEdgeMCP metadata.
+- [X] T018 Update Playwright UI integration prompt for the corrected Linux-runnable bundle.
+- [X] T019 Add probe definitions/status metadata for the five MCP server entries.
 - [X] T020 Run focused manifest/config/unit validation.
 
 ## Phase 5: Documentation And Spec Kit Artifacts
@@ -48,6 +48,16 @@
 - [X] T029 Update engineer/maintainer docs for the four-image matrix and Windows host constraints.
 - [X] T030 Add tests for image-family manifest, platform bundles, arm64 FreeCAD path, and Windows scaffolding.
 
+## Phase 7: LLM First-Run And Seeded Provider Setup
+
+- [X] T031 Add Spec Kit requirements for fresh-container LLM onboarding and reusable provider seed files.
+- [X] T032 Add Hermes LLM seed helper for Codex/OpenAI-compatible config and auth seeding.
+- [X] T033 Update Docker entrypoint and run helpers to avoid fake localhost LLM defaults and accept mounted seed files.
+- [X] T034 Add setup API provider metadata/configuration endpoints and Codex login polling for browser-first setup.
+- [X] T035 Add engineer docs and an example seed file for repeatable Codex/OpenAI-compatible Docker tests.
+- [X] T036 Add focused tests for provider seed config, Codex auth seeding, and setup API behavior.
+- [X] T037 Add Wright Model Setup UI for Codex login and OpenAI-compatible endpoint configuration.
+
 ## Validation Evidence
 
 - [X] `python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml`
@@ -55,8 +65,14 @@
 - [X] `bash -n scripts/docker-mcp-smoke-test.sh`
 - [X] `bash -n docker/mcp/install-bundle.sh`
 - [X] `UV_CACHE_DIR=/tmp/wright-uv-cache uv run pytest tests/docker/test_mcp_bundle.py`
+- [X] `UV_CACHE_DIR=/tmp/wright-uv-cache uv run pytest packages/agent_adapters/tests/test_llm_seed.py apps/api/tests/test_setup_api.py tests/test_docker_smoke_contract.py`
+- [X] `UV_CACHE_DIR=/tmp/wright-uv-cache uv run pytest tests/test_getting_started_paths.py tests/test_readme_branding_and_docker_user_guide.py`
+- [X] `python -m py_compile packages/agent_adapters/src/agent_adapters/llm_seed.py`
+- [X] `bash -n scripts/docker-mcp-run.sh scripts/docker-smoke-test.sh docker/entrypoint.sh`
+- [X] `npm test --workspace=apps/web -- ModelSetupPage.spec.tsx Sidebar.spec.tsx App.spec.tsx`
+- [X] `npm run build --workspace=apps/web`
 
 ## Host-Limited Validation
 
-- `WRIGHT_MCP_DOCKER_PLATFORM=linux/arm64 WRIGHT_MCP_DOCKER_IMAGE=wright:mcp-linux-arm64 WRIGHT_DOCKER_IMAGE=wright:standard-linux-arm64 WRIGHT_MCP_CONTAINER=wright-mcp-smoke-arm64 bash scripts/docker-mcp-smoke-test.sh` built the native arm64 standard image and reached MCP image installation. It installed the arm64 Debian FreeCAD/OpenSCAD package path, then stopped cloning private `https://github.com/burhop/SolidEdgeMCP.git` because this host's `gh` tokens are invalid and no `GITHUB_TOKEN` was exported. The Dockerfile and helper scripts now support a BuildKit `github_token` secret for private configured Git sources; rerun after `GITHUB_TOKEN` or `gh auth login` is repaired.
+- Live ARM64 validation on GB10 showed Debian Trixie's `freecad` package segfaulting before startup and SolidEdgeMCP reporting the expected Windows/Solid Edge runtime boundary. The Linux ARM64 manifest now uses FreeCAD's official 1.1.1 Linux aarch64 AppImage and keeps SolidEdgeMCP blocked in Linux while the Windows runtime owns the runnable SolidEdgeMCP path.
 - `pwsh` is not installed on this Linux host, so the Windows PowerShell build/run scripts were covered by static tests but not executed locally.

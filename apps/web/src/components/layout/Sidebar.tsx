@@ -34,11 +34,18 @@ export function Sidebar() {
       order: 3,
     },
     {
+      id: "model-setup",
+      label: "Model Setup",
+      path: "/setup/model",
+      icon: "settings",
+      order: 4,
+    },
+    {
       id: "settings",
       label: "Settings",
       path: "/settings",
       icon: "settings",
-      order: 4,
+      order: 5,
     },
   ];
 

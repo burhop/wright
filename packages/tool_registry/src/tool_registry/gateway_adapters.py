@@ -6,7 +6,7 @@ from typing import Any
 from .db import get_servers, get_tools
 from .gateway_models import GatewayResource, GatewaySessionContext, GatewayTool
 from .manager import McpEngine
-from .safety import ApprovalContext
+from .safety import ApprovalContext, McpSafetyPolicy
 from .runners.base import ProgressCallback
 
 
@@ -49,6 +49,7 @@ class DatabaseGatewayCatalog:
         )
         if server is None:
             return ()
+        policy = McpSafetyPolicy()
         return tuple(
             GatewayTool(
                 name=f"{server_id}__{tool.name}",
@@ -59,7 +60,11 @@ class DatabaseGatewayCatalog:
                 title=tool.title,
                 output_schema=tool.output_schema,
                 annotations=tool.annotations,
-                required_approvals=frozenset(server.approval_gates),
+                required_approvals=frozenset(
+                    policy.can_call_tool(
+                        server, tool.name, ApprovalContext()
+                    ).required_approvals
+                ),
                 provenance={
                     "server_id": server.server_id,
                     "source_url": server.source_url,

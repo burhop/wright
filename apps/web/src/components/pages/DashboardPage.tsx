@@ -202,6 +202,45 @@ export function DashboardPage() {
         </button>
       </div>
 
+      {inferenceState === "disconnected" && (
+        <div
+          data-testid="llm-setup-banner"
+          style={{
+            alignItems: "center",
+            backgroundColor: "var(--color-surface)",
+            border: "1px solid var(--color-warning)",
+            borderRadius: "var(--radius-md)",
+            display: "flex",
+            gap: "var(--space-md)",
+            justifyContent: "space-between",
+            padding: "var(--space-md)",
+          }}
+        >
+          <div>
+            <strong>Model provider is not connected.</strong>
+            <div style={{ color: "var(--color-secondary)", fontSize: "0.85rem" }}>
+              Wright and Hermes are running, but prompts need a model provider.
+            </div>
+          </div>
+          <button
+            data-testid="open-model-setup"
+            type="button"
+            onClick={() => navigate("/setup/model")}
+            style={{
+              backgroundColor: "var(--color-secondary)",
+              border: "none",
+              borderRadius: "var(--radius-md)",
+              color: "var(--color-surface-subtle)",
+              cursor: "pointer",
+              fontWeight: 700,
+              padding: "10px 14px",
+            }}
+          >
+            Connect Model
+          </button>
+        </div>
+      )}
+
       {/* Grid Layout (Condensed margin & padding, fits on 1080p screen) */}
       <div
         style={{

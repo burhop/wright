@@ -65,9 +65,13 @@ async def lifespan(app: FastAPI):
         from api.database.secret_migration import migrate_plaintext_secrets
 
         migrate_plaintext_secrets(DATABASE_PATH)
-        from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+        from tool_registry.catalog_reconcile import (
+            reconcile_engineering_catalog,
+            reconcile_installed_bundle,
+        )
 
         reconcile_engineering_catalog(DATABASE_PATH)
+        reconcile_installed_bundle(DATABASE_PATH)
     except Exception as exc:
         logger.error(
             "database_readiness_failed",
@@ -222,6 +226,11 @@ class LocalSessionRequest(BaseModel):
     token: str
 
 
+class LocalSessionStatusResponse(BaseModel):
+    auth_required: bool
+    authenticated: bool
+
+
 @app.post("/api/auth/session", status_code=204)
 async def create_local_session(body: LocalSessionRequest, response: Response):
     """Exchange the configured local token for a browser-only session cookie."""
@@ -245,6 +254,18 @@ async def create_local_session(body: LocalSessionRequest, response: Response):
 @app.delete("/api/auth/session", status_code=204)
 async def delete_local_session(response: Response):
     response.delete_cookie(SESSION_COOKIE, path="/api")
+
+
+@app.get("/api/auth/session/status", response_model=LocalSessionStatusResponse)
+async def local_session_status(request: Request):
+    settings: SecuritySettings = app.state.security_settings
+    if not settings.enforced:
+        return LocalSessionStatusResponse(auth_required=False, authenticated=True)
+    browser_session = request.cookies.get(SESSION_COOKIE)
+    return LocalSessionStatusResponse(
+        auth_required=True,
+        authenticated=settings.browser_session_valid(browser_session),
+    )
 
 
 @app.get("/api/health", response_model=HealthResponse)

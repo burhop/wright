@@ -31,4 +31,4 @@
 
 ## Notes
 
-- Validation updated on 2026-07-30. The spec intentionally skips OpenCAD, installs BREP tooling through the selected BREP MCP path, and treats SolidEdgeMCP as an internal configured source.
+- Validation updated on 2026-07-30. The spec intentionally skips OpenCAD, installs BREP tooling through the selected BREP MCP path, and treats SolidEdgeMCP as Windows-owned while blocked in Linux bundles until a Linux-runnable server target exists.

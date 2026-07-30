@@ -99,8 +99,10 @@ mcp_servers:
         - brepjs-cad@0.103.0
     launch:
       command:
-        - brep-mcp
+        - node
+        - C:/wright/mcp/bin/brep-mcp-wrapped.cjs
       env:
+        BREPJS_CAD_ROOT: C:/Users/ContainerAdministrator/AppData/Roaming/npm/node_modules/brepjs-cad
         BREP_WORKSPACE: C:/wright/workspace
     workspace_binding:
       required: true
@@ -177,6 +179,8 @@ mcp_servers:
     install:
       npm_tools:
         - "@playwright/mcp@0.0.78"
+      playwright_mcp_browsers:
+        - chrome-for-testing
     launch:
       command:
         - playwright-mcp

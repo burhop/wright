@@ -14,6 +14,9 @@ follow from it.
 - Do not use CAiD/OpenCASCADE as a BREP substitute. The BREP entry is the BREP
   application/tooling plus its BREP MCP server.
 - Keep the standard non-MCP Docker appliance free of MCP host software.
+- Keep third-party package fixes in Wright-owned launchers or wrappers when a
+  runtime workaround is sufficient; do not rewrite installed package files just
+  to make the appliance pass validation.
 
 ## Current Default Set
 
@@ -31,6 +34,27 @@ MCP servers:
 - `brep-mcp`
 - `solid-edge-mcp`
 - `playwright-mcp`
+
+## BREP MCP
+
+The Linux bundles install `brepjs-cad@0.103.0` from npm and launch its MCP
+server through `/opt/wright/mcp/bin/brep-mcp-wrapped`. The wrapper corrects the
+pinned package build's generated URL lookups so the MCP uses the real
+`dist/cli/main.js` file when executing `run_program` or `export_part`.
+
+Leave the package itself unmodified in the image. When a future pinned
+`brepjs-cad` release no longer needs the wrapper, update the manifest launch
+command, this note, and the live MCP validation evidence together.
+
+## Playwright MCP
+
+The Playwright application entry installs the standard Playwright Chromium
+payload through `playwright_browsers`. The `playwright-mcp` server entry also
+sets `playwright_mcp_browsers` to `chrome-for-testing` so the
+`@playwright/mcp` package installs the exact browser revision expected by its
+own pinned Playwright dependency. Keep both fields intentional when changing
+Playwright or `@playwright/mcp` versions, then rerun the live gateway probe for
+`playwright-mcp__browser_navigate`.
 
 ## License Profiles
 

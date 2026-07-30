@@ -6,6 +6,7 @@ from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlparse
 
 import anyio
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
@@ -145,14 +146,11 @@ class AuthenticatedMcpTransport:
                 workspace_id=binding.workspace_id,
                 transport="streamable_http",
             )
-            allowed_hosts = ["127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*"]
-            if self.security.bind_host not in {"127.0.0.1", "localhost", "::1"}:
-                allowed_hosts.append(f"{self.security.bind_host}:*")
             manager = StreamableHTTPSessionManager(
                 create_mcp_server(self.service, gateway_session_id),
                 security_settings=TransportSecuritySettings(
                     enable_dns_rebinding_protection=True,
-                    allowed_hosts=allowed_hosts,
+                    allowed_hosts=_allowed_transport_hosts(self.security),
                     allowed_origins=list(self.security.allowed_origins),
                 ),
                 session_idle_timeout=self.settings.session_idle_timeout_seconds,
@@ -195,6 +193,29 @@ class AuthenticatedMcpTransport:
 
     async def _error(self, scope, receive, send, status: int, detail: str) -> None:
         await JSONResponse({"detail": detail}, status_code=status)(scope, receive, send)
+
+
+def _allowed_transport_hosts(security: Any) -> list[str]:
+    hosts = {"127.0.0.1", "127.0.0.1:*", "localhost", "localhost:*"}
+
+    def add_host(hostname: str | None, port: int | None = None) -> None:
+        if not hostname:
+            return
+        hostname = hostname.strip().lower()
+        if hostname in {"0.0.0.0", "::", "[::]"}:
+            return
+        host = f"[{hostname}]" if ":" in hostname and not hostname.startswith("[") else hostname
+        hosts.add(host)
+        hosts.add(f"{host}:*")
+        if port is not None:
+            hosts.add(f"{host}:{port}")
+
+    add_host(getattr(security, "bind_host", None))
+    for origin in getattr(security, "allowed_origins", ()):
+        parsed = urlparse(str(origin))
+        add_host(parsed.hostname, parsed.port)
+
+    return sorted(hosts)
 
 
 class McpTransportMount:

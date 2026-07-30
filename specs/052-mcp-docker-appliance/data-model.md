@@ -53,11 +53,11 @@ Validation rules:
 
 - Local MCP servers require install, launch, health probe, and compliance data.
 - Non-null `application_id` must reference an application entry.
-- `solid-edge-mcp` uses `application_id: null` because Solid Edge itself is not redistributed.
+- Linux bundles keep `solid-edge-mcp` blocked because Solid Edge itself is not redistributed and the current server target is Windows-only.
 
 ## Third-Party Compliance Profile
 
-- `profile_id`: `permissive`, `gpl-2.0-runtime-redistribution`, `lgpl-runtime-redistribution`, or `internal-reviewed-source`
+- `profile_id`: `permissive`, `gpl-2.0-runtime-redistribution`, `lgpl-runtime-redistribution`, `internal-reviewed-source`, `blocked`, or `remote-only`
 - `runtime_use_only`: true when redistributing an unmodified executable runtime
 - `modification_status`: unmodified, patched, rebuilt, or unknown
 - `source_access`: source URL/archive/repository/written-offer instruction
@@ -75,6 +75,7 @@ Validation rules:
 
 - `hermes-mcp.generated.yaml`: generated `mcp_servers` mapping
 - `mcp-bundle-status.json`: accepted/blocked/remote status per application and MCP server
+- `llm-provider-status.json`: startup LLM provider seed result without secret values
 - `THIRD-PARTY-COMPLIANCE.json`: generated license/compliance evidence
 - `NO-WARRANTY-GPL-2.0.txt`: GPL runtime notice
 - `NO-WARRANTY-LGPL.txt`: LGPL runtime notice
@@ -84,6 +85,26 @@ Validation rules:
 
 - Generated config is idempotently merged into the `wright` Hermes profile at container startup.
 - Generated status is copied to Wright config for inspection.
+
+## LLM Provider Seed
+
+- `version`: seed schema version
+- `provider`: `openai-codex`, `openai-compatible`, `custom`, or a supported alias
+- `base_url`: OpenAI-compatible base URL or provider-specific default
+- `model`: default model id for Hermes
+- `api_key`: optional provider key for local/private seed files
+- `auth_file`: optional mounted Hermes auth payload path for Codex
+- `tokens`: optional inline Codex `access_token` and `refresh_token` for
+  disposable local testing
+
+Validation rules:
+
+- Seed files are mounted at runtime and are never copied into Docker image layers.
+- Codex seed auth requires both access and refresh token material before it is
+  treated as configured.
+- Startup status must not echo API keys or tokens.
+- Missing seed/provider settings leave inference disconnected while Wright and
+  Hermes continue running.
 
 ## MCP Appliance Image
 

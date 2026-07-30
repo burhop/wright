@@ -12,7 +12,7 @@ configure_github_secret() {
     DOCKER_SECRET_ARGS=(--secret id=github_token,env=GITHUB_TOKEN)
     return 0
   fi
-  if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  if command -v gh >/dev/null 2>&1; then
     if token="$(gh auth token 2>/dev/null)" && [ -n "$token" ]; then
       export GITHUB_TOKEN="$token"
       DOCKER_SECRET_ARGS=(--secret id=github_token,env=GITHUB_TOKEN)

@@ -71,6 +71,9 @@ RUN --mount=type=secret,id=github_token,required=false \
     chown -R agent:agent /home/agent && \
     chown -R agent:agent /opt/wright
 
+RUN mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share && \
+    chown -R agent:agent /home/agent/.config /home/agent/.cache /home/agent/.local
+
 LABEL org.opencontainers.image.title="Wright MCP Appliance" \
       org.opencontainers.image.description="Wright Docker appliance flavor with a reviewed MCP/application bundle" \
       org.opencontainers.image.licenses="MIT AND Apache-2.0 AND GPL-2.0-or-later AND LGPL-2.1-or-later"

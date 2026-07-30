@@ -50,6 +50,21 @@ export LLM_API_MODEL=your-model
 
 Open `http://127.0.0.1:8080`.
 
+For repeatable Codex/OpenAI-compatible testing, use a mounted provider seed
+instead of re-entering model setup for every new container:
+
+```bash
+export WRIGHT_API_TOKEN=change-this-long-random-token
+export WRIGHT_LLM_CONFIG_FILE=/absolute/host/path/llm-seed.yaml
+./scripts/docker-mcp-run.sh linux-arm64
+```
+
+For Codex/ChatGPT login reuse, the seed selects `provider: openai-codex` and
+either inlines a token pair or points at a mounted Hermes auth file through
+`auth_file: /run/secrets/wright/hermes-auth.json`. With the run helper, set
+`WRIGHT_LLM_AUTH_FILE=/absolute/host/path/hermes-auth.json` and it is mounted
+at that container path.
+
 ## Build Linux Amd64
 
 On a native amd64 host, or on an ARM host with amd64 emulation enabled:
@@ -99,7 +114,7 @@ Edge environment.
 ## Bundle Differences
 
 - Linux amd64 uses the FreeCAD 1.1.1 x86_64 AppImage.
-- Linux arm64 uses system FreeCAD packages instead of the x86_64 AppImage.
+- Linux arm64 uses the official FreeCAD 1.1.1 Linux aarch64 AppImage.
 - Windows amd64 includes Windows-oriented MCP runtime metadata for BREP,
   SolidEdgeMCP, and Playwright. OpenSCAD and FreeCAD are not included in the
   initial Windows runtime profile until their Windows install/probe path is

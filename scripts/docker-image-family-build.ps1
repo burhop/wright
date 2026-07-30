@@ -14,7 +14,6 @@ function Use-GitHubSecret {
   }
   if (Get-Command gh -ErrorAction SilentlyContinue) {
     try {
-      gh auth status *> $null
       $token = gh auth token 2>$null
       if ($token) {
         $env:GITHUB_TOKEN = $token.Trim()

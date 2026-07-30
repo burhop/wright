@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { BrowserHostAdapter } from "../../src/services/host-adapter/browser-adapter";
+import { AUTH_TOKEN_STORAGE_KEY } from "../../src/services/auth-session";
 
 describe("BrowserHostAdapter", () => {
   let adapter: BrowserHostAdapter;
@@ -11,6 +12,11 @@ describe("BrowserHostAdapter", () => {
         hostname: "localhost",
         port: "5173",
         protocol: "http:",
+      },
+      localStorage: {
+        getItem: vi.fn(),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
       },
     });
   });
@@ -39,9 +45,48 @@ describe("BrowserHostAdapter", () => {
     vi.stubGlobal("fetch", fetchSpy);
 
     const res = await adapter.fetch("/api/test");
-    expect(fetchSpy).toHaveBeenCalledWith("/api/test", undefined);
+    expect(fetchSpy).toHaveBeenCalledWith("/api/test", {
+      credentials: "same-origin",
+    });
     const data = await res.json();
     expect(data).toEqual({ data: "ok" });
+  });
+
+  it("should exchange a stored token and retry once after a protected API 401", async () => {
+    const unauthorized = new Response(JSON.stringify({ detail: "nope" }), {
+      status: 401,
+    });
+    const session = new Response(null, { status: 204 });
+    const retried = new Response(JSON.stringify({ data: "ok" }), {
+      status: 200,
+    });
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValueOnce(unauthorized)
+      .mockResolvedValueOnce(session)
+      .mockResolvedValueOnce(retried);
+    vi.stubGlobal("fetch", fetchSpy);
+    vi.mocked(window.localStorage.getItem).mockImplementation((key) =>
+      key === AUTH_TOKEN_STORAGE_KEY ? "stored-token" : null,
+    );
+
+    const res = await adapter.fetch("/api/workspace/create", { method: "POST" });
+
+    expect(fetchSpy).toHaveBeenNthCalledWith(1, "/api/workspace/create", {
+      method: "POST",
+      credentials: "same-origin",
+    });
+    expect(fetchSpy).toHaveBeenNthCalledWith(2, "/api/auth/session", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: "stored-token" }),
+    });
+    expect(fetchSpy).toHaveBeenNthCalledWith(3, "/api/workspace/create", {
+      method: "POST",
+      credentials: "same-origin",
+    });
+    expect(await res.json()).toEqual({ data: "ok" });
   });
 
   it("should read files using the API content endpoint", async () => {
@@ -54,6 +99,7 @@ describe("BrowserHostAdapter", () => {
     });
     expect(fetchSpy).toHaveBeenCalledWith(
       "/api/workspace/files/content?session_id=session-123&path=some%2Ffile.txt",
+      { credentials: "same-origin" },
     );
     expect(content).toBe("file content");
   });
@@ -70,6 +116,7 @@ describe("BrowserHostAdapter", () => {
     });
     expect(fetchSpy).toHaveBeenCalledWith("/api/workspace/files/content", {
       method: "PUT",
+      credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         session_id: "session-123",

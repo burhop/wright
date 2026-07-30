@@ -13,25 +13,71 @@ builds, see [Docker image family](docker-image-family.md).
 - OpenSCAD plus OpenSCAD MCP.
 - FreeCAD plus FreeCAD MCP.
 - BREP CAD tooling plus BREP MCP.
-- SolidEdgeMCP source from `burhop/SolidEdgeMCP` at the pinned default ref.
-  Solid Edge itself is not redistributed in this Linux image, and the current
-  SolidEdgeMCP server target is Windows/Solid Edge only.
+- SolidEdgeMCP metadata for the Windows MCP runtime. Solid Edge itself is not
+  redistributed in this Linux image, and the current SolidEdgeMCP server target
+  is Windows/Solid Edge only.
 - Playwright plus Playwright MCP for driving Wright and browser-based CAD tools.
 
 ## Before You Start
 
 Create `docker/.env` the same way you do for the standard appliance. At minimum
-set a unique `WRIGHT_API_TOKEN` and your LLM settings:
+set a unique `WRIGHT_API_TOKEN`. The container can start without a language
+model, but agent prompts need one of the provider setup paths below.
 
 ```bash
 WRIGHT_API_TOKEN=change-this-long-random-token
+```
+
+For a normal OpenAI-compatible endpoint, keep using the existing environment
+variables:
+
+```bash
 LLM_API_URL=https://your-provider.example/v1
 LLM_API_KEY=your-key
 LLM_API_MODEL=your-model
 ```
 
-SolidEdgeMCP source is fetched from GitHub by default. To override the source
-or test a newer reviewed commit, set both build-time variables:
+For repeated Docker tests, use a provider seed file instead. Copy
+`docker/llm-seed.example.yaml` to a private location outside the repo, fill in
+the provider values, then mount it read-only:
+
+```bash
+WRIGHT_LLM_CONFIG_FILE=/absolute/host/path/llm-seed.yaml \
+./scripts/docker-mcp-run.sh linux-arm64
+```
+
+With compose:
+
+```bash
+WRIGHT_LLM_CONFIG_FILE=/absolute/host/path/llm-seed.yaml \
+docker compose -f docker-compose.mcp.yml -f docker-compose.llm-seed.yml up -d --build
+```
+
+Codex/ChatGPT login reuse is supported through Hermes' `openai-codex` provider.
+A seed file can point at a mounted Hermes auth payload:
+
+```yaml
+version: 1
+provider: openai-codex
+model: your-codex-model-id
+auth_file: /run/secrets/wright/hermes-auth.json
+```
+
+When using `scripts/docker-mcp-run.sh`, mount that auth file by setting:
+
+```bash
+WRIGHT_LLM_CONFIG_FILE=/absolute/host/path/codex-seed.yaml \
+WRIGHT_LLM_AUTH_FILE=/absolute/host/path/hermes-auth.json \
+./scripts/docker-mcp-run.sh linux-arm64
+```
+
+The mounted auth file must contain Hermes `providers.openai-codex.tokens` with
+both `access_token` and `refresh_token`, or a seed file can inline a `tokens`
+mapping for disposable local testing. Do not commit seed or auth files.
+
+For the Windows MCP runtime, SolidEdgeMCP source is fetched from GitHub by
+default. To override the source or test a newer reviewed commit, set both
+build-time variables:
 
 ```bash
 export WRIGHT_SOLIDEDGE_MCP_GIT_URL=https://github.com/burhop/SolidEdgeMCP.git
@@ -46,9 +92,8 @@ The ref must be exact. Do not use `main`, `dev`, or another floating branch for
 a distributed trial image.
 
 At that ref, `src/SolidEdgeMcpServer/SolidEdgeMcpServer.csproj` targets
-`net10.0-windows`. The Linux appliance clones the source and configures the MCP
-wrapper, but the wrapper reports the Windows/Solid Edge platform limitation
-instead of pretending the server can run locally.
+`net10.0-windows`. Linux bundles keep SolidEdgeMCP blocked instead of
+installing a non-runnable local server.
 
 ## Run With Docker Compose
 
@@ -72,6 +117,13 @@ http://127.0.0.1:8080
 ```
 
 Use the same token you placed in `WRIGHT_API_TOKEN`.
+
+If no model provider was configured before startup, open **Model Setup** in the
+left navigation. Use **Start Login** for Codex/ChatGPT; Wright starts Hermes'
+Codex device-code login, shows the OpenAI URL and code, then polls until the
+Hermes profile is connected. Use **OpenAI-Compatible Endpoint** for OpenAI API,
+OpenRouter, Groq, Ollama, LM Studio, or Docker Model Runner style `/v1`
+servers.
 
 ## Remote Access
 
@@ -104,8 +156,18 @@ WRIGHT_API_TOKEN=change-this-long-random-token \
 | OpenSCAD | OpenSCAD | `openscad-mcp` | Create a 10 mm cube and export STL. |
 | FreeCAD | FreeCAD AppImage | `freecad-mcp` | Create a 10 mm by 8 mm by 6 mm box named `WrightBox`. |
 | BREP | `brep` CLI from `brepjs-cad` | `brep-mcp` | Create and verify a 40 mm by 20 mm by 10 mm BREP box and export STEP. |
-| Solid Edge | Not redistributed | `solid-edge-mcp` | Create a 20 mm by 20 mm by 10 mm Solid Edge part under the workspace. |
+| Solid Edge | Windows host only | `solid-edge-mcp` in the Windows runtime | Create a 20 mm by 20 mm by 10 mm Solid Edge part under the workspace. |
 | Playwright | Playwright Chromium | `playwright-mcp` | Open Wright and confirm the health page responds. |
+
+The Linux images launch the pinned `brepjs-cad` MCP through
+`/opt/wright/mcp/bin/brep-mcp-wrapped`. That wrapper leaves the installed
+package files untouched and points the MCP server at the package's file-backed
+CLI entry so `run_program` and `export_part` work reliably in Docker.
+
+The image also installs the browser payload requested by the pinned
+`@playwright/mcp` package. This is separate from the general Playwright
+Chromium install because the MCP package may depend on a different browser
+revision.
 
 ## Verification Prompts
 
@@ -149,4 +211,4 @@ The image writes third-party evidence to:
 GPL/LGPL runtime components are included unmodified with source-access and
 no-warranty notices beside that file. Source-configured components such as
 SolidEdgeMCP must keep their own approval and redistribution terms current in
-the bundle manifest before the image is shared.
+the Windows bundle manifest before that image is shared.

@@ -33,7 +33,7 @@ An engineer or CI operator runs validation that starts the MCP appliance, verifi
 1. OpenSCAD and `openscad-mcp` are installed and can produce a simple SCAD/STL artifact.
 2. FreeCAD and `freecad-mcp` are installed and can create/read a simple Part box.
 3. BREP CAD tooling and `brep-mcp` are installed and can verify/export a simple BREP geometry.
-4. SolidEdgeMCP source is included from the pinned `burhop/SolidEdgeMCP` GitHub ref using Wright's generic workspace-binding contract; Solid Edge itself is not redistributed in the Linux image, and the current upstream server target is Windows/Solid Edge only.
+4. SolidEdgeMCP is included in the managed image family as a Windows-owned runtime from the pinned `burhop/SolidEdgeMCP` GitHub ref; Linux bundles record it as blocked because Solid Edge itself is not redistributed and the current upstream server target is Windows/Solid Edge only.
 5. Playwright and `playwright-mcp` are installed and can drive the Wright/browser workflow.
 
 ### User Story 3 - Maintain A Reviewable MCP Bundle (Priority: P3)
@@ -47,7 +47,7 @@ A maintainer changes included applications/MCP servers by editing `docker/mcp-bu
 1. Permissive exact-pinned sources pass.
 2. GPL-2.0 runtime components pass only with source-access, license, no-warranty, and unmodified-runtime evidence.
 3. LGPL runtime components pass only with source-access, license, no-warranty, and unmodified-runtime evidence.
-4. Source-configured entries such as SolidEdgeMCP pass only through an explicit internal-reviewed-source profile when their repository-specific terms are not represented by a permissive/SPDX profile.
+4. Source-configured entries such as Windows SolidEdgeMCP pass only through an explicit internal-reviewed-source profile when their repository-specific terms are not represented by a permissive/SPDX profile.
 5. Floating Git refs, unknown licenses, and unsupported obligations fail before image build.
 
 ### User Story 4 - Follow Engineer-Friendly Documentation (Priority: P4)
@@ -75,6 +75,33 @@ host or document the concrete host limitation.
    container mode and persists its data/workspace/config/log directories.
 5. The Windows image profile does not imply Solid Edge itself is redistributed.
 
+### User Story 6 - Connect A Model On First Run (Priority: P1)
+
+An engineer starts a fresh Docker appliance with no model configured, sees that
+Wright and Hermes are running but inference is not connected, and can connect a
+provider through either guided setup or a reusable startup seed file.
+
+**Independent Test**: Start a fresh appliance without `LLM_API_URL` and verify
+startup succeeds with disconnected inference status. Start another fresh
+appliance with a mounted LLM seed file selecting Codex/OpenAI-compatible
+settings and verify Hermes profile config and auth state are materialized
+without re-running interactive setup.
+
+**Acceptance Scenarios**:
+
+1. Given no provider is configured, when the container starts, then Wright and
+   Hermes start and report that the LLM backend still needs configuration.
+2. Given a mounted provider seed file selects `openai-codex`, when the
+   container starts, then the Wright Hermes profile uses Hermes'
+   `openai-codex` provider and imports the supplied Hermes auth payload.
+3. Given a mounted provider seed file selects an OpenAI-compatible endpoint,
+   when the container starts, then Hermes uses the seeded base URL, model, and
+   API key without a browser or terminal setup step.
+4. Given an engineer wants a browser-driven setup flow, when they open Model
+   Setup, then Wright can start Hermes' Codex device-code login, display the
+   URL/code, poll completion, or save an OpenAI-compatible endpoint without
+   exposing any secret values.
+
 ## Requirements
 
 - **FR-001**: Provide a separate MCP-enabled Docker image flavor derived from the existing Hermes + Wright appliance.
@@ -87,11 +114,11 @@ host or document the concrete host limitation.
 - **FR-008**: Support reusable compliance profiles for GPL-2.0 runtime redistribution, LGPL runtime redistribution, and internal reviewed source.
 - **FR-009**: Generate license, notice, no-warranty, source-access, and third-party compliance artifacts in the image.
 - **FR-010**: Initially install these local applications: OpenSCAD, FreeCAD, BREP CAD tooling, and Playwright.
-- **FR-011**: Initially configure these MCP servers: OpenSCAD MCP, FreeCAD MCP, BREP MCP, SolidEdgeMCP, and Playwright MCP.
+- **FR-011**: Initially configure Linux-runnable OpenSCAD MCP, FreeCAD MCP, BREP MCP, and Playwright MCP servers, and represent SolidEdgeMCP as Windows-owned runtime metadata with a blocked Linux status.
 - **FR-012**: Do not include OpenCAD in the initial bundle.
 - **FR-013**: Do not use CAiD/OpenCASCADE as the BREP implementation.
 - **FR-014**: Do not redistribute Solid Edge, vendor SDKs, license managers, or desktop application assets in the Linux image.
-- **FR-015**: Clone SolidEdgeMCP source from the pinned default GitHub URL/ref, allow overrides through `WRIGHT_SOLIDEDGE_MCP_GIT_URL` and exact `WRIGHT_SOLIDEDGE_MCP_GIT_REF`, and report the current Windows/Solid Edge platform limitation from the Linux wrapper.
+- **FR-015**: Publish SolidEdgeMCP from the pinned default GitHub URL/ref in the Windows MCP runtime, allow overrides through `WRIGHT_SOLIDEDGE_MCP_GIT_URL` and exact `WRIGHT_SOLIDEDGE_MCP_GIT_REF`, and keep Linux bundle status blocked while the server target is Windows/Solid Edge only.
 - **FR-016**: Generate Hermes MCP config from the manifest without overwriting unrelated user-owned profile settings.
 - **FR-017**: Provide Docker smoke validation for Wright health, Hermes health, generated config, generated compliance files, local tool binaries/wrappers, and expected bundle statuses.
 - **FR-018**: Provide Playwright UI coverage that can open Wright, create/select a workspace, and submit a prompt covering bundled MCP health.
@@ -100,6 +127,12 @@ host or document the concrete host limitation.
 - **FR-021**: Provide a Linux arm64 MCP bundle that avoids x86_64-only FreeCAD AppImage assets.
 - **FR-022**: Provide host-specific build/run scripts for Linux/GB10 and Windows PCs.
 - **FR-023**: Ensure every managed image profile has documented persistent data, workspace, config, Hermes/profile, and log paths.
+- **FR-024**: Do not write a fake default LLM endpoint for fresh Docker containers that do not provide model settings.
+- **FR-025**: Support `WRIGHT_LLM_CONFIG_FILE` as a mounted YAML/JSON provider seed file for repeatable Docker tests.
+- **FR-026**: Support startup environment overrides for provider, base URL, model, API key, and Hermes auth seed file.
+- **FR-027**: Support Codex/ChatGPT login reuse by configuring Hermes' `openai-codex` provider from a seed file or mounted Hermes auth payload.
+- **FR-028**: Expose provider setup metadata and Codex login status through Wright's setup API so a browser-first UI can wrap Hermes-owned provider flows.
+- **FR-029**: Provide a Wright Model Setup page for Codex/ChatGPT login and OpenAI-compatible endpoint configuration.
 
 ## Key Entities
 
@@ -109,23 +142,26 @@ host or document the concrete host limitation.
 - **Third-Party Compliance Profile**: Reusable policy record for permissive, GPL runtime, LGPL runtime, or internal reviewed source obligations.
 - **MCP Appliance Image**: Docker artifact derived from the standard appliance with the reviewed bundle installed.
 - **Managed Image Profile**: Platform-specific image record with Dockerfile, platform, bundle, image tag, and persisted paths.
+- **LLM Provider Seed**: Mounted file or startup environment values that configure the Wright Hermes profile for Codex/OpenAI-compatible model access.
 - **Validation Workspace**: Fresh workspace used by Docker and Playwright validation.
 
 ## Success Criteria
 
 - **SC-001**: A new engineer can start the MCP appliance and open Wright from the documented URL in 15 minutes or less after Docker and credentials are available.
-- **SC-002**: The default manifest validates with four accepted local applications and five accepted MCP servers.
+- **SC-002**: The Linux manifest validates with four accepted local applications, four accepted Linux-runnable MCP servers, and a blocked SolidEdgeMCP metadata entry.
 - **SC-003**: 100% of bundled sources included in the image have exact pins or an explicit internal-source configuration gate.
 - **SC-004**: Generated third-party compliance artifacts include GPL/LGPL runtime source-access and no-warranty evidence.
 - **SC-005**: The documented compose path leaves standard Wright appliance volumes unchanged.
 - **SC-006**: Playwright can submit a bundle-health prompt through the Wright UI against a running MCP appliance.
 - **SC-007**: The image-family manifest lists exactly four managed image profiles with persisted paths.
 - **SC-008**: The Linux arm64 bundle validates independently and contains no x86_64-only FreeCAD AppImage install path.
+- **SC-009**: A maintainer can reuse a Codex/OpenAI-compatible provider seed file across disposable Docker containers without re-running model setup.
+- **SC-010**: A fresh container without model settings starts successfully and reports disconnected inference instead of pretending a localhost model exists.
 
 ## Assumptions
 
 - The standard Wright Docker appliance remains the baseline for ports, entrypoint behavior, supervisor services, and environment-file usage.
 - Build-time installation is preferred so engineers do not need first-run dependency downloads.
-- SolidEdgeMCP source is configured at image build time from a pinned GitHub ref; at the current ref the server targets Windows/Solid Edge and is not runnable inside the Linux appliance.
+- SolidEdgeMCP source is configured in the Windows MCP runtime from a pinned GitHub ref; at the current ref the server targets Windows/Solid Edge and is not runnable inside the Linux appliance.
 - Windows Docker builds require a Windows host with Docker Desktop switched to Windows container mode; Linux image builds require Linux container mode or compatible emulation.
 - Remote/LAN access is opt-in for trusted engineering test networks only.

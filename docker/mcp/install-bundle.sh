@@ -78,6 +78,11 @@ elif query == "playwright_browsers":
     for _, install in installs():
         values.extend(install.get("playwright_browsers") or [])
     print("\n".join(dict.fromkeys(str(value) for value in values)))
+elif query == "playwright_mcp_browsers":
+    values = []
+    for _, install in installs():
+        values.extend(install.get("playwright_mcp_browsers") or [])
+    print("\n".join(dict.fromkeys(str(value) for value in values)))
 else:
     raise SystemExit(f"unknown query: {query}")
 PY
@@ -375,6 +380,12 @@ install_npm_tools() {
   fi
 }
 
+install_brep_mcp_launcher() {
+  if [ -f "${MCP_ROOT}/brep-mcp-launcher.cjs" ]; then
+    install -m 755 "${MCP_ROOT}/brep-mcp-launcher.cjs" "${BIN_DIR}/brep-mcp-wrapped"
+  fi
+}
+
 install_playwright_browsers() {
   local browsers=()
   while IFS= read -r browser; do
@@ -383,6 +394,17 @@ install_playwright_browsers() {
   done < <(bundle_query playwright_browsers)
   if [ "${#browsers[@]}" -gt 0 ] && command -v playwright >/dev/null 2>&1; then
     playwright install --with-deps "${browsers[@]}"
+  fi
+}
+
+install_playwright_mcp_browsers() {
+  local browsers=()
+  while IFS= read -r browser; do
+    [ -n "$browser" ] || continue
+    browsers+=("$browser")
+  done < <(bundle_query playwright_mcp_browsers)
+  if [ "${#browsers[@]}" -gt 0 ] && command -v playwright-mcp >/dev/null 2>&1; then
+    playwright-mcp install-browser --with-deps "${browsers[@]}"
   fi
 }
 
@@ -478,7 +500,9 @@ install_python_tools
 install_python_projects
 install_dotnet_projects
 install_npm_tools
+install_brep_mcp_launcher
 install_playwright_browsers
+install_playwright_mcp_browsers
 install_freecad_addon
 write_wrappers
 

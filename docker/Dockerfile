@@ -46,6 +46,10 @@ ENV HOME=/home/agent
 ENV HERMES_HOME=/home/agent/.hermes
 ENV HERMES_PROFILE=wright
 ENV DATABASE_PATH=/home/agent/.local/share/wright/state.db
+ENV FRONTEND_DIST_DIR=/workspace/apps/web/dist
+ENV WRIGHT_MCP_BUNDLE=
+ENV WRIGHT_MCP_HERMES_CONFIG=
+ENV WRIGHT_MCP_STATUS=
 
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
 # Node.js, and uv come from the Hermes base image.
@@ -170,6 +174,9 @@ RUN touch /var/log/agent-startup.log /var/log/agent-changes.log && \
 
 RUN mkdir -p /var/log/supervisor && \
     chown -R agent:agent /var/log/supervisor
+
+RUN mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share && \
+    chown -R agent:agent /home/agent/.config /home/agent/.cache /home/agent/.local
 
 ARG VERSION=unknown
 ARG REVISION=unknown

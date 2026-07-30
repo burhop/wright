@@ -1,5 +1,9 @@
 import type { HostAdapter } from "./host-adapter";
 import type { FileEntry, SelectOptions } from "./wright-desktop";
+import {
+  createBrowserSession,
+  readStoredAccessToken,
+} from "../auth-session";
 
 export class BrowserHostAdapter implements HostAdapter {
   readonly mode = "browser";
@@ -19,7 +23,36 @@ export class BrowserHostAdapter implements HostAdapter {
   }
 
   async fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-    return fetch(input, init);
+    const requestInit: RequestInit = {
+      ...init,
+      credentials: init?.credentials ?? "same-origin",
+    };
+    const response = await fetch(input, requestInit);
+    if (response.status !== 401 || this.isAuthSessionRequest(input)) {
+      return response;
+    }
+
+    const token = readStoredAccessToken();
+    if (!token) return response;
+
+    try {
+      await createBrowserSession(token);
+    } catch {
+      return response;
+    }
+    return fetch(input, requestInit);
+  }
+
+  private isAuthSessionRequest(input: RequestInfo | URL): boolean {
+    const value =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : "url" in input
+            ? input.url
+            : "";
+    return value.includes("/api/auth/session");
   }
 
   async readFile(
@@ -28,7 +61,7 @@ export class BrowserHostAdapter implements HostAdapter {
   ): Promise<string> {
     const sessionId = options?.sessionId || "";
     const url = `${this.getApiBaseUrl()}/api/workspace/files/content?session_id=${sessionId}&path=${encodeURIComponent(path)}`;
-    const response = await fetch(url);
+    const response = await this.fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to read file: ${response.statusText}`);
     }
@@ -42,7 +75,7 @@ export class BrowserHostAdapter implements HostAdapter {
   ): Promise<void> {
     const sessionId = options?.sessionId || "";
     const url = `${this.getApiBaseUrl()}/api/workspace/files/content`;
-    const response = await fetch(url, {
+    const response = await this.fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

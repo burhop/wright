@@ -14,6 +14,8 @@ import FileVaultPage from "./components/pages/FileVaultPage";
 import NotFoundPage from "./components/pages/NotFoundPage";
 import LogsPage from "./components/pages/LogsPage";
 import SettingsPage from "./components/pages/SettingsPage";
+import ModelSetupPage from "./components/pages/ModelSetupPage";
+import { AuthGate } from "./components/common/AuthGate";
 
 import { ToolsProvider } from "./store/tools";
 import { ChatProvider } from "./store/sessions";
@@ -45,25 +47,28 @@ function App() {
       <ChatProvider>
         <ViewerPanelProvider>
           <ToolsProvider>
-            <AppShell>
-              <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route
-                  path="/workspace/:workspaceId"
-                  element={<WorkspacePage />}
-                />
-                <Route path="/tool-registry" element={<ToolRegistryPage />} />
-                <Route path="/file-vault" element={<FileVaultPage />} />
-                <Route path="/logs" element={<LogsPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
-                <Route
-                  path="/agent-chat"
-                  element={<Navigate to="/" replace />}
-                />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </AppShell>
+            <AuthGate>
+              <AppShell>
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route
+                    path="/workspace/:workspaceId"
+                    element={<WorkspacePage />}
+                  />
+                  <Route path="/tool-registry" element={<ToolRegistryPage />} />
+                  <Route path="/file-vault" element={<FileVaultPage />} />
+                  <Route path="/logs" element={<LogsPage />} />
+                  <Route path="/setup/model" element={<ModelSetupPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
+                  <Route
+                    path="/agent-chat"
+                    element={<Navigate to="/" replace />}
+                  />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </AppShell>
+            </AuthGate>
           </ToolsProvider>
         </ViewerPanelProvider>
       </ChatProvider>

@@ -55,17 +55,17 @@ applications:
     category: cad
     availability: local_enabled
     source:
-      type: apt
-      packages:
-        - freecad
+      type: github_release
+      version: 1.1.1
+      url: https://github.com/FreeCAD/FreeCAD/releases/download/1.1.1/FreeCAD_1.1.1-Linux-aarch64-py311.AppImage
       repository: https://github.com/FreeCAD/FreeCAD
       license: LGPL-2.1-or-later
-      source_reference: apt source freecad for the exact package installed during image build, plus upstream FreeCAD source archives
+      source_reference: https://github.com/FreeCAD/FreeCAD/tree/1.1.1 and GitHub 1.1.1 release source archives
     compliance_profile:
       id: lgpl-runtime-redistribution
       runtime_use_only: true
       modification_status: unmodified
-      source_access: apt source freecad for the installed package, upstream FreeCAD source archives, and /opt/wright/mcp/generated/licenses/source-offer.md
+      source_access: FreeCAD 1.1.1 upstream source archives and /opt/wright/mcp/generated/licenses/source-offer.md
       license_text: /opt/wright/mcp/generated/licenses/LGPL-RUNTIME-NOTICE.txt
       no_warranty_notice: /opt/wright/mcp/generated/licenses/NO-WARRANTY-LGPL.txt
     install:
@@ -86,13 +86,16 @@ applications:
         - libxtst6
         - libfontconfig1
         - libdbus-1-3
-        - freecad
+      release_assets:
+        - url: https://github.com/FreeCAD/FreeCAD/releases/download/1.1.1/FreeCAD_1.1.1-Linux-aarch64-py311.AppImage
+          target: /opt/wright/mcp/apps/freecad/FreeCAD_1.1.1-Linux-aarch64-py311.AppImage
+          extract_appimage: true
     health_probe:
       kind: command
       command:
         - /opt/wright/mcp/bin/freecadcmd
         - --version
-    docs_summary: Parametric CAD automation through the Linux arm64 system FreeCAD package launched under Xvfb.
+    docs_summary: Parametric CAD automation through the official Linux aarch64 FreeCAD AppImage launched under Xvfb.
 
   - id: brep
     display_name: BREP CAD
@@ -246,7 +249,7 @@ mcp_servers:
         - brepjs-cad@0.103.0
     launch:
       command:
-        - /usr/local/bin/brep-mcp
+        - /opt/wright/mcp/bin/brep-mcp-wrapped
       env:
         BREP_WORKSPACE: /home/agent/workspace
     workspace_binding:
@@ -263,12 +266,12 @@ mcp_servers:
         - bracket.brep.ts
         - bracket.step
         - report.json
-    docs_summary: BREP MCP server shipped by brepjs-cad.
+    docs_summary: BREP MCP server shipped by brepjs-cad, launched through Wright's file-backed CLI compatibility wrapper for the pinned package build.
 
   - id: solid-edge-mcp
     display_name: SolidEdgeMCP
     application_id: null
-    availability: local_enabled
+    availability: blocked_pending_review
     mcp_source:
       type: configured_git
       url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
@@ -279,38 +282,9 @@ mcp_servers:
       license: Internal-Use-Only
       source_reference: https://github.com/burhop/SolidEdgeMCP.git at commit 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.
     compliance_profile:
-      id: internal-reviewed-source
-      source_access: SolidEdgeMCP Git repository configured by WRIGHT_SOLIDEDGE_MCP_GIT_URL and WRIGHT_SOLIDEDGE_MCP_GIT_REF, defaulting to https://github.com/burhop/SolidEdgeMCP.git at commit 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.
-      redistribution_scope: internal engineering trial image only unless repository licensing says otherwise.
-    install:
-      configured_git_sources:
-        - url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
-          ref_env: WRIGHT_SOLIDEDGE_MCP_GIT_REF
-          default_url: https://github.com/burhop/SolidEdgeMCP.git
-          default_ref: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
-          target: /opt/wright/mcp/src/SolidEdgeMCP
-      wrappers:
-        - solid-edge-mcp
-    launch:
-      command:
-        - /opt/wright/mcp/bin/solid-edge-mcp
-      env:
-        CADMCP_SOLID_EDGE_ALLOWED_ROOTS: /home/agent/workspace
-    workspace_binding:
-      required: true
-      env:
-        CADMCP_SOLID_EDGE_ALLOWED_ROOTS: "{workspace.path}"
-    health_probe:
-      kind: mcp
-      expected_tools:
-        - cad.validate_recipe
-        - cad.create_part_from_recipe
-    prompt_probe:
-      prompt: Create a 20 mm by 20 mm by 10 mm Solid Edge part in the workspace.
-      expected_result_contains:
-        - solid_edge
-        - outputPath
-    docs_summary: SolidEdgeMCP source is cloned into the image from the pinned GitHub ref; the current server project targets Windows/Solid Edge and the Linux wrapper reports that platform limitation.
+      id: blocked
+      reason: Current SolidEdgeMCP ref targets Windows/Solid Edge COM automation and is not runnable inside the Linux appliance.
+    docs_summary: SolidEdgeMCP is intentionally not installed in Linux images until a Linux-runnable target exists; use the Windows image for this MCP.
 
   - id: playwright-mcp
     display_name: Playwright MCP
@@ -329,6 +303,8 @@ mcp_servers:
     install:
       npm_tools:
         - "@playwright/mcp@0.0.78"
+      playwright_mcp_browsers:
+        - chrome-for-testing
     launch:
       command:
         - /usr/local/bin/playwright-mcp
