@@ -1,0 +1,5143 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/gpt5-6plan/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Wright Professionalization, Release, and Codex Integration Plan - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wright-professionalization-release-and-codex-integration-plan" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wright Professionalization, Release, and Codex Integration Plan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../security/control-plane/" class="md-tabs__link">
+          
+  
+  
+  Security
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../operations/database-recovery/" class="md-tabs__link">
+          
+  
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../integrations/codex-mcp-compatibility/" class="md-tabs__link">
+          
+  
+  
+  Integrations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Wright for Hermes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/codex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wright for Codex
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/package-boundaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Package Boundaries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/gateway-service/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/control-plane/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local Control Plane
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/credential-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credential Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/container-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/database-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Database Migration and Recovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/mcp-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/solid-edge-diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solid Edge Diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/codex-mcp-compatibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Codex MCP Compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/solid-edge-creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solid Edge Creation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/artifact-topology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Artifact Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/release-runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/release-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Recovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#feature-048-scope-reconciliation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 048 scope reconciliation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-executive-verdict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Executive verdict
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Executive verdict">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#five-highest-risk-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Five highest-risk findings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-dated-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dated baseline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Dated baseline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-source-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Source state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-published-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Published state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-codex-and-hermes-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Codex and Hermes state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-verification-performed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Verification performed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-current-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Current architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Current architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-dependency-facts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Dependency facts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-evidence-backed-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Evidence-backed findings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-keep-refactor-replace-delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Keep, refactor, replace, delete
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-target-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Target architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Target architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-package-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Package ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-enforced-dependency-direction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Enforced dependency direction
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-public-artifact-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Public artifact topology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Public artifact topology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-intended-cli-experience" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Intended CLI experience
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-direct-codex-integration-adr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Direct Codex integration ADR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Direct Codex integration ADR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Decision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-required-mcp-service-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Required MCP service behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-toolresource-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Tool/resource surface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-installation-ux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Installation UX
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#85-codex-plugin-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.5 Codex plugin target
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-hermes-and-codexhermes-adr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Hermes and Codex/Hermes ADR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Hermes and Codex/Hermes ADR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Decision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-compatibility-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Compatibility matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-hermes-specific-corrections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Hermes-specific corrections
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-coordinated-release-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Coordinated release pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Coordinated release pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-release-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Release flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-required-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Required controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-container-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Container policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 Rollback
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-dependency-ordered-implementation-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Dependency-ordered implementation roadmap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Dependency-ordered implementation roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-0-establish-an-honest-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 0 — Establish an honest baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-close-p0-safety-and-data-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1 — Close P0 safety and data risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-complete-architecture-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2 — Complete architecture ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-make-distribution-and-ci-trustworthy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3 — Make distribution and CI trustworthy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-4-deliver-direct-codex-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4 — Deliver direct Codex support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-5-reintroduce-a-safe-hermes-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5 — Reintroduce a safe Hermes integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-6-open-source-release-rehearsal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6 — Open-source release rehearsal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#111-milestone-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 Milestone gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-rejected-alternatives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Rejected alternatives
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-assumptions-and-maintainer-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Assumptions and maintainer decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-recommended-spec-kit-sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Recommended Spec Kit sequence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-primary-source-research-appendix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Primary-source research appendix
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Primary-source research appendix">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codex-and-mcp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codex and MCP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hermes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hermes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packaging-and-release-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packaging and release engineering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-definition-of-a-professional-first-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Definition of a professional first release
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wright-professionalization-release-and-codex-integration-plan">Wright Professionalization, Release, and Codex Integration Plan<a class="headerlink" href="#wright-professionalization-release-and-codex-integration-plan" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Proposed; audit and planning only<br />
+<strong>Audit cutoff:</strong> 2026-07-10, America/New_York<br />
+<strong>Repository:</strong> D:\repos\wright<br />
+<strong>Local baseline:</strong> dev at 7f3f7416c59271c4c8ed9ee1420aee431a0f4619<br />
+<strong>Target outcome:</strong> A secure, maintainable open-source appliance with tested Python and OCI distribution, a direct Codex integration, and an optional first-class Hermes integration.</p>
+<p>This plan is based on the checked-out source, fetched upstream refs, published artifacts, local verification, and primary-source product documentation. It does not authorize implementation, publication, or a release.</p>
+<h2 id="feature-048-scope-reconciliation">Feature 048 scope reconciliation<a class="headerlink" href="#feature-048-scope-reconciliation" title="Permanent link">&para;</a></h2>
+<p>Feature 048's merge scope is the production-test stabilization already present
+on <code>048-solid-edge-creation-visibility</code>: creation-oriented Solid Edge gateway
+projection, visible new-document agent guidance, timely chat progress,
+Hermes-owned lifecycle behavior, authenticated bridge calls, and reliable
+workspace rebinding. The larger immutable profile, artifact-binding,
+diagnostics aggregation, and 20-trial benchmark design is deferred to a
+follow-up feature. The detailed evidence and non-claims are recorded in the
+Feature 048 completion audit.</p>
+<h2 id="1-executive-verdict">1. Executive verdict<a class="headerlink" href="#1-executive-verdict" title="Permanent link">&para;</a></h2>
+<p>Wright has a credible foundation: a uv monorepo, FastAPI/Pydantic boundaries, SQLite-first storage, agent adapter contracts, server-side MCP safety decisions, offline test seams, clean-container MCP evidence rules, and strong community scaffolding. Specs 037 and 038 established useful transition points and their focused tests are healthy.</p>
+<p>Wright is not release-grade yet. Several documented guarantees are aspirational, and some exposed operations amount to unauthenticated local code execution. The project should not publish an application release or a stable Hermes plugin until the P0 controls in this plan are complete.</p>
+<p>The recommended product architecture is:</p>
+<ol>
+<li>Keep the full Wright application in a hardened OCI appliance.</li>
+<li>Keep wright-engineering as the sole public Wright Python distribution.</li>
+<li>Evolve wright-engineering into the supported CLI, diagnostics client, configuration installer, and local STDIO MCP bridge to a running Wright appliance.</li>
+<li>Implement one host-neutral Wright GatewayService and current MCP transports. Codex and Hermes consume the same service independently.</li>
+<li>Ship a Codex plugin as the polished Codex experience. Do not require Hermes for Codex.</li>
+<li>Retain hermes-plugin-wright as an optional, thin lifecycle/discovery integration after its public dependency and configuration problems are fixed.</li>
+<li>Keep internal monorepo packages private until their names, APIs, and dependency contracts are intentionally stabilized.</li>
+</ol>
+<h3 id="five-highest-risk-findings">Five highest-risk findings<a class="headerlink" href="#five-highest-risk-findings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>ID</th>
+<th>Priority</th>
+<th>Finding</th>
+<th>Release consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SEC-01/SEC-02</td>
+<td>P0</td>
+<td>The control plane has wildcard CORS, no effective authentication/RBAC, executable custom MCP commands, direct Python execution, and workspace path escapes through backups, symlinks, and global /tmp.</td>
+<td>A hostile page or local process may reach code-execution and file operations. Block public release.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SEC-03/CTR-01</td>
+<td>P0</td>
+<td>API, Git, MCP, and Hermes secrets are plaintext or observable; Git tokens enter process arguments; default keys, passwordless sudo, raw protocol logging, and broad persisted system volumes widen impact.</td>
+<td>Credentials can leak and compromise survives image upgrades. Block public release.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>DATA-01/ISO-01</td>
+<td>P0</td>
+<td>Unversioned startup migrations can fail while the API continues; one global active gateway session can fall back to the most recently updated workspace.</td>
+<td>State corruption and cross-project tool disclosure are possible. Block direct Codex release.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>REL-01/PKG-01</td>
+<td>P0/P1</td>
+<td>Upstream release automation rebuilds and pushes an image different from the image CI scanned; Python publishing skips exact clean-install checks; the published sdist includes nearly the entire monorepo.</td>
+<td>Published artifacts are not demonstrably the tested artifacts. Freeze tag publication until corrected.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>MCP-01/ARC-01</td>
+<td>P1</td>
+<td>The Wright gateway is a handwritten, legacy, Hermes-oriented tools-only proxy; service boundaries remain transitional and include reverse dependencies.</td>
+<td>Codex safety/approval behavior is incomplete and maintenance cost will keep rising.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-dated-baseline">2. Dated baseline<a class="headerlink" href="#2-dated-baseline" title="Permanent link">&para;</a></h2>
+<h3 id="21-source-state">2.1 Source state<a class="headerlink" href="#21-source-state" title="Permanent link">&para;</a></h3>
+<p>The working tree was clean before this document was created.</p>
+<table>
+<thead>
+<tr>
+<th>Ref</th>
+<th>Commit</th>
+<th>Date</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local dev</td>
+<td>7f3f7416c59271c4c8ed9ee1420aee431a0f4619</td>
+<td>2026-07-01</td>
+<td>Audit target; 27 commits behind origin/dev and 32 behind origin/main</td>
+</tr>
+<tr>
+<td>origin/dev</td>
+<td>edaded4f88051fe79456ddba1ce0d0859117b8d6</td>
+<td>2026-07-03</td>
+<td>Contains later Python packaging, Hermes mirror, release-readiness, UI, and session work</td>
+</tr>
+<tr>
+<td>origin/main</td>
+<td>e8cfb182c9060cfbd057ef645d913be9a613088a</td>
+<td>2026-07-03</td>
+<td>Production ref; includes the Python publish artifact-path correction</td>
+</tr>
+</tbody>
+</table>
+<p>The first implementation task must integrate and retest current upstream. This plan records local defects even when later upstream work touches the same files; a finding is closed only by evidence after integration.</p>
+<h3 id="22-published-state">2.2 Published state<a class="headerlink" href="#22-published-state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Verified state on 2026-07-10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PyPI</td>
+<td>wright-engineering 0.1.0 was uploaded 2026-07-03 with Trusted Publishing and PEP 740 provenance. The wheel is 7,528 bytes and 7 files; the sdist is 4,277,833 bytes and 963 files and contains most of the monorepo. Source: <a href="https://pypi.org/project/wright-engineering/0.1.0/">PyPI project</a>.</td>
+</tr>
+<tr>
+<td>Git tags/releases</td>
+<td>The public repository has no Git tags or GitHub Releases. Sources: <a href="https://github.com/burhop/wright/releases">GitHub Releases</a> and <a href="https://api.github.com/repos/burhop/wright/tags">tags API</a>.</td>
+</tr>
+<tr>
+<td>Docker Hub</td>
+<td>burhop/wright exists but has no tags. Source: <a href="https://hub.docker.com/v2/repositories/burhop/wright/tags?page_size=100">Docker Hub tags API</a>.</td>
+</tr>
+<tr>
+<td>GHCR</td>
+<td>The anonymous package page returns 404, so an image is absent or not public. Source: <a href="https://github.com/burhop/wright/pkgs/container/wright">GHCR package page</a>.</td>
+</tr>
+<tr>
+<td>Hermes plugin</td>
+<td>The proposed mirror depends on wright-tool-registry, which is not published. The advertised stable install is therefore not a clean public-index install.</td>
+</tr>
+<tr>
+<td>Name safety</td>
+<td>The PyPI distributions wright and wright-core belong to unrelated projects. The unrelated wright distribution also exports wright and wright-mcp console commands.</td>
+</tr>
+</tbody>
+</table>
+<p>The published wright-engineering 0.1.0 sdist should receive an immediate sensitive-content review. If it contains no secret or prohibited material, publish a corrected patch rather than yanking solely for size. PyPI artifacts are immutable.</p>
+<h3 id="23-codex-and-hermes-state">2.3 Codex and Hermes state<a class="headerlink" href="#23-codex-and-hermes-state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Product</th>
+<th>Verified state on 2026-07-10</th>
+<th>Architectural implication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex</td>
+<td>Codex joined the ChatGPT desktop app on 2026-07-09. The latest listed CLI release is 0.144.1. Version 0.144.0 added writes approval behavior and interactive MCP authentication. Source: <a href="https://learn.chatgpt.com/docs/changelog">Codex changelog</a>.</td>
+<td>Design for desktop, CLI, and IDE from one MCP configuration; test approval annotations.</td>
+</tr>
+<tr>
+<td>Codex MCP host</td>
+<td>Supports STDIO and Streamable HTTP, server instructions, bearer/OAuth auth, user/project config, tool filters, and auto, prompt, writes, and approve policies. Desktop, CLI, and IDE share config. Source: <a href="https://learn.chatgpt.com/docs/extend/mcp?surface=cli">Codex MCP</a>.</td>
+<td>A standards-compliant Wright MCP service is the shortest supported path.</td>
+</tr>
+<tr>
+<td>Codex plugins</td>
+<td>Plugins can bundle skills and MCP configuration and use a marketplace manifest. Source: <a href="https://learn.chatgpt.com/docs/build-plugins">Codex plugin guide</a>.</td>
+<td>Package workflow guidance with MCP discovery rather than requiring manual configuration forever.</td>
+</tr>
+<tr>
+<td>Codex app-server</td>
+<td>Intended for products embedding Codex with auth, history, approvals, and streamed events; the SDK is preferable for jobs/CI. Source: <a href="https://learn.chatgpt.com/docs/app-server">Codex app-server</a>.</td>
+<td>Defer unless Wright itself needs to host a Codex chat runtime.</td>
+</tr>
+<tr>
+<td>Hermes</td>
+<td>Latest PyPI release is 0.19.0 from 2026-07-20; local Docker pins 0.19.0. Source: <a href="https://pypi.org/project/hermes-agent/">Hermes on PyPI</a>.</td>
+<td>Upgrade only with a clean compatibility matrix.</td>
+</tr>
+<tr>
+<td>Hermes/Codex</td>
+<td>Hermes has an openai-codex provider, a Codex MCP preset, and an opt-in beta Codex app-server runtime. Source: <a href="https://hermes-agent.nousresearch.com/docs/user-guide/features/codex-app-server-runtime">Hermes Codex runtime</a>.</td>
+<td>These are different directions and must not replace direct Wright-to-Codex MCP.</td>
+</tr>
+<tr>
+<td>MCP specification</td>
+<td>Current stable protocol version is 2025-11-25. Sources: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">lifecycle</a>, <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">transports</a>, and <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">tools</a>.</td>
+<td>The hard-coded 2024-11-05 response and partial tool schema need replacement.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-verification-performed">2.4 Verification performed<a class="headerlink" href="#24-verification-performed" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command/scope</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>uv run pytest -q packages/core packages/agent_adapters packages/tool_registry packages/workspace_service packages/data_vault</td>
+<td>91 passed in 12.34s</td>
+</tr>
+<tr>
+<td>uv run pytest -q apps/api/tests</td>
+<td>122 passed, 1 warning in 38.41s</td>
+</tr>
+<tr>
+<td>uv run pytest -q tests --ignore=tests/e2e-live</td>
+<td>78 passed, 1 warning in 3.51s</td>
+</tr>
+<tr>
+<td>uv run pytest -q hermes-plugin-wright/tests</td>
+<td>79 passed in 125.35s</td>
+</tr>
+<tr>
+<td>npm run test --workspace=apps/web</td>
+<td>21 files and 69 tests passed</td>
+</tr>
+<tr>
+<td>uv run ruff check apps/api packages</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>uv run ruff format --check apps/api packages</td>
+<td>110 files passed</td>
+</tr>
+<tr>
+<td>uv run python scripts/generate-frontend-contracts.py --check</td>
+<td>Passed, but the generator is not schema-derived</td>
+</tr>
+<tr>
+<td>Ruff against hermes-plugin-wright</td>
+<td>12 findings; the plugin is excluded from the current CI lint scope</td>
+</tr>
+<tr>
+<td>npm lint and production build</td>
+<td>Passed; emitted a 1,227.48 kB JavaScript chunk and a code-splitting warning</td>
+</tr>
+<tr>
+<td>mkdocs build --strict</td>
+<td>Not run locally because mkdocs is not in the local development environment</td>
+</tr>
+<tr>
+<td>One monolithic uv run pytest -q invocation</td>
+<td>Exceeded a 124-second command timeout; all constituent Python suites passed separately</td>
+</tr>
+</tbody>
+</table>
+<p>The slow Hermes suite should be a separate CI job with its own cache and timeout. Passing tests are valuable evidence, but they do not cover the P0 threat paths or release artifact identity.</p>
+<h2 id="3-current-architecture">3. Current architecture<a class="headerlink" href="#3-current-architecture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    UI[&quot;React/Vite UI&quot;] --&gt; API[&quot;FastAPI routers&quot;]
+    API --&gt; WS[&quot;workspace_service facade&quot;]
+    API --&gt; CORE[&quot;core.workspace and direct helpers&quot;]
+    API --&gt; REG[&quot;tool_registry&quot;]
+    WS --&gt; CORE
+    WS --&gt; REG
+    WS --&gt; ADAPTERS[&quot;agent_adapters&quot;]
+    WS --&gt; VAULT[&quot;data_vault&quot;]
+    CORE -. &quot;dynamic reverse import&quot; .-&gt; REG
+    HERMES[&quot;Hermes plugin/runtime&quot;] --&gt; LEGACY[&quot;handwritten STDIO Wright gateway&quot;]
+    LEGACY --&gt; REST[&quot;FastAPI REST + bespoke SSE&quot;]
+    REST --&gt; REG
+    REG --&gt; CHILD[&quot;selected child MCP servers&quot;]
+</code></pre></div>
+<p>The diagram exposes three problems:</p>
+<ul>
+<li>The API and workspace_service both reach around intended ownership boundaries.</li>
+<li>core is not a lower-level package because it dynamically imports tool_registry.</li>
+<li>The agent-facing gateway is a second transport implementation over REST/SSE rather than a transport adapter over one application service.</li>
+</ul>
+<h3 id="31-dependency-facts">3.1 Dependency facts<a class="headerlink" href="#31-dependency-facts" title="Permanent link">&para;</a></h3>
+<p>The intended package direction is not enforced. workspace_service imports concrete Hermes/OpenClaw materializers, core helpers, registry storage, and direct SQL. core dynamically imports tool_registry even though tool_registry declares a dependency on core. The only fitness test, tests/test_import_boundaries.py:7-34, prohibits packages importing apps/api but does not encode the full graph.</p>
+<p>The largest ownership hotspots remain:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th style="text-align: right;">Approximate lines</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>apps/web/src/components/chat/WorkspacePanel.tsx</td>
+<td style="text-align: right;">3,045</td>
+<td>36 local states, 20 effects, mixed session/file/Git/MCP/layout behavior</td>
+</tr>
+<tr>
+<td>packages/tool_registry/src/tool_registry/engineering_catalog.py</td>
+<td style="text-align: right;">2,728</td>
+<td>Code-owned data, difficult review, divergent from plugin YAML</td>
+</tr>
+<tr>
+<td>apps/web/src/components/tools/ToolCard.tsx</td>
+<td style="text-align: right;">1,643</td>
+<td>19 local states and mixed lifecycle/credential/presentation behavior</td>
+</tr>
+<tr>
+<td>packages/core/src/core/workspace.py</td>
+<td style="text-align: right;">1,459</td>
+<td>Storage, Git, paths, process execution, runtime sync, legacy behavior</td>
+</tr>
+<tr>
+<td>apps/api/src/api/routers/workspace.py</td>
+<td style="text-align: right;">967</td>
+<td>Transport plus filesystem, Git, SQLite, config, runtime orchestration</td>
+</tr>
+<tr>
+<td>hermes-plugin-wright/commands.py</td>
+<td style="text-align: right;">953</td>
+<td>Lifecycle, UI, networking, process, and install behavior</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-evidence-backed-findings">4. Evidence-backed findings<a class="headerlink" href="#4-evidence-backed-findings" title="Permanent link">&para;</a></h2>
+<p>Priority meanings:</p>
+<ul>
+<li>P0: Release blocker or plausible data/code-execution boundary failure.</li>
+<li>P1: Must be completed before calling the project professional/stable.</li>
+<li>P2: Important maintainability, portability, or operability improvement.</li>
+<li>P3: Useful follow-on after the higher-risk work.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Priority</th>
+<th>Confidence</th>
+<th>Evidence</th>
+<th>Impact and required response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SEC-01</td>
+<td>P0</td>
+<td>High</td>
+<td>apps/api/src/api/main.py:61-68 allows all origins/methods/headers; routers at 121-129 have no global auth. apps/api/src/api/routers/mcp.py:112-129 accepts custom commands; packages/tool_registry/src/tool_registry/services.py:131-148 can start them.</td>
+<td>Treat custom MCP registration, settings, logs, Python execution, and lifecycle operations as an authenticated control plane. Add strict origins, WebSocket checks, local session tokens, RBAC, and an admin boundary.</td>
+</tr>
+<tr>
+<td>SEC-02</td>
+<td>P0</td>
+<td>High</td>
+<td>apps/api/src/api/routers/workspace.py:149-171 and 195-210 join unvalidated backup IDs; core/workspace.py:688-715 allows global /tmp; 717-724 uses non-real-path containment; 790-816 follows directory symlinks.</td>
+<td>Introduce one WorkspacePath capability using resolved containment/no-follow semantics, fixed-format backup IDs, workspace-local scratch, Windows drive/UNC tests, and symlink/race tests.</td>
+</tr>
+<tr>
+<td>SEC-03</td>
+<td>P0</td>
+<td>High</td>
+<td>settings.py:48-80 returns stored API keys; schemas/settings.py:5-14 models plaintext values; migrate.py:220-234 stores git_token; core/workspace.py:1123-1204 embeds tokens in Git URLs.</td>
+<td>Put all secrets behind a provider interface, return status only, migrate plaintext values, and use askpass/credential helpers rather than process arguments.</td>
+</tr>
+<tr>
+<td>SEC-04</td>
+<td>P0</td>
+<td>High</td>
+<td>tool_registry/secrets.py:71-105 truncates/writes around separate lock operations; stdio.py:60-90 and 220-277 logs commands/protocol/stderr; logs.py:13-35 exposes logs without auth.</td>
+<td>Use one atomic locked transaction with a separate lock file, temp file, fsync, and replace. Redact by default and authenticate log access.</td>
+</tr>
+<tr>
+<td>CTR-01</td>
+<td>P0</td>
+<td>High</td>
+<td>docker/Dockerfile:51-81 installs sudo and grants NOPASSWD; supervisord.conf:20,33 hard-code wright-dev-key; entrypoint.sh:7-8,45-71,97,106 logs endpoints and writes provider keys; Compose persists /home, /usr/local, /opt, /var/lib, /var/cache, and /etc.</td>
+<td>Remove sudo/default keys, generate or require secrets, narrow volumes to Wright data, make the root filesystem/capabilities restrictive, and test upgrades across image versions.</td>
+</tr>
+<tr>
+<td>DATA-01</td>
+<td>P0</td>
+<td>High</td>
+<td>main.py:38-50 continues after migration failure. migrate.py:15-347 mixes unversioned schema, deletes, catalog reset, and seeding.</td>
+<td>Add numbered/checksummed transactional migrations, preflight backup/integrity checks, fail-closed readiness, and previous-release upgrade/restore fixtures.</td>
+</tr>
+<tr>
+<td>ISO-01</td>
+<td>P0</td>
+<td>High</td>
+<td>core/workspace.py:119-168 persists one active_gateway_session_id and falls back to the most recently updated workspace.</td>
+<td>Bind workspace identity immutably per STDIO process or authenticated HTTP MCP session. Never use recent activity as authorization.</td>
+</tr>
+<tr>
+<td>CFG-01</td>
+<td>P0</td>
+<td>High</td>
+<td>wright_gateway_sync.py:35-38 and 61-75 replaces the full mcp_servers map; tests do not preserve unknown servers. entrypoint.sh:45-80 rewrites Hermes config on every boot.</td>
+<td>Use host-specific, merge-only, locked, atomic, idempotent writers with backup, validation, dry-run, and rollback. Preserve all unowned keys.</td>
+</tr>
+<tr>
+<td>REL-01</td>
+<td>P0</td>
+<td>High</td>
+<td>origin/main docker-build.yml:54-75 builds/scans one local image; release.yml:88-99 rebuilds and pushes another image, then publishes at 110-117 without a dependency on CI. Trivy is non-blocking.</td>
+<td>Freeze tag publication. Build a candidate once by digest, scan/smoke that digest, then promote registry tags without rebuilding.</td>
+</tr>
+<tr>
+<td>HERMES-01</td>
+<td>P0</td>
+<td>High</td>
+<td>origin/main hermes-plugin-wright/pyproject.toml:8-14 depends on unpublished wright-tool-registry. wright-core is unrelated on PyPI.</td>
+<td>Disable the stable install claim. Make the plugin self-contained or depend only on the public protocol/CLI. Add a public-index clean-install gate.</td>
+</tr>
+<tr>
+<td>MCP-01</td>
+<td>P1</td>
+<td>High</td>
+<td>tool_registry/gateway.py:71-83 ignores the requested version and returns 2024-11-05; 23-43 and 163-165 swallow failures; 38-40 and 85-148 write concurrently; it supports only list/call.</td>
+<td>Replace handwritten wire handling with a pinned official MCP SDK. Negotiate versions, serialize outbound STDIO, implement standard errors/cancellation/progress, and share one GatewayService across transports.</td>
+</tr>
+<tr>
+<td>MCP-02</td>
+<td>P1</td>
+<td>High</td>
+<td>api/routers/gateway.py:73-84 emits only name, description, inputSchema. models.py:131-138 stores no title, annotations, outputSchema, or structured result contract.</td>
+<td>Add reviewed per-tool metadata and provenance. Preserve Wright policy as authority; MCP annotations are client hints, not authorization.</td>
+</tr>
+<tr>
+<td>MCP-03</td>
+<td>P1</td>
+<td>High</td>
+<td>api/routers/gateway.py:101-110 creates an empty ApprovalContext or adds only workspace_id, while safety.py:25-34 and 54-167 requires approval sets.</td>
+<td>Persist and hydrate Wright approval grants for gateway calls, separate machine/workspace scope, expire/revoke grants, and audit every decision.</td>
+</tr>
+<tr>
+<td>ARC-01</td>
+<td>P1</td>
+<td>High</td>
+<td>workspace_service/service.py:10-36 imports concrete adapters and many core helpers; 272-369 performs subprocess/SQL. core/workspace.py:228-280 dynamically imports tool_registry.</td>
+<td>Complete the application-service extraction and enforce a one-way package graph. core must contain pure domain contracts, not higher-level runtime behavior.</td>
+</tr>
+<tr>
+<td>ARC-02</td>
+<td>P1</td>
+<td>High</td>
+<td>workspace router directly performs file, Git, SQLite, config, and runtime work; wright_gateway_sync.py:92-96 imports a router to notify it.</td>
+<td>Make routes translation-only and move notification ports into application infrastructure. Add AST/import fitness tests for all allowed edges.</td>
+</tr>
+<tr>
+<td>CAT-01</td>
+<td>P1</td>
+<td>High</td>
+<td>engineering_catalog.py contains 42 entries; plugin YAML contains 34, with only 10 IDs shared. Current tests do not compare the real sources.</td>
+<td>Choose one packaged, schema-validated catalog data source and generate API/plugin views. Keep validation evidence separate and preserve clean-container rules.</td>
+</tr>
+<tr>
+<td>FE-01</td>
+<td>P1</td>
+<td>High</td>
+<td>generate-frontend-contracts.py:9-105 returns a literal string; no production frontend imports the generated file.</td>
+<td>Export deterministic OpenAPI/JSON Schema, generate a typed client, use it in production, and fail CI on regeneration diff.</td>
+</tr>
+<tr>
+<td>PKG-01</td>
+<td>P1</td>
+<td>High</td>
+<td>origin/main publish workflow ignores its required version input, invokes --skip-clean-install, has no concurrency or tag/version validation, and published an oversized sdist.</td>
+<td>Fix 0.1.1 packaging, validate contents, install wheel and sdist on supported Python, and promote identical artifacts from TestPyPI to PyPI.</td>
+</tr>
+<tr>
+<td>PKG-02</td>
+<td>P1</td>
+<td>High</td>
+<td>Local packages have independent hard-coded versions and unbounded internal dependencies; plugin is 1.0.0 while root is 0.1.0.</td>
+<td>Adopt an explicit product/integration version policy and ensure no public artifact references a private/unowned distribution.</td>
+</tr>
+<tr>
+<td>OCI-01</td>
+<td>P1</td>
+<td>High</td>
+<td>Dockerfile uses unpinned base tags, uv:latest, apt-get upgrade, unchecked linux-64/latest micromamba, and lower-only dependency upgrades.</td>
+<td>Pin digests/versions/checksums and generate a dependency inventory. Do not claim arm64 until the architecture-specific path passes a native smoke test.</td>
+</tr>
+<tr>
+<td>CI-01</td>
+<td>P1</td>
+<td>High</td>
+<td>Python &gt;=3.11 is declared but only 3.13 is tested; mypy is warning-only; Hermes plugin is outside lint; actions use moving tags; no coverage gate.</td>
+<td>Add supported-version matrices, staged blocking types/coverage, plugin lint/package tests, full action SHAs, dependency review, CodeQL, audits, and license checks.</td>
+</tr>
+<tr>
+<td>OBS-01</td>
+<td>P2</td>
+<td>High</td>
+<td>tracing.py obtains the default tracer without configuring a provider/exporter; telemetry tests allow no-active-span; Compose advertises Jaeger.</td>
+<td>Configure local tracing in lifespan, make remote export explicit/default-off, test actual span export, propagate traceparent and Wright correlation IDs, and remove import-time log filesystem writes.</td>
+</tr>
+<tr>
+<td>LIFE-01</td>
+<td>P2</td>
+<td>High</td>
+<td>core/workspace.py:556-592 spawns unowned tasks; manager.py:58-94 lacks per-server lifecycle locks; sync subprocesses run in async request paths.</td>
+<td>Add an owned reconciliation coordinator, per-server locks/generations, bounded workers, timeouts, and cancellation. Separate workspace provisioning from read access.</td>
+</tr>
+<tr>
+<td>UI-01</td>
+<td>P2</td>
+<td>High</td>
+<td>WorkspacePanel and ToolCard remain multi-responsibility hotspots; production build emits a 1.2 MB chunk.</td>
+<td>Characterize flows, extract use-case hooks and panels, consolidate the API client, and code-split heavy viewers. Do not split only to reduce line counts.</td>
+</tr>
+<tr>
+<td>DOC-01</td>
+<td>P1</td>
+<td>High</td>
+<td>constitution.md requires a CUDA/FreeCAD/CalculiX thick base, conflicting with the mandatory clean-container policy. It also mandates auth/RBAC, LanceDB, and Jaeger as if implemented.</td>
+<td>Amend the constitution through its governance process. Separate current guarantees from desired capabilities and make status claims executable.</td>
+</tr>
+<tr>
+<td>OSS-01</td>
+<td>P2</td>
+<td>High</td>
+<td>Strong community files exist, but no governance/maintainer/deprecation policy was found; CHANGELOG.md stops before July work; stale local file URLs and support claims remain.</td>
+<td>Keep the community scaffolding, add governance/compatibility/release ownership, archive historical plans, update the changelog, and test docs examples.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-keep-refactor-replace-delete">5. Keep, refactor, replace, delete<a class="headerlink" href="#5-keep-refactor-replace-delete" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keep</td>
+<td>uv monorepo; FastAPI/Pydantic; SQLite local-first model; agent registry concept; typed MCP safety decisions; redaction helpers; clean-container validation plan/evidence model; offline tests; MIT license; README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, SUPPORT, issue/PR templates, CODEOWNERS, Dependabot; design tokens.</td>
+</tr>
+<tr>
+<td>Refactor</td>
+<td>workspace_service into real use cases and ports; agent-specific context materializers; MCP lifecycle; GatewayService; secret provider; host config writers; logging/tracing; API composition root; catalog loader; UI API client and use-case hooks; public CLI.</td>
+</tr>
+<tr>
+<td>Replace</td>
+<td>Monolithic startup migration; handwritten MCP protocol loop; literal frontend type generator; duplicate catalog sources; ad-hoc path sanitizers; plaintext settings/Git/MCP secret storage; independent release rebuilds.</td>
+</tr>
+<tr>
+<td>Delete after characterization</td>
+<td>Legacy core.activate_workspace; global /tmp exception; sys.modules/WRIGHT_TESTING production branches; default wright-dev-key; passwordless sudo; broad system-directory volumes; stale claims that auth/RAG/tracing are complete; duplicated frontend interfaces and command/catalog data.</td>
+</tr>
+<tr>
+<td>Defer</td>
+<td>Public SDK; embedded Codex app-server adapter; arm64 release claim; remote multi-user deployment; additional public internal distributions. Each needs a separate contract and support policy.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-target-architecture">6. Target architecture<a class="headerlink" href="#6-target-architecture" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    subgraph Hosts[&quot;Supported hosts&quot;]
+      CODEX[&quot;Codex desktop / CLI / IDE&quot;]
+      HERMES[&quot;Hermes default runtime&quot;]
+      WEB[&quot;Wright web UI&quot;]
+    end
+
+    CODEX --&gt; MCPSTDIO[&quot;MCP STDIO adapter&quot;]
+    CODEX --&gt; MCPHTTP[&quot;MCP Streamable HTTP adapter&quot;]
+    HERMES --&gt; MCPSTDIO
+    HERMES --&gt; MCPHTTP
+    WEB --&gt; API[&quot;FastAPI HTTP/WebSocket adapters&quot;]
+
+    MCPSTDIO --&gt; GATEWAY[&quot;GatewayService&quot;]
+    MCPHTTP --&gt; GATEWAY
+    API --&gt; APP[&quot;Workspace application use cases&quot;]
+    API --&gt; GATEWAY
+
+    APP --&gt; WSPORT[&quot;Workspace repository / file / Git ports&quot;]
+    APP --&gt; AGENTPORT[&quot;Agent runtime port&quot;]
+    APP --&gt; GATEWAY
+    GATEWAY --&gt; POLICY[&quot;Catalog + tool safety policy&quot;]
+    GATEWAY --&gt; RUNNERS[&quot;Child MCP lifecycle coordinator&quot;]
+
+    WSPORT --&gt; SQLITE[&quot;SQLite/filesystem adapters&quot;]
+    AGENTPORT --&gt; HERMESAD[&quot;Hermes adapter&quot;]
+    AGENTPORT -. &quot;optional future&quot; .-&gt; CODEXAD[&quot;Codex app-server adapter&quot;]
+    RUNNERS --&gt; CHILD[&quot;Selected engineering MCP servers&quot;]
+</code></pre></div>
+<h3 id="61-package-ownership">6.1 Package ownership<a class="headerlink" href="#61-package-ownership" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Package/surface</th>
+<th>Owned responsibilities</th>
+<th>Forbidden dependencies/behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>packages/core</td>
+<td>Pure domain identifiers, value objects, error taxonomy, redaction/telemetry contracts</td>
+<td>No SQLite, subprocess, filesystem mutation, provider config, or dynamic import of higher packages</td>
+</tr>
+<tr>
+<td>packages/data_vault</td>
+<td>SQLite connection policy, repositories, numbered migrations, backup/integrity/restore, artifact metadata</td>
+<td>No FastAPI or agent provider imports</td>
+</tr>
+<tr>
+<td>packages/tool_registry</td>
+<td>Canonical catalog, tool metadata, safety policy, GatewayService, lifecycle ports/coordinator, validation plan/evidence</td>
+<td>No API router imports; no UI; no direct provider config</td>
+</tr>
+<tr>
+<td>packages/agent_adapters</td>
+<td>AgentRuntime interface plus Hermes implementation and provider-specific context/config adapters</td>
+<td>No generic workspace persistence or canonical catalog</td>
+</tr>
+<tr>
+<td>packages/workspace_service</td>
+<td>Application use cases coordinating repositories, paths, Git/process ports, agent context, and GatewayService</td>
+<td>No HTTP types; no concrete global singleton selection inside use cases</td>
+</tr>
+<tr>
+<td>apps/api</td>
+<td>Composition root and HTTP/WebSocket/MCP-HTTP transport translation</td>
+<td>No domain SQL, subprocess, file, Git, or provider-config business logic</td>
+</tr>
+<tr>
+<td>apps/web</td>
+<td>Generated API client, UI-specific view models, feature hooks/components</td>
+<td>No duplicated backend contracts or raw fetch scattered through components</td>
+</tr>
+<tr>
+<td>root wright_engineering package</td>
+<td>Public CLI, diagnostics, API client, STDIO MCP bridge, safe host-config installer</td>
+<td>No full appliance runtime, private package dependency, or embedded CAD/CAE host software</td>
+</tr>
+<tr>
+<td>hermes-plugin-wright</td>
+<td>Optional Hermes commands and discovery/bootstrap UX over public Wright protocols</td>
+<td>No duplicate catalog, private monorepo dependency, or destructive config replacement</td>
+</tr>
+<tr>
+<td>integrations/codex-wright</td>
+<td>Codex plugin manifest, MCP profile, Wright workflow skills, marketplace metadata</td>
+<td>No separate business rules; delegate to public CLI/MCP service</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-enforced-dependency-direction">6.2 Enforced dependency direction<a class="headerlink" href="#62-enforced-dependency-direction" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>core
+  ^
+  +-- data_vault
+  +-- tool_registry
+  +-- agent_adapters
+          ^       ^       ^
+          +-------+-------+
+              workspace_service
+                     ^
+                apps/api
+
+wright_engineering and integration plugins consume public protocols,
+not private package internals.
+</code></pre></div>
+<p>Add an explicit dependency manifest and an AST/import test that fails every unapproved edge, including dynamic imports. Use a temporary compatibility adapter while moving code; do not create a second permanent service graph.</p>
+<h2 id="7-public-artifact-topology">7. Public artifact topology<a class="headerlink" href="#7-public-artifact-topology" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Decision</th>
+<th>Version policy</th>
+<th>Installation/verification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>wright-engineering</td>
+<td>Sole public Python distribution. Expand it into a lightweight CLI, doctor, integration installer, API client, and STDIO MCP bridge.</td>
+<td>Same product version as the Wright OCI release.</td>
+<td>Prefer uvx --from wright-engineering==VERSION or uv tool install. Test wheel and sdist in clean environments.</td>
+</tr>
+<tr>
+<td>wright command</td>
+<td>Keep as a convenience alias during alpha, but document that an unrelated distribution exports the same command. Add collision detection and a canonical wright-engineering executable if necessary.</td>
+<td>Compatibility alias follows the distribution.</td>
+<td>Codex plugin should invoke an explicit pinned distribution, not rely on an ambiguous PATH install.</td>
+</tr>
+<tr>
+<td>Full application</td>
+<td>OCI only. Do not attempt to put the React application, Hermes runtime, supervisor, or OS dependencies into PyPI.</td>
+<td>Product SemVer, including prerelease suffixes.</td>
+<td>ghcr.io/burhop/wright@sha256:DIGEST is canonical; Docker Hub is a byte-identical mirror.</td>
+</tr>
+<tr>
+<td>Internal Python packages</td>
+<td>Workspace-private. Mark Private :: Do Not Upload and remove them from public dependency graphs. Rename generic distributions/imports only through a dedicated migration.</td>
+<td>Internal lockstep or explicitly private independent versions.</td>
+<td>Built/tested in the monorepo, never pulled from public PyPI.</td>
+</tr>
+<tr>
+<td>Codex plugin</td>
+<td>Versioned GitHub Release asset and repository marketplace entry. Bundles manifest, MCP configuration, skills, and docs.</td>
+<td>Same compatible product version; manifest declares required CLI range.</td>
+<td>Install through Codex plugin UX or repository marketplace; verify manifest and archive checksum.</td>
+</tr>
+<tr>
+<td>hermes-plugin-wright</td>
+<td>Optional public integration only after it has no unpublished dependency and a clean Hermes load matrix.</td>
+<td>Independent plugin SemVer with explicit Wright/Hermes compatibility.</td>
+<td>Clean public-index install, entry-point discovery, enable, upgrade, uninstall, and rollback tests.</td>
+</tr>
+<tr>
+<td>SDK</td>
+<td>Deferred until API compatibility and deprecation policies exist.</td>
+<td>Separate only when public API stability is intentional.</td>
+<td>None in the first professional release.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="71-intended-cli-experience">7.1 Intended CLI experience<a class="headerlink" href="#71-intended-cli-experience" title="Permanent link">&para;</a></h3>
+<p>Target commands, to be finalized by the CLI specification:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>wright-engineering
+wright<span class="w"> </span>doctor
+wright<span class="w"> </span>appliance<span class="w"> </span>status
+wright<span class="w"> </span>mcp<span class="w"> </span>serve<span class="w"> </span>--stdio<span class="w"> </span>--api-url<span class="w"> </span>http://127.0.0.1:8000<span class="w"> </span>--workspace<span class="w"> </span>.
+wright<span class="w"> </span>integration<span class="w"> </span>install<span class="w"> </span>codex<span class="w"> </span>--scope<span class="w"> </span>project<span class="w"> </span>--transport<span class="w"> </span>stdio<span class="w"> </span>--dry-run
+wright<span class="w"> </span>integration<span class="w"> </span>install<span class="w"> </span>hermes<span class="w"> </span>--scope<span class="w"> </span>user<span class="w"> </span>--transport<span class="w"> </span>http<span class="w"> </span>--dry-run
+</code></pre></div>
+<p>Every config-writing command must support dry-run, show changed keys without values, merge only Wright-owned keys, make an atomic backup, validate the result, and be idempotent.</p>
+<h2 id="8-direct-codex-integration-adr">8. Direct Codex integration ADR<a class="headerlink" href="#8-direct-codex-integration-adr" title="Permanent link">&para;</a></h2>
+<h3 id="81-decision">8.1 Decision<a class="headerlink" href="#81-decision" title="Permanent link">&para;</a></h3>
+<p>Adopt a provider-neutral Wright MCP service as the direct Codex boundary. Deliver manual/project configuration first, then a Codex plugin that bundles the workflow skill and MCP profile. Hermes is not in the direct path.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Decision</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direct Wright MCP over STDIO/HTTP</td>
+<td>Accept as primary</td>
+<td>Native Codex capability, least coupling, reuses Wright policy, works across desktop/CLI/IDE, and also serves Hermes</td>
+</tr>
+<tr>
+<td>Codex plugin with Wright MCP + skills</td>
+<td>Accept as polished follow-on</td>
+<td>Best installation/discovery UX and a home for workflow instructions without duplicating logic</td>
+</tr>
+<tr>
+<td>Wright CLI + skill only</td>
+<td>Keep as complementary fallback</td>
+<td>Useful for deterministic operations, but a skill alone cannot expose live typed tools/resources or policy metadata</td>
+</tr>
+<tr>
+<td>Wright embeds Codex app-server</td>
+<td>Defer to a separate product ADR</td>
+<td>Correct only if the Wright UI becomes a Codex host; it adds auth, history, approval, event, and compatibility responsibilities</td>
+</tr>
+<tr>
+<td>Hermes Codex app-server runtime</td>
+<td>Optional compatibility</td>
+<td>Useful to Hermes users, but beta, adds another process/config/auth layer, and omits some Hermes tools</td>
+</tr>
+<tr>
+<td>Hermes launches codex mcp-server</td>
+<td>Reject for this goal</td>
+<td>Reverse direction: exposes Codex to an MCP client; it does not expose Wright to Codex</td>
+</tr>
+<tr>
+<td>Codex consumes Hermes mcp serve</td>
+<td>Reject as Wright boundary</td>
+<td>Exposes Hermes conversation/channel operations, not Wright’s engineering service contract</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-required-mcp-service-behavior">8.2 Required MCP service behavior<a class="headerlink" href="#82-required-mcp-service-behavior" title="Permanent link">&para;</a></h3>
+<p>The existing gateway is migration compatibility only. The replacement must:</p>
+<ul>
+<li>Use the official Python MCP SDK pinned to a tested range.</li>
+<li>Negotiate the client-requested supported protocol rather than hard-code 2024-11-05.</li>
+<li>Implement standards-compliant STDIO and Streamable HTTP from the same GatewayService.</li>
+<li>Return JSON-RPC parse/method/tool errors rather than silently dropping failures.</li>
+<li>Serialize STDIO output through one queue.</li>
+<li>Support cancellation, progress where useful, bounded timeouts, graceful shutdown, and list-changed notifications.</li>
+<li>Supply concise initialization instructions containing safety, workspace, and rate-limit guidance.</li>
+<li>Bind one explicit workspace to each local process/session.</li>
+<li>Authenticate remote HTTP, validate Origin, use loopback by default, isolate sessions, and rate-limit administrative operations.</li>
+<li>Preserve structuredContent and outputSchema when downstream tools provide them.</li>
+<li>Sanitize downstream content before logs/UI without corrupting protocol results.</li>
+<li>Hydrate and audit Wright approval grants. Client approval is not a substitute for server authorization.</li>
+</ul>
+<h3 id="83-toolresource-surface">8.3 Tool/resource surface<a class="headerlink" href="#83-toolresource-surface" title="Permanent link">&para;</a></h3>
+<p>Do not mechanically expose every REST endpoint. Offer stable task-oriented operations and curated downstream engineering tools.</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Initial MCP form</th>
+<th>Safety posture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workspace/catalog/tool status</td>
+<td>Read-only tools and resources</td>
+<td>readOnlyHint true; no secret values</td>
+</tr>
+<tr>
+<td>Workspace selection/context</td>
+<td>Session-local tool</td>
+<td>Mutates only the bound MCP session; never global recent-workspace state</td>
+</tr>
+<tr>
+<td>Artifact list/read/metadata</td>
+<td>Resources plus read-only tools</td>
+<td>Confined to resolved workspace root</td>
+</tr>
+<tr>
+<td>Tool enable/install/config</td>
+<td>Administrative tools</td>
+<td>Always authenticated; prompt/writes; catalog and machine approval required</td>
+</tr>
+<tr>
+<td>Engineering tool calls</td>
+<td>Dynamically surfaced curated tools with stable prefix/ID</td>
+<td>Per-tool readOnly/destructive/idempotent/openWorld hints plus authoritative Wright policy</td>
+</tr>
+<tr>
+<td>Validation planning</td>
+<td>Read-only tool</td>
+<td>Does not claim actual validation</td>
+</tr>
+<tr>
+<td>Clean-container validation</td>
+<td>Explicit operator tool or CLI only</td>
+<td>High-risk, opt-in, auditable; must follow docs/mcp-catalog/mcp-server-testing-process.md</td>
+</tr>
+<tr>
+<td>Long operations</td>
+<td>MCP tasks/progress only where clients and SDK support the tested contract</td>
+<td>Cancellable, bounded, and resumable where feasible</td>
+</tr>
+</tbody>
+</table>
+<p>Candidate resources:</p>
+<ul>
+<li>wright://workspace/WORKSPACE_ID/manifest</li>
+<li>wright://workspace/WORKSPACE_ID/artifacts</li>
+<li>wright://catalog/SERVER_ID</li>
+<li>wright://validation/SERVER_ID/latest</li>
+</ul>
+<h3 id="84-installation-ux">8.4 Installation UX<a class="headerlink" href="#84-installation-ux" title="Permanent link">&para;</a></h3>
+<p>Source checkout:</p>
+<div class="highlight"><pre><span></span><code>codex<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </span>wright<span class="w"> </span>--<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>wright<span class="w"> </span>mcp<span class="w"> </span>serve<span class="w"> </span>--stdio<span class="w"> </span>--workspace<span class="w"> </span>.
+</code></pre></div>
+<p>Pinned PyPI bridge:</p>
+<div class="highlight"><pre><span></span><code>codex<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </span>wright<span class="w"> </span>--<span class="w"> </span>uvx<span class="w"> </span>--from<span class="w"> </span>wright-engineering<span class="o">==</span>VERSION<span class="w"> </span>wright<span class="w"> </span>mcp<span class="w"> </span>serve<span class="w"> </span>--stdio<span class="w"> </span>--workspace<span class="w"> </span>.
+</code></pre></div>
+<p>Local appliance:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[mcp_servers.wright]</span>
+<span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;http://127.0.0.1:8000/mcp&quot;</span>
+<span class="n">bearer_token_env_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;WRIGHT_MCP_TOKEN&quot;</span>
+<span class="n">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+<span class="n">default_tools_approval_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;writes&quot;</span>
+<span class="n">startup_timeout_sec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span>
+<span class="n">tool_timeout_sec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">120</span>
+</code></pre></div>
+<p>The HTTP endpoint is the right path for the Docker appliance and remote hosts. STDIO is the right local bridge when the CLI is installed beside Codex. ChatGPT web cannot read a local Codex config; that case requires an approved plugin and reachable authenticated remote MCP service.</p>
+<h3 id="85-codex-plugin-target">8.5 Codex plugin target<a class="headerlink" href="#85-codex-plugin-target" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>integrations/codex-wright/
++-- .codex-plugin/plugin.json
++-- .mcp.json
++-- skills/wright-engineering/SKILL.md
++-- assets/
++-- README.md
+
+.agents/plugins/marketplace.json
+</code></pre></div>
+<p>The plugin must declare its Wright CLI/appliance prerequisites, use a pinned compatible range, contain no credentials, and avoid hooks in the MVP unless a concrete enforcement need justifies them.</p>
+<h2 id="9-hermes-and-codexhermes-adr">9. Hermes and Codex/Hermes ADR<a class="headerlink" href="#9-hermes-and-codexhermes-adr" title="Permanent link">&para;</a></h2>
+<h3 id="91-decision">9.1 Decision<a class="headerlink" href="#91-decision" title="Permanent link">&para;</a></h3>
+<p>Hermes remains optional and first-class. The stable Hermes path is Hermes consuming the same Wright MCP server as Codex. The Hermes plugin becomes a thin lifecycle/discovery layer. The Codex app-server runtime is an optional beta compatibility preset, not Wright’s primary Codex architecture.</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Model/tool-loop owner</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hermes -&gt; Wright MCP</td>
+<td>Hermes owns the model/tool loop; Wright owns engineering policy/execution</td>
+<td>Supported secondary path</td>
+</tr>
+<tr>
+<td>Codex -&gt; Wright MCP</td>
+<td>Codex owns the model/tool loop; Wright owns engineering policy/execution</td>
+<td>Primary Codex path</td>
+</tr>
+<tr>
+<td>Hermes openai-codex provider</td>
+<td>Hermes tool loop with an OpenAI/Codex model provider and Hermes auth store</td>
+<td>Document as model selection, not direct Codex integration</td>
+</tr>
+<tr>
+<td>Hermes -&gt; Codex app-server -&gt; Wright MCP</td>
+<td>Codex executes shell/patch/MCP inside a Hermes session shell</td>
+<td>Optional beta; separate auth and a pinned tested matrix</td>
+</tr>
+<tr>
+<td>Hermes -&gt; codex mcp-server</td>
+<td>Hermes delegates coding work to Codex</td>
+<td>Reverse direction; not a Wright exposure mechanism</td>
+</tr>
+<tr>
+<td>Codex -&gt; hermes mcp serve</td>
+<td>Codex accesses Hermes conversations/channels/approvals</td>
+<td>Optional unrelated integration; not the engineering service</td>
+</tr>
+<tr>
+<td>Wright -&gt; Codex app-server adapter</td>
+<td>Wright embeds Codex runtime in its UI</td>
+<td>Deferred</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-compatibility-matrix">9.2 Compatibility matrix<a class="headerlink" href="#92-compatibility-matrix" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Host/surface</th>
+<th>Target Wright path</th>
+<th>Support condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Codex CLI 0.144.1</td>
+<td>STDIO or HTTP Wright MCP</td>
+<td>Primary reference version</td>
+</tr>
+<tr>
+<td>ChatGPT desktop Codex on Windows/macOS</td>
+<td>Shared Codex MCP config/plugin</td>
+<td>Primary; verify restart/install UX</td>
+</tr>
+<tr>
+<td>Codex IDE extension</td>
+<td>Shared Codex MCP config/plugin</td>
+<td>Primary</td>
+</tr>
+<tr>
+<td>Codex remote/cloud executor</td>
+<td>Installed bridge in remote environment or reachable HTTP</td>
+<td>Local desktop Wright is not implicitly reachable</td>
+</tr>
+<tr>
+<td>Hermes 0.19.0 default runtime</td>
+<td>Same STDIO/HTTP Wright MCP</td>
+<td>Supported secondary reference</td>
+</tr>
+<tr>
+<td>Previous pinned Hermes 0.17.0</td>
+<td>Legacy compatibility during upgrade only</td>
+<td>Test, migrate, then remove from supported matrix on a dated policy</td>
+</tr>
+<tr>
+<td>Hermes codex_app_server</td>
+<td>Migrated Wright MCP configuration</td>
+<td>Optional beta; separate codex login; verify missing delegate_task, memory, session_search, and todo behavior</td>
+</tr>
+<tr>
+<td>Wright Docker</td>
+<td>HTTP /mcp</td>
+<td>Target; the current REST/SSE proxy is not that transport</td>
+</tr>
+<tr>
+<td>Current Wright gateway</td>
+<td>2024-11-05 tools-only proxy</td>
+<td>Compatibility period only</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-hermes-specific-corrections">9.3 Hermes-specific corrections<a class="headerlink" href="#93-hermes-specific-corrections" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Upgrade Docker from Hermes 0.17.0 to the chosen supported release only after clean wheel/plugin/runtime tests.</li>
+<li>Add hermes plugins enable wright to current 0.19.x installation documentation.</li>
+<li>Verify the current entry-point contract from a built wheel, not a flat source directory.</li>
+<li>Do not rely on custom manifest keys such as min_hermes_version unless the current Hermes loader enforces them; enforce compatibility in dependency metadata, runtime checks, and CI.</li>
+<li>Replace the token/fingerprint-only openai-codex health check with an explicit capability/readiness probe.</li>
+<li>Remove duplicate catalog ownership and duplicated slash-command data.</li>
+<li>Deep-merge the owned MCP key and preserve users’ existing servers, including configurations later migrated into Codex.</li>
+<li>Treat plugins as in-process privileged code. Whole-process OS/container isolation remains the meaningful boundary for untrusted tool/web content.</li>
+</ul>
+<h2 id="10-coordinated-release-pipeline">10. Coordinated release pipeline<a class="headerlink" href="#10-coordinated-release-pipeline" title="Permanent link">&para;</a></h2>
+<h3 id="101-release-flow">10.1 Release flow<a class="headerlink" href="#101-release-flow" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>flowchart TD
+    TAG[&quot;Protected reviewed SemVer tag&quot;] --&gt; PRE[&quot;Preflight: source, version, changelog, policy&quot;]
+    PRE --&gt; CI[&quot;Python/OS + frontend + docs + contracts + security gates&quot;]
+    CI --&gt; PYBUILD[&quot;Build wheel + sdist once&quot;]
+    CI --&gt; OCIBUILD[&quot;Build per-arch candidate images once&quot;]
+    PYBUILD --&gt; PYTEST[&quot;Metadata, content, README, wheel/sdist installs, CLI tests&quot;]
+    OCIBUILD --&gt; OCITEST[&quot;Push SHA candidate; scan + smoke exact digests&quot;]
+    PYTEST --&gt; TESTPYPI[&quot;TestPyPI exact files&quot;]
+    OCITEST --&gt; ATTEST[&quot;SBOM, max provenance, keyless digest attestations&quot;]
+    TESTPYPI --&gt; APPROVE[&quot;Protected release approval&quot;]
+    ATTEST --&gt; APPROVE
+    APPROVE --&gt; PYPI[&quot;PyPI exact files&quot;]
+    APPROVE --&gt; PROMOTE[&quot;Promote tested OCI digest to version tags&quot;]
+    PROMOTE --&gt; MIRROR[&quot;Copy identical manifest to Docker Hub&quot;]
+    PYPI --&gt; VERIFY[&quot;Post-publish install/pull/attestation verification&quot;]
+    MIRROR --&gt; VERIFY
+    VERIFY --&gt; DOCS[&quot;Deploy versioned docs&quot;]
+    DOCS --&gt; GHREL[&quot;Publish immutable GitHub Release last&quot;]
+</code></pre></div>
+<h3 id="102-required-controls">10.2 Required controls<a class="headerlink" href="#102-required-controls" title="Permanent link">&para;</a></h3>
+<ol>
+<li>One product version source. Validate Git tag, PEP 440 version, OCI labels/tags, changelog, plugin compatibility, and API version.</li>
+<li>One release run and immutable artifacts. TestPyPI and PyPI consume the same downloaded files.</li>
+<li>Per-product/version concurrency. Existing identical hashes are idempotent; differing hashes fail.</li>
+<li>Protected testpypi, pypi, release, and dockerhub environments with tag restrictions and reviewers.</li>
+<li>Least privilege by job. PyPI publication receives id-token: write only; container and attestation jobs receive only required scopes.</li>
+<li>Full commit SHA pins for third-party Actions, updated by Dependabot.</li>
+<li>Exact artifact content policies:</li>
+<li>explicit Hatch wheel and sdist includes;</li>
+<li>no secrets, specs, screenshots, sandbox scripts, or unrelated packages in the CLI distribution;</li>
+<li>twine check --strict;</li>
+<li>wheel-content checks;</li>
+<li>build/install from sdist;</li>
+<li>console and import smoke tests.</li>
+<li>Python supported-version matrix. Either cap requires-python to tested versions or test every admitted active version. Start with 3.11-3.14 if dependencies support it.</li>
+<li>Pinned Node LTS for CI and Docker; align versions.</li>
+<li>Blocking fixable High/Critical image policy with reviewed, expiring exceptions and scheduled rescans.</li>
+<li>Explicit provenance: mode=max, SBOM, PEP 740 package attestations, GitHub OCI digest attestations, checksums, and user-facing verification commands.</li>
+<li>Keep engineering MCP validation in the separate clean-container workflow; never make the base image a universal CAD workstation.</li>
+</ol>
+<h3 id="103-container-policy">10.3 Container policy<a class="headerlink" href="#103-container-policy" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Canonical image: ghcr.io/burhop/wright.</li>
+<li>Required byte-identical distribution: burhop/wright on Docker Hub.</li>
+<li>Immutable tags: version and git SHA. Mutable latest only moves after stable verification.</li>
+<li>Build and push SHA candidates first; smoke and scan by digest; promote without rebuilding.</li>
+<li>Start with linux/amd64. Add linux/arm64 only after:</li>
+<li>micromamba URL selection is architecture-aware and checksum-pinned;</li>
+<li>every binary dependency has an arm64 path;</li>
+<li>the exact image passes a native arm64 smoke test;</li>
+<li>release notes state any engineering-tool limitations.</li>
+<li>Persist only application data/config/workspaces. Never persist whole /etc, /opt, /usr/local, or /var trees.</li>
+<li>Run as a non-root user without sudo, drop capabilities, set no-new-privileges, and use a read-only root filesystem where the application permits.</li>
+<li>Generate local keys/tokens at first initialization or require them; no universal development credential in a published image.</li>
+</ul>
+<h3 id="104-rollback">10.4 Rollback<a class="headerlink" href="#104-rollback" title="Permanent link">&para;</a></h3>
+<ul>
+<li>PyPI: publish a corrected patch. Yank only broken, incompatible, vulnerable, or disclosed releases; never overwrite files.</li>
+<li>OCI: never move immutable version/SHA tags. Repoint only mutable aliases, quarantine the bad digest, and publish a patch.</li>
+<li>Database: pre-upgrade backup plus schema/integrity manifest; restore only through a documented command and version check.</li>
+<li>Configuration: atomic writer creates a timestamped backup and supports dry-run/restore.</li>
+<li>Multi-registry release: record the tested digest/hashes in a release manifest so promotion is safely retryable.</li>
+<li>GitHub Release: remain draft until all post-publish checks pass; publish last.</li>
+</ul>
+<h2 id="11-dependency-ordered-implementation-roadmap">11. Dependency-ordered implementation roadmap<a class="headerlink" href="#11-dependency-ordered-implementation-roadmap" title="Permanent link">&para;</a></h2>
+<p>Effort scale: XS &lt; 1 day, S 1-3 days, M 3-5 days, L 1-2 weeks. Estimates assume two experienced engineers and exclude external account approval delays.</p>
+<h3 id="phase-0-establish-an-honest-baseline">Phase 0 — Establish an honest baseline<a class="headerlink" href="#phase-0-establish-an-honest-baseline" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R0.1</td>
+<td>P0</td>
+<td>Integrate origin/main into the implementation baseline without losing this plan; reconcile specs 039-041, packaging work, and UI/session changes.</td>
+<td>None</td>
+<td>Run all split Python suites, web tests/build, package checks, and docs. Roll back by restoring the pre-integration branch. Document accepted upstream findings. S / medium. Done when every finding is marked open, closed, or changed against one reviewed commit.</td>
+</tr>
+<tr>
+<td>R0.2</td>
+<td>P0</td>
+<td>Amend constitution.md and add ADRs for thin base/clean-container policy, security modes, public artifacts, and provider-neutral MCP.</td>
+<td>R0.1</td>
+<td>Constitution governance approval; docs tests assert no contradictory thick-base/auth-complete claims. No code migration. S / high governance. Done when current guarantees and target principles are distinct.</td>
+</tr>
+<tr>
+<td>R0.3</td>
+<td>P0</td>
+<td>Add characterization and security regression tests before moving code: tests/security, path fixtures, config fixtures, migration fixtures, concurrent workspaces, and public artifact contents.</td>
+<td>R0.1</td>
+<td>Tests initially reproduce each P0 and then become blocking. Add pytest markers and CI partitions. Roll back by removing tests only before implementation starts. M / low. Done when each P0 has an executable failing/passing contract.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-1-close-p0-safety-and-data-risks">Phase 1 — Close P0 safety and data risks<a class="headerlink" href="#phase-1-close-p0-safety-and-data-risks" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1.1</td>
+<td>P0</td>
+<td>Security control plane in apps/api: strict configured origins, loopback session/token auth, WebSocket checks, RBAC/admin dependencies, protected logs/settings/MCP/execute routes.</td>
+<td>R0.2-R0.3</td>
+<td>Unauthorized/cross-origin tests fail closed; authenticated local quickstart works; remote bind refuses startup without secure mode. Feature flag permits short compatibility rollback. Update threat model and deployment docs. L / high. Done with no unauthenticated mutating/code-execution route.</td>
+</tr>
+<tr>
+<td>R1.2</td>
+<td>P0</td>
+<td>WorkspacePath capability and backup IDs in workspace_service/core; replace global /tmp with workspace/.wright/tmp; no-follow/real-path validation across Windows and POSIX.</td>
+<td>R0.3</td>
+<td>Tests cover absolute backup IDs, .., symlink/junction, UNC/drive paths, cycles, race attempts, and valid files. Compatibility scanner reports unsafe legacy paths. M / high. Done when every file operation uses one capability.</td>
+</tr>
+<tr>
+<td>R1.3</td>
+<td>P0</td>
+<td>SecretProvider abstraction for settings, Git, MCP, and integration auth; atomic fallback store; masked API responses; Git askpass/credential helper; log redaction.</td>
+<td>R1.1</td>
+<td>Migration moves plaintext DB values, keeps encrypted/OS-keyring or mounted-secret fallback, verifies no token in DB/API/argv/logs. Backup enables rollback. Update recovery/key rotation docs. L / high. Done after a leak scan and concurrency tests.</td>
+</tr>
+<tr>
+<td>R1.4</td>
+<td>P0</td>
+<td>Harden docker/Dockerfile, entrypoint, supervisord, and Compose: remove sudo/default key/logged URL, narrow volumes, drop privileges/capabilities, safe YAML/config generation.</td>
+<td>R1.1/R1.3</td>
+<td>Container smoke runs non-root with no universal key; restart/upgrade retains only documented data; security scan and secret scan pass. Keep a temporary legacy Compose file for one migration release. M / high.</td>
+</tr>
+<tr>
+<td>R1.5</td>
+<td>P0</td>
+<td>Numbered transactional migrations and repositories in data_vault; remove schema/catalog mutation from boot routine; fail readiness closed.</td>
+<td>R0.3/R1.3</td>
+<td>Fresh DB, each supported prior schema, interrupted migration, corruption, backup/restore, and downgrade/restore tests. CLI commands: db status, backup, upgrade, restore. Compatibility wrapper can invoke the new runner for one release. L / high.</td>
+</tr>
+<tr>
+<td>R1.6</td>
+<td>P0</td>
+<td>Per-session workspace binding and merge-only host config writers; remove recent-workspace fallback and whole-map replacement. Files: core/workspace.py, workspace_service, wright_gateway_sync.py, adapter config writers.</td>
+<td>R0.3/R1.2</td>
+<td>Two concurrent MCP sessions cannot see/call each other’s tools. Golden configs preserve unknown Codex/Hermes entries/comments where supported. Atomic crash/concurrency tests pass. M / high.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-2-complete-architecture-ownership">Phase 2 — Complete architecture ownership<a class="headerlink" href="#phase-2-complete-architecture-ownership" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R2.1</td>
+<td>P1</td>
+<td>Declare/enforce full dependency graph; make core pure; introduce repository, Git, process, path, agent, gateway, and notification ports.</td>
+<td>R1.2/R1.5/R1.6</td>
+<td>AST/import fitness test catches direct and dynamic forbidden edges; all existing behavior passes through compatibility adapters. ADR and package READMEs updated. M / medium.</td>
+</tr>
+<tr>
+<td>R2.2</td>
+<td>P1</td>
+<td>Move workspace CRUD, files, backups, Git, context, settings, and execution into PR-sized workspace_service use cases; make API routes translators.</td>
+<td>R2.1</td>
+<td>Route tests plus direct use-case tests preserve response compatibility. Blocking work uses bounded executors/timeouts. Delete legacy core.activate_workspace after call graph proves unused. L / high.</td>
+</tr>
+<tr>
+<td>R2.3</td>
+<td>P1</td>
+<td>Introduce owned MCP lifecycle coordinator with per-server locks/generations, awaitable reconciliation, cancellation, and graceful shutdown.</td>
+<td>R2.1</td>
+<td>Concurrency, restart, failure, shutdown, and timeout tests pass without leaked tasks/processes. Compatibility manager delegates to coordinator. M / high.</td>
+</tr>
+<tr>
+<td>R2.4</td>
+<td>P1</td>
+<td>Replace Python/YAML catalog duplication with one schema-validated packaged resource; add per-tool safety metadata, provenance, and validation dates.</td>
+<td>R2.1</td>
+<td>Exact real-catalog ID/count/metadata parity across API/plugin; wheel resource test; no passed validation without complete clean-container evidence. Migration maps existing IDs. M / medium.</td>
+</tr>
+<tr>
+<td>R2.5</td>
+<td>P2</td>
+<td>Configure actual OTel provider/exporter in lifespan, W3C context, Wright correlation, repository/lifecycle spans, and side-effect-free logging.</td>
+<td>R2.1/R1.3</td>
+<td>In-memory exporter tests assert spans/redaction; remote export remains default-off; no import-time log file creation. Update observability runbook. M / medium.</td>
+</tr>
+<tr>
+<td>R2.6</td>
+<td>P1/P2</td>
+<td>Generate OpenAPI/JSON Schema and a typed frontend client; migrate live services; split WorkspacePanel/ToolCard by use case and code-split viewers.</td>
+<td>R2.2</td>
+<td>Regenerate-and-diff CI; no duplicate backend types; existing 69+ UI tests and Playwright flows pass; bundle budget enforced. Keep adapter wrappers during incremental migration. L / medium.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-3-make-distribution-and-ci-trustworthy">Phase 3 — Make distribution and CI trustworthy<a class="headerlink" href="#phase-3-make-distribution-and-ci-trustworthy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R3.1</td>
+<td>P1</td>
+<td>Artifact/naming ADR; explicit Hatch sdist/wheel includes; Private classifier on internals; sensitive-content review of 0.1.0; corrected wright-engineering patch.</td>
+<td>R0.1/R0.2</td>
+<td>Wheel/sdist content manifests are small and intentional; twine/readme/content checks pass. Publish only after R3.3; do not yank 0.1.0 unless disclosure is found. S / medium.</td>
+</tr>
+<tr>
+<td>R3.2</td>
+<td>P1</td>
+<td>Build public CLI skeleton in src/wright_engineering: version, doctor, appliance status, integration dry-run, stable command/collision handling.</td>
+<td>R3.1/R1.1</td>
+<td>Clean 3.11-3.14 wheel/sdist installs, --version, doctor, uninstall/reinstall, no private imports. Update PyPI README and CLI reference. M / medium.</td>
+</tr>
+<tr>
+<td>R3.3</td>
+<td>P1</td>
+<td>Harden publish-python-packages workflow: one version/tag, concurrency, full SHA actions, exact clean installs, TestPyPI then protected approval then PyPI, post-install and attestation verification.</td>
+<td>R3.1/R3.2</td>
+<td>Rehearsal publishes exact hashes to TestPyPI; production environment has OIDC and reviewer; retries reject differing hashes. Disable old dispatch/tag path. M / high.</td>
+</tr>
+<tr>
+<td>R3.4</td>
+<td>P1</td>
+<td>Reproducible OCI build: pinned bases/tools/checksums, Node LTS alignment, no apt upgrade, dependency lock/inventory, minimal runtime.</td>
+<td>R1.4</td>
+<td>Rebuild comparison is documented; image contents/labels/license inventory pass; exact amd64 image smoke passes. Keep old Dockerfile only on a rollback branch. M / high.</td>
+</tr>
+<tr>
+<td>R3.5</td>
+<td>P1</td>
+<td>Unified release workflow: build candidate digests once, blocking scan/smoke, SBOM/max provenance/keyless attest, promote GHCR tags, mirror same manifest, verify, docs, GitHub Release last.</td>
+<td>R3.3/R3.4</td>
+<td>Dry-run release manifest records all hashes/digests; published candidate verification commands pass. Remove independent tag builds. L / high.</td>
+</tr>
+<tr>
+<td>R3.6</td>
+<td>P1/P2</td>
+<td>CI matrix and supply chain: Python/OS support, Hermes job, blocking staged types/coverage, Node LTS, docs examples, dependency review, CodeQL, Python/npm audits, license rules, full action SHAs.</td>
+<td>R0.3</td>
+<td>Required branch checks map to support policy; expensive/live/clean-container suites are scheduled or manual. Baseline thresholds ratchet upward, not arbitrarily block legacy code. M / medium.</td>
+</tr>
+<tr>
+<td>R3.7</td>
+<td>P2</td>
+<td>Add arm64 candidate build only after architecture-aware micromamba/dependencies and a native smoke runner.</td>
+<td>R3.4/R3.5</td>
+<td>Native arm64 API/Hermes/workspace smoke and manifest inspection pass; otherwise remain amd64-only with honest docs. S-M / medium.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-4-deliver-direct-codex-support">Phase 4 — Deliver direct Codex support<a class="headerlink" href="#phase-4-deliver-direct-codex-support" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R4.1</td>
+<td>P1</td>
+<td>Extract GatewayService in tool_registry and implement current STDIO MCP with official SDK, negotiated versions, instructions, serialized writes, errors, cancellation, and explicit workspace.</td>
+<td>R1.6/R2.3/R2.4</td>
+<td>MCP Inspector fixtures plus Codex 0.144.1 list/call/listChanged/concurrency/error tests. Keep legacy gateway behind a feature flag for one release. L / high.</td>
+</tr>
+<tr>
+<td>R4.2</td>
+<td>P1</td>
+<td>Expose authenticated Streamable HTTP /mcp in apps/api over the same service; Origin/session/rate-limit policy.</td>
+<td>R4.1/R1.1</td>
+<td>Codex HTTP smoke, reconnect/cancel, two-session isolation, bearer/OAuth path, loopback default. REST/SSE gateway remains only during migration. M / high.</td>
+</tr>
+<tr>
+<td>R4.3</td>
+<td>P1</td>
+<td>Add reviewed tool annotations/output schemas/structured results, approval hydration, task-oriented management tools, and catalog/workspace/artifact resources.</td>
+<td>R4.1/R2.4</td>
+<td>Codex writes policy prompts only for appropriate tools; server policy blocks calls even if client auto-approves; every decision is audited. M / high.</td>
+</tr>
+<tr>
+<td>R4.4</td>
+<td>P1</td>
+<td>Put STDIO bridge and config installer in wright-engineering; create integrations/codex-wright plugin, skill, MCP manifest, and marketplace entry.</td>
+<td>R3.2/R4.1/R4.2</td>
+<td>Source, pinned uvx, local Docker HTTP, plugin install/uninstall, dry-run/config preservation, and doctor tests pass. Archive is attached to release manifest. M / medium.</td>
+</tr>
+<tr>
+<td>R4.5</td>
+<td>P2</td>
+<td>Real host compatibility matrix: Codex CLI, ChatGPT desktop on Windows/macOS, IDE, and remote executor constraints.</td>
+<td>R4.4/R3.5</td>
+<td>Evidence records exact versions/platforms, screenshots/logs without secrets, and known limitations. Do not claim unsupported surfaces. S-M / external.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-5-reintroduce-a-safe-hermes-integration">Phase 5 — Reintroduce a safe Hermes integration<a class="headerlink" href="#phase-5-reintroduce-a-safe-hermes-integration" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R5.1</td>
+<td>P1</td>
+<td>Upgrade/test Hermes 0.19.0, plugin enable flow, built-wheel entry point, config migration, and real health probes; set supported range.</td>
+<td>R1.6/R3.6/R4.1</td>
+<td>Matrix covers current pin, migration target, plugin load, MCP list/call, upgrade/uninstall. Docker rollback pins the prior image digest. M / high.</td>
+</tr>
+<tr>
+<td>R5.2</td>
+<td>P1</td>
+<td>Thin hermes-plugin-wright to public API/MCP/CLI; remove private wright-tool-registry dependency and duplicate catalog/transport logic; repair mirror docs.</td>
+<td>R5.1/R3.2/R4.1</td>
+<td>Clean public-index install in a fresh environment, hermes plugins enable wright, lifecycle commands, no unknown package downloads. Stable mirror remains disabled until this passes. M / high.</td>
+</tr>
+<tr>
+<td>R5.3</td>
+<td>P2</td>
+<td>Test/document openai-codex provider, Codex MCP preset, and beta codex_app_server as distinct optional modes. Do not build a Wright Codex adapter yet.</td>
+<td>R5.1/R4.5</td>
+<td>Separate auth/config ownership diagrams; missing-tool behavior; toggle/rollback; current Codex/Hermes pinned matrix. S / medium/external.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-6-open-source-release-rehearsal">Phase 6 — Open-source release rehearsal<a class="headerlink" href="#phase-6-open-source-release-rehearsal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Pri</th>
+<th>Scope and likely files</th>
+<th>Depends on</th>
+<th>Acceptance, migration/rollback, docs, effort/risk, definition of done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R6.1</td>
+<td>P2</td>
+<td>Governance, maintainers/release owners, compatibility/deprecation policy, security advisory process, changelog, ADR index, docs truth/archive pass.</td>
+<td>R0.2 and completed feature docs</td>
+<td>Maintainers approve; docs examples execute in CI; no local file URLs or unsupported artifact claims. S-M / governance.</td>
+</tr>
+<tr>
+<td>R6.2</td>
+<td>P1</td>
+<td>End-to-end release candidate rehearsal from a protected commit through TestPyPI, candidate OCI digest, attestations, upgrade/backup/restore, Codex/Hermes smokes, and draft GitHub Release.</td>
+<td>All P0 and R3-R5</td>
+<td>Release checklist has zero waived P0/P1 gates; all published claims link to evidence. Rollback/yank/quarantine drill succeeds. M / high/external.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="111-milestone-gates">11.1 Milestone gates<a class="headerlink" href="#111-milestone-gates" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Required exit gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M0: Honest baseline</td>
+<td>Upstream integrated; constitution/ADRs approved; each P0 has a regression test</td>
+</tr>
+<tr>
+<td>M1: Safe local alpha</td>
+<td>Auth/control plane, path confinement, secrets, container, migrations, session/config isolation complete</td>
+</tr>
+<tr>
+<td>M2: Maintainable core</td>
+<td>Dependency graph enforced; routes thin; lifecycle/catalog/contracts corrected</td>
+</tr>
+<tr>
+<td>M3: Trustworthy artifacts</td>
+<td>Correct PyPI files, exact-artifact OCI/PyPI promotion, CI/security/attestations in place</td>
+</tr>
+<tr>
+<td>M4: Codex preview</td>
+<td>Direct STDIO/HTTP MCP and Codex plugin pass the reference matrix</td>
+</tr>
+<tr>
+<td>M5: Hermes preview</td>
+<td>Thin plugin clean-installs and both hosts consume the same MCP service</td>
+</tr>
+<tr>
+<td>M6: Professional public release</td>
+<td>Full release rehearsal and rollback drill pass; docs and registry claims match artifacts</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-rejected-alternatives">12. Rejected alternatives<a class="headerlink" href="#12-rejected-alternatives" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Big-bang rewrite:</strong> rejected. Existing tests and seams have value; use characterization plus reversible ownership moves.</li>
+<li><strong>Hermes as the mandatory Codex bridge:</strong> rejected. It adds beta runtime, two auth/config boundaries, and unnecessary coupling.</li>
+<li><strong>Expose REST mechanically as MCP:</strong> rejected. MCP tools need stable task semantics, per-tool safety metadata, workspace/session identity, and structured results.</li>
+<li><strong>Publish every monorepo package:</strong> rejected. Names collide, APIs are not stable, and public dependency confusion already breaks the proposed Hermes install.</li>
+<li><strong>Put the full appliance on PyPI:</strong> rejected. The UI, Hermes, supervisor, and OS dependencies belong in OCI; PyPI should deliver a lightweight integration/client tool.</li>
+<li><strong>Keep independent tag builds for CI and release:</strong> rejected. Publication must promote the exact tested digest.</li>
+<li><strong>Claim arm64 based on Buildx alone:</strong> rejected. The current micromamba and engineering dependency paths are architecture-specific.</li>
+<li><strong>Add CAD/CAE/MCP host applications to the base image:</strong> rejected by the clean-container policy and supply-chain/size concerns.</li>
+<li><strong>Treat MCP annotations or Codex approval as authorization:</strong> rejected. Annotations are hints; Wright policy remains authoritative.</li>
+<li><strong>Call aspirational docs implemented:</strong> rejected. Status and guarantees must be backed by executable evidence.</li>
+</ol>
+<h2 id="13-assumptions-and-maintainer-decisions">13. Assumptions and maintainer decisions<a class="headerlink" href="#13-assumptions-and-maintainer-decisions" title="Permanent link">&para;</a></h2>
+<p>The plan makes these defaults unless maintainers explicitly choose otherwise:</p>
+<ul>
+<li>Docker remains the full-application delivery mechanism for the next public releases.</li>
+<li>wright-engineering remains the owned public Python name.</li>
+<li>The product is single-user/local-first by default. Any LAN/remote mode must be explicitly authenticated.</li>
+<li>No external identity provider is required for the local mode; remote OAuth is a later deployment feature.</li>
+<li>Existing API response shapes remain compatible until a versioned API policy approves changes.</li>
+<li>Hermes remains supported but optional.</li>
+<li>Clean-container MCP validation remains operator-invoked and separate from fast tests.</li>
+</ul>
+<p>Maintainer decisions required before implementation:</p>
+<ol>
+<li>Approve the constitution amendment and explicit local-versus-remote security modes.</li>
+<li>Confirm the public package/console-command naming policy and registry ownership.</li>
+<li>Configure protected GitHub environments and PyPI Trusted Publishers with required reviewers.</li>
+<li>Choose the supported Python, Node LTS, Codex, Hermes, OS, and architecture ranges.</li>
+<li>Decide whether Docker Hub remains a supported mirror or GHCR becomes the only registry.</li>
+<li>Choose the fallback secret-provider design for air-gapped Windows/Linux/macOS installs.</li>
+<li>Confirm whether multi-user/RBAC is a release requirement or whether the first release is explicitly single-user.</li>
+</ol>
+<h2 id="14-recommended-spec-kit-sequence">14. Recommended Spec Kit sequence<a class="headerlink" href="#14-recommended-spec-kit-sequence" title="Permanent link">&para;</a></h2>
+<p>Upstream already contains feature numbers 039-041, so new implementation should start after reconciling those artifacts:</p>
+<ol>
+<li>042-security-control-plane-and-workspace-confinement</li>
+<li>043-secrets-container-and-provider-config</li>
+<li>044-state-migrations-and-recovery</li>
+<li>045-package-boundary-and-workspace-use-cases</li>
+<li>046-gateway-service-and-mcp-2025-11-25</li>
+<li>047-python-oci-release-train</li>
+<li>048-codex-wright-plugin</li>
+<li>049-hermes-thin-integration</li>
+<li>050-openapi-frontend-contracts-and-ui-modularity</li>
+<li>051-observability-lifecycle-and-release-rehearsal</li>
+</ol>
+<p>Each feature must run specify, clarify, plan, tasks, analyze, and checklist before implementation. No feature should combine a P0 security migration with unrelated UI cleanup.</p>
+<h2 id="15-primary-source-research-appendix">15. Primary-source research appendix<a class="headerlink" href="#15-primary-source-research-appendix" title="Permanent link">&para;</a></h2>
+<p>All sources below were accessed on 2026-07-10.</p>
+<h3 id="codex-and-mcp">Codex and MCP<a class="headerlink" href="#codex-and-mcp" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://learn.chatgpt.com/docs/changelog">Codex changelog</a></li>
+<li><a href="https://learn.chatgpt.com/docs/extend/mcp?surface=cli">Codex MCP configuration and transports</a></li>
+<li><a href="https://learn.chatgpt.com/docs/build-plugins">Build Codex plugins</a></li>
+<li><a href="https://learn.chatgpt.com/docs/app-server">Codex app-server</a></li>
+<li><a href="https://learn.chatgpt.com/docs/mcp-server">Run Codex as an MCP server</a></li>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">MCP 2025-11-25 lifecycle</a></li>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP 2025-11-25 transports</a></li>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP 2025-11-25 tools</a></li>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25/schema">MCP 2025-11-25 schema</a></li>
+</ul>
+<h3 id="hermes">Hermes<a class="headerlink" href="#hermes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://github.com/NousResearch/hermes-agent/releases">Hermes Agent releases</a></li>
+<li><a href="https://pypi.org/project/hermes-agent/">Hermes Agent on PyPI</a></li>
+<li><a href="https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp">Hermes MCP</a></li>
+<li><a href="https://hermes-agent.nousresearch.com/docs/user-guide/features/plugins">Hermes plugins</a></li>
+<li><a href="https://hermes-agent.nousresearch.com/docs/user-guide/features/codex-app-server-runtime">Hermes Codex app-server runtime</a></li>
+<li><a href="https://hermes-agent.nousresearch.com/docs/integrations/providers/">Hermes providers</a></li>
+<li><a href="https://github.com/NousResearch/hermes-agent/security/policy">Hermes security policy</a></li>
+</ul>
+<h3 id="packaging-and-release-engineering">Packaging and release engineering<a class="headerlink" href="#packaging-and-release-engineering" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://pypi.org/project/wright-engineering/0.1.0/">wright-engineering 0.1.0 on PyPI</a></li>
+<li><a href="https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/">PyPA Trusted Publishing workflow guide</a></li>
+<li><a href="https://docs.pypi.org/attestations/">PyPI attestations</a></li>
+<li><a href="https://docs.pypi.org/project-management/yanking/">PyPI yanking</a></li>
+<li><a href="https://packaging.python.org/en/latest/guides/writing-pyproject-toml/">Pyproject metadata guidance</a></li>
+<li><a href="https://packaging.python.org/en/latest/discussions/distribution-package-vs-import-package/">Distribution versus import packages</a></li>
+<li><a href="https://docs.astral.sh/uv/concepts/projects/build/">uv build</a></li>
+<li><a href="https://docs.docker.com/build/ci/github-actions/attestations/">Docker GitHub Actions attestations</a></li>
+<li><a href="https://docs.docker.com/build/ci/github-actions/multi-platform/">Docker multi-platform builds</a></li>
+<li><a href="https://docs.github.com/en/enterprise-cloud%40latest/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations">GitHub artifact attestations</a></li>
+<li><a href="https://docs.github.com/en/code-security/tutorials/secure-your-organization/protect-against-threats">GitHub Actions security hardening</a></li>
+<li><a href="https://docs.github.com/en/actions/reference/runners/github-hosted-runners">GitHub-hosted arm64 runners</a></li>
+<li><a href="https://nodejs.org/en/about/previous-releases">Node release status</a></li>
+<li><a href="https://www.python.org/downloads/">Python active versions</a></li>
+</ul>
+<h2 id="16-definition-of-a-professional-first-release">16. Definition of a professional first release<a class="headerlink" href="#16-definition-of-a-professional-first-release" title="Permanent link">&para;</a></h2>
+<p>Wright is ready for a professional public release only when:</p>
+<ul>
+<li>Every P0 finding is closed by an executable regression test and a reviewed threat model.</li>
+<li>Database upgrade, failure, backup, and restore have been exercised from the previous public state.</li>
+<li>The published Python files and OCI digest are the exact artifacts tested and attested.</li>
+<li>Registry names, tags, docs, badges, and install commands resolve to real public artifacts.</li>
+<li>Direct Codex use works without Hermes.</li>
+<li>Hermes uses the same provider-neutral Wright MCP boundary and its optional plugin clean-installs from public sources.</li>
+<li>Supported Python, Node, OS, architecture, Codex, and Hermes versions are evidence-backed.</li>
+<li>High-risk engineering MCP validation still follows the clean-container process and no base-image shortcut was introduced.</li>
+<li>Governance, release ownership, security reporting, deprecation, compatibility, and rollback policies are published.</li>
+<li>A maintainer can reproduce the release and a new contributor can reproduce the development and test environment from the documentation.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

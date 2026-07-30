@@ -1,0 +1,82 @@
+{
+  "catalog_version": "unknown",
+  "container_image": "wright:latest",
+  "credential_requirements": "[REDACTED]",
+  "diagnostics": "Direct MCP stdio probes completed in a clean container. Direct clean-container protocol probes ran, but Wright gateway proxy probes were not executed.",
+  "environment": "windows_11_x64",
+  "follow_up_required": true,
+  "follow_up_url": null,
+  "gateway_proxy_probe": [],
+  "install_steps": [
+    "uv run --with git+https://github.com/quellant/openscad-mcp.git openscad-mcp"
+  ],
+  "missing_dependencies": [],
+  "network_requirements": {
+    "requires_network": true
+  },
+  "protocol_probes": [
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "initialize",
+      "output": "{\"protocolVersion\": \"2024-11-05\", \"capabilities\": {\"experimental\": {}, \"logging\": {}, \"prompts\": {\"listChanged\": false}, \"resources\": {\"subscribe\": false, \"listChanged\": false}, \"tools\": {\"listChanged\": true}, \"extensions\": {\"io.modelcontextprotocol/ui\": {}}}, \"serverInfo\": {\"name\": \"OpenSCAD MCP Server\", \"version\": \"3.4.2\"}}",
+      "status": "passed"
+    },
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "notifications/initialized",
+      "output": "sent",
+      "status": "passed"
+    },
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "tools/list",
+      "output": "{\"tools\": [{\"name\": \"render_single\", \"description\": \"Render a single view from OpenSCAD code or file.\", \"inputSchema\": {\"additionalProperties\": false, \"properties\": {\"scad_content\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"OpenSCAD code to render (mutually exclusive with scad_file)\"}, \"scad_file\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Path to OpenSCAD file (mutually exclusive with scad_content)\"}, \"view\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Predefined view name (\\\"front\\\", \\\"back\\\", \\\"left\\\", \\\"right\\\", \\\"top\\\", \\\"bottom\\\", \\\"isometric\\\", \\\"dimetric\\\")\"}, \"camera_position\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"number\"}, \"type\": \"array\"}, {\"additionalProperties\": {\"type\": \"number\"}, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Camera position - accepts [x,y,z] list, JSON string \\\"[x,y,z]\\\", or dict {\\\"x\\\":x,\\\"y\\\":y,\\\"z\\\":z} (default: [70, 70, 70])\"}, \"camera_target\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"number\"}, \"type\": \"array\"}, {\"additionalProperties\": {\"type\": \"number\"}, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Camera look-at point - accepts [x,y,z] list, JSON string, or dict (default: [0, 0, 0])\"}, \"camera_up\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"number\"}, \"type\": \"array\"}, {\"additionalProperties\": {\"type\": \"number\"}, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Camera up vector - accepts [x,y,z] list, JSON string, or dict (default: [0, 0, 1])\"}, \"image_size\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"integer\"}, \"type\": \"array\"}, {\"items\": {}, \"type\": \"array\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Image dimensions - accepts [width, height] list, JSON string \\\"[width, height]\\\", \\\"widthxheight\\\", or tuple (default: [800, 600])\"}, \"color_scheme\": {\"default\": \"Cornfield\", \"type\": \"string\", \"description\": \"OpenSCAD color scheme (default: \\\"Cornfield\\\")\"}, \"variables\": {\"anyOf\": [{\"additionalProperties\": true, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Variables to pass to OpenSCAD\"}, \"auto_center\": {\"default\": false, \"type\": \"boolean\", \"description\": \"Auto-center the model\"}, \"quality\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Quality preset - \\\"draft\\\" (fast, low detail), \\\"normal\\\" (OpenSCAD defaults), or \\\"high\\\" (slow, high detail). User-provided variables override quality preset values.\"}, \"output_format\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": \"auto\", \"description\": \"Output format - \\\"auto\\\", \\\"base64\\\", \\\"file_path\\\", or \\\"compressed\\\" (default: \\\"auto\\\")\"}, \"include_paths\": {\"anyOf\": [{\"items\": {\"type\": \"string\"}, \"type\": \"array\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Additional include paths for OpenSCAD via -I flags, enabling multi-file project support\"}}, \"type\": \"object\"}, \"outputSchema\": {\"additionalProperties\": true, \"type\": \"object\"}, \"_meta\": {\"fastmcp\": {\"tags\": []}}}, {\"name\": \"render_perspectives\", \"description\": \"Render multiple standard views of an OpenSCAD model in a single call.\\n\\nRenders the model from several predefined camera perspectives in parallel,\\nreturning all images at once. Useful for generating a comprehensive visual\\noverview of a 3D model.\", \"inputSchema\": {\"additionalProperties\": false, \"properties\": {\"scad_content\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"OpenSCAD code to render (mutually exclusive with scad_file)\"}, \"scad_file\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Path to OpenSCAD file (mutually exclusive with scad_content)\"}, \"views\": {\"anyOf\": [{\"items\": {\"type\": \"string\"}, \"type\": \"array\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"List of view names to render. Valid names: \\\"front\\\", \\\"back\\\", \\\"left\\\"",
+      "status": "passed"
+    }
+  ],
+  "redactions": [
+    "credentials",
+    "environment",
+    "commands",
+    "subprocess_output"
+  ],
+  "result": "partial",
+  "safe_backend_probe": null,
+  "server_id": "openscad-mcp-server",
+  "status": "partial",
+  "steps": [
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "docker.clean_container",
+      "output": "python=3.14.4; cwd=/home/agent",
+      "status": "passed"
+    },
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "initialize",
+      "output": "{\"protocolVersion\": \"2024-11-05\", \"capabilities\": {\"experimental\": {}, \"logging\": {}, \"prompts\": {\"listChanged\": false}, \"resources\": {\"subscribe\": false, \"listChanged\": false}, \"tools\": {\"listChanged\": true}, \"extensions\": {\"io.modelcontextprotocol/ui\": {}}}, \"serverInfo\": {\"name\": \"OpenSCAD MCP Server\", \"version\": \"3.4.2\"}}",
+      "status": "passed"
+    },
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "notifications/initialized",
+      "output": "sent",
+      "status": "passed"
+    },
+    {
+      "duration_ms": null,
+      "error": null,
+      "name": "tools/list",
+      "output": "{\"tools\": [{\"name\": \"render_single\", \"description\": \"Render a single view from OpenSCAD code or file.\", \"inputSchema\": {\"additionalProperties\": false, \"properties\": {\"scad_content\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"OpenSCAD code to render (mutually exclusive with scad_file)\"}, \"scad_file\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Path to OpenSCAD file (mutually exclusive with scad_content)\"}, \"view\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Predefined view name (\\\"front\\\", \\\"back\\\", \\\"left\\\", \\\"right\\\", \\\"top\\\", \\\"bottom\\\", \\\"isometric\\\", \\\"dimetric\\\")\"}, \"camera_position\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"number\"}, \"type\": \"array\"}, {\"additionalProperties\": {\"type\": \"number\"}, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Camera position - accepts [x,y,z] list, JSON string \\\"[x,y,z]\\\", or dict {\\\"x\\\":x,\\\"y\\\":y,\\\"z\\\":z} (default: [70, 70, 70])\"}, \"camera_target\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"number\"}, \"type\": \"array\"}, {\"additionalProperties\": {\"type\": \"number\"}, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Camera look-at point - accepts [x,y,z] list, JSON string, or dict (default: [0, 0, 0])\"}, \"camera_up\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"number\"}, \"type\": \"array\"}, {\"additionalProperties\": {\"type\": \"number\"}, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Camera up vector - accepts [x,y,z] list, JSON string, or dict (default: [0, 0, 1])\"}, \"image_size\": {\"anyOf\": [{\"type\": \"string\"}, {\"items\": {\"type\": \"integer\"}, \"type\": \"array\"}, {\"items\": {}, \"type\": \"array\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Image dimensions - accepts [width, height] list, JSON string \\\"[width, height]\\\", \\\"widthxheight\\\", or tuple (default: [800, 600])\"}, \"color_scheme\": {\"default\": \"Cornfield\", \"type\": \"string\", \"description\": \"OpenSCAD color scheme (default: \\\"Cornfield\\\")\"}, \"variables\": {\"anyOf\": [{\"additionalProperties\": true, \"type\": \"object\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Variables to pass to OpenSCAD\"}, \"auto_center\": {\"default\": false, \"type\": \"boolean\", \"description\": \"Auto-center the model\"}, \"quality\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Quality preset - \\\"draft\\\" (fast, low detail), \\\"normal\\\" (OpenSCAD defaults), or \\\"high\\\" (slow, high detail). User-provided variables override quality preset values.\"}, \"output_format\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": \"auto\", \"description\": \"Output format - \\\"auto\\\", \\\"base64\\\", \\\"file_path\\\", or \\\"compressed\\\" (default: \\\"auto\\\")\"}, \"include_paths\": {\"anyOf\": [{\"items\": {\"type\": \"string\"}, \"type\": \"array\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Additional include paths for OpenSCAD via -I flags, enabling multi-file project support\"}}, \"type\": \"object\"}, \"outputSchema\": {\"additionalProperties\": true, \"type\": \"object\"}, \"_meta\": {\"fastmcp\": {\"tags\": []}}}, {\"name\": \"render_perspectives\", \"description\": \"Render multiple standard views of an OpenSCAD model in a single call.\\n\\nRenders the model from several predefined camera perspectives in parallel,\\nreturning all images at once. Useful for generating a comprehensive visual\\noverview of a 3D model.\", \"inputSchema\": {\"additionalProperties\": false, \"properties\": {\"scad_content\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"OpenSCAD code to render (mutually exclusive with scad_file)\"}, \"scad_file\": {\"anyOf\": [{\"type\": \"string\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"Path to OpenSCAD file (mutually exclusive with scad_content)\"}, \"views\": {\"anyOf\": [{\"items\": {\"type\": \"string\"}, \"type\": \"array\"}, {\"type\": \"null\"}], \"default\": null, \"description\": \"List of view names to render. Valid names: \\\"front\\\", \\\"back\\\", \\\"left\\\"",
+      "status": "passed"
+    }
+  ],
+  "validation_finished_at": "2026-07-02T00:22:26.747127+00:00",
+  "validation_started_at": "2026-07-02T00:22:17.538148+00:00"
+}

@@ -1,0 +1,3644 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital engineer, designer, and mechanical analyst - local-first multi-agent mechanical engineering appliance">
+      
+      
+        <meta name="author" content="Burhop">
+      
+      
+        <link rel="canonical" href="https://burhop.github.io/wright/gpt5-6-implementation-status/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../docs/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>GPT-5.6 Plan Implementation Status - Wright</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#gpt-56-plan-implementation-status" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Wright" class="md-header__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wright
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              GPT-5.6 Plan Implementation Status
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/docker/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/system-overview/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../security/control-plane/" class="md-tabs__link">
+          
+  
+  
+  Security
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../operations/database-recovery/" class="md-tabs__link">
+          
+  
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../integrations/codex-mcp-compatibility/" class="md-tabs__link">
+          
+  
+  
+  Integrations
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../contributing/dev-setup/" class="md-tabs__link">
+          
+  
+  
+  Contributing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../release/community-release-readiness/" class="md-tabs__link">
+          
+  
+  
+  Release
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../community/funding/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../mcp-catalog/tools-list/" class="md-tabs__link">
+          
+  
+  
+  MCP Tools Catalog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../admin/github-public-readiness/" class="md-tabs__link">
+          
+  
+  
+  Admin
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Wright" class="md-nav__button md-logo" aria-label="Wright" data-md-component="logo">
+      
+  <img src="../docs/images/wright-logo.png" alt="logo">
+
+    </a>
+    Wright
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/install-matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Appliance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/windows-11/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows 11
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/linux-gb10/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux and GB10
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-desktop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Desktop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/python-packages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/mcp-contributors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Contributors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/enterprise-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enterprise Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PC Local Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workstation-gb10-dgx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GB10 and DGX Workstations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/hermes-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Native Wright for Hermes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/codex/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wright for Codex
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/env-vars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/makefile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Makefile Targets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/maintenance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maintenance & Updates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recovery Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/system-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/project-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/package-boundaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Package Boundaries
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/agent-adapters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Adapters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/tool-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/gateway-service/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway Service
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/data-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/control-plane/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local Control Plane
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/credential-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credential Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/container-hardening/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Hardening
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/database-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Database Migration and Recovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/mcp-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/solid-edge-diagnostics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solid Edge Diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Integrations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Integrations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/codex-mcp-compatibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Codex MCP Compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrations/solid-edge-creation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Solid Edge Creation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/dev-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/spec-kit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spec-Kit Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/code-style/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/ci-cd-workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/pull-requests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pull Requests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-launch-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Launch Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alpha-release-notes-template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alpha Release Notes Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/hermes-plugin-mirror/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hermes Plugin Mirror Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/community-release-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Release Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/python-packaging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Packaging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/container-publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Container Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/artifact-topology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Artifact Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/release-runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/release-recovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Recovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/funding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Funding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/commercial-support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commercial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/partner-brief/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/visibility-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visibility Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/demo-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/launch-indicators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Launch Indicators
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/discord-admin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discord Admin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP Tools Catalog
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    MCP Tools Catalog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/tools-list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/custom-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom MCP Tools
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mcp-catalog/offline-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Admin
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Admin
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../admin/github-public-readiness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GitHub Public Readiness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#feature-048-implementation-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 048 implementation cycle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-047-implementation-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 047 implementation cycle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-046-implementation-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 046 implementation cycle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#baseline-reconciliation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Baseline reconciliation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#finding-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Finding state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-ledger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation ledger
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implemented-checkpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implemented checkpoints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migration-and-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration and rollback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exact-next-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exact next action
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-045-implementation-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 045 implementation cycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Feature 045 implementation cycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feature-045-validation-so-far" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 045 validation so far
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feature-045-migration-and-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 045 migration and rollback
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-043-implementation-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 043 implementation cycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Feature 043 implementation cycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feature-043-validation-so-far" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 043 validation so far
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-044-implementation-cycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 044 implementation cycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Feature 044 implementation cycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#feature-044-validation-so-far" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature 044 validation so far
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="gpt-56-plan-implementation-status">GPT-5.6 Plan Implementation Status<a class="headerlink" href="#gpt-56-plan-implementation-status" title="Permanent link">&para;</a></h1>
+<h2 id="feature-048-implementation-cycle">Feature 048 implementation cycle<a class="headerlink" href="#feature-048-implementation-cycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Baseline</strong>: <code>7aa085a</code>; local and <code>origin/dev</code> matched before the feature branch.</li>
+<li><strong>Branch</strong>: <code>048-solid-edge-creation-visibility</code>.</li>
+<li><strong>State</strong>: merged to <code>dev</code> for the reconciled production-test stabilization scope.</li>
+<li><strong>Delivered scope</strong>: creation-oriented Solid Edge gateway projection, canonical new-visible-document guidance, immediate and elapsed chat progress, busy-turn steering, Hermes-owned MCP lifecycle behavior, workspace gateway rebinding, protected bridge authentication, and Linux CI portability.</li>
+<li><strong>Scope reconciliation</strong>: the original immutable-profile, artifact-binding, provider-neutral progress/diagnostics services, benchmark scripts, and 20-run live evidence are explicitly deferred and are not represented as complete.</li>
+<li><strong>CI repair</strong>: the Playwright backend now selects compatibility authentication explicitly; API tests use a private temporary directory for fallback secrets instead of attempting to chmod the shared Linux temp directory.</li>
+<li><strong>Evidence</strong>: see <code>specs/048-solid-edge-creation-visibility/checklists/completion-audit.md</code>.</li>
+<li><strong>Final merge gate</strong>: <code>scripts/check-dev-merge.sh</code> passed end to end on 2026-07-24: 516 Python passed/12 skipped, 82 Hermes tests passed, 24 frontend files/103 tests passed, production build and strict MkDocs passed, release coverage reached 87.53%, exact Python artifacts built and clean-installed, and all 38 live Playwright tests passed. Repository-wide mypy retains its pre-existing duplicate-test-<code>conftest</code> warning under the gate's documented warning mode.</li>
+<li><strong>Merge evidence</strong>: PR #44 passed its complete required check matrix on final SHA <code>918e784</code> and merged to <code>dev</code> as <code>fa5baba</code>.</li>
+<li><strong>Exact next action</strong>: schedule the explicitly deferred immutable-profile, diagnostics-attribution, and repeated live-benchmark work as a separate feature.</li>
+</ul>
+<h2 id="feature-047-implementation-cycle">Feature 047 implementation cycle<a class="headerlink" href="#feature-047-implementation-cycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Baseline</strong>: <code>b6c6703d05c9333762a073664ae81fd07215ce7d</code>; local and <code>origin/dev</code> matched before branching.</li>
+<li><strong>Branch</strong>: <code>codex/047-python-oci-release-train</code>.</li>
+<li><strong>Roadmap</strong>: R3.1-R3.7. Features 048-051 remain out of scope.</li>
+<li><strong>State</strong>: review-ready — implementation, requirement audit, and authoritative dev merge gate complete; exact OCI runtime validation remains delegated to CI because the local Linux engine is unavailable.</li>
+<li><strong>Artifact topology</strong>: <code>wright-engineering</code> is the sole public Python distribution; all internal packages, including the not-yet-thinned Hermes plugin, are <code>Private :: Do Not Upload</code>. Docker remains the full appliance; GHCR is canonical and Docker Hub is a required byte-identical distribution target for completed production releases.</li>
+<li><strong>Python evidence</strong>: final gate wheel is 11,066 bytes and sdist is 12,317 bytes. The sdist contains 10 intentional packaging/source files (public source, README, license, metadata, and Hatch's VCS manifest); no apps, internal packages, specs, workflows, tests, screenshots, sandbox assets, caches, outputs, or secrets. Wheel and sdist independently installed and ran from <code>C:\tmp</code> on Python 3.11.14, 3.12.11, 3.13.5, and 3.14.2 with no source-tree/private-package access.</li>
+<li><strong>Release evidence</strong>: two no-publication rehearsals produced identical SHA-256 <code>ec25cf8559ce498abb3f984ed6f5bc84f5d2a05978412cd6483959f0e8dd5f5d</code>; every stage recorded <code>external_mutation=false</code>.</li>
+<li><strong>Workflow evidence</strong>: checksum-verified actionlint 1.7.10 passed every workflow. All third-party Actions are pinned to full upstream commit SHAs. Python publication downloads one recorded candidate through TestPyPI verification and protected PyPI; OCI builds one amd64 candidate, smokes/scans/attests its digest, promotes without rebuilding, optionally mirrors the same manifest, verifies, deploys docs, and publishes GitHub Release last.</li>
+<li><strong>Supply-chain evidence</strong>: root Docker bases/tools use resolved digests/versions/checksums; Node 24 LTS replaces Node 26 Current; micromamba 2.5.0 archive SHA-256 was independently resolved as <code>cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6</code>; no <code>apt-get upgrade</code> remains. Dependency review, CodeQL, Python/npm audits, private plugin lint/package tests, and an 85% ratcheted release-code coverage gate are configured.</li>
+<li><strong>Focused validation</strong>: 50 release/legacy contract tests passed with one platform skip before the dependency-policy addition; current Feature 047 suite is 34 passed. Focused mypy passes 14 source files with zero findings. Hermes lint passed and 82 plugin tests passed in 132.53 seconds. npm audit reported zero vulnerabilities. pip-audit reported only <code>PYSEC-2026-1325</code> in <code>ecdsa</code> with no fixed version; a documented expiring exception ends 2026-09-01 and is enforced by code.</li>
+<li><strong>Container host limitation</strong>: <code>docker buildx imagetools inspect</code> resolved the pinned upstream manifests, but <code>docker info</code> cannot connect because <code>//./pipe/dockerDesktopLinuxEngine</code> is absent. The exact local Docker build/smoke/scan therefore requires CI or a running Linux engine; Dockerfile policy, checksum, shell, workflow, and smoke contracts pass locally. This is a host limitation, not a claimed image pass.</li>
+<li><strong>Migration/rollback</strong>: existing 0.1.0 remains immutable. A corrected public artifact uses a later patch only after protected release approval. Identical retries resume; differing hashes/digests require a patch. PyPI corrections may be yanked under documented criteria. OCI immutable version/SHA refs never move; quarantine bad digests and restore mutable aliases only to previously verified digests.</li>
+<li><strong>External prerequisites</strong>: repository administrators must configure/protect <code>testpypi</code>, <code>pypi</code>, <code>release</code>, and <code>dockerhub</code> environments and Trusted Publishers. Feature 047 does not claim these external settings exist and performs no publication.</li>
+<li><strong>Final merge gate</strong>: <code>scripts/check-dev-merge.sh</code> reached its own terminal <code>Dev merge gate passed.</code> line. Results include 496 Python passed/12 skipped, 82 Hermes passed, 24 frontend files/99 tests passed, production frontend build, strict MkDocs, focused 87.21% release-code coverage, focused mypy with zero findings, clean wheel/sdist builds and installs, and 38 live Playwright passed. The log contains expected mocked/browser fallback diagnostics but no failed gate.</li>
+<li><strong>Exact next action</strong>: commit/push/merge Feature 047 under standing authorization while preserving <code>docs/gpt5-6plan.md</code>; then start Feature 048 in a new cycle.</li>
+</ul>
+<h2 id="feature-046-implementation-cycle">Feature 046 implementation cycle<a class="headerlink" href="#feature-046-implementation-cycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Baseline</strong>: <code>89466673430023a48795046c2aa41b2ebb77745c</code>; local and <code>origin/dev</code> matched before branching.</li>
+<li><strong>Branch</strong>: <code>codex/046-gateway-service-and-mcp-2025-11-25</code>.</li>
+<li><strong>Roadmap</strong>: R1.6, R2.3, R2.4, and R4.1–R4.3. Features 047–051 remain out of scope.</li>
+<li><strong>State</strong>: review-ready — implementation, requirement audit, clean artifact validation, real Codex evidence, and authoritative merge gate complete.</li>
+<li><strong>Current compatibility evidence</strong>: Codex CLI 0.144.1 on Windows; MCP protocol target 2025-11-25; official stable SDK resolved to <code>mcp 1.28.1</code> under <code>&lt;2</code>.</li>
+<li><strong>Closed findings</strong>: official SDK handlers replace hand-written protocol framing; STDIO and authenticated <code>/mcp</code> use immutable explicit bindings; transport sessions are unique even when clients share a workspace-agent session; no production caller reads or writes recent/global gateway selection; the one-release REST/SSE and launcher seam defaults off and delegates to <code>GatewayService</code>.</li>
+<li><strong>Implemented checkpoint</strong>: provider-neutral discovery/call/resources/management, conservative schemas and reviewed annotations, append-only redacted audit, protocol cancellation/timeouts, scoped list-change notifications, generation-safe runner lifecycle, 42-entry packaged catalog with dated evidence and byte-identical plugin projection, serialized SDK STDIO, authenticated Origin/DNS-rebinding-protected Streamable HTTP, body/rate/concurrency limits, production API composition, and shutdown/reconciliation.</li>
+<li><strong>Validation so far</strong>: SDK server 4 passed; real/parallel STDIO 4 passed including partial input and EOF; 100-trial two-session isolation and 100-response/notification stress 2 passed; HTTP authentication/binding/reconnect/limit contracts 4 passed; explicit legacy/workspace regressions 35 passed with 1 unrelated skip; official SDK HTTP plus legacy E2E 2 passed; catalog/plugin parity 48 passed; wheel/sdist resource build passed. The ephemeral real Codex harness passed with <code>codex-cli 0.144.1</code>, <code>gpt-5.6-sol</code>, Windows x64, and observed <code>wright__workspace_status</code> plus exact workspace/session output.</li>
+<li><strong>Migration/rollback</strong>: migration v4 adds only the append-only <code>gateway_audit_events</code> table; existing workspace/session/tool rows remain compatible and catalog aliases retain legacy IDs. Roll back the complete Feature 046 commit/image to Feature 045; no reverse data migration is required. <code>WRIGHT_LEGACY_GATEWAY=1</code> is a one-release caller migration aid, not an authorization rollback.</li>
+<li><strong>Final verification</strong>: final <code>scripts/check-dev-merge.sh</code> passed all configured sub-gates without skips in 441 seconds, including 473 Python tests, frontend lint/type/unit/build checks, strict docs and live Playwright. Focused mypy passed 17 Feature 046 production files with zero findings; the gate's repository-wide warning-mode mypy reports only duplicate test <code>conftest</code> module discovery. Core/tool-registry wheel and sdist candidates installed and imported successfully in a clean environment. The completion audit proves FR-001–FR-028 and SC-001–SC-009.</li>
+<li><strong>Remaining risks</strong>: Codex host evidence is Windows x64 only; Linux/macOS Codex compatibility is not claimed. Feature 049 still owns removal of the optional Hermes compatibility seam.</li>
+<li><strong>Exact next action</strong>: commit and merge Feature 046 to <code>dev</code> under standing authorization, preserving the operator-owned <code>docs/gpt5-6plan.md</code>; then begin Feature 047 in a new cycle.</li>
+</ul>
+<p><strong>Baseline</strong>: <code>9fd210802c28f8fccbfb96850ca35200f35b11fb</code>
+<strong>Branch</strong>: <code>codex/045-package-boundary-and-workspace-use-cases</code>
+<strong>Feature</strong>: 045 — Package Boundaries and Workspace Use Cases
+<strong>State</strong>: review-ready — implementation and requirement audit complete
+<strong>Updated</strong>: 2026-07-10 America/New_York</p>
+<h2 id="baseline-reconciliation">Baseline reconciliation<a class="headerlink" href="#baseline-reconciliation" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Local <code>dev</code> and <code>origin/dev</code> were identical at the baseline commit.</li>
+<li>Refreshed <code>origin/main</code> is five commits ahead by topology; its net content
+  delta from <code>origin/dev</code> is only the two-line Python publication artifact-path
+  correction. That release-only delta is recorded for Feature 047 and is not
+  mixed into this security feature.</li>
+<li>Specs 039-041 are present and marked implemented. Spec 040 adds stable
+  workspace/session associations but retains a global active gateway context;
+  it does not close SEC-01 or SEC-02. Spec 039's publication dependency issue,
+  and Spec 041's artifact-identity gaps, remain assigned to later features.</li>
+</ul>
+<h2 id="finding-state">Finding state<a class="headerlink" href="#finding-state" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Finding</th>
+<th>State at baseline</th>
+<th>Roadmap disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SEC-01</td>
+<td>Open: wildcard CORS, unauthenticated routers and WebSocket</td>
+<td>In progress</td>
+</tr>
+<tr>
+<td>SEC-02</td>
+<td>Open: direct backup joins, global <code>/tmp</code>, lexical containment</td>
+<td>In progress</td>
+</tr>
+<tr>
+<td>ISO-01</td>
+<td>Changed by Spec 040 but open for concurrent gateway sessions</td>
+<td>Feature 046</td>
+</tr>
+<tr>
+<td>SEC-03/04, CTR-01</td>
+<td>Open</td>
+<td>Feature 043</td>
+</tr>
+<tr>
+<td>DATA-01</td>
+<td>Open</td>
+<td>Feature 044</td>
+</tr>
+<tr>
+<td>REL-01/PKG-01</td>
+<td>Open; origin/main has only artifact-path correction</td>
+<td>Feature 047</td>
+</tr>
+</tbody>
+</table>
+<h2 id="validation-ledger">Validation ledger<a class="headerlink" href="#validation-ledger" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git fetch --prune origin</code></td>
+<td>Passed; metadata only</td>
+</tr>
+<tr>
+<td><code>git rev-list --left-right --count HEAD...origin/dev</code></td>
+<td><code>0 0</code></td>
+</tr>
+<tr>
+<td><code>git rev-list --left-right --count HEAD...origin/main</code></td>
+<td><code>0 5</code></td>
+</tr>
+<tr>
+<td><code>uv run pytest -q apps/api/tests/test_security.py apps/api/tests/test_webmcp.py apps/api/tests/test_workspace_api.py packages/core/tests</code></td>
+<td>Passed: 62 passed, 1 skipped, 1 warning (commit <code>ac3163d</code>)</td>
+</tr>
+<tr>
+<td>Ruff/pytest/MkDocs after the browser-session follow-up</td>
+<td>Aborted by operator after 4.9s; do not treat as passed</td>
+</tr>
+<tr>
+<td>Focused SEC-01/SEC-02 suites</td>
+<td>Passed: 56 passed, 1 skipped, 1 warning</td>
+</tr>
+<tr>
+<td>Agent/security regression suites after test initialization fix</td>
+<td>Passed: 13 passed, 1 warning</td>
+</tr>
+<tr>
+<td>Ruff check and format over API and Python packages</td>
+<td>Passed: 115 files formatted; no lint findings</td>
+</tr>
+<tr>
+<td>ESLint and TypeScript</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td><code>npx prettier --check apps/web/</code></td>
+<td>Failed on 33 untouched files due to CRLF checkout; <code>--end-of-line auto</code> passed</td>
+</tr>
+<tr>
+<td>Python distribution dry run</td>
+<td>Passed for <code>wright-core</code> and <code>wright-tool-registry</code></td>
+</tr>
+<tr>
+<td><code>uv run pytest -q</code></td>
+<td>336 passed, 11 skipped, then suite-order <code>test_mcp_engine</code> failed with zero registered mock tools; the test passed in isolation</td>
+</tr>
+<tr>
+<td>Hermes plugin suite</td>
+<td>80 passed, 1 Windows failure because the test expects one <code>Popen</code> while current code starts the gateway and API</td>
+</tr>
+<tr>
+<td>Frontend unit tests and production build</td>
+<td>Passed: 24 files / 99 tests; build passed with existing chunk warning</td>
+</tr>
+<tr>
+<td>Strict MkDocs build</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Manual live Playwright sub-gate</td>
+<td>Passed: 38 tests with a loopback compatibility-mode backend</td>
+</tr>
+<tr>
+<td><code>D:\Program Files\Git\bin\bash.exe scripts/check-dev-merge.sh</code></td>
+<td>Passed end-to-end in 405.7 seconds; no sub-gates skipped. Existing mypy findings remain warning-only under the gate's configured policy.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="implemented-checkpoints">Implemented checkpoints<a class="headerlink" href="#implemented-checkpoints" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Commit <code>ac3163d</code> was pushed to
+  <code>origin/codex/042-security-control-plane-and-workspace-confinement</code>.</li>
+<li>That commit adds the Feature 042 spec/tasks, audit plan and status ledger,
+  fail-closed bearer-token middleware, explicit CORS origins, WebSocket
+  pre-accept authorization, shared <code>WorkspacePath</code>, fixed-format backup IDs,
+  workspace-local scratch mapping, symlink/reparse rejection, and focused tests.</li>
+<li>A second, uncommitted follow-up adds an HttpOnly browser-session exchange,
+  cookie-aware HTTP/WebSocket authentication, extra WebSocket tests, Docker
+  bind/token configuration, and <code>docs/security/control-plane.md</code>.</li>
+<li>The second follow-up has been formatted but its combined Ruff, pytest, and
+  strict MkDocs command was interrupted before completion. Preserve and verify
+  these files before committing; they are intentionally left in the worktree.</li>
+<li>Continuation verification made API test authentication mode deterministic
+  before app import and made the merge gate's temporary loopback backend select
+  compatibility mode explicitly. Enforced mode remains covered by focused
+  security tests.</li>
+<li>Final verification narrowed test initialization to <code>WRIGHT_AUTH_MODE=compat</code>
+  so package tests do not inherit the API's mock-runner flag, corrected the
+  Hermes launch test to identify the API subprocess independently of the
+  gateway subprocess, and made the Windows merge gate use the project Python
+  runtime and line-ending-portable Prettier validation.</li>
+</ul>
+<h2 id="migration-and-rollback">Migration and rollback<a class="headerlink" href="#migration-and-rollback" title="Permanent link">&para;</a></h2>
+<p>The intended authentication compatibility rollback is
+<code>WRIGHT_AUTH_MODE=compat</code> for local-only use during one migration release.
+Unsafe path behavior has no rollback switch; legacy scratch files must be moved
+under each workspace's <code>.wright/tmp</code> directory.</p>
+<h2 id="exact-next-action">Exact next action<a class="headerlink" href="#exact-next-action" title="Permanent link">&para;</a></h2>
+<p>Complete Feature 045's manifest-driven boundary enforcement, extract workspace
+repositories/adapters/use cases, make API workspace routes transport-only, then
+run the authoritative dev merge gate before using the standing push/merge
+authorization. Feature 046 remains a separate cycle.</p>
+<h2 id="feature-045-implementation-cycle">Feature 045 implementation cycle<a class="headerlink" href="#feature-045-implementation-cycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Feature 044 merged to <code>dev</code> at <code>9fd2108</code>; local and <code>origin/dev</code> matched and
+  the working tree was clean when Feature 045 branched.</li>
+<li>The current call graph confirms <code>core.workspace</code> still owns SQLite, files,
+  Git, processes, and reverse <code>tool_registry</code> imports; <code>workspace_service</code>
+  selects concrete agent adapters and direct storage; the workspace router
+  still performs file/Git/process work and imports another route for refresh.</li>
+<li>Feature 045 maps to roadmap R2.1 and R2.2. R2.3-R2.6 remain out of scope.</li>
+<li>Spec, plan, research, data model, two contracts, quickstart, tasks, and two
+  requirement-quality checklists are complete. Cross-artifact analysis mapped
+  all 23 functional requirements and 9 success criteria to 43 tasks with no
+  critical ambiguity or coverage gap.</li>
+<li>Added the package-graph manifest, AST/dynamic-import/metadata fitness harness,
+  shared domain identifiers/errors/ports, workspace application ports/errors,
+  and a bounded executor as the first implementation slice.</li>
+</ul>
+<h3 id="feature-045-validation-so-far">Feature 045 validation so far<a class="headerlink" href="#feature-045-validation-so-far" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Package/API regression suite</td>
+<td>Passed: 277 passed, 1 skipped, 1 warning</td>
+</tr>
+<tr>
+<td>Focused mypy over changed boundaries</td>
+<td>Passed: 0 issues in 64 files</td>
+</tr>
+<tr>
+<td>Five-package wheel/sdist build and clean-install imports</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Ruff, strict MkDocs, public-alpha leak scan, and <code>git diff --check</code></td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Full <code>scripts/check-dev-merge.sh</code> non-browser sub-gates</td>
+<td>Passed; Python reported 412 passed and 11 skipped. Existing broad mypy findings remain warning-only under gate policy.</td>
+</tr>
+<tr>
+<td>Full live Playwright suite</td>
+<td>One existing dashboard test missed its fixed 5-second render timeout under suite load while the API remained healthy; all other live tests passed.</td>
+</tr>
+<tr>
+<td>Isolated failing <code>dashboard-real.spec.ts</code> test with a fresh backend</td>
+<td>Passed: 1 test in 8.8 seconds, confirming a suite-load flake rather than a Feature 045 regression</td>
+</tr>
+</tbody>
+</table>
+<h3 id="feature-045-migration-and-rollback">Feature 045 migration and rollback<a class="headerlink" href="#feature-045-migration-and-rollback" title="Permanent link">&para;</a></h3>
+<ul>
+<li>API contracts and persisted workspace/session data remain compatible; clean
+  package-install tests cover the new internal dependency graph.</li>
+<li>Roll back as one feature commit. Restoring only the removed <code>core</code> runtime
+  modules would recreate the forbidden reverse dependencies.</li>
+<li>Exact next action after merge: begin Feature 046 for session-scoped gateway
+  lifecycle and removal of remaining process-global activation state.</li>
+</ul>
+<h2 id="feature-043-implementation-cycle">Feature 043 implementation cycle<a class="headerlink" href="#feature-043-implementation-cycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Feature 042 merged to <code>dev</code> at <code>0bceb60</code>; local and <code>origin/dev</code> matched when
+  Feature 043 branched.</li>
+<li>Added provider-neutral references, environment/mounted/fallback providers,
+  and lock-file plus fsync/replace atomic fallback storage.</li>
+<li>Settings and MCP reads expose status only; Git tokens leave SQLite and use
+  askpass rather than URLs or argv.</li>
+<li>Added backup-first, verify-before-delete legacy credential migration and
+  explicit restore support with fail-closed startup.</li>
+<li>Redacted MCP protocol/subprocess diagnostics and API log responses.</li>
+<li>Removed sudo/universal keys; default Compose uses narrow volumes, read-only
+  rootfs, dropped capabilities, and no-new-privileges; legacy layout is
+  migration-only.</li>
+<li>Added atomic merge-only YAML updates preserving unknown provider/MCP entries.</li>
+</ul>
+<h3 id="feature-043-validation-so-far">Feature 043 validation so far<a class="headerlink" href="#feature-043-validation-so-far" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core provider, concurrency, redaction</td>
+<td>7 passed</td>
+</tr>
+<tr>
+<td>MCP credential compatibility</td>
+<td>33 passed, 1 warning</td>
+</tr>
+<tr>
+<td>Settings/security</td>
+<td>6 passed</td>
+</tr>
+<tr>
+<td>Git askpass/redaction</td>
+<td>3 passed</td>
+</tr>
+<tr>
+<td>MCP protocol/log redaction</td>
+<td>27 passed, 1 warning</td>
+</tr>
+<tr>
+<td>Secret migration plus workspace/settings regressions</td>
+<td>47 passed, 1 warning</td>
+</tr>
+<tr>
+<td>Container/workflow contracts</td>
+<td>13 passed</td>
+</tr>
+<tr>
+<td>Provider merge and Hermes sync</td>
+<td>5 passed</td>
+</tr>
+<tr>
+<td>Compose render: default, minimal, legacy override</td>
+<td>Passed</td>
+</tr>
+<tr>
+<td>Focused SEC-03/SEC-04/CTR-01 regression suite</td>
+<td>120 passed, 1 warning</td>
+</tr>
+<tr>
+<td>Seeded-value production scan and shell syntax checks</td>
+<td>Passed; removed the remaining legacy default from native Hermes profile setup</td>
+</tr>
+<tr>
+<td><code>D:\Program Files\Git\bin\bash.exe scripts/check-dev-merge.sh</code></td>
+<td>Passed end-to-end in 317.3 seconds; no sub-gates skipped. Existing mypy findings remain warning-only under the gate policy.</td>
+</tr>
+<tr>
+<td><code>docker info</code> / image-runtime smoke</td>
+<td>Not run: Docker Desktop Linux engine was unavailable (<code>//./pipe/dockerDesktopLinuxEngine</code> missing). Static contracts, shell syntax, and Compose renders passed.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="feature-044-implementation-cycle">Feature 044 implementation cycle<a class="headerlink" href="#feature-044-implementation-cycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Feature 043 merged to <code>dev</code> at <code>49bf248</code>; local and <code>origin/dev</code> matched when
+  Feature 044 branched.</li>
+<li>Replaced API-owned monolithic schema/catalog mutation with data-vault-owned
+  numbered, checksummed, per-migration transactions and a durable ledger.</li>
+<li>Added fresh and partial-legacy adoption, integrity/foreign-key preflight and
+  postflight, future-version/checksum refusal, stable lifecycle locking, and
+  fail-closed API startup before runtime construction.</li>
+<li>Added consistent SQLite snapshots, restricted manifests, digest and schema
+  validation, displaced-state recovery, atomic restore, and corrupt-state
+  replacement from a verified backup.</li>
+<li>Added internal <code>wright-db</code> status, backup, upgrade, and restore operations;
+  catalog reconciliation now runs separately and preserves unknown servers.</li>
+</ul>
+<h3 id="feature-044-validation-so-far">Feature 044 validation so far<a class="headerlink" href="#feature-044-validation-so-far" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data-vault migration, interruption, backup/restore, CLI, and state-store suites</td>
+<td>18 passed</td>
+</tr>
+<tr>
+<td>API startup plus catalog separation/reconciliation</td>
+<td>12 passed</td>
+</tr>
+<tr>
+<td>Full API and tool-registry suites</td>
+<td>196 passed, 1 warning</td>
+</tr>
+<tr>
+<td><code>scripts/benchmark-database-recovery.py --size-mib 1024 --limit-seconds 300</code></td>
+<td>Passed on Windows: 1,074,900,992 bytes; backup 11.565s; restore 22.430s; total 33.995s</td>
+</tr>
+<tr>
+<td>Data-vault and public CLI wheel/sdist build plus clean-install imports</td>
+<td>Passed after making the shared build helper select <code>Scripts/python.exe</code> on Windows</td>
+</tr>
+<tr>
+<td>Wheel content/dependency inspection</td>
+<td>Data-vault wheel contains migrations, backup, CLI, models, lock, and entry point; public <code>wright-engineering</code> wheel has no <code>Requires-Dist</code> entries; data-vault is <code>Private :: Do Not Upload</code></td>
+</tr>
+<tr>
+<td><code>uv run pytest -q</code></td>
+<td>381 passed, 11 skipped, 1 existing Starlette deprecation warning</td>
+</tr>
+<tr>
+<td><code>scripts/check-public-alpha-leaks.py --include-untracked</code></td>
+<td>Passed; also corrected three tracked Feature 043 placeholder literals newly visible to the scanner</td>
+</tr>
+<tr>
+<td>Ruff check/format, strict MkDocs, and <code>git diff --check</code></td>
+<td>Passed after formatter reconciliation; MkDocs emitted only existing informational notices</td>
+</tr>
+<tr>
+<td>First <code>scripts/check-dev-merge.sh</code> attempt</td>
+<td>All non-browser gates passed; live Playwright had one transient cross-origin <code>page.evaluate(fetch)</code> failure in <code>dashboard-real.spec.ts</code></td>
+</tr>
+<tr>
+<td>Live-test stabilization and reproduction</td>
+<td>Replaced the browser-context cross-origin fetch with Playwright request context; isolated live test passed</td>
+</tr>
+<tr>
+<td>Final <code>D:\Program Files\Git\bin\bash.exe scripts/check-dev-merge.sh</code></td>
+<td>Passed end-to-end in 315.4 seconds with no skipped sub-gates; data-vault has zero mypy findings and existing repository findings remain warning-only under gate policy</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
