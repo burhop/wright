@@ -286,6 +286,16 @@ workspaces, config, Hermes profile data, and logs survive container recreation.
   ```bash
   WRIGHT_API_TOKEN=change-this ./scripts/docker-mcp-run.sh linux-amd64
   ```
+* **Remote browser access on a trusted LAN**:
+  ```bash
+  WRIGHT_MCP_BIND=0.0.0.0 \
+  WRIGHT_MCP_PUBLIC_HOST=<host-lan-ip> \
+  WRIGHT_API_TOKEN=change-this \
+  ./scripts/docker-mcp-run.sh linux-arm64
+  ```
+  `WRIGHT_MCP_PUBLIC_HOST` is added to `WRIGHT_ALLOWED_ORIGINS` so browser
+  requests for CSS, JavaScript, API calls, and WebSocket connections are not
+  rejected by the origin guard.
 * **Windows MCP runtime**:
   ```powershell
   pwsh -File scripts/docker-mcp-run-windows.ps1

@@ -76,13 +76,26 @@ Use the same token you placed in `WRIGHT_API_TOKEN`.
 ## Remote Access
 
 The compose file binds to localhost by default. For a trusted test machine on a
-private engineering LAN, set:
+private engineering LAN, set the bind address and add the exact browser origin
+engineers will use from their PCs:
 
 ```bash
-WRIGHT_MCP_BIND=0.0.0.0 docker compose -f docker-compose.mcp.yml up -d --build
+WRIGHT_MCP_BIND=0.0.0.0 \
+WRIGHT_ALLOWED_ORIGINS=http://<host-lan-ip>:8080,http://localhost:8080,http://127.0.0.1:8080 \
+docker compose -f docker-compose.mcp.yml up -d --build
 ```
 
 Use a strong token and do not expose this port to the public internet.
+
+When using `scripts/docker-mcp-run.sh`, set `WRIGHT_MCP_PUBLIC_HOST` or
+`WRIGHT_MCP_PUBLIC_ORIGIN` instead:
+
+```bash
+WRIGHT_MCP_BIND=0.0.0.0 \
+WRIGHT_MCP_PUBLIC_HOST=<host-lan-ip> \
+WRIGHT_API_TOKEN=change-this-long-random-token \
+./scripts/docker-mcp-run.sh linux-arm64
+```
 
 ## Included Tools
 

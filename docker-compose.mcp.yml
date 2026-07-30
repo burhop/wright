@@ -26,7 +26,7 @@ services:
       - docker/.env
     ports:
       # Default mapping is 127.0.0.1:8080:8000. Set WRIGHT_MCP_BIND=0.0.0.0 only for trusted LAN tests.
-      - "${WRIGHT_MCP_BIND:-127.0.0.1}:8080:8000"
+      - "${WRIGHT_MCP_BIND:-127.0.0.1}:${WRIGHT_MCP_HOST_PORT:-8080}:8000"
     volumes:
       - wright_mcp_data:/home/agent/.local/share/wright
       - wright_mcp_workspaces:/home/agent/workspace
@@ -44,7 +44,9 @@ services:
       - no-new-privileges:true
     environment:
       - WRIGHT_ENV=production
-      - WRIGHT_BIND_HOST=0.0.0.0
+      - WRIGHT_AUTH_MODE=${WRIGHT_AUTH_MODE:-enforced}
+      - WRIGHT_BIND_HOST=${WRIGHT_MCP_BIND:-127.0.0.1}
+      - WRIGHT_ALLOWED_ORIGINS=${WRIGHT_ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:8000,http://127.0.0.1:8000,http://localhost:5173,http://127.0.0.1:5173}
       - WRIGHT_MCP_HERMES_CONFIG=/opt/wright/mcp/generated/hermes-mcp.generated.yaml
       - WRIGHT_MCP_STATUS=/opt/wright/mcp/generated/mcp-bundle-status.json
       - OTEL_EXPORTER_OTLP_ENDPOINT=
