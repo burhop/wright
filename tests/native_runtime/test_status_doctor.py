@@ -108,3 +108,8 @@ def test_status_reports_safe_process_identity_failure_code(tmp_path: Path) -> No
     assert (
         result.details["process_identity_code"] == "process_executable_outside_runtime"
     )
+    doctor = lifecycle.doctor()
+    assert (
+        doctor.details["checks"]["process_ownership"]["code"]
+        == "process_executable_outside_runtime"
+    )

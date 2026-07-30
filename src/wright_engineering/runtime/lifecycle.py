@@ -448,15 +448,18 @@ class NativeLifecycle:
         started_at = utc_now()
         operation_id = str(uuid4())
         status = self.status()
+        process_ownership: dict[str, object] = {
+            "ok": status.details.get(
+                "process_owned", status.state is not LifecycleState.HEALTHY
+            )
+        }
+        if identity_code := status.details.get("process_identity_code"):
+            process_ownership["code"] = identity_code
         checks: dict[str, object] = {
             "manifest": {"ok": status.code != "manifest_corrupt"},
             "compatibility": status.details.get("compatibility", {"ok": False}),
             "runtime_containment": {"ok": self._runtime_paths_contained()},
-            "process_ownership": {
-                "ok": status.details.get(
-                    "process_owned", status.state is not LifecycleState.HEALTHY
-                )
-            },
+            "process_ownership": process_ownership,
             "api": {"ok": bool(status.details.get("api_healthy"))},
             "ui": {"ok": bool(status.details.get("ui_healthy"))},
             "data_permissions": {"ok": self._data_permissions_ready()},
