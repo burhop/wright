@@ -1,7 +1,7 @@
 # Workspace Surfaces Research
 
-**Date**: 2026-07-30  
-**Scope**: primary-source standards research plus read-only repository discovery  
+**Date**: 2026-07-30
+**Scope**: primary-source standards research plus read-only repository discovery
 **Decision status**: all investigated choices are resolved
 
 ## Executive Findings

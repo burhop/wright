@@ -1,7 +1,7 @@
 # Workspace Surfaces Data Model
 
-**Version**: planning draft 1  
-**Persistence**: SQLite/WAL metadata plus content-addressed file-vault payloads  
+**Version**: planning draft 1
+**Persistence**: SQLite/WAL metadata plus content-addressed file-vault payloads
 **Rule**: persisted intent is authoritative only after current workspace, source, runtime, target, and policy reconciliation
 
 ## Identity and Scoping

@@ -1,8 +1,8 @@
 # Workspace Surfaces Security Requirements Checklist
 
-**Purpose**: Challenge the completeness, clarity and auditability of the security requirements before implementation  
-**Created**: 2026-07-30  
-**Feature**: [spec.md](../spec.md)  
+**Purpose**: Challenge the completeness, clarity and auditability of the security requirements before implementation
+**Created**: 2026-07-30
+**Feature**: [spec.md](../spec.md)
 **Depth**: formal security design/release review
 
 ## Trust Boundaries and Authority

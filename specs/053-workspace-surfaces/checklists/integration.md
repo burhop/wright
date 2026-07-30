@@ -1,8 +1,8 @@
 # Workspace Surfaces Integration and Release Requirements Checklist
 
-**Purpose**: Validate cross-package contracts, protocol coverage, compatibility, documentation and release evidence  
-**Created**: 2026-07-30  
-**Feature**: [spec.md](../spec.md)  
+**Purpose**: Validate cross-package contracts, protocol coverage, compatibility, documentation and release evidence
+**Created**: 2026-07-30
+**Feature**: [spec.md](../spec.md)
 **Depth**: architecture/integration/release review
 
 ## Package and API Boundaries

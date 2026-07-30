@@ -1,8 +1,8 @@
 # Workspace Surfaces UX and Accessibility Requirements Checklist
 
-**Purpose**: Validate the panel/browser, chat coexistence, novice display, diagnostics and accessibility contract  
-**Created**: 2026-07-30  
-**Feature**: [spec.md](../spec.md)  
+**Purpose**: Validate the panel/browser, chat coexistence, novice display, diagnostics and accessibility contract
+**Created**: 2026-07-30
+**Feature**: [spec.md](../spec.md)
 **Depth**: product design and accessibility release review
 
 ## Presentation and Continuity

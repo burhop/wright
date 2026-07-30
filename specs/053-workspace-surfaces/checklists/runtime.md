@@ -1,8 +1,8 @@
 # Workspace Surfaces Runtime Requirements Checklist
 
-**Purpose**: Verify lifecycle, proxy, persistence, recovery and platform requirements are complete before task generation  
-**Created**: 2026-07-30  
-**Feature**: [spec.md](../spec.md)  
+**Purpose**: Verify lifecycle, proxy, persistence, recovery and platform requirements are complete before task generation
+**Created**: 2026-07-30
+**Feature**: [spec.md](../spec.md)
 **Depth**: formal runtime/reliability review
 
 ## Lifecycle Semantics

@@ -1,6 +1,6 @@
 # Workspace Surfaces Threat Model
 
-**Method**: asset/trust-boundary review with STRIDE-style abuse cases  
+**Method**: asset/trust-boundary review with STRIDE-style abuse cases
 **Security posture**: active content is untrusted even when it originated in the workspace; declarations constrain possible authority but do not grant it
 
 ## Assets
