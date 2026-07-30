@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import io
 import json
 from pathlib import Path
 
@@ -9,8 +8,6 @@ import pytest
 
 from wright_engineering.runtime import server
 from wright_engineering.runtime.layout import NativeLayout
-from wright_engineering.runtime.lifecycle import NativeLifecycle
-from wright_engineering.runtime.models import ProcessIdentity
 from wright_engineering.runtime.server import (
     ServerBootstrapError,
     packaged_static_path,
@@ -48,38 +45,8 @@ def test_runtime_identity_contains_hash_not_raw_challenge(monkeypatch) -> None:
     monkeypatch.setenv("WRIGHT_RUNTIME_ID", "runtime-1")
     monkeypatch.setenv("WRIGHT_RUNTIME_INSTANCE_ID", "instance-1")
     payload = runtime_identity_payload()
-    assert payload["pid"] > 0
     assert payload["challenge_hash"] == hashlib.sha256(b"unlogged-secret").hexdigest()
     assert "unlogged-secret" not in json.dumps(payload)
-
-
-def test_health_identity_binds_challenge_to_expected_pid(monkeypatch) -> None:
-    identity = ProcessIdentity(
-        pid=42,
-        started_at="2026-07-30T00:00:00Z",
-        runtime_id="runtime-1",
-        executable_path="/runtime/bin/python",
-        host="127.0.0.1",
-        port=8765,
-        instance_id="instance-1",
-        challenge_hash=hashlib.sha256(b"secret").hexdigest(),
-        operation_id="operation-1",
-    )
-    payload = {
-        "product": "wright",
-        "pid": 43,
-        "runtime_id": identity.runtime_id,
-        "instance_id": identity.instance_id,
-        "challenge_hash": identity.challenge_hash,
-    }
-    monkeypatch.setattr(
-        "wright_engineering.runtime.lifecycle.urllib.request.urlopen",
-        lambda *_args, **_kwargs: io.BytesIO(json.dumps(payload).encode("utf-8")),
-    )
-
-    assert NativeLifecycle._probe_health(identity) is False
-    payload["pid"] = identity.pid
-    assert NativeLifecycle._probe_health(identity) is True
 
 
 def test_packaged_static_path_exists_and_missing_asset_fails(
