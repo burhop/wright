@@ -20,6 +20,14 @@ WHEEL_NAME = re.compile(
 )
 
 
+def default_fixture_version(source: Path) -> str:
+    match = WHEEL_NAME.fullmatch(source.name)
+    if match is None:
+        raise ValueError(f"not a Wright wheel: {source.name}")
+    public = match.group("version").split("+", 1)[0]
+    return f"{public}+fixture.1"
+
+
 def _digest(value: bytes) -> str:
     encoded = base64.urlsafe_b64encode(hashlib.sha256(value).digest()).rstrip(b"=")
     return f"sha256={encoded.decode('ascii')}"
@@ -92,9 +100,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wheel", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--version", default="0.1.6+fixture.1")
+    parser.add_argument("--version")
     args = parser.parse_args(argv)
-    target = build_fixture(args.wheel, args.output, args.version)
+    version = args.version or default_fixture_version(args.wheel)
+    target = build_fixture(args.wheel, args.output, version)
     print(target)
     return 0
 

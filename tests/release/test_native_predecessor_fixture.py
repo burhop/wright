@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import sys
+import tomllib
 import zipfile
 
 
@@ -55,3 +56,11 @@ def test_fixture_rewrites_wheel_identity_and_compatibility(tmp_path: Path) -> No
         assert compatibility["runtime_version"] == "0.1.6+fixture.1"
         assert compatibility["runtime_specifier"] == "==0.1.6.*"
         assert archive.read("wright_engineering-0.1.6+fixture.1.dist-info/RECORD")
+
+
+def test_default_fixture_version_tracks_root_release() -> None:
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    version = project["project"]["version"]
+    wheel = Path(f"wright_engineering-{version}-py3-none-any.whl")
+
+    assert _module().default_fixture_version(wheel) == f"{version}+fixture.1"
