@@ -10,7 +10,7 @@ import type {
   ViewerDocumentChangeEvent,
   Event,
 } from "../types";
-import { API_BASE } from "../../workspace-service";
+import { workspaceContentUrl } from "./workspace-content-url";
 
 export interface IframeDocument extends ViewerDocument {
   sessionId: string;
@@ -75,14 +75,11 @@ export class IframeProvider implements ViewerProvider<IframeDocument> {
     container.innerHTML = "";
 
     const iframe = window.document.createElement("iframe");
-    const encodedPath = encodeURIComponent(document.uri);
-    const encodedSessionId = encodeURIComponent(document.sessionId);
-
     // Sandbox attribute to prevent access to parent document and cookies
     iframe.setAttribute("sandbox", "allow-scripts");
 
     // Set source pointing to file endpoint
-    iframe.src = `${API_BASE}/api/workspace/files/content?path=${encodedPath}&session_id=${encodedSessionId}`;
+    iframe.src = workspaceContentUrl(document.uri, document.sessionId);
     iframe.style.width = "100%";
     iframe.style.height = "100%";
     iframe.style.border = "none";

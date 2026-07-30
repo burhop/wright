@@ -1,63 +1,48 @@
 # Python Packaging
 
-Wright's public-alpha PyPI package is:
+Wright's sole public Python distribution is `wright-engineering`; the ideal
+name `wright` is unavailable on PyPI.
 
-```text
-wright-engineering
-```
+## Application role
 
-The ideal package name `wright` is unavailable on PyPI. Existing component names such as `wright-core` also collide or need a more careful dependency plan, so component package publication is deferred for alpha.
+The distribution contains the complete manager-neutral application: lifecycle
+bootstrap, packaged API/UI, canonical catalog, provider-neutral gateway, manager
+profile generation, and a bounded `runtime` extra. It does not contain a Hermes
+plugin entry point and does not depend on manager runtimes. Internal module
+sources are bundled into the wheel rather than resolved as private packages.
 
-## What `wright-engineering` Is
-
-`wright-engineering` is the sole public Wright Python distribution. It is a
-lightweight CLI, diagnostics/configuration client, appliance status client, and
-direct MCP STDIO bridge. It does not contain the full appliance or depend on
-workspace-private packages. Supported Python versions are 3.11 through 3.14,
-and both the wheel and source archive must clean-install independently.
-
-It exposes commands such as:
+Supported Python versions are 3.11 through 3.14. Useful direct-manager and
+diagnostic commands include:
 
 ```bash
-pip install wright-engineering
+python -m pip install 'wright-engineering[runtime]==<version>'
 wright doctor
 wright appliance status --api-url http://127.0.0.1:8000
-wright config --dry-run
-wright mcp serve --stdio --api-url http://127.0.0.1:8000 --workspace WORKSPACE_ID
+wright mcp serve --stdio --api-url http://127.0.0.1:8000 --workspace WORKSPACE
 ```
 
-Docker remains the primary end-user install path for running the Wright appliance.
+Hermes users do not run that install manually: its thin Git adapter resolves the
+exact compatible wheel. Codex may launch the installed command or
+connect to the running HTTP service. Docker remains mandatory for every release.
 
 ## Trusted Publishing
 
-PyPI and TestPyPI use Trusted Publishing through GitHub Actions OIDC. Do not add PyPI API tokens to GitHub secrets.
+PyPI and TestPyPI use GitHub Actions OIDC Trusted Publishing; do not add PyPI
+API tokens to GitHub secrets.
 
-Configured project publishers:
+| Index | Project | Workflow | Environment |
+| --- | --- | --- | --- |
+| TestPyPI | `wright-engineering` | `release.yml` | `testpypi` |
+| PyPI | `wright-engineering` | `release.yml` | `pypi` |
 
-| Index | Project | GitHub owner/repo | Workflow | Environment |
-| --- | --- | --- | --- | --- |
-| TestPyPI | `wright-engineering` | `burhop/wright` | `release.yml` | `testpypi` |
-| PyPI | `wright-engineering` | `burhop/wright` | `release.yml` | `pypi` |
+The publishing action stays in the top-level workflow because Trusted
+Publishing does not support a reusable workflow as the publisher identity. The
+build-once wheel and sdist are identified by SHA-256, installed from TestPyPI,
+and passed unchanged to PyPI.
 
-The `testpypi`, `pypi`, and `release` environments require protected review.
-The PyPI publishing action must remain directly in the top-level `release.yml`;
-PyPI Trusted Publishing does not support using a reusable workflow as the
-publisher identity. The reusable OCI build is unaffected by this restriction.
-The build-once wheel and source archive are identified by SHA-256, installed
-from TestPyPI first, and then passed unchanged to PyPI. Identical retries may
-resume; different hashes require a new patch version.
+## Private component packages
 
-## Deferred Component Packages
-
-These packages stay workspace-local for alpha and are not promised as PyPI installs:
-
-- `wright-core`
-- `wright-tool-registry`
-- `wright-workspace-service`
-- `wright-agent-adapters`
-- `wright-data-vault`
-- `hermes-plugin-wright`
-
-They are marked `Private :: Do Not Upload`. Publish them later only after
-naming, dependency bounds, mirror behavior, and collision handling are designed
-together. Never publish `wright-core`; that public name belongs to another project.
+`wright-core`, `wright-tool-registry`, `wright-workspace-service`,
+`wright-agent-adapters`, `wright-data-vault`, and `hermes-plugin-wright` are
+marked `Private :: Do Not Upload`. Never publish `wright-core`; that public name
+belongs to another project.

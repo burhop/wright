@@ -19,7 +19,6 @@ from .db import (
     update_tool_enabled,
 )
 from .secrets import read_secrets, write_secrets, delete_secrets, has_credentials
-from .manager import McpEngine
 from .safety import ApprovalContext, McpSafetyPolicy, PolicyDecision
 from .engineering_catalog import ENGINEERING_CATALOG
 from .gateway_models import (
@@ -33,6 +32,15 @@ from .gateway_models import (
     RequestState,
     SessionState,
 )
+
+
+def __getattr__(name: str):
+    if name == "McpEngine":
+        from .manager import McpEngine
+
+        return McpEngine
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "McpServer",

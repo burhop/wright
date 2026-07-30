@@ -64,6 +64,8 @@ engineering toolchains still require explicit configuration.
 - Deterministic CAD, CAE, CAM, and calculation tool actuation through adapters.
 - Docker appliance for the Wright API, static web UI, Hermes profile/bootstrap,
   and general validation tooling.
+- A manager-neutral packaged runtime with a production Hermes Git adapter and
+  a direct MCP profile for Codex. OpenClaw integration remains future work.
 - BYO-AI configuration for local or hosted OpenAI-compatible endpoints.
 
 The Docker appliance is not a complete CAD/CAE/CAM workstation and does not
@@ -94,10 +96,27 @@ workspace volume or checkout you control.
 
 ## Quick Start
 
+### Native Hermes (Primary User Path)
+
+Hermes is Wright's primary manager path. Hermes uses Git for plugin installation,
+so Git is its one adapter prerequisite; Wright itself does not require Docker,
+Node.js, npm, a Wright checkout, `WRIGHT_REPO_DIR`, or a manual Python package
+command. Install the thin production adapter through Hermes:
+
+```text
+hermes plugins install https://github.com/burhop/hermes-plugin-wright --enable
+```
+
+Then use `/wright start`, `/wright status`, `/wright doctor`, `/wright stop`,
+`/wright update`, `/wright rollback`, `/wright uninstall`, and the separately
+confirmed `/wright purge`. See the
+[native Hermes guide](docs/getting-started/hermes-plugin.md) for data behavior
+and the live availability gate.
+
 ### Docker Appliance
 
-Docker is the primary end-user install path for the public alpha. Published
-release images use `burhop/wright:<tag>` on Docker Hub and
+Docker is the mandatory turnkey path for users who want a working appliance
+without Hermes setup. Published release images use `burhop/wright:<tag>` on Docker Hub and
 `ghcr.io/burhop/wright:<tag>` on GHCR.
 
 With a release image and an env file:
@@ -141,15 +160,14 @@ burhop/wright:<tag>
 ghcr.io/burhop/wright:<tag>
 ```
 
-The public-alpha Python helper package is:
+`wright-engineering` is the one complete public application distribution used
+by every supported manager adapter. The Hermes repository is a standard-library-only
+Git adapter; Codex connects directly through an MCP profile. Neither adapter
+duplicates Wright lifecycle or application code, and the public wheel
+has no dependency on private `wright-*` packages.
 
-```bash
-pip install wright-engineering
-wright doctor
-```
-
-Docker remains the primary end-user install path. `wright-engineering` is a
-lightweight helper/discovery package, not the full appliance. Prerelease tags
+Every production release requires both the published native Hermes lifecycle
+and byte-identical Docker publication to GHCR and Docker Hub. Prerelease tags
 such as `v0.1.0-alpha.1` do not move `latest`; stable tags may.
 
 ## Architecture

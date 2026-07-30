@@ -77,9 +77,23 @@ if ($null -eq $Options) {
     $pythonCmd = $null
     foreach ($candidate in @('python3', 'python')) {
         if (Get-Command $candidate -ErrorAction SilentlyContinue) {
-            # Verify it is Python 3
-            $verOut = & $candidate --version 2>&1
-            if ($verOut -match 'Python 3') {
+            # Verify it is a working Python 3 command. Windows may expose a
+            # Microsoft Store app-execution alias named python3.exe that
+            # Get-Command can resolve even though invoking it fails. Probe
+            # candidates without letting that native-command error abort the
+            # fallback to `python` under $ErrorActionPreference = 'Stop'.
+            $previousErrorActionPreference = $ErrorActionPreference
+            try {
+                $ErrorActionPreference = 'Continue'
+                $verOut = & $candidate --version 2>&1
+                $verExitCode = $LASTEXITCODE
+            } catch {
+                $verOut = ''
+                $verExitCode = 1
+            } finally {
+                $ErrorActionPreference = $previousErrorActionPreference
+            }
+            if ($verExitCode -eq 0 -and $verOut -match 'Python 3') {
                 $pythonCmd = $candidate
                 break
             }
@@ -88,7 +102,10 @@ if ($null -eq $Options) {
 
     if ($pythonCmd) {
         try {
-            $jsonOut = & $pythonCmd -c @'
+            # Windows PowerShell can split a multiline `python -c` argument at
+            # embedded newlines. Encode the helper so Python receives one
+            # stable command-line argument on both Windows PowerShell and pwsh.
+            $pythonHelper = @'
 import json
 import sys
 try:
@@ -101,11 +118,11 @@ except ImportError:
     sys.exit(2)
 
 try:
-    with open(sys.argv[1], "r", encoding="utf-8") as fh:
+    with open(sys.argv[2], "r", encoding="utf-8") as fh:
         data = yaml.safe_load(fh)
 except Exception as exc:
     print(
-        f"agent-context: unable to parse {sys.argv[1]} ({exc}); cannot update context.",
+        f"agent-context: unable to parse {sys.argv[2]} ({exc}); cannot update context.",
         file=sys.stderr,
     )
     sys.exit(2)
@@ -114,7 +131,11 @@ if not isinstance(data, dict):
     data = {}
 
 print(json.dumps(data))
-'@ $ExtConfig
+'@
+            $pythonHelperBytes = [System.Text.Encoding]::UTF8.GetBytes($pythonHelper)
+            $pythonHelperBase64 = [System.Convert]::ToBase64String($pythonHelperBytes)
+            $pythonBootstrap = 'import base64,sys;exec(base64.b64decode(sys.argv[1]))'
+            $jsonOut = & $pythonCmd -c $pythonBootstrap $pythonHelperBase64 $ExtConfig
             if ($LASTEXITCODE -eq 0 -and $jsonOut) {
                 $Options = $jsonOut | ConvertFrom-Json -ErrorAction Stop
             }

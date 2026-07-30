@@ -54,11 +54,19 @@ software to the base Docker image just to make catalog validation pass.
 ## Quality Gates
 
 For feature branches, `scripts/check-dev-merge.sh` is the authoritative gate
-before merge to `dev`. Release-train changes must additionally preserve the
-build-once wheel/sdist hashes, OCI candidate digest, full-SHA Action pins,
-protected environment ordering, expiring vulnerability exceptions, and the
-GitHub-Release-last contract. A dry-run rehearsal is evidence of orchestration,
-not authorization to publish.
+before merge to `dev`. The native Hermes candidate checks are mandatory and
+have no skip flag: they validate the complete wheel, base/runtime isolation,
+source isolation, forbidden executables, lifecycle behavior, and every claimed
+platform. Release-train changes must additionally preserve the build-once
+wheel/sdist hashes, runtime-extra lock, released-Hermes capability and stable
+channel ordering, OCI candidate digest, mandatory Docker Hub mirror, full-SHA
+Action pins, protected environment ordering, expiring vulnerability exceptions,
+and the GitHub-Release-last contract. A fixture or dry-run rehearsal is evidence
+of orchestration, not authorization to publish.
+
+Before merging `dev` to `main`, run `scripts/check-prod-merge.sh`. Production is
+not complete until published native Hermes and Docker paths both have terminal
+evidence; the legacy Git-plugin mirror cannot substitute for native evidence.
 
 The dev gate runs a focused security regression tranche before the complete
 test suite. Changes that move request-controlled data into cookies, filesystem

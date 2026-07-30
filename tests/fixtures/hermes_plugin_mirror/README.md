@@ -1,6 +1,9 @@
 # Wright Hermes Plugin Mirror
 
 This is the official thin Wright Hermes plugin mirror for https://github.com/burhop/wright.
+It is the production thin adapter for the Hermes Git plugin interface. The
+adapter installs `wright-engineering` into manager-neutral `WRIGHT_HOME` state;
+it does not contain the Wright application runtime.
 
 ## Install
 
@@ -23,6 +26,9 @@ hermes plugins update wright
 ```
 
 ## Remove
+
+Preserve Wright data by running `/wright uninstall` first, then remove the
+manager-owned adapter:
 
 ```bash
 hermes plugins remove wright

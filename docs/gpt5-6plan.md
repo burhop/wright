@@ -80,7 +80,7 @@ The published wright-engineering 0.1.0 sdist should receive an immediate sensiti
 | Codex MCP host | Supports STDIO and Streamable HTTP, server instructions, bearer/OAuth auth, user/project config, tool filters, and auto, prompt, writes, and approve policies. Desktop, CLI, and IDE share config. Source: [Codex MCP](https://learn.chatgpt.com/docs/extend/mcp?surface=cli). | A standards-compliant Wright MCP service is the shortest supported path. |
 | Codex plugins | Plugins can bundle skills and MCP configuration and use a marketplace manifest. Source: [Codex plugin guide](https://learn.chatgpt.com/docs/build-plugins). | Package workflow guidance with MCP discovery rather than requiring manual configuration forever. |
 | Codex app-server | Intended for products embedding Codex with auth, history, approvals, and streamed events; the SDK is preferable for jobs/CI. Source: [Codex app-server](https://learn.chatgpt.com/docs/app-server). | Defer unless Wright itself needs to host a Codex chat runtime. |
-| Hermes | Latest release is 0.18.2 / v2026.7.7.2 from 2026-07-08; local Docker pins 0.17.0. Source: [Hermes releases](https://github.com/NousResearch/hermes-agent/releases). | Upgrade only with a clean compatibility matrix. |
+| Hermes | Latest PyPI release is 0.19.0 from 2026-07-20; local Docker pins 0.19.0. Source: [Hermes on PyPI](https://pypi.org/project/hermes-agent/). | Upgrade only with a clean compatibility matrix. |
 | Hermes/Codex | Hermes has an openai-codex provider, a Codex MCP preset, and an opt-in beta Codex app-server runtime. Source: [Hermes Codex runtime](https://hermes-agent.nousresearch.com/docs/user-guide/features/codex-app-server-runtime). | These are different directions and must not replace direct Wright-to-Codex MCP. |
 | MCP specification | Current stable protocol version is 2025-11-25. Sources: [lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle), [transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports), and [tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools). | The hard-coded 2024-11-05 response and partial tool schema need replacement. |
 
@@ -408,8 +408,8 @@ Hermes remains optional and first-class. The stable Hermes path is Hermes consum
 | ChatGPT desktop Codex on Windows/macOS | Shared Codex MCP config/plugin | Primary; verify restart/install UX |
 | Codex IDE extension | Shared Codex MCP config/plugin | Primary |
 | Codex remote/cloud executor | Installed bridge in remote environment or reachable HTTP | Local desktop Wright is not implicitly reachable |
-| Hermes 0.18.2 default runtime | Same STDIO/HTTP Wright MCP | Supported secondary reference |
-| Local pinned Hermes 0.17.0 | Legacy compatibility during upgrade only | Test, migrate, then remove from supported matrix on a dated policy |
+| Hermes 0.19.0 default runtime | Same STDIO/HTTP Wright MCP | Supported secondary reference |
+| Previous pinned Hermes 0.17.0 | Legacy compatibility during upgrade only | Test, migrate, then remove from supported matrix on a dated policy |
 | Hermes codex_app_server | Migrated Wright MCP configuration | Optional beta; separate codex login; verify missing delegate_task, memory, session_search, and todo behavior |
 | Wright Docker | HTTP /mcp | Target; the current REST/SSE proxy is not that transport |
 | Current Wright gateway | 2024-11-05 tools-only proxy | Compatibility period only |
@@ -555,7 +555,7 @@ Effort scale: XS < 1 day, S 1-3 days, M 3-5 days, L 1-2 weeks. Estimates assume 
 
 | ID | Pri | Scope and likely files | Depends on | Acceptance, migration/rollback, docs, effort/risk, definition of done |
 | --- | --- | --- | --- | --- |
-| R5.1 | P1 | Upgrade/test Hermes 0.18.2, plugin enable flow, built-wheel entry point, config migration, and real health probes; set supported range. | R1.6/R3.6/R4.1 | Matrix covers current pin, migration target, plugin load, MCP list/call, upgrade/uninstall. Docker rollback pins the prior image digest. M / high. |
+| R5.1 | P1 | Upgrade/test Hermes 0.19.0, plugin enable flow, built-wheel entry point, config migration, and real health probes; set supported range. | R1.6/R3.6/R4.1 | Matrix covers current pin, migration target, plugin load, MCP list/call, upgrade/uninstall. Docker rollback pins the prior image digest. M / high. |
 | R5.2 | P1 | Thin hermes-plugin-wright to public API/MCP/CLI; remove private wright-tool-registry dependency and duplicate catalog/transport logic; repair mirror docs. | R5.1/R3.2/R4.1 | Clean public-index install in a fresh environment, hermes plugins enable wright, lifecycle commands, no unknown package downloads. Stable mirror remains disabled until this passes. M / high. |
 | R5.3 | P2 | Test/document openai-codex provider, Codex MCP preset, and beta codex_app_server as distinct optional modes. Do not build a Wright Codex adapter yet. | R5.1/R4.5 | Separate auth/config ownership diagrams; missing-tool behavior; toggle/rollback; current Codex/Hermes pinned matrix. S / medium/external. |
 

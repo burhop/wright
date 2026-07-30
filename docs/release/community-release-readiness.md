@@ -1,27 +1,35 @@
 # Community Release Readiness
 
-This page records the public-alpha release posture for Wright. It keeps install, package, container, visibility, and funding decisions in one place so public surfaces stay consistent.
+## Alpha channels
 
-## Alpha Channels
-
-| Surface | Alpha decision | Status |
+| Surface | Decision | Status |
 | --- | --- | --- |
-| Docker Hub | `burhop/wright:<tag>` | Required, protected, and digest-verified for every production release. |
-| GHCR | `ghcr.io/burhop/wright:<tag>` | Enabled by the release workflow. |
-| PyPI | `wright-engineering` | Single alpha helper package. |
-| Component packages | Not published for alpha | Existing package names collide or need a dependency plan. |
-| Contact | `wright@makerengineer.com` | Public support and partner contact. |
-| Sponsorship | GitHub Sponsors for `burhop` | Active. Organization/fiscal host deferred. |
+| Docker Hub | `burhop/wright:<tag>` | Required and digest-verified for every production release |
+| GHCR | `ghcr.io/burhop/wright:<tag>` | Required canonical OCI subject |
+| PyPI | `wright-engineering` | One complete manager-neutral application distribution |
+| Hermes | Production Git adapter plus exact Wright wheel | Primary manager path; Git is the Hermes adapter prerequisite |
+| Codex | Direct MCP profile | Supported without Hermes when its profile evidence passes |
+| OpenClaw | Future adapter seam | Not supported or release-gated in this delivery |
+| Component packages | Not published | Private monorepo implementation surfaces |
 
-## Messaging Rules
+## Messaging rules
 
-- Wright is public-alpha software for testing, MCP porting, demos, and selected beta feedback.
-- Wright is local-first and bring-your-own-AI. Public artifacts must not imply bundled LLMs, provider credentials, model weights, hosted services, proprietary engineering tools, or paid backends.
-- Docker is the primary end-user install path for alpha.
-- `wright-engineering` is a lightweight Python helper and discovery package, not the full appliance.
-- MCP-specific host software stays out of the base image unless a separate validated feature changes that boundary.
-- NVIDIA Inception and organization/fiscal-host funding are deferred until Wright has an eligible company, organization, or fiscal host.
+- Wright is public-alpha, local-first, and bring-your-own-AI.
+- Hermes is the primary manager path. It requires Git for its documented plugin
+  operation, but Wright runtime commands require no source checkout, Docker, or
+  Node/npm.
+- Codex connects directly to the same Wright MCP runtime. Its
+  prerequisites and configuration stay in their adapters.
+- `wright-engineering` contains the one complete application. Manager adapters
+  contain only installation or connection projection.
+- Docker is the mandatory turnkey path and must publish to GHCR and Docker Hub
+  for every production release.
+- MCP-specific host software remains outside the base wheel and image.
 
-## Release Gate
+## Release gate
 
-Before merging this feature branch to `dev`, run `scripts/check-dev-merge.sh` or document the specific local host limitation that prevented the gate. Before merging `dev` to `main`, run `scripts/check-prod-merge.sh`.
+Before feature-to-`dev`, run `scripts/check-dev-merge.sh`. Before `dev`-to-`main`,
+run `scripts/check-prod-merge.sh`. Final evidence must contain exact Wright and
+adapter identities, clean platform lifecycle/MCP results, forbidden-executable
+audits, and Docker digest/mirror verification before documentation and the
+GitHub Release complete.

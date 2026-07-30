@@ -1,45 +1,43 @@
-import importlib.metadata
+"""Verify the root-level Hermes Git plugin without installing a wheel."""
+
+from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
 import sys
 
 
-def verify():
-    print("Running Wright plugin skeleton verification...")
+class _Context:
+    def __init__(self) -> None:
+        self.commands: list[str] = []
 
-    # 1. Check if the package is installed and entry points are registered
+    def register_command(self, **kwargs: object) -> None:
+        self.commands.append(str(kwargs["name"]))
+
+
+def verify() -> None:
+    root = Path(__file__).resolve().parent
+    name = "wright_verified_adapter"
+    spec = importlib.util.spec_from_file_location(
+        name,
+        root / "__init__.py",
+        submodule_search_locations=[str(root)],
+    )
+    if spec is None or spec.loader is None:
+        raise SystemExit("Wright adapter package could not be loaded")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
     try:
-        eps = importlib.metadata.entry_points(group="hermes_agent.plugins")
-        wright_ep = next((ep for ep in eps if ep.name == "wright"), None)
-
-        if wright_ep is None:
-            print(
-                "❌ entry_point 'wright' not found under group 'hermes_agent.plugins'."
-            )
-            print(
-                "Please make sure the package is installed in editable mode: pip install -e ."
-            )
-            sys.exit(1)
-
-        print(f"✅ Found entry point: {wright_ep.name} -> {wright_ep.value}")
-
-        # 2. Try loading the entry point
-        print("Loading entry point...")
-        register_mod = wright_ep.load()
-        register_func = getattr(register_mod, "register", None)
-        if register_func is None:
-            raise AttributeError("Loaded module has no 'register' function.")
-        print("✅ Entry point loaded successfully.")
-
-        # 3. Invoke registration
-        print("Calling register()...")
-        register_func(None)
-        print("✅ register() executed successfully.")
-
-    except Exception as e:
-        print(f"❌ Verification failed: {e}")
-        import traceback
-
-        traceback.print_exc()
-        sys.exit(1)
+        spec.loader.exec_module(module)
+        context = _Context()
+        module.register(context)
+    finally:
+        for module_name in tuple(sys.modules):
+            if module_name == name or module_name.startswith(f"{name}."):
+                sys.modules.pop(module_name, None)
+    if context.commands != ["wright"]:
+        raise SystemExit(f"unexpected registered commands: {context.commands}")
+    print("Wright Hermes Git adapter verification passed")
 
 
 if __name__ == "__main__":

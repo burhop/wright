@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -19,7 +20,12 @@ logger = structlog.get_logger(__name__)
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
 SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
+UUID_SESSION_PATTERN = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
 HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
+GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
 
 
 class _ClosingConnection(sqlite3.Connection):
@@ -78,11 +84,13 @@ def is_synthetic_session_workspace(row: Dict[str, Any]) -> bool:
     basename = os.path.basename(local_path)
     workspace_name = str(row.get("workspace_name") or "").strip()
 
-    synthetic_id = (
-        session_id.startswith(SYNTHETIC_SESSION_PREFIXES)
-        or basename.startswith(SYNTHETIC_SESSION_PREFIXES)
-        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(session_id))
-        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(basename))
+    synthetic_id = any(
+        token.startswith(SYNTHETIC_SESSION_PREFIXES)
+        or bool(UUID_SESSION_PATTERN.fullmatch(token))
+        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
+        or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
+        for token in (session_id, basename, workspace_name)
+        if token
     )
     if not synthetic_id:
         return False
@@ -844,21 +852,34 @@ class WorkspaceManager:
         # `git init` is idempotent, so initialization needs no path existence
         # probe. The workspace path is passed only as a process capability (cwd),
         # while every command argument remains server-owned and fixed.
-        try:
-            subprocess.run(
-                ["git", "init"], cwd=self.base_dir, capture_output=True, check=True
+        git_executable = shutil.which("git")
+        if git_executable is None:
+            logger.warning(
+                "Git is unavailable; workspace created without a local repository",
+                workspace=self.base_dir,
             )
-            logger.info(
-                "Initialized local Git repository in workspace %s", self.base_dir
-            )
-        except (FileNotFoundError, NotADirectoryError) as error:
-            raise FileNotFoundError(self.base_dir) from error
-        except Exception as e:
-            logger.error(
-                "Failed to initialize Git repository in workspace %s: %s",
-                self.base_dir,
-                e,
-            )
+        else:
+            try:
+                subprocess.run(
+                    [git_executable, "init"],
+                    cwd=self.base_dir,
+                    capture_output=True,
+                    check=True,
+                )
+                logger.info(
+                    "Initialized local Git repository in workspace %s", self.base_dir
+                )
+            except (FileNotFoundError, NotADirectoryError) as error:
+                # `git_executable` was resolved independently of request data, so
+                # this failure identifies an invalid workspace capability without
+                # a second filesystem access using the caller-derived root.
+                raise FileNotFoundError(self.base_dir) from error
+            except Exception as e:
+                logger.error(
+                    "Failed to initialize Git repository in workspace %s: %s",
+                    self.base_dir,
+                    e,
+                )
 
         # Create the fixed-name default without probing a path derived from the
         # workspace identifier. Exclusive mode preserves an existing user file.
@@ -879,6 +900,8 @@ class WorkspaceManager:
                 check=True,
                 text=True,
             )
+        except (FileNotFoundError, NotADirectoryError) as error:
+            raise FileNotFoundError(self.base_dir) from error
         except Exception as e:
             logger.error(
                 "Failed to create default .gitignore in workspace %s: %s",

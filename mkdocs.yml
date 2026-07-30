@@ -54,7 +54,8 @@ nav:
       - Enterprise Evaluation: getting-started/enterprise-evaluation.md
       - PC Local Setup: getting-started/quickstart-local.md
       - GB10 and DGX Workstations: getting-started/workstation-gb10-dgx.md
-      - Existing Hermes Plugin: getting-started/hermes-plugin.md
+      - Native Wright for Hermes: getting-started/hermes-plugin.md
+      - Wright for Codex: getting-started/codex.md
   - User Guide:
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md

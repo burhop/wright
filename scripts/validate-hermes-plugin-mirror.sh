@@ -60,7 +60,7 @@ case "$CHANNEL" in stable|development) ;; *) echo "--channel must be stable or d
 failures=()
 fail() { failures+=("$1"); }
 
-required=(plugin.yaml __init__.py bridge.py catalog.py catalog.yaml commands.py schemas.py pyproject.toml README.md verify_plugin.py tests)
+required=(plugin.yaml __init__.py bootstrap.py commands.py pyproject.toml README.md verify_plugin.py tests)
 for path in "${required[@]}"; do
   [ -e "$MIRROR_DIR/$path" ] || fail "missing required root path: $path"
 done
@@ -79,18 +79,17 @@ done < <(find "$MIRROR_DIR" \( -name '*.pyc' -o -name '.env' -o -name '.env.*' \
 readme="$MIRROR_DIR/README.md"
 if [ -f "$readme" ]; then
   for token in \
-    "official thin Wright Hermes plugin mirror" \
-    "Stable install" \
-    "Development install" \
+    "production thin adapter" \
+    "Hermes Git plugin" \
+    "WRIGHT_HOME" \
     "hermes plugins update wright" \
     "hermes plugins remove wright" \
-    "Migration" \
+    "/wright uninstall" \
     "https://github.com/burhop/wright" \
     "https://github.com/burhop/wright/issues" \
     "https://github.com/burhop/wright/releases" \
-    "https://pypi.org/project/wright-engineering/" \
-    "Hermes plugin" \
-    "Provenance"; do
+    "wright-engineering" \
+    "Hermes plugin"; do
     grep -qi "$token" "$readme" || fail "README missing required content: $token"
   done
 fi

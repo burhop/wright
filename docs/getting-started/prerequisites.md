@@ -1,37 +1,51 @@
-# System Requirements & Prerequisites
+# Prerequisites
 
-Before installing and booting Wright, ensure your host environment meets these system and hardware requirements.
+Wright's runtime is manager-neutral. Each manager adapter owns its own small set
+of prerequisites.
 
----
+## Hermes
 
-## 1. Hardware Requirements
+- A released Hermes version satisfying the packaged compatibility contract.
+- Git, because `hermes plugins install`, `update`, and `remove` use Hermes' Git
+  plugin interface.
+- Network access to the adapter repository and PyPI for first install/update.
 
-### Minimum Configuration
-*   **CPU**: 4-Core x86_64 or ARM64 processor
-*   **Memory**: 16 GB RAM
-*   **Disk**: 20 GB free space (SSD recommended)
+After the adapter is installed, Wright lifecycle commands do not invoke Git,
+Docker, Node.js, npm, uv, or a source checkout. A complete verified cache can be
+used offline; missing or mismatched artifacts fail before activation.
 
-### Recommended Configuration (For Local Inference & Advanced Solvers)
-*   **Appliance Workstation**: Dell GB10 / NVIDIA DGX Spark
-*   **CPU**: 16-Core / 32-Thread AMD Threadripper or Intel Xeon
-*   **GPU**: NVIDIA RTX 4090 or NVIDIA H100 (128 GB+ Unified VRAM)
-*   **Memory**: 128 GB RAM
-*   **Disk**: 500 GB NVMe PCIe Gen 5 SSD
+## Codex
 
----
+- Codex with MCP server support.
+- An installed `wright-engineering[runtime]` command or a running Wright HTTP
+  service.
 
-## 2. Software Requirements
+Codex connects directly over STDIO or Streamable HTTP. Hermes and Git are not
+Codex runtime prerequisites.
 
-Ensure the following base tools are installed on your host system:
+## OpenClaw
 
-### Operating System
-*   **Linux**: Ubuntu 22.04 LTS / 24.04 LTS (Recommended), Debian 12, Fedora 40
-    *   *Note for Ubuntu 24.04+*: Default AppArmor rules restrict unprivileged user namespaces, which can cause sandboxing tools (e.g. `bwrap`) to fail. See the [GB10 Workstation Guide](workstation-gb10-dgx.md#troubleshooting-sandboxing-ubuntu-2404) for AppArmor setup instructions.
-*   **macOS**: macOS Sonoma 14+ (Compatible, though CalculiX/OpenFOAM solvers require Docker setup)
-*   **Windows**: Windows 11 with WSL2 (Ubuntu runtime)
+OpenClaw integration is future work. It is not a prerequisite, supported
+installation path, or release gate for this version of Wright.
 
-### Core Dependencies
-*   **Docker Engine**: v24.0+ and **Docker Compose** v2.20+
-*   **Python**: v3.11 or v3.12 (For running locally on the host)
-*   **Node.js**: v20+ and **npm / yarn** (For frontend development)
-*   **Git**: v2.34+ (For workspace history tracking)
+## Supported platform evidence
+
+Public native support is claimed only after clean evidence passes on Windows 11
+x64, Ubuntu 22.04/24.04 x64, and macOS Sonoma 14+ on each recorded x64 or arm64
+runner where Wright and the chosen manager both claim support.
+
+## Docker appliance
+
+- Docker Engine 24+ or Docker Desktop with Compose v2.20+.
+- 4 CPU cores, 16 GB RAM, and 20 GB free disk as an alpha baseline.
+- Network access for the image registry and configured model/MCP endpoints.
+
+Docker is a mandatory turnkey release artifact even though native managers are
+supported.
+
+## Contributors and external engineering tools
+
+Source development additionally uses Git, Python 3.11-3.14, uv, Node.js 22,
+npm, and Docker. FreeCAD, OpenSCAD, CalculiX, Blender, vendor CAD systems,
+license managers, drivers, credentials, and hardware remain selected-MCP
+prerequisites; they are not part of the base native runtime or Docker image.

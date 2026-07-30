@@ -18,7 +18,7 @@ def test_release_builds_each_subject_once_and_publishes_release_last() -> None:
     assert "docker/build-push-action@" not in release
     assert "Publish GitHub Release only after every verification" in release
     assert (
-        "needs: [preflight-and-python-build, post-publish-verification, deploy-versioned-docs]"
+        "needs: [preflight-and-python-build, post-publish-verification, native-published-lifecycle, mirror-dockerhub, deploy-versioned-docs]"
         in release
     )
     assert "uses: ./.github/workflows/docs-deploy.yml" in release

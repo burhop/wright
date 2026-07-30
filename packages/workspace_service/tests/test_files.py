@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import subprocess
+import shutil
+
 import pytest
 
 from workspace_service.executor import BoundedExecutor
@@ -11,6 +14,26 @@ from workspace_service.use_cases.files import WorkspaceFileUseCases
 def test_workspace_manager_requires_an_existing_root(tmp_path):
     with pytest.raises(FileNotFoundError):
         WorkspaceManager(str(tmp_path / "missing-workspace"))
+
+
+def test_workspace_manager_allows_file_workspace_when_git_is_unavailable(
+    tmp_path, monkeypatch
+):
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    real_run = subprocess.run
+    monkeypatch.setattr(shutil, "which", lambda command: None)
+
+    def run_without_git(command, *args, **kwargs):
+        assert command[0] != "git"
+        return real_run(command, *args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", run_without_git)
+
+    WorkspaceManager(str(workspace))
+
+    assert (workspace / ".gitignore").is_file()
+    assert not (workspace / ".git").exists()
 
 
 @pytest.mark.asyncio

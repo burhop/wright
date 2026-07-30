@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/049-provider-neutral-mcp/plan.md
+at specs/051-codeql-hardening/plan.md
 <!-- SPECKIT END -->
 
 

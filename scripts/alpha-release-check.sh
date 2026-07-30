@@ -9,7 +9,7 @@ git diff --check
 
 echo
 echo "== Python pytest =="
-uv run pytest
+uv run python -m pytest
 
 echo
 echo "== Frontend Vitest =="

@@ -12,7 +12,11 @@ from .models import (
     WorkspaceRecord,
     WorkspaceToolState,
 )
-from .service import WorkspaceService, default_workspace_parent_dir
+from .service import (
+    SessionWorkspaceAuthorization,
+    WorkspaceService,
+    default_workspace_parent_dir,
+)
 from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
@@ -29,6 +33,7 @@ __all__ = [
     "WorkspaceRecord",
     "WorkspaceManager",
     "WorkspaceService",
+    "SessionWorkspaceAuthorization",
     "WorkspaceServiceError",
     "WorkspaceToolState",
     "default_workspace_parent_dir",

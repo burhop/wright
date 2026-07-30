@@ -55,7 +55,7 @@ def build_api_gateway_service(db_path: str, engine, settings) -> GatewayService:
         },
         workspace_status=lambda session: {
             "workspace_id": session.workspace_id,
-            "session_id": session.session_id,
+            "session_id": session.binding_session_id or session.session_id,
         },
     )
     return GatewayService(

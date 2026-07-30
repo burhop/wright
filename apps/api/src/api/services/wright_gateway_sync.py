@@ -36,9 +36,14 @@ _PRESERVED_GATEWAY_CONFIG_KEYS = (
 
 
 def default_hermes_gateway_profile(repo_dir: str | None = None) -> WrightGatewayProfile:
-    return hermes_wright_gateway_profile(
-        repo_dir or os.getenv("WRIGHT_REPO_DIR", _REPO_ROOT)
-    )
+    if repo_dir is not None:
+        return hermes_wright_gateway_profile(repo_dir)
+    if os.getenv("WRIGHT_NATIVE_RUNTIME") == "1":
+        workspace_root = os.environ.get("WRIGHT_WORKSPACE_ROOT", "").strip()
+        if not workspace_root:
+            raise RuntimeError("WRIGHT_WORKSPACE_ROOT is required in native mode")
+        return hermes_wright_gateway_profile(None, terminal_cwd=workspace_root)
+    return hermes_wright_gateway_profile(_REPO_ROOT)
 
 
 def write_gateway_profile_config(
@@ -216,9 +221,7 @@ def sync_workspace_tools_to_wright_gateway(
     active_profile = profile or default_hermes_gateway_profile()
     active_config_paths = config_paths or hermes_config_paths()
     if active_profile.provider_name == "hermes":
-        gateway_project_dir = (
-            active_profile.gateway_project_dir or active_profile.terminal_cwd
-        )
+        gateway_project_dir = active_profile.gateway_project_dir
         binding_session_id = _gateway_binding_session(
             db_path,
             session_id,

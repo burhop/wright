@@ -1,40 +1,40 @@
 # Release Recovery
 
-Recovery preserves immutable subjects. Never overwrite PyPI files or move OCI version/SHA references.
+Recovery preserves immutable subjects. Never overwrite PyPI files or rebuild an
+old OCI version. Native manager paths and Docker are independent mandatory
+production paths.
 
-## Retry and partial completion
+## Manager adapter and runtime recovery
 
-Compare the release identity, Python SHA-256 values, and OCI digest with retained evidence. Identical subjects may resume missing stages. A differing subject under the same version is a conflict: stop and create a corrected patch version.
+If the Hermes adapter clone does not match the recorded Git commit or its
+provenance does not name the Wright release commit, stop before starting Wright.
+Repair and resync the mirror, then retry only with the same release subjects.
+The released-Hermes verification must use `hermes plugins install`, `update`,
+and `remove`; a fixture cannot replace it.
 
-## Python correction and yank
+If a published Wright update fails, retain the predecessor and use `/wright
+rollback` only when packaged schema bounds permit it. `recovery_required` is a
+stop condition. Default uninstall preserves `WRIGHT_HOME/data`; purge is
+separate and requires the exact confirmation code for the disclosed path.
 
-PyPI files are immutable. Publish a corrected patch. Yank only when the release is broken, incompatible, vulnerable, or contains prohibited material; record the reason and replacement. Do not yank solely because a newer version exists or because an artifact is larger than desired after sensitive-content review passes.
+Codex profile failure does not authorize routing through Hermes.
+Repair that manager's profile or evidence while retaining the same Wright
+runtime subject.
 
-## OCI quarantine and alias restore
+## Python and OCI recovery
 
-Keep immutable version and SHA references for audit. Mark the bad digest quarantined in release evidence, stop mutable aliases from pointing to it, and restore `latest` only to a digest already recorded as verified. Publish a patch candidate for the fix. Do not rebuild an old version.
+Never overwrite PyPI files. Publish a corrected patch; yank only for a broken,
+incompatible, vulnerable, or prohibited release and record the reason.
 
-## Mirror divergence
+For OCI recovery, preserve immutable version and digest references. Restore
+`latest` only to a digest already recorded as verified. If Docker Hub failed
+after GHCR passed, dispatch `recover-dockerhub-release.yml` with the existing tag
+and recorded GHCR digest; do not rebuild or republish Python artifacts.
 
-If Docker Hub resolves to a different manifest, hold the GitHub Release as draft, quarantine the mirror reference, and recopy from the canonical GHCR digest only after credentials/repository ownership are revalidated. Canonical GHCR evidence remains authoritative.
+## Completion and evidence
 
-If PyPI and GHCR already passed but Docker Hub did not, do not rerun Python
-publication or rebuild the OCI image. Dispatch
-`.github/workflows/recover-dockerhub-release.yml` from `main` with the existing
-release tag and the GHCR digest recorded in `release-evidence.json`. The
-recovery validates the tag commit and retained evidence, copies that exact
-digest to the version tag and stable `latest`, verifies both publicly, and
-retains separate recovery evidence as an artifact of the protected workflow
-run. Finalized GitHub Releases are immutable, so recovery intentionally does
-not modify the existing release; the evidence records the workflow run URL.
-
-## GitHub Release and documentation
-
-Keep the GitHub Release absent or draft until package, canonical image, required
-Docker Hub distribution, attestations, and versioned documentation are
-verified. If a terminal job fails, resume only after all evidence subjects
-remain identical.
-
-## Evidence retention
-
-Retain release identity, candidate files/hashes, archive content manifests, OCI digest/platform/labels, vulnerability decision and exceptions, SBOM/provenance subjects, approvals, promotions, verification output, optional skips, and recovery decisions. Redact credentials and secret values.
+Keep the GitHub Release absent or draft until PyPI, released-Hermes lifecycle,
+the Codex profile, GHCR, Docker Hub, attestations, and documentation are
+verified. Retain hashes, adapter identities, manager versions, lifecycle/MCP
+results, forbidden-executable audits, approvals, promotion output, and recovery
+decisions without credentials.

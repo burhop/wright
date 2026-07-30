@@ -1,7 +1,7 @@
 [project]
 name = "wright-engineering"
-version = "0.1.5"
-description = "Public-alpha helper CLI for the Wright local-first engineering appliance"
+version = "0.1.6"
+description = "Managed manager-neutral application and CLI for the Wright engineering workspace"
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
@@ -19,7 +19,29 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
 ]
-dependencies = []
+dependencies = [
+    "packaging>=24,<27",
+    "psutil>=6,<8",
+]
+
+[project.optional-dependencies]
+runtime = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.30,<1",
+    "python-jose[cryptography]>=3.3,<4",
+    "passlib[bcrypt]>=1.7,<2",
+    "structlog>=24.1,<27",
+    "opentelemetry-api>=1.25,<2",
+    "opentelemetry-sdk>=1.25,<2",
+    "opentelemetry-exporter-otlp>=1.25,<2",
+    "pydantic>=2.7,<3",
+    "httpx>=0.28,<1",
+    "httpx-sse>=0.4,<1",
+    "PyYAML>=6,<7",
+    "mcp>=1.27.2,<2",
+    "jsonschema>=4.26,<5",
+    "python-multipart>=0.0.32,<1",
+]
 
 [project.urls]
 Homepage = "https://github.com/burhop/wright"
@@ -32,6 +54,7 @@ Releases = "https://github.com/burhop/wright/releases"
 wright = "wright_engineering.cli:main"
 
 [tool.uv.sources]
+wright-engineering = { workspace = true }
 wright-workspace-service = { workspace = true }
 
 [tool.uv.workspace]
@@ -63,6 +86,7 @@ markers = [
 
 [dependency-groups]
 dev = [
+    "build>=1.2,<2",
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "respx>=0.22",
@@ -74,11 +98,25 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/wright_engineering"]
+packages = [
+    "src/wright_engineering",
+    "apps/api/src/api",
+    "packages/core/src/core",
+    "packages/agent_adapters/src/agent_adapters",
+    "packages/tool_registry/src/tool_registry",
+    "packages/data_vault/src/data_vault",
+    "packages/workspace_service/src/workspace_service",
+]
 
 [tool.hatch.build.targets.sdist]
 include = [
     "/src/wright_engineering",
+    "/apps/api/src/api",
+    "/packages/core/src/core",
+    "/packages/agent_adapters/src/agent_adapters",
+    "/packages/tool_registry/src/tool_registry",
+    "/packages/data_vault/src/data_vault",
+    "/packages/workspace_service/src/workspace_service",
     "/README.md",
     "/LICENSE",
     "/pyproject.toml",
@@ -87,11 +125,9 @@ exclude = [
     "/.gitignore",
     "/.github",
     "/.specify",
-    "/apps",
     "/docker",
     "/docs",
     "/hermes-plugin-wright",
-    "/packages",
     "/scripts",
     "/specs",
     "/tests",

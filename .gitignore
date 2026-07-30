@@ -296,6 +296,10 @@ tests_output/
 tmp/
 /tmp/
 
+# Native Hermes candidate build/test scratch (never user data)
+/native-candidate/
+/.native-runtime-cache/
+
 # Data vault local state
 .vault/
 

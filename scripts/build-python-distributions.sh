@@ -151,7 +151,19 @@ PY
   rm -rf "$out_dir"
   mkdir -p "$out_dir"
 
-  "$python_bin" -m build --sdist --wheel --outdir "$out_dir" "$package_dir"
+  if [ "$package_name" = "wright-engineering" ]; then
+    native_args=(
+      "$ROOT_DIR/scripts/build-native-runtime.py"
+      --output "$out_dir"
+      --evidence "$out_dir/native-build-evidence.json"
+    )
+    if [ "${WRIGHT_NATIVE_SKIP_FRONTEND_BUILD:-0}" = "1" ]; then
+      native_args+=(--skip-frontend-build)
+    fi
+    "$python_bin" "${native_args[@]}"
+  else
+    "$python_bin" -m build --sdist --wheel --outdir "$out_dir" "$package_dir"
+  fi
 
   wheel="$(find "$out_dir" -maxdepth 1 -type f -name '*.whl' | sort | tail -1)"
   sdist="$(find "$out_dir" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) | sort | tail -1)"
@@ -168,12 +180,14 @@ import sys
 
 root = pathlib.Path(sys.argv[1])
 sys.path.insert(0, str(root))
-from scripts.release.python_artifacts import artifact_evidence
+from scripts.release.python_artifacts import artifact_evidence, validate_native_distribution
 
 artifacts = []
 for value in sys.argv[2:]:
     path = pathlib.Path(value)
     evidence, manifest = artifact_evidence(path)
+    if evidence.filename.lower().startswith("wright_engineering-"):
+        validate_native_distribution(path)
     artifacts.append(evidence)
     path.with_name(path.name + ".contents.txt").write_text(
         manifest, encoding="utf-8", newline="\n"

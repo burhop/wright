@@ -91,11 +91,8 @@ fi
 allowlist=(
   plugin.yaml
   __init__.py
-  bridge.py
-  catalog.py
-  catalog.yaml
+  bootstrap.py
   commands.py
-  schemas.py
   pyproject.toml
   README.md
   PROVENANCE.md

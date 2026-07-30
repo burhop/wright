@@ -1,20 +1,30 @@
 # Wright Artifact Topology
 
-Wright has one product version and three intentionally different delivery surfaces.
+Wright has one product version and separate, jointly required delivery surfaces.
 
-| Surface | Role | Public identity | Support boundary |
+| Surface | Role | Public identity | Release evidence |
 | --- | --- | --- | --- |
-| Python | Lightweight CLI, diagnostics, configuration dry-run, appliance status, and direct MCP STDIO bridge | `wright-engineering` | No appliance runtime or workspace-private dependencies |
-| OCI | Complete local Wright appliance | `ghcr.io/burhop/wright@sha256:<digest>` and byte-identical `burhop/wright:<tag>` | `linux/amd64`; both registries required for a completed release |
-| Integrations | Codex and optional Hermes packaging | Versioned release assets/packages in their owning features | Consume public CLI/API/MCP contracts only |
+| Wright runtime | Complete manager-neutral application, UI, catalog, gateway, lifecycle, and MCP profiles | `wright-engineering` wheel/sdist | Exact filename, SHA-256, runtime lock, clean install, and lifecycle |
+| Hermes adapter | Standard-library-only projection from Hermes' real Git plugin interface to Wright lifecycle | `burhop/hermes-plugin-wright` Git commit | Released Hermes version, mirror commit and provenance, install/update/remove, `/wright` lifecycle |
+| Codex adapter | Direct STDIO or Streamable HTTP MCP profile | Versioned Wright profile at the release commit | Profile identity and MCP initialize/list/call |
+| OCI appliance | Turnkey local Wright appliance | `ghcr.io/burhop/wright@sha256:<digest>` and `burhop/wright:<tag>` | Same tested manifest digest in both registries |
 
-`wright-core`, `wright-tool-registry`, `wright-workspace-service`, `wright-agent-adapters`, `wright-data-vault`, and `wright-api` are private monorepo distributions. They are marked `Private :: Do Not Upload`, are absent from public publication workflows, and must never be resolved from public indexes. The `wright` and `wright-core` names on PyPI belong to other projects.
+`wright-core`, `wright-tool-registry`, `wright-workspace-service`,
+`wright-agent-adapters`, `wright-data-vault`, and `wright-api` are private
+monorepo distributions. They are not resolved from public indexes. The `wright`
+and `wright-core` names on PyPI belong to other projects.
 
-The root `pyproject.toml` version is authoritative. A release tag, Python metadata, OCI labels/tags, changelog, and release evidence must agree before candidate construction.
+## Exact-subject rule
 
-## Exact-artifact rule
-
-- Build the wheel and sdist once. Record filenames, safe content manifests, and SHA-256 hashes. TestPyPI and PyPI consume those bytes.
-- Build the `linux/amd64` OCI candidate once. Record its digest. Smoke, scan, inventory, SBOM, provenance, GHCR promotion, and required Docker Hub distribution consume that digest.
-- A retry with the same identity and same subjects may resume. Different subjects require a new patch version.
-- A dry-run rehearsal proves local identity and ordering only. It is not a production release.
+- Build the public wheel and sdist once and retain their content manifests and
+  hashes through TestPyPI, PyPI, and native manager verification.
+- Verify the Hermes mirror's installed Git commit and provenance source commit
+  before running Wright. Hermes does not select a Git ref, so post-clone
+  identity verification is mandatory.
+- Codex evidence names the Wright release commit and verifies the
+  direct MCP contract without Hermes.
+- Build the OCI candidate once; GHCR and Docker Hub must resolve to that tested
+  digest.
+- A retry may resume only with identical subjects. A different subject requires
+  a new patch version.
+- Native manager paths and Docker are both terminal release requirements.

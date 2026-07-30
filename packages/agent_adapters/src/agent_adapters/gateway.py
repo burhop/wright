@@ -39,6 +39,29 @@ def build_bound_wright_gateway_args(
     ]
 
 
+def build_installed_wright_gateway_args(
+    workspace_path: str,
+    session_id: str,
+    workspace_id: str,
+) -> list[str]:
+    """Launch the installed provider-neutral bridge without a source project."""
+    if not workspace_path.strip() or not session_id.strip() or not workspace_id.strip():
+        raise ValueError("Installed Wright gateway binding requires workspace and IDs")
+    return [
+        "-m",
+        "wright_engineering.cli",
+        "mcp",
+        "serve",
+        "--stdio",
+        "--workspace",
+        workspace_path,
+        "--session-id",
+        session_id,
+        "--workspace-id",
+        workspace_id,
+    ]
+
+
 @dataclass(frozen=True)
 class WrightGatewayProfile:
     provider_name: str

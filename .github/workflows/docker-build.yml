@@ -34,14 +34,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
       - name: Resolve canonical image
         id: image
         shell: bash
         run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/wright" >> "$GITHUB_OUTPUT"
       - name: Log in to canonical registry for release candidate
         if: ${{ inputs.push-candidate }}
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -67,7 +67,7 @@ jobs:
           IMAGE: ${{ inputs.push-candidate && format('{0}@{1}', steps.image.outputs.name, steps.build.outputs.digest) || format('{0}:candidate-{1}', steps.image.outputs.name, github.sha) }}
         run: WRIGHT_DOCKER_IMAGE="$IMAGE" WRIGHT_DOCKER_SKIP_BUILD=1 scripts/docker-smoke-test.sh
       - name: Scan exact candidate with blocking policy
-        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ inputs.push-candidate && format('{0}@{1}', steps.image.outputs.name, steps.build.outputs.digest) || format('{0}:candidate-{1}', steps.image.outputs.name, github.sha) }}
           format: json

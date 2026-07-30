@@ -103,8 +103,13 @@ def get_llm_api_url() -> str:
 DATABASE_PATH = os.getenv(
     "DATABASE_PATH",
     os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "state.db",
+        os.getenv(
+            "WRIGHT_DATA_ROOT",
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            ),
+        ),
+        "wright.db" if os.getenv("WRIGHT_DATA_ROOT") else "state.db",
     ),
 )
 
@@ -155,8 +160,9 @@ class McpTransportSettings:
 # Dynamically resolve and set default OPENSCAD_PATH for headless execution
 API_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(API_DIR)))
-DEFAULT_OPENSCAD_HEADLESS_PATH = os.path.join(
-    WORKSPACE_ROOT, "scripts", "openscad-headless.sh"
+DEFAULT_OPENSCAD_HEADLESS_PATH = os.getenv(
+    "WRIGHT_OPENSCAD_HEADLESS_PATH",
+    os.path.join(WORKSPACE_ROOT, "scripts", "openscad-headless.sh"),
 )
 
 if "OPENSCAD_PATH" not in os.environ:
