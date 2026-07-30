@@ -1748,7 +1748,7 @@ requires-dist = [{ name = "wright-core", editable = "packages/core" }]
 
 [[package]]
 name = "wright-engineering"
-version = "0.1.7"
+version = "0.1.8"
 source = { editable = "." }
 dependencies = [
     { name = "packaging" },

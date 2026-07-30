@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Iterator, Sequence
 
 
-WRIGHT_RUNTIME_VERSION = "0.1.7"
+WRIGHT_RUNTIME_VERSION = "0.1.8"
 ADAPTER_PROTOCOL = "hermes-git-plugin-v1"
 COMMAND_TIMEOUT_SECONDS = 600
 

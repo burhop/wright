@@ -25,6 +25,13 @@ run uv run --with check-wheel-contents==0.6.3 check-wheel-contents "$wheel_path"
 run scripts/security-scan.sh --include-untracked
 run scripts/alpha-release-check.sh
 
+adapter_default_ref="$(git ls-remote --symref https://github.com/burhop/hermes-plugin-wright HEAD | awk '$1 == "ref:" { print $2; exit }')"
+if [[ "$adapter_default_ref" != refs/heads/main ]]; then
+  echo "Hermes installs the mirror default branch; expected refs/heads/main, observed ${adapter_default_ref:-missing}."
+  exit 1
+fi
+echo "Stable Hermes adapter default branch is refs/heads/main."
+
 mirror_dir="$(mktemp -d "${TMPDIR:-/tmp}/wright-plugin-mirror.XXXXXX")"
 cleanup_mirror() {
   rm -rf "$mirror_dir"
