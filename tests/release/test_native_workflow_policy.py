@@ -47,6 +47,9 @@ def test_production_release_keeps_native_docker_docs_and_release_terminal() -> N
     assert "mirror-dockerhub" in release
     assert "deploy-versioned-docs" in release
     assert "publish-github-release-last" in release
+    assert "Verify stable Hermes adapter install branch" in release
+    assert "default_ref" in release
+    assert "refs/heads/main" in release
     release_last = release[release.index("publish-github-release-last:") :]
     assert "native-published-lifecycle" in release_last
     assert "mirror-dockerhub" in release_last
@@ -84,6 +87,9 @@ def test_merge_gates_have_mandatory_native_acceptance_without_skip_flag() -> Non
     assert "scripts/test-hermes-plugin-install.sh" in prod
     assert "scripts/test-hermes-plugin-update.sh" in prod
     assert "scripts/test-hermes-plugin-uninstall.sh" in prod
+    assert "adapter_default_ref" in prod
+    assert "refs/heads/main" in prod
+    assert "default branch" in contributing
     assert "run make" not in prod
     assert "SKIP_NATIVE" not in dev + prod
     assert "no skip flag" in contributing

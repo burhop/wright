@@ -1,6 +1,6 @@
 [project]
 name = "wright-engineering"
-version = "0.1.7"
+version = "0.1.8"
 description = "Managed manager-neutral application and CLI for the Wright engineering workspace"
 requires-python = ">=3.11"
 readme = "README.md"
