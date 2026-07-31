@@ -34,6 +34,11 @@ class LiveAppRouteManager(Protocol):
 class AuthorizedSurfaceRoute:
     presentation_id: str
     presentation_origin: str
+    principal_id: str
+    workspace_id: str
+    session_id: str
+    surface_id: str
+    source_id: str
     instance_id: str
     generation: int
     pin: ResolvedTargetPin
@@ -102,6 +107,11 @@ class SurfaceRouteAuthority:
         return AuthorizedSurfaceRoute(
             presentation_id=presentation.presentation_id,
             presentation_origin=presentation.effective_origin,
+            principal_id=presentation.user_id,
+            workspace_id=presentation.workspace_id,
+            session_id=presentation.session_id,
+            surface_id=presentation.surface_id,
+            source_id=presentation.source_id,
             instance_id=presentation.instance_id,
             generation=presentation.generation,
             pin=route.target,

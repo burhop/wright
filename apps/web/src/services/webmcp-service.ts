@@ -4,6 +4,7 @@ const webMcpLogger = logger.child("WebMcpService");
 
 export class WebMcpService {
   private socket: WebSocket | null = null;
+  readonly compatibilityEnabled: boolean;
   private get wsUrl() {
     if (typeof window === "undefined") {
       return "ws://127.0.0.1:8000/api/webmcp/ws";
@@ -15,7 +16,13 @@ export class WebMcpService {
   }
   private reconnectTimer: any = null;
 
-  constructor() {
+  constructor(options: { enabled?: boolean } = {}) {
+    this.compatibilityEnabled = options.enabled ?? false;
+    if (!this.compatibilityEnabled) return;
+    webMcpLogger.warn(
+      "Deprecated unprivileged WebMCP relay enabled for one-release compatibility",
+      { deprecated: true, privileged: false },
+    );
     // Listen for response dispatches from browser viewport components
     window.addEventListener("webmcp:response", (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -45,6 +52,13 @@ export class WebMcpService {
   }
 
   connect() {
+    if (!this.compatibilityEnabled) {
+      webMcpLogger.info("Deprecated WebMCP relay remains disabled", {
+        deprecated: true,
+        privileged: false,
+      });
+      return;
+    }
     if (
       this.socket &&
       (this.socket.readyState === WebSocket.CONNECTING ||
@@ -125,5 +139,7 @@ export class WebMcpService {
   }
 }
 
-export const webMcpService = new WebMcpService();
+export const webMcpService = new WebMcpService({
+  enabled: import.meta.env.VITE_WEBMCP_LEGACY_RELAY_ENABLED === "true",
+});
 export default webMcpService;

@@ -4,12 +4,24 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 import os
+import uuid
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Annotated, Any
 from urllib.parse import urlsplit
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, WebSocket
+from fastapi import (
+    APIRouter,
+    Depends,
+    Header,
+    HTTPException,
+    Request,
+    Response,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.background import BackgroundTask
@@ -32,6 +44,12 @@ from api.surface_websocket_proxy import (
 from workspace_service.surfaces.presentation_tokens import (
     PresentationTokenError,
     PresentationTokenService,
+)
+from tool_registry.webmcp_router import (
+    WebMcpBinding,
+    WebMcpRegistration,
+    WebMcpRouter,
+    WebMcpRoutingError,
 )
 
 
@@ -358,6 +376,162 @@ async def proxy_application(application_path: str, request: Request) -> Response
         raise _route_error(error) from error
     except (HttpProxyError, SseProxyError) as error:
         raise HTTPException(status_code=error.status_code, detail=error.code) from error
+
+
+def _webmcp_registration(
+    route: AuthorizedSurfaceRoute,
+    payload: Any,
+    router: WebMcpRouter,
+) -> WebMcpRegistration:
+    if not isinstance(payload, dict):
+        raise WebMcpRoutingError(
+            "SURFACE_PROTOCOL_WEBMCP_MESSAGE_INVALID",
+            "WebMCP registration must be a surface message",
+        )
+    router.validate_surface_message(payload)
+    body = payload.get("payload")
+    tool = body.get("tool") if isinstance(body, dict) else None
+    if not isinstance(tool, dict):
+        raise WebMcpRoutingError(
+            "SURFACE_PROTOCOL_WEBMCP_REGISTRATION_INVALID",
+            "WebMCP registration omitted its tool declaration",
+        )
+    name = tool.get("name")
+    description = tool.get("description", "")
+    input_schema = tool.get("inputSchema", {"type": "object"})
+    if not isinstance(name, str) or not isinstance(description, str):
+        raise WebMcpRoutingError(
+            "SURFACE_PROTOCOL_WEBMCP_REGISTRATION_INVALID",
+            "WebMCP tool identity is invalid",
+        )
+    if not isinstance(input_schema, dict):
+        raise WebMcpRoutingError(
+            "SURFACE_PROTOCOL_WEBMCP_SCHEMA_INVALID",
+            "WebMCP input schema must be an object",
+        )
+    registration = WebMcpRegistration(
+        binding=WebMcpBinding(
+            principal_id=route.principal_id,
+            workspace_id=route.workspace_id,
+            session_id=route.session_id,
+            surface_id=route.surface_id,
+            instance_id=route.instance_id,
+            generation=route.generation,
+            document_origin=route.presentation_origin,
+            server_id=route.source_id,
+            tool_name=name,
+        ),
+        description=description,
+        input_schema=input_schema,
+    )
+    if payload.get("binding") != registration.binding.envelope():
+        raise WebMcpRoutingError(
+            "SURFACE_PROTOCOL_WEBMCP_SCOPE_INVALID",
+            "WebMCP message scope does not match the authorized presentation",
+        )
+    return registration
+
+
+@router.websocket("/__wright/webmcp")
+async def surface_webmcp(websocket: WebSocket) -> None:
+    router: WebMcpRouter | None = getattr(
+        websocket.app.state, "surface_webmcp_router", None
+    )
+    if router is None:
+        await websocket.close(code=1008, reason="WebMCP is disabled")
+        return
+    try:
+        route = _authorize_application_route(websocket)
+        origins = [
+            value
+            for name, value in _raw_headers(websocket.scope)
+            if name.lower() == "origin"
+        ]
+        if origins != [route.presentation_origin]:
+            raise WebMcpRoutingError(
+                "SURFACE_PROTOCOL_WEBMCP_ORIGIN_INVALID",
+                "WebMCP origin does not match the authorized presentation",
+            )
+        await websocket.accept()
+        connected_at = datetime.now(UTC)
+        base_binding = {
+            "workspaceId": route.workspace_id,
+            "sessionId": route.session_id,
+            "surfaceId": route.surface_id,
+            "instanceId": route.instance_id,
+            "generation": route.generation,
+            "documentOrigin": route.presentation_origin,
+            "serverId": route.source_id,
+        }
+        await websocket.send_json(
+            {
+                "protocolVersion": "1.0",
+                "kind": "event",
+                "messageId": str(uuid.uuid4()),
+                "correlationId": str(uuid.uuid4()),
+                "binding": base_binding,
+                "operation": "webmcp.connected",
+                "sequence": 0,
+                "createdAt": connected_at.isoformat(),
+                "deadlineAt": (
+                    connected_at + timedelta(seconds=30)
+                ).isoformat(),
+                "payload": {"draft": "2026-07-28"},
+            }
+        )
+        while route.authority_valid() and route.target_valid():
+            raw = await websocket.receive_text()
+            payload = json.loads(raw)
+            operation = payload.get("operation") if isinstance(payload, dict) else None
+            if operation == "webmcp.register":
+                registration = _webmcp_registration(route, payload, router)
+                router.register(websocket, registration)
+                await websocket.send_json(
+                    {
+                        "protocolVersion": "1.0",
+                        "kind": "result",
+                        "messageId": str(uuid.uuid4()),
+                        "correlationId": payload["correlationId"],
+                        "replyTo": payload["messageId"],
+                        "binding": registration.binding.envelope(),
+                        "operation": "webmcp.register.result",
+                        "toolName": registration.binding.tool_name,
+                        "sequence": 0,
+                        "createdAt": datetime.now(UTC).isoformat(),
+                        "deadlineAt": payload["deadlineAt"],
+                        "payload": {"registered": True},
+                    }
+                )
+            elif operation == "webmcp.unregister":
+                registration = _webmcp_registration(route, payload, router)
+                router.unregister(
+                    websocket, registration.binding, reason="disposed"
+                )
+                await websocket.send_json(
+                    {
+                        "protocolVersion": "1.0",
+                        "kind": "result",
+                        "messageId": str(uuid.uuid4()),
+                        "correlationId": payload["correlationId"],
+                        "replyTo": payload["messageId"],
+                        "binding": registration.binding.envelope(),
+                        "operation": "webmcp.unregister.result",
+                        "toolName": registration.binding.tool_name,
+                        "sequence": 0,
+                        "createdAt": datetime.now(UTC).isoformat(),
+                        "deadlineAt": payload["deadlineAt"],
+                        "payload": {"unregistered": True},
+                    }
+                )
+            else:
+                router.handle_message(websocket, raw)
+    except (SurfaceRouteAuthorizationError, WebMcpRoutingError, ValueError, json.JSONDecodeError):
+        await websocket.close(code=1008, reason="WebMCP route denied")
+    except WebSocketDisconnect:
+        pass
+    finally:
+        if router is not None:
+            router.disconnect(websocket)
 
 
 @router.websocket("/{application_path:path}")

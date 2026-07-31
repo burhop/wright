@@ -109,6 +109,9 @@ async def lifespan(app: FastAPI):
         DATABASE_PATH,
         operation_timeout=mcp_settings.operation_timeout_seconds,
     )
+    if app.state.workspace_surface_settings.flags.webmcp:
+        app.state.surface_webmcp_router = app.state.mcp_engine.webmcp_router
+        preview_app.state.surface_webmcp_router = app.state.surface_webmcp_router
     if api_mcp_autostart_enabled():
         await app.state.mcp_engine.sync_active_servers()
     app.state.gateway_service = build_api_gateway_service(
@@ -294,6 +297,7 @@ preview_app.include_router(surface_preview_router)
 if (
     app.state.workspace_surface_settings.flags.live_apps
     or app.state.workspace_surface_settings.flags.mcp_apps
+    or app.state.workspace_surface_settings.flags.webmcp
 ):
     app.add_middleware(
         SurfaceHostDispatchMiddleware,
@@ -304,6 +308,9 @@ if (
 
 @app.websocket("/api/webmcp/ws")
 async def webmcp_websocket_endpoint(websocket: WebSocket):
+    if os.getenv("WRIGHT_WEBMCP_LEGACY_RELAY_ENABLED") != "1":
+        await websocket.close(code=1008, reason="Legacy WebMCP relay is disabled")
+        return
     selected_protocol = authorize_websocket(websocket, app.state.security_settings)
     await websocket.accept(subprotocol=selected_protocol)
     mcp_engine = app.state.mcp_engine

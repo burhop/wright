@@ -1,8 +1,6 @@
 import time
 import json
-import uuid
-import asyncio
-from typing import Dict, Any, Optional, Set
+from typing import Dict, Any, Optional
 from core.logging import get_logger
 from core.redaction import redact_command, redact_mapping, redact_text
 from .models import McpServer, McpTool
@@ -14,6 +12,7 @@ from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials
 from .lifecycle import McpLifecycleCoordinator
 from .lifecycle_adapters import DatabaseLifecycleAdapter
+from .webmcp_router import WebMcpRouter, WebMcpRoutingError
 
 logger = get_logger(__name__)
 
@@ -36,36 +35,34 @@ class McpEngine:
             publish_status=self._lifecycle_adapter.publish_status,
             operation_timeout=operation_timeout,
         )
-        self._webmcp_connections: Set[Any] = set()
-        self._pending_webmcp_calls: Dict[str, asyncio.Future] = {}
+        self.webmcp_router = WebMcpRouter(operation_timeout=operation_timeout)
 
     async def register_webmcp_connection(self, websocket: Any) -> None:
-        """Register a new WebMCP WebSocket connection from the client browser."""
-        self._webmcp_connections.add(websocket)
+        """Accept the deprecated relay socket without granting tool authority."""
         logger.info(
-            "webmcp_connection_registered",
-            total=len(self._webmcp_connections),
+            "webmcp_legacy_connection_registered",
+            deprecated=True,
+            privileged=False,
         )
 
     async def unregister_webmcp_connection(self, websocket: Any) -> None:
         """Unregister a WebMCP WebSocket connection on disconnect."""
-        self._webmcp_connections.discard(websocket)
+        self.webmcp_router.disconnect(websocket, reason="legacy_disconnect")
         logger.info(
-            "webmcp_connection_unregistered",
-            total=len(self._webmcp_connections),
+            "webmcp_legacy_connection_unregistered",
+            deprecated=True,
         )
 
     async def handle_webmcp_message(self, message_str: str) -> None:
-        """Process incoming WebSocket JSON-RPC messages and resolve pending tool call futures."""
+        """Ignore messages on the deprecated unscoped compatibility socket."""
         try:
             payload = json.loads(message_str)
-            if not isinstance(payload, dict):
-                return
-            call_id = payload.get("id")
-            if call_id and call_id in self._pending_webmcp_calls:
-                future = self._pending_webmcp_calls[call_id]
-                if not future.done():
-                    future.set_result(payload)
+            if isinstance(payload, dict):
+                logger.warning(
+                    "webmcp_legacy_message_ignored",
+                    deprecated=True,
+                    privileged=False,
+                )
         except Exception as e:
             logger.error("webmcp_message_process_failed", error=redact_text(e))
 
@@ -440,45 +437,26 @@ class McpEngine:
             raise RuntimeError(decision.reason)
 
         if server.type == "webmcp":
-            if not self._webmcp_connections:
+            workspace_id = approval_context.workspace_id if approval_context else None
+            if not workspace_id:
                 raise RuntimeError(
-                    "No active browser WebSocket connection found for WebMCP tool invocation."
+                    "WebMCP tool invocation requires an exact workspace binding."
                 )
-
-            call_id = f"webmcp-call-{uuid.uuid4()}"
-            future = asyncio.get_running_loop().create_future()
-            self._pending_webmcp_calls[call_id] = future
-
-            payload = {
-                "jsonrpc": "2.0",
-                "id": call_id,
-                "method": tool_name,
-                "params": arguments,
-            }
-
-            send_payload = json.dumps(payload)
-            # Broadcast the tool call to all connected client WebMCP sockets
-            for conn in list(self._webmcp_connections):
-                try:
-                    await conn.send_text(send_payload)
-                except Exception as e:
-                    logger.warning(
-                        "webmcp_payload_send_failed",
-                        server_id=server_id,
-                        tool_name=tool_name,
-                        error=redact_text(e),
-                    )
-
+            matches = self.webmcp_router.matching(
+                workspace_id=workspace_id,
+                server_id=server_id,
+                tool_name=tool_name,
+            )
+            if not matches:
+                raise RuntimeError("No exact WebMCP surface registration is available.")
+            if len(matches) != 1:
+                raise RuntimeError(
+                    "WebMCP tool name is ambiguous; select an exact surface registration."
+                )
             try:
-                # Wait for client response over WebSocket with a 30-second timeout
-                response = await asyncio.wait_for(future, timeout=30.0)
-                if "error" in response:
-                    raise RuntimeError(
-                        f"WebMCP tool invocation failed: {response['error']}"
-                    )
-                return response.get("result", {})
-            finally:
-                self._pending_webmcp_calls.pop(call_id, None)
+                return dict(await self.webmcp_router.invoke(matches[0], arguments))
+            except WebMcpRoutingError as error:
+                raise RuntimeError(f"{error.code}: {error}") from error
 
         return await self.lifecycle.call_tool(
             server_id,
@@ -533,4 +511,5 @@ class McpEngine:
     async def shutdown(self) -> None:
         """Shutdown all active runners on cleanup."""
         await self.lifecycle.shutdown()
+        await self.webmcp_router.close()
         self._active_runners.clear()

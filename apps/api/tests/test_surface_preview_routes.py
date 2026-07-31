@@ -119,6 +119,11 @@ def _configured_preview() -> _ConfiguredPreview:
     route = AuthorizedSurfaceRoute(
         presentation_id="presentation-1",
         presentation_origin=ORIGIN,
+        principal_id="user-1",
+        workspace_id="workspace-1",
+        session_id="session-1",
+        surface_id="surface-1",
+        source_id="server-1",
         instance_id="instance-1",
         generation=3,
         pin=_pin(),
@@ -226,7 +231,11 @@ class _Tokens:
         self.active = True
         self.record = SimpleNamespace(
             presentation_id="presentation-1",
+            user_id="user-1",
             workspace_id="workspace-1",
+            session_id="session-1",
+            surface_id="surface-1",
+            source_id="server-1",
             instance_id="instance-1",
             generation=3,
             effective_origin=ORIGIN,

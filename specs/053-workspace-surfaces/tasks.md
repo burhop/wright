@@ -281,10 +281,10 @@
 - [X] T152 [P] [US6] Add double-iframe restrictive-default CSP, permission/domain validation, undeclared fetch/object/frame, and no-pre-init-message tests to `tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts` (FR-035 through FR-037, SC-009)
 - [X] T153 [P] [US6] Add absent/unsupported capability, missing/bad resource, CSP failure, renderer failure, and useful non-UI fallback tests to `apps/web/src/services/surfaces/mcp/mcp-app-presenter.spec.tsx` (FR-028 through FR-030, FR-034)
 - [ ] T154 [P] [US6] Add official reference MCP App end-to-end authorized/denied/fallback journeys to `tests/e2e/workspace-surfaces/test_mcp_app.py` (User Story 6, SC-009)
-- [ ] T155 [P] [US6] Add composite workspace/session/surface/generation/origin/server/tool registration and identical-name routing tests to `apps/api/tests/test_surface_webmcp.py` (FR-032 through FR-033)
-- [ ] T156 [P] [US6] Add navigation/abort/dispose/disconnect cancellation, stale/late/replay, schema/size/rate, injection, and policy tests to `apps/api/tests/test_surface_webmcp_security.py` (FR-031 through FR-034, FR-043)
-- [ ] T157 [P] [US6] Add absent/current/rejected/changing `document.modelContext`, Permissions Policy, and scoped fallback tests to `apps/web/src/services/surfaces/webmcp/webmcp-adapter.spec.ts` (FR-032 through FR-034)
-- [ ] T158 [P] [US6] Add two simultaneous same-tool-name pages, native-absent fallback, denial, and teardown journeys to `tests/ui-integration/workspace-surfaces/webmcp.spec.ts` (FR-032 through FR-034, SC-009)
+- [X] T155 [P] [US6] Add composite workspace/session/surface/generation/origin/server/tool registration and identical-name routing tests to `apps/api/tests/test_surface_webmcp.py` (FR-032 through FR-033)
+- [X] T156 [P] [US6] Add navigation/abort/dispose/disconnect cancellation, stale/late/replay, schema/size/rate, injection, and policy tests to `apps/api/tests/test_surface_webmcp_security.py` (FR-031 through FR-034, FR-043)
+- [X] T157 [P] [US6] Add absent/current/rejected/changing `document.modelContext`, Permissions Policy, and scoped fallback tests to `apps/web/src/services/surfaces/webmcp/webmcp-adapter.spec.ts` (FR-032 through FR-034)
+- [X] T158 [P] [US6] Add two simultaneous same-tool-name pages, native-absent fallback, denial, and teardown journeys to `tests/ui-integration/workspace-surfaces/webmcp.spec.ts` (FR-032 through FR-034, SC-009)
 
 ### Implementation for User Story 6
 
@@ -298,10 +298,10 @@
 - [X] T166 [P] [US6] Bundle the official sandbox/bridge assets offline and implement the distinct-origin outer sandbox proxy in `apps/web/src/services/surfaces/mcp/sandbox-proxy.ts` and `apps/web/public/surface-sandbox/` (FR-030, FR-035 through FR-037, FR-051)
 - [X] T167 [US6] Implement official AppBridge host lifecycle, exact window/origin verification, capability context, cancellation, and gateway routing in `apps/web/src/services/surfaces/mcp/mcp-app-host.ts` (FR-030 through FR-034)
 - [X] T168 [P] [US6] Implement MCP App presenter negotiation, loading/error/status, fallback content, and stable test IDs in `apps/web/src/services/surfaces/mcp/mcp-app-presenter.tsx` (FR-028 through FR-030, FR-034, FR-054)
-- [ ] T169 [US6] Replace the global backend WebMCP socket set/call map with composite-bound registration, exact target, cancellation, validation, limits, and audit in `packages/tool_registry/src/tool_registry/webmcp_router.py` and `apps/api/src/api/routers/webmcp.py` (FR-031 through FR-034, FR-043)
-- [ ] T170 [US6] Implement the abortable surface-scoped Wright WebMCP SDK/bridge with no global window broadcasts in `apps/web/src/services/surfaces/webmcp/wright-surface-sdk.ts` (FR-032 through FR-034)
-- [ ] T171 [P] [US6] Implement tested feature detection and optional dual registration at `document.modelContext` without polyfilling it in `apps/web/src/services/surfaces/webmcp/webmcp-adapter.ts` (FR-032)
-- [ ] T172 [US6] Gate the legacy relay as an unprivileged one-release compatibility adapter with deprecation telemetry in `apps/web/src/services/webmcp-service.ts` and `apps/web/src/components/chat/WorkspacePanel.tsx` (FR-032 through FR-034)
+- [X] T169 [US6] Replace the global backend WebMCP socket set/call map with composite-bound registration, exact target, cancellation, validation, limits, and audit in `packages/tool_registry/src/tool_registry/webmcp_router.py` and `apps/api/src/api/routers/webmcp.py` (FR-031 through FR-034, FR-043)
+- [X] T170 [US6] Implement the abortable surface-scoped Wright WebMCP SDK/bridge with no global window broadcasts in `apps/web/src/services/surfaces/webmcp/wright-surface-sdk.ts` (FR-032 through FR-034)
+- [X] T171 [P] [US6] Implement tested feature detection and optional dual registration at `document.modelContext` without polyfilling it in `apps/web/src/services/surfaces/webmcp/webmcp-adapter.ts` (FR-032)
+- [X] T172 [US6] Gate the legacy relay as an unprivileged one-release compatibility adapter with deprecation telemetry in `apps/web/src/services/webmcp-service.ts` and `apps/web/src/components/chat/WorkspacePanel.tsx` (FR-032 through FR-034)
 - [ ] T173 [P] [US6] Create packaged MCP App and scoped WebMCP reference integrations with authorized, denied, fallback, and teardown paths in `examples/workspace-surfaces/mcp_app_server/` and `examples/workspace-surfaces/webmcp_app/` (FR-028 through FR-034, FR-055)
 
 **Checkpoint**: User Story 6 passes with stable MCP Apps behavior and with native WebMCP both absent and feature-detected; the global broadcast path carries no authority.

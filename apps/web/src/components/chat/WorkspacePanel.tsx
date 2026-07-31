@@ -664,34 +664,6 @@ export function WorkspacePanel({
     };
   }, [activeTabPath, workspaceFileSessionId, getDocument, getProvider]);
 
-  // Keep compatibility with webmcp event integration
-  useEffect(() => {
-    const handleWebMcpRequest = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const { callId, method } = customEvent.detail || {};
-
-      if (!callId) return;
-
-      if (method === "get_selected_part") {
-        const responseEvent = new CustomEvent("webmcp:response", {
-          detail: {
-            callId,
-            result: {
-              partId: "part-aba8973b-31a8",
-              dimensions: [12.0, 5.5, 2.3],
-            },
-          },
-        });
-        window.dispatchEvent(responseEvent);
-      }
-    };
-
-    window.addEventListener("webmcp:request", handleWebMcpRequest);
-    return () => {
-      window.removeEventListener("webmcp:request", handleWebMcpRequest);
-    };
-  }, []);
-
   // Fetch Git Data helper
   const fetchGitData = useCallback(async () => {
     if (!activeSessionId) return;
