@@ -29,17 +29,10 @@ export type VerificationState =
   | "excluded";
 
 export type InstallabilityTier =
-  | "tested"
-  | "might_work"
-  | "blocked"
-  | "non_working";
+  "tested" | "might_work" | "blocked" | "non_working";
 
 export type RiskLevel =
-  | "read-only"
-  | "low"
-  | "medium"
-  | "high"
-  | "safety-critical";
+  "read-only" | "low" | "medium" | "high" | "safety-critical";
 
 export interface PlatformSupportRecord {
   status: "yes" | "likely" | "host-dependent" | "unknown" | "no";

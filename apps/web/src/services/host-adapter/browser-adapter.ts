@@ -1,9 +1,6 @@
 import type { HostAdapter } from "./host-adapter";
 import type { FileEntry, SelectOptions } from "./wright-desktop";
-import {
-  createBrowserSession,
-  readStoredAccessToken,
-} from "../auth-session";
+import { createBrowserSession, readStoredAccessToken } from "../auth-session";
 
 export class BrowserHostAdapter implements HostAdapter {
   readonly mode = "browser";

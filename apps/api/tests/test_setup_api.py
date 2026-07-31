@@ -257,9 +257,7 @@ async def test_configure_llm_provider_rejects_missing_url(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_codex_login_flow_surfaces_device_code(
-    client: AsyncClient, monkeypatch
-):
+async def test_codex_login_flow_surfaces_device_code(client: AsyncClient, monkeypatch):
     from api.routers import setup as setup_router
 
     setup_router._CODEX_LOGIN_JOBS.clear()

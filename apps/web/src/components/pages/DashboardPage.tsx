@@ -218,7 +218,9 @@ export function DashboardPage() {
         >
           <div>
             <strong>Model provider is not connected.</strong>
-            <div style={{ color: "var(--color-secondary)", fontSize: "0.85rem" }}>
+            <div
+              style={{ color: "var(--color-secondary)", fontSize: "0.85rem" }}
+            >
               Wright and Hermes are running, but prompts need a model provider.
             </div>
           </div>

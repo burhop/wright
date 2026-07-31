@@ -339,7 +339,7 @@ def _registry_category(
 
 def _risk_level(server_id: str, manifest_entry: dict[str, Any]) -> str:
     text = f"{server_id} {manifest_entry.get('docs_summary', '')}".lower()
-    if "playwright" in text or "solid edge" in text:
+    if "playwright" in text or manifest_entry.get("availability") == "windows_only":
         return "medium"
     return "low"
 
@@ -396,8 +396,6 @@ def _platform_support(
 def _host_software_required(
     app_entry: dict[str, Any], manifest_entry: dict[str, Any]
 ) -> list[str]:
-    if manifest_entry.get("id") == "solid-edge-mcp":
-        return ["Solid Edge"]
     display_name = app_entry.get("display_name")
     return [str(display_name)] if isinstance(display_name, str) and display_name else []
 

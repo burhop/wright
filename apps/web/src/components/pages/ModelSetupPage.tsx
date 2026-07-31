@@ -86,10 +86,7 @@ export function ModelSetupPage() {
   }, []);
 
   useEffect(() => {
-    if (
-      !codexLogin ||
-      ["succeeded", "failed"].includes(codexLogin.status)
-    ) {
+    if (!codexLogin || ["succeeded", "failed"].includes(codexLogin.status)) {
       return;
     }
     const timer = window.setInterval(() => {
@@ -115,9 +112,12 @@ export function ModelSetupPage() {
   const startCodexLogin = async () => {
     setError(null);
     setMessage(null);
-    const response = await hostAdapter.fetch(apiUrl("/api/setup/llm/codex/start"), {
-      method: "POST",
-    });
+    const response = await hostAdapter.fetch(
+      apiUrl("/api/setup/llm/codex/start"),
+      {
+        method: "POST",
+      },
+    );
     if (!response.ok) {
       setError("Codex login could not be started.");
       return;
@@ -131,16 +131,19 @@ export function ModelSetupPage() {
     setError(null);
     setMessage(null);
     try {
-      const response = await hostAdapter.fetch(apiUrl("/api/setup/llm/configure"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider: "openai-compatible",
-          base_url: baseUrl,
-          model,
-          api_key: apiKey,
-        }),
-      });
+      const response = await hostAdapter.fetch(
+        apiUrl("/api/setup/llm/configure"),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            provider: "openai-compatible",
+            base_url: baseUrl,
+            model,
+            api_key: apiKey,
+          }),
+        },
+      );
       const payload = await response.json();
       if (!response.ok) {
         throw new Error(payload.message || "Provider could not be saved.");
@@ -149,7 +152,9 @@ export function ModelSetupPage() {
       setMessage(payload.message || "Provider saved.");
       await refreshStatus();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Provider could not be saved.");
+      setError(
+        err instanceof Error ? err.message : "Provider could not be saved.",
+      );
     } finally {
       setIsSaving(false);
     }

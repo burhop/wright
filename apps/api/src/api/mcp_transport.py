@@ -204,7 +204,11 @@ def _allowed_transport_hosts(security: Any) -> list[str]:
         hostname = hostname.strip().lower()
         if hostname in {"0.0.0.0", "::", "[::]"}:
             return
-        host = f"[{hostname}]" if ":" in hostname and not hostname.startswith("[") else hostname
+        host = (
+            f"[{hostname}]"
+            if ":" in hostname and not hostname.startswith("[")
+            else hostname
+        )
         hosts.add(host)
         hosts.add(f"{host}:*")
         if port is not None:

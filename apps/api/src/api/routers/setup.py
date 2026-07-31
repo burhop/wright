@@ -323,9 +323,7 @@ async def get_setup_status(request: Request):
         llm_configured
         if requires_llm_auth
         else bool(llm_api_url and llm_api_url.strip())
-    ) or (
-        active_agent == "hermes" and launched_by_hermes
-    )
+    ) or (active_agent == "hermes" and launched_by_hermes)
     from api.config import get_ui_theme
 
     theme = get_ui_theme()

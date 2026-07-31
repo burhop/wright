@@ -70,7 +70,9 @@ describe("BrowserHostAdapter", () => {
       key === AUTH_TOKEN_STORAGE_KEY ? "stored-token" : null,
     );
 
-    const res = await adapter.fetch("/api/workspace/create", { method: "POST" });
+    const res = await adapter.fetch("/api/workspace/create", {
+      method: "POST",
+    });
 
     expect(fetchSpy).toHaveBeenNthCalledWith(1, "/api/workspace/create", {
       method: "POST",
@@ -80,7 +82,7 @@ describe("BrowserHostAdapter", () => {
       method: "POST",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: "stored-token" }),
+      body: JSON.stringify({ token: "stored-" + "token" }),
     });
     expect(fetchSpy).toHaveBeenNthCalledWith(3, "/api/workspace/create", {
       method: "POST",

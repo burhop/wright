@@ -54,7 +54,9 @@ def _run_gateway_restart_command(command: list[str], label: str) -> None:
             for value in (completed.stdout, completed.stderr)
             if value and value.strip()
         )
-        detail = f"{label} failed after workspace rebinding (exit {completed.returncode})"
+        detail = (
+            f"{label} failed after workspace rebinding (exit {completed.returncode})"
+        )
         if output:
             detail = f"{detail}: {output[-2000:]}"
         raise RuntimeError(detail)

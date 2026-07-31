@@ -116,7 +116,9 @@ def _seed_from_env(env: Mapping[str, str]) -> tuple[dict[str, Any] | None, str |
     seed: dict[str, Any] = {}
     source: str | None = None
 
-    seed_file = _first_present(env, "WRIGHT_LLM_CONFIG_FILE", "WRIGHT_MODEL_CONFIG_FILE")
+    seed_file = _first_present(
+        env, "WRIGHT_LLM_CONFIG_FILE", "WRIGHT_MODEL_CONFIG_FILE"
+    )
     if seed_file:
         seed = load_seed_file(seed_file)
         source = seed_file
@@ -216,7 +218,9 @@ def _merge_auth_store(path: str | Path, payload: Mapping[str, Any]) -> bool:
         existing = {}
 
     changed = dict(existing)
-    providers = changed.get("providers") if isinstance(changed.get("providers"), dict) else {}
+    providers = (
+        changed.get("providers") if isinstance(changed.get("providers"), dict) else {}
+    )
     incoming_providers = payload.get("providers")
     if isinstance(incoming_providers, dict):
         providers = {**providers, **incoming_providers}
@@ -236,7 +240,9 @@ def _merge_auth_store(path: str | Path, payload: Mapping[str, Any]) -> bool:
         return False
 
     temporary = auth_path.with_name(f".{auth_path.name}.tmp")
-    temporary.write_text(json.dumps(changed, indent=2, sort_keys=True), encoding="utf-8")
+    temporary.write_text(
+        json.dumps(changed, indent=2, sort_keys=True), encoding="utf-8"
+    )
     os.replace(temporary, auth_path)
     return True
 
@@ -265,7 +271,12 @@ def _codex_auth_configured(auth_path: str | Path | None) -> bool:
     def rejected(entry: dict[str, Any]) -> bool:
         status = str(entry.get("last_status") or "").strip().lower()
         error_code = entry.get("last_error_code")
-        return status in {"exhausted", "rejected", "invalid", "failed"} or error_code in {
+        return status in {
+            "exhausted",
+            "rejected",
+            "invalid",
+            "failed",
+        } or error_code in {
             401,
             403,
             "401",

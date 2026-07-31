@@ -5,7 +5,7 @@ import re
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_production_dockerfile_uses_pinned_amd64_inputs() -> None:
+def test_production_dockerfile_uses_pinned_architecture_inputs() -> None:
     dockerfile = (ROOT / "docker/Dockerfile").read_text(encoding="utf-8")
     from_lines = [line for line in dockerfile.splitlines() if line.startswith("FROM ")]
     assert from_lines
@@ -15,10 +15,11 @@ def test_production_dockerfile_uses_pinned_amd64_inputs() -> None:
     assert "node:24.17.0-slim@sha256:" in dockerfile
     assert "python:3.13.13-slim@sha256:" in dockerfile
     assert "uv:0.9.26@sha256:" in dockerfile
-    assert "/micromamba/linux-64/${MICROMAMBA_VERSION}" in dockerfile
-    assert re.search(r"ARG MICROMAMBA_SHA256=[0-9a-f]{64}", dockerfile)
+    assert "micromamba_arch=\"linux-64\"" in dockerfile
+    assert "micromamba_arch=\"linux-aarch64\"" in dockerfile
+    assert re.search(r"ARG MICROMAMBA_AMD64_SHA256=[0-9a-f]{64}", dockerfile)
+    assert re.search(r"ARG MICROMAMBA_ARM64_SHA256=[0-9a-f]{64}", dockerfile)
     assert "sha256sum --check --strict" in dockerfile
-    assert 'test "${TARGETARCH:-amd64}" = "amd64"' in dockerfile
     assert "apt-get upgrade" not in dockerfile
     assert ":latest" not in "\n".join(from_lines)
 

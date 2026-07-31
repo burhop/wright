@@ -16,8 +16,9 @@ describe("ModelSetupPage", () => {
   });
 
   it("starts Hermes Codex login and shows the device code", async () => {
-    const fetchMock = vi.spyOn(hostAdapter, "fetch").mockImplementation(
-      (input: RequestInfo | URL, init?: RequestInit) => {
+    const fetchMock = vi
+      .spyOn(hostAdapter, "fetch")
+      .mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
         const url = String(input);
         if (url.endsWith("/api/setup/status")) {
           return jsonResponse({
@@ -49,8 +50,7 @@ describe("ModelSetupPage", () => {
           });
         }
         return jsonResponse({});
-      },
-    );
+      });
 
     render(<ModelSetupPage />);
 

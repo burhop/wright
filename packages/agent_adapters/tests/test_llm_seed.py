@@ -87,11 +87,7 @@ def test_codex_summary_requires_refresh_token(tmp_path):
     )
     auth.write_text(
         json.dumps(
-            {
-                "providers": {
-                    "openai-codex": {"tokens": {"access_token": "access-only"}}
-                }
-            }
+            {"providers": {"openai-codex": {"tokens": {"access_token": "access-only"}}}}
         ),
         encoding="utf-8",
     )
