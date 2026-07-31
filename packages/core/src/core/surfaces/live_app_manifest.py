@@ -341,6 +341,7 @@ class LiveAppManifest:
                 secret_names.add(name)
             else:
                 environment[name] = literal_environment[name]
+        environment.update(values)
         return ResolvedCommand(
             argv=argv,
             cwd=cwd,

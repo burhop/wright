@@ -235,9 +235,9 @@
 - [x] T122 [P] [US5] Add real SSE no-buffer/comment/heartbeat/retry/id/Last-Event-ID/204/disconnect/deadline conformance to `tests/contract/workspace_surfaces/test_sse_proxy.py` (FR-021, FR-025)
 - [x] T123 [P] [US5] Add two-app/same-app-isolated concurrent route/cookie/log/health/lifecycle collision tests to `tests/e2e/workspace-surfaces/test_concurrent_live_apps.py` (FR-026, SC-006)
 - [x] T124 [P] [US5] Add authenticated lifecycle API start/retry/restart/stop/log/health/invalid-state and thin-route tests to `apps/api/tests/test_live_app_api.py` (FR-022 through FR-025)
-- [ ] T125 [P] [US5] Add live panel/browser FastAPI dashboard journey with nested assets, deep links, redirect, SSE, WebSocket, crash/restart, and stop to `tests/ui-integration/workspace-surfaces/live-app.spec.ts` (User Story 5, SC-003 through SC-007)
-- [ ] T126 [P] [US5] Add Docker single-port opaque-preview-host and remote-adapter origin/reachability tests to `tests/e2e/workspace-surfaces/test_surface_deployments.py` (FR-027, SC-010)
-- [ ] T127 [P] [US5] Add clean-container FastAPI, Panel, Streamlit, Gradio, and Dash root/deep-link/asset/redirect/cookie/upload/WebSocket/SSE/readiness/health/shutdown/offline/two-instance conformance from `specs/053-workspace-surfaces/framework-conformance.md` to `tests/contract/workspace_surfaces/test_framework_manifests.py` without installing them in the base image (FR-027, FR-051, FR-055)
+- [X] T125 [P] [US5] Add live panel/browser FastAPI dashboard journey with nested assets, deep links, redirect, SSE, WebSocket, crash/restart, and stop to `tests/ui-integration/workspace-surfaces/live-app.spec.ts` (User Story 5, SC-003 through SC-007)
+- [X] T126 [P] [US5] Add Docker single-port opaque-preview-host and remote-adapter origin/reachability tests to `tests/e2e/workspace-surfaces/test_surface_deployments.py` (FR-027, SC-010)
+- [X] T127 [P] [US5] Add clean-container FastAPI, Panel, Streamlit, Gradio, and Dash root/deep-link/asset/redirect/cookie/upload/WebSocket/SSE/readiness/health/shutdown/offline/two-instance conformance from `specs/053-workspace-surfaces/framework-conformance.md` to `tests/contract/workspace_surfaces/test_framework_manifests.py` without installing them in the base image (FR-027, FR-051, FR-055)
 
 ### Implementation for User Story 5
 

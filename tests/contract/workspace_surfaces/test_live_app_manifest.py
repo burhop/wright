@@ -136,6 +136,13 @@ def test_command_launch_interpolates_only_documented_values_and_secret_refs() ->
     assert launch.cwd == "."
     assert launch.environment["PUBLIC_ORIGIN"] == "http://s-one.localhost:8000"
     assert launch.environment["API_TOKEN"] == "secret-value"
+    assert launch.environment["WRIGHT_BIND_HOST"] == "127.0.0.1"
+    assert launch.environment["WRIGHT_PORT"] == "43123"
+    assert launch.environment["WRIGHT_PUBLIC_ORIGIN"] == (
+        "http://s-one.localhost:8000"
+    )
+    assert launch.environment["WRIGHT_BASE_PATH"] == "/"
+    assert launch.environment["WRIGHT_INSTANCE_ID"] == "instance-one"
     assert launch.secret_environment_names == frozenset({"API_TOKEN"})
     assert launch.shell is False
 
