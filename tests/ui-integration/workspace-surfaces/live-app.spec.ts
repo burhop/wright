@@ -187,9 +187,8 @@ test.describe("managed FastAPI dashboard journey", () => {
           });
         } else if (url.pathname === "/go/latest") {
           await route.fulfill({
-            status: 302,
-            headers: { location: `${url.origin}/reports/latest` },
-            body: "",
+            contentType: "text/html",
+            body: '<!doctype html><meta http-equiv="refresh" content="0;url=/reports/latest">',
           });
         } else if (url.pathname === "/reports/latest") {
           await route.fulfill({
