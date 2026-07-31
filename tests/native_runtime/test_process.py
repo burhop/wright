@@ -209,6 +209,33 @@ class SequencedWaitInspector(FakeInspector):
         return next(self.wait_results)
 
 
+class ExitedAfterSignalInspector(FakeInspector):
+    def signal(self, pid: int, *, force: bool = False) -> None:
+        super().signal(pid, force=force)
+        self.observation = None
+
+    def wait(self, pid: int, timeout: float) -> bool:
+        return False
+
+
+def test_stop_accepts_verified_process_disappearance_after_signal(
+    tmp_path: Path,
+) -> None:
+    runtime = tmp_path / "runtime"
+    identity = _identity(runtime)
+    inspector = ExitedAfterSignalInspector(
+        ProcessObservation(
+            identity.pid, identity.started_at, Path(identity.executable_path)
+        )
+    )
+
+    ProcessManager(inspector).stop(
+        identity, runtime, expected_runtime_id="runtime-1", graceful_timeout=0.1
+    )
+
+    assert inspector.signals == [(42, False)]
+
+
 def test_stop_escalates_only_after_graceful_timeout(tmp_path: Path) -> None:
     runtime = tmp_path / "runtime"
     identity = _identity(runtime)
