@@ -20,17 +20,29 @@ interface NativeDocument extends Document {
 
 export type NativeWebMcpState = "absent" | "available" | "policy_denied";
 
-export function detectNativeWebMcp(documentValue: Document = document): NativeWebMcpState {
+export function detectNativeWebMcp(
+  documentValue: Document = document,
+): NativeWebMcpState {
   const candidate = documentValue as NativeDocument;
-  if (typeof candidate.modelContext?.registerTool !== "function") return "absent";
-  if (candidate.permissionsPolicy?.allowsFeature("tools") === false) return "policy_denied";
+  if (typeof candidate.modelContext?.registerTool !== "function")
+    return "absent";
+  if (candidate.permissionsPolicy?.allowsFeature("tools") === false)
+    return "policy_denied";
   return "available";
 }
 
 export async function registerWebMcpTool(
   tool: WrightSurfaceTool,
-  options: { sdk?: WrightSurfaceSdk; document?: Document; dualRegisterNative?: boolean } = {},
-): Promise<WrightSurfaceRegistration & { readonly nativeState: NativeWebMcpState | "rejected" }> {
+  options: {
+    sdk?: WrightSurfaceSdk;
+    document?: Document;
+    dualRegisterNative?: boolean;
+  } = {},
+): Promise<
+  WrightSurfaceRegistration & {
+    readonly nativeState: NativeWebMcpState | "rejected";
+  }
+> {
   const sdk = options.sdk || new WrightSurfaceSdk();
   const stable = await sdk.registerTool(tool);
   const documentValue = (options.document || document) as NativeDocument;
@@ -43,7 +55,8 @@ export async function registerWebMcpTool(
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
-        execute: (argumentsValue) => tool.handler(argumentsValue, { signal: tool.signal }),
+        execute: (argumentsValue) =>
+          tool.handler(argumentsValue, { signal: tool.signal }),
       });
     } catch {
       nativeState = "rejected";

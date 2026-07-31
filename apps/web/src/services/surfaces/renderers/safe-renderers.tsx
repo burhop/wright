@@ -33,9 +33,7 @@ function requireTable(value: unknown): {
     !Array.isArray(columns) ||
     !columns.every((item) => typeof item === "string") ||
     !Array.isArray(data) ||
-    !data.every(
-      (row) => Array.isArray(row) && row.length === columns.length,
-    )
+    !data.every((row) => Array.isArray(row) && row.length === columns.length)
   ) {
     throw new TypeError("table columns and rows are malformed");
   }
@@ -129,7 +127,9 @@ export function SafeRepresentationRenderer({
     }
     case "text/html": {
       if (representation.activeHtml) {
-        throw new TypeError("active HTML requires the isolated active renderer");
+        throw new TypeError(
+          "active HTML requires the isolated active renderer",
+        );
       }
       if (representation.encoding !== "utf-8") {
         throw new TypeError("HTML representation must use utf-8");

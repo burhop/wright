@@ -52,11 +52,7 @@ export type SurfaceSource =
   | ExternalUrlSurfaceSource;
 
 export type SurfaceCapabilityState =
-  | "unavailable"
-  | "available"
-  | "consent_required"
-  | "granted"
-  | "denied";
+  "unavailable" | "available" | "consent_required" | "granted" | "denied";
 
 export type SurfaceCapabilityRiskTier = "low" | "high" | "mutating";
 
@@ -325,7 +321,9 @@ function parsePresentationOption(
     eligible: option.eligible,
     ...(option.reason === undefined
       ? {}
-      : { reason: string(option.reason, `presentations[${index}].reason`, 1024) }),
+      : {
+          reason: string(option.reason, `presentations[${index}].reason`, 1024),
+        }),
     ...(option.presentationId === undefined
       ? {}
       : {

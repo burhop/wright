@@ -52,7 +52,8 @@ export function PaneSeparator({
 
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (!separatorRef.current?.hasPointerCapture(event.pointerId)) return;
-    const container = separatorRef.current.parentElement?.getBoundingClientRect();
+    const container =
+      separatorRef.current.parentElement?.getBoundingClientRect();
     if (!container || container.width <= 0) return;
     const fromLeft = clamp(
       ((event.clientX - container.left) / container.width) * 10_000,
@@ -76,9 +77,13 @@ export function PaneSeparator({
       aria-valuetext={`Chat width ${Math.round(valueBasisPoints / 100)} percent`}
       tabIndex={0}
       onKeyDown={onKeyDown}
-      onPointerDown={(event) => event.currentTarget.setPointerCapture(event.pointerId)}
+      onPointerDown={(event) =>
+        event.currentTarget.setPointerCapture(event.pointerId)
+      }
       onPointerMove={onPointerMove}
-      onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)}
+      onPointerUp={(event) =>
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      }
     />
   );
 }

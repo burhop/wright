@@ -43,12 +43,10 @@ function incoming(
 
 function gateway(): McpAppGateway {
   return {
-    callTool: vi.fn(
-      async (): Promise<CallToolResult> => ({
-        content: [{ type: "text", text: "tool complete" }],
-        structuredContent: { answer: 42 },
-      }),
-    ),
+    callTool: vi.fn(async (): Promise<CallToolResult> => ({
+      content: [{ type: "text", text: "tool complete" }],
+      structuredContent: { answer: 42 },
+    })),
     listResources: vi.fn(async () => ({ resources: [] })),
     listResourceTemplates: vi.fn(async () => ({ resourceTemplates: [] })),
     readResource: vi.fn(async ({ uri }) => ({
@@ -103,8 +101,9 @@ function findOutgoing(
 ): Record<string, unknown> | undefined {
   return postMessage.mock.calls
     .map((call) => call[0])
-    .filter((message): message is Record<string, unknown> =>
-      typeof message === "object" && message !== null,
+    .filter(
+      (message): message is Record<string, unknown> =>
+        typeof message === "object" && message !== null,
     )
     .find(predicate);
 }
@@ -137,7 +136,10 @@ describe("ExactOriginPostMessageTransport", () => {
 
     incoming(window, request);
     incoming(frameWindow, request, "https://attacker.test");
-    incoming(frameWindow, request, SANDBOX_ORIGIN, { ...ENVELOPE, generation: 3 });
+    incoming(frameWindow, request, SANDBOX_ORIGIN, {
+      ...ENVELOPE,
+      generation: 3,
+    });
     incoming(frameWindow, request);
     incoming(frameWindow, request);
 
@@ -154,7 +156,9 @@ describe("ExactOriginPostMessageTransport", () => {
 
   it("posts only to the configured exact sandbox origin with a surface envelope", async () => {
     const { frameWindow } = createFrame();
-    const postMessage = vi.spyOn(frameWindow, "postMessage").mockImplementation(() => undefined);
+    const postMessage = vi
+      .spyOn(frameWindow, "postMessage")
+      .mockImplementation(() => undefined);
     const transport = new ExactOriginPostMessageTransport(
       frameWindow,
       frameWindow,
@@ -167,7 +171,10 @@ describe("ExactOriginPostMessageTransport", () => {
       window,
     );
     await transport.start();
-    await transport.send({ jsonrpc: "2.0", method: "notifications/resources/list_changed" });
+    await transport.send({
+      jsonrpc: "2.0",
+      method: "notifications/resources/list_changed",
+    });
 
     expect(postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -183,7 +190,9 @@ describe("ExactOriginPostMessageTransport", () => {
 describe("McpAppHost", () => {
   it("uses the official initialization, resource, context, tool, and teardown lifecycle", async () => {
     const { frameWindow } = createFrame();
-    const postMessage = vi.spyOn(frameWindow, "postMessage").mockImplementation(() => undefined);
+    const postMessage = vi
+      .spyOn(frameWindow, "postMessage")
+      .mockImplementation(() => undefined);
     const appGateway = gateway();
     const statuses: string[] = [];
     const initialToolResult: CallToolResult = {
@@ -214,7 +223,8 @@ describe("McpAppHost", () => {
     await vi.waitFor(() => {
       const resource = findOutgoing(
         postMessage,
-        (message) => message.method === "ui/notifications/sandbox-resource-ready",
+        (message) =>
+          message.method === "ui/notifications/sandbox-resource-ready",
       );
       expect(resource).toMatchObject({
         params: {
@@ -240,7 +250,11 @@ describe("McpAppHost", () => {
         protocolVersion: LATEST_PROTOCOL_VERSION,
       },
     });
-    await vi.waitFor(() => expect(findOutgoing(postMessage, (message) => message.id === 1)).toBeDefined());
+    await vi.waitFor(() =>
+      expect(
+        findOutgoing(postMessage, (message) => message.id === 1),
+      ).toBeDefined(),
+    );
     incoming(frameWindow, {
       jsonrpc: "2.0",
       method: "ui/notifications/initialized",
@@ -263,7 +277,8 @@ describe("McpAppHost", () => {
       expect(
         findOutgoing(
           postMessage,
-          (message) => message.method === "ui/notifications/host-context-changed",
+          (message) =>
+            message.method === "ui/notifications/host-context-changed",
         ),
       ).toBeDefined();
     });
@@ -290,7 +305,10 @@ describe("McpAppHost", () => {
       jsonrpc: "2.0",
       id: 5,
       method: "ui/message",
-      params: { role: "user", content: [{ type: "text", text: "Use this selection" }] },
+      params: {
+        role: "user",
+        content: [{ type: "text", text: "Use this selection" }],
+      },
     });
     await vi.waitFor(() => {
       expect(appGateway.readResource).toHaveBeenCalledWith(
@@ -308,7 +326,9 @@ describe("McpAppHost", () => {
       expect(appGateway.updateModelContext).toHaveBeenCalledTimes(1);
       expect(appGateway.sendUserMessage).toHaveBeenCalledTimes(1);
       for (const id of [2, 3, 4, 5]) {
-        expect(findOutgoing(postMessage, (message) => message.id === id)).toBeDefined();
+        expect(
+          findOutgoing(postMessage, (message) => message.id === id),
+        ).toBeDefined();
       }
     });
 
@@ -342,7 +362,9 @@ describe("McpAppHost", () => {
 
   it("rejects privileged operations before the view completes initialization", async () => {
     const { frameWindow } = createFrame();
-    const postMessage = vi.spyOn(frameWindow, "postMessage").mockImplementation(() => undefined);
+    const postMessage = vi
+      .spyOn(frameWindow, "postMessage")
+      .mockImplementation(() => undefined);
     const appGateway = gateway();
     const host = new McpAppHost(options(frameWindow, appGateway));
     await host.connect();
@@ -357,7 +379,9 @@ describe("McpAppHost", () => {
     await vi.waitFor(() => {
       const response = findOutgoing(postMessage, (message) => message.id === 8);
       expect(response?.error).toEqual(
-        expect.objectContaining({ message: expect.stringMatching(/before initialization/i) }),
+        expect.objectContaining({
+          message: expect.stringMatching(/before initialization/i),
+        }),
       );
     });
     expect(appGateway.callTool).not.toHaveBeenCalled();

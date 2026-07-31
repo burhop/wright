@@ -39,9 +39,10 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
   const [projection, setProjection] = useState<DisplayProjection | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<DisplayHistoryItem[] | null>(null);
-  const [verification, setVerification] = useState<Record<string, unknown> | null>(
-    null,
-  );
+  const [verification, setVerification] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [retentionStatus, setRetentionStatus] = useState<string | null>(null);
 
@@ -58,12 +59,18 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
         if (active) setProjection(value);
       })
       .catch((reason: unknown) => {
-        if (active) setError(reason instanceof Error ? reason.message : String(reason));
+        if (active)
+          setError(reason instanceof Error ? reason.message : String(reason));
       });
     return () => {
       active = false;
     };
-  }, [descriptor.revision, descriptor.surfaceId, descriptor.workspaceId, sessionId]);
+  }, [
+    descriptor.revision,
+    descriptor.surfaceId,
+    descriptor.workspaceId,
+    sessionId,
+  ]);
 
   const ordered = useMemo(
     () =>
@@ -77,7 +84,8 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
   if (error || (projection && ordered.length === 0)) {
     return (
       <div role="alert" style={{ padding: 24 }}>
-        This display is unavailable. {error ?? "No safe representation was provided."}
+        This display is unavailable.{" "}
+        {error ?? "No safe representation was provided."}
         <button data-testid="surface-diagnostics" type="button">
           Open diagnostics
         </button>
@@ -160,7 +168,8 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
           <ol>
             {history.map((item) => (
               <li key={item.artifactId}>
-                Revision {item.revision}{item.current ? " (current)" : ""}
+                Revision {item.revision}
+                {item.current ? " (current)" : ""}
               </li>
             ))}
           </ol>
@@ -172,8 +181,14 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
       {verification && (
         <div role="dialog" aria-label="Artifact verification">
           <h3>Artifact verification</h3>
-          <p>{verification.prompt ? String(verification.prompt) : "Direct execution (no prompt)"}</p>
-          <pre>{JSON.stringify(verification.effective_constraints, null, 2)}</pre>
+          <p>
+            {verification.prompt
+              ? String(verification.prompt)
+              : "Direct execution (no prompt)"}
+          </p>
+          <pre>
+            {JSON.stringify(verification.effective_constraints, null, 2)}
+          </pre>
           <pre>{String(verification.script ?? "")}</pre>
           <p>Script revision {String(verification.script_revision)}</p>
           <button type="button" onClick={() => setVerification(null)}>
@@ -185,8 +200,8 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
         <div role="dialog" aria-label="Delete durable output">
           <p>
             This durable output and its history will be removed and cannot be
-            recovered. Content-addressed payload cleanup is scheduled by retention
-            policy.
+            recovered. Content-addressed payload cleanup is scheduled by
+            retention policy.
           </p>
           <button
             type="button"

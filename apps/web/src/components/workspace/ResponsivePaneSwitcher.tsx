@@ -41,7 +41,11 @@ export function ResponsivePaneSwitcher({
           Surface
         </button>
       </nav>
-      <div className="sr-only" aria-live="polite" data-testid="hidden-pane-updates">
+      <div
+        className="sr-only"
+        aria-live="polite"
+        data-testid="hidden-pane-updates"
+      >
         {activePane === "surface" ? hiddenChatUpdate : hiddenSurfaceUpdate}
       </div>
       {!controlsOnly && (

@@ -14,7 +14,9 @@ describe("PaneSeparator", () => {
         onChange={vi.fn()}
       />,
     );
-    const separator = screen.getByRole("separator", { name: "Resize chat and surface" });
+    const separator = screen.getByRole("separator", {
+      name: "Resize chat and surface",
+    });
     expect(separator).toHaveAttribute("aria-orientation", "vertical");
     expect(separator).toHaveAttribute("aria-valuemin", "32");
     expect(separator).toHaveAttribute("aria-valuemax", "52");

@@ -21,9 +21,12 @@ interface Props {
 const fallbackActions = (
   state: SurfaceDescriptor["lifecycle"],
 ): readonly { operation: LiveAppOperation; label: string }[] => {
-  if (state === "declared") return [{ operation: "start", label: "Start application" }];
-  if (state === "failed") return [{ operation: "retry", label: "Retry application" }];
-  if (state === "stopped") return [{ operation: "restart", label: "Start application again" }];
+  if (state === "declared")
+    return [{ operation: "start", label: "Start application" }];
+  if (state === "failed")
+    return [{ operation: "retry", label: "Retry application" }];
+  if (state === "stopped")
+    return [{ operation: "restart", label: "Start application again" }];
   if (state === "ready" || state === "unhealthy") {
     return [
       { operation: "restart", label: "Restart application" },
@@ -33,11 +36,17 @@ const fallbackActions = (
   return [];
 };
 
-export function LiveAppControls({ descriptor, sessionId, onRuntimeChange }: Props) {
+export function LiveAppControls({
+  descriptor,
+  sessionId,
+  onRuntimeChange,
+}: Props) {
   const [runtime, setRuntime] = useState<LiveAppRuntime | null>(null);
   const [health, setHealth] = useState<LiveAppHealth | null>(null);
   const [logs, setLogs] = useState<LiveAppLogs | null>(null);
-  const [busy, setBusy] = useState<LiveAppOperation | "health" | "logs" | null>(null);
+  const [busy, setBusy] = useState<LiveAppOperation | "health" | "logs" | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const hasInstance = descriptor.instance !== null;
 
@@ -48,8 +57,16 @@ export function LiveAppControls({ descriptor, sessionId, onRuntimeChange }: Prop
     if (!hasInstance) return;
     void getLiveApp(descriptor.surfaceId, descriptor.workspaceId, sessionId)
       .then(setRuntime)
-      .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
-  }, [descriptor.instance?.generation, descriptor.surfaceId, descriptor.workspaceId, hasInstance, sessionId]);
+      .catch((reason) =>
+        setError(reason instanceof Error ? reason.message : String(reason)),
+      );
+  }, [
+    descriptor.instance?.generation,
+    descriptor.surfaceId,
+    descriptor.workspaceId,
+    hasInstance,
+    sessionId,
+  ]);
 
   const state = runtime?.state ?? descriptor.lifecycle;
   const actions = runtime?.actions ?? fallbackActions(state);
@@ -111,7 +128,10 @@ export function LiveAppControls({ descriptor, sessionId, onRuntimeChange }: Prop
   };
 
   return (
-    <section aria-label="Managed application controls" data-testid="live-app-controls">
+    <section
+      aria-label="Managed application controls"
+      data-testid="live-app-controls"
+    >
       <p role="status" aria-live="polite">
         Application state: {state}.
         {runtime?.failure ? ` ${runtime.failure.message}` : ""}
@@ -130,10 +150,18 @@ export function LiveAppControls({ descriptor, sessionId, onRuntimeChange }: Prop
         ))}
         {hasInstance && state !== "stopped" && (
           <>
-            <button type="button" disabled={busy !== null} onClick={() => void inspectHealth()}>
+            <button
+              type="button"
+              disabled={busy !== null}
+              onClick={() => void inspectHealth()}
+            >
               Check application health
             </button>
-            <button type="button" disabled={busy !== null} onClick={() => void inspectLogs()}>
+            <button
+              type="button"
+              disabled={busy !== null}
+              onClick={() => void inspectLogs()}
+            >
               View application logs
             </button>
           </>
@@ -141,11 +169,21 @@ export function LiveAppControls({ descriptor, sessionId, onRuntimeChange }: Prop
       </div>
       {health && (
         <p role="note">
-          Health: {health.ok === null ? "not declared" : health.ok ? "healthy" : "unhealthy"}. {health.message}
+          Health:{" "}
+          {health.ok === null
+            ? "not declared"
+            : health.ok
+              ? "healthy"
+              : "unhealthy"}
+          . {health.message}
         </p>
       )}
       {logs && (
-        <div role="log" aria-label="Managed application logs" aria-live="polite">
+        <div
+          role="log"
+          aria-label="Managed application logs"
+          aria-live="polite"
+        >
           {logs.entries.length === 0 ? (
             <p>No captured log entries.</p>
           ) : (
@@ -158,7 +196,9 @@ export function LiveAppControls({ descriptor, sessionId, onRuntimeChange }: Prop
               ))}
             </ol>
           )}
-          {logs.droppedBytes > 0 && <p>{logs.droppedBytes} log bytes were dropped by policy.</p>}
+          {logs.droppedBytes > 0 && (
+            <p>{logs.droppedBytes} log bytes were dropped by policy.</p>
+          )}
         </div>
       )}
       {error && <p role="alert">{error}</p>}

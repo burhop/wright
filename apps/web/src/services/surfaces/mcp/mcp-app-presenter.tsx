@@ -1,5 +1,8 @@
 import { SUPPORTED_PROTOCOL_VERSIONS } from "@modelcontextprotocol/ext-apps/app-bridge";
-import type { CallToolResult, ContentBlock } from "@modelcontextprotocol/sdk/types.js";
+import type {
+  CallToolResult,
+  ContentBlock,
+} from "@modelcontextprotocol/sdk/types.js";
 
 import type { SurfacePresenter } from "../registry";
 import type { SurfaceDescriptor } from "../surface-contract";
@@ -29,9 +32,7 @@ export interface McpAppPresentationProjection {
   readonly initialToolInput?: Readonly<Record<string, unknown>>;
   readonly initialToolResult?: CallToolResult;
   readonly hostCapabilities?: readonly (
-    | "context.update"
-    | "user.message"
-    | "open.link"
+    "context.update" | "user.message" | "open.link"
   )[];
 }
 
@@ -59,7 +60,9 @@ function source(descriptor: SurfaceDescriptor) {
 function nonce(): string {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
-  return [...bytes].map((value) => value.toString(16).padStart(2, "0")).join("");
+  return [...bytes]
+    .map((value) => value.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function fallbackText(block: ContentBlock): string | null {
@@ -91,10 +94,7 @@ export class McpAppPresenter implements SurfacePresenter {
   private descriptor: SurfaceDescriptor;
   private readonly options: McpAppPresenterOptions;
 
-  constructor(
-    descriptor: SurfaceDescriptor,
-    options: McpAppPresenterOptions,
-  ) {
+  constructor(descriptor: SurfaceDescriptor, options: McpAppPresenterOptions) {
     source(descriptor);
     this.descriptor = descriptor;
     this.options = options;
@@ -177,7 +177,8 @@ export class McpAppPresenter implements SurfacePresenter {
         controller.signal,
       );
     } catch (reason) {
-      if (controller.signal.aborted || generation !== this.loadGeneration) return;
+      if (controller.signal.aborted || generation !== this.loadGeneration)
+        return;
       this.showFallback(
         `Interactive view could not be loaded: ${
           reason instanceof Error ? reason.message : String(reason)
@@ -185,7 +186,12 @@ export class McpAppPresenter implements SurfacePresenter {
       );
       return;
     }
-    if (controller.signal.aborted || generation !== this.loadGeneration || this.disposed) return;
+    if (
+      controller.signal.aborted ||
+      generation !== this.loadGeneration ||
+      this.disposed
+    )
+      return;
     const appSource = source(this.descriptor);
     if (projection.capability !== "supported") {
       this.showFallback(
@@ -209,7 +215,8 @@ export class McpAppPresenter implements SurfacePresenter {
     }
     if (!projection.resource) {
       this.showFallback(
-        projection.reason || "The MCP server did not return its associated UI resource.",
+        projection.reason ||
+          "The MCP server did not return its associated UI resource.",
         projection.fallbackResult,
       );
       return;
@@ -240,10 +247,14 @@ export class McpAppPresenter implements SurfacePresenter {
         projection.resource.csp,
         projection.resource.grantedPermissions,
       );
-      const hostOrigin = new URL(this.options.hostOrigin || window.location.origin).origin;
+      const hostOrigin = new URL(
+        this.options.hostOrigin || window.location.origin,
+      ).origin;
       const sandboxOrigin = new URL(projection.sandboxOrigin).origin;
       if (hostOrigin === sandboxOrigin) {
-        throw new Error("MCP App sandbox origin must differ from Wright's control origin");
+        throw new Error(
+          "MCP App sandbox origin must differ from Wright's control origin",
+        );
       }
       const frame = document.createElement("iframe");
       frame.dataset.testid = "mcp-app-sandbox-frame";
@@ -259,7 +270,8 @@ export class McpAppPresenter implements SurfacePresenter {
         sandboxOrigin,
         hostOrigin,
         surfaceId: this.descriptor.surfaceId,
-        generation: this.descriptor.instance?.generation || this.descriptor.revision,
+        generation:
+          this.descriptor.instance?.generation || this.descriptor.revision,
         nonce: nonce(),
       }).href;
       root.append(frame);
@@ -271,14 +283,17 @@ export class McpAppPresenter implements SurfacePresenter {
         workspaceId: this.descriptor.workspaceId,
         sessionId: this.options.sessionId,
         surfaceId: this.descriptor.surfaceId,
-        generation: this.descriptor.instance?.generation || this.descriptor.revision,
+        generation:
+          this.descriptor.instance?.generation || this.descriptor.revision,
         serverId: appSource.serverId,
         nonce: new URL(frame.src).searchParams.get("nonce") || "",
         resource: projection.resource,
         policy,
         gateway: this.options.gateway,
         hostContext: {
-          theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+          theme: window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light",
           displayMode: "inline",
           availableDisplayModes: ["inline", "fullscreen"],
           locale: navigator.language,
@@ -295,14 +310,17 @@ export class McpAppPresenter implements SurfacePresenter {
             frame.style.height = `${Math.min(Math.max(height, 160), 2_000)}px`;
           }
         },
-        onRequestTeardown: () => this.showFallback("The MCP App closed its interactive view."),
-        onSecurityViolation: () => this.setStatus("Blocked an invalid MCP App message."),
+        onRequestTeardown: () =>
+          this.showFallback("The MCP App closed its interactive view."),
+        onSecurityViolation: () =>
+          this.setStatus("Blocked an invalid MCP App message."),
       });
       this.frame = frame;
       this.host = host;
       await host.connect();
     } catch (reason) {
-      if (controller.signal.aborted || generation !== this.loadGeneration) return;
+      if (controller.signal.aborted || generation !== this.loadGeneration)
+        return;
       this.host = null;
       this.frame?.remove();
       this.frame = null;
@@ -356,7 +374,10 @@ export class McpAppPresenter implements SurfacePresenter {
     const explanation = document.createElement("p");
     explanation.textContent = reason;
     fallback.append(heading, explanation);
-    const texts = result?.content.map(fallbackText).filter((item): item is string => Boolean(item)) || [];
+    const texts =
+      result?.content
+        .map(fallbackText)
+        .filter((item): item is string => Boolean(item)) || [];
     for (const text of texts) {
       const paragraph = document.createElement("p");
       paragraph.textContent = text;
@@ -364,12 +385,17 @@ export class McpAppPresenter implements SurfacePresenter {
     }
     if (result?.structuredContent) {
       const structured = document.createElement("pre");
-      structured.textContent = JSON.stringify(result.structuredContent, null, 2);
+      structured.textContent = JSON.stringify(
+        result.structuredContent,
+        null,
+        2,
+      );
       fallback.append(structured);
     }
     if (texts.length === 0 && !result?.structuredContent) {
       const retained = document.createElement("p");
-      retained.textContent = "The tool result remains available in the conversation.";
+      retained.textContent =
+        "The tool result remains available in the conversation.";
       fallback.append(retained);
     }
     const retry = document.createElement("button");

@@ -1,5 +1,8 @@
 import { hostAdapter } from "../host-adapter";
-import { parseSurfaceDescriptor, type SurfaceDescriptor } from "./surface-contract";
+import {
+  parseSurfaceDescriptor,
+  type SurfaceDescriptor,
+} from "./surface-contract";
 import { listSurfaces } from "./surface-client";
 
 const MAXIMUM_EVENT_BUFFER = 1024 * 1024;
@@ -48,11 +51,15 @@ export async function consumeSurfaceEventStream(
   lastEventId: string | null = null,
 ): Promise<string | null> {
   if (!response.ok || !response.body) {
-    throw new Error(`Workspace Surface event stream failed with HTTP ${response.status}`);
+    throw new Error(
+      `Workspace Surface event stream failed with HTTP ${response.status}`,
+    );
   }
   const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
   if (!contentType.startsWith("text/event-stream")) {
-    throw new Error("Workspace Surface event stream returned an invalid content type");
+    throw new Error(
+      "Workspace Surface event stream returned an invalid content type",
+    );
   }
 
   const reader = response.body.getReader();
@@ -86,7 +93,9 @@ export async function consumeSurfaceEventStream(
 }
 
 function retryDelay(): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, RETRY_MILLISECONDS));
+  return new Promise((resolve) =>
+    window.setTimeout(resolve, RETRY_MILLISECONDS),
+  );
 }
 
 function subscribeBrowserStream(
@@ -142,11 +151,17 @@ function subscribeDesktopPolling(
     try {
       const descriptors = await listSurfaces(workspaceId, sessionId);
       if (stopped) return;
-      const current = new Map(descriptors.map((item) => [item.surfaceId, item]));
+      const current = new Map(
+        descriptors.map((item) => [item.surfaceId, item]),
+      );
       for (const descriptor of descriptors) {
         const known = previous.get(descriptor.surfaceId);
         if (!known || descriptor.revision > known.revision) {
-          listener({ eventId: null, eventType: "surface.snapshot", descriptor });
+          listener({
+            eventId: null,
+            eventType: "surface.snapshot",
+            descriptor,
+          });
         }
       }
       for (const descriptor of previous.values()) {

@@ -8,7 +8,8 @@ export function workspaceSurfacesEnabled(
   if (!import.meta.env.DEV || typeof window === "undefined") return false;
   try {
     return (
-      window.localStorage.getItem("wright.workspaceSurfaces.testEnabled") === "1"
+      window.localStorage.getItem("wright.workspaceSurfaces.testEnabled") ===
+      "1"
     );
   } catch {
     // Opaque/sandboxed documents may expose Storage while denying all access.

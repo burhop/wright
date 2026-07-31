@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  BrowserHostAdapter,
-  SurfaceHostAdapterError,
-} from "./browser-adapter";
+import { BrowserHostAdapter, SurfaceHostAdapterError } from "./browser-adapter";
 
 describe("BrowserHostAdapter surface presentation boundary", () => {
   const openWindow = vi.fn();

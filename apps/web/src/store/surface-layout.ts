@@ -58,15 +58,25 @@ export function usePersistentSurfaceLayout(
     () => surfaceLayoutStorageKey(userId, workspaceId),
     [userId, workspaceId],
   );
-  type KeyedState = { readonly key: string; readonly layout: WorkspaceLayoutState };
+  type KeyedState = {
+    readonly key: string;
+    readonly layout: WorkspaceLayoutState;
+  };
   type KeyedAction =
     | { readonly type: "layout"; readonly action: WorkspaceLayoutAction }
-    | { readonly type: "hydrate"; readonly key: string; readonly layout: WorkspaceLayoutState };
+    | {
+        readonly type: "hydrate";
+        readonly key: string;
+        readonly layout: WorkspaceLayoutState;
+      };
   const [record, keyedDispatch] = useReducer(
     (current: KeyedState, action: KeyedAction): KeyedState =>
       action.type === "hydrate"
         ? { key: action.key, layout: action.layout }
-        : { key: current.key, layout: workspaceLayoutReducer(current.layout, action.action) },
+        : {
+            key: current.key,
+            layout: workspaceLayoutReducer(current.layout, action.action),
+          },
     undefined,
     (): KeyedState => ({
       key,
@@ -74,7 +84,8 @@ export function usePersistentSurfaceLayout(
     }),
   );
   const dispatch = useCallback(
-    (action: WorkspaceLayoutAction) => keyedDispatch({ type: "layout", action }),
+    (action: WorkspaceLayoutAction) =>
+      keyedDispatch({ type: "layout", action }),
     [],
   );
 

@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 export interface PlotlyModule {
   react(
@@ -44,7 +38,8 @@ function finiteJson(value: unknown, depth = 0): boolean {
   ) {
     return true;
   }
-  if (Array.isArray(value)) return value.every((item) => finiteJson(item, depth + 1));
+  if (Array.isArray(value))
+    return value.every((item) => finiteJson(item, depth + 1));
   if (typeof value === "object") {
     return Object.values(value).every((item) => finiteJson(item, depth + 1));
   }
@@ -85,10 +80,13 @@ export function PlotlyRenderer({
   const host = useRef<HTMLDivElement>(null);
   const module = useRef<PlotlyModule | null>(null);
   const loading = useRef<Promise<PlotlyModule> | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error" | "invalid">(
-    "loading",
+  const [status, setStatus] = useState<
+    "loading" | "ready" | "error" | "invalid"
+  >("loading");
+  const plot = useMemo(
+    () => parsePlot(representation.data),
+    [representation.data],
   );
-  const plot = useMemo(() => parsePlot(representation.data), [representation.data]);
 
   useEffect(() => {
     if (!plot) {
@@ -128,7 +126,9 @@ export function PlotlyRenderer({
 
   return (
     <div>
-      {status === "invalid" && <div role="alert">Invalid Plotly display data.</div>}
+      {status === "invalid" && (
+        <div role="alert">Invalid Plotly display data.</div>
+      )}
       {status === "error" && (
         <div role="alert">The interactive graph could not render.</div>
       )}

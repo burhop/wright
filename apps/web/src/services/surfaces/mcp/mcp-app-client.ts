@@ -17,10 +17,7 @@ import type {
 
 import { hostAdapter } from "../../host-adapter";
 import type { SurfaceDescriptor } from "../surface-contract";
-import type {
-  McpAppGateway,
-  McpAppOperationContext,
-} from "./mcp-app-host";
+import type { McpAppGateway, McpAppOperationContext } from "./mcp-app-host";
 import type {
   McpAppPresentationProjection,
   McpAppPresenterGateway,
@@ -51,7 +48,11 @@ async function responseJson(response: Response): Promise<unknown> {
 
 function parseProjection(value: unknown): McpAppPresentationProjection {
   const projection = record(value, "MCP App presentation");
-  if (!["supported", "absent", "unsupported"].includes(String(projection.capability))) {
+  if (
+    !["supported", "absent", "unsupported"].includes(
+      String(projection.capability),
+    )
+  ) {
     throw new TypeError("MCP App capability is malformed");
   }
   const rawCapabilities = projection.hostCapabilities ?? [];
@@ -89,25 +90,48 @@ function parseProjection(value: unknown): McpAppPresentationProjection {
     };
   }
   return {
-    capability: projection.capability as McpAppPresentationProjection["capability"],
-    ...(projection.protocolVersion === undefined || projection.protocolVersion === null
+    capability:
+      projection.capability as McpAppPresentationProjection["capability"],
+    ...(projection.protocolVersion === undefined ||
+    projection.protocolVersion === null
       ? {}
-      : { protocolVersion: text(projection.protocolVersion, "MCP App protocol version") }),
+      : {
+          protocolVersion: text(
+            projection.protocolVersion,
+            "MCP App protocol version",
+          ),
+        }),
     ...(projection.reason === undefined || projection.reason === null
       ? {}
       : { reason: text(projection.reason, "MCP App fallback reason") }),
     ...(projection.contentHash === undefined || projection.contentHash === null
       ? {}
       : { contentHash: text(projection.contentHash, "MCP App content hash") }),
-    ...(projection.sandboxOrigin === undefined || projection.sandboxOrigin === null
+    ...(projection.sandboxOrigin === undefined ||
+    projection.sandboxOrigin === null
       ? {}
-      : { sandboxOrigin: text(projection.sandboxOrigin, "MCP App sandbox origin") }),
+      : {
+          sandboxOrigin: text(
+            projection.sandboxOrigin,
+            "MCP App sandbox origin",
+          ),
+        }),
     ...(resource ? { resource } : {}),
     ...(projection.fallbackResult
-      ? { fallbackResult: record(projection.fallbackResult, "MCP App fallback") as CallToolResult }
+      ? {
+          fallbackResult: record(
+            projection.fallbackResult,
+            "MCP App fallback",
+          ) as CallToolResult,
+        }
       : {}),
     ...(projection.initialToolInput
-      ? { initialToolInput: record(projection.initialToolInput, "MCP App tool input") }
+      ? {
+          initialToolInput: record(
+            projection.initialToolInput,
+            "MCP App tool input",
+          ),
+        }
       : {}),
     ...(projection.initialToolResult
       ? {
@@ -137,7 +161,10 @@ export class McpAppClient implements McpAppPresenterGateway, McpAppGateway {
         await hostAdapter.fetch(
           `${this.base(descriptor.surfaceId)}/presentation`,
           {
-            headers: this.headers(descriptor.workspaceId, this.surfaceSessionId),
+            headers: this.headers(
+              descriptor.workspaceId,
+              this.surfaceSessionId,
+            ),
             signal,
           },
         ),
@@ -160,7 +187,11 @@ export class McpAppClient implements McpAppPresenterGateway, McpAppGateway {
     _params: ListResourcesRequest["params"],
     context: McpAppOperationContext,
   ): Promise<ListResourcesResult> {
-    return (await this.post("resources/list", {}, context)) as ListResourcesResult;
+    return (await this.post(
+      "resources/list",
+      {},
+      context,
+    )) as ListResourcesResult;
   }
 
   async listResourceTemplates(

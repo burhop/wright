@@ -36,9 +36,15 @@ export class LiveAppPresenter implements SurfacePresenter {
     frame.src = source;
     frame.title = this.descriptor.title;
     frame.dataset.testid = `surface-frame-${this.descriptor.surfaceId}`;
-    frame.setAttribute("sandbox", "allow-scripts allow-forms allow-same-origin");
+    frame.setAttribute(
+      "sandbox",
+      "allow-scripts allow-forms allow-same-origin",
+    );
     frame.setAttribute("referrerpolicy", "no-referrer");
-    frame.setAttribute("allow", "fullscreen 'none'; camera 'none'; microphone 'none'; geolocation 'none'");
+    frame.setAttribute(
+      "allow",
+      "fullscreen 'none'; camera 'none'; microphone 'none'; geolocation 'none'",
+    );
     frame.style.width = "100%";
     frame.style.height = "100%";
     frame.style.border = "0";
@@ -68,7 +74,9 @@ export class LiveAppPresenter implements SurfacePresenter {
       instance?.instanceId !== this.launch.instanceId ||
       instance?.generation !== this.launch.generation
     ) {
-      throw new Error("Live app presentation belongs to a stale instance generation");
+      throw new Error(
+        "Live app presentation belongs to a stale instance generation",
+      );
     }
     this.descriptor = descriptor;
     if (this.frame) this.frame.title = descriptor.title;

@@ -16,18 +16,30 @@ describe("PlotlyRenderer", () => {
   it("loads bundled Plotly lazily, renders, and updates the same host", async () => {
     const react = vi.fn().mockResolvedValue(undefined);
     const purge = vi.fn();
-    const loadPlotly = vi.fn().mockResolvedValue({ react, purge } satisfies PlotlyModule);
+    const loadPlotly = vi
+      .fn()
+      .mockResolvedValue({ react, purge } satisfies PlotlyModule);
     const { rerender } = render(
       <PlotlyRenderer
         representation={representation}
         description="Load rises from 10 N to 12 N."
-        fallback={<table aria-label="Load data"><tbody><tr><td>10</td></tr></tbody></table>}
+        fallback={
+          <table aria-label="Load data">
+            <tbody>
+              <tr>
+                <td>10</td>
+              </tr>
+            </tbody>
+          </table>
+        }
         loadPlotly={loadPlotly}
       />,
     );
     expect(screen.getByRole("table", { name: "Load data" })).toBeVisible();
     await waitFor(() => expect(react).toHaveBeenCalledTimes(1));
-    const host = screen.getByRole("img", { name: "Load rises from 10 N to 12 N." });
+    const host = screen.getByRole("img", {
+      name: "Load rises from 10 N to 12 N.",
+    });
     expect(react.mock.calls[0][0]).toBe(host);
     expect(host).toHaveStyle({ width: "100%", minHeight: "320px" });
 
@@ -57,7 +69,9 @@ describe("PlotlyRenderer", () => {
         loadPlotly={loadPlotly}
       />,
     );
-    expect(await screen.findByRole("alert")).toHaveTextContent(/could not render/i);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /could not render/i,
+    );
     expect(screen.getByText("Load values: 10, 12")).toBeVisible();
   });
 

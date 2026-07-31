@@ -37,9 +37,10 @@ export const WorkspaceLayout = forwardRef<HTMLDivElement, Props>(
     const resolved = resolveWorkspaceLayout(layout, paneContainerWidth);
     const focus = layout.wideMode === "focus" && layout.mode !== "narrow";
     const narrow = layout.mode === "narrow";
-    const chromeColumns = focus || narrow
-      ? "0px 0px 0px"
-      : `48px ${leftSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${leftSidebarCollapsed ? "0px" : "4px"}`;
+    const chromeColumns =
+      focus || narrow
+        ? "0px 0px 0px"
+        : `48px ${leftSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${leftSidebarCollapsed ? "0px" : "4px"}`;
     const paneColumns = narrow
       ? "minmax(0, 1fr)"
       : chatCollapsed && !focus

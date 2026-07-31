@@ -36,6 +36,9 @@ export function McpAppSurface({
       next.dispose();
       if (presenter.current === next) presenter.current = null;
     };
+    // The presenter is mounted once per surface identity. Descriptor revisions are
+    // applied by the update effect below so a live MCP App is not reloaded.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [descriptor.surfaceId, gateway, sessionId]);
 
   useEffect(() => {

@@ -1,9 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import {
-  detectNativeWebMcp,
-  registerWebMcpTool,
-} from "./webmcp-adapter";
+import { detectNativeWebMcp, registerWebMcpTool } from "./webmcp-adapter";
 
 function documentWith(values: Record<string, unknown>): Document {
   return values as unknown as Document;

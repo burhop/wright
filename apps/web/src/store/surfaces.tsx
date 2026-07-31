@@ -34,7 +34,10 @@ export interface SurfaceState {
 
 export type SurfaceAction =
   | { readonly type: "upsert"; readonly descriptor: SurfaceDescriptor }
-  | { readonly type: "reconcile"; readonly descriptors: readonly SurfaceDescriptor[] }
+  | {
+      readonly type: "reconcile";
+      readonly descriptors: readonly SurfaceDescriptor[];
+    }
   | { readonly type: "restore"; readonly state: SurfaceState }
   | { readonly type: "activate"; readonly surfaceId: string | null }
   | { readonly type: "remove"; readonly surfaceId: string }
@@ -175,7 +178,9 @@ export function reconcileRestoredSurfaceState(
   const currentById = Object.fromEntries(
     currentDescriptors.map((descriptor) => [descriptor.surfaceId, descriptor]),
   );
-  const retainedTabs = restored.tabs.filter((surfaceId) => currentById[surfaceId]);
+  const retainedTabs = restored.tabs.filter(
+    (surfaceId) => currentById[surfaceId],
+  );
   const appendedTabs = currentDescriptors
     .map((descriptor) => descriptor.surfaceId)
     .filter((surfaceId) => !retainedTabs.includes(surfaceId));
@@ -290,7 +295,10 @@ export function useSurfaces(): SurfaceStateContextValue {
   return context;
 }
 
-export function useSurfaceUpdates(workspaceId: string, sessionId: string): void {
+export function useSurfaceUpdates(
+  workspaceId: string,
+  sessionId: string,
+): void {
   const { dispatch } = useSurfaces();
   useEffect(
     () =>

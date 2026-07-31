@@ -84,7 +84,10 @@ export interface LiveAppLogs {
   readonly nextSequence: number;
 }
 
-function responseRecord(value: unknown, label: string): Record<string, unknown> {
+function responseRecord(
+  value: unknown,
+  label: string,
+): Record<string, unknown> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new TypeError(`${label} response is malformed`);
   }
@@ -106,7 +109,10 @@ function parsePresentationLaunch(
   if (launch.kind !== requestedKind) {
     throw new TypeError("presentation launch kind does not match the request");
   }
-  if (!Number.isSafeInteger(launch.generation) || Number(launch.generation) < 1) {
+  if (
+    !Number.isSafeInteger(launch.generation) ||
+    Number(launch.generation) < 1
+  ) {
     throw new TypeError("presentation launch generation is malformed");
   }
   const expiresAt = responseString(launch.expiresAt, "presentation expiresAt");
@@ -137,7 +143,9 @@ function parsePresentationPreference(value: unknown): PresentationPreference {
     throw new TypeError("presentation preference kind is malformed");
   }
   if (typeof preference.remembered !== "boolean") {
-    throw new TypeError("presentation preference remembered state is malformed");
+    throw new TypeError(
+      "presentation preference remembered state is malformed",
+    );
   }
   return Object.freeze({
     kind: preference.kind,
@@ -160,7 +168,10 @@ function parseLiveAppRuntime(value: unknown): LiveAppRuntime {
   if (!states.has(String(runtime.state))) {
     throw new TypeError("live app state is malformed");
   }
-  if (!Number.isSafeInteger(runtime.generation) || Number(runtime.generation) < 1) {
+  if (
+    !Number.isSafeInteger(runtime.generation) ||
+    Number(runtime.generation) < 1
+  ) {
     throw new TypeError("live app generation is malformed");
   }
   if (!Array.isArray(runtime.actions)) {
@@ -168,7 +179,9 @@ function parseLiveAppRuntime(value: unknown): LiveAppRuntime {
   }
   const actions = runtime.actions.map((item) => {
     const action = responseRecord(item, "live app action");
-    if (!["start", "retry", "restart", "stop"].includes(String(action.operation))) {
+    if (
+      !["start", "retry", "restart", "stop"].includes(String(action.operation))
+    ) {
       throw new TypeError("live app action operation is malformed");
     }
     return Object.freeze({
@@ -183,8 +196,14 @@ function parseLiveAppRuntime(value: unknown): LiveAppRuntime {
     state: runtime.state as SurfaceDescriptor["lifecycle"],
     sharing: responseString(runtime.sharing, "live app sharing"),
     ownership: responseString(runtime.ownership, "live app ownership"),
-    platform: runtime.platform === null ? null : responseString(runtime.platform, "live app platform"),
-    lifetimePolicy: responseString(runtime.lifetimePolicy, "live app lifetimePolicy"),
+    platform:
+      runtime.platform === null
+        ? null
+        : responseString(runtime.platform, "live app platform"),
+    lifetimePolicy: responseString(
+      runtime.lifetimePolicy,
+      "live app lifetimePolicy",
+    ),
     failure: runtime.failure as LiveAppRuntime["failure"],
     actions,
   });
@@ -199,7 +218,9 @@ function headers(workspaceId: string, sessionId: string): HeadersInit {
 
 async function checked(response: Response): Promise<unknown> {
   if (!response.ok) {
-    throw new Error(`Workspace Surface request failed with HTTP ${response.status}`);
+    throw new Error(
+      `Workspace Surface request failed with HTTP ${response.status}`,
+    );
   }
   return response.json();
 }
@@ -211,9 +232,12 @@ export async function listSurfaces(
   sessionId: string,
 ): Promise<SurfaceDescriptor[]> {
   const value = (await checked(
-    await hostAdapter.fetch(base(), { headers: headers(workspaceId, sessionId) }),
+    await hostAdapter.fetch(base(), {
+      headers: headers(workspaceId, sessionId),
+    }),
   )) as { items?: unknown[] };
-  if (!Array.isArray(value.items)) throw new TypeError("surface list is malformed");
+  if (!Array.isArray(value.items))
+    throw new TypeError("surface list is malformed");
   return value.items.map(parseSurfaceDescriptor);
 }
 
@@ -240,11 +264,15 @@ export async function getDisplayHistory(
   sessionId: string,
 ): Promise<DisplayHistoryItem[]> {
   const value = (await checked(
-    await hostAdapter.fetch(`${base()}/${encodeURIComponent(surfaceId)}/history`, {
-      headers: headers(workspaceId, sessionId),
-    }),
+    await hostAdapter.fetch(
+      `${base()}/${encodeURIComponent(surfaceId)}/history`,
+      {
+        headers: headers(workspaceId, sessionId),
+      },
+    ),
   )) as { items?: DisplayHistoryItem[] };
-  if (!Array.isArray(value.items)) throw new TypeError("display history is malformed");
+  if (!Array.isArray(value.items))
+    throw new TypeError("display history is malformed");
   return value.items;
 }
 
@@ -265,7 +293,11 @@ export async function deleteDisplay(
   surfaceId: string,
   workspaceId: string,
   sessionId: string,
-): Promise<{ deleted: boolean; recoverable: boolean; retentionStatus: string }> {
+): Promise<{
+  deleted: boolean;
+  recoverable: boolean;
+  retentionStatus: string;
+}> {
   return (await checked(
     await hostAdapter.fetch(
       `${base()}/${encodeURIComponent(surfaceId)}/display?retentionDisclosureConfirmed=true`,

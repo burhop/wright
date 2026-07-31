@@ -57,7 +57,9 @@ function Probe({
     () => () => onDispose(descriptor.surfaceId),
     [descriptor.surfaceId, onDispose],
   );
-  return <div data-testid={`probe-${descriptor.surfaceId}`}>{descriptor.title}</div>;
+  return (
+    <div data-testid={`probe-${descriptor.surfaceId}`}>{descriptor.title}</div>
+  );
 }
 
 describe("SurfaceDeck", () => {
@@ -105,7 +107,11 @@ describe("SurfaceDeck", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Reload least recently used surface" }));
+    await user.click(
+      screen.getByRole("button", {
+        name: "Reload least recently used surface",
+      }),
+    );
     expect(screen.queryByTestId("probe-app-a")).not.toBeInTheDocument();
     expect(screen.getByTestId("probe-app-b")).toBeInTheDocument();
     expect(screen.getByTestId("probe-app-c")).toBeVisible();
@@ -143,10 +149,18 @@ describe("SurfaceDeck", () => {
       <Probe descriptor={item} onDispose={dispose} />
     );
     const { rerender } = render(
-      <SurfaceDeck descriptors={descriptors} activeSurfaceId="graph-a" renderSurface={renderSurface} />,
+      <SurfaceDeck
+        descriptors={descriptors}
+        activeSurfaceId="graph-a"
+        renderSurface={renderSurface}
+      />,
     );
     rerender(
-      <SurfaceDeck descriptors={descriptors} activeSurfaceId="app-a" renderSurface={renderSurface} />,
+      <SurfaceDeck
+        descriptors={descriptors}
+        activeSurfaceId="app-a"
+        renderSurface={renderSurface}
+      />,
     );
 
     expect(screen.getByTestId("probe-app-a")).toBeVisible();
@@ -164,7 +178,9 @@ describe("SurfaceDeck", () => {
       />,
     );
 
-    expect(screen.getByRole("alertdialog", { name: "Surface memory limit reached" })).toBeVisible();
+    expect(
+      screen.getByRole("alertdialog", { name: "Surface memory limit reached" }),
+    ).toBeVisible();
     expect(screen.getByText(/app-a.*reload/i)).toBeVisible();
   });
 
@@ -176,11 +192,17 @@ describe("SurfaceDeck", () => {
         descriptors={[live("app-a"), live("app-b"), live("app-c")]}
         activeSurfaceId="app-c"
         maximumRetainedHosts={2}
-        renderSurface={(item) => <Probe descriptor={item} onDispose={dispose} />}
+        renderSurface={(item) => (
+          <Probe descriptor={item} onDispose={dispose} />
+        )}
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Reload least recently used surface" }));
+    await user.click(
+      screen.getByRole("button", {
+        name: "Reload least recently used surface",
+      }),
+    );
     expect(dispose).toHaveBeenCalledTimes(1);
     expect(dispose).toHaveBeenCalledWith("app-a");
     expect(screen.getByRole("tabpanel", { name: "app-c" })).toHaveFocus();

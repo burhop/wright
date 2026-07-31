@@ -18,10 +18,14 @@ interface StoryArgs {
   readonly state: SurfaceStoryState;
 }
 
-function storyLayout(mode: WorkspaceLayoutMode, width: number): WorkspaceLayoutState {
+function storyLayout(
+  mode: WorkspaceLayoutMode,
+  width: number,
+): WorkspaceLayoutState {
   const base = createWorkspaceLayout(width);
   if (mode === "normal") return base;
-  if (mode === "narrow") return { ...base, mode: "narrow", narrowPane: "surface" };
+  if (mode === "narrow")
+    return { ...base, mode: "narrow", narrowPane: "surface" };
   return { ...base, mode: "focus", wideMode: "focus" };
 }
 
@@ -29,7 +33,10 @@ function SurfaceStory({ mode, state }: StoryArgs): ReactElement {
   const width = mode === "narrow" ? 700 : 1200;
   const [layout, setLayout] = useState(() => storyLayout(mode, width));
   const [selected, setSelected] = useState("graph");
-  const resolved = useMemo(() => resolveWorkspaceLayout(layout, width), [layout, width]);
+  const resolved = useMemo(
+    () => resolveWorkspaceLayout(layout, width),
+    [layout, width],
+  );
   const status =
     state === "loading"
       ? "Starting graph renderer…"
@@ -51,7 +58,9 @@ function SurfaceStory({ mode, state }: StoryArgs): ReactElement {
           <ResponsivePaneSwitcher
             controlsOnly
             activePane={layout.narrowPane}
-            onChange={(narrowPane) => setLayout((current) => ({ ...current, narrowPane }))}
+            onChange={(narrowPane) =>
+              setLayout((current) => ({ ...current, narrowPane }))
+            }
           />
         )}
         <main
@@ -167,6 +176,9 @@ export const ErrorState = {
 export const Permission = {
   args: { mode: "normal", state: "permission" } satisfies StoryArgs,
   play: ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    requireElement(canvasElement, '[role="dialog"][aria-label="Permission request"]');
+    requireElement(
+      canvasElement,
+      '[role="dialog"][aria-label="Permission request"]',
+    );
   },
 };

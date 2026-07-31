@@ -34,7 +34,10 @@ function message(
 class Socket {
   readyState: number = WebSocket.OPEN;
   readonly sent: string[] = [];
-  private readonly listeners = new Map<string, ((event: MessageEvent) => void)[]>();
+  private readonly listeners = new Map<
+    string,
+    ((event: MessageEvent) => void)[]
+  >();
 
   addEventListener(name: string, listener: EventListenerOrEventListenerObject) {
     const callback = listener as (event: MessageEvent) => void;

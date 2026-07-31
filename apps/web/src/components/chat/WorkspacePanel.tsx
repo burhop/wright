@@ -1238,7 +1238,10 @@ export function WorkspacePanel({
                 </option>
               </select>
 
-              <label htmlFor="workspace-session-select" style={{ fontSize: "0.65rem" }}>
+              <label
+                htmlFor="workspace-session-select"
+                style={{ fontSize: "0.65rem" }}
+              >
                 Session
               </label>
               <select
@@ -1432,8 +1435,7 @@ export function WorkspacePanel({
           backgroundColor: "var(--color-surface)",
           borderRight: "1px solid var(--color-border)",
           gridColumn: "2",
-          display:
-            surfaceChromeHidden || isSidebarCollapsed ? "none" : "flex",
+          display: surfaceChromeHidden || isSidebarCollapsed ? "none" : "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
@@ -2629,7 +2631,8 @@ export function WorkspacePanel({
 
       {/* Right Sidebar Resize Handle */}
       {(!surfacesEnabled || surfaceLayout.mode !== "narrow") &&
-        (!isAgentCollapsed || (surfacesEnabled && surfaceLayout.wideMode === "focus")) &&
+        (!isAgentCollapsed ||
+          (surfacesEnabled && surfaceLayout.wideMode === "focus")) &&
         (surfacesEnabled ? (
           <PaneSeparator
             valueBasisPoints={resolvedSurfaceLayout.chatBasisPoints}
@@ -2774,7 +2777,10 @@ export function WorkspacePanel({
               </option>
             </select>
 
-            <label htmlFor="workspace-session-select" style={{ fontSize: "0.65rem" }}>
+            <label
+              htmlFor="workspace-session-select"
+              style={{ fontSize: "0.65rem" }}
+            >
               Session
             </label>
             <select
@@ -2927,35 +2933,35 @@ export function WorkspacePanel({
       {isAgentCollapsed &&
         (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
         (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
-        <button
-          data-testid="agent-sidebar-toggle"
-          onClick={() => setIsAgentCollapsed(false)}
-          style={{
-            position: "absolute",
-            right: "var(--space-md)",
-            top: "var(--space-md)",
-            backgroundColor: "var(--color-secondary)",
-            color: "var(--color-surface-subtle)",
-            border: "none",
-            borderRadius: "50%",
-            width: "36px",
-            height: "36px",
-            cursor: "pointer",
-            boxShadow: "var(--shadow-glow-active)",
-            zIndex: 10,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "0.8rem",
-            fontWeight: "bold",
-            transition:
-              "background-color var(--transition-fast), box-shadow var(--transition-fast)",
-          }}
-          title="Open Agent Console"
-        >
-          ◀
-        </button>
-      )}
+          <button
+            data-testid="agent-sidebar-toggle"
+            onClick={() => setIsAgentCollapsed(false)}
+            style={{
+              position: "absolute",
+              right: "var(--space-md)",
+              top: "var(--space-md)",
+              backgroundColor: "var(--color-secondary)",
+              color: "var(--color-surface-subtle)",
+              border: "none",
+              borderRadius: "50%",
+              width: "36px",
+              height: "36px",
+              cursor: "pointer",
+              boxShadow: "var(--shadow-glow-active)",
+              zIndex: 10,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "0.8rem",
+              fontWeight: "bold",
+              transition:
+                "background-color var(--transition-fast), box-shadow var(--transition-fast)",
+            }}
+            title="Open Agent Console"
+          >
+            ◀
+          </button>
+        )}
     </WorkspaceLayout>
   );
 }

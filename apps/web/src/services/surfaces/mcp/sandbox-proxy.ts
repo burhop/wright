@@ -103,9 +103,9 @@ function validateDomains(
   if (!Array.isArray(values) || values.length > MAX_DOMAINS_PER_DIRECTIVE) {
     fail(`${directive} exceeds ${MAX_DOMAINS_PER_DIRECTIVE} entries`);
   }
-  return Object.freeze(
-    [...new Set(values.map((value) => validateOriginSource(value, directive)))],
-  );
+  return Object.freeze([
+    ...new Set(values.map((value) => validateOriginSource(value, directive))),
+  ]);
 }
 
 function validatePermissions(
@@ -135,9 +135,7 @@ function sources(values: readonly string[]): string {
   return values.length === 0 ? "'none'" : values.join(" ");
 }
 
-export function buildContentSecurityPolicy(
-  csp: ValidatedResourceCsp,
-): string {
+export function buildContentSecurityPolicy(csp: ValidatedResourceCsp): string {
   const resources = sources(csp.resourceDomains);
   return [
     "default-src 'none'",
@@ -226,7 +224,9 @@ function exactOrigin(value: string, label: string): string {
     parsed.hostname !== "localhost" &&
     !parsed.hostname.endsWith(".localhost")
   ) {
-    throw new TypeError(`${label} must use HTTPS outside localhost development`);
+    throw new TypeError(
+      `${label} must use HTTPS outside localhost development`,
+    );
   }
   return parsed.origin;
 }

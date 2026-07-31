@@ -28,7 +28,10 @@ describe("surface layout persistence", () => {
 
   it("round-trips basis-point state and safely handles unavailable storage", () => {
     const storage = new MemoryStorage();
-    const state = { ...createWorkspaceLayout(1200), normalChatBasisPoints: 4100 };
+    const state = {
+      ...createWorkspaceLayout(1200),
+      normalChatBasisPoints: 4100,
+    };
     saveSurfaceLayout(storage, "layout", state);
     expect(loadSurfaceLayout(storage, "layout", 1200)).toEqual(state);
 

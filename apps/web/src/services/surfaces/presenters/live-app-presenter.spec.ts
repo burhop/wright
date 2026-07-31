@@ -77,9 +77,15 @@ describe("LiveAppPresenter", () => {
     const frame = host.querySelector("iframe");
     expect(validate).toHaveBeenCalledWith(launch.absoluteBootstrapUrl);
     expect(frame).not.toBeNull();
-    expect(frame).toHaveAttribute("sandbox", "allow-scripts allow-forms allow-same-origin");
+    expect(frame).toHaveAttribute(
+      "sandbox",
+      "allow-scripts allow-forms allow-same-origin",
+    );
     expect(frame).toHaveAttribute("referrerpolicy", "no-referrer");
-    expect(frame).toHaveAttribute("allow", expect.stringContaining("camera 'none'"));
+    expect(frame).toHaveAttribute(
+      "allow",
+      expect.stringContaining("camera 'none'"),
+    );
     expect(statuses).toEqual(["loading"]);
 
     frame?.dispatchEvent(new Event("load"));

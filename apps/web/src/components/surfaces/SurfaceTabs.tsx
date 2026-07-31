@@ -38,11 +38,12 @@ export function SurfaceTabs({
 
   const moveFocus = (currentId: string, destination: number) => {
     const currentIndex = tabs.findIndex((tab) => tab.id === currentId);
-    const index = destination < 0
-      ? (currentIndex - 1 + tabs.length) % tabs.length
-      : destination >= tabs.length
-        ? (currentIndex + 1) % tabs.length
-        : destination;
+    const index =
+      destination < 0
+        ? (currentIndex - 1 + tabs.length) % tabs.length
+        : destination >= tabs.length
+          ? (currentIndex + 1) % tabs.length
+          : destination;
     const nextId = tabs[index]?.id;
     if (!nextId) return;
     setFocusedId(nextId);
@@ -61,7 +62,10 @@ export function SurfaceTabs({
     }
   };
 
-  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, tab: SurfaceTabItem) => {
+  const onKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    tab: SurfaceTabItem,
+  ) => {
     switch (event.key) {
       case "ArrowLeft":
         event.preventDefault();
@@ -95,7 +99,11 @@ export function SurfaceTabs({
 
   return (
     <div className="surface-tabs-shell">
-      <div className="surface-tabs" role="tablist" aria-label="Workspace surfaces">
+      <div
+        className="surface-tabs"
+        role="tablist"
+        aria-label="Workspace surfaces"
+      >
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -139,7 +147,11 @@ export function SurfaceTabs({
         </div>
       )}
       {onClose && tabs.some((tab) => tab.id === selectedId && tab.closable) && (
-        <div className="surface-tab-close-controls" role="toolbar" aria-label="Close surfaces">
+        <div
+          className="surface-tab-close-controls"
+          role="toolbar"
+          aria-label="Close surfaces"
+        >
           {tabs.map((tab) =>
             tab.id === selectedId && tab.closable ? (
               <button

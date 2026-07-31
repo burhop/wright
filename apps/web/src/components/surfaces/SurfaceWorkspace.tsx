@@ -104,7 +104,10 @@ export function SurfaceWorkspace({
 
   if (state.tabs.length === 0 || !state.activeSurfaceId) {
     return notice ? (
-      <div role="status" style={{ position: "absolute", inset: 16, zIndex: 20 }}>
+      <div
+        role="status"
+        style={{ position: "absolute", inset: 16, zIndex: 20 }}
+      >
         {notice.replaceAll("_", " ")}
       </div>
     ) : null;
@@ -125,7 +128,12 @@ export function SurfaceWorkspace({
       }}
     >
       <div style={{ display: "flex", alignItems: "center" }}>
-        <h2 ref={headingRef} id="workspace-surfaces-heading" tabIndex={-1} className="sr-only">
+        <h2
+          ref={headingRef}
+          id="workspace-surfaces-heading"
+          tabIndex={-1}
+          className="sr-only"
+        >
           Workspace surfaces
         </h2>
         <div style={{ flex: 1, minWidth: 0 }} data-focus-region="tabs">
@@ -166,12 +174,15 @@ export function SurfaceWorkspace({
                 "browser",
                 {
                   rememberPreference: false,
-                  isolatedAcknowledged: descriptor.instance?.sharing === "isolated",
+                  isolatedAcknowledged:
+                    descriptor.instance?.sharing === "isolated",
                 },
               );
               await hostAdapter.openExternal(launch.absoluteBootstrapUrl);
             } catch (reason) {
-              setNotice(reason instanceof Error ? reason.message : String(reason));
+              setNotice(
+                reason instanceof Error ? reason.message : String(reason),
+              );
             }
           }}
           renderSurface={(descriptor) =>
@@ -188,9 +199,7 @@ export function SurfaceWorkspace({
               <LiveAppSurface
                 descriptor={descriptor}
                 sessionId={sessionId}
-                onFocusMode={() =>
-                  onEnterFocus?.()
-                }
+                onFocusMode={() => onEnterFocus?.()}
               />
             ) : descriptor.source.kind === "mcp_app" ? (
               <McpAppSurface
@@ -199,7 +208,9 @@ export function SurfaceWorkspace({
                 onFocusMode={onEnterFocus}
               />
             ) : (
-              <div role="status">This surface presenter is not enabled yet.</div>
+              <div role="status">
+                This surface presenter is not enabled yet.
+              </div>
             )
           }
         />

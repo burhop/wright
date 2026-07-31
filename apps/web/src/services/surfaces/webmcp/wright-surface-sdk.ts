@@ -11,7 +11,9 @@ export interface WrightSurfaceTool {
   readonly handler: (
     argumentsValue: Readonly<Record<string, unknown>>,
     context: WrightSurfaceToolCallContext,
-  ) => Promise<Readonly<Record<string, unknown>>> | Readonly<Record<string, unknown>>;
+  ) =>
+    | Promise<Readonly<Record<string, unknown>>>
+    | Readonly<Record<string, unknown>>;
   readonly signal: AbortSignal;
 }
 
@@ -82,16 +84,21 @@ export class WrightSurfaceSdk {
   private readonly origin: string;
   private readonly pageHide: () => void;
 
-  constructor(options: { origin?: string; socketFactory?: SocketFactory } = {}) {
+  constructor(
+    options: { origin?: string; socketFactory?: SocketFactory } = {},
+  ) {
     this.origin = new URL(options.origin || window.location.origin).origin;
     this.socketFactory = options.socketFactory || ((url) => new WebSocket(url));
     this.pageHide = () => this.dispose();
     window.addEventListener("pagehide", this.pageHide);
   }
 
-  async registerTool(tool: WrightSurfaceTool): Promise<WrightSurfaceRegistration> {
+  async registerTool(
+    tool: WrightSurfaceTool,
+  ): Promise<WrightSurfaceRegistration> {
     this.validateTool(tool);
-    if (tool.signal.aborted) throw new DOMException("Registration aborted", "AbortError");
+    if (tool.signal.aborted)
+      throw new DOMException("Registration aborted", "AbortError");
     await this.connect();
     const message = this.message("request", "webmcp.register", tool.name, {
       tool: {
@@ -135,9 +142,15 @@ export class WrightSurfaceSdk {
     });
     const socket = this.socketFactory(socketUrl(this.origin));
     this.socket = socket;
-    socket.addEventListener("message", (event) => this.receive(String(event.data)));
-    socket.addEventListener("error", () => this.failConnection(new Error("WebMCP connection failed")));
-    socket.addEventListener("close", () => this.failConnection(new Error("WebMCP connection closed")));
+    socket.addEventListener("message", (event) =>
+      this.receive(String(event.data)),
+    );
+    socket.addEventListener("error", () =>
+      this.failConnection(new Error("WebMCP connection failed")),
+    );
+    socket.addEventListener("close", () =>
+      this.failConnection(new Error("WebMCP connection closed")),
+    );
     return this.connectPromise;
   }
 
@@ -175,11 +188,18 @@ export class WrightSurfaceSdk {
       this.connectReject = null;
       return;
     }
-    if (!this.binding || JSON.stringify(message.binding) !== JSON.stringify(this.binding)) return;
+    if (
+      !this.binding ||
+      JSON.stringify(message.binding) !== JSON.stringify(this.binding)
+    )
+      return;
     if (message.replyTo && this.control.has(message.replyTo)) {
       const pending = this.control.get(message.replyTo)!;
       this.control.delete(message.replyTo);
-      if (message.kind === "error") pending.reject(new Error(message.error?.message || "WebMCP request failed"));
+      if (message.kind === "error")
+        pending.reject(
+          new Error(message.error?.message || "WebMCP request failed"),
+        );
       else pending.resolve();
       return;
     }
@@ -187,18 +207,25 @@ export class WrightSurfaceSdk {
       this.calls.get(message.replyTo)?.abort();
       return;
     }
-    if (message.kind === "request" && message.operation === "webmcp.tool.call") {
+    if (
+      message.kind === "request" &&
+      message.operation === "webmcp.tool.call"
+    ) {
       void this.invoke(message);
     }
   }
 
   private async invoke(message: SurfaceMessage): Promise<void> {
-    const tool = message.toolName ? this.registrations.get(message.toolName) : undefined;
+    const tool = message.toolName
+      ? this.registrations.get(message.toolName)
+      : undefined;
     if (!tool || !isRecord(message.payload)) return;
     const controller = new AbortController();
     this.calls.set(message.messageId, controller);
     try {
-      const result = await tool.handler(message.payload, { signal: controller.signal });
+      const result = await tool.handler(message.payload, {
+        signal: controller.signal,
+      });
       if (!isRecord(result) || encodedSize(result) > MAX_MESSAGE_BYTES) {
         throw new Error("WebMCP result must be a bounded object");
       }
@@ -220,7 +247,11 @@ export class WrightSurfaceSdk {
     }
     this.registrations.delete(toolName);
     const message = this.message("request", "webmcp.unregister", toolName, {
-      tool: { name: tool.name, description: tool.description, inputSchema: tool.inputSchema },
+      tool: {
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+      },
     });
     await this.controlRequest(message).catch(() => undefined);
   }
@@ -266,13 +297,21 @@ export class WrightSurfaceSdk {
     payload?: unknown,
     reason?: unknown,
   ): SurfaceMessage {
-    const message = this.message(kind, `webmcp.tool.${kind}`, request.toolName || "unknown", payload);
+    const message = this.message(
+      kind,
+      `webmcp.tool.${kind}`,
+      request.toolName || "unknown",
+      payload,
+    );
     message.replyTo = request.messageId;
     message.correlationId = request.correlationId;
     if (kind === "error") {
       message.error = {
         code: "SURFACE_PROTOCOL_WEBMCP_HANDLER_FAILED",
-        message: reason instanceof Error ? reason.message.slice(0, 2048) : "WebMCP handler failed",
+        message:
+          reason instanceof Error
+            ? reason.message.slice(0, 2048)
+            : "WebMCP handler failed",
         retryable: false,
       };
     }
@@ -283,7 +322,8 @@ export class WrightSurfaceSdk {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       throw new Error("WebMCP socket is not open");
     }
-    if (encodedSize(message) > MAX_MESSAGE_BYTES) throw new Error("WebMCP message is too large");
+    if (encodedSize(message) > MAX_MESSAGE_BYTES)
+      throw new Error("WebMCP message is too large");
     this.socket.send(JSON.stringify(message));
   }
 
@@ -291,7 +331,10 @@ export class WrightSurfaceSdk {
     if (!/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/.test(tool.name)) {
       throw new TypeError("WebMCP tool name is invalid");
     }
-    if (tool.description.length > 2048 || encodedSize(tool.inputSchema) > 64 * 1024) {
+    if (
+      tool.description.length > 2048 ||
+      encodedSize(tool.inputSchema) > 64 * 1024
+    ) {
       throw new TypeError("WebMCP tool declaration exceeds its limit");
     }
   }

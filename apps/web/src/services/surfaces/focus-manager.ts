@@ -13,7 +13,9 @@ export function nextHostFocusRegion(
 ): HostFocusRegion {
   const index = regionOrder.indexOf(current);
   const offset = reverse ? -1 : 1;
-  return regionOrder[(index + offset + regionOrder.length) % regionOrder.length];
+  return regionOrder[
+    (index + offset + regionOrder.length) % regionOrder.length
+  ];
 }
 
 export interface FocusRegionElements {
@@ -43,7 +45,8 @@ export class SurfaceFocusManager {
   ): HostFocusRegion {
     let target = nextHostFocusRegion(current, reverse);
     for (let attempts = 0; attempts < regionOrder.length; attempts += 1) {
-      const element = target === "frame-return" ? regions.frameReturn : regions[target];
+      const element =
+        target === "frame-return" ? regions.frameReturn : regions[target];
       if (element && !element.hasAttribute("disabled")) {
         element.focus();
         return target;

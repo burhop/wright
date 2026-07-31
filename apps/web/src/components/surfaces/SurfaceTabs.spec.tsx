@@ -18,7 +18,9 @@ describe("SurfaceTabs", () => {
 
     const graph = screen.getByTestId("surface-tab-graph");
     const brep = screen.getByTestId("surface-tab-brep");
-    expect(screen.getByRole("tablist", { name: "Workspace surfaces" })).toBeVisible();
+    expect(
+      screen.getByRole("tablist", { name: "Workspace surfaces" }),
+    ).toBeVisible();
     expect(graph).toHaveAttribute("aria-selected", "true");
     expect(graph).toHaveAttribute("tabindex", "0");
     expect(brep).toHaveAttribute("tabindex", "-1");
@@ -55,7 +57,9 @@ describe("SurfaceTabs", () => {
     await user.keyboard("{Delete}");
     expect(close).toHaveBeenCalledWith("brep");
     expect(screen.getByTestId("surface-tab-webmcp")).toHaveFocus();
-    expect(screen.queryByRole("button", { name: /reorder/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /reorder/i }),
+    ).not.toBeInTheDocument();
     expect(brep).not.toHaveAttribute("draggable", "true");
 
     headingRef.current.remove();

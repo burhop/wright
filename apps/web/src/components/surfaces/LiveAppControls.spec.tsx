@@ -66,7 +66,9 @@ describe("LiveAppControls", () => {
     const changed = vi.fn();
     const fetch = vi
       .spyOn(hostAdapter, "fetch")
-      .mockResolvedValue(new Response(JSON.stringify(runtime("ready")), { status: 202 }));
+      .mockResolvedValue(
+        new Response(JSON.stringify(runtime("ready")), { status: 202 }),
+      );
     render(
       <LiveAppControls
         descriptor={descriptor("declared", false)}
@@ -76,10 +78,18 @@ describe("LiveAppControls", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Start application" }));
-    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("ready"));
-    expect(screen.getByRole("button", { name: "Restart application" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Stop application" })).toBeVisible();
-    expect(changed).toHaveBeenCalledWith(expect.objectContaining({ state: "ready" }));
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent("ready"),
+    );
+    expect(
+      screen.getByRole("button", { name: "Restart application" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Stop application" }),
+    ).toBeVisible();
+    expect(changed).toHaveBeenCalledWith(
+      expect.objectContaining({ state: "ready" }),
+    );
     expect(fetch).toHaveBeenCalledWith(
       expect.stringMatching(/\/surface-app\/start$/),
       expect.objectContaining({
@@ -132,16 +142,25 @@ describe("LiveAppControls", () => {
       return new Response(JSON.stringify(runtime("ready")));
     });
     render(
-      <LiveAppControls descriptor={descriptor("ready")} sessionId="session-1" />,
+      <LiveAppControls
+        descriptor={descriptor("ready")}
+        sessionId="session-1"
+      />,
     );
     await screen.findByRole("button", { name: "Check application health" });
 
-    await user.click(screen.getByRole("button", { name: "Check application health" }));
-    expect(await screen.findByRole("note")).toHaveTextContent(/healthy/i);
-    await user.click(screen.getByRole("button", { name: "View application logs" }));
-    expect(await screen.findByRole("log", { name: "Managed application logs" })).toHaveTextContent(
-      "dashboard ready",
+    await user.click(
+      screen.getByRole("button", { name: "Check application health" }),
     );
-    expect(screen.getByRole("log")).toHaveTextContent("4 log bytes were dropped");
+    expect(await screen.findByRole("note")).toHaveTextContent(/healthy/i);
+    await user.click(
+      screen.getByRole("button", { name: "View application logs" }),
+    );
+    expect(
+      await screen.findByRole("log", { name: "Managed application logs" }),
+    ).toHaveTextContent("dashboard ready");
+    expect(screen.getByRole("log")).toHaveTextContent(
+      "4 log bytes were dropped",
+    );
   });
 });

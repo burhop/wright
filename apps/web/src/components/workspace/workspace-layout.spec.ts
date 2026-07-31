@@ -20,7 +20,11 @@ describe("workspace layout", () => {
     expect(SURFACE_MINIMUM_PX).toBe(480);
     expect(SEPARATOR_SIZE_PX).toBe(8);
     expect(NARROW_BREAKPOINT_PX).toBe(808);
-    expect(state).toMatchObject({ version: 2, mode: "normal", wideMode: "normal" });
+    expect(state).toMatchObject({
+      version: 2,
+      mode: "normal",
+      wideMode: "normal",
+    });
     expect(state.normalChatBasisPoints).toBe(3800);
     expect(resolved.chatPixels).toBeGreaterThanOrEqual(320);
     expect(resolved.surfacePixels).toBeGreaterThanOrEqual(480);
@@ -39,7 +43,9 @@ describe("workspace layout", () => {
 
     expect(focus.mode).toBe("focus");
     expect(resolveWorkspaceLayout(focus, 1600).chatPixels).toBeCloseTo(360, 0);
-    expect(resolveWorkspaceLayout(focus, 1600).chatPixels).toBeLessThanOrEqual(720);
+    expect(resolveWorkspaceLayout(focus, 1600).chatPixels).toBeLessThanOrEqual(
+      720,
+    );
 
     const restored = workspaceLayoutReducer(focus, {
       type: "exit_focus",
@@ -113,14 +119,21 @@ describe("workspace layout", () => {
     );
     expect(migrated.version).toBe(2);
     expect(migrated.mode).toBe("focus");
-    expect(resolveWorkspaceLayout(migrated, 1200).chatPixels).toBeCloseTo(420, 0);
+    expect(resolveWorkspaceLayout(migrated, 1200).chatPixels).toBeCloseTo(
+      420,
+      0,
+    );
 
     expect(restoreWorkspaceLayout("{broken", 1200)).toEqual(
       createWorkspaceLayout(1200),
     );
     expect(
       restoreWorkspaceLayout(
-        JSON.stringify({ version: 2, mode: "space", normalChatBasisPoints: -1 }),
+        JSON.stringify({
+          version: 2,
+          mode: "space",
+          normalChatBasisPoints: -1,
+        }),
         1200,
       ),
     ).toEqual(createWorkspaceLayout(1200));

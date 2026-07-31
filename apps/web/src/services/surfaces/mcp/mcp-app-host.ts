@@ -127,10 +127,7 @@ interface EnvelopedMessage extends Record<string, unknown> {
 export class McpAppHostError extends Error {
   readonly code: string;
 
-  constructor(
-    code: string,
-    message: string,
-  ) {
+  constructor(code: string, message: string) {
     super(message);
     this.code = code;
     this.name = "McpAppHostError";
@@ -144,9 +141,16 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function isJsonRpcMessage(value: unknown): value is JSONRPCMessage {
   if (!isRecord(value) || value.jsonrpc !== "2.0") return false;
   if (typeof value.method === "string") {
-    return value.id === undefined || typeof value.id === "string" || typeof value.id === "number";
+    return (
+      value.id === undefined ||
+      typeof value.id === "string" ||
+      typeof value.id === "number"
+    );
   }
-  if (value.id === undefined || (typeof value.id !== "string" && typeof value.id !== "number")) {
+  if (
+    value.id === undefined ||
+    (typeof value.id !== "string" && typeof value.id !== "number")
+  ) {
     return false;
   }
   return "result" in value || "error" in value;
@@ -170,7 +174,9 @@ function exactOrigin(value: string): string {
     parsed.hostname !== "localhost" &&
     !parsed.hostname.endsWith(".localhost")
   ) {
-    throw new TypeError("sandboxOrigin must use HTTPS outside localhost development");
+    throw new TypeError(
+      "sandboxOrigin must use HTTPS outside localhost development",
+    );
   }
   return parsed.origin;
 }
@@ -241,7 +247,8 @@ export class ExactOriginPostMessageTransport implements Transport {
   async close(): Promise<void> {
     if (this.closed) return;
     this.closed = true;
-    if (this.started) this.eventWindow.removeEventListener("message", this.listener);
+    if (this.started)
+      this.eventWindow.removeEventListener("message", this.listener);
     this.onclose?.();
   }
 
@@ -279,7 +286,9 @@ export class ExactOriginPostMessageTransport implements Transport {
       this.reject("stale_or_invalid_envelope");
       return;
     }
-    const message: Record<string, unknown> = { ...(event.data as EnvelopedMessage) };
+    const message: Record<string, unknown> = {
+      ...(event.data as EnvelopedMessage),
+    };
     delete message._wright;
     if (!isJsonRpcMessage(message)) {
       this.reject("malformed_json_rpc");
@@ -332,14 +341,19 @@ export class McpAppHost {
 
   constructor(options: McpAppHostOptions) {
     this.options = options;
-    if (options.resource.mediaType.toLowerCase() !== "text/html;profile=mcp-app") {
+    if (
+      options.resource.mediaType.toLowerCase() !== "text/html;profile=mcp-app"
+    ) {
       throw new McpAppHostError(
         "MCP_APP_MEDIA_TYPE_UNSUPPORTED",
         `Unsupported MCP App media type: ${options.resource.mediaType}`,
       );
     }
     if (options.resource.html.length === 0) {
-      throw new McpAppHostError("MCP_APP_RESOURCE_EMPTY", "MCP App resource is empty");
+      throw new McpAppHostError(
+        "MCP_APP_RESOURCE_EMPTY",
+        "MCP App resource is empty",
+      );
     }
     const enabled = options.enabledHostCapabilities || new Set();
     const capabilities: McpUiHostCapabilities = {
@@ -400,7 +414,10 @@ export class McpAppHost {
       await this.bridge.connect(this.transport);
       this.transition("waiting_for_proxy");
     } catch (reason) {
-      this.transition("error", reason instanceof Error ? reason.message : String(reason));
+      this.transition(
+        "error",
+        reason instanceof Error ? reason.message : String(reason),
+      );
       throw reason;
     }
   }
@@ -420,7 +437,10 @@ export class McpAppHost {
     this.lifetime.abort();
     if (this.initialized) {
       try {
-        await this.bridge.teardownResource({}, { timeout: TEARDOWN_TIMEOUT_MS });
+        await this.bridge.teardownResource(
+          {},
+          { timeout: TEARDOWN_TIMEOUT_MS },
+        );
       } catch {
         // Teardown is bounded and best-effort; closing the transport revokes authority.
       }
@@ -449,7 +469,10 @@ export class McpAppHost {
         })
         .then(() => this.transition("initializing"))
         .catch((reason) =>
-          this.transition("error", reason instanceof Error ? reason.message : String(reason)),
+          this.transition(
+            "error",
+            reason instanceof Error ? reason.message : String(reason),
+          ),
         );
     });
     this.bridge.addEventListener("initialized", () => {
@@ -462,19 +485,29 @@ export class McpAppHost {
       }
       void this.sendInitialToolState();
     });
-    this.bridge.addEventListener("sizechange", (size) => this.options.onSizeChange?.(size));
-    this.bridge.addEventListener("requestteardown", () => this.options.onRequestTeardown?.());
+    this.bridge.addEventListener("sizechange", (size) =>
+      this.options.onSizeChange?.(size),
+    );
+    this.bridge.addEventListener("requestteardown", () =>
+      this.options.onRequestTeardown?.(),
+    );
 
     this.bridge.oncalltool = (params, extra) =>
-      this.operation(extra.signal, (context) => this.options.gateway.callTool(params, context));
+      this.operation(extra.signal, (context) =>
+        this.options.gateway.callTool(params, context),
+      );
     this.bridge.onlistresources = (params, extra) =>
-      this.operation(extra.signal, (context) => this.options.gateway.listResources(params, context));
+      this.operation(extra.signal, (context) =>
+        this.options.gateway.listResources(params, context),
+      );
     this.bridge.onlistresourcetemplates = (params, extra) =>
       this.operation(extra.signal, (context) =>
         this.options.gateway.listResourceTemplates(params, context),
       );
     this.bridge.onreadresource = (params, extra) =>
-      this.operation(extra.signal, (context) => this.options.gateway.readResource(params, context));
+      this.operation(extra.signal, (context) =>
+        this.options.gateway.readResource(params, context),
+      );
     if (this.options.enabledHostCapabilities?.has("context.update")) {
       this.bridge.onupdatemodelcontext = (params, extra) =>
         this.operation(extra.signal, async (context) => {
@@ -503,7 +536,9 @@ export class McpAppHost {
 
   private async sendInitialToolState(): Promise<void> {
     if (this.options.initialToolInput) {
-      await this.bridge.sendToolInput({ arguments: { ...this.options.initialToolInput } });
+      await this.bridge.sendToolInput({
+        arguments: { ...this.options.initialToolInput },
+      });
     }
     if (this.options.initialToolResult) {
       await this.bridge.sendToolResult(this.options.initialToolResult);

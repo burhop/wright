@@ -73,7 +73,9 @@ describe("SurfaceToolbar", () => {
     expect(actions.onOpen).toHaveBeenNthCalledWith(2, "browser");
     expect(actions.onOpenBoth).toHaveBeenCalledOnce();
 
-    await user.click(screen.getByLabelText("Remember this presentation choice"));
+    await user.click(
+      screen.getByLabelText("Remember this presentation choice"),
+    );
     expect(actions.onRememberPreferenceChange).toHaveBeenCalledWith(true);
   });
 
@@ -107,7 +109,9 @@ describe("SurfaceToolbar", () => {
         {...actions}
       />,
     );
-    expect(screen.getByRole("status")).toHaveTextContent(/starting.*not ready/i);
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /starting.*not ready/i,
+    );
     expect(screen.queryByTestId("surface-open-panel")).not.toBeInTheDocument();
     await user.click(screen.getByTestId("surface-diagnostics"));
     expect(actions.onDiagnostics).toHaveBeenCalledOnce();

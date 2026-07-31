@@ -15,9 +15,9 @@ describe("safe Workspace Surface renderers", () => {
         }}
       />,
     );
-    expect(screen.getByRole("region", { name: "Raw solver output" })).toHaveTextContent(
-      "<script>not markup</script>",
-    );
+    expect(
+      screen.getByRole("region", { name: "Raw solver output" }),
+    ).toHaveTextContent("<script>not markup</script>");
     expect(document.querySelector("script")).toBeNull();
   });
 
@@ -28,12 +28,20 @@ describe("safe Workspace Surface renderers", () => {
         representation={{
           mediaType: "application/vnd.wright.table+json",
           encoding: "json",
-          data: { columns: ["Time", "Load"], data: [[0, 10], [1, 12]] },
+          data: {
+            columns: ["Time", "Load"],
+            data: [
+              [0, 10],
+              [1, 12],
+            ],
+          },
         }}
       />,
     );
     const table = screen.getByRole("table", { name: "Load by time table" });
-    expect(within(table).getByRole("columnheader", { name: "Time" })).toBeVisible();
+    expect(
+      within(table).getByRole("columnheader", { name: "Time" }),
+    ).toBeVisible();
     expect(within(table).getByRole("cell", { name: "12" })).toBeVisible();
   });
 

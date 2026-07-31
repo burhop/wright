@@ -26,9 +26,7 @@ interface MessageComposerProps {
   }[];
 }
 
-function getMcpStatusTone(
-  status: string,
-): { label: string; color: string } {
+function getMcpStatusTone(status: string): { label: string; color: string } {
   if (status === "ok") {
     return { label: "Active", color: "#22c55e" };
   }

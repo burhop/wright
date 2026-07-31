@@ -7,7 +7,9 @@ interface Props {
   readonly activeSurfaceId: string;
   readonly maximumRetainedHosts?: number;
   readonly renderSurface: (descriptor: SurfaceDescriptor) => ReactNode;
-  readonly onOpenInBrowser?: (descriptor: SurfaceDescriptor) => void | Promise<void>;
+  readonly onOpenInBrowser?: (
+    descriptor: SurfaceDescriptor,
+  ) => void | Promise<void>;
 }
 
 function stateful(descriptor: SurfaceDescriptor): boolean {
@@ -23,7 +25,9 @@ export function SurfaceDeck({
 }: Props) {
   const [retained, setRetained] = useState<readonly string[]>([]);
   const [evicted, setEvicted] = useState<readonly string[]>([]);
-  const [pressureCandidate, setPressureCandidate] = useState<string | null>(null);
+  const [pressureCandidate, setPressureCandidate] = useState<string | null>(
+    null,
+  );
   const activePanelRef = useRef<HTMLElement>(null);
 
   const descriptorIds = useMemo(
@@ -33,7 +37,9 @@ export function SurfaceDeck({
 
   useEffect(() => {
     if (evicted.includes(activeSurfaceId)) {
-      setEvicted((previous) => previous.filter((item) => item !== activeSurfaceId));
+      setEvicted((previous) =>
+        previous.filter((item) => item !== activeSurfaceId),
+      );
     }
   }, [activeSurfaceId, evicted]);
 
@@ -78,13 +84,17 @@ export function SurfaceDeck({
 
   const mounted = descriptors.filter(
     (descriptor) =>
-      descriptor.surfaceId === activeSurfaceId || retained.includes(descriptor.surfaceId),
+      descriptor.surfaceId === activeSurfaceId ||
+      retained.includes(descriptor.surfaceId),
   );
   const pressureDescriptor = descriptors.find(
     (descriptor) => descriptor.surfaceId === pressureCandidate,
   );
   return (
-    <div data-testid="surface-retained-deck" style={{ height: "100%", position: "relative" }}>
+    <div
+      data-testid="surface-retained-deck"
+      style={{ height: "100%", position: "relative" }}
+    >
       {pressureCandidate && (
         <div
           role="alertdialog"
@@ -92,7 +102,9 @@ export function SurfaceDeck({
           aria-describedby="surface-pressure-description"
           className="surface-pressure-dialog"
         >
-          <strong id="surface-pressure-title">Surface memory limit reached</strong>
+          <strong id="surface-pressure-title">
+            Surface memory limit reached
+          </strong>
           <p id="surface-pressure-description">
             {pressureCandidate} must reload if it is removed from memory.
           </p>
@@ -117,7 +129,8 @@ export function SurfaceDeck({
             type="button"
             disabled={!onOpenInBrowser || !pressureDescriptor}
             onClick={() => {
-              if (pressureDescriptor) void onOpenInBrowser?.(pressureDescriptor);
+              if (pressureDescriptor)
+                void onOpenInBrowser?.(pressureDescriptor);
             }}
           >
             Open surface in browser

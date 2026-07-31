@@ -215,10 +215,14 @@ export function restoreWorkspaceLayout(
     const value = JSON.parse(serialized) as Record<string, unknown>;
     if (value.version === 1) {
       const chatWidth = Number(value.chatWidth);
-      const wideMode: WideWorkspaceMode = value.focus === true ? "focus" : "normal";
+      const wideMode: WideWorkspaceMode =
+        value.focus === true ? "focus" : "normal";
       const migratedBasisPoints =
         Number.isFinite(chatWidth) && chatWidth > 0
-          ? toBasisPoints(chatWidth, Math.max(containerWidth, NARROW_BREAKPOINT_PX))
+          ? toBasisPoints(
+              chatWidth,
+              Math.max(containerWidth, NARROW_BREAKPOINT_PX),
+            )
           : wideMode === "focus"
             ? fallback.focusChatBasisPoints
             : fallback.normalChatBasisPoints;
@@ -227,7 +231,10 @@ export function restoreWorkspaceLayout(
         wideMode,
         mode: actualMode(wideMode, containerWidth),
         ...(wideMode === "focus"
-          ? { focusChatBasisPoints: migratedBasisPoints, focusChatCustomized: true }
+          ? {
+              focusChatBasisPoints: migratedBasisPoints,
+              focusChatCustomized: true,
+            }
           : { normalChatBasisPoints: migratedBasisPoints }),
       };
     }

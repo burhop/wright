@@ -13,14 +13,19 @@ interface Props {
   readonly onOpen: (kind: PresentationKind) => void | Promise<void>;
   readonly onOpenBoth: () => void | Promise<void>;
   readonly onFocus: () => void;
-  readonly onClosePresentation: (kind: PresentationKind) => void | Promise<void>;
+  readonly onClosePresentation: (
+    kind: PresentationKind,
+  ) => void | Promise<void>;
   readonly onStopApplication: () => void | Promise<void>;
   readonly onDiagnostics: () => void;
   readonly onRememberPreferenceChange: (value: boolean) => void;
   readonly onRestart?: () => void | Promise<void>;
 }
 
-function eligibility(descriptor: SurfaceDescriptor, kind: PresentationKind): boolean {
+function eligibility(
+  descriptor: SurfaceDescriptor,
+  kind: PresentationKind,
+): boolean {
   return descriptor.presentations.some(
     (value) => value.kind === kind && value.eligible === true,
   );
@@ -42,7 +47,8 @@ export function SurfaceToolbar({
   onRememberPreferenceChange,
   onRestart,
 }: Props) {
-  const ready = descriptor.lifecycle === "ready" || descriptor.lifecycle === "unhealthy";
+  const ready =
+    descriptor.lifecycle === "ready" || descriptor.lifecycle === "unhealthy";
   const panelEligible = eligibility(descriptor, "panel");
   const browserEligible = eligibility(descriptor, "browser");
   const sharing = descriptor.instance?.sharing;
@@ -50,15 +56,25 @@ export function SurfaceToolbar({
   const browserActive = activeKinds.includes("browser");
 
   return (
-    <header data-testid="surface-toolbar" aria-label={`${descriptor.title} controls`}>
-      <SurfaceStatus lifecycle={descriptor.lifecycle} frameStatus={frameStatus} />
+    <header
+      data-testid="surface-toolbar"
+      aria-label={`${descriptor.title} controls`}
+    >
+      <SurfaceStatus
+        lifecycle={descriptor.lifecycle}
+        frameStatus={frameStatus}
+      />
       {sharing === "shared" ? (
         <p>Panel and browser use the same running instance.</p>
       ) : sharing === "isolated" ? (
-        <p>Each presentation creates a separate isolated application instance.</p>
+        <p>
+          Each presentation creates a separate isolated application instance.
+        </p>
       ) : null}
       {activeKinds.length > 0 && (
-        <p>Closing this view keeps the workspace-lifetime application running.</p>
+        <p>
+          Closing this view keeps the workspace-lifetime application running.
+        </p>
       )}
       {preferredKind && <p>Preferred presentation: {preferredKind}.</p>}
       <div role="toolbar" aria-label="Surface presentation actions">
@@ -124,16 +140,21 @@ export function SurfaceToolbar({
             Stop application
           </button>
         )}
-        {onRestart && ["stopped", "failed", "unhealthy"].includes(descriptor.lifecycle) && (
-          <button
-            type="button"
-            data-testid="surface-restart-application"
-            onClick={() => void onRestart()}
-          >
-            Restart application
-          </button>
-        )}
-        <button type="button" data-testid="surface-diagnostics" onClick={onDiagnostics}>
+        {onRestart &&
+          ["stopped", "failed", "unhealthy"].includes(descriptor.lifecycle) && (
+            <button
+              type="button"
+              data-testid="surface-restart-application"
+              onClick={() => void onRestart()}
+            >
+              Restart application
+            </button>
+          )}
+        <button
+          type="button"
+          data-testid="surface-diagnostics"
+          onClick={onDiagnostics}
+        >
           Diagnostics
         </button>
       </div>
@@ -142,7 +163,9 @@ export function SurfaceToolbar({
           <input
             type="checkbox"
             checked={rememberPreference}
-            onChange={(event) => onRememberPreferenceChange(event.target.checked)}
+            onChange={(event) =>
+              onRememberPreferenceChange(event.target.checked)
+            }
           />
           Remember this presentation choice
         </label>

@@ -49,7 +49,12 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
         setPreferredKind(decision.remembered ? decision.kind : undefined);
       })
       .catch(() => undefined);
-  }, [descriptor.source.sourceVersion, descriptor.surfaceId, descriptor.workspaceId, sessionId]);
+  }, [
+    descriptor.source.sourceVersion,
+    descriptor.surfaceId,
+    descriptor.workspaceId,
+    sessionId,
+  ]);
 
   useEffect(() => {
     const current = presenter.current;
@@ -160,42 +165,46 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
   };
 
   return (
-    <div ref={root} data-testid="live-app-surface" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <div
+      ref={root}
+      data-testid="live-app-surface"
+      style={{ height: "100%", display: "flex", flexDirection: "column" }}
+    >
       <div data-focus-region="toolbar">
         <SurfaceToolbar
-        descriptor={descriptor}
-        activeKinds={Object.keys(launches) as ("panel" | "browser")[]}
-        rememberPreference={rememberPreference}
-        preferredKind={preferredKind}
-        frameStatus={
-          frameStatus === "unknown" || frameStatus === "blocked"
-            ? frameStatus
-            : undefined
-        }
-        busy={busy}
-        onOpen={(kind) => {
-          void open(kind);
-        }}
-        onOpenBoth={async () => {
-          const panelOpened = await open("panel");
-          const browserOpened = await open("browser");
-          if (panelOpened !== browserOpened) {
-            setError(
-              panelOpened
-                ? "The panel opened, but the system browser presentation failed."
-                : "The browser opened, but the workspace panel presentation failed.",
-            );
+          descriptor={descriptor}
+          activeKinds={Object.keys(launches) as ("panel" | "browser")[]}
+          rememberPreference={rememberPreference}
+          preferredKind={preferredKind}
+          frameStatus={
+            frameStatus === "unknown" || frameStatus === "blocked"
+              ? frameStatus
+              : undefined
           }
-        }}
-        onFocus={() => presenter.current?.focus()}
-        onClosePresentation={close}
-        onStopApplication={() => {
-          runtimeControls.current
-            ?.querySelector<HTMLButtonElement>('[data-operation="stop"]')
-            ?.click();
-        }}
-        onDiagnostics={() => setDiagnostics((value) => !value)}
-        onRememberPreferenceChange={setRememberPreference}
+          busy={busy}
+          onOpen={(kind) => {
+            void open(kind);
+          }}
+          onOpenBoth={async () => {
+            const panelOpened = await open("panel");
+            const browserOpened = await open("browser");
+            if (panelOpened !== browserOpened) {
+              setError(
+                panelOpened
+                  ? "The panel opened, but the system browser presentation failed."
+                  : "The browser opened, but the workspace panel presentation failed.",
+              );
+            }
+          }}
+          onFocus={() => presenter.current?.focus()}
+          onClosePresentation={close}
+          onStopApplication={() => {
+            runtimeControls.current
+              ?.querySelector<HTMLButtonElement>('[data-operation="stop"]')
+              ?.click();
+          }}
+          onDiagnostics={() => setDiagnostics((value) => !value)}
+          onRememberPreferenceChange={setRememberPreference}
         />
       </div>
       <div ref={runtimeControls}>
@@ -214,10 +223,15 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
       {error && <p role="alert">{error}</p>}
       {diagnostics && (
         <aside data-testid="surface-diagnostics-panel">
-          Source {descriptor.source.sourceId}, revision {descriptor.revision}, lifecycle {descriptor.lifecycle}.
+          Source {descriptor.source.sourceId}, revision {descriptor.revision},
+          lifecycle {descriptor.lifecycle}.
         </aside>
       )}
-      <button type="button" onClick={onFocusMode} data-testid="surface-enter-focus">
+      <button
+        type="button"
+        onClick={onFocusMode}
+        data-testid="surface-enter-focus"
+      >
         Maximize surface while keeping chat
       </button>
       {launches.panel && (
@@ -230,7 +244,11 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
           Enter embedded application
         </button>
       )}
-      <div ref={panelHost} data-testid="surface-panel-host" style={{ flex: 1, minHeight: 320 }} />
+      <div
+        ref={panelHost}
+        data-testid="surface-panel-host"
+        style={{ flex: 1, minHeight: 320 }}
+      />
       {launches.panel && (
         <button
           type="button"
@@ -243,9 +261,14 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
         </button>
       )}
       {(frameStatus === "unknown" || frameStatus === "blocked") && (
-        <p role="note" aria-live="polite" data-testid="surface-frame-unverified">
-          Keyboard escape from this application is unverified. Use Return to surface controls,
-          the desktop return shortcut, or open the application in your browser.
+        <p
+          role="note"
+          aria-live="polite"
+          data-testid="surface-frame-unverified"
+        >
+          Keyboard escape from this application is unverified. Use Return to
+          surface controls, the desktop return shortcut, or open the application
+          in your browser.
         </p>
       )}
     </div>

@@ -25,7 +25,11 @@ function descriptor(): SurfaceDescriptor {
     },
     title: "Reference MCP App",
     lifecycle: "ready",
-    instance: { instanceId: "mcp-instance", generation: 2, sharing: "isolated" },
+    instance: {
+      instanceId: "mcp-instance",
+      generation: 2,
+      sharing: "isolated",
+    },
     presentations: [{ kind: "panel", eligible: true }],
     capabilities: [],
     revision: 3,
@@ -54,13 +58,17 @@ function supported(
   };
 }
 
-function gateway(projection: McpAppPresentationProjection): McpAppPresenterGateway {
+function gateway(
+  projection: McpAppPresentationProjection,
+): McpAppPresenterGateway {
   return {
     getPresentation: vi.fn(async () => projection),
     callTool: vi.fn(async () => ({ content: [] })),
     listResources: vi.fn(async () => ({ resources: [] })),
     listResourceTemplates: vi.fn(async () => ({ resourceTemplates: [] })),
-    readResource: vi.fn(async ({ uri }) => ({ contents: [{ uri, text: "resource" }] })),
+    readResource: vi.fn(async ({ uri }) => ({
+      contents: [{ uri, text: "resource" }],
+    })),
     updateModelContext: vi.fn(async () => undefined),
     sendUserMessage: vi.fn(async () => undefined),
   };
@@ -85,10 +93,14 @@ async function expectFallback(
 ): Promise<string> {
   const { container, presenter } = mount(projection);
   await vi.waitFor(() => {
-    expect(container.querySelector('[data-testid="mcp-app-fallback"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="mcp-app-fallback"]'),
+    ).not.toBeNull();
   });
   expect(container.textContent).toMatch(text);
-  expect(container.querySelector('[data-testid="mcp-app-sandbox-frame"]')).toBeNull();
+  expect(
+    container.querySelector('[data-testid="mcp-app-sandbox-frame"]'),
+  ).toBeNull();
   const rendered = container.textContent || "";
   presenter.dispose();
   return rendered;
@@ -151,18 +163,24 @@ describe("McpAppPresenter", () => {
   it("mounts a distinct-origin outer sandbox with stable automation identifiers", async () => {
     const { container, presenter, presenterGateway } = mount(supported());
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-testid="mcp-app-sandbox-frame"]')).not.toBeNull();
+      expect(
+        container.querySelector('[data-testid="mcp-app-sandbox-frame"]'),
+      ).not.toBeNull();
     });
     const frame = container.querySelector<HTMLIFrameElement>(
       '[data-testid="mcp-app-sandbox-frame"]',
     );
-    expect(container.querySelector('[data-testid="mcp-app-surface"]')).not.toBeNull();
-    expect(container.querySelector('[data-testid="mcp-app-status"]')).toHaveTextContent(
-      /waiting for the isolated/i,
-    );
+    expect(
+      container.querySelector('[data-testid="mcp-app-surface"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="mcp-app-status"]'),
+    ).toHaveTextContent(/waiting for the isolated/i);
     expect(frame).toHaveAttribute("sandbox", "allow-scripts allow-same-origin");
     expect(frame).toHaveAttribute("referrerpolicy", "no-referrer");
-    expect(frame?.src).toMatch(/^https:\/\/mcp-sandbox\.test\/surface-sandbox\/index\.html\?/);
+    expect(frame?.src).toMatch(
+      /^https:\/\/mcp-sandbox\.test\/surface-sandbox\/index\.html\?/,
+    );
     expect(frame?.src).toContain("hostOrigin=https%3A%2F%2Fwright.test");
     expect(presenterGateway.getPresentation).toHaveBeenCalledWith(
       expect.objectContaining({ surfaceId: "surface-mcp" }),
@@ -188,10 +206,16 @@ describe("McpAppPresenter", () => {
       hostOrigin: "https://wright.test",
     });
     presenter.mount(container);
-    await vi.waitFor(() => expect(container).toHaveTextContent(/resource read timed out/i));
-    container.querySelector<HTMLButtonElement>('[data-testid="mcp-app-retry"]')?.click();
+    await vi.waitFor(() =>
+      expect(container).toHaveTextContent(/resource read timed out/i),
+    );
+    container
+      .querySelector<HTMLButtonElement>('[data-testid="mcp-app-retry"]')
+      ?.click();
     await vi.waitFor(() => {
-      expect(container.querySelector('[data-testid="mcp-app-sandbox-frame"]')).not.toBeNull();
+      expect(
+        container.querySelector('[data-testid="mcp-app-sandbox-frame"]'),
+      ).not.toBeNull();
     });
     expect(presenterGateway.getPresentation).toHaveBeenCalledTimes(2);
     presenter.dispose();
