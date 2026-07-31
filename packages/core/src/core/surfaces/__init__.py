@@ -2,6 +2,10 @@
 
 from .errors import SurfaceError as SurfaceError
 from .errors import SurfaceErrorCode as SurfaceErrorCode
+from .live_app_manifest import LiveAppManifest as LiveAppManifest
+from .live_app_manifest import ManifestError as ManifestError
+from .live_app_manifest import ManifestPlaceholders as ManifestPlaceholders
+from .live_app_manifest import parse_live_app_manifest as parse_live_app_manifest
 from .models import SurfaceDescriptor as SurfaceDescriptor
 from .models import SurfaceId as SurfaceId
 from .models import SurfaceLifecycle as SurfaceLifecycle
@@ -16,6 +20,9 @@ CONTRACT_VERSION = 1
 __all__ = (
     "CONTRACT_VERSION",
     "AddressClass",
+    "LiveAppManifest",
+    "ManifestError",
+    "ManifestPlaceholders",
     "NetworkValueError",
     "NormalizedTargetUrl",
     "SurfaceDescriptor",
@@ -25,4 +32,5 @@ __all__ = (
     "SurfaceLifecycle",
     "SurfaceRevision",
     "SurfaceSourceKind",
+    "parse_live_app_manifest",
 )

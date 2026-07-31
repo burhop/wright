@@ -148,7 +148,10 @@
       "properties": {
         "startupTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 300000, "default": 30000},
         "shutdownTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 60000, "default": 10000},
+        "gracefulShutdownMs": {"type": "integer", "minimum": 100, "maximum": 30000, "default": 5000},
+        "cleanupReconciliationMs": {"type": "integer", "minimum": 100, "maximum": 30000, "default": 5000},
         "maxRestarts": {"type": "integer", "minimum": 0, "maximum": 20, "default": 2},
+        "restartWindowMs": {"type": "integer", "minimum": 1000, "maximum": 3600000, "default": 300000},
         "maxProcesses": {"type": "integer", "minimum": 1, "maximum": 256, "default": 32},
         "maxCpuCores": {"type": "number", "minimum": 0.1, "maximum": 64, "default": 2},
         "maxMemoryMiB": {"type": "integer", "minimum": 16, "maximum": 65536, "default": 2048},
@@ -158,16 +161,22 @@
         "maxRequestBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 16777216},
         "maxResponseBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 67108864},
         "maxDecodedBodyBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 67108864},
+        "maxDecompressionRatio": {"type": "integer", "minimum": 1, "maximum": 64, "default": 8},
         "maxBufferedOutputBytes": {"type": "integer", "minimum": 4096, "maximum": 1073741824, "default": 4194304},
         "maxRequestRatePerMinute": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 300},
+        "requestBurst": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 60},
         "maxMessageRatePerSecond": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 100},
         "maxWebSocketMessageBytes": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 4194304},
+        "webSocketMessageBurst": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 200},
         "maxStreamBytesPerSecond": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 8388608},
+        "streamBurstBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 16777216},
         "firstByteTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 300000, "default": 30000},
-        "idleTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 3600000, "default": 90000},
+        "httpIdleTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 3600000, "default": 60000},
+        "streamHeartbeatIdleMs": {"type": "integer", "minimum": 100, "maximum": 3600000, "default": 90000},
         "maxConnectionLifetimeMs": {"type": "integer", "minimum": 1000, "maximum": 86400000, "default": 28800000},
         "maxLogBytes": {"type": "integer", "minimum": 4096, "maximum": 1073741824, "default": 10485760},
-        "maxLogBytesPerSecond": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 262144}
+        "maxLogBytesPerSecond": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 262144},
+        "logBurstBytes": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 1048576}
       }
     },
     "redaction": {

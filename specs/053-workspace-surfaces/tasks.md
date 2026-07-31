@@ -224,7 +224,7 @@
 
 ### Tests for User Story 5 — write and observe failure first
 
-- [ ] T114 [P] [US5] Add manifest schema/default/interpolation/no-shell/cwd/env/secret/probe/presentation/transport, command-versus-approved-attach ownership, workspace/lease/defined-activity idle lifetime, and exact `policy-defaults.md` process/CPU/memory/request/response/decoded/rate/buffer/header/connection/stream/log/time limit tests to `tests/contract/workspace_surfaces/test_live_app_manifest.py` (FR-018 through FR-019, FR-023, FR-025)
+- [x] T114 [P] [US5] Add manifest schema/default/interpolation/no-shell/cwd/env/secret/probe/presentation/transport, command-versus-approved-attach ownership, workspace/lease/defined-activity idle lifetime, and exact `policy-defaults.md` process/CPU/memory/request/response/decoded/rate/buffer/header/connection/stream/log/time limit tests to `tests/contract/workspace_surfaces/test_live_app_manifest.py` (FR-018 through FR-019, FR-023, FR-025)
 - [ ] T115 [P] [US5] Add fake-clock/process/port runtime state, per-instance locking/generation/idempotency, start/retry/restart/stop/lifetime tests to `packages/workspace_service/tests/surfaces/test_live_app_manager.py` (FR-020, FR-022 through FR-026)
 - [ ] T116 [P] [US5] Add readiness versus transport/application health, timeout, crash, restart-budget, and actionable-diagnostic tests to `packages/workspace_service/tests/surfaces/test_app_health.py` (FR-022 through FR-025)
 - [ ] T117 [P] [US5] Add POSIX process-group descendant, graceful/escalated stop, cancellation, PID-reuse, executable/listener identity, and orphan tests to `tests/native_runtime/test_surface_process_posix.py` (FR-020, FR-024, FR-052)
@@ -241,16 +241,16 @@
 
 ### Implementation for User Story 5
 
-- [ ] T128 [P] [US5] Implement immutable manifest values, command/approved-attach ownership consistency, documented placeholder interpolation, workspace/lease/defined-activity idle lifetime, complete runtime/proxy limits, defaults, secret references, and policy projection in `packages/core/src/core/surfaces/live_app_manifest.py` (FR-018 through FR-019, FR-023, FR-025)
-- [ ] T129 [US5] Implement workspace-confined manifest discovery/validation and explicit attach approval in `packages/workspace_service/src/workspace_service/surfaces/manifests.py` (FR-018 through FR-019, FR-040)
-- [ ] T130 [US5] Implement race-resistant loopback endpoint allocation/reservation and listener ownership verification in `packages/workspace_service/src/workspace_service/surfaces/endpoints.py` (FR-020)
-- [ ] T131 [US5] Replace one-shot blocking execution for managed apps with an async process-supervisor port, bounded redacted ring logs, cancellation, and identity evidence in `packages/workspace_service/src/workspace_service/surfaces/process_supervisor.py` (FR-019, FR-024 through FR-025)
+- [x] T128 [P] [US5] Implement immutable manifest values, command/approved-attach ownership consistency, documented placeholder interpolation, workspace/lease/defined-activity idle lifetime, complete runtime/proxy limits, defaults, secret references, and policy projection in `packages/core/src/core/surfaces/live_app_manifest.py` (FR-018 through FR-019, FR-023, FR-025)
+- [x] T129 [US5] Implement workspace-confined manifest discovery/validation and explicit attach approval in `packages/workspace_service/src/workspace_service/surfaces/manifests.py` (FR-018 through FR-019, FR-040)
+- [x] T130 [US5] Implement race-resistant loopback endpoint allocation/reservation and listener ownership verification in `packages/workspace_service/src/workspace_service/surfaces/endpoints.py` (FR-020)
+- [x] T131 [US5] Replace one-shot blocking execution for managed apps with an async process-supervisor port, bounded redacted ring logs, cancellation, and identity evidence in `packages/workspace_service/src/workspace_service/surfaces/process_supervisor.py` (FR-019, FR-024 through FR-025)
 - [ ] T132 [P] [US5] Implement POSIX new-session/process-group launch, graceful/escalated tree stop, and psutil reconciliation in `packages/workspace_service/src/workspace_service/surfaces/process_posix.py` (FR-024, FR-052)
 - [ ] T133 [P] [US5] Implement Windows hidden launch, kill-on-close Job Object, descendant reconciliation, and explicit degraded-control errors in `packages/workspace_service/src/workspace_service/surfaces/process_windows.py` (FR-024, FR-052)
 - [ ] T134 [P] [US5] Implement container/remote process and preview-origin adapter contracts without assuming browser reachability in `packages/workspace_service/src/workspace_service/surfaces/process_remote.py` (FR-027, FR-052)
 - [ ] T135 [US5] Implement the serialized live-app manager for launch/attach, generation, workspace default, restart budget, absolute leases, defined app/presentation-activity idle timeout, manual policy, and cleanup in `packages/workspace_service/src/workspace_service/surfaces/live_app_manager.py` (FR-018 through FR-026)
 - [ ] T136 [P] [US5] Implement bounded readiness/health probes that distinguish target transport and application failure in `packages/workspace_service/src/workspace_service/surfaces/health.py` (FR-022)
-- [ ] T137 [P] [US5] Implement bounded redacted runtime log capture/tail/rotation and diagnostic projection in `packages/workspace_service/src/workspace_service/surfaces/runtime_logs.py` (FR-025, FR-044, FR-049)
+- [x] T137 [P] [US5] Implement bounded redacted runtime log capture/tail/rotation and diagnostic projection in `packages/workspace_service/src/workspace_service/surfaces/runtime_logs.py` (FR-025, FR-044, FR-049)
 - [ ] T138 [US5] Create/revoke immutable target pins only after readiness and process/listener ownership proof in `packages/workspace_service/src/workspace_service/surfaces/target_pins.py` (FR-020, FR-040)
 - [ ] T139 [US5] Implement streamed HTTP proxying with cancellation, limits, preserved semantics, and security helpers in `apps/api/src/api/surface_http_proxy.py` (FR-021, FR-025, FR-040, FR-043)
 - [ ] T140 [P] [US5] Implement WebSocket proxying with exact Origin/subprotocol/frame/close/backpressure/revocation semantics in `apps/api/src/api/surface_websocket_proxy.py` (FR-021, FR-025, FR-043)
