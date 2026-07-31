@@ -82,10 +82,7 @@ class TargetPinRegistry:
         scheme: str,
     ) -> ActiveTargetPin:
         self._require_ready(readiness)
-        if (
-            ownership.instance_id != instance_id
-            or ownership.generation != generation
-        ):
+        if ownership.instance_id != instance_id or ownership.generation != generation:
             raise TargetPinError(
                 "SURFACE_TARGET_OWNERSHIP_MISMATCH",
                 "Listener ownership does not match the target runtime generation",

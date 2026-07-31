@@ -31,9 +31,8 @@ class SurfaceHostDispatchMiddleware:
         if not hostname.endswith(suffix):
             return False
         label = hostname[: -len(suffix)]
-        return (
-            label == "mcp-sandbox"
-            or (label.startswith("s-") and len(label) > 2 and "." not in label)
+        return label == "mcp-sandbox" or (
+            label.startswith("s-") and len(label) > 2 and "." not in label
         )
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:

@@ -59,7 +59,9 @@ def test_inherited_listener_remains_continuously_owned() -> None:
         reservation.close()
 
 
-def test_listener_ownership_requires_exact_pid_creation_identity_and_generation() -> None:
+def test_listener_ownership_requires_exact_pid_creation_identity_and_generation() -> (
+    None
+):
     reservation = LoopbackEndpointAllocator().reserve(
         instance_id="instance-3", generation=7, inherit_listener=True
     )

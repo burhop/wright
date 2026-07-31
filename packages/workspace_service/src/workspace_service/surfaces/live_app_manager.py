@@ -25,7 +25,10 @@ from workspace_service.surfaces.manifests import (
     ManifestDiscoveryError,
 )
 from workspace_service.surfaces.target_pins import TargetPinError
-from workspace_service.surfaces.target_policy import ResolvedTargetPin, TargetPolicyError
+from workspace_service.surfaces.target_policy import (
+    ResolvedTargetPin,
+    TargetPolicyError,
+)
 
 
 class LiveAppManagerError(RuntimeError):
@@ -149,7 +152,8 @@ class LiveAppManager:
         maximum_endpoint_attempts: int = 5,
         inherited_listener: Callable[[str], bool] | None = None,
         platform_hint: str | None = None,
-        persistence: Callable[[LiveAppInstance, DiscoveredManifest], None] | None = None,
+        persistence: Callable[[LiveAppInstance, DiscoveredManifest], None]
+        | None = None,
     ) -> None:
         if not 1 <= maximum_endpoint_attempts <= 5:
             raise ValueError("endpoint launch attempts must be between one and five")
@@ -222,7 +226,8 @@ class LiveAppManager:
         instance_id = self._id_factory()
         if not instance_id or instance_id in self._instances:
             raise LiveAppManagerError(
-                "SURFACE_INSTANCE_ID_INVALID", "Live-app instance ID is empty or collided"
+                "SURFACE_INSTANCE_ID_INVALID",
+                "Live-app instance ID is empty or collided",
             )
         now = self._clock()
         lifetime = declaration.manifest.lifetime
@@ -271,7 +276,9 @@ class LiveAppManager:
 
     def _persist(self, instance: LiveAppInstance) -> None:
         if self._persistence is not None:
-            self._persistence(instance, self._contexts[instance.instance_id].declaration)
+            self._persistence(
+                instance, self._contexts[instance.instance_id].declaration
+            )
 
     def _replace(self, instance_id: str, **changes: Any) -> LiveAppInstance:
         current = self._instances[instance_id]
@@ -296,7 +303,10 @@ class LiveAppManager:
                     for item in self._instances.values()
                     if item.workspace_id == workspace_id
                 ),
-                key=lambda item: (item.started_at or item.last_activity_at, item.instance_id),
+                key=lambda item: (
+                    item.started_at or item.last_activity_at,
+                    item.instance_id,
+                ),
             )
         )
 
@@ -304,7 +314,10 @@ class LiveAppManager:
         self, instance_id: str, *, generation: int
     ) -> LiveAppRoutingPolicy:
         instance = self.get(instance_id)
-        if instance.generation != generation or instance.state not in {"ready", "unhealthy"}:
+        if instance.generation != generation or instance.state not in {
+            "ready",
+            "unhealthy",
+        }:
             raise LiveAppManagerError(
                 "SURFACE_STATE_STALE_GENERATION",
                 "Live-app route generation is not currently available",
@@ -339,13 +352,9 @@ class LiveAppManager:
             ) from error
         return LiveAppRoute(policy=policy, target=active.target)
 
-    def presentation_projection(
-        self, instance_id: str
-    ) -> tuple[dict[str, Any], ...]:
+    def presentation_projection(self, instance_id: str) -> tuple[dict[str, Any], ...]:
         self.get(instance_id)
-        presentation = self._contexts[
-            instance_id
-        ].declaration.manifest.presentation
+        presentation = self._contexts[instance_id].declaration.manifest.presentation
         return tuple(
             {
                 "kind": kind,
@@ -399,18 +408,14 @@ class LiveAppManager:
                     self._target_pins.revoke(
                         instance_id=instance_id, generation=current.generation
                     )
-                    self._routing_limits.pop(
-                        (instance_id, current.generation), None
-                    )
+                    self._routing_limits.pop((instance_id, current.generation), None)
                     return self._replace(
                         instance_id,
                         state="failed",
                         ended_at=self._clock(),
                         failure=failure,
                     )
-            route = self.resolve_route(
-                instance_id, generation=current.generation
-            )
+            route = self.resolve_route(instance_id, generation=current.generation)
             result = await self._health.check(
                 target=ProbeTarget(
                     scheme=route.target.scheme,
@@ -486,9 +491,9 @@ class LiveAppManager:
                         "Workspace has reached its managed live-app limit",
                     )
             instance = self._new_instance(request, declaration)
-            self._request_results[
-                (request.workspace_id, request.idempotency_key)
-            ] = instance.instance_id
+            self._request_results[(request.workspace_id, request.idempotency_key)] = (
+                instance.instance_id
+            )
             if declaration.manifest.presentation.sharing == "shared":
                 self._source_instances[source_key] = instance.instance_id
             semaphore = self._start_semaphores.setdefault(
@@ -591,8 +596,10 @@ class LiveAppManager:
                         server_name=None,
                     ),
                     probe=manifest.readiness,
-                    process_alive=lambda: self._supervisor.snapshot(runtime_id).status
-                    in {"running", "starting"},
+                    process_alive=lambda: (
+                        self._supervisor.snapshot(runtime_id).status
+                        in {"running", "starting"}
+                    ),
                     ownership_valid=lambda: True,
                 )
                 if not readiness.ok:
@@ -625,7 +632,9 @@ class LiveAppManager:
             except EndpointError as error:
                 last_error = error
                 if error.code != "SURFACE_TARGET_OWNERSHIP_MISMATCH":
-                    await self._fail_launch(instance_id, runtime_id, error.code, str(error))
+                    await self._fail_launch(
+                        instance_id, runtime_id, error.code, str(error)
+                    )
                     break
                 await self._cleanup_attempt(instance_id, runtime_id)
                 reservation.close()
@@ -707,7 +716,9 @@ class LiveAppManager:
                 ),
                 probe=context.declaration.manifest.readiness,
                 process_alive=lambda: True,
-                ownership_valid=lambda: self._target_policy.revalidate(target) == target,
+                ownership_valid=lambda: (
+                    self._target_policy.revalidate(target) == target
+                ),
             )
             if not readiness.ok:
                 raise LiveAppManagerError(
@@ -747,13 +758,9 @@ class LiveAppManager:
                 retryable=True,
             ) from error
 
-    async def _cleanup_attempt(
-        self, instance_id: str, runtime_id: str | None
-    ) -> None:
+    async def _cleanup_attempt(self, instance_id: str, runtime_id: str | None) -> None:
         current = self.get(instance_id)
-        self._target_pins.revoke(
-            instance_id=instance_id, generation=current.generation
-        )
+        self._target_pins.revoke(instance_id=instance_id, generation=current.generation)
         self._routing_limits.pop((instance_id, current.generation), None)
         if runtime_id is not None:
             await self._supervisor.stop(
@@ -762,8 +769,9 @@ class LiveAppManager:
                 deadline=self._clock()
                 + timedelta(
                     seconds=int(
-                        self._effective_limits(self._contexts[instance_id].declaration)
-                        .ordinary_stop_timeout_seconds
+                        self._effective_limits(
+                            self._contexts[instance_id].declaration
+                        ).ordinary_stop_timeout_seconds
                     )
                 ),
             )
@@ -791,9 +799,7 @@ class LiveAppManager:
             return current
         current = self._replace(instance_id, state="stopping")
         # Route and presentation authority is revoked before process signalling.
-        self._target_pins.revoke(
-            instance_id=instance_id, generation=current.generation
-        )
+        self._target_pins.revoke(instance_id=instance_id, generation=current.generation)
         self._routing_limits.pop((instance_id, current.generation), None)
         if current.runtime_id and current.ownership == "launched":
             limits = self._effective_limits(self._contexts[instance_id].declaration)
@@ -821,9 +827,7 @@ class LiveAppManager:
             failure=None,
         )
 
-    async def stop(
-        self, instance_id: str, *, idempotency_key: str
-    ) -> LiveAppInstance:
+    async def stop(self, instance_id: str, *, idempotency_key: str) -> LiveAppInstance:
         if not idempotency_key:
             raise LiveAppManagerError(
                 "SURFACE_LIFECYCLE_REQUEST_INVALID", "Stop requires idempotency"
@@ -887,9 +891,7 @@ class LiveAppManager:
             self._operation_results[operation] = result
             return result
 
-    async def retry(
-        self, instance_id: str, *, idempotency_key: str
-    ) -> LiveAppInstance:
+    async def retry(self, instance_id: str, *, idempotency_key: str) -> LiveAppInstance:
         if self.get(instance_id).state not in {"failed", "stopped"}:
             raise LiveAppManagerError(
                 "SURFACE_LIFECYCLE_CONFLICT",
@@ -934,7 +936,10 @@ class LiveAppManager:
             0, self._presentations.get(instance_id, 0) - 1
         )
         current = self.get(instance_id)
-        if current.lifetime_policy == "presentation" and not self._presentations[instance_id]:
+        if (
+            current.lifetime_policy == "presentation"
+            and not self._presentations[instance_id]
+        ):
             return await self.stop(
                 instance_id,
                 idempotency_key=f"lifetime:presentation:{current.generation}",

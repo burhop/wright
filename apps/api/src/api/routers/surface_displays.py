@@ -82,7 +82,9 @@ def _control_context(
     user_id = getattr(request.state, "principal_id", None)
     role = getattr(request.state, "principal_role", None)
     if not user_id or role not in {None, "engineer", "admin"} or not session_id:
-        raise HTTPException(status_code=401, detail="Authenticated surface user required")
+        raise HTTPException(
+            status_code=401, detail="Authenticated surface user required"
+        )
     return DisplayExecutionContext(
         user_id=str(user_id),
         workspace_id=workspace_id,
@@ -105,9 +107,7 @@ def ingest_display(
         Body(media_type="application/vnd.wright.display+json"),
     ],
     service: Annotated[DisplayService, Depends(get_display_service)],
-    tokens: Annotated[
-        DisplayExecutionTokenService, Depends(get_display_token_service)
-    ],
+    tokens: Annotated[DisplayExecutionTokenService, Depends(get_display_token_service)],
     workspace_id: Annotated[
         str, Header(alias="X-Wright-Workspace-ID", min_length=1, max_length=128)
     ],
@@ -139,9 +139,7 @@ def delete_display(
     surface_id: str,
     request: Request,
     service: Annotated[DisplayService, Depends(get_display_service)],
-    tokens: Annotated[
-        DisplayExecutionTokenService, Depends(get_display_token_service)
-    ],
+    tokens: Annotated[DisplayExecutionTokenService, Depends(get_display_token_service)],
     workspace_id: Annotated[
         str, Header(alias="X-Wright-Workspace-ID", min_length=1, max_length=128)
     ],
@@ -169,7 +167,9 @@ def delete_display(
     except DisplayDeletionNotConfirmed as error:
         raise HTTPException(status_code=409, detail=str(error)) from error
     except KeyError as error:
-        raise HTTPException(status_code=404, detail="Display surface not found") from error
+        raise HTTPException(
+            status_code=404, detail="Display surface not found"
+        ) from error
     return {
         "deleted": result.deleted,
         "recoverable": result.recoverable,
@@ -182,9 +182,7 @@ def get_display(
     surface_id: str,
     request: Request,
     service: Annotated[DisplayService, Depends(get_display_service)],
-    tokens: Annotated[
-        DisplayExecutionTokenService, Depends(get_display_token_service)
-    ],
+    tokens: Annotated[DisplayExecutionTokenService, Depends(get_display_token_service)],
     workspace_id: Annotated[str, Header(alias="X-Wright-Workspace-ID")],
     session_id: Annotated[
         str | None, Header(alias="X-Wright-Session-ID", max_length=128)
@@ -201,7 +199,9 @@ def get_display(
     try:
         return service.display_projection(surface_id=surface_id, context=context)
     except KeyError as error:
-        raise HTTPException(status_code=404, detail="Display surface not found") from error
+        raise HTTPException(
+            status_code=404, detail="Display surface not found"
+        ) from error
 
 
 @router.get("/{surface_id}/history")
@@ -209,9 +209,7 @@ def get_display_history(
     surface_id: str,
     request: Request,
     service: Annotated[DisplayService, Depends(get_display_service)],
-    tokens: Annotated[
-        DisplayExecutionTokenService, Depends(get_display_token_service)
-    ],
+    tokens: Annotated[DisplayExecutionTokenService, Depends(get_display_token_service)],
     workspace_id: Annotated[str, Header(alias="X-Wright-Workspace-ID")],
     session_id: Annotated[
         str | None, Header(alias="X-Wright-Session-ID", max_length=128)
@@ -226,9 +224,13 @@ def get_display_history(
         tokens=tokens,
     )
     try:
-        return {"items": service.surface_history(surface_id=surface_id, context=context)}
+        return {
+            "items": service.surface_history(surface_id=surface_id, context=context)
+        }
     except KeyError as error:
-        raise HTTPException(status_code=404, detail="Display surface not found") from error
+        raise HTTPException(
+            status_code=404, detail="Display surface not found"
+        ) from error
 
 
 @router.get("/{surface_id}/verification")
@@ -236,9 +238,7 @@ def get_display_verification(
     surface_id: str,
     request: Request,
     service: Annotated[DisplayService, Depends(get_display_service)],
-    tokens: Annotated[
-        DisplayExecutionTokenService, Depends(get_display_token_service)
-    ],
+    tokens: Annotated[DisplayExecutionTokenService, Depends(get_display_token_service)],
     workspace_id: Annotated[str, Header(alias="X-Wright-Workspace-ID")],
     session_id: Annotated[
         str | None, Header(alias="X-Wright-Session-ID", max_length=128)
@@ -255,4 +255,6 @@ def get_display_verification(
     try:
         return service.verify_artifact(surface_id=surface_id, context=context)
     except KeyError as error:
-        raise HTTPException(status_code=404, detail="Display surface not found") from error
+        raise HTTPException(
+            status_code=404, detail="Display surface not found"
+        ) from error

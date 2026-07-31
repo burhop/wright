@@ -68,7 +68,9 @@ def _envelope(revision: int, *, data: str = "10 N", key: str | None = None) -> d
 
 def _service(tmp_path: Path) -> DisplayService:
     database = _database(tmp_path)
-    return DisplayService(database, vault=SurfaceVault(tmp_path / "vault"), clock=lambda: NOW)
+    return DisplayService(
+        database, vault=SurfaceVault(tmp_path / "vault"), clock=lambda: NOW
+    )
 
 
 def test_ingest_is_atomic_updates_one_logical_surface_and_preserves_history(
@@ -88,11 +90,14 @@ def test_ingest_is_atomic_updates_one_logical_surface_and_preserves_history(
     )
     assert [artifact.revision for artifact in history] == [1, 2]
     assert [artifact.current for artifact in history] == [False, True]
-    assert service.read_representation(
-        artifact_id=history[-1].artifact_id,
-        index=0,
-        context=_context(),
-    ) == b"12 N"
+    assert (
+        service.read_representation(
+            artifact_id=history[-1].artifact_id,
+            index=0,
+            context=_context(),
+        )
+        == b"12 N"
+    )
 
 
 def test_duplicate_is_idempotent_and_stale_revision_never_replaces_current(
@@ -169,9 +174,7 @@ def test_provenance_is_exact_workspace_authorized_and_absent_from_general_logs(
 
 def test_direct_execution_uses_explicit_no_prompt_marker(tmp_path: Path) -> None:
     service = _service(tmp_path)
-    result = service.ingest(
-        _envelope(1), context=_context(prompt=None, no_prompt=True)
-    )
+    result = service.ingest(_envelope(1), context=_context(prompt=None, no_prompt=True))
     verification = service.verify_artifact(
         surface_id=str(result.descriptor.surface_id),
         context=_context(prompt=None, no_prompt=True),

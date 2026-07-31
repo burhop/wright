@@ -62,15 +62,17 @@ class SurfaceRouteAuthority:
         self._manager_for_workspace = manager_for_workspace
 
     @staticmethod
-    def _translate(error: PresentationTokenError | LiveAppManagerError) -> (
-        SurfaceRouteAuthorizationError
-    ):
+    def _translate(
+        error: PresentationTokenError | LiveAppManagerError,
+    ) -> SurfaceRouteAuthorizationError:
         if isinstance(error, PresentationTokenError):
             return SurfaceRouteAuthorizationError(
                 error.code, str(error), status_code=error.status_code
             )
         status = 410 if error.code == "SURFACE_STATE_STALE_GENERATION" else 503
-        return SurfaceRouteAuthorizationError(error.code, str(error), status_code=status)
+        return SurfaceRouteAuthorizationError(
+            error.code, str(error), status_code=status
+        )
 
     def authorize(self, *, host: str, cookie: str) -> AuthorizedSurfaceRoute:
         try:

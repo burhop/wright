@@ -269,13 +269,17 @@ def validate_display_envelope(
             try:
                 base64.b64decode(data, validate=True)
             except (ValueError, binascii.Error) as error:
-                raise DisplayContractError("display data is not valid base64") from error
+                raise DisplayContractError(
+                    "display data is not valid base64"
+                ) from error
         if encoding == "json":
             depth, items = _json_metrics(data, depth=1, deadline=deadline)
             if depth > effective.maximum_json_depth:
                 raise DisplayContractError("display JSON exceeds the maximum depth")
             if items > effective.maximum_json_items:
-                raise DisplayContractError("display JSON exceeds the maximum item count")
+                raise DisplayContractError(
+                    "display JSON exceeds the maximum item count"
+                )
         metadata = raw.get("metadata", {})
         if not isinstance(metadata, dict) or len(metadata) > 32:
             raise DisplayContractError("representation metadata is invalid")
@@ -385,11 +389,15 @@ class DisplayService:
     def _require_context(context: DisplayExecutionContext) -> None:
         if context.prompt is None:
             if not context.no_prompt:
-                raise DisplayContractError("direct execution requires a no-prompt marker")
+                raise DisplayContractError(
+                    "direct execution requires a no-prompt marker"
+                )
         elif context.no_prompt or not context.prompt.strip():
             raise DisplayContractError("agent generation requires the exact prompt")
         if context.script_revision < 1 or not context.script:
-            raise DisplayContractError("exact script and positive revision are required")
+            raise DisplayContractError(
+                "exact script and positive revision are required"
+            )
 
     def _existing_by_idempotency(
         self, envelope: DisplayEnvelopeValue, context: DisplayExecutionContext
@@ -447,9 +455,7 @@ class DisplayService:
         stored_representations: list[dict[str, Any]] = []
         for representation in envelope.representations:
             payload = _payload_bytes(representation)
-            digest = self.vault.put(
-                workspace_id=context.workspace_id, payload=payload
-            )
+            digest = self.vault.put(workspace_id=context.workspace_id, payload=payload)
             stored_representations.append(
                 {
                     "mediaType": representation.media_type,
@@ -510,7 +516,9 @@ class DisplayService:
                         context.session_id,
                     ),
                 ).fetchone()
-                expected_revision = 1 if current is None else int(current["revision"]) + 1
+                expected_revision = (
+                    1 if current is None else int(current["revision"]) + 1
+                )
                 accepted_revision = envelope.revision
                 if (
                     current is not None
@@ -627,7 +635,9 @@ class DisplayService:
                     (
                         artifact_id,
                         context.workspace_id,
-                        "agent_generated" if context.prompt is not None else "direct_execution",
+                        "agent_generated"
+                        if context.prompt is not None
+                        else "direct_execution",
                         prompt_digest,
                         int(context.no_prompt),
                         constraints_digest,
@@ -910,7 +920,9 @@ class DisplayService:
             user_id=context.user_id,
             session_id=context.session_id,
         )
-        if descriptor is None or not isinstance(descriptor.source, DisplaySurfaceSource):
+        if descriptor is None or not isinstance(
+            descriptor.source, DisplaySurfaceSource
+        ):
             raise KeyError(surface_id)
         with connect_state_db(self.db_path) as connection:
             connection.execute("BEGIN IMMEDIATE")

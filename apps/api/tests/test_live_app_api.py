@@ -60,7 +60,9 @@ def _instance(
             elapsed_seconds=0.02,
             failure_kind="application-status" if failed else None,
             diagnostic_code="SURFACE_READINESS_STATUS_MISMATCH" if failed else None,
-            message="Application probe failed" if failed else "Application probe succeeded",
+            message="Application probe failed"
+            if failed
+            else "Application probe succeeded",
             observed_status=503 if failed else 200,
         ),
         failure=(
@@ -193,8 +195,7 @@ def test_inspect_health_and_redacted_bounded_log_routes() -> None:
     }
 
     logs = client.get(
-        "/api/workspace/surfaces/surface-app/live-app/logs"
-        "?afterSequence=3&limit=10",
+        "/api/workspace/surfaces/surface-app/live-app/logs?afterSequence=3&limit=10",
         headers=_headers(),
     )
     assert logs.status_code == 200

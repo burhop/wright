@@ -81,9 +81,7 @@ def _publication() -> McpUiPublication:
 @pytest.mark.asyncio
 async def test_api_adapter_publishes_ready_mcp_app_surface_with_exact_binding() -> None:
     surfaces = Surfaces()
-    descriptor = await ApiMcpUiPublisher(surfaces, enabled=True).publish(
-        _publication()
-    )
+    descriptor = await ApiMcpUiPublisher(surfaces, enabled=True).publish(_publication())
 
     assert descriptor.lifecycle is SurfaceLifecycle.READY
     assert isinstance(descriptor.source, McpAppSurfaceSource)

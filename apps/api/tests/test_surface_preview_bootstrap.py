@@ -134,9 +134,7 @@ def test_fragment_bootstrap_document_never_receives_or_reflects_token(
     _clock, _presentations, tokens, launch = _services(tmp_path)
     parsed = urlsplit(launch.absolute_bootstrap_url)
     client = _client(tokens)
-    response = client.get(
-        "/__wright/bootstrap", headers={"Host": parsed.netloc}
-    )
+    response = client.get("/__wright/bootstrap", headers={"Host": parsed.netloc})
     assert response.status_code == 200
     assert parsed.fragment not in response.text
     assert "location.hash" in response.text
@@ -211,7 +209,6 @@ def test_bootstrap_ttl_host_audience_cookie_and_close_revocation(
     assert revoked.value.code == "SURFACE_PREVIEW_GONE"
 
 
-
 def test_bootstrap_token_expires_before_the_presentation(tmp_path: Path) -> None:
     clock, _presentations, tokens, launch = _services(tmp_path)
     parsed = urlsplit(launch.absolute_bootstrap_url)
@@ -273,21 +270,15 @@ def test_reserved_mcp_sandbox_host_serves_only_bundled_proxy_assets(
     client = TestClient(control_app)
     host = f"mcp-sandbox.{PREVIEW.domain}"
 
-    response = client.get(
-        "/surface-sandbox/index.html", headers={"Host": host}
-    )
+    response = client.get("/surface-sandbox/index.html", headers={"Host": host})
     assert response.status_code == 200
     assert response.text == "<h1>proxy</h1>"
     assert response.headers["x-content-type-options"] == "nosniff"
-    assert "frame-ancestors http: https:" in response.headers[
-        "content-security-policy"
-    ]
+    assert "frame-ancestors http: https:" in response.headers["content-security-policy"]
     assert response.headers["permissions-policy"].startswith("camera=*")
     assert client.get("/api/secret", headers={"Host": host}).status_code == 404
     assert (
-        client.get(
-            "/surface-sandbox/unknown.js", headers={"Host": host}
-        ).status_code
+        client.get("/surface-sandbox/unknown.js", headers={"Host": host}).status_code
         == 404
     )
     assert (

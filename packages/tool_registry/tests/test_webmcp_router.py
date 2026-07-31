@@ -85,12 +85,12 @@ async def test_identical_tool_names_route_only_to_exact_composite_binding() -> N
 @pytest.mark.asyncio
 async def test_wrong_socket_stale_generation_and_late_results_are_ignored() -> None:
     audit: list[tuple[str, dict]] = []
-    router = WebMcpRouter(audit=lambda event, fields: audit.append((event, dict(fields))))
+    router = WebMcpRouter(
+        audit=lambda event, fields: audit.append((event, dict(fields)))
+    )
     owner, foreign = Socket(), Socket()
     router.register(owner, registration("surface-a"))
-    call = asyncio.create_task(
-        router.invoke(binding("surface-a"), {"partId": "one"})
-    )
+    call = asyncio.create_task(router.invoke(binding("surface-a"), {"partId": "one"}))
     await asyncio.sleep(0)
     request = json.loads(owner.messages[0])
     response = {
@@ -146,9 +146,7 @@ async def test_abort_dispose_disconnect_schema_size_and_rate_fail_closed() -> No
 
     replacement = WebMcpRouter()
     replacement.register(socket, exact)
-    pending = asyncio.create_task(
-        replacement.invoke(exact.binding, {"partId": "one"})
-    )
+    pending = asyncio.create_task(replacement.invoke(exact.binding, {"partId": "one"}))
     await asyncio.sleep(0)
     assert replacement.unregister(socket, exact.binding, reason="navigation")
     with pytest.raises(WebMcpRoutingError) as disposed:
@@ -156,11 +154,14 @@ async def test_abort_dispose_disconnect_schema_size_and_rate_fail_closed() -> No
     assert disposed.value.code == "SURFACE_STATE_WEBMCP_DISPOSED"
     replacement.register(socket, exact)
     assert replacement.disconnect(socket) == 1
-    assert replacement.matching(
-        workspace_id="workspace-1",
-        server_id="web-app",
-        tool_name="select_part",
-    ) == ()
+    assert (
+        replacement.matching(
+            workspace_id="workspace-1",
+            server_id="web-app",
+            tool_name="select_part",
+        )
+        == ()
+    )
 
 
 def test_registration_rejects_duplicate_owner_and_invalid_origin() -> None:

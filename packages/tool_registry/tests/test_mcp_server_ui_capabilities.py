@@ -19,9 +19,7 @@ from test_gateway_service import service
 def test_ui_extension_is_advertised_only_when_full_host_is_enabled() -> None:
     gateway, _, _ = service()
     disabled = initialization_options(create_mcp_server(gateway, "s1"))
-    enabled = initialization_options(
-        create_mcp_server(gateway, "s1", ui_enabled=True)
-    )
+    enabled = initialization_options(create_mcp_server(gateway, "s1", ui_enabled=True))
 
     assert disabled.capabilities.experimental in (None, {})
     assert enabled.capabilities.experimental == {
@@ -79,7 +77,9 @@ def test_upstream_cannot_overwrite_wright_authority_or_provenance() -> None:
 
 
 @pytest.mark.asyncio
-async def test_server_round_trip_preserves_all_result_blocks_structured_and_meta() -> None:
+async def test_server_round_trip_preserves_all_result_blocks_structured_and_meta() -> (
+    None
+):
     gateway, lifecycle, _ = service()
     lifecycle.result = {
         "content": [

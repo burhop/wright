@@ -49,7 +49,9 @@ def normalize_ip_address(value: str) -> str:
     try:
         address = ipaddress.ip_address(value)
     except ValueError as error:
-        raise NetworkValueError("Target address is not a canonical IP address") from error
+        raise NetworkValueError(
+            "Target address is not a canonical IP address"
+        ) from error
     if isinstance(address, ipaddress.IPv6Address) and address.ipv4_mapped:
         address = address.ipv4_mapped
     return address.compressed.lower()
@@ -94,7 +96,9 @@ def _normalize_hostname(value: str) -> tuple[str, bool]:
 
 
 def normalize_target_url(value: str) -> NormalizedTargetUrl:
-    if not value or any(ord(character) <= 32 or ord(character) == 127 for character in value):
+    if not value or any(
+        ord(character) <= 32 or ord(character) == 127 for character in value
+    ):
         raise NetworkValueError("Target URL contains whitespace or control characters")
     if "\\" in value:
         raise NetworkValueError("Target URL contains an ambiguous backslash")

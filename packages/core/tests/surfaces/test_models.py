@@ -263,9 +263,10 @@ def test_generation_provenance_distinguishes_prompt_from_direct_execution() -> N
         created_at=_now(),
     )
     assert generated.prompt.startswith("Plot")
-    assert generation_provenance_from_dict(
-        generation_provenance_to_dict(generated)
-    ) == generated
+    assert (
+        generation_provenance_from_dict(generation_provenance_to_dict(generated))
+        == generated
+    )
     direct = GenerationProvenance(
         mode=ProvenanceMode.DIRECT_EXECUTION,
         prompt=None,

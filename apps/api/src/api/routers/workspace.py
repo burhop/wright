@@ -255,7 +255,9 @@ async def run_file_endpoint(
             body.session_id,
             body.path,
             engine,
-            display_tokens=(surface_application().display_tokens if safe_display else None),
+            display_tokens=(
+                surface_application().display_tokens if safe_display else None
+            ),
             display_endpoint=(
                 str(request.url_for("ingest_display")) if safe_display else None
             ),

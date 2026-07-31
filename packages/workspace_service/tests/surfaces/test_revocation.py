@@ -141,9 +141,7 @@ def test_runtime_replacement_revokes_old_instance_authority(tmp_path: Path) -> N
 def test_logout_and_workspace_close_revoke_exact_scopes(tmp_path: Path) -> None:
     database = _database(tmp_path)
     coordinator = RevocationCoordinator(database, clock=lambda: NOW)
-    logged_out = coordinator.logout(
-        workspace_id="workspace-1", user_id="user-1"
-    )
+    logged_out = coordinator.logout(workspace_id="workspace-1", user_id="user-1")
     assert (logged_out.presentations, logged_out.grants) == (2, 2)
     presentations, grants = _states(database)
     assert presentations["presentation-3"] == "active"

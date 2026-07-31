@@ -32,10 +32,8 @@ class SurfaceEventHistory:
         if maximum_events_per_workspace < 1:
             raise ValueError("maximum event history must be positive")
         self.maximum = maximum_events_per_workspace
-        self._events: dict[
-            tuple[str, str, str], deque[SurfaceDescriptorEvent]
-        ] = defaultdict(
-            lambda: deque(maxlen=self.maximum)
+        self._events: dict[tuple[str, str, str], deque[SurfaceDescriptorEvent]] = (
+            defaultdict(lambda: deque(maxlen=self.maximum))
         )
         self._sequences: dict[tuple[str, str, str], int] = defaultdict(int)
         self._lock = RLock()
@@ -77,9 +75,7 @@ class SurfaceEventHistory:
         last_event_id: str | None = None,
     ) -> tuple[SurfaceDescriptorEvent, ...]:
         with self._lock:
-            events = tuple(
-                self._events.get((workspace_id, user_id, session_id), ())
-            )
+            events = tuple(self._events.get((workspace_id, user_id, session_id), ()))
         if last_event_id is None:
             return events
         for index, event in enumerate(events):

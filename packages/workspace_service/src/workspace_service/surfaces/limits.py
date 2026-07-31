@@ -81,19 +81,27 @@ class EffectiveSurfaceLimits:
         decoded_bytes: int,
     ) -> None:
         if len(headers) > self.maximum_header_count:
-            self._raise("SURFACE_LIMIT_HEADER_COUNT", "Surface header count limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_HEADER_COUNT", "Surface header count limit exceeded"
+            )
         header_bytes = sum(
             len(name.encode("utf-8")) + len(value.encode("utf-8")) + 4
             for name, value in headers
         )
         if header_bytes > self.maximum_header_bytes:
-            self._raise("SURFACE_LIMIT_HEADER_BYTES", "Surface header byte limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_HEADER_BYTES", "Surface header byte limit exceeded"
+            )
         if encoded_bytes < 0 or decoded_bytes < 0:
             self._raise("SURFACE_LIMIT_BODY_INVALID", "Surface body size is invalid")
         if encoded_bytes > self.maximum_request_body_bytes:
-            self._raise("SURFACE_LIMIT_REQUEST_BODY", "Surface request body limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_REQUEST_BODY", "Surface request body limit exceeded"
+            )
         if decoded_bytes > self.maximum_decoded_body_bytes:
-            self._raise("SURFACE_LIMIT_DECODED_BODY", "Surface decoded body limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_DECODED_BODY", "Surface decoded body limit exceeded"
+            )
         ratio = decoded_bytes / max(1, encoded_bytes)
         if ratio > self.maximum_decompression_ratio:
             self._raise(
@@ -105,9 +113,13 @@ class EffectiveSurfaceLimits:
         if encoded_bytes < 0 or decoded_bytes < 0:
             self._raise("SURFACE_LIMIT_BODY_INVALID", "Surface body size is invalid")
         if encoded_bytes > self.maximum_response_body_bytes:
-            self._raise("SURFACE_LIMIT_RESPONSE_BODY", "Surface response body limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_RESPONSE_BODY", "Surface response body limit exceeded"
+            )
         if decoded_bytes > self.maximum_decoded_body_bytes:
-            self._raise("SURFACE_LIMIT_DECODED_BODY", "Surface decoded body limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_DECODED_BODY", "Surface decoded body limit exceeded"
+            )
         if decoded_bytes / max(1, encoded_bytes) > self.maximum_decompression_ratio:
             self._raise(
                 "SURFACE_LIMIT_DECOMPRESSION",
@@ -116,13 +128,18 @@ class EffectiveSurfaceLimits:
 
     def validate_frame(self, frame: bytes) -> None:
         if len(frame) > self.websocket_message_bytes:
-            self._raise("SURFACE_LIMIT_MESSAGE_BYTES", "Surface message byte limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_MESSAGE_BYTES", "Surface message byte limit exceeded"
+            )
 
     @staticmethod
     def _json_depth(value: Any, depth: int = 0) -> int:
         if isinstance(value, dict):
             return max(
-                (EffectiveSurfaceLimits._json_depth(item, depth + 1) for item in value.values()),
+                (
+                    EffectiveSurfaceLimits._json_depth(item, depth + 1)
+                    for item in value.values()
+                ),
                 default=depth + 1,
             )
         if isinstance(value, list):
@@ -140,7 +157,9 @@ class EffectiveSurfaceLimits:
                 "SURFACE_LIMIT_JSON_INVALID", "Surface JSON is invalid"
             ) from error
         if len(encoded) > self.websocket_message_bytes:
-            self._raise("SURFACE_LIMIT_MESSAGE_BYTES", "Surface message byte limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_MESSAGE_BYTES", "Surface message byte limit exceeded"
+            )
         if self._json_depth(value) > maximum_depth:
             self._raise("SURFACE_LIMIT_JSON_DEPTH", "Surface JSON depth limit exceeded")
 
@@ -188,16 +207,22 @@ class EffectiveSurfaceLimits:
 
     def admit_stream_bytes(self, key: str, amount: int) -> None:
         if amount < 0:
-            self._raise("SURFACE_LIMIT_STREAM_INVALID", "Surface stream size is invalid")
+            self._raise(
+                "SURFACE_LIMIT_STREAM_INVALID", "Surface stream size is invalid"
+            )
         now = self.clock()
         window = self._stream_windows[key]
         cutoff = now - timedelta(seconds=1)
         while window and window[0][0] <= cutoff:
             window.popleft()
         if amount > self.stream_burst_bytes:
-            self._raise("SURFACE_LIMIT_STREAM_BURST", "Surface stream burst limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_STREAM_BURST", "Surface stream burst limit exceeded"
+            )
         if sum(item[1] for item in window) + amount > self.stream_bytes_per_second:
-            self._raise("SURFACE_LIMIT_STREAM_RATE", "Surface stream rate limit exceeded")
+            self._raise(
+                "SURFACE_LIMIT_STREAM_RATE", "Surface stream rate limit exceeded"
+            )
         window.append((now, amount))
 
     def admit_log_bytes(self, key: str, amount: int) -> None:
@@ -210,7 +235,10 @@ class EffectiveSurfaceLimits:
         cutoff = now - timedelta(seconds=1)
         while window and window[0][0] <= cutoff:
             window.popleft()
-        if sum(item[1] for item in window) + amount > self.captured_log_bytes_per_second:
+        if (
+            sum(item[1] for item in window) + amount
+            > self.captured_log_bytes_per_second
+        ):
             self._raise("SURFACE_LIMIT_LOG_RATE", "Surface log rate limit exceeded")
         window.append((now, amount))
 
@@ -337,7 +365,9 @@ class SurfaceLimitPolicy:
                     candidates.append(value)
             selected = min(candidates)
             default = getattr(self.defaults, field.name)
-            values[field.name] = float(selected) if isinstance(default, float) else int(selected)
+            values[field.name] = (
+                float(selected) if isinstance(default, float) else int(selected)
+            )
         return EffectiveSurfaceLimits(values, clock=clock)
 
 

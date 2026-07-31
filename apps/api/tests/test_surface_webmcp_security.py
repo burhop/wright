@@ -25,11 +25,14 @@ def test_wrong_origin_is_denied_before_registration() -> None:
             cookies={"wright_surface": "cookie"},
         ):
             pass
-    assert webmcp.matching(
-        workspace_id="workspace-1",
-        server_id="web-app",
-        tool_name="select_part",
-    ) == ()
+    assert (
+        webmcp.matching(
+            workspace_id="workspace-1",
+            server_id="web-app",
+            tool_name="select_part",
+        )
+        == ()
+    )
 
 
 @pytest.mark.parametrize(
@@ -39,9 +42,7 @@ def test_wrong_origin_is_denied_before_registration() -> None:
         lambda payload: payload["payload"]["tool"].update(
             {"inputSchema": {"type": "array"}}
         ),
-        lambda payload: payload["payload"]["tool"].update(
-            {"description": "x" * 3000}
-        ),
+        lambda payload: payload["payload"]["tool"].update({"description": "x" * 3000}),
     ],
 )
 def test_malformed_schema_and_oversized_registration_close_fail_closed(
@@ -60,11 +61,14 @@ def test_malformed_schema_and_oversized_registration_close_fail_closed(
         socket.send_json(payload)
         with pytest.raises(WebSocketDisconnect):
             socket.receive_json()
-    assert webmcp.matching(
-        workspace_id="workspace-1",
-        server_id="web-app",
-        tool_name="select_part",
-    ) == ()
+    assert (
+        webmcp.matching(
+            workspace_id="workspace-1",
+            server_id="web-app",
+            tool_name="select_part",
+        )
+        == ()
+    )
 
 
 def test_disconnect_removes_registration_immediately() -> None:
@@ -78,15 +82,21 @@ def test_disconnect_removes_registration_immediately() -> None:
         assert socket.receive_json()["operation"] == "webmcp.connected"
         socket.send_json(_registration())
         socket.receive_json()
-        assert len(
-            webmcp.matching(
-                workspace_id="workspace-1",
-                server_id="web-app",
-                tool_name="select_part",
+        assert (
+            len(
+                webmcp.matching(
+                    workspace_id="workspace-1",
+                    server_id="web-app",
+                    tool_name="select_part",
+                )
             )
-        ) == 1
-    assert webmcp.matching(
-        workspace_id="workspace-1",
-        server_id="web-app",
-        tool_name="select_part",
-    ) == ()
+            == 1
+        )
+    assert (
+        webmcp.matching(
+            workspace_id="workspace-1",
+            server_id="web-app",
+            tool_name="select_part",
+        )
+        == ()
+    )

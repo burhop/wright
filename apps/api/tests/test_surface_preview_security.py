@@ -82,9 +82,7 @@ def test_redirects_are_limited_to_the_pinned_target_and_rebased() -> None:
     assert validate_redirect("dashboard?tab=1", pin=_pin()) == "/ui/dashboard?tab=1"
     assert validate_redirect("/login", pin=_pin()) == "/login"
     assert (
-        validate_redirect(
-            "https://app.example.test:8443/ui/results#chart", pin=_pin()
-        )
+        validate_redirect("https://app.example.test:8443/ui/results#chart", pin=_pin())
         == "/ui/results#chart"
     )
     with pytest.raises(ProxySecurityError, match="redirect target"):

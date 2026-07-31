@@ -102,7 +102,9 @@ def _actions(state: str) -> list[LiveAppActionResponse]:
         "failed": (("retry", "Retry application"),),
         "stopped": (("restart", "Start application again"),),
     }.get(state, ())
-    return [LiveAppActionResponse(operation=item[0], label=item[1]) for item in operations]
+    return [
+        LiveAppActionResponse(operation=item[0], label=item[1]) for item in operations
+    ]
 
 
 def _runtime(surface_id: str, instance: LiveAppInstance) -> LiveAppResponse:
@@ -251,9 +253,7 @@ async def inspect_live_app(
     service: Annotated[LiveAppControlService, Depends(get_live_app_service)],
 ) -> LiveAppResponse:
     try:
-        instance = await service.inspect(
-            actor=actor, surface_id=SurfaceId(surface_id)
-        )
+        instance = await service.inspect(actor=actor, surface_id=SurfaceId(surface_id))
     except (LiveAppControlError, SurfaceError, ValueError) as error:
         raise _translate(error) from error
     return _runtime(surface_id, instance)
@@ -266,9 +266,7 @@ async def live_app_health(
     service: Annotated[LiveAppControlService, Depends(get_live_app_service)],
 ) -> LiveAppHealthResponse:
     try:
-        instance = await service.health(
-            actor=actor, surface_id=SurfaceId(surface_id)
-        )
+        instance = await service.health(actor=actor, surface_id=SurfaceId(surface_id))
     except (LiveAppControlError, SurfaceError, ValueError) as error:
         raise _translate(error) from error
     probe = instance.last_health
@@ -289,9 +287,7 @@ async def live_app_logs(
     surface_id: str,
     actor: Annotated[SurfaceActor, Depends(get_surface_actor)],
     service: Annotated[LiveAppControlService, Depends(get_live_app_service)],
-    after_sequence: Annotated[
-        int, Query(alias="afterSequence", ge=0)
-    ] = 0,
+    after_sequence: Annotated[int, Query(alias="afterSequence", ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=1000)] = 200,
 ) -> LiveAppLogsResponse:
     try:

@@ -81,9 +81,7 @@ class DisplayExecutionTokenService:
             raise DisplayTokenRejected("Invalid display token")
         with self._lock:
             claims = self._claims.get(token_id)
-            revoked = bool(
-                claims and claims.execution_id in self._revoked_executions
-            )
+            revoked = bool(claims and claims.execution_id in self._revoked_executions)
         if claims is None or revoked:
             raise DisplayTokenRejected("Display token is unknown or revoked")
         if claims.expires_at <= self._clock():

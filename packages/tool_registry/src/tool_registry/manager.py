@@ -497,9 +497,7 @@ class McpEngine:
     async def list_child_resource_templates(self, server_id: str) -> Dict[str, Any]:
         return await self.lifecycle.list_resource_templates(server_id)
 
-    async def read_child_resource(
-        self, server_id: str, uri: str
-    ) -> Dict[str, Any]:
+    async def read_child_resource(self, server_id: str, uri: str) -> Dict[str, Any]:
         return await self.lifecycle.read_resource(server_id, uri)
 
     async def subscribe_child_resource(self, server_id: str, uri: str) -> None:

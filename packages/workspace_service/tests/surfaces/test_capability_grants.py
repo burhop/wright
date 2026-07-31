@@ -44,7 +44,9 @@ def _service(tmp_path: Path, *, policy: CapabilityPolicy | None = None):
     service = CapabilityGrantService(
         database,
         clock=lambda: current[0],
-        id_factory=lambda: f"grant-{len(service.repository.list(user_id='user-1', workspace_id='workspace-1', source_id='app', source_version='1.0')) + 1}",
+        id_factory=lambda: (
+            f"grant-{len(service.repository.list(user_id='user-1', workspace_id='workspace-1', source_id='app', source_version='1.0')) + 1}"
+        ),
         policy=policy or CapabilityPolicy(),
     )
     return current, service
@@ -73,12 +75,12 @@ def test_low_risk_grant_is_exactly_scoped_and_expires(tmp_path: Path) -> None:
     clock, service = _service(tmp_path)
     grant = service.decide(actor=_actor(), request=_request())
     assert grant.expires_at == NOW + timedelta(seconds=600)
-    assert service.authorize(actor=_actor(), request=_request()).grant_id == grant.grant_id
+    assert (
+        service.authorize(actor=_actor(), request=_request()).grant_id == grant.grant_id
+    )
 
     with pytest.raises(CapabilityGrantError, match="grant scope"):
-        service.authorize(
-            actor=_actor(), request=_request(source_version="2.0")
-        )
+        service.authorize(actor=_actor(), request=_request(source_version="2.0"))
     with pytest.raises(CapabilityGrantError, match="grant scope"):
         service.authorize(actor=_actor(user="user-2"), request=_request())
     clock[0] = NOW + timedelta(seconds=601)
@@ -99,13 +101,18 @@ def test_high_risk_and_mutating_grants_cannot_be_remembered(tmp_path: Path) -> N
         actor=_actor(),
         request=_request(risk_tier="mutating", persistence="operation"),
     )
-    assert service.authorize(actor=_actor(), request=_request(
-        risk_tier="mutating", persistence="operation"
-    )).grant_id == operation.grant_id
+    assert (
+        service.authorize(
+            actor=_actor(),
+            request=_request(risk_tier="mutating", persistence="operation"),
+        ).grant_id
+        == operation.grant_id
+    )
     with pytest.raises(CapabilityGrantError, match="consumed"):
-        service.authorize(actor=_actor(), request=_request(
-            risk_tier="mutating", persistence="operation"
-        ))
+        service.authorize(
+            actor=_actor(),
+            request=_request(risk_tier="mutating", persistence="operation"),
+        )
 
 
 def test_revocation_denial_and_stricter_policy_override_allow(tmp_path: Path) -> None:
@@ -121,7 +128,9 @@ def test_revocation_denial_and_stricter_policy_override_allow(tmp_path: Path) ->
 
     _clock, narrowed = _service(
         tmp_path / "narrowed",
-        policy=CapabilityPolicy(denied_capabilities=frozenset({"workspace.read_selection"})),
+        policy=CapabilityPolicy(
+            denied_capabilities=frozenset({"workspace.read_selection"})
+        ),
     )
     with pytest.raises(CapabilityGrantError, match="policy"):
         narrowed.decide(actor=_actor(), request=_request())
@@ -132,13 +141,14 @@ def test_engineer_self_grant_and_administrator_only_operations(tmp_path: Path) -
     service.decide(actor=_actor(), request=_request())
     for capability in ("target.attach", "policy.broaden"):
         with pytest.raises(CapabilityGrantError, match="administrator"):
+            service.decide(actor=_actor(), request=_request(capability=capability))
+        assert (
             service.decide(
-                actor=_actor(), request=_request(capability=capability)
-            )
-        assert service.decide(
-            actor=_actor(role=ActorRole.ADMIN),
-            request=_request(capability=capability),
-        ).decision == "allow"
+                actor=_actor(role=ActorRole.ADMIN),
+                request=_request(capability=capability),
+            ).decision
+            == "allow"
+        )
 
     with pytest.raises(CapabilityGrantError, match="declared"):
         service.decide(actor=_actor(), request=_request(declared=False))

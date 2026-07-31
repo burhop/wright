@@ -173,7 +173,9 @@ def _raw_target(scope: dict[str, Any]) -> tuple[str, str]:
     try:
         return bytes(raw_path).decode("ascii"), bytes(raw_query).decode("ascii")
     except UnicodeDecodeError as error:
-        raise HTTPException(status_code=400, detail="SURFACE_PROTOCOL_TARGET_INVALID") from error
+        raise HTTPException(
+            status_code=400, detail="SURFACE_PROTOCOL_TARGET_INVALID"
+        ) from error
 
 
 def _raw_headers(scope: dict[str, Any]) -> tuple[tuple[str, str], ...]:
@@ -198,7 +200,9 @@ def _authorize_application_route(
     connection: Request | WebSocket,
 ) -> AuthorizedSurfaceRoute:
     host_values = [
-        value for name, value in _raw_headers(connection.scope) if name.lower() == "host"
+        value
+        for name, value in _raw_headers(connection.scope)
+        if name.lower() == "host"
     ]
     cookie = connection.cookies.get("wright_surface", "")
     if len(host_values) != 1 or not cookie:
@@ -207,9 +211,7 @@ def _authorize_application_route(
             "Preview credential is invalid",
             status_code=401,
         )
-    authority: SurfaceRouteAuthority = _component(
-        connection, "surface_route_authority"
-    )
+    authority: SurfaceRouteAuthority = _component(connection, "surface_route_authority")
     return authority.authorize(host=host_values[0], cookie=cookie)
 
 
@@ -226,8 +228,7 @@ def _streaming_response(
         background=BackgroundTask(close),
     )
     response.raw_headers = [
-        (name.encode("latin-1"), value.encode("latin-1"))
-        for name, value in headers
+        (name.encode("latin-1"), value.encode("latin-1")) for name, value in headers
     ]
     return response
 
@@ -473,9 +474,7 @@ async def surface_webmcp(websocket: WebSocket) -> None:
                 "operation": "webmcp.connected",
                 "sequence": 0,
                 "createdAt": connected_at.isoformat(),
-                "deadlineAt": (
-                    connected_at + timedelta(seconds=30)
-                ).isoformat(),
+                "deadlineAt": (connected_at + timedelta(seconds=30)).isoformat(),
                 "payload": {"draft": "2026-07-28"},
             }
         )
@@ -504,9 +503,7 @@ async def surface_webmcp(websocket: WebSocket) -> None:
                 )
             elif operation == "webmcp.unregister":
                 registration = _webmcp_registration(route, payload, router)
-                router.unregister(
-                    websocket, registration.binding, reason="disposed"
-                )
+                router.unregister(websocket, registration.binding, reason="disposed")
                 await websocket.send_json(
                     {
                         "protocolVersion": "1.0",
@@ -525,7 +522,12 @@ async def surface_webmcp(websocket: WebSocket) -> None:
                 )
             else:
                 router.handle_message(websocket, raw)
-    except (SurfaceRouteAuthorizationError, WebMcpRoutingError, ValueError, json.JSONDecodeError):
+    except (
+        SurfaceRouteAuthorizationError,
+        WebMcpRoutingError,
+        ValueError,
+        json.JSONDecodeError,
+    ):
         await websocket.close(code=1008, reason="WebMCP route denied")
     except WebSocketDisconnect:
         pass
@@ -543,9 +545,7 @@ async def proxy_application_websocket(
         return
     try:
         route = _authorize_application_route(websocket)
-        proxy: SurfaceWebSocketProxy = _component(
-            websocket, "surface_websocket_proxy"
-        )
+        proxy: SurfaceWebSocketProxy = _component(websocket, "surface_websocket_proxy")
         raw_path, raw_query = _raw_target(websocket.scope)
         origins = [
             value

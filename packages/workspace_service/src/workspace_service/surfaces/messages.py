@@ -100,12 +100,15 @@ class SurfaceMessageRouter:
         maximum_messages_per_minute: int = 60,
         replay_window_seconds: int = 300,
     ) -> None:
-        if min(
-            maximum_message_bytes,
-            maximum_json_depth,
-            maximum_messages_per_minute,
-            replay_window_seconds,
-        ) < 1:
+        if (
+            min(
+                maximum_message_bytes,
+                maximum_json_depth,
+                maximum_messages_per_minute,
+                replay_window_seconds,
+            )
+            < 1
+        ):
             raise ValueError("surface message limits must be positive")
         self.clock = clock
         self.handlers = dict(handlers or {})
@@ -124,7 +127,10 @@ class SurfaceMessageRouter:
     def _depth(value: Any, current: int = 0) -> int:
         if isinstance(value, dict):
             return max(
-                (SurfaceMessageRouter._depth(item, current + 1) for item in value.values()),
+                (
+                    SurfaceMessageRouter._depth(item, current + 1)
+                    for item in value.values()
+                ),
                 default=current + 1,
             )
         if isinstance(value, list):
@@ -174,7 +180,11 @@ class SurfaceMessageRouter:
             raise _MessageRejected("SURFACE_MESSAGE_INVALID")
         kind = message["kind"]
         operation = message["operation"]
-        if kind not in _KINDS or not isinstance(operation, str) or not _OPERATION.fullmatch(operation):
+        if (
+            kind not in _KINDS
+            or not isinstance(operation, str)
+            or not _OPERATION.fullmatch(operation)
+        ):
             raise _MessageRejected("SURFACE_MESSAGE_INVALID")
         for name in ("messageId", "correlationId"):
             try:

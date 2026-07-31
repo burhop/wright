@@ -59,24 +59,36 @@ def test_event_history_is_bounded_resumable_and_exactly_scoped() -> None:
         session_id="session-1",
         last_event_id=available[0].event_id,
     ) == (available[1],)
-    assert history.after(
-        workspace_id="workspace-1",
-        user_id="user-2",
-        session_id="session-1",
-    ) == ()
-    assert history.after(
-        workspace_id="workspace-1",
-        user_id="user-1",
-        session_id="session-2",
-    ) == ()
-    assert history.after(
-        workspace_id="workspace-2",
-        user_id="user-1",
-        session_id="session-1",
-    ) == ()
-    assert history.after(
-        workspace_id="workspace-1",
-        user_id="user-1",
-        session_id="session-1",
-        last_event_id="evicted-or-unknown",
-    ) == available
+    assert (
+        history.after(
+            workspace_id="workspace-1",
+            user_id="user-2",
+            session_id="session-1",
+        )
+        == ()
+    )
+    assert (
+        history.after(
+            workspace_id="workspace-1",
+            user_id="user-1",
+            session_id="session-2",
+        )
+        == ()
+    )
+    assert (
+        history.after(
+            workspace_id="workspace-2",
+            user_id="user-1",
+            session_id="session-1",
+        )
+        == ()
+    )
+    assert (
+        history.after(
+            workspace_id="workspace-1",
+            user_id="user-1",
+            session_id="session-1",
+            last_event_id="evicted-or-unknown",
+        )
+        == available
+    )

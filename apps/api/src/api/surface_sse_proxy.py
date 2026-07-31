@@ -80,7 +80,9 @@ def _target_path(pin: ResolvedTargetPin, raw_path: str, raw_query: str) -> str:
         or any(value in raw_query for value in ("\0", "\r", "\n", "#"))
     ):
         raise SseProxyError(
-            "SURFACE_PROTOCOL_TARGET_INVALID", "SSE request target is invalid", status_code=400
+            "SURFACE_PROTOCOL_TARGET_INVALID",
+            "SSE request target is invalid",
+            status_code=400,
         )
     base = pin.base_path or "/"
     path = raw_path if base == "/" else f"{base.rstrip('/')}/{raw_path.lstrip('/')}"
@@ -142,7 +144,11 @@ class SurfaceSseProxy:
         if not any(name.lower() == "accept" for name, _value in headers):
             headers.append(("Accept", "text/event-stream"))
         target = _target_path(pin, request.raw_path, request.raw_query)
-        host = f"[{pin.numeric_address}]" if ":" in pin.numeric_address else pin.numeric_address
+        host = (
+            f"[{pin.numeric_address}]"
+            if ":" in pin.numeric_address
+            else pin.numeric_address
+        )
         url = f"{pin.scheme}://{host}:{pin.port}{target}"
         upstream = self._client.build_request("GET", url, headers=headers)
         if pin.server_name:
@@ -167,7 +173,9 @@ class SurfaceSseProxy:
             if response.status_code == 204:
                 await response.aclose()
                 semaphore.release()
-                return SseProxyStream(204, safe_headers, _SseBody(_empty(), close=_noop))
+                return SseProxyStream(
+                    204, safe_headers, _SseBody(_empty(), close=_noop)
+                )
             if response.status_code != 200:
                 raise SseProxyError(
                     "SURFACE_SSE_STATUS_INVALID",
@@ -180,7 +188,9 @@ class SurfaceSseProxy:
                     "SSE target did not return text/event-stream",
                 )
             source = response.aiter_raw().__aiter__()
-            read_task = asyncio.create_task(source.__anext__(), name="surface-sse-first-byte")
+            read_task = asyncio.create_task(
+                source.__anext__(), name="surface-sse-first-byte"
+            )
             try:
                 first = await asyncio.wait_for(
                     asyncio.shield(read_task),
@@ -252,7 +262,9 @@ class SurfaceSseProxy:
                     )
                     limits.admit_stream_bytes(rate_key, len(payload))
                 except SurfaceLimitError as error:
-                    raise SseProxyError(error.code, str(error), status_code=413) from error
+                    raise SseProxyError(
+                        error.code, str(error), status_code=413
+                    ) from error
                 last_byte = self._monotonic()
                 activity()
                 return payload

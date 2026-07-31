@@ -86,9 +86,7 @@ class _Gateway:
                 {},
                 {
                     "ui": {
-                        "csp": {
-                            "connectDomains": ["https://api.example.test"]
-                        },
+                        "csp": {"connectDomains": ["https://api.example.test"]},
                         "permissions": {"camera": {}},
                     }
                 },
@@ -232,7 +230,9 @@ def test_projection_falls_back_when_disabled_or_content_binding_changes(
     assert changed["fallbackResult"] is not None
 
 
-def test_bridge_operations_are_scoped_to_persisted_gateway_and_server(monkeypatch) -> None:
+def test_bridge_operations_are_scoped_to_persisted_gateway_and_server(
+    monkeypatch,
+) -> None:
     client, _surfaces, gateway = _client(monkeypatch)
     root = "/api/workspace/surfaces/mcp-surface/mcp-app"
 
@@ -256,9 +256,7 @@ def test_bridge_operations_are_scoped_to_persisted_gateway_and_server(monkeypatc
         headers=_headers(),
         json={"requestId": "r4", "uri": "ui://cad/other"},
     )
-    cancel = client.delete(
-        f"{root}/operations/r4", headers=_headers()
-    )
+    cancel = client.delete(f"{root}/operations/r4", headers=_headers())
 
     assert tool.json() == {
         "content": [{"type": "text", "text": "done"}],
@@ -268,14 +266,24 @@ def test_bridge_operations_are_scoped_to_persisted_gateway_and_server(monkeypatc
     assert templates.json() == {"resourceTemplates": []}
     assert read.json()["contents"][0]["text"] == "other"
     assert cancel.status_code == 204
-    assert ("tool", "gateway-session", "r1", "cad", "cad__update", {"x": 1}) in gateway.calls
-    assert ("cancel", "gateway-session", "r4", "MCP App request aborted") in gateway.calls
+    assert (
+        "tool",
+        "gateway-session",
+        "r1",
+        "cad",
+        "cad__update",
+        {"x": 1},
+    ) in gateway.calls
+    assert (
+        "cancel",
+        "gateway-session",
+        "r4",
+        "MCP App request aborted",
+    ) in gateway.calls
 
 
 def test_projection_requires_workspace_headers(monkeypatch) -> None:
     client, _surfaces, gateway = _client(monkeypatch)
-    response = client.get(
-        "/api/workspace/surfaces/mcp-surface/mcp-app/presentation"
-    )
+    response = client.get("/api/workspace/surfaces/mcp-surface/mcp-app/presentation")
     assert response.status_code == 422
     assert gateway.calls == []

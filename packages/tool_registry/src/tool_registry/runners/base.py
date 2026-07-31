@@ -63,9 +63,7 @@ class BaseRunner(ABC):
         raise NotImplementedError("Child runner does not support resources/subscribe")
 
     async def unsubscribe_resource(self, uri: str) -> None:
-        raise NotImplementedError(
-            "Child runner does not support resources/unsubscribe"
-        )
+        raise NotImplementedError("Child runner does not support resources/unsubscribe")
 
     @abstractmethod
     def is_running(self) -> bool:

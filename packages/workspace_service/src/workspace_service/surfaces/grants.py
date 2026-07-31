@@ -63,17 +63,12 @@ class CapabilityGrantService:
         self.clock = clock
         self.id_factory = id_factory
 
-    def _validate(
-        self, *, actor: SurfaceActor, request: CapabilityRequest
-    ) -> None:
+    def _validate(self, *, actor: SurfaceActor, request: CapabilityRequest) -> None:
         if not request.declared:
             raise CapabilityGrantError("Capability was not declared by the source")
-        if (
-            request.capability in self.policy.denied_capabilities
-            or (
-                self.policy.allowed_capabilities is not None
-                and request.capability not in self.policy.allowed_capabilities
-            )
+        if request.capability in self.policy.denied_capabilities or (
+            self.policy.allowed_capabilities is not None
+            and request.capability not in self.policy.allowed_capabilities
         ):
             raise CapabilityGrantError("Capability is denied by effective policy")
         if (
@@ -98,7 +93,11 @@ class CapabilityGrantService:
             raise CapabilityGrantError("Capability duration exceeds effective policy")
         if not request.source_id or not request.source_version:
             raise CapabilityGrantError("Capability source scope is invalid")
-        if not request.capability or not request.operation or not request.reason.strip():
+        if (
+            not request.capability
+            or not request.operation
+            or not request.reason.strip()
+        ):
             raise CapabilityGrantError("Capability disclosure is incomplete")
         try:
             encoded = json.dumps(request.constraints, allow_nan=False)
@@ -185,9 +184,7 @@ class CapabilityGrantService:
             return consumed
         return grant
 
-    def revoke(
-        self, *, actor: SurfaceActor, grant_id: str
-    ) -> SurfaceGrantRecord:
+    def revoke(self, *, actor: SurfaceActor, grant_id: str) -> SurfaceGrantRecord:
         record = self.repository.get(
             grant_id=grant_id,
             user_id=actor.user_id,

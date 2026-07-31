@@ -66,16 +66,18 @@ def _request(tmp_path) -> ProcessLaunchRequest:
 
 
 @pytest.mark.asyncio
-async def test_internal_container_origin_is_proxy_only_not_browser_assumed(tmp_path) -> None:
+async def test_internal_container_origin_is_proxy_only_not_browser_assumed(
+    tmp_path,
+) -> None:
     endpoint = RemotePreviewEndpoint(
         internal_origin="http://app:8000",
         public_origin=None,
         browser_reachable=False,
     )
     provider = FakeProvider(endpoint)
-    process = await RemoteProcessAdapter(provider=provider, adapter_name="docker").launch(
-        _request(tmp_path)
-    )
+    process = await RemoteProcessAdapter(
+        provider=provider, adapter_name="docker"
+    ).launch(_request(tmp_path))
 
     assert process.endpoint.internal_origin == "http://app:8000"
     assert process.endpoint.browser_url is None
@@ -94,9 +96,9 @@ async def test_remote_adapter_exposes_public_origin_only_when_vouched_reachable(
         browser_reachable=True,
     )
     provider = FakeProvider(endpoint)
-    process = await RemoteProcessAdapter(provider=provider, adapter_name="remote").launch(
-        _request(tmp_path)
-    )
+    process = await RemoteProcessAdapter(
+        provider=provider, adapter_name="remote"
+    ).launch(_request(tmp_path))
     assert process.endpoint.browser_url == "https://preview.example.test/app"
     report = await process.stop(deadline=datetime.now(UTC) + timedelta(seconds=2))
     assert report.complete is True
@@ -106,8 +108,16 @@ async def test_remote_adapter_exposes_public_origin_only_when_vouched_reachable(
 @pytest.mark.parametrize(
     "values",
     [
-        {"internal_origin": "file:///tmp/app", "public_origin": None, "browser_reachable": False},
-        {"internal_origin": "http://app:8000", "public_origin": None, "browser_reachable": True},
+        {
+            "internal_origin": "file:///tmp/app",
+            "public_origin": None,
+            "browser_reachable": False,
+        },
+        {
+            "internal_origin": "http://app:8000",
+            "public_origin": None,
+            "browser_reachable": True,
+        },
         {
             "internal_origin": "http://user:pass@app:8000",
             "public_origin": None,

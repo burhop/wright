@@ -149,7 +149,8 @@ class ProcessSupervisor:
             )
         if not Path(cwd).is_absolute():
             raise ProcessSupervisorError(
-                "SURFACE_PROCESS_CWD_INVALID", "Process working directory must be absolute"
+                "SURFACE_PROCESS_CWD_INVALID",
+                "Process working directory must be absolute",
             )
         identity_key = (workspace_id, instance_id, generation)
         operation_lock = await self._identity_lock(identity_key)
@@ -177,7 +178,8 @@ class ProcessSupervisor:
             runtime_id = self._id_factory()
             if not runtime_id:
                 raise ProcessSupervisorError(
-                    "SURFACE_PROCESS_ID_INVALID", "Process runtime ID factory returned empty"
+                    "SURFACE_PROCESS_ID_INVALID",
+                    "Process runtime ID factory returned empty",
                 )
             secret_values = tuple(
                 environment[name]

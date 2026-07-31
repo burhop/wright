@@ -123,7 +123,9 @@ def _remaining_seconds(deadline: datetime) -> float:
 class WindowsJob:
     """Minimal safe Job Object owner; closing it terminates all assigned members."""
 
-    def __init__(self, *, max_processes: int, max_memory_mib: int, cpu_cores: float) -> None:
+    def __init__(
+        self, *, max_processes: int, max_memory_mib: int, cpu_cores: float
+    ) -> None:
         if _KERNEL32 is None:
             raise OSError("Windows Job Objects are unavailable")
         self._handle = _KERNEL32.CreateJobObjectW(None, None)
@@ -181,7 +183,9 @@ class WindowsJob:
         assert _KERNEL32 is not None
         process_handle = self._open_process(
             pid,
-            _PROCESS_SET_QUOTA | _PROCESS_TERMINATE | _PROCESS_QUERY_LIMITED_INFORMATION,
+            _PROCESS_SET_QUOTA
+            | _PROCESS_TERMINATE
+            | _PROCESS_QUERY_LIMITED_INFORMATION,
         )
         try:
             if not _KERNEL32.AssignProcessToJobObject(self._handle, process_handle):
@@ -197,7 +201,9 @@ class WindowsJob:
             return False
         result = wintypes.BOOL()
         try:
-            if not _KERNEL32.IsProcessInJob(process_handle, self._handle, ctypes.byref(result)):
+            if not _KERNEL32.IsProcessInJob(
+                process_handle, self._handle, ctypes.byref(result)
+            ):
                 raise _windows_error("Could not query Windows Job Object membership")
             return bool(result.value)
         finally:
@@ -205,7 +211,9 @@ class WindowsJob:
 
     def terminate(self, exit_code: int = 1) -> None:
         assert _KERNEL32 is not None
-        if not self._closed and not _KERNEL32.TerminateJobObject(self._handle, exit_code):
+        if not self._closed and not _KERNEL32.TerminateJobObject(
+            self._handle, exit_code
+        ):
             error = ctypes.get_last_error()
             if error not in {0, 5, 87}:
                 raise ctypes.WinError(error)
@@ -237,7 +245,8 @@ class WindowsManagedProcess:
         self._poll_seconds = poll_seconds
         self._owned: dict[int, float] = {process.pid: creation_time}
         self._monitor_task = asyncio.create_task(
-            self._monitor_descendants(), name=f"surface-windows-{process.pid}-descendants"
+            self._monitor_descendants(),
+            name=f"surface-windows-{process.pid}-descendants",
         )
         digest = hashlib.sha256(
             json.dumps(request.argv, separators=(",", ":")).encode()
@@ -312,7 +321,9 @@ class WindowsManagedProcess:
         if seconds <= 0:
             return False
         try:
-            await asyncio.wait_for(asyncio.shield(self._process.wait()), timeout=seconds)
+            await asyncio.wait_for(
+                asyncio.shield(self._process.wait()), timeout=seconds
+            )
             return True
         except TimeoutError:
             return False
@@ -326,7 +337,9 @@ class WindowsManagedProcess:
 
     def _remaining_listeners(self) -> tuple[str, ...]:
         owned = {
-            pid for pid, created in self._owned.items() if self._same_process(pid, created)
+            pid
+            for pid, created in self._owned.items()
+            if self._same_process(pid, created)
         }
         try:
             connections = psutil.net_connections(kind="tcp")
@@ -461,7 +474,9 @@ class WindowsProcessAdapter:
         try:
             job = self._job_factory(
                 max_processes=int(request.limits.get("processes_per_owned_tree", 32)),
-                max_memory_mib=int(request.limits.get("memory_mib_per_owned_app", 2048)),
+                max_memory_mib=int(
+                    request.limits.get("memory_mib_per_owned_app", 2048)
+                ),
                 cpu_cores=float(request.limits.get("cpu_cores_per_owned_app", 2.0)),
             )
         except OSError as error:

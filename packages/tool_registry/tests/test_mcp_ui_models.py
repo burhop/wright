@@ -47,9 +47,7 @@ def test_canonical_tool_ui_metadata_wins_and_preserves_upstream_values() -> None
 
 
 def test_deprecated_resource_uri_is_accepted_but_recorded() -> None:
-    metadata = McpUiToolMetadata.from_upstream(
-        {"ui/resourceUri": "ui://server/legacy"}
-    )
+    metadata = McpUiToolMetadata.from_upstream({"ui/resourceUri": "ui://server/legacy"})
 
     assert metadata.resource_uri == "ui://server/legacy"
     assert metadata.accepted_deprecated_resource_uri

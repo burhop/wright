@@ -22,9 +22,7 @@ from .service import SurfaceActor, SurfaceService
 
 
 class LiveAppControlError(RuntimeError):
-    def __init__(
-        self, code: str, message: str, *, retryable: bool = False
-    ) -> None:
+    def __init__(self, code: str, message: str, *, retryable: bool = False) -> None:
         super().__init__(message)
         self.code = code
         self.retryable = retryable
@@ -53,9 +51,7 @@ class LiveAppControlManager(Protocol):
         self, instance_id: str
     ) -> tuple[dict[str, Any], ...]: ...
 
-    def logs(
-        self, instance_id: str, *, after_sequence: int, limit: int
-    ) -> Any: ...
+    def logs(self, instance_id: str, *, after_sequence: int, limit: int) -> Any: ...
 
 
 class LiveAppControlService:
@@ -347,7 +343,9 @@ class LiveAppControlService:
     ) -> LiveAppInstance:
         descriptor, _source, manager = await self._surface(actor, surface_id)
         instance = manager.get(self._instance_id(descriptor))
-        if instance.workspace_id != actor.workspace_id or instance.surface_id != str(surface_id):
+        if instance.workspace_id != actor.workspace_id or instance.surface_id != str(
+            surface_id
+        ):
             raise LiveAppControlError(
                 "SURFACE_RUNTIME_NOT_FOUND", "Managed application was not found"
             )

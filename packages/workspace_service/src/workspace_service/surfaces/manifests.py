@@ -127,12 +127,14 @@ class WorkspaceManifestStore:
             ) from error
         if not confined.is_file():
             raise ManifestDiscoveryError(
-                "SURFACE_MANIFEST_NOT_FILE", f"Manifest {relative} is not a regular file"
+                "SURFACE_MANIFEST_NOT_FILE",
+                f"Manifest {relative} is not a regular file",
             )
         before = confined.stat()
         if before.st_size > self._maximum_bytes:
             raise ManifestDiscoveryError(
-                "SURFACE_MANIFEST_TOO_LARGE", f"Manifest {relative} exceeds the size limit"
+                "SURFACE_MANIFEST_TOO_LARGE",
+                f"Manifest {relative} exceeds the size limit",
             )
         try:
             document = json.loads(
@@ -143,7 +145,8 @@ class WorkspaceManifestStore:
             raise
         except (OSError, UnicodeError, json.JSONDecodeError) as error:
             raise ManifestDiscoveryError(
-                "SURFACE_MANIFEST_JSON_INVALID", f"Manifest {relative} is not valid UTF-8 JSON"
+                "SURFACE_MANIFEST_JSON_INVALID",
+                f"Manifest {relative} is not valid UTF-8 JSON",
             ) from error
         after = confined.stat()
         if (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns) != (
@@ -153,11 +156,13 @@ class WorkspaceManifestStore:
             after.st_mtime_ns,
         ):
             raise ManifestDiscoveryError(
-                "SURFACE_MANIFEST_CHANGED", f"Manifest {relative} changed while it was read"
+                "SURFACE_MANIFEST_CHANGED",
+                f"Manifest {relative} changed while it was read",
             )
         if not isinstance(document, Mapping):
             raise ManifestDiscoveryError(
-                "SURFACE_MANIFEST_INVALID", f"Manifest {relative} must contain an object"
+                "SURFACE_MANIFEST_INVALID",
+                f"Manifest {relative} must contain an object",
             )
         try:
             manifest = parse_live_app_manifest(document)
@@ -169,9 +174,8 @@ class WorkspaceManifestStore:
         if isinstance(manifest.launch, CommandLaunch):
             for name in manifest.launch.environment:
                 normalized = name.upper()
-                if (
-                    normalized in _DENIED_ENVIRONMENT_NAMES
-                    or normalized.startswith(("DYLD_", "LD_", "WRIGHT_"))
+                if normalized in _DENIED_ENVIRONMENT_NAMES or normalized.startswith(
+                    ("DYLD_", "LD_", "WRIGHT_")
                 ):
                     raise ManifestDiscoveryError(
                         "SURFACE_MANIFEST_ENVIRONMENT_DENIED",
@@ -212,7 +216,9 @@ class WorkspaceManifestStore:
                 "SURFACE_MANIFEST_DIRECTORY_INVALID",
                 ".wright/apps must be a workspace directory",
             )
-        candidates = sorted(directory.glob("*.surface.json"), key=lambda item: item.name)
+        candidates = sorted(
+            directory.glob("*.surface.json"), key=lambda item: item.name
+        )
         if len(candidates) > self._maximum_files:
             raise ManifestDiscoveryError(
                 "SURFACE_MANIFEST_COUNT_EXCEEDED",

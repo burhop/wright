@@ -86,7 +86,9 @@ async def test_readiness_retries_transport_failures_then_succeeds() -> None:
 @pytest.mark.asyncio
 async def test_application_status_failure_is_distinct_and_actionable() -> None:
     clock = Clock()
-    transport = FakeTransport(*(ProbeResponse(status=503, body_bytes=12) for _ in range(20)))
+    transport = FakeTransport(
+        *(ProbeResponse(status=503, body_bytes=12) for _ in range(20))
+    )
     result = await HealthProber(
         transport=transport,
         monotonic=clock.monotonic,

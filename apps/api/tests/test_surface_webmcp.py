@@ -102,16 +102,21 @@ def test_two_same_name_pages_register_under_distinct_surface_identity() -> None:
     headers_a = {"Host": "s-one.preview.example.test", "Origin": ORIGIN_A}
     headers_b = {"Host": "s-two.preview.example.test", "Origin": ORIGIN_B}
 
-    with first.websocket_connect(
-        "/__wright/webmcp", headers=headers_a, cookies={"wright_surface": "cookie"}
-    ) as socket_a, second.websocket_connect(
-        "/__wright/webmcp", headers=headers_b, cookies={"wright_surface": "cookie"}
-    ) as socket_b:
-        socket_a.send_json(
-            _registration("11111111-1111-4111-8111-111111111111")
-        )
+    with (
+        first.websocket_connect(
+            "/__wright/webmcp", headers=headers_a, cookies={"wright_surface": "cookie"}
+        ) as socket_a,
+        second.websocket_connect(
+            "/__wright/webmcp", headers=headers_b, cookies={"wright_surface": "cookie"}
+        ) as socket_b,
+    ):
+        socket_a.send_json(_registration("11111111-1111-4111-8111-111111111111"))
         socket_b.send_json(
-            _registration("22222222-2222-4222-8222-222222222222", surface_id="surface-two", origin=ORIGIN_B)
+            _registration(
+                "22222222-2222-4222-8222-222222222222",
+                surface_id="surface-two",
+                origin=ORIGIN_B,
+            )
         )
         assert socket_a.receive_json()["operation"] == "webmcp.connected"
         assert socket_b.receive_json()["operation"] == "webmcp.connected"
@@ -131,11 +136,14 @@ def test_two_same_name_pages_register_under_distinct_surface_identity() -> None:
             "surface-two",
         }
 
-    assert webmcp.matching(
-        workspace_id="workspace-1",
-        server_id="web-app",
-        tool_name="select_part",
-    ) == ()
+    assert (
+        webmcp.matching(
+            workspace_id="workspace-1",
+            server_id="web-app",
+            tool_name="select_part",
+        )
+        == ()
+    )
 
 
 def test_unregister_uses_exact_generation_origin_server_and_tool_binding() -> None:
@@ -152,8 +160,11 @@ def test_unregister_uses_exact_generation_origin_server_and_tool_binding() -> No
         unregister = _registration(operation="webmcp.unregister")
         socket.send_json(unregister)
         assert socket.receive_json()["payload"] == {"unregistered": True}
-        assert webmcp.matching(
-            workspace_id="workspace-1",
-            server_id="web-app",
-            tool_name="select_part",
-        ) == ()
+        assert (
+            webmcp.matching(
+                workspace_id="workspace-1",
+                server_id="web-app",
+                tool_name="select_part",
+            )
+            == ()
+        )

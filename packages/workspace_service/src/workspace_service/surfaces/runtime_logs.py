@@ -156,9 +156,7 @@ class RuntimeLogBuffer:
             )
             return RuntimeLogWrite(sequence=entry.sequence, dropped=False)
 
-    def tail(
-        self, *, after_sequence: int = 0, limit: int = 200
-    ) -> RuntimeLogTail:
+    def tail(self, *, after_sequence: int = 0, limit: int = 200) -> RuntimeLogTail:
         if after_sequence < 0 or not 1 <= limit <= 1000:
             raise ValueError("runtime log tail bounds are invalid")
         with self._lock:

@@ -163,9 +163,7 @@ class PresentationService:
         return token, hashlib.sha256(token.encode("ascii")).hexdigest()
 
     @staticmethod
-    def _launch(
-        record: SurfacePresentationRecord, *, token: str
-    ) -> PresentationLaunch:
+    def _launch(record: SurfacePresentationRecord, *, token: str) -> PresentationLaunch:
         return PresentationLaunch(
             presentation_id=record.presentation_id,
             instance_id=record.instance_id,
@@ -288,10 +286,7 @@ class PresentationService:
         )
         if not eligible:
             raise PresentationUnavailable(reason)
-        if (
-            source.sharing_mode is SharingMode.ISOLATED
-            and not isolated_acknowledged
-        ):
+        if source.sharing_mode is SharingMode.ISOLATED and not isolated_acknowledged:
             raise IsolatedPresentationAcknowledgementRequired(
                 "Isolated presentation creates a separate application instance"
             )
@@ -325,9 +320,7 @@ class PresentationService:
             existing = self.presentations.rotate_bootstrap(
                 existing,
                 bootstrap_nonce_hash=token_hash,
-                bootstrap_expires_at=min(
-                    bootstrap_expires_at, existing.expires_at
-                ),
+                bootstrap_expires_at=min(bootstrap_expires_at, existing.expires_at),
             )
             if remember_preference:
                 self._remember(actor=actor, source=source, kind=kind)
@@ -398,9 +391,7 @@ class PresentationService:
             existing = self.presentations.rotate_bootstrap(
                 existing,
                 bootstrap_nonce_hash=token_hash,
-                bootstrap_expires_at=min(
-                    bootstrap_expires_at, existing.expires_at
-                ),
+                bootstrap_expires_at=min(bootstrap_expires_at, existing.expires_at),
             )
             if remember_preference:
                 self._remember(actor=actor, source=source, kind=kind)

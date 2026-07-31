@@ -141,7 +141,9 @@ class PosixManagedProcess:
         if seconds <= 0:
             return False
         try:
-            await asyncio.wait_for(asyncio.shield(self._process.wait()), timeout=seconds)
+            await asyncio.wait_for(
+                asyncio.shield(self._process.wait()), timeout=seconds
+            )
             return True
         except TimeoutError:
             return False
@@ -166,7 +168,9 @@ class PosixManagedProcess:
 
     def _remaining_listeners(self) -> tuple[str, ...]:
         owned_pids = {
-            pid for pid, created in self._owned.items() if self._same_process(pid, created)
+            pid
+            for pid, created in self._owned.items()
+            if self._same_process(pid, created)
         }
         listeners: list[str] = []
         try:
@@ -268,7 +272,7 @@ class PosixProcessAdapter:
                 "SURFACE_PROCESS_ADAPTER_UNAVAILABLE",
                 "POSIX process-group containment is unavailable on this host",
             )
-        pass_fds = (() if request.listener_handle is None else (request.listener_handle,))
+        pass_fds = () if request.listener_handle is None else (request.listener_handle,)
         process = await asyncio.create_subprocess_exec(
             *request.argv,
             cwd=request.cwd,

@@ -57,9 +57,7 @@ class McpUiPolicy:
         )
         if not visibility.allowed:
             return visibility
-        missing = sorted(
-            set(tool.required_approvals) - set(workspace_approvals or ())
-        )
+        missing = sorted(set(tool.required_approvals) - set(workspace_approvals or ()))
         if missing:
             return GatewayPolicyDecision(
                 False,

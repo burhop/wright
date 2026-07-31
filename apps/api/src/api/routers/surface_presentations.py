@@ -27,9 +27,7 @@ class PresentationRequest(BaseModel):
 
     kind: Literal["panel", "browser"]
     remember_preference: bool = Field(default=False, alias="rememberPreference")
-    isolated_acknowledged: bool = Field(
-        default=False, alias="isolatedAcknowledged"
-    )
+    isolated_acknowledged: bool = Field(default=False, alias="isolatedAcknowledged")
 
 
 class PreferenceRequest(BaseModel):

@@ -119,7 +119,9 @@ def test_stdio_runner_inherits_adapter_operation_timeout(tmp_path, monkeypatch) 
 
 
 @pytest.mark.asyncio
-async def test_child_resource_notifications_invalidate_exact_connection_and_uri() -> None:
+async def test_child_resource_notifications_invalidate_exact_connection_and_uri() -> (
+    None
+):
     handlers = []
 
     class Runner:

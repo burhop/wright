@@ -158,18 +158,27 @@ def test_shared_panel_and_browser_reuse_instance_and_close_does_not_stop(
         surface_id=SurfaceId("surface-app"),
         presentation_id=panel.launch.presentation_id,
     )
-    assert service.get_record(
-        actor=_actor(), presentation_id=panel.launch.presentation_id
-    ).state == "closed"
-    assert service.get_record(
-        actor=_actor(), presentation_id=browser.launch.presentation_id
-    ).state == "issued"
-    assert surfaces.get(
-        SurfaceId("surface-app"),
-        workspace_id="workspace-1",
-        user_id="user-1",
-        session_id="session-1",
-    ).lifecycle is SurfaceLifecycle.READY
+    assert (
+        service.get_record(
+            actor=_actor(), presentation_id=panel.launch.presentation_id
+        ).state
+        == "closed"
+    )
+    assert (
+        service.get_record(
+            actor=_actor(), presentation_id=browser.launch.presentation_id
+        ).state
+        == "issued"
+    )
+    assert (
+        surfaces.get(
+            SurfaceId("surface-app"),
+            workspace_id="workspace-1",
+            user_id="user-1",
+            session_id="session-1",
+        ).lifecycle
+        is SurfaceLifecycle.READY
+    )
 
     with sqlite3.connect(database) as connection:
         stored = connection.execute(
@@ -199,7 +208,10 @@ def test_idempotent_reopen_rotates_bootstrap_without_duplicate_presentation(
     assert replay.created is False
     assert replay.launch.presentation_id == first.launch.presentation_id
     assert replay.launch.absolute_bootstrap_url != first.launch.absolute_bootstrap_url
-    assert len(service.list_records(actor=_actor(), surface_id=SurfaceId("surface-app"))) == 1
+    assert (
+        len(service.list_records(actor=_actor(), surface_id=SurfaceId("surface-app")))
+        == 1
+    )
     preference = service.resolve_preference(
         actor=_actor(), surface_id=SurfaceId("surface-app")
     )
@@ -227,9 +239,10 @@ def test_concurrent_idempotent_create_returns_the_winning_presentation(
     )
     assert result.created is False
     assert result.launch.presentation_id == "presentation-panel"
-    assert len(
-        service.list_records(actor=_actor(), surface_id=SurfaceId("surface-app"))
-    ) == 1
+    assert (
+        len(service.list_records(actor=_actor(), surface_id=SurfaceId("surface-app")))
+        == 1
+    )
 
 
 def test_preference_is_revalidated_against_source_version_and_eligibility(
@@ -284,7 +297,9 @@ def test_preference_is_revalidated_against_source_version_and_eligibility(
     assert decision.kind == "browser"
 
 
-def test_stale_or_ineligible_instance_is_rejected_without_new_app(tmp_path: Path) -> None:
+def test_stale_or_ineligible_instance_is_rejected_without_new_app(
+    tmp_path: Path,
+) -> None:
     descriptor = replace(_ready_descriptor(), instance=None)
     _database_path, _surfaces, service = _service(tmp_path, descriptor)
     with pytest.raises(PresentationUnavailable, match="ready instance"):

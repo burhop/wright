@@ -42,9 +42,12 @@ def test_explicit_approval_is_exact_direct_only_and_unprivileged() -> None:
     assert approval.wright_credentials is False
     assert approval.bridge_enabled is False
     assert approval.managed_lifecycle is False
-    assert service.authorize(
-        actor=_actor(), approval_id="approval-1", url=approval.normalized_url
-    ) == approval
+    assert (
+        service.authorize(
+            actor=_actor(), approval_id="approval-1", url=approval.normalized_url
+        )
+        == approval
+    )
 
     with pytest.raises(ExternalUrlApprovalError, match="scope"):
         service.authorize(
@@ -101,5 +104,7 @@ def test_approval_requires_disclosure_and_expires() -> None:
     current[0] = NOW + timedelta(seconds=61)
     with pytest.raises(ExternalUrlApprovalError, match="expired"):
         service.authorize(
-            actor=_actor(), approval_id=approval.approval_id, url=approval.normalized_url
+            actor=_actor(),
+            approval_id=approval.approval_id,
+            url=approval.normalized_url,
         )

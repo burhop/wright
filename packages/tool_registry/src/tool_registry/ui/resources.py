@@ -18,13 +18,9 @@ class McpUiResourceReader(Protocol):
 
     async def list_resources(self, server_id: str) -> Mapping[str, Any]: ...
 
-    async def list_resource_templates(
-        self, server_id: str
-    ) -> Mapping[str, Any]: ...
+    async def list_resource_templates(self, server_id: str) -> Mapping[str, Any]: ...
 
-    async def read_resource(
-        self, server_id: str, uri: str
-    ) -> Mapping[str, Any]: ...
+    async def read_resource(self, server_id: str, uri: str) -> Mapping[str, Any]: ...
 
     async def subscribe_resource(self, server_id: str, uri: str) -> None: ...
 
@@ -66,7 +62,9 @@ class McpUiResourceStore:
         self.cache_ttl = cache_ttl
         self.maximum_content_bytes = maximum_content_bytes
         self._cache: dict[tuple[str, str, str, str, str], _CachedBinding] = {}
-        self._listing_meta: dict[tuple[str, str, str], dict[str, Mapping[str, Any]]] = {}
+        self._listing_meta: dict[
+            tuple[str, str, str], dict[str, Mapping[str, Any]]
+        ] = {}
         self._subscriptions: set[tuple[str, str, str, str, str]] = set()
         self._locks: dict[tuple[str, str, str, str, str], asyncio.Lock] = {}
         set_invalidator = getattr(reader, "set_invalidator", None)
@@ -229,9 +227,13 @@ class McpUiResourceStore:
                 result = {}
             resources = result.get("resources")
             metadata = {}
-            if isinstance(resources, Sequence) and not isinstance(resources, (str, bytes)):
+            if isinstance(resources, Sequence) and not isinstance(
+                resources, (str, bytes)
+            ):
                 for item in resources:
-                    if not isinstance(item, Mapping) or not isinstance(item.get("uri"), str):
+                    if not isinstance(item, Mapping) or not isinstance(
+                        item.get("uri"), str
+                    ):
                         continue
                     raw = item.get("_meta")
                     metadata[str(item["uri"])] = (

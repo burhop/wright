@@ -350,9 +350,7 @@ def get_tool(db_path: str, tool_id: str) -> Optional[McpTool]:
 
 def insert_tools(db_path: str, tools: List[McpTool]) -> None:
     with _get_conn(db_path) as conn:
-        columns = {
-            str(row[1]) for row in conn.execute("PRAGMA table_info(mcp_tools)")
-        }
+        columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(mcp_tools)")}
         for tool in tools:
             names = [
                 "tool_id",

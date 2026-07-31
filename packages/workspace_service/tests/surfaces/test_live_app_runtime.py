@@ -185,9 +185,10 @@ async def test_startup_reconciliation_revokes_credentials_and_pins_fail_closed(
             "presentation_cookie_hash": None,
         }
         assert surface["lifecycle"] == "failed"
-        assert "SURFACE_RECONCILE_OWNERSHIP_UNPROVABLE" in surface[
-            "diagnostic_summary_json"
-        ]
+        assert (
+            "SURFACE_RECONCILE_OWNERSHIP_UNPROVABLE"
+            in surface["diagnostic_summary_json"]
+        )
     finally:
         await registry.shutdown()
 

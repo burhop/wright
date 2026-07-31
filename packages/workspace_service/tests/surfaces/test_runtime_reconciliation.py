@@ -44,10 +44,14 @@ class Store:
             record,
             state=state,
             revision=record.revision + 1,
-            authority_expires_at=(NOW + timedelta(minutes=5) if fresh_authority else None),
+            authority_expires_at=(
+                NOW + timedelta(minutes=5) if fresh_authority else None
+            ),
         )
         self.records[record.runtime_id] = updated
-        self.transitions.append((record.runtime_id, state, diagnostic_code, fresh_authority))
+        self.transitions.append(
+            (record.runtime_id, state, diagnostic_code, fresh_authority)
+        )
         return updated
 
 
@@ -117,7 +121,9 @@ async def test_valid_runtime_gets_fresh_authority_only_after_full_evidence() -> 
     assert stopper.calls == []
 
 
-async def test_stale_owned_tree_is_stopped_but_unprovable_tree_is_never_touched() -> None:
+async def test_stale_owned_tree_is_stopped_but_unprovable_tree_is_never_touched() -> (
+    None
+):
     stale = _record(runtime_id="stale", instance_id="stale-instance")
     unknown = _record(runtime_id="unknown", instance_id="unknown-instance")
     store = Store([stale, unknown])

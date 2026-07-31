@@ -61,9 +61,7 @@ def _from_row(row) -> SurfacePresentationRecord:
         expires_at=datetime.fromisoformat(row["expires_at"]),
         presentation_cookie_hash=row["presentation_cookie_hash"],
         last_seen_at=(
-            datetime.fromisoformat(row["last_seen_at"])
-            if row["last_seen_at"]
-            else None
+            datetime.fromisoformat(row["last_seen_at"]) if row["last_seen_at"] else None
         ),
         closed_at=(
             datetime.fromisoformat(row["closed_at"]) if row["closed_at"] else None
@@ -109,7 +107,9 @@ class SurfacePresentationRepository:
                             record.cookie_audience,
                             record.idempotency_key,
                             record.created_at.isoformat(),
-                            record.last_seen_at.isoformat() if record.last_seen_at else None,
+                            record.last_seen_at.isoformat()
+                            if record.last_seen_at
+                            else None,
                             record.bootstrap_expires_at.isoformat(),
                             record.expires_at.isoformat(),
                             record.presentation_cookie_hash,
@@ -202,11 +202,11 @@ class SurfacePresentationRepository:
                 connection.commit()
         return updated
 
-    def get_for_preview(
-        self, presentation_id: str
-    ) -> SurfacePresentationRecord | None:
+    def get_for_preview(self, presentation_id: str) -> SurfacePresentationRecord | None:
         """Resolve opaque preview authority without crossing its host audience."""
-        with self.tracer.start_as_current_span("surface.sqlite.presentation.preview_get"):
+        with self.tracer.start_as_current_span(
+            "surface.sqlite.presentation.preview_get"
+        ):
             with connect_state_db(self.db_path) as connection:
                 row = connection.execute(
                     "SELECT * FROM surface_presentations WHERE presentation_id=?",

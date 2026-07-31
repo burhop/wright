@@ -221,7 +221,12 @@ _LIMIT_FIELDS: dict[str, tuple[str, int, int | float, int | float]] = {
     "firstByteTimeoutMs": ("first_byte_timeout_seconds", 1000, 100, 300_000),
     "httpIdleTimeoutMs": ("http_idle_timeout_seconds", 1000, 100, 3_600_000),
     "streamHeartbeatIdleMs": ("stream_heartbeat_idle_seconds", 1000, 100, 3_600_000),
-    "maxConnectionLifetimeMs": ("live_connection_lifetime_seconds", 1000, 1000, 86_400_000),
+    "maxConnectionLifetimeMs": (
+        "live_connection_lifetime_seconds",
+        1000,
+        1000,
+        86_400_000,
+    ),
     "maxLogBytes": ("captured_log_bytes", 1, 4096, 1_073_741_824),
     "maxLogBytesPerSecond": ("captured_log_bytes_per_second", 1, 1024, 67_108_864),
     "logBurstBytes": ("captured_log_burst_bytes", 1, 1024, 67_108_864),
@@ -359,7 +364,13 @@ class LiveAppManifest:
             )
         parts = urlsplit(self.launch.url)
         normalized = urlunsplit(
-            (parts.scheme.lower(), parts.netloc.lower(), parts.path or "/", parts.query, "")
+            (
+                parts.scheme.lower(),
+                parts.netloc.lower(),
+                parts.path or "/",
+                parts.query,
+                "",
+            )
         )
         return ResolvedAttach(url=normalized)
 
@@ -381,13 +392,19 @@ def _parse_probe(value: Any, label: str) -> Probe:
         path=path,
         method=method,
         expected_status=_integer(
-            record.get("expectedStatus"), f"{label}.expectedStatus", minimum=100, maximum=599
+            record.get("expectedStatus"),
+            f"{label}.expectedStatus",
+            minimum=100,
+            maximum=599,
         ),
         timeout_ms=_integer(
             record.get("timeoutMs"), f"{label}.timeoutMs", minimum=100, maximum=300_000
         ),
         interval_ms=_integer(
-            record.get("intervalMs", 250), f"{label}.intervalMs", minimum=50, maximum=60_000
+            record.get("intervalMs", 250),
+            f"{label}.intervalMs",
+            minimum=50,
+            maximum=60_000,
         ),
     )
 
@@ -403,9 +420,13 @@ def _parse_launch(value: Any) -> CommandLaunch | AttachLaunch:
         )
         argv_value = record.get("argv")
         if not isinstance(argv_value, list) or not 1 <= len(argv_value) <= 128:
-            raise ManifestError("launch.argv must be a non-empty argument array; shell strings are forbidden")
+            raise ManifestError(
+                "launch.argv must be a non-empty argument array; shell strings are forbidden"
+            )
         argv = tuple(_string(item, "launch.argv item") for item in argv_value)
-        environment_record = _record(record.get("environment", {}), "launch.environment")
+        environment_record = _record(
+            record.get("environment", {}), "launch.environment"
+        )
         if len(environment_record) > 128:
             raise ManifestError("launch.environment contains too many values")
         environment: dict[str, EnvironmentValue] = {}
@@ -423,11 +444,20 @@ def _parse_launch(value: Any) -> CommandLaunch | AttachLaunch:
                     _string(secret.get("secretRef"), "secretRef", maximum=256)
                 )
         framework = record.get("framework", "generic")
-        if framework not in {"generic", "fastapi", "panel", "streamlit", "gradio", "dash"}:
+        if framework not in {
+            "generic",
+            "fastapi",
+            "panel",
+            "streamlit",
+            "gradio",
+            "dash",
+        }:
             raise ManifestError("launch.framework is invalid")
         return CommandLaunch(
             argv=argv,
-            working_directory=_string(record.get("workingDirectory"), "launch.workingDirectory"),
+            working_directory=_string(
+                record.get("workingDirectory"), "launch.workingDirectory"
+            ),
             environment=MappingProxyType(environment),
             framework=framework,
         )
@@ -442,7 +472,9 @@ def _parse_launch(value: Any) -> CommandLaunch | AttachLaunch:
             or parts.password is not None
             or parts.fragment
         ):
-            raise ManifestError("launch.url must be an absolute HTTP URL without credentials or fragment")
+            raise ManifestError(
+                "launch.url must be an absolute HTTP URL without credentials or fragment"
+            )
         proof = record.get("ownershipProof")
         if proof is not None and proof not in {
             "shared-secret",
@@ -462,7 +494,11 @@ def _parse_limits(value: Any) -> LiveAppLimits:
     for manifest_name, raw in declared.items():
         policy_name, divisor, minimum, maximum = _LIMIT_FIELDS[manifest_name]
         if manifest_name == "maxCpuCores":
-            if isinstance(raw, bool) or not isinstance(raw, (int, float)) or not minimum <= raw <= maximum:
+            if (
+                isinstance(raw, bool)
+                or not isinstance(raw, (int, float))
+                or not minimum <= raw <= maximum
+            ):
                 raise ManifestError(f"limits.{manifest_name} is invalid")
             converted: int | float = float(raw)
         else:
@@ -515,7 +551,9 @@ def parse_live_app_manifest(value: Mapping[str, Any]) -> LiveAppManifest:
         raise ManifestError("version is invalid")
     ownership = record.get("ownershipPolicy")
     launch = _parse_launch(record.get("launch"))
-    expected_ownership = "wright-owned" if isinstance(launch, CommandLaunch) else "approved-attach"
+    expected_ownership = (
+        "wright-owned" if isinstance(launch, CommandLaunch) else "approved-attach"
+    )
     if ownership != expected_ownership:
         raise ManifestError("launch mode and ownership policy are inconsistent")
 
@@ -534,7 +572,11 @@ def parse_live_app_manifest(value: Mapping[str, Any]) -> LiveAppManifest:
     )
     panel = presentation_record.get("panel")
     browser = presentation_record.get("browser")
-    if not isinstance(panel, bool) or not isinstance(browser, bool) or not (panel or browser):
+    if (
+        not isinstance(panel, bool)
+        or not isinstance(browser, bool)
+        or not (panel or browser)
+    ):
         raise ManifestError("presentation must enable panel or browser")
     sharing = presentation_record.get("sharing")
     if sharing not in {"shared", "isolated"}:
@@ -556,7 +598,11 @@ def parse_live_app_manifest(value: Mapping[str, Any]) -> LiveAppManifest:
         "downloads",
         "notifications",
     }
-    if not isinstance(permissions, list) or len(permissions) != len(set(permissions)) or not set(permissions) <= allowed_permissions:
+    if (
+        not isinstance(permissions, list)
+        or len(permissions) != len(set(permissions))
+        or not set(permissions) <= allowed_permissions
+    ):
         raise ManifestError("presentation.permissionsPolicy is invalid")
 
     transports_record = _record(record.get("transports"), "transports")
@@ -565,7 +611,9 @@ def parse_live_app_manifest(value: Mapping[str, Any]) -> LiveAppManifest:
         isinstance(transports_record[name], bool) for name in transports_record
     ):
         raise ManifestError("transports must define HTTP, WebSocket, and SSE booleans")
-    if (transports_record["websocket"] or transports_record["sse"]) and not transports_record["http"]:
+    if (
+        transports_record["websocket"] or transports_record["sse"]
+    ) and not transports_record["http"]:
         raise ManifestError("WebSocket and SSE transports require HTTP")
 
     navigation_record = _record(record.get("navigation", {}), "navigation")
@@ -577,10 +625,16 @@ def parse_live_app_manifest(value: Mapping[str, Any]) -> LiveAppManifest:
     allow_redirects = navigation_record.get("allowSameTargetRedirects", True)
     external_links = navigation_record.get("externalLinks", "prompt-browser")
     downloads = navigation_record.get("downloads", "deny")
-    if not isinstance(allow_redirects, bool) or external_links not in {"deny", "prompt-browser"} or downloads not in {"deny", "prompt"}:
+    if (
+        not isinstance(allow_redirects, bool)
+        or external_links not in {"deny", "prompt-browser"}
+        or downloads not in {"deny", "prompt"}
+    ):
         raise ManifestError("navigation is invalid")
 
-    lifetime_record = _record(record.get("lifetime", {"policy": "workspace"}), "lifetime")
+    lifetime_record = _record(
+        record.get("lifetime", {"policy": "workspace"}), "lifetime"
+    )
     _exact(lifetime_record, {"policy", "leaseSeconds", "idleSeconds"}, "lifetime")
     lifetime_policy = lifetime_record.get("policy")
     if lifetime_policy not in {"presentation", "workspace", "lease", "idle", "manual"}:
@@ -621,7 +675,9 @@ def parse_live_app_manifest(value: Mapping[str, Any]) -> LiveAppManifest:
         )
     ):
         raise ManifestError("redaction values must be arrays")
-    canonical = json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    canonical = json.dumps(
+        record, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
     return LiveAppManifest(
         schema_version=1,
         manifest_id=manifest_id,

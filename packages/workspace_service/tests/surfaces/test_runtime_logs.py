@@ -37,7 +37,10 @@ def test_redacts_secret_values_environment_and_query_fields() -> None:
     )
 
     entry = logs.tail().entries[0]
-    assert entry.message == "API_TOKEN=[REDACTED] GET /data?access_token=[REDACTED]&safe=yes"
+    assert (
+        entry.message
+        == "API_TOKEN=[REDACTED] GET /data?access_token=[REDACTED]&safe=yes"
+    )
     assert "super-secret" not in logs.diagnostic_projection()["preview"]
 
 

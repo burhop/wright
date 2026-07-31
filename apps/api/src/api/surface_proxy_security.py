@@ -37,9 +37,7 @@ _CONTROL_HEADERS = frozenset(
         "x-real-ip",
     }
 )
-_INTERNAL_COOKIES = frozenset(
-    {"wright_surface", "wright_session", "wright_csrf"}
-)
+_INTERNAL_COOKIES = frozenset({"wright_surface", "wright_session", "wright_csrf"})
 
 
 def _safe_pair(name: str, value: str) -> tuple[str, str]:
@@ -137,9 +135,7 @@ def filter_response_headers(
 def validate_redirect(location: str, *, pin: ResolvedTargetPin) -> str:
     if not location or any(character in location for character in "\r\n\\"):
         raise ProxySecurityError("redirect target is invalid")
-    base = urlunsplit(
-        (pin.scheme, pin.host_header, pin.base_path or "/", "", "")
-    )
+    base = urlunsplit((pin.scheme, pin.host_header, pin.base_path or "/", "", ""))
     absolute = urlsplit(urljoin(base, location))
     if absolute.username is not None or absolute.password is not None:
         raise ProxySecurityError("redirect credentials are forbidden")

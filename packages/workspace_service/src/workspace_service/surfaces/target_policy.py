@@ -81,7 +81,8 @@ class TargetPolicy:
         allowed_attach_classes: set[AddressClass] | frozenset[AddressClass] = frozenset(
             {AddressClass.PUBLIC}
         ),
-        control_plane_endpoints: set[tuple[str, int]] | frozenset[tuple[str, int]] = frozenset(),
+        control_plane_endpoints: set[tuple[str, int]]
+        | frozenset[tuple[str, int]] = frozenset(),
     ) -> None:
         self.resolver = resolver or SystemResolver()
         self.allowed_attach_classes = frozenset(allowed_attach_classes)

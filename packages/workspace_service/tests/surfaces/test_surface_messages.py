@@ -58,48 +58,67 @@ def _message(**overrides):
 def test_exact_binding_generation_and_active_presentation_are_required() -> None:
     router = SurfaceMessageRouter(clock=lambda: NOW)
     assert router.route(binding=_binding(), message=_message()).code == "OK"
-    assert router.route(
-        binding=_binding(workspace_id="workspace-2"),
-        message=_message(messageId="00000000-0000-4000-8000-000000000003"),
-    ).code == "SURFACE_MESSAGE_BINDING_MISMATCH"
-    assert router.route(
-        binding=_binding(generation=4),
-        message=_message(messageId="00000000-0000-4000-8000-000000000004"),
-    ).code == "SURFACE_MESSAGE_STALE_GENERATION"
-    assert router.route(
-        binding=_binding(active=False),
-        message=_message(messageId="00000000-0000-4000-8000-000000000005"),
-    ).code == "SURFACE_MESSAGE_PRESENTATION_GONE"
+    assert (
+        router.route(
+            binding=_binding(workspace_id="workspace-2"),
+            message=_message(messageId="00000000-0000-4000-8000-000000000003"),
+        ).code
+        == "SURFACE_MESSAGE_BINDING_MISMATCH"
+    )
+    assert (
+        router.route(
+            binding=_binding(generation=4),
+            message=_message(messageId="00000000-0000-4000-8000-000000000004"),
+        ).code
+        == "SURFACE_MESSAGE_STALE_GENERATION"
+    )
+    assert (
+        router.route(
+            binding=_binding(active=False),
+            message=_message(messageId="00000000-0000-4000-8000-000000000005"),
+        ).code
+        == "SURFACE_MESSAGE_PRESENTATION_GONE"
+    )
 
 
 def test_schema_deadline_size_and_depth_fail_with_stable_codes() -> None:
     router = SurfaceMessageRouter(
         clock=lambda: NOW, maximum_message_bytes=1024, maximum_json_depth=4
     )
-    assert router.route(
-        binding=_binding(), message=_message(protocolVersion="2.0")
-    ).code == "SURFACE_MESSAGE_INVALID"
-    assert router.route(
-        binding=_binding(),
-        message=_message(
-            messageId="00000000-0000-4000-8000-000000000006",
-            deadlineAt=(NOW - timedelta(seconds=1)).isoformat(),
-        ),
-    ).code == "SURFACE_MESSAGE_DEADLINE"
-    assert router.route(
-        binding=_binding(),
-        message=_message(
-            messageId="00000000-0000-4000-8000-000000000007",
-            payload={"large": "x" * 2000},
-        ),
-    ).code == "SURFACE_MESSAGE_TOO_LARGE"
-    assert router.route(
-        binding=_binding(),
-        message=_message(
-            messageId="00000000-0000-4000-8000-000000000008",
-            payload={"a": {"b": {"c": {"d": {"e": True}}}}},
-        ),
-    ).code == "SURFACE_MESSAGE_TOO_DEEP"
+    assert (
+        router.route(binding=_binding(), message=_message(protocolVersion="2.0")).code
+        == "SURFACE_MESSAGE_INVALID"
+    )
+    assert (
+        router.route(
+            binding=_binding(),
+            message=_message(
+                messageId="00000000-0000-4000-8000-000000000006",
+                deadlineAt=(NOW - timedelta(seconds=1)).isoformat(),
+            ),
+        ).code
+        == "SURFACE_MESSAGE_DEADLINE"
+    )
+    assert (
+        router.route(
+            binding=_binding(),
+            message=_message(
+                messageId="00000000-0000-4000-8000-000000000007",
+                payload={"large": "x" * 2000},
+            ),
+        ).code
+        == "SURFACE_MESSAGE_TOO_LARGE"
+    )
+    assert (
+        router.route(
+            binding=_binding(),
+            message=_message(
+                messageId="00000000-0000-4000-8000-000000000008",
+                payload={"a": {"b": {"c": {"d": {"e": True}}}}},
+            ),
+        ).code
+        == "SURFACE_MESSAGE_TOO_DEEP"
+    )
 
 
 def test_replay_is_idempotent_but_conflicting_reuse_is_rejected() -> None:
@@ -128,9 +147,7 @@ def test_sequence_rate_and_cancellation_are_bounded() -> None:
     assert router.route(binding=_binding(), message=_message()).ok
     out_of_order = router.route(
         binding=_binding(),
-        message=_message(
-            messageId="00000000-0000-4000-8000-000000000010", sequence=0
-        ),
+        message=_message(messageId="00000000-0000-4000-8000-000000000010", sequence=0),
     )
     assert out_of_order.code == "SURFACE_MESSAGE_SEQUENCE"
     cancel = _message(
@@ -144,8 +161,6 @@ def test_sequence_rate_and_cancellation_are_bounded() -> None:
     assert cancelled == ["00000000-0000-4000-8000-000000000001"]
     limited = router.route(
         binding=_binding(),
-        message=_message(
-            messageId="00000000-0000-4000-8000-000000000012", sequence=2
-        ),
+        message=_message(messageId="00000000-0000-4000-8000-000000000012", sequence=2),
     )
     assert limited.code == "SURFACE_MESSAGE_RATE_LIMIT"

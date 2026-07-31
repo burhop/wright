@@ -167,7 +167,9 @@ class McpUiToolMetadata(BaseModel):
         return cls(
             resource_uri=selected,
             visibility=visibility,
-            accepted_deprecated_resource_uri=(canonical is None and deprecated is not None),
+            accepted_deprecated_resource_uri=(
+                canonical is None and deprecated is not None
+            ),
             upstream=upstream,
         )
 

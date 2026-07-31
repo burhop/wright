@@ -20,9 +20,7 @@ def _tools(server_id: str) -> list[GatewayTool]:
             tool_name="model",
             description="Model-only operation",
             input_schema={"type": "object"},
-            ui=McpUiToolMetadata.from_upstream(
-                {"ui": {"visibility": ["model"]}}
-            ),
+            ui=McpUiToolMetadata.from_upstream({"ui": {"visibility": ["model"]}}),
         ),
         GatewayTool(
             name=f"{server_id}__app",
@@ -30,9 +28,7 @@ def _tools(server_id: str) -> list[GatewayTool]:
             tool_name="app",
             description="App-only operation",
             input_schema={"type": "object"},
-            ui=McpUiToolMetadata.from_upstream(
-                {"ui": {"visibility": ["app"]}}
-            ),
+            ui=McpUiToolMetadata.from_upstream({"ui": {"visibility": ["app"]}}),
         ),
         GatewayTool(
             name=f"{server_id}__both",
@@ -47,9 +43,7 @@ def _tools(server_id: str) -> list[GatewayTool]:
             tool_name="approved",
             description="Approved app operation",
             input_schema={"type": "object"},
-            ui=McpUiToolMetadata.from_upstream(
-                {"ui": {"visibility": ["app"]}}
-            ),
+            ui=McpUiToolMetadata.from_upstream({"ui": {"visibility": ["app"]}}),
             required_approvals=frozenset({"workspace_write"}),
         ),
     ]
@@ -83,7 +77,9 @@ def test_model_and_app_tool_visibility_are_distinct_and_same_server_scoped() -> 
 
 
 @pytest.mark.asyncio
-async def test_same_server_app_call_is_allowed_but_cross_server_and_model_only_fail() -> None:
+async def test_same_server_app_call_is_allowed_but_cross_server_and_model_only_fail() -> (
+    None
+):
     gateway, lifecycle, audit = _app_service()
 
     result = await gateway.call_app_tool(
@@ -92,19 +88,14 @@ async def test_same_server_app_call_is_allowed_but_cross_server_and_model_only_f
     assert result.structured_content == {"server": "cad", "workspace": "w1"}
     assert lifecycle.calls[-1][0] == "cad"
     assert any(
-        event["operation"] == "app.tool.call"
-        and event["outcome"] == "succeeded"
+        event["operation"] == "app.tool.call" and event["outcome"] == "succeeded"
         for event in audit.events
     )
 
     with pytest.raises(GatewayError, match="Unknown or disabled"):
-        await gateway.call_app_tool(
-            "s1", "cross-server", "cad", "fea__app", {}
-        )
+        await gateway.call_app_tool("s1", "cross-server", "cad", "fea__app", {})
     with pytest.raises(GatewayError, match="Unknown or disabled"):
-        await gateway.call_app_tool(
-            "s1", "model-only", "cad", "cad__model", {}
-        )
+        await gateway.call_app_tool("s1", "model-only", "cad", "cad__model", {})
     with pytest.raises(GatewayError, match="Unknown or disabled"):
         await gateway.call_tool("s1", "model-app-only", "cad__app", {})
 
@@ -113,9 +104,7 @@ async def test_same_server_app_call_is_allowed_but_cross_server_and_model_only_f
 async def test_app_calls_use_workspace_approval_not_client_hints() -> None:
     gateway, lifecycle, _ = _app_service()
 
-    denied = await gateway.call_app_tool(
-        "s1", "denied", "cad", "cad__approved", {}
-    )
+    denied = await gateway.call_app_tool("s1", "denied", "cad", "cad__approved", {})
     assert denied.is_error
     assert denied.structured_content == {"error": "approval_required"}
     allowed = await gateway.call_app_tool(
@@ -148,8 +137,7 @@ async def test_app_call_cancellation_is_owned_and_audited() -> None:
     with pytest.raises(asyncio.CancelledError):
         await call
     assert any(
-        event["operation"] == "app.tool.call"
-        and event["outcome"] == "cancelled"
+        event["operation"] == "app.tool.call" and event["outcome"] == "cancelled"
         for event in audit.events
     )
 
@@ -194,11 +182,7 @@ class _UiResources:
         return {"resources": [{"uri": f"ui://{server_id}/app"}]}
 
     async def list_resource_templates(self, server_id: str):
-        return {
-            "resourceTemplates": [
-                {"uriTemplate": f"ui://{server_id}/{{view}}"}
-            ]
-        }
+        return {"resourceTemplates": [{"uriTemplate": f"ui://{server_id}/{{view}}"}]}
 
     async def read(self, session, server_id: str, uri: str) -> McpUiBinding:
         if self.gate is not None:
@@ -238,8 +222,7 @@ async def test_app_resource_read_uses_same_server_policy_and_audit() -> None:
     assert binding.content_hash == "a" * 64
     assert resources.calls == [("s1", "cad", "ui://cad/app")]
     assert any(
-        event["operation"] == "app.resource.read"
-        and event["outcome"] == "succeeded"
+        event["operation"] == "app.resource.read" and event["outcome"] == "succeeded"
         for event in audit.events
     )
     with pytest.raises(GatewayError) as denied:
@@ -275,8 +258,7 @@ async def test_app_resource_read_is_cancellable_by_owning_session() -> None:
     with pytest.raises(asyncio.CancelledError):
         await read
     assert any(
-        event["operation"] == "app.resource.read"
-        and event["outcome"] == "cancelled"
+        event["operation"] == "app.resource.read" and event["outcome"] == "cancelled"
         for event in audit.events
     )
 
@@ -288,17 +270,12 @@ async def test_app_resource_discovery_is_same_server_scoped_and_audited() -> Non
     gateway.mcp_ui_resources = resources
 
     listed = await gateway.list_app_resources("s1", "resources-list", "cad")
-    templates = await gateway.list_app_resource_templates(
-        "s1", "templates-list", "cad"
-    )
+    templates = await gateway.list_app_resource_templates("s1", "templates-list", "cad")
 
     assert listed == {"resources": [{"uri": "ui://cad/app"}]}
-    assert templates == {
-        "resourceTemplates": [{"uriTemplate": "ui://cad/{view}"}]
-    }
+    assert templates == {"resourceTemplates": [{"uriTemplate": "ui://cad/{view}"}]}
     assert any(
-        event["operation"] == "app.resources.list"
-        and event["outcome"] == "succeeded"
+        event["operation"] == "app.resources.list" and event["outcome"] == "succeeded"
         for event in audit.events
     )
     assert any(

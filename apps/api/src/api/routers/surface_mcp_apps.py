@@ -13,7 +13,11 @@ from api.config import get_workspace_surface_settings
 from api.routers.surfaces import get_surface_actor, get_surface_service
 from core.surfaces.errors import SurfaceError
 from core.surfaces.models import McpAppSurfaceSource, SurfaceDescriptor, SurfaceId
-from tool_registry.gateway_models import GatewayError, GatewayErrorCode, GatewayToolResult
+from tool_registry.gateway_models import (
+    GatewayError,
+    GatewayErrorCode,
+    GatewayToolResult,
+)
 from tool_registry.gateway_service import GatewayService
 from workspace_service.surfaces.service import SurfaceActor, SurfaceService
 
@@ -41,18 +45,14 @@ class McpAppProjectionResponse(_ContractModel):
     content_hash: str | None = Field(default=None, alias="contentHash")
     sandbox_origin: str | None = Field(default=None, alias="sandboxOrigin")
     resource: McpAppResourceResponse | None = None
-    fallback_result: dict[str, Any] | None = Field(
-        default=None, alias="fallbackResult"
-    )
+    fallback_result: dict[str, Any] | None = Field(default=None, alias="fallbackResult")
     initial_tool_input: dict[str, Any] | None = Field(
         default=None, alias="initialToolInput"
     )
     initial_tool_result: dict[str, Any] | None = Field(
         default=None, alias="initialToolResult"
     )
-    host_capabilities: list[str] = Field(
-        default_factory=list, alias="hostCapabilities"
-    )
+    host_capabilities: list[str] = Field(default_factory=list, alias="hostCapabilities")
 
 
 class OperationRequest(_ContractModel):
@@ -82,11 +82,11 @@ async def _mcp_surface(
     service: SurfaceService,
 ) -> tuple[SurfaceDescriptor, McpAppSurfaceSource]:
     try:
-        descriptor = await service.get(
-            actor=actor, surface_id=SurfaceId(surface_id)
-        )
+        descriptor = await service.get(actor=actor, surface_id=SurfaceId(surface_id))
     except (SurfaceError, ValueError) as error:
-        raise HTTPException(status_code=404, detail="MCP_APP_SURFACE_NOT_FOUND") from error
+        raise HTTPException(
+            status_code=404, detail="MCP_APP_SURFACE_NOT_FOUND"
+        ) from error
     if not isinstance(descriptor.source, McpAppSurfaceSource):
         raise HTTPException(status_code=409, detail="SURFACE_SOURCE_NOT_MCP_APP")
     return descriptor, descriptor.source
@@ -94,10 +94,15 @@ async def _mcp_surface(
 
 def _sandbox_origin() -> str:
     preview = get_workspace_surface_settings().preview
-    port = "" if (preview.scheme, preview.public_port) in {
-        ("https", 443),
-        ("http", 80),
-    } else f":{preview.public_port}"
+    port = (
+        ""
+        if (preview.scheme, preview.public_port)
+        in {
+            ("https", 443),
+            ("http", 80),
+        }
+        else f":{preview.public_port}"
+    )
     return urlunsplit(
         (preview.scheme, f"mcp-sandbox.{preview.domain}{port}", "", "", "")
     )

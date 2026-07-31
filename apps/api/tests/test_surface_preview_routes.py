@@ -11,7 +11,10 @@ from fastapi.testclient import TestClient
 from api.routers.surface_preview import router
 from api.surface_route_authority import AuthorizedSurfaceRoute, SurfaceRouteAuthority
 from api.surface_websocket_proxy import WebSocketMessage
-from workspace_service.surfaces.live_app_manager import LiveAppRoute, LiveAppRoutingPolicy
+from workspace_service.surfaces.live_app_manager import (
+    LiveAppRoute,
+    LiveAppRoutingPolicy,
+)
 from workspace_service.surfaces.target_policy import ResolvedTargetPin
 
 

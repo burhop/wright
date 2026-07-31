@@ -173,7 +173,9 @@ class WebMcpRouter:
                 self._registrations.pop(binding, None)
                 self._cancel_binding(binding, reason)
         if bindings:
-            self.audit("webmcp.disconnected", {"count": len(bindings), "reason": reason})
+            self.audit(
+                "webmcp.disconnected", {"count": len(bindings), "reason": reason}
+            )
         return len(bindings)
 
     def matching(
@@ -206,7 +208,10 @@ class WebMcpRouter:
             )
         self._bounded_json(arguments, "arguments")
         try:
-            validate(instance=dict(arguments), schema=dict(registered.registration.input_schema))
+            validate(
+                instance=dict(arguments),
+                schema=dict(registered.registration.input_schema),
+            )
         except ValidationError as error:
             raise WebMcpRoutingError(
                 "SURFACE_PROTOCOL_WEBMCP_ARGUMENTS_INVALID",
@@ -288,10 +293,14 @@ class WebMcpRouter:
             self.audit("webmcp.response.late", {"call_id": call_id[:64]})
             return False
         if pending.websocket is not websocket:
-            self.audit("webmcp.response.wrong_socket", self._audit_fields(pending.binding))
+            self.audit(
+                "webmcp.response.wrong_socket", self._audit_fields(pending.binding)
+            )
             return False
         if payload.get("binding") != pending.binding.envelope():
-            self.audit("webmcp.response.stale_scope", self._audit_fields(pending.binding))
+            self.audit(
+                "webmcp.response.stale_scope", self._audit_fields(pending.binding)
+            )
             return False
         if not pending.future.done():
             pending.future.set_result(dict(payload))
@@ -310,12 +319,20 @@ class WebMcpRouter:
             "createdAt",
             "deadlineAt",
         }
-        allowed = required | {"traceId", "replyTo", "toolName", "idempotencyKey", "payload", "error"}
+        allowed = required | {
+            "traceId",
+            "replyTo",
+            "toolName",
+            "idempotencyKey",
+            "payload",
+            "error",
+        }
         if (
             payload.get("protocolVersion") != "1.0"
             or not required.issubset(payload)
             or not set(payload).issubset(allowed)
-            or payload.get("kind") not in {"request", "result", "error", "event", "cancel"}
+            or payload.get("kind")
+            not in {"request", "result", "error", "event", "cancel"}
             or not isinstance(payload.get("binding"), Mapping)
             or not isinstance(payload.get("operation"), str)
             or not isinstance(payload.get("sequence"), int)

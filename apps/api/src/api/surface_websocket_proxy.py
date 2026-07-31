@@ -90,7 +90,8 @@ class _MessageBucket:
     def admit(self) -> None:
         current = self.monotonic()
         self.tokens = min(
-            float(self.burst), self.tokens + max(0.0, current - self.updated) * self.rate
+            float(self.burst),
+            self.tokens + max(0.0, current - self.updated) * self.rate,
         )
         self.updated = current
         if self.tokens < 1:
@@ -121,7 +122,8 @@ def _message_bytes(message: WebSocketMessage) -> bytes:
     if message.kind == "binary" and isinstance(message.data, bytes):
         return message.data
     raise WebSocketProxyError(
-        "SURFACE_PROTOCOL_WEBSOCKET_MESSAGE_INVALID", "WebSocket message shape is invalid"
+        "SURFACE_PROTOCOL_WEBSOCKET_MESSAGE_INVALID",
+        "WebSocket message shape is invalid",
     )
 
 
@@ -176,7 +178,8 @@ class SurfaceWebSocketProxy:
         self._validate_request(request)
         if not authority_valid():
             raise WebSocketProxyError(
-                "SURFACE_PRESENTATION_REVOKED", "Presentation authority is no longer active"
+                "SURFACE_PRESENTATION_REVOKED",
+                "Presentation authority is no longer active",
             )
         if not target_valid():
             raise WebSocketProxyError(
@@ -279,7 +282,11 @@ class SurfaceWebSocketProxy:
                     await upstream.close(code=message.code, reason=message.reason)
                     await upstream.wait_closed()
                     return WebSocketBridgeResult(
-                        "client-close", message.code, message.reason, up_count, down_count
+                        "client-close",
+                        message.code,
+                        message.reason,
+                        up_count,
+                        down_count,
                     )
                 payload = _message_bytes(message)
                 try:
@@ -320,7 +327,9 @@ class SurfaceWebSocketProxy:
                     up_count,
                     down_count,
                 )
-            await downstream.close(code=upstream.close_code, reason=upstream.close_reason)
+            await downstream.close(
+                code=upstream.close_code, reason=upstream.close_reason
+            )
             return WebSocketBridgeResult(
                 "upstream-close",
                 upstream.close_code,
@@ -335,10 +344,18 @@ class SurfaceWebSocketProxy:
                 if self._monotonic() - started > float(
                     limits.live_connection_lifetime_seconds
                 ):
-                    await upstream.close(code=1008, reason="connection lifetime expired")
-                    await downstream.close(code=1008, reason="connection lifetime expired")
+                    await upstream.close(
+                        code=1008, reason="connection lifetime expired"
+                    )
+                    await downstream.close(
+                        code=1008, reason="connection lifetime expired"
+                    )
                     return WebSocketBridgeResult(
-                        "lifetime", 1008, "connection lifetime expired", up_count, down_count
+                        "lifetime",
+                        1008,
+                        "connection lifetime expired",
+                        up_count,
+                        down_count,
                     )
                 if not authority_valid() or not target_valid():
                     await upstream.close(code=1008, reason="presentation revoked")
@@ -353,7 +370,9 @@ class SurfaceWebSocketProxy:
             asyncio.create_task(monitor(), name="surface-ws-authority"),
         }
         try:
-            done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+            done, pending = await asyncio.wait(
+                tasks, return_when=asyncio.FIRST_COMPLETED
+            )
             results: list[WebSocketBridgeResult] = []
             proxy_error: WebSocketProxyError | None = None
             for task in done:
@@ -370,7 +389,12 @@ class SurfaceWebSocketProxy:
                     "limit", code, "surface policy limit", up_count, down_count
                 )
             else:
-                priority = {"revoked": 0, "lifetime": 1, "upstream-close": 2, "client-close": 3}
+                priority = {
+                    "revoked": 0,
+                    "lifetime": 1,
+                    "upstream-close": 2,
+                    "client-close": 3,
+                }
                 result = min(results, key=lambda item: priority.get(item.outcome, 10))
             for task in pending:
                 task.cancel()

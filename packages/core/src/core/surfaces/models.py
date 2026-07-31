@@ -457,9 +457,7 @@ def surface_source_to_dict(source: SurfaceSource) -> dict[str, Any]:
                 if source.fallback_result is not None
                 else None
             ),
-            "declared_host_capabilities": sorted(
-                source.declared_host_capabilities
-            ),
+            "declared_host_capabilities": sorted(source.declared_host_capabilities),
         }
     return {
         **common,

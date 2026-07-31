@@ -226,9 +226,7 @@ async def test_failed_start_projects_safe_retryable_diagnostic(tmp_path: Path) -
             idempotency_key="failed-start-0001",
         )
     assert error.value.code == "SURFACE_START_FAILED"
-    current = await surfaces.get(
-        actor=_actor(), surface_id=SurfaceId("surface-app")
-    )
+    current = await surfaces.get(actor=_actor(), surface_id=SurfaceId("surface-app"))
     assert current.lifecycle is SurfaceLifecycle.FAILED
     assert current.diagnostic_summary == {
         "code": "SURFACE_START_FAILED",

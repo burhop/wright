@@ -35,9 +35,7 @@ async def test_surface_application_owns_complete_foundation_graph(
     application = build_surface_application(tmp_path / "state.db")
 
     assert isinstance(application.repository, SurfaceRepository)
-    assert isinstance(
-        application.provenance_repository, GenerationProvenanceRepository
-    )
+    assert isinstance(application.provenance_repository, GenerationProvenanceRepository)
     assert isinstance(application.preference_repository, SurfacePreferenceRepository)
     assert isinstance(application.grant_repository, SurfaceGrantRepository)
     assert isinstance(application.runtime_repository, SurfaceRuntimeRepository)
@@ -52,7 +50,9 @@ async def test_surface_application_owns_complete_foundation_graph(
     assert isinstance(application.browser_policy, BrowserPolicyProjector)
     assert isinstance(application.limits, EffectiveSurfaceLimits)
     assert isinstance(application.external_urls, ExternalUrlApprovalService)
-    assert application.display_service.surfaces.db_path == application.repository.db_path
+    assert (
+        application.display_service.surfaces.db_path == application.repository.db_path
+    )
     assert isinstance(application.vault, SurfaceVault)
     assert application.service.repository is application.repository
     assert application.service.events is application.events

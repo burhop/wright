@@ -55,7 +55,9 @@ def _session(workspace: str, session: str) -> GatewaySessionContext:
 
 
 @pytest.mark.asyncio
-async def test_identical_ui_uri_never_collides_across_server_session_or_workspace() -> None:
+async def test_identical_ui_uri_never_collides_across_server_session_or_workspace() -> (
+    None
+):
     store = McpUiResourceStore(ScopedReader())
     first = await store.read(
         _session("workspace-one", "session-one"),
@@ -80,18 +82,21 @@ async def test_identical_ui_uri_never_collides_across_server_session_or_workspac
 
     assert first.content == "<h1>one</h1>"
     assert other_server.content == "<h1>two</h1>"
-    assert len(
-        {
-            (
-                item.workspace_id,
-                item.gateway_session_id,
-                item.server_connection_id,
-                item.upstream_resource_uri,
-                item.content_hash,
-            )
-            for item in (first, other_server, other_session, other_workspace)
-        }
-    ) == 4
+    assert (
+        len(
+            {
+                (
+                    item.workspace_id,
+                    item.gateway_session_id,
+                    item.server_connection_id,
+                    item.upstream_resource_uri,
+                    item.content_hash,
+                )
+                for item in (first, other_server, other_session, other_workspace)
+            }
+        )
+        == 4
+    )
     assert first.metadata.ui["prefersBorder"] is False
     assert first.metadata.upstream["server"] == "one"
 

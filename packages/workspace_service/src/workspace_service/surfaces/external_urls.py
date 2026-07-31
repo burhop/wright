@@ -61,7 +61,9 @@ def normalize_external_url(value: str) -> str:
         try:
             hostname = hostname.encode("idna").decode("ascii")
         except UnicodeError as error:
-            raise ExternalUrlApprovalError("External destination host is invalid") from error
+            raise ExternalUrlApprovalError(
+                "External destination host is invalid"
+            ) from error
     else:
         if classify_address(str(numeric)) is not AddressClass.PUBLIC:
             raise ExternalUrlApprovalError("External destination address is denied")
@@ -84,7 +86,9 @@ class ExternalUrlApprovalService:
         id_factory=lambda: secrets.token_urlsafe(24),
     ) -> None:
         if not 1 <= ttl_seconds <= 60 * 60:
-            raise ValueError("external URL approval TTL must be between 1 second and 1 hour")
+            raise ValueError(
+                "external URL approval TTL must be between 1 second and 1 hour"
+            )
         self.ttl_seconds = ttl_seconds
         self.clock = clock
         self.id_factory = id_factory
@@ -100,7 +104,9 @@ class ExternalUrlApprovalService:
         reason: str,
     ) -> ExternalUrlApproval:
         if not acknowledged:
-            raise ExternalUrlApprovalError("External navigation acknowledgement is required")
+            raise ExternalUrlApprovalError(
+                "External navigation acknowledgement is required"
+            )
         if not reason.strip() or len(reason) > 512:
             raise ExternalUrlApprovalError("External navigation reason is required")
         normalized = normalize_external_url(url)

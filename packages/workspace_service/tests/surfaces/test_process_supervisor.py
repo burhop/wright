@@ -60,7 +60,9 @@ class FakeAdapter:
         return self.process
 
 
-async def test_async_start_is_argv_only_idempotent_and_captures_redacted_logs(tmp_path) -> None:
+async def test_async_start_is_argv_only_idempotent_and_captures_redacted_logs(
+    tmp_path,
+) -> None:
     adapter = FakeAdapter()
     supervisor = ProcessSupervisor(adapter=adapter, id_factory=lambda: "runtime-1")
     arguments = dict(
@@ -97,7 +99,9 @@ async def test_async_start_is_argv_only_idempotent_and_captures_redacted_logs(tm
     assert "[REDACTED]" in preview
 
 
-async def test_stop_is_generation_checked_idempotent_and_awaits_tree_cleanup(tmp_path) -> None:
+async def test_stop_is_generation_checked_idempotent_and_awaits_tree_cleanup(
+    tmp_path,
+) -> None:
     adapter = FakeAdapter()
     supervisor = ProcessSupervisor(adapter=adapter, id_factory=lambda: "runtime-2")
     snapshot = await supervisor.start(
@@ -143,7 +147,9 @@ async def test_shutdown_stops_every_owned_runtime(tmp_path) -> None:
             return await next(current).launch(request)
 
     ids = iter(("runtime-a", "runtime-b"))
-    supervisor = ProcessSupervisor(adapter=MultiplexAdapter(), id_factory=lambda: next(ids))
+    supervisor = ProcessSupervisor(
+        adapter=MultiplexAdapter(), id_factory=lambda: next(ids)
+    )
     for index in range(2):
         await supervisor.start(
             workspace_id="workspace-1",

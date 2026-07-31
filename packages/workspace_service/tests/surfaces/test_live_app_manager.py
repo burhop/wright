@@ -120,7 +120,9 @@ class FakeReservation:
         return EndpointOwnershipProof(
             self.instance_id,
             self.generation,
-            ListenerIdentity(self.address, self.port, runtime.pid, runtime.creation_time),
+            ListenerIdentity(
+                self.address, self.port, runtime.pid, runtime.creation_time
+            ),
         )
 
     def close(self):
@@ -162,7 +164,11 @@ class FakeSupervisor:
             generation=generation,
             status="running",
             identity=PlatformProcessIdentity(
-                "fake", 100 + generation, 50.0 + generation, f"group-{generation}", "hard"
+                "fake",
+                100 + generation,
+                50.0 + generation,
+                f"group-{generation}",
+                "hard",
             ),
             started_at=datetime(2026, 7, 30, tzinfo=UTC),
         )
@@ -285,7 +291,9 @@ async def test_isolated_starts_are_distinct_and_port_ownership_retry_increments_
     assert allocator.reservations[0].port != allocator.reservations[1].port
 
 
-async def test_restart_generation_budget_and_stop_are_exact_and_idempotent(tmp_path) -> None:
+async def test_restart_generation_budget_and_stop_are_exact_and_idempotent(
+    tmp_path,
+) -> None:
     policy = SurfacePolicySettings(restart_attempts=2, restart_window_seconds=300)
     manager, supervisor, pins, _clock = _manager(tmp_path, policy=policy)
     started = await manager.start(_request("start"))
@@ -392,9 +400,12 @@ async def test_approved_attach_is_probed_and_pinned_without_process_ownership(
     assert instance.state == "ready"
     assert instance.ownership == "attached_verified"
     assert supervisor.starts == []
-    assert pins.resolve(
-        instance_id=instance.instance_id, generation=instance.generation
-    ).target.numeric_address == "8.8.8.8"
+    assert (
+        pins.resolve(
+            instance_id=instance.instance_id, generation=instance.generation
+        ).target.numeric_address
+        == "8.8.8.8"
+    )
 
 
 async def test_presentation_workspace_lease_idle_and_manual_lifetimes(tmp_path) -> None:

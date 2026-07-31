@@ -65,7 +65,9 @@ def _headers(**overrides) -> dict[str, str]:
     return values
 
 
-def test_surface_api_never_crosses_user_workspace_or_session_scope(tmp_path: Path) -> None:
+def test_surface_api_never_crosses_user_workspace_or_session_scope(
+    tmp_path: Path,
+) -> None:
     client = _client(_database(tmp_path))
     created = client.post(
         "/api/workspace/surfaces",
@@ -79,9 +81,12 @@ def test_surface_api_never_crosses_user_workspace_or_session_scope(tmp_path: Pat
     )
     assert created.status_code == 201
     surface_id = created.json()["surfaceId"]
-    assert client.get(
-        f"/api/workspace/surfaces/{surface_id}", headers=_headers()
-    ).status_code == 200
+    assert (
+        client.get(
+            f"/api/workspace/surfaces/{surface_id}", headers=_headers()
+        ).status_code
+        == 200
+    )
     for hostile_headers in (
         _headers(**{"X-Test-User": "user-2"}),
         _headers(**{"X-Wright-Session-ID": "other-session"}),
@@ -111,9 +116,7 @@ def test_engineer_cannot_approve_attach_but_administrator_can(tmp_path: Path) ->
             "launch": {"mode": "attach", "url": "https://app.example.test"},
         },
     }
-    denied = client.post(
-        "/api/workspace/surfaces", headers=_headers(), json=body
-    )
+    denied = client.post("/api/workspace/surfaces", headers=_headers(), json=body)
     assert denied.status_code == 403
     allowed = client.post(
         "/api/workspace/surfaces",
@@ -166,12 +169,21 @@ def test_generated_provenance_repository_requires_exact_workspace_user(
         )
         connection.commit()
     repository = GenerationProvenanceRepository(database)
-    assert repository.get(
-        artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-1"
-    ) is not None
-    assert repository.get(
-        artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-2"
-    ) is None
-    assert repository.get(
-        artifact_id="artifact-1", workspace_id="workspace-2", user_id="user-1"
-    ) is None
+    assert (
+        repository.get(
+            artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-1"
+        )
+        is not None
+    )
+    assert (
+        repository.get(
+            artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-2"
+        )
+        is None
+    )
+    assert (
+        repository.get(
+            artifact_id="artifact-1", workspace_id="workspace-2", user_id="user-1"
+        )
+        is None
+    )

@@ -72,10 +72,13 @@ async def test_content_hash_cache_is_invalidated_by_exact_resource_update() -> N
     assert reader.reads == 1
 
     reader.value = "<h1>updated</h1>"
-    assert store.invalidate(
-        server_connection_id="server-one:generation-1",
-        uri="ui://shared/app",
-    ) == 1
+    assert (
+        store.invalidate(
+            server_connection_id="server-one:generation-1",
+            uri="ui://shared/app",
+        )
+        == 1
+    )
     updated = await store.read(session, "server-one", "ui://shared/app")
 
     assert reader.reads == 2

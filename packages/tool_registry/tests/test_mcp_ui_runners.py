@@ -16,7 +16,9 @@ from tool_registry.runners.sse import SseRunner
 from tool_registry.runners.stdio import StdioRunner
 
 
-def test_child_initialize_uses_current_version_and_negotiates_ui_only_when_enabled() -> None:
+def test_child_initialize_uses_current_version_and_negotiates_ui_only_when_enabled() -> (
+    None
+):
     plain = ChildProtocolState()
     ui = ChildProtocolState(ui_enabled=True)
 
@@ -26,20 +28,18 @@ def test_child_initialize_uses_current_version_and_negotiates_ui_only_when_enabl
         "clientInfo": {"name": "wright", "version": "0.1.0"},
     }
     assert ui.initialize_parameters()["capabilities"] == {
-        "extensions": {
-            MCP_APPS_EXTENSION: {"mimeTypes": [MCP_APP_MIME_TYPE]}
-        }
+        "extensions": {MCP_APPS_EXTENSION: {"mimeTypes": [MCP_APP_MIME_TYPE]}}
     }
 
 
-def test_child_initialize_preserves_server_capabilities_and_rejects_bad_results() -> None:
+def test_child_initialize_preserves_server_capabilities_and_rejects_bad_results() -> (
+    None
+):
     protocol = ChildProtocolState(ui_enabled=True)
     protocol.accept_initialize(
         {
             "protocolVersion": LATEST_PROTOCOL_VERSION,
-            "capabilities": {
-                "resources": {"subscribe": True, "listChanged": True}
-            },
+            "capabilities": {"resources": {"subscribe": True, "listChanged": True}},
             "serverInfo": {"name": "reference", "version": "1"},
         }
     )
@@ -138,7 +138,9 @@ async def test_stdio_cancellation_notifies_child_and_clears_request() -> None:
         returncode=None,
         pid=12,
     )
-    request = asyncio.create_task(runner._send_request("resources/read", {"uri": "ui://x"}))
+    request = asyncio.create_task(
+        runner._send_request("resources/read", {"uri": "ui://x"})
+    )
     while not runner._pending_requests:
         await asyncio.sleep(0)
     request.cancel()

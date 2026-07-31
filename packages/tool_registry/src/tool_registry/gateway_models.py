@@ -270,11 +270,15 @@ class GatewayToolResult:
                 if isinstance(resource, Mapping) and resource.get("text"):
                     parts.append(str(resource["text"]).strip())
             elif kind in {"image", "audio"}:
-                parts.append(f"{str(kind).title()} content ({item.get('mimeType', 'unknown')})")
+                parts.append(
+                    f"{str(kind).title()} content ({item.get('mimeType', 'unknown')})"
+                )
         if self.structured_content is not None:
             parts.append(
                 json.dumps(self.structured_content, sort_keys=True, default=str)
             )
         if not parts:
-            return "Interactive result is unavailable; no fallback content was provided."
+            return (
+                "Interactive result is unavailable; no fallback content was provided."
+            )
         return "\n".join(parts)

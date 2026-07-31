@@ -231,12 +231,15 @@ def test_repository_round_trips_authorized_generation_provenance(
         ),
     )
     repository.create(descriptor, user_id="user-1", session_id="session-1")
-    assert repository.get(
-        descriptor.surface_id,
-        workspace_id="workspace-1",
-        user_id="user-1",
-        session_id="session-1",
-    ) == descriptor
+    assert (
+        repository.get(
+            descriptor.surface_id,
+            workspace_id="workspace-1",
+            user_id="user-1",
+            session_id="session-1",
+        )
+        == descriptor
+    )
 
 
 def test_preference_repository_is_user_workspace_source_scoped_and_optimistic(
@@ -257,13 +260,12 @@ def test_preference_repository_is_user_workspace_source_scoped_and_optimistic(
         updated_at=created,
     )
     assert preferences.compare_and_set(record, expected_revision=None) == record
-    assert preferences.get(
-        user_id="user-1", workspace_id="workspace-1", source_id="brep"
-    ) == record
     assert (
-        preferences.get(
-            user_id="user-2", workspace_id="workspace-1", source_id="brep"
-        )
+        preferences.get(user_id="user-1", workspace_id="workspace-1", source_id="brep")
+        == record
+    )
+    assert (
+        preferences.get(user_id="user-2", workspace_id="workspace-1", source_id="brep")
         is None
     )
     updated = replace(
@@ -310,12 +312,15 @@ def test_runtime_and_grant_repositories_enforce_full_authority_scope(
         updated_at=now,
     )
     assert runtimes.create(runtime, user_id="user-1", session_id="session-1") == runtime
-    assert runtimes.get(
-        runtime_id="runtime-1",
-        workspace_id="workspace-1",
-        user_id="user-1",
-        session_id="session-1",
-    ) == runtime
+    assert (
+        runtimes.get(
+            runtime_id="runtime-1",
+            workspace_id="workspace-1",
+            user_id="user-1",
+            session_id="session-1",
+        )
+        == runtime
+    )
     assert (
         runtimes.get(
             runtime_id="runtime-1",
@@ -331,12 +336,15 @@ def test_runtime_and_grant_repositories_enforce_full_authority_scope(
         revision=2,
         updated_at=datetime(2026, 7, 30, 12, 1, tzinfo=UTC),
     )
-    assert runtimes.compare_and_set(
-        running,
-        expected_revision=1,
-        user_id="user-1",
-        session_id="session-1",
-    ) == running
+    assert (
+        runtimes.compare_and_set(
+            running,
+            expected_revision=1,
+            user_id="user-1",
+            session_id="session-1",
+        )
+        == running
+    )
     with pytest.raises(SurfaceRevisionConflict):
         runtimes.compare_and_set(
             replace(running, revision=3),
@@ -430,9 +438,12 @@ def test_generation_provenance_and_diagnostics_require_authorized_scope(
         repository.db_path, tracer=tracer
     )
     assert provenance_repository.create(provenance, user_id="user-1") == provenance
-    assert provenance_repository.get(
-        artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-1"
-    ) == provenance
+    assert (
+        provenance_repository.get(
+            artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-1"
+        )
+        == provenance
+    )
     assert (
         provenance_repository.get(
             artifact_id="artifact-1", workspace_id="workspace-1", user_id="user-2"

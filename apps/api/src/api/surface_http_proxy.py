@@ -101,7 +101,9 @@ class _DecodedTracker:
             )
 
     def feed(self, payload: bytes) -> int:
-        decoded = payload if self._decoder is None else self._decoder.decompress(payload)
+        decoded = (
+            payload if self._decoder is None else self._decoder.decompress(payload)
+        )
         self.decoded_bytes += len(decoded)
         return self.decoded_bytes
 
@@ -116,7 +118,11 @@ def _header_value(headers: Sequence[tuple[str, str]], name: str) -> str | None:
     values = [value for key, value in headers if key.lower() == lowered]
     if not values:
         return None
-    if len(values) > 1 and lowered in {"content-length", "content-encoding", "location"}:
+    if len(values) > 1 and lowered in {
+        "content-length",
+        "content-encoding",
+        "location",
+    }:
         raise HttpProxyError(
             "SURFACE_PROTOCOL_HEADER_INVALID",
             f"Upstream supplied ambiguous {name} headers",
@@ -132,11 +138,15 @@ def _target_path(pin: ResolvedTargetPin, raw_path: str, raw_query: str) -> str:
         or any(value in raw_query for value in ("\0", "\r", "\n", "#"))
     ):
         raise HttpProxyError(
-            "SURFACE_PROTOCOL_TARGET_INVALID", "Application request target is invalid", status_code=400
+            "SURFACE_PROTOCOL_TARGET_INVALID",
+            "Application request target is invalid",
+            status_code=400,
         )
     base = pin.base_path or "/"
     if not base.startswith("/"):
-        raise HttpProxyError("SURFACE_TARGET_PIN_INVALID", "Pinned base path is invalid")
+        raise HttpProxyError(
+            "SURFACE_TARGET_PIN_INVALID", "Pinned base path is invalid"
+        )
     path = raw_path if base == "/" else f"{base.rstrip('/')}/{raw_path.lstrip('/')}"
     return f"{path}?{raw_query}" if raw_query else path
 
@@ -191,7 +201,9 @@ class SurfaceHttpProxy:
                     )
                 if len(chunk) > int(limits.maximum_buffered_output_bytes):
                     raise HttpProxyError(
-                        "SURFACE_LIMIT_BUFFER", "Application request chunk exceeds buffer limit", status_code=413
+                        "SURFACE_LIMIT_BUFFER",
+                        "Application request chunk exceeds buffer limit",
+                        status_code=413,
                     )
                 encoded += len(chunk)
                 decoded = tracker.feed(chunk)
@@ -231,7 +243,9 @@ class SurfaceHttpProxy:
             )
         if not request.presentation_id:
             raise HttpProxyError(
-                "SURFACE_PRESENTATION_UNAUTHORIZED", "Presentation identity is required", status_code=401
+                "SURFACE_PRESENTATION_UNAUTHORIZED",
+                "Presentation identity is required",
+                status_code=401,
             )
         self._require_current_route(
             authority_valid=authority_valid, target_valid=target_valid
@@ -249,15 +263,25 @@ class SurfaceHttpProxy:
                 declared_length = int(content_length)
             except ValueError as error:
                 raise HttpProxyError(
-                    "SURFACE_PROTOCOL_HEADER_INVALID", "Content-Length is invalid", status_code=400
+                    "SURFACE_PROTOCOL_HEADER_INVALID",
+                    "Content-Length is invalid",
+                    status_code=400,
                 ) from error
-            if declared_length < 0 or declared_length > int(limits.maximum_request_body_bytes):
+            if declared_length < 0 or declared_length > int(
+                limits.maximum_request_body_bytes
+            ):
                 raise HttpProxyError(
-                    "SURFACE_LIMIT_REQUEST_BODY", "Surface request body limit exceeded", status_code=413
+                    "SURFACE_LIMIT_REQUEST_BODY",
+                    "Surface request body limit exceeded",
+                    status_code=413,
                 )
 
         target = _target_path(pin, request.raw_path, request.raw_query)
-        host = f"[{pin.numeric_address}]" if ":" in pin.numeric_address else pin.numeric_address
+        host = (
+            f"[{pin.numeric_address}]"
+            if ":" in pin.numeric_address
+            else pin.numeric_address
+        )
         url = f"{pin.scheme}://{host}:{pin.port}{target}"
         upstream = self._client.build_request(
             method,
@@ -292,12 +316,13 @@ class SurfaceHttpProxy:
                 len(name.encode("latin-1")) + len(value.encode("latin-1")) + 4
                 for name, value in raw_headers
             )
-            if (
-                len(raw_headers) > int(limits.maximum_header_count)
-                or header_bytes > int(limits.maximum_header_bytes)
-            ):
+            if len(raw_headers) > int(
+                limits.maximum_header_count
+            ) or header_bytes > int(limits.maximum_header_bytes):
                 raise HttpProxyError(
-                    "SURFACE_LIMIT_HEADER_BYTES", "Upstream response headers exceed policy", status_code=502
+                    "SURFACE_LIMIT_HEADER_BYTES",
+                    "Upstream response headers exceed policy",
+                    status_code=502,
                 )
             safe_headers = filter_response_headers(raw_headers)
             location = _header_value(safe_headers, "location")
@@ -372,7 +397,8 @@ class SurfaceHttpProxy:
                     limits.live_connection_lifetime_seconds
                 ):
                     raise HttpProxyError(
-                        "SURFACE_LIMIT_LIFETIME", "HTTP response lifetime limit exceeded"
+                        "SURFACE_LIMIT_LIFETIME",
+                        "HTTP response lifetime limit exceeded",
                     )
                 try:
                     chunk = await asyncio.wait_for(
@@ -387,7 +413,8 @@ class SurfaceHttpProxy:
                     ) from error
                 if len(chunk) > int(limits.maximum_buffered_output_bytes):
                     raise HttpProxyError(
-                        "SURFACE_LIMIT_BUFFER", "HTTP response chunk exceeds buffer limit"
+                        "SURFACE_LIMIT_BUFFER",
+                        "HTTP response chunk exceeds buffer limit",
                     )
                 encoded += len(chunk)
                 decoded = tracker.feed(chunk)
