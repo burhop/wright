@@ -271,12 +271,12 @@
 
 ### Tests for User Story 6 — write and observe failure first
 
-- [ ] T145 [P] [US6] Add canonical/deprecated tool UI metadata, content-item UI metadata, all content types, structured content, result metadata, and meaningful fallback model tests to `packages/tool_registry/tests/test_mcp_ui_models.py` (FR-028, FR-034)
-- [ ] T146 [P] [US6] Add child initialize capability/version, resources list/templates/read/subscribe, notifications, cancellation, and transport error tests to `packages/tool_registry/tests/test_mcp_ui_runners.py` (FR-028 through FR-029)
-- [ ] T147 [P] [US6] Add exact `resources/read` success when UI URI is omitted from list and cache invalidation tests to `packages/tool_registry/tests/test_gateway_ui_resources.py` (FR-029, SC-009)
-- [ ] T148 [P] [US6] Add identical `ui://` URI across server/session/workspace collision and content-hash/source-version tests to `packages/tool_registry/tests/test_gateway_ui_resource_scoping.py` (FR-002, FR-029)
-- [ ] T149 [P] [US6] Add model/app visibility, app-only exclusion, same-server allow, cross-server/model-only denial, policy/grant/cancel/audit tests to `packages/tool_registry/tests/test_gateway_app_tools.py` (FR-030 through FR-031, SC-009)
-- [ ] T150 [P] [US6] Add extension negotiation and canonical metadata merge/no-Wright-provenance-overwrite tests to `packages/tool_registry/tests/test_mcp_server_ui_capabilities.py` (FR-028, FR-053)
+- [X] T145 [P] [US6] Add canonical/deprecated tool UI metadata, content-item UI metadata, all content types, structured content, result metadata, and meaningful fallback model tests to `packages/tool_registry/tests/test_mcp_ui_models.py` (FR-028, FR-034)
+- [X] T146 [P] [US6] Add child initialize capability/version, resources list/templates/read/subscribe, notifications, cancellation, and transport error tests to `packages/tool_registry/tests/test_mcp_ui_runners.py` (FR-028 through FR-029)
+- [X] T147 [P] [US6] Add exact `resources/read` success when UI URI is omitted from list and cache invalidation tests to `packages/tool_registry/tests/test_gateway_ui_resources.py` (FR-029, SC-009)
+- [X] T148 [P] [US6] Add identical `ui://` URI across server/session/workspace collision and content-hash/source-version tests to `packages/tool_registry/tests/test_gateway_ui_resource_scoping.py` (FR-002, FR-029)
+- [X] T149 [P] [US6] Add model/app visibility, app-only exclusion, same-server allow, cross-server/model-only denial, policy/grant/cancel/audit tests to `packages/tool_registry/tests/test_gateway_app_tools.py` (FR-030 through FR-031, SC-009)
+- [X] T150 [P] [US6] Add extension negotiation and canonical metadata merge/no-Wright-provenance-overwrite tests to `packages/tool_registry/tests/test_mcp_server_ui_capabilities.py` (FR-028, FR-053)
 - [ ] T151 [P] [US6] Add official AppBridge initialization/context/resource/tool/user-message/update/teardown and wrong-source/origin/replay tests to `apps/web/src/services/surfaces/mcp/mcp-app-host.spec.ts` (FR-030 through FR-034)
 - [ ] T152 [P] [US6] Add double-iframe restrictive-default CSP, permission/domain validation, undeclared fetch/object/frame, and no-pre-init-message tests to `tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts` (FR-035 through FR-037, SC-009)
 - [ ] T153 [P] [US6] Add absent/unsupported capability, missing/bad resource, CSP failure, renderer failure, and useful non-UI fallback tests to `apps/web/src/services/surfaces/mcp/mcp-app-presenter.spec.tsx` (FR-028 through FR-030, FR-034)
@@ -288,13 +288,13 @@
 
 ### Implementation for User Story 6
 
-- [ ] T159 [P] [US6] Extend MCP tool/result/resource/content models to preserve upstream `_meta`, all content blocks, UI metadata, visibility, and fallback in `packages/tool_registry/src/tool_registry/models.py` and `gateway_models.py` (FR-028 through FR-030)
-- [ ] T160 [US6] Extend stdio/SSE runner protocol initialization and child resource/template/subscription/notification operations in `packages/tool_registry/src/tool_registry/runners/protocol.py`, `runners/stdio.py`, and `runners/sse.py` (FR-028 through FR-029)
-- [ ] T161 [US6] Preserve child UI metadata/resources through discovery and lifecycle adapters in `packages/tool_registry/src/tool_registry/manager.py` and `lifecycle_adapters.py` (FR-028 through FR-029)
-- [ ] T162 [US6] Implement server/session-scoped UI resource projection, read-without-list, hash cache, subscriptions, and invalidation in `packages/tool_registry/src/tool_registry/ui/resources.py` (FR-029)
-- [ ] T163 [US6] Implement app visibility and same-server tool/resource/context/user-message policy in `packages/tool_registry/src/tool_registry/ui/policy.py` and `gateway_service.py` (FR-030 through FR-031)
-- [ ] T164 [US6] Negotiate `io.modelcontextprotocol/ui`, merge rather than replace upstream metadata, and preserve fallback/result content in `packages/tool_registry/src/tool_registry/mcp_server.py` (FR-028 through FR-030, FR-053)
-- [ ] T165 [US6] Add a consumer-owned MCP UI publisher port and API composition adapter without reversing package dependencies in `packages/workspace_service/src/workspace_service/surfaces/mcp_ui_port.py` and `apps/api/src/api/mcp_ui_adapter.py` (FR-028 through FR-031)
+- [X] T159 [P] [US6] Extend MCP tool/result/resource/content models to preserve upstream `_meta`, all content blocks, UI metadata, visibility, and fallback in `packages/tool_registry/src/tool_registry/models.py` and `gateway_models.py` (FR-028 through FR-030)
+- [X] T160 [US6] Extend stdio/SSE runner protocol initialization and child resource/template/subscription/notification operations in `packages/tool_registry/src/tool_registry/runners/protocol.py`, `runners/stdio.py`, and `runners/sse.py` (FR-028 through FR-029)
+- [X] T161 [US6] Preserve child UI metadata/resources through discovery and lifecycle adapters in `packages/tool_registry/src/tool_registry/manager.py` and `lifecycle_adapters.py` (FR-028 through FR-029)
+- [X] T162 [US6] Implement server/session-scoped UI resource projection, read-without-list, hash cache, subscriptions, and invalidation in `packages/tool_registry/src/tool_registry/ui/resources.py` (FR-029)
+- [X] T163 [US6] Implement app visibility and same-server tool/resource/context/user-message policy in `packages/tool_registry/src/tool_registry/ui/policy.py` and `gateway_service.py` (FR-030 through FR-031)
+- [X] T164 [US6] Negotiate `io.modelcontextprotocol/ui`, merge rather than replace upstream metadata, and preserve fallback/result content in `packages/tool_registry/src/tool_registry/mcp_server.py` (FR-028 through FR-030, FR-053)
+- [X] T165 [US6] Add a consumer-owned MCP UI publisher port and API composition adapter without reversing package dependencies in `packages/workspace_service/src/workspace_service/surfaces/mcp_ui_port.py` and `apps/api/src/api/mcp_ui_adapter.py` (FR-028 through FR-031)
 - [ ] T166 [P] [US6] Bundle the official sandbox/bridge assets offline and implement the distinct-origin outer sandbox proxy in `apps/web/src/services/surfaces/mcp/sandbox-proxy.ts` and `apps/web/public/surface-sandbox/` (FR-030, FR-035 through FR-037, FR-051)
 - [ ] T167 [US6] Implement official AppBridge host lifecycle, exact window/origin verification, capability context, cancellation, and gateway routing in `apps/web/src/services/surfaces/mcp/mcp-app-host.ts` (FR-030 through FR-034)
 - [ ] T168 [P] [US6] Implement MCP App presenter negotiation, loading/error/status, fallback content, and stable test IDs in `apps/web/src/services/surfaces/mcp/mcp-app-presenter.tsx` (FR-028 through FR-030, FR-034, FR-054)

@@ -42,6 +42,7 @@ def test_migration_six_is_contiguous_checksummed_and_creates_all_surface_tables(
         6,
         7,
         8,
+        9,
     ]
     migration = MIGRATIONS[5]
     assert migration.name == "workspace_surfaces"
@@ -79,7 +80,7 @@ def test_upgrade_from_five_creates_verified_backup_and_preserves_workspace(
     result = upgrade_database(path, backup_dir=tmp_path / "backups")
 
     assert result.starting_version == 5
-    assert result.ending_version == 8
+    assert result.ending_version == len(MIGRATIONS)
     assert result.backup_manifest is not None
     assert Path(result.backup_manifest).is_file()
     with sqlite3.connect(path) as connection:
@@ -94,7 +95,7 @@ def test_future_surface_schema_is_rejected_before_mutation(tmp_path: Path) -> No
     with sqlite3.connect(path) as connection:
         connection.execute(
             f"INSERT INTO {LEDGER_TABLE} VALUES (?, ?, ?, ?, ?, ?)",
-            (9, "future_surface_contract", "future", "now", 0, "99.0.0"),
+            (10, "future_surface_contract", "future", "now", 0, "99.0.0"),
         )
         connection.commit()
 
@@ -146,7 +147,7 @@ def test_upgrade_from_six_revokes_legacy_presentation_authority(
 
     result = upgrade_database(path)
     assert result.starting_version == 6
-    assert result.ending_version == 8
+    assert result.ending_version == len(MIGRATIONS)
     with sqlite3.connect(path) as connection:
         migrated = connection.execute(
             """SELECT session_id, state, generation, source_id, source_version,

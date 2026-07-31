@@ -30,6 +30,18 @@ class Runner(Protocol):
 
     def is_running(self) -> bool: ...
 
+    async def list_resources(self, cursor: str | None = None) -> dict[str, Any]: ...
+
+    async def list_resource_templates(
+        self, cursor: str | None = None
+    ) -> dict[str, Any]: ...
+
+    async def read_resource(self, uri: str) -> dict[str, Any]: ...
+
+    async def subscribe_resource(self, uri: str) -> None: ...
+
+    async def unsubscribe_resource(self, uri: str) -> None: ...
+
 
 class DesiredState(StrEnum):
     STOPPED = "stopped"
@@ -169,6 +181,50 @@ class McpLifecycleCoordinator:
         result = await asyncio.wait_for(
             operation,
             min(timeout or self._operation_timeout, self._operation_timeout),
+        )
+        if not self._current(slot, generation):
+            raise asyncio.CancelledError("MCP server generation was superseded")
+        return result
+
+    async def list_resources(
+        self, server_id: str, cursor: str | None = None
+    ) -> dict[str, Any]:
+        return await self._child_operation(server_id, "list_resources", cursor)
+
+    async def list_resource_templates(
+        self, server_id: str, cursor: str | None = None
+    ) -> dict[str, Any]:
+        return await self._child_operation(
+            server_id,
+            "list_resource_templates",
+            cursor,
+        )
+
+    async def read_resource(self, server_id: str, uri: str) -> dict[str, Any]:
+        return await self._child_operation(server_id, "read_resource", uri)
+
+    async def subscribe_resource(self, server_id: str, uri: str) -> None:
+        await self._child_operation(server_id, "subscribe_resource", uri)
+
+    async def unsubscribe_resource(self, server_id: str, uri: str) -> None:
+        await self._child_operation(server_id, "unsubscribe_resource", uri)
+
+    async def _child_operation(
+        self,
+        server_id: str,
+        method: str,
+        argument: str | None,
+    ) -> Any:
+        slot = await self._slot(server_id)
+        async with slot.lock:
+            runner = slot.runner
+            generation = slot.generation
+            if runner is None or not runner.is_running():
+                raise RuntimeError(f"MCP server '{server_id}' is not active")
+        operation = getattr(runner, method)
+        result = await asyncio.wait_for(
+            operation(argument),
+            self._operation_timeout,
         )
         if not self._current(slot, generation):
             raise asyncio.CancelledError("MCP server generation was superseded")

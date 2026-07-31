@@ -170,6 +170,7 @@ def _row_to_tool(row: sqlite3.Row) -> McpTool:
         input_schema=input_schema,
         output_schema=_parse_json(_row_value(row, "output_schema"), None),
         annotations=_parse_json(_row_value(row, "annotations"), {}),
+        meta=_parse_json(_row_value(row, "meta"), {}),
         is_enabled=bool(row["is_enabled"]),
         created_at=row["created_at"],
     )
@@ -349,26 +350,40 @@ def get_tool(db_path: str, tool_id: str) -> Optional[McpTool]:
 
 def insert_tools(db_path: str, tools: List[McpTool]) -> None:
     with _get_conn(db_path) as conn:
+        columns = {
+            str(row[1]) for row in conn.execute("PRAGMA table_info(mcp_tools)")
+        }
         for tool in tools:
+            names = [
+                "tool_id",
+                "server_id",
+                "name",
+                "title",
+                "description",
+                "input_schema",
+                "output_schema",
+                "annotations",
+            ]
+            values: list[Any] = [
+                tool.tool_id,
+                tool.server_id,
+                tool.name,
+                tool.title,
+                tool.description,
+                json.dumps(tool.input_schema),
+                _serialize_json(tool.output_schema),
+                _serialize_json(tool.annotations),
+            ]
+            if "meta" in columns:
+                names.append("meta")
+                values.append(_serialize_json(tool.meta))
+            names.extend(("is_enabled", "created_at"))
+            values.extend((1 if tool.is_enabled else 0, tool.created_at))
+            placeholders = ", ".join("?" for _ in names)
             conn.execute(
-                """
-                INSERT OR REPLACE INTO mcp_tools (
-                    tool_id, server_id, name, title, description, input_schema,
-                    output_schema, annotations, is_enabled, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    tool.tool_id,
-                    tool.server_id,
-                    tool.name,
-                    tool.title,
-                    tool.description,
-                    json.dumps(tool.input_schema),
-                    _serialize_json(tool.output_schema),
-                    _serialize_json(tool.annotations),
-                    1 if tool.is_enabled else 0,
-                    tool.created_at,
-                ),
+                f"INSERT OR REPLACE INTO mcp_tools ({', '.join(names)}) "
+                f"VALUES ({placeholders})",
+                values,
             )
         conn.commit()
 

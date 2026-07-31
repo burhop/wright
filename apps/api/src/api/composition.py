@@ -22,6 +22,8 @@ from tool_registry.gateway_management import GatewayManagementTools
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.gateway_resources import GatewayResourceProvider
 from tool_registry.gateway_service import GatewayService
+from tool_registry.lifecycle_adapters import EngineMcpUiResourceReader
+from tool_registry.ui.resources import McpUiResourceStore
 
 from api.config import DATABASE_PATH
 from api.notifications import GatewayWorkspaceNotifier
@@ -76,6 +78,8 @@ def build_api_gateway_service(db_path: str, engine, settings) -> GatewayService:
             "session_id": session.binding_session_id or session.session_id,
         },
     )
+    ui_reader = EngineMcpUiResourceReader(engine)
+    ui_resources = McpUiResourceStore(ui_reader)
     return GatewayService(
         workspaces=DatabaseGatewayWorkspace(repository),
         catalog=catalog,
@@ -84,6 +88,7 @@ def build_api_gateway_service(db_path: str, engine, settings) -> GatewayService:
         notifier=GatewayNotificationHub(),
         resources=GatewayResourceProvider(),
         management=management,
+        mcp_ui_resources=ui_resources,
         operation_timeout=settings.operation_timeout_seconds,
         maximum_timeout=settings.maximum_timeout_seconds,
     )

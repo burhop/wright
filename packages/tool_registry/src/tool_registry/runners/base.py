@@ -46,6 +46,27 @@ class BaseRunner(ABC):
         """
         pass
 
+    async def list_resources(self, cursor: str | None = None) -> Dict[str, Any]:
+        raise NotImplementedError("Child runner does not support resources/list")
+
+    async def list_resource_templates(
+        self, cursor: str | None = None
+    ) -> Dict[str, Any]:
+        raise NotImplementedError(
+            "Child runner does not support resources/templates/list"
+        )
+
+    async def read_resource(self, uri: str) -> Dict[str, Any]:
+        raise NotImplementedError("Child runner does not support resources/read")
+
+    async def subscribe_resource(self, uri: str) -> None:
+        raise NotImplementedError("Child runner does not support resources/subscribe")
+
+    async def unsubscribe_resource(self, uri: str) -> None:
+        raise NotImplementedError(
+            "Child runner does not support resources/unsubscribe"
+        )
+
     @abstractmethod
     def is_running(self) -> bool:
         """Return True if the runner is currently connected/active."""

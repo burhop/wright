@@ -507,6 +507,29 @@ class McpEngine:
                         error=redact_text(e),
                     )
 
+    def child_connection_id(self, server_id: str) -> str:
+        generation = self.lifecycle.generation_for(server_id)
+        if self.lifecycle.runner_for(server_id) is None:
+            return ""
+        return f"{server_id}:{generation}"
+
+    async def list_child_resources(self, server_id: str) -> Dict[str, Any]:
+        return await self.lifecycle.list_resources(server_id)
+
+    async def list_child_resource_templates(self, server_id: str) -> Dict[str, Any]:
+        return await self.lifecycle.list_resource_templates(server_id)
+
+    async def read_child_resource(
+        self, server_id: str, uri: str
+    ) -> Dict[str, Any]:
+        return await self.lifecycle.read_resource(server_id, uri)
+
+    async def subscribe_child_resource(self, server_id: str, uri: str) -> None:
+        await self.lifecycle.subscribe_resource(server_id, uri)
+
+    async def unsubscribe_child_resource(self, server_id: str, uri: str) -> None:
+        await self.lifecycle.unsubscribe_resource(server_id, uri)
+
     async def shutdown(self) -> None:
         """Shutdown all active runners on cleanup."""
         await self.lifecycle.shutdown()

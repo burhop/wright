@@ -510,6 +510,11 @@ MIGRATIONS: tuple[Migration, ...] = (
                 WHERE bootstrap_expires_at IS NULL"""),
         ),
     ),
+    Migration(
+        9,
+        "mcp_upstream_metadata",
+        (add_column("mcp_tools", "meta", "TEXT"),),
+    ),
 )
 
 
