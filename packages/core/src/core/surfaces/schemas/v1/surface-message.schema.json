@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/surface-message-v1.json",
+  "title": "Wright Surface Message",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocolVersion", "kind", "messageId", "correlationId", "binding", "operation", "sequence", "createdAt", "deadlineAt"],
+  "properties": {
+    "protocolVersion": {"const": "1.0"},
+    "kind": {"enum": ["request", "result", "error", "event", "cancel"]},
+    "messageId": {"type": "string", "format": "uuid"},
+    "correlationId": {"type": "string", "format": "uuid"},
+    "traceId": {"type": "string", "minLength": 16, "maxLength": 64, "pattern": "^[0-9a-fA-F]+$"},
+    "replyTo": {"type": "string", "format": "uuid"},
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspaceId", "sessionId", "surfaceId", "instanceId", "generation", "documentOrigin"],
+      "properties": {
+        "workspaceId": {"type": "string", "minLength": 1, "maxLength": 128},
+        "sessionId": {"type": "string", "minLength": 1, "maxLength": 128},
+        "surfaceId": {"type": "string", "minLength": 1, "maxLength": 128},
+        "instanceId": {"type": "string", "minLength": 1, "maxLength": 128},
+        "generation": {"type": "integer", "minimum": 1},
+        "documentOrigin": {"type": "string", "format": "uri", "maxLength": 2048},
+        "serverId": {"type": "string", "minLength": 1, "maxLength": 256},
+        "presentationId": {"type": "string", "minLength": 1, "maxLength": 128}
+      }
+    },
+    "operation": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-z][a-z0-9_.:/-]+$"},
+    "toolName": {"type": "string", "minLength": 1, "maxLength": 256},
+    "sequence": {"type": "integer", "minimum": 0},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "deadlineAt": {"type": "string", "format": "date-time"},
+    "idempotencyKey": {"type": "string", "minLength": 16, "maxLength": 128},
+    "payload": {},
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "retryable"],
+      "properties": {
+        "code": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Z][A-Z0-9_]+$"},
+        "message": {"type": "string", "minLength": 1, "maxLength": 2048},
+        "retryable": {"type": "boolean"},
+        "details": {"type": "object", "maxProperties": 32}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "error"}}, "required": ["kind"]},
+      "then": {"required": ["error"]}
+    },
+    {
+      "if": {"properties": {"kind": {"enum": ["result", "error", "cancel"]}}, "required": ["kind"]},
+      "then": {"required": ["replyTo"]}
+    }
+  ]
+}

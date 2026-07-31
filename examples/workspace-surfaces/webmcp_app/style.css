@@ -1,0 +1,7 @@
+:root { color-scheme: light dark; font: 16px/1.45 system-ui, sans-serif; }
+body { margin: 0; }
+main { max-width: 52rem; margin: auto; padding: 1.5rem; }
+svg { width: 100%; border: 1px solid CanvasText; border-radius: .5rem; }
+polyline { fill: none; stroke: #2b88d8; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+button { font: inherit; margin-top: 1rem; padding: .5rem .75rem; }
+button:focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }

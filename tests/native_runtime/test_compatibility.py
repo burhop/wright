@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from data_vault.migrations import MIGRATIONS
 
 from wright_engineering.runtime.compatibility import (
     CompatibilityError,
@@ -91,3 +92,11 @@ def test_missing_or_malformed_contract_fails_closed(tmp_path: Path) -> None:
     path.write_text("{}", encoding="utf-8")
     with pytest.raises(CompatibilityError, match="compatibility_contract_invalid"):
         CompatibilityPolicy.load(path)
+
+
+def test_shipped_contract_supports_the_current_data_schema() -> None:
+    contract = CompatibilityPolicy.load(
+        Path(__file__).parents[2] / "src" / "wright_engineering" / "compatibility.json"
+    )
+
+    assert contract.data_schema_max == MIGRATIONS[-1].version

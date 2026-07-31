@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import ntpath
 import os
 from pathlib import Path
@@ -53,6 +54,8 @@ from .use_cases import (
     WorkspaceLifecycleUseCases,
     WorkspaceToolUseCases,
 )
+from .use_cases.run import issue_display_execution_lease
+from .surfaces.display_tokens import DisplayExecutionTokenService
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -635,6 +638,10 @@ class WorkspaceService:
         engine,
         *,
         policy: FileExecutionPolicy | None = None,
+        display_tokens: DisplayExecutionTokenService | None = None,
+        display_endpoint: str | None = None,
+        principal_id: str = "local-user",
+        trace_id: str = "no-active-trace",
     ) -> FileExecutionResult:
         workspace_path = await self.resolve_workspace_dir(session_id, engine)
         full_path = self._workspace_file(workspace_path, path)
@@ -644,6 +651,36 @@ class WorkspaceService:
             )
 
         timeout = (policy or FileExecutionPolicy()).timeout_seconds
+        display_lease = None
+        if display_tokens is not None and display_endpoint:
+            workspace = self.repository.get_by_session(session_id)
+            if workspace is None:
+                raise WorkspaceNotFoundError("Workspace session not found.")
+            script = full_path.read_text(encoding="utf-8")
+            execution_id = str(uuid.uuid4())
+            display_lease = issue_display_execution_lease(
+                token_service=display_tokens,
+                endpoint=display_endpoint,
+                user_id=principal_id,
+                workspace_id=workspace["workspace_id"],
+                session_id=session_id,
+                task_id=(
+                    "file-run-"
+                    + hashlib.sha256(
+                        str(full_path.relative_to(workspace_path)).encode("utf-8")
+                    ).hexdigest()[:32]
+                ),
+                execution_id=execution_id,
+                prompt=None,
+                effective_constraints={
+                    "contract_version": 1,
+                    "execution_kind": "workspace_file",
+                },
+                script=script,
+                script_revision=max(1, full_path.stat().st_mtime_ns),
+                trace_id=trace_id,
+                lifetime_seconds=timeout + 30,
+            )
         command = [
             sys.executable,
             "-c",
@@ -655,6 +692,10 @@ class WorkspaceService:
             timeout_seconds=timeout,
         )
         try:
+            environment = None
+            if display_lease is not None:
+                environment = os.environ.copy()
+                environment.update(display_lease.environment())
             result = subprocess.run(
                 command,
                 cwd=workspace_path,
@@ -662,6 +703,7 @@ class WorkspaceService:
                 text=True,
                 input=f"{full_path}\n",
                 timeout=timeout,
+                env=environment,
             )
             return FileExecutionResult(
                 success=result.returncode == 0,
@@ -686,6 +728,9 @@ class WorkspaceService:
                 stderr=stderr,
                 exit_code=-9,
             )
+        finally:
+            if display_lease is not None:
+                display_lease.revoke()
 
     @traced("agent.context.materialize")
     def refresh_agent_context_for_path(

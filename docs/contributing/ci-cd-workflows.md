@@ -9,20 +9,20 @@ Docker Hub as a required byte-identical distribution target.
 
 ## Workflow Overview
 
-| Workflow | Trigger | What it checks or publishes |
-| --- | --- | --- |
-| `python-quality.yml` | Push or pull request to `main` or `dev` | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`. |
-| `frontend-quality.yml` | Push or pull request to `main` or `dev` | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`. |
-| `test-windows.yml` | Push or pull request to `main` or `dev`, or manual run | Runs backend pytest and frontend Vitest on `windows-latest`; live Playwright remains in the Linux frontend workflow. |
-| `public-alpha-safety.yml` | Push, pull request, or manual run | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan. |
-| `codeql.yml` | Push or pull request to `main` or `dev`, plus weekly schedule | Runs CodeQL for Python and JavaScript/TypeScript. |
-| `dependency-review.yml` | Pull request to `main` or `dev` | Blocks high-severity dependency changes and denied licenses except for reviewed allowlisted advisories. |
-| `docker-pr.yml` | Pull request to `main` or `dev` when container/application inputs change | Builds and loads `wright:pr-<sha>`, runs the exact-image smoke contract, collects a Trivy report, and enforces the blocking vulnerability policy. It does not publish public images. |
-| `docker-build.yml` | Reusable `workflow_call` from `release.yml` | Builds one amd64 OCI candidate, smokes and scans that exact subject, enforces vulnerability policy, records evidence, and optionally pushes and attests the candidate digest. |
-| `docs-deploy.yml` | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds. |
-| `sync-hermes-plugin-mirror.yml` | Relevant push to `main` or `dev`, or manual run | Generates and validates the thin Hermes plugin mirror, records provenance, and publishes the selected mirror branch when enabled. |
-| `release-drafter.yml` | Push to `main` or `dev` | Updates the draft release notes from merged PR metadata. |
-| `release.yml` | Push to tag matching `v*`, or manual rehearsal | Builds immutable Python and OCI candidates, installs and smokes them, then publishes/promotes/verifies only for a real tag. The PyPI actions run directly here so OIDC and package attestations share the same trusted workflow identity. Manual dispatch is a no-public-mutation rehearsal. |
+| Workflow                        | Trigger                                                                  | What it checks or publishes                                                                                                                                                                                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `python-quality.yml`            | Push or pull request to `main` or `dev`                                  | Python 3.13, `uv sync --all-packages --all-groups`, Ruff lint/format, warning-mode mypy, and `uv run pytest`.                                                                                                                                                                                |
+| `frontend-quality.yml`          | Push or pull request to `main` or `dev`                                  | Node.js 22, `npm ci`, ESLint, Prettier, TypeScript, `npm run test --workspace=apps/web`, and `npm run build --workspace=apps/web`.                                                                                                                                                           |
+| `test-windows.yml`              | Push or pull request to `main` or `dev`, or manual run                   | Runs backend pytest and frontend Vitest on `windows-latest`; live Playwright remains in the Linux frontend workflow.                                                                                                                                                                         |
+| `public-alpha-safety.yml`       | Push, pull request, or manual run                                        | Repo-native public-alpha leak scan, Gitleaks history scan, and TruffleHog history scan.                                                                                                                                                                                                      |
+| `codeql.yml`                    | Push or pull request to `main` or `dev`, plus weekly schedule            | Runs CodeQL for Python and JavaScript/TypeScript.                                                                                                                                                                                                                                            |
+| `dependency-review.yml`         | Pull request to `main` or `dev`                                          | Blocks high-severity dependency changes and denied licenses except for reviewed allowlisted advisories.                                                                                                                                                                                      |
+| `docker-pr.yml`                 | Pull request to `main` or `dev` when container/application inputs change | Builds and loads `wright:pr-<sha>`, runs the exact-image smoke contract, collects a Trivy report, and enforces the blocking vulnerability policy. It does not publish public images.                                                                                                         |
+| `docker-build.yml`              | Reusable `workflow_call` from `release.yml`                              | Builds one amd64 OCI candidate, smokes and scans that exact subject, enforces vulnerability policy, records evidence, and optionally pushes and attests the candidate digest.                                                                                                                |
+| `docs-deploy.yml`               | Push to `main` or `dev`, pull request to `main` or `dev`, or manual run  | Runs `mkdocs build --strict`; deploys GitHub Pages only for non-PR `main` builds.                                                                                                                                                                                                            |
+| `sync-hermes-plugin-mirror.yml` | Relevant push to `main` or `dev`, or manual run                          | Generates and validates the thin Hermes plugin mirror, records provenance, and publishes the selected mirror branch when enabled.                                                                                                                                                            |
+| `release-drafter.yml`           | Push to `main` or `dev`                                                  | Updates the draft release notes from merged PR metadata.                                                                                                                                                                                                                                     |
+| `release.yml`                   | Push to tag matching `v*`, or manual rehearsal                           | Builds immutable Python and OCI candidates, installs and smokes them, then publishes/promotes/verifies only for a real tag. The PyPI actions run directly here so OIDC and package attestations share the same trusted workflow identity. Manual dispatch is a no-public-mutation rehearsal. |
 
 ## Pull Request Gates
 
@@ -60,7 +60,9 @@ This runs `scripts/check-dev-merge.sh`, including `git diff --check`, Ruff lint
 and format checks, ESLint, Prettier, TypeScript, mypy warning-mode checks,
 Python package metadata validation, pytest, Hermes plugin pytest, Vitest,
 frontend build, strict docs build, and Playwright with `PLAYWRIGHT_INCLUDE_LIVE=1`
-against a temporary local API database.
+against a temporary local API database. Install every browser configured by the
+suite before running the gate (`npx playwright install chromium firefox webkit
+--with-deps`); CI uses the same browser set.
 
 `dev` to `main`:
 

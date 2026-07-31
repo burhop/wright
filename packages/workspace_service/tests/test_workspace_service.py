@@ -13,6 +13,10 @@ from workspace_service import (
     WorkspaceService,
     default_workspace_parent_dir,
 )
+from workspace_service.surfaces.display_tokens import (
+    DisplayExecutionTokenService,
+    DisplayTokenRejected,
+)
 
 
 class FakeEngine:
@@ -348,3 +352,55 @@ async def test_execute_workspace_file_uses_static_command_and_stdin_path(
     assert str(script.resolve()) not in captured["command"]
     assert captured["input"].strip() == str(script.resolve())
     assert captured["cwd"] == record.local_path
+
+
+@pytest.mark.asyncio
+async def test_execute_workspace_file_injects_only_display_handle_and_revokes_it(
+    tmp_path, db_path, monkeypatch
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Display Workspace", str(tmp_path / "display-workspace"), engine
+    )
+    script = tmp_path / "display-workspace" / "graph.py"
+    script.write_text("import wright\n", encoding="utf-8")
+    captured = {}
+
+    def fake_run(_command, **kwargs):
+        captured.update(kwargs)
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(service_module.subprocess, "run", fake_run)
+    tokens = DisplayExecutionTokenService(secret=b"test-secret" * 4)
+    result = await service.execute_workspace_file(
+        record.session_id,
+        "graph.py",
+        engine,
+        display_tokens=tokens,
+        display_endpoint="http://127.0.0.1:8000/api/workspace/surfaces/displays",
+        principal_id="user-1",
+        trace_id="a" * 32,
+    )
+
+    assert result.success is True
+    environment = captured["env"]
+    injected = {
+        key
+        for key, value in environment.items()
+        if value != os.environ.get(key) and key.startswith("WRIGHT_DISPLAY_")
+    }
+    assert injected == {
+        "WRIGHT_DISPLAY_ENDPOINT",
+        "WRIGHT_DISPLAY_TOKEN",
+        "WRIGHT_DISPLAY_WORKSPACE_ID",
+        "WRIGHT_DISPLAY_CONTRACT",
+    }
+    assert "PROMPT" not in environment
+    assert "SCRIPT" not in environment
+    with pytest.raises(DisplayTokenRejected, match="revoked"):
+        tokens.validate(
+            environment["WRIGHT_DISPLAY_TOKEN"],
+            audience="wright-display-ingest-v1",
+            workspace_id=record.workspace_id,
+        )

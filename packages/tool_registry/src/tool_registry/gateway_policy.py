@@ -27,6 +27,12 @@ class GatewayPolicy:
             return GatewayPolicyDecision(
                 False, "missing_workspace", "Workspace required"
             )
+        if not tool.ui.model_visible:
+            return GatewayPolicyDecision(
+                False,
+                "app_only",
+                "Tool is available only to its same-server MCP App",
+            )
         return GatewayPolicyDecision(True, "workspace_authorized", "Tool is visible")
 
     def can_call(

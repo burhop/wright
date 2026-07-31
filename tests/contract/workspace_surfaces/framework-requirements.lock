@@ -1,0 +1,7 @@
+# Install only in the disposable framework-conformance image/environment.
+# Verified from official PyPI release histories on 2026-07-30.
+fastapi==0.139.2
+panel==1.9.3
+streamlit==1.59.2
+gradio==6.20.0
+dash==4.4.1

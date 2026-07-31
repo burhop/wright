@@ -275,3 +275,47 @@ def test_seeded_approved_import_is_accepted():
         )
         == []
     )
+
+
+def test_workspace_surface_package_ownership_is_explicit_and_directional():
+    surfaces = _load_policy()["surfaces"]
+    assert surfaces["core"]["allowed_dependencies"] == []
+    assert set(surfaces["data_vault"]["allowed_dependencies"]) == {"core"}
+    assert set(surfaces["workspace_service"]["allowed_dependencies"]) == {
+        "core",
+        "data_vault",
+        "tool_registry",
+        "agent_adapters",
+    }
+    assert set(surfaces["api"]["allowed_dependencies"]) == {
+        "core",
+        "data_vault",
+        "tool_registry",
+        "agent_adapters",
+        "workspace_service",
+    }
+    assert surfaces["wright"]["allowed_dependencies"] == []
+    assert surfaces["wright"]["roots"] == ["src/wright"]
+
+
+def test_public_wright_helper_cannot_import_private_wright_packages_dynamically():
+    policy = _load_policy()
+    violations: list[str] = []
+    for path in sorted((ROOT / "src/wright").rglob("*.py")):
+        for dependency, line, form in _source_violations(
+            "wright", path, path.read_text(encoding="utf-8"), policy
+        ):
+            violations.append(f"{_relative(path)}:{line}: {dependency} ({form})")
+    assert violations == []
+
+
+def test_surface_core_remains_free_of_host_and_persistence_imports():
+    policy = _load_policy()
+    violations: list[str] = []
+    root = ROOT / "packages/core/src/core/surfaces"
+    for path in sorted(root.rglob("*.py")):
+        for dependency, line, form in _source_violations(
+            "core", path, path.read_text(encoding="utf-8"), policy
+        ):
+            violations.append(f"{_relative(path)}:{line}: {dependency} ({form})")
+    assert violations == []

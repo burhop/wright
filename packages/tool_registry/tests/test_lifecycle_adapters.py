@@ -1,7 +1,12 @@
 import os
 from types import SimpleNamespace
 
-from tool_registry.lifecycle_adapters import DatabaseLifecycleAdapter
+import pytest
+
+from tool_registry.lifecycle_adapters import (
+    DatabaseLifecycleAdapter,
+    EngineMcpUiResourceReader,
+)
 from tool_registry.runners.stdio import StdioRunner
 
 
@@ -111,3 +116,52 @@ def test_stdio_runner_inherits_adapter_operation_timeout(tmp_path, monkeypatch) 
 
     assert isinstance(runner, StdioRunner)
     assert runner.operation_timeout == 47.5
+
+
+@pytest.mark.asyncio
+async def test_child_resource_notifications_invalidate_exact_connection_and_uri() -> (
+    None
+):
+    handlers = []
+
+    class Runner:
+        def add_notification_handler(self, handler) -> None:
+            handlers.append(handler)
+
+    class Engine:
+        def __init__(self) -> None:
+            self.lifecycle = SimpleNamespace(runner_for=lambda server_id: Runner())
+
+        def child_connection_id(self, server_id: str) -> str:
+            return f"{server_id}:7"
+
+        async def list_child_resources(self, server_id: str):
+            return {"resources": []}
+
+        async def read_child_resource(self, server_id: str, uri: str):
+            return {"contents": []}
+
+        async def subscribe_child_resource(self, server_id: str, uri: str) -> None:
+            return None
+
+    invalidations = []
+    reader = EngineMcpUiResourceReader(
+        Engine(),
+        invalidate=lambda **values: invalidations.append(values) or 1,
+    )
+    await reader.list_resources("server")
+    assert len(handlers) == 1
+
+    await handlers[0](
+        "notifications/resources/updated",
+        {"uri": "ui://server/app"},
+    )
+    await handlers[0]("notifications/resources/list_changed", {})
+
+    assert invalidations == [
+        {
+            "server_connection_id": "server:7",
+            "uri": "ui://server/app",
+        },
+        {"server_connection_id": "server:7", "uri": None},
+    ]

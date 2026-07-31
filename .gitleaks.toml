@@ -19,3 +19,7 @@ condition = "AND"
 paths = ['''docs/nous-hackathon-prototype\.md''']
 regexTarget = "secret"
 regexes = ['''wright-local-dev''']
+
+[[allowlists]]
+description = "Workspace Surface contract-set values are public SHA-256 integrity hashes, not credentials."
+paths = ['''packages/core/src/core/surfaces/schemas/contract-set\.json''']

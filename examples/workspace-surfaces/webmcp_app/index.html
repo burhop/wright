@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scoped WebMCP graph</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Scoped WebMCP graph</h1>
+      <p id="status" role="status">Registering <code>set_graph</code>…</p>
+      <svg viewBox="0 0 640 360" role="img" aria-labelledby="chart-title chart-description">
+        <title id="chart-title">Values supplied to set_graph</title>
+        <desc id="chart-description">A line graph that updates when Wright calls the page-scoped tool.</desc>
+        <polyline id="line" points="20,320 170,230 320,275 470,115 620,55" />
+      </svg>
+      <button id="unregister" type="button">Unregister tool</button>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

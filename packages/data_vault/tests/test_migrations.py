@@ -67,7 +67,7 @@ def test_upgrade_is_idempotent(tmp_path):
 
 def test_provider_neutral_mcp_columns_are_added_without_losing_rows(tmp_path):
     path = tmp_path / "pre-provider-neutral.db"
-    upgrade_database(path, migrations=MIGRATIONS[:-1])
+    upgrade_database(path, migrations=MIGRATIONS[:4])
     with sqlite3.connect(path) as connection:
         connection.execute(
             """INSERT INTO mcp_servers
@@ -81,7 +81,7 @@ def test_provider_neutral_mcp_columns_are_added_without_losing_rows(tmp_path):
         )
         connection.commit()
 
-    result = upgrade_database(path)
+    result = upgrade_database(path, migrations=MIGRATIONS[:5])
 
     assert result.applied == ({"version": 5, "name": "provider_neutral_mcp_contract"},)
     with sqlite3.connect(path) as connection:

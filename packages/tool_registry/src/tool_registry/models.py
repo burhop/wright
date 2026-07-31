@@ -1,5 +1,7 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Union, Literal
+from collections.abc import Mapping
+from typing import Any, List, Literal, Optional, Union
+
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 
 VerificationState = Literal[
@@ -131,7 +133,83 @@ class McpServerUpdate(BaseModel):
     install_blocked_reason: Optional[str] = None
 
 
+McpUiVisibility = Literal["model", "app"]
+
+
+class McpUiToolMetadata(BaseModel):
+    """Canonical, security-relevant projection of upstream MCP Apps tool metadata."""
+
+    resource_uri: Optional[str] = None
+    visibility: frozenset[McpUiVisibility] = Field(
+        default_factory=lambda: frozenset({"model", "app"})
+    )
+    accepted_deprecated_resource_uri: bool = False
+    upstream: dict[str, Any] = Field(default_factory=dict)
+
+    @classmethod
+    def from_upstream(cls, metadata: Mapping[str, Any] | None) -> "McpUiToolMetadata":
+        upstream = dict(metadata or {})
+        raw_ui = upstream.get("ui")
+        ui = dict(raw_ui) if isinstance(raw_ui, Mapping) else {}
+        canonical = ui.get("resourceUri")
+        deprecated = upstream.get("ui/resourceUri")
+        selected = canonical if canonical is not None else deprecated
+        if selected is not None and (
+            not isinstance(selected, str) or not selected.startswith("ui://")
+        ):
+            raise ValueError("MCP UI resource URI must use ui://")
+        raw_visibility = ui.get("visibility", ("model", "app"))
+        if not isinstance(raw_visibility, (list, tuple, set, frozenset)):
+            raise ValueError("MCP UI visibility must be an array")
+        visibility = frozenset(str(item) for item in raw_visibility)
+        if not visibility.issubset({"model", "app"}):
+            raise ValueError("MCP UI visibility contains an unsupported scope")
+        return cls(
+            resource_uri=selected,
+            visibility=visibility,
+            accepted_deprecated_resource_uri=(
+                canonical is None and deprecated is not None
+            ),
+            upstream=upstream,
+        )
+
+    @property
+    def model_visible(self) -> bool:
+        return "model" in self.visibility
+
+    @property
+    def app_visible(self) -> bool:
+        return "app" in self.visibility
+
+
+class McpUiResourceMetadata(BaseModel):
+    """Merged MCP Apps resource metadata with content-item precedence."""
+
+    ui: dict[str, Any] = Field(default_factory=dict)
+    upstream: dict[str, Any] = Field(default_factory=dict)
+
+    @classmethod
+    def merge(
+        cls,
+        listing_metadata: Mapping[str, Any] | None,
+        content_metadata: Mapping[str, Any] | None,
+    ) -> "McpUiResourceMetadata":
+        listing = dict(listing_metadata or {})
+        content = dict(content_metadata or {})
+        listed_ui = listing.get("ui")
+        content_ui = content.get("ui")
+        merged_ui = dict(listed_ui) if isinstance(listed_ui, Mapping) else {}
+        if isinstance(content_ui, Mapping):
+            merged_ui.update(content_ui)
+        merged = {**listing, **content}
+        if merged_ui:
+            merged["ui"] = merged_ui
+        return cls(ui=merged_ui, upstream=merged)
+
+
 class McpTool(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     tool_id: str
     server_id: str
     name: str
@@ -140,5 +218,14 @@ class McpTool(BaseModel):
     input_schema: dict = Field(default_factory=dict)
     output_schema: Optional[dict] = None
     annotations: dict = Field(default_factory=dict)
+    meta: dict[str, Any] = Field(
+        default_factory=dict,
+        validation_alias=AliasChoices("_meta", "meta"),
+        serialization_alias="_meta",
+    )
     is_enabled: bool
     created_at: int
+
+    @property
+    def ui(self) -> McpUiToolMetadata:
+        return McpUiToolMetadata.from_upstream(self.meta)

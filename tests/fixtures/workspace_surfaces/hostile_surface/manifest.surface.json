@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "wright-hostile-conformance",
+  "title": "Hostile conformance app",
+  "version": "1.0.0",
+  "sharing": "isolated",
+  "launch": {
+    "mode": "command",
+    "argv": ["python", "-m", "http.server", "{port}", "--bind", "127.0.0.1"],
+    "cwd": "."
+  },
+  "health": {
+    "path": "/index.html",
+    "expectedStatus": 200
+  },
+  "presentations": ["panel", "browser"],
+  "capabilities": []
+}

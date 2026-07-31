@@ -50,6 +50,30 @@ GitHub Release mutation.
 Any missing manager evidence, adapter identity mismatch, Docker Hub failure, or
 digest divergence leaves the release incomplete.
 
+## Integration lessons and failure handling
+
+- Treat the merge, the `main` push checks, and the production release as three
+  separate gates. Do not report the integration complete until all three pass.
+- Exercise the full native lifecycle on Linux, macOS, and Windows before the
+  production tag, then repeat it against the publicly installed package.
+- Build Python and OCI candidates once. Promote the recorded files and digest;
+  do not rebuild between validation and publication.
+- PyPI, TestPyPI, and container registries are eventually consistent. Public
+  verification should use bounded retry and backoff. If publication succeeded
+  but lookup has not propagated, wait for the expected files or digest and
+  rerun only verification and its downstream jobs. Never republish an existing
+  version to work around propagation.
+- Require the complete production-readiness check set in GitHub branch
+  protection for `dev` to `main`. If GitHub reports no required checks, treat
+  that as a repository-control gap rather than assuming the checks are
+  enforced.
+- Keep the GitHub Release last so its presence means PyPI, GHCR, Docker Hub,
+  native lifecycle verification, release evidence, and documentation all
+  succeeded.
+- When confirming that `dev` and `main` are synchronized after a PR merge,
+  compare Git tree hashes. Their commit hashes normally differ because `main`
+  retains merge commits.
+
 ## Consumer verification
 
 ```bash

@@ -34,12 +34,16 @@ classDiagram
 ## 2. Test Execution Details
 
 ### Tier 1: Component Validation (Vitest)
+
 Tests individual React components in isolation. Verifies layout rendering, event handlers, and loading indicators under mocked API conditions.
-*   **Command**: `npm run test --workspace=apps/web`
+
+- **Command**: `npm run test --workspace=apps/web`
 
 ### Tier 2: UI Integration (Playwright Mocked)
+
 Validates complete page-level workflows (e.g., tool installation tabs, Git commits, file browser navigation) against a fully mocked backend API.
-*   **Command**: `npx playwright test`
+
+- **Command**: `npx playwright test`
 
 Tests tagged `@live` are excluded from this default mocked command. To include those tests, start the required backend first and run:
 
@@ -47,10 +51,11 @@ Tests tagged `@live` are excluded from this default mocked command. To include t
 PLAYWRIGHT_INCLUDE_LIVE=1 npx playwright test
 ```
 
-
 ### Tier 3: E2E System Tests (Pytest & Playwright Live)
+
 Executes happy-path end-to-end smoke tests against a live local server, validating SQLite database migrations, SSE websocket streams, and geometry creation.
-*   **Command**: `pytest` or `make docker-test-e2e`
+
+- **Command**: `pytest` or `make docker-test-e2e`
 
 ---
 
@@ -61,7 +66,6 @@ To run lint check, typecheck, pytest, and vitest suites sequentially on your hos
 ```bash
 make check
 ```
-
 
 `make check` is intended for the fast development loop. Before merging a feature
 branch to `dev`, run the CI-equivalent merge gate:
@@ -109,6 +113,7 @@ scripts/security-scan.sh --include-untracked
 scripts/security-scan.ps1 -IncludeUntracked
 
 # Mocked Playwright UI workflows when browser dependencies are available
+npx playwright install chromium firefox webkit --with-deps
 npx playwright test
 
 # Docker appliance smoke path

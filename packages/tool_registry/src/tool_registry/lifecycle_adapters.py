@@ -4,7 +4,7 @@ import os
 import shlex
 import shutil
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 from core.logging import get_logger  # type: ignore[import-untyped]
@@ -19,6 +19,64 @@ from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials, read_secrets, value_for_credential
 
 logger = get_logger(__name__)
+
+
+class EngineMcpUiResourceReader:
+    def __init__(
+        self,
+        engine: Any,
+        *,
+        invalidate: Callable[..., int] | None = None,
+    ) -> None:
+        self.engine = engine
+        self._invalidate = invalidate
+        self._attached: set[str] = set()
+
+    def set_invalidator(self, invalidate: Callable[..., int]) -> None:
+        self._invalidate = invalidate
+
+    def connection_id(self, server_id: str) -> str:
+        return self.engine.child_connection_id(server_id)
+
+    async def list_resources(self, server_id: str) -> Mapping[str, Any]:
+        self._attach_notifications(server_id)
+        return await self.engine.list_child_resources(server_id)
+
+    async def list_resource_templates(self, server_id: str) -> Mapping[str, Any]:
+        self._attach_notifications(server_id)
+        return await self.engine.list_child_resource_templates(server_id)
+
+    async def read_resource(self, server_id: str, uri: str) -> Mapping[str, Any]:
+        self._attach_notifications(server_id)
+        return await self.engine.read_child_resource(server_id, uri)
+
+    async def subscribe_resource(self, server_id: str, uri: str) -> None:
+        self._attach_notifications(server_id)
+        await self.engine.subscribe_child_resource(server_id, uri)
+
+    def _attach_notifications(self, server_id: str) -> None:
+        connection_id = self.connection_id(server_id)
+        if not connection_id or connection_id in self._attached:
+            return
+        runner = self.engine.lifecycle.runner_for(server_id)
+        add_handler = getattr(runner, "add_notification_handler", None)
+        if not callable(add_handler):
+            return
+
+        async def handle(method: str, params: Mapping[str, Any]) -> None:
+            if self._invalidate is None:
+                return
+            if method == "notifications/resources/updated":
+                uri = params.get("uri")
+                self._invalidate(
+                    server_connection_id=connection_id,
+                    uri=str(uri) if isinstance(uri, str) else None,
+                )
+            elif method == "notifications/resources/list_changed":
+                self._invalidate(server_connection_id=connection_id, uri=None)
+
+        add_handler(handle)
+        self._attached.add(connection_id)
 
 
 class MockRunner(BaseRunner):
@@ -99,11 +157,15 @@ class DatabaseLifecycleAdapter:
                 env=env,
                 cwd=workspace_path,
                 operation_timeout=self.operation_timeout,
+                ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
             )
         if server.type == "sse":
             if not server.command or not isinstance(server.command, str):
                 raise ValueError("Valid SSE URL string is required for sse server.")
-            return SseRunner(server.command)
+            return SseRunner(
+                server.command,
+                ui_enabled=os.getenv("WRIGHT_SURFACES_MCP_APPS_ENABLED") == "1",
+            )
         raise ValueError(f"Unsupported coordinated server type: {server.type}")
 
     async def publish_tools(
@@ -121,6 +183,7 @@ class DatabaseLifecycleAdapter:
                 input_schema=tool.get("inputSchema", {}),
                 output_schema=tool.get("outputSchema"),
                 annotations=tool.get("annotations") or {},
+                meta=tool.get("_meta") or {},
                 is_enabled=True,
                 created_at=now,
             )

@@ -5,6 +5,11 @@ schema migrations, migration ledger, integrity checks, consistent backups, and
 verified restore activation. Application packages may use repositories after
 readiness, but they must not create or alter schema.
 
+Workspace Surfaces persistence follows the same rule: this package owns surface,
+runtime, presentation, preference, grant, audit, provenance, and
+content-addressed payload records, while authorization and lifecycle decisions
+remain in `workspace_service`.
+
 It also owns workspace/session/context repositories and the local
 environment/mounted/atomic-file secret-provider implementations. Repository
 records remain application-neutral; this package never imports FastAPI,

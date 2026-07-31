@@ -16,7 +16,7 @@ from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from api.config import api_mcp_autostart_enabled
 from api.routers.agent import get_agent_engine
-from api.composition import workspace_service
+from api.composition import surface_application, workspace_service
 from workspace_service import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
@@ -238,11 +238,32 @@ async def save_file_content_endpoint(
 @traced("workspace.files.run")
 async def run_file_endpoint(
     body: FileRunRequest,
+    request: Request,
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     try:
-        res = await service.execute_workspace_file(body.session_id, body.path, engine)
+        surface_settings = getattr(
+            request.app.state, "workspace_surface_settings", None
+        )
+        safe_display = bool(
+            surface_settings
+            and surface_settings.flags.model
+            and surface_settings.flags.safe_display
+        )
+        res = await service.execute_workspace_file(
+            body.session_id,
+            body.path,
+            engine,
+            display_tokens=(
+                surface_application().display_tokens if safe_display else None
+            ),
+            display_endpoint=(
+                str(request.url_for("ingest_display")) if safe_display else None
+            ),
+            principal_id=getattr(request.state, "principal_id", "local-user"),
+            trace_id=getattr(request.state, "trace_id", "no-active-trace"),
+        )
         return FileRunResponse(
             success=res.success,
             stdout=res.stdout,

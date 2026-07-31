@@ -12,6 +12,7 @@ from typing import List, Dict, Any, Optional, Union
 from opentelemetry import trace
 from core.redaction import SECRET_KEY_RE, redact_command, redact_mapping, redact_text
 from .base import BaseRunner, ProgressCallback
+from .protocol import ChildProtocolState, NotificationHandler
 
 logger = structlog.get_logger(__name__)
 tracer = trace.get_tracer(__name__)
@@ -45,6 +46,7 @@ class StdioRunner(BaseRunner):
         env: Optional[Dict[str, str]] = None,
         cwd: Optional[str] = None,
         operation_timeout: float = 60.0,
+        ui_enabled: bool = False,
     ):
         if operation_timeout <= 0:
             raise ValueError("operation_timeout must be positive")
@@ -65,6 +67,7 @@ class StdioRunner(BaseRunner):
         self._request_progress_tokens: dict[int | str, int | str] = {}
         self._next_id = 1
         self._lock = asyncio.Lock()
+        self.protocol = ChildProtocolState(ui_enabled=ui_enabled)
 
     def _secret_values(self) -> list[str]:
         return [
@@ -228,14 +231,48 @@ class StdioRunner(BaseRunner):
                 span.record_exception(e)
                 raise
 
+    async def list_resources(self, cursor: str | None = None) -> Dict[str, Any]:
+        params = {"cursor": cursor} if cursor else None
+        return await asyncio.wait_for(
+            self._send_request("resources/list", params),
+            timeout=self.operation_timeout,
+        )
+
+    async def list_resource_templates(
+        self, cursor: str | None = None
+    ) -> Dict[str, Any]:
+        params = {"cursor": cursor} if cursor else None
+        return await asyncio.wait_for(
+            self._send_request("resources/templates/list", params),
+            timeout=self.operation_timeout,
+        )
+
+    async def read_resource(self, uri: str) -> Dict[str, Any]:
+        return await asyncio.wait_for(
+            self._send_request("resources/read", {"uri": uri}),
+            timeout=self.operation_timeout,
+        )
+
+    async def subscribe_resource(self, uri: str) -> None:
+        await asyncio.wait_for(
+            self._send_request("resources/subscribe", {"uri": uri}),
+            timeout=self.operation_timeout,
+        )
+
+    async def unsubscribe_resource(self, uri: str) -> None:
+        await asyncio.wait_for(
+            self._send_request("resources/unsubscribe", {"uri": uri}),
+            timeout=self.operation_timeout,
+        )
+
+    def add_notification_handler(self, handler: NotificationHandler) -> None:
+        self.protocol.add_notification_handler(handler)
+
     async def _handshake(self) -> None:
-        # 1. Send initialize
-        init_params = {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "wright", "version": "0.1.0"},
-        }
-        await self._send_request("initialize", init_params)
+        result = await self._send_request(
+            "initialize", self.protocol.initialize_parameters()
+        )
+        self.protocol.accept_initialize(result)
         logger.debug("mcp_initialize_response_received")
 
         # 2. Send initialized notification (no ID)
@@ -284,6 +321,20 @@ class StdioRunner(BaseRunner):
         try:
             result = await fut
         except BaseException as exc:
+            if isinstance(exc, asyncio.CancelledError):
+                try:
+                    await asyncio.shield(
+                        self._send_notification(
+                            "notifications/cancelled",
+                            {"requestId": req_id, "reason": "caller cancelled"},
+                        )
+                    )
+                except Exception:
+                    logger.warning(
+                        "mcp_cancellation_notification_failed",
+                        request_id=req_id,
+                        method=method,
+                    )
             self._pending_requests.pop(req_id, None)
             token = self._request_progress_tokens.pop(req_id, None)
             if token is not None:
@@ -400,6 +451,12 @@ class StdioRunner(BaseRunner):
                         logger.info(
                             "mcp_server_notification", method=message.get("method")
                         )
+                    if isinstance(method, str):
+                        params = message.get("params")
+                        await self.protocol.handle_notification(
+                            method,
+                            params if isinstance(params, dict) else None,
+                        )
             except asyncio.CancelledError:
                 break
             except Exception as e:
@@ -408,6 +465,11 @@ class StdioRunner(BaseRunner):
                     error=redact_text(e, self._secret_values()),
                 )
                 break
+        failure = RuntimeError("Child MCP transport closed")
+        for future in self._pending_requests.values():
+            if not future.done():
+                future.set_exception(failure)
+        self._pending_requests.clear()
 
     async def _handle_progress_notification(self, params: Any) -> None:
         if not isinstance(params, dict):

@@ -7,15 +7,21 @@ from typing import Any
 import mcp.types as types
 from mcp.server.lowlevel import NotificationOptions, Server
 from mcp.server.lowlevel.helper_types import ReadResourceContents
-from pydantic import AnyUrl
+from pydantic import AnyUrl, TypeAdapter
 
 from .gateway_models import GatewayError, SessionState
 from .gateway_service import GatewayService, SUPPORTED_PROTOCOL_VERSION
+from .runners.protocol import MCP_APPS_EXTENSION, MCP_APP_MIME_TYPE
+
+
+_CONTENT_BLOCK = TypeAdapter(types.ContentBlock)
 
 
 def create_mcp_server(
     service: GatewayService,
     gateway_session_id: str,
+    *,
+    ui_enabled: bool = False,
 ) -> Server:
     pump_task: asyncio.Task[None] | None = None
 
@@ -39,6 +45,7 @@ def create_mcp_server(
         ),
         lifespan=lifespan,
     )
+    setattr(server, "_wright_mcp_ui_enabled", ui_enabled)
 
     async def ensure_initialized() -> None:
         nonlocal pump_task
@@ -120,30 +127,21 @@ def create_mcp_server(
                 isError=True,
             )
         return types.CallToolResult(
-            content=[
-                types.TextContent(type="text", text=str(item.get("text", "")))
-                for item in result.content
-                if item.get("type") == "text"
-            ],
+            content=[_mcp_content(item) for item in result.content],
             structuredContent=(
                 dict(result.structured_content)
                 if result.structured_content is not None
                 else None
             ),
             isError=result.is_error,
+            _meta=dict(result.meta),
         )
 
     @server.list_resources()
     async def list_resources() -> list[types.Resource]:
         await ensure_initialized()
         return [
-            types.Resource(
-                uri=AnyUrl(resource.uri),
-                name=resource.name,
-                description=resource.description,
-                mimeType=resource.mime_type,
-                _meta={"wright/provenance": dict(resource.provenance)},
-            )
+            _mcp_resource(resource)
             for resource in service.list_resources(gateway_session_id)
         ]
 
@@ -157,12 +155,17 @@ def create_mcp_server(
 
 
 def initialization_options(server: Server):
+    ui_enabled = bool(getattr(server, "_wright_mcp_ui_enabled", False))
     return server.create_initialization_options(
         notification_options=NotificationOptions(
             tools_changed=True,
             resources_changed=True,
         ),
-        experimental_capabilities={},
+        experimental_capabilities=(
+            {MCP_APPS_EXTENSION: {"mimeTypes": [MCP_APP_MIME_TYPE]}}
+            if ui_enabled
+            else {}
+        ),
     )
 
 
@@ -175,6 +178,16 @@ def _mcp_tool(tool) -> types.Tool:
         idempotentHint=annotations.get("idempotentHint"),
         openWorldHint=annotations.get("openWorldHint"),
     )
+    meta = dict(tool.upstream_meta)
+    meta.update(
+        {
+            "wright/serverId": tool.server_id,
+            "wright/toolName": tool.tool_name,
+            "wright/approvalGates": sorted(tool.required_approvals),
+            "wright/provenance": dict(tool.provenance),
+            "wright/safetyReviewed": True,
+        }
+    )
     return types.Tool(
         name=tool.name,
         description=tool.description,
@@ -183,11 +196,21 @@ def _mcp_tool(tool) -> types.Tool:
             dict(tool.output_schema) if tool.output_schema is not None else None
         ),
         annotations=sdk_annotations,
-        _meta={
-            "wright/serverId": tool.server_id,
-            "wright/toolName": tool.tool_name,
-            "wright/approvalGates": sorted(tool.required_approvals),
-            "wright/provenance": dict(tool.provenance),
-            "wright/safetyReviewed": True,
-        },
+        _meta=meta,
+    )
+
+
+def _mcp_content(item) -> types.ContentBlock:
+    return _CONTENT_BLOCK.validate_python(dict(item))
+
+
+def _mcp_resource(resource) -> types.Resource:
+    meta = dict(resource.upstream_meta)
+    meta["wright/provenance"] = dict(resource.provenance)
+    return types.Resource(
+        uri=AnyUrl(resource.uri),
+        name=resource.name,
+        description=resource.description,
+        mimeType=resource.mime_type,
+        _meta=meta,
     )

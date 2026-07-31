@@ -224,6 +224,13 @@ yarn-debug.log*
 yarn-error.log*
 .eslintcache
 
+# Cross-platform editor and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/
+
 # Playwright / E2E Testing
 test-results/
 release-evidence*.json

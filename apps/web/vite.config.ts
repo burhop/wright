@@ -33,7 +33,7 @@ export default defineConfig(({ command, mode }) => {
       outDir: isDesktop ? "dist-desktop" : "dist",
     },
     server: {
-      allowedHosts: ["promaxgb10-9666"],
+      allowedHosts: ["promaxgb10-9666", ".localhost"],
       proxy: {
         "/api": {
           target: "http://127.0.0.1:8000",

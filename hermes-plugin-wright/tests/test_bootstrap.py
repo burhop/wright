@@ -60,8 +60,21 @@ def test_local_bootstrap_uses_explicit_complete_wheelhouse(
         target, options = module._install_target()
     finally:
         sys.modules.pop(module.__name__, None)
+    assert target.startswith("wright-engineering[runtime] @ ")
     assert wheel.as_uri() in target
     assert options == ["--no-index", "--find-links", str(wheelhouse.resolve())]
+
+
+def test_registry_bootstrap_installs_runtime_dependencies(monkeypatch) -> None:
+    monkeypatch.delenv("WRIGHT_RUNTIME_ARTIFACT", raising=False)
+    monkeypatch.delenv("WRIGHT_RUNTIME_WHEELHOUSE", raising=False)
+    module = _load_bootstrap("wright_bootstrap_registry_target_test")
+    try:
+        target, options = module._install_target()
+    finally:
+        sys.modules.pop(module.__name__, None)
+    assert target == "wright-engineering[runtime]==0.1.9"
+    assert options == []
 
 
 def test_windows_adapter_removal_clears_read_only_git_pack_files(

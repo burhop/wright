@@ -216,8 +216,14 @@ class ProcessManager:
         self.inspector.signal(identity.pid, force=False)
         if self.inspector.wait(identity.pid, graceful_timeout):
             return
+        observation = self.inspector.observe(identity.pid)
+        if observation is None:
+            return
         self.require_identity(
-            identity, runtime_path, expected_runtime_id=expected_runtime_id
+            identity,
+            runtime_path,
+            expected_runtime_id=expected_runtime_id,
+            observation=observation,
         )
         self.inspector.signal(identity.pid, force=True)
         if not self.inspector.wait(identity.pid, max(1.0, graceful_timeout / 2)):

@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs/promises');
 const http = require('http');
-const { nativeTheme, dialog, Notification, ipcMain } = require('electron');
+const { nativeTheme, dialog, Notification, ipcMain, shell } = require('electron');
 
 let ptyModule = null;
 try {
@@ -102,12 +102,100 @@ function proxyRequest(port, options) {
   });
 }
 
+function validateExternalUrl(rawUrl, options = {}) {
+  let url;
+  try {
+    url = new URL(rawUrl);
+  } catch {
+    const error = new Error('External URL must be absolute.');
+    error.code = 'SURFACE_HOST_URL_REJECTED';
+    throw error;
+  }
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) {
+    const error = new Error('External URL must use HTTP(S) without credentials.');
+    error.code = 'SURFACE_HOST_URL_REJECTED';
+    throw error;
+  }
+  if (options.approvedDirectUrl === true) {
+    const allowed = new Set(options.allowedExternalOrigins || []);
+    if (!allowed.has(url.origin)) {
+      const error = new Error('Direct external origin is not allowlisted.');
+      error.code = 'SURFACE_HOST_URL_REJECTED';
+      throw error;
+    }
+    return url.toString();
+  }
+  const previewDomain = String(options.previewDomain || 'localhost').toLowerCase();
+  const expectedPort = String(options.previewPort || 8000);
+  const expectedProtocol = `${options.previewScheme || 'http'}:`;
+  // A presentation must never share the control-plane/apex origin. The
+  // backend-issued opaque label is a mandatory origin-isolation boundary.
+  const previewHost = url.hostname.endsWith(`.${previewDomain}`);
+  const port = url.port || (url.protocol === 'https:' ? '443' : '80');
+  if (
+    !previewHost ||
+    url.protocol !== expectedProtocol ||
+    port !== expectedPort ||
+    url.pathname !== '/__wright/bootstrap' ||
+    url.search ||
+    url.hash.slice(1).length < 32
+  ) {
+    const error = new Error('External URL is not an issued Wright preview URL.');
+    error.code = 'SURFACE_HOST_URL_REJECTED';
+    throw error;
+  }
+  return url.toString();
+}
+
+function installNavigationPolicy(webContents, controlUrl) {
+  const allowed = new URL(controlUrl);
+  webContents.on('will-navigate', (event, target) => {
+    let destination;
+    try {
+      destination = new URL(target);
+    } catch {
+      event.preventDefault();
+      return;
+    }
+    const permitted = allowed.protocol === 'file:'
+      ? destination.protocol === 'file:' && destination.pathname === allowed.pathname
+      : destination.origin === allowed.origin;
+    if (!permitted) event.preventDefault();
+  });
+  webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+}
+
+function installReturnToHostAccelerator(webContents) {
+  const listener = (event, input = {}) => {
+    const modifier = process.platform === 'darwin' ? input.meta : input.control;
+    if (
+      input.type !== 'keyDown' ||
+      input.key !== 'F6' ||
+      input.shift !== true ||
+      modifier !== true ||
+      input.isAutoRepeat === true
+    ) {
+      return;
+    }
+    event.preventDefault();
+    if (!webContents.isDestroyed()) {
+      webContents.send('wright:return-to-host');
+    }
+  };
+  webContents.on('before-input-event', listener);
+  return () => webContents.removeListener('before-input-event', listener);
+}
+
 class WrightPanel {
   constructor(mainWindow, options = {}) {
     this.mainWindow = mainWindow;
     this.wrightApiPort = options.wrightApiPort || 8000;
     this.distPath = options.distPath || null;
     this.workspacePath = options.workspacePath || null;
+    this.previewDomain = options.previewDomain || 'localhost';
+    this.previewScheme = options.previewScheme || 'http';
+    this.previewPort = options.previewPort || this.wrightApiPort;
+    this.allowedExternalOrigins = Object.freeze([...(options.allowedExternalOrigins || [])]);
     this.view = null;
     this.themeListener = null;
     this.terminalSessions = new Map();
@@ -119,6 +207,7 @@ class WrightPanel {
       listDirectory: (event, path) => this.handleListDirectory(path),
       selectFiles: (event, options) => this.handleSelectFiles(options),
       notify: (event, payload) => this.handleNotify(payload),
+      openExternal: (event, payload) => this.handleOpenExternal(payload),
       getConfig: () => Promise.resolve({
         apiPort: this.wrightApiPort,
         workspacePath: this.workspacePath,
@@ -137,6 +226,9 @@ class WrightPanel {
         preload: path.join(__dirname, 'preload.cjs'),
         contextIsolation: true,
         nodeIntegration: false,
+        sandbox: true,
+        webSecurity: true,
+        allowRunningInsecureContent: false,
       }
     });
     
@@ -146,10 +238,14 @@ class WrightPanel {
     if (this.distPath) {
       const { pathToFileURL } = require('url');
       const indexUrl = pathToFileURL(path.resolve(this.distPath, 'index.html')).toString();
+    installNavigationPolicy(view.webContents, indexUrl);
       view.webContents.loadURL(indexUrl);
     } else {
-      view.webContents.loadURL(`http://localhost:${this.wrightApiPort}`);
+      const controlUrl = `http://localhost:${this.wrightApiPort}`;
+      installNavigationPolicy(view.webContents, controlUrl);
+      view.webContents.loadURL(controlUrl);
     }
+    this.returnToHostCleanup = installReturnToHostAccelerator(view.webContents);
     
     const handleThemeChange = () => {
       if (view && !view.webContents.isDestroyed()) {
@@ -174,6 +270,7 @@ class WrightPanel {
     ipcMain.handle('wright:listDirectory', this.ipcHandlers.listDirectory);
     ipcMain.handle('wright:selectFiles', this.ipcHandlers.selectFiles);
     ipcMain.handle('wright:notify', this.ipcHandlers.notify);
+    ipcMain.handle('wright:openExternal', this.ipcHandlers.openExternal);
     ipcMain.handle('wright:getConfig', this.ipcHandlers.getConfig);
     ipcMain.handle('wright:terminal:start', this.ipcHandlers.terminalStart);
     ipcMain.handle('wright:terminal:write', this.ipcHandlers.terminalWrite);
@@ -188,6 +285,7 @@ class WrightPanel {
     ipcMain.removeHandler('wright:listDirectory');
     ipcMain.removeHandler('wright:selectFiles');
     ipcMain.removeHandler('wright:notify');
+    ipcMain.removeHandler('wright:openExternal');
     ipcMain.removeHandler('wright:getConfig');
     ipcMain.removeHandler('wright:terminal:start');
     ipcMain.removeHandler('wright:terminal:write');
@@ -197,6 +295,11 @@ class WrightPanel {
 
   destroy() {
     this.unregisterIpc();
+
+    if (this.returnToHostCleanup) {
+      this.returnToHostCleanup();
+      this.returnToHostCleanup = null;
+    }
     
     if (this.themeListener) {
       nativeTheme.off('updated', this.themeListener);
@@ -312,6 +415,18 @@ class WrightPanel {
     }
   }
 
+  async handleOpenExternal(payload = {}) {
+    const validated = validateExternalUrl(payload.url, {
+      approvedDirectUrl: payload.options?.approvedDirectUrl === true,
+      allowedExternalOrigins: this.allowedExternalOrigins,
+      previewDomain: this.previewDomain,
+      previewScheme: this.previewScheme,
+      previewPort: this.previewPort,
+    });
+    await shell.openExternal(validated, { activate: true });
+    return true;
+  }
+
   async handleTerminalStart(options = {}) {
     if (!ptyModule) {
       throw {
@@ -394,5 +509,8 @@ class WrightPanel {
 
 module.exports = {
   WrightPanel,
-  validatePath
+  validatePath,
+  validateExternalUrl,
+  installNavigationPolicy,
+  installReturnToHostAccelerator
 };

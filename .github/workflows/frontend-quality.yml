@@ -73,8 +73,8 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Install Playwright Chromium
-        run: npx playwright install chromium --with-deps
+      - name: Install configured Playwright browsers
+        run: npx playwright install chromium firefox webkit --with-deps
 
       - name: Start backend server
         run: |

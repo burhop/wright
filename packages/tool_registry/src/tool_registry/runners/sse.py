@@ -7,6 +7,7 @@ import httpx
 from httpx_sse import aconnect_sse, EventSource
 from core.redaction import redact_mapping, redact_text
 from .base import BaseRunner, ProgressCallback
+from .protocol import ChildProtocolState, NotificationHandler
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 class SseRunner(BaseRunner):
     """MCP Runner implementing SSE (Server-Sent Events) and Streamable HTTP transport with remote MCP servers."""
 
-    def __init__(self, sse_url: str):
+    def __init__(self, sse_url: str, *, ui_enabled: bool = False):
         self.sse_url = sse_url
         self.client: Optional[httpx.AsyncClient] = None
         self._message_endpoint: Optional[str] = None
@@ -29,6 +30,7 @@ class SseRunner(BaseRunner):
         self._session_id: Optional[str] = None
         self._protocol_version: Optional[str] = None
         self._probe_response: Optional[Dict[str, Any]] = None
+        self.protocol = ChildProtocolState(ui_enabled=ui_enabled)
 
     def _prepare_headers(self) -> Dict[str, str]:
         headers = {
@@ -64,11 +66,7 @@ class SseRunner(BaseRunner):
                 "jsonrpc": "2.0",
                 "id": 1,
                 "method": "initialize",
-                "params": {
-                    "protocolVersion": "2024-11-05",
-                    "capabilities": {},
-                    "clientInfo": {"name": "wright", "version": "0.1.0"},
-                },
+                "params": self.protocol.initialize_parameters(),
             }
             try:
                 response = await self.client.post(
@@ -204,14 +202,43 @@ class SseRunner(BaseRunner):
                 f"Call to tool '{tool_name}' timed out after 60 seconds."
             )
 
+    async def list_resources(self, cursor: str | None = None) -> Dict[str, Any]:
+        params = {"cursor": cursor} if cursor else None
+        return await asyncio.wait_for(
+            self._send_request("resources/list", params), timeout=60.0
+        )
+
+    async def list_resource_templates(
+        self, cursor: str | None = None
+    ) -> Dict[str, Any]:
+        params = {"cursor": cursor} if cursor else None
+        return await asyncio.wait_for(
+            self._send_request("resources/templates/list", params), timeout=60.0
+        )
+
+    async def read_resource(self, uri: str) -> Dict[str, Any]:
+        return await asyncio.wait_for(
+            self._send_request("resources/read", {"uri": uri}), timeout=60.0
+        )
+
+    async def subscribe_resource(self, uri: str) -> None:
+        await asyncio.wait_for(
+            self._send_request("resources/subscribe", {"uri": uri}), timeout=60.0
+        )
+
+    async def unsubscribe_resource(self, uri: str) -> None:
+        await asyncio.wait_for(
+            self._send_request("resources/unsubscribe", {"uri": uri}), timeout=60.0
+        )
+
+    def add_notification_handler(self, handler: NotificationHandler) -> None:
+        self.protocol.add_notification_handler(handler)
+
     async def _handshake(self) -> None:
-        # 1. Send initialize
-        init_params = {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "wright", "version": "0.1.0"},
-        }
-        await self._send_request("initialize", init_params)
+        result = await self._send_request(
+            "initialize", self.protocol.initialize_parameters()
+        )
+        self.protocol.accept_initialize(result)
         logger.debug("SSE initialize response received")
 
         # 2. Send initialized notification (no ID)
@@ -293,14 +320,43 @@ class SseRunner(BaseRunner):
                             "Failed to parse SSE response in POST request: %s",
                             redact_text(sse_err),
                         )
+        except asyncio.CancelledError:
+            self._pending_requests.pop(req_id, None)
+            try:
+                await asyncio.shield(
+                    self._send_notification(
+                        "notifications/cancelled",
+                        {"requestId": req_id, "reason": "caller cancelled"},
+                    )
+                )
+            except Exception:
+                logger.warning(
+                    "Failed to send SSE cancellation notification for %s", req_id
+                )
+            raise
         except Exception as e:
             self._pending_requests.pop(req_id, None)
             raise RuntimeError(
                 f"Failed to post request to message endpoint: {redact_text(e)}"
             ) from e
 
-        # Otherwise wait for the response to arrive in the SSE stream
-        return await fut
+        # Otherwise wait for the response to arrive in the SSE stream.
+        try:
+            return await fut
+        except asyncio.CancelledError:
+            self._pending_requests.pop(req_id, None)
+            try:
+                await asyncio.shield(
+                    self._send_notification(
+                        "notifications/cancelled",
+                        {"requestId": req_id, "reason": "caller cancelled"},
+                    )
+                )
+            except Exception:
+                logger.warning(
+                    "Failed to send SSE cancellation notification for %s", req_id
+                )
+            raise
 
     async def _send_notification(
         self, method: str, params: Optional[Dict[str, Any]] = None
@@ -388,6 +444,14 @@ class SseRunner(BaseRunner):
                                         ) if "result" not in message else fut.set_result(
                                             message["result"]
                                         )
+                            else:
+                                method = message.get("method")
+                                if isinstance(method, str):
+                                    params = message.get("params")
+                                    await self.protocol.handle_notification(
+                                        method,
+                                        params if isinstance(params, dict) else None,
+                                    )
             except asyncio.CancelledError:
                 break
             except Exception as e:

@@ -113,8 +113,8 @@ def _install_target() -> tuple[str, list[str]]:
         if not wheelhouse.is_dir():
             raise BootstrapError("runtime_wheelhouse_invalid")
         options = ["--no-index", "--find-links", str(wheelhouse)]
-        return f"wright-engineering @ {wheel.as_uri()}", options
-    return f"wright-engineering=={WRIGHT_RUNTIME_VERSION}", []
+        return f"wright-engineering[runtime] @ {wheel.as_uri()}", options
+    return f"wright-engineering[runtime]=={WRIGHT_RUNTIME_VERSION}", []
 
 
 def ensure_bootstrap() -> Path:

@@ -2,7 +2,6 @@ import os
 import tempfile
 import pytest
 import sqlite3
-import asyncio
 import json
 from data_vault import upgrade_database
 from fastapi.testclient import TestClient
@@ -76,13 +75,18 @@ class MockWebSocket:
         self.sent_messages.append(text)
 
 
-def test_webmcp_websocket_connection(client):
+def test_webmcp_websocket_connection_requires_legacy_flag(client, monkeypatch):
+    with pytest.raises(WebSocketDisconnect):
+        with client.websocket_connect("/api/webmcp/ws"):
+            pass
+    monkeypatch.setenv("WRIGHT_WEBMCP_LEGACY_RELAY_ENABLED", "1")
     with client.websocket_connect("/api/webmcp/ws"):
         # Check connection is active and we can close it
         pass
 
 
-def test_webmcp_rejects_missing_token_and_bad_origin(client):
+def test_webmcp_rejects_missing_token_and_bad_origin(client, monkeypatch):
+    monkeypatch.setenv("WRIGHT_WEBMCP_LEGACY_RELAY_ENABLED", "1")
     previous = app.state.security_settings
     app.state.security_settings = SecuritySettings(
         "enforced", "websocket-token", ("http://localhost:5173",), "127.0.0.1"
@@ -111,7 +115,7 @@ def test_webmcp_rejects_missing_token_and_bad_origin(client):
 
 
 @pytest.mark.asyncio
-async def test_webmcp_tool_call_bridging(test_db_path):
+async def test_legacy_webmcp_socket_is_unprivileged(test_db_path):
     server = McpServer(
         server_id="webmcp-id-123",
         name="WebMCP Viewer",
@@ -128,32 +132,11 @@ async def test_webmcp_tool_call_bridging(test_db_path):
     mock_ws = MockWebSocket()
     await mcp_engine.register_webmcp_connection(mock_ws)
 
-    # Run call_tool concurrently
-    async def call_tool_task():
-        return await mcp_engine.call_tool(
+    with pytest.raises(RuntimeError, match="exact workspace binding"):
+        await mcp_engine.call_tool(
             "webmcp-id-123", "get_selected_part", {"mock_arg": "val"}
         )
-
-    task = asyncio.create_task(call_tool_task())
-
-    # Yield control to let call_tool register and send payload
-    await asyncio.sleep(0.05)
-
-    # Verify WebSocket sent the request
-    assert len(mock_ws.sent_messages) == 1
-    received_data = json.loads(mock_ws.sent_messages[0])
-    assert received_data["method"] == "get_selected_part"
-    assert received_data["params"] == {"mock_arg": "val"}
-    call_id = received_data["id"]
-
-    # Send response back to engine
-    response_payload = {
-        "jsonrpc": "2.0",
-        "id": call_id,
-        "result": {"part_id": "part-123"},
-    }
-    await mcp_engine.handle_webmcp_message(json.dumps(response_payload))
-
-    # Await result
-    result = await task
-    assert result == {"part_id": "part-123"}
+    await mcp_engine.handle_webmcp_message(
+        json.dumps({"jsonrpc": "2.0", "id": "forged", "result": {"ok": True}})
+    )
+    assert mock_ws.sent_messages == []

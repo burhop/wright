@@ -17,6 +17,7 @@ from api.config import (
     McpTransportSettings,
     api_mcp_autostart_enabled,
     get_llm_health_url,
+    get_workspace_surface_settings,
 )
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
@@ -26,10 +27,24 @@ from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
+from api.routers.surface_events import router as surface_events_router
+from api.routers.surface_displays import router as surface_displays_router
+from api.routers.live_apps import router as live_apps_router
+from api.routers.surface_presentations import router as surface_presentations_router
+from api.routers.surface_preview import router as surface_preview_router
+from api.routers.surface_mcp_apps import router as surface_mcp_apps_router
+from api.routers.surfaces import router as surfaces_router
+from api.surface_host_dispatch import SurfaceHostDispatchMiddleware
+from api.surface_http_proxy import SurfaceHttpProxy
+from api.surface_route_authority import SurfaceRouteAuthority
+from api.surface_sse_proxy import SurfaceSseProxy
+from api.surface_websocket_proxy import SurfaceWebSocketProxy
 from api.middleware.tracing import TracingMiddleware
 from api.composition import (
     build_api_gateway_service,
     close_application_services,
+    close_surface_application_services,
+    surface_application,
     workspace_service,
 )
 from api.mcp_transport import AuthenticatedMcpTransport, McpTransportMount
@@ -57,6 +72,7 @@ async def lifespan(app: FastAPI):
     # Refresh after test/deployment environment setup, before serving requests.
     app.state.security_settings = SecuritySettings.from_env()
     app.state.security_settings.validate()
+    app.state.workspace_surface_settings = get_workspace_surface_settings()
     # State must be fully migrated and verified before runtime construction.
     try:
         from api.database.migrate import run_migrations
@@ -93,6 +109,9 @@ async def lifespan(app: FastAPI):
         DATABASE_PATH,
         operation_timeout=mcp_settings.operation_timeout_seconds,
     )
+    if app.state.workspace_surface_settings.flags.webmcp:
+        app.state.surface_webmcp_router = app.state.mcp_engine.webmcp_router
+        preview_app.state.surface_webmcp_router = app.state.surface_webmcp_router
     if api_mcp_autostart_enabled():
         await app.state.mcp_engine.sync_active_servers()
     app.state.gateway_service = build_api_gateway_service(
@@ -105,10 +124,40 @@ async def lifespan(app: FastAPI):
     )
     try:
         app.state.workspace_service = workspace_service()
+        if app.state.workspace_surface_settings.flags.model:
+            app.state.surface_application = surface_application()
+            await app.state.surface_application.reconcile_startup()
+            if app.state.workspace_surface_settings.flags.live_apps:
+                app.state.surface_http_proxy = SurfaceHttpProxy()
+                app.state.surface_sse_proxy = SurfaceSseProxy()
+                app.state.surface_websocket_proxy = SurfaceWebSocketProxy()
+                app.state.surface_route_authority = SurfaceRouteAuthority(
+                    tokens=app.state.surface_application.presentation_tokens,
+                    manager_for_workspace=(
+                        app.state.surface_application.runtime_registry.manager_for
+                    ),
+                )
+                for name in (
+                    "surface_http_proxy",
+                    "surface_sse_proxy",
+                    "surface_websocket_proxy",
+                    "surface_route_authority",
+                ):
+                    setattr(preview_app.state, name, getattr(app.state, name))
         async with app.state.mcp_transport.run():
             yield
     finally:
         # Shutdown owns every process and worker constructed during startup.
+        try:
+            surface_graph = getattr(app.state, "surface_application", None)
+            if surface_graph is not None:
+                await surface_graph.begin_shutdown()
+            for name in ("surface_http_proxy", "surface_sse_proxy"):
+                proxy = getattr(app.state, name, None)
+                if proxy is not None:
+                    await proxy.aclose()
+        finally:
+            await close_surface_application_services()
         try:
             await app.state.gateway_service.shutdown()
         except Exception as e:
@@ -118,6 +167,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
 app.state.security_settings = SecuritySettings.from_env()
+app.state.workspace_surface_settings = get_workspace_surface_settings()
 
 # Allow only explicitly configured frontend origins.
 app.add_middleware(
@@ -125,7 +175,16 @@ app.add_middleware(
     allow_origins=list(app.state.security_settings.allowed_origins),
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-Trace-Id"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "X-Trace-Id",
+        "X-Wright-Workspace-ID",
+        "X-Wright-Session-ID",
+        "Idempotency-Key",
+        "Last-Event-ID",
+        "X-Wright-Display-Contract",
+    ],
 )
 app.add_middleware(ControlPlaneSecurityMiddleware)
 
@@ -185,6 +244,37 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+if app.state.workspace_surface_settings.flags.model:
+    # Events must be registered before the dynamic /surfaces/{surface_id} path.
+    app.include_router(
+        surface_events_router, prefix="/api/workspace", tags=["Workspace Surfaces"]
+    )
+    app.include_router(
+        surfaces_router, prefix="/api/workspace", tags=["Workspace Surfaces"]
+    )
+    if app.state.workspace_surface_settings.flags.live_apps:
+        app.include_router(
+            live_apps_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface Live Apps"],
+        )
+        app.include_router(
+            surface_presentations_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface Presentations"],
+        )
+    if app.state.workspace_surface_settings.flags.mcp_apps:
+        app.include_router(
+            surface_mcp_apps_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface MCP Apps"],
+        )
+    if app.state.workspace_surface_settings.flags.safe_display:
+        app.include_router(
+            surface_displays_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface Displays"],
+        )
 app.add_route(
     "/mcp",
     McpTransportMount(),
@@ -192,9 +282,35 @@ app.add_route(
     name="mcp-transport",
 )
 
+# Preview origins are a separate data plane. The host dispatcher is added last
+# and therefore sits outside control-plane authentication and CORS middleware.
+preview_app = FastAPI(
+    title="Wright Surface Preview",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
+)
+preview_app.state.surface_sandbox_domain = (
+    app.state.workspace_surface_settings.preview.domain
+)
+preview_app.include_router(surface_preview_router)
+if (
+    app.state.workspace_surface_settings.flags.live_apps
+    or app.state.workspace_surface_settings.flags.mcp_apps
+    or app.state.workspace_surface_settings.flags.webmcp
+):
+    app.add_middleware(
+        SurfaceHostDispatchMiddleware,
+        preview_app=preview_app,
+        preview_domain=app.state.workspace_surface_settings.preview.domain,
+    )
+
 
 @app.websocket("/api/webmcp/ws")
 async def webmcp_websocket_endpoint(websocket: WebSocket):
+    if os.getenv("WRIGHT_WEBMCP_LEGACY_RELAY_ENABLED") != "1":
+        await websocket.close(code=1008, reason="Legacy WebMCP relay is disabled")
+        return
     selected_protocol = authorize_websocket(websocket, app.state.security_settings)
     await websocket.accept(subprotocol=selected_protocol)
     mcp_engine = app.state.mcp_engine
@@ -243,7 +359,11 @@ async def create_local_session(body: LocalSessionRequest, response: Response):
 
 
 @app.delete("/api/auth/session", status_code=204)
-async def delete_local_session(response: Response):
+async def delete_local_session(request: Request, response: Response):
+    if app.state.workspace_surface_settings.flags.model:
+        surface_application().revocation.user_logout(
+            user_id=getattr(request.state, "principal_id", "local-user")
+        )
     response.delete_cookie(SESSION_COOKIE, path="/api")
 
 

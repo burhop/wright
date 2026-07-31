@@ -1,0 +1,93 @@
+.surface-capability-backdrop {
+  align-items: center;
+  background: rgb(2 6 23 / 72%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  z-index: 1000;
+}
+
+.surface-capability-dialog {
+  background: var(--surface-panel-bg, #fff);
+  border: 1px solid var(--surface-border, #cbd5e1);
+  border-radius: 0.75rem;
+  box-shadow: 0 1.5rem 4rem rgb(15 23 42 / 32%);
+  color: var(--surface-text, #0f172a);
+  max-height: min(48rem, calc(100vh - 2rem));
+  max-width: 42rem;
+  overflow: auto;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.surface-capability-eyebrow {
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.surface-capability-dialog h2 {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.surface-capability-details {
+  border-block: 1px solid #e2e8f0;
+  margin: 1rem 0;
+  padding: 0.5rem 0;
+}
+
+.surface-capability-details > div {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(7rem, 0.35fr) 1fr;
+  padding: 0.45rem 0;
+}
+
+.surface-capability-details dt {
+  color: #475569;
+  font-weight: 650;
+}
+
+.surface-capability-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.surface-capability-details .risk-high,
+.surface-capability-details .risk-mutating,
+.surface-capability-admin {
+  color: #9a3412;
+  font-weight: 700;
+}
+
+.surface-capability-consequence,
+.surface-capability-admin {
+  background: #fff7ed;
+  border-radius: 0.4rem;
+  padding: 0.75rem;
+}
+
+.surface-capability-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.surface-capability-actions button {
+  min-height: 2.75rem;
+  min-width: 5.5rem;
+}
+
+@media (max-width: 32rem) {
+  .surface-capability-details > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}

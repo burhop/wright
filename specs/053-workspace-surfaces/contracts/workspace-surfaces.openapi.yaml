@@ -1,0 +1,600 @@
+openapi: 3.1.0
+info:
+  title: Wright Workspace Surfaces API
+  version: 1.0.0
+  description: >-
+    Authenticated control-plane contract for surface discovery, display ingestion,
+    lifecycle, presentation, grants and diagnostics. Preview URLs are capability-
+    bound data-plane routes and never accept an upstream URL.
+servers:
+  - url: /
+security:
+  - bearerAuth: []
+paths:
+  /api/workspace/surfaces:
+    get:
+      operationId: listWorkspaceSurfaces
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Current workspace-authorized surface projections
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: {$ref: '#/components/schemas/SurfaceDescriptor'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+    post:
+      operationId: declareWorkspaceSurface
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DeclareSurfaceRequest'}
+      responses:
+        '201': {$ref: '#/components/responses/Surface'}
+        '400': {$ref: '#/components/responses/Problem'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}:
+    get:
+      operationId: getWorkspaceSurface
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+      responses:
+        '200': {$ref: '#/components/responses/Surface'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/start:
+    post:
+      operationId: startWorkspaceSurface
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '202': {$ref: '#/components/responses/Surface'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/stop:
+    post:
+      operationId: stopWorkspaceSurface
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                reason: {type: string, maxLength: 256}
+      responses:
+        '202': {$ref: '#/components/responses/Surface'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/presentations:
+    post:
+      operationId: createSurfacePresentation
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [kind]
+              properties:
+                kind: {enum: [panel, browser]}
+                rememberPreference: {type: boolean, default: false}
+                isolatedAcknowledged: {type: boolean, default: false}
+      responses:
+        '201':
+          description: A short-lived absolute bootstrap URL whose one-use token is in the fragment
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationLaunch'}
+        '200':
+          description: Idempotent replay with a newly rotated one-use bootstrap token
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationLaunch'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/presentations/{presentationId}:
+    delete:
+      operationId: closeSurfacePresentation
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - $ref: '#/components/parameters/PresentationId'
+      responses:
+        '204': {description: Presentation closed and authority revoked}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/presentation-preference:
+    get:
+      operationId: getSurfacePresentationPreference
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+      responses:
+        '200':
+          description: Revalidated presentation preference or the current safe fallback
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationPreferenceDecision'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+    put:
+      operationId: setSurfacePresentationPreference
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PresentationPreferenceRequest'}
+      responses:
+        '200':
+          description: Stored and revalidated non-secret preference
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationPreferenceDecision'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/displays:
+    post:
+      operationId: ingestDisplayEnvelope
+      security:
+        - displayExecutionToken: []
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/vnd.wright.display+json:
+            schema:
+              $ref: './display-envelope.schema.json'
+      responses:
+        '201': {$ref: '#/components/responses/Surface'}
+        '200': {$ref: '#/components/responses/Surface'}
+        '400': {$ref: '#/components/responses/Problem'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '413': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/grants:
+    post:
+      operationId: decideSurfaceCapability
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/GrantDecision'}
+      responses:
+        '201':
+          description: Redacted grant projection
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/GrantProjection'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+        '422': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/grants/{grantId}:
+    delete:
+      operationId: revokeSurfaceCapability
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - name: grantId
+          in: path
+          required: true
+          schema: {type: string, maxLength: 128}
+      responses:
+        '204': {description: Grant revoked}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '404': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/diagnostics:
+    get:
+      operationId: getSurfaceDiagnostics
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+        - name: cursor
+          in: query
+          schema: {type: string, maxLength: 256}
+      responses:
+        '200':
+          description: Redacted bounded diagnostics
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [surface, events]
+                properties:
+                  surface: {$ref: '#/components/schemas/SurfaceDescriptor'}
+                  events:
+                    type: array
+                    maxItems: 200
+                    items: {$ref: '#/components/schemas/DiagnosticEvent'}
+                  nextCursor: {type: [string, 'null']}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/events:
+    get:
+      operationId: streamSurfaceEvents
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - name: Last-Event-ID
+          in: header
+          schema: {type: string, maxLength: 128}
+      responses:
+        '200':
+          description: Workspace/session-scoped descriptor update stream
+          content:
+            text/event-stream:
+              schema: {type: string}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+  /__wright/bootstrap:
+    get:
+      operationId: getSurfacePreviewBootstrapDocument
+      security: []
+      x-wright-preview-host-only: true
+      responses:
+        '200':
+          description: Restrictive bootstrap document that reads the fragment locally and POSTs it
+          content:
+            text/html:
+              schema: {type: string}
+        '404': {$ref: '#/components/responses/Problem'}
+    post:
+      operationId: exchangeSurfacePreviewBootstrapToken
+      security: []
+      x-wright-preview-host-only: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [token]
+              properties:
+                token: {type: string, minLength: 32, maxLength: 2048}
+      responses:
+        '204':
+          description: Sets an audience-bound presentation cookie; bootstrap script clears the fragment and navigates to the clean app root
+          headers:
+            Set-Cookie: {schema: {type: string}}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '410': {$ref: '#/components/responses/Problem'}
+  /{path}:
+    get:
+      operationId: proxySurfaceGet
+      security:
+        - presentationCookie: []
+      x-wright-preview-host-only: true
+      x-wright-proxy-methods: [GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS]
+      x-wright-live-transports: [websocket, sse]
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Streamed target response with preserved end-to-end/security headers}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '502': {$ref: '#/components/responses/Problem'}
+        '504': {$ref: '#/components/responses/Problem'}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    displayExecutionToken:
+      type: http
+      scheme: bearer
+      description: Short-lived execution/workspace/display-ingestion capability only
+    presentationCookie:
+      type: apiKey
+      in: cookie
+      name: wright_surface
+  parameters:
+    WorkspaceId:
+      name: X-Wright-Workspace-ID
+      in: header
+      required: true
+      schema: {type: string, minLength: 1, maxLength: 128}
+    SessionId:
+      name: X-Wright-Session-ID
+      in: header
+      required: true
+      schema: {type: string, minLength: 1, maxLength: 128}
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, minLength: 16, maxLength: 128}
+    SurfaceId:
+      name: surfaceId
+      in: path
+      required: true
+      schema: {type: string, minLength: 1, maxLength: 128}
+    PresentationId:
+      name: presentationId
+      in: path
+      required: true
+      schema: {type: string, minLength: 1, maxLength: 128}
+  responses:
+    Surface:
+      description: Current surface projection
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/SurfaceDescriptor'}
+    Problem:
+      description: Stable redacted problem response
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+  schemas:
+    DeclareSurfaceRequest:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [schemaVersion, kind, manifest]
+          properties:
+            schemaVersion: {const: 1}
+            kind: {const: live_app}
+            manifest: {$ref: './live-app-manifest.schema.json'}
+        - type: object
+          additionalProperties: false
+          required: [schemaVersion, kind, url, approval]
+          properties:
+            schemaVersion: {const: 1}
+            kind: {const: external_url}
+            url: {type: string, format: uri, maxLength: 4096}
+            approval: {const: explicit_view_only_instance}
+    SurfaceDescriptor:
+      type: object
+      additionalProperties: false
+      required: [schemaVersion, surfaceId, workspaceId, source, title, lifecycle, presentations, capabilities, revision, createdAt, updatedAt]
+      properties:
+        schemaVersion: {const: 1}
+        surfaceId: {type: string, maxLength: 128}
+        workspaceId: {type: string, maxLength: 128}
+        source: {$ref: '#/components/schemas/SurfaceSource'}
+        title: {type: string, maxLength: 256}
+        lifecycle: {enum: [declared, starting, ready, unhealthy, stopping, stopped, failed]}
+        instance:
+          anyOf:
+            - {$ref: '#/components/schemas/InstanceSummary'}
+            - {type: 'null'}
+        presentations:
+          type: array
+          items: {$ref: '#/components/schemas/PresentationOption'}
+        capabilities:
+          type: array
+          items:
+            type: object
+            required: [name, state, riskTier]
+            properties:
+              name: {type: string, maxLength: 128}
+              state: {enum: [unavailable, available, consent_required, granted, denied]}
+              riskTier: {enum: [low, high, mutating]}
+        diagnosticSummary:
+          type: object
+          properties:
+            code: {type: string, maxLength: 128}
+            message: {type: string, maxLength: 2048}
+            correlationId: {type: string, maxLength: 128}
+            actions: {type: array, items: {type: string, maxLength: 64}}
+        generationProvenance:
+          anyOf:
+            - {$ref: '#/components/schemas/GenerationProvenance'}
+            - {type: 'null'}
+        revision: {type: integer, minimum: 1}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+    SurfaceSource:
+      oneOf:
+        - {$ref: '#/components/schemas/FileSource'}
+        - {$ref: '#/components/schemas/DisplaySource'}
+        - {$ref: '#/components/schemas/LiveAppSource'}
+        - {$ref: '#/components/schemas/McpAppSource'}
+        - {$ref: '#/components/schemas/ExternalUrlSource'}
+      discriminator: {propertyName: kind}
+    FileSource:
+      type: object
+      required: [kind, sourceId, sourceVersion, path]
+      properties:
+        kind: {const: file}
+        sourceId: {type: string}
+        sourceVersion: {type: string}
+        path: {type: string}
+        mediaType: {type: string}
+    DisplaySource:
+      type: object
+      required: [kind, sourceId, sourceVersion, displayId, revision]
+      properties:
+        kind: {const: display}
+        sourceId: {type: string}
+        sourceVersion: {type: string}
+        displayId: {type: string}
+        revision: {type: integer, minimum: 1}
+    LiveAppSource:
+      type: object
+      required: [kind, sourceId, sourceVersion, manifestId]
+      properties:
+        kind: {const: live_app}
+        sourceId: {type: string}
+        sourceVersion: {type: string}
+        manifestId: {type: string}
+    McpAppSource:
+      type: object
+      required: [kind, sourceId, sourceVersion, serverId, resourceUri, contentHash]
+      properties:
+        kind: {const: mcp_app}
+        sourceId: {type: string}
+        sourceVersion: {type: string}
+        serverId: {type: string}
+        resourceUri: {type: string}
+        contentHash: {type: string}
+    ExternalUrlSource:
+      type: object
+      required: [kind, sourceId, sourceVersion, displayUrl, viewOnly]
+      properties:
+        kind: {const: external_url}
+        sourceId: {type: string}
+        sourceVersion: {type: string}
+        displayUrl: {type: string, format: uri}
+        viewOnly: {const: true}
+    InstanceSummary:
+      type: object
+      required: [instanceId, generation, sharing]
+      properties:
+        instanceId: {type: string}
+        generation: {type: integer, minimum: 1}
+        sharing: {enum: [shared, isolated]}
+        readyAt: {type: [string, 'null'], format: date-time}
+    PresentationOption:
+      type: object
+      required: [kind, eligible]
+      properties:
+        kind: {enum: [panel, browser]}
+        eligible: {type: boolean}
+        reason: {type: string, maxLength: 1024}
+        presentationId: {type: string, maxLength: 128}
+    PresentationLaunch:
+      type: object
+      additionalProperties: false
+      required: [presentationId, instanceId, generation, kind, absoluteBootstrapUrl, expiresAt]
+      properties:
+        presentationId: {type: string, maxLength: 128}
+        instanceId: {type: string, maxLength: 128}
+        generation: {type: integer, minimum: 1}
+        kind: {enum: [panel, browser]}
+        absoluteBootstrapUrl: {type: string, format: uri, maxLength: 4096}
+        expiresAt: {type: string, format: date-time}
+    PresentationPreferenceRequest:
+      type: object
+      additionalProperties: false
+      required: [kind]
+      properties:
+        kind: {enum: [panel, browser]}
+    PresentationPreferenceDecision:
+      type: object
+      additionalProperties: false
+      required: [kind, remembered]
+      properties:
+        kind: {enum: [panel, browser]}
+        remembered: {type: boolean}
+        reason: {type: [string, 'null'], maxLength: 1024}
+    GrantDecision:
+      type: object
+      additionalProperties: false
+      required: [sourceVersion, capability, operation, decision, persistence]
+      properties:
+        sourceVersion: {type: string, maxLength: 256}
+        capability: {type: string, maxLength: 128}
+        operation: {type: string, maxLength: 128}
+        decision: {enum: [allow, deny]}
+        persistence: {enum: [operation, instance, remembered_exact]}
+        constraints: {type: object, maxProperties: 32}
+    GrantProjection:
+      type: object
+      required: [grantId, capability, operation, decision, persistence, riskTier]
+      properties:
+        grantId: {type: string}
+        capability: {type: string}
+        operation: {type: string}
+        decision: {enum: [allow, deny]}
+        persistence: {enum: [operation, instance, remembered_exact]}
+        riskTier: {enum: [low, high, mutating]}
+        expiresAt: {type: [string, 'null'], format: date-time}
+    DiagnosticEvent:
+      type: object
+      required: [timestamp, severity, code, message, correlationId]
+      properties:
+        timestamp: {type: string, format: date-time}
+        severity: {enum: [debug, info, warning, error]}
+        code: {type: string, maxLength: 128}
+        message: {type: string, maxLength: 2048}
+        correlationId: {type: string, maxLength: 128}
+        traceId: {type: string, maxLength: 64}
+        retryable: {type: boolean}
+    GenerationProvenance:
+      type: object
+      additionalProperties: false
+      required: [mode, promptState, effectiveConstraints, scriptContentHash, scriptRevision, executionId]
+      properties:
+        mode: {enum: [agent_generated, direct_execution]}
+        promptState: {enum: [available, direct_execution_no_prompt]}
+        promptResourceId: {type: string, maxLength: 256}
+        effectiveConstraints: {type: object, maxProperties: 128}
+        scriptResourceId: {type: string, maxLength: 256}
+        scriptContentHash: {type: string, maxLength: 128}
+        scriptRevision: {type: string, maxLength: 128}
+        executionId: {type: string, maxLength: 128}
+        traceId: {type: string, maxLength: 64}
+    Problem:
+      type: object
+      required: [type, title, status, code, correlationId]
+      properties:
+        type: {type: string, format: uri-reference}
+        title: {type: string, maxLength: 256}
+        status: {type: integer, minimum: 400, maximum: 599}
+        code: {type: string, maxLength: 128}
+        detail: {type: string, maxLength: 2048}
+        correlationId: {type: string, maxLength: 128}
+        retryable: {type: boolean}

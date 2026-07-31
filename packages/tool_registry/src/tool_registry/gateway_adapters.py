@@ -59,6 +59,8 @@ class DatabaseGatewayCatalog:
                 title=tool.title,
                 output_schema=tool.output_schema,
                 annotations=tool.annotations,
+                upstream_meta=tool.meta,
+                ui=tool.ui,
                 required_approvals=frozenset(server.approval_gates),
                 provenance={
                     "server_id": server.server_id,

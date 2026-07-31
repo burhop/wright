@@ -13,6 +13,24 @@ from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
 from .gateway_repository import GatewayBindingError, GatewayRepository
 from .file_vault import FileVault, StoredVaultFile, VaultPathError
+from .surface_repository import (
+    GenerationProvenanceReference,
+    GenerationProvenanceRepository,
+    PresentationPreferenceRecord,
+    SurfaceDiagnosticRepository,
+    SurfaceGrantRecord,
+    SurfacePreferenceRepository,
+    SurfaceRepository,
+    SurfaceRevisionConflict,
+    SurfaceRuntimeRecord,
+    SurfaceRuntimeRepository,
+)
+from .surface_grants import SurfaceGrantRepository
+from .surface_vault import SurfacePayloadNotFound, SurfaceVault
+from .surface_presentations import (
+    SurfacePresentationRecord,
+    SurfacePresentationRepository,
+)
 from .secret_provider import (
     CompositeSecretProvider,
     EnvironmentSecretProvider,
@@ -36,6 +54,21 @@ __all__ = [
     "FileVault",
     "StoredVaultFile",
     "VaultPathError",
+    "SurfaceRepository",
+    "SurfaceRevisionConflict",
+    "GenerationProvenanceReference",
+    "GenerationProvenanceRepository",
+    "PresentationPreferenceRecord",
+    "SurfaceDiagnosticRepository",
+    "SurfaceGrantRecord",
+    "SurfaceGrantRepository",
+    "SurfacePreferenceRepository",
+    "SurfaceRuntimeRecord",
+    "SurfaceRuntimeRepository",
+    "SurfacePayloadNotFound",
+    "SurfaceVault",
+    "SurfacePresentationRecord",
+    "SurfacePresentationRepository",
     "CompositeSecretProvider",
     "EnvironmentSecretProvider",
     "FileSecretProvider",

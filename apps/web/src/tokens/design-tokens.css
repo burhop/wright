@@ -14,7 +14,7 @@
   --color-border-glow: rgba(56, 189, 248, 0.2); /* glowing border color */
   --color-success: #10b981; /* emerald green */
   --color-warning: #f59e0b; /* amber orange */
-  --color-error: #ef4444; /* rose red */
+  --color-error: #f87171; /* accessible rose red on dark surfaces */
 
   /* Theme-aware Text States */
   --color-text-muted: rgba(241, 245, 249, 0.6);
@@ -80,7 +80,7 @@
   --color-border-glow: rgba(56, 189, 248, 0.2);
   --color-success: #10b981;
   --color-warning: #f59e0b;
-  --color-error: #ef4444;
+  --color-error: #f87171;
   --color-text-muted: rgba(241, 245, 249, 0.6);
   --color-text-dim: rgba(241, 245, 249, 0.4);
   --color-surface-card-subtle: rgba(255, 255, 255, 0.01);

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reference design</title>
+  </head>
+  <body>
+    <main>
+      <h1>Reference design</h1>
+      <p id="status" role="status">Connecting to Wright…</p>
+      <svg viewBox="0 0 540 320" role="img" aria-labelledby="design-title design-description">
+        <title id="design-title">Bracket dimensions</title>
+        <desc id="design-description">A rectangular bracket whose width and height follow the controls.</desc>
+        <rect id="shape" x="70" y="55" width="320" height="200" rx="12" />
+      </svg>
+      <form id="dimensions">
+        <label>Width (mm) <input id="width" name="width" type="number" min="10" max="500" value="80" /></label>
+        <label>Height (mm) <input id="height" name="height" type="number" min="10" max="500" value="50" /></label>
+        <button type="submit">Update design</button>
+      </form>
+      <button id="denied" type="button">Try model-only operation</button>
+      <button id="close" type="button">Close view</button>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

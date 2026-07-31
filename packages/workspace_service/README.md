@@ -8,6 +8,11 @@ Use cases receive their repository, filesystem, Git, process, agent, and
 notification capabilities explicitly. Concrete local adapters are selected in
 composition; HTTP routes translate requests and results only.
 
+Workspace Surfaces lifecycle, presentation, display ingestion, grants,
+diagnostics, policy composition, and reconciliation live here behind explicit
+ports. React rendering, FastAPI request models, MCP gateway internals, and
+SQLite statements remain in their owning packages.
+
 The package may depend on `core`, `data_vault`, `tool_registry`, and
 `agent_adapters`. It must not import API routes or HTTP framework types.
 `architecture/python-packages.toml` and `tests/test_import_boundaries.py`

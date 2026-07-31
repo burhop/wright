@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Hostile conformance app</title>
+  </head>
+  <body>
+    <h1>Hostile boundary results</h1>
+    <dl>
+      <dt>Parent document</dt>
+      <dd id="parent-document">pending</dd>
+      <dt>Parent storage</dt>
+      <dd id="parent-storage">pending</dd>
+      <dt>Control cookie</dt>
+      <dd id="control-cookie">pending</dd>
+      <dt>Popup</dt>
+      <dd id="popup">pending</dd>
+      <dt>Control API</dt>
+      <dd id="control-api">pending</dd>
+      <dt>Camera</dt>
+      <dd id="camera">pending</dd>
+      <dt>Download</dt>
+      <dd id="download">pending</dd>
+      <dt>Wildcard message</dt>
+      <dd id="wildcard-message">pending</dd>
+    </dl>
+    <script>
+      const result = (id, value) => {
+        document.getElementById(id).textContent = value;
+      };
+      try {
+        void parent.document.body;
+        result("parent-document", "UNSAFE");
+      } catch {
+        result("parent-document", "blocked");
+      }
+      try {
+        void parent.localStorage.getItem("wright.control.secret");
+        result("parent-storage", "UNSAFE");
+      } catch {
+        result("parent-storage", "blocked");
+      }
+      result(
+        "control-cookie",
+        document.cookie.includes("wright_control=") ? "UNSAFE" : "isolated",
+      );
+      let popup = null;
+      try {
+        popup = window.open("about:blank", "_blank");
+      } catch {
+        popup = null;
+      }
+      result("popup", popup ? "UNSAFE" : "blocked");
+      if (popup) popup.close();
+      fetch("/api/secret", { credentials: "include" })
+        .then((response) =>
+          result("control-api", response.status === 404 ? "blocked" : "UNSAFE"),
+        )
+        .catch(() => result("control-api", "blocked"));
+      if (!navigator.mediaDevices?.getUserMedia) {
+        result("camera", "blocked");
+      } else {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then((stream) => {
+            stream.getTracks().forEach((track) => track.stop());
+            result("camera", "UNSAFE");
+          })
+          .catch(() => result("camera", "blocked"));
+      }
+      const download = document.createElement("a");
+      download.download = "hostile.txt";
+      download.href = "data:text/plain,hostile";
+      download.addEventListener("click", () =>
+        result("download", "attempted-but-sandboxed"),
+      );
+      document.body.append(download);
+      download.click();
+      parent.postMessage(
+        {
+          operation: "tool.call",
+          capability: "workspace.write",
+          secret: "test-secret",
+        },
+        "*",
+      );
+      result("wildcard-message", "sent-without-authority");
+    </script>
+  </body>
+</html>

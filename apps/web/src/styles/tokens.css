@@ -1,0 +1,153 @@
+:root {
+  --workspace-surface-chat-min: 320px;
+  --workspace-surface-content-min: 480px;
+  --workspace-surface-separator: 8px;
+  --workspace-surface-normal-chat-bp: 3800;
+  --workspace-surface-focus-chat-default: 360px;
+  --workspace-surface-focus-chat-max: min(50%, 720px);
+  --workspace-surface-narrow-breakpoint: 808px;
+  --workspace-surface-retained-hosts: 6;
+  --workspace-surface-tab-height: 40px;
+  --workspace-surface-control-min: 32px;
+  --workspace-surface-focus-ring: 0 0 0 3px var(--color-secondary);
+  --workspace-surface-status-gap: var(--space-xs);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.surface-tabs-shell {
+  display: flex;
+  min-width: 0;
+  min-height: var(--workspace-surface-tab-height);
+  background: var(--color-surface-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.surface-tabs {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.surface-tabs [role="tab"],
+.surface-tab-close-controls button {
+  min-width: var(--workspace-surface-control-min);
+  min-height: var(--workspace-surface-control-min);
+  padding: var(--space-xs) var(--space-sm);
+  border-right: 1px solid var(--color-border);
+}
+
+.surface-tabs [role="tab"][aria-selected="true"] {
+  color: var(--color-secondary);
+  background: var(--color-surface-hover);
+}
+
+.surface-tab-close-controls {
+  display: flex;
+  align-items: stretch;
+}
+
+.surface-tab-status {
+  align-self: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.surface-tab-statuses {
+  display: flex;
+  align-items: center;
+  gap: var(--workspace-surface-status-gap);
+  padding-inline: var(--space-xs);
+  white-space: nowrap;
+}
+
+.workspace-pane-separator {
+  grid-column: 5;
+  width: var(--workspace-surface-separator);
+  min-width: var(--workspace-surface-separator);
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+  background: transparent;
+  border-inline: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.workspace-pane-separator:hover,
+.workspace-pane-separator:focus-visible {
+  background-color: var(--color-secondary);
+}
+
+.workspace-surface-control:focus-visible,
+.surface-tabs button:focus-visible,
+.workspace-pane-separator:focus-visible,
+.workspace-pane-switcher button:focus-visible,
+.surface-pressure-dialog button:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--workspace-surface-focus-ring);
+  position: relative;
+  z-index: 2;
+}
+
+.workspace-pane-switcher {
+  position: absolute;
+  top: var(--space-xs);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-subtle);
+  z-index: 100;
+}
+
+.workspace-pane-switcher button {
+  min-width: 96px;
+  min-height: var(--workspace-surface-control-min);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.workspace-pane-switcher button[aria-pressed="true"] {
+  color: var(--color-surface-subtle);
+  background: var(--color-secondary);
+}
+
+.surface-pressure-dialog {
+  position: absolute;
+  inset: auto var(--space-md) var(--space-md);
+  z-index: 30;
+  padding: var(--space-md);
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (forced-colors: active) {
+  .workspace-pane-separator,
+  .surface-tabs button,
+  .workspace-pane-switcher button {
+    border: 1px solid ButtonText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-surfaces-layout {
+    transition: none !important;
+  }
+}

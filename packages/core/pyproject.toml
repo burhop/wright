@@ -1,7 +1,7 @@
 [project]
 name = "wright-core"
 version = "0.1.0"
-description = "Shared Wright domain models, structured JSON logging, and common utilities"
+description = "Shared Wright domain models, Workspace Surfaces contracts, structured JSON logging, and common utilities"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

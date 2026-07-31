@@ -1,6 +1,11 @@
 # Force LF line endings for shell scripts so they run correctly in bash/Docker
 *.sh text eol=lf
 
+# Versioned Workspace Surface contracts are byte-hashed. Keep their source and
+# packaged copies identical on Windows and POSIX checkouts.
+specs/053-workspace-surfaces/contracts/** text eol=lf
+packages/core/src/core/surfaces/schemas/** text eol=lf
+
 # Generated Vite bundles are byte-addressed release inputs. Preserve their exact
 # bytes across platforms; shader source also contains significant whitespace.
 src/wright_engineering/static/web/** -text -whitespace

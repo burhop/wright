@@ -6,6 +6,8 @@ from enum import StrEnum
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from .models import McpUiResourceMetadata, McpUiToolMetadata
+
 
 class GatewayErrorCode(StrEnum):
     INVALID_BINDING = "invalid_binding"
@@ -198,6 +200,8 @@ class GatewayTool:
     title: str | None = None
     output_schema: Mapping[str, Any] | None = None
     annotations: Mapping[str, Any] = field(default_factory=dict)
+    upstream_meta: Mapping[str, Any] = field(default_factory=dict)
+    ui: McpUiToolMetadata = field(default_factory=McpUiToolMetadata)
     required_approvals: frozenset[str] = field(default_factory=frozenset)
     provenance: Mapping[str, Any] = field(default_factory=dict)
 
@@ -209,11 +213,72 @@ class GatewayResource:
     description: str
     mime_type: str
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    upstream_meta: Mapping[str, Any] = field(default_factory=dict)
+    ui: McpUiResourceMetadata = field(default_factory=McpUiResourceMetadata)
 
 
 @dataclass(frozen=True, slots=True)
 class GatewayToolResult:
     content: tuple[Mapping[str, Any], ...]
     structured_content: Mapping[str, Any] | None = None
+    meta: Mapping[str, Any] = field(default_factory=dict)
     is_error: bool = False
     error_code: GatewayErrorCode | None = None
+
+    @classmethod
+    def from_upstream(cls, result: Mapping[str, Any]) -> "GatewayToolResult":
+        is_transport_envelope = any(
+            key in result
+            for key in ("content", "structuredContent", "isError", "_meta")
+        )
+        if not is_transport_envelope:
+            return cls(content=(), structured_content=dict(result))
+        raw_content = result.get("content")
+        content = (
+            tuple(dict(item) for item in raw_content if isinstance(item, Mapping))
+            if isinstance(raw_content, list)
+            else ()
+        )
+        raw_structured = result.get("structuredContent")
+        structured = (
+            dict(raw_structured) if isinstance(raw_structured, Mapping) else None
+        )
+        raw_meta = result.get("_meta")
+        return cls(
+            content=content,
+            structured_content=structured,
+            meta=dict(raw_meta) if isinstance(raw_meta, Mapping) else {},
+            is_error=bool(result.get("isError")),
+        )
+
+    def meaningful_fallback(self) -> str:
+        """Return bounded renderer/model fallback text without discarding rich blocks."""
+
+        import json
+
+        parts: list[str] = []
+        for item in self.content:
+            kind = item.get("type")
+            if kind == "text" and str(item.get("text") or "").strip():
+                parts.append(str(item["text"]).strip())
+            elif kind == "resource_link":
+                label = item.get("name") or item.get("title") or item.get("uri")
+                if label:
+                    parts.append(f"Resource: {label}")
+            elif kind == "resource":
+                resource = item.get("resource")
+                if isinstance(resource, Mapping) and resource.get("text"):
+                    parts.append(str(resource["text"]).strip())
+            elif kind in {"image", "audio"}:
+                parts.append(
+                    f"{str(kind).title()} content ({item.get('mimeType', 'unknown')})"
+                )
+        if self.structured_content is not None:
+            parts.append(
+                json.dumps(self.structured_content, sort_keys=True, default=str)
+            )
+        if not parts:
+            return (
+                "Interactive result is unavailable; no fallback content was provided."
+            )
+        return "\n".join(parts)
