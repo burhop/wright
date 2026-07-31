@@ -175,6 +175,9 @@ The compose files use named volumes for:
 - `/home/agent/.hermes`: Hermes profiles and sessions.
 - `/var/log`: startup, supervisor, and application logs.
 
+The image sets `WRIGHT_WORKSPACES_DIR=/home/agent/workspace` so newly created
+workspaces land in the mounted workspace volume.
+
 The image root filesystem is read-only, Linux capabilities are dropped, and
 privilege escalation is disabled. System paths such as `/etc`, `/opt`, and
 `/usr/local` come from each new image rather than persisted volumes. Existing

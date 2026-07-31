@@ -100,6 +100,8 @@ docker run -d \
   --name "$CONTAINER_NAME" \
   -p "127.0.0.1:${HOST_PORT}:8000" \
   -e WRIGHT_API_TOKEN="${WRIGHT_API_TOKEN:-ci-mcp-smoke-token-000000000000000000000000}" \
+  -e WRIGHT_WORKSPACES_DIR=/home/agent/workspace \
+  -e WRIGHT_WORKSPACE_PATH=/home/agent/workspace \
   -e LLM_API_URL="${LLM_API_URL:-https://example.com/v1}" \
   -e LLM_API_KEY="${LLM_API_KEY:-not-needed}" \
   -e LLM_API_MODEL="${LLM_API_MODEL:-test-model}" \

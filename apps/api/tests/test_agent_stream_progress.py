@@ -65,7 +65,11 @@ class _AttachFailureRegistry:
 
 def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
     captured = {}
-    monkeypatch.setattr("api.routers.agent.shutil.which", lambda name: "hermes.exe")
+    monkeypatch.setattr(
+        "api.routers.agent.shutil.which",
+        lambda name: "hermes.exe" if name == "hermes" else None,
+    )
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: False)
 
     def run(command, **kwargs):
         captured["command"] = command
@@ -78,6 +82,62 @@ def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
 
     assert captured["command"] == ["hermes.exe", "gateway", "restart"]
     assert captured["kwargs"]["timeout"] == 30
+
+
+def test_restart_hermes_gateway_prefers_supervisor_in_appliance(monkeypatch):
+    captured = {}
+
+    def which(name):
+        return {
+            "supervisorctl": "/usr/bin/supervisorctl",
+            "hermes": "/opt/hermes/bin/hermes",
+        }.get(name)
+
+    monkeypatch.setattr("api.routers.agent.shutil.which", which)
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: True)
+
+    def run(command, **kwargs):
+        captured["command"] = command
+        captured["kwargs"] = kwargs
+        return SimpleNamespace(returncode=0, stdout="started", stderr="")
+
+    monkeypatch.setattr("api.routers.agent.subprocess.run", run)
+
+    _restart_hermes_gateway_process()
+
+    assert captured["command"] == [
+        "/usr/bin/supervisorctl",
+        "-c",
+        "/etc/supervisor/conf.d/wright.conf",
+        "restart",
+        "hermes-gateway",
+    ]
+    assert captured["kwargs"]["timeout"] == 30
+
+
+def test_restart_hermes_gateway_failure_includes_diagnostics(monkeypatch):
+    monkeypatch.setattr(
+        "api.routers.agent.shutil.which",
+        lambda name: "hermes.exe" if name == "hermes" else None,
+    )
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: False)
+
+    def run(_command, **_kwargs):
+        return SimpleNamespace(
+            returncode=19,
+            stdout="",
+            stderr="gateway lock could not be acquired",
+        )
+
+    monkeypatch.setattr("api.routers.agent.subprocess.run", run)
+
+    with pytest.raises(RuntimeError) as error:
+        _restart_hermes_gateway_process()
+
+    assert "Hermes gateway restart failed after workspace rebinding (exit 19)" in str(
+        error.value
+    )
+    assert "gateway lock could not be acquired" in str(error.value)
 
 
 @pytest.mark.asyncio

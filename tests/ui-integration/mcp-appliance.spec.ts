@@ -543,9 +543,9 @@ test.describe("MCP appliance prompt workflow @live", () => {
       await expect(transcript.getByText(prompt)).toBeVisible({
         timeout: 30_000,
       });
+      await page.waitForTimeout(45_000);
       await expect(page.locator("body")).not.toContainText(
-        /Failed to start workspace MCP server|Authentication required|Unauthorized/i,
-        { timeout: 15_000 },
+        /Failed to start workspace MCP server|Authentication required|Unauthorized|Hermes gateway restart failed|Hermes gateway did not become ready/i,
       );
     });
   });

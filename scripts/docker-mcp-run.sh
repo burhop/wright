@@ -83,6 +83,8 @@ docker run -d \
   -e WRIGHT_BIND_HOST="${WRIGHT_BIND_HOST:-$BIND_HOST}" \
   -e WRIGHT_ALLOWED_ORIGINS="$ALLOWED_ORIGINS" \
   -e WRIGHT_API_TOKEN="$TOKEN" \
+  -e WRIGHT_WORKSPACES_DIR=/home/agent/workspace \
+  -e WRIGHT_WORKSPACE_PATH=/home/agent/workspace \
   -e FRONTEND_DIST_DIR="${FRONTEND_DIST_DIR:-/workspace/apps/web/dist}" \
   "${LLM_ENV_ARGS[@]}" \
   -e WRIGHT_MCP_HERMES_CONFIG=/opt/wright/mcp/generated/hermes-mcp.generated.yaml \

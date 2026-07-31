@@ -71,8 +71,11 @@
 - [X] `bash -n scripts/docker-mcp-run.sh scripts/docker-smoke-test.sh docker/entrypoint.sh`
 - [X] `npm test --workspace=apps/web -- ModelSetupPage.spec.tsx Sidebar.spec.tsx App.spec.tsx`
 - [X] `npm run build --workspace=apps/web`
+- [X] `UV_CACHE_DIR=/tmp/wright-uv-cache uv run pytest apps/api/tests/test_agent_stream_progress.py packages/workspace_service/tests/test_agent_sync.py tests/test_docker_smoke_contract.py tests/test_container_security_contract.py -q`
+- [X] `PLAYWRIGHT_INCLUDE_LIVE=1 PLAYWRIGHT_BASE_URL=http://192.168.1.163:18182 WRIGHT_API_TOKEN=<test-token> npx playwright test tests/ui-integration/mcp-appliance.spec.ts --reporter=line`
 
 ## Host-Limited Validation
 
 - Live ARM64 validation on GB10 showed Debian Trixie's `freecad` package segfaulting before startup and SolidEdgeMCP reporting the expected Windows/Solid Edge runtime boundary. The Linux ARM64 manifest now uses FreeCAD's official 1.1.1 Linux aarch64 AppImage and keeps SolidEdgeMCP blocked in Linux while the Windows runtime owns the runnable SolidEdgeMCP path.
+- Live ARM64 Playwright validation passed against a fresh MCP appliance container after rebinding the supervised Hermes gateway through `supervisorctl` and aligning Wright workspaces with the mounted `/home/agent/workspace` volume.
 - `pwsh` is not installed on this Linux host, so the Windows PowerShell build/run scripts were covered by static tests but not executed locally.

@@ -176,6 +176,8 @@ docker run --rm -d --name "$SMOKE_CONTAINER" \
   -e LLM_API_KEY="ci-test" \
   -e LLM_API_MODEL="ci-model" \
   -e WRIGHT_API_TOKEN="ci-smoke-token" \
+  -e WRIGHT_WORKSPACES_DIR=/home/agent/workspace \
+  -e WRIGHT_WORKSPACE_PATH=/home/agent/workspace \
   "$IMAGE_TAG" >/dev/null
 
 cleanup_smoke() {

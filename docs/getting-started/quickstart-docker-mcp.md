@@ -5,6 +5,9 @@ MCP bundle installed. You still open Wright in a browser and use the same
 API/token workflow as the standard container, but this flavor starts with CAD
 and browser-control MCPs already configured.
 
+Workspaces are created under `/home/agent/workspace`, which the Docker Compose
+and helper-script paths mount as a persistent named volume.
+
 For the full managed image matrix, including Linux arm64 and Windows-host
 builds, see [Docker image family](docker-image-family.md).
 

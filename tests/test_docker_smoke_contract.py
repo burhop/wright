@@ -78,15 +78,21 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     mcp_dockerfile = read_text("docker/Dockerfile.mcp")
 
     assert "ENV FRONTEND_DIST_DIR=/workspace/apps/web/dist" in dockerfile
+    assert "ENV WRIGHT_WORKSPACES_DIR=/home/agent/workspace" in dockerfile
+    assert "ENV WRIGHT_WORKSPACE_PATH=/home/agent/workspace" in dockerfile
     assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
     assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
     assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
     assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in dockerfile
     assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in mcp_dockerfile
     assert 'FRONTEND_DIST_DIR="%(ENV_FRONTEND_DIST_DIR)s"' in supervisor
+    assert 'WRIGHT_WORKSPACES_DIR="%(ENV_WRIGHT_WORKSPACES_DIR)s"' in supervisor
+    assert 'WRIGHT_WORKSPACE_PATH="%(ENV_WRIGHT_WORKSPACE_PATH)s"' in supervisor
     assert 'WRIGHT_MCP_BUNDLE="%(ENV_WRIGHT_MCP_BUNDLE)s"' in supervisor
     assert 'WRIGHT_MCP_HERMES_CONFIG="%(ENV_WRIGHT_MCP_HERMES_CONFIG)s"' in supervisor
     assert 'WRIGHT_MCP_STATUS="%(ENV_WRIGHT_MCP_STATUS)s"' in supervisor
+    assert "-e WRIGHT_WORKSPACES_DIR=/home/agent/workspace" in mcp_run
+    assert "-e WRIGHT_WORKSPACE_PATH=/home/agent/workspace" in mcp_run
     assert '-e FRONTEND_DIST_DIR="${FRONTEND_DIST_DIR:-/workspace/apps/web/dist}"' in mcp_run
 
 

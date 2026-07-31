@@ -12,6 +12,8 @@ export HERMES_API_KEY="${HERMES_API_KEY:-${API_SERVER_KEY:-$(generate_secret)}}"
 export API_SERVER_KEY="${HERMES_API_KEY}"
 : "${WRIGHT_API_TOKEN:?WRIGHT_API_TOKEN must be set to a unique installation secret}"
 export WRIGHT_API_TOKEN
+export WRIGHT_WORKSPACES_DIR="${WRIGHT_WORKSPACES_DIR:-${WRIGHT_WORKSPACE_PATH:-/home/agent/workspace}}"
+export WRIGHT_WORKSPACE_PATH="${WRIGHT_WORKSPACE_PATH:-${WRIGHT_WORKSPACES_DIR}}"
 
 echo "=== Agent Container Starting ==="
 echo "  Timestamp   : $(date -u)"
@@ -32,6 +34,7 @@ fi
 # 3. Create Wright-owned data directories
 mkdir -p /home/agent/.local/share/wright || echo "Warning: Failed to create Wright state directory" >&2
 mkdir -p /home/agent/.config/wright || echo "Warning: Failed to create Wright config directory" >&2
+mkdir -p "${WRIGHT_WORKSPACES_DIR}" || echo "Warning: Failed to create Wright workspace directory" >&2
 
 # 4. Bootstrap Hermes Agent (first-run only)
 HERMES_HOME="/home/agent/.hermes"
@@ -70,7 +73,7 @@ existing["terminal"] = {
     **(existing.get("terminal") if isinstance(existing.get("terminal"), dict) else {}),
     "backend": "local",
     "persistent_shell": True,
-    "cwd": "/home/agent/workspace",
+    "cwd": os.environ.get("WRIGHT_WORKSPACES_DIR") or "/home/agent/workspace",
     "timeout": 300,
 }
 path.parent.mkdir(parents=True, exist_ok=True)
@@ -184,7 +187,7 @@ else
 fi
 
 # 5. Create default workspace directory
-mkdir -p /home/agent/workspace
+mkdir -p "${WRIGHT_WORKSPACES_DIR}"
 
 # 6. Log startup event
 if echo "$(date -u) | Container started" >> /var/log/agent-startup.log 2>/dev/null; then

@@ -43,6 +43,18 @@ def test_default_compose_is_read_only_least_privilege_and_narrow():
         assert "/home/agent/workspace" in targets
 
 
+def test_compose_workspace_env_matches_workspace_volume():
+    for filename in (
+        "docker-compose.yml",
+        "docker-compose.minimal.yml",
+        "docker-compose.mcp.yml",
+    ):
+        compose = yaml.safe_load(text(filename))
+        environment = compose["services"]["agent"]["environment"]
+        assert "WRIGHT_WORKSPACES_DIR=/home/agent/workspace" in environment
+        assert "WRIGHT_WORKSPACE_PATH=/home/agent/workspace" in environment
+
+
 def test_legacy_compose_is_explicitly_migration_only():
     legacy = text("docker-compose.legacy.yml")
     assert "Migration-only" in legacy

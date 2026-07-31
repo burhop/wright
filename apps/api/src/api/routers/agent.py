@@ -2,6 +2,7 @@ import asyncio
 from contextlib import suppress
 import json
 import os
+from pathlib import Path
 import secrets
 import shutil
 import subprocess
@@ -37,13 +38,10 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-def _restart_hermes_gateway_process() -> None:
-    executable = shutil.which("hermes")
-    if not executable:
-        raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+def _run_gateway_restart_command(command: list[str], label: str) -> None:
     creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
     completed = subprocess.run(
-        [executable, "gateway", "restart"],
+        command,
         capture_output=True,
         text=True,
         timeout=30,
@@ -51,7 +49,35 @@ def _restart_hermes_gateway_process() -> None:
         check=False,
     )
     if completed.returncode != 0:
-        raise RuntimeError("Hermes gateway restart failed after workspace rebinding")
+        output = "\n".join(
+            value.strip()
+            for value in (completed.stdout, completed.stderr)
+            if value and value.strip()
+        )
+        detail = f"{label} failed after workspace rebinding (exit {completed.returncode})"
+        if output:
+            detail = f"{detail}: {output[-2000:]}"
+        raise RuntimeError(detail)
+
+
+def _restart_hermes_gateway_process() -> None:
+    supervisorctl = shutil.which("supervisorctl")
+    supervisor_config = os.environ.get(
+        "WRIGHT_SUPERVISOR_CONFIG", "/etc/supervisor/conf.d/wright.conf"
+    )
+    if supervisorctl and Path(supervisor_config).is_file():
+        _run_gateway_restart_command(
+            [supervisorctl, "-c", supervisor_config, "restart", "hermes-gateway"],
+            "Supervisor Hermes gateway restart",
+        )
+        return
+
+    executable = shutil.which("hermes")
+    if not executable:
+        raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+    _run_gateway_restart_command(
+        [executable, "gateway", "restart"], "Hermes gateway restart"
+    )
 
 
 async def _refresh_hermes_gateway(engine: BaseAgentEngine) -> None:

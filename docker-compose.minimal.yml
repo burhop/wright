@@ -36,6 +36,8 @@ services:
     environment:
       - WRIGHT_ENV=production
       - WRIGHT_BIND_HOST=0.0.0.0
+      - WRIGHT_WORKSPACES_DIR=/home/agent/workspace
+      - WRIGHT_WORKSPACE_PATH=/home/agent/workspace
       - OTEL_EXPORTER_OTLP_ENDPOINT=        # Explicitly empty to disable remote OTLP export
     restart: unless-stopped
     healthcheck:
