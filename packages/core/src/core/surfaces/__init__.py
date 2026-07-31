@@ -7,11 +7,17 @@ from .models import SurfaceId as SurfaceId
 from .models import SurfaceLifecycle as SurfaceLifecycle
 from .models import SurfaceRevision as SurfaceRevision
 from .models import SurfaceSourceKind as SurfaceSourceKind
+from .network_values import AddressClass as AddressClass
+from .network_values import NetworkValueError as NetworkValueError
+from .network_values import NormalizedTargetUrl as NormalizedTargetUrl
 
 CONTRACT_VERSION = 1
 
 __all__ = (
     "CONTRACT_VERSION",
+    "AddressClass",
+    "NetworkValueError",
+    "NormalizedTargetUrl",
     "SurfaceDescriptor",
     "SurfaceError",
     "SurfaceErrorCode",

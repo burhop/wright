@@ -30,7 +30,9 @@ from api.routers.gateway import router as gateway_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
 from api.routers.surface_presentations import router as surface_presentations_router
+from api.routers.surface_preview import router as surface_preview_router
 from api.routers.surfaces import router as surfaces_router
+from api.surface_host_dispatch import SurfaceHostDispatchMiddleware
 from api.middleware.tracing import TracingMiddleware
 from api.composition import (
     build_api_gateway_service,
@@ -234,6 +236,22 @@ app.add_route(
     name="mcp-transport",
 )
 
+# Preview origins are a separate data plane. The host dispatcher is added last
+# and therefore sits outside control-plane authentication and CORS middleware.
+preview_app = FastAPI(
+    title="Wright Surface Preview",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
+)
+preview_app.include_router(surface_preview_router)
+if app.state.workspace_surface_settings.flags.live_apps:
+    app.add_middleware(
+        SurfaceHostDispatchMiddleware,
+        preview_app=preview_app,
+        preview_domain=app.state.workspace_surface_settings.preview.domain,
+    )
+
 
 @app.websocket("/api/webmcp/ws")
 async def webmcp_websocket_endpoint(websocket: WebSocket):
@@ -285,7 +303,11 @@ async def create_local_session(body: LocalSessionRequest, response: Response):
 
 
 @app.delete("/api/auth/session", status_code=204)
-async def delete_local_session(response: Response):
+async def delete_local_session(request: Request, response: Response):
+    if app.state.workspace_surface_settings.flags.model:
+        surface_application().revocation.user_logout(
+            user_id=getattr(request.state, "principal_id", "local-user")
+        )
     response.delete_cookie(SESSION_COOKIE, path="/api")
 
 

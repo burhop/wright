@@ -1,0 +1,22 @@
+{
+  "protocolVersion": "1.0",
+  "expectedOutcomes": [
+    {"attempt": "parent-document", "code": "SURFACE_BRIDGE_SOURCE_MISMATCH", "allowed": false},
+    {"attempt": "parent-storage", "code": "SURFACE_POLICY_ORIGIN_ISOLATED", "allowed": false},
+    {"attempt": "control-cookie", "code": "SURFACE_POLICY_COOKIE_ISOLATED", "allowed": false},
+    {"attempt": "popup", "code": "SURFACE_POLICY_POPUP_DENIED", "allowed": false},
+    {"attempt": "control-api", "code": "SURFACE_PREVIEW_NOT_FOUND", "allowed": false},
+    {"attempt": "camera", "code": "SURFACE_POLICY_DEVICE_DENIED", "allowed": false},
+    {"attempt": "download", "code": "SURFACE_POLICY_DOWNLOAD_DENIED", "allowed": false},
+    {"attempt": "top-navigation", "code": "SURFACE_POLICY_NAVIGATION_DENIED", "allowed": false},
+    {"attempt": "wildcard-message", "code": "SURFACE_BRIDGE_ORIGIN_MISMATCH", "allowed": false}
+  ],
+  "forbiddenAuditFields": [
+    "authorization",
+    "cookie",
+    "query",
+    "target_pin",
+    "user_content",
+    "upstream_logs"
+  ]
+}

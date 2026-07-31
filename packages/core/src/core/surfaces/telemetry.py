@@ -15,7 +15,8 @@ from core.redaction import REDACTED, redact_mapping, redact_text
 _CODE = re.compile(r"^SURFACE_[A-Z0-9]+(?:_[A-Z0-9]+)+$")
 _CONTENT_KEY = re.compile(
     r"(?i)(prompt|effective_constraints|script(?:_content)?$|target_url|display_url|"
-    r"request_url|query|body|authorization|cookie|token|secret|password|credential)"
+    r"request_url|query|body|authorization|cookie|token|secret|password|credential|"
+    r"target_?pin|user_?content|upstream_?logs?|secret_?env)"
 )
 _SAFE_CONTENT_SUFFIX = ("_hash", "_digest", "_id", "_revision")
 

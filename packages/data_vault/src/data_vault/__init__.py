@@ -19,13 +19,13 @@ from .surface_repository import (
     PresentationPreferenceRecord,
     SurfaceDiagnosticRepository,
     SurfaceGrantRecord,
-    SurfaceGrantRepository,
     SurfacePreferenceRepository,
     SurfaceRepository,
     SurfaceRevisionConflict,
     SurfaceRuntimeRecord,
     SurfaceRuntimeRepository,
 )
+from .surface_grants import SurfaceGrantRepository
 from .surface_vault import SurfacePayloadNotFound, SurfaceVault
 from .surface_presentations import (
     SurfacePresentationRecord,

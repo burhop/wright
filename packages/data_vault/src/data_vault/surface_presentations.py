@@ -30,7 +30,9 @@ class SurfacePresentationRecord:
     cookie_audience: str
     idempotency_key: str
     created_at: datetime
+    bootstrap_expires_at: datetime
     expires_at: datetime
+    presentation_cookie_hash: str | None = None
     last_seen_at: datetime | None = None
     closed_at: datetime | None = None
 
@@ -53,7 +55,11 @@ def _from_row(row) -> SurfacePresentationRecord:
         cookie_audience=row["cookie_audience"],
         idempotency_key=row["idempotency_key"],
         created_at=datetime.fromisoformat(row["created_at"]),
+        bootstrap_expires_at=datetime.fromisoformat(
+            row["bootstrap_expires_at"] or row["expires_at"]
+        ),
         expires_at=datetime.fromisoformat(row["expires_at"]),
+        presentation_cookie_hash=row["presentation_cookie_hash"],
         last_seen_at=(
             datetime.fromisoformat(row["last_seen_at"])
             if row["last_seen_at"]
@@ -83,8 +89,9 @@ class SurfacePresentationRepository:
                             user_id, session_id, kind, state, generation, source_id,
                             source_version, effective_origin, bootstrap_nonce_hash,
                             cookie_audience, idempotency_key, created_at, last_seen_at,
-                            expires_at, closed_at
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                            bootstrap_expires_at, expires_at,
+                            presentation_cookie_hash, closed_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                         (
                             record.presentation_id,
                             record.instance_id,
@@ -103,7 +110,9 @@ class SurfacePresentationRepository:
                             record.idempotency_key,
                             record.created_at.isoformat(),
                             record.last_seen_at.isoformat() if record.last_seen_at else None,
+                            record.bootstrap_expires_at.isoformat(),
                             record.expires_at.isoformat(),
+                            record.presentation_cookie_hash,
                             record.closed_at.isoformat() if record.closed_at else None,
                         ),
                     )
@@ -160,14 +169,14 @@ class SurfacePresentationRepository:
         record: SurfacePresentationRecord,
         *,
         bootstrap_nonce_hash: str,
-        expires_at: datetime,
+        bootstrap_expires_at: datetime,
     ) -> SurfacePresentationRecord:
         if record.state in {"closed", "expired"}:
             raise ValueError("closed presentation authority cannot be rotated")
         updated = replace(
             record,
             bootstrap_nonce_hash=bootstrap_nonce_hash,
-            expires_at=expires_at,
+            bootstrap_expires_at=bootstrap_expires_at,
         )
         with self.tracer.start_as_current_span(
             "surface.sqlite.presentation.rotate_bootstrap",
@@ -176,12 +185,12 @@ class SurfacePresentationRepository:
             with connect_state_db(self.db_path) as connection:
                 cursor = connection.execute(
                     """UPDATE surface_presentations
-                    SET bootstrap_nonce_hash=?, expires_at=?
+                    SET bootstrap_nonce_hash=?, bootstrap_expires_at=?
                     WHERE presentation_id=? AND user_id=? AND workspace_id=?
                       AND session_id=? AND state NOT IN ('closed', 'expired')""",
                     (
                         bootstrap_nonce_hash,
-                        expires_at.isoformat(),
+                        bootstrap_expires_at.isoformat(),
                         record.presentation_id,
                         record.user_id,
                         record.workspace_id,
@@ -193,6 +202,60 @@ class SurfacePresentationRepository:
                 connection.commit()
         return updated
 
+    def get_for_preview(
+        self, presentation_id: str
+    ) -> SurfacePresentationRecord | None:
+        """Resolve opaque preview authority without crossing its host audience."""
+        with self.tracer.start_as_current_span("surface.sqlite.presentation.preview_get"):
+            with connect_state_db(self.db_path) as connection:
+                row = connection.execute(
+                    "SELECT * FROM surface_presentations WHERE presentation_id=?",
+                    (presentation_id,),
+                ).fetchone()
+        return _from_row(row) if row else None
+
+    def activate_with_cookie(
+        self,
+        record: SurfacePresentationRecord,
+        *,
+        expected_bootstrap_hash: str,
+        presentation_cookie_hash: str,
+        activated_at: datetime,
+    ) -> SurfacePresentationRecord | None:
+        """Atomically consume a bootstrap token and establish cookie authority."""
+        with self.tracer.start_as_current_span(
+            "surface.sqlite.presentation.activate",
+            attributes={"wright.workspace_id": record.workspace_id},
+        ):
+            with connect_state_db(self.db_path) as connection:
+                cursor = connection.execute(
+                    """UPDATE surface_presentations
+                    SET state='active', bootstrap_nonce_hash=NULL,
+                        presentation_cookie_hash=?, last_seen_at=?
+                    WHERE presentation_id=?
+                      AND state IN ('issued', 'inactive')
+                      AND bootstrap_nonce_hash=?
+                      AND bootstrap_expires_at>=?
+                      AND expires_at>=?""",
+                    (
+                        presentation_cookie_hash,
+                        activated_at.isoformat(),
+                        record.presentation_id,
+                        expected_bootstrap_hash,
+                        activated_at.isoformat(),
+                        activated_at.isoformat(),
+                    ),
+                )
+                if cursor.rowcount != 1:
+                    connection.rollback()
+                    return None
+                connection.commit()
+                row = connection.execute(
+                    "SELECT * FROM surface_presentations WHERE presentation_id=?",
+                    (record.presentation_id,),
+                ).fetchone()
+        return _from_row(row) if row else None
+
     def close(
         self, record: SurfacePresentationRecord, *, closed_at: datetime
     ) -> SurfacePresentationRecord:
@@ -202,6 +265,7 @@ class SurfacePresentationRepository:
             record,
             state="closed",
             bootstrap_nonce_hash=None,
+            presentation_cookie_hash=None,
             closed_at=closed_at,
         )
         with self.tracer.start_as_current_span(
@@ -211,7 +275,8 @@ class SurfacePresentationRepository:
             with connect_state_db(self.db_path) as connection:
                 cursor = connection.execute(
                     """UPDATE surface_presentations
-                    SET state='closed', bootstrap_nonce_hash=NULL, closed_at=?
+                    SET state='closed', bootstrap_nonce_hash=NULL,
+                        presentation_cookie_hash=NULL, closed_at=?
                     WHERE presentation_id=? AND user_id=? AND workspace_id=?
                       AND session_id=?""",
                     (

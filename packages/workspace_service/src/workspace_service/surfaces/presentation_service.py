@@ -75,17 +75,23 @@ class PresentationService:
         *,
         preview: SurfacePreviewSettings,
         token_ttl_seconds: int = 60,
+        presentation_ttl_seconds: int = 8 * 60 * 60,
         clock=lambda: datetime.now(UTC),
         id_factory=lambda: str(uuid.uuid4()),
         token_factory=lambda: secrets.token_urlsafe(32),
     ) -> None:
         if not 1 <= token_ttl_seconds <= 300:
             raise ValueError("bootstrap token TTL must be between 1 and 300 seconds")
+        if not token_ttl_seconds <= presentation_ttl_seconds <= 24 * 60 * 60:
+            raise ValueError(
+                "presentation TTL must be at least the bootstrap TTL and at most one day"
+            )
         self.surfaces = SurfaceRepository(db_path)
         self.presentations = SurfacePresentationRepository(db_path)
         self.preferences = SurfacePreferenceRepository(db_path)
         self.preview = preview
         self.token_ttl_seconds = token_ttl_seconds
+        self.presentation_ttl_seconds = presentation_ttl_seconds
         self.clock = clock
         self.id_factory = id_factory
         self.token_factory = token_factory
@@ -168,7 +174,7 @@ class PresentationService:
             absolute_bootstrap_url=(
                 f"{record.effective_origin}/__wright/bootstrap#{token}"
             ),
-            expires_at=record.expires_at,
+            expires_at=record.bootstrap_expires_at,
         )
 
     def resolve_preference(
@@ -291,7 +297,7 @@ class PresentationService:
             )
 
         now = self.clock()
-        expires_at = now + timedelta(seconds=self.token_ttl_seconds)
+        bootstrap_expires_at = now + timedelta(seconds=self.token_ttl_seconds)
         token, token_hash = self._token()
         existing = self.presentations.get_by_idempotency(
             user_id=actor.user_id,
@@ -300,6 +306,8 @@ class PresentationService:
             idempotency_key=idempotency_key,
         )
         if existing is not None:
+            if existing.expires_at < now:
+                raise PresentationUnavailable("Presentation authority has expired")
             if (
                 existing.surface_id != str(surface_id)
                 or existing.kind != kind
@@ -317,7 +325,9 @@ class PresentationService:
             existing = self.presentations.rotate_bootstrap(
                 existing,
                 bootstrap_nonce_hash=token_hash,
-                expires_at=expires_at,
+                bootstrap_expires_at=min(
+                    bootstrap_expires_at, existing.expires_at
+                ),
             )
             if remember_preference:
                 self._remember(actor=actor, source=source, kind=kind)
@@ -351,7 +361,9 @@ class PresentationService:
             cookie_audience=f"surface-presentation:{presentation_id}:{origin}",
             idempotency_key=idempotency_key,
             created_at=now,
-            expires_at=expires_at,
+            bootstrap_expires_at=bootstrap_expires_at,
+            expires_at=now + timedelta(seconds=self.presentation_ttl_seconds),
+            presentation_cookie_hash=None,
         )
         try:
             self.presentations.create(record)
@@ -386,7 +398,9 @@ class PresentationService:
             existing = self.presentations.rotate_bootstrap(
                 existing,
                 bootstrap_nonce_hash=token_hash,
-                expires_at=expires_at,
+                bootstrap_expires_at=min(
+                    bootstrap_expires_at, existing.expires_at
+                ),
             )
             if remember_preference:
                 self._remember(actor=actor, source=source, kind=kind)

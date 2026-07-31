@@ -8,10 +8,10 @@ from typing import Any
 REDACTED = "[REDACTED]"
 
 SECRET_KEY_RE = re.compile(
-    r"(?i)(api[_-]?key|secret|token|password|authorization|credential|private[_-]?key)"
+    r"(?i)(api[_-]?key|secret|token|password|authorization|cookie|credential|private[_-]?key)"
 )
 SECRET_ASSIGNMENT_RE = re.compile(
-    r"(?i)\b(api[_-]?(?:key|token)|secret|token|password|authorization|credential)\b\s*[:=]\s*([^\s,;]+)"
+    r"(?i)\b(api[_-]?(?:key|token)|secret|token|password|authorization|cookie|credential)\b\s*[:=]\s*([^\s,;]+)"
 )
 BEARER_RE = re.compile(r"(?i)\bbearer\s+[a-z0-9._~+/=-]+")
 

@@ -499,6 +499,17 @@ MIGRATIONS: tuple[Migration, ...] = (
                 ON surface_presentations(workspace_id, user_id, session_id, surface_id, state)"""),
         ),
     ),
+    Migration(
+        8,
+        "surface_preview_credentials",
+        (
+            add_column("surface_presentations", "bootstrap_expires_at", "TEXT"),
+            add_column("surface_presentations", "presentation_cookie_hash", "TEXT"),
+            sql("""UPDATE surface_presentations
+                SET bootstrap_expires_at=expires_at
+                WHERE bootstrap_expires_at IS NULL"""),
+        ),
+    ),
 )
 
 

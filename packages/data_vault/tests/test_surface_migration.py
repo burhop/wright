@@ -33,7 +33,16 @@ SURFACE_TABLES = {
 def test_migration_six_is_contiguous_checksummed_and_creates_all_surface_tables(
     tmp_path: Path,
 ) -> None:
-    assert [migration.version for migration in MIGRATIONS] == [1, 2, 3, 4, 5, 6, 7]
+    assert [migration.version for migration in MIGRATIONS] == [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+    ]
     migration = MIGRATIONS[5]
     assert migration.name == "workspace_surfaces"
     assert len(migration.checksum) == 64
@@ -70,7 +79,7 @@ def test_upgrade_from_five_creates_verified_backup_and_preserves_workspace(
     result = upgrade_database(path, backup_dir=tmp_path / "backups")
 
     assert result.starting_version == 5
-    assert result.ending_version == 7
+    assert result.ending_version == 8
     assert result.backup_manifest is not None
     assert Path(result.backup_manifest).is_file()
     with sqlite3.connect(path) as connection:
@@ -85,7 +94,7 @@ def test_future_surface_schema_is_rejected_before_mutation(tmp_path: Path) -> No
     with sqlite3.connect(path) as connection:
         connection.execute(
             f"INSERT INTO {LEDGER_TABLE} VALUES (?, ?, ?, ?, ?, ?)",
-            (8, "future_surface_contract", "future", "now", 0, "99.0.0"),
+            (9, "future_surface_contract", "future", "now", 0, "99.0.0"),
         )
         connection.commit()
 
@@ -93,7 +102,7 @@ def test_future_surface_schema_is_rejected_before_mutation(tmp_path: Path) -> No
         database_status(path)
     with sqlite3.connect(path) as connection:
         assert connection.execute(
-            f"SELECT COUNT(*) FROM {LEDGER_TABLE} WHERE version=8"
+            f"SELECT COUNT(*) FROM {LEDGER_TABLE} WHERE version=9"
         ).fetchone() == (1,)
 
 
@@ -137,11 +146,12 @@ def test_upgrade_from_six_revokes_legacy_presentation_authority(
 
     result = upgrade_database(path)
     assert result.starting_version == 6
-    assert result.ending_version == 7
+    assert result.ending_version == 8
     with sqlite3.connect(path) as connection:
         migrated = connection.execute(
             """SELECT session_id, state, generation, source_id, source_version,
-                      bootstrap_nonce_hash, idempotency_key, closed_at
+                      bootstrap_nonce_hash, idempotency_key, closed_at,
+                      bootstrap_expires_at, presentation_cookie_hash
                FROM surface_presentations
                WHERE presentation_id='legacy-presentation'"""
         ).fetchone()
@@ -154,4 +164,6 @@ def test_upgrade_from_six_revokes_legacy_presentation_authority(
         None,
         "migration-7:legacy-presentation",
         "2026-07-30T12:00:00+00:00",
+        "2026-07-30T12:01:00+00:00",
+        None,
     )
