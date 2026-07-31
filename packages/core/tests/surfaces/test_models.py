@@ -90,6 +90,7 @@ def test_surface_revision_is_positive_and_monotonic() -> None:
         (
             McpAppSurfaceSource(
                 gateway_session_id="gateway-1",
+                server_id="brep",
                 server_connection_id="server-1",
                 resource_uri="ui://brep/main",
                 content_hash="b" * 64,
@@ -130,6 +131,7 @@ def test_mcp_source_requires_ui_uri_and_server_scoped_identity() -> None:
     with pytest.raises(ValueError, match="ui://"):
         McpAppSurfaceSource(
             gateway_session_id="gateway-1",
+            server_id="brep",
             server_connection_id="server-1",
             resource_uri="https://example.test/app",
             content_hash="c" * 64,
@@ -138,6 +140,7 @@ def test_mcp_source_requires_ui_uri_and_server_scoped_identity() -> None:
     with pytest.raises(ValueError, match="server_connection_id"):
         McpAppSurfaceSource(
             gateway_session_id="gateway-1",
+            server_id="brep",
             server_connection_id=" ",
             resource_uri="ui://brep/main",
             content_hash="c" * 64,

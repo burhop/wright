@@ -251,3 +251,49 @@ def test_preview_dispatch_denies_control_routes_and_unbound_hosts(
         ).status_code
         == 404
     )
+
+
+def test_reserved_mcp_sandbox_host_serves_only_bundled_proxy_assets(
+    tmp_path: Path,
+) -> None:
+    sandbox = tmp_path / "surface-sandbox"
+    sandbox.mkdir()
+    (sandbox / "index.html").write_text("<h1>proxy</h1>", encoding="utf-8")
+    (sandbox / "sandbox-proxy.js").write_text("void 0;", encoding="utf-8")
+    preview_app = FastAPI()
+    preview_app.state.surface_sandbox_domain = PREVIEW.domain
+    preview_app.state.surface_sandbox_dist_dir = tmp_path
+    preview_app.include_router(router)
+    control_app = FastAPI()
+    control_app.add_middleware(
+        SurfaceHostDispatchMiddleware,
+        preview_app=preview_app,
+        preview_domain=PREVIEW.domain,
+    )
+    client = TestClient(control_app)
+    host = f"mcp-sandbox.{PREVIEW.domain}"
+
+    response = client.get(
+        "/surface-sandbox/index.html", headers={"Host": host}
+    )
+    assert response.status_code == 200
+    assert response.text == "<h1>proxy</h1>"
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert "frame-ancestors http: https:" in response.headers[
+        "content-security-policy"
+    ]
+    assert response.headers["permissions-policy"].startswith("camera=*")
+    assert client.get("/api/secret", headers={"Host": host}).status_code == 404
+    assert (
+        client.get(
+            "/surface-sandbox/unknown.js", headers={"Host": host}
+        ).status_code
+        == 404
+    )
+    assert (
+        client.get(
+            "/surface-sandbox/index.html",
+            headers={"Host": f"evil.{PREVIEW.domain}"},
+        ).status_code
+        == 404
+    )

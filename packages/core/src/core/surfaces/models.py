@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from datetime import datetime
 from enum import StrEnum
@@ -287,10 +289,14 @@ class LiveAppSurfaceSource:
 @dataclass(frozen=True, slots=True)
 class McpAppSurfaceSource:
     gateway_session_id: str
+    server_id: str
     server_connection_id: str
     resource_uri: str
     content_hash: str
     protocol_version: str
+    initial_tool_input: Mapping[str, Any] | None = None
+    fallback_result: Mapping[str, Any] | None = None
+    declared_host_capabilities: frozenset[str] = frozenset()
 
     def __post_init__(self) -> None:
         object.__setattr__(
@@ -298,6 +304,7 @@ class McpAppSurfaceSource:
             "gateway_session_id",
             _opaque(self.gateway_session_id, "gateway_session_id"),
         )
+        object.__setattr__(self, "server_id", _opaque(self.server_id, "server_id"))
         object.__setattr__(
             self,
             "server_connection_id",
@@ -315,6 +322,25 @@ class McpAppSurfaceSource:
             "protocol_version",
             _required(self.protocol_version, "protocol_version"),
         )
+        for label in ("initial_tool_input", "fallback_result"):
+            value = getattr(self, label)
+            if value is None:
+                continue
+            if not isinstance(value, Mapping):
+                raise ValueError(f"{label} must be a JSON object")
+            copied = dict(value)
+            try:
+                encoded = json.dumps(copied, allow_nan=False, separators=(",", ":"))
+            except (TypeError, ValueError) as error:
+                raise ValueError(f"{label} must contain JSON values") from error
+            if len(encoded.encode("utf-8")) > 1024 * 1024:
+                raise ValueError(f"{label} exceeds the 1 MiB surface limit")
+            object.__setattr__(self, label, MappingProxyType(copied))
+        allowed = {"context.update", "user.message", "open.link"}
+        declared = frozenset(str(item) for item in self.declared_host_capabilities)
+        if not declared.issubset(allowed):
+            raise ValueError("declared_host_capabilities contains an unsupported value")
+        object.__setattr__(self, "declared_host_capabilities", declared)
 
     @property
     def kind(self) -> SurfaceSourceKind:
@@ -416,10 +442,24 @@ def surface_source_to_dict(source: SurfaceSource) -> dict[str, Any]:
         return {
             **common,
             "gateway_session_id": source.gateway_session_id,
+            "server_id": source.server_id,
             "server_connection_id": source.server_connection_id,
             "resource_uri": source.resource_uri,
             "content_hash": source.content_hash,
             "protocol_version": source.protocol_version,
+            "initial_tool_input": (
+                dict(source.initial_tool_input)
+                if source.initial_tool_input is not None
+                else None
+            ),
+            "fallback_result": (
+                dict(source.fallback_result)
+                if source.fallback_result is not None
+                else None
+            ),
+            "declared_host_capabilities": sorted(
+                source.declared_host_capabilities
+            ),
         }
     return {
         **common,
@@ -458,10 +498,17 @@ def surface_source_from_dict(value: dict[str, Any]) -> SurfaceSource:
     if kind is SurfaceSourceKind.MCP_APP:
         return McpAppSurfaceSource(
             gateway_session_id=value["gateway_session_id"],
+            # Compatibility for pre-host records that retained only the connection id.
+            server_id=value.get("server_id", value["server_connection_id"]),
             server_connection_id=value["server_connection_id"],
             resource_uri=value["resource_uri"],
             content_hash=value["content_hash"],
             protocol_version=value["protocol_version"],
+            initial_tool_input=value.get("initial_tool_input"),
+            fallback_result=value.get("fallback_result"),
+            declared_host_capabilities=frozenset(
+                value.get("declared_host_capabilities", ())
+            ),
         )
     return ExternalUrlSurfaceSource(
         normalized_url=value["normalized_url"],

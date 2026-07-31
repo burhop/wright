@@ -385,6 +385,162 @@ class GatewayService:
         finally:
             self._requests.pop(key, None)
 
+    async def list_app_resources(
+        self,
+        session_id: str,
+        request_id: str,
+        app_server_id: str,
+        *,
+        timeout: float | None = None,
+    ) -> Mapping[str, Any]:
+        return await self._list_app_resource_collection(
+            session_id,
+            request_id,
+            app_server_id,
+            collection="resources",
+            timeout=timeout,
+        )
+
+    async def list_app_resource_templates(
+        self,
+        session_id: str,
+        request_id: str,
+        app_server_id: str,
+        *,
+        timeout: float | None = None,
+    ) -> Mapping[str, Any]:
+        return await self._list_app_resource_collection(
+            session_id,
+            request_id,
+            app_server_id,
+            collection="resource_templates",
+            timeout=timeout,
+        )
+
+    async def _list_app_resource_collection(
+        self,
+        session_id: str,
+        request_id: str,
+        app_server_id: str,
+        *,
+        collection: str,
+        timeout: float | None,
+    ) -> Mapping[str, Any]:
+        session = self._session(session_id)
+        operation = f"app.{collection}.list"
+        target = GatewayTool(
+            name=collection,
+            server_id=app_server_id,
+            tool_name=collection,
+            description="MCP App resource discovery",
+            input_schema={},
+        )
+        if self.mcp_ui_resources is None:
+            raise GatewayError(
+                GatewayErrorCode.CHILD_UNAVAILABLE,
+                "MCP UI resource service is unavailable",
+            )
+        enabled = self.workspaces.enabled_server_ids(session)
+        server = next(
+            (
+                item
+                for item in self.catalog.servers()
+                if item.server_id == app_server_id and item.is_installed
+            ),
+            None,
+        )
+        if server is None or (
+            enabled is not None
+            and app_server_id not in enabled
+            and server.name not in enabled
+        ):
+            raise GatewayError(
+                GatewayErrorCode.NOT_FOUND,
+                "MCP UI resource server is not enabled in this workspace",
+            )
+        now = time.monotonic()
+        bounded = min(timeout or self.operation_timeout, self.maximum_timeout)
+        request = GatewayRequest(
+            session_id,
+            request_id,
+            f"{collection}/list",
+            str(uuid.uuid4()),
+            now + bounded,
+            now + self.maximum_timeout,
+        )
+        request.transition(RequestState.RUNNING)
+        self._audit(
+            session,
+            request_id,
+            target,
+            True,
+            "same_server",
+            "started",
+            now,
+            operation=operation,
+        )
+
+        async def execute() -> Mapping[str, Any]:
+            await self.lifecycle.ensure_started(
+                app_server_id,
+                workspace_path=session.workspace_path,
+                approval_context={"workspace_id": session.workspace_id},
+            )
+            reader = self.mcp_ui_resources.reader
+            if collection == "resources":
+                return await reader.list_resources(app_server_id)
+            return await reader.list_resource_templates(app_server_id)
+
+        task = asyncio.create_task(execute())
+        key = (session_id, request_id)
+        self._requests[key] = (request, task)
+        try:
+            result = await asyncio.wait_for(task, bounded)
+            request.transition(RequestState.SUCCEEDED)
+            self._audit(
+                session,
+                request_id,
+                target,
+                True,
+                "same_server",
+                "succeeded",
+                now,
+                operation=operation,
+            )
+            return result
+        except TimeoutError:
+            request.transition(RequestState.TIMED_OUT)
+            self._audit(
+                session,
+                request_id,
+                target,
+                True,
+                "timeout",
+                "timed_out",
+                now,
+                operation=operation,
+            )
+            raise GatewayError(
+                GatewayErrorCode.TIMEOUT,
+                "MCP UI resource discovery timed out",
+            ) from None
+        except asyncio.CancelledError:
+            if not request.state.terminal:
+                request.cancel("cancelled")
+            self._audit(
+                session,
+                request_id,
+                target,
+                True,
+                "cancelled",
+                "cancelled",
+                now,
+                operation=operation,
+            )
+            raise
+        finally:
+            self._requests.pop(key, None)
+
     async def call_tool(
         self,
         session_id: str,

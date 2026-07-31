@@ -168,7 +168,7 @@ def _source_response(source) -> SurfaceSourceResponse:
     if isinstance(source, McpAppSurfaceSource):
         return McpAppSourceResponse(
             **common,
-            serverId=source.server_connection_id,
+            serverId=source.server_id,
             resourceUri=source.resource_uri,
             contentHash=source.content_hash,
         )

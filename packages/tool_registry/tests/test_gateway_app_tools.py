@@ -188,6 +188,17 @@ class _UiResources:
     def __init__(self) -> None:
         self.calls: list[tuple[str, str, str]] = []
         self.gate: asyncio.Event | None = None
+        self.reader = self
+
+    async def list_resources(self, server_id: str):
+        return {"resources": [{"uri": f"ui://{server_id}/app"}]}
+
+    async def list_resource_templates(self, server_id: str):
+        return {
+            "resourceTemplates": [
+                {"uriTemplate": f"ui://{server_id}/{{view}}"}
+            ]
+        }
 
     async def read(self, session, server_id: str, uri: str) -> McpUiBinding:
         if self.gate is not None:
@@ -268,3 +279,33 @@ async def test_app_resource_read_is_cancellable_by_owning_session() -> None:
         and event["outcome"] == "cancelled"
         for event in audit.events
     )
+
+
+@pytest.mark.asyncio
+async def test_app_resource_discovery_is_same_server_scoped_and_audited() -> None:
+    gateway, _, audit = _app_service()
+    resources = _UiResources()
+    gateway.mcp_ui_resources = resources
+
+    listed = await gateway.list_app_resources("s1", "resources-list", "cad")
+    templates = await gateway.list_app_resource_templates(
+        "s1", "templates-list", "cad"
+    )
+
+    assert listed == {"resources": [{"uri": "ui://cad/app"}]}
+    assert templates == {
+        "resourceTemplates": [{"uriTemplate": "ui://cad/{view}"}]
+    }
+    assert any(
+        event["operation"] == "app.resources.list"
+        and event["outcome"] == "succeeded"
+        for event in audit.events
+    )
+    assert any(
+        event["operation"] == "app.resource_templates.list"
+        and event["outcome"] == "succeeded"
+        for event in audit.events
+    )
+
+    with pytest.raises(GatewayError, match="not enabled"):
+        await gateway.list_app_resources("s1", "disabled-list", "fea")

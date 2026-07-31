@@ -68,6 +68,7 @@ def _publication() -> McpUiPublication:
         workspace_id="workspace-one",
         session_id="session-one",
         gateway_session_id="gateway-one",
+        server_id="server-one",
         server_connection_id="server-one:7",
         resource_uri="ui://server-one/app",
         content_hash="a" * 64,
@@ -87,6 +88,7 @@ async def test_api_adapter_publishes_ready_mcp_app_surface_with_exact_binding() 
     assert descriptor.lifecycle is SurfaceLifecycle.READY
     assert isinstance(descriptor.source, McpAppSurfaceSource)
     assert descriptor.source.gateway_session_id == "gateway-one"
+    assert descriptor.source.server_id == "server-one"
     assert descriptor.source.server_connection_id == "server-one:7"
     assert descriptor.source.resource_uri == "ui://server-one/app"
     assert descriptor.source.content_hash == "a" * 64

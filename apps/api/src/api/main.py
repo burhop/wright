@@ -32,6 +32,7 @@ from api.routers.surface_displays import router as surface_displays_router
 from api.routers.live_apps import router as live_apps_router
 from api.routers.surface_presentations import router as surface_presentations_router
 from api.routers.surface_preview import router as surface_preview_router
+from api.routers.surface_mcp_apps import router as surface_mcp_apps_router
 from api.routers.surfaces import router as surfaces_router
 from api.surface_host_dispatch import SurfaceHostDispatchMiddleware
 from api.surface_http_proxy import SurfaceHttpProxy
@@ -259,6 +260,12 @@ if app.state.workspace_surface_settings.flags.model:
             prefix="/api/workspace",
             tags=["Workspace Surface Presentations"],
         )
+    if app.state.workspace_surface_settings.flags.mcp_apps:
+        app.include_router(
+            surface_mcp_apps_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface MCP Apps"],
+        )
     if app.state.workspace_surface_settings.flags.safe_display:
         app.include_router(
             surface_displays_router,
@@ -280,8 +287,14 @@ preview_app = FastAPI(
     redoc_url=None,
     openapi_url=None,
 )
+preview_app.state.surface_sandbox_domain = (
+    app.state.workspace_surface_settings.preview.domain
+)
 preview_app.include_router(surface_preview_router)
-if app.state.workspace_surface_settings.flags.live_apps:
+if (
+    app.state.workspace_surface_settings.flags.live_apps
+    or app.state.workspace_surface_settings.flags.mcp_apps
+):
     app.add_middleware(
         SurfaceHostDispatchMiddleware,
         preview_app=preview_app,

@@ -42,6 +42,10 @@ class EngineMcpUiResourceReader:
         self._attach_notifications(server_id)
         return await self.engine.list_child_resources(server_id)
 
+    async def list_resource_templates(self, server_id: str) -> Mapping[str, Any]:
+        self._attach_notifications(server_id)
+        return await self.engine.list_child_resource_templates(server_id)
+
     async def read_resource(self, server_id: str, uri: str) -> Mapping[str, Any]:
         self._attach_notifications(server_id)
         return await self.engine.read_child_resource(server_id, uri)

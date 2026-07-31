@@ -18,6 +18,10 @@ class McpUiResourceReader(Protocol):
 
     async def list_resources(self, server_id: str) -> Mapping[str, Any]: ...
 
+    async def list_resource_templates(
+        self, server_id: str
+    ) -> Mapping[str, Any]: ...
+
     async def read_resource(
         self, server_id: str, uri: str
     ) -> Mapping[str, Any]: ...

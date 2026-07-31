@@ -14,6 +14,7 @@ import {
 } from "../../store/surfaces";
 import { DisplaySurface } from "./DisplaySurface";
 import { LiveAppSurface } from "./LiveAppSurface";
+import { McpAppSurface } from "./McpAppSurface";
 import { SurfaceDeck } from "./SurfaceDeck";
 import { SurfaceTabs } from "./SurfaceTabs";
 
@@ -190,6 +191,12 @@ export function SurfaceWorkspace({
                 onFocusMode={() =>
                   onEnterFocus?.()
                 }
+              />
+            ) : descriptor.source.kind === "mcp_app" ? (
+              <McpAppSurface
+                descriptor={descriptor}
+                sessionId={sessionId}
+                onFocusMode={onEnterFocus}
               />
             ) : (
               <div role="status">This surface presenter is not enabled yet.</div>

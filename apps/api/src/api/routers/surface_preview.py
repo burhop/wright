@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import os
+from pathlib import Path
 from typing import Annotated, Any
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, WebSocket
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.background import BackgroundTask
 
+from api.config import get_workspace_surface_settings
 from api.composition import surface_application
 from api.surface_http_proxy import HttpProxyError, ProxyHttpRequest, SurfaceHttpProxy
 from api.surface_route_authority import (
@@ -32,6 +36,18 @@ from workspace_service.surfaces.presentation_tokens import (
 
 
 router = APIRouter()
+
+_SANDBOX_ASSETS = {
+    "index.html": "text/html; charset=utf-8",
+    "sandbox-proxy.js": "text/javascript; charset=utf-8",
+}
+_SANDBOX_CSP = (
+    "default-src 'none'; script-src 'self' 'unsafe-inline' https:; "
+    "style-src 'unsafe-inline' https:; connect-src https: wss:; "
+    "img-src data: blob: https:; font-src https:; media-src blob: https:; "
+    "worker-src blob: https:; frame-src 'self' https:; base-uri https:; "
+    "form-action 'none'; object-src 'none'; frame-ancestors http: https:"
+)
 
 _BOOTSTRAP_SCRIPT = """(() => {
   const token = location.hash.startsWith('#') ? location.hash.slice(1) : '';
@@ -69,6 +85,63 @@ def get_presentation_tokens() -> PresentationTokenService:
 
 def _translate(error: PresentationTokenError) -> HTTPException:
     return HTTPException(status_code=error.status_code, detail=error.code)
+
+
+def _sandbox_dist_dir(request: Request) -> Path:
+    configured = getattr(request.app.state, "surface_sandbox_dist_dir", None)
+    if configured is not None:
+        return Path(configured)
+    if "FRONTEND_DIST_DIR" in os.environ:
+        return Path(os.environ["FRONTEND_DIST_DIR"])
+    try:
+        from wright_engineering.runtime.server import packaged_static_path
+
+        return Path(packaged_static_path())
+    except Exception:
+        return Path("/workspace/apps/web/dist")
+
+
+@router.api_route(
+    "/surface-sandbox/{asset_name}",
+    methods=["GET", "HEAD"],
+)
+def surface_sandbox_asset(
+    asset_name: str,
+    request: Request,
+    host: Annotated[str, Header(alias="Host")],
+) -> Response:
+    """Serve only Wright's immutable proxy on its reserved isolated origin."""
+
+    expected_domain = getattr(request.app.state, "surface_sandbox_domain", None)
+    if expected_domain is None:
+        expected_domain = get_workspace_surface_settings().preview.domain
+    try:
+        hostname = urlsplit(f"//{host}").hostname
+    except ValueError:
+        hostname = None
+    if hostname is None or hostname.lower().rstrip(".") != (
+        f"mcp-sandbox.{expected_domain}".lower().rstrip(".")
+    ):
+        raise HTTPException(status_code=404, detail="SURFACE_PREVIEW_NOT_FOUND")
+    media_type = _SANDBOX_ASSETS.get(asset_name)
+    if media_type is None:
+        raise HTTPException(status_code=404, detail="SURFACE_PREVIEW_NOT_FOUND")
+    target = _sandbox_dist_dir(request) / "surface-sandbox" / asset_name
+    if not target.is_file():
+        raise HTTPException(status_code=503, detail="SURFACE_SANDBOX_UNAVAILABLE")
+    return FileResponse(
+        target,
+        media_type=media_type,
+        headers={
+            "Cache-Control": "public, max-age=31536000, immutable",
+            "Content-Security-Policy": _SANDBOX_CSP,
+            "Permissions-Policy": (
+                "camera=*, microphone=*, geolocation=*, clipboard-write=*"
+            ),
+            "Referrer-Policy": "no-referrer",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
 
 
 def _reserved_application_path(application_path: str) -> bool:
