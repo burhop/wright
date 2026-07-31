@@ -83,7 +83,11 @@ export function DisplaySurface({ descriptor, sessionId, onDeleted }: Props) {
 
   if (error || (projection && ordered.length === 0)) {
     return (
-      <div role="alert" style={{ padding: 24 }}>
+      <div
+        role="alert"
+        data-testid="surface-display-error"
+        style={{ padding: 24 }}
+      >
         This display is unavailable.{" "}
         {error ?? "No safe representation was provided."}
         <button data-testid="surface-diagnostics" type="button">

@@ -220,7 +220,11 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
           }}
         />
       </div>
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <p role="alert" data-testid="surface-presentation-error">
+          {error}
+        </p>
+      )}
       {diagnostics && (
         <aside data-testid="surface-diagnostics-panel">
           Source {descriptor.source.sourceId}, revision {descriptor.revision},
