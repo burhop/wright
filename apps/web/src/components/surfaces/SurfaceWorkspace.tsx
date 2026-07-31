@@ -1,8 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { listSurfaces } from "../../services/surfaces/surface-client";
-import { useSurfaces, useSurfaceUpdates } from "../../store/surfaces";
+import {
+  createSurfaceState,
+  restoreSurfaceState,
+  serializeSurfaceState,
+  useSurfaces,
+  useSurfaceUpdates,
+} from "../../store/surfaces";
 import { DisplaySurface } from "./DisplaySurface";
+import { LiveAppSurface } from "./LiveAppSurface";
+import { SurfaceDeck } from "./SurfaceDeck";
 
 interface Props {
   readonly workspaceId: string;
@@ -12,20 +20,71 @@ interface Props {
 export function SurfaceWorkspace({ workspaceId, sessionId }: Props) {
   const { state, dispatch } = useSurfaces();
   const [notice, setNotice] = useState<string | null>(null);
+  const [restoredStorageKey, setRestoredStorageKey] = useState<string | null>(
+    null,
+  );
+  const [reconciledStorageKey, setReconciledStorageKey] = useState<
+    string | null
+  >(null);
+  const storageKey = useMemo(
+    () => `wright.workspaceSurfaces.state.${workspaceId}.${sessionId}`,
+    [sessionId, workspaceId],
+  );
   useSurfaceUpdates(workspaceId, sessionId);
 
   useEffect(() => {
+    setRestoredStorageKey(null);
+    let nextState = createSurfaceState();
+    try {
+      const serialized = window.localStorage.getItem(storageKey);
+      if (serialized) {
+        nextState = restoreSurfaceState(serialized);
+      }
+    } catch {
+      // Sandboxed/opaque documents may deny storage; server reconciliation remains.
+    } finally {
+      dispatch({ type: "restore", state: nextState });
+      setRestoredStorageKey(storageKey);
+    }
+  }, [dispatch, storageKey]);
+
+  useEffect(() => {
+    if (restoredStorageKey !== storageKey) return;
+    try {
+      window.localStorage.setItem(storageKey, serializeSurfaceState(state));
+    } catch {
+      // Persistence is a hint and never required for runtime authority.
+    }
+  }, [restoredStorageKey, state, storageKey]);
+
+  useEffect(() => {
     let active = true;
+    setReconciledStorageKey(null);
+    setNotice(null);
     void listSurfaces(workspaceId, sessionId)
       .then((items) => {
         if (!active) return;
-        for (const descriptor of items) dispatch({ type: "upsert", descriptor });
+        dispatch({ type: "reconcile", descriptors: items });
+        setReconciledStorageKey(storageKey);
       })
-      .catch(() => undefined);
+      .catch(() => {
+        if (!active) return;
+        setNotice(
+          "Unable to reconcile restored surfaces. Retry after the workspace service reconnects.",
+        );
+      });
     return () => {
       active = false;
     };
-  }, [dispatch, sessionId, workspaceId]);
+  }, [dispatch, sessionId, storageKey, workspaceId]);
+
+  if (reconciledStorageKey !== storageKey) {
+    return (
+      <div role="status" data-testid="surface-restore-status">
+        {notice ?? "Restoring workspace surfaces…"}
+      </div>
+    );
+  }
 
   if (state.tabs.length === 0 || !state.activeSurfaceId) {
     return notice ? (
@@ -34,8 +93,8 @@ export function SurfaceWorkspace({ workspaceId, sessionId }: Props) {
       </div>
     ) : null;
   }
-  const descriptor = state.byId[state.activeSurfaceId];
-  if (!descriptor) return null;
+  if (!state.byId[state.activeSurfaceId]) return null;
+  const descriptors = state.tabs.map((surfaceId) => state.byId[surfaceId]);
 
   return (
     <div
@@ -66,19 +125,39 @@ export function SurfaceWorkspace({ workspaceId, sessionId }: Props) {
           );
         })}
       </div>
-      <div role="tabpanel" style={{ flex: 1, minHeight: 0 }}>
-        {descriptor.source.kind === "display" ? (
-          <DisplaySurface
-            descriptor={descriptor}
-            sessionId={sessionId}
-            onDeleted={(retentionStatus) => {
-              setNotice(retentionStatus);
-              dispatch({ type: "remove", surfaceId: descriptor.surfaceId });
-            }}
-          />
-        ) : (
-          <div role="status">This surface presenter is not enabled yet.</div>
-        )}
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <SurfaceDeck
+          descriptors={descriptors}
+          activeSurfaceId={state.activeSurfaceId}
+          renderSurface={(descriptor) =>
+            descriptor.source.kind === "display" ? (
+              <DisplaySurface
+                descriptor={descriptor}
+                sessionId={sessionId}
+                onDeleted={(retentionStatus) => {
+                  setNotice(retentionStatus);
+                  dispatch({ type: "remove", surfaceId: descriptor.surfaceId });
+                }}
+              />
+            ) : descriptor.source.kind === "live_app" ? (
+              <LiveAppSurface
+                descriptor={descriptor}
+                sessionId={sessionId}
+                onFocusMode={() =>
+                  dispatch({
+                    type: "layout",
+                    layout: {
+                      mode: "focus",
+                      chatSize: state.layout.chatSize,
+                    },
+                  })
+                }
+              />
+            ) : (
+              <div role="status">This surface presenter is not enabled yet.</div>
+            )
+          }
+        />
       </div>
     </div>
   );

@@ -23,6 +23,83 @@ export interface DisplayHistoryItem {
   readonly createdAt: string;
 }
 
+export interface PresentationLaunch {
+  readonly presentationId: string;
+  readonly instanceId: string;
+  readonly generation: number;
+  readonly kind: "panel" | "browser";
+  readonly absoluteBootstrapUrl: string;
+  readonly expiresAt: string;
+}
+
+export interface PresentationPreference {
+  readonly kind: "panel" | "browser";
+  readonly remembered: boolean;
+  readonly reason: string;
+}
+
+function responseRecord(value: unknown, label: string): Record<string, unknown> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new TypeError(`${label} response is malformed`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function responseString(value: unknown, label: string): string {
+  if (typeof value !== "string" || value.trim() === "") {
+    throw new TypeError(`${label} is malformed`);
+  }
+  return value;
+}
+
+function parsePresentationLaunch(
+  value: unknown,
+  requestedKind: "panel" | "browser",
+): PresentationLaunch {
+  const launch = responseRecord(value, "presentation launch");
+  if (launch.kind !== requestedKind) {
+    throw new TypeError("presentation launch kind does not match the request");
+  }
+  if (!Number.isSafeInteger(launch.generation) || Number(launch.generation) < 1) {
+    throw new TypeError("presentation launch generation is malformed");
+  }
+  const expiresAt = responseString(launch.expiresAt, "presentation expiresAt");
+  if (Number.isNaN(Date.parse(expiresAt))) {
+    throw new TypeError("presentation expiresAt is malformed");
+  }
+  return Object.freeze({
+    presentationId: responseString(
+      launch.presentationId,
+      "presentation presentationId",
+    ),
+    instanceId: responseString(launch.instanceId, "presentation instanceId"),
+    generation: Number(launch.generation),
+    kind: requestedKind,
+    absoluteBootstrapUrl: hostAdapter.validateIssuedPreviewUrl(
+      responseString(
+        launch.absoluteBootstrapUrl,
+        "presentation absoluteBootstrapUrl",
+      ),
+    ),
+    expiresAt,
+  });
+}
+
+function parsePresentationPreference(value: unknown): PresentationPreference {
+  const preference = responseRecord(value, "presentation preference");
+  if (preference.kind !== "panel" && preference.kind !== "browser") {
+    throw new TypeError("presentation preference kind is malformed");
+  }
+  if (typeof preference.remembered !== "boolean") {
+    throw new TypeError("presentation preference remembered state is malformed");
+  }
+  return Object.freeze({
+    kind: preference.kind,
+    remembered: preference.remembered,
+    reason: responseString(preference.reason, "presentation preference reason"),
+  });
+}
+
 function headers(workspaceId: string, sessionId: string): HeadersInit {
   return {
     "X-Wright-Workspace-ID": workspaceId,
@@ -105,4 +182,73 @@ export async function deleteDisplay(
       { method: "DELETE", headers: headers(workspaceId, sessionId) },
     ),
   )) as { deleted: boolean; recoverable: boolean; retentionStatus: string };
+}
+
+export async function createPresentation(
+  surfaceId: string,
+  workspaceId: string,
+  sessionId: string,
+  kind: "panel" | "browser",
+  options: {
+    readonly rememberPreference?: boolean;
+    readonly isolatedAcknowledged?: boolean;
+    readonly idempotencyKey?: string;
+  } = {},
+): Promise<PresentationLaunch> {
+  const idempotencyKey =
+    options.idempotencyKey ??
+    `presentation-${surfaceId}-${kind}-${crypto.randomUUID()}`;
+  return parsePresentationLaunch(
+    await checked(
+      await hostAdapter.fetch(
+        `${base()}/${encodeURIComponent(surfaceId)}/presentations`,
+        {
+          method: "POST",
+          headers: {
+            ...headers(workspaceId, sessionId),
+            "Content-Type": "application/json",
+            "Idempotency-Key": idempotencyKey,
+          },
+          body: JSON.stringify({
+            kind,
+            rememberPreference: options.rememberPreference ?? false,
+            isolatedAcknowledged: options.isolatedAcknowledged ?? false,
+          }),
+        },
+      ),
+    ),
+    kind,
+  );
+}
+
+export async function closePresentation(
+  surfaceId: string,
+  presentationId: string,
+  workspaceId: string,
+  sessionId: string,
+): Promise<void> {
+  const response = await hostAdapter.fetch(
+    `${base()}/${encodeURIComponent(surfaceId)}/presentations/${encodeURIComponent(presentationId)}`,
+    { method: "DELETE", headers: headers(workspaceId, sessionId) },
+  );
+  if (!response.ok) {
+    throw new Error(
+      `Workspace Surface presentation close failed with HTTP ${response.status}`,
+    );
+  }
+}
+
+export async function getPresentationPreference(
+  surfaceId: string,
+  workspaceId: string,
+  sessionId: string,
+): Promise<PresentationPreference> {
+  return parsePresentationPreference(
+    await checked(
+      await hostAdapter.fetch(
+        `${base()}/${encodeURIComponent(surfaceId)}/presentation-preference`,
+        { headers: headers(workspaceId, sessionId) },
+      ),
+    ),
+  );
 }

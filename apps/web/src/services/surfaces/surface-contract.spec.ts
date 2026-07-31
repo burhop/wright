@@ -124,4 +124,51 @@ describe("Workspace Surface contract", () => {
       }),
     ).toThrow(/state/);
   });
+
+  it("parses instance authority and presentation eligibility explicitly", () => {
+    const descriptor = parseSurfaceDescriptor({
+      ...base,
+      lifecycle: "ready",
+      source: sources[2],
+      instance: {
+        instanceId: "instance-1",
+        generation: 2,
+        sharing: "shared",
+        readyAt: "2026-07-30T12:00:00Z",
+      },
+      presentations: [
+        { kind: "panel", eligible: true },
+        { kind: "browser", eligible: false, reason: "Policy denied" },
+      ],
+    });
+    expect(descriptor.instance).toEqual({
+      instanceId: "instance-1",
+      generation: 2,
+      sharing: "shared",
+      readyAt: "2026-07-30T12:00:00Z",
+    });
+    expect(descriptor.presentations[1]).toEqual({
+      kind: "browser",
+      eligible: false,
+      reason: "Policy denied",
+    });
+    expect(() =>
+      parseSurfaceDescriptor({
+        ...base,
+        source: sources[2],
+        instance: {
+          instanceId: "instance-1",
+          generation: 2,
+          sharing: "global",
+        },
+      }),
+    ).toThrow(/sharing/);
+    expect(() =>
+      parseSurfaceDescriptor({
+        ...base,
+        source: sources[2],
+        presentations: [{ kind: "popup", eligible: true }],
+      }),
+    ).toThrow(/presentations\[0\].kind/);
+  });
 });

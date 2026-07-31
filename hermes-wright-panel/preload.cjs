@@ -1,12 +1,13 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('wrightDesktop', {
+if (process.isMainFrame !== false) contextBridge.exposeInMainWorld('wrightDesktop', {
   api: (request) => ipcRenderer.invoke('wright:api', request),
   readFile: (path) => ipcRenderer.invoke('wright:readFile', path),
   writeFile: (path, content) => ipcRenderer.invoke('wright:writeFile', { path, content }),
   listDirectory: (path) => ipcRenderer.invoke('wright:listDirectory', path),
   selectFiles: (options) => ipcRenderer.invoke('wright:selectFiles', options),
   notify: (payload) => ipcRenderer.invoke('wright:notify', payload),
+  openExternal: (url, options) => ipcRenderer.invoke('wright:openExternal', { url, options }),
   getConfig: () => ipcRenderer.invoke('wright:getConfig'),
   onThemeChange: (callback) => {
     const subscription = (_event, payload) => callback(payload);

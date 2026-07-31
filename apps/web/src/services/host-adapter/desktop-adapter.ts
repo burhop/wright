@@ -1,8 +1,18 @@
-import type { HostAdapter } from "./host-adapter";
+import {
+  SurfaceHostAdapterError,
+  validateApprovedDirectSurfaceUrl,
+  validateIssuedSurfacePreviewUrl,
+  type ExternalOpenOptions,
+  type HostAdapter,
+} from "./host-adapter";
 import type { FileEntry, SelectOptions } from "./wright-desktop";
 
 export class DesktopHostAdapter implements HostAdapter {
   readonly mode = "desktop";
+  readonly surfaceCapabilities = {
+    absolutePreviewUrls: true,
+    externalOpen: true,
+  } as const;
   private apiPort = 8000;
   private workspacePath: string | null = null;
   private configPromise: Promise<void>;
@@ -29,6 +39,44 @@ export class DesktopHostAdapter implements HostAdapter {
 
   getApiBaseUrl(): string {
     return `http://localhost:${this.apiPort}`;
+  }
+
+  resolveBackendUrl(path: string): string {
+    if (!path.startsWith("/")) {
+      throw new SurfaceHostAdapterError(
+        "SURFACE_HOST_URL_REJECTED",
+        "Backend path must be absolute.",
+      );
+    }
+    return new URL(path, this.getApiBaseUrl()).toString();
+  }
+
+  validateIssuedPreviewUrl(value: string): string {
+    return validateIssuedSurfacePreviewUrl(value);
+  }
+
+  async openExternal(
+    value: string,
+    options: ExternalOpenOptions = {},
+  ): Promise<void> {
+    if (typeof window === "undefined" || !window.wrightDesktop?.openExternal) {
+      throw new SurfaceHostAdapterError(
+        "SURFACE_HOST_EXTERNAL_OPEN_UNAVAILABLE",
+        "Desktop external-open integration is unavailable.",
+      );
+    }
+    const validated = options.approvedDirectUrl
+      ? validateApprovedDirectSurfaceUrl(value)
+      : this.validateIssuedPreviewUrl(value);
+    const opened = await window.wrightDesktop.openExternal(validated, {
+      approvedDirectUrl: options.approvedDirectUrl === true,
+    });
+    if (!opened) {
+      throw new SurfaceHostAdapterError(
+        "SURFACE_HOST_EXTERNAL_OPEN_FAILED",
+        "The system browser refused to open the surface.",
+      );
+    }
   }
 
   getRouterType(): "browser" | "hash" {

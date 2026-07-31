@@ -66,6 +66,20 @@ export interface SurfaceCapabilityProjection {
   readonly riskTier: SurfaceCapabilityRiskTier;
 }
 
+export interface SurfaceInstanceSummary {
+  readonly instanceId: string;
+  readonly generation: number;
+  readonly sharing: "shared" | "isolated";
+  readonly readyAt?: string | null;
+}
+
+export interface SurfacePresentationOption {
+  readonly kind: "panel" | "browser";
+  readonly eligible: boolean;
+  readonly reason?: string;
+  readonly presentationId?: string;
+}
+
 export interface SurfaceDescriptor {
   readonly schemaVersion: 1;
   readonly surfaceId: string;
@@ -73,8 +87,8 @@ export interface SurfaceDescriptor {
   readonly source: SurfaceSource;
   readonly title: string;
   readonly lifecycle: SurfaceLifecycle;
-  readonly instance?: Readonly<Record<string, unknown>> | null;
-  readonly presentations: readonly Readonly<Record<string, unknown>>[];
+  readonly instance?: SurfaceInstanceSummary | null;
+  readonly presentations: readonly SurfacePresentationOption[];
   readonly capabilities: readonly SurfaceCapabilityProjection[];
   readonly diagnosticSummary?: Readonly<Record<string, unknown>> | null;
   readonly generationProvenance?: Readonly<Record<string, unknown>> | null;
@@ -277,6 +291,53 @@ function parseCapability(
   });
 }
 
+function parseInstance(value: unknown): SurfaceInstanceSummary | null {
+  if (value === null) return null;
+  const instance = record(value, "instance");
+  if (instance.sharing !== "shared" && instance.sharing !== "isolated") {
+    throw new TypeError("instance.sharing is unsupported");
+  }
+  const readyAt =
+    instance.readyAt === undefined || instance.readyAt === null
+      ? instance.readyAt
+      : timestamp(instance.readyAt, "instance.readyAt");
+  return Object.freeze({
+    instanceId: string(instance.instanceId, "instance.instanceId", 128),
+    generation: positiveInteger(instance.generation, "instance.generation"),
+    sharing: instance.sharing,
+    ...(readyAt === undefined ? {} : { readyAt }),
+  });
+}
+
+function parsePresentationOption(
+  value: unknown,
+  index: number,
+): SurfacePresentationOption {
+  const option = record(value, `presentations[${index}]`);
+  if (option.kind !== "panel" && option.kind !== "browser") {
+    throw new TypeError(`presentations[${index}].kind is unsupported`);
+  }
+  if (typeof option.eligible !== "boolean") {
+    throw new TypeError(`presentations[${index}].eligible must be boolean`);
+  }
+  return Object.freeze({
+    kind: option.kind,
+    eligible: option.eligible,
+    ...(option.reason === undefined
+      ? {}
+      : { reason: string(option.reason, `presentations[${index}].reason`, 1024) }),
+    ...(option.presentationId === undefined
+      ? {}
+      : {
+          presentationId: string(
+            option.presentationId,
+            `presentations[${index}].presentationId`,
+            128,
+          ),
+        }),
+  });
+}
+
 export function parseSurfaceDescriptor(value: unknown): SurfaceDescriptor {
   const descriptor = record(value, "surface");
   exactKeys(descriptor, descriptorKeys, "surface");
@@ -302,8 +363,10 @@ export function parseSurfaceDescriptor(value: unknown): SurfaceDescriptor {
     lifecycle: lifecycle as SurfaceLifecycle,
     ...(descriptor.instance === undefined
       ? {}
-      : { instance: descriptor.instance as Readonly<Record<string, unknown>> }),
-    presentations: Object.freeze([...descriptor.presentations]),
+      : { instance: parseInstance(descriptor.instance) }),
+    presentations: Object.freeze(
+      descriptor.presentations.map(parsePresentationOption),
+    ),
     capabilities: Object.freeze(descriptor.capabilities.map(parseCapability)),
     ...(descriptor.diagnosticSummary === undefined
       ? {}

@@ -117,28 +117,28 @@
 
 ### Tests for User Story 2 — write and observe failure first
 
-- [ ] T055 [P] [US2] Add presentation eligibility, sharing/isolated reuse, close-versus-stop, preference revalidation, bootstrap issuance, and stale-instance tests to `packages/workspace_service/tests/surfaces/test_presentation_service.py` (FR-004 through FR-008)
-- [ ] T056 [P] [US2] Add panel/browser create/close, absolute-URL, idempotency, unauthorized workspace/session, and no-raw-target API tests to `apps/api/tests/test_surface_presentations_api.py` (FR-002, FR-004 through FR-008, FR-042)
-- [ ] T057 [P] [US2] Add browser host-adapter absolute-preview validation, external-open failure, and approved-direct-URL tests to `apps/web/src/services/host-adapter/browser-adapter.spec.ts` (FR-004, FR-042)
-- [ ] T058 [P] [US2] Add Electron IPC allowlist, unexpected navigation/window-open denial, and no-child-preload-access tests to `hermes-wright-panel/tests/surface-host-adapter.spec.cjs` (FR-035, FR-042)
-- [ ] T059 [P] [US2] Add panel/browser/both toolbar, preference, lifecycle/status, close/stop distinction, and recovery-state component tests to `apps/web/src/components/surfaces/SurfaceToolbar.spec.tsx` (FR-004 through FR-008, FR-048, FR-054)
-- [ ] T060 [P] [US2] Add same-instance panel+browser state, alternate presentation, browser failure, and retained-tab journeys to `tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts` (User Story 2, SC-004)
-- [ ] T061 [P] [US2] Add XFO/`frame-ancestors` refusal and always-usable browser fallback journeys to `tests/ui-integration/workspace-surfaces/frame-fallback.spec.ts` (FR-037, FR-042)
-- [ ] T062 [P] [US2] Add reload/reconcile valid-instance versus deliberate-restart state tests to `apps/web/src/store/surfaces-restore.spec.tsx` and `tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts` (FR-003, FR-008)
+- [X] T055 [P] [US2] Add presentation eligibility, sharing/isolated reuse, close-versus-stop, preference revalidation, bootstrap issuance, and stale-instance tests to `packages/workspace_service/tests/surfaces/test_presentation_service.py` (FR-004 through FR-008)
+- [X] T056 [P] [US2] Add panel/browser create/close, absolute-URL, idempotency, unauthorized workspace/session, and no-raw-target API tests to `apps/api/tests/test_surface_presentations_api.py` (FR-002, FR-004 through FR-008, FR-042)
+- [X] T057 [P] [US2] Add browser host-adapter absolute-preview validation, external-open failure, and approved-direct-URL tests to `apps/web/src/services/host-adapter/browser-adapter.spec.ts` (FR-004, FR-042)
+- [X] T058 [P] [US2] Add Electron IPC allowlist, unexpected navigation/window-open denial, and no-child-preload-access tests to `hermes-wright-panel/tests/surface-host-adapter.spec.cjs` (FR-035, FR-042)
+- [X] T059 [P] [US2] Add panel/browser/both toolbar, preference, lifecycle/status, close/stop distinction, and recovery-state component tests to `apps/web/src/components/surfaces/SurfaceToolbar.spec.tsx` (FR-004 through FR-008, FR-048, FR-054)
+- [X] T060 [P] [US2] Add same-instance panel+browser state, alternate presentation, browser failure, and retained-tab journeys to `tests/ui-integration/workspace-surfaces/presentation-choice.spec.ts` (User Story 2, SC-004)
+- [X] T061 [P] [US2] Add XFO/`frame-ancestors` refusal and always-usable browser fallback journeys to `tests/ui-integration/workspace-surfaces/frame-fallback.spec.ts` (FR-037, FR-042)
+- [X] T062 [P] [US2] Add reload/reconcile valid-instance versus deliberate-restart state tests to `apps/web/src/store/surfaces-restore.spec.tsx` and `tests/ui-integration/workspace-surfaces/presentation-restore.spec.ts` (FR-003, FR-008)
 
 ### Implementation for User Story 2
 
-- [ ] T063 [US2] Implement presentation eligibility, shared/isolated instance selection, separate close semantics, preference fallback, and short-lived launch projection in `packages/workspace_service/src/workspace_service/surfaces/presentation_service.py` (FR-004 through FR-008)
-- [ ] T064 [P] [US2] Implement principal/workspace/source-version presentation preferences in `packages/data_vault/src/data_vault/surface_preferences.py` (FR-008)
-- [ ] T065 [US2] Implement thin create/close presentation and preference routes in `apps/api/src/api/routers/surface_presentations.py` (FR-004 through FR-008, FR-042)
-- [ ] T066 [P] [US2] Extend `SurfaceHostAdapter` with backend URL resolution, issued-preview validation, capabilities, and guarded external open in `apps/web/src/services/host-adapter/host-adapter.ts` and `browser-adapter.ts` (FR-004, FR-027, FR-042)
-- [ ] T067 [P] [US2] Add narrow `wright:openExternal` IPC, renderer sandbox, `will-navigate`, and `setWindowOpenHandler` policy in `hermes-wright-panel/preload.cjs`, `panel.cjs`, and `types.d.ts` (FR-035, FR-042)
-- [ ] T068 [P] [US2] Implement accessible panel/browser/both, focus, lifecycle, status, diagnostics, and close controls with stable test IDs in `apps/web/src/components/surfaces/SurfaceToolbar.tsx` (FR-004 through FR-008, FR-048, FR-054)
-- [ ] T069 [US2] Implement the panel presenter using only backend-issued absolute preview URLs and explicit fallback states in `apps/web/src/services/surfaces/presenters/live-app-presenter.ts` (FR-004, FR-027, FR-042)
-- [ ] T070 [US2] Implement bounded retained hosts, inactive semantics, exact-once presentation disposal, and state-preserving tab switches in `apps/web/src/components/surfaces/SurfaceDeck.tsx` (FR-005 through FR-007)
-- [ ] T071 [P] [US2] Implement truthful starting/unhealthy/stopped/failed/frame-unknown states and browser/restart recovery actions in `apps/web/src/components/surfaces/SurfaceStatus.tsx` (FR-003, FR-048)
-- [ ] T072 [P] [US2] Add a deterministic shareable ready-app fixture with observable shared state in `tests/fixtures/workspace_surfaces/shareable_app/app.py` and `manifest.surface.json` (FR-005, FR-055)
-- [ ] T073 [US2] Document panel/browser/both choice, remembered defaults, close-versus-stop, framing fallback, and desktop failure recovery in `docs/workspace-surfaces/opening-surfaces.md` (FR-004 through FR-008, FR-042)
+- [X] T063 [US2] Implement presentation eligibility, shared/isolated instance selection, separate close semantics, preference fallback, and short-lived launch projection in `packages/workspace_service/src/workspace_service/surfaces/presentation_service.py` (FR-004 through FR-008)
+- [X] T064 [P] [US2] Implement principal/workspace/source-version presentation preferences in `packages/data_vault/src/data_vault/surface_preferences.py` (FR-008)
+- [X] T065 [US2] Implement thin create/close presentation and preference routes in `apps/api/src/api/routers/surface_presentations.py` (FR-004 through FR-008, FR-042)
+- [X] T066 [P] [US2] Extend `SurfaceHostAdapter` with backend URL resolution, issued-preview validation, capabilities, and guarded external open in `apps/web/src/services/host-adapter/host-adapter.ts` and `browser-adapter.ts` (FR-004, FR-027, FR-042)
+- [X] T067 [P] [US2] Add narrow `wright:openExternal` IPC, renderer sandbox, `will-navigate`, and `setWindowOpenHandler` policy in `hermes-wright-panel/preload.cjs`, `panel.cjs`, and `types.d.ts` (FR-035, FR-042)
+- [X] T068 [P] [US2] Implement accessible panel/browser/both, focus, lifecycle, status, diagnostics, and close controls with stable test IDs in `apps/web/src/components/surfaces/SurfaceToolbar.tsx` (FR-004 through FR-008, FR-048, FR-054)
+- [X] T069 [US2] Implement the panel presenter using only backend-issued absolute preview URLs and explicit fallback states in `apps/web/src/services/surfaces/presenters/live-app-presenter.ts` (FR-004, FR-027, FR-042)
+- [X] T070 [US2] Implement bounded retained hosts, inactive semantics, exact-once presentation disposal, and state-preserving tab switches in `apps/web/src/components/surfaces/SurfaceDeck.tsx` (FR-005 through FR-007)
+- [X] T071 [P] [US2] Implement truthful starting/unhealthy/stopped/failed/frame-unknown states and browser/restart recovery actions in `apps/web/src/components/surfaces/SurfaceStatus.tsx` (FR-003, FR-048)
+- [X] T072 [P] [US2] Add a deterministic shareable ready-app fixture with observable shared state in `tests/fixtures/workspace_surfaces/shareable_app/app.py` and `manifest.surface.json` (FR-005, FR-055)
+- [X] T073 [US2] Document panel/browser/both choice, remembered defaults, close-versus-stop, framing fallback, and desktop failure recovery in `docs/workspace-surfaces/opening-surfaces.md` (FR-004 through FR-008, FR-042)
 
 **Checkpoint**: User Story 2 works against a ready fixture without depending on the production process manager from User Story 5.
 

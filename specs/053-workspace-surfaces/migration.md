@@ -23,11 +23,27 @@ Feature flags never bypass schema validation, authentication, target policy, iso
 
 ## Data Migration
 
-1. Add forward-compatible surface, instance, runtime, presentation, preference, display revision, grant, MCP binding and diagnostic indexes/tables using the repository's migration mechanism.
-2. Append the next contiguous, checksummed data-vault migration (currently expected to be migration 6); never modify an applied migration. Add layout schema version `2`. On first read, transform every valid legacy tab path into a file `SurfaceDescriptor` compatibility record and preserve active-tab/order/width intent.
-3. Do not persist or migrate legacy iframe runtime state, window references, global WebMCP handlers, PIDs, ports or tokens.
-4. Keep legacy layout data until the version-2 record has been written and read successfully; record migration outcome without path/content leakage.
-5. The data-vault framework intentionally rejects a database with a future schema version, so binary rollback requires stopping Wright and restoring the automatic pre-upgrade backup using the documented database restore procedure. It is not safe to claim an old binary can ignore the new schema. New vault payloads created after that backup remain subject to the explicit recovery/retention procedure.
+1. Migration 6 adds the forward-compatible surface, instance, runtime,
+   presentation, preference, display revision, grant, MCP binding, diagnostic,
+   and outbox tables. Its committed checksum is immutable.
+2. Migration 7 adds the session, generation, immutable source, and idempotency
+   scope required by presentation authority. It rebuilds the presentation table
+   transactionally and migrates any version-6 presentation as `expired`, clears
+   its bootstrap hash, and records a closed timestamp. An upgrade therefore
+   never revives an authority created under the narrower schema.
+3. Add layout schema version `2`. On first read, transform every valid legacy
+   tab path into a file `SurfaceDescriptor` compatibility record and preserve
+   active-tab/order/width intent.
+4. Do not persist or migrate legacy iframe runtime state, window references,
+   global WebMCP handlers, PIDs, ports, cookies, or raw tokens.
+5. Keep legacy layout data until the version-2 record has been written and read
+   successfully; record migration outcome without path/content leakage.
+6. The data-vault framework intentionally rejects a database with a future
+   schema version, so binary rollback requires stopping Wright and restoring
+   the automatic pre-upgrade backup using the documented database restore
+   procedure. It is not safe to claim an old binary can ignore the new schema.
+   New vault payloads created after that backup remain subject to the explicit
+   recovery/retention procedure.
 
 ## API and Contract Versioning
 

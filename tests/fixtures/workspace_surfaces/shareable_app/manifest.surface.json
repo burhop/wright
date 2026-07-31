@@ -1,0 +1,50 @@
+{
+  "$schema": "https://wright.local/schemas/live-app-manifest-v1.json",
+  "schemaVersion": 1,
+  "id": "wright.shareable-app-fixture",
+  "version": "1.0.0",
+  "title": "Shareable app fixture",
+  "description": "One in-memory counter shared by simultaneous panel and browser presentations.",
+  "ownershipPolicy": "wright-owned",
+  "launch": {
+    "mode": "command",
+    "argv": ["python", "app.py", "--host", "${WRIGHT_BIND_HOST}", "--port", "${WRIGHT_PORT}"],
+    "workingDirectory": ".",
+    "framework": "generic"
+  },
+  "readiness": {
+    "path": "/health",
+    "method": "GET",
+    "expectedStatus": 200,
+    "timeoutMs": 1000,
+    "intervalMs": 100
+  },
+  "health": {
+    "path": "/health",
+    "method": "GET",
+    "expectedStatus": 200,
+    "timeoutMs": 1000,
+    "intervalMs": 1000
+  },
+  "presentation": {
+    "panel": true,
+    "browser": true,
+    "sharing": "shared",
+    "basePathMode": "root",
+    "permissionsPolicy": []
+  },
+  "transports": {
+    "http": true,
+    "websocket": false,
+    "sse": false
+  },
+  "navigation": {
+    "allowSameTargetRedirects": true,
+    "externalLinks": "deny",
+    "downloads": "deny"
+  },
+  "lifetime": {
+    "policy": "workspace"
+  },
+  "capabilities": []
+}

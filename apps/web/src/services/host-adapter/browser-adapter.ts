@@ -1,17 +1,103 @@
-import type { HostAdapter } from "./host-adapter";
+import {
+  SurfaceHostAdapterError,
+  validateApprovedDirectSurfaceUrl,
+  validateIssuedSurfacePreviewUrl,
+  type ExternalOpenOptions,
+  type HostAdapter,
+} from "./host-adapter";
 import type { FileEntry, SelectOptions } from "./wright-desktop";
+
+export { SurfaceHostAdapterError } from "./host-adapter";
+
+interface BrowserHostAdapterOptions {
+  readonly controlUrl?: string;
+  readonly openWindow?: (
+    url: string,
+    target: string,
+    features: string,
+  ) => Window | null;
+}
 
 export class BrowserHostAdapter implements HostAdapter {
   readonly mode = "browser";
+  readonly surfaceCapabilities = {
+    absolutePreviewUrls: true,
+    externalOpen: true,
+  } as const;
+  private readonly configuredControlUrl?: string;
+  private readonly configuredOpenWindow?: BrowserHostAdapterOptions["openWindow"];
+
+  constructor(options: BrowserHostAdapterOptions = {}) {
+    this.configuredControlUrl = options.controlUrl;
+    this.configuredOpenWindow = options.openWindow;
+  }
+
+  private controlUrl(): URL {
+    if (this.configuredControlUrl) return new URL(this.configuredControlUrl);
+    if (typeof window === "undefined") return new URL("http://127.0.0.1:8000/");
+    return new URL(window.location.href);
+  }
 
   getApiBaseUrl(): string {
-    if (typeof window === "undefined") return "http://127.0.0.1:8000";
-    const host = window.location.hostname;
-    const port = window.location.port;
+    const control = this.controlUrl();
+    const host = control.hostname;
+    const port = control.port;
     if (port === "5173" || port === "5174") {
       return "";
     }
-    return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
+    return `${control.protocol}//${host}${port ? `:${port}` : ""}`;
+  }
+
+  resolveBackendUrl(path: string): string {
+    if (!path.startsWith("/")) {
+      throw new SurfaceHostAdapterError(
+        "SURFACE_HOST_URL_REJECTED",
+        "Backend path must be absolute.",
+      );
+    }
+    return new URL(path, this.controlUrl().origin).toString();
+  }
+
+  validateIssuedPreviewUrl(value: string): string {
+    return validateIssuedSurfacePreviewUrl(value, this.controlUrl().origin);
+  }
+
+  async openExternal(
+    value: string,
+    options: ExternalOpenOptions = {},
+  ): Promise<void> {
+    const validated = options.approvedDirectUrl
+      ? validateApprovedDirectSurfaceUrl(value)
+      : this.validateIssuedPreviewUrl(value);
+    const openWindow =
+      this.configuredOpenWindow ??
+      ((url: string, target: string, features: string) =>
+        window.open(url, target, features));
+    // Browsers may return null for a successful `window.open` when the
+    // `noopener` feature is used, making that indistinguishable from a popup
+    // blocker. Open a same-origin blank window first, sever its opener before
+    // any remote content loads, install a no-referrer policy, then navigate.
+    const opened = openWindow("about:blank", "_blank", "popup");
+    if (!opened) {
+      throw new SurfaceHostAdapterError(
+        "SURFACE_HOST_EXTERNAL_OPEN_FAILED",
+        "The system browser refused to open the surface.",
+      );
+    }
+    try {
+      opened.opener = null;
+      const referrerPolicy = opened.document.createElement("meta");
+      referrerPolicy.name = "referrer";
+      referrerPolicy.content = "no-referrer";
+      opened.document.head.append(referrerPolicy);
+      opened.location.replace(validated);
+    } catch {
+      opened.close();
+      throw new SurfaceHostAdapterError(
+        "SURFACE_HOST_EXTERNAL_OPEN_FAILED",
+        "The system browser could not navigate to the surface.",
+      );
+    }
   }
 
   getRouterType(): "browser" | "hash" {

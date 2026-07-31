@@ -443,6 +443,62 @@ MIGRATIONS: tuple[Migration, ...] = (
             )"""),
         ),
     ),
+    Migration(
+        7,
+        "surface_presentation_authority",
+        (
+            sql("ALTER TABLE surface_presentations RENAME TO surface_presentations_v6"),
+            sql("DROP INDEX IF EXISTS idx_surface_presentations_scope"),
+            sql("""CREATE TABLE surface_presentations (
+                presentation_id TEXT PRIMARY KEY,
+                instance_id TEXT NOT NULL,
+                surface_id TEXT NOT NULL,
+                workspace_id TEXT NOT NULL,
+                user_id TEXT NOT NULL,
+                session_id TEXT NOT NULL,
+                kind TEXT NOT NULL CHECK(kind IN ('panel', 'browser')),
+                state TEXT NOT NULL CHECK(state IN ('issued', 'active', 'inactive', 'closed', 'expired')),
+                generation INTEGER NOT NULL CHECK(generation >= 1),
+                source_id TEXT NOT NULL,
+                source_version TEXT NOT NULL,
+                effective_origin TEXT NOT NULL,
+                bootstrap_nonce_hash TEXT,
+                cookie_audience TEXT NOT NULL,
+                idempotency_key TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                last_seen_at TEXT,
+                expires_at TEXT NOT NULL,
+                closed_at TEXT,
+                UNIQUE(user_id, workspace_id, session_id, idempotency_key),
+                FOREIGN KEY (surface_id) REFERENCES workspace_surfaces(surface_id) ON DELETE CASCADE,
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id) ON DELETE CASCADE
+            )"""),
+            sql("""INSERT INTO surface_presentations (
+                    presentation_id, instance_id, surface_id, workspace_id,
+                    user_id, session_id, kind, state, generation, source_id,
+                    source_version, effective_origin, bootstrap_nonce_hash,
+                    cookie_audience, idempotency_key, created_at, last_seen_at,
+                    expires_at, closed_at
+                )
+                SELECT
+                    legacy.presentation_id, legacy.instance_id,
+                    legacy.surface_id, legacy.workspace_id, legacy.user_id,
+                    surface.session_id, legacy.kind, 'expired', 1,
+                    surface.source_id, surface.source_version,
+                    legacy.effective_origin, NULL, legacy.cookie_audience,
+                    'migration-7:' || legacy.presentation_id,
+                    legacy.created_at, legacy.last_seen_at, legacy.expires_at,
+                    COALESCE(legacy.closed_at, legacy.created_at)
+                FROM surface_presentations_v6 AS legacy
+                JOIN workspace_surfaces AS surface
+                  ON surface.surface_id = legacy.surface_id
+                 AND surface.workspace_id = legacy.workspace_id
+                 AND surface.user_id = legacy.user_id"""),
+            sql("DROP TABLE surface_presentations_v6"),
+            sql("""CREATE INDEX idx_surface_presentations_scope
+                ON surface_presentations(workspace_id, user_id, session_id, surface_id, state)"""),
+        ),
+    ),
 )
 
 

@@ -19,7 +19,9 @@ from .surfaces.diagnostics import SurfaceDiagnosticHistory
 from .surfaces.display_service import DisplayService
 from .surfaces.display_tokens import DisplayExecutionTokenService
 from .surfaces.events import SurfaceEventHistory
+from .surfaces.presentation_service import PresentationService
 from .surfaces.service import SurfaceService
+from .config import WorkspaceSurfaceSettings
 
 
 def build_workspace_service(
@@ -42,6 +44,7 @@ class SurfaceApplication:
     diagnostic_repository: SurfaceDiagnosticRepository
     display_service: DisplayService
     display_tokens: DisplayExecutionTokenService
+    presentation_service: PresentationService
     vault: SurfaceVault
     events: SurfaceEventHistory
     diagnostics: SurfaceDiagnosticHistory
@@ -59,7 +62,10 @@ class SurfaceApplication:
 
 
 def build_surface_application(
-    db_path: str, *, vault_root: str | Path | None = None
+    db_path: str,
+    *,
+    vault_root: str | Path | None = None,
+    settings: WorkspaceSurfaceSettings | None = None,
 ) -> SurfaceApplication:
     repository = SurfaceRepository(db_path)
     provenance_repository = GenerationProvenanceRepository(db_path)
@@ -74,6 +80,12 @@ def build_surface_application(
     display_tokens = DisplayExecutionTokenService(
         secret=DisplayExecutionTokenService.generate_secret()
     )
+    effective_settings = settings or WorkspaceSurfaceSettings.from_env()
+    presentation_service = PresentationService(
+        db_path,
+        preview=effective_settings.preview,
+        token_ttl_seconds=effective_settings.policy.bootstrap_token_ttl_seconds,
+    )
     return SurfaceApplication(
         service=SurfaceService(repository=repository, events=events),
         repository=repository,
@@ -84,6 +96,7 @@ def build_surface_application(
         diagnostic_repository=diagnostic_repository,
         display_service=display_service,
         display_tokens=display_tokens,
+        presentation_service=presentation_service,
         vault=vault,
         events=events,
         diagnostics=diagnostics,

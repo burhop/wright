@@ -58,6 +58,7 @@ nav:
       - Wright for Codex: getting-started/codex.md
   - User Guide:
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
+      - Open Web Applications: workspace-surfaces/opening-surfaces.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md
       - Makefile Targets: user-guide/makefile.md

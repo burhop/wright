@@ -114,9 +114,15 @@ paths:
               properties:
                 kind: {enum: [panel, browser]}
                 rememberPreference: {type: boolean, default: false}
+                isolatedAcknowledged: {type: boolean, default: false}
       responses:
         '201':
           description: A short-lived absolute bootstrap URL whose one-use token is in the fragment
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationLaunch'}
+        '200':
+          description: Idempotent replay with a newly rotated one-use bootstrap token
           content:
             application/json:
               schema: {$ref: '#/components/schemas/PresentationLaunch'}
@@ -137,6 +143,42 @@ paths:
         '401': {$ref: '#/components/responses/Problem'}
         '403': {$ref: '#/components/responses/Problem'}
         '404': {$ref: '#/components/responses/Problem'}
+  /api/workspace/surfaces/{surfaceId}/presentation-preference:
+    get:
+      operationId: getSurfacePresentationPreference
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+      responses:
+        '200':
+          description: Revalidated presentation preference or the current safe fallback
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationPreferenceDecision'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
+    put:
+      operationId: setSurfacePresentationPreference
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceId'
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/SurfaceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PresentationPreferenceRequest'}
+      responses:
+        '200':
+          description: Stored and revalidated non-secret preference
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PresentationPreferenceDecision'}
+        '401': {$ref: '#/components/responses/Problem'}
+        '403': {$ref: '#/components/responses/Problem'}
+        '409': {$ref: '#/components/responses/Problem'}
   /api/workspace/surfaces/displays:
     post:
       operationId: ingestDisplayEnvelope
@@ -476,12 +518,28 @@ components:
     PresentationLaunch:
       type: object
       additionalProperties: false
-      required: [presentationId, kind, absoluteBootstrapUrl, expiresAt]
+      required: [presentationId, instanceId, generation, kind, absoluteBootstrapUrl, expiresAt]
       properties:
         presentationId: {type: string, maxLength: 128}
+        instanceId: {type: string, maxLength: 128}
+        generation: {type: integer, minimum: 1}
         kind: {enum: [panel, browser]}
         absoluteBootstrapUrl: {type: string, format: uri, maxLength: 4096}
         expiresAt: {type: string, format: date-time}
+    PresentationPreferenceRequest:
+      type: object
+      additionalProperties: false
+      required: [kind]
+      properties:
+        kind: {enum: [panel, browser]}
+    PresentationPreferenceDecision:
+      type: object
+      additionalProperties: false
+      required: [kind, remembered]
+      properties:
+        kind: {enum: [panel, browser]}
+        remembered: {type: boolean}
+        reason: {type: [string, 'null'], maxLength: 1024}
     GrantDecision:
       type: object
       additionalProperties: false

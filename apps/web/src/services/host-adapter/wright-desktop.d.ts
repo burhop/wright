@@ -48,6 +48,10 @@ export interface WrightDesktopBridge {
   selectFiles: (options?: SelectOptions) => Promise<string[]>;
   notify: (payload: NotifyPayload) => Promise<boolean>;
   getConfig: () => Promise<WrightConfig>;
+  openExternal: (
+    url: string,
+    options: { approvedDirectUrl: boolean },
+  ) => Promise<boolean>;
   onThemeChange: (
     callback: (payload: { theme: "dark" | "light" }) => void,
   ) => () => void;

@@ -27,6 +27,10 @@ from .surface_repository import (
     SurfaceRuntimeRepository,
 )
 from .surface_vault import SurfacePayloadNotFound, SurfaceVault
+from .surface_presentations import (
+    SurfacePresentationRecord,
+    SurfacePresentationRepository,
+)
 from .secret_provider import (
     CompositeSecretProvider,
     EnvironmentSecretProvider,
@@ -63,6 +67,8 @@ __all__ = [
     "SurfaceRuntimeRepository",
     "SurfacePayloadNotFound",
     "SurfaceVault",
+    "SurfacePresentationRecord",
+    "SurfacePresentationRepository",
     "CompositeSecretProvider",
     "EnvironmentSecretProvider",
     "FileSecretProvider",

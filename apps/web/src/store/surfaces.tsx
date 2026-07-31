@@ -34,6 +34,8 @@ export interface SurfaceState {
 
 export type SurfaceAction =
   | { readonly type: "upsert"; readonly descriptor: SurfaceDescriptor }
+  | { readonly type: "reconcile"; readonly descriptors: readonly SurfaceDescriptor[] }
+  | { readonly type: "restore"; readonly state: SurfaceState }
   | { readonly type: "activate"; readonly surfaceId: string | null }
   | { readonly type: "remove"; readonly surfaceId: string }
   | { readonly type: "layout"; readonly layout: SurfaceLayout };
@@ -58,6 +60,10 @@ export function reduceSurfaceState(
   action: SurfaceAction,
 ): SurfaceState {
   switch (action.type) {
+    case "restore":
+      return action.state;
+    case "reconcile":
+      return reconcileRestoredSurfaceState(state, action.descriptors);
     case "upsert": {
       const current = state.byId[action.descriptor.surfaceId];
       if (current && current.revision >= action.descriptor.revision) {
@@ -160,6 +166,31 @@ export function restoreSurfaceState(serialized: string): SurfaceState {
     throw new TypeError("unsupported surface state version");
   }
   return restoreVersionTwo(value);
+}
+
+export function reconcileRestoredSurfaceState(
+  restored: SurfaceState,
+  currentDescriptors: readonly SurfaceDescriptor[],
+): SurfaceState {
+  const currentById = Object.fromEntries(
+    currentDescriptors.map((descriptor) => [descriptor.surfaceId, descriptor]),
+  );
+  const retainedTabs = restored.tabs.filter((surfaceId) => currentById[surfaceId]);
+  const appendedTabs = currentDescriptors
+    .map((descriptor) => descriptor.surfaceId)
+    .filter((surfaceId) => !retainedTabs.includes(surfaceId));
+  const tabs = [...retainedTabs, ...appendedTabs];
+  const activeSurfaceId =
+    restored.activeSurfaceId && currentById[restored.activeSurfaceId]
+      ? restored.activeSurfaceId
+      : (tabs[0] ?? null);
+  return {
+    version: SURFACE_STATE_VERSION,
+    byId: currentById,
+    tabs,
+    activeSurfaceId,
+    layout: restored.layout,
+  };
 }
 
 function restoreVersionTwo(value: Record<string, unknown>): SurfaceState {
