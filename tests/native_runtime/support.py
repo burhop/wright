@@ -114,7 +114,7 @@ def seed_runtime(
     active: bool = True,
     running: bool = False,
     data_schema_min: int = 0,
-    data_schema_max: int = 5,
+    data_schema_max: int = 9,
 ) -> RuntimeInstallation:
     environment = runtime.layout.runtime_path(runtime_id)
     executable = environment / "Scripts" / "python.exe"
