@@ -1916,6 +1916,7 @@ name = "wright-workspace-service"
 version = "0.1.0"
 source = { editable = "packages/workspace_service" }
 dependencies = [
+    { name = "psutil" },
     { name = "pydantic" },
     { name = "wright-agent-adapters" },
     { name = "wright-core" },
@@ -1925,6 +1926,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "psutil", specifier = ">=6,<8" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "wright-agent-adapters", editable = "packages/agent_adapters" },
     { name = "wright-core", editable = "packages/core" },

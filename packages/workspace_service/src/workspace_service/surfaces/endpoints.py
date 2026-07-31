@@ -7,6 +7,8 @@ import socket
 from dataclasses import dataclass
 from typing import Protocol
 
+import psutil
+
 
 class EndpointError(RuntimeError):
     def __init__(self, code: str, message: str) -> None:
@@ -44,6 +46,38 @@ class EndpointOwnershipProof:
 
 class ListenerInspector(Protocol):
     def find_listener(self, *, address: str, port: int) -> ListenerIdentity | None: ...
+
+
+class PsutilListenerInspector:
+    """Resolve a numeric listener to an exact PID creation-time identity."""
+
+    def find_listener(self, *, address: str, port: int) -> ListenerIdentity | None:
+        normalized = ipaddress.ip_address(address).compressed
+        try:
+            connections = psutil.net_connections(kind="tcp")
+        except psutil.Error as error:
+            raise EndpointError(
+                "SURFACE_LISTENER_INSPECTION_FAILED",
+                "Could not inspect host listeners for endpoint ownership",
+            ) from error
+        matches = []
+        for item in connections:
+            if item.status != psutil.CONN_LISTEN or not item.laddr or item.pid is None:
+                continue
+            try:
+                item_address = ipaddress.ip_address(item.laddr.ip).compressed
+            except ValueError:
+                continue
+            if item_address == normalized and item.laddr.port == port:
+                matches.append(item)
+        if len(matches) != 1:
+            return None
+        item = matches[0]
+        try:
+            created = psutil.Process(item.pid).create_time()
+        except psutil.Error:
+            return None
+        return ListenerIdentity(normalized, port, item.pid, created)
 
 
 class EndpointReservation:
@@ -196,5 +230,6 @@ __all__ = [
     "ListenerIdentity",
     "ListenerInspector",
     "LoopbackEndpointAllocator",
+    "PsutilListenerInspector",
     "RuntimeIdentity",
 ]

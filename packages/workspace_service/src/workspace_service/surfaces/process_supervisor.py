@@ -11,6 +11,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Protocol
 
+from workspace_service.surfaces.endpoints import RuntimeIdentity
 from workspace_service.surfaces.runtime_logs import RuntimeLogBuffer, RuntimeLogTail
 
 
@@ -27,6 +28,8 @@ class PlatformProcessIdentity:
     creation_time: float | None
     containment_id: str
     containment_mode: str
+    executable: str | None = None
+    command_digest: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,6 +69,8 @@ class PlatformProcess(Protocol):
     async def wait(self) -> int: ...
 
     async def stop(self, *, deadline: datetime) -> ProcessStopResult: ...
+
+    def owned_processes(self) -> tuple[tuple[int, float], ...]: ...
 
 
 class ProcessAdapter(Protocol):
@@ -272,6 +277,24 @@ class ProcessSupervisor:
 
     def snapshot(self, runtime_id: str) -> RuntimeSnapshot:
         return self._get(runtime_id).snapshot
+
+    def runtime_identity(self, runtime_id: str) -> RuntimeIdentity:
+        runtime = self._get(runtime_id)
+        snapshot = runtime.snapshot
+        if snapshot.identity.pid is None or snapshot.identity.creation_time is None:
+            raise ProcessSupervisorError(
+                "SURFACE_PROCESS_IDENTITY_UNAVAILABLE",
+                "Runtime adapter does not expose a host process identity",
+            )
+        owned = runtime.process.owned_processes()
+        root = (snapshot.identity.pid, snapshot.identity.creation_time)
+        return RuntimeIdentity(
+            instance_id=snapshot.instance_id,
+            generation=snapshot.generation,
+            pid=root[0],
+            creation_time=root[1],
+            descendants=tuple(item for item in owned if item != root),
+        )
 
     def logs(
         self, runtime_id: str, *, after_sequence: int = 0, limit: int = 200

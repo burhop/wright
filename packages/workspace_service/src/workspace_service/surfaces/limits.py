@@ -66,6 +66,9 @@ class EffectiveSurfaceLimits:
         except KeyError as error:
             raise AttributeError(name) from error
 
+    def as_mapping(self) -> dict[str, int | float]:
+        return dict(self._values)
+
     @staticmethod
     def _raise(code: str, message: str, **diagnostic: Any) -> None:
         raise SurfaceLimitError(code, message, diagnostic=diagnostic)
@@ -320,7 +323,12 @@ class SurfaceLimitPolicy:
             for overrides in (declared, administrator):
                 if field.name in overrides:
                     value = overrides[field.name]
-                    if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
+                    minimum = 0 if field.name == "restart_attempts" else 1
+                    if (
+                        isinstance(value, bool)
+                        or not isinstance(value, (int, float))
+                        or value < minimum
+                    ):
                         raise SurfaceLimitError(
                             "SURFACE_LIMIT_POLICY_INVALID",
                             "Surface policy limits must be positive",

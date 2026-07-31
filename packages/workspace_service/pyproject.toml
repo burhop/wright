@@ -16,6 +16,7 @@ classifiers = [
 
 dependencies = [
     "pydantic>=2.7",
+    "psutil>=6,<8",
     "wright-core>=0.1.0,<0.2.0",
     "wright-agent-adapters>=0.1.0,<0.2.0",
     "wright-data-vault>=0.1.0,<0.2.0",
