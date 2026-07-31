@@ -30,6 +30,15 @@ import MessageComposer from "./MessageComposer";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
+import { usePersistentSurfaceLayout } from "../../store/surface-layout";
+import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
+import { PaneSeparator } from "../workspace/PaneSeparator";
+import { ResponsivePaneSwitcher } from "../workspace/ResponsivePaneSwitcher";
+import { resolveWorkspaceLayout } from "../workspace/workspace-layout";
+import {
+  SurfaceFocusManager,
+  installF6HostRegionCycle,
+} from "../../services/surfaces/focus-manager";
 
 function findFileInTree(
   node: WorkspaceNode,
@@ -131,7 +140,7 @@ export function WorkspacePanel({
     return () => observer.disconnect();
   }, []);
 
-  const isThin = panelWidth < 768;
+  const isThin = panelWidth < 768 && !surfacesEnabled;
 
   // Refresh sessions when workspace changes
   useEffect(() => {
@@ -277,6 +286,56 @@ export function WorkspacePanel({
   const [isLeftDragging, setIsLeftDragging] = useState<boolean>(false);
   const [isRightDragging, setIsRightDragging] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<string>("Hermes");
+  const normalSurfacePaneWidth = Math.max(
+    1,
+    panelWidth -
+      48 -
+      (isSidebarCollapsed ? 0 : leftSidebarWidth) -
+      (isSidebarCollapsed ? 0 : 4),
+  );
+  const [surfaceLayout, surfaceLayoutDispatch] = usePersistentSurfaceLayout(
+    _workspaceId ?? "unbound-workspace",
+    normalSurfacePaneWidth,
+  );
+  const surfacePaneContainerWidth =
+    surfaceLayout.wideMode === "focus" ? panelWidth : normalSurfacePaneWidth;
+  const resolvedSurfaceLayout = resolveWorkspaceLayout(
+    surfaceLayout,
+    surfacePaneContainerWidth,
+  );
+  const surfaceChromeHidden =
+    surfacesEnabled &&
+    (surfaceLayout.mode === "focus" || surfaceLayout.mode === "narrow");
+  const surfaceFocusManager = useMemo(() => new SurfaceFocusManager(), []);
+
+  useEffect(() => {
+    surfaceLayoutDispatch({
+      type: "resize_container",
+      containerWidth: surfacePaneContainerWidth,
+    });
+  }, [surfaceLayoutDispatch, surfacePaneContainerWidth]);
+
+  useEffect(() => {
+    if (!surfacesEnabled || !containerRef.current) return;
+    return installF6HostRegionCycle(containerRef.current, () => ({
+      chat:
+        containerRef.current?.querySelector<HTMLElement>(
+          '[data-focus-region="chat"] button, [data-focus-region="chat"] textarea, [data-focus-region="chat"] input',
+        ) ?? null,
+      tabs:
+        containerRef.current?.querySelector<HTMLElement>(
+          '[data-focus-region="tabs"] [role="tab"][tabindex="0"]',
+        ) ?? null,
+      toolbar:
+        containerRef.current?.querySelector<HTMLElement>(
+          '[data-focus-region="toolbar"] button',
+        ) ?? null,
+      frameReturn:
+        containerRef.current?.querySelector<HTMLElement>(
+          '[data-focus-region="frame-return"]',
+        ) ?? null,
+    }));
+  }, [surfacesEnabled]);
 
   // Workspace Config state
   const [workspacePrompt, setWorkspacePrompt] = useState("");
@@ -1179,7 +1238,11 @@ export function WorkspacePanel({
               }}
             >
               {/* Model Select */}
+              <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
+                Model
+              </label>
               <select
+                id="llm-model-select"
                 data-testid="llm-model-select"
                 value={selectedModel}
                 onChange={(e) => handleModelChange(e.target.value)}
@@ -1203,7 +1266,11 @@ export function WorkspacePanel({
                 </option>
               </select>
 
+              <label htmlFor="workspace-session-select" style={{ fontSize: "0.65rem" }}>
+                Session
+              </label>
               <select
+                id="workspace-session-select"
                 data-testid="sessions-sidebar"
                 value={activeSessionId || ""}
                 onChange={async (e) => {
@@ -1354,30 +1421,37 @@ export function WorkspacePanel({
   }
 
   return (
-    <div
+    <WorkspaceLayout
       ref={containerRef}
       data-testid="workspace-panel"
       {...(surfacesEnabled ? { "data-workspace-surfaces": "enabled" } : {})}
-      style={{
-        display: "grid",
-        gridTemplateColumns: `48px ${isSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${isSidebarCollapsed ? "0px" : "4px"} 1fr ${isAgentCollapsed ? "0px" : "4px"} ${isAgentCollapsed ? "0px" : `${rightSidebarWidth}px`}`,
-        height: "100%",
-        width: "100%",
-        backgroundColor: "var(--color-neutral)",
-        color: "var(--color-primary)",
-        overflow: "hidden",
-        transition:
-          isLeftDragging || isRightDragging
-            ? "none"
-            : "grid-template-columns 0.15s ease-out",
-      }}
+      layout={surfaceLayout}
+      paneContainerWidth={surfacePaneContainerWidth}
+      leftSidebarWidth={leftSidebarWidth}
+      leftSidebarCollapsed={isSidebarCollapsed}
+      chatCollapsed={isAgentCollapsed && surfaceLayout.wideMode !== "focus"}
+      legacyChatWidth={rightSidebarWidth}
+      adaptive={surfacesEnabled}
+      resizing={isLeftDragging || isRightDragging}
     >
-      <WorkspaceActivityBar
-        activeSidebar={activeSidebar}
-        isSidebarCollapsed={isSidebarCollapsed}
-        onBack={() => navigate("/")}
-        onSelectSidebar={handleActivityBarClick}
-      />
+      {surfacesEnabled && surfaceLayout.mode === "narrow" && (
+        <ResponsivePaneSwitcher
+          controlsOnly
+          activePane={surfaceLayout.narrowPane}
+          onChange={(pane) =>
+            surfaceLayoutDispatch({ type: "select_narrow_pane", pane })
+          }
+          hiddenChatUpdate={activeSessionStreamedText ? "Chat updated." : null}
+        />
+      )}
+      {!surfaceChromeHidden && (
+        <WorkspaceActivityBar
+          activeSidebar={activeSidebar}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onBack={() => navigate("/")}
+          onSelectSidebar={handleActivityBarClick}
+        />
+      )}
 
       {/* 2. Left Sidebar Panel (collapsible) */}
       <div
@@ -1386,7 +1460,8 @@ export function WorkspacePanel({
           backgroundColor: "var(--color-surface)",
           borderRight: "1px solid var(--color-border)",
           gridColumn: "2",
-          display: isSidebarCollapsed ? "none" : "flex",
+          display:
+            surfaceChromeHidden || isSidebarCollapsed ? "none" : "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
@@ -2190,7 +2265,7 @@ export function WorkspacePanel({
       </div>
 
       {/* Left Sidebar Resize Handle */}
-      {!isSidebarCollapsed && (
+      {!surfaceChromeHidden && !isSidebarCollapsed && (
         <div
           data-testid="left-resize-handle"
           style={{
@@ -2216,9 +2291,16 @@ export function WorkspacePanel({
 
       {/* 3. Central Tabbed Editor View */}
       <div
+        data-testid="workspace-surface-pane"
         style={{
-          gridColumn: "4",
-          display: "flex",
+          gridColumn:
+            surfacesEnabled && surfaceLayout.mode === "narrow" ? "1" : "4",
+          display:
+            surfacesEnabled &&
+            surfaceLayout.mode === "narrow" &&
+            surfaceLayout.narrowPane !== "surface"
+              ? "none"
+              : "flex",
           flexDirection: "column",
           backgroundColor: "var(--color-neutral)",
           overflow: "hidden",
@@ -2229,6 +2311,32 @@ export function WorkspacePanel({
           <SurfaceWorkspace
             workspaceId={_workspaceId}
             sessionId={workspaceFileSessionId}
+            focusMode={surfaceLayout.wideMode === "focus"}
+            onEnterFocus={() => {
+              surfaceFocusManager.rememberInitiator(
+                document.activeElement instanceof HTMLElement
+                  ? document.activeElement
+                  : null,
+              );
+              setIsAgentCollapsed(false);
+              surfaceLayoutDispatch({
+                type: "enter_focus",
+                containerWidth: panelWidth,
+              });
+            }}
+            onExitFocus={() => {
+              surfaceLayoutDispatch({
+                type: "exit_focus",
+                containerWidth: normalSurfacePaneWidth,
+              });
+              queueMicrotask(() =>
+                surfaceFocusManager.restoreInitiator(
+                  containerRef.current?.querySelector<HTMLElement>(
+                    '[data-focus-region="tabs"] [role="tab"][aria-selected="true"]',
+                  ) ?? null,
+                ),
+              );
+            }}
           />
         )}
         {openTabs.length > 0 && (
@@ -2548,38 +2656,63 @@ export function WorkspacePanel({
       </div>
 
       {/* Right Sidebar Resize Handle */}
-      {!isAgentCollapsed && (
-        <div
-          data-testid="right-resize-handle"
-          style={{
-            gridColumn: "5",
-            width: "4px",
-            cursor: "col-resize",
-            backgroundColor: isRightDragging
-              ? "var(--color-secondary)"
-              : "transparent",
-            zIndex: 10,
-            transition: "background-color 0.2s",
-          }}
-          onMouseDown={handleRightMouseDown}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--color-secondary)";
-          }}
-          onMouseLeave={(e) => {
-            if (!isRightDragging)
-              e.currentTarget.style.backgroundColor = "transparent";
-          }}
-        />
-      )}
+      {(!surfacesEnabled || surfaceLayout.mode !== "narrow") &&
+        (!isAgentCollapsed || (surfacesEnabled && surfaceLayout.wideMode === "focus")) &&
+        (surfacesEnabled ? (
+          <PaneSeparator
+            valueBasisPoints={resolvedSurfaceLayout.chatBasisPoints}
+            minimumBasisPoints={resolvedSurfaceLayout.minimumChatBasisPoints}
+            maximumBasisPoints={resolvedSurfaceLayout.maximumChatBasisPoints}
+            onChange={(value) =>
+              surfaceLayoutDispatch({
+                type: "set_chat_basis_points",
+                value,
+                containerWidth: surfacePaneContainerWidth,
+              })
+            }
+          />
+        ) : (
+          <div
+            data-testid="right-resize-handle"
+            style={{
+              gridColumn: "5",
+              width: "4px",
+              cursor: "col-resize",
+              backgroundColor: isRightDragging
+                ? "var(--color-secondary)"
+                : "transparent",
+              zIndex: 10,
+              transition: "background-color 0.2s",
+            }}
+            onMouseDown={handleRightMouseDown}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "var(--color-secondary)";
+            }}
+            onMouseLeave={(e) => {
+              if (!isRightDragging)
+                e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          />
+        ))}
 
       {/* 4. Right Sidebar Drawer (Agent chat) */}
       <div
         data-testid="agent-sidebar"
+        data-focus-region="chat"
         style={{
           backgroundColor: "var(--color-surface)",
           borderLeft: "1px solid var(--color-border)",
-          gridColumn: "6",
-          display: isAgentCollapsed ? "none" : "flex",
+          gridColumn:
+            surfacesEnabled && surfaceLayout.mode === "narrow" ? "1" : "6",
+          display:
+            surfacesEnabled && surfaceLayout.mode === "narrow"
+              ? surfaceLayout.narrowPane === "chat"
+                ? "flex"
+                : "none"
+              : isAgentCollapsed &&
+                  (!surfacesEnabled || surfaceLayout.wideMode !== "focus")
+                ? "none"
+                : "flex",
           flexDirection: "column",
           overflow: "hidden",
           position: "relative",
@@ -2641,7 +2774,11 @@ export function WorkspacePanel({
             }}
           >
             {/* Model Select */}
+            <label htmlFor="llm-model-select" style={{ fontSize: "0.65rem" }}>
+              Model
+            </label>
             <select
+              id="llm-model-select"
               data-testid="llm-model-select"
               value={selectedModel}
               onChange={(e) => handleModelChange(e.target.value)}
@@ -2665,7 +2802,11 @@ export function WorkspacePanel({
               </option>
             </select>
 
+            <label htmlFor="workspace-session-select" style={{ fontSize: "0.65rem" }}>
+              Session
+            </label>
             <select
+              id="workspace-session-select"
               data-testid="sessions-sidebar"
               value={activeSessionId || ""}
               onChange={async (e) => {
@@ -2811,7 +2952,9 @@ export function WorkspacePanel({
       </div>
 
       {/* Floating Expand button for Right Agent Drawer if collapsed */}
-      {isAgentCollapsed && (
+      {isAgentCollapsed &&
+        (!surfacesEnabled || surfaceLayout.wideMode !== "focus") &&
+        (!surfacesEnabled || surfaceLayout.mode !== "narrow") && (
         <button
           data-testid="agent-sidebar-toggle"
           onClick={() => setIsAgentCollapsed(false)}
@@ -2841,7 +2984,7 @@ export function WorkspacePanel({
           ◀
         </button>
       )}
-    </div>
+    </WorkspaceLayout>
   );
 }
 

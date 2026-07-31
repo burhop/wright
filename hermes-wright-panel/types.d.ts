@@ -1,4 +1,4 @@
-import { BrowserView, BrowserWindow } from 'electron';
+import { BrowserView, BrowserWindow, WebContents } from 'electron';
 
 export interface WrightPanelOptions {
   wrightApiPort?: number;
@@ -33,3 +33,4 @@ export function validateExternalUrl(
     previewPort?: number;
   },
 ): string;
+export function installReturnToHostAccelerator(webContents: WebContents): () => void;

@@ -26,8 +26,12 @@ interface MessageComposerProps {
   }[];
 }
 
-function getMcpStatusTone(status: string): { label: string; color: string } {
-  if (status === "ok") return { label: "Active", color: "#22c55e" };
+function getMcpStatusTone(
+  status: string,
+): { label: string; color: string } {
+  if (status === "ok") {
+    return { label: "Active", color: "#22c55e" };
+  }
   if (status === "warning" || status === "mismatch") {
     return {
       label: status === "mismatch" ? "Mismatch" : "Needs attention",
@@ -692,7 +696,7 @@ export function MessageComposer({
                   borderRadius: "10px",
                   border: "none",
                   backgroundColor: mcpTone?.color || "#ef4444",
-                  color: "#ffffff",
+                  color: "#0b0f19",
                   fontSize: "0.65rem",
                   fontWeight: "bold",
                   cursor: "pointer",

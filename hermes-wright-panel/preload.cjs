@@ -16,6 +16,13 @@ if (process.isMainFrame !== false) contextBridge.exposeInMainWorld('wrightDeskto
       ipcRenderer.removeListener('wright:theme-changed', subscription);
     };
   },
+  onReturnToHost: (callback) => {
+    const subscription = () => callback();
+    ipcRenderer.on('wright:return-to-host', subscription);
+    return () => {
+      ipcRenderer.removeListener('wright:return-to-host', subscription);
+    };
+  },
   terminal: {
     start: (options) => ipcRenderer.invoke('wright:terminal:start', options),
     write: (id, data) => ipcRenderer.invoke('wright:terminal:write', { id, data }),

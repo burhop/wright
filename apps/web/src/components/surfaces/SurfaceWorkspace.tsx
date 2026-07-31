@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { listSurfaces } from "../../services/surfaces/surface-client";
+import {
+  createPresentation,
+  listSurfaces,
+} from "../../services/surfaces/surface-client";
+import { hostAdapter } from "../../services/host-adapter";
 import {
   createSurfaceState,
   restoreSurfaceState,
@@ -11,14 +15,25 @@ import {
 import { DisplaySurface } from "./DisplaySurface";
 import { LiveAppSurface } from "./LiveAppSurface";
 import { SurfaceDeck } from "./SurfaceDeck";
+import { SurfaceTabs } from "./SurfaceTabs";
 
 interface Props {
   readonly workspaceId: string;
   readonly sessionId: string;
+  readonly focusMode?: boolean;
+  readonly onEnterFocus?: () => void;
+  readonly onExitFocus?: () => void;
 }
 
-export function SurfaceWorkspace({ workspaceId, sessionId }: Props) {
+export function SurfaceWorkspace({
+  workspaceId,
+  sessionId,
+  focusMode = false,
+  onEnterFocus,
+  onExitFocus,
+}: Props) {
   const { state, dispatch } = useSurfaces();
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [restoredStorageKey, setRestoredStorageKey] = useState<string | null>(
     null,
@@ -108,27 +123,56 @@ export function SurfaceWorkspace({ workspaceId, sessionId }: Props) {
         background: "var(--color-neutral)",
       }}
     >
-      <div role="tablist" aria-label="Workspace surfaces" style={{ display: "flex" }}>
-        {state.tabs.map((surfaceId) => {
-          const item = state.byId[surfaceId];
-          return (
-            <button
-              key={surfaceId}
-              role="tab"
-              aria-selected={surfaceId === state.activeSurfaceId}
-              data-testid={`surface-tab-${surfaceId}`}
-              type="button"
-              onClick={() => dispatch({ type: "activate", surfaceId })}
-            >
-              {item.title}
-            </button>
-          );
-        })}
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <h2 ref={headingRef} id="workspace-surfaces-heading" tabIndex={-1} className="sr-only">
+          Workspace surfaces
+        </h2>
+        <div style={{ flex: 1, minWidth: 0 }} data-focus-region="tabs">
+          <SurfaceTabs
+            tabs={descriptors.map((descriptor) => ({
+              id: descriptor.surfaceId,
+              label: descriptor.title,
+              closable: true,
+              status: descriptor.lifecycle,
+            }))}
+            selectedId={state.activeSurfaceId}
+            onSelect={(surfaceId) => dispatch({ type: "activate", surfaceId })}
+            onClose={(surfaceId) => dispatch({ type: "remove", surfaceId })}
+            emptyFocusRef={headingRef}
+          />
+        </div>
+        {focusMode && (
+          <button
+            type="button"
+            className="workspace-surface-control"
+            data-testid="surface-exit-focus"
+            onClick={onExitFocus}
+          >
+            Restore workspace layout
+          </button>
+        )}
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         <SurfaceDeck
           descriptors={descriptors}
           activeSurfaceId={state.activeSurfaceId}
+          onOpenInBrowser={async (descriptor) => {
+            try {
+              const launch = await createPresentation(
+                descriptor.surfaceId,
+                workspaceId,
+                sessionId,
+                "browser",
+                {
+                  rememberPreference: false,
+                  isolatedAcknowledged: descriptor.instance?.sharing === "isolated",
+                },
+              );
+              await hostAdapter.openExternal(launch.absoluteBootstrapUrl);
+            } catch (reason) {
+              setNotice(reason instanceof Error ? reason.message : String(reason));
+            }
+          }}
           renderSurface={(descriptor) =>
             descriptor.source.kind === "display" ? (
               <DisplaySurface
@@ -144,13 +188,7 @@ export function SurfaceWorkspace({ workspaceId, sessionId }: Props) {
                 descriptor={descriptor}
                 sessionId={sessionId}
                 onFocusMode={() =>
-                  dispatch({
-                    type: "layout",
-                    layout: {
-                      mode: "focus",
-                      chatSize: state.layout.chatSize,
-                    },
-                  })
+                  onEnterFocus?.()
                 }
               />
             ) : (

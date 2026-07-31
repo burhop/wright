@@ -91,6 +91,36 @@ test('navigation and window-open policies deny escape from Wright control UI', (
   assert.deepEqual(windowPolicy({ url: 'https://evil.example/' }), { action: 'deny' });
 });
 
+test('desktop return accelerator is narrow, repeat-safe, and removable', () => {
+  const { installReturnToHostAccelerator } = loadPanel();
+  const contents = Object.assign(new EventEmitter(), {
+    sent: [],
+    isDestroyed: () => false,
+    send(channel) { this.sent.push(channel); },
+  });
+  const remove = installReturnToHostAccelerator(contents);
+  const event = { prevented: false, preventDefault() { this.prevented = true; } };
+  const modifier = process.platform === 'darwin' ? { meta: true } : { control: true };
+  contents.emit('before-input-event', event, {
+    type: 'keyDown', key: 'F6', shift: true, ...modifier,
+  });
+  assert.equal(event.prevented, true);
+  assert.deepEqual(contents.sent, ['wright:return-to-host']);
+
+  contents.emit('before-input-event', event, {
+    type: 'keyDown', key: 'F6', shift: true, isAutoRepeat: true, ...modifier,
+  });
+  contents.emit('before-input-event', event, {
+    type: 'keyDown', key: 'F6', shift: false, ...modifier,
+  });
+  assert.deepEqual(contents.sent, ['wright:return-to-host']);
+  remove();
+  contents.emit('before-input-event', event, {
+    type: 'keyDown', key: 'F6', shift: true, ...modifier,
+  });
+  assert.deepEqual(contents.sent, ['wright:return-to-host']);
+});
+
 test('preload bridge is not exposed inside child frames', () => {
   const originalLoad = Module._load;
   const originalMainFrame = process.isMainFrame;
@@ -113,6 +143,38 @@ test('preload bridge is not exposed inside child frames', () => {
   delete require.cache[preload];
   require(preload);
   assert.equal(exposures, 1);
+  Object.defineProperty(process, 'isMainFrame', {
+    configurable: true,
+    value: originalMainFrame,
+  });
+  Module._load = originalLoad;
+});
+
+test('preload translates the desktop return channel into a removable callback', () => {
+  const originalLoad = Module._load;
+  const originalMainFrame = process.isMainFrame;
+  const ipcRenderer = new EventEmitter();
+  let bridge;
+  Module._load = function(request, parent, isMain) {
+    if (request === 'electron') {
+      return {
+        contextBridge: { exposeInMainWorld: (_name, value) => { bridge = value; } },
+        ipcRenderer,
+      };
+    }
+    return originalLoad.call(this, request, parent, isMain);
+  };
+  Object.defineProperty(process, 'isMainFrame', { configurable: true, value: true });
+  const preload = require.resolve('../preload.cjs');
+  delete require.cache[preload];
+  require(preload);
+  let calls = 0;
+  const unsubscribe = bridge.onReturnToHost(() => { calls += 1; });
+  ipcRenderer.emit('wright:return-to-host', {});
+  assert.equal(calls, 1);
+  unsubscribe();
+  ipcRenderer.emit('wright:return-to-host', {});
+  assert.equal(calls, 1);
   Object.defineProperty(process, 'isMainFrame', {
     configurable: true,
     value: originalMainFrame,

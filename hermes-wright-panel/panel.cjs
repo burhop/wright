@@ -165,6 +165,27 @@ function installNavigationPolicy(webContents, controlUrl) {
   webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
 }
 
+function installReturnToHostAccelerator(webContents) {
+  const listener = (event, input = {}) => {
+    const modifier = process.platform === 'darwin' ? input.meta : input.control;
+    if (
+      input.type !== 'keyDown' ||
+      input.key !== 'F6' ||
+      input.shift !== true ||
+      modifier !== true ||
+      input.isAutoRepeat === true
+    ) {
+      return;
+    }
+    event.preventDefault();
+    if (!webContents.isDestroyed()) {
+      webContents.send('wright:return-to-host');
+    }
+  };
+  webContents.on('before-input-event', listener);
+  return () => webContents.removeListener('before-input-event', listener);
+}
+
 class WrightPanel {
   constructor(mainWindow, options = {}) {
     this.mainWindow = mainWindow;
@@ -217,13 +238,14 @@ class WrightPanel {
     if (this.distPath) {
       const { pathToFileURL } = require('url');
       const indexUrl = pathToFileURL(path.resolve(this.distPath, 'index.html')).toString();
-      installNavigationPolicy(view.webContents, indexUrl);
+    installNavigationPolicy(view.webContents, indexUrl);
       view.webContents.loadURL(indexUrl);
     } else {
       const controlUrl = `http://localhost:${this.wrightApiPort}`;
       installNavigationPolicy(view.webContents, controlUrl);
       view.webContents.loadURL(controlUrl);
     }
+    this.returnToHostCleanup = installReturnToHostAccelerator(view.webContents);
     
     const handleThemeChange = () => {
       if (view && !view.webContents.isDestroyed()) {
@@ -273,6 +295,11 @@ class WrightPanel {
 
   destroy() {
     this.unregisterIpc();
+
+    if (this.returnToHostCleanup) {
+      this.returnToHostCleanup();
+      this.returnToHostCleanup = null;
+    }
     
     if (this.themeListener) {
       nativeTheme.off('updated', this.themeListener);
@@ -484,5 +511,6 @@ module.exports = {
   WrightPanel,
   validatePath,
   validateExternalUrl,
-  installNavigationPolicy
+  installNavigationPolicy,
+  installReturnToHostAccelerator
 };

@@ -55,6 +55,7 @@ export interface WrightDesktopBridge {
   onThemeChange: (
     callback: (payload: { theme: "dark" | "light" }) => void,
   ) => () => void;
+  onReturnToHost: (callback: () => void) => () => void;
   terminal: {
     start: (options?: {
       cols?: number;

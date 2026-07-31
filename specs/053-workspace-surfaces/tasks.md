@@ -193,24 +193,24 @@
 
 ### Tests for User Story 4 — write and observe failure first
 
-- [ ] T099 [P] [US4] Add the exact focus/normal/narrow state, 320px/480px container minimums, basis-point ratios, 200% zoom, switcher, migration, and restoration reducer tests from `specs/053-workspace-surfaces/ux-contract.md` to `apps/web/src/components/workspace/workspace-layout.spec.ts` (FR-046 through FR-047)
-- [ ] T100 [P] [US4] Add semantic tablist/roving focus/close/selection/restoration, explicit no-reorder behavior, and keyboard separator ARIA/2%/10%/Home/End tests from `specs/053-workspace-surfaces/ux-contract.md` to `apps/web/src/components/surfaces/SurfaceTabs.spec.tsx` and `apps/web/src/components/workspace/PaneSeparator.spec.tsx` (FR-047, FR-054)
-- [ ] T101 [P] [US4] Add retained live-host versus suspendable static-host, pressure warning, exact-once disposal, and focus restoration tests to `apps/web/src/components/surfaces/SurfaceDeck.spec.tsx` (FR-005 through FR-007, FR-047)
-- [ ] T102 [P] [US4] Add wide focus/chat-update/resize/tab-switch/exit and narrow chat-surface-switcher journeys to `tests/ui-integration/workspace-surfaces/focus-layout.spec.ts` (User Story 4, SC-005)
-- [ ] T103 [P] [US4] Add keyboard-only, focus-trap escape, visible focus, semantic role, and axe critical/serious checks to `tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts` (FR-047, SC-005)
+- [x] T099 [P] [US4] Add the exact focus/normal/narrow state, 320px/480px container minimums, basis-point ratios, 200% zoom, switcher, migration, and restoration reducer tests from `specs/053-workspace-surfaces/ux-contract.md` to `apps/web/src/components/workspace/workspace-layout.spec.ts` (FR-046 through FR-047)
+- [x] T100 [P] [US4] Add semantic tablist/roving focus/close/selection/restoration, explicit no-reorder behavior, and keyboard separator ARIA/2%/10%/Home/End tests from `specs/053-workspace-surfaces/ux-contract.md` to `apps/web/src/components/surfaces/SurfaceTabs.spec.tsx` and `apps/web/src/components/workspace/PaneSeparator.spec.tsx` (FR-047, FR-054)
+- [x] T101 [P] [US4] Add retained live-host versus suspendable static-host, pressure warning, exact-once disposal, and focus restoration tests to `apps/web/src/components/surfaces/SurfaceDeck.spec.tsx` (FR-005 through FR-007, FR-047)
+- [x] T102 [P] [US4] Add wide focus/chat-update/resize/tab-switch/exit and narrow chat-surface-switcher journeys to `tests/ui-integration/workspace-surfaces/focus-layout.spec.ts` (User Story 4, SC-005)
+- [x] T103 [P] [US4] Add keyboard-only, focus-trap escape, visible focus, semantic role, and axe critical/serious checks to `tests/ui-integration/workspace-surfaces/focus-accessibility.spec.ts` (FR-047, SC-005)
 
 ### Implementation for User Story 4
 
-- [ ] T104 [P] [US4] Add the exact `ux-contract.md` surface/chat minimum/default/maximum sizing, 8px separator target, focus, tab, status, 200%-zoom, and responsive tokens to `apps/web/src/styles/tokens.css` (constitution atomic design)
-- [ ] T105 [P] [US4] Implement accessible semantic surface tabs with roving focus and stable test IDs in `apps/web/src/components/surfaces/SurfaceTabs.tsx` (FR-047, FR-054)
-- [ ] T106 [P] [US4] Implement pointer/keyboard container-relative separator with ARIA min/max/current values in `apps/web/src/components/workspace/PaneSeparator.tsx` (FR-047, FR-054)
-- [ ] T107 [US4] Implement the basis-point, container-relative versioned normal/focus/narrow layout reducer, exact defaults/constraint conflict behavior, and malformed/legacy state migration in `apps/web/src/components/workspace/workspace-layout.ts` and `apps/web/src/store/surface-layout.ts` (FR-046 through FR-047)
-- [ ] T108 [US4] Implement the grid-based workspace layout that hides the left drawer in focus mode and reserves bounded chat in `apps/web/src/components/workspace/WorkspaceLayout.tsx` (FR-046)
-- [ ] T109 [US4] Implement explicit accessible Chat/Surface narrow switcher without clipping or unmounting retained content in `apps/web/src/components/workspace/ResponsivePaneSwitcher.tsx` (FR-046 through FR-047)
-- [ ] T110 [US4] Integrate stable retained `SurfaceDeck`, chat pane, status, focus entry/exit, and layout persistence in `apps/web/src/components/chat/WorkspacePanel.tsx` (FR-046 through FR-047)
-- [ ] T111 [P] [US4] Implement host focus-entry, before/after-frame return controls, F6 host-region cycle, nonconforming-frame disclosure/browser fallback, Electron return accelerator integration, tab-close restoration, and mode-restoration helpers in `apps/web/src/services/surfaces/focus-manager.ts` (FR-047)
-- [ ] T112 [P] [US4] Add component stories/play functions for normal, focus, narrow, loading, error, and permission states in `apps/web/src/components/surfaces/WorkspaceSurfaces.stories.tsx` (constitution Tier 1)
-- [ ] T113 [US4] Document focus, keyboard resizing, iframe escape, responsive behavior, and retained-state limits in `docs/workspace-surfaces/focus-and-accessibility.md` (FR-046 through FR-047)
+- [x] T104 [P] [US4] Add the exact `ux-contract.md` surface/chat minimum/default/maximum sizing, 8px separator target, focus, tab, status, 200%-zoom, and responsive tokens to `apps/web/src/styles/tokens.css` (constitution atomic design)
+- [x] T105 [P] [US4] Implement accessible semantic surface tabs with roving focus and stable test IDs in `apps/web/src/components/surfaces/SurfaceTabs.tsx` (FR-047, FR-054)
+- [x] T106 [P] [US4] Implement pointer/keyboard container-relative separator with ARIA min/max/current values in `apps/web/src/components/workspace/PaneSeparator.tsx` (FR-047, FR-054)
+- [x] T107 [US4] Implement the basis-point, container-relative versioned normal/focus/narrow layout reducer, exact defaults/constraint conflict behavior, and malformed/legacy state migration in `apps/web/src/components/workspace/workspace-layout.ts` and `apps/web/src/store/surface-layout.ts` (FR-046 through FR-047)
+- [x] T108 [US4] Implement the grid-based workspace layout that hides the left drawer in focus mode and reserves bounded chat in `apps/web/src/components/workspace/WorkspaceLayout.tsx` (FR-046)
+- [x] T109 [US4] Implement explicit accessible Chat/Surface narrow switcher without clipping or unmounting retained content in `apps/web/src/components/workspace/ResponsivePaneSwitcher.tsx` (FR-046 through FR-047)
+- [x] T110 [US4] Integrate stable retained `SurfaceDeck`, chat pane, status, focus entry/exit, and layout persistence in `apps/web/src/components/chat/WorkspacePanel.tsx` (FR-046 through FR-047)
+- [x] T111 [P] [US4] Implement host focus-entry, before/after-frame return controls, F6 host-region cycle, nonconforming-frame disclosure/browser fallback, Electron return accelerator integration, tab-close restoration, and mode-restoration helpers in `apps/web/src/services/surfaces/focus-manager.ts` (FR-047)
+- [x] T112 [P] [US4] Add component stories/play functions for normal, focus, narrow, loading, error, and permission states in `apps/web/src/components/surfaces/WorkspaceSurfaces.stories.tsx` (constitution Tier 1)
+- [x] T113 [US4] Document focus, keyboard resizing, iframe escape, responsive behavior, and retained-state limits in `docs/workspace-surfaces/focus-and-accessibility.md` (FR-046 through FR-047)
 
 **Checkpoint**: User Story 4 passes entirely with static/ready fixtures and does not depend on the live process manager.
 

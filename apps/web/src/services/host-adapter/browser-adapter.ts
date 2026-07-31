@@ -35,7 +35,12 @@ export class BrowserHostAdapter implements HostAdapter {
   private controlUrl(): URL {
     if (this.configuredControlUrl) return new URL(this.configuredControlUrl);
     if (typeof window === "undefined") return new URL("http://127.0.0.1:8000/");
-    return new URL(window.location.href);
+    const location = window.location;
+    if (typeof location.href === "string" && location.href) {
+      return new URL(location.href);
+    }
+    const port = location.port ? `:${location.port}` : "";
+    return new URL(`${location.protocol}//${location.hostname}${port}/`);
   }
 
   getApiBaseUrl(): string {

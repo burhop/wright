@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { hostAdapter } from "../../services/host-adapter";
 import type { SurfaceDescriptor } from "../../services/surfaces/surface-contract";
@@ -12,6 +12,7 @@ import {
   LiveAppPresenter,
   type LiveFrameStatus,
 } from "../../services/surfaces/presenters/live-app-presenter";
+import { installElectronReturnAccelerator } from "../../services/surfaces/focus-manager";
 import { SurfaceToolbar } from "./SurfaceToolbar";
 
 interface Props {
@@ -23,6 +24,7 @@ interface Props {
 type ActiveLaunches = Partial<Record<"panel" | "browser", PresentationLaunch>>;
 
 export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
+  const root = useRef<HTMLDivElement>(null);
   const panelHost = useRef<HTMLDivElement>(null);
   const presenter = useRef<LiveAppPresenter | null>(null);
   const [launches, setLaunches] = useState<ActiveLaunches>({});
@@ -73,6 +75,17 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
       presenter.current = null;
     },
     [],
+  );
+
+  const returnToHost = useCallback(() => {
+    root.current
+      ?.querySelector<HTMLElement>('[data-testid="surface-focus"]')
+      ?.focus();
+  }, []);
+
+  useEffect(
+    () => installElectronReturnAccelerator(returnToHost),
+    [returnToHost],
   );
 
   const open = async (kind: "panel" | "browser"): Promise<boolean> => {
@@ -145,8 +158,9 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
   };
 
   return (
-    <div data-testid="live-app-surface" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <SurfaceToolbar
+    <div ref={root} data-testid="live-app-surface" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div data-focus-region="toolbar">
+        <SurfaceToolbar
         descriptor={descriptor}
         activeKinds={Object.keys(launches) as ("panel" | "browser")[]}
         rememberPreference={rememberPreference}
@@ -178,7 +192,8 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
         }}
         onDiagnostics={() => setDiagnostics((value) => !value)}
         onRememberPreferenceChange={setRememberPreference}
-      />
+        />
+      </div>
       {error && <p role="alert">{error}</p>}
       {diagnostics && (
         <aside data-testid="surface-diagnostics-panel">
@@ -188,7 +203,34 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
       <button type="button" onClick={onFocusMode} data-testid="surface-enter-focus">
         Maximize surface while keeping chat
       </button>
+      {launches.panel && (
+        <button
+          type="button"
+          className="workspace-surface-control"
+          data-testid="surface-enter-frame"
+          onClick={() => presenter.current?.focus()}
+        >
+          Enter embedded application
+        </button>
+      )}
       <div ref={panelHost} data-testid="surface-panel-host" style={{ flex: 1, minHeight: 320 }} />
+      {launches.panel && (
+        <button
+          type="button"
+          className="workspace-surface-control"
+          data-testid="surface-return-host"
+          data-focus-region="frame-return"
+          onClick={returnToHost}
+        >
+          Return to surface controls
+        </button>
+      )}
+      {(frameStatus === "unknown" || frameStatus === "blocked") && (
+        <p role="note" aria-live="polite" data-testid="surface-frame-unverified">
+          Keyboard escape from this application is unverified. Use Return to surface controls,
+          the desktop return shortcut, or open the application in your browser.
+        </p>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import type { SurfaceDescriptor } from "../../services/surfaces/surface-contract";
@@ -28,6 +29,20 @@ function live(surfaceId: string): SurfaceDescriptor {
     revision: 1,
     createdAt: "2026-07-30T12:00:00Z",
     updatedAt: "2026-07-30T12:00:00Z",
+  };
+}
+
+function display(surfaceId: string): SurfaceDescriptor {
+  return {
+    ...live(surfaceId),
+    source: {
+      kind: "display",
+      sourceId: surfaceId,
+      sourceVersion: "b".repeat(64),
+      displayId: surfaceId,
+      revision: 1,
+    },
+    instance: null,
   };
 }
 
@@ -75,7 +90,8 @@ describe("SurfaceDeck", () => {
     expect(dispose).not.toHaveBeenCalled();
   });
 
-  it("bounds retained hosts while always keeping the active host", () => {
+  it("bounds retained hosts after consent while always keeping the active host", async () => {
+    const user = userEvent.setup();
     const dispose = vi.fn();
     const descriptors = [live("app-a"), live("app-b"), live("app-c")];
     render(
@@ -89,6 +105,7 @@ describe("SurfaceDeck", () => {
       />,
     );
 
+    await user.click(screen.getByRole("button", { name: "Reload least recently used surface" }));
     expect(screen.queryByTestId("probe-app-a")).not.toBeInTheDocument();
     expect(screen.getByTestId("probe-app-b")).toBeInTheDocument();
     expect(screen.getByTestId("probe-app-c")).toBeVisible();
@@ -117,5 +134,55 @@ describe("SurfaceDeck", () => {
     );
     expect(dispose).toHaveBeenCalledWith("app-a");
     expect(screen.queryByTestId("probe-app-a")).not.toBeInTheDocument();
+  });
+
+  it("retains live hosts but suspends inactive static displays", () => {
+    const dispose = vi.fn();
+    const descriptors = [live("app-a"), display("graph-a")];
+    const renderSurface = (item: SurfaceDescriptor) => (
+      <Probe descriptor={item} onDispose={dispose} />
+    );
+    const { rerender } = render(
+      <SurfaceDeck descriptors={descriptors} activeSurfaceId="graph-a" renderSurface={renderSurface} />,
+    );
+    rerender(
+      <SurfaceDeck descriptors={descriptors} activeSurfaceId="app-a" renderSurface={renderSurface} />,
+    );
+
+    expect(screen.getByTestId("probe-app-a")).toBeVisible();
+    expect(screen.queryByTestId("probe-graph-a")).not.toBeInTheDocument();
+    expect(dispose).toHaveBeenCalledTimes(1);
+  });
+
+  it("warns before pressure can reload a retained stateful host", () => {
+    render(
+      <SurfaceDeck
+        descriptors={[live("app-a"), live("app-b"), live("app-c")]}
+        activeSurfaceId="app-c"
+        maximumRetainedHosts={2}
+        renderSurface={(item) => <div>{item.title}</div>}
+      />,
+    );
+
+    expect(screen.getByRole("alertdialog", { name: "Surface memory limit reached" })).toBeVisible();
+    expect(screen.getByText(/app-a.*reload/i)).toBeVisible();
+  });
+
+  it("disposes an evicted host exactly once and restores focus to the active panel", async () => {
+    const user = userEvent.setup();
+    const dispose = vi.fn();
+    render(
+      <SurfaceDeck
+        descriptors={[live("app-a"), live("app-b"), live("app-c")]}
+        activeSurfaceId="app-c"
+        maximumRetainedHosts={2}
+        renderSurface={(item) => <Probe descriptor={item} onDispose={dispose} />}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Reload least recently used surface" }));
+    expect(dispose).toHaveBeenCalledTimes(1);
+    expect(dispose).toHaveBeenCalledWith("app-a");
+    expect(screen.getByRole("tabpanel", { name: "app-c" })).toHaveFocus();
   });
 });
