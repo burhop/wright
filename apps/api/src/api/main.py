@@ -283,6 +283,21 @@ async def runtime_identity():
 
 @app.get("/api/agent/health", response_model=HealthResponse)
 async def check_agent_health():
+    sync_manager = getattr(app.state, "agent_sync_manager", None)
+    if (
+        sync_manager is not None
+        and getattr(sync_manager, "active_agent", "") == "hermes"
+        and (
+            getattr(sync_manager, "gateway_refresh_in_progress", False)
+            or getattr(sync_manager, "gateway_refresh_pending", False)
+        )
+    ):
+        return HealthResponse(
+            state="unknown",
+            latencyMs=0.0,
+            baseUrl=getattr(app.state.agent_engine, "base_url", None),
+            error="Hermes gateway is refreshing workspace tools",
+        )
     res = await app.state.agent_engine.check_health()
     return HealthResponse(
         state=res["state"],

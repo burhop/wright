@@ -170,7 +170,7 @@ export class HermesAgentService {
       if (response.ok) {
         const data = await response.json();
         return {
-          state: data.state as "connected" | "disconnected",
+          state: data.state as "connected" | "disconnected" | "unknown",
           latencyMs: data.latencyMs,
           baseUrl: data.baseUrl ?? null,
           error: data.error ?? null,

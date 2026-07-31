@@ -51,9 +51,13 @@ export class LiveHealthService {
             );
             if (response.ok) {
               const data = await response.json();
-              if (data.state === "connected" || data.state === "disconnected") {
+              if (
+                data.state === "connected" ||
+                data.state === "disconnected" ||
+                data.state === "unknown"
+              ) {
                 return {
-                  state: data.state as "connected" | "disconnected",
+                  state: data.state as "connected" | "disconnected" | "unknown",
                   latencyMs: data.latencyMs ?? null,
                   baseUrl: data.baseUrl ?? null,
                   error: data.error ?? null,

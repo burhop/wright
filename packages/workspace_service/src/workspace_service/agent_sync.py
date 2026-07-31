@@ -23,6 +23,8 @@ class AgentSyncManager:
         self.db_path = db_path
         self._workspace_sync = workspace_sync
         self._gateway_restart_required = False
+        self._gateway_refresh_in_progress = False
+        self._gateway_refresh_error: str | None = None
         self._gateway_refresh_lock = asyncio.Lock()
         self._active_agent = "hermes"
         self._load_active_agent()
@@ -53,9 +55,11 @@ class AgentSyncManager:
             return self._gateway_restart_required
 
         if self._active_agent == "hermes" and self._workspace_sync is not None:
+            restart_required = bool(self._workspace_sync(session_id, self.db_path))
+            if restart_required:
+                self._gateway_refresh_error = None
             self._gateway_restart_required = (
-                bool(self._workspace_sync(session_id, self.db_path))
-                or self._gateway_restart_required
+                restart_required or self._gateway_restart_required
             )
 
         logger.info(
@@ -68,6 +72,19 @@ class AgentSyncManager:
 
     def mark_gateway_refreshed(self) -> None:
         self._gateway_restart_required = False
+        self._gateway_refresh_error = None
+
+    @property
+    def gateway_refresh_in_progress(self) -> bool:
+        return self._gateway_refresh_in_progress
+
+    @property
+    def gateway_refresh_pending(self) -> bool:
+        return self._gateway_restart_required and self._gateway_refresh_error is None
+
+    @property
+    def gateway_refresh_error(self) -> str | None:
+        return self._gateway_refresh_error
 
     async def refresh_gateway_if_needed(
         self, refresh: Callable[[], Awaitable[None]]
@@ -76,7 +93,14 @@ class AgentSyncManager:
         async with self._gateway_refresh_lock:
             if not self._gateway_restart_required:
                 return False
-            await refresh()
+            self._gateway_refresh_in_progress = True
+            try:
+                await refresh()
+            except Exception as exc:
+                self._gateway_refresh_error = str(exc)
+                raise
+            finally:
+                self._gateway_refresh_in_progress = False
             self.mark_gateway_refreshed()
             return True
 
