@@ -411,10 +411,11 @@ def test_generation_provenance_and_diagnostics_require_authorized_scope(
         connection.execute(
             """INSERT INTO surface_display_artifacts (
                 artifact_id, surface_id, workspace_id, display_id, revision,
-                producer_execution_id, representations_json, durability,
-                current, created_at
+                producer_execution_id, producer_task_id, representations_json,
+                durability, current, idempotency_key, created_at
             ) VALUES ('artifact-1', 'surface-1', 'workspace-1', 'loads', 1,
-                'execution-1', '[]', 'durable', 1, ?)""",
+                'execution-1', 'task-1', '[]', 'durable', 1,
+                'artifact-fixture-1', ?)""",
             (now.isoformat(),),
         )
         connection.commit()

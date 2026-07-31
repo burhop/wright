@@ -4,15 +4,36 @@
   "title": "Wright Live App Manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "id", "version", "title", "ownershipPolicy", "launch", "readiness", "presentation", "transports", "capabilities"],
+  "required": [
+    "schemaVersion",
+    "id",
+    "version",
+    "title",
+    "ownershipPolicy",
+    "launch",
+    "readiness",
+    "presentation",
+    "transports",
+    "capabilities"
+  ],
   "properties": {
-    "$schema": {"type": "string", "format": "uri"},
-    "schemaVersion": {"const": 1},
-    "id": {"type": "string", "minLength": 3, "maxLength": 128, "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"},
-    "version": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"},
-    "title": {"type": "string", "minLength": 1, "maxLength": 256},
-    "description": {"type": "string", "maxLength": 4096},
-    "ownershipPolicy": {"enum": ["wright-owned", "approved-attach"]},
+    "$schema": { "type": "string", "format": "uri" },
+    "schemaVersion": { "const": 1 },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+    "title": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "description": { "type": "string", "maxLength": 4096 },
+    "ownershipPolicy": { "enum": ["wright-owned", "approved-attach"] },
     "launch": {
       "oneOf": [
         {
@@ -20,31 +41,50 @@
           "additionalProperties": false,
           "required": ["mode", "argv", "workingDirectory"],
           "properties": {
-            "mode": {"const": "command"},
+            "mode": { "const": "command" },
             "argv": {
               "type": "array",
               "minItems": 1,
               "maxItems": 128,
-              "items": {"type": "string", "minLength": 1, "maxLength": 4096}
+              "items": { "type": "string", "minLength": 1, "maxLength": 4096 }
             },
-            "workingDirectory": {"type": "string", "minLength": 1, "maxLength": 4096},
+            "workingDirectory": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
             "environment": {
               "type": "object",
               "maxProperties": 128,
-              "propertyNames": {"pattern": "^[A-Z_][A-Z0-9_]{0,127}$"},
+              "propertyNames": { "pattern": "^[A-Z_][A-Z0-9_]{0,127}$" },
               "additionalProperties": {
                 "oneOf": [
-                  {"type": "string", "maxLength": 8192},
+                  { "type": "string", "maxLength": 8192 },
                   {
                     "type": "object",
                     "additionalProperties": false,
                     "required": ["secretRef"],
-                    "properties": {"secretRef": {"type": "string", "minLength": 1, "maxLength": 256}}
+                    "properties": {
+                      "secretRef": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256
+                      }
+                    }
                   }
                 ]
               }
             },
-            "framework": {"enum": ["generic", "fastapi", "panel", "streamlit", "gradio", "dash"]}
+            "framework": {
+              "enum": [
+                "generic",
+                "fastapi",
+                "panel",
+                "streamlit",
+                "gradio",
+                "dash"
+              ]
+            }
           }
         },
         {
@@ -52,35 +92,63 @@
           "additionalProperties": false,
           "required": ["mode", "url"],
           "properties": {
-            "mode": {"const": "attach"},
-            "url": {"type": "string", "format": "uri", "maxLength": 4096},
-            "ownershipProof": {"enum": ["shared-secret", "health-nonce", "process-attestation", "operator-approved"]}
+            "mode": { "const": "attach" },
+            "url": { "type": "string", "format": "uri", "maxLength": 4096 },
+            "ownershipProof": {
+              "enum": [
+                "shared-secret",
+                "health-nonce",
+                "process-attestation",
+                "operator-approved"
+              ]
+            }
           }
         }
       ]
     },
-    "readiness": {"$ref": "#/$defs/probe"},
-    "health": {"$ref": "#/$defs/probe"},
+    "readiness": { "$ref": "#/$defs/probe" },
+    "health": { "$ref": "#/$defs/probe" },
     "presentation": {
       "type": "object",
       "additionalProperties": false,
       "required": ["panel", "browser", "sharing"],
       "properties": {
-        "panel": {"type": "boolean"},
-        "browser": {"type": "boolean"},
-        "sharing": {"enum": ["shared", "isolated"]},
-        "basePathMode": {"enum": ["root", "injected-prefix"], "default": "injected-prefix"},
-        "allowedFrameAncestors": {"type": "array", "maxItems": 16, "items": {"type": "string", "format": "uri", "maxLength": 2048}},
+        "panel": { "type": "boolean" },
+        "browser": { "type": "boolean" },
+        "sharing": { "enum": ["shared", "isolated"] },
+        "basePathMode": {
+          "enum": ["root", "injected-prefix"],
+          "default": "injected-prefix"
+        },
+        "allowedFrameAncestors": {
+          "type": "array",
+          "maxItems": 16,
+          "items": { "type": "string", "format": "uri", "maxLength": 2048 }
+        },
         "permissionsPolicy": {
           "type": "array",
           "uniqueItems": true,
           "maxItems": 32,
-          "items": {"enum": ["clipboard-read", "clipboard-write", "camera", "microphone", "geolocation", "fullscreen", "downloads", "notifications"]}
+          "items": {
+            "enum": [
+              "clipboard-read",
+              "clipboard-write",
+              "camera",
+              "microphone",
+              "geolocation",
+              "fullscreen",
+              "downloads",
+              "notifications"
+            ]
+          }
         }
       },
       "anyOf": [
-        {"properties": {"panel": {"const": true}}, "required": ["panel"]},
-        {"properties": {"browser": {"const": true}}, "required": ["browser"]}
+        { "properties": { "panel": { "const": true } }, "required": ["panel"] },
+        {
+          "properties": { "browser": { "const": true } },
+          "required": ["browser"]
+        }
       ]
     },
     "transports": {
@@ -88,18 +156,21 @@
       "additionalProperties": false,
       "required": ["http", "websocket", "sse"],
       "properties": {
-        "http": {"type": "boolean"},
-        "websocket": {"type": "boolean"},
-        "sse": {"type": "boolean"}
+        "http": { "type": "boolean" },
+        "websocket": { "type": "boolean" },
+        "sse": { "type": "boolean" }
       }
     },
     "navigation": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "allowSameTargetRedirects": {"type": "boolean", "default": true},
-        "externalLinks": {"enum": ["deny", "prompt-browser"], "default": "prompt-browser"},
-        "downloads": {"enum": ["deny", "prompt"], "default": "deny"}
+        "allowSameTargetRedirects": { "type": "boolean", "default": true },
+        "externalLinks": {
+          "enum": ["deny", "prompt-browser"],
+          "default": "prompt-browser"
+        },
+        "downloads": { "enum": ["deny", "prompt"], "default": "deny" }
       }
     },
     "lifetime": {
@@ -107,18 +178,26 @@
       "additionalProperties": false,
       "required": ["policy"],
       "properties": {
-        "policy": {"enum": ["presentation", "workspace", "lease", "idle", "manual"]},
-        "leaseSeconds": {"type": "integer", "minimum": 30, "maximum": 86400},
-        "idleSeconds": {"type": "integer", "minimum": 30, "maximum": 86400}
+        "policy": {
+          "enum": ["presentation", "workspace", "lease", "idle", "manual"]
+        },
+        "leaseSeconds": { "type": "integer", "minimum": 30, "maximum": 86400 },
+        "idleSeconds": { "type": "integer", "minimum": 30, "maximum": 86400 }
       },
       "allOf": [
         {
-          "if": {"properties": {"policy": {"const": "lease"}}, "required": ["policy"]},
-          "then": {"required": ["leaseSeconds"]}
+          "if": {
+            "properties": { "policy": { "const": "lease" } },
+            "required": ["policy"]
+          },
+          "then": { "required": ["leaseSeconds"] }
         },
         {
-          "if": {"properties": {"policy": {"const": "idle"}}, "required": ["policy"]},
-          "then": {"required": ["idleSeconds"]}
+          "if": {
+            "properties": { "policy": { "const": "idle" } },
+            "required": ["policy"]
+          },
+          "then": { "required": ["idleSeconds"] }
         }
       ]
     },
@@ -146,63 +225,242 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "startupTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 300000, "default": 30000},
-        "shutdownTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 60000, "default": 10000},
-        "gracefulShutdownMs": {"type": "integer", "minimum": 100, "maximum": 30000, "default": 5000},
-        "cleanupReconciliationMs": {"type": "integer", "minimum": 100, "maximum": 30000, "default": 5000},
-        "maxRestarts": {"type": "integer", "minimum": 0, "maximum": 20, "default": 2},
-        "restartWindowMs": {"type": "integer", "minimum": 1000, "maximum": 3600000, "default": 300000},
-        "maxProcesses": {"type": "integer", "minimum": 1, "maximum": 256, "default": 32},
-        "maxCpuCores": {"type": "number", "minimum": 0.1, "maximum": 64, "default": 2},
-        "maxMemoryMiB": {"type": "integer", "minimum": 16, "maximum": 65536, "default": 2048},
-        "maxConnections": {"type": "integer", "minimum": 1, "maximum": 10000, "default": 128},
-        "maxHeaderCount": {"type": "integer", "minimum": 1, "maximum": 200, "default": 100},
-        "maxHeaderBytes": {"type": "integer", "minimum": 1024, "maximum": 1048576, "default": 65536},
-        "maxRequestBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 16777216},
-        "maxResponseBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 67108864},
-        "maxDecodedBodyBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 67108864},
-        "maxDecompressionRatio": {"type": "integer", "minimum": 1, "maximum": 64, "default": 8},
-        "maxBufferedOutputBytes": {"type": "integer", "minimum": 4096, "maximum": 1073741824, "default": 4194304},
-        "maxRequestRatePerMinute": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 300},
-        "requestBurst": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 60},
-        "maxMessageRatePerSecond": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 100},
-        "maxWebSocketMessageBytes": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 4194304},
-        "webSocketMessageBurst": {"type": "integer", "minimum": 1, "maximum": 100000, "default": 200},
-        "maxStreamBytesPerSecond": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 8388608},
-        "streamBurstBytes": {"type": "integer", "minimum": 1024, "maximum": 1073741824, "default": 16777216},
-        "firstByteTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 300000, "default": 30000},
-        "httpIdleTimeoutMs": {"type": "integer", "minimum": 100, "maximum": 3600000, "default": 60000},
-        "streamHeartbeatIdleMs": {"type": "integer", "minimum": 100, "maximum": 3600000, "default": 90000},
-        "maxConnectionLifetimeMs": {"type": "integer", "minimum": 1000, "maximum": 86400000, "default": 28800000},
-        "maxLogBytes": {"type": "integer", "minimum": 4096, "maximum": 1073741824, "default": 10485760},
-        "maxLogBytesPerSecond": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 262144},
-        "logBurstBytes": {"type": "integer", "minimum": 1024, "maximum": 67108864, "default": 1048576}
+        "startupTimeoutMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 300000,
+          "default": 30000
+        },
+        "shutdownTimeoutMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000,
+          "default": 10000
+        },
+        "gracefulShutdownMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 30000,
+          "default": 5000
+        },
+        "cleanupReconciliationMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 30000,
+          "default": 5000
+        },
+        "maxRestarts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 2
+        },
+        "restartWindowMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 3600000,
+          "default": 300000
+        },
+        "maxProcesses": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256,
+          "default": 32
+        },
+        "maxCpuCores": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 64,
+          "default": 2
+        },
+        "maxMemoryMiB": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 65536,
+          "default": 2048
+        },
+        "maxConnections": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 128
+        },
+        "maxHeaderCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 100
+        },
+        "maxHeaderBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1048576,
+          "default": 65536
+        },
+        "maxRequestBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1073741824,
+          "default": 16777216
+        },
+        "maxResponseBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1073741824,
+          "default": 67108864
+        },
+        "maxDecodedBodyBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1073741824,
+          "default": 67108864
+        },
+        "maxDecompressionRatio": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64,
+          "default": 8
+        },
+        "maxBufferedOutputBytes": {
+          "type": "integer",
+          "minimum": 4096,
+          "maximum": 1073741824,
+          "default": 4194304
+        },
+        "maxRequestRatePerMinute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 300
+        },
+        "requestBurst": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 60
+        },
+        "maxMessageRatePerSecond": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 100
+        },
+        "maxWebSocketMessageBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 67108864,
+          "default": 4194304
+        },
+        "webSocketMessageBurst": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 200
+        },
+        "maxStreamBytesPerSecond": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1073741824,
+          "default": 8388608
+        },
+        "streamBurstBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1073741824,
+          "default": 16777216
+        },
+        "firstByteTimeoutMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 300000,
+          "default": 30000
+        },
+        "httpIdleTimeoutMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 3600000,
+          "default": 60000
+        },
+        "streamHeartbeatIdleMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 3600000,
+          "default": 90000
+        },
+        "maxConnectionLifetimeMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 86400000,
+          "default": 28800000
+        },
+        "maxLogBytes": {
+          "type": "integer",
+          "minimum": 4096,
+          "maximum": 1073741824,
+          "default": 10485760
+        },
+        "maxLogBytesPerSecond": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 67108864,
+          "default": 262144
+        },
+        "logBurstBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 67108864,
+          "default": 1048576
+        }
       }
     },
     "redaction": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "environmentNames": {"type": "array", "uniqueItems": true, "maxItems": 128, "items": {"type": "string", "maxLength": 128}},
-        "queryNames": {"type": "array", "uniqueItems": true, "maxItems": 128, "items": {"type": "string", "maxLength": 128}}
+        "environmentNames": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 128,
+          "items": { "type": "string", "maxLength": 128 }
+        },
+        "queryNames": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 128,
+          "items": { "type": "string", "maxLength": 128 }
+        }
       }
     },
-    "documentation": {"type": "string", "format": "uri", "maxLength": 2048}
+    "documentation": { "type": "string", "format": "uri", "maxLength": 2048 }
   },
   "allOf": [
     {
       "if": {
-        "properties": {"launch": {"properties": {"mode": {"const": "command"}}, "required": ["mode"]}},
+        "properties": {
+          "launch": {
+            "properties": { "mode": { "const": "command" } },
+            "required": ["mode"]
+          }
+        },
         "required": ["launch"]
       },
-      "then": {"properties": {"ownershipPolicy": {"const": "wright-owned"}}}
+      "then": {
+        "properties": { "ownershipPolicy": { "const": "wright-owned" } }
+      }
     },
     {
       "if": {
-        "properties": {"launch": {"properties": {"mode": {"const": "attach"}}, "required": ["mode"]}},
+        "properties": {
+          "launch": {
+            "properties": { "mode": { "const": "attach" } },
+            "required": ["mode"]
+          }
+        },
         "required": ["launch"]
       },
-      "then": {"properties": {"ownershipPolicy": {"const": "approved-attach"}}}
+      "then": {
+        "properties": { "ownershipPolicy": { "const": "approved-attach" } }
+      }
     }
   ],
   "$defs": {
@@ -211,11 +469,16 @@
       "additionalProperties": false,
       "required": ["path", "expectedStatus", "timeoutMs"],
       "properties": {
-        "path": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
-        "method": {"enum": ["GET", "HEAD"], "default": "GET"},
-        "expectedStatus": {"type": "integer", "minimum": 100, "maximum": 599},
-        "timeoutMs": {"type": "integer", "minimum": 100, "maximum": 300000},
-        "intervalMs": {"type": "integer", "minimum": 50, "maximum": 60000}
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^/"
+        },
+        "method": { "enum": ["GET", "HEAD"], "default": "GET" },
+        "expectedStatus": { "type": "integer", "minimum": 100, "maximum": 599 },
+        "timeoutMs": { "type": "integer", "minimum": 100, "maximum": 300000 },
+        "intervalMs": { "type": "integer", "minimum": 50, "maximum": 60000 }
       }
     }
   }

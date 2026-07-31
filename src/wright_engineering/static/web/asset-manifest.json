@@ -1,14 +1,19 @@
 {
   "files": [
     {
-      "path": "assets/index-CoQH_6y2.js",
-      "sha256": "aa9d43bdeadeb193afac700784353de8c9bc9454d607038f6ccae064e81573f8",
-      "size": 1274108
+      "path": "assets/index-Bkpi4WVA.js",
+      "sha256": "df42b25aacffd45847202ae0af7323c58ecefa2c7054f9a049508e578d6bca77",
+      "size": 1507046
     },
     {
-      "path": "assets/index-D3wY7_Ji.css",
-      "sha256": "44080f3cd05046b7e0ca67fa4a9e82ebee1920a5f4588a7e47c285299ff9ecd1",
-      "size": 10841
+      "path": "assets/index-S5yp3jth.css",
+      "sha256": "36cfd9553d83b72c95e68eca05c42d1082ec37f6904e1e299886e6336a9c060d",
+      "size": 14196
+    },
+    {
+      "path": "assets/plotly.min-689HCUnv.js",
+      "sha256": "1f139849210a800c4126afaa58ee6a8fa7d0c025e58355ee68915a7aa1381332",
+      "size": 4606227
     },
     {
       "path": "favicon.svg",
@@ -22,13 +27,23 @@
     },
     {
       "path": "index.html",
-      "sha256": "3e5f8f04184b36016c0d2259bd0dcf92f85972e3c0ec1b33fe9b87be82315587",
+      "sha256": "f44b31f3aec1fbd8966c0088cfccc8ab16f84890bfe6f61c9458ea2100658e4a",
       "size": 917
     },
     {
+      "path": "surface-sandbox/index.html",
+      "sha256": "355d8670db4d040a872d071451d3a3e0394599ca103350d60dcd93e58bf6c04e",
+      "size": 949
+    },
+    {
+      "path": "surface-sandbox/sandbox-proxy.js",
+      "sha256": "3bb60809a83d431263f37654611e4366302d18f01cf6fcbc03fd4e15fb0ba71a",
+      "size": 8022
+    },
+    {
       "path": "third-party-licenses-web.txt",
-      "sha256": "7520ece9b008f9671ab9857937625e31eb51a9efc50351cc90620ed1e7c51a1b",
-      "size": 190715
+      "sha256": "f51c415d57849d698dcf5db7cae0ca170dc32681ae20a0a35607f36208591cd8",
+      "size": 219335
     }
   ],
   "schema_version": 1

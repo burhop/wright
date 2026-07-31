@@ -29,7 +29,7 @@ class FakeProcess:
         self.stop_calls = 0
 
     async def stdout(self):
-        yield b"started token=secret-value\n"
+        yield b"started token=test-secret-value\n"
 
     async def stderr(self):
         yield b"warning\n"
@@ -71,7 +71,7 @@ async def test_async_start_is_argv_only_idempotent_and_captures_redacted_logs(
         generation=1,
         argv=("python", "app.py"),
         cwd=str(tmp_path),
-        environment={"API_TOKEN": "secret-value"},
+        environment={"API_TOKEN": "test-secret-value"},
         secret_environment_names=frozenset({"API_TOKEN"}),
         redaction_query_names=frozenset({"token"}),
         limits={

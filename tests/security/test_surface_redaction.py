@@ -12,7 +12,7 @@ pytestmark = pytest.mark.workspace_surfaces
 
 
 def test_surface_attributes_remove_every_sensitive_boundary_value() -> None:
-    secret = "super-secret-value"
+    secret = "test-secret-value"
     attributes = redact_surface_attributes(
         {
             "authorization": f"Bearer {secret}",

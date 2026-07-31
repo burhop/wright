@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'unsafe-inline' https:; style-src 'unsafe-inline' https:; connect-src https: wss:; img-src data: blob: https:; font-src https:; media-src blob: https:; worker-src blob: https:; frame-src 'self' https:; base-uri https:; form-action 'none'; object-src 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wright MCP App sandbox</title>
+    <script src="./sandbox-proxy.js" defer></script>
+    <style>
+      html,
+      body,
+      iframe {
+        border: 0;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+
+      body {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body aria-label="MCP App sandbox"></body>
+</html>

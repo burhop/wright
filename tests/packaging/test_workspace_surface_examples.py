@@ -78,7 +78,7 @@ from wright.client import DisplayClient, use_display_client
 def transport(method, url, headers, payload):
     assert url == '/display'
     return 201, {'surfaceId': 'surface-1', 'displayId': payload['displayId'], 'revision': payload['revision'], 'title': payload['title']}
-client = DisplayClient(endpoint='/display', token='offline-test', workspace_id='workspace-1', transport=transport)
+client = DisplayClient(endpoint='/display', token='ci-test-token', workspace_id='workspace-1', transport=transport)
 scope = use_display_client(client)
 scope.__enter__()
 """,
