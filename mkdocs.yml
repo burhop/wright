@@ -57,6 +57,7 @@ nav:
       - Native Wright for Hermes: getting-started/hermes-plugin.md
       - Wright for Codex: getting-started/codex.md
   - User Guide:
+      - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md
       - Makefile Targets: user-guide/makefile.md

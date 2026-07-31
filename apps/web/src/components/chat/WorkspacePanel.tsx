@@ -29,6 +29,7 @@ import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
+import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 
 function findFileInTree(
   node: WorkspaceNode,
@@ -2224,6 +2225,12 @@ export function WorkspacePanel({
           position: "relative",
         }}
       >
+        {surfacesEnabled && _workspaceId && workspaceFileSessionId && (
+          <SurfaceWorkspace
+            workspaceId={_workspaceId}
+            sessionId={workspaceFileSessionId}
+          />
+        )}
         {openTabs.length > 0 && (
           <div
             style={{

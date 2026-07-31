@@ -14,6 +14,8 @@ from data_vault import (
     SurfaceVault,
 )
 from workspace_service.composition import build_surface_application
+from workspace_service.surfaces.display_service import DisplayService
+from workspace_service.surfaces.display_tokens import DisplayExecutionTokenService
 
 
 pytestmark = [pytest.mark.workspace_surfaces, pytest.mark.asyncio]
@@ -32,6 +34,9 @@ async def test_surface_application_owns_complete_foundation_graph(
     assert isinstance(application.grant_repository, SurfaceGrantRepository)
     assert isinstance(application.runtime_repository, SurfaceRuntimeRepository)
     assert isinstance(application.diagnostic_repository, SurfaceDiagnosticRepository)
+    assert isinstance(application.display_service, DisplayService)
+    assert isinstance(application.display_tokens, DisplayExecutionTokenService)
+    assert application.display_service.surfaces.db_path == application.repository.db_path
     assert isinstance(application.vault, SurfaceVault)
     assert application.service.repository is application.repository
     assert application.service.events is application.events

@@ -28,6 +28,7 @@ from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.routers.surface_events import router as surface_events_router
+from api.routers.surface_displays import router as surface_displays_router
 from api.routers.surfaces import router as surfaces_router
 from api.middleware.tracing import TracingMiddleware
 from api.composition import (
@@ -144,6 +145,7 @@ app.add_middleware(
         "X-Wright-Session-ID",
         "Idempotency-Key",
         "Last-Event-ID",
+        "X-Wright-Display-Contract",
     ],
 )
 app.add_middleware(ControlPlaneSecurityMiddleware)
@@ -212,6 +214,12 @@ if app.state.workspace_surface_settings.flags.model:
     app.include_router(
         surfaces_router, prefix="/api/workspace", tags=["Workspace Surfaces"]
     )
+    if app.state.workspace_surface_settings.flags.safe_display:
+        app.include_router(
+            surface_displays_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface Displays"],
+        )
 app.add_route(
     "/mcp",
     McpTransportMount(),

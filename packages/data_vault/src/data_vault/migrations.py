@@ -294,20 +294,23 @@ MIGRATIONS: tuple[Migration, ...] = (
                 display_id TEXT NOT NULL,
                 revision INTEGER NOT NULL CHECK(revision >= 1),
                 producer_execution_id TEXT NOT NULL,
+                producer_task_id TEXT NOT NULL,
                 representations_json TEXT NOT NULL,
                 title TEXT,
                 accessibility_description TEXT,
                 dimensions_json TEXT,
                 durability TEXT NOT NULL CHECK(durability IN ('durable', 'session', 'ephemeral')),
                 current INTEGER NOT NULL DEFAULT 0 CHECK(current IN (0, 1)),
+                idempotency_key TEXT NOT NULL,
                 supersedes_artifact_id TEXT,
                 created_at TEXT NOT NULL,
-                UNIQUE(workspace_id, producer_execution_id, display_id, revision),
+                UNIQUE(workspace_id, producer_task_id, display_id, revision),
+                UNIQUE(workspace_id, producer_execution_id, idempotency_key),
                 FOREIGN KEY (surface_id) REFERENCES workspace_surfaces(surface_id) ON DELETE CASCADE,
                 FOREIGN KEY (supersedes_artifact_id) REFERENCES surface_display_artifacts(artifact_id)
             )"""),
             sql("""CREATE UNIQUE INDEX IF NOT EXISTS idx_surface_display_current
-                ON surface_display_artifacts(workspace_id, producer_execution_id, display_id)
+                ON surface_display_artifacts(workspace_id, producer_task_id, display_id)
                 WHERE current = 1"""),
             sql("""CREATE TABLE IF NOT EXISTS surface_generation_provenance (
                 artifact_id TEXT PRIMARY KEY,

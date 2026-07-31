@@ -12,6 +12,7 @@ import {
   type SurfaceDescriptor,
 } from "../services/surfaces/surface-contract";
 import type { SurfacePresenter } from "../services/surfaces/registry";
+import { subscribeSurfaceUpdates } from "../services/surfaces/surface-events";
 
 export const SURFACE_STATE_VERSION = 2 as const;
 
@@ -256,4 +257,20 @@ export function useSurfaces(): SurfaceStateContextValue {
     throw new Error("useSurfaces must be used inside SurfaceStateProvider");
   }
   return context;
+}
+
+export function useSurfaceUpdates(workspaceId: string, sessionId: string): void {
+  const { dispatch } = useSurfaces();
+  useEffect(
+    () =>
+      subscribeSurfaceUpdates(workspaceId, sessionId, (event) => {
+        if (event.descriptor.workspaceId !== workspaceId) return;
+        dispatch(
+          event.eventType.endsWith(".deleted")
+            ? { type: "remove", surfaceId: event.descriptor.surfaceId }
+            : { type: "upsert", descriptor: event.descriptor },
+        );
+      }),
+    [dispatch, sessionId, workspaceId],
+  );
 }

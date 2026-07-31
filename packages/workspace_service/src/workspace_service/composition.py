@@ -16,6 +16,8 @@ from data_vault import (
 from .ports import WorkspaceNotifier
 from .service import WorkspaceService
 from .surfaces.diagnostics import SurfaceDiagnosticHistory
+from .surfaces.display_service import DisplayService
+from .surfaces.display_tokens import DisplayExecutionTokenService
 from .surfaces.events import SurfaceEventHistory
 from .surfaces.service import SurfaceService
 
@@ -38,6 +40,8 @@ class SurfaceApplication:
     grant_repository: SurfaceGrantRepository
     runtime_repository: SurfaceRuntimeRepository
     diagnostic_repository: SurfaceDiagnosticRepository
+    display_service: DisplayService
+    display_tokens: DisplayExecutionTokenService
     vault: SurfaceVault
     events: SurfaceEventHistory
     diagnostics: SurfaceDiagnosticHistory
@@ -66,6 +70,10 @@ def build_surface_application(
     vault = SurfaceVault(vault_root or Path(db_path).with_suffix(".surfaces"))
     events = SurfaceEventHistory()
     diagnostics = SurfaceDiagnosticHistory()
+    display_service = DisplayService(db_path, vault=vault, events=events)
+    display_tokens = DisplayExecutionTokenService(
+        secret=DisplayExecutionTokenService.generate_secret()
+    )
     return SurfaceApplication(
         service=SurfaceService(repository=repository, events=events),
         repository=repository,
@@ -74,6 +82,8 @@ def build_surface_application(
         grant_repository=grant_repository,
         runtime_repository=runtime_repository,
         diagnostic_repository=diagnostic_repository,
+        display_service=display_service,
+        display_tokens=display_tokens,
         vault=vault,
         events=events,
         diagnostics=diagnostics,
