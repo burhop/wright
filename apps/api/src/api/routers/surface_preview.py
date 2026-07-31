@@ -55,10 +55,8 @@ from tool_registry.webmcp_router import (
 
 router = APIRouter()
 
-_SANDBOX_ASSETS = {
-    "index.html": "text/html; charset=utf-8",
-    "sandbox-proxy.js": "text/javascript; charset=utf-8",
-}
+_SANDBOX_INDEX = ("index.html", "text/html; charset=utf-8")
+_SANDBOX_PROXY = ("sandbox-proxy.js", "text/javascript; charset=utf-8")
 _SANDBOX_CSP = (
     "default-src 'none'; script-src 'self' 'unsafe-inline' https:; "
     "style-src 'unsafe-inline' https:; connect-src https: wss:; "
@@ -141,10 +139,13 @@ def surface_sandbox_asset(
         f"mcp-sandbox.{expected_domain}".lower().rstrip(".")
     ):
         raise HTTPException(status_code=404, detail="SURFACE_PREVIEW_NOT_FOUND")
-    media_type = _SANDBOX_ASSETS.get(asset_name)
-    if media_type is None:
+    if asset_name == _SANDBOX_INDEX[0]:
+        safe_asset_name, media_type = _SANDBOX_INDEX
+    elif asset_name == _SANDBOX_PROXY[0]:
+        safe_asset_name, media_type = _SANDBOX_PROXY
+    else:
         raise HTTPException(status_code=404, detail="SURFACE_PREVIEW_NOT_FOUND")
-    target = _sandbox_dist_dir(request) / "surface-sandbox" / asset_name
+    target = _sandbox_dist_dir(request) / "surface-sandbox" / safe_asset_name
     if not target.is_file():
         raise HTTPException(status_code=503, detail="SURFACE_SANDBOX_UNAVAILABLE")
     return FileResponse(

@@ -81,10 +81,21 @@ async def test_ignored_graceful_signal_escalates_entire_group(tmp_path) -> None:
 
 @pytest.mark.skipif(os.name != "posix", reason="requires POSIX process groups")
 async def test_stop_cancellation_finishes_cleanup_before_propagating(tmp_path) -> None:
-    code = "import signal,time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)"
+    ready = tmp_path / "ready"
+    code = (
+        "import pathlib,signal,time; "
+        "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+        f"pathlib.Path({str(ready)!r}).touch(); time.sleep(60)"
+    )
     process = await PosixProcessAdapter(graceful_seconds=0.1).launch(
         _request(tmp_path, code)
     )
+    for _ in range(100):
+        if ready.exists():
+            break
+        await asyncio.sleep(0.01)
+    else:
+        pytest.fail("child did not install its signal handler")
     pid = process.identity.pid
     task = asyncio.create_task(
         process.stop(deadline=datetime.now(UTC) + timedelta(seconds=2))
@@ -115,10 +126,10 @@ async def test_pid_reuse_or_executable_mismatch_never_signals_unknown_process(
 
 
 @pytest.mark.skipif(os.name != "posix", reason="requires POSIX process groups")
-async def test_breakaway_orphan_is_reconciled_by_recorded_creation_identity(tmp_path) -> None:
-    child = (
-        "import os,time; time.sleep(.15); os.setsid(); time.sleep(60)"
-    )
+async def test_breakaway_orphan_is_reconciled_by_recorded_creation_identity(
+    tmp_path,
+) -> None:
+    child = "import os,time; time.sleep(.15); os.setsid(); time.sleep(60)"
     code = (
         "import subprocess,sys,time; "
         f"subprocess.Popen([sys.executable,'-c',{child!r}]); time.sleep(60)"
