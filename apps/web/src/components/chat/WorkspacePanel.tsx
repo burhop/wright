@@ -1329,7 +1329,7 @@ export function WorkspacePanel({
               style={{
                 backgroundColor: "rgba(239, 68, 68, 0.1)",
                 borderBottom: "1px solid rgba(239, 68, 68, 0.2)",
-                color: "#ef4444",
+                color: "var(--color-error, #f87171)",
                 padding: "var(--space-sm) var(--space-md)",
                 fontSize: "0.75rem",
                 display: "flex",
@@ -2865,7 +2865,7 @@ export function WorkspacePanel({
             style={{
               backgroundColor: "rgba(239, 68, 68, 0.1)",
               borderBottom: "1px solid rgba(239, 68, 68, 0.2)",
-              color: "#ef4444",
+              color: "var(--color-error, #f87171)",
               padding: "var(--space-sm) var(--space-md)",
               fontSize: "0.75rem",
               display: "flex",
