@@ -12,6 +12,7 @@ from api.routers.agent import (
     _restart_hermes_gateway_process,
     chat,
 )
+from fastapi import HTTPException
 
 
 class _SlowEngine:
@@ -49,6 +50,19 @@ class _FailingEngine:
         if False:
             yield
         raise RuntimeError("sentinel C:\\private\\agent-token.txt")
+
+
+class _DisconnectedLlmEngine:
+    async def check_llm_backend_health(self):
+        return {
+            "state": "disconnected",
+            "error": "Codex auth expired",
+        }
+
+    async def stream_chat(self, request):
+        if False:
+            yield
+        raise AssertionError("chat should not start with disconnected LLM")
 
 
 class _AttachFailureJob:
@@ -228,3 +242,34 @@ async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch
     assert "Agent response stream failed." in body
     assert '"trace_id"' in body
     assert "sentinel" not in body
+
+
+@pytest.mark.asyncio
+async def test_chat_preflight_reports_disconnected_llm(monkeypatch):
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/agent/chat",
+            "headers": [],
+            "app": SimpleNamespace(state=SimpleNamespace()),
+        }
+    )
+
+    async def no_mcp_activation(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(
+        "api.routers.agent.ensure_workspace_mcp_servers_active",
+        no_mcp_activation,
+    )
+
+    with pytest.raises(HTTPException) as error:
+        await chat(
+            ChatRequest(session_id="session-1", message="Create a part"),
+            request,
+            _DisconnectedLlmEngine(),
+        )
+
+    assert error.value.status_code == 503
+    assert error.value.detail == "LLM backend is not ready: Codex auth expired"

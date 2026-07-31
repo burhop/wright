@@ -62,9 +62,14 @@ A seed file can point at a mounted Hermes auth payload:
 ```yaml
 version: 1
 provider: openai-codex
-model: your-codex-model-id
+model: gpt-5.4-mini
 auth_file: /run/secrets/wright/hermes-auth.json
 ```
+
+Use a model that is supported by the Hermes `openai-codex` provider for
+ChatGPT sign-in. For this appliance path, `gpt-5.4-mini` is the known working
+low-cost default; placeholder names such as `codex-test-model` will authenticate
+successfully but fail when chat starts.
 
 When using `scripts/docker-mcp-run.sh`, mount that auth file by setting:
 

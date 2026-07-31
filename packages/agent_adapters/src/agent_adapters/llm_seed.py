@@ -253,28 +253,48 @@ def _codex_auth_configured(auth_path: str | Path | None) -> bool:
         return False
     providers = auth.get("providers") if isinstance(auth.get("providers"), dict) else {}
     codex = providers.get("openai-codex") if isinstance(providers, dict) else None
+    provider_has_tokens = False
     if isinstance(codex, dict):
         tokens = codex.get("tokens")
-        if (
+        provider_has_tokens = (
             isinstance(tokens, dict)
-            and str(tokens.get("access_token") or "").strip()
-            and str(tokens.get("refresh_token") or "").strip()
-        ):
-            return True
+            and bool(str(tokens.get("access_token") or "").strip())
+            and bool(str(tokens.get("refresh_token") or "").strip())
+        )
+
+    def rejected(entry: dict[str, Any]) -> bool:
+        status = str(entry.get("last_status") or "").strip().lower()
+        error_code = entry.get("last_error_code")
+        return status in {"exhausted", "rejected", "invalid", "failed"} or error_code in {
+            401,
+            403,
+            "401",
+            "403",
+        }
+
     pool = (
         auth.get("credential_pool")
         if isinstance(auth.get("credential_pool"), dict)
         else {}
     )
     entries = pool.get("openai-codex") if isinstance(pool, dict) else None
+    saw_rejected_entry = False
     if isinstance(entries, list):
-        return any(
-            isinstance(entry, dict)
-            and str(entry.get("access_token") or "").strip()
-            and str(entry.get("refresh_token") or "").strip()
-            for entry in entries
-        )
-    return False
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            has_tokens = bool(str(entry.get("access_token") or "").strip()) and bool(
+                str(entry.get("refresh_token") or "").strip()
+            )
+            if not has_tokens:
+                continue
+            if rejected(entry):
+                saw_rejected_entry = True
+                continue
+            return True
+    if saw_rejected_entry:
+        return False
+    return provider_has_tokens
 
 
 def apply_llm_seed(

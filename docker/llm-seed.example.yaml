@@ -6,7 +6,7 @@
 #
 # version: 1
 # provider: openai-codex
-# model: your-codex-model-id
+# model: gpt-5.4-mini
 # auth_file: /run/secrets/wright/hermes-auth.json
 #
 # The auth file can be a Hermes auth.json payload with providers.openai-codex

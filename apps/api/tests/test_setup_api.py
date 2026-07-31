@@ -1,5 +1,6 @@
 import asyncio
 import io
+import json
 
 import pytest
 from httpx import AsyncClient
@@ -70,6 +71,57 @@ async def test_get_setup_status_reports_hermes_llm_summary(
     assert payload["llm_model"] == "codex-test"
     assert payload["llm_configured"] is True
     assert payload["llm_auth_configured"] is True
+
+
+@pytest.mark.asyncio
+async def test_get_setup_status_requires_valid_codex_auth(
+    client: AsyncClient, monkeypatch, tmp_path
+):
+    clear_setup_settings()
+    config = tmp_path / "config.yaml"
+    config.write_text(
+        "\n".join(
+            [
+                "model:",
+                "  provider: openai-codex",
+                "  base_url: https://chatgpt.com/backend-api/codex",
+                "  default: codex-test",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "auth.json").write_text(
+        json.dumps(
+            {
+                "providers": {
+                    "openai-codex": {
+                        "tokens": {"access_token": "a", "refresh_token": "r"}
+                    }
+                },
+                "credential_pool": {
+                    "openai-codex": [
+                        {
+                            "access_token": "a",
+                            "refresh_token": "r",
+                            "last_status": "exhausted",
+                            "last_error_code": 401,
+                        }
+                    ]
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(config))
+
+    response = await client.get("/api/setup/status")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["llm_provider"] == "openai-codex"
+    assert payload["llm_configured"] is False
+    assert payload["llm_auth_configured"] is False
+    assert payload["is_configured"] is False
 
 
 @pytest.mark.asyncio

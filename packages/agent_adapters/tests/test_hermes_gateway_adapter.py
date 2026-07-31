@@ -176,6 +176,57 @@ async def test_llm_backend_health_accepts_openai_codex_auth(monkeypatch, tmp_pat
 
 
 @pytest.mark.asyncio
+async def test_llm_backend_health_rejects_exhausted_openai_codex_auth(
+    monkeypatch, tmp_path
+):
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        "\n".join(
+            [
+                "model:",
+                "  provider: openai-codex",
+                "  base_url: https://chatgpt.com/backend-api/codex",
+                "  default: gpt-5.5",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "auth.json").write_text(
+        json.dumps(
+            {
+                "providers": {
+                    "openai-codex": {
+                        "tokens": {
+                            "access_token": "codex-token",
+                            "refresh_token": "refresh-token",
+                        },
+                    },
+                },
+                "credential_pool": {
+                    "openai-codex": [
+                        {
+                            "access_token": "codex-token",
+                            "last_status": "exhausted",
+                            "last_error_code": 401,
+                            "last_error_message": "Could not parse your authentication token.",
+                        }
+                    ]
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(config_file))
+    adapter = HermesAdapter("http://127.0.0.1:8642", "")
+
+    result = await adapter.check_llm_backend_health()
+
+    assert result["state"] == "disconnected"
+    assert "openai-codex credentials were rejected" in result["error"]
+    assert "Could not parse your authentication token" in result["error"]
+
+
+@pytest.mark.asyncio
 async def test_llm_backend_health_reports_missing_openai_codex_auth(
     monkeypatch, tmp_path
 ):

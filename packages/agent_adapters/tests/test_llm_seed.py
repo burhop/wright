@@ -103,6 +103,53 @@ def test_codex_summary_requires_refresh_token(tmp_path):
     assert summary["configured"] is False
 
 
+def test_codex_summary_rejects_exhausted_credentials(tmp_path):
+    config = tmp_path / "config.yaml"
+    auth = tmp_path / "auth.json"
+    config.write_text(
+        yaml.safe_dump(
+            {
+                "model": {
+                    "provider": "openai-codex",
+                    "base_url": "https://chatgpt.com/backend-api/codex",
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    auth.write_text(
+        json.dumps(
+            {
+                "providers": {
+                    "openai-codex": {
+                        "tokens": {
+                            "access_token": "access",
+                            "refresh_token": "refresh",
+                        }
+                    }
+                },
+                "credential_pool": {
+                    "openai-codex": [
+                        {
+                            "access_token": "access",
+                            "refresh_token": "refresh",
+                            "last_status": "exhausted",
+                            "last_error_code": 401,
+                        }
+                    ]
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    summary = read_llm_summary(config, auth_path=auth)
+
+    assert summary["provider"] == "openai-codex"
+    assert summary["auth_configured"] is False
+    assert summary["configured"] is False
+
+
 def test_auth_file_merges_hermes_auth_payload(tmp_path):
     config = tmp_path / "config.yaml"
     auth = tmp_path / "auth.json"

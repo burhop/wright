@@ -367,6 +367,21 @@ async def ensure_workspace_mcp_servers_active(
         )
 
 
+async def ensure_llm_backend_ready(engine: BaseAgentEngine) -> None:
+    """Fail chat early when Hermes has no usable model credentials."""
+    health_checker = getattr(engine, "check_llm_backend_health", None)
+    if not callable(health_checker):
+        return
+    health = await health_checker()
+    if str(health.get("state") or "").lower() == "connected":
+        return
+    detail = str(health.get("error") or "LLM backend is not ready")
+    raise HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        detail=f"LLM backend is not ready: {detail}",
+    )
+
+
 #  Pydantic Request/Response Schemas
 class ActiveAgentResponse(BaseModel):
     agent: str
@@ -726,6 +741,7 @@ async def chat(
                 detail=str(exc),
             ) from exc
 
+    await ensure_llm_backend_ready(engine)
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 
     requested_title = title_from_slash_command(body.message)

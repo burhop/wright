@@ -317,7 +317,13 @@ async def get_setup_status(request: Request):
         "true",
         "yes",
     }
-    is_configured = bool(llm_api_url and llm_api_url.strip()) or (
+    llm_configured = bool(llm_summary.get("configured"))
+    requires_llm_auth = llm_summary.get("provider") == "openai-codex"
+    is_configured = (
+        llm_configured
+        if requires_llm_auth
+        else bool(llm_api_url and llm_api_url.strip())
+    ) or (
         active_agent == "hermes" and launched_by_hermes
     )
     from api.config import get_ui_theme
@@ -331,7 +337,7 @@ async def get_setup_status(request: Request):
         theme=theme,
         llm_provider=llm_summary.get("provider"),
         llm_model=llm_summary.get("model"),
-        llm_configured=bool(llm_summary.get("configured")),
+        llm_configured=llm_configured,
         llm_auth_configured=bool(llm_summary.get("auth_configured")),
     )
 
