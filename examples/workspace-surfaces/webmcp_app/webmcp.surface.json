@@ -1,0 +1,18 @@
+{
+  "$schema": "https://wright.local/schemas/live-app-manifest-v1.json",
+  "schemaVersion": 1,
+  "id": "wright.reference.webmcp",
+  "version": "1.0.0",
+  "title": "Scoped WebMCP graph",
+  "ownershipPolicy": "wright-owned",
+  "launch": {
+    "mode": "command",
+    "argv": ["python", "server.py", "--host", "${WRIGHT_BIND_HOST}", "--port", "${WRIGHT_PORT}"],
+    "workingDirectory": "."
+  },
+  "readiness": {"path": "/health", "expectedStatus": 200, "timeoutMs": 10000},
+  "presentation": {"panel": true, "browser": true, "sharing": "shared"},
+  "transports": {"http": true, "websocket": false, "sse": false},
+  "lifetime": {"policy": "workspace"},
+  "capabilities": ["wright.webmcp.register"]
+}

@@ -16,6 +16,8 @@ test fixture root and must never be presented as copyable application code.
 - `matplotlib_graph.py`: an optional Matplotlib figure with an accessible label.
 - `plotly_graph.py`: an optional Plotly figure rendered from the offline bundle.
 - `display_gallery.py`: native tables, passive sanitized HTML, pandas, and Pillow.
+- `mcp_app_server/`: stable packaged MCP App with official bridge, fallback, policy denial, and teardown.
+- `webmcp_app/`: managed graph page with exact scoped WebMCP registration and optional native detection.
 
 Run a script with Wright's **Run file** action. The expected result is a labeled
 surface in the center panel. Closing the tab retains durable output; use the

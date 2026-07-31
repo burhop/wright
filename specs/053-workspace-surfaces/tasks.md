@@ -280,7 +280,7 @@
 - [X] T151 [P] [US6] Add official AppBridge initialization/context/resource/tool/user-message/update/teardown and wrong-source/origin/replay tests to `apps/web/src/services/surfaces/mcp/mcp-app-host.spec.ts` (FR-030 through FR-034)
 - [X] T152 [P] [US6] Add double-iframe restrictive-default CSP, permission/domain validation, undeclared fetch/object/frame, and no-pre-init-message tests to `tests/ui-integration/workspace-surfaces/mcp-app-sandbox.spec.ts` (FR-035 through FR-037, SC-009)
 - [X] T153 [P] [US6] Add absent/unsupported capability, missing/bad resource, CSP failure, renderer failure, and useful non-UI fallback tests to `apps/web/src/services/surfaces/mcp/mcp-app-presenter.spec.tsx` (FR-028 through FR-030, FR-034)
-- [ ] T154 [P] [US6] Add official reference MCP App end-to-end authorized/denied/fallback journeys to `tests/e2e/workspace-surfaces/test_mcp_app.py` (User Story 6, SC-009)
+- [X] T154 [P] [US6] Add official reference MCP App end-to-end authorized/denied/fallback journeys to `tests/e2e/workspace-surfaces/test_mcp_app.py` (User Story 6, SC-009)
 - [X] T155 [P] [US6] Add composite workspace/session/surface/generation/origin/server/tool registration and identical-name routing tests to `apps/api/tests/test_surface_webmcp.py` (FR-032 through FR-033)
 - [X] T156 [P] [US6] Add navigation/abort/dispose/disconnect cancellation, stale/late/replay, schema/size/rate, injection, and policy tests to `apps/api/tests/test_surface_webmcp_security.py` (FR-031 through FR-034, FR-043)
 - [X] T157 [P] [US6] Add absent/current/rejected/changing `document.modelContext`, Permissions Policy, and scoped fallback tests to `apps/web/src/services/surfaces/webmcp/webmcp-adapter.spec.ts` (FR-032 through FR-034)
@@ -302,7 +302,7 @@
 - [X] T170 [US6] Implement the abortable surface-scoped Wright WebMCP SDK/bridge with no global window broadcasts in `apps/web/src/services/surfaces/webmcp/wright-surface-sdk.ts` (FR-032 through FR-034)
 - [X] T171 [P] [US6] Implement tested feature detection and optional dual registration at `document.modelContext` without polyfilling it in `apps/web/src/services/surfaces/webmcp/webmcp-adapter.ts` (FR-032)
 - [X] T172 [US6] Gate the legacy relay as an unprivileged one-release compatibility adapter with deprecation telemetry in `apps/web/src/services/webmcp-service.ts` and `apps/web/src/components/chat/WorkspacePanel.tsx` (FR-032 through FR-034)
-- [ ] T173 [P] [US6] Create packaged MCP App and scoped WebMCP reference integrations with authorized, denied, fallback, and teardown paths in `examples/workspace-surfaces/mcp_app_server/` and `examples/workspace-surfaces/webmcp_app/` (FR-028 through FR-034, FR-055)
+- [X] T173 [P] [US6] Create packaged MCP App and scoped WebMCP reference integrations with authorized, denied, fallback, and teardown paths in `examples/workspace-surfaces/mcp_app_server/` and `examples/workspace-surfaces/webmcp_app/` (FR-028 through FR-034, FR-055)
 
 **Checkpoint**: User Story 6 passes with stable MCP Apps behavior and with native WebMCP both absent and feature-detected; the global broadcast path carries no authority.
 
@@ -329,7 +329,7 @@
 - [ ] T181 [P] [US7] Publish architecture, trust profiles, package boundaries, lifecycle, data model, policy defaults, UX contract, evidence protocol, and protocol-version support in `docs/workspace-surfaces/architecture.md` (FR-053, FR-056)
 - [ ] T182 [P] [US7] Publish the public Python API, MIME/adapters, accessibility, generated-artifact prompt/constraints/script verification, offline assets, and five-minute examples in `docs/workspace-surfaces/python-api.md` (FR-010 through FR-017, FR-049, FR-056)
 - [ ] T183 [P] [US7] Publish manifest authoring, all safe/default limits, and the exact pinned FastAPI/Panel/Streamlit/Gradio/Dash host/port/base-path/public-origin/security/health templates from `framework-conformance.md` in `docs/workspace-surfaces/managed-apps.md` (FR-018 through FR-027, FR-056)
-- [ ] T184 [P] [US7] Publish stable MCP Apps negotiation/resource/bridge/fallback and experimental scoped WebMCP SDK/version guidance in `docs/workspace-surfaces/mcp-and-webmcp.md` (FR-028 through FR-034, FR-056)
+- [X] T184 [P] [US7] Publish stable MCP Apps negotiation/resource/bridge/fallback and experimental scoped WebMCP SDK/version guidance in `docs/workspace-surfaces/mcp-and-webmcp.md` (FR-028 through FR-034, FR-056)
 - [ ] T185 [P] [US7] Publish the threat model, capability grants, isolation, target validation, proxy headers/cookies, incident evidence, and security review procedure in `docs/workspace-surfaces/security.md` (FR-035 through FR-045, FR-056)
 - [ ] T186 [P] [US7] Publish native/Docker/remote/Electron configuration, lifecycle, recovery, backup/rollback, logs, limits, cleanup, and troubleshooting in `docs/workspace-surfaces/operations.md` (FR-018 through FR-027, FR-049 through FR-052, FR-056)
 - [ ] T187 [P] [US7] Publish viewer/layout/database/API/WebMCP compatibility migration and rollback procedure in `docs/workspace-surfaces/migration.md` (FR-008 through FR-009, FR-032, FR-053, FR-056)
