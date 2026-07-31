@@ -20,7 +20,7 @@ from workspace_service.surfaces.endpoints import EndpointError
 from workspace_service.surfaces.health import ProbeResult, ProbeTarget, RestartBudget
 from workspace_service.surfaces.manifests import AttachApproval, DiscoveredManifest
 from workspace_service.surfaces.target_pins import TargetPinError
-from workspace_service.surfaces.target_policy import TargetPolicyError
+from workspace_service.surfaces.target_policy import ResolvedTargetPin, TargetPolicyError
 
 
 class LiveAppManagerError(RuntimeError):
@@ -79,6 +79,22 @@ class LiveAppInstance:
     ended_at: datetime | None
     last_health: ProbeResult | None
     failure: LiveAppFailure | None
+
+
+@dataclass(frozen=True, slots=True)
+class LiveAppRoutingPolicy:
+    instance_id: str
+    generation: int
+    http: bool
+    websocket: bool
+    sse: bool
+    limits: Any
+
+
+@dataclass(frozen=True, slots=True)
+class LiveAppRoute:
+    policy: LiveAppRoutingPolicy
+    target: ResolvedTargetPin
 
 
 @dataclass(frozen=True, slots=True)
@@ -156,6 +172,7 @@ class LiveAppManager:
         self._start_semaphores: dict[str, asyncio.Semaphore] = {}
         self._restart_budgets: dict[str, RestartBudget] = {}
         self._presentations: dict[str, int] = {}
+        self._routing_limits: dict[tuple[str, int], Any] = {}
         self._registry_lock = asyncio.Lock()
 
     @staticmethod
@@ -267,6 +284,45 @@ class LiveAppManager:
                 key=lambda item: (item.started_at or item.last_activity_at, item.instance_id),
             )
         )
+
+    def routing_policy(
+        self, instance_id: str, *, generation: int
+    ) -> LiveAppRoutingPolicy:
+        instance = self.get(instance_id)
+        if instance.generation != generation or instance.state not in {"ready", "unhealthy"}:
+            raise LiveAppManagerError(
+                "SURFACE_STATE_STALE_GENERATION",
+                "Live-app route generation is not currently available",
+                instance=instance,
+            )
+        key = (instance_id, generation)
+        limits = self._routing_limits.get(key)
+        if limits is None:
+            limits = self._effective_limits(self._contexts[instance_id].declaration)
+            self._routing_limits[key] = limits
+        transports = self._contexts[instance_id].declaration.manifest.transports
+        return LiveAppRoutingPolicy(
+            instance_id=instance_id,
+            generation=generation,
+            http=transports.http,
+            websocket=transports.websocket,
+            sse=transports.sse,
+            limits=limits,
+        )
+
+    def resolve_route(self, instance_id: str, *, generation: int) -> LiveAppRoute:
+        policy = self.routing_policy(instance_id, generation=generation)
+        try:
+            active = self._target_pins.resolve(
+                instance_id=instance_id, generation=generation
+            )
+        except TargetPinError as error:
+            raise LiveAppManagerError(
+                error.code,
+                str(error),
+                instance=self.get(instance_id),
+            ) from error
+        return LiveAppRoute(policy=policy, target=active.target)
 
     async def start(self, request: LiveAppStartRequest) -> LiveAppInstance:
         self._validate_request(request)
@@ -582,6 +638,7 @@ class LiveAppManager:
         self._target_pins.revoke(
             instance_id=instance_id, generation=current.generation
         )
+        self._routing_limits.pop((instance_id, current.generation), None)
         if runtime_id is not None:
             await self._supervisor.stop(
                 runtime_id=runtime_id,
@@ -621,6 +678,7 @@ class LiveAppManager:
         self._target_pins.revoke(
             instance_id=instance_id, generation=current.generation
         )
+        self._routing_limits.pop((instance_id, current.generation), None)
         if current.runtime_id and current.ownership == "launched":
             limits = self._effective_limits(self._contexts[instance_id].declaration)
             report = await self._supervisor.stop(
@@ -735,6 +793,15 @@ class LiveAppManager:
             return current
         return self._replace(instance_id, last_activity_at=self._clock())
 
+    def record_route_activity(self, instance_id: str) -> LiveAppInstance:
+        declared_events = self._contexts[
+            instance_id
+        ].declaration.manifest.lifetime.activity_events
+        for event in ("presentation-traffic", "application-request"):
+            if event in declared_events:
+                return self.record_activity(instance_id, event)
+        return self.get(instance_id)
+
     async def presentation_opened(self, instance_id: str) -> LiveAppInstance:
         self._presentations[instance_id] = self._presentations.get(instance_id, 0) + 1
         return self.record_activity(instance_id, "presentation-open")
@@ -801,5 +868,7 @@ __all__ = [
     "LiveAppInstance",
     "LiveAppManager",
     "LiveAppManagerError",
+    "LiveAppRoute",
+    "LiveAppRoutingPolicy",
     "LiveAppStartRequest",
 ]

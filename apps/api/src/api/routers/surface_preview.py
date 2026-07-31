@@ -1,15 +1,30 @@
-"""Data-plane-only bootstrap routes for isolated Workspace Surface origins."""
+"""Data-plane bootstrap and capability-bound application proxy routes."""
 
 from __future__ import annotations
 
 import base64
 import hashlib
-from typing import Annotated
+from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Response
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, WebSocket
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
+from starlette.background import BackgroundTask
 
 from api.composition import surface_application
+from api.surface_http_proxy import HttpProxyError, ProxyHttpRequest, SurfaceHttpProxy
+from api.surface_route_authority import (
+    AuthorizedSurfaceRoute,
+    SurfaceRouteAuthorizationError,
+    SurfaceRouteAuthority,
+)
+from api.surface_sse_proxy import SseProxyError, SseProxyRequest, SurfaceSseProxy
+from api.surface_websocket_proxy import (
+    SurfaceWebSocketProxy,
+    WebSocketMessage,
+    WebSocketProxyError,
+    WebSocketProxyRequest,
+)
 from workspace_service.surfaces.presentation_tokens import (
     PresentationTokenError,
     PresentationTokenService,
@@ -54,6 +69,105 @@ def get_presentation_tokens() -> PresentationTokenService:
 
 def _translate(error: PresentationTokenError) -> HTTPException:
     return HTTPException(status_code=error.status_code, detail=error.code)
+
+
+def _reserved_application_path(application_path: str) -> bool:
+    first = application_path.lstrip("/").split("/", 1)[0].lower()
+    return first in {"__wright", "api", "mcp"}
+
+
+def _raw_target(scope: dict[str, Any]) -> tuple[str, str]:
+    raw_path = scope.get("raw_path") or str(scope.get("path") or "/").encode("ascii")
+    raw_query = scope.get("query_string") or b""
+    try:
+        return bytes(raw_path).decode("ascii"), bytes(raw_query).decode("ascii")
+    except UnicodeDecodeError as error:
+        raise HTTPException(status_code=400, detail="SURFACE_PROTOCOL_TARGET_INVALID") from error
+
+
+def _raw_headers(scope: dict[str, Any]) -> tuple[tuple[str, str], ...]:
+    return tuple(
+        (bytes(name).decode("latin-1"), bytes(value).decode("latin-1"))
+        for name, value in scope.get("headers", ())
+    )
+
+
+def _component(connection: Request | WebSocket, name: str) -> Any:
+    value = getattr(connection.app.state, name, None)
+    if value is None:
+        raise SurfaceRouteAuthorizationError(
+            "SURFACE_RUNTIME_UNAVAILABLE",
+            "Surface runtime routing is unavailable",
+            status_code=503,
+        )
+    return value
+
+
+def _authorize_application_route(
+    connection: Request | WebSocket,
+) -> AuthorizedSurfaceRoute:
+    host_values = [
+        value for name, value in _raw_headers(connection.scope) if name.lower() == "host"
+    ]
+    cookie = connection.cookies.get("wright_surface", "")
+    if len(host_values) != 1 or not cookie:
+        raise SurfaceRouteAuthorizationError(
+            "SURFACE_PREVIEW_UNAUTHORIZED",
+            "Preview credential is invalid",
+            status_code=401,
+        )
+    authority: SurfaceRouteAuthority = _component(
+        connection, "surface_route_authority"
+    )
+    return authority.authorize(host=host_values[0], cookie=cookie)
+
+
+def _route_error(error: SurfaceRouteAuthorizationError) -> HTTPException:
+    return HTTPException(status_code=error.status_code, detail=error.code)
+
+
+def _streaming_response(
+    *, status: int, headers: tuple[tuple[str, str], ...], body: Any, close: Any
+) -> StreamingResponse:
+    response = StreamingResponse(
+        body,
+        status_code=status,
+        background=BackgroundTask(close),
+    )
+    response.raw_headers = [
+        (name.encode("latin-1"), value.encode("latin-1"))
+        for name, value in headers
+    ]
+    return response
+
+
+class _StarletteWebSocket:
+    def __init__(self, websocket: WebSocket) -> None:
+        self._websocket = websocket
+
+    async def accept(self, *, subprotocol: str | None = None) -> None:
+        await self._websocket.accept(subprotocol=subprotocol)
+
+    async def receive(self) -> WebSocketMessage:
+        message = await self._websocket.receive()
+        if message["type"] == "websocket.disconnect":
+            return WebSocketMessage.close(int(message.get("code") or 1000))
+        if message.get("text") is not None:
+            return WebSocketMessage.text(str(message["text"]))
+        if message.get("bytes") is not None:
+            return WebSocketMessage.binary(bytes(message["bytes"]))
+        return WebSocketMessage.close(1002, "invalid WebSocket frame")
+
+    async def send(self, message: WebSocketMessage) -> None:
+        if message.kind == "text":
+            await self._websocket.send_text(str(message.data))
+        elif message.kind == "binary":
+            await self._websocket.send_bytes(bytes(message.data or b""))
+        else:
+            await self.close(code=message.code, reason=message.reason)
+
+    async def close(self, *, code: int, reason: str = "") -> None:
+        await self._websocket.close(code=code, reason=reason)
 
 
 @router.get("/__wright/bootstrap")
@@ -102,3 +216,117 @@ def exchange_bootstrap(
         max_age=remaining,
     )
     return response
+
+
+@router.api_route(
+    "/{application_path:path}",
+    methods=["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+)
+async def proxy_application(application_path: str, request: Request) -> Response:
+    if _reserved_application_path(application_path):
+        raise HTTPException(status_code=404, detail="SURFACE_PREVIEW_NOT_FOUND")
+    try:
+        route = _authorize_application_route(request)
+        raw_path, raw_query = _raw_target(request.scope)
+        headers = _raw_headers(request.scope)
+        accepts_sse = request.method == "GET" and any(
+            name.lower() == "accept" and "text/event-stream" in value.lower()
+            for name, value in headers
+        )
+        if accepts_sse:
+            sse_proxy: SurfaceSseProxy = _component(request, "surface_sse_proxy")
+            stream = await sse_proxy.open(
+                SseProxyRequest(
+                    raw_path=raw_path,
+                    raw_query=raw_query,
+                    headers=headers,
+                    presentation_id=route.presentation_id,
+                    sse_declared=route.sse_declared,
+                ),
+                pin=route.pin,
+                limits=route.limits,
+                authority_valid=route.authority_valid,
+                target_valid=route.target_valid,
+                activity=route.activity,
+            )
+            return _streaming_response(
+                status=stream.status,
+                headers=stream.headers,
+                body=stream.body,
+                close=stream.aclose,
+            )
+        if not route.http_declared:
+            raise HTTPException(
+                status_code=403, detail="SURFACE_PROTOCOL_TRANSPORT_UNDECLARED"
+            )
+        http_proxy: SurfaceHttpProxy = _component(request, "surface_http_proxy")
+        response = await http_proxy.forward(
+            ProxyHttpRequest(
+                method=request.method,
+                raw_path=raw_path,
+                raw_query=raw_query,
+                headers=headers,
+                body=request.stream(),
+                presentation_id=route.presentation_id,
+            ),
+            pin=route.pin,
+            limits=route.limits,
+            authority_valid=route.authority_valid,
+            target_valid=route.target_valid,
+            activity=route.activity,
+        )
+        return _streaming_response(
+            status=response.status,
+            headers=response.headers,
+            body=response.body,
+            close=response.aclose,
+        )
+    except SurfaceRouteAuthorizationError as error:
+        raise _route_error(error) from error
+    except (HttpProxyError, SseProxyError) as error:
+        raise HTTPException(status_code=error.status_code, detail=error.code) from error
+
+
+@router.websocket("/{application_path:path}")
+async def proxy_application_websocket(
+    application_path: str, websocket: WebSocket
+) -> None:
+    if _reserved_application_path(application_path):
+        await websocket.close(code=1008, reason="surface route denied")
+        return
+    try:
+        route = _authorize_application_route(websocket)
+        proxy: SurfaceWebSocketProxy = _component(
+            websocket, "surface_websocket_proxy"
+        )
+        raw_path, raw_query = _raw_target(websocket.scope)
+        origins = [
+            value
+            for name, value in _raw_headers(websocket.scope)
+            if name.lower() == "origin"
+        ]
+        await proxy.bridge(
+            _StarletteWebSocket(websocket),
+            request=WebSocketProxyRequest(
+                raw_path=raw_path,
+                raw_query=raw_query,
+                origin=origins[0] if len(origins) == 1 else None,
+                presentation_origin=route.presentation_origin,
+                subprotocols=tuple(websocket.scope.get("subprotocols") or ()),
+                headers=_raw_headers(websocket.scope),
+                presentation_id=route.presentation_id,
+                websocket_declared=route.websocket_declared,
+            ),
+            pin=route.pin,
+            limits=route.limits,
+            authority_valid=route.authority_valid,
+            target_valid=route.target_valid,
+            activity=route.activity,
+        )
+    except SurfaceRouteAuthorizationError:
+        await websocket.close(code=1008, reason="surface authorization denied")
+    except WebSocketProxyError as error:
+        code = 1009 if error.code == "SURFACE_LIMIT_MESSAGE_BYTES" else 1008
+        await websocket.close(code=code, reason="surface route denied")
+    except HTTPException:
+        await websocket.close(code=1008, reason="surface route denied")
