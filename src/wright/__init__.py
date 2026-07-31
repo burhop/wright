@@ -5,4 +5,6 @@ phases. Importing :mod:`wright` deliberately performs no environment access,
 network calls, optional plotting imports, or runtime initialization.
 """
 
-__all__: tuple[str, ...] = ()
+CONTRACT_VERSION = 1
+
+__all__ = ("CONTRACT_VERSION",)

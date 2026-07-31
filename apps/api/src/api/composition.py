@@ -6,6 +6,10 @@ from workspace_service import (  # type: ignore[import-untyped]
     WorkspaceService,
     build_workspace_service,
 )
+from workspace_service.composition import (
+    SurfaceApplication,
+    build_surface_application,
+)
 from data_vault import GatewayRepository
 from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.gateway_adapters import (
@@ -28,10 +32,24 @@ def workspace_service() -> WorkspaceService:
     return build_workspace_service(DATABASE_PATH, notifier=GatewayWorkspaceNotifier())
 
 
+@lru_cache(maxsize=1)
+def surface_application() -> SurfaceApplication:
+    return build_surface_application(DATABASE_PATH)
+
+
 async def close_application_services() -> None:
+    if surface_application.cache_info().currsize:
+        await surface_application().close()
+        surface_application.cache_clear()
     if workspace_service.cache_info().currsize:
         await workspace_service().close()
         workspace_service.cache_clear()
+
+
+async def close_surface_application_services() -> None:
+    if surface_application.cache_info().currsize:
+        await surface_application().close()
+        surface_application.cache_clear()
 
 
 def build_api_gateway_service(db_path: str, engine, settings) -> GatewayService:

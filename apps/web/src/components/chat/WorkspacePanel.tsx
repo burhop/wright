@@ -28,6 +28,7 @@ import useHealthStatus from "../../hooks/useHealthStatus";
 import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import type { EditorTab } from "../../store/viewer";
+import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 
 function findFileInTree(
   node: WorkspaceNode,
@@ -94,6 +95,7 @@ export function WorkspacePanel({
     cancelActiveStream,
   } = useChat();
   const navigate = useNavigate();
+  const surfacesEnabled = workspaceSurfacesEnabled();
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1354,6 +1356,7 @@ export function WorkspacePanel({
     <div
       ref={containerRef}
       data-testid="workspace-panel"
+      {...(surfacesEnabled ? { "data-workspace-surfaces": "enabled" } : {})}
       style={{
         display: "grid",
         gridTemplateColumns: `48px ${isSidebarCollapsed ? "0px" : `${leftSidebarWidth}px`} ${isSidebarCollapsed ? "0px" : "4px"} 1fr ${isAgentCollapsed ? "0px" : "4px"} ${isAgentCollapsed ? "0px" : `${rightSidebarWidth}px`}`,

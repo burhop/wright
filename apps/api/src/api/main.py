@@ -17,6 +17,7 @@ from api.config import (
     McpTransportSettings,
     api_mcp_autostart_enabled,
     get_llm_health_url,
+    get_workspace_surface_settings,
 )
 from api.routers.agent import router as agent_router
 from api.routers.mcp import router as mcp_router
@@ -26,10 +27,14 @@ from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
+from api.routers.surface_events import router as surface_events_router
+from api.routers.surfaces import router as surfaces_router
 from api.middleware.tracing import TracingMiddleware
 from api.composition import (
     build_api_gateway_service,
     close_application_services,
+    close_surface_application_services,
+    surface_application,
     workspace_service,
 )
 from api.mcp_transport import AuthenticatedMcpTransport, McpTransportMount
@@ -57,6 +62,7 @@ async def lifespan(app: FastAPI):
     # Refresh after test/deployment environment setup, before serving requests.
     app.state.security_settings = SecuritySettings.from_env()
     app.state.security_settings.validate()
+    app.state.workspace_surface_settings = get_workspace_surface_settings()
     # State must be fully migrated and verified before runtime construction.
     try:
         from api.database.migrate import run_migrations
@@ -105,10 +111,14 @@ async def lifespan(app: FastAPI):
     )
     try:
         app.state.workspace_service = workspace_service()
+        if app.state.workspace_surface_settings.flags.model:
+            app.state.surface_application = surface_application()
+            await app.state.surface_application.reconcile_startup()
         async with app.state.mcp_transport.run():
             yield
     finally:
         # Shutdown owns every process and worker constructed during startup.
+        await close_surface_application_services()
         try:
             await app.state.gateway_service.shutdown()
         except Exception as e:
@@ -118,6 +128,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Wright API", version="0.1.0", lifespan=lifespan)
 app.state.security_settings = SecuritySettings.from_env()
+app.state.workspace_surface_settings = get_workspace_surface_settings()
 
 # Allow only explicitly configured frontend origins.
 app.add_middleware(
@@ -125,7 +136,15 @@ app.add_middleware(
     allow_origins=list(app.state.security_settings.allowed_origins),
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-Trace-Id"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "X-Trace-Id",
+        "X-Wright-Workspace-ID",
+        "X-Wright-Session-ID",
+        "Idempotency-Key",
+        "Last-Event-ID",
+    ],
 )
 app.add_middleware(ControlPlaneSecurityMiddleware)
 
@@ -185,6 +204,14 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+if app.state.workspace_surface_settings.flags.model:
+    # Events must be registered before the dynamic /surfaces/{surface_id} path.
+    app.include_router(
+        surface_events_router, prefix="/api/workspace", tags=["Workspace Surfaces"]
+    )
+    app.include_router(
+        surfaces_router, prefix="/api/workspace", tags=["Workspace Surfaces"]
+    )
 app.add_route(
     "/mcp",
     McpTransportMount(),
