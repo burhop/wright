@@ -1,0 +1,51 @@
+schema_version: 1
+bundle_id: fixture-gpl-missing-compliance
+base_image: wright:test
+applications:
+  - id: gpl-runtime
+    display_name: GPL Runtime
+    category: code-cad
+    availability: local_enabled
+    source:
+      type: apt
+      packages:
+        - example-gpl
+      license: GPL-2.0-or-later
+    compliance_profile:
+      id: gpl-2.0-runtime-redistribution
+      runtime_use_only: true
+      modification_status: unmodified
+    install:
+      system_packages:
+        - example-gpl
+    health_probe:
+      kind: command
+      command:
+        - example-gpl
+        - --version
+mcp_servers:
+  - id: gpl-runtime-mcp
+    display_name: GPL Runtime MCP
+    application_id: gpl-runtime
+    availability: local_enabled
+    mcp_source:
+      type: package
+      registry: pypi
+      name: example-mcp
+      version: 1.0.0
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      python_tools:
+        - example-mcp==1.0.0
+    launch:
+      command:
+        - example-mcp
+    health_probe:
+      kind: command
+      command:
+        - example-mcp
+        - --version
+    prompt_probe:
+      prompt: Create a cube.

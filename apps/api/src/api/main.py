@@ -81,9 +81,13 @@ async def lifespan(app: FastAPI):
         from api.database.secret_migration import migrate_plaintext_secrets
 
         migrate_plaintext_secrets(DATABASE_PATH)
-        from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+        from tool_registry.catalog_reconcile import (
+            reconcile_engineering_catalog,
+            reconcile_installed_bundle,
+        )
 
         reconcile_engineering_catalog(DATABASE_PATH)
+        reconcile_installed_bundle(DATABASE_PATH)
     except Exception as exc:
         logger.error(
             "database_readiness_failed",
@@ -338,6 +342,11 @@ class LocalSessionRequest(BaseModel):
     token: str
 
 
+class LocalSessionStatusResponse(BaseModel):
+    auth_required: bool
+    authenticated: bool
+
+
 @app.post("/api/auth/session", status_code=204)
 async def create_local_session(body: LocalSessionRequest, response: Response):
     """Exchange the configured local token for a browser-only session cookie."""
@@ -367,6 +376,18 @@ async def delete_local_session(request: Request, response: Response):
     response.delete_cookie(SESSION_COOKIE, path="/api")
 
 
+@app.get("/api/auth/session/status", response_model=LocalSessionStatusResponse)
+async def local_session_status(request: Request):
+    settings: SecuritySettings = app.state.security_settings
+    if not settings.enforced:
+        return LocalSessionStatusResponse(auth_required=False, authenticated=True)
+    browser_session = request.cookies.get(SESSION_COOKIE)
+    return LocalSessionStatusResponse(
+        auth_required=True,
+        authenticated=settings.browser_session_valid(browser_session),
+    )
+
+
 @app.get("/api/health", response_model=HealthResponse)
 async def check_api_health():
     return HealthResponse(state="connected", latencyMs=1.5)
@@ -382,6 +403,21 @@ async def runtime_identity():
 
 @app.get("/api/agent/health", response_model=HealthResponse)
 async def check_agent_health():
+    sync_manager = getattr(app.state, "agent_sync_manager", None)
+    if (
+        sync_manager is not None
+        and getattr(sync_manager, "active_agent", "") == "hermes"
+        and (
+            getattr(sync_manager, "gateway_refresh_in_progress", False)
+            or getattr(sync_manager, "gateway_refresh_pending", False)
+        )
+    ):
+        return HealthResponse(
+            state="unknown",
+            latencyMs=0.0,
+            baseUrl=getattr(app.state.agent_engine, "base_url", None),
+            error="Hermes gateway is refreshing workspace tools",
+        )
     res = await app.state.agent_engine.check_health()
     return HealthResponse(
         state=res["state"],

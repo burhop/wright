@@ -1,4 +1,5 @@
 import { logger } from "./logger";
+import { hostAdapter } from "./host-adapter";
 
 const mcpLogger = logger.child("McpService");
 
@@ -161,23 +162,12 @@ export interface VersionCheckResult {
   error: string | null;
 }
 
-const getApiBase = () => {
-  if (typeof window === "undefined") {
-    return "http://127.0.0.1:8000";
-  }
-  const host = window.location.hostname;
-  const port = window.location.port;
-  if (port === "5173" || port === "5174") {
-    return "";
-  }
-  return `${window.location.protocol}//${host}${port ? `:${port}` : ""}`;
-};
-const API_BASE = getApiBase();
+const apiUrl = (path: string) => `${hostAdapter.getApiBaseUrl()}${path}`;
 
 export class McpService {
   async getServers(): Promise<McpServer[]> {
     mcpLogger.info("Fetching MCP servers");
-    const response = await fetch(`${API_BASE}/api/mcp/servers`);
+    const response = await hostAdapter.fetch(apiUrl("/api/mcp/servers"));
     if (!response.ok) {
       mcpLogger.error("Failed to fetch MCP servers", {
         status: response.status,
@@ -195,7 +185,7 @@ export class McpService {
       string,
       unknown
     >);
-    const response = await fetch(`${API_BASE}/api/mcp/servers`, {
+    const response = await hostAdapter.fetch(apiUrl("/api/mcp/servers"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -216,13 +206,16 @@ export class McpService {
   async reportMissingMcp(
     payload: MissingMcpReportPayload,
   ): Promise<{ server_id: string; name: string; status: string }> {
-    const response = await fetch(`${API_BASE}/api/mcp/servers/report-missing`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      apiUrl("/api/mcp/servers/report-missing"),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       },
-      body: JSON.stringify(payload),
-    });
+    );
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
@@ -233,13 +226,16 @@ export class McpService {
 
   async toggleServer(serverId: string, isActive: boolean): Promise<McpServer> {
     mcpLogger.info("Toggling server active state", { serverId, isActive });
-    const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}`),
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_active: isActive }),
       },
-      body: JSON.stringify({ is_active: isActive }),
-    });
+    );
 
     if (!response.ok) {
       mcpLogger.error("Failed to toggle MCP server state", {
@@ -266,9 +262,12 @@ export class McpService {
 
   async deleteServer(serverId: string): Promise<void> {
     mcpLogger.info("Deleting MCP server", { serverId });
-    const response = await fetch(`${API_BASE}/api/mcp/servers/${serverId}`, {
-      method: "DELETE",
-    });
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}`),
+      {
+        method: "DELETE",
+      },
+    );
 
     if (!response.ok) {
       mcpLogger.error("Failed to delete MCP server", {
@@ -280,7 +279,7 @@ export class McpService {
 
   async getTools(): Promise<McpTool[]> {
     mcpLogger.info("Fetching MCP tools");
-    const response = await fetch(`${API_BASE}/api/mcp/tools`);
+    const response = await hostAdapter.fetch(apiUrl("/api/mcp/tools"));
     if (!response.ok) {
       mcpLogger.error("Failed to fetch MCP tools", { status: response.status });
       throw new Error(`Failed to fetch MCP tools: ${response.statusText}`);
@@ -291,13 +290,16 @@ export class McpService {
 
   async toggleTool(toolId: string, isEnabled: boolean): Promise<McpTool> {
     mcpLogger.info("Toggling tool enabled state", { toolId, isEnabled });
-    const response = await fetch(`${API_BASE}/api/mcp/tools/${toolId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/tools/${toolId}`),
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ is_enabled: isEnabled }),
       },
-      body: JSON.stringify({ is_enabled: isEnabled }),
-    });
+    );
 
     if (!response.ok) {
       mcpLogger.error("Failed to toggle tool state", {
@@ -315,9 +317,9 @@ export class McpService {
   ): Promise<McpServer> {
     mcpLogger.info("Installing MCP server", { serverId, sessionId });
     const url = sessionId
-      ? `${API_BASE}/api/mcp/servers/${serverId}/install?session_id=${sessionId}`
-      : `${API_BASE}/api/mcp/servers/${serverId}/install`;
-    const response = await fetch(url, { method: "POST" });
+      ? apiUrl(`/api/mcp/servers/${serverId}/install?session_id=${sessionId}`)
+      : apiUrl(`/api/mcp/servers/${serverId}/install`);
+    const response = await hostAdapter.fetch(url, { method: "POST" });
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
@@ -348,9 +350,9 @@ export class McpService {
   ): Promise<McpServer> {
     mcpLogger.info("Uninstalling MCP server", { serverId, sessionId });
     const url = sessionId
-      ? `${API_BASE}/api/mcp/servers/${serverId}/uninstall?session_id=${sessionId}`
-      : `${API_BASE}/api/mcp/servers/${serverId}/uninstall`;
-    const response = await fetch(url, { method: "POST" });
+      ? apiUrl(`/api/mcp/servers/${serverId}/uninstall?session_id=${sessionId}`)
+      : apiUrl(`/api/mcp/servers/${serverId}/uninstall`);
+    const response = await hostAdapter.fetch(url, { method: "POST" });
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
@@ -377,8 +379,8 @@ export class McpService {
 
   async checkServerVersion(serverId: string): Promise<VersionCheckResult> {
     mcpLogger.info("Checking server version", { serverId });
-    const response = await fetch(
-      `${API_BASE}/api/mcp/servers/${serverId}/version-check`,
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}/version-check`),
     );
     if (!response.ok) {
       mcpLogger.error("Failed to check server version", {
@@ -391,8 +393,8 @@ export class McpService {
 
   async updateServer(serverId: string): Promise<{ installed_version: string }> {
     mcpLogger.info("Updating server", { serverId });
-    const response = await fetch(
-      `${API_BASE}/api/mcp/servers/${serverId}/update`,
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}/update`),
       {
         method: "POST",
       },
@@ -408,8 +410,8 @@ export class McpService {
     serverId: string,
   ): Promise<CredentialStatusResponse> {
     mcpLogger.info("Fetching credential status", { serverId });
-    const response = await fetch(
-      `${API_BASE}/api/mcp/servers/${serverId}/credentials`,
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}/credentials`),
     );
     if (!response.ok) {
       mcpLogger.error("Failed to get credential status", {
@@ -427,8 +429,8 @@ export class McpService {
     credentials: Record<string, string>,
   ): Promise<CredentialStatusResponse> {
     mcpLogger.info("Saving credentials", { serverId });
-    const response = await fetch(
-      `${API_BASE}/api/mcp/servers/${serverId}/credentials`,
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}/credentials`),
       {
         method: "PUT",
         headers: {
@@ -448,8 +450,8 @@ export class McpService {
 
   async deleteCredentials(serverId: string): Promise<void> {
     mcpLogger.info("Deleting credentials", { serverId });
-    const response = await fetch(
-      `${API_BASE}/api/mcp/servers/${serverId}/credentials`,
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/servers/${serverId}/credentials`),
       {
         method: "DELETE",
       },

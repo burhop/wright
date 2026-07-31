@@ -215,7 +215,7 @@ export function ToolRegistryPage() {
                 textTransform: "uppercase",
               }}
             >
-              {servers.length} Tools {installedCount} Active
+              {servers.length} Servers {installedCount} Installed
             </span>
           </div>
           <p

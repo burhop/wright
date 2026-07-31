@@ -1,0 +1,334 @@
+schema_version: 1
+bundle_id: wright-mcp-appliance-linux-arm64
+base_image: wright:standard-linux-arm64
+default_license_policy:
+  allowed:
+    - MIT
+    - Apache-2.0
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - ISC
+  supported_profiles:
+    - permissive
+    - gpl-2.0-runtime-redistribution
+    - lgpl-runtime-redistribution
+    - internal-reviewed-source
+    - blocked
+generated_outputs:
+  hermes_config: /opt/wright/mcp/generated/hermes-mcp.generated.yaml
+  status: /opt/wright/mcp/generated/mcp-bundle-status.json
+  licenses: /opt/wright/mcp/generated/licenses
+
+applications:
+  - id: openscad
+    display_name: OpenSCAD
+    category: code-cad
+    availability: local_enabled
+    source:
+      type: apt
+      packages:
+        - openscad
+        - xvfb
+      repository: https://github.com/openscad/openscad
+      license: GPL-2.0-or-later
+      source_reference: apt source openscad for the exact package installed during image build
+    compliance_profile:
+      id: gpl-2.0-runtime-redistribution
+      runtime_use_only: true
+      modification_status: unmodified
+      source_access: apt source openscad for the installed package, plus /opt/wright/mcp/generated/licenses/source-offer.md
+      license_text: /usr/share/common-licenses/GPL-2
+      no_warranty_notice: /opt/wright/mcp/generated/licenses/NO-WARRANTY-GPL-2.0.txt
+    install:
+      system_packages:
+        - openscad
+        - xvfb
+    health_probe:
+      kind: command
+      command:
+        - /usr/bin/openscad
+        - --version
+    docs_summary: Parametric SCAD modeling and STL generation with OpenSCAD.
+
+  - id: freecad
+    display_name: FreeCAD
+    category: cad
+    availability: local_enabled
+    source:
+      type: github_release
+      version: 1.1.1
+      url: https://github.com/FreeCAD/FreeCAD/releases/download/1.1.1/FreeCAD_1.1.1-Linux-aarch64-py311.AppImage
+      repository: https://github.com/FreeCAD/FreeCAD
+      license: LGPL-2.1-or-later
+      source_reference: https://github.com/FreeCAD/FreeCAD/tree/1.1.1 and GitHub 1.1.1 release source archives
+    compliance_profile:
+      id: lgpl-runtime-redistribution
+      runtime_use_only: true
+      modification_status: unmodified
+      source_access: FreeCAD 1.1.1 upstream source archives and /opt/wright/mcp/generated/licenses/source-offer.md
+      license_text: /opt/wright/mcp/generated/licenses/LGPL-RUNTIME-NOTICE.txt
+      no_warranty_notice: /opt/wright/mcp/generated/licenses/NO-WARRANTY-LGPL.txt
+    install:
+      system_packages:
+        - xvfb
+        - xauth
+        - libgl1
+        - libegl1
+        - libxkbcommon-x11-0
+        - libxcb-cursor0
+        - libxrender1
+        - libxi6
+        - libxrandr2
+        - libxinerama1
+        - libxcursor1
+        - libxcomposite1
+        - libxdamage1
+        - libxtst6
+        - libfontconfig1
+        - libdbus-1-3
+      release_assets:
+        - url: https://github.com/FreeCAD/FreeCAD/releases/download/1.1.1/FreeCAD_1.1.1-Linux-aarch64-py311.AppImage
+          target: /opt/wright/mcp/apps/freecad/FreeCAD_1.1.1-Linux-aarch64-py311.AppImage
+          extract_appimage: true
+    health_probe:
+      kind: command
+      command:
+        - /opt/wright/mcp/bin/freecadcmd
+        - --version
+    docs_summary: Parametric CAD automation through the official Linux aarch64 FreeCAD AppImage launched under Xvfb.
+
+  - id: brep
+    display_name: BREP CAD
+    category: brep
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: brepjs-cad
+      version: 0.103.0
+      repository: https://github.com/andymai/brepjs
+      ref: 2cfc880f517e82cfc4bbafed36ce55afa27daa12
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - brepjs-cad@0.103.0
+    health_probe:
+      kind: command
+      command:
+        - /usr/local/bin/brep
+        - --help
+    docs_summary: BREP CAD authoring and deterministic geometry verification through the brep CLI.
+
+  - id: playwright
+    display_name: Playwright
+    category: browser-automation
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: playwright
+      version: 1.62.0
+      repository: https://github.com/microsoft/playwright
+      ref: e3950d9c140d007bd52853b45813c6274b24e36f
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - playwright@1.62.0
+      playwright_browsers:
+        - chromium
+    health_probe:
+      kind: command
+      command:
+        - /usr/local/bin/playwright
+        - --version
+    docs_summary: Headless browser automation for driving local CAD web UIs and Wright itself.
+
+mcp_servers:
+  - id: openscad-mcp
+    display_name: OpenSCAD MCP
+    application_id: openscad
+    availability: local_enabled
+    mcp_source:
+      type: git
+      url: https://github.com/quellant/openscad-mcp
+      ref: d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+      tag: v0.2.0
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      python_tools:
+        - git+https://github.com/quellant/openscad-mcp.git@d438b84fff8af9d646c2bcb76fe58fa4ad387de0
+    launch:
+      command:
+        - /opt/wright/mcp/bin/openscad-mcp
+      env:
+        OPENSCAD_WORKSPACE: /home/agent/workspace
+        OPENSCAD_PATH: /usr/bin/openscad
+    workspace_binding:
+      required: true
+      env:
+        OPENSCAD_WORKSPACE: "{workspace.path}"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - check_openscad
+        - export_model
+    prompt_probe:
+      prompt: Create a 10 mm OpenSCAD cube, export an STL, and save both files in the workspace.
+      expected_artifacts:
+        - model.scad
+        - model.stl
+    docs_summary: OpenSCAD MCP server from the validated Quellant source.
+
+  - id: freecad-mcp
+    display_name: FreeCAD MCP
+    application_id: freecad
+    availability: local_enabled
+    mcp_source:
+      type: git
+      url: https://github.com/neka-nat/freecad-mcp
+      ref: 63acb305573194a011641ab13ccfb391fe95769f
+      package_version: 0.1.18
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      git_sources:
+        - url: https://github.com/neka-nat/freecad-mcp
+          ref: 63acb305573194a011641ab13ccfb391fe95769f
+          target: /opt/wright/mcp/src/freecad-mcp
+      python_tools:
+        - git+https://github.com/neka-nat/freecad-mcp.git@63acb305573194a011641ab13ccfb391fe95769f
+      freecad_addon:
+        source: /opt/wright/mcp/src/freecad-mcp/addon/FreeCADMCP
+    launch:
+      command:
+        - /opt/wright/mcp/bin/freecad-mcp-wrapped
+      env:
+        FREECAD_MCP_WORK_DIR: /home/agent/workspace/freecad_mcp_work
+        FREECAD_MCP_HOST: 127.0.0.1
+    workspace_binding:
+      required: true
+      env:
+        FREECAD_MCP_WORK_DIR: "{workspace.path}/freecad_mcp_work"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - list_documents
+        - create_document
+        - create_object
+        - get_objects
+    prompt_probe:
+      prompt: Create a FreeCAD document with a 10 mm by 8 mm by 6 mm box named WrightBox and report its volume.
+      expected_result_contains:
+        - WrightBox
+        - "480"
+    docs_summary: FreeCADMCP addon plus stdio server validated with a Part::Box workflow.
+
+  - id: brep-mcp
+    display_name: BREP MCP
+    application_id: brep
+    availability: local_enabled
+    mcp_source:
+      type: package
+      registry: npm
+      name: brepjs-cad
+      version: 0.103.0
+      repository: https://github.com/andymai/brepjs
+      ref: 2cfc880f517e82cfc4bbafed36ce55afa27daa12
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - brepjs-cad@0.103.0
+    launch:
+      command:
+        - /opt/wright/mcp/bin/brep-mcp-wrapped
+      env:
+        BREP_WORKSPACE: /home/agent/workspace
+    workspace_binding:
+      required: true
+      env:
+        BREP_WORKSPACE: "{workspace.path}"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - run_program
+    prompt_probe:
+      prompt: Create a BREP box that is 40 mm by 20 mm by 10 mm, verify dimensions, and export STEP.
+      expected_artifacts:
+        - bracket.brep.ts
+        - bracket.step
+        - report.json
+    docs_summary: BREP MCP server shipped by brepjs-cad, launched through Wright's file-backed CLI compatibility wrapper for the pinned package build.
+
+  - id: solid-edge-mcp
+    display_name: SolidEdgeMCP
+    application_id: null
+    availability: blocked_pending_review
+    mcp_source:
+      type: configured_git
+      url_env: WRIGHT_SOLIDEDGE_MCP_GIT_URL
+      ref_env: WRIGHT_SOLIDEDGE_MCP_GIT_REF
+      default_url: https://github.com/burhop/SolidEdgeMCP.git
+      default_ref: 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+      default_target: /opt/wright/mcp/src/SolidEdgeMCP
+      license: Internal-Use-Only
+      source_reference: https://github.com/burhop/SolidEdgeMCP.git at commit 2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.
+    compliance_profile:
+      id: blocked
+      reason: Current SolidEdgeMCP ref targets Windows/Solid Edge COM automation and is not runnable inside the Linux appliance.
+    docs_summary: SolidEdgeMCP is intentionally not installed in Linux images until a Linux-runnable target exists; use the Windows image for this MCP.
+
+  - id: playwright-mcp
+    display_name: Playwright MCP
+    application_id: playwright
+    availability: local_enabled
+    mcp_source:
+      type: package
+      registry: npm
+      name: "@playwright/mcp"
+      version: 0.0.78
+      repository: https://github.com/microsoft/playwright-mcp
+      ref: 5f8fc00210b27b4407c375b59cda4838045d429c
+      license: Apache-2.0
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - "@playwright/mcp@0.0.78"
+      playwright_mcp_browsers:
+        - chrome-for-testing
+    launch:
+      command:
+        - /usr/local/bin/playwright-mcp
+        - --headless
+        - --browser
+        - chromium
+        - --allowed-hosts
+        - localhost,127.0.0.1
+      env:
+        PLAYWRIGHT_BROWSERS_PATH: /opt/wright/mcp/playwright-browsers
+    workspace_binding:
+      required: true
+      env:
+        PLAYWRIGHT_MCP_WORKSPACE: "{workspace.path}"
+    health_probe:
+      kind: mcp
+      expected_tools:
+        - browser_navigate
+        - browser_snapshot
+        - browser_click
+        - browser_type
+    prompt_probe:
+      prompt: Use Playwright to open Wright in the mapped browser URL and confirm the health page responds.
+      expected_result_contains:
+        - Wright
+        - health
+    docs_summary: Playwright MCP for browser-driven CAD and Wright UI automation.

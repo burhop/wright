@@ -1,0 +1,14 @@
+id: playwright-mcp
+application_id: playwright
+kind: local_mcp_application
+health:
+  expected_tools:
+    - browser_navigate
+    - browser_snapshot
+    - browser_click
+    - browser_type
+prompt:
+  text: Use Playwright to open Wright in the mapped browser URL and confirm the health page responds.
+  expected_result_contains:
+    - Wright
+    - health

@@ -1,0 +1,12 @@
+id: brep-mcp
+application_id: brep
+kind: local_mcp_application
+health:
+  expected_tools:
+    - run_program
+prompt:
+  text: Create a BREP box that is 40 mm by 20 mm by 10 mm, verify dimensions, and export STEP.
+  expected_artifacts:
+    - bracket.brep.ts
+    - bracket.step
+    - report.json

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
 import { hostAdapter } from "../src/services/host-adapter";
 
@@ -29,12 +29,28 @@ describe("App startup", () => {
     window.history.replaceState({}, "", "/");
   });
 
-  it("renders the Wright dashboard without waiting for setup status", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("renders the Wright dashboard without waiting for setup status", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({ auth_required: false, authenticated: true }),
+            { status: 200 },
+          ),
+        ),
+    );
     vi.spyOn(hostAdapter, "fetch").mockReturnValue(new Promise(() => {}));
 
     render(<App />);
 
-    expect(screen.getByTestId("page-dashboard")).toBeInTheDocument();
+    expect(await screen.findByTestId("page-dashboard")).toBeInTheDocument();
     expect(screen.queryByText("Welcome to Wright")).not.toBeInTheDocument();
   });
 });

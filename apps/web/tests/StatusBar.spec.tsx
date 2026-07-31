@@ -67,9 +67,10 @@ describe("StatusBar", () => {
           ok: true,
           json: () =>
             Promise.resolve({
-              state: "connected",
+              state: "unknown",
               latencyMs: 4,
               baseUrl: "http://127.0.0.1:8642",
+              error: "Hermes gateway is refreshing workspace tools",
             }),
         });
       }
@@ -107,7 +108,7 @@ describe("StatusBar", () => {
     const llmStatus = statuses.find((s) => s.serviceId === "llm-backend");
 
     expect(wrightStatus?.state).toBe("connected");
-    expect(hermesStatus?.state).toBe("connected");
+    expect(hermesStatus?.state).toBe("unknown");
     expect(llmStatus?.state).toBe("disconnected");
     expect(llmStatus?.error).toBe("LLM backend is not ready");
 

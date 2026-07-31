@@ -61,7 +61,8 @@ Variables that direct the MCP execution pathways.
 
 | Variable Name | Required | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `WRIGHT_WORKSPACE_PATH` | No | `/home/agent/workspace` | Base directory on disk where workspaces reside. |
+| `WRIGHT_WORKSPACES_DIR` | No | `/home/agent/workspace` | Base directory on disk where workspaces reside. |
+| `WRIGHT_WORKSPACE_PATH` | No | value of `WRIGHT_WORKSPACES_DIR` | Backward-compatible alias for the workspace directory. |
 | `RHINO_MCP_ALLOW_REMOTE` | No | `0` | If set to `1`, allows RhinoMCP socket connection to bind to non-loopback addresses. |
 
 MCP-specific host software, credentials, license managers, and hardware drivers

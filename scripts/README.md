@@ -197,7 +197,7 @@ Runs a local verification suite against a production Docker build to ensure envi
      security overrides are reconciled, and every other conflict fails.
   4. Verifies that the `/container-manifest.md` is present and has read-only `444` permissions.
   5. Verifies that `/entrypoint.sh` is present and executable.
-  6. Validates setup-pending behavior (warns and continues if `LLM_API_URL` is missing, succeeds when provided).
+  6. Validates setup-pending behavior (warns and continues if no LLM provider is configured, succeeds when one is provided).
   7. Validates container recovery paths (ephemeral write checks and entrypoint shell bypasses).
 
 Host-side JSON and dependency assertions honor an explicit `PYTHON`
@@ -213,6 +213,92 @@ when run through Git for Windows.
 * **Smoke an existing image without rebuilding**:
   ```bash
   WRIGHT_DOCKER_IMAGE=wright:latest WRIGHT_DOCKER_SKIP_BUILD=1 ./scripts/docker-smoke-test.sh
+  ```
+
+---
+
+### `docker-mcp-smoke-test.sh`
+
+Builds the standard Wright image as `wright:test`, derives the MCP appliance
+image as `wright:mcp-test`, validates the MCP bundle, starts the container with
+fresh runtime state, and checks Wright API health, Hermes gateway supervision,
+generated MCP config, generated compliance artifacts, and local tool/wrapper
+presence for OpenSCAD, FreeCAD, BREP, SolidEdgeMCP, and Playwright.
+The default Docker platform is `linux/amd64`; set
+`WRIGHT_MCP_DOCKER_PLATFORM=linux/arm64` to smoke the arm64 bundle on GB10-class
+hosts.
+
+* **Usage**:
+  ```bash
+  ./scripts/docker-mcp-smoke-test.sh
+  ```
+* **Smoke an existing MCP image without rebuilding**:
+  ```bash
+  WRIGHT_MCP_DOCKER_IMAGE=wright:mcp-test WRIGHT_MCP_SKIP_BUILD=1 ./scripts/docker-mcp-smoke-test.sh
+  ```
+
+Bundle-only validation:
+
+```bash
+python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
+python docker/mcp/generate-config.py docker/mcp-bundle.yaml --output-dir /tmp/wright-mcp-generated
+```
+
+---
+
+### `docker-image-family-build.sh` / `docker-image-family-build.ps1`
+
+Builds managed Wright image profiles from `docker/image-family.yaml`.
+
+* **Linux/GB10 arm64**:
+  ```bash
+  ./scripts/docker-image-family-build.sh linux-arm64
+  ```
+* **Linux amd64**:
+  ```bash
+  ./scripts/docker-image-family-build.sh linux-amd64
+  ```
+* **Windows host**:
+  ```powershell
+  pwsh -File scripts/docker-image-family-build.ps1 -Profile windows-amd64
+  ```
+
+The Windows profile must be built from Docker Desktop in Windows container
+mode. It honors `WRIGHT_SOLIDEDGE_MCP_GIT_URL`, exact
+`WRIGHT_SOLIDEDGE_MCP_GIT_REF`, and optional
+`WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL` for nonstandard archive sources. Private
+GitHub MCP sources require `GITHUB_TOKEN` or a valid `gh auth login`; Linux MCP
+builds pass that token as a BuildKit `github_token` secret. Linux profiles
+should be built from Linux container mode.
+
+---
+
+### `docker-mcp-run.sh` / `docker-mcp-run-windows.ps1`
+
+Runs a built MCP image with platform-specific named volumes so Wright data,
+workspaces, config, Hermes profile data, and logs survive container recreation.
+
+* **Linux arm64**:
+  ```bash
+  WRIGHT_API_TOKEN=change-this ./scripts/docker-mcp-run.sh linux-arm64
+  ```
+* **Linux amd64**:
+  ```bash
+  WRIGHT_API_TOKEN=change-this ./scripts/docker-mcp-run.sh linux-amd64
+  ```
+* **Remote browser access on a trusted LAN**:
+  ```bash
+  WRIGHT_MCP_BIND=0.0.0.0 \
+  WRIGHT_MCP_PUBLIC_HOST=<host-lan-ip> \
+  WRIGHT_API_TOKEN=change-this \
+  ./scripts/docker-mcp-run.sh linux-arm64
+  ```
+  `WRIGHT_MCP_PUBLIC_HOST` is added to `WRIGHT_ALLOWED_ORIGINS` so browser
+  requests for CSS, JavaScript, API calls, and WebSocket connections are not
+  rejected by the origin guard.
+* **Windows MCP runtime**:
+  ```powershell
+  pwsh -File scripts/docker-mcp-run-windows.ps1
   ```
 
 ---

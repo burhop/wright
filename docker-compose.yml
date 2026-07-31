@@ -37,6 +37,8 @@ services:
     environment:
       - WRIGHT_ENV=production
       - WRIGHT_BIND_HOST=0.0.0.0
+      - WRIGHT_WORKSPACES_DIR=/home/agent/workspace
+      - WRIGHT_WORKSPACE_PATH=/home/agent/workspace
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     restart: unless-stopped
     healthcheck:
@@ -71,4 +73,3 @@ volumes:
     name: wright_hermes
   wright_logs:
     name: wright_logs
-

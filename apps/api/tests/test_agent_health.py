@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pytest
 
 
@@ -21,6 +23,34 @@ async def test_agent_health_includes_connection_details(client, mock_agent_engin
         "latencyMs": 0.0,
         "baseUrl": "http://127.0.0.1:8642",
         "error": "connection refused",
+    }
+
+
+@pytest.mark.asyncio
+async def test_agent_health_reports_unknown_during_workspace_gateway_refresh(
+    client, mock_agent_engine
+):
+    from api.main import app
+
+    async def should_not_check_live_gateway():
+        raise AssertionError("health should not probe Hermes during planned refresh")
+
+    mock_agent_engine.base_url = "http://127.0.0.1:8642"
+    mock_agent_engine.check_health = should_not_check_live_gateway
+    app.state.agent_sync_manager = SimpleNamespace(
+        active_agent="hermes",
+        gateway_refresh_in_progress=True,
+        gateway_refresh_pending=True,
+    )
+
+    response = await client.get("/api/agent/health")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "state": "unknown",
+        "latencyMs": 0.0,
+        "baseUrl": "http://127.0.0.1:8642",
+        "error": "Hermes gateway is refreshing workspace tools",
     }
 
 

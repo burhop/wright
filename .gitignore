@@ -272,6 +272,12 @@ lance_db/
 # Docker runtime volumes
 docker-volumes/
 backups/
+docker/mcp/generated/
+docker/mcp/work/
+docker/mcp/cache/
+docker/mcp/licenses/generated/
+docker/mcp-bundle.generated.*
+docker/mcp-bundle-status.json
 
 # Environment secrets
 .env.local

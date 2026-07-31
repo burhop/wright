@@ -2,6 +2,7 @@ import asyncio
 from contextlib import suppress
 import json
 import os
+from pathlib import Path
 import secrets
 import shutil
 import subprocess
@@ -37,13 +38,10 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-def _restart_hermes_gateway_process() -> None:
-    executable = shutil.which("hermes")
-    if not executable:
-        raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+def _run_gateway_restart_command(command: list[str], label: str) -> None:
     creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if os.name == "nt" else 0
     completed = subprocess.run(
-        [executable, "gateway", "restart"],
+        command,
         capture_output=True,
         text=True,
         timeout=30,
@@ -51,7 +49,37 @@ def _restart_hermes_gateway_process() -> None:
         check=False,
     )
     if completed.returncode != 0:
-        raise RuntimeError("Hermes gateway restart failed after workspace rebinding")
+        output = "\n".join(
+            value.strip()
+            for value in (completed.stdout, completed.stderr)
+            if value and value.strip()
+        )
+        detail = (
+            f"{label} failed after workspace rebinding (exit {completed.returncode})"
+        )
+        if output:
+            detail = f"{detail}: {output[-2000:]}"
+        raise RuntimeError(detail)
+
+
+def _restart_hermes_gateway_process() -> None:
+    supervisorctl = shutil.which("supervisorctl")
+    supervisor_config = os.environ.get(
+        "WRIGHT_SUPERVISOR_CONFIG", "/etc/supervisor/conf.d/wright.conf"
+    )
+    if supervisorctl and Path(supervisor_config).is_file():
+        _run_gateway_restart_command(
+            [supervisorctl, "-c", supervisor_config, "restart", "hermes-gateway"],
+            "Supervisor Hermes gateway restart",
+        )
+        return
+
+    executable = shutil.which("hermes")
+    if not executable:
+        raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
+    _run_gateway_restart_command(
+        [executable, "gateway", "restart"], "Hermes gateway restart"
+    )
 
 
 async def _refresh_hermes_gateway(engine: BaseAgentEngine) -> None:
@@ -306,7 +334,7 @@ async def ensure_workspace_mcp_servers_active(
             runner = getattr(mcp_engine, "_active_runners", {}).get(server.server_id)
             if runner and runner.is_running() and server.status == "active":
                 continue
-            await mcp_engine.start_server(
+            started_server = await mcp_engine.start_server(
                 server.server_id,
                 workspace_dir=workspace_dir,
                 approval_context=ApprovalContext(
@@ -314,6 +342,16 @@ async def ensure_workspace_mcp_servers_active(
                     workspace_approvals=set(server.approval_gates or []),
                 ),
             )
+            if started_server is not None and (
+                getattr(started_server, "status", None) == "error"
+                or getattr(started_server, "is_active", True) is False
+            ):
+                reason = (
+                    getattr(started_server, "error_message", None)
+                    or getattr(started_server, "status", None)
+                    or "server did not become active"
+                )
+                raise RuntimeError(str(reason))
         except Exception as exc:
             logger.exception(
                 "workspace_mcp_preflight_start_failed",
@@ -329,6 +367,21 @@ async def ensure_workspace_mcp_servers_active(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=detail,
         )
+
+
+async def ensure_llm_backend_ready(engine: BaseAgentEngine) -> None:
+    """Fail chat early when Hermes has no usable model credentials."""
+    health_checker = getattr(engine, "check_llm_backend_health", None)
+    if not callable(health_checker):
+        return
+    health = await health_checker()
+    if str(health.get("state") or "").lower() == "connected":
+        return
+    detail = str(health.get("error") or "LLM backend is not ready")
+    raise HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        detail=f"LLM backend is not ready: {detail}",
+    )
 
 
 #  Pydantic Request/Response Schemas
@@ -690,6 +743,7 @@ async def chat(
                 detail=str(exc),
             ) from exc
 
+    await ensure_llm_backend_ready(engine)
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 
     requested_title = title_from_slash_command(body.message)

@@ -44,8 +44,12 @@ should use a published immutable release tag.
 | Path | Command | Host URL | Notes |
 | --- | --- | --- | --- |
 | Minimal alpha appliance | `docker compose -f docker-compose.minimal.yml up -d --build` | `http://localhost:8080` | Recommended first run; Wright only. |
+| MCP appliance flavor | `docker compose -f docker-compose.mcp.yml up -d --build` | `http://localhost:8080` | Experimental MCP bundle with separate volumes; see [MCP Docker quickstart](quickstart-docker-mcp.md). |
 | Full local stack | `docker compose up -d --build` | `http://localhost:8000` | Adds Jaeger tracing on localhost. |
 | Test/dev stack | `docker compose -f docker-compose.test.yml up -d --build` | `http://localhost:8080` | Bind-mounts source for iteration. |
+
+See [Docker image family](docker-image-family.md) for the managed standard,
+Linux amd64 MCP, Linux arm64 MCP, and Windows MCP runtime image profiles.
 
 All checked-in compose files bind host ports to `127.0.0.1` by default. That is
 the safe local-first setting.
@@ -170,6 +174,9 @@ The compose files use named volumes for:
 - `/home/agent/.config/wright`: owner-only Wright configuration and fallback secrets.
 - `/home/agent/.hermes`: Hermes profiles and sessions.
 - `/var/log`: startup, supervisor, and application logs.
+
+The image sets `WRIGHT_WORKSPACES_DIR=/home/agent/workspace` so newly created
+workspaces land in the mounted workspace volume.
 
 The image root filesystem is read-only, Linux capabilities are dropped, and
 privilege escalation is disabled. System paths such as `/etc`, `/opt`, and

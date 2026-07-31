@@ -212,18 +212,39 @@ def _hermes_auth_path_for_config(config_path: str | None) -> Path | None:
     return config_file.with_name("auth.json")
 
 
-def _openai_codex_auth_is_present(config_path: str | None) -> bool:
+def _openai_codex_auth_status(config_path: str | None) -> tuple[bool, str | None]:
     auth_path = _hermes_auth_path_for_config(config_path)
     if not auth_path or not auth_path.exists():
-        return False
+        return False, None
 
     auth = _load_mapping_file(str(auth_path))
+    rejected_messages: list[str] = []
+    saw_pool_entry = False
+
+    def rejected_reason(entry: dict[str, Any]) -> str | None:
+        status = str(entry.get("last_status") or "").strip().lower()
+        error_code = entry.get("last_error_code")
+        if status in {"exhausted", "rejected", "invalid", "failed"} or error_code in {
+            401,
+            403,
+            "401",
+            "403",
+        }:
+            message = str(entry.get("last_error_message") or "").strip()
+            if message:
+                return message
+            if error_code:
+                return f"HTTP {error_code}"
+            return status
+        return None
+
     providers = auth.get("providers") if isinstance(auth.get("providers"), dict) else {}
     codex = providers.get("openai-codex") if isinstance(providers, dict) else None
+    provider_has_token = False
     if isinstance(codex, dict):
         tokens = codex.get("tokens")
         if isinstance(tokens, dict) and str(tokens.get("access_token") or "").strip():
-            return True
+            provider_has_token = True
 
     pool = (
         auth.get("credential_pool")
@@ -232,15 +253,32 @@ def _openai_codex_auth_is_present(config_path: str | None) -> bool:
     )
     entries = pool.get("openai-codex") if isinstance(pool, dict) else None
     if isinstance(entries, list):
-        return any(
-            isinstance(entry, dict)
-            and str(
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            has_token = str(
                 entry.get("secret_fingerprint") or entry.get("access_token") or ""
             ).strip()
-            for entry in entries
-        )
+            if not has_token:
+                continue
+            saw_pool_entry = True
+            reason = rejected_reason(entry)
+            if reason:
+                rejected_messages.append(reason)
+                continue
+            return True, None
 
-    return False
+    if saw_pool_entry and rejected_messages:
+        return False, rejected_messages[-1]
+    if provider_has_token:
+        return True, None
+
+    return False, rejected_messages[-1] if rejected_messages else None
+
+
+def _openai_codex_auth_is_present(config_path: str | None) -> bool:
+    configured, _reason = _openai_codex_auth_status(config_path)
+    return configured
 
 
 class HermesAdapter(BaseAgentEngine):
@@ -363,17 +401,25 @@ class HermesAdapter(BaseAgentEngine):
         config_path = settings["config_path"]
 
         if provider == "openai-codex":
-            if _openai_codex_auth_is_present(config_path):
+            auth_configured, auth_error = _openai_codex_auth_status(config_path)
+            if auth_configured:
                 return {
                     "state": "connected",
                     "latencyMs": (time.perf_counter() - start_time) * 1000.0,
                     "baseUrl": base_url or "https://chatgpt.com/backend-api/codex",
                 }
+            error = "Hermes openai-codex credentials are not configured"
+            if auth_error:
+                error = (
+                    "Hermes openai-codex credentials were rejected. "
+                    "Please sign in again or provide a fresh seed file. "
+                    f"Last error: {auth_error}"
+                )
             return {
                 "state": "disconnected",
                 "latencyMs": (time.perf_counter() - start_time) * 1000.0,
                 "baseUrl": base_url or "https://chatgpt.com/backend-api/codex",
-                "error": "Hermes openai-codex credentials are not configured",
+                "error": error,
             }
 
         if _is_placeholder(base_url):

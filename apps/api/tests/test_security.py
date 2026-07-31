@@ -70,6 +70,12 @@ async def test_protected_api_requires_valid_bearer(client, monkeypatch):
             "/api/auth/session", json={"token": "wrong"}
         )
         assert invalid_session.status_code == 401
+        session_status = await client.get("/api/auth/session/status")
+        assert session_status.status_code == 200
+        assert session_status.json() == {
+            "auth_required": True,
+            "authenticated": False,
+        }
         session = await client.post(
             "/api/auth/session", json={"token": "test-admin-token"}
         )
@@ -77,6 +83,12 @@ async def test_protected_api_requires_valid_bearer(client, monkeypatch):
         cookie_header = session.headers["set-cookie"]
         assert "test-admin-token" not in cookie_header
         assert app.state.security_settings.browser_session_token() in cookie_header
+        session_status = await client.get("/api/auth/session/status")
+        assert session_status.status_code == 200
+        assert session_status.json() == {
+            "auth_required": True,
+            "authenticated": True,
+        }
         assert (await client.get("/api/settings")).status_code == 200
     finally:
         app.state.security_settings = previous

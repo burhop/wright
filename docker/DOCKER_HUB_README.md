@@ -18,10 +18,16 @@ Public alpha images are always intended to be published with immutable tags on
 Docker Hub and GHCR when release credentials are configured:
 
 - `burhop/wright:<tag>`
+- `burhop/wright:<tag>-engineering-tools-linux-amd64`
+- `burhop/wright:<tag>-engineering-tools-linux-arm64`
+- `burhop/wright:<tag>-engineering-tools-windows-amd64`
 - `ghcr.io/burhop/wright:<tag>`
+- `ghcr.io/burhop/wright:<tag>-engineering-tools-linux-amd64`
+- `ghcr.io/burhop/wright:<tag>-engineering-tools-linux-arm64`
+- `ghcr.io/burhop/wright:<tag>-engineering-tools-windows-amd64`
 
-Stable tags may also move `latest`. Alpha, beta, and release-candidate tags do
-not move `latest`.
+Stable standard tags may also move `latest`. Alpha, beta, release-candidate,
+and engineering-tools tags do not move `latest`.
 
 ## Quick Start
 

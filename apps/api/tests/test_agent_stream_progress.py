@@ -12,6 +12,7 @@ from api.routers.agent import (
     _restart_hermes_gateway_process,
     chat,
 )
+from fastapi import HTTPException
 
 
 class _SlowEngine:
@@ -51,6 +52,19 @@ class _FailingEngine:
         raise RuntimeError("sentinel C:\\private\\agent-token.txt")
 
 
+class _DisconnectedLlmEngine:
+    async def check_llm_backend_health(self):
+        return {
+            "state": "disconnected",
+            "error": "Codex auth expired",
+        }
+
+    async def stream_chat(self, request):
+        if False:
+            yield
+        raise AssertionError("chat should not start with disconnected LLM")
+
+
 class _AttachFailureJob:
     async def stream_from(self, index=0):
         if False:
@@ -65,7 +79,11 @@ class _AttachFailureRegistry:
 
 def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
     captured = {}
-    monkeypatch.setattr("api.routers.agent.shutil.which", lambda name: "hermes.exe")
+    monkeypatch.setattr(
+        "api.routers.agent.shutil.which",
+        lambda name: "hermes.exe" if name == "hermes" else None,
+    )
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: False)
 
     def run(command, **kwargs):
         captured["command"] = command
@@ -78,6 +96,62 @@ def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
 
     assert captured["command"] == ["hermes.exe", "gateway", "restart"]
     assert captured["kwargs"]["timeout"] == 30
+
+
+def test_restart_hermes_gateway_prefers_supervisor_in_appliance(monkeypatch):
+    captured = {}
+
+    def which(name):
+        return {
+            "supervisorctl": "/usr/bin/supervisorctl",
+            "hermes": "/opt/hermes/bin/hermes",
+        }.get(name)
+
+    monkeypatch.setattr("api.routers.agent.shutil.which", which)
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: True)
+
+    def run(command, **kwargs):
+        captured["command"] = command
+        captured["kwargs"] = kwargs
+        return SimpleNamespace(returncode=0, stdout="started", stderr="")
+
+    monkeypatch.setattr("api.routers.agent.subprocess.run", run)
+
+    _restart_hermes_gateway_process()
+
+    assert captured["command"] == [
+        "/usr/bin/supervisorctl",
+        "-c",
+        "/etc/supervisor/conf.d/wright.conf",
+        "restart",
+        "hermes-gateway",
+    ]
+    assert captured["kwargs"]["timeout"] == 30
+
+
+def test_restart_hermes_gateway_failure_includes_diagnostics(monkeypatch):
+    monkeypatch.setattr(
+        "api.routers.agent.shutil.which",
+        lambda name: "hermes.exe" if name == "hermes" else None,
+    )
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: False)
+
+    def run(_command, **_kwargs):
+        return SimpleNamespace(
+            returncode=19,
+            stdout="",
+            stderr="gateway lock could not be acquired",
+        )
+
+    monkeypatch.setattr("api.routers.agent.subprocess.run", run)
+
+    with pytest.raises(RuntimeError) as error:
+        _restart_hermes_gateway_process()
+
+    assert "Hermes gateway restart failed after workspace rebinding (exit 19)" in str(
+        error.value
+    )
+    assert "gateway lock could not be acquired" in str(error.value)
 
 
 @pytest.mark.asyncio
@@ -168,3 +242,34 @@ async def test_chat_attach_failure_emits_generic_trace_bearing_error(monkeypatch
     assert "Agent response stream failed." in body
     assert '"trace_id"' in body
     assert "sentinel" not in body
+
+
+@pytest.mark.asyncio
+async def test_chat_preflight_reports_disconnected_llm(monkeypatch):
+    request = Request(
+        {
+            "type": "http",
+            "method": "POST",
+            "path": "/api/agent/chat",
+            "headers": [],
+            "app": SimpleNamespace(state=SimpleNamespace()),
+        }
+    )
+
+    async def no_mcp_activation(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(
+        "api.routers.agent.ensure_workspace_mcp_servers_active",
+        no_mcp_activation,
+    )
+
+    with pytest.raises(HTTPException) as error:
+        await chat(
+            ChatRequest(session_id="session-1", message="Create a part"),
+            request,
+            _DisconnectedLlmEngine(),
+        )
+
+    assert error.value.status_code == 503
+    assert error.value.detail == "LLM backend is not ready: Codex auth expired"

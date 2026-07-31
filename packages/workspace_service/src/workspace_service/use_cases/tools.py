@@ -99,7 +99,7 @@ class WorkspaceToolUseCases:
                 effective, error_message = "active", None
             elif mcp_engine and server.status != "error":
                 try:
-                    await mcp_engine.start_server(
+                    started_server = await mcp_engine.start_server(
                         server.server_id,
                         workspace_dir=workspace["local_path"],
                         approval_context=ApprovalContext(
@@ -107,11 +107,24 @@ class WorkspaceToolUseCases:
                             workspace_approvals=set(server.approval_gates or []),
                         ),
                     )
+                    if started_server is not None:
+                        effective = getattr(started_server, "status", effective)
+                        error_message = getattr(
+                            started_server, "error_message", error_message
+                        )
                     runner = getattr(mcp_engine, "_active_runners", {}).get(
                         server.server_id
                     )
                     if runner and runner.is_running():
                         effective, error_message = "active", None
+                    elif effective == "error":
+                        failures.append(
+                            f"{server.name}: {error_message or 'server did not become active'}"
+                        )
+                    elif effective != "active":
+                        failures.append(
+                            f"{server.name}: server did not become active (status {effective})"
+                        )
                 except Exception as error:
                     effective, error_message = "error", str(error)
                     failures.append(f"{server.name}: {error}")
@@ -137,17 +150,17 @@ class WorkspaceToolUseCases:
             except (OSError, yaml.YAMLError):
                 continue
 
-        if expected and (not config_loaded or "wrightgateway" not in configured):
-            return {
-                "status": "mismatch",
-                "message": "Workspace MCP tools are not connected through Wright gateway.",
-                "running_mcps": running,
-            }
         if failures:
             return {
                 "status": "error",
                 "message": "Failed to start workspace MCP server(s): "
                 + "; ".join(failures),
+                "running_mcps": running,
+            }
+        if expected and (not config_loaded or "wrightgateway" not in configured):
+            return {
+                "status": "mismatch",
+                "message": "Workspace MCP tools are not connected through Wright gateway.",
                 "running_mcps": running,
             }
         errors = [item for item in running if item["status"] == "error"]

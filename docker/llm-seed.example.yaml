@@ -1,0 +1,25 @@
+# Wright LLM seed example. Copy this outside the repository, fill it with real
+# values, then mount it read-only and set WRIGHT_LLM_CONFIG_FILE to the mounted
+# path inside the container.
+#
+# Codex / ChatGPT login reuse:
+#
+# version: 1
+# provider: openai-codex
+# model: gpt-5.4-mini
+# auth_file: /run/secrets/wright/hermes-auth.json
+#
+# The auth file can be a Hermes auth.json payload with providers.openai-codex
+# tokens, or this seed file can inline the token pair:
+#
+# tokens:
+#   access_token: paste-access-token-here
+#   refresh_token: paste-refresh-token-here
+#
+# OpenAI-compatible endpoint:
+
+version: 1
+provider: openai-compatible
+base_url: http://host.docker.internal:11434/v1
+model: your-model-id
+api_key: NotNeeded

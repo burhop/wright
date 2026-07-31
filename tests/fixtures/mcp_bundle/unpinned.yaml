@@ -1,0 +1,49 @@
+schema_version: 1
+bundle_id: fixture-unpinned
+base_image: wright:test
+applications:
+  - id: unpinned-app
+    display_name: Unpinned App
+    category: utilities
+    availability: local_enabled
+    source:
+      type: package
+      registry: npm
+      name: unpinned-app
+      version: 1.0.0
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      npm_tools:
+        - unpinned-app@1.0.0
+    health_probe:
+      kind: command
+      command:
+        - unpinned-app
+        - --version
+mcp_servers:
+  - id: unpinned-tool
+    display_name: Unpinned Tool
+    application_id: unpinned-app
+    availability: local_enabled
+    mcp_source:
+      type: git
+      url: https://github.com/example/unpinned-tool
+      ref: main
+      license: MIT
+    compliance_profile:
+      id: permissive
+    install:
+      python_tools:
+        - git+https://github.com/example/unpinned-tool.git@main
+    launch:
+      command:
+        - unpinned-tool
+    health_probe:
+      kind: command
+      command:
+        - unpinned-tool
+        - --version
+    prompt_probe:
+      prompt: Create a cube.

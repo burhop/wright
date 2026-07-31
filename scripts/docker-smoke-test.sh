@@ -103,9 +103,9 @@ fi
 
 # 5. Run basic 'echo ok' tests for configured and setup-pending LLM states.
 echo -e "\n${YELLOW}Step 5: Testing basic command execution...${NC}"
-# First test: missing LLM_API_URL should warn and continue so the setup UI can
+# First test: missing LLM provider settings should warn and continue so the setup UI can
 # collect configuration.
-echo -e "Testing setup-pending warning with missing LLM_API_URL..."
+echo -e "Testing setup-pending warning with missing LLM provider..."
 if ! MISSING_LLM_OUTPUT=$(docker run --rm \
   -e WRIGHT_API_TOKEN="ci-smoke-token" \
   -e HERMES_API_KEY="-ci-smoke-leading-hyphen" \
@@ -114,8 +114,8 @@ if ! MISSING_LLM_OUTPUT=$(docker run --rm \
   echo "$MISSING_LLM_OUTPUT"
   exit 1
 fi
-if [[ "$MISSING_LLM_OUTPUT" == *"Warning: LLM_API_URL environment variable is not set"* ]] && [[ "$MISSING_LLM_OUTPUT" == *"ok"* ]]; then
-  echo -e "${GREEN}✓ Container warned and continued when LLM_API_URL was missing.${NC}"
+if [[ "$MISSING_LLM_OUTPUT" == *"Warning: no LLM provider is configured"* ]] && [[ "$MISSING_LLM_OUTPUT" == *"ok"* ]]; then
+  echo -e "${GREEN}✓ Container warned and continued when LLM provider settings were missing.${NC}"
 else
   echo -e "${RED}✗ Container did not show the expected missing LLM warning and command output.${NC}"
   echo "$MISSING_LLM_OUTPUT"
@@ -176,6 +176,8 @@ docker run --rm -d --name "$SMOKE_CONTAINER" \
   -e LLM_API_KEY="ci-test" \
   -e LLM_API_MODEL="ci-model" \
   -e WRIGHT_API_TOKEN="ci-smoke-token" \
+  -e WRIGHT_WORKSPACES_DIR=/home/agent/workspace \
+  -e WRIGHT_WORKSPACE_PATH=/home/agent/workspace \
   "$IMAGE_TAG" >/dev/null
 
 cleanup_smoke() {

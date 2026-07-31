@@ -45,8 +45,10 @@ def test_gateway_restart_remains_pending_until_chat_refreshes_it(tmp_path) -> No
     manager = AgentSyncManager(db_path, workspace_sync=sync)
 
     assert manager.sync_workspace_tools("session-1") is True
+    assert manager.gateway_refresh_pending is True
     assert manager.sync_workspace_tools("session-1") is True
     manager.mark_gateway_refreshed()
+    assert manager.gateway_refresh_pending is False
     assert manager.sync_workspace_tools("session-1") is False
 
 
@@ -66,6 +68,7 @@ async def test_concurrent_chat_turns_share_one_gateway_refresh(tmp_path) -> None
     async def refresh() -> None:
         nonlocal calls
         calls += 1
+        assert manager.gateway_refresh_in_progress is True
         refresh_started.set()
         await allow_refresh_to_finish.wait()
 
@@ -76,3 +79,27 @@ async def test_concurrent_chat_turns_share_one_gateway_refresh(tmp_path) -> None
 
     assert await asyncio.gather(first, second) == [True, False]
     assert calls == 1
+    assert manager.gateway_refresh_in_progress is False
+    assert manager.gateway_refresh_pending is False
+
+
+@pytest.mark.asyncio
+async def test_failed_gateway_refresh_exposes_error_and_stops_pending_state(
+    tmp_path,
+) -> None:
+    def sync(_session_id: str, _db_path: str) -> bool:
+        return True
+
+    db_path = _workspace_db(tmp_path)
+    manager = AgentSyncManager(db_path, workspace_sync=sync)
+    assert manager.sync_workspace_tools("session-1") is True
+
+    async def refresh() -> None:
+        raise RuntimeError("restart failed")
+
+    with pytest.raises(RuntimeError, match="restart failed"):
+        await manager.refresh_gateway_if_needed(refresh)
+
+    assert manager.gateway_refresh_in_progress is False
+    assert manager.gateway_refresh_pending is False
+    assert manager.gateway_refresh_error == "restart failed"

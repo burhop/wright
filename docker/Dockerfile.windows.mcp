@@ -1,0 +1,79 @@
+# escape=`
+# =============================================================================
+# Wright Windows MCP Runtime Image
+# =============================================================================
+# Build on a Windows 11 host with Docker Desktop switched to Windows containers:
+#
+#   docker build --isolation=process -t wright:engineering-tools-windows-amd64 -f docker/Dockerfile.windows.mcp .
+#
+# This image is a Windows MCP runtime, not the Linux Wright appliance. It builds
+# Windows-compatible MCP runtimes such as SolidEdgeMCP. Solid Edge itself is not
+# redistributed and normally remains a licensed Windows host application.
+# =============================================================================
+
+ARG WINDOWS_BASE_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0-windowsservercore-ltsc2022
+FROM ${WINDOWS_BASE_IMAGE}
+
+SHELL ["powershell", "-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue';"]
+
+ARG NODE_VERSION=24.17.0
+ARG WRIGHT_SOLIDEDGE_MCP_GIT_URL=https://github.com/burhop/SolidEdgeMCP.git
+ARG WRIGHT_SOLIDEDGE_MCP_GIT_REF=2aad5bd24df6ce1ac9578ad35c4da7ac241b5330
+ARG WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL=https://github.com/burhop/SolidEdgeMCP/archive/2aad5bd24df6ce1ac9578ad35c4da7ac241b5330.zip
+
+ENV WRIGHT_MCP_ROOT=C:\wright\mcp
+ENV WRIGHT_WORKSPACE=C:\wright\workspace
+ENV NODE_VERSION=${NODE_VERSION}
+ENV WRIGHT_SOLIDEDGE_MCP_GIT_URL=${WRIGHT_SOLIDEDGE_MCP_GIT_URL}
+ENV WRIGHT_SOLIDEDGE_MCP_GIT_REF=${WRIGHT_SOLIDEDGE_MCP_GIT_REF}
+ENV PLAYWRIGHT_BROWSERS_PATH=C:\wright\mcp\playwright-browsers
+ENV BREPJS_CAD_ROOT=C:/Users/ContainerAdministrator/AppData/Roaming/npm/node_modules/brepjs-cad
+ENV PATH="C:\node;C:\Users\ContainerAdministrator\AppData\Roaming\npm;${PATH}"
+
+RUN New-Item -ItemType Directory -Force `
+      C:\wright\data, `
+      C:\wright\workspace, `
+      C:\wright\config, `
+      C:\wright\hermes, `
+      C:\wright\logs, `
+      C:\wright\mcp\apps, `
+      C:\wright\mcp\bin, `
+      C:\wright\mcp\generated, `
+      C:\wright\mcp\src | Out-Null
+
+COPY docker/mcp/brep-mcp-launcher.cjs C:/wright/mcp/bin/brep-mcp-wrapped.cjs
+
+ADD https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-win-x64.zip C:/wright/mcp/src/node.zip
+RUN Expand-Archive C:\wright\mcp\src\node.zip C:\wright\mcp\src\node; `
+    Move-Item "C:\wright\mcp\src\node\node-v${env:NODE_VERSION}-win-x64" C:\node; `
+    npm --version; `
+    npm install --global brepjs-cad@0.103.0 playwright@1.62.0 @playwright/mcp@0.0.78; `
+    playwright install chromium; `
+    playwright-mcp install-browser chrome-for-testing
+
+ADD ${WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL} C:/wright/mcp/src/SolidEdgeMCP.zip
+RUN Expand-Archive C:\wright\mcp\src\SolidEdgeMCP.zip C:\wright\mcp\src; `
+    Move-Item "C:\wright\mcp\src\SolidEdgeMCP-${env:WRIGHT_SOLIDEDGE_MCP_GIT_REF}" C:\wright\mcp\src\SolidEdgeMCP; `
+    dotnet publish C:\wright\mcp\src\SolidEdgeMCP\src\SolidEdgeMcpServer\SolidEdgeMcpServer.csproj `
+      --configuration Release `
+      --output C:\wright\mcp\apps\SolidEdgeMCP
+
+COPY docker/mcp-bundle.windows-amd64.yaml C:/wright/mcp/mcp-bundle.yaml
+
+RUN @'
+Wright Windows MCP runtime image
+
+Persist these paths with Docker volumes or bind mounts:
+- C:\wright\data
+- C:\wright\workspace
+- C:\wright\config
+- C:\wright\hermes
+- C:\wright\logs
+
+SolidEdgeMCP is published under C:\wright\mcp\apps\SolidEdgeMCP.
+Solid Edge itself is not redistributed by this image.
+'@ | Set-Content C:\wright\mcp\README.txt
+
+WORKDIR C:\wright\workspace
+
+CMD ["powershell", "-NoLogo", "-NoProfile", "-Command", "Get-Content C:\\wright\\mcp\\README.txt; while ($true) { Start-Sleep -Seconds 3600 }"]

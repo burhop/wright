@@ -1,0 +1,12 @@
+# Optional compose overlay for repeatable LLM provider setup.
+#
+# Usage:
+#   WRIGHT_LLM_CONFIG_FILE=/absolute/host/path/llm-seed.yaml \
+#   docker compose -f docker-compose.mcp.yml -f docker-compose.llm-seed.yml up -d --build
+
+services:
+  agent:
+    environment:
+      - WRIGHT_LLM_CONFIG_FILE=/run/secrets/wright/llm-seed.yaml
+    volumes:
+      - ${WRIGHT_LLM_CONFIG_FILE:?Set WRIGHT_LLM_CONFIG_FILE to a host seed file}:/run/secrets/wright/llm-seed.yaml:ro

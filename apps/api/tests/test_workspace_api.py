@@ -1865,3 +1865,111 @@ def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
         conn.commit()
     finally:
         conn.close()
+
+
+@pytest.mark.asyncio
+async def test_agent_chat_reports_mcp_returned_error_state(monkeypatch, tmp_path):
+    from api.config import DATABASE_PATH
+    from api.routers.agent import ensure_workspace_mcp_servers_active
+    from fastapi import HTTPException
+    from types import SimpleNamespace
+    from tool_registry import McpServer
+    from tool_registry.db import insert_server
+    from workspace_service.adapters.runtime import create_workspace
+    import sqlite3
+    import time
+
+    now = int(time.time())
+    server_id = "chat-returned-error-mcp"
+    session_id = "chat-returned-error-session"
+    workspace_id = "chat-returned-error-workspace"
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute("DELETE FROM mcp_tools WHERE server_id = ?", (server_id,))
+        conn.execute("DELETE FROM mcp_servers WHERE server_id = ?", (server_id,))
+        conn.execute(
+            "DELETE FROM workspace_agent_sessions WHERE session_id = ?", (session_id,)
+        )
+        conn.execute(
+            "DELETE FROM engineering_workspaces WHERE workspace_id = ?",
+            (workspace_id,),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    create_workspace(
+        DATABASE_PATH,
+        workspace_id,
+        session_id,
+        str(tmp_path),
+        "Returned Error Workspace",
+    )
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute(
+            "UPDATE engineering_workspaces SET enabled_tools = ? WHERE session_id = ?",
+            ('["chat-returned-error-mcp"]', session_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    insert_server(
+        DATABASE_PATH,
+        McpServer(
+            server_id=server_id,
+            name="Returned Error MCP",
+            type="stdio",
+            command=["uv", "run", "chat-returned-error"],
+            is_active=False,
+            is_installed=True,
+            status="inactive",
+            created_at=now,
+            updated_at=now,
+        ),
+    )
+
+    async def fake_start_server(*_args, **_kwargs):
+        return McpServer(
+            server_id=server_id,
+            name="Returned Error MCP",
+            type="stdio",
+            command=["uv", "run", "chat-returned-error"],
+            is_active=False,
+            is_installed=True,
+            status="error",
+            error_message="spawn failed",
+            created_at=now,
+            updated_at=now,
+        )
+
+    fake_engine = SimpleNamespace(
+        _active_runners={},
+        start_server=fake_start_server,
+    )
+    request = SimpleNamespace(
+        app=SimpleNamespace(state=SimpleNamespace(mcp_engine=fake_engine))
+    )
+
+    with pytest.raises(HTTPException) as exc:
+        await ensure_workspace_mcp_servers_active(request, session_id)
+
+    assert exc.value.status_code == 503
+    assert "Failed to start workspace MCP server(s)" in exc.value.detail
+    assert "Returned Error MCP: spawn failed" in exc.value.detail
+
+    conn = sqlite3.connect(DATABASE_PATH)
+    try:
+        conn.execute("DELETE FROM mcp_servers WHERE server_id = ?", (server_id,))
+        conn.execute(
+            "DELETE FROM workspace_agent_sessions WHERE session_id = ?", (session_id,)
+        )
+        conn.execute(
+            "DELETE FROM engineering_workspaces WHERE workspace_id = ?",
+            (workspace_id,),
+        )
+        conn.commit()
+    finally:
+        conn.close()

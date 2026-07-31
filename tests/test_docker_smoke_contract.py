@@ -14,12 +14,12 @@ def test_docker_smoke_script_matches_entrypoint_llm_contract() -> None:
 
     assert "WRIGHT_DOCKER_IMAGE" in script
     assert "WRIGHT_DOCKER_SKIP_BUILD" in script
-    assert "Testing setup-pending warning with missing LLM_API_URL" in script
-    assert "Warning: LLM_API_URL environment variable is not set" in script
-    assert "Container warned and continued when LLM_API_URL was missing" in script
+    assert "Testing setup-pending warning with missing LLM provider" in script
+    assert "Warning: no LLM provider is configured" in script
+    assert "Container warned and continued when LLM provider settings were missing" in script
     assert "did not fail-fast" not in script
     assert "correctly failed-fast" not in script
-    assert "Warning: LLM_API_URL environment variable is not set" in entrypoint
+    assert "Warning: no LLM provider is configured" in entrypoint
 
 
 def test_hermes_api_key_is_safe_when_it_starts_with_option_prefix() -> None:
@@ -36,10 +36,21 @@ def test_hermes_api_key_is_safe_when_it_starts_with_option_prefix() -> None:
 def test_docker_smoke_script_docs_include_existing_image_mode() -> None:
     readme = read_text("scripts/README.md")
 
-    assert "warns and continues if `LLM_API_URL` is missing" in readme
+    assert "warns and continues if no LLM provider is configured" in readme
     assert "WRIGHT_DOCKER_IMAGE=wright:latest" in readme
     assert "WRIGHT_DOCKER_SKIP_BUILD=1" in readme
     assert "reconcile_hermes_pip_check.py" in readme
+
+
+def test_private_mcp_build_helpers_accept_active_gh_token_with_stale_accounts() -> None:
+    smoke = read_text("scripts/docker-mcp-smoke-test.sh")
+    linux_family = read_text("scripts/docker-image-family-build.sh")
+    windows_family = read_text("scripts/docker-image-family-build.ps1")
+
+    for script in (smoke, linux_family, windows_family):
+        assert "gh auth token" in script
+        assert "id=github_token,env=GITHUB_TOKEN" in script
+        assert "gh auth status" not in script
 
 
 def test_docker_smoke_script_keeps_gateway_process_name() -> None:
@@ -58,6 +69,31 @@ def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
 
     assert "python:3.13.13-slim@sha256:" in dockerfile
     assert "hermes-agent==0.19.0" in dockerfile
+
+
+def test_docker_runtime_serves_image_built_frontend_dist() -> None:
+    dockerfile = read_text("docker/Dockerfile")
+    supervisor = read_text("docker/supervisord.conf")
+    mcp_run = read_text("scripts/docker-mcp-run.sh")
+    mcp_dockerfile = read_text("docker/Dockerfile.mcp")
+
+    assert "ENV FRONTEND_DIST_DIR=/workspace/apps/web/dist" in dockerfile
+    assert "ENV WRIGHT_WORKSPACES_DIR=/home/agent/workspace" in dockerfile
+    assert "ENV WRIGHT_WORKSPACE_PATH=/home/agent/workspace" in dockerfile
+    assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
+    assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
+    assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
+    assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in dockerfile
+    assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in mcp_dockerfile
+    assert 'FRONTEND_DIST_DIR="%(ENV_FRONTEND_DIST_DIR)s"' in supervisor
+    assert 'WRIGHT_WORKSPACES_DIR="%(ENV_WRIGHT_WORKSPACES_DIR)s"' in supervisor
+    assert 'WRIGHT_WORKSPACE_PATH="%(ENV_WRIGHT_WORKSPACE_PATH)s"' in supervisor
+    assert 'WRIGHT_MCP_BUNDLE="%(ENV_WRIGHT_MCP_BUNDLE)s"' in supervisor
+    assert 'WRIGHT_MCP_HERMES_CONFIG="%(ENV_WRIGHT_MCP_HERMES_CONFIG)s"' in supervisor
+    assert 'WRIGHT_MCP_STATUS="%(ENV_WRIGHT_MCP_STATUS)s"' in supervisor
+    assert "-e WRIGHT_WORKSPACES_DIR=/home/agent/workspace" in mcp_run
+    assert "-e WRIGHT_WORKSPACE_PATH=/home/agent/workspace" in mcp_run
+    assert '-e FRONTEND_DIST_DIR="${FRONTEND_DIST_DIR:-/workspace/apps/web/dist}"' in mcp_run
 
 
 def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
