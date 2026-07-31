@@ -92,7 +92,7 @@ async def test_async_start_is_argv_only_idempotent_and_captures_redacted_logs(
     assert len(adapter.launches) == 1
     assert adapter.launches[0].argv == ("python", "app.py")
     assert adapter.launches[0].shell is False
-    assert adapter.launches[0].environment["API_TOKEN"] == "secret-value"
+    assert adapter.launches[0].environment["API_TOKEN"] == "test-secret-value"
     assert "secret-value" not in str(first)
     preview = supervisor.diagnostics("runtime-1")["logs"]["preview"]
     assert "secret-value" not in preview
