@@ -58,6 +58,12 @@
 - [X] T036 Add focused tests for provider seed config, Codex auth seeding, and setup API behavior.
 - [X] T037 Add Wright Model Setup UI for Codex login and OpenAI-compatible endpoint configuration.
 
+## Phase 8: Engineering Tools Image Publication
+
+- [X] T038 Rename public MCP image tags to engineering-tools tags across image-family metadata, compose defaults, build/run scripts, and engineer docs.
+- [X] T039 Add GitHub Actions CD for Linux engineering-tools images on native amd64 and arm64 runners with GHCR and Docker Hub publication.
+- [X] T040 Add static coverage for engineering-tools tag naming and Docker Hub publication workflow.
+
 ## Validation Evidence
 
 - [X] `python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml`

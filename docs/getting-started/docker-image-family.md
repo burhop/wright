@@ -5,9 +5,9 @@ Wright now manages four Docker image profiles:
 | Image profile | Platform | Purpose |
 |---|---:|---|
 | `wright-standard` | `linux/amd64` | Existing Hermes + Wright appliance. |
-| `wright-mcp-linux-amd64` | `linux/amd64` | Wright appliance plus Linux amd64 MCP bundle. |
-| `wright-mcp-linux-arm64` | `linux/arm64` | Wright appliance plus GB10-class Linux arm64 MCP bundle. |
-| `wright-mcp-windows-amd64` | `windows/amd64` | Windows MCP runtime for Windows-host MCPs such as SolidEdgeMCP. |
+| `wright:engineering-tools-linux-amd64` | `linux/amd64` | Wright appliance plus Linux amd64 engineering MCP/tool bundle. |
+| `wright:engineering-tools-linux-arm64` | `linux/arm64` | Wright appliance plus GB10-class Linux arm64 engineering MCP/tool bundle. |
+| `wright:engineering-tools-windows-amd64` | `windows/amd64` | Windows engineering MCP runtime for Windows-host MCPs such as SolidEdgeMCP. |
 
 The source of truth is `docker/image-family.yaml`.
 

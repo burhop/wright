@@ -4,7 +4,7 @@
 # =============================================================================
 # Build on a Windows 11 host with Docker Desktop switched to Windows containers:
 #
-#   docker build --isolation=process -t wright:mcp-windows-amd64 -f docker/Dockerfile.windows.mcp .
+#   docker build --isolation=process -t wright:engineering-tools-windows-amd64 -f docker/Dockerfile.windows.mcp .
 #
 # This image is a Windows MCP runtime, not the Linux Wright appliance. It builds
 # Windows-compatible MCP runtimes such as SolidEdgeMCP. Solid Edge itself is not

@@ -1,6 +1,6 @@
 schema_version: 1
 bundle_id: wright-mcp-appliance-windows-amd64
-base_image: wright:mcp-windows-amd64
+base_image: wright:engineering-tools-windows-amd64
 default_license_policy:
   allowed:
     - MIT

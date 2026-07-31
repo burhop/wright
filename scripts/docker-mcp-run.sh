@@ -48,12 +48,12 @@ fi
 
 case "$PROFILE" in
   linux-amd64)
-    IMAGE="${WRIGHT_MCP_IMAGE:-wright:mcp-linux-amd64}"
+    IMAGE="${WRIGHT_MCP_IMAGE:-wright:engineering-tools-linux-amd64}"
     PLATFORM="${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}"
     PREFIX="${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp_linux_amd64}"
     ;;
   linux-arm64)
-    IMAGE="${WRIGHT_MCP_IMAGE:-wright:mcp-linux-arm64}"
+    IMAGE="${WRIGHT_MCP_IMAGE:-wright:engineering-tools-linux-arm64}"
     PLATFORM="${WRIGHT_MCP_DOCKER_PLATFORM:-linux/arm64}"
     PREFIX="${WRIGHT_MCP_VOLUME_PREFIX:-wright_mcp_linux_arm64}"
     ;;

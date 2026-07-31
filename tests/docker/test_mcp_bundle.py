@@ -251,7 +251,7 @@ def test_base_dockerfile_normalizes_supervisor_config_permissions() -> None:
 def test_compose_mcp_uses_separate_volume_names_and_same_port_contract() -> None:
     compose = read_text("docker-compose.mcp.yml")
 
-    assert "image: ${WRIGHT_MCP_IMAGE:-wright:mcp-linux-amd64}" in compose
+    assert "image: ${WRIGHT_MCP_IMAGE:-wright:engineering-tools-linux-amd64}" in compose
     assert "127.0.0.1:8080:8000" in compose
     assert "platform: ${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}" in compose
     assert "WRIGHT_MCP_BUNDLE_FILE: ${WRIGHT_MCP_BUNDLE_FILE:-mcp-bundle.yaml}" in compose
@@ -332,6 +332,18 @@ def test_image_family_declares_four_managed_images_with_persisted_paths() -> Non
     assert images["wright-mcp-linux-amd64"]["platform"] == "linux/amd64"
     assert images["wright-mcp-linux-arm64"]["platform"] == "linux/arm64"
     assert images["wright-mcp-windows-amd64"]["platform"] == "windows/amd64"
+    assert (
+        images["wright-mcp-linux-amd64"]["image"]
+        == "wright:engineering-tools-linux-amd64"
+    )
+    assert (
+        images["wright-mcp-linux-arm64"]["image"]
+        == "wright:engineering-tools-linux-arm64"
+    )
+    assert (
+        images["wright-mcp-windows-amd64"]["image"]
+        == "wright:engineering-tools-windows-amd64"
+    )
     for image in images.values():
         assert image["persisted_paths"]
 
@@ -343,9 +355,12 @@ def test_platform_build_scripts_cover_linux_arm64_and_windows_host_paths() -> No
     windows_dockerfile = read_text("docker/Dockerfile.windows.mcp")
 
     assert "mcp-bundle.linux-arm64.yaml" in shell
+    assert "wright:engineering-tools-linux-arm64" in shell
+    assert "wright:engineering-tools-linux-arm64" in read_text("scripts/docker-mcp-run.sh")
     assert "linux/arm64" in shell
     assert "docker/Dockerfile.windows.mcp" in powershell
     assert "windows-amd64" in powershell
+    assert "wright:engineering-tools-windows-amd64" in powershell
     assert "github_token" in shell
     assert "github_token" in powershell
     assert "WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL" in powershell
@@ -355,6 +370,22 @@ def test_platform_build_scripts_cover_linux_arm64_and_windows_host_paths() -> No
     assert "WRIGHT_SOLIDEDGE_MCP_ARCHIVE_URL" in windows_dockerfile
     assert "brep-mcp-wrapped.cjs" in windows_dockerfile
     assert "playwright-mcp install-browser chrome-for-testing" in windows_dockerfile
+
+
+def test_engineering_tools_image_family_cd_publishes_clear_tags() -> None:
+    workflow = read_text(".github/workflows/docker-image-family.yml")
+    docker_hub_readme = read_text("docker/DOCKER_HUB_README.md")
+    ci_docs = read_text("docs/contributing/ci-cd-workflows.md")
+
+    for text in (docker_hub_readme, ci_docs):
+        assert "engineering-tools-linux-amd64" in text
+        assert "engineering-tools-linux-arm64" in text
+    assert 'tag="${prefix}-engineering-tools-${PROFILE}"' in workflow
+    assert "profile: linux-amd64" in workflow
+    assert "profile: linux-arm64" in workflow
+    assert "ubuntu-24.04-arm" in workflow
+    assert "DOCKERHUB_TOKEN is required to publish engineering-tools images" in workflow
+    assert "scripts/docker-mcp-smoke-test.sh" in workflow
 
 
 def test_docs_link_mcp_quickstart_from_existing_guides() -> None:

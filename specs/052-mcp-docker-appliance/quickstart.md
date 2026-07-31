@@ -86,6 +86,6 @@ See `docs/getting-started/quickstart-docker-mcp.md`.
 - `python docker/mcp/generate-config.py docker/mcp-bundle.yaml --output-dir /tmp/wright-mcp-generated-check`: passed on 2026-07-30.
 - `UV_CACHE_DIR=/tmp/wright-uv-cache uv run pytest tests/docker/test_mcp_bundle.py`: 25 passed on 2026-07-30.
 - `docker build --platform linux/arm64 -t wright:standard-linux-arm64 -f docker/Dockerfile .`: passed on 2026-07-30.
-- `docker build --platform linux/arm64 -t wright:mcp-linux-arm64-appimage-freecad-test -f docker/Dockerfile.mcp --build-arg WRIGHT_BASE_IMAGE=wright:standard-linux-arm64 --build-arg WRIGHT_MCP_BUNDLE_FILE=mcp-bundle.linux-arm64.yaml .`: passed on 2026-07-30.
+- `docker build --platform linux/arm64 -t wright:engineering-tools-linux-arm64-appimage-freecad-test -f docker/Dockerfile.mcp --build-arg WRIGHT_BASE_IMAGE=wright:standard-linux-arm64 --build-arg WRIGHT_MCP_BUNDLE_FILE=mcp-bundle.linux-arm64.yaml .`: passed on 2026-07-30.
 - `WRIGHT_MCP_SKIP_BUILD=1 ... scripts/docker-mcp-smoke-test.sh`: passed on 2026-07-30 for `linux/arm64`.
 - `PLAYWRIGHT_INCLUDE_LIVE=1 PLAYWRIGHT_BASE_URL=http://192.168.1.163:18181 ... npx playwright test tests/ui-integration/mcp-appliance.spec.ts --reporter=line`: 1 passed on 2026-07-30 against a clean `linux/arm64` container.

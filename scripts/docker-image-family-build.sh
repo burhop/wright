@@ -3,7 +3,7 @@ set -euo pipefail
 
 PROFILE="${1:-linux-arm64}"
 STANDARD_IMAGE="${WRIGHT_STANDARD_IMAGE:-wright:standard-${PROFILE}}"
-MCP_IMAGE="${WRIGHT_MCP_IMAGE:-wright:mcp-${PROFILE}}"
+MCP_IMAGE="${WRIGHT_MCP_IMAGE:-wright:engineering-tools-${PROFILE}}"
 DOCKER_SECRET_ARGS=()
 
 configure_github_secret() {
@@ -31,7 +31,7 @@ case "$PROFILE" in
   linux-amd64)
     PLATFORM="${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}"
     BASE_IMAGE="${WRIGHT_BASE_IMAGE:-wright:standard-linux-amd64}"
-    MCP_IMAGE="${WRIGHT_MCP_IMAGE:-wright:mcp-linux-amd64}"
+    MCP_IMAGE="${WRIGHT_MCP_IMAGE:-wright:engineering-tools-linux-amd64}"
     docker build --platform "$PLATFORM" -t "$BASE_IMAGE" -f docker/Dockerfile .
     docker build "${DOCKER_SECRET_ARGS[@]}" --platform "$PLATFORM" -t "$MCP_IMAGE" -f docker/Dockerfile.mcp \
       --build-arg "WRIGHT_BASE_IMAGE=$BASE_IMAGE" \
@@ -43,7 +43,7 @@ case "$PROFILE" in
   linux-arm64)
     PLATFORM="${WRIGHT_MCP_DOCKER_PLATFORM:-linux/arm64}"
     BASE_IMAGE="${WRIGHT_BASE_IMAGE:-wright:standard-linux-arm64}"
-    MCP_IMAGE="${WRIGHT_MCP_IMAGE:-wright:mcp-linux-arm64}"
+    MCP_IMAGE="${WRIGHT_MCP_IMAGE:-wright:engineering-tools-linux-arm64}"
     docker build --platform "$PLATFORM" -t "$BASE_IMAGE" -f docker/Dockerfile .
     docker build "${DOCKER_SECRET_ARGS[@]}" --platform "$PLATFORM" -t "$MCP_IMAGE" -f docker/Dockerfile.mcp \
       --build-arg "WRIGHT_BASE_IMAGE=$BASE_IMAGE" \

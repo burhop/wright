@@ -21,6 +21,9 @@ def test_release_builds_each_subject_once_and_publishes_release_last() -> None:
         "needs: [preflight-and-python-build, post-publish-verification, native-published-lifecycle, mirror-dockerhub, deploy-versioned-docs]"
         in release
     )
+    assert "engineering-tools-image-family:" in release
+    assert "uses: ./.github/workflows/docker-image-family.yml" in release
+    assert "engineering-tools-image-family, verify-pypi" in release
     assert "uses: ./.github/workflows/docs-deploy.yml" in release
     assert "TestPyPI" in release
     assert release.index("publish-testpypi:") < release.index("publish-pypi:")

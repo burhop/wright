@@ -41,7 +41,7 @@ switch ($Profile) {
     $baseImage = $env:WRIGHT_BASE_IMAGE
     if (-not $baseImage) { $baseImage = "wright:standard-linux-amd64" }
     $mcpImage = $env:WRIGHT_MCP_IMAGE
-    if (-not $mcpImage) { $mcpImage = "wright:mcp-linux-amd64" }
+    if (-not $mcpImage) { $mcpImage = "wright:engineering-tools-linux-amd64" }
     $solidEdgeUrl = $env:WRIGHT_SOLIDEDGE_MCP_GIT_URL
     if (-not $solidEdgeUrl) { $solidEdgeUrl = "https://github.com/burhop/SolidEdgeMCP.git" }
     $solidEdgeRef = $env:WRIGHT_SOLIDEDGE_MCP_GIT_REF
@@ -60,7 +60,7 @@ switch ($Profile) {
     $baseImage = $env:WRIGHT_BASE_IMAGE
     if (-not $baseImage) { $baseImage = "wright:standard-linux-arm64" }
     $mcpImage = $env:WRIGHT_MCP_IMAGE
-    if (-not $mcpImage) { $mcpImage = "wright:mcp-linux-arm64" }
+    if (-not $mcpImage) { $mcpImage = "wright:engineering-tools-linux-arm64" }
     $solidEdgeUrl = $env:WRIGHT_SOLIDEDGE_MCP_GIT_URL
     if (-not $solidEdgeUrl) { $solidEdgeUrl = "https://github.com/burhop/SolidEdgeMCP.git" }
     $solidEdgeRef = $env:WRIGHT_SOLIDEDGE_MCP_GIT_REF
@@ -75,7 +75,7 @@ switch ($Profile) {
   }
   "windows-amd64" {
     $image = $env:WRIGHT_MCP_WINDOWS_IMAGE
-    if (-not $image) { $image = "wright:mcp-windows-amd64" }
+    if (-not $image) { $image = "wright:engineering-tools-windows-amd64" }
     $solidEdgeUrl = $env:WRIGHT_SOLIDEDGE_MCP_GIT_URL
     if (-not $solidEdgeUrl) { $solidEdgeUrl = "https://github.com/burhop/SolidEdgeMCP.git" }
     $solidEdgeRef = $env:WRIGHT_SOLIDEDGE_MCP_GIT_REF

@@ -9,7 +9,7 @@
 
 services:
   agent:
-    image: ${WRIGHT_MCP_IMAGE:-wright:mcp-linux-amd64}
+    image: ${WRIGHT_MCP_IMAGE:-wright:engineering-tools-linux-amd64}
     platform: ${WRIGHT_MCP_DOCKER_PLATFORM:-linux/amd64}
     build:
       context: .

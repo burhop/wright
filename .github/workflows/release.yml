@@ -120,6 +120,18 @@ jobs:
       attestations: write
     secrets: inherit
 
+  engineering-tools-image-family:
+    if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
+    needs: preflight-and-python-build
+    uses: ./.github/workflows/docker-image-family.yml
+    with:
+      tag-prefix: ${{ needs.preflight-and-python-build.outputs.tag }}
+      publish: true
+    permissions:
+      contents: read
+      packages: write
+    secrets: inherit
+
   verify-python-candidate:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
     needs: [preflight-and-python-build, python-install-matrix, oci-candidate]
@@ -463,7 +475,7 @@ jobs:
 
   post-publish-verification:
     if: ${{ needs.preflight-and-python-build.outputs.rehearsal != 'true' }}
-    needs: [preflight-and-python-build, oci-candidate, verify-pypi, promote-oci, mirror-dockerhub, native-published-lifecycle]
+    needs: [preflight-and-python-build, oci-candidate, engineering-tools-image-family, verify-pypi, promote-oci, mirror-dockerhub, native-published-lifecycle]
     runs-on: ubuntu-latest
     permissions:
       contents: read

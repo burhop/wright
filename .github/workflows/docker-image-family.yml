@@ -1,0 +1,153 @@
+name: Engineering tools image family
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - .github/workflows/docker-image-family.yml
+      - docker/**
+      - scripts/docker-image-family-build.sh
+      - scripts/docker-mcp-smoke-test.sh
+      - apps/**
+      - packages/**
+      - pyproject.toml
+      - uv.lock
+      - package-lock.json
+  workflow_dispatch:
+    inputs:
+      tag-prefix:
+        description: Tag prefix to publish, for example dev or v0.1.6
+        required: true
+        default: dev
+        type: string
+      publish:
+        description: Push GHCR and Docker Hub tags
+        required: true
+        default: true
+        type: boolean
+  workflow_call:
+    inputs:
+      tag-prefix:
+        required: true
+        type: string
+      publish:
+        required: true
+        type: boolean
+
+env:
+  DOCKERHUB_IMAGE: burhop/wright
+
+permissions:
+  contents: read
+
+jobs:
+  linux-engineering-tools:
+    name: Build ${{ matrix.profile }}
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: linux-amd64
+            platform: linux/amd64
+            runner: ubuntu-24.04
+          - profile: linux-arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - name: Resolve image tags
+        id: tags
+        shell: bash
+        env:
+          PROFILE: ${{ matrix.profile }}
+          DISPATCH_TAG_PREFIX: ${{ inputs['tag-prefix'] }}
+          DISPATCH_PUBLISH: ${{ inputs.publish }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" || "${GITHUB_EVENT_NAME}" == "workflow_call" ]]; then
+            prefix="${DISPATCH_TAG_PREFIX}"
+            publish="${DISPATCH_PUBLISH}"
+          else
+            prefix="${GITHUB_REF_NAME}"
+            publish="true"
+          fi
+          tag="${prefix}-engineering-tools-${PROFILE}"
+          local_image="wright:engineering-tools-${PROFILE}"
+          ghcr_image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/wright:${tag}"
+          dockerhub_image="${DOCKERHUB_IMAGE}:${tag}"
+          {
+            echo "publish=${publish}"
+            echo "local_image=${local_image}"
+            echo "ghcr_image=${ghcr_image}"
+            echo "dockerhub_image=${dockerhub_image}"
+          } >> "$GITHUB_OUTPUT"
+      - name: Log in to GHCR
+        if: ${{ steps.tags.outputs.publish == 'true' }}
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Require Docker Hub credentials
+        if: ${{ steps.tags.outputs.publish == 'true' }}
+        shell: bash
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$DOCKERHUB_USERNAME" || {
+            echo "::error::DOCKERHUB_USERNAME is required to publish engineering-tools images."
+            exit 1
+          }
+          test -n "$DOCKERHUB_TOKEN" || {
+            echo "::error::DOCKERHUB_TOKEN is required to publish engineering-tools images."
+            exit 1
+          }
+          [[ "$DOCKERHUB_TOKEN" =~ ^dckr_pat_[A-Za-z0-9_-]+$ ]] || {
+            echo "::error::DOCKERHUB_TOKEN must contain the raw Docker Hub access-token value."
+            exit 1
+          }
+      - name: Log in to Docker Hub
+        if: ${{ steps.tags.outputs.publish == 'true' }}
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build engineering tools image
+        shell: bash
+        env:
+          WRIGHT_MCP_IMAGE: ${{ steps.tags.outputs.local_image }}
+          WRIGHT_MCP_DOCKER_PLATFORM: ${{ matrix.platform }}
+        run: scripts/docker-image-family-build.sh "${{ matrix.profile }}"
+      - name: Smoke exact engineering tools image
+        shell: bash
+        env:
+          WRIGHT_MCP_SKIP_BUILD: "1"
+          WRIGHT_MCP_DOCKER_IMAGE: ${{ steps.tags.outputs.local_image }}
+          WRIGHT_MCP_DOCKER_PLATFORM: ${{ matrix.platform }}
+        run: scripts/docker-mcp-smoke-test.sh
+      - name: Publish and verify GHCR and Docker Hub tags
+        if: ${{ steps.tags.outputs.publish == 'true' }}
+        shell: bash
+        env:
+          LOCAL_IMAGE: ${{ steps.tags.outputs.local_image }}
+          GHCR_IMAGE: ${{ steps.tags.outputs.ghcr_image }}
+          DOCKERHUB_IMAGE_TAG: ${{ steps.tags.outputs.dockerhub_image }}
+        run: |
+          set -euo pipefail
+          docker tag "$LOCAL_IMAGE" "$GHCR_IMAGE"
+          docker push "$GHCR_IMAGE"
+          docker tag "$LOCAL_IMAGE" "$DOCKERHUB_IMAGE_TAG"
+          docker push "$DOCKERHUB_IMAGE_TAG"
+          docker buildx imagetools inspect "$GHCR_IMAGE"
+          docker buildx imagetools inspect "$DOCKERHUB_IMAGE_TAG"
