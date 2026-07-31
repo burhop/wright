@@ -233,8 +233,8 @@
 - [x] T120 [P] [US5] Add real HTTP method/path/query/body/duplicate-header/cookie/compression/chunk/cancel/1xx/204/304/redirect conformance to `tests/contract/workspace_surfaces/test_http_proxy.py` (FR-021, FR-025)
 - [x] T121 [P] [US5] Add real WebSocket Origin/subprotocol/text/binary/close/backpressure/limit/reconnect/revoke conformance to `tests/contract/workspace_surfaces/test_websocket_proxy.py` (FR-021, FR-025)
 - [x] T122 [P] [US5] Add real SSE no-buffer/comment/heartbeat/retry/id/Last-Event-ID/204/disconnect/deadline conformance to `tests/contract/workspace_surfaces/test_sse_proxy.py` (FR-021, FR-025)
-- [ ] T123 [P] [US5] Add two-app/same-app-isolated concurrent route/cookie/log/health/lifecycle collision tests to `tests/e2e/workspace-surfaces/test_concurrent_live_apps.py` (FR-026, SC-006)
-- [ ] T124 [P] [US5] Add authenticated lifecycle API start/retry/restart/stop/log/health/invalid-state and thin-route tests to `apps/api/tests/test_live_app_api.py` (FR-022 through FR-025)
+- [x] T123 [P] [US5] Add two-app/same-app-isolated concurrent route/cookie/log/health/lifecycle collision tests to `tests/e2e/workspace-surfaces/test_concurrent_live_apps.py` (FR-026, SC-006)
+- [x] T124 [P] [US5] Add authenticated lifecycle API start/retry/restart/stop/log/health/invalid-state and thin-route tests to `apps/api/tests/test_live_app_api.py` (FR-022 through FR-025)
 - [ ] T125 [P] [US5] Add live panel/browser FastAPI dashboard journey with nested assets, deep links, redirect, SSE, WebSocket, crash/restart, and stop to `tests/ui-integration/workspace-surfaces/live-app.spec.ts` (User Story 5, SC-003 through SC-007)
 - [ ] T126 [P] [US5] Add Docker single-port opaque-preview-host and remote-adapter origin/reachability tests to `tests/e2e/workspace-surfaces/test_surface_deployments.py` (FR-027, SC-010)
 - [ ] T127 [P] [US5] Add clean-container FastAPI, Panel, Streamlit, Gradio, and Dash root/deep-link/asset/redirect/cookie/upload/WebSocket/SSE/readiness/health/shutdown/offline/two-instance conformance from `specs/053-workspace-surfaces/framework-conformance.md` to `tests/contract/workspace_surfaces/test_framework_manifests.py` without installing them in the base image (FR-027, FR-051, FR-055)
@@ -256,8 +256,8 @@
 - [x] T140 [P] [US5] Implement WebSocket proxying with exact Origin/subprotocol/frame/close/backpressure/revocation semantics in `apps/api/src/api/surface_websocket_proxy.py` (FR-021, FR-025, FR-043)
 - [x] T141 [P] [US5] Implement SSE streaming with Last-Event-ID/heartbeat/204/deadline/disconnect semantics in `apps/api/src/api/surface_sse_proxy.py` (FR-021, FR-025, FR-043)
 - [x] T142 [US5] Route all preview-host application methods/transports through the authorized presentation and immutable target in `apps/api/src/api/routers/surface_preview.py` (FR-021, FR-026 through FR-027)
-- [ ] T143 [US5] Implement thin lifecycle/log/health endpoints and accessible start/retry/restart/stop actions in `apps/api/src/api/routers/live_apps.py` and `apps/web/src/components/surfaces/LiveAppControls.tsx` (FR-022 through FR-025, FR-048, FR-054)
-- [ ] T144 [US5] Add API startup reconciliation and cleanup-before-gateway/executor shutdown in `apps/api/src/api/main.py`, revoking routes/credentials before process termination (FR-024, FR-045)
+- [x] T143 [US5] Implement thin lifecycle/log/health endpoints and accessible start/retry/restart/stop actions in `apps/api/src/api/routers/live_apps.py` and `apps/web/src/components/surfaces/LiveAppControls.tsx` (FR-022 through FR-025, FR-048, FR-054)
+- [x] T144 [US5] Add API startup reconciliation and cleanup-before-gateway/executor shutdown in `apps/api/src/api/main.py`, revoking routes/credentials before process termination (FR-024, FR-045)
 
 **Checkpoint**: User Story 5 passes the real transport fixture and platform-specific process tests; BREP can use the generic manifest without a one-off proxy.
 

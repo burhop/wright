@@ -14,6 +14,7 @@ import {
 } from "../../services/surfaces/presenters/live-app-presenter";
 import { installElectronReturnAccelerator } from "../../services/surfaces/focus-manager";
 import { SurfaceToolbar } from "./SurfaceToolbar";
+import { LiveAppControls } from "./LiveAppControls";
 
 interface Props {
   readonly descriptor: SurfaceDescriptor;
@@ -26,6 +27,7 @@ type ActiveLaunches = Partial<Record<"panel" | "browser", PresentationLaunch>>;
 export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const panelHost = useRef<HTMLDivElement>(null);
+  const runtimeControls = useRef<HTMLDivElement>(null);
   const presenter = useRef<LiveAppPresenter | null>(null);
   const [launches, setLaunches] = useState<ActiveLaunches>({});
   const [rememberPreference, setRememberPreference] = useState(false);
@@ -188,10 +190,25 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
         onFocus={() => presenter.current?.focus()}
         onClosePresentation={close}
         onStopApplication={() => {
-          setError("Stop application is available when the managed runtime controller is connected.");
+          runtimeControls.current
+            ?.querySelector<HTMLButtonElement>('[data-operation="stop"]')
+            ?.click();
         }}
         onDiagnostics={() => setDiagnostics((value) => !value)}
         onRememberPreferenceChange={setRememberPreference}
+        />
+      </div>
+      <div ref={runtimeControls}>
+        <LiveAppControls
+          descriptor={descriptor}
+          sessionId={sessionId}
+          onRuntimeChange={(runtime) => {
+            if (runtime.state === "stopped" || runtime.state === "failed") {
+              presenter.current?.dispose();
+              presenter.current = null;
+              setLaunches({});
+            }
+          }}
         />
       </div>
       {error && <p role="alert">{error}</p>}

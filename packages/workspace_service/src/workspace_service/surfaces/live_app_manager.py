@@ -18,7 +18,12 @@ from core.surfaces.live_app_manifest import (
 
 from workspace_service.surfaces.endpoints import EndpointError
 from workspace_service.surfaces.health import ProbeResult, ProbeTarget, RestartBudget
-from workspace_service.surfaces.manifests import AttachApproval, DiscoveredManifest
+from workspace_service.surfaces.limits import SurfaceLimitError
+from workspace_service.surfaces.manifests import (
+    AttachApproval,
+    DiscoveredManifest,
+    ManifestDiscoveryError,
+)
 from workspace_service.surfaces.target_pins import TargetPinError
 from workspace_service.surfaces.target_policy import ResolvedTargetPin, TargetPolicyError
 
@@ -143,6 +148,8 @@ class LiveAppManager:
         administrator_limits: Mapping[str, int | float] | None = None,
         maximum_endpoint_attempts: int = 5,
         inherited_listener: Callable[[str], bool] | None = None,
+        platform_hint: str | None = None,
+        persistence: Callable[[LiveAppInstance, DiscoveredManifest], None] | None = None,
     ) -> None:
         if not 1 <= maximum_endpoint_attempts <= 5:
             raise ValueError("endpoint launch attempts must be between one and five")
@@ -162,6 +169,8 @@ class LiveAppManager:
         self._administrator_limits = dict(administrator_limits or {})
         self._maximum_endpoint_attempts = maximum_endpoint_attempts
         self._inherited_listener = inherited_listener or (lambda _framework: False)
+        self._platform_hint = platform_hint
+        self._persistence = persistence
         self._instances: dict[str, LiveAppInstance] = {}
         self._contexts: dict[str, _StartContext] = {}
         self._source_instances: dict[tuple[str, str, str], str] = {}
@@ -232,7 +241,7 @@ class LiveAppManager:
                 if isinstance(declaration.manifest.launch, CommandLaunch)
                 else "attached_verified"
             ),
-            platform=None,
+            platform=self._platform_hint,
             runtime_id=None,
             lifetime_policy=lifetime.policy,
             lease_expires_at=(
@@ -257,12 +266,18 @@ class LiveAppManager:
             window_seconds=int(limits.restart_window_seconds),
             monotonic=self._monotonic,
         )
+        self._persist(instance)
         return instance
+
+    def _persist(self, instance: LiveAppInstance) -> None:
+        if self._persistence is not None:
+            self._persistence(instance, self._contexts[instance.instance_id].declaration)
 
     def _replace(self, instance_id: str, **changes: Any) -> LiveAppInstance:
         current = self._instances[instance_id]
         updated = replace(current, revision=current.revision + 1, **changes)
         self._instances[instance_id] = updated
+        self._persist(updated)
         return updated
 
     def get(self, instance_id: str) -> LiveAppInstance:
@@ -324,6 +339,95 @@ class LiveAppManager:
             ) from error
         return LiveAppRoute(policy=policy, target=active.target)
 
+    def presentation_projection(
+        self, instance_id: str
+    ) -> tuple[dict[str, Any], ...]:
+        self.get(instance_id)
+        presentation = self._contexts[
+            instance_id
+        ].declaration.manifest.presentation
+        return tuple(
+            {
+                "kind": kind,
+                "eligible": enabled,
+                "reason": (
+                    "Declared by the managed application."
+                    if enabled
+                    else f"The managed application does not declare {kind} presentation."
+                ),
+            }
+            for kind, enabled in (
+                ("panel", presentation.panel),
+                ("browser", presentation.browser),
+            )
+        )
+
+    def logs(self, instance_id: str, *, after_sequence: int = 0, limit: int = 200):
+        instance = self.get(instance_id)
+        if instance.runtime_id is None or instance.ownership != "launched":
+            raise LiveAppManagerError(
+                "SURFACE_LOGS_UNAVAILABLE",
+                "Captured logs are unavailable for this managed application",
+                instance=instance,
+            )
+        return self._supervisor.logs(
+            instance.runtime_id, after_sequence=after_sequence, limit=limit
+        )
+
+    async def check_health(self, instance_id: str) -> LiveAppInstance:
+        lock = await self._instance_lock(instance_id)
+        async with lock:
+            current = self.get(instance_id)
+            if current.state not in {"ready", "unhealthy"}:
+                raise LiveAppManagerError(
+                    "SURFACE_LIFECYCLE_CONFLICT",
+                    f"Health cannot be checked from {current.state}",
+                    instance=current,
+                )
+            declaration = self._contexts[instance_id].declaration
+            probe = declaration.manifest.health
+            if probe is None:
+                return current
+            if current.runtime_id and current.ownership == "launched":
+                process = self._supervisor.snapshot(current.runtime_id)
+                if process.status not in {"running", "starting"}:
+                    failure = LiveAppFailure(
+                        "SURFACE_PROCESS_EXITED",
+                        "Managed process exited while the application was active",
+                        True,
+                    )
+                    self._target_pins.revoke(
+                        instance_id=instance_id, generation=current.generation
+                    )
+                    self._routing_limits.pop(
+                        (instance_id, current.generation), None
+                    )
+                    return self._replace(
+                        instance_id,
+                        state="failed",
+                        ended_at=self._clock(),
+                        failure=failure,
+                    )
+            route = self.resolve_route(
+                instance_id, generation=current.generation
+            )
+            result = await self._health.check(
+                target=ProbeTarget(
+                    scheme=route.target.scheme,
+                    numeric_address=route.target.numeric_address,
+                    port=route.target.port,
+                    host_header=route.target.host_header,
+                    server_name=route.target.server_name,
+                ),
+                probe=probe,
+            )
+            return self._replace(
+                instance_id,
+                state="ready" if result.ok else "unhealthy",
+                last_health=result,
+                failure=None,
+            )
+
     async def start(self, request: LiveAppStartRequest) -> LiveAppInstance:
         self._validate_request(request)
         prior_id = self._request_results.get(
@@ -331,9 +435,16 @@ class LiveAppManager:
         )
         if prior_id is not None:
             return self.get(prior_id)
-        declaration = self._manifests.authorize(
-            request.manifest_id, attach_approval=request.attach_approval
-        )
+        try:
+            declaration = self._manifests.authorize(
+                request.manifest_id, attach_approval=request.attach_approval
+            )
+        except (ManifestDiscoveryError, SurfaceLimitError) as error:
+            raise LiveAppManagerError(
+                error.code,
+                str(error),
+                retryable=False,
+            ) from error
         source_key = (
             request.workspace_id,
             request.surface_id,
@@ -355,7 +466,12 @@ class LiveAppManager:
                             (request.workspace_id, request.idempotency_key)
                         ] = shared_id
                         return shared
-            limits = self._effective_limits(declaration)
+            try:
+                limits = self._effective_limits(declaration)
+            except SurfaceLimitError as error:
+                raise LiveAppManagerError(
+                    error.code, str(error), retryable=False
+                ) from error
             if isinstance(declaration.manifest.launch, CommandLaunch):
                 owned = sum(
                     1
@@ -416,7 +532,7 @@ class LiveAppManager:
             ended_at=None,
             failure=None,
             runtime_id=None,
-            platform=None,
+            platform=self._platform_hint,
             last_health=None,
         )
         if isinstance(manifest.launch, AttachLaunch):
@@ -519,7 +635,7 @@ class LiveAppManager:
                     instance_id,
                     generation=self.get(instance_id).generation + 1,
                     runtime_id=None,
-                    platform=None,
+                    platform=self._platform_hint,
                 )
             except (LiveAppManagerError, TargetPinError, TargetPolicyError) as error:
                 last_error = error
@@ -763,7 +879,7 @@ class LiveAppManager:
                 generation=current.generation + 1,
                 state="declared",
                 runtime_id=None,
-                platform=None,
+                platform=self._platform_hint,
                 failure=None,
                 ended_at=None,
             )
@@ -801,6 +917,13 @@ class LiveAppManager:
             if event in declared_events:
                 return self.record_activity(instance_id, event)
         return self.get(instance_id)
+
+    def revoke_all_routes(self) -> int:
+        revoked = 0
+        for instance_id in tuple(self._instances):
+            revoked += self._target_pins.revoke_instance(instance_id=instance_id)
+        self._routing_limits.clear()
+        return revoked
 
     async def presentation_opened(self, instance_id: str) -> LiveAppInstance:
         self._presentations[instance_id] = self._presentations.get(instance_id, 0) + 1

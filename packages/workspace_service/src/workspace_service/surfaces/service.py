@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from dataclasses import replace
 from datetime import UTC, datetime
 from enum import StrEnum
 
@@ -203,6 +204,49 @@ class SurfaceService:
                 str(surface_id), expected_revision, current.revision
             )
         updated = current.with_lifecycle(target, updated_at=self.clock())
+        try:
+            result = self.repository.compare_and_set(
+                updated,
+                expected_revision=expected_revision,
+                user_id=actor.user_id,
+                session_id=actor.session_id,
+            )
+        except SurfaceOptimisticLockError as error:
+            latest = await self.get(actor=actor, surface_id=surface_id)
+            raise SurfaceRevisionConflictError(
+                str(surface_id), expected_revision, latest.revision
+            ) from error
+        if self.events:
+            self.events.publish(
+                result,
+                event_type="surface.updated",
+                user_id=actor.user_id,
+                session_id=actor.session_id,
+            )
+        return result
+
+    async def project_runtime(
+        self,
+        *,
+        actor: SurfaceActor,
+        surface_id: SurfaceId,
+        target: SurfaceLifecycle,
+        expected_revision: SurfaceRevision,
+        instance: dict[str, object] | None,
+        presentations: tuple[dict[str, object], ...],
+        diagnostic_summary: dict[str, object] | None = None,
+    ) -> SurfaceDescriptor:
+        current = await self.get(actor=actor, surface_id=surface_id)
+        if current.revision != expected_revision:
+            raise SurfaceRevisionConflictError(
+                str(surface_id), expected_revision, current.revision
+            )
+        updated = replace(
+            current.with_lifecycle(target, updated_at=self.clock()),
+            instance=instance,
+            presentations=presentations,
+            diagnostic_summary=diagnostic_summary,
+        )
         try:
             result = self.repository.compare_and_set(
                 updated,

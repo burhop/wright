@@ -23,6 +23,8 @@ from .surfaces.events import SurfaceEventHistory
 from .surfaces.external_urls import ExternalUrlApprovalService
 from .surfaces.grants import CapabilityGrantService
 from .surfaces.limits import EffectiveSurfaceLimits, SurfaceLimitPolicy
+from .surfaces.live_app_runtime import LiveAppRuntimeRegistry
+from .surfaces.live_app_service import LiveAppControlService
 from .surfaces.messages import SurfaceMessageRouter
 from .surfaces.presentation_service import PresentationService
 from .surfaces.presentation_tokens import PresentationTokenService
@@ -64,17 +66,21 @@ class SurfaceApplication:
     vault: SurfaceVault
     events: SurfaceEventHistory
     diagnostics: SurfaceDiagnosticHistory
+    runtime_registry: LiveAppRuntimeRegistry
+    live_apps: LiveAppControlService
     accepting_commands: bool = False
 
     async def reconcile_startup(self) -> None:
-        # Runtime/presentation reconciliation is filled by the managed-runtime
-        # phase. Until then this gate deliberately exposes no recovered authority.
+        await self.runtime_registry.reconcile_startup()
         self.accepting_commands = True
 
-    async def close(self) -> None:
-        # Reject commands before later phases revoke presentation/runtime
-        # authority and flush their durable outbox work.
+    async def begin_shutdown(self) -> None:
         self.accepting_commands = False
+        await self.runtime_registry.begin_shutdown()
+
+    async def close(self) -> None:
+        await self.begin_shutdown()
+        await self.runtime_registry.shutdown()
 
 
 def build_surface_application(
@@ -117,8 +123,14 @@ def build_surface_application(
             effective_settings.policy.bridge_messages_per_minute
         ),
     )
+    runtime_registry = LiveAppRuntimeRegistry(
+        db_path,
+        settings=effective_settings,
+        revocation=revocation,
+    )
+    surface_service = SurfaceService(repository=repository, events=events)
     return SurfaceApplication(
-        service=SurfaceService(repository=repository, events=events),
+        service=surface_service,
         repository=repository,
         provenance_repository=provenance_repository,
         preference_repository=preference_repository,
@@ -139,4 +151,9 @@ def build_surface_application(
         vault=vault,
         events=events,
         diagnostics=diagnostics,
+        runtime_registry=runtime_registry,
+        live_apps=LiveAppControlService(
+            surfaces=surface_service,
+            manager_for_workspace=runtime_registry.manager_for,
+        ),
     )

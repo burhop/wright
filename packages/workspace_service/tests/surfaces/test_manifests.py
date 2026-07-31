@@ -76,6 +76,20 @@ def test_rejects_working_directory_escape_or_link(tmp_path, cwd) -> None:
         WorkspaceManifestStore(workspace).discover()
 
 
+@pytest.mark.parametrize(
+    "name", ["PATH", "PYTHONPATH", "NODE_OPTIONS", "LD_PRELOAD", "WRIGHT_PORT"]
+)
+def test_rejects_process_control_environment_variables(tmp_path, name) -> None:
+    workspace = tmp_path / "workspace"
+    value = _manifest()
+    value["launch"]["environment"] = {name: "unsafe"}
+    _write(workspace, value)
+
+    with pytest.raises(ManifestDiscoveryError) as error:
+        WorkspaceManifestStore(workspace).discover()
+    assert error.value.code == "SURFACE_MANIFEST_ENVIRONMENT_DENIED"
+
+
 def test_duplicate_ids_and_duplicate_json_keys_fail_closed(tmp_path) -> None:
     workspace = tmp_path / "workspace"
     _write(workspace, _manifest(), "one.surface.json")

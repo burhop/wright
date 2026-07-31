@@ -22,6 +22,28 @@ from core.surfaces.live_app_manifest import (
 from workspace_service.workspace_path import WorkspacePath
 
 
+_DENIED_ENVIRONMENT_NAMES = frozenset(
+    {
+        "BASH_ENV",
+        "COMSPEC",
+        "ENV",
+        "GIT_CONFIG_COUNT",
+        "NODE_OPTIONS",
+        "PATH",
+        "PATHEXT",
+        "PERL5OPT",
+        "PROMPT_COMMAND",
+        "PS4",
+        "PYTHONHOME",
+        "PYTHONPATH",
+        "RUBYOPT",
+        "SHELLOPTS",
+        "SYSTEMROOT",
+        "WINDIR",
+    }
+)
+
+
 class ManifestDiscoveryError(RuntimeError):
     """A stable, user-actionable failure at the manifest trust boundary."""
 
@@ -143,6 +165,18 @@ class WorkspaceManifestStore:
             raise ManifestDiscoveryError(
                 error.code, f"Manifest {relative} is invalid: {error}"
             ) from error
+
+        if isinstance(manifest.launch, CommandLaunch):
+            for name in manifest.launch.environment:
+                normalized = name.upper()
+                if (
+                    normalized in _DENIED_ENVIRONMENT_NAMES
+                    or normalized.startswith(("DYLD_", "LD_", "WRIGHT_"))
+                ):
+                    raise ManifestDiscoveryError(
+                        "SURFACE_MANIFEST_ENVIRONMENT_DENIED",
+                        f"Manifest {relative} declares a process-control environment variable",
+                    )
 
         working_directory = self.workspace_root
         if isinstance(manifest.launch, CommandLaunch):

@@ -38,6 +38,52 @@ export interface PresentationPreference {
   readonly reason: string;
 }
 
+export type LiveAppOperation = "start" | "retry" | "restart" | "stop";
+
+export interface LiveAppRuntime {
+  readonly surfaceId: string;
+  readonly instanceId: string;
+  readonly generation: number;
+  readonly state: SurfaceDescriptor["lifecycle"];
+  readonly sharing: string;
+  readonly ownership: string;
+  readonly platform: string | null;
+  readonly lifetimePolicy: string;
+  readonly failure: {
+    readonly code: string;
+    readonly message: string;
+    readonly retryable: boolean;
+  } | null;
+  readonly actions: readonly {
+    readonly operation: LiveAppOperation;
+    readonly label: string;
+  }[];
+}
+
+export interface LiveAppHealth {
+  readonly instanceId: string;
+  readonly generation: number;
+  readonly state: string;
+  readonly ok: boolean | null;
+  readonly diagnosticCode: string | null;
+  readonly message: string;
+  readonly observedStatus: number | null;
+  readonly attempts: number;
+}
+
+export interface LiveAppLogs {
+  readonly entries: readonly {
+    readonly sequence: number;
+    readonly stream: string;
+    readonly message: string;
+    readonly capturedAt: string;
+    readonly byteCount: number;
+  }[];
+  readonly rotated: boolean;
+  readonly droppedBytes: number;
+  readonly nextSequence: number;
+}
+
 function responseRecord(value: unknown, label: string): Record<string, unknown> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new TypeError(`${label} response is malformed`);
@@ -97,6 +143,50 @@ function parsePresentationPreference(value: unknown): PresentationPreference {
     kind: preference.kind,
     remembered: preference.remembered,
     reason: responseString(preference.reason, "presentation preference reason"),
+  });
+}
+
+function parseLiveAppRuntime(value: unknown): LiveAppRuntime {
+  const runtime = responseRecord(value, "live app");
+  const states = new Set([
+    "declared",
+    "starting",
+    "ready",
+    "unhealthy",
+    "stopping",
+    "stopped",
+    "failed",
+  ]);
+  if (!states.has(String(runtime.state))) {
+    throw new TypeError("live app state is malformed");
+  }
+  if (!Number.isSafeInteger(runtime.generation) || Number(runtime.generation) < 1) {
+    throw new TypeError("live app generation is malformed");
+  }
+  if (!Array.isArray(runtime.actions)) {
+    throw new TypeError("live app actions are malformed");
+  }
+  const actions = runtime.actions.map((item) => {
+    const action = responseRecord(item, "live app action");
+    if (!["start", "retry", "restart", "stop"].includes(String(action.operation))) {
+      throw new TypeError("live app action operation is malformed");
+    }
+    return Object.freeze({
+      operation: action.operation as LiveAppOperation,
+      label: responseString(action.label, "live app action label"),
+    });
+  });
+  return Object.freeze({
+    surfaceId: responseString(runtime.surfaceId, "live app surfaceId"),
+    instanceId: responseString(runtime.instanceId, "live app instanceId"),
+    generation: Number(runtime.generation),
+    state: runtime.state as SurfaceDescriptor["lifecycle"],
+    sharing: responseString(runtime.sharing, "live app sharing"),
+    ownership: responseString(runtime.ownership, "live app ownership"),
+    platform: runtime.platform === null ? null : responseString(runtime.platform, "live app platform"),
+    lifetimePolicy: responseString(runtime.lifetimePolicy, "live app lifetimePolicy"),
+    failure: runtime.failure as LiveAppRuntime["failure"],
+    actions,
   });
 }
 
@@ -251,4 +341,67 @@ export async function getPresentationPreference(
       ),
     ),
   );
+}
+
+export async function operateLiveApp(
+  surfaceId: string,
+  workspaceId: string,
+  sessionId: string,
+  operation: LiveAppOperation,
+): Promise<LiveAppRuntime> {
+  return parseLiveAppRuntime(
+    await checked(
+      await hostAdapter.fetch(
+        `${base()}/${encodeURIComponent(surfaceId)}/${operation}`,
+        {
+          method: "POST",
+          headers: {
+            ...headers(workspaceId, sessionId),
+            "Idempotency-Key": `live-app-${operation}-${surfaceId}-${crypto.randomUUID()}`,
+          },
+        },
+      ),
+    ),
+  );
+}
+
+export async function getLiveApp(
+  surfaceId: string,
+  workspaceId: string,
+  sessionId: string,
+): Promise<LiveAppRuntime> {
+  return parseLiveAppRuntime(
+    await checked(
+      await hostAdapter.fetch(
+        `${base()}/${encodeURIComponent(surfaceId)}/live-app`,
+        { headers: headers(workspaceId, sessionId) },
+      ),
+    ),
+  );
+}
+
+export async function getLiveAppHealth(
+  surfaceId: string,
+  workspaceId: string,
+  sessionId: string,
+): Promise<LiveAppHealth> {
+  return (await checked(
+    await hostAdapter.fetch(
+      `${base()}/${encodeURIComponent(surfaceId)}/live-app/health`,
+      { headers: headers(workspaceId, sessionId) },
+    ),
+  )) as LiveAppHealth;
+}
+
+export async function getLiveAppLogs(
+  surfaceId: string,
+  workspaceId: string,
+  sessionId: string,
+): Promise<LiveAppLogs> {
+  return (await checked(
+    await hostAdapter.fetch(
+      `${base()}/${encodeURIComponent(surfaceId)}/live-app/logs?limit=100`,
+      { headers: headers(workspaceId, sessionId) },
+    ),
+  )) as LiveAppLogs;
 }

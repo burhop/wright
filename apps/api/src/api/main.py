@@ -29,10 +29,15 @@ from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
+from api.routers.live_apps import router as live_apps_router
 from api.routers.surface_presentations import router as surface_presentations_router
 from api.routers.surface_preview import router as surface_preview_router
 from api.routers.surfaces import router as surfaces_router
 from api.surface_host_dispatch import SurfaceHostDispatchMiddleware
+from api.surface_http_proxy import SurfaceHttpProxy
+from api.surface_route_authority import SurfaceRouteAuthority
+from api.surface_sse_proxy import SurfaceSseProxy
+from api.surface_websocket_proxy import SurfaceWebSocketProxy
 from api.middleware.tracing import TracingMiddleware
 from api.composition import (
     build_api_gateway_service,
@@ -118,11 +123,37 @@ async def lifespan(app: FastAPI):
         if app.state.workspace_surface_settings.flags.model:
             app.state.surface_application = surface_application()
             await app.state.surface_application.reconcile_startup()
+            if app.state.workspace_surface_settings.flags.live_apps:
+                app.state.surface_http_proxy = SurfaceHttpProxy()
+                app.state.surface_sse_proxy = SurfaceSseProxy()
+                app.state.surface_websocket_proxy = SurfaceWebSocketProxy()
+                app.state.surface_route_authority = SurfaceRouteAuthority(
+                    tokens=app.state.surface_application.presentation_tokens,
+                    manager_for_workspace=(
+                        app.state.surface_application.runtime_registry.manager_for
+                    ),
+                )
+                for name in (
+                    "surface_http_proxy",
+                    "surface_sse_proxy",
+                    "surface_websocket_proxy",
+                    "surface_route_authority",
+                ):
+                    setattr(preview_app.state, name, getattr(app.state, name))
         async with app.state.mcp_transport.run():
             yield
     finally:
         # Shutdown owns every process and worker constructed during startup.
-        await close_surface_application_services()
+        try:
+            surface_graph = getattr(app.state, "surface_application", None)
+            if surface_graph is not None:
+                await surface_graph.begin_shutdown()
+            for name in ("surface_http_proxy", "surface_sse_proxy"):
+                proxy = getattr(app.state, name, None)
+                if proxy is not None:
+                    await proxy.aclose()
+        finally:
+            await close_surface_application_services()
         try:
             await app.state.gateway_service.shutdown()
         except Exception as e:
@@ -218,6 +249,11 @@ if app.state.workspace_surface_settings.flags.model:
         surfaces_router, prefix="/api/workspace", tags=["Workspace Surfaces"]
     )
     if app.state.workspace_surface_settings.flags.live_apps:
+        app.include_router(
+            live_apps_router,
+            prefix="/api/workspace",
+            tags=["Workspace Surface Live Apps"],
+        )
         app.include_router(
             surface_presentations_router,
             prefix="/api/workspace",
