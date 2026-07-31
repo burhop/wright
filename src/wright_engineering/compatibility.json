@@ -1,7 +1,7 @@
 {
   "contract_version": 2,
-  "runtime_version": "0.1.6",
-  "runtime_specifier": "==0.1.6.*",
+  "runtime_version": "0.1.9",
+  "runtime_specifier": "==0.1.9.*",
   "python_specifier": ">=3.11,<3.15",
   "platforms": [
     "windows-x86_64",

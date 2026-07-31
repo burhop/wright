@@ -1,6 +1,6 @@
 [project]
 name = "wright-engineering"
-version = "0.1.6"
+version = "0.1.9"
 description = "Managed manager-neutral application and CLI for the Wright engineering workspace"
 requires-python = ">=3.11"
 readme = "README.md"
@@ -96,6 +96,11 @@ dev = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.check-wheel-contents]
+# The public runtime is intentionally self-contained and bundles these package
+# roots in one wheel; W009 would otherwise reject that reviewed layout.
+ignore = ["W009"]
 
 [tool.hatch.build.targets.wheel]
 packages = [

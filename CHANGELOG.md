@@ -4,6 +4,26 @@ All notable changes to the Wright project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.9] - 2026-07-30
+
+### Fixed
+- Preserved fail-closed native process ownership on macOS by recording the managed runtime launcher separately from the operating system's framework executable observation.
+- Added start, status, doctor, stop, and uninstall coverage on every supported CI platform before a release can be tagged.
+- Exposed bounded process-identity failure codes in native doctor evidence without disclosing process or environment secrets.
+
+## [0.1.8] - 2026-07-30
+
+### Fixed
+- Prevented the published native lifecycle harness from blocking on Windows when background runtime processes inherit redirected standard handles.
+- Added bounded native doctor readiness checks with actionable failed-check diagnostics for slower hosted runners.
+- Blocked production publication unless the public Hermes adapter mirror defaults to stable `main`.
+
+## [0.1.7] - 2026-07-30
+
+### Fixed
+- Allowed the intentional self-contained multi-package wheel layout while keeping every other wheel-content validation fatal.
+- Added the release wheel-content check to the local production merge gate so CI and local release validation enforce the same policy.
+
 ## [0.1.6] - 2026-07-29
 
 ### Added

@@ -63,9 +63,9 @@ class FakeProcessManager:
 
 
 def _artifact(tmp_path: Path) -> RuntimeArtifact:
-    wheel = tmp_path / "wright_engineering-0.1.6-py3-none-any.whl"
+    wheel = tmp_path / "wright_engineering-0.1.9-py3-none-any.whl"
     wheel.write_bytes(b"wheel")
-    return RuntimeArtifact.from_local(wheel, "0.1.6", SourceChannel.LOCAL_CANDIDATE)
+    return RuntimeArtifact.from_local(wheel, "0.1.9", SourceChannel.LOCAL_CANDIDATE)
 
 
 def test_start_automatically_installs_then_reuses_healthy_runtime(
@@ -142,7 +142,9 @@ def test_start_fails_closed_for_unsupported_manager_protocol(tmp_path: Path) -> 
     assert result.details["compatibility_code"] == "manager_protocol_incompatible"
 
 
-def test_runtime_environment_roots_secret_storage_in_wright_home(tmp_path: Path) -> None:
+def test_runtime_environment_roots_secret_storage_in_wright_home(
+    tmp_path: Path,
+) -> None:
     layout = NativeLayout.from_wright_home(tmp_path / "wright-home")
     lifecycle = NativeLifecycle(
         layout,
@@ -154,12 +156,11 @@ def test_runtime_environment_roots_secret_storage_in_wright_home(tmp_path: Path)
 
     environment = lifecycle._runtime_environment()
 
-    assert environment["WRIGHT_SECRETS_PATH"] == str(
-        layout.data / "credentials.json"
-    )
+    assert environment["WRIGHT_SECRETS_PATH"] == str(layout.data / "credentials.json")
     assert environment["WRIGHT_SECRETS_DIR"] == str(layout.data / "secrets.d")
     assert environment["WRIGHT_AUTH_MODE"] == "enforced"
     assert len(environment["WRIGHT_API_TOKEN"]) == 64
-    assert layout.control_plane_token.read_text(encoding="utf-8") == environment[
-        "WRIGHT_API_TOKEN"
-    ]
+    assert (
+        layout.control_plane_token.read_text(encoding="utf-8")
+        == environment["WRIGHT_API_TOKEN"]
+    )

@@ -13,7 +13,13 @@ def test_all_workflow_actions_are_pinned_to_full_commit_shas() -> None:
 def test_release_builds_each_subject_once_and_publishes_release_last() -> None:
     release = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
     docker = (ROOT / ".github/workflows/docker-build.yml").read_text(encoding="utf-8")
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    prod_gate = (ROOT / "scripts/check-prod-merge.sh").read_text(encoding="utf-8")
     assert release.count("scripts/build-python-distributions.sh") == 1
+    assert "check-wheel-contents==0.6.3" in release
+    assert "check-wheel-contents==0.6.3" in prod_gate
+    assert "[tool.check-wheel-contents]\n" in pyproject
+    assert 'ignore = ["W009"]' in pyproject
     assert docker.count("docker/build-push-action@") == 1
     assert "docker/build-push-action@" not in release
     assert "Publish GitHub Release only after every verification" in release

@@ -33,6 +33,13 @@ def test_native_candidate_builds_once_and_runs_every_claimed_platform() -> None:
     assert "--wheelhouse dist/platform-wheelhouse" in workflow
     assert "--hermes-home" in workflow
     assert "--plugin-source hermes-plugin-wright" in workflow
+    platform_matrix = workflow[
+        workflow.index("native-base-platform-matrix:") : workflow.index(
+            "native-lifecycle-contract:"
+        )
+    ]
+    assert "--runtime-smoke" in platform_matrix
+    assert "--base-only" not in platform_matrix
     assert "hermes-agent==0.19.0" in workflow
     lifecycle = workflow[workflow.index("native-lifecycle-contract:") :]
     assert '"mcp>=1.27.2,<2"' in lifecycle
@@ -47,6 +54,9 @@ def test_production_release_keeps_native_docker_docs_and_release_terminal() -> N
     assert "mirror-dockerhub" in release
     assert "deploy-versioned-docs" in release
     assert "publish-github-release-last" in release
+    assert "Verify stable Hermes adapter install branch" in release
+    assert "default_ref" in release
+    assert "refs/heads/main" in release
     release_last = release[release.index("publish-github-release-last:") :]
     assert "native-published-lifecycle" in release_last
     assert "mirror-dockerhub" in release_last
@@ -84,6 +94,9 @@ def test_merge_gates_have_mandatory_native_acceptance_without_skip_flag() -> Non
     assert "scripts/test-hermes-plugin-install.sh" in prod
     assert "scripts/test-hermes-plugin-update.sh" in prod
     assert "scripts/test-hermes-plugin-uninstall.sh" in prod
+    assert "adapter_default_ref" in prod
+    assert "refs/heads/main" in prod
+    assert "default branch" in contributing
     assert "run make" not in prod
     assert "SKIP_NATIVE" not in dev + prod
     assert "no skip flag" in contributing

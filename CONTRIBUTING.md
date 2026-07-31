@@ -56,8 +56,10 @@ software to the base Docker image just to make catalog validation pass.
 For feature branches, `scripts/check-dev-merge.sh` is the authoritative gate
 before merge to `dev`. The native Hermes candidate checks are mandatory and
 have no skip flag: they validate the complete wheel, base/runtime isolation,
-source isolation, forbidden executables, lifecycle behavior, and every claimed
-platform. Release-train changes must additionally preserve the build-once
+source isolation, forbidden executables, and start/status/doctor/stop/uninstall
+runtime behavior on every claimed platform. The full update, rollback, purge,
+and manager-profile lifecycle remains an additional Linux contract.
+Release-train changes must additionally preserve the build-once
 wheel/sdist hashes, runtime-extra lock, released-Hermes capability and stable
 channel ordering, OCI candidate digest, mandatory Docker Hub mirror, full-SHA
 Action pins, protected environment ordering, expiring vulnerability exceptions,
@@ -67,6 +69,14 @@ of orchestration, not authorization to publish.
 Before merging `dev` to `main`, run `scripts/check-prod-merge.sh`. Production is
 not complete until published native Hermes and Docker paths both have terminal
 evidence; the legacy Git-plugin mirror cannot substitute for native evidence.
+The production gate also runs `check-wheel-contents` against the exact wheel
+built by the dev gate. Wright intentionally ships a self-contained wheel with
+multiple reviewed top-level package roots, so only `W009` is suppressed in the
+root packaging configuration; all other wheel-content findings remain fatal.
+Because Hermes installs the adapter repository URL without selecting a branch,
+the production gate also requires the public adapter mirror's default branch
+to be stable `main`. A `dev` default is a release blocker even when both mirror
+branches contain valid generated adapters.
 
 The dev gate runs a focused security regression tranche before the complete
 test suite. Changes that move request-controlled data into cookies, filesystem

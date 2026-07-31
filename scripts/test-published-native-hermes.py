@@ -39,34 +39,57 @@ def _run(
     allow_executables: frozenset[str] = frozenset(),
 ) -> subprocess.CompletedProcess[str]:
     rendered = [str(item) for item in command]
-    process = subprocess.Popen(
-        rendered,
-        cwd=cwd,
-        env=dict(env),
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    observed: set[str] = {Path(rendered[0]).stem.lower()}
-    deadline = time.monotonic() + timeout
-    while process.poll() is None:
-        if time.monotonic() >= deadline:
-            process.kill()
-            raise RuntimeError("published Hermes command timed out")
-        try:
-            import psutil
-
-            for child in psutil.Process(process.pid).children(recursive=True):
+    # Temporary files avoid a Windows deadlock when a lifecycle command starts
+    # a background runtime that inherits the parent's redirected handles. A
+    # pipe-backed communicate() waits for every inheriting descendant to close
+    # the pipe even after the lifecycle command itself has exited.
+    with (
+        tempfile.TemporaryFile(
+            mode="w+", encoding="utf-8", errors="replace"
+        ) as stdout_file,
+        tempfile.TemporaryFile(
+            mode="w+", encoding="utf-8", errors="replace"
+        ) as stderr_file,
+    ):
+        process = subprocess.Popen(
+            rendered,
+            cwd=cwd,
+            env=dict(env),
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            stdout=stdout_file,
+            stderr=stderr_file,
+        )
+        observed: set[str] = {Path(rendered[0]).stem.lower()}
+        deadline = time.monotonic() + timeout
+        while process.poll() is None:
+            if time.monotonic() >= deadline:
+                process.kill()
+                process.wait()
+                raise RuntimeError("published Hermes command timed out")
+            try:
+                import psutil
+            except ImportError:
+                pass
+            else:
                 try:
-                    observed.add(Path(child.exe()).stem.lower())
+                    children = psutil.Process(process.pid).children(recursive=True)
+                    for child in children:
+                        try:
+                            observed.add(Path(child.exe()).stem.lower())
+                        except (psutil.Error, OSError):
+                            pass
                 except (psutil.Error, OSError):
                     pass
-        except (ImportError, OSError):
-            pass
-        time.sleep(0.01)
-    stdout, stderr = process.communicate()
+            time.sleep(0.01)
+        process.wait()
+        stdout_file.flush()
+        stderr_file.flush()
+        stdout_file.seek(0)
+        stderr_file.seek(0)
+        stdout = stdout_file.read()
+        stderr = stderr_file.read()
     forbidden = (observed & FORBIDDEN) - set(allow_executables)
     if forbidden:
         raise RuntimeError(
@@ -141,6 +164,48 @@ def _adapter_lifecycle(
     if require_ok and result.get("ok") is not True:
         raise RuntimeError(f"native {command} failed: {result.get('code')}")
     return result
+
+
+def _failed_doctor_checks(result: Mapping[str, object]) -> list[str]:
+    details = result.get("details")
+    if not isinstance(details, dict):
+        return []
+    checks = details.get("checks")
+    if not isinstance(checks, dict):
+        return []
+    return sorted(
+        str(name)
+        for name, value in checks.items()
+        if not isinstance(value, dict) or value.get("ok") is not True
+    )
+
+
+def _wait_for_doctor(
+    plugin_dir: Path,
+    *,
+    env: Mapping[str, str],
+    cwd: Path,
+    timeout: float = 30,
+    interval: float = 0.5,
+) -> dict[str, object]:
+    deadline = time.monotonic() + timeout
+    while True:
+        result = _adapter_lifecycle(
+            plugin_dir,
+            "doctor",
+            env=env,
+            cwd=cwd,
+            require_ok=False,
+        )
+        if result.get("ok") is True:
+            return result
+        if time.monotonic() >= deadline:
+            failed = ",".join(_failed_doctor_checks(result)) or "unknown"
+            raise RuntimeError(
+                "native doctor did not become healthy: "
+                f"code={result.get('code')} failed_checks={failed}"
+            )
+        time.sleep(interval)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -220,7 +285,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         _adapter_lifecycle(plugin_dir, "start", env=env, cwd=cwd)
         _adapter_lifecycle(plugin_dir, "status", env=env, cwd=cwd)
-        _adapter_lifecycle(plugin_dir, "doctor", env=env, cwd=cwd)
+        _wait_for_doctor(plugin_dir, env=env, cwd=cwd)
         lifecycle = ["install", "start", "status", "doctor"]
         data = Path(env["WRIGHT_HOME"]) / "data"
         data.mkdir(parents=True, exist_ok=True)

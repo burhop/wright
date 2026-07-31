@@ -150,6 +150,7 @@ class ProcessIdentity:
     instance_id: str
     challenge_hash: str
     operation_id: str
+    launcher_path: str | None = None
     health_verified_at: str | None = None
 
     def validate(self) -> None:
@@ -157,6 +158,11 @@ class ProcessIdentity:
             raise ValueError("process_pid_invalid")
         if not Path(self.executable_path).is_absolute():
             raise ValueError("process_executable_not_absolute")
+        if (
+            self.launcher_path is not None
+            and not Path(self.launcher_path).is_absolute()
+        ):
+            raise ValueError("process_launcher_not_absolute")
         if self.host not in {"127.0.0.1", "localhost", "::1"}:
             raise ValueError("process_host_not_loopback")
         if not 1 <= self.port <= 65535:
