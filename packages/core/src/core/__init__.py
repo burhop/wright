@@ -9,3 +9,8 @@ from .errors import WrightError as WrightError
 from .identifiers import AgentId as AgentId
 from .identifiers import SessionId as SessionId
 from .identifiers import WorkspaceId as WorkspaceId
+from .workflows import (
+    WorkflowDocument as WorkflowDocument,
+    WorkflowPersistenceError as WorkflowPersistenceError,
+    WorkflowRevisionConflict as WorkflowRevisionConflict,
+)

@@ -5,6 +5,7 @@ from .git import GitMergeConflict, WorkspaceGitUseCases
 from .context import WorkspaceContextUseCases
 from .lifecycle import WorkspaceLifecycleUseCases
 from .tools import WorkspaceToolUseCases
+from .workflows import WorkspaceWorkflowUseCases
 
 __all__ = [
     "FileReadResult",
@@ -14,4 +15,5 @@ __all__ = [
     "WorkspaceContextUseCases",
     "WorkspaceLifecycleUseCases",
     "WorkspaceToolUseCases",
+    "WorkspaceWorkflowUseCases",
 ]

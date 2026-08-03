@@ -33,17 +33,9 @@ SURFACE_TABLES = {
 def test_migration_six_is_contiguous_checksummed_and_creates_all_surface_tables(
     tmp_path: Path,
 ) -> None:
-    assert [migration.version for migration in MIGRATIONS] == [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-    ]
+    assert [migration.version for migration in MIGRATIONS] == list(
+        range(1, len(MIGRATIONS) + 1)
+    )
     migration = MIGRATIONS[5]
     assert migration.name == "workspace_surfaces"
     assert len(migration.checksum) == 64
@@ -95,7 +87,7 @@ def test_future_surface_schema_is_rejected_before_mutation(tmp_path: Path) -> No
     with sqlite3.connect(path) as connection:
         connection.execute(
             f"INSERT INTO {LEDGER_TABLE} VALUES (?, ?, ?, ?, ?, ?)",
-            (10, "future_surface_contract", "future", "now", 0, "99.0.0"),
+            (len(MIGRATIONS) + 1, "future_surface_contract", "future", "now", 0, "99.0.0"),
         )
         connection.commit()
 
@@ -103,7 +95,7 @@ def test_future_surface_schema_is_rejected_before_mutation(tmp_path: Path) -> No
         database_status(path)
     with sqlite3.connect(path) as connection:
         assert connection.execute(
-            f"SELECT COUNT(*) FROM {LEDGER_TABLE} WHERE version=9"
+            f"SELECT COUNT(*) FROM {LEDGER_TABLE} WHERE version={len(MIGRATIONS)}"
         ).fetchone() == (1,)
 
 

@@ -515,6 +515,24 @@ MIGRATIONS: tuple[Migration, ...] = (
         "mcp_upstream_metadata",
         (add_column("mcp_tools", "meta", "TEXT"),),
     ),
+    Migration(
+        10,
+        "workspace_workflow_metadata",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflows (
+                workspace_id TEXT NOT NULL,
+                workflow_id TEXT NOT NULL,
+                slug TEXT NOT NULL,
+                revision INTEGER NOT NULL,
+                digest TEXT NOT NULL,
+                state TEXT NOT NULL DEFAULT 'active',
+                updated_at INTEGER NOT NULL,
+                PRIMARY KEY (workspace_id, workflow_id),
+                UNIQUE (workspace_id, slug),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id) ON DELETE CASCADE
+            )"""),
+        ),
+    ),
 )
 
 

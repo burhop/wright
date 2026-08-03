@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/055-rivet-compatibility-spike/plan.md
+at specs/056-rivet-workspace-persistence/plan.md
 <!-- SPECKIT END -->
 
 
