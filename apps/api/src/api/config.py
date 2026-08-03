@@ -17,7 +17,20 @@ LLM_HEALTH_URL = os.getenv("LLM_HEALTH_URL", "")
 
 def rivet_workflows_enabled() -> bool:
     """Default-off gate for storage APIs; it does not import Rivet or Node."""
-    return os.getenv("WRIGHT_RIVET_WORKFLOWS_ENABLED", "0").strip().lower() in {"1", "true", "yes"}
+    return os.getenv("WRIGHT_RIVET_WORKFLOWS_ENABLED", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
+
+def rivet_runner_enabled() -> bool:
+    """Default-off gate for the optional supervised runner HTTP surface."""
+    return os.getenv("WRIGHT_RIVET_RUNNER_ENABLED", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
 
 
 # UI theme configuration (defaulting to "dark")

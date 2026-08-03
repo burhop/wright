@@ -21,7 +21,11 @@ from agent_adapters.openclaw import openclaw_context_materializer
 from core.logging import get_logger
 from core.redaction import redact_command, redact_text
 from core.tracing import traced
-from data_vault import WorkflowRepository, WorkspaceRepository, create_default_secret_provider
+from data_vault import (
+    WorkflowRepository,
+    WorkspaceRepository,
+    create_default_secret_provider,
+)
 from data_vault.workspace_repository import sanitize_workspace_name
 from tool_registry.db import get_servers
 
@@ -57,6 +61,8 @@ from .use_cases import (
 )
 from .use_cases.run import issue_display_execution_lease
 from .surfaces.display_tokens import DisplayExecutionTokenService
+from .surfaces.process_supervisor import ProcessAdapter, ProcessSupervisor
+from .workflow_runner import WorkspaceWorkflowRunner
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -163,6 +169,18 @@ class WorkspaceService:
         )
         self.workflows = WorkspaceWorkflowUseCases(
             self.executor, WorkflowRepository(db_path)
+        )
+        runner_adapter: ProcessAdapter
+        if os.name == "nt":
+            from .surfaces.process_windows import WindowsProcessAdapter
+
+            runner_adapter = WindowsProcessAdapter()
+        else:
+            from .surfaces.process_posix import PosixProcessAdapter
+
+            runner_adapter = PosixProcessAdapter()
+        self.workflow_runner = WorkspaceWorkflowRunner(
+            supervisor=ProcessSupervisor(adapter=runner_adapter)
         )
         process = LocalProcessRunner()
         self.git = WorkspaceGitUseCases(
@@ -335,6 +353,7 @@ class WorkspaceService:
         return candidate
 
     async def close(self) -> None:
+        await self.workflow_runner.shutdown()
         await self.executor.close()
 
     async def reconcile_runtime(

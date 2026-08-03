@@ -21,7 +21,12 @@ from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
 from .workflows import WorkspaceWorkflowStore
-from core.workflows import WorkflowDocument, WorkflowPersistenceError, WorkflowRevisionConflict
+from .workflow_runner import RunnerSettings, RunnerStatus, WorkspaceWorkflowRunner
+from core.workflows import (
+    WorkflowDocument,
+    WorkflowPersistenceError,
+    WorkflowRevisionConflict,
+)
 
 __all__ = [
     "FileExecutionPolicy",

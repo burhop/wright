@@ -14,3 +14,11 @@ from .workflows import (
     WorkflowPersistenceError as WorkflowPersistenceError,
     WorkflowRevisionConflict as WorkflowRevisionConflict,
 )
+from .workflow_runs import (
+    RunnerAvailability as RunnerAvailability,
+    WorkflowRunnerError as WorkflowRunnerError,
+    WorkflowRunnerUnavailable as WorkflowRunnerUnavailable,
+    WorkflowRun as WorkflowRun,
+    WorkflowRunEvent as WorkflowRunEvent,
+    WorkflowRunState as WorkflowRunState,
+)

@@ -79,6 +79,33 @@ class WorkflowDocumentResponse(WorkflowResponse):
     datasets: Dict[str, str]
 
 
+class WorkflowRunnerStatusResponse(BaseModel):
+    availability: str
+    generation: int
+    detail: str | None = None
+
+
+class WorkflowRunStartRequest(BaseModel):
+    session_id: str
+    expected_generation: int | None = Field(default=None, ge=1)
+
+
+class WorkflowRunCancelRequest(BaseModel):
+    session_id: str
+    generation: int = Field(ge=1)
+
+
+class WorkflowRunResponse(BaseModel):
+    run_id: str
+    workspace_id: str
+    session_id: str
+    workflow_id: str
+    revision: int
+    generation: int
+    state: str
+    reason: str | None = None
+
+
 class WorkflowDeleteRequest(BaseModel):
     session_id: str
     expected_revision: int
