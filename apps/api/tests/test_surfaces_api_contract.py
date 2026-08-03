@@ -186,6 +186,31 @@ def test_engineer_and_admin_routes_pass_explicit_actor_scope(role: str) -> None:
     assert call[-1] == "declare-request-0001"
 
 
+def test_disabled_rivet_editor_manifest_is_rejected_before_service_call(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("api.routers.surfaces.rivet_editor_enabled", lambda: False)
+    client, service = _client()
+    response = client.post(
+        "/api/workspace/surfaces",
+        headers=_headers(),
+        json={
+            "schemaVersion": 1,
+            "kind": "live_app",
+            "manifest": {
+                "schemaVersion": 1,
+                "id": "wright.rivet-editor",
+                "title": "Rivet editor (manual import/export)",
+                "version": "1.25.0",
+                "launch": {"mode": "command", "argv": ["python", "host.py"]},
+            },
+        },
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Rivet editor is disabled"
+    assert service.calls == []
+
+
 def test_forbidden_role_is_rejected_before_service_call() -> None:
     client, service = _client("viewer")
     response = client.get(
