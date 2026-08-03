@@ -1,6 +1,6 @@
 {
   "rivet_version": "1.25.0",
-  "entrypoint": null,
-  "sha256": null,
+  "entrypoint": "dist/index.html",
+  "sha256": "1d09b177844970f00b881eb1733e2c4594e41663468c88bed46adc53287c0697",
   "license": "MIT"
 }

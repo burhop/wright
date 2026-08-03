@@ -98,6 +98,8 @@ from api.schemas.workspace import (
     WorkflowOperationsListResponse,
     WorkflowRunHistoryResponse,
     WorkflowEditorAvailabilityResponse,
+    WorkflowEditorSurfaceRequest,
+    WorkflowEditorSurfaceResponse,
     WorkflowEditorBootstrapRequest,
     WorkflowEditorBootstrapResponse,
     WorkflowEditorReadRequest,
@@ -222,6 +224,31 @@ async def workflow_editor_status_endpoint(
     _editor_feature_enabled()
     availability, detail = service.workflow_editor.availability()
     return WorkflowEditorAvailabilityResponse(availability=availability, detail=detail)
+
+
+@router.post(
+    "/workflows/editor/surface", response_model=WorkflowEditorSurfaceResponse
+)
+@traced("workspace.workflows.editor.surface")
+async def workflow_editor_surface_endpoint(
+    body: WorkflowEditorSurfaceRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _editor_feature_enabled()
+    _workspace_id, workspace_dir = await _editor_scope(body.session_id, engine, service)
+    availability, detail = service.workflow_editor.availability()
+    if availability.value != "available":
+        return WorkflowEditorSurfaceResponse(availability=availability, detail=detail)
+    try:
+        manifest = service.workflow_editor.manual_surface_manifest(workspace_dir)
+    except WorkflowEditorError as error:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(error)) from error
+    return WorkflowEditorSurfaceResponse(
+        availability=availability,
+        detail=detail,
+        manifest=manifest,
+    )
 
 
 @router.post(

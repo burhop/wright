@@ -7,10 +7,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 
 from api.composition import surface_application
+from api.config import rivet_editor_enabled
 from api.schemas.surfaces import (
     DeclareSurfaceRequest,
     SurfaceDescriptorResponse,
     SurfaceListResponse,
+    LiveAppDeclareRequest,
     declare_request_to_domain,
 )
 from core.surfaces.errors import SurfaceError
@@ -96,6 +98,14 @@ async def declare_surface(
         Header(alias="Idempotency-Key", min_length=16, max_length=128),
     ],
 ) -> SurfaceDescriptorResponse:
+    if (
+        isinstance(body, LiveAppDeclareRequest)
+        and body.manifest.get("id") == "wright.rivet-editor"
+        and not rivet_editor_enabled()
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Rivet editor is disabled"
+        )
     source, title = declare_request_to_domain(
         body, actor=actor, idempotency_key=idempotency_key
     )
