@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/059-rivet-workspace-tab/plan.md
+at specs/060-rivet-wright-nodes/plan.md
 <!-- SPECKIT END -->
 
 
