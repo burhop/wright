@@ -126,11 +126,12 @@ async def test_get_setup_status_requires_valid_codex_auth(
 
 @pytest.mark.asyncio
 async def test_get_setup_status_is_configured_when_launched_by_hermes(
-    client: AsyncClient, monkeypatch
+    client: AsyncClient, monkeypatch, tmp_path
 ):
     clear_setup_settings()
     monkeypatch.delenv("LLM_API_URL", raising=False)
     monkeypatch.delenv("LLM_HEALTH_URL", raising=False)
+    monkeypatch.setenv("HERMES_CONFIG_PATH", str(tmp_path / "missing-config.yaml"))
     monkeypatch.setenv("WRIGHT_LAUNCHED_BY_HERMES", "1")
 
     response = await client.get("/api/setup/status")
