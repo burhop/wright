@@ -50,16 +50,27 @@ class WorkflowRepository:
                 ON CONFLICT(workspace_id, workflow_id) DO UPDATE SET
                     slug=excluded.slug, revision=excluded.revision, digest=excluded.digest,
                     state=excluded.state, updated_at=excluded.updated_at""",
-                (record.workspace_id, record.workflow_id, record.slug, record.revision,
-                 record.digest, record.state, record.updated_at),
+                (
+                    record.workspace_id,
+                    record.workflow_id,
+                    record.slug,
+                    record.revision,
+                    record.digest,
+                    record.state,
+                    record.updated_at,
+                ),
             )
 
-    def list(self, workspace_id: str, *, include_deleted: bool = False) -> list[WorkflowIndexRecord]:
+    def list(
+        self, workspace_id: str, *, include_deleted: bool = False
+    ) -> list[WorkflowIndexRecord]:
         with connect_state_db(self.db_path, ensure_parent=True) as conn:
             self._ensure(conn)
             clause = "" if include_deleted else " AND state = 'active'"
             rows = conn.execute(
-                "SELECT * FROM workspace_workflows WHERE workspace_id = ?" + clause + " ORDER BY slug",
+                "SELECT * FROM workspace_workflows WHERE workspace_id = ?"
+                + clause
+                + " ORDER BY slug",
                 (workspace_id,),
             ).fetchall()
         return [WorkflowIndexRecord(**dict(row)) for row in rows]
@@ -67,4 +78,7 @@ class WorkflowRepository:
     def mark_deleted(self, workspace_id: str, workflow_id: str) -> None:
         with connect_state_db(self.db_path, ensure_parent=True) as conn:
             self._ensure(conn)
-            conn.execute("UPDATE workspace_workflows SET state='deleted', updated_at=? WHERE workspace_id=? AND workflow_id=?", (int(time.time()), workspace_id, workflow_id))
+            conn.execute(
+                "UPDATE workspace_workflows SET state='deleted', updated_at=? WHERE workspace_id=? AND workflow_id=?",
+                (int(time.time()), workspace_id, workflow_id),
+            )

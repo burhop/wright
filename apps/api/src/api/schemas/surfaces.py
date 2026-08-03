@@ -93,9 +93,7 @@ def declare_request_to_domain(
         manifest_hash=hashlib.sha256(encoded).hexdigest(),
         ownership=ownership,
         administrator_approved=actor.role is ActorRole.ADMIN,
-        sharing_mode=str(
-            manifest.get("presentation", {}).get("sharing", "shared")
-        ),
+        sharing_mode=str(manifest.get("presentation", {}).get("sharing", "shared")),
     )
     return source, str(manifest["title"])
 

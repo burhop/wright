@@ -87,7 +87,14 @@ def test_future_surface_schema_is_rejected_before_mutation(tmp_path: Path) -> No
     with sqlite3.connect(path) as connection:
         connection.execute(
             f"INSERT INTO {LEDGER_TABLE} VALUES (?, ?, ?, ?, ?, ?)",
-            (len(MIGRATIONS) + 1, "future_surface_contract", "future", "now", 0, "99.0.0"),
+            (
+                len(MIGRATIONS) + 1,
+                "future_surface_contract",
+                "future",
+                "now",
+                0,
+                "99.0.0",
+            ),
         )
         connection.commit()
 
