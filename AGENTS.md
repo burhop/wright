@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/057-rivet-headless-runner/plan.md
+at specs/054-rivet-workflow-integration/plan.md
 <!-- SPECKIT END -->
 
 
