@@ -35,6 +35,19 @@ def _catalog(tmp_path) -> EditorAssetCatalog:
     return EditorAssetCatalog(tmp_path / "manifest.json")
 
 
+def _hosted_catalog(tmp_path) -> EditorAssetCatalog:
+    assets = tmp_path / "dist"
+    assets.mkdir(parents=True)
+    asset = assets / "index.html"
+    asset.write_text("<html></html>", encoding="utf-8")
+    (tmp_path / "host.py").write_text("# test host\n", encoding="utf-8")
+    (tmp_path / "manifest.json").write_text(
+        json.dumps({"rivet_version": "1.25.0", "entrypoint": "dist/index.html", "sha256": hashlib.sha256(asset.read_bytes()).hexdigest(), "license": "MIT"}),
+        encoding="utf-8",
+    )
+    return EditorAssetCatalog(tmp_path / "manifest.json")
+
+
 @pytest.mark.asyncio
 async def test_editor_grant_is_workspace_session_and_revision_scoped(tmp_path):
     executor = BoundedExecutor()
@@ -145,3 +158,32 @@ async def test_editor_grant_expiry_and_missing_manifest_are_safe(tmp_path):
             workspace_dir=str(tmp_path),
         )
     await executor.close()
+
+
+def test_manual_surface_manifest_is_verified_and_collision_safe(tmp_path):
+    editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "assets"),
+    )
+    workspace = tmp_path / "workspace"
+    manifest = editor.manual_surface_manifest(str(workspace))
+    assert manifest is not None
+    assert manifest["id"] == "wright.rivet-editor"
+    assert manifest["capabilities"] == []
+    assert manifest["presentation"]["sharing"] == "isolated"  # type: ignore[index]
+    generated = workspace / ".wright" / "apps" / "rivet-editor.surface.json"
+    assert generated.is_file()
+    assert editor.manual_surface_manifest(str(workspace)) == manifest
+    generated.write_text("{}", encoding="utf-8")
+    with pytest.raises(WorkflowEditorError, match="conflicts"):
+        editor.manual_surface_manifest(str(workspace))
+
+
+def test_manual_surface_manifest_never_provisions_without_a_verified_host(tmp_path):
+    editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_catalog(tmp_path / "assets"),
+    )
+    assert editor.manual_surface_manifest(str(tmp_path / "workspace")) is None

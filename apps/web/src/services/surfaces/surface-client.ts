@@ -227,6 +227,18 @@ async function checked(response: Response): Promise<unknown> {
 
 const base = () => `${hostAdapter.getApiBaseUrl()}/api/workspace/surfaces`;
 
+export async function declareLiveApp(
+  manifest: Record<string, unknown>,
+  workspaceId: string,
+  sessionId: string,
+): Promise<SurfaceDescriptor> {
+  return parseSurfaceDescriptor(await checked(await hostAdapter.fetch(base(), {
+    method: "POST",
+    headers: { ...headers(workspaceId, sessionId), "Content-Type": "application/json", "Idempotency-Key": `rivet-editor-${crypto.randomUUID()}` },
+    body: JSON.stringify({ schemaVersion: 1, kind: "live_app", manifest }),
+  })));
+}
+
 export async function listSurfaces(
   workspaceId: string,
   sessionId: string,

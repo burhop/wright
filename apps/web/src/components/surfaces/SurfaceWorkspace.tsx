@@ -49,6 +49,16 @@ export function SurfaceWorkspace({
   useSurfaceUpdates(workspaceId, sessionId);
 
   useEffect(() => {
+    const reconcile = () => {
+      void listSurfaces(workspaceId, sessionId).then((items) => {
+        dispatch({ type: "reconcile", descriptors: items });
+      });
+    };
+    window.addEventListener("wright-surfaces-changed", reconcile);
+    return () => window.removeEventListener("wright-surfaces-changed", reconcile);
+  }, [dispatch, sessionId, workspaceId]);
+
+  useEffect(() => {
     setRestoredStorageKey(null);
     let nextState = createSurfaceState();
     try {

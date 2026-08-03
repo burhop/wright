@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import secrets
+import sys
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
@@ -90,8 +91,9 @@ class EditorAssetCatalog:
                 manifest,
                 "Pinned editor bundle is not installed",
             )
-        asset = (self._manifest_path.parent / manifest.entrypoint).resolve()
-        if asset.parent != self._manifest_path.parent.resolve() or not asset.is_file():
+        asset_root = self._manifest_path.parent.resolve()
+        asset = (asset_root / manifest.entrypoint).resolve()
+        if asset_root not in asset.parents or not asset.is_file():
             return (
                 EditorAvailability.MISSING,
                 manifest,
@@ -129,6 +131,47 @@ class WorkspaceWorkflowEditor:
             return EditorAvailability.DISABLED, "Rivet editor is disabled"
         status, _manifest, detail = self._catalog.status()
         return status, detail
+
+    def manual_surface_manifest(self, workspace_dir: str) -> dict[str, object] | None:
+        """Provision the sole Wright-owned manual editor surface manifest."""
+        availability, _detail = self.availability()
+        if availability is not EditorAvailability.AVAILABLE:
+            return None
+        status, artifact, _detail = self._catalog.status()
+        if status is not EditorAvailability.AVAILABLE or artifact is None:
+            return None
+        root = self._catalog._manifest_path.parent.resolve()
+        host = root / "host.py"
+        entrypoint = (root / artifact.entrypoint).resolve()
+        if (
+            not host.is_file()
+            or not entrypoint.is_file()
+            or root not in entrypoint.parents
+        ):
+            return None
+        document: dict[str, object] = {
+            "schemaVersion": 1,
+            "id": "wright.rivet-editor",
+            "version": artifact.rivet_version,
+            "title": "Rivet editor (manual import/export)",
+            "description": "Manual browser import/export only; this editor does not save into the Wright workspace.",
+            "ownershipPolicy": "wright-owned",
+            "launch": {"mode": "command", "argv": [sys.executable, str(host), "--root", str(entrypoint.parent), "--host", "${WRIGHT_BIND_HOST}", "--port", "${WRIGHT_PORT}"], "workingDirectory": ".", "environment": {}, "framework": "generic"},
+            "readiness": {"path": "/health", "method": "GET", "expectedStatus": 200, "timeoutMs": 5000, "intervalMs": 100},
+            "health": {"path": "/health", "method": "GET", "expectedStatus": 200, "timeoutMs": 1000, "intervalMs": 1000},
+            "presentation": {"panel": True, "browser": True, "sharing": "isolated", "basePathMode": "root", "allowedFrameAncestors": [], "permissionsPolicy": []},
+            "transports": {"http": True, "websocket": False, "sse": False},
+            "navigation": {"allowSameTargetRedirects": False, "externalLinks": "prompt-browser", "downloads": "prompt"},
+            "lifetime": {"policy": "workspace"},
+            "capabilities": [],
+        }
+        target = Path(workspace_dir).resolve() / ".wright" / "apps" / "rivet-editor.surface.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        encoded = json.dumps(document, indent=2, sort_keys=True) + "\n"
+        if target.exists() and target.read_text(encoding="utf-8") != encoded:
+            raise WorkflowEditorError("RIVET_EDITOR_MANIFEST_CONFLICT", "Rivet editor manifest conflicts with an existing workspace file")
+        target.write_text(encoded, encoding="utf-8")
+        return document
 
     async def bootstrap(
         self, *, workspace_id: str, session_id: str, workspace_dir: str, slug: str

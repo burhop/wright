@@ -33,6 +33,12 @@ export interface RivetWorkflowRun {
   reason: string | null;
 }
 
+export interface RivetEditorSurface {
+  availability: "disabled" | "available" | "missing" | "incompatible";
+  detail: string | null;
+  manifest: Record<string, unknown> | null;
+}
+
 const getApiBase = () => {
   if (typeof window === "undefined") {
     return "http://127.0.0.1:8000";
@@ -47,6 +53,14 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
+  async getRivetEditorSurface(sessionId: string): Promise<RivetEditorSurface> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/workflows/editor/surface`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId }),
+    });
+    if (!response.ok) throw new Error("Rivet editor is unavailable");
+    return response.json();
+  }
   async listRivetWorkflowOperations(sessionId: string): Promise<RivetWorkflowOperation[]> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows?session_id=${encodeURIComponent(sessionId)}`,
