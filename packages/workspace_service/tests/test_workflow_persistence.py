@@ -16,7 +16,9 @@ from workspace_service.workflows import (
 def test_workspace_workflow_is_revisioned_recoverable_and_file_authoritative(tmp_path):
     store = WorkspaceWorkflowStore(str(tmp_path))
     created = store.create("first-flow", "version: 4", {"inputs": "[]"})
-    assert (tmp_path / "workflows" / "first-flow" / "workflow.rivet-project").read_text() == "version: 4"
+    assert (
+        tmp_path / "workflows" / "first-flow" / "workflow.rivet-project"
+    ).read_text() == "version: 4"
     updated = store.save("first-flow", created.revision, "version: 4\nname: updated")
     with pytest.raises(WorkflowRevisionConflict):
         store.save("first-flow", created.revision, "stale")
@@ -35,7 +37,9 @@ def test_workspace_workflow_rename_is_revisioned(tmp_path):
     assert not (tmp_path / "workflows" / "first-flow").exists()
 
 
-@pytest.mark.parametrize("slug", ["../outside", "C:/outside", "two words", "", "a" * 64])
+@pytest.mark.parametrize(
+    "slug", ["../outside", "C:/outside", "two words", "", "a" * 64]
+)
 def test_workspace_workflow_rejects_unsafe_slug(tmp_path, slug):
     with pytest.raises(WorkflowPersistenceError):
         WorkspaceWorkflowStore(str(tmp_path)).create(slug, "version: 4")
@@ -80,8 +84,19 @@ async def test_use_cases_keep_index_rebuildable_from_authoritative_files(tmp_pat
         BoundedExecutor(), WorkflowRepository(str(tmp_path / "state.db"))
     )
     try:
-        created = await use_cases.create("workspace-a", str(tmp_path / "workspace"), "flow", "version: 4")
-        await use_cases.save("workspace-a", str(tmp_path / "workspace"), "flow", created.revision, "version: 4\nname: saved")
-        assert await use_cases.rebuild_index("workspace-a", str(tmp_path / "workspace")) == 1
+        created = await use_cases.create(
+            "workspace-a", str(tmp_path / "workspace"), "flow", "version: 4"
+        )
+        await use_cases.save(
+            "workspace-a",
+            str(tmp_path / "workspace"),
+            "flow",
+            created.revision,
+            "version: 4\nname: saved",
+        )
+        assert (
+            await use_cases.rebuild_index("workspace-a", str(tmp_path / "workspace"))
+            == 1
+        )
     finally:
         await use_cases._executor.close()

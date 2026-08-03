@@ -16,7 +16,11 @@ import time
 import uuid
 from pathlib import Path
 
-from core.workflows import WorkflowDocument, WorkflowPersistenceError, WorkflowRevisionConflict
+from core.workflows import (
+    WorkflowDocument,
+    WorkflowPersistenceError,
+    WorkflowRevisionConflict,
+)
 
 from .workspace_path import WorkspacePath
 
@@ -32,7 +36,9 @@ def _digest(content: bytes) -> str:
 def _validate_slug(slug: str) -> str:
     candidate = slug.strip().lower()
     if not _SLUG.fullmatch(candidate):
-        raise WorkflowPersistenceError("Workflow slug must be 1-63 lowercase letters, digits, or hyphens")
+        raise WorkflowPersistenceError(
+            "Workflow slug must be 1-63 lowercase letters, digits, or hyphens"
+        )
     return candidate
 
 
@@ -53,7 +59,9 @@ class WorkspaceWorkflowStore:
         return self._paths.resolve(f"workflows/{_validate_slug(slug)}")
 
     def _metadata_path(self, slug: str) -> Path:
-        return self._paths.resolve(f"workflows/{_validate_slug(slug)}/.wright-workflow.json")
+        return self._paths.resolve(
+            f"workflows/{_validate_slug(slug)}/.wright-workflow.json"
+        )
 
     @staticmethod
     def _atomic_write(path: Path, content: bytes) -> None:
@@ -61,8 +69,12 @@ class WorkspaceWorkflowStore:
         # Resolve after creation and before replace to reject a link introduced
         # between request validation and mutation.
         if path.is_symlink() or any(parent.is_symlink() for parent in path.parents):
-            raise WorkflowPersistenceError("Workflow path may not contain symbolic links")
-        descriptor, temporary_name = tempfile.mkstemp(prefix=".wright-workflow-", dir=path.parent)
+            raise WorkflowPersistenceError(
+                "Workflow path may not contain symbolic links"
+            )
+        descriptor, temporary_name = tempfile.mkstemp(
+            prefix=".wright-workflow-", dir=path.parent
+        )
         temporary = Path(temporary_name)
         try:
             with os.fdopen(descriptor, "wb") as stream:
@@ -73,7 +85,9 @@ class WorkspaceWorkflowStore:
         finally:
             temporary.unlink(missing_ok=True)
 
-    def create(self, slug: str, project: str, datasets: dict[str, str] | None = None) -> WorkflowDocument:
+    def create(
+        self, slug: str, project: str, datasets: dict[str, str] | None = None
+    ) -> WorkflowDocument:
         slug = _validate_slug(slug)
         directory = self._directory(slug)
         if directory.exists():
@@ -84,26 +98,53 @@ class WorkspaceWorkflowStore:
     def read(self, slug: str) -> WorkflowDocument:
         slug = _validate_slug(slug)
         metadata = self._metadata_path(slug)
-        project_path = self._paths.resolve(f"workflows/{slug}/workflow.rivet-project", must_exist=True)
+        project_path = self._paths.resolve(
+            f"workflows/{slug}/workflow.rivet-project", must_exist=True
+        )
         if not metadata.is_file() or not project_path.is_file():
             raise FileNotFoundError(slug)
         data = json.loads(metadata.read_text(encoding="utf-8"))
         datasets_dir = self._paths.resolve(f"workflows/{slug}/datasets")
-        datasets = {
-            item.stem: item.read_text(encoding="utf-8")
-            for item in datasets_dir.glob("*.json")
-            if item.is_file() and not item.is_symlink()
-        } if datasets_dir.is_dir() else {}
+        datasets = (
+            {
+                item.stem: item.read_text(encoding="utf-8")
+                for item in datasets_dir.glob("*.json")
+                if item.is_file() and not item.is_symlink()
+            }
+            if datasets_dir.is_dir()
+            else {}
+        )
         project = project_path.read_text(encoding="utf-8")
-        return WorkflowDocument(str(data["workflow_id"]), slug, int(data["revision"]), str(data["digest"]), project, datasets)
+        return WorkflowDocument(
+            str(data["workflow_id"]),
+            slug,
+            int(data["revision"]),
+            str(data["digest"]),
+            project,
+            datasets,
+        )
 
-    def save(self, slug: str, expected_revision: int, project: str, datasets: dict[str, str] | None = None) -> WorkflowDocument:
+    def save(
+        self,
+        slug: str,
+        expected_revision: int,
+        project: str,
+        datasets: dict[str, str] | None = None,
+    ) -> WorkflowDocument:
         current = self.read(slug)
         if current.revision != expected_revision:
             raise WorkflowRevisionConflict(current.revision, current.digest)
-        return self._write(current.slug, current.workflow_id, current.revision + 1, project, datasets or current.datasets)
+        return self._write(
+            current.slug,
+            current.workflow_id,
+            current.revision + 1,
+            project,
+            datasets or current.datasets,
+        )
 
-    def rename(self, slug: str, expected_revision: int, new_slug: str) -> WorkflowDocument:
+    def rename(
+        self, slug: str, expected_revision: int, new_slug: str
+    ) -> WorkflowDocument:
         current = self.read(slug)
         if current.revision != expected_revision:
             raise WorkflowRevisionConflict(current.revision, current.digest)
@@ -113,9 +154,22 @@ class WorkspaceWorkflowStore:
         if destination.exists():
             raise WorkflowPersistenceError("Workflow slug already exists")
         os.replace(source, destination)
-        return self._write(destination_slug, current.workflow_id, current.revision + 1, current.project, current.datasets)
+        return self._write(
+            destination_slug,
+            current.workflow_id,
+            current.revision + 1,
+            current.project,
+            current.datasets,
+        )
 
-    def _write(self, slug: str, workflow_id: str, revision: int, project: str, datasets: dict[str, str]) -> WorkflowDocument:
+    def _write(
+        self,
+        slug: str,
+        workflow_id: str,
+        revision: int,
+        project: str,
+        datasets: dict[str, str],
+    ) -> WorkflowDocument:
         project_bytes = _validate_content(project, _MAX_PROJECT_BYTES, "Project")
         directory = self._directory(slug)
         self._atomic_write(directory / "workflow.rivet-project", project_bytes)
@@ -123,9 +177,22 @@ class WorkspaceWorkflowStore:
         for name, value in datasets.items():
             if not _SLUG.fullmatch(name):
                 raise WorkflowPersistenceError("Dataset name must be a safe slug")
-            self._atomic_write(datasets_dir / f"{name}.json", _validate_content(value, _MAX_DATASET_BYTES, "Dataset"))
-        document = WorkflowDocument(workflow_id, slug, revision, _digest(project_bytes), project, dict(datasets))
-        metadata = json.dumps({"workflow_id": workflow_id, "revision": revision, "digest": document.digest, "updated_at": int(time.time())}, sort_keys=True).encode("utf-8")
+            self._atomic_write(
+                datasets_dir / f"{name}.json",
+                _validate_content(value, _MAX_DATASET_BYTES, "Dataset"),
+            )
+        document = WorkflowDocument(
+            workflow_id, slug, revision, _digest(project_bytes), project, dict(datasets)
+        )
+        metadata = json.dumps(
+            {
+                "workflow_id": workflow_id,
+                "revision": revision,
+                "digest": document.digest,
+                "updated_at": int(time.time()),
+            },
+            sort_keys=True,
+        ).encode("utf-8")
         self._atomic_write(directory / ".wright-workflow.json", metadata)
         return document
 
@@ -144,7 +211,9 @@ class WorkspaceWorkflowStore:
         if not re.fullmatch(r"[0-9a-f-]{36,64}", recovery_id):
             raise WorkflowPersistenceError("Invalid recovery ID")
         target = self._directory(slug)
-        source = self._paths.resolve(f"workflows/.deleted/{recovery_id}", must_exist=True)
+        source = self._paths.resolve(
+            f"workflows/.deleted/{recovery_id}", must_exist=True
+        )
         if target.exists():
             raise WorkflowPersistenceError("Workflow slug already exists")
         os.replace(source, target)
@@ -154,4 +223,11 @@ class WorkspaceWorkflowStore:
         root = self._paths.resolve("workflows")
         if not root.exists():
             return []
-        return [child.name for child in root.iterdir() if child.name != ".deleted" and child.is_dir() and not child.is_symlink() and _SLUG.fullmatch(child.name)]
+        return [
+            child.name
+            for child in root.iterdir()
+            if child.name != ".deleted"
+            and child.is_dir()
+            and not child.is_symlink()
+            and _SLUG.fullmatch(child.name)
+        ]

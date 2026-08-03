@@ -226,9 +226,7 @@ async def workflow_editor_status_endpoint(
     return WorkflowEditorAvailabilityResponse(availability=availability, detail=detail)
 
 
-@router.post(
-    "/workflows/editor/surface", response_model=WorkflowEditorSurfaceResponse
-)
+@router.post("/workflows/editor/surface", response_model=WorkflowEditorSurfaceResponse)
 @traced("workspace.workflows.editor.surface")
 async def workflow_editor_surface_endpoint(
     body: WorkflowEditorSurfaceRequest,
@@ -243,7 +241,9 @@ async def workflow_editor_surface_endpoint(
     try:
         manifest = service.workflow_editor.manual_surface_manifest(workspace_dir)
     except WorkflowEditorError as error:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=str(error)
+        ) from error
     return WorkflowEditorSurfaceResponse(
         availability=availability,
         detail=detail,
