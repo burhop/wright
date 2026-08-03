@@ -14,7 +14,11 @@ from typing import Optional
 from agent_adapters import BaseAgentEngine
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
-from api.config import api_mcp_autostart_enabled, rivet_workflows_enabled
+from api.config import (
+    api_mcp_autostart_enabled,
+    rivet_runner_enabled,
+    rivet_workflows_enabled,
+)
 from api.routers.agent import get_agent_engine
 from api.composition import surface_application, workspace_service
 from workspace_service import (
@@ -83,8 +87,16 @@ from api.schemas.workspace import (
     WorkflowDeleteRequest,
     WorkflowRecoveryRequest,
     WorkflowRenameRequest,
+    WorkflowRunnerStatusResponse,
+    WorkflowRunCancelRequest,
+    WorkflowRunResponse,
+    WorkflowRunStartRequest,
 )
-from workspace_service.workflows import WorkflowPersistenceError, WorkflowRevisionConflict
+from workspace_service.workflows import (
+    WorkflowPersistenceError,
+    WorkflowRevisionConflict,
+)
+from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -101,7 +113,16 @@ def get_workspace_service() -> WorkspaceService:
 
 def _workflow_feature_enabled() -> None:
     if not rivet_workflows_enabled():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rivet workflows are disabled")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Rivet workflows are disabled"
+        )
+
+
+def _runner_feature_enabled() -> None:
+    if not rivet_runner_enabled():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Rivet runner is disabled"
+        )
 
 
 def _workflow_response(document) -> WorkflowResponse:
@@ -113,10 +134,126 @@ def _workflow_response(document) -> WorkflowResponse:
     )
 
 
+def _run_response(run) -> WorkflowRunResponse:
+    return WorkflowRunResponse(
+        run_id=run.run_id,
+        workspace_id=run.workspace_id,
+        session_id=run.session_id,
+        workflow_id=run.workflow_id,
+        revision=run.revision,
+        generation=run.generation,
+        state=run.state,
+        reason=run.reason,
+    )
+
+
+@router.get("/workflows/runner/status", response_model=WorkflowRunnerStatusResponse)
+@traced("workspace.workflows.runner.status")
+async def workflow_runner_status_endpoint(
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    runner = service.workflow_runner.status()
+    return WorkflowRunnerStatusResponse(
+        availability=runner.availability,
+        generation=runner.generation,
+        detail=runner.detail,
+    )
+
+
+@router.post(
+    "/workflows/{slug}/runs",
+    response_model=WorkflowRunResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflows.runner.start")
+async def start_workflow_run_endpoint(
+    slug: str,
+    body: WorkflowRunStartRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
+    try:
+        run = await service.workflow_runner.start(
+            workspace_id=workspace["workspace_id"],
+            session_id=body.session_id,
+            workspace_dir=workspace_dir,
+            slug=slug,
+            expected_generation=body.expected_generation,
+        )
+        return _run_response(run)
+    except WorkflowRunnerUnavailable as error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={"code": error.code, "availability": error.availability},
+        ) from error
+    except (WorkflowRunnerError, WorkflowPersistenceError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "code": getattr(error, "code", "invalid_workflow_run"),
+                "message": str(error),
+            },
+        ) from error
+
+
+@router.get("/workflows/runs/{run_id}", response_model=WorkflowRunResponse)
+@traced("workspace.workflows.runner.status")
+async def workflow_run_status_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    try:
+        run = service.workflow_runner.get(run_id)
+        if run.session_id != session_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Workflow run not found"
+            )
+        return _run_response(run)
+    except WorkflowRunnerError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+
+
+@router.post("/workflows/runs/{run_id}/cancel", response_model=WorkflowRunResponse)
+@traced("workspace.workflows.runner.cancel")
+async def cancel_workflow_run_endpoint(
+    run_id: str,
+    body: WorkflowRunCancelRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    try:
+        run = service.workflow_runner.get(run_id)
+        if run.session_id != body.session_id:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Workflow run not found"
+            )
+        return _run_response(
+            await service.workflow_runner.cancel(run_id, generation=body.generation)
+        )
+    except WorkflowRunnerError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"code": error.code, "message": str(error)},
+        ) from error
+
+
 @router.get("/workflows/{slug}", response_model=WorkflowDocumentResponse)
 @traced("workspace.workflows.read")
 async def read_workflow_endpoint(
-    slug: str, session_id: str = Query(...),
+    slug: str,
+    session_id: str = Query(...),
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
@@ -125,15 +262,23 @@ async def read_workflow_endpoint(
     try:
         document = await service.workflows.read(workspace_dir, slug)
         return WorkflowDocumentResponse(
-            **_workflow_response(document).model_dump(), project=document.project, datasets=document.datasets
+            **_workflow_response(document).model_dump(),
+            project=document.project,
+            datasets=document.datasets,
         )
     except FileNotFoundError as error:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found") from error
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found"
+        ) from error
     except WorkflowPersistenceError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
 
 
-@router.post("/workflows", response_model=WorkflowResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/workflows", response_model=WorkflowResponse, status_code=status.HTTP_201_CREATED
+)
 @traced("workspace.workflows.create")
 async def create_workflow_endpoint(
     body: WorkflowCreateRequest,
@@ -144,14 +289,22 @@ async def create_workflow_endpoint(
     workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     workspace = service.lifecycle.get_by_session(body.session_id)
     if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
     try:
         document = await service.workflows.create(
-            workspace["workspace_id"], workspace_dir, body.slug, body.project, body.datasets
+            workspace["workspace_id"],
+            workspace_dir,
+            body.slug,
+            body.project,
+            body.datasets,
         )
         return _workflow_response(document)
     except WorkflowPersistenceError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
 
 
 @router.put("/workflows/{slug}", response_model=WorkflowResponse)
@@ -166,22 +319,39 @@ async def save_workflow_endpoint(
     workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     workspace = service.lifecycle.get_by_session(body.session_id)
     if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
     try:
         document = await service.workflows.save(
-            workspace["workspace_id"], workspace_dir, slug, body.expected_revision, body.project, body.datasets
+            workspace["workspace_id"],
+            workspace_dir,
+            slug,
+            body.expected_revision,
+            body.project,
+            body.datasets,
         )
         return _workflow_response(document)
     except WorkflowRevisionConflict as error:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail={"code": "revision_conflict", "revision": error.revision, "etag": error.digest}) from error
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": "revision_conflict",
+                "revision": error.revision,
+                "etag": error.digest,
+            },
+        ) from error
     except WorkflowPersistenceError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
 
 
 @router.post("/workflows/{slug}/rename", response_model=WorkflowResponse)
 @traced("workspace.workflows.rename")
 async def rename_workflow_endpoint(
-    slug: str, body: WorkflowRenameRequest,
+    slug: str,
+    body: WorkflowRenameRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
@@ -189,22 +359,38 @@ async def rename_workflow_endpoint(
     workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     workspace = service.lifecycle.get_by_session(body.session_id)
     if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
     try:
         document = await service.workflows.rename(
-            workspace["workspace_id"], workspace_dir, slug, body.expected_revision, body.slug
+            workspace["workspace_id"],
+            workspace_dir,
+            slug,
+            body.expected_revision,
+            body.slug,
         )
         return _workflow_response(document)
     except WorkflowRevisionConflict as error:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail={"code": "revision_conflict", "revision": error.revision, "etag": error.digest}) from error
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": "revision_conflict",
+                "revision": error.revision,
+                "etag": error.digest,
+            },
+        ) from error
     except WorkflowPersistenceError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
 
 
 @router.delete("/workflows/{slug}")
 @traced("workspace.workflows.delete")
 async def delete_workflow_endpoint(
-    slug: str, body: WorkflowDeleteRequest,
+    slug: str,
+    body: WorkflowDeleteRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
@@ -212,20 +398,34 @@ async def delete_workflow_endpoint(
     workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     workspace = service.lifecycle.get_by_session(body.session_id)
     if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
     try:
-        recovery_id = await service.workflows.delete(workspace["workspace_id"], workspace_dir, slug, body.expected_revision)
+        recovery_id = await service.workflows.delete(
+            workspace["workspace_id"], workspace_dir, slug, body.expected_revision
+        )
         return {"recovery_id": recovery_id}
     except WorkflowRevisionConflict as error:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail={"code": "revision_conflict", "revision": error.revision, "etag": error.digest}) from error
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": "revision_conflict",
+                "revision": error.revision,
+                "etag": error.digest,
+            },
+        ) from error
     except WorkflowPersistenceError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
 
 
 @router.post("/workflows/recover/{recovery_id}", response_model=WorkflowResponse)
 @traced("workspace.workflows.recover")
 async def recover_workflow_endpoint(
-    recovery_id: str, body: WorkflowRecoveryRequest,
+    recovery_id: str,
+    body: WorkflowRecoveryRequest,
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
@@ -233,12 +433,18 @@ async def recover_workflow_endpoint(
     workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     workspace = service.lifecycle.get_by_session(body.session_id)
     if not workspace:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
     try:
-        document = await service.workflows.recover(workspace["workspace_id"], workspace_dir, recovery_id, body.slug)
+        document = await service.workflows.recover(
+            workspace["workspace_id"], workspace_dir, recovery_id, body.slug
+        )
         return _workflow_response(document)
     except WorkflowPersistenceError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
 
 
 def _active_agent_id(request: Request | None = None) -> str:
