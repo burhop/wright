@@ -29,6 +29,7 @@ import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
+import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
@@ -106,6 +107,7 @@ export function WorkspacePanel({
   } = useChat();
   const navigate = useNavigate();
   const surfacesEnabled = workspaceSurfacesEnabled();
+  const workflowsTabEnabled = rivetWorkflowsTabEnabled();
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1425,6 +1427,7 @@ export function WorkspacePanel({
           isSidebarCollapsed={isSidebarCollapsed}
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
+          workflowsEnabled={workflowsTabEnabled}
         />
       )}
 
@@ -1581,6 +1584,14 @@ export function WorkspacePanel({
               )}
             </div>
           </div>
+        )}
+        {activeSidebar === "workflows" && workflowsTabEnabled && (
+          <section data-testid="rivet-workflows-tab" style={{ padding: "var(--space-md)" }}>
+            <h2 style={{ fontSize: "0.8rem", marginTop: 0 }}>Rivet Workflows</h2>
+            <p style={{ color: "var(--color-secondary)", fontSize: "0.75rem", lineHeight: 1.5 }}>
+              The editor runs as an isolated retained workspace surface. It is unavailable until a verified local Rivet editor bundle is installed.
+            </p>
+          </section>
         )}
 
         {activeSidebar === "files" && (

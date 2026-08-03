@@ -16,3 +16,10 @@ export function workspaceSurfacesEnabled(
     return false;
   }
 }
+
+export function rivetWorkflowsTabEnabled(
+  environment: Record<string, unknown> = import.meta.env,
+): boolean {
+  const value = environment.VITE_RIVET_WORKFLOWS_TAB_ENABLED;
+  return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
+}

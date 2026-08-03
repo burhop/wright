@@ -10,13 +10,14 @@ import {
 } from "../common/Icons";
 
 export type WorkspaceSidebarId =
-  "marketplace" | "files" | "git" | "settings" | "docs";
+  "marketplace" | "files" | "git" | "settings" | "docs" | "workflows";
 
 interface WorkspaceActivityBarProps {
   activeSidebar: WorkspaceSidebarId;
   isSidebarCollapsed: boolean;
   onBack: () => void;
   onSelectSidebar: (sidebar: WorkspaceSidebarId) => void;
+  workflowsEnabled?: boolean;
 }
 
 const items: Array<{
@@ -25,6 +26,12 @@ const items: Array<{
   title: string;
   icon: (size: number) => ReactElement;
 }> = [
+  {
+    id: "workflows",
+    testId: "activity-bar-workflows-btn",
+    title: "Rivet Workflows",
+    icon: (size) => <BookOpenIcon size={size} />,
+  },
   {
     id: "files",
     testId: "activity-bar-explorer-btn",
@@ -73,6 +80,7 @@ export function WorkspaceActivityBar({
   isSidebarCollapsed,
   onBack,
   onSelectSidebar,
+  workflowsEnabled = false,
 }: WorkspaceActivityBarProps) {
   return (
     <div
@@ -97,7 +105,7 @@ export function WorkspaceActivityBar({
       >
         <BackIcon size={20} />
       </button>
-      {items.map((item) => {
+      {items.filter((item) => item.id !== "workflows" || workflowsEnabled).map((item) => {
         const isActive = !isSidebarCollapsed && activeSidebar === item.id;
         return (
           <button
