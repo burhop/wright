@@ -7,7 +7,9 @@ import * as surfaceClient from "../src/services/surfaces/surface-client";
 
 describe("RivetWorkflowsPanel", () => {
   beforeEach(() => {
-    vi.spyOn(workspaceService, "listRivetWorkflowOperations").mockResolvedValue([]);
+    vi.spyOn(workspaceService, "listRivetWorkflowOperations").mockResolvedValue(
+      [],
+    );
   });
 
   afterEach(() => {
@@ -15,14 +17,20 @@ describe("RivetWorkflowsPanel", () => {
   });
 
   it("discloses manual-only browser storage without a workspace save control", async () => {
-    render(<RivetWorkflowsPanel sessionId="session-1" workspaceId="workspace-1" />);
+    render(
+      <RivetWorkflowsPanel sessionId="session-1" workspaceId="workspace-1" />,
+    );
 
     expect(
       screen.getByText(/does not save into the Wright workspace/i),
     ).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /save.*workspace/i })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /save.*workspace/i }),
+    ).toBeNull();
     await waitFor(() => {
-      expect(workspaceService.listRivetWorkflowOperations).toHaveBeenCalledWith("session-1");
+      expect(workspaceService.listRivetWorkflowOperations).toHaveBeenCalledWith(
+        "session-1",
+      );
     });
   });
 
@@ -39,20 +47,30 @@ describe("RivetWorkflowsPanel", () => {
       detail: null,
       manifest,
     });
-    const declare = vi.spyOn(surfaceClient, "declareLiveApp").mockResolvedValue({
-      surfaceId: "surface-1",
-    } as never);
+    const declare = vi
+      .spyOn(surfaceClient, "declareLiveApp")
+      .mockResolvedValue({
+        surfaceId: "surface-1",
+      } as never);
     const reconciled = vi.fn();
     window.addEventListener("wright-surfaces-changed", reconciled);
-    render(<RivetWorkflowsPanel sessionId="session-1" workspaceId="workspace-1" />);
+    render(
+      <RivetWorkflowsPanel sessionId="session-1" workspaceId="workspace-1" />,
+    );
 
     fireEvent.click(screen.getByTestId("rivet-editor-open"));
 
     await waitFor(() => {
-      expect(declare).toHaveBeenCalledWith(manifest, "workspace-1", "session-1");
+      expect(declare).toHaveBeenCalledWith(
+        manifest,
+        "workspace-1",
+        "session-1",
+      );
     });
     expect(reconciled).toHaveBeenCalledTimes(1);
-    expect(screen.getByText(/opened as an isolated workspace tab/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/opened as an isolated workspace tab/i),
+    ).toBeInTheDocument();
     window.removeEventListener("wright-surfaces-changed", reconciled);
   });
 });

@@ -105,21 +105,23 @@ export function WorkspaceActivityBar({
       >
         <BackIcon size={20} />
       </button>
-      {items.filter((item) => item.id !== "workflows" || workflowsEnabled).map((item) => {
-        const isActive = !isSidebarCollapsed && activeSidebar === item.id;
-        return (
-          <button
-            key={item.id}
-            data-testid={item.testId}
-            onClick={() => onSelectSidebar(item.id)}
-            style={iconButtonStyle(isActive)}
-            title={item.title}
-            className="activity-bar-icon"
-          >
-            {item.icon(20)}
-          </button>
-        );
-      })}
+      {items
+        .filter((item) => item.id !== "workflows" || workflowsEnabled)
+        .map((item) => {
+          const isActive = !isSidebarCollapsed && activeSidebar === item.id;
+          return (
+            <button
+              key={item.id}
+              data-testid={item.testId}
+              onClick={() => onSelectSidebar(item.id)}
+              style={iconButtonStyle(isActive)}
+              title={item.title}
+              className="activity-bar-icon"
+            >
+              {item.icon(20)}
+            </button>
+          );
+        })}
     </div>
   );
 }

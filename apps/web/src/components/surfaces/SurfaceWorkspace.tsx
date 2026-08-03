@@ -55,7 +55,8 @@ export function SurfaceWorkspace({
       });
     };
     window.addEventListener("wright-surfaces-changed", reconcile);
-    return () => window.removeEventListener("wright-surfaces-changed", reconcile);
+    return () =>
+      window.removeEventListener("wright-surfaces-changed", reconcile);
   }, [dispatch, sessionId, workspaceId]);
 
   useEffect(() => {

@@ -54,14 +54,20 @@ export const API_BASE = getApiBase();
 
 export class WorkspaceService {
   async getRivetEditorSurface(sessionId: string): Promise<RivetEditorSurface> {
-    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/workflows/editor/surface`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: sessionId }),
-    });
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/editor/surface`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
     if (!response.ok) throw new Error("Rivet editor is unavailable");
     return response.json();
   }
-  async listRivetWorkflowOperations(sessionId: string): Promise<RivetWorkflowOperation[]> {
+  async listRivetWorkflowOperations(
+    sessionId: string,
+  ): Promise<RivetWorkflowOperation[]> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows?session_id=${encodeURIComponent(sessionId)}`,
     );
@@ -70,28 +76,46 @@ export class WorkspaceService {
   }
 
   async reviewRivetWorkflow(
-    sessionId: string, slug: string, state: "approved" | "rejected", reviewer: string,
+    sessionId: string,
+    slug: string,
+    state: "approved" | "rejected",
+    reviewer: string,
   ): Promise<RivetWorkflowOperation> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/review`,
-      { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, state, reviewer }) },
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, state, reviewer }),
+      },
     );
     if (!response.ok) throw new Error("Unable to record workflow review");
     return response.json();
   }
 
-  async runRivetWorkflow(sessionId: string, slug: string): Promise<RivetWorkflowRun> {
+  async runRivetWorkflow(
+    sessionId: string,
+    slug: string,
+  ): Promise<RivetWorkflowRun> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/runs`,
-      { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId }) },
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
     );
-    if (!response.ok) throw new Error("Workflow could not start; approve its current revision and enable the runner.");
+    if (!response.ok)
+      throw new Error(
+        "Workflow could not start; approve its current revision and enable the runner.",
+      );
     return response.json();
   }
 
-  async getRivetWorkflowHistory(sessionId: string, runId: string): Promise<Array<{ sequence: number; kind: string }>> {
+  async getRivetWorkflowHistory(
+    sessionId: string,
+    runId: string,
+  ): Promise<Array<{ sequence: number; kind: string }>> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/history?session_id=${encodeURIComponent(sessionId)}`,
     );
@@ -99,11 +123,20 @@ export class WorkspaceService {
     return (await response.json()).events || [];
   }
 
-  async cancelRivetWorkflow(sessionId: string, run: RivetWorkflowRun): Promise<RivetWorkflowRun> {
+  async cancelRivetWorkflow(
+    sessionId: string,
+    run: RivetWorkflowRun,
+  ): Promise<RivetWorkflowRun> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(run.run_id)}/cancel`,
-      { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, generation: run.generation }) },
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          generation: run.generation,
+        }),
+      },
     );
     if (!response.ok) throw new Error("Workflow cancellation failed");
     return response.json();
