@@ -84,18 +84,18 @@ def is_synthetic_session_workspace(row: Dict[str, Any]) -> bool:
     basename = os.path.basename(local_path)
     workspace_name = str(row.get("workspace_name") or "").strip()
 
-    synthetic_id = any(
-        token.startswith(SYNTHETIC_SESSION_PREFIXES)
-        or bool(UUID_SESSION_PATTERN.fullmatch(token))
-        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
-        or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
-        for token in (session_id, basename, workspace_name)
-        if token
-    )
-    if not synthetic_id:
-        return False
+    def is_synthetic_token(token: str) -> bool:
+        return (
+            token.startswith(SYNTHETIC_SESSION_PREFIXES)
+            or bool(UUID_SESSION_PATTERN.fullmatch(token))
+            or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
+            or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
+        )
 
     display_name = workspace_name or basename
+    if not display_name or not is_synthetic_token(display_name):
+        return False
+
     return display_name in {session_id, basename}
 
 

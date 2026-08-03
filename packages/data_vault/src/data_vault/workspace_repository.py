@@ -32,22 +32,24 @@ def sanitize_workspace_name(name: str) -> str:
 
 
 def is_synthetic_session_workspace(row: Mapping[str, Any]) -> bool:
+    """Return True only for rows whose display name is a transient session id."""
     session_id = str(row.get("session_id") or "").strip()
     local_path = str(row.get("local_path") or "").rstrip("/\\")
     basename = os.path.basename(local_path)
     workspace_name = str(row.get("workspace_name") or "").strip()
-    synthetic = any(
-        token.startswith(SYNTHETIC_SESSION_PREFIXES)
-        or bool(UUID_SESSION_PATTERN.fullmatch(token))
-        or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
-        or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
-        for token in (session_id, basename, workspace_name)
-        if token
-    )
-    if not synthetic:
-        return False
+
+    def is_synthetic_token(token: str) -> bool:
+        return (
+            token.startswith(SYNTHETIC_SESSION_PREFIXES)
+            or bool(UUID_SESSION_PATTERN.fullmatch(token))
+            or bool(HERMES_NATIVE_SESSION_PATTERN.fullmatch(token))
+            or bool(GENERIC_SESSION_PATTERN.fullmatch(token))
+        )
 
     display_name = workspace_name or basename
+    if not display_name or not is_synthetic_token(display_name):
+        return False
+
     return display_name in {session_id, basename}
 
 
