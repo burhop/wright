@@ -16,6 +16,7 @@ from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from api.config import (
     api_mcp_autostart_enabled,
+    rivet_editor_enabled,
     rivet_runner_enabled,
     rivet_workflows_enabled,
 )
@@ -91,12 +92,18 @@ from api.schemas.workspace import (
     WorkflowRunCancelRequest,
     WorkflowRunResponse,
     WorkflowRunStartRequest,
+    WorkflowEditorAvailabilityResponse,
+    WorkflowEditorBootstrapRequest,
+    WorkflowEditorBootstrapResponse,
+    WorkflowEditorReadRequest,
+    WorkflowEditorSaveRequest,
 )
 from workspace_service.workflows import (
     WorkflowPersistenceError,
     WorkflowRevisionConflict,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
+from core.workflow_editor import WorkflowEditorError
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -125,6 +132,13 @@ def _runner_feature_enabled() -> None:
         )
 
 
+def _editor_feature_enabled() -> None:
+    if not rivet_editor_enabled():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Rivet editor is disabled"
+        )
+
+
 def _workflow_response(document) -> WorkflowResponse:
     return WorkflowResponse(
         workflow_id=document.workflow_id,
@@ -145,6 +159,132 @@ def _run_response(run) -> WorkflowRunResponse:
         state=run.state,
         reason=run.reason,
     )
+
+
+def _editor_bootstrap_response(bootstrap) -> WorkflowEditorBootstrapResponse:
+    return WorkflowEditorBootstrapResponse(
+        availability=bootstrap.availability,
+        grant_id=bootstrap.grant_id,
+        workflow_id=bootstrap.workflow_id,
+        revision=bootstrap.revision,
+        etag=bootstrap.etag,
+        expires_at=(bootstrap.expires_at.isoformat() if bootstrap.expires_at else None),
+        detail=bootstrap.detail,
+    )
+
+
+async def _editor_scope(
+    session_id: str, engine: BaseAgentEngine, service: WorkspaceService
+):
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    return workspace["workspace_id"], await service.resolve_workspace_dir(
+        session_id, engine
+    )
+
+
+@router.get(
+    "/workflows/editor/status", response_model=WorkflowEditorAvailabilityResponse
+)
+@traced("workspace.workflows.editor.status")
+async def workflow_editor_status_endpoint(
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _editor_feature_enabled()
+    availability, detail = service.workflow_editor.availability()
+    return WorkflowEditorAvailabilityResponse(availability=availability, detail=detail)
+
+
+@router.post(
+    "/workflows/{slug}/editor/bootstrap", response_model=WorkflowEditorBootstrapResponse
+)
+@traced("workspace.workflows.editor.bootstrap")
+async def workflow_editor_bootstrap_endpoint(
+    slug: str,
+    body: WorkflowEditorBootstrapRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _editor_feature_enabled()
+    workspace_id, workspace_dir = await _editor_scope(body.session_id, engine, service)
+    try:
+        return _editor_bootstrap_response(
+            await service.workflow_editor.bootstrap(
+                workspace_id=workspace_id,
+                session_id=body.session_id,
+                workspace_dir=workspace_dir,
+                slug=slug,
+            )
+        )
+    except WorkflowPersistenceError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found"
+        ) from error
+
+
+@router.post("/workflows/editor/read", response_model=WorkflowDocumentResponse)
+@traced("workspace.workflows.editor.read")
+async def workflow_editor_read_endpoint(
+    body: WorkflowEditorReadRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _editor_feature_enabled()
+    workspace_id, workspace_dir = await _editor_scope(body.session_id, engine, service)
+    try:
+        document = await service.workflow_editor.read(
+            body.grant_id,
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_dir=workspace_dir,
+        )
+        return WorkflowDocumentResponse(
+            **_workflow_response(document).model_dump(),
+            project=document.project,
+            datasets=document.datasets,
+        )
+    except WorkflowEditorError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Editor grant is unavailable"
+        ) from error
+
+
+@router.post("/workflows/editor/save", response_model=WorkflowResponse)
+@traced("workspace.workflows.editor.save")
+async def workflow_editor_save_endpoint(
+    body: WorkflowEditorSaveRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _editor_feature_enabled()
+    workspace_id, workspace_dir = await _editor_scope(body.session_id, engine, service)
+    try:
+        document = await service.workflow_editor.save(
+            body.grant_id,
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_dir=workspace_dir,
+            expected_revision=body.expected_revision,
+            project=body.project,
+            datasets=body.datasets,
+        )
+        return _workflow_response(document)
+    except WorkflowEditorError as error:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Editor grant is unavailable"
+        ) from error
+    except WorkflowRevisionConflict as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": "revision_conflict",
+                "revision": error.revision,
+                "etag": error.digest,
+            },
+        ) from error
 
 
 @router.get("/workflows/runner/status", response_model=WorkflowRunnerStatusResponse)
