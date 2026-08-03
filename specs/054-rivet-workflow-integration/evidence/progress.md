@@ -9,6 +9,7 @@
 | 059 workspace tab | Complete | `5c1736f` | Default-off workspace Workflows tab chrome is present; the real retained editor stays unavailable pending verified offline assets. |
 | 060 Wright nodes | Complete with hardening follow-up | `f3cd5de` | Gateway bridge carries run/workspace/session scope and forces server-side approval policy; runner-to-bridge execution wiring and durable provenance remain hardening work. |
 | 061 workflow operations | Complete | `4725e75` | Exact workspace/revision review is required before launch; catalog, review, run, cancellation, and bounded scope-checked history are default-off. Migration 11 preserves earlier metadata. See `specs/061-rivet-workflow-operations/evidence.md`. |
+| 064 retained editor host | Complete | `cdbf110` (restored by `5dac57e`) | Pinned offline Rivet artifact, bounded localhost host, isolated retained workspace surface, stable re-open declaration, and browser-only import/export disclosure are verified. Disabled or missing editor paths cannot declare or start a process. See `specs/064-retained-editor-host/evidence.md`. |
 | Agent publication (optional P2) | Deferred | — | Requires a separate explicit approval; it does not block MVP completion. |
 | Release hardening | Next | — | Revisit retained editor, real packaged Node runtime, runner/bridge provenance, platform/offline/Docker, accessibility, and final merge evidence. |
 
