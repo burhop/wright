@@ -106,6 +106,34 @@ class WorkflowRunResponse(BaseModel):
     reason: str | None = None
 
 
+class WorkflowEditorAvailabilityResponse(BaseModel):
+    availability: str
+    detail: str | None = None
+
+
+class WorkflowEditorBootstrapRequest(BaseModel):
+    session_id: str
+
+
+class WorkflowEditorBootstrapResponse(WorkflowEditorAvailabilityResponse):
+    grant_id: str | None = None
+    workflow_id: str | None = None
+    revision: int | None = None
+    etag: str | None = None
+    expires_at: str | None = None
+
+
+class WorkflowEditorReadRequest(BaseModel):
+    session_id: str
+    grant_id: str
+
+
+class WorkflowEditorSaveRequest(WorkflowEditorReadRequest):
+    expected_revision: int = Field(ge=1)
+    project: str
+    datasets: Dict[str, str] = Field(default_factory=dict)
+
+
 class WorkflowDeleteRequest(BaseModel):
     session_id: str
     expected_revision: int

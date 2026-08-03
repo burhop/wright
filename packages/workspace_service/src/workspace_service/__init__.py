@@ -22,6 +22,7 @@ from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
 from .workflows import WorkspaceWorkflowStore
 from .workflow_runner import RunnerSettings, RunnerStatus, WorkspaceWorkflowRunner
+from .workflow_editor import EditorAssetCatalog, EditorSettings, WorkspaceWorkflowEditor
 from core.workflows import (
     WorkflowDocument,
     WorkflowPersistenceError,
@@ -49,4 +50,10 @@ __all__ = [
     "WorkflowPersistenceError",
     "WorkflowRevisionConflict",
     "WorkspaceWorkflowStore",
+    "RunnerSettings",
+    "RunnerStatus",
+    "WorkspaceWorkflowRunner",
+    "EditorAssetCatalog",
+    "EditorSettings",
+    "WorkspaceWorkflowEditor",
 ]

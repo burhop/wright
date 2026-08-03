@@ -33,6 +33,15 @@ def rivet_runner_enabled() -> bool:
     }
 
 
+def rivet_editor_enabled() -> bool:
+    """Default-off gate for the isolated editor adapter HTTP surface."""
+    return os.getenv("WRIGHT_RIVET_EDITOR_ENABLED", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
+
 # UI theme configuration (defaulting to "dark")
 def get_ui_theme() -> str:
     return os.getenv("UI_THEME", "dark")

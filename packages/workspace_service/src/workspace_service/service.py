@@ -63,6 +63,7 @@ from .use_cases.run import issue_display_execution_lease
 from .surfaces.display_tokens import DisplayExecutionTokenService
 from .surfaces.process_supervisor import ProcessAdapter, ProcessSupervisor
 from .workflow_runner import WorkspaceWorkflowRunner
+from .workflow_editor import WorkspaceWorkflowEditor
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -170,6 +171,7 @@ class WorkspaceService:
         self.workflows = WorkspaceWorkflowUseCases(
             self.executor, WorkflowRepository(db_path)
         )
+        self.workflow_editor = WorkspaceWorkflowEditor(self.workflows)
         runner_adapter: ProcessAdapter
         if os.name == "nt":
             from .surfaces.process_windows import WindowsProcessAdapter
