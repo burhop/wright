@@ -6,8 +6,8 @@ All models used by workspace endpoints are defined here.
 """
 
 import json
-from pydantic import BaseModel
-from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Literal, Optional
 
 
 #  File Operations
@@ -51,6 +51,136 @@ class FileContentSaveRequest(BaseModel):
 
 class FileContentSaveResponse(BaseModel):
     success: bool
+
+
+class WorkflowCreateRequest(BaseModel):
+    session_id: str
+    slug: str
+    project: str
+    datasets: Dict[str, str] = Field(default_factory=dict)
+
+
+class WorkflowSaveRequest(BaseModel):
+    session_id: str
+    expected_revision: int
+    project: str
+    datasets: Dict[str, str] = Field(default_factory=dict)
+
+
+class WorkflowResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+
+
+class WorkflowDocumentResponse(WorkflowResponse):
+    project: str
+    datasets: Dict[str, str]
+
+
+class WorkflowRunnerStatusResponse(BaseModel):
+    availability: str
+    generation: int
+    detail: str | None = None
+
+
+class WorkflowRunStartRequest(BaseModel):
+    session_id: str
+    expected_generation: int | None = Field(default=None, ge=1)
+
+
+class WorkflowRunCancelRequest(BaseModel):
+    session_id: str
+    generation: int = Field(ge=1)
+
+
+class WorkflowRunResponse(BaseModel):
+    run_id: str
+    workspace_id: str
+    session_id: str
+    workflow_id: str
+    revision: int
+    generation: int
+    state: str
+    reason: str | None = None
+
+
+class WorkflowReviewRequest(BaseModel):
+    session_id: str
+    state: Literal["approved", "rejected"]
+    reviewer: str = Field(min_length=1, max_length=200)
+
+
+class WorkflowReviewResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+    review_state: str | None = None
+    reviewer: str | None = None
+    reviewed_at: int | None = None
+
+
+class WorkflowOperationsListResponse(BaseModel):
+    workflows: list[WorkflowReviewResponse]
+
+
+class WorkflowRunHistoryResponse(BaseModel):
+    run_id: str
+    events: list[dict]
+
+
+class WorkflowEditorAvailabilityResponse(BaseModel):
+    availability: str
+    detail: str | None = None
+
+
+class WorkflowEditorSurfaceRequest(BaseModel):
+    session_id: str
+
+
+class WorkflowEditorSurfaceResponse(WorkflowEditorAvailabilityResponse):
+    manifest: Dict[str, Any] | None = None
+
+
+class WorkflowEditorBootstrapRequest(BaseModel):
+    session_id: str
+
+
+class WorkflowEditorBootstrapResponse(WorkflowEditorAvailabilityResponse):
+    grant_id: str | None = None
+    workflow_id: str | None = None
+    revision: int | None = None
+    etag: str | None = None
+    expires_at: str | None = None
+
+
+class WorkflowEditorReadRequest(BaseModel):
+    session_id: str
+    grant_id: str
+
+
+class WorkflowEditorSaveRequest(WorkflowEditorReadRequest):
+    expected_revision: int = Field(ge=1)
+    project: str
+    datasets: Dict[str, str] = Field(default_factory=dict)
+
+
+class WorkflowDeleteRequest(BaseModel):
+    session_id: str
+    expected_revision: int
+
+
+class WorkflowRecoveryRequest(BaseModel):
+    session_id: str
+    slug: str
+
+
+class WorkflowRenameRequest(BaseModel):
+    session_id: str
+    expected_revision: int
+    slug: str
 
 
 #  Git Operations

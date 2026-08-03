@@ -14,6 +14,31 @@ export interface WorkspaceNode {
   children: WorkspaceNode[] | null;
 }
 
+export interface RivetWorkflowOperation {
+  workflow_id: string;
+  slug: string;
+  revision: number;
+  etag: string;
+  review_state: "approved" | "rejected" | null;
+  reviewer: string | null;
+  reviewed_at: number | null;
+}
+
+export interface RivetWorkflowRun {
+  run_id: string;
+  workflow_id: string;
+  revision: number;
+  generation: number;
+  state: string;
+  reason: string | null;
+}
+
+export interface RivetEditorSurface {
+  availability: "disabled" | "available" | "missing" | "incompatible";
+  detail: string | null;
+  manifest: Record<string, unknown> | null;
+}
+
 const getApiBase = () => {
   if (typeof window === "undefined") {
     return "http://127.0.0.1:8000";
@@ -28,6 +53,62 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
+  async getRivetEditorSurface(sessionId: string): Promise<RivetEditorSurface> {
+    const response = await hostAdapter.fetch(`${API_BASE}/api/workspace/workflows/editor/surface`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId }),
+    });
+    if (!response.ok) throw new Error("Rivet editor is unavailable");
+    return response.json();
+  }
+  async listRivetWorkflowOperations(sessionId: string): Promise<RivetWorkflowOperation[]> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Rivet workflows are unavailable");
+    return (await response.json()).workflows || [];
+  }
+
+  async reviewRivetWorkflow(
+    sessionId: string, slug: string, state: "approved" | "rejected", reviewer: string,
+  ): Promise<RivetWorkflowOperation> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/review`,
+      { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, state, reviewer }) },
+    );
+    if (!response.ok) throw new Error("Unable to record workflow review");
+    return response.json();
+  }
+
+  async runRivetWorkflow(sessionId: string, slug: string): Promise<RivetWorkflowRun> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/runs`,
+      { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }) },
+    );
+    if (!response.ok) throw new Error("Workflow could not start; approve its current revision and enable the runner.");
+    return response.json();
+  }
+
+  async getRivetWorkflowHistory(sessionId: string, runId: string): Promise<Array<{ sequence: number; kind: string }>> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/history?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Workflow history is unavailable");
+    return (await response.json()).events || [];
+  }
+
+  async cancelRivetWorkflow(sessionId: string, run: RivetWorkflowRun): Promise<RivetWorkflowRun> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(run.run_id)}/cancel`,
+      { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, generation: run.generation }) },
+    );
+    if (!response.ok) throw new Error("Workflow cancellation failed");
+    return response.json();
+  }
+
   async getWorkspaceFiles(sessionId: string): Promise<WorkspaceNode> {
     workspaceLogger.info("Fetching workspace files", { sessionId });
 

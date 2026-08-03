@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Wright Rivet compatibility probe envelope",
+  "type": "object",
+  "required": ["contractVersion", "baselineId", "phase", "environment", "result", "timestamp"],
+  "properties": {
+    "contractVersion": { "const": 1 },
+    "baselineId": { "type": "string", "minLength": 1 },
+    "phase": { "enum": ["acquire", "build", "editor", "runner", "offline", "supply-chain", "cleanup"] },
+    "environment": { "type": "object" },
+    "result": { "enum": ["passed", "failed", "unsupported", "blocked"] },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "events": { "type": "array" },
+    "details": { "type": "object" }
+  },
+  "additionalProperties": false
+}

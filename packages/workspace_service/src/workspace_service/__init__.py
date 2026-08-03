@@ -20,6 +20,20 @@ from .service import (
 from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
+from .workflows import WorkspaceWorkflowStore
+from .workflow_runner import RunnerSettings, RunnerStatus, WorkspaceWorkflowRunner
+from .workflow_editor import EditorAssetCatalog, EditorSettings, WorkspaceWorkflowEditor
+from .workflow_operations import (
+    WorkflowOperationRecord,
+    WorkflowOperationsError,
+    WorkflowOperationsSettings,
+    WorkspaceWorkflowOperations,
+)
+from core.workflows import (
+    WorkflowDocument,
+    WorkflowPersistenceError,
+    WorkflowRevisionConflict,
+)
 
 __all__ = [
     "FileExecutionPolicy",
@@ -38,4 +52,18 @@ __all__ = [
     "WorkspaceToolState",
     "default_workspace_parent_dir",
     "build_workspace_service",
+    "WorkflowDocument",
+    "WorkflowPersistenceError",
+    "WorkflowRevisionConflict",
+    "WorkspaceWorkflowStore",
+    "RunnerSettings",
+    "RunnerStatus",
+    "WorkspaceWorkflowRunner",
+    "EditorAssetCatalog",
+    "EditorSettings",
+    "WorkspaceWorkflowEditor",
+    "WorkflowOperationRecord",
+    "WorkflowOperationsError",
+    "WorkflowOperationsSettings",
+    "WorkspaceWorkflowOperations",
 ]

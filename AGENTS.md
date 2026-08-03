@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/053-workspace-surfaces/plan.md
+at specs\064-retained-editor-host\plan.md
 <!-- SPECKIT END -->
 
 

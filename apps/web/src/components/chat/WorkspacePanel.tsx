@@ -29,6 +29,8 @@ import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
+import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
+import { RivetWorkflowsPanel } from "./RivetWorkflowsPanel";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
@@ -106,6 +108,7 @@ export function WorkspacePanel({
   } = useChat();
   const navigate = useNavigate();
   const surfacesEnabled = workspaceSurfacesEnabled();
+  const workflowsTabEnabled = rivetWorkflowsTabEnabled();
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1425,6 +1428,7 @@ export function WorkspacePanel({
           isSidebarCollapsed={isSidebarCollapsed}
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
+          workflowsEnabled={workflowsTabEnabled}
         />
       )}
 
@@ -1581,6 +1585,9 @@ export function WorkspacePanel({
               )}
             </div>
           </div>
+        )}
+        {activeSidebar === "workflows" && workflowsTabEnabled && (
+          <RivetWorkflowsPanel sessionId={workspaceFileSessionId} workspaceId={_workspaceId ?? null} />
         )}
 
         {activeSidebar === "files" && (
