@@ -11,7 +11,7 @@
 | 061 workflow operations | Complete | `4725e75` | Exact workspace/revision review is required before launch; catalog, review, run, cancellation, and bounded scope-checked history are default-off. Migration 11 preserves earlier metadata. See `specs/061-rivet-workflow-operations/evidence.md`. |
 | 064 retained editor host | Complete | `cdbf110` (restored by `5dac57e`) | Pinned offline Rivet artifact, bounded localhost host, isolated retained workspace surface, stable re-open declaration, and browser-only import/export disclosure are verified. Disabled or missing editor paths cannot declare or start a process. See `specs/064-retained-editor-host/evidence.md`. |
 | Agent publication (optional P2) | Deferred | — | Requires a separate explicit approval; it does not block MVP completion. |
-| Release hardening | Next | — | Revisit retained editor, real packaged Node runtime, runner/bridge provenance, platform/offline/Docker, accessibility, and final merge evidence. |
+| Release hardening | Deferred with execution program | — | The editor-tab MVP does not include a Node runner, governed execution, provenance, or execution packaging. Those concerns require a separately approved future program. |
 
 No slice has been pushed, proposed to a remote pull request, merged to `dev` or
 `main`, published, or released. The unresolved Windows offline package-cache

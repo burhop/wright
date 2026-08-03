@@ -8,9 +8,13 @@
 
 ## Summary
 
-Integrate Ironclad Rivet as an optional visual-workflow capability without making Rivet a second workspace, authorization, execution, or artifact system. Wright will host a pinned Rivet editor build as an isolated retained `LiveAppSurface`, replace browser-profile persistence with workspace-scoped host adapters, execute immutable workflow revisions in an optional supervised Node runner, and route all engineering operations through Wright's existing gateway, approval, policy, trace, and artifact contracts.
+Integrate Ironclad Rivet as an optional visual editor without making Rivet a second workspace, authorization, execution, or artifact system. Wright hosts a pinned editor build as an isolated retained `LiveAppSurface` in each workspace. For this MVP, Rivet uses ordinary browser import/export and never claims that browser-selected content is saved to, or executed by, Wright.
 
-Delivery is intentionally incremental. Nine stable slice short names define the compatibility proof, persistence, runtime, editor adapters, workspace tab, Wright nodes, lightweight operations, optional agent publication, and release hardening. Each slice receives the next Spec Kit number only when work starts, branches from the latest umbrella branch, produces its own complete specification/design/task/evidence set, and merges back into this branch. The first user-operable MVP excludes agent publication but includes all other functional slices through workflow operations.
+Delivery is intentionally incremental. The completed compatibility, workspace, tab, and retained-host slices form the MVP. Headless execution, Wright nodes, workflow operations, agent publication, and execution-runtime release hardening are deferred to a separate future program. Each future slice receives a new number and approval; it does not block the editor-tab MVP.
+
+## Scope Amendment — Editor-Tab MVP
+
+This amendment supersedes any conflicting execution, persistence-bridge, runner, gateway, approval, artifact, publication, and Node-runtime language below. The MVP is complete when the pinned Rivet web editor opens as an isolated retained tab in a Wright workspace and visibly discloses that import/export is browser-local and non-authoritative. No graph execution is enabled or claimed.
 
 ## Technical Context
 
@@ -55,10 +59,8 @@ Post-design re-check: research, data model, four boundary contracts, slice depen
 1. **Use a managed workspace surface, not a component transplant.** Wright serves a pinned Rivet editor build behind the existing `LiveAppSurface` isolation, preview-origin, lifecycle, tab, focus, and diagnostic contracts. Rivet's React application and dependency graph do not enter Wright's React tree.
 2. **Make workspace files authoritative.** Projects live under `workflows/<workflow-slug>/workflow.rivet-project`; project datasets and author-owned attachments live below the same workflow directory. Browser IndexedDB, native file pickers, and global Rivet application directories are compatibility mechanisms only and cannot become Wright's source of truth.
 3. **Introduce narrow Wright host adapters.** A `WrightIOProvider`, `WrightDatasetProvider`, and constrained `WrightNativeApi` translate editor operations to authenticated, revision-aware Wright APIs. If upstream does not expose all providers, a small, isolated patch or maintained fork injects them; the compatibility slice fixes the exact seam and upstream strategy.
-4. **Run graphs in an optional supervised Node sidecar.** `@ironclad/rivet-node` provides the supported headless executor and remote-debugger integration. Wright starts it through the existing process supervisor, binds it to one runtime generation and workspace, applies resource bounds, and treats loss/restart as reconciliation rather than durable process restoration.
-5. **Keep Wright's gateway authoritative.** Rivet External Call nodes or a Wright-owned approved plugin call a narrow runner bridge. That bridge invokes `GatewayService` with the current Wright principal, workspace, session, run, node, constraints, and approval context. Rivet's direct MCP configuration, arbitrary plugin install, file/network nodes, and graph upload remain independently controllable and disabled by default.
-6. **Execute immutable revisions.** A run snapshots or content-addresses the exact reviewed workflow revision and dataset references before launch. Editor autosave state never silently changes an active run. Every event and artifact links back to that immutable source.
-7. **Separate authoring from operations.** The full editor is for design and remote debugging. Wright also provides a lightweight catalog/detail/run/monitor experience that does not load the editor. Explicit agent publication is a later optional projection of the same typed run contract.
+4. **Defer graph execution.** No Node sidecar, debugger bridge, Wright gateway adapter, or run API is enabled by this MVP. Those capabilities require their own approved program because they turn a web editor integration into a governed execution product.
+5. **Keep browser content non-authoritative.** The editor has no workspace-file, gateway, secret, or execution bridge. Browser-selected projects may be opened/exported normally but are not Wright data.
 8. **Degrade cleanly.** Rivet and Node are optional. When disabled, missing, incompatible, or unhealthy, Wright displays an actionable unavailable state and continues all non-Rivet behavior. No slice may make later slices necessary for startup or existing workflows.
 9. **Treat visual graphs as executable code.** Review state, revision pinning, policy profiles, plugin allowlists, network/file controls, approval pauses, audit, and provenance apply before convenience. A graph file alone never grants authority.
 
@@ -69,23 +71,11 @@ flowchart LR
     UI["Wright workspace UI"] --> CAT["Workflow catalog and run monitor"]
     UI --> SURF["Retained LiveAppSurface"]
     SURF --> EDITOR["Pinned isolated Rivet editor"]
-    EDITOR --> BOOT["Workspace-bound editor bootstrap"]
-    EDITOR --> STORE["Wright IO and dataset adapters"]
-    STORE --> WS["workspace_service"]
-    WS --> FILES["Workspace workflow files"]
-    WS --> DB["SQLite metadata and run index"]
-    WS --> VAULT["Vault artifacts and recordings"]
-    CAT --> WS
-    EDITOR -. "remote debugger" .-> RUNNER["Supervised optional Node runner"]
-    WS --> RUNNER
-    RUNNER --> BRIDGE["Wright external-call bridge"]
-    BRIDGE --> GATEWAY["tool_registry GatewayService"]
-    GATEWAY --> TOOLS["Approved MCP and engineering tools"]
-    GATEWAY --> APPROVAL["Wright approval and revocation"]
-    RUNNER --> WS
+    EDITOR --> NOTICE["Browser-only import/export disclosure"]
+    NOTICE -. "no file, secret, gateway, or execution bridge" .-> WS["Wright workspace"]
 ```
 
-Trust direction is one-way: the editor and runner request actions; Wright re-identifies and authorizes them. Neither a Rivet project, browser message, debugger connection, nor plugin configuration can select another workspace or confer privileges.
+Trust direction is one-way: the editor receives no Wright authority. Neither a Rivet project nor browser message can select a workspace or confer privileges.
 
 ## Project Structure
 

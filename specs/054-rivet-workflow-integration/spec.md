@@ -4,6 +4,10 @@
 
 **Created**: 2026-08-03
 
+## Scope Amendment — Editor-Tab MVP
+
+The approved MVP is limited to a pinned Rivet web editor displayed as an isolated retained Wright workspace tab. It may use normal browser import/export, with a visible statement that this content is not saved into or executed by Wright. All requirements below concerning workspace-authoritative Rivet files, Node execution, gateway calls, approvals, artifacts, runs, provenance, agent publication, and execution packaging are deferred to a separately approved future program and do not block this MVP.
+
 **Status**: Draft — umbrella planning feature; implementation occurs only in approved slice branches
 
 **Input**: User description: "Integrate Rivet into Wright incrementally so workflow content is stored per workspace and the Rivet UI appears as a retained workspace tab. Use a separate Spec Kit branch and complete specification/design set for every implementable slice."
