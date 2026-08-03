@@ -1,0 +1,25 @@
+version: 4
+data:
+  graphs:
+    wright-spike-cancellation:
+      metadata:
+        id: wright-spike-cancellation
+        name: Wright Spike Cancellation
+      nodes:
+        '[external-call]:externalCall "External Call"':
+          data:
+            functionName: wright_slow_operation
+            useFunctionNameInput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - result->"Graph Output" graph-output/value
+          visualData: 120/120/180/0
+        '[graph-output]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: result
+          visualData: 420/120/180/0
+  metadata:
+    id: wright-spike-cancellation-project
+    title: Wright Rivet cancellation fixture
+    mainGraphId: wright-spike-cancellation
