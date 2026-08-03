@@ -21,6 +21,7 @@ from core.workflow_editor import (
 from core.workflows import WorkflowDocument
 
 from .use_cases.workflows import WorkspaceWorkflowUseCases
+from .workspace_path import WorkspacePath
 
 
 @dataclass(frozen=True, slots=True)
@@ -108,6 +109,10 @@ class EditorAssetCatalog:
             )
         return EditorAvailability.AVAILABLE, manifest, None
 
+    @property
+    def artifact_root(self) -> Path:
+        return self._manifest_path.parent.resolve()
+
 
 class WorkspaceWorkflowEditor:
     """Issue and enforce opaque grants for exactly one persisted workflow."""
@@ -140,7 +145,7 @@ class WorkspaceWorkflowEditor:
         status, artifact, _detail = self._catalog.status()
         if status is not EditorAvailability.AVAILABLE or artifact is None:
             return None
-        root = self._catalog._manifest_path.parent.resolve()
+        root = self._catalog.artifact_root
         host = root / "host.py"
         entrypoint = (root / artifact.entrypoint).resolve()
         if (
@@ -165,12 +170,20 @@ class WorkspaceWorkflowEditor:
             "lifetime": {"policy": "workspace"},
             "capabilities": [],
         }
-        target = Path(workspace_dir).resolve() / ".wright" / "apps" / "rivet-editor.surface.json"
-        target.parent.mkdir(parents=True, exist_ok=True)
+        paths = WorkspacePath(workspace_dir)
+        apps_directory = paths.resolve(".wright/apps")
+        apps_directory.mkdir(parents=True, exist_ok=True)
+        target = paths.resolve(".wright/apps/rivet-editor.surface.json")
         encoded = json.dumps(document, indent=2, sort_keys=True) + "\n"
-        if target.exists() and target.read_text(encoding="utf-8") != encoded:
-            raise WorkflowEditorError("RIVET_EDITOR_MANIFEST_CONFLICT", "Rivet editor manifest conflicts with an existing workspace file")
-        target.write_text(encoded, encoding="utf-8")
+        try:
+            with target.open("x", encoding="utf-8") as stream:
+                stream.write(encoded)
+        except FileExistsError:
+            if target.read_text(encoding="utf-8") != encoded:
+                raise WorkflowEditorError(
+                    "RIVET_EDITOR_MANIFEST_CONFLICT",
+                    "Rivet editor manifest conflicts with an existing workspace file",
+                ) from None
         return document
 
     async def bootstrap(

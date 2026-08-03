@@ -15,6 +15,7 @@ from workspace_service.workflow_editor import (
     EditorSettings,
     WorkspaceWorkflowEditor,
 )
+from workspace_service.surfaces.manifests import WorkspaceManifestStore
 
 
 def _catalog(tmp_path) -> EditorAssetCatalog:
@@ -174,6 +175,9 @@ def test_manual_surface_manifest_is_verified_and_collision_safe(tmp_path):
     assert manifest["presentation"]["sharing"] == "isolated"  # type: ignore[index]
     generated = workspace / ".wright" / "apps" / "rivet-editor.surface.json"
     assert generated.is_file()
+    discovered = WorkspaceManifestStore(workspace).get("wright.rivet-editor")
+    assert discovered.manifest.presentation.sharing == "isolated"
+    assert discovered.manifest.capabilities == frozenset()
     assert editor.manual_surface_manifest(str(workspace)) == manifest
     generated.write_text("{}", encoding="utf-8")
     with pytest.raises(WorkflowEditorError, match="conflicts"):
@@ -187,3 +191,44 @@ def test_manual_surface_manifest_never_provisions_without_a_verified_host(tmp_pa
         catalog=_catalog(tmp_path / "assets"),
     )
     assert editor.manual_surface_manifest(str(tmp_path / "workspace")) is None
+
+
+def test_manual_surface_manifest_is_confined_to_its_workspace(tmp_path):
+    editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "assets"),
+    )
+    first = tmp_path / "workspace-a"
+    second = tmp_path / "workspace-b"
+    editor.manual_surface_manifest(str(first))
+
+    assert (first / ".wright" / "apps" / "rivet-editor.surface.json").is_file()
+    assert not (second / ".wright" / "apps" / "rivet-editor.surface.json").exists()
+    assert WorkspaceManifestStore(second).discover() == {}
+    editor.manual_surface_manifest(str(second))
+    assert WorkspaceManifestStore(first).get("wright.rivet-editor").relative_path == (
+        ".wright/apps/rivet-editor.surface.json"
+    )
+    assert WorkspaceManifestStore(second).get("wright.rivet-editor").relative_path == (
+        ".wright/apps/rivet-editor.surface.json"
+    )
+
+
+def test_manual_surface_manifest_rejects_linked_workspace_app_directory(tmp_path):
+    editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "assets"),
+    )
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (workspace / ".wright").mkdir()
+    try:
+        (workspace / ".wright" / "apps").symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("Symbolic links are unavailable on this host")
+    with pytest.raises(ValueError, match="symbolic links"):
+        editor.manual_surface_manifest(str(workspace))

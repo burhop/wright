@@ -2,7 +2,7 @@
 
 **Feature Branch**: `064-retained-editor-host`  
 **Created**: 2026-08-03  
-**Status**: Draft  
+**Status**: Verified locally; pending umbrella integration
 **Umbrella base**: `9c0c19b` (`054-rivet-workflow-integration`)
 
 ## User Scenarios & Testing
