@@ -32,6 +32,26 @@ def test_browser_session_token_is_derived_and_separately_validated():
     assert not settings.browser_session_valid(settings.api_token)
 
 
+def test_compat_loopback_bind_allows_dynamic_loopback_browser_origins():
+    settings = SecuritySettings("compat", None, (), "127.0.0.1")
+
+    assert settings.origin_allowed("http://localhost:56351")
+    assert settings.origin_allowed("http://127.0.0.1:56351")
+    assert settings.origin_allowed("http://[::1]:56351")
+    assert not settings.origin_allowed("https://evil.example")
+    assert settings.cors_origin_regex() is not None
+
+
+def test_enforced_mode_does_not_allow_dynamic_loopback_origins_by_default():
+    settings = SecuritySettings(
+        "enforced", "test-admin-token", ("http://localhost:5173",), "127.0.0.1"
+    )
+
+    assert settings.origin_allowed("http://localhost:5173")
+    assert not settings.origin_allowed("http://localhost:56351")
+    assert settings.cors_origin_regex() is None
+
+
 @pytest.mark.asyncio
 async def test_protected_api_requires_valid_bearer(client, monkeypatch):
     from api.main import app

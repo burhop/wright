@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { hostAdapter } from "../../services/host-adapter";
 
@@ -68,13 +68,15 @@ export function ModelSetupPage() {
     () => providers.find((provider) => provider.id === "openai-codex"),
     [providers],
   );
+  const codexSessionId = codexLogin?.session_id;
+  const codexStatus = codexLogin?.status;
 
-  const refreshStatus = async () => {
+  const refreshStatus = useCallback(async () => {
     const response = await hostAdapter.fetch(apiUrl("/api/setup/status"));
     if (response.ok) {
       setStatus(await response.json());
     }
-  };
+  }, []);
 
   useEffect(() => {
     refreshStatus().catch(() => undefined);
@@ -83,15 +85,15 @@ export function ModelSetupPage() {
       .then((response) => (response.ok ? response.json() : { providers: [] }))
       .then((payload) => setProviders(payload.providers || []))
       .catch(() => setProviders([]));
-  }, []);
+  }, [refreshStatus]);
 
   useEffect(() => {
-    if (!codexLogin || ["succeeded", "failed"].includes(codexLogin.status)) {
+    if (!codexSessionId || ["succeeded", "failed"].includes(codexStatus ?? "")) {
       return;
     }
     const timer = window.setInterval(() => {
       hostAdapter
-        .fetch(apiUrl(`/api/setup/llm/codex/status/${codexLogin.session_id}`))
+        .fetch(apiUrl(`/api/setup/llm/codex/status/${codexSessionId}`))
         .then((response) => (response.ok ? response.json() : null))
         .then((payload: CodexLogin | null) => {
           if (!payload) return;
@@ -107,7 +109,7 @@ export function ModelSetupPage() {
         .catch(() => undefined);
     }, 1500);
     return () => window.clearInterval(timer);
-  }, [codexLogin?.session_id, codexLogin?.status]);
+  }, [codexSessionId, codexStatus, refreshStatus]);
 
   const startCodexLogin = async () => {
     setError(null);

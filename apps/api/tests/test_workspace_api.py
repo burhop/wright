@@ -1638,6 +1638,13 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
             os.path.join(workspace_setup, "demo"),
             now + 1,
         ),
+        (
+            str(uuid.uuid4()),
+            "api_1785775550_d549bff4",
+            "dashboard-created",
+            os.path.join(workspace_setup, "dashboard-created"),
+            now + 5,
+        ),
     ]
     for _, _, _, local_path, _ in rows:
         os.makedirs(local_path, exist_ok=True)
@@ -1674,9 +1681,11 @@ def test_workspace_lists_hide_synthetic_session_rows(client, workspace_setup):
         assert "session-1" not in all_names
         assert "Demo" in recent_names
         assert "Demo" in all_names
+        assert "dashboard-created" in recent_names
+        assert "dashboard-created" in all_names
     finally:
         conn.execute(
-            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?, ?, ?)",
+            "DELETE FROM engineering_workspaces WHERE workspace_id IN (?, ?, ?, ?, ?, ?, ?)",
             tuple(row[0] for row in rows),
         )
         conn.commit()

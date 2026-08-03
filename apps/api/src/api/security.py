@@ -7,6 +7,7 @@ import hashlib
 import ipaddress
 import os
 from dataclasses import dataclass
+from urllib.parse import urlsplit
 
 from fastapi import HTTPException, Request, WebSocket, status
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
@@ -84,7 +85,21 @@ class SecuritySettings:
             )
 
     def origin_allowed(self, origin: str | None) -> bool:
-        return origin is None or origin.rstrip("/") in self.allowed_origins
+        if origin is None:
+            return True
+        normalized = origin.rstrip("/")
+        if normalized in self.allowed_origins:
+            return True
+        return (
+            self.mode == "compat"
+            and _loopback_host(self.bind_host)
+            and _loopback_origin(normalized)
+        )
+
+    def cors_origin_regex(self) -> str | None:
+        if self.mode == "compat" and _loopback_host(self.bind_host):
+            return r"https?://(?:localhost|127(?:\.\d{1,3}){3}|\[::1\])(?::\d+)?"
+        return None
 
     def token_valid(self, candidate: str | None) -> bool:
         return bool(
@@ -122,6 +137,13 @@ def _loopback_host(value: str) -> bool:
         return ipaddress.ip_address(host).is_loopback
     except ValueError:
         return False
+
+
+def _loopback_origin(value: str) -> bool:
+    parsed = urlsplit(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return False
+    return _loopback_host(parsed.netloc)
 
 
 def native_browser_bootstrap_allowed(

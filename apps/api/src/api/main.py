@@ -177,6 +177,7 @@ app.state.workspace_surface_settings = get_workspace_surface_settings()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(app.state.security_settings.allowed_origins),
+    allow_origin_regex=app.state.security_settings.cors_origin_regex(),
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=[

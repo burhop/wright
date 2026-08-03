@@ -8,8 +8,8 @@
     "cleanup:workspaces": "python3 scripts/cleanup-workspaces.py"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.0",
-    "@types/node": "^22.10.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.1.2",
     "prettier": "^3.9.6",
     "typescript": "^5.7.0"
   }

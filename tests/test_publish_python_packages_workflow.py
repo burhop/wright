@@ -18,7 +18,7 @@ def test_publish_workflow_uses_exact_candidate_and_protected_trusted_publishing(
     assert "name: testpypi" in workflow
     assert (
         workflow.count(
-            "pypa/gh-action-pypi-publish@ba38be9e461d3875417946c167d0b5f3d385a247"
+            "pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33"
         )
         == 2
     )
@@ -43,7 +43,7 @@ def test_publish_workflow_uses_exact_candidate_and_protected_trusted_publishing(
 def test_pypi_publish_action_is_never_called_from_a_reusable_workflow() -> None:
     publisher = (
         "pypa/gh-action-pypi-publish@"
-        "ba38be9e461d3875417946c167d0b5f3d385a247"
+        "dc37677b2e1c63e2034f94d8a5b11f265b73ba33"
     )
     workflows = sorted((ROOT / ".github/workflows").glob("*.yml"))
     publishing_workflows = [

@@ -98,8 +98,20 @@ def test_workspace_repository_filters_synthetic_rows_and_updates_session(tmp_pat
         str(generic_synthetic),
         workspace_name="session-1",
     )
+    repository.create(
+        "dashboard-created",
+        "api_1785775550_d549bff4",
+        str(tmp_path / "dashboard-created"),
+        workspace_name="dashboard-created",
+    )
 
-    assert [row["workspace_id"] for row in repository.list_all()] == ["real"]
-    assert [row["workspace_id"] for row in repository.list_recent(limit=10)] == ["real"]
+    assert [row["workspace_id"] for row in repository.list_all()] == [
+        "dashboard-created",
+        "real",
+    ]
+    assert {row["workspace_id"] for row in repository.list_recent(limit=10)} == {
+        "dashboard-created",
+        "real",
+    }
     repository.update_session("real", "session-next")
     assert repository.get_by_session("session-next")["workspace_id"] == "real"
