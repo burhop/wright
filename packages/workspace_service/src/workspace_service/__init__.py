@@ -23,6 +23,12 @@ from .adapters.runtime import WorkspaceManager as WorkspaceManager
 from .workflows import WorkspaceWorkflowStore
 from .workflow_runner import RunnerSettings, RunnerStatus, WorkspaceWorkflowRunner
 from .workflow_editor import EditorAssetCatalog, EditorSettings, WorkspaceWorkflowEditor
+from .workflow_operations import (
+    WorkflowOperationRecord,
+    WorkflowOperationsError,
+    WorkflowOperationsSettings,
+    WorkspaceWorkflowOperations,
+)
 from core.workflows import (
     WorkflowDocument,
     WorkflowPersistenceError,
@@ -56,4 +62,8 @@ __all__ = [
     "EditorAssetCatalog",
     "EditorSettings",
     "WorkspaceWorkflowEditor",
+    "WorkflowOperationRecord",
+    "WorkflowOperationsError",
+    "WorkflowOperationsSettings",
+    "WorkspaceWorkflowOperations",
 ]

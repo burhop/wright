@@ -12,6 +12,7 @@ from .models import (
 from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
 from .workflow_repository import WorkflowIndexRecord, WorkflowRepository
+from .workflow_review_repository import WorkflowReview, WorkflowReviewRepository
 from .gateway_repository import GatewayBindingError, GatewayRepository
 from .file_vault import FileVault, StoredVaultFile, VaultPathError
 from .surface_repository import (
@@ -52,6 +53,8 @@ __all__ = [
     "WorkspaceRepository",
     "WorkflowIndexRecord",
     "WorkflowRepository",
+    "WorkflowReview",
+    "WorkflowReviewRepository",
     "GatewayBindingError",
     "GatewayRepository",
     "FileVault",

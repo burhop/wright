@@ -42,6 +42,17 @@ def rivet_editor_enabled() -> bool:
     }
 
 
+def rivet_workflow_operations_enabled() -> bool:
+    """Default-off gate for review-gated workflow operations."""
+    return os.getenv(
+        "WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED", "0"
+    ).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
+
 # UI theme configuration (defaulting to "dark")
 def get_ui_theme() -> str:
     return os.getenv("UI_THEME", "dark")

@@ -18,6 +18,7 @@ from api.config import (
     api_mcp_autostart_enabled,
     rivet_editor_enabled,
     rivet_runner_enabled,
+    rivet_workflow_operations_enabled,
     rivet_workflows_enabled,
 )
 from api.routers.agent import get_agent_engine
@@ -92,6 +93,10 @@ from api.schemas.workspace import (
     WorkflowRunCancelRequest,
     WorkflowRunResponse,
     WorkflowRunStartRequest,
+    WorkflowReviewRequest,
+    WorkflowReviewResponse,
+    WorkflowOperationsListResponse,
+    WorkflowRunHistoryResponse,
     WorkflowEditorAvailabilityResponse,
     WorkflowEditorBootstrapRequest,
     WorkflowEditorBootstrapResponse,
@@ -104,6 +109,7 @@ from workspace_service.workflows import (
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
+from workspace_service.workflow_operations import WorkflowOperationsError
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -139,6 +145,14 @@ def _editor_feature_enabled() -> None:
         )
 
 
+def _operations_feature_enabled() -> None:
+    if not rivet_workflow_operations_enabled():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Rivet workflow operations are disabled",
+        )
+
+
 def _workflow_response(document) -> WorkflowResponse:
     return WorkflowResponse(
         workflow_id=document.workflow_id,
@@ -170,6 +184,18 @@ def _editor_bootstrap_response(bootstrap) -> WorkflowEditorBootstrapResponse:
         etag=bootstrap.etag,
         expires_at=(bootstrap.expires_at.isoformat() if bootstrap.expires_at else None),
         detail=bootstrap.detail,
+    )
+
+
+def _review_response(record) -> WorkflowReviewResponse:
+    return WorkflowReviewResponse(
+        workflow_id=record.workflow_id,
+        slug=record.slug,
+        revision=record.revision,
+        etag=record.digest,
+        review_state=record.review.state if record.review else None,
+        reviewer=record.review.reviewer if record.review else None,
+        reviewed_at=record.review.updated_at if record.review else None,
     )
 
 
@@ -314,6 +340,7 @@ async def start_workflow_run_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     _runner_feature_enabled()
+    _operations_feature_enabled()
     workspace = service.lifecycle.get_by_session(body.session_id)
     if not workspace:
         raise HTTPException(
@@ -321,7 +348,7 @@ async def start_workflow_run_endpoint(
         )
     workspace_dir = await service.resolve_workspace_dir(body.session_id, engine)
     try:
-        run = await service.workflow_runner.start(
+        run = await service.workflow_operations.start(
             workspace_id=workspace["workspace_id"],
             session_id=body.session_id,
             workspace_dir=workspace_dir,
@@ -334,7 +361,11 @@ async def start_workflow_run_endpoint(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail={"code": error.code, "availability": error.availability},
         ) from error
-    except (WorkflowRunnerError, WorkflowPersistenceError) as error:
+    except (
+        WorkflowRunnerError,
+        WorkflowPersistenceError,
+        WorkflowOperationsError,
+    ) as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -352,14 +383,18 @@ async def workflow_run_status_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
     try:
-        run = service.workflow_runner.get(run_id)
-        if run.session_id != session_id:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Workflow run not found"
-            )
+        run = service.workflow_operations.run(
+            workspace_id=workspace["workspace_id"], session_id=session_id, run_id=run_id
+        )
         return _run_response(run)
-    except WorkflowRunnerError as error:
+    except (WorkflowRunnerError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
@@ -373,19 +408,147 @@ async def cancel_workflow_run_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     _runner_feature_enabled()
-    try:
-        run = service.workflow_runner.get(run_id)
-        if run.session_id != body.session_id:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Workflow run not found"
-            )
-        return _run_response(
-            await service.workflow_runner.cancel(run_id, generation=body.generation)
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
         )
-    except WorkflowRunnerError as error:
+    try:
+        return _run_response(
+            await service.workflow_operations.cancel(
+                workspace_id=workspace["workspace_id"],
+                session_id=body.session_id,
+                run_id=run_id,
+                generation=body.generation,
+            )
+        )
+    except (WorkflowRunnerError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"code": error.code, "message": str(error)},
+        ) from error
+
+
+@router.post("/workflows/{slug}/review", response_model=WorkflowReviewResponse)
+@traced("workspace.workflows.review")
+async def review_workflow_endpoint(
+    slug: str,
+    body: WorkflowReviewRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    try:
+        return _review_response(
+            await service.workflow_operations.review(
+                workspace_id=workspace["workspace_id"],
+                workspace_dir=await service.resolve_workspace_dir(
+                    body.session_id, engine
+                ),
+                slug=slug,
+                state=body.state,
+                reviewer=body.reviewer,
+            )
+        )
+    except (WorkflowOperationsError, WorkflowPersistenceError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
+
+
+@router.get("/workflows", response_model=WorkflowOperationsListResponse)
+@traced("workspace.workflows.operations.list")
+async def list_workflow_operations_endpoint(
+    session_id: str = Query(...),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    records = await service.workflow_operations.list(
+        workspace_id=workspace["workspace_id"],
+        workspace_dir=await service.resolve_workspace_dir(session_id, engine),
+    )
+    return WorkflowOperationsListResponse(
+        workflows=[_review_response(record) for record in records]
+    )
+
+
+@router.get("/workflows/{slug}/operation", response_model=WorkflowReviewResponse)
+@traced("workspace.workflows.operation")
+async def workflow_operation_detail_endpoint(
+    slug: str,
+    session_id: str = Query(...),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    try:
+        return _review_response(
+            await service.workflow_operations.detail(
+                workspace_id=workspace["workspace_id"],
+                workspace_dir=await service.resolve_workspace_dir(session_id, engine),
+                slug=slug,
+            )
+        )
+    except (WorkflowOperationsError, FileNotFoundError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/history", response_model=WorkflowRunHistoryResponse
+)
+@traced("workspace.workflows.history")
+async def workflow_run_history_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    after_sequence: int = Query(default=0, ge=0),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    try:
+        events = service.workflow_operations.history(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+            after_sequence=after_sequence,
+        )
+        return WorkflowRunHistoryResponse(
+            run_id=run_id,
+            events=[
+                {
+                    "sequence": event.sequence,
+                    "kind": event.kind,
+                    "payload": dict(event.payload),
+                }
+                for event in events
+            ],
+        )
+    except (WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
 
 

@@ -533,6 +533,24 @@ MIGRATIONS: tuple[Migration, ...] = (
             )"""),
         ),
     ),
+    Migration(
+        11,
+        "workspace_workflow_reviews",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_reviews (
+                workspace_id TEXT NOT NULL,
+                workflow_id TEXT NOT NULL,
+                revision INTEGER NOT NULL CHECK(revision >= 1),
+                state TEXT NOT NULL CHECK(state IN ('approved', 'rejected')),
+                reviewer TEXT NOT NULL,
+                updated_at INTEGER NOT NULL,
+                PRIMARY KEY (workspace_id, workflow_id),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id) ON DELETE CASCADE
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workspace_workflow_reviews_scope
+                ON workspace_workflow_reviews(workspace_id, workflow_id, revision)"""),
+        ),
+    ),
 )
 
 

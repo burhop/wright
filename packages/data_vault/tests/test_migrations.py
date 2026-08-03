@@ -65,6 +65,32 @@ def test_upgrade_is_idempotent(tmp_path):
     assert second.starting_version == second.ending_version == len(MIGRATIONS)
 
 
+def test_workflow_review_migration_preserves_prior_workflow_metadata(tmp_path):
+    path = tmp_path / "workflow-review.db"
+    upgrade_database(path, migrations=MIGRATIONS[:10])
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            """INSERT INTO engineering_workspaces
+            (workspace_id, session_id, local_path, created_at, updated_at)
+            VALUES ('workspace', 'session', 'D:/workspace', 1, 1)"""
+        )
+        connection.execute(
+            """INSERT INTO workspace_workflows
+            (workspace_id, workflow_id, slug, revision, digest, state, updated_at)
+            VALUES ('workspace', 'workflow', 'sample', 1, 'digest', 'active', 1)"""
+        )
+        connection.commit()
+
+    result = upgrade_database(path)
+
+    assert result.applied == ({"version": 11, "name": "workspace_workflow_reviews"},)
+    with sqlite3.connect(path) as connection:
+        assert connection.execute("SELECT slug FROM workspace_workflows").fetchone() == ("sample",)
+        assert connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='workspace_workflow_reviews'"
+        ).fetchone() == ("workspace_workflow_reviews",)
+
+
 def test_provider_neutral_mcp_columns_are_added_without_losing_rows(tmp_path):
     path = tmp_path / "pre-provider-neutral.db"
     upgrade_database(path, migrations=MIGRATIONS[:4])
