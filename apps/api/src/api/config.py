@@ -15,6 +15,11 @@ HERMES_API_PORT = urlparse(HERMES_API_BASE_URL).port or 8642
 LLM_HEALTH_URL = os.getenv("LLM_HEALTH_URL", "")
 
 
+def rivet_workflows_enabled() -> bool:
+    """Default-off gate for storage APIs; it does not import Rivet or Node."""
+    return os.getenv("WRIGHT_RIVET_WORKFLOWS_ENABLED", "0").strip().lower() in {"1", "true", "yes"}
+
+
 # UI theme configuration (defaulting to "dark")
 def get_ui_theme() -> str:
     return os.getenv("UI_THEME", "dark")

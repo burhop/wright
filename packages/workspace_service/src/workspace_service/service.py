@@ -21,7 +21,7 @@ from agent_adapters.openclaw import openclaw_context_materializer
 from core.logging import get_logger
 from core.redaction import redact_command, redact_text
 from core.tracing import traced
-from data_vault import WorkspaceRepository, create_default_secret_provider
+from data_vault import WorkflowRepository, WorkspaceRepository, create_default_secret_provider
 from data_vault.workspace_repository import sanitize_workspace_name
 from tool_registry.db import get_servers
 
@@ -53,6 +53,7 @@ from .use_cases import (
     WorkspaceGitUseCases,
     WorkspaceLifecycleUseCases,
     WorkspaceToolUseCases,
+    WorkspaceWorkflowUseCases,
 )
 from .use_cases.run import issue_display_execution_lease
 from .surfaces.display_tokens import DisplayExecutionTokenService
@@ -159,6 +160,9 @@ class WorkspaceService:
             self.executor,
             LocalWorkspaceFiles,
             repository=self.repository,
+        )
+        self.workflows = WorkspaceWorkflowUseCases(
+            self.executor, WorkflowRepository(db_path)
         )
         process = LocalProcessRunner()
         self.git = WorkspaceGitUseCases(

@@ -6,7 +6,7 @@ All models used by workspace endpoints are defined here.
 """
 
 import json
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional
 
 
@@ -51,6 +51,48 @@ class FileContentSaveRequest(BaseModel):
 
 class FileContentSaveResponse(BaseModel):
     success: bool
+
+
+class WorkflowCreateRequest(BaseModel):
+    session_id: str
+    slug: str
+    project: str
+    datasets: Dict[str, str] = Field(default_factory=dict)
+
+
+class WorkflowSaveRequest(BaseModel):
+    session_id: str
+    expected_revision: int
+    project: str
+    datasets: Dict[str, str] = Field(default_factory=dict)
+
+
+class WorkflowResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+
+
+class WorkflowDocumentResponse(WorkflowResponse):
+    project: str
+    datasets: Dict[str, str]
+
+
+class WorkflowDeleteRequest(BaseModel):
+    session_id: str
+    expected_revision: int
+
+
+class WorkflowRecoveryRequest(BaseModel):
+    session_id: str
+    slug: str
+
+
+class WorkflowRenameRequest(BaseModel):
+    session_id: str
+    expected_revision: int
+    slug: str
 
 
 #  Git Operations
