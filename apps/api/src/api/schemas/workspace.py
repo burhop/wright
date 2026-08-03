@@ -7,7 +7,7 @@ All models used by workspace endpoints are defined here.
 
 import json
 from pydantic import BaseModel, Field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 
 #  File Operations
@@ -104,6 +104,31 @@ class WorkflowRunResponse(BaseModel):
     generation: int
     state: str
     reason: str | None = None
+
+
+class WorkflowReviewRequest(BaseModel):
+    session_id: str
+    state: Literal["approved", "rejected"]
+    reviewer: str = Field(min_length=1, max_length=200)
+
+
+class WorkflowReviewResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+    review_state: str | None = None
+    reviewer: str | None = None
+    reviewed_at: int | None = None
+
+
+class WorkflowOperationsListResponse(BaseModel):
+    workflows: list[WorkflowReviewResponse]
+
+
+class WorkflowRunHistoryResponse(BaseModel):
+    run_id: str
+    events: list[dict]
 
 
 class WorkflowEditorAvailabilityResponse(BaseModel):

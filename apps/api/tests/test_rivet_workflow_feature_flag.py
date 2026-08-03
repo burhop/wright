@@ -1,6 +1,7 @@
 from api.config import (
     rivet_editor_enabled,
     rivet_runner_enabled,
+    rivet_workflow_operations_enabled,
     rivet_workflows_enabled,
 )
 from api.main import app
@@ -20,6 +21,11 @@ def test_rivet_workflow_feature_can_be_explicitly_enabled(monkeypatch):
 def test_rivet_runner_feature_defaults_off(monkeypatch):
     monkeypatch.delenv("WRIGHT_RIVET_RUNNER_ENABLED", raising=False)
     assert not rivet_runner_enabled()
+
+
+def test_rivet_workflow_operations_default_off(monkeypatch):
+    monkeypatch.delenv("WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED", raising=False)
+    assert not rivet_workflow_operations_enabled()
 
 
 def test_rivet_editor_feature_defaults_off(monkeypatch):

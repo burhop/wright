@@ -30,6 +30,7 @@ import MessageComposer from "./MessageComposer";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
+import { RivetWorkflowsPanel } from "./RivetWorkflowsPanel";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
@@ -1586,12 +1587,7 @@ export function WorkspacePanel({
           </div>
         )}
         {activeSidebar === "workflows" && workflowsTabEnabled && (
-          <section data-testid="rivet-workflows-tab" style={{ padding: "var(--space-md)" }}>
-            <h2 style={{ fontSize: "0.8rem", marginTop: 0 }}>Rivet Workflows</h2>
-            <p style={{ color: "var(--color-secondary)", fontSize: "0.75rem", lineHeight: 1.5 }}>
-              The editor runs as an isolated retained workspace surface. It is unavailable until a verified local Rivet editor bundle is installed.
-            </p>
-          </section>
+          <RivetWorkflowsPanel sessionId={workspaceFileSessionId} />
         )}
 
         {activeSidebar === "files" && (
