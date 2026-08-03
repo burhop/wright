@@ -1,0 +1,25 @@
+version: 4
+data:
+  graphs:
+    wright-spike-main:
+      metadata:
+        id: wright-spike-main
+        name: Wright Spike Main
+      nodes:
+        '[external-call]:externalCall "External Call"':
+          data:
+            functionName: wright_mock_operation
+            useFunctionNameInput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - result->"Graph Output" graph-output/value
+          visualData: 120/120/180/0
+        '[graph-output]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: result
+          visualData: 420/120/180/0
+  metadata:
+    id: wright-spike-project
+    title: Wright Rivet Compatibility Fixture
+    mainGraphId: wright-spike-main

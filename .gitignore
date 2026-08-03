@@ -324,3 +324,8 @@ windows-sandbox/*.latest.path
 windows-sandbox/image-factory/packer/packer_cache/
 windows-sandbox/image-factory/packer/crash.log
 windows-sandbox/image-factory/**/*.log
+
+# Rivet compatibility spike generated source, package cache, and reports.
+/integrations/rivet/spike/.work/
+/integrations/rivet/spike/node_modules/
+/integrations/rivet/spike/reports/

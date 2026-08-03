@@ -1,0 +1,25 @@
+{
+  "name": "wright-rivet-compatibility-spike",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.4.0 <26"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "spike:acquire": "node scripts/acquire-baseline.mjs",
+    "spike:build": "node scripts/build-baseline.mjs",
+    "spike:editor": "node scripts/probe-editor.mjs",
+    "spike:runner": "node fixture/runner-harness.mjs",
+    "spike:offline": "node scripts/network-policy.mjs",
+    "spike:inventory": "node scripts/inventory-supply-chain.mjs",
+    "spike:clean": "node scripts/clean-spike.mjs",
+    "spike:all": "npm run spike:acquire && npm run spike:build && npm run spike:editor && npm run spike:runner && npm run spike:offline && npm run spike:inventory"
+  },
+  "dependencies": {
+    "@ironclad/rivet-core": "1.25.0",
+    "@ironclad/rivet-node": "1.25.0",
+    "ws": "8.18.0"
+  }
+}

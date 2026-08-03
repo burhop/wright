@@ -1,0 +1,15 @@
+{
+  "contractVersion": 1,
+  "baselineId": "rivet-v1.25.0",
+  "sourceRepository": "https://github.com/Ironclad/rivet.git",
+  "sourceTag": "v1.25.0",
+  "sourceRevision": "02777a59583be8e8a2730ac9fb1e3e259795e4fd",
+  "packages": {
+    "@ironclad/rivet-core": "1.25.0",
+    "@ironclad/rivet-node": "1.25.0"
+  },
+  "upstreamNodeVersion": "20.4.0",
+  "sourcePackageManager": "yarn",
+  "patches": [],
+  "disposition": "candidate"
+}
