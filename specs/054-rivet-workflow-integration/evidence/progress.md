@@ -17,3 +17,8 @@ No slice has been pushed, proposed to a remote pull request, merged to `dev` or
 `main`, published, or released. The unresolved Windows offline package-cache
 finding is a release-hardening gate and does not authorize a production Rivet
 runtime bundle.
+
+## Umbrella validation
+
+- `scripts/check-dev-merge.sh` passed locally on 2026-08-03 for the scoped
+  editor-tab MVP. The umbrella branch remains unmerged into `dev`.
