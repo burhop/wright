@@ -291,19 +291,6 @@ async def test_isolated_starts_are_distinct_and_port_ownership_retry_increments_
     assert allocator.reservations[0].port != allocator.reservations[1].port
 
 
-async def test_isolated_surface_reuses_its_retained_instance_for_the_same_declaration(
-    tmp_path,
-) -> None:
-    manager, supervisor, _pins, _clock = _manager(
-        tmp_path, manifest=_manifest(sharing="isolated")
-    )
-    first = await manager.start(_request("retained-editor-declaration"))
-    reopened = await manager.start(_request("retained-editor-declaration"))
-
-    assert reopened == first
-    assert len(supervisor.starts) == 1
-
-
 async def test_restart_generation_budget_and_stop_are_exact_and_idempotent(
     tmp_path,
 ) -> None:

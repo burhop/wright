@@ -5,9 +5,8 @@ import {
   type RivetWorkflowOperation,
   type RivetWorkflowRun,
 } from "../../services/workspace-service";
-import { declareLiveApp } from "../../services/surfaces/surface-client";
 
-export function RivetWorkflowsPanel({ sessionId, workspaceId }: { sessionId: string | null; workspaceId: string | null }) {
+export function RivetWorkflowsPanel({ sessionId }: { sessionId: string | null }) {
   const [workflows, setWorkflows] = useState<RivetWorkflowOperation[]>([]);
   const [runs, setRuns] = useState<Record<string, RivetWorkflowRun>>({});
   const [history, setHistory] = useState<Record<string, string>>({});
@@ -59,25 +58,12 @@ export function RivetWorkflowsPanel({ sessionId, workspaceId }: { sessionId: str
       setMessage(error instanceof Error ? error.message : "Workflow cancellation failed.");
     }
   };
-  const openEditor = async () => {
-    if (!sessionId || !workspaceId) return;
-    try {
-      const surface = await workspaceService.getRivetEditorSurface(sessionId);
-      if (!surface.manifest) throw new Error(surface.detail || "Rivet editor is unavailable.");
-      await declareLiveApp(surface.manifest, workspaceId, sessionId);
-      window.dispatchEvent(new Event("wright-surfaces-changed"));
-      setMessage("Rivet editor opened as an isolated workspace tab.");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Rivet editor is unavailable.");
-    }
-  };
 
   return (
     <section data-testid="rivet-workflows-tab" style={{ padding: "var(--space-md)" }}>
       <h2 style={{ fontSize: "0.8rem", marginTop: 0 }}>Rivet Workflows</h2>
       <p style={{ color: "var(--color-secondary)", fontSize: "0.75rem", lineHeight: 1.5 }}>{message}</p>
       <button data-testid="rivet-workflows-refresh" type="button" onClick={() => void refresh()}>Refresh</button>
-      <button data-testid="rivet-editor-open" type="button" disabled={!sessionId || !workspaceId} onClick={() => void openEditor()}>Open Rivet editor</button>
       {workflows.map((workflow) => (
         <div key={workflow.workflow_id} style={{ borderTop: "1px solid var(--color-border)", marginTop: "var(--space-sm)", paddingTop: "var(--space-sm)" }}>
           <strong>{workflow.slug}</strong><br />
@@ -93,7 +79,7 @@ export function RivetWorkflowsPanel({ sessionId, workspaceId }: { sessionId: str
         </div>
       ))}
       <p style={{ color: "var(--color-secondary)", fontSize: "0.72rem", lineHeight: 1.5 }}>
-        Manual import/export mode: use the browser file picker to open or export projects. This does not save into the Wright workspace.
+        The editor is a separate retained workspace surface and remains unavailable until a verified local Rivet bundle is installed.
       </p>
     </section>
   );

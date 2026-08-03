@@ -136,14 +136,6 @@ class WorkflowEditorAvailabilityResponse(BaseModel):
     detail: str | None = None
 
 
-class WorkflowEditorSurfaceRequest(BaseModel):
-    session_id: str
-
-
-class WorkflowEditorSurfaceResponse(WorkflowEditorAvailabilityResponse):
-    manifest: Dict[str, Any] | None = None
-
-
 class WorkflowEditorBootstrapRequest(BaseModel):
     session_id: str
 

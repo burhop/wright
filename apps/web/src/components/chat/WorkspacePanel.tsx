@@ -1587,7 +1587,7 @@ export function WorkspacePanel({
           </div>
         )}
         {activeSidebar === "workflows" && workflowsTabEnabled && (
-          <RivetWorkflowsPanel sessionId={workspaceFileSessionId} workspaceId={_workspaceId ?? null} />
+          <RivetWorkflowsPanel sessionId={workspaceFileSessionId} />
         )}
 
         {activeSidebar === "files" && (

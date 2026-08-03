@@ -227,22 +227,6 @@ async function checked(response: Response): Promise<unknown> {
 
 const base = () => `${hostAdapter.getApiBaseUrl()}/api/workspace/surfaces`;
 
-export async function declareLiveApp(
-  manifest: Record<string, unknown>,
-  workspaceId: string,
-  sessionId: string,
-): Promise<SurfaceDescriptor> {
-  const manifestId = typeof manifest.id === "string" ? manifest.id : "live-app";
-  const idempotencyKey = manifestId === "wright.rivet-editor"
-    ? `rivet-editor-${workspaceId}-${sessionId}`
-    : `live-app-${crypto.randomUUID()}`;
-  return parseSurfaceDescriptor(await checked(await hostAdapter.fetch(base(), {
-    method: "POST",
-    headers: { ...headers(workspaceId, sessionId), "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
-    body: JSON.stringify({ schemaVersion: 1, kind: "live_app", manifest }),
-  })));
-}
-
 export async function listSurfaces(
   workspaceId: string,
   sessionId: string,
