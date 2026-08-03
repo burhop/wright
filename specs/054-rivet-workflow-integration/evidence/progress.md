@@ -20,5 +20,10 @@ runtime bundle.
 
 ## Umbrella validation
 
-- `scripts/check-dev-merge.sh` passed locally on 2026-08-03 for the scoped
-  editor-tab MVP. The umbrella branch remains unmerged into `dev`.
+- The focused backend checks (31 passed, 1 Windows symbolic-link permission
+  skip), Rivet panel checks (2 passed), and web production build passed locally
+  on 2026-08-03 for the scoped editor-tab MVP.
+- `scripts/check-dev-merge.sh` is Bash-only. Git for Windows' Bash is not
+  installed on this Windows host, so the full gate could not be run here. The
+  prior direct PowerShell invocation produced no gate output and is not counted
+  as a passing result.
