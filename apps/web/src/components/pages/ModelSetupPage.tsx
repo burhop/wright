@@ -88,7 +88,10 @@ export function ModelSetupPage() {
   }, [refreshStatus]);
 
   useEffect(() => {
-    if (!codexSessionId || ["succeeded", "failed"].includes(codexStatus ?? "")) {
+    if (
+      !codexSessionId ||
+      ["succeeded", "failed"].includes(codexStatus ?? "")
+    ) {
       return;
     }
     const timer = window.setInterval(() => {
