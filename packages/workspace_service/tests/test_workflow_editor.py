@@ -43,7 +43,14 @@ def _hosted_catalog(tmp_path) -> EditorAssetCatalog:
     asset.write_text("<html></html>", encoding="utf-8")
     (tmp_path / "host.py").write_text("# test host\n", encoding="utf-8")
     (tmp_path / "manifest.json").write_text(
-        json.dumps({"rivet_version": "1.25.0", "entrypoint": "dist/index.html", "sha256": hashlib.sha256(asset.read_bytes()).hexdigest(), "license": "MIT"}),
+        json.dumps(
+            {
+                "rivet_version": "1.25.0",
+                "entrypoint": "dist/index.html",
+                "sha256": hashlib.sha256(asset.read_bytes()).hexdigest(),
+                "license": "MIT",
+            }
+        ),
         encoding="utf-8",
     )
     return EditorAssetCatalog(tmp_path / "manifest.json")

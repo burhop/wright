@@ -85,7 +85,9 @@ def test_workflow_review_migration_preserves_prior_workflow_metadata(tmp_path):
 
     assert result.applied == ({"version": 11, "name": "workspace_workflow_reviews"},)
     with sqlite3.connect(path) as connection:
-        assert connection.execute("SELECT slug FROM workspace_workflows").fetchone() == ("sample",)
+        assert connection.execute(
+            "SELECT slug FROM workspace_workflows"
+        ).fetchone() == ("sample",)
         assert connection.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='workspace_workflow_reviews'"
         ).fetchone() == ("workspace_workflow_reviews",)
