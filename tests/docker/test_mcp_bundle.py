@@ -189,7 +189,7 @@ def test_dockerfile_mcp_derives_from_existing_appliance_contract_and_adds_node_r
     assert "# syntax=docker/dockerfile:1.7" in dockerfile
     assert "ARG WRIGHT_BASE_IMAGE=wright:test" in dockerfile
     assert "FROM ${WRIGHT_BASE_IMAGE}" in dockerfile
-    assert "FROM node:24.17.0-slim" in dockerfile
+    assert "FROM node:26.5.1-slim" in dockerfile
     assert "COPY --from=node-runtime" in dockerfile
     assert "WRIGHT_MCP_BUNDLE_FILE" in dockerfile
     assert "mcp-bundle*.yaml" in dockerfile
