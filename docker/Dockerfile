@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a54a05ea56ed03a934d00fe9fbeded4b /uv /usr/local/bin/uv
 
-RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
+RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.14 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
         hermes-agent==0.19.0 aiohttp==3.13.3 && \
     mkdir -p /opt/hermes/bin && \

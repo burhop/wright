@@ -14,7 +14,7 @@ RECONCILIATION = importlib.util.module_from_spec(MODULE_SPEC)
 MODULE_SPEC.loader.exec_module(RECONCILIATION)
 
 
-EXPECTED_OUTPUT = """Using Python 3.13.13 environment at: /opt/hermes/.venv
+EXPECTED_OUTPUT = """Using Python 3.14.6 environment at: /opt/hermes/.venv
 Checked 83 packages in 3ms
 Found 2 incompatibilities
 The package `hermes-agent` requires `cryptography==46.0.7`, but `49.0.0` is installed

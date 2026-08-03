@@ -67,7 +67,7 @@ def test_docker_smoke_script_keeps_gateway_process_name() -> None:
 def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
     dockerfile = read_text("docker/Dockerfile")
 
-    assert "python:3.13.13-slim@sha256:" in dockerfile
+    assert "python:3.14.6-slim@sha256:" in dockerfile
     assert "hermes-agent==0.19.0" in dockerfile
 
 

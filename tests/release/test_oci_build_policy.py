@@ -13,7 +13,7 @@ def test_production_dockerfile_uses_pinned_architecture_inputs() -> None:
         if line != "FROM hermes-base":
             assert "@sha256:" in line, line
     assert "node:24.17.0-slim@sha256:" in dockerfile
-    assert "python:3.13.13-slim@sha256:" in dockerfile
+    assert "python:3.14.6-slim@sha256:" in dockerfile
     assert "uv:0.9.26@sha256:" in dockerfile
     assert "micromamba_arch=\"linux-64\"" in dockerfile
     assert "micromamba_arch=\"linux-aarch64\"" in dockerfile
