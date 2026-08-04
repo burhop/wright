@@ -56,7 +56,10 @@ class WorkspaceWorkflowStore:
         self._paths = WorkspacePath(workspace_dir)
 
     def _directory(self, slug: str) -> Path:
-        return self._paths.resolve(f"workflows/{_validate_slug(slug)}")
+        try:
+            return self._paths.resolve(f"workflows/{_validate_slug(slug)}")
+        except ValueError as error:
+            raise WorkflowPersistenceError(str(error)) from error
 
     def _metadata_path(self, slug: str) -> Path:
         return self._paths.resolve(
