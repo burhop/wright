@@ -158,8 +158,8 @@ class WorkspaceWorkflowEditor:
             "schemaVersion": 1,
             "id": "wright.rivet-editor",
             "version": artifact.rivet_version,
-            "title": "Rivet editor (manual import/export)",
-            "description": "Manual browser import/export only; this editor does not save into the Wright workspace.",
+            "title": "Rivet",
+            "description": "Wright-owned Rivet editor hosted from the active workspace.",
             "ownershipPolicy": "wright-owned",
             "launch": {
                 "mode": "command",

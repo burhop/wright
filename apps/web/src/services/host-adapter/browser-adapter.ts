@@ -19,6 +19,14 @@ interface BrowserHostAdapterOptions {
   ) => Window | null;
 }
 
+function devSurfaceProxyUrl(value: string, control: URL): string {
+  const preview = new URL(value);
+  if (!["5173", "5174"].includes(control.port)) return value;
+  if (preview.origin === control.origin) return value;
+  const path = `/__wright-surface/${encodeURIComponent(preview.host)}${preview.pathname}${preview.search}${preview.hash}`;
+  return new URL(path, control.origin).toString();
+}
+
 export class BrowserHostAdapter implements HostAdapter {
   readonly mode = "browser";
   readonly surfaceCapabilities = {
@@ -65,7 +73,9 @@ export class BrowserHostAdapter implements HostAdapter {
   }
 
   validateIssuedPreviewUrl(value: string): string {
-    return validateIssuedSurfacePreviewUrl(value, this.controlUrl().origin);
+    const control = this.controlUrl();
+    const validated = validateIssuedSurfacePreviewUrl(value, control.origin);
+    return devSurfaceProxyUrl(validated, control);
   }
 
   async openExternal(

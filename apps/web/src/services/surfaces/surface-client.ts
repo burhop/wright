@@ -1,4 +1,5 @@
 import { hostAdapter } from "../host-adapter";
+import { surfaceRequestId } from "./ids";
 import {
   parseSurfaceDescriptor,
   type SurfaceDescriptor,
@@ -236,7 +237,7 @@ export async function declareLiveApp(
   const idempotencyKey =
     manifestId === "wright.rivet-editor"
       ? `rivet-editor-${workspaceId}-${sessionId}`
-      : `live-app-${crypto.randomUUID()}`;
+      : `live-app-${surfaceRequestId()}`;
   return parseSurfaceDescriptor(
     await checked(
       await hostAdapter.fetch(base(), {
@@ -344,7 +345,7 @@ export async function createPresentation(
 ): Promise<PresentationLaunch> {
   const idempotencyKey =
     options.idempotencyKey ??
-    `presentation-${surfaceId}-${kind}-${crypto.randomUUID()}`;
+    `presentation-${surfaceId}-${kind}-${surfaceRequestId()}`;
   return parsePresentationLaunch(
     await checked(
       await hostAdapter.fetch(
@@ -414,7 +415,7 @@ export async function operateLiveApp(
           method: "POST",
           headers: {
             ...headers(workspaceId, sessionId),
-            "Idempotency-Key": `live-app-${operation}-${surfaceId}-${crypto.randomUUID()}`,
+            "Idempotency-Key": `live-app-${operation}-${surfaceId}-${surfaceRequestId()}`,
           },
         },
       ),

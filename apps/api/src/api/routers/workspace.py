@@ -16,6 +16,7 @@ from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from api.config import (
     api_mcp_autostart_enabled,
+    get_workspace_surface_settings,
     rivet_editor_enabled,
     rivet_runner_enabled,
     rivet_workflow_operations_enabled,
@@ -85,6 +86,9 @@ from api.schemas.workspace import (
     WorkflowCreateRequest,
     WorkflowResponse,
     WorkflowDocumentResponse,
+    WorkflowGraphActionRequest,
+    WorkflowGraphResponse,
+    WorkflowGraphSummaryResponse,
     WorkflowSaveRequest,
     WorkflowDeleteRequest,
     WorkflowRecoveryRequest,
@@ -112,6 +116,7 @@ from workspace_service.workflows import (
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
 from workspace_service.workflow_operations import WorkflowOperationsError
+from workspace_service.workflow_graph import WorkflowGraphError
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -144,6 +149,12 @@ def _editor_feature_enabled() -> None:
     if not rivet_editor_enabled():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Rivet editor is disabled"
+        )
+    surface_flags = get_workspace_surface_settings().flags
+    if not surface_flags.model or not surface_flags.live_apps:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Rivet editor requires workspace live app surfaces",
         )
 
 
@@ -201,7 +212,43 @@ def _review_response(record) -> WorkflowReviewResponse:
     )
 
 
+def _graph_response(result) -> WorkflowGraphResponse:
+    return WorkflowGraphResponse(
+        **_workflow_response(result.document).model_dump(),
+        graph=WorkflowGraphSummaryResponse(
+            graph_id=result.graph.graph_id,
+            name=result.graph.name,
+            main=result.graph.main,
+            node_count=len(result.graph.nodes),
+            nodes=[
+                {
+                    "node_id": node.node_id,
+                    "node_type": node.node_type,
+                    "title": node.title,
+                    "data": dict(node.data),
+                    "outgoing_connections": list(node.outgoing_connections),
+                }
+                for node in result.graph.nodes
+            ],
+        ),
+        issues=[dict(issue) for issue in result.issues],
+    )
+
+
 async def _editor_scope(
+    session_id: str, engine: BaseAgentEngine, service: WorkspaceService
+):
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    return workspace["workspace_id"], await service.resolve_workspace_dir(
+        session_id, engine
+    )
+
+
+async def _workflow_scope(
     session_id: str, engine: BaseAgentEngine, service: WorkspaceService
 ):
     workspace = service.lifecycle.get_by_session(session_id)
@@ -576,6 +623,110 @@ async def workflow_run_history_endpoint(
     except (WorkflowOperationsError, WorkflowRunnerError) as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+
+
+@router.get("/workflows/{slug}/graph", response_model=WorkflowGraphResponse)
+@traced("workspace.workflows.graph.inspect")
+async def inspect_workflow_graph_endpoint(
+    slug: str,
+    session_id: str = Query(...),
+    graph_id: str | None = Query(default=None),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    try:
+        _workspace_id, workspace_dir = await _workflow_scope(
+            session_id, engine, service
+        )
+        return _graph_response(
+            await service.workflow_graph.inspect(
+                workspace_dir=workspace_dir,
+                slug=slug,
+                graph_id=graph_id,
+            )
+        )
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found"
+        ) from error
+    except WorkflowGraphError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
+
+
+@router.get("/workflows/{slug}/graph/lint", response_model=WorkflowGraphResponse)
+@traced("workspace.workflows.graph.lint")
+async def lint_workflow_graph_endpoint(
+    slug: str,
+    session_id: str = Query(...),
+    graph_id: str | None = Query(default=None),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    try:
+        _workspace_id, workspace_dir = await _workflow_scope(
+            session_id, engine, service
+        )
+        return _graph_response(
+            await service.workflow_graph.lint(
+                workspace_dir=workspace_dir,
+                slug=slug,
+                graph_id=graph_id,
+            )
+        )
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found"
+        ) from error
+    except WorkflowGraphError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
+
+
+@router.post("/workflows/{slug}/graph/actions", response_model=WorkflowGraphResponse)
+@traced("workspace.workflows.graph.action")
+async def apply_workflow_graph_action_endpoint(
+    slug: str,
+    body: WorkflowGraphActionRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    try:
+        workspace_id, workspace_dir = await _workflow_scope(
+            body.session_id, engine, service
+        )
+        return _graph_response(
+            await service.workflow_graph.apply(
+                workspace_id=workspace_id,
+                workspace_dir=workspace_dir,
+                slug=slug,
+                expected_revision=body.expected_revision,
+                action=body.action,
+                arguments=body.model_dump(exclude={"session_id", "action"}),
+            )
+        )
+    except FileNotFoundError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workflow not found"
+        ) from error
+    except WorkflowRevisionConflict as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": "revision_conflict",
+                "revision": error.revision,
+                "etag": error.digest,
+            },
+        ) from error
+    except WorkflowGraphError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
         ) from error
 
 

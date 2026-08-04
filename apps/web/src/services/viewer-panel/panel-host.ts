@@ -26,6 +26,7 @@ export class PanelHostImpl implements PanelHost, Disposable {
     container: HTMLElement,
     active = true,
     visible = true,
+    enableHeartbeat = false,
   ) {
     this.id = id;
     this.title = title;
@@ -67,7 +68,9 @@ export class PanelHostImpl implements PanelHost, Disposable {
       },
     };
 
-    this.startHeartbeat();
+    if (enableHeartbeat) {
+      this.startHeartbeat();
+    }
   }
 
   get active(): boolean {

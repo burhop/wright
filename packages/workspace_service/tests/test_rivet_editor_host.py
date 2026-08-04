@@ -54,10 +54,18 @@ def test_editor_host_serves_health_and_spa_routes_from_supplied_root(tmp_path) -
         else:
             raise AssertionError("editor host did not become ready")
         assert status == 200
-        assert health == b'{"status": "ok", "mode": "manual-import-export"}'
+        assert health == b'{"status": "ok", "mode": "wright-workspace"}'
         route_status, content = _get(f"{base_url}/projects/untitled")
         assert route_status == 200
-        assert content == b"<main>Rivet editor</main>"
+        assert b"wright-minimal-mode.css" in content
+        assert b"wright-minimal-mode.js" in content
+        css_status, css = _get(f"{base_url}/wright-minimal-mode.css")
+        assert css_status == 200
+        assert b"Prompt Designer" in css
+        js_status, js = _get(f"{base_url}/wright-minimal-mode.js")
+        assert js_status == 200
+        assert b"showOpenFilePicker" in js
+        assert b"jotai-store" in js
     finally:
         process.terminate()
         process.wait(timeout=5)

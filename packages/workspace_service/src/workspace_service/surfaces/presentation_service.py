@@ -329,11 +329,7 @@ class PresentationService:
             )
 
         presentation_id = self.id_factory()
-        instance_id = (
-            shared_instance_id
-            if source.sharing_mode is SharingMode.SHARED
-            else self.id_factory()
-        )
+        instance_id = shared_instance_id
         if not _INSTANCE_ID.fullmatch(instance_id):
             raise RuntimeError("instance ID factory returned an invalid ID")
         origin = self._origin(presentation_id)

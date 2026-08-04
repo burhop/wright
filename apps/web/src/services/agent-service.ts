@@ -42,6 +42,36 @@ export interface AgentCommand {
   prefix: string;
 }
 
+export interface HermesModelOption {
+  value: string;
+  label: string;
+  provider: string;
+  model: string;
+  is_current: boolean;
+}
+
+export interface HermesModelOptionGroup {
+  provider: string;
+  label: string;
+  options: HermesModelOption[];
+}
+
+export interface HermesModelOptionsResponse {
+  current_value?: string | null;
+  current_provider?: string | null;
+  current_model?: string | null;
+  groups: HermesModelOptionGroup[];
+}
+
+export interface SetHermesModelResponse {
+  ok: boolean;
+  provider: string;
+  model: string;
+  session_locked: boolean;
+  confirm_required: boolean;
+  confirm_message?: string | null;
+}
+
 export interface VaultFile {
   file_id: string;
   filename: string;
@@ -519,6 +549,41 @@ export class HermesAgentService {
     }
     const data = await response.json();
     return data.agent;
+  }
+
+  async listHermesModels(refresh = false): Promise<HermesModelOptionsResponse> {
+    const response = await fetch(
+      `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to list Hermes models: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async setHermesModel(
+    provider: string,
+    model: string,
+    sessionId?: string | null,
+  ): Promise<SetHermesModelResponse> {
+    const response = await fetch(`${API_BASE}/api/agent/model`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        provider,
+        model,
+        session_id: sessionId || null,
+      }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(
+        data.detail || `Failed to set Hermes model: ${response.statusText}`,
+      );
+    }
+    return response.json();
   }
 
   async saveContext(

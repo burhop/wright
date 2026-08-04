@@ -5,14 +5,22 @@ import {
   type RivetWorkflowOperation,
   type RivetWorkflowRun,
 } from "../../services/workspace-service";
-import { declareLiveApp } from "../../services/surfaces/surface-client";
+import {
+  declareLiveApp,
+  operateLiveApp,
+  type LiveAppOperation,
+} from "../../services/surfaces/surface-client";
 
 export function RivetWorkflowsPanel({
   sessionId,
   workspaceId,
+  onOpenEditor,
+  onCreateWorkflow,
 }: {
   sessionId: string | null;
   workspaceId: string | null;
+  onOpenEditor?: (slug?: string) => void | Promise<void>;
+  onCreateWorkflow?: () => void | Promise<void>;
 }) {
   const [workflows, setWorkflows] = useState<RivetWorkflowOperation[]>([]);
   const [runs, setRuns] = useState<Record<string, RivetWorkflowRun>>({});
@@ -106,15 +114,54 @@ export function RivetWorkflowsPanel({
   const openEditor = async () => {
     if (!sessionId || !workspaceId) return;
     try {
+      if (onOpenEditor) {
+        await onOpenEditor();
+        setMessage("Rivet editor opened in the workspace.");
+        return;
+      }
       const surface = await workspaceService.getRivetEditorSurface(sessionId);
       if (!surface.manifest)
         throw new Error(surface.detail || "Rivet editor is unavailable.");
-      await declareLiveApp(surface.manifest, workspaceId, sessionId);
+      const descriptor = await declareLiveApp(
+        surface.manifest,
+        workspaceId,
+        sessionId,
+      );
+      const operation: LiveAppOperation | null =
+        descriptor.lifecycle === "declared"
+          ? "start"
+          : descriptor.lifecycle === "stopped"
+            ? "restart"
+            : descriptor.lifecycle === "failed"
+              ? "retry"
+              : null;
+      if (operation) {
+        await operateLiveApp(
+          descriptor.surfaceId,
+          descriptor.workspaceId,
+          sessionId,
+          operation,
+        );
+      }
       window.dispatchEvent(new Event("wright-surfaces-changed"));
       setMessage("Rivet editor opened as an isolated workspace tab.");
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "Rivet editor is unavailable.",
+      );
+    }
+  };
+  const createWorkflow = async () => {
+    if (!sessionId || !workspaceId || !onCreateWorkflow) return;
+    try {
+      await onCreateWorkflow();
+      await refresh();
+      setMessage("Blank Rivet workflow created in the workspace.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to create Rivet workflow.",
       );
     }
   };
@@ -149,6 +196,14 @@ export function RivetWorkflowsPanel({
       >
         Open Rivet editor
       </button>
+      <button
+        data-testid="rivet-workflow-new"
+        type="button"
+        disabled={!sessionId || !workspaceId || !onCreateWorkflow}
+        onClick={() => void createWorkflow()}
+      >
+        New blank workflow
+      </button>
       {workflows.map((workflow) => (
         <div
           key={workflow.workflow_id}
@@ -165,6 +220,13 @@ export function RivetWorkflowsPanel({
             {workflow.review_state || "needs review"}
           </small>
           <br />
+          <button
+            data-testid={`rivet-workflow-open-${workflow.slug}`}
+            type="button"
+            onClick={() => void onOpenEditor?.(workflow.slug)}
+          >
+            Open
+          </button>{" "}
           <button
             data-testid={`rivet-workflow-approve-${workflow.slug}`}
             type="button"

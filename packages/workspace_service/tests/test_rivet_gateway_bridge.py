@@ -41,3 +41,9 @@ async def test_bridge_binds_run_scope_and_never_sets_client_approval():
                 "run", "node", "other", "session", "tool", {}, "request"
             )
         )
+    with pytest.raises(PermissionError):
+        await bridge.invoke(
+            RivetNodeInvocation(
+                "run", "node", "workspace", "other-session", "tool", {}, "request"
+            )
+        )

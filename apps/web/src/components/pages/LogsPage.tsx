@@ -54,10 +54,9 @@ export function LogsPage() {
 
   // Helper to construct API URL
   const getApiUrl = (path: string) => {
-    const host = window.location.hostname;
     const port = window.location.port;
     const base =
-      port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+      port === "5173" || port === "5174" ? "" : "";
     return `${base}${path}`;
   };
 

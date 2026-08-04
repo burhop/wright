@@ -9,6 +9,8 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Protocol
 
+import httpx
+
 from core.surfaces.live_app_manifest import Probe
 
 
@@ -103,7 +105,7 @@ class HealthProber:
                 ),
                 timeout=bound,
             )
-        except (TimeoutError, OSError, ConnectionError) as error:
+        except (TimeoutError, OSError, ConnectionError, httpx.TransportError) as error:
             return _failure(
                 attempts=1,
                 elapsed=self._monotonic() - started,

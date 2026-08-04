@@ -24,6 +24,7 @@ from workspace_service.surfaces.manifests import (
     DiscoveredManifest,
     ManifestDiscoveryError,
 )
+from workspace_service.surfaces.process_supervisor import ProcessSupervisorError
 from workspace_service.surfaces.target_pins import TargetPinError
 from workspace_service.surfaces.target_policy import (
     ResolvedTargetPin,
@@ -656,17 +657,28 @@ class LiveAppManager:
                 )
                 reservation.close()
                 break
+            except ProcessSupervisorError as error:
+                last_error = error
+                await self._fail_launch(
+                    instance_id,
+                    runtime_id,
+                    error.code,
+                    str(error),
+                )
+                reservation.close()
+                break
             except BaseException as error:
                 if isinstance(error, asyncio.CancelledError):
                     await self._cleanup_attempt(instance_id, runtime_id)
                     reservation.close()
                     raise
                 last_error = error
+                detail = f"{type(error).__name__}: {error}"
                 await self._fail_launch(
                     instance_id,
                     runtime_id,
                     "SURFACE_START_FAILED",
-                    "Managed application could not start",
+                    detail if detail.strip() else "Managed application could not start",
                 )
                 reservation.close()
                 break
