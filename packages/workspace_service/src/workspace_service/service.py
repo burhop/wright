@@ -65,6 +65,7 @@ from .surfaces.display_tokens import DisplayExecutionTokenService
 from .surfaces.process_supervisor import ProcessAdapter, ProcessSupervisor
 from .workflow_runner import WorkspaceWorkflowRunner
 from .workflow_editor import WorkspaceWorkflowEditor
+from .workflow_graph import WorkspaceWorkflowGraphOperations
 from .workflow_operations import WorkspaceWorkflowOperations
 from .workspace_path import WorkspacePath
 
@@ -173,6 +174,7 @@ class WorkspaceService:
         self.workflows = WorkspaceWorkflowUseCases(
             self.executor, WorkflowRepository(db_path)
         )
+        self.workflow_graph = WorkspaceWorkflowGraphOperations(self.workflows)
         self.workflow_editor = WorkspaceWorkflowEditor(self.workflows)
         runner_adapter: ProcessAdapter
         if os.name == "nt":

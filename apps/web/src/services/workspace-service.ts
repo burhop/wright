@@ -33,11 +33,79 @@ export interface RivetWorkflowRun {
   reason: string | null;
 }
 
+export interface RivetWorkflowDocument extends RivetWorkflowOperation {
+  project: string;
+  datasets: Record<string, string>;
+}
+
 export interface RivetEditorSurface {
   availability: "disabled" | "available" | "missing" | "incompatible";
   detail: string | null;
   manifest: Record<string, unknown> | null;
 }
+
+export interface RivetWorkflowGraphNode {
+  node_id: string;
+  node_type: string | null;
+  title: string | null;
+  data: Record<string, unknown>;
+  outgoing_connections: string[];
+}
+
+export interface RivetWorkflowGraph {
+  graph_id: string;
+  name: string | null;
+  main: boolean;
+  node_count: number;
+  nodes: RivetWorkflowGraphNode[];
+}
+
+export interface RivetWorkflowGraphResponse extends RivetWorkflowOperation {
+  graph: RivetWorkflowGraph;
+  issues: Array<Record<string, unknown>>;
+}
+
+const slugifyWorkflowName = (name: string) =>
+  name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "untitled-workflow";
+
+const titleFromSlug = (slug: string) =>
+  slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ") || "Untitled Workflow";
+
+const buildBlankRivetProject = (slug: string, title = titleFromSlug(slug)) =>
+  `${JSON.stringify(
+    {
+      version: 4,
+      data: {
+        graphs: {
+          main: {
+            metadata: {
+              id: "main",
+              name: "Main",
+              description: "",
+            },
+            nodes: {},
+          },
+        },
+        metadata: {
+          id: `wright-${slug}`,
+          title,
+          description: "",
+          mainGraphId: "main",
+        },
+        plugins: [],
+      },
+    },
+    null,
+    2,
+  )}\n`;
 
 const getApiBase = () => {
   if (typeof window === "undefined") {
@@ -73,6 +141,99 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Rivet workflows are unavailable");
     return (await response.json()).workflows || [];
+  }
+
+  async ensureDefaultRivetWorkflow(
+    sessionId: string,
+  ): Promise<RivetWorkflowOperation> {
+    const existing = await this.listRivetWorkflowOperations(sessionId);
+    const first = existing[0];
+    if (first) return first;
+    return this.createBlankRivetWorkflow(sessionId, "rivet");
+  }
+
+  async createBlankRivetWorkflow(
+    sessionId: string,
+    preferredName = "untitled-workflow",
+  ): Promise<RivetWorkflowOperation> {
+    const existing = await this.listRivetWorkflowOperations(sessionId);
+    const taken = new Set(existing.map((workflow) => workflow.slug));
+    const base = slugifyWorkflowName(preferredName);
+    let slug = base;
+    let index = 2;
+    while (taken.has(slug)) {
+      slug = `${base}-${index}`;
+      index += 1;
+    }
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          slug,
+          project: buildBlankRivetProject(slug),
+          datasets: {},
+        }),
+      },
+    );
+    if (!response.ok) throw new Error("Unable to create a Rivet workflow");
+    const created: RivetWorkflowOperation = await response.json();
+    return { ...created, review_state: null, reviewer: null, reviewed_at: null };
+  }
+
+  async readRivetWorkflow(
+    sessionId: string,
+    slug: string,
+  ): Promise<RivetWorkflowDocument> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Unable to open Rivet workflow");
+    const document = await response.json();
+    return {
+      ...document,
+      review_state: null,
+      reviewer: null,
+      reviewed_at: null,
+    };
+  }
+
+  async saveRivetWorkflow(
+    sessionId: string,
+    slug: string,
+    expectedRevision: number,
+    project: string,
+    datasets: Record<string, string> = {},
+  ): Promise<RivetWorkflowOperation> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          expected_revision: expectedRevision,
+          project,
+          datasets,
+        }),
+      },
+    );
+    if (!response.ok) throw new Error("Unable to save Rivet workflow");
+    const saved: RivetWorkflowOperation = await response.json();
+    return { ...saved, review_state: null, reviewer: null, reviewed_at: null };
+  }
+
+  async lintRivetWorkflowGraph(
+    sessionId: string,
+    slug: string,
+  ): Promise<RivetWorkflowGraphResponse> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/graph/lint?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Unable to lint Rivet workflow");
+    return response.json();
   }
 
   async reviewRivetWorkflow(

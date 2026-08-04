@@ -36,6 +36,10 @@ const fallbackActions = (
   return [];
 };
 
+function hasInspectableRuntime(state: SurfaceDescriptor["lifecycle"]): boolean {
+  return state === "starting" || state === "ready" || state === "unhealthy";
+}
+
 export function LiveAppControls({
   descriptor,
   sessionId,
@@ -54,7 +58,8 @@ export function LiveAppControls({
     setRuntime(null);
     setHealth(null);
     setLogs(null);
-    if (!hasInstance) return;
+    setError(null);
+    if (!hasInstance || !hasInspectableRuntime(descriptor.lifecycle)) return;
     void getLiveApp(descriptor.surfaceId, descriptor.workspaceId, sessionId)
       .then(setRuntime)
       .catch((reason) =>
@@ -84,6 +89,7 @@ export function LiveAppControls({
       setRuntime(next);
       setHealth(null);
       onRuntimeChange?.(next);
+      window.dispatchEvent(new Event("wright-surfaces-changed"));
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : String(reason));
     } finally {

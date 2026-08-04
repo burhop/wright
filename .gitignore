@@ -298,6 +298,7 @@ docker/.env.bak
 ci_failures.md
 
 # Stale logs and local runtime databases
+.local-run/
 phase*.log
 ps_debug.log
 test-*-output.log

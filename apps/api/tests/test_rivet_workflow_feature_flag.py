@@ -62,3 +62,17 @@ def test_disabled_editor_endpoint_rejects_before_workspace_resolution(monkeypatc
         response = client.get("/api/workspace/workflows/editor/status")
     assert response.status_code == 404
     assert response.json()["message"] == "Rivet editor is disabled"
+
+
+def test_editor_endpoint_requires_live_app_surfaces(monkeypatch):
+    monkeypatch.setenv("WRIGHT_RIVET_EDITOR_ENABLED", "true")
+    monkeypatch.delenv("WRIGHT_SURFACES_ENABLED", raising=False)
+    monkeypatch.delenv("WRIGHT_SURFACES_LIVE_APPS_ENABLED", raising=False)
+
+    with TestClient(app) as client:
+        response = client.get("/api/workspace/workflows/editor/status")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == (
+        "Rivet editor requires workspace live app surfaces"
+    )

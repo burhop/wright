@@ -641,7 +641,7 @@ class GatewayService:
 
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
-                return self.management.call(session, tool.name)
+                return await self.management.call(session, tool.name, dict(arguments))
             await self.lifecycle.ensure_started(
                 tool.server_id,
                 workspace_path=session.workspace_path,

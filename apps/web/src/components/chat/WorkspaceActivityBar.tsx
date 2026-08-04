@@ -7,6 +7,7 @@ import {
   BackIcon,
   MCPIcon,
   BookOpenIcon,
+  WorkflowIcon,
 } from "../common/Icons";
 
 export type WorkspaceSidebarId =
@@ -17,6 +18,7 @@ interface WorkspaceActivityBarProps {
   isSidebarCollapsed: boolean;
   onBack: () => void;
   onSelectSidebar: (sidebar: WorkspaceSidebarId) => void;
+  onOpenRivetEditor?: () => void;
   workflowsEnabled?: boolean;
 }
 
@@ -27,16 +29,16 @@ const items: Array<{
   icon: (size: number) => ReactElement;
 }> = [
   {
-    id: "workflows",
-    testId: "activity-bar-workflows-btn",
-    title: "Rivet Workflows",
-    icon: (size) => <BookOpenIcon size={size} />,
-  },
-  {
     id: "files",
     testId: "activity-bar-explorer-btn",
     title: "Workspace Files",
     icon: (size) => <FolderIcon size={size} />,
+  },
+  {
+    id: "workflows",
+    testId: "activity-bar-workflows-btn",
+    title: "Rivet Workflows",
+    icon: (size) => <WorkflowIcon size={size} />,
   },
   {
     id: "marketplace",
@@ -80,6 +82,7 @@ export function WorkspaceActivityBar({
   isSidebarCollapsed,
   onBack,
   onSelectSidebar,
+  onOpenRivetEditor,
   workflowsEnabled = false,
 }: WorkspaceActivityBarProps) {
   return (
@@ -113,7 +116,13 @@ export function WorkspaceActivityBar({
             <button
               key={item.id}
               data-testid={item.testId}
-              onClick={() => onSelectSidebar(item.id)}
+              onClick={() => {
+                if (item.id === "workflows" && onOpenRivetEditor) {
+                  onOpenRivetEditor();
+                  return;
+                }
+                onSelectSidebar(item.id);
+              }}
               style={iconButtonStyle(isActive)}
               title={item.title}
               className="activity-bar-icon"

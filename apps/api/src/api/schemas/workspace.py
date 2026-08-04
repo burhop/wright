@@ -79,6 +79,53 @@ class WorkflowDocumentResponse(WorkflowResponse):
     datasets: Dict[str, str]
 
 
+class WorkflowGraphNodeResponse(BaseModel):
+    node_id: str
+    node_type: str | None = None
+    title: str | None = None
+    data: Dict[str, Any] = Field(default_factory=dict)
+    outgoing_connections: List[str] = Field(default_factory=list)
+
+
+class WorkflowGraphSummaryResponse(BaseModel):
+    graph_id: str
+    name: str | None = None
+    main: bool
+    node_count: int
+    nodes: List[WorkflowGraphNodeResponse] = Field(default_factory=list)
+
+
+class WorkflowGraphResponse(WorkflowResponse):
+    graph: WorkflowGraphSummaryResponse
+    issues: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class WorkflowGraphActionRequest(BaseModel):
+    session_id: str
+    action: Literal[
+        "add_node",
+        "edit_node",
+        "delete_node",
+        "connect_ports",
+        "disconnect_ports",
+        "save_revision",
+    ]
+    expected_revision: int = Field(ge=1)
+    graph_id: str | None = None
+    node_id: str | None = None
+    source_node_id: str | None = None
+    source_port: str | None = None
+    target_node_ref: str | None = None
+    target_port: str | None = None
+    connection: str | None = None
+    visual_data: str | None = None
+    node: Dict[str, Any] | None = None
+    node_patch: Dict[str, Any] | None = None
+    data: Dict[str, Any] | None = None
+    project: str | None = None
+    datasets: Dict[str, str] | None = None
+
+
 class WorkflowRunnerStatusResponse(BaseModel):
     availability: str
     generation: int

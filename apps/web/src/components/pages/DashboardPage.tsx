@@ -10,9 +10,8 @@ import { CreateWorkspaceModal } from "../common/CreateWorkspaceModal";
 
 const getApiUrl = (path: string) => {
   if (typeof window === "undefined") return `http://127.0.0.1:8000${path}`;
-  const host = window.location.hostname;
   const port = window.location.port;
-  const base = port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+  const base = port === "5173" || port === "5174" ? "" : "";
   return `${base}${path}`;
 };
 

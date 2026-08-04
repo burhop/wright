@@ -16,6 +16,7 @@ import type {
 } from "@modelcontextprotocol/sdk/types.js";
 
 import { hostAdapter } from "../../host-adapter";
+import { surfaceRequestId } from "../ids";
 import type { SurfaceDescriptor } from "../surface-contract";
 import type { McpAppGateway, McpAppOperationContext } from "./mcp-app-host";
 import type {
@@ -235,7 +236,7 @@ export class McpAppClient implements McpAppPresenterGateway, McpAppGateway {
     body: Record<string, unknown>,
     context: McpAppOperationContext,
   ): Promise<unknown> {
-    const requestId = crypto.randomUUID();
+    const requestId = surfaceRequestId();
     const cancel = () => {
       void hostAdapter
         .fetch(

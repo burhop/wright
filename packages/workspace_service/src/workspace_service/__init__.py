@@ -29,6 +29,13 @@ from .workflow_operations import (
     WorkflowOperationsSettings,
     WorkspaceWorkflowOperations,
 )
+from .workflow_graph import (
+    WorkflowGraphError,
+    WorkflowGraphNode,
+    WorkflowGraphResult,
+    WorkflowGraphSummary,
+    WorkspaceWorkflowGraphOperations,
+)
 from core.workflows import (
     WorkflowDocument,
     WorkflowPersistenceError,
@@ -62,6 +69,11 @@ __all__ = [
     "EditorAssetCatalog",
     "EditorSettings",
     "WorkspaceWorkflowEditor",
+    "WorkflowGraphError",
+    "WorkflowGraphNode",
+    "WorkflowGraphResult",
+    "WorkflowGraphSummary",
+    "WorkspaceWorkflowGraphOperations",
     "WorkflowOperationRecord",
     "WorkflowOperationsError",
     "WorkflowOperationsSettings",

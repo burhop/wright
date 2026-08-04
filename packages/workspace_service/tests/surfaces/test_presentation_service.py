@@ -348,7 +348,7 @@ def test_idempotent_replay_rejects_a_replaced_instance_even_at_same_generation(
         )
 
 
-def test_isolated_presentations_require_acknowledgement_and_do_not_reuse_instance(
+def test_isolated_presentations_require_acknowledgement_and_use_retained_runtime(
     tmp_path: Path,
 ) -> None:
     descriptor = _ready_descriptor(sharing=SharingMode.ISOLATED)
@@ -374,7 +374,7 @@ def test_isolated_presentations_require_acknowledgement_and_do_not_reuse_instanc
         idempotency_key="isolated-browser-request",
         isolated_acknowledged=True,
     )
-    assert panel.launch.instance_id != browser.launch.instance_id
+    assert panel.launch.instance_id == browser.launch.instance_id == "instance-shared"
 
 
 def test_cross_scope_and_ineligible_panel_are_indistinguishable(tmp_path: Path) -> None:

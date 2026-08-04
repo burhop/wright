@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import time
 from typing import Optional, List, AsyncIterator
+import httpx
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -23,6 +24,7 @@ from agent_adapters import (
     create_agent_engine,
     default_agent_registry,
     GenericProgressProjector,
+    resolve_agent_api_settings,
 )
 from workspace_service import WorkspaceInvalidRequestError, WorkspaceService
 from workspace_service.adapters.runtime import (
@@ -393,6 +395,43 @@ class SetActiveAgentRequest(BaseModel):
     agent: str
 
 
+class HermesModelOption(BaseModel):
+    value: str
+    label: str
+    provider: str
+    model: str
+    is_current: bool = False
+
+
+class HermesModelOptionGroup(BaseModel):
+    provider: str
+    label: str
+    options: List[HermesModelOption]
+
+
+class HermesModelOptionsResponse(BaseModel):
+    current_value: Optional[str] = None
+    current_provider: Optional[str] = None
+    current_model: Optional[str] = None
+    groups: List[HermesModelOptionGroup]
+
+
+class SetHermesModelRequest(BaseModel):
+    provider: str
+    model: str
+    session_id: Optional[str] = None
+    confirm_expensive_model: bool = False
+
+
+class SetHermesModelResponse(BaseModel):
+    ok: bool
+    provider: str
+    model: str
+    session_locked: bool = False
+    confirm_required: bool = False
+    confirm_message: Optional[str] = None
+
+
 class NewSessionRequest(BaseModel):
     workspace: Optional[str] = None
 
@@ -438,6 +477,135 @@ def title_from_slash_command(message: str) -> str | None:
         return None
     title = remainder.strip().strip("\"'“”")
     return title[:MAX_SESSION_TITLE_LENGTH] or None
+
+
+def _hermes_profile() -> str:
+    return (
+        os.getenv("WRIGHT_HERMES_PROFILE")
+        or os.getenv("HERMES_PROFILE")
+        or "wright"
+    ).strip() or "wright"
+
+
+def _model_option_value(provider: str, model: str) -> str:
+    return f"{provider}::{model}"
+
+
+async def _hermes_json_request(
+    method: str,
+    path: str,
+    *,
+    params: dict | None = None,
+    json_body: dict | None = None,
+) -> dict:
+    profile = _hermes_profile()
+    settings = resolve_agent_api_settings(
+        "hermes", env={**os.environ, "HERMES_PROFILE": profile}
+    )
+    headers = {"Accept": "application/json"}
+    if settings.api_key:
+        headers["Authorization"] = f"Bearer {settings.api_key}"
+
+    url = f"{settings.base_url.rstrip('/')}{path}"
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.request(
+                method,
+                url,
+                params=params,
+                json=json_body,
+                headers=headers,
+            )
+            response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        detail = exc.response.text or exc.response.reason_phrase
+        raise HTTPException(
+            status_code=exc.response.status_code,
+            detail=f"Hermes model request failed: {detail}",
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Hermes model service is unavailable: {exc}",
+        ) from exc
+
+    data = response.json()
+    return data if isinstance(data, dict) else {}
+
+
+def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
+    current_provider = str(payload.get("provider") or "").strip() or None
+    current_model = str(payload.get("model") or "").strip() or None
+    current_value = (
+        _model_option_value(current_provider, current_model)
+        if current_provider and current_model
+        else None
+    )
+
+    groups: list[HermesModelOptionGroup] = []
+    for provider_row in payload.get("providers") or []:
+        if not isinstance(provider_row, dict):
+            continue
+        provider = str(provider_row.get("slug") or "").strip()
+        if not provider:
+            continue
+        models = [
+            str(model).strip()
+            for model in (provider_row.get("models") or [])
+            if str(model).strip()
+        ]
+        if not models:
+            continue
+        provider_label = str(provider_row.get("name") or provider).strip()
+        groups.append(
+            HermesModelOptionGroup(
+                provider=provider,
+                label=provider_label,
+                options=[
+                    HermesModelOption(
+                        value=_model_option_value(provider, model),
+                        label=model,
+                        provider=provider,
+                        model=model,
+                        is_current=provider == current_provider
+                        and model == current_model,
+                    )
+                    for model in models
+                ],
+            )
+        )
+
+    if current_value and not any(
+        option.value == current_value for group in groups for option in group.options
+    ):
+        provider = current_provider or "hermes"
+        model = current_model or current_value
+        groups.insert(
+            0,
+            HermesModelOptionGroup(
+                provider=provider,
+                label=provider,
+                options=[
+                    HermesModelOption(
+                        value=current_value,
+                        label=model,
+                        provider=provider,
+                        model=model,
+                        is_current=True,
+                    )
+                ],
+            ),
+        )
+
+    if current_provider:
+        groups.sort(key=lambda group: 0 if group.provider == current_provider else 1)
+
+    return HermesModelOptionsResponse(
+        current_value=current_value,
+        current_provider=current_provider,
+        current_model=current_model,
+        groups=groups,
+    )
 
 
 class ChatHistoryMessage(BaseModel):
@@ -783,6 +951,75 @@ async def chat(
             "Connection": "keep-alive",
             "X-Trace-Id": trace_id,
         },
+    )
+
+
+@router.get("/models", response_model=HermesModelOptionsResponse)
+@traced("agent.models.list")
+async def list_hermes_models(refresh: bool = False):
+    payload = await _hermes_json_request(
+        "GET",
+        "/api/model/options",
+        params={
+            "profile": _hermes_profile(),
+            "explicit_only": "true",
+            "include_unconfigured": "false",
+            "refresh": "true" if refresh else "false",
+        },
+    )
+    return _build_model_options_response(payload)
+
+
+@router.post("/model", response_model=SetHermesModelResponse)
+@traced("agent.model.set")
+async def set_hermes_model(body: SetHermesModelRequest):
+    provider = body.provider.strip()
+    model = body.model.strip()
+    if not provider or not model:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="provider and model are required",
+        )
+
+    assignment = await _hermes_json_request(
+        "POST",
+        "/api/model/set",
+        params={"profile": _hermes_profile()},
+        json_body={
+            "scope": "main",
+            "provider": provider,
+            "model": model,
+            "profile": _hermes_profile(),
+            "confirm_expensive_model": body.confirm_expensive_model,
+        },
+    )
+    if assignment.get("confirm_required"):
+        return SetHermesModelResponse(
+            ok=False,
+            provider=provider,
+            model=model,
+            confirm_required=True,
+            confirm_message=str(assignment.get("confirm_message") or ""),
+        )
+
+    session_locked = False
+    if body.session_id:
+        await _hermes_json_request(
+            "POST",
+            f"/api/sessions/{body.session_id}/model",
+            json_body={
+                "provider": provider,
+                "model": model,
+                "require_model_lock": True,
+            },
+        )
+        session_locked = True
+
+    return SetHermesModelResponse(
+        ok=bool(assignment.get("ok", True)),
+        provider=provider,
+        model=model,
+        session_locked=session_locked,
     )
 
 
