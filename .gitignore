@@ -313,6 +313,10 @@ tmp/
 /native-candidate/
 /.native-runtime-cache/
 
+# Local Codex artifact-generation scratch and inspection metadata
+/.codex-tmp/
+*.inspect.ndjson
+
 # Data vault local state
 .vault/
 

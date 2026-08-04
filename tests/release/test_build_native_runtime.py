@@ -1,5 +1,6 @@
 from pathlib import Path
 import hashlib
+import json
 import runpy
 
 
@@ -43,3 +44,31 @@ def test_packaged_web_bytes_are_not_rewritten_by_git() -> None:
         "src/wright_engineering/static/web/** -text -whitespace"
         in attributes.splitlines()
     )
+
+
+def test_stage_frontend_preserves_runtime_generated_license(tmp_path: Path) -> None:
+    namespace = runpy.run_path(str(BUILD_SCRIPT))
+    stage_frontend = namespace["stage_frontend"]
+    packaged_web = tmp_path / "packaged-web"
+    web_dist = tmp_path / "web-dist"
+
+    packaged_web.mkdir()
+    (packaged_web / "third-party-licenses-api.txt").write_text(
+        "backend license\n", encoding="utf-8"
+    )
+    (web_dist / "assets").mkdir(parents=True)
+    (web_dist / "index.html").write_text("<main />\n", encoding="utf-8")
+    (web_dist / "assets" / "index.js").write_text("export {};\n", encoding="utf-8")
+
+    stage_frontend.__globals__["PACKAGED_WEB"] = packaged_web
+    stage_frontend.__globals__["WEB_DIST"] = web_dist
+
+    stage_frontend()
+
+    assert (packaged_web / "third-party-licenses-api.txt").read_text(
+        encoding="utf-8"
+    ) == "backend license\n"
+    manifest = json.loads((packaged_web / "asset-manifest.json").read_text())
+    assert "third-party-licenses-api.txt" in {
+        entry["path"] for entry in manifest["files"]
+    }
