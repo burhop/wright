@@ -59,6 +59,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
     curl \
+    libatomic1 \
     libssl3t64 \
     openssl \
     openssl-provider-legacy \
