@@ -1,5 +1,6 @@
 # Force LF line endings for shell scripts so they run correctly in bash/Docker
 *.sh text eol=lf
+docker/mcp/brep-mcp-launcher.cjs text eol=lf
 
 # Versioned Workspace Surface contracts are byte-hashed. Keep their source and
 # packaged copies identical on Windows and POSIX checkouts.

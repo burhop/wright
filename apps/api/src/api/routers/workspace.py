@@ -141,6 +141,7 @@ from tool_registry.safety import ApprovalContext
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+_brep_panel_start_lock = asyncio.Lock()
 
 
 def get_default_workspace_parent_dir() -> str:
@@ -406,49 +407,54 @@ async def brep_panel_endpoint(
             detail="The Wright MCP runtime is unavailable.",
         )
     try:
-        server = select_brep_application_server(get_servers(DATABASE_PATH))
-        configured_environment = panel_environment(
-            server.env_vars if isinstance(server.env_vars, dict) else {}
-        )
-        environment_changed = configured_environment != server.env_vars
-        if environment_changed:
-            server = update_server(
-                DATABASE_PATH,
-                server.server_id,
-                {
-                    "env_vars": configured_environment,
-                    "updated_at": int(time.time()),
-                },
+        # Workspace restoration can mount the retained BREP surface more than
+        # once before the first MCP process has published its runner. Keep the
+        # environment reconciliation, process start, and readiness probe in one
+        # single-flight section so every waiter reuses the first healthy host.
+        async with _brep_panel_start_lock:
+            server = select_brep_application_server(get_servers(DATABASE_PATH))
+            configured_environment = panel_environment(
+                server.env_vars if isinstance(server.env_vars, dict) else {}
             )
-            if server is None:
-                raise BrepPanelError("The BREP MCP registration disappeared.")
+            environment_changed = configured_environment != server.env_vars
+            if environment_changed:
+                server = update_server(
+                    DATABASE_PATH,
+                    server.server_id,
+                    {
+                        "env_vars": configured_environment,
+                        "updated_at": int(time.time()),
+                    },
+                )
+                if server is None:
+                    raise BrepPanelError("The BREP MCP registration disappeared.")
 
-        approval = ApprovalContext(
-            workspace_id=workspace_id,
-            session_id=body.session_id,
-            workspace_approvals=set(server.approval_gates or []),
-        )
-        runner = mcp_engine.lifecycle.runner_for(server.server_id)
-        if environment_changed or runner is None or not runner.is_running():
-            started = await mcp_engine.start_server(
+            approval = ApprovalContext(
+                workspace_id=workspace_id,
+                session_id=body.session_id,
+                workspace_approvals=set(server.approval_gates or []),
+            )
+            runner = mcp_engine.lifecycle.runner_for(server.server_id)
+            if environment_changed or runner is None or not runner.is_running():
+                started = await mcp_engine.start_server(
+                    server.server_id,
+                    workspace_dir=workspace_dir,
+                    approval_context=approval,
+                )
+                if started is None or started.status == "error":
+                    raise BrepPanelError(
+                        (started.error_message if started else None)
+                        or "The BREP MCP process did not start."
+                    )
+
+            result = await mcp_engine.call_tool(
                 server.server_id,
-                workspace_dir=workspace_dir,
+                BREP_APPLICATION_STATUS_TOOL,
+                {},
                 approval_context=approval,
             )
-            if started is None or started.status == "error":
-                raise BrepPanelError(
-                    (started.error_message if started else None)
-                    or "The BREP MCP process did not start."
-                )
-
-        result = await mcp_engine.call_tool(
-            server.server_id,
-            BREP_APPLICATION_STATUS_TOOL,
-            {},
-            approval_context=approval,
-        )
-        panel = parse_brep_status_result(result)
-        await asyncio.to_thread(wait_for_brep_module, panel.module_url)
+            panel = parse_brep_status_result(result)
+            await asyncio.to_thread(wait_for_brep_module, panel.module_url)
     except BrepPanelError as error:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from types import SimpleNamespace
 
 import pytest
@@ -46,6 +47,19 @@ class _McpEngine:
         }
 
 
+class _ConcurrentMcpEngine(_McpEngine):
+    def __init__(self, server):
+        super().__init__(server)
+        self.runner = None
+        self.lifecycle = SimpleNamespace(runner_for=lambda _server_id: self.runner)
+
+    async def start_server(self, server_id, workspace_dir, *, approval_context):
+        self.started.append((server_id, workspace_dir, approval_context))
+        await asyncio.sleep(0.05)
+        self.runner = SimpleNamespace(is_running=lambda: True)
+        return self.server
+
+
 @pytest.mark.asyncio
 async def test_brep_panel_starts_workspace_bound_mcp_and_returns_control_page(
     monkeypatch,
@@ -89,6 +103,49 @@ async def test_brep_panel_starts_workspace_bound_mcp_and_returns_control_page(
     assert len(mcp_engine.started) == 1
     assert mcp_engine.called[0][1] == "brep.app.status"
     assert response.headers["cache-control"] == "no-store"
+
+
+@pytest.mark.asyncio
+async def test_brep_panel_coalesces_concurrent_workspace_restore_requests(
+    monkeypatch,
+):
+    server = SimpleNamespace(
+        server_id="brep-server",
+        name="BREP MCP",
+        source_url="https://github.com/mmiscool/BREP-MCP",
+        is_installed=True,
+        env_vars={"BREP_CAD_MODULE_URL": "http://127.0.0.1:5190/src/CAD.ts"},
+        approval_gates=[],
+        status="active",
+        error_message=None,
+    )
+    mcp_engine = _ConcurrentMcpEngine(server)
+    monkeypatch.setattr(workspace_router, "get_servers", lambda _path: [server])
+
+    def update(_path, _server_id, changes):
+        server.env_vars = changes["env_vars"]
+        return server
+
+    monkeypatch.setattr(workspace_router, "update_server", update)
+    monkeypatch.setattr(
+        workspace_router, "wait_for_brep_module", lambda _module_url: None
+    )
+
+    async def open_panel():
+        return await workspace_router.brep_panel_endpoint(
+            BrepPanelRequest(session_id="session-1"),
+            SimpleNamespace(
+                app=SimpleNamespace(state=SimpleNamespace(mcp_engine=mcp_engine))
+            ),
+            Response(),
+            SimpleNamespace(),
+            _WorkspaceService(),
+        )
+
+    first, second = await asyncio.gather(open_panel(), open_panel())
+
+    assert first.module_url == second.module_url
+    assert len(mcp_engine.started) == 1
 
 
 @pytest.mark.asyncio

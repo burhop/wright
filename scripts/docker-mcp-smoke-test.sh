@@ -87,6 +87,7 @@ docker run --rm --platform "$DOCKER_PLATFORM" --entrypoint sh "$IMAGE_TAG" -c '
   command -v openscad >/dev/null &&
   test -x /opt/wright/mcp/bin/freecadcmd &&
   command -v brep >/dev/null &&
+  brep --help >/dev/null &&
   command -v brep-mcp >/dev/null &&
   test -x /opt/wright/mcp/bin/brep-mcp-wrapped &&
   command -v playwright >/dev/null &&
@@ -94,6 +95,34 @@ docker run --rm --platform "$DOCKER_PLATFORM" --entrypoint sh "$IMAGE_TAG" -c '
   grep -R "@playwright/mcp/node_modules/playwright-core" /opt/wright/mcp/playwright-browsers/.links >/dev/null &&
   test -x /opt/wright/mcp/bin/freecad-mcp-wrapped
 '
+
+docker run --rm -i --platform "$DOCKER_PLATFORM" \
+  --entrypoint /workspace/.venv/bin/python "$IMAGE_TAG" - <<'PY'
+import asyncio
+import os
+
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+
+async def main() -> None:
+    parameters = StdioServerParameters(
+        command="/opt/wright/mcp/bin/brep-mcp-wrapped",
+        args=[],
+        env={**os.environ, "BREP_WORKSPACE": "/home/agent"},
+        cwd="/home/agent",
+    )
+    async with stdio_client(parameters) as (read_stream, write_stream):
+        async with ClientSession(read_stream, write_stream) as client:
+            await client.initialize()
+            tools = await client.list_tools()
+    names = {tool.name for tool in tools.tools}
+    if "run_program" not in names:
+        raise SystemExit(f"BREP MCP did not publish run_program: {sorted(names)}")
+
+
+asyncio.run(main())
+PY
 
 docker run -d \
   --platform "$DOCKER_PLATFORM" \
