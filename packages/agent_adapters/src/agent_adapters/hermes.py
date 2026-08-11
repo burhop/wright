@@ -27,6 +27,14 @@ WRIGHT_SYSTEM_HINT = (
     "wrightgateway. Select tools from their advertised descriptions and schemas, "
     "and use the workspace path from the [Workspace::v1: ...] prefix when a tool "
     "requires an explicit workspace or output location. "
+    "When a tool returns retryable validation errors and confirms that no external "
+    "state was changed, apply every deterministic correction it reports in one "
+    "revised tool call and retry. Do not stop merely to relay those corrections "
+    "unless a correction is ambiguous, requires new user authority, or the revised "
+    "call repeats the same failure. "
+    "When Wright supplies a currently displayed Rivet workflow, every Rivet read or "
+    "write must target that workflow. Never select, create, or open another Rivet "
+    "workflow unless the user explicitly requests it. "
     "For Onshape requests, do not ask the user for document, "
     "workspace, or element IDs when they provided a document or part name. "
     "First use jarvisonshapemcp__search_documents or "
@@ -700,6 +708,31 @@ class HermesAdapter(BaseAgentEngine):
         """Fetch chat history and append the current user message to construct messages list."""
         history = await self.get_chat_history(request.session_id)
         messages = [{"role": "system", "content": WRIGHT_SYSTEM_HINT}]
+        if request.active_rivet_slug:
+            quoted_slug = json.dumps(request.active_rivet_slug)
+            messages.append(
+                {
+                    "role": "system",
+                    "content": (
+                        "Wright UI context: the currently displayed Rivet workflow "
+                        f"slug is {quoted_slug}. Use this exact slug for every "
+                        "wright__rivet_* read or write. Do not target, create, or "
+                        "open another Rivet workflow unless the user explicitly "
+                        "requests it."
+                    ),
+                }
+            )
+        else:
+            messages.append(
+                {
+                    "role": "system",
+                    "content": (
+                        "Wright UI context: no Rivet workflow is currently displayed. "
+                        "Do not guess a Rivet workflow target or create/open one unless "
+                        "the user explicitly requests it."
+                    ),
+                }
+            )
         for msg in history:
             messages.append({"role": msg.role, "content": msg.content})
 
@@ -709,7 +742,17 @@ class HermesAdapter(BaseAgentEngine):
         if workspace_path:
             message_content = f"[Workspace::v1: {workspace_path}] {message_content}"
 
-        messages.append({"role": "user", "content": message_content})
+        if request.attachments:
+            content: str | list[dict[str, Any]] = [
+                {"type": "text", "text": message_content},
+                *(
+                    {"type": "image_url", "image_url": {"url": attachment}}
+                    for attachment in request.attachments
+                ),
+            ]
+        else:
+            content = message_content
+        messages.append({"role": "user", "content": content})
         return messages
 
     async def stream_chat(

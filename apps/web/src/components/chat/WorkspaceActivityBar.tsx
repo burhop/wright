@@ -7,6 +7,7 @@ import {
   BackIcon,
   MCPIcon,
   BookOpenIcon,
+  BrepIcon,
   WorkflowIcon,
 } from "../common/Icons";
 
@@ -19,11 +20,12 @@ interface WorkspaceActivityBarProps {
   onBack: () => void;
   onSelectSidebar: (sidebar: WorkspaceSidebarId) => void;
   onOpenRivetEditor?: () => void;
+  onOpenBrepPanel: () => void;
   workflowsEnabled?: boolean;
 }
 
 const items: Array<{
-  id: WorkspaceSidebarId;
+  id: WorkspaceSidebarId | "brep";
   testId: string;
   title: string;
   icon: (size: number) => ReactElement;
@@ -39,6 +41,12 @@ const items: Array<{
     testId: "activity-bar-workflows-btn",
     title: "Rivet Workflows",
     icon: (size) => <WorkflowIcon size={size} />,
+  },
+  {
+    id: "brep",
+    testId: "activity-bar-brep-btn",
+    title: "Start BREP",
+    icon: (size) => <BrepIcon size={size} />,
   },
   {
     id: "marketplace",
@@ -83,6 +91,7 @@ export function WorkspaceActivityBar({
   onBack,
   onSelectSidebar,
   onOpenRivetEditor,
+  onOpenBrepPanel,
   workflowsEnabled = false,
 }: WorkspaceActivityBarProps) {
   return (
@@ -111,7 +120,10 @@ export function WorkspaceActivityBar({
       {items
         .filter((item) => item.id !== "workflows" || workflowsEnabled)
         .map((item) => {
-          const isActive = !isSidebarCollapsed && activeSidebar === item.id;
+          const isActive =
+            item.id !== "brep" &&
+            !isSidebarCollapsed &&
+            activeSidebar === item.id;
           return (
             <button
               key={item.id}
@@ -119,6 +131,10 @@ export function WorkspaceActivityBar({
               onClick={() => {
                 if (item.id === "workflows" && onOpenRivetEditor) {
                   onOpenRivetEditor();
+                  return;
+                }
+                if (item.id === "brep") {
+                  onOpenBrepPanel();
                   return;
                 }
                 onSelectSidebar(item.id);

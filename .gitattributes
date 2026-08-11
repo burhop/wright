@@ -9,3 +9,7 @@ packages/core/src/core/surfaces/schemas/** text eol=lf
 # Generated Vite bundles are byte-addressed release inputs. Preserve their exact
 # bytes across platforms; shader source also contains significant whitespace.
 src/wright_engineering/static/web/** -text -whitespace
+
+# The pinned Rivet 2 bundle is verified byte-for-byte. Monaco language data uses
+# significant trailing spaces inside generated JavaScript template literals.
+integrations/rivet/editor/dist/** -text -whitespace

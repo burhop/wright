@@ -184,7 +184,10 @@ async def test_structured_call_uses_bound_workspace_and_audits() -> None:
 
     assert result.structured_content == {"server": "cad", "workspace": "w1"}
     assert not result.is_error
-    assert lifecycle.calls[0][3] == {"workspace_id": "w1"}
+    assert lifecycle.calls[0][3] == {
+        "workspace_id": "w1",
+        "session_id": "s1",
+    }
     executed = next(event for event in audit.events if event["outcome"] == "succeeded")
     assert executed["workspace_id"] == "w1"
     assert executed["metadata"]["response_bytes"] > 0
@@ -217,6 +220,35 @@ async def test_call_forwards_generic_correlated_progress() -> None:
         "status": "running",
     }
     assert updates[0]["correlationId"]
+
+
+@pytest.mark.asyncio
+async def test_call_preserves_child_terminal_progress_status_and_title() -> None:
+    instance, lifecycle, _ = service()
+    updates: list[dict] = []
+
+    async def completed_progress(_server_id, _tool_name, _arguments, **kwargs):
+        callback = kwargs["progress_callback"]
+        await callback(
+            {
+                "status": "completed",
+                "title": "BREP panel ready",
+                "message": "The visible panel is ready.",
+            }
+        )
+        return {"server": "cad", "workspace": "w1"}
+
+    lifecycle.call_tool = completed_progress
+    await instance.call_tool(
+        "s1",
+        "terminal-progress",
+        "cad__run",
+        {},
+        progress_callback=lambda update: updates.append(dict(update)),
+    )
+
+    assert updates[0]["status"] == "completed"
+    assert updates[0]["title"] == "BREP panel ready"
 
 
 @pytest.mark.asyncio

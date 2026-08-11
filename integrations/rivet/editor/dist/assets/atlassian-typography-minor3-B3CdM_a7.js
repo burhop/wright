@@ -1,4 +1,4 @@
-const n=`
+const n = `
 html[data-theme~="typography:typography-minor3"] {
   --ds-UNSAFE-textTransformUppercase: uppercase;
   --ds-font-body: normal 400 0.875rem/1.25rem var(--ds-font-family-body);
@@ -32,4 +32,7 @@ html[data-theme~="typography:typography-minor3"] {
     --ds-font-heading-xxlarge: normal 700 1.75rem/2rem var(--ds-font-family-heading);
   }
 }
-`;export{n as default};
+`;
+export {
+  n as default
+};

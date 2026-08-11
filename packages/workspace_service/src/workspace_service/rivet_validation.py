@@ -1,0 +1,268 @@
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass
+from typing import Any
+
+import yaml
+
+
+_NODE_TYPE = re.compile(r"\]:([A-Za-z0-9_-]+)(?:\s|$)")
+_MAX_GRAPHS = 256
+_MAX_PORTS = 256
+_MAX_ISSUES = 64
+_MAX_MESSAGE = 256
+
+
+class WorkflowIdentityMismatch(ValueError):
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class ValidationIssue:
+    code: str
+    message: str
+    graph_id: str | None = None
+    node_id: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class GraphPortSummary:
+    id: str
+    data_type: str
+    required: bool
+
+
+@dataclass(frozen=True, slots=True)
+class GraphSummary:
+    id: str
+    name: str
+    inputs: tuple[GraphPortSummary, ...]
+    outputs: tuple[GraphPortSummary, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowValidationResult:
+    workflow_id: str
+    revision: int
+    digest: str
+    valid: bool
+    main_graph: GraphSummary | None
+    graphs: tuple[GraphSummary, ...]
+    requirements: tuple[str, ...]
+    errors: tuple[ValidationIssue, ...]
+    warnings: tuple[ValidationIssue, ...]
+
+
+def _issue(code: str, message: object, **location: str | None) -> ValidationIssue:
+    safe = " ".join(str(message).split())[:_MAX_MESSAGE]
+    return ValidationIssue(code, safe, **location)
+
+
+def _node_type(serialized_id: object, node: object) -> str:
+    if isinstance(node, dict) and isinstance(node.get("type"), str):
+        return str(node["type"])
+    match = _NODE_TYPE.search(str(serialized_id))
+    return match.group(1) if match else "unknown"
+
+
+def _nodes(graph: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
+    raw = graph.get("nodes")
+    if isinstance(raw, dict):
+        return [
+            (str(key), value)
+            for key, value in raw.items()
+            if isinstance(value, dict)
+        ]
+    if isinstance(raw, list):
+        return [
+            (str(value.get("id") or index), value)
+            for index, value in enumerate(raw)
+            if isinstance(value, dict)
+        ]
+    return []
+
+
+def _port(node: dict[str, Any]) -> GraphPortSummary | None:
+    data = node.get("data")
+    if not isinstance(data, dict):
+        return None
+    port_id = data.get("id")
+    if not isinstance(port_id, str) or not port_id.strip():
+        return None
+    data_type = data.get("dataType")
+    return GraphPortSummary(
+        port_id.strip(),
+        str(data_type)[:64] if data_type is not None else "any",
+        not bool(data.get("useDefaultValueInput", False)),
+    )
+
+
+def _requirements(node_types: set[str]) -> tuple[str, ...]:
+    requirements: set[str] = set()
+    for value in node_types:
+        node_type = value.lower()
+        if (
+            "chat" in node_type
+            or "embedding" in node_type
+            or node_type in {"generate", "generateimage", "generateaudio"}
+        ):
+            requirements.add("ai")
+        if "dataset" in node_type or node_type in {"vectorknn", "vectorstore"}:
+            requirements.add("dataset")
+        if node_type in {
+            "readfile",
+            "writefile",
+            "readallfiles",
+            "readdirectory",
+        }:
+            requirements.add("native-filesystem")
+        if node_type in {"code", "codenew"}:
+            requirements.add("code")
+        if node_type in {"httpcall", "urlreference"}:
+            requirements.add("network")
+        if "mcp" in node_type or node_type in {"externalcall", "delegatetoolcall"}:
+            requirements.add("mcp")
+        if node_type in {"userinput", "chatloop", "waitforevent"}:
+            requirements.add("interactive-user-input")
+    return tuple(sorted(requirements))
+
+
+def validate_rivet_project(
+    project: str,
+    *,
+    workflow_id: str,
+    revision: int,
+    digest: str,
+    selected_graph: str | None = None,
+    expected_revision: int | None = None,
+    expected_digest: str | None = None,
+) -> WorkflowValidationResult:
+    if expected_revision is not None and revision != expected_revision:
+        raise WorkflowIdentityMismatch(
+            f"Workflow revision changed from {expected_revision} to {revision}"
+        )
+    if expected_digest is not None and digest != expected_digest:
+        raise WorkflowIdentityMismatch("Workflow digest changed")
+
+    errors: list[ValidationIssue] = []
+    warnings: list[ValidationIssue] = []
+    try:
+        document = yaml.safe_load(project)
+    except yaml.YAMLError as error:
+        errors.append(_issue("RIVET_PROJECT_PARSE_FAILED", error))
+        return WorkflowValidationResult(
+            workflow_id,
+            revision,
+            digest,
+            False,
+            None,
+            (),
+            (),
+            tuple(errors),
+            (),
+        )
+    if not isinstance(document, dict) or not isinstance(document.get("data"), dict):
+        errors.append(
+            _issue("RIVET_PROJECT_INVALID", "Project must contain a data mapping")
+        )
+        return WorkflowValidationResult(
+            workflow_id,
+            revision,
+            digest,
+            False,
+            None,
+            (),
+            (),
+            tuple(errors),
+            (),
+        )
+
+    data = document["data"]
+    raw_graphs = data.get("graphs")
+    if not isinstance(raw_graphs, dict) or not raw_graphs:
+        errors.append(_issue("RIVET_GRAPHS_MISSING", "Project has no graphs"))
+        raw_graphs = {}
+    if len(raw_graphs) > _MAX_GRAPHS:
+        errors.append(
+            _issue(
+                "RIVET_GRAPH_LIMIT_EXCEEDED",
+                f"Project contains more than {_MAX_GRAPHS} graphs",
+            )
+        )
+
+    graph_summaries: list[GraphSummary] = []
+    all_node_types: set[str] = set()
+    for serialized_graph_id, raw_graph in list(raw_graphs.items())[:_MAX_GRAPHS]:
+        if not isinstance(raw_graph, dict):
+            errors.append(
+                _issue(
+                    "RIVET_GRAPH_INVALID",
+                    "Graph must be a mapping",
+                    graph_id=str(serialized_graph_id),
+                )
+            )
+            continue
+        metadata = raw_graph.get("metadata")
+        metadata = metadata if isinstance(metadata, dict) else {}
+        graph_id = str(metadata.get("id") or serialized_graph_id)
+        name = str(metadata.get("name") or graph_id)
+        inputs: list[GraphPortSummary] = []
+        outputs: list[GraphPortSummary] = []
+        for serialized_node_id, node in _nodes(raw_graph):
+            node_type = _node_type(serialized_node_id, node)
+            all_node_types.add(node_type)
+            port = _port(node)
+            if port is None:
+                continue
+            if node_type == "graphInput" and len(inputs) < _MAX_PORTS:
+                inputs.append(port)
+            elif node_type == "graphOutput" and len(outputs) < _MAX_PORTS:
+                outputs.append(port)
+        graph_summaries.append(
+            GraphSummary(
+                graph_id,
+                name[:256],
+                tuple(sorted(inputs, key=lambda value: value.id)),
+                tuple(sorted(outputs, key=lambda value: value.id)),
+            )
+        )
+
+    metadata = data.get("metadata")
+    metadata = metadata if isinstance(metadata, dict) else {}
+    main_selector = selected_graph or metadata.get("mainGraphId")
+    main_graph = next(
+        (
+            graph
+            for graph in graph_summaries
+            if main_selector is not None
+            and (graph.id == str(main_selector) or graph.name == str(main_selector))
+        ),
+        None,
+    )
+    if main_selector is None:
+        errors.append(
+            _issue(
+                "RIVET_MAIN_GRAPH_MISSING",
+                "Project has no main graph; select a graph explicitly",
+            )
+        )
+    elif main_graph is None:
+        errors.append(
+            _issue(
+                "RIVET_GRAPH_NOT_FOUND",
+                f'Graph "{main_selector}" was not found',
+            )
+        )
+
+    return WorkflowValidationResult(
+        workflow_id,
+        revision,
+        digest,
+        not errors,
+        main_graph,
+        tuple(graph_summaries),
+        _requirements(all_node_types),
+        tuple(errors[:_MAX_ISSUES]),
+        tuple(warnings[:_MAX_ISSUES]),
+    )

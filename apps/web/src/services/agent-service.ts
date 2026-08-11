@@ -29,6 +29,10 @@ export type AgentEvent =
   | { type: "done"; session: ChatSession }
   | { type: "error"; message: string };
 
+export interface AgentUiContext {
+  activeRivetSlug?: string | null;
+}
+
 interface ServiceHealthResult {
   state: "connected" | "disconnected" | "unknown";
   latencyMs?: number;
@@ -282,6 +286,7 @@ export class HermesAgentService {
     sessionId: string,
     message: string,
     attachments?: string[],
+    uiContext?: AgentUiContext,
   ): AsyncIterable<AgentEvent> {
     agentLogger.info("Sending message", {
       sessionId,
@@ -301,7 +306,12 @@ export class HermesAgentService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ session_id: sessionId, message, attachments }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          message,
+          attachments,
+          active_rivet_slug: uiContext?.activeRivetSlug ?? null,
+        }),
         signal: abortController.signal,
       });
 

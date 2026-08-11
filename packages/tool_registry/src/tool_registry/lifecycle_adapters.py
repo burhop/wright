@@ -17,6 +17,7 @@ from .runners.sse import SseRunner
 from .runners.stdio import StdioRunner
 from .safety import ApprovalContext, McpSafetyPolicy, required_credentials
 from .secrets import has_credentials, read_secrets, value_for_credential
+from .wright_managed_servers import trusted_managed_launch_environment
 
 logger = get_logger(__name__)
 
@@ -150,7 +151,24 @@ class DatabaseLifecycleAdapter:
                 workspace_path,
                 server_id=server_id,
             )
-            env = {**self._environment(server_id, server.env_vars), **launch_env}
+            trusted_env = trusted_managed_launch_environment(
+                server_id,
+                workspace_path=workspace_path,
+                database_path=self.db_path,
+                binding={
+                    "workspace_id": approval_context.workspace_id
+                    if approval_context
+                    else None,
+                    "session_id": approval_context.session_id
+                    if approval_context
+                    else None,
+                },
+            )
+            env = {
+                **self._environment(server_id, server.env_vars),
+                **launch_env,
+                **trusted_env,
+            }
             command = self._headless_command(server, command)
             return StdioRunner(
                 command,

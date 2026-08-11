@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import WorkspacePanel from "../src/components/chat/WorkspacePanel";
@@ -440,6 +440,10 @@ describe("WorkspacePanel session selection", () => {
 
     expect(mockSendMessage).toHaveBeenCalledWith(
       "Summarize this Wright workspace. Identify the open files, available MCP tools, likely CAD workflow, and the next three useful actions.",
+      undefined,
+      false,
+      undefined,
+      { activeRivetSlug: null },
     );
   });
 
@@ -476,5 +480,67 @@ describe("WorkspacePanel session selection", () => {
     expect(
       screen.queryByTestId("editor-tabs-container"),
     ).not.toBeInTheDocument();
+  });
+
+  it("reattaches responsive measurement after compact chat replaces the workspace root", async () => {
+    const observers: Array<{
+      callback: ResizeObserverCallback;
+      target: Element | null;
+    }> = [];
+
+    class TestResizeObserver {
+      private readonly record: (typeof observers)[number];
+
+      constructor(callback: ResizeObserverCallback) {
+        this.record = { callback, target: null };
+        observers.push(this.record);
+      }
+
+      observe(target: Element) {
+        this.record.target = target;
+      }
+
+      unobserve() {}
+
+      disconnect() {}
+    }
+
+    vi.stubGlobal("ResizeObserver", TestResizeObserver);
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByTestId("workspace-surface-pane")).toBeInTheDocument();
+    await waitFor(() => expect(observers.at(-1)?.target).not.toBeNull());
+    const wideRoot = observers.at(-1)?.target;
+
+    act(() => {
+      const observer = observers.at(-1)!;
+      observer.callback(
+        [{ contentRect: { width: 700 } } as ResizeObserverEntry],
+        {} as ResizeObserver,
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("workspace-surface-pane")).not.toBeInTheDocument();
+      expect(observers.at(-1)?.target).not.toBe(wideRoot);
+    });
+
+    act(() => {
+      const observer = observers.at(-1)!;
+      observer.callback(
+        [{ contentRect: { width: 1184 } } as ResizeObserverEntry],
+        {} as ResizeObserver,
+      );
+    });
+
+    expect(await screen.findByTestId("workspace-surface-pane")).toBeInTheDocument();
+    vi.unstubAllGlobals();
   });
 });

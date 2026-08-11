@@ -28,10 +28,22 @@ from .workspace_path import WorkspacePath
 class EditorSettings:
     enabled: bool = False
     grant_ttl_seconds: int = 60
+    ai_enabled: bool = False
+    ai_token_ttl_seconds: int = 300
+    ai_request_bytes: int = 2 * 1024 * 1024
+    ai_timeout_seconds: float = 300.0
 
     def __post_init__(self) -> None:
         if not 1 <= self.grant_ttl_seconds <= 300:
             raise ValueError("Editor grant TTL must be between 1 and 300 seconds")
+        if not 1 <= self.ai_token_ttl_seconds <= 3600:
+            raise ValueError("Editor AI token TTL must be between 1 and 3600 seconds")
+        if not 1024 <= self.ai_request_bytes <= 10 * 1024 * 1024:
+            raise ValueError(
+                "Editor AI request limit must be between 1 KiB and 10 MiB"
+            )
+        if not 1 <= self.ai_timeout_seconds <= 600:
+            raise ValueError("Editor AI timeout must be between 1 and 600 seconds")
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> "EditorSettings":
@@ -40,6 +52,17 @@ class EditorSettings:
             enabled=source.get("WRIGHT_RIVET_EDITOR_ENABLED", "0").strip().lower()
             in {"1", "true", "yes"},
             grant_ttl_seconds=int(source.get("WRIGHT_RIVET_EDITOR_GRANT_TTL", "60")),
+            ai_enabled=source.get("WRIGHT_RIVET_AI_ENABLED", "0").strip().lower()
+            in {"1", "true", "yes"},
+            ai_token_ttl_seconds=int(
+                source.get("WRIGHT_RIVET_AI_TOKEN_TTL", "300")
+            ),
+            ai_request_bytes=int(
+                source.get("WRIGHT_RIVET_AI_REQUEST_BYTES", str(2 * 1024 * 1024))
+            ),
+            ai_timeout_seconds=float(
+                source.get("WRIGHT_RIVET_AI_TIMEOUT_SECONDS", "300")
+            ),
         )
 
 
@@ -58,13 +81,27 @@ class _Grant:
 class EditorAssetCatalog:
     """Validates only Wright-owned local editor assets; no network fallback."""
 
+    _RIVET_VERSION = "2.8.9"
+    _SOURCE_REPOSITORY = "https://github.com/valerypopoff/rivet2.0.git"
+    _SOURCE_REVISION = "4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053"
+    _SOURCE_PACKAGE = "@valerypopoff/rivet-app"
+
     def __init__(self, manifest_path: Path | None = None) -> None:
-        self._manifest_path = manifest_path or (
+        checkout_manifest = (
             Path(__file__).resolve().parents[4]
             / "integrations"
             / "rivet"
             / "editor"
             / "manifest.json"
+        )
+        packaged_manifest = (
+            Path(__file__).resolve().parent
+            / "_rivet"
+            / "editor"
+            / "manifest.json"
+        )
+        self._manifest_path = manifest_path or (
+            checkout_manifest if checkout_manifest.is_file() else packaged_manifest
         )
 
     def status(
@@ -74,6 +111,20 @@ class EditorAssetCatalog:
             return EditorAvailability.MISSING, None, "Editor asset manifest is missing"
         try:
             raw = json.loads(self._manifest_path.read_text(encoding="utf-8"))
+            if raw.get("schema_version") != 2:
+                raise ValueError("Unsupported editor artifact schema")
+            source = raw["source"]
+            if source != {
+                "repository": self._SOURCE_REPOSITORY,
+                "revision": self._SOURCE_REVISION,
+                "package": self._SOURCE_PACKAGE,
+                "package_version": self._RIVET_VERSION,
+            }:
+                raise ValueError("Unexpected editor source")
+            if raw.get("rivet_version") != self._RIVET_VERSION:
+                raise ValueError("Unexpected editor version")
+            if raw.get("license") != "MIT":
+                raise ValueError("Unexpected editor license")
             manifest = EditorAssetManifest(
                 rivet_version=str(raw["rivet_version"]),
                 entrypoint=(str(raw["entrypoint"]) if raw.get("entrypoint") else None),
@@ -93,8 +144,8 @@ class EditorAssetCatalog:
                 "Pinned editor bundle is not installed",
             )
         asset_root = self._manifest_path.parent.resolve()
-        asset = (asset_root / manifest.entrypoint).resolve()
-        if asset_root not in asset.parents or not asset.is_file():
+        asset = self._confined_file(asset_root, manifest.entrypoint)
+        if asset is None or not asset.is_file():
             return (
                 EditorAvailability.MISSING,
                 manifest,
@@ -107,7 +158,97 @@ class EditorAssetCatalog:
                 manifest,
                 "Pinned editor checksum does not match",
             )
+        try:
+            self._verify_inputs(asset_root, raw, "patches")
+            self._verify_inputs(asset_root, raw, "wrapper")
+            self._verify_artifact_tree(asset_root, raw)
+        except FileNotFoundError:
+            return (
+                EditorAvailability.MISSING,
+                manifest,
+                "Pinned editor artifact is incomplete",
+            )
+        except (KeyError, TypeError, ValueError):
+            return (
+                EditorAvailability.INCOMPATIBLE,
+                manifest,
+                "Pinned editor artifact integrity does not match",
+            )
         return EditorAvailability.AVAILABLE, manifest, None
+
+    @staticmethod
+    def _confined_file(root: Path, relative: object) -> Path | None:
+        if not isinstance(relative, str) or not relative:
+            return None
+        candidate = (root / relative).resolve()
+        if candidate == root or root not in candidate.parents:
+            return None
+        return candidate
+
+    @classmethod
+    def _verify_inputs(
+        cls, asset_root: Path, raw: dict[str, object], category: str
+    ) -> None:
+        entries = raw[category]
+        if not isinstance(entries, list) or not entries:
+            raise ValueError(f"Missing {category}")
+        for entry in entries:
+            if not isinstance(entry, dict):
+                raise TypeError(category)
+            path = cls._confined_file(asset_root, entry.get("path"))
+            if path is None or not path.is_file():
+                raise FileNotFoundError(str(entry.get("path")))
+            expected = entry.get("sha256")
+            if not isinstance(expected, str) or not secrets.compare_digest(
+                hashlib.sha256(path.read_bytes()).hexdigest(), expected
+            ):
+                raise ValueError(f"Changed {category} input")
+
+    @classmethod
+    def _verify_artifact_tree(cls, asset_root: Path, raw: dict[str, object]) -> None:
+        entries = raw["files"]
+        if not isinstance(entries, list) or not entries:
+            raise ValueError("Missing artifact inventory")
+        recorded_paths: list[str] = []
+        digest_lines: list[str] = []
+        for entry in entries:
+            if not isinstance(entry, dict):
+                raise TypeError("files")
+            relative = entry.get("path")
+            if not isinstance(relative, str) or not relative.startswith("dist/"):
+                raise ValueError("Artifact path must be under dist")
+            path = cls._confined_file(asset_root, relative)
+            if path is None or not path.is_file():
+                raise FileNotFoundError(relative)
+            content = path.read_bytes()
+            digest = hashlib.sha256(content).hexdigest()
+            if entry.get("bytes") != len(content) or not isinstance(
+                entry.get("sha256"), str
+            ):
+                raise ValueError("Invalid artifact inventory entry")
+            if not secrets.compare_digest(digest, str(entry["sha256"])):
+                raise ValueError("Artifact file checksum does not match")
+            recorded_paths.append(relative)
+            digest_lines.append(f"{digest}  {relative}\n")
+        # The Node inventory uses JavaScript localeCompare ordering, which is
+        # deterministic but not byte-for-byte equivalent to Python's Unicode
+        # sort (notably around mixed-case asset names). The signed tree digest
+        # preserves that canonical order; here we separately reject duplicates.
+        if len(recorded_paths) != len(set(recorded_paths)):
+            raise ValueError("Artifact inventory is not canonical")
+        actual_paths = sorted(
+            f"dist/{path.relative_to(asset_root / 'dist').as_posix()}"
+            for path in (asset_root / "dist").rglob("*")
+            if path.is_file()
+        )
+        if set(recorded_paths) != set(actual_paths):
+            raise ValueError("Artifact inventory is incomplete")
+        expected_tree = raw.get("tree_sha256")
+        tree_digest = hashlib.sha256("".join(digest_lines).encode()).hexdigest()
+        if not isinstance(expected_tree, str) or not secrets.compare_digest(
+            tree_digest, expected_tree
+        ):
+            raise ValueError("Artifact tree checksum does not match")
 
     @property
     def artifact_root(self) -> Path:
@@ -172,6 +313,19 @@ class WorkspaceWorkflowEditor:
                     "${WRIGHT_BIND_HOST}",
                     "--port",
                     "${WRIGHT_PORT}",
+                    *(
+                        [
+                            "--ai-enabled",
+                            "--ai-token-ttl",
+                            str(self._settings.ai_token_ttl_seconds),
+                            "--ai-request-bytes",
+                            str(self._settings.ai_request_bytes),
+                            "--ai-timeout",
+                            str(self._settings.ai_timeout_seconds),
+                        ]
+                        if self._settings.ai_enabled
+                        else []
+                    ),
                 ],
                 "workingDirectory": ".",
                 "environment": {},

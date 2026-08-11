@@ -13,6 +13,11 @@ from .state_store import ClosingConnection, connect_state_db
 from .workspace_repository import WorkspaceRepository
 from .workflow_repository import WorkflowIndexRecord, WorkflowRepository
 from .workflow_review_repository import WorkflowReview, WorkflowReviewRepository
+from .workflow_runs import (
+    WorkflowRunEventRecord,
+    WorkflowRunRecord,
+    WorkflowRunRepository,
+)
 from .gateway_repository import GatewayBindingError, GatewayRepository
 from .file_vault import FileVault, StoredVaultFile, VaultPathError
 from .surface_repository import (
@@ -55,6 +60,9 @@ __all__ = [
     "WorkflowRepository",
     "WorkflowReview",
     "WorkflowReviewRepository",
+    "WorkflowRunEventRecord",
+    "WorkflowRunRecord",
+    "WorkflowRunRepository",
     "GatewayBindingError",
     "GatewayRepository",
     "FileVault",

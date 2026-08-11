@@ -11,7 +11,7 @@ Generated upstream source, package installs, and reports live under ignored
 the slice tasks and plan are approved. `npm run spike:clean` deletes generated
 content under this directory only.
 
-The selected candidate is source tag `v1.25.0` at
-`02777a59583be8e8a2730ac9fb1e3e259795e4fd`, with the published core and Node
-packages pinned to `1.25.0`. This is a candidate baseline, not production
-approval.
+The selected candidate is the Rivet 2 source revision
+`4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053`, with the app pinned to `2.8.9`
+and the published core and Node packages pinned to `2.1.9`. The production
+canvas wrapper, patch, artifact, and integrity manifest live in `../editor/`.

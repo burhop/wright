@@ -43,6 +43,7 @@ class ProcessLaunchRequest:
     limits: Mapping[str, int | float]
     listener_handle: int | None
     shell: bool = False
+    stdin_payload: bytes | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -136,6 +137,10 @@ class ProcessSupervisor:
         limits: Mapping[str, int | float],
         idempotency_key: str,
         listener_handle: int | None = None,
+        stdin_payload: bytes | None = None,
+        secret_values: tuple[str, ...] = (),
+        stdout_callback: Callable[[bytes], Any] | None = None,
+        stderr_callback: Callable[[bytes], Any] | None = None,
     ) -> RuntimeSnapshot:
         if (
             not workspace_id
@@ -151,6 +156,11 @@ class ProcessSupervisor:
             raise ProcessSupervisorError(
                 "SURFACE_PROCESS_CWD_INVALID",
                 "Process working directory must be absolute",
+            )
+        if stdin_payload is not None and len(stdin_payload) > 4 * 1024 * 1024:
+            raise ProcessSupervisorError(
+                "SURFACE_PROCESS_STDIN_TOO_LARGE",
+                "Process standard input exceeds the 4 MiB limit",
             )
         identity_key = (workspace_id, instance_id, generation)
         operation_lock = await self._identity_lock(identity_key)
@@ -173,6 +183,7 @@ class ProcessSupervisor:
                 environment=MappingProxyType(dict(environment)),
                 limits=MappingProxyType(dict(limits)),
                 listener_handle=listener_handle,
+                stdin_payload=stdin_payload,
             )
             process = await self._adapter.launch(request)
             runtime_id = self._id_factory()
@@ -181,18 +192,18 @@ class ProcessSupervisor:
                     "SURFACE_PROCESS_ID_INVALID",
                     "Process runtime ID factory returned empty",
                 )
-            secret_values = tuple(
+            redacted_values = tuple(
                 environment[name]
                 for name in secret_environment_names
                 if name in environment and environment[name]
-            )
+            ) + tuple(value for value in secret_values if value)
             logs = RuntimeLogBuffer(
                 maximum_bytes=int(limits.get("captured_log_bytes", 10 * 1024 * 1024)),
                 bytes_per_second=int(
                     limits.get("captured_log_bytes_per_second", 256 * 1024)
                 ),
                 burst_bytes=int(limits.get("captured_log_burst_bytes", 1024 * 1024)),
-                secret_values=secret_values,
+                secret_values=redacted_values,
                 environment_names=secret_environment_names,
                 query_names=redaction_query_names,
             )
@@ -222,11 +233,15 @@ class ProcessSupervisor:
                 self._idempotency[(workspace_id, idempotency_key)] = runtime_id
             runtime.tasks = (
                 asyncio.create_task(
-                    self._pump(runtime_id, "stdout", process.stdout()),
+                    self._pump(
+                        runtime_id, "stdout", process.stdout(), stdout_callback
+                    ),
                     name=f"surface-{runtime_id}-stdout",
                 ),
                 asyncio.create_task(
-                    self._pump(runtime_id, "stderr", process.stderr()),
+                    self._pump(
+                        runtime_id, "stderr", process.stderr(), stderr_callback
+                    ),
                     name=f"surface-{runtime_id}-stderr",
                 ),
                 asyncio.create_task(
@@ -236,7 +251,11 @@ class ProcessSupervisor:
             return snapshot
 
     async def _pump(
-        self, runtime_id: str, stream: str, source: AsyncIterator[bytes]
+        self,
+        runtime_id: str,
+        stream: str,
+        source: AsyncIterator[bytes],
+        callback: Callable[[bytes], Any] | None,
     ) -> None:
         try:
             async for payload in source:
@@ -244,6 +263,10 @@ class ProcessSupervisor:
                 if runtime is None:
                     return
                 runtime.logs.write(stream, payload)
+                if callback is not None:
+                    result = callback(payload)
+                    if hasattr(result, "__await__"):
+                        await result
         except asyncio.CancelledError:
             raise
         except Exception:

@@ -385,10 +385,7 @@ export const BookOpenIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
-export const WorkflowIcon: React.FC<IconProps> = ({
-  size = 18,
-  ...props
-}) => (
+export const WorkflowIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -407,6 +404,26 @@ export const WorkflowIcon: React.FC<IconProps> = ({
     <path d="M9 7h6" />
     <path d="m7 10 4 4" />
     <path d="m17 10-4 4" />
+  </svg>
+);
+
+export const BrepIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+    <path d="m3 7 9 5 9-5" />
+    <path d="M3 7v10l9 5 9-5V7" />
+    <path d="M12 12v10" />
   </svg>
 );
 
@@ -468,10 +485,7 @@ export const SplitIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
-export const MaximizeIcon: React.FC<IconProps> = ({
-  size = 18,
-  ...props
-}) => (
+export const MaximizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -491,10 +505,7 @@ export const MaximizeIcon: React.FC<IconProps> = ({
   </svg>
 );
 
-export const MinimizeIcon: React.FC<IconProps> = ({
-  size = 18,
-  ...props
-}) => (
+export const MinimizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}

@@ -7,8 +7,9 @@ const root = resolve(import.meta.dirname, "..");
 test("baseline is pinned by full immutable revision and exact package versions", async () => {
   const baseline = JSON.parse(await readFile(resolve(root, "baseline", "baseline.json"), "utf8"));
   assert.match(baseline.sourceRevision, /^[0-9a-f]{40}$/);
-  assert.equal(baseline.packages["@ironclad/rivet-core"], "1.25.0");
-  assert.equal(baseline.packages["@ironclad/rivet-node"], "1.25.0");
+  assert.equal(baseline.packages["@valerypopoff/rivet-app"], "2.8.9");
+  assert.equal(baseline.packages["@valerypopoff/rivet2-core"], "2.1.9");
+  assert.equal(baseline.packages["@valerypopoff/rivet2-node"], "2.1.9");
 });
 
 test("fixture contains only synthetic host operation identifiers", async () => {

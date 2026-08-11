@@ -1,5 +1,7 @@
 import os
 import logging
+import base64
+import mimetypes
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
@@ -14,6 +16,30 @@ VAULT_DIR = Path(os.getenv("WRIGHT_VAULT_DIR", ".vault"))
 
 def _vault() -> FileVault:
     return FileVault(VAULT_DIR)
+
+
+def attachment_data_urls(file_ids: list[str] | None) -> list[str] | None:
+    """Resolve uploaded image IDs into Hermes-compatible multimodal data URLs."""
+    if not file_ids:
+        return None
+
+    urls: list[str] = []
+    vault = _vault()
+    for file_id in file_ids:
+        try:
+            path = vault.resolve_file_id(file_id)
+        except (VaultPathError, FileNotFoundError):
+            raise HTTPException(
+                status_code=400, detail="Attachment was not found"
+            ) from None
+        mime_type = mimetypes.guess_type(path.name)[0]
+        if not mime_type or not mime_type.startswith("image/"):
+            raise HTTPException(
+                status_code=400, detail="Only image attachments are supported"
+            )
+        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+        urls.append(f"data:{mime_type};base64,{encoded}")
+    return urls
 
 
 @router.post("/upload")

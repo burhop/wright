@@ -6,6 +6,9 @@ All business logic is owned by workspace_service application operations.
 All handlers are decorated with @traced for OTel span creation.
 """
 
+import asyncio
+import time
+
 import structlog
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Response, Request
 from fastapi.responses import FileResponse, JSONResponse
@@ -15,6 +18,7 @@ from agent_adapters import BaseAgentEngine
 from agent_adapters.hermes_gateway import hermes_config_paths
 from core.tracing import traced
 from api.config import (
+    DATABASE_PATH,
     api_mcp_autostart_enabled,
     get_workspace_surface_settings,
     rivet_editor_enabled,
@@ -86,6 +90,9 @@ from api.schemas.workspace import (
     WorkflowCreateRequest,
     WorkflowResponse,
     WorkflowDocumentResponse,
+    WorkflowTemplateInstantiateRequest,
+    WorkflowTemplateListResponse,
+    WorkflowTemplateResponse,
     WorkflowGraphActionRequest,
     WorkflowGraphResponse,
     WorkflowGraphSummaryResponse,
@@ -104,6 +111,9 @@ from api.schemas.workspace import (
     WorkflowEditorAvailabilityResponse,
     WorkflowEditorSurfaceRequest,
     WorkflowEditorSurfaceResponse,
+    BrepPanelRequest,
+    BrepPanelResponse,
+    BrepToolRequest,
     WorkflowEditorBootstrapRequest,
     WorkflowEditorBootstrapResponse,
     WorkflowEditorReadRequest,
@@ -117,6 +127,17 @@ from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
 from workspace_service.workflow_operations import WorkflowOperationsError
 from workspace_service.workflow_graph import WorkflowGraphError
+from workspace_service.workflow_catalog import WorkflowTemplateError
+from workspace_service.brep_panel import (
+    BREP_APPLICATION_STATUS_TOOL,
+    BrepPanelError,
+    panel_environment,
+    parse_brep_status_result,
+    select_brep_application_server,
+    wait_for_brep_module,
+)
+from tool_registry.db import get_servers, update_server
+from tool_registry.safety import ApprovalContext
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -175,16 +196,32 @@ def _workflow_response(document) -> WorkflowResponse:
     )
 
 
-def _run_response(run) -> WorkflowRunResponse:
+def _workflow_template_response(template) -> WorkflowTemplateResponse:
+    return WorkflowTemplateResponse(
+        template_id=template.template_id,
+        title=template.title,
+        description=template.description,
+        kind=template.kind,
+        requirements=list(template.requirements),
+    )
+
+
+def _run_response(run, record=None) -> WorkflowRunResponse:
+    output = record.output_summary if record is not None else None
     return WorkflowRunResponse(
         run_id=run.run_id,
         workspace_id=run.workspace_id,
         session_id=run.session_id,
         workflow_id=run.workflow_id,
         revision=run.revision,
+        digest=record.digest if record is not None else None,
+        graph=record.graph if record is not None else None,
         generation=run.generation,
         state=run.state,
         reason=run.reason,
+        outputs=output.get("outputs") if output else None,
+        duration_ms=output.get("durationMs") if output else None,
+        output_truncated=record.output_truncated if record is not None else False,
     )
 
 
@@ -261,6 +298,56 @@ async def _workflow_scope(
     )
 
 
+@router.get("/workflow-templates", response_model=WorkflowTemplateListResponse)
+@traced("workspace.workflow_templates.list")
+async def list_workflow_templates_endpoint(
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    return WorkflowTemplateListResponse(
+        templates=[
+            _workflow_template_response(template)
+            for template in service.workflow_templates.list()
+        ]
+    )
+
+
+@router.post(
+    "/workflow-templates/{template_id}/instantiate",
+    response_model=WorkflowResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+@traced("workspace.workflow_templates.instantiate")
+async def instantiate_workflow_template_endpoint(
+    template_id: str,
+    body: WorkflowTemplateInstantiateRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    workspace_id, workspace_dir = await _workflow_scope(
+        body.session_id, engine, service
+    )
+    try:
+        project = service.workflow_templates.instantiate(template_id)
+        document = await service.workflows.create(
+            workspace_id,
+            workspace_dir,
+            body.slug,
+            project,
+            {},
+        )
+        return _workflow_response(document)
+    except WorkflowTemplateError as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+    except WorkflowPersistenceError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
+        ) from error
+
+
 @router.get(
     "/workflows/editor/status", response_model=WorkflowEditorAvailabilityResponse
 )
@@ -296,6 +383,164 @@ async def workflow_editor_surface_endpoint(
         detail=detail,
         manifest=manifest,
     )
+
+
+@router.post("/brep/panel", response_model=BrepPanelResponse)
+@traced("workspace.brep.panel")
+async def brep_panel_endpoint(
+    body: BrepPanelRequest,
+    request: Request,
+    response: Response,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Start the visible BREP MCP and return its bounded loopback panel URL."""
+
+    workspace_id, workspace_dir = await _workflow_scope(
+        body.session_id, engine, service
+    )
+    mcp_engine = getattr(request.app.state, "mcp_engine", None)
+    if mcp_engine is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="The Wright MCP runtime is unavailable.",
+        )
+    try:
+        server = select_brep_application_server(get_servers(DATABASE_PATH))
+        configured_environment = panel_environment(
+            server.env_vars if isinstance(server.env_vars, dict) else {}
+        )
+        environment_changed = configured_environment != server.env_vars
+        if environment_changed:
+            server = update_server(
+                DATABASE_PATH,
+                server.server_id,
+                {
+                    "env_vars": configured_environment,
+                    "updated_at": int(time.time()),
+                },
+            )
+            if server is None:
+                raise BrepPanelError("The BREP MCP registration disappeared.")
+
+        approval = ApprovalContext(
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_approvals=set(server.approval_gates or []),
+        )
+        runner = mcp_engine.lifecycle.runner_for(server.server_id)
+        if environment_changed or runner is None or not runner.is_running():
+            started = await mcp_engine.start_server(
+                server.server_id,
+                workspace_dir=workspace_dir,
+                approval_context=approval,
+            )
+            if started is None or started.status == "error":
+                raise BrepPanelError(
+                    (started.error_message if started else None)
+                    or "The BREP MCP process did not start."
+                )
+
+        result = await mcp_engine.call_tool(
+            server.server_id,
+            BREP_APPLICATION_STATUS_TOOL,
+            {},
+            approval_context=approval,
+        )
+        panel = parse_brep_status_result(result)
+        await asyncio.to_thread(wait_for_brep_module, panel.module_url)
+    except BrepPanelError as error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)
+        ) from error
+    except Exception as error:
+        logger.exception("brep_panel_start_failed", error=str(error))
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="BREP could not be started for the Wright panel.",
+        ) from error
+
+    response.headers["Cache-Control"] = "no-store"
+    return BrepPanelResponse(
+        server_id=server.server_id,
+        control_url=panel.control_url,
+        module_url=panel.module_url,
+        connected=panel.connected,
+    )
+
+
+@router.post("/brep/tool")
+@traced("workspace.brep.tool")
+async def brep_tool_endpoint(
+    body: BrepToolRequest,
+    request: Request,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    """Call the panel-owned BREP process for the Wright STDIO gateway."""
+
+    workspace_id, workspace_dir = await _workflow_scope(
+        body.session_id, engine, service
+    )
+    mcp_engine = getattr(request.app.state, "mcp_engine", None)
+    if mcp_engine is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="The Wright MCP runtime is unavailable.",
+        )
+    try:
+        server = select_brep_application_server(get_servers(DATABASE_PATH))
+        configured_environment = panel_environment(
+            server.env_vars if isinstance(server.env_vars, dict) else {}
+        )
+        if configured_environment != server.env_vars:
+            server = update_server(
+                DATABASE_PATH,
+                server.server_id,
+                {
+                    "env_vars": configured_environment,
+                    "updated_at": int(time.time()),
+                },
+            )
+            if server is None:
+                raise BrepPanelError("The BREP MCP registration disappeared.")
+        approval = ApprovalContext(
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_approvals=set(server.approval_gates or []),
+        )
+        runner = mcp_engine.lifecycle.runner_for(server.server_id)
+        if runner is None or not runner.is_running():
+            started = await mcp_engine.start_server(
+                server.server_id,
+                workspace_dir=workspace_dir,
+                approval_context=approval,
+            )
+            if started is None or started.status == "error":
+                raise BrepPanelError(
+                    (started.error_message if started else None)
+                    or "The BREP MCP process did not start."
+                )
+        return await mcp_engine.call_tool(
+            server.server_id,
+            body.tool_name,
+            body.arguments,
+            approval_context=approval,
+        )
+    except BrepPanelError as error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(error)
+        ) from error
+    except Exception as error:
+        logger.exception(
+            "brep_panel_tool_failed",
+            tool_name=body.tool_name,
+            error=str(error),
+        )
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="BREP could not execute the requested tool.",
+        ) from error
 
 
 @router.post(
@@ -428,8 +673,14 @@ async def start_workflow_run_endpoint(
             workspace_dir=workspace_dir,
             slug=slug,
             expected_generation=body.expected_generation,
+            expected_revision=body.expected_revision,
+            expected_digest=body.expected_digest,
+            graph=body.graph,
+            inputs=body.inputs,
+            context=body.context,
+            timeout_seconds=body.timeout_seconds,
         )
-        return _run_response(run)
+        return _run_response(run, service.workflow_runner.result(run.run_id))
     except WorkflowRunnerUnavailable as error:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -467,7 +718,7 @@ async def workflow_run_status_endpoint(
         run = service.workflow_operations.run(
             workspace_id=workspace["workspace_id"], session_id=session_id, run_id=run_id
         )
-        return _run_response(run)
+        return _run_response(run, service.workflow_runner.result(run.run_id))
     except (WorkflowRunnerError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
@@ -489,14 +740,13 @@ async def cancel_workflow_run_endpoint(
             status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
         )
     try:
-        return _run_response(
-            await service.workflow_operations.cancel(
-                workspace_id=workspace["workspace_id"],
-                session_id=body.session_id,
-                run_id=run_id,
-                generation=body.generation,
-            )
+        run = await service.workflow_operations.cancel(
+            workspace_id=workspace["workspace_id"],
+            session_id=body.session_id,
+            run_id=run_id,
+            generation=body.generation,
         )
+        return _run_response(run, service.workflow_runner.result(run.run_id))
     except (WorkflowRunnerError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

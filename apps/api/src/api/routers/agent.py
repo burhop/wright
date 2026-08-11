@@ -15,7 +15,7 @@ from pydantic import BaseModel
 import structlog
 from opentelemetry import trace
 from core.tracing import traced
-from api.config import api_mcp_autostart_enabled
+from api.config import DATABASE_PATH, api_mcp_autostart_enabled
 
 from agent_adapters import (
     BaseAgentEngine,
@@ -24,20 +24,43 @@ from agent_adapters import (
     create_agent_engine,
     default_agent_registry,
     GenericProgressProjector,
+    official_hermes_cli_path,
     resolve_agent_api_settings,
 )
 from workspace_service import WorkspaceInvalidRequestError, WorkspaceService
 from workspace_service.adapters.runtime import (
+    get_active_gateway_session,
     get_workspace_by_session,
     get_workspace_enabled_tools,
+    set_active_rivet_workflow,
     update_workspace_agent_session_title,
     update_workspace_session,
 )
 from tool_registry import ApprovalContext
 from tool_registry.db import get_servers
+from api.routers.vault import attachment_data_urls
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+
+
+def _mirror_active_rivet_workflow_to_gateway_binding(
+    session_id: str, slug: str | None
+) -> None:
+    """Copy UI context onto Hermes' stable per-workspace gateway binding."""
+    gateway_session_id = get_active_gateway_session(DATABASE_PATH)
+    if not gateway_session_id or gateway_session_id == session_id:
+        return
+    chat_workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    gateway_workspace = get_workspace_by_session(DATABASE_PATH, gateway_session_id)
+    if (
+        not chat_workspace
+        or not gateway_workspace
+        or str(chat_workspace.get("workspace_id"))
+        != str(gateway_workspace.get("workspace_id"))
+    ):
+        return
+    set_active_rivet_workflow(DATABASE_PATH, gateway_session_id, slug)
 
 
 def _run_gateway_restart_command(command: list[str], label: str) -> None:
@@ -76,7 +99,7 @@ def _restart_hermes_gateway_process() -> None:
         )
         return
 
-    executable = shutil.which("hermes")
+    executable = shutil.which("hermes") or official_hermes_cli_path()
     if not executable:
         raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
     _run_gateway_restart_command(
@@ -462,6 +485,7 @@ class ChatRequest(BaseModel):
     session_id: str
     message: str
     attachments: Optional[List[str]] = None
+    active_rivet_slug: Optional[str] = None
 
 
 MAX_SESSION_TITLE_LENGTH = 200
@@ -481,9 +505,7 @@ def title_from_slash_command(message: str) -> str | None:
 
 def _hermes_profile() -> str:
     return (
-        os.getenv("WRIGHT_HERMES_PROFILE")
-        or os.getenv("HERMES_PROFILE")
-        or "wright"
+        os.getenv("WRIGHT_HERMES_PROFILE") or os.getenv("HERMES_PROFILE") or "wright"
     ).strip() or "wright"
 
 
@@ -498,10 +520,11 @@ async def _hermes_json_request(
     params: dict | None = None,
     json_body: dict | None = None,
 ) -> dict:
-    profile = _hermes_profile()
-    settings = resolve_agent_api_settings(
-        "hermes", env={**os.environ, "HERMES_PROFILE": profile}
-    )
+    # The model profile selects Hermes configuration data; it does not select
+    # the gateway process Wright is connected to. Resolve authentication for
+    # the running gateway independently. Otherwise a stale profile-local
+    # API_SERVER_KEY can make model calls fail even while gateway health is OK.
+    settings = resolve_agent_api_settings("hermes")
     headers = {"Accept": "application/json"}
     if settings.api_key:
         headers["Authorization"] = f"Bearer {settings.api_key}"
@@ -883,6 +906,16 @@ async def chat(
     log = logger.bind(trace_id=trace_id, session_id=body.session_id)
     log.info("chat_requested")
 
+    try:
+        set_active_rivet_workflow(
+            DATABASE_PATH, body.session_id, body.active_rivet_slug
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        ) from exc
+
     # Sync and activate workspace tools before chat turn. Chat should not begin
     # until the MCP servers assigned to this workspace are available.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
@@ -911,13 +944,15 @@ async def chat(
                 detail=str(exc),
             ) from exc
 
+    _mirror_active_rivet_workflow_to_gateway_binding(
+        body.session_id, body.active_rivet_slug
+    )
+
     await ensure_llm_backend_ready(engine)
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 
     requested_title = title_from_slash_command(body.message)
     if requested_title:
-        from api.config import DATABASE_PATH
-
         updated = update_workspace_agent_session_title(
             DATABASE_PATH, body.session_id, requested_title
         )
@@ -927,7 +962,8 @@ async def chat(
         session_id=body.session_id,
         message=body.message,
         trace_id=trace_id,
-        attachments=body.attachments,
+        attachments=attachment_data_urls(body.attachments),
+        active_rivet_slug=body.active_rivet_slug,
     )
     registry = get_chat_stream_registry(request)
     job = await registry.start(chat_request, engine)

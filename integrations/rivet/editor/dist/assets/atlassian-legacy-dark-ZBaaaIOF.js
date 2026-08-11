@@ -1,4 +1,4 @@
-const e=`
+const e = `
 html[data-color-mode="light"][data-theme~="light:legacy-dark"],
 html[data-color-mode="dark"][data-theme~="dark:legacy-dark"] {
   color-scheme: dark;
@@ -391,4 +391,7 @@ html[data-color-mode="dark"][data-theme~="dark:legacy-dark"] {
   --ds-UNSAFE-transparent: transparent;
   --ds-elevation-surface-current: #1B2638;
 }
-`;export{e as default};
+`;
+export {
+  e as default
+};

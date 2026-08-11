@@ -292,6 +292,7 @@ jwt_secret.txt
 
 # Test outputs
 outputs/
+/output/
 tests/screenshots/
 tests_output*.txt
 docker/.env.bak

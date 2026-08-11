@@ -24,6 +24,7 @@ from core.tracing import traced
 from data_vault import (
     WorkflowRepository,
     WorkflowReviewRepository,
+    WorkflowRunRepository,
     WorkspaceRepository,
     create_default_secret_provider,
 )
@@ -63,10 +64,12 @@ from .use_cases import (
 from .use_cases.run import issue_display_execution_lease
 from .surfaces.display_tokens import DisplayExecutionTokenService
 from .surfaces.process_supervisor import ProcessAdapter, ProcessSupervisor
-from .workflow_runner import WorkspaceWorkflowRunner
+from .workflow_runner import RunnerSettings, WorkspaceWorkflowRunner
+from .rivet_runtime_host import RivetRuntimeHost
 from .workflow_editor import WorkspaceWorkflowEditor
 from .workflow_graph import WorkspaceWorkflowGraphOperations
 from .workflow_operations import WorkspaceWorkflowOperations
+from .workflow_catalog import WorkflowTemplateCatalog
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -174,6 +177,7 @@ class WorkspaceService:
         self.workflows = WorkspaceWorkflowUseCases(
             self.executor, WorkflowRepository(db_path)
         )
+        self.workflow_templates = WorkflowTemplateCatalog()
         self.workflow_graph = WorkspaceWorkflowGraphOperations(self.workflows)
         self.workflow_editor = WorkspaceWorkflowEditor(self.workflows)
         runner_adapter: ProcessAdapter
@@ -185,8 +189,19 @@ class WorkspaceService:
             from .surfaces.process_posix import PosixProcessAdapter
 
             runner_adapter = PosixProcessAdapter()
+        runner_settings = RunnerSettings.from_env()
+        runner_supervisor = ProcessSupervisor(adapter=runner_adapter)
         self.workflow_runner = WorkspaceWorkflowRunner(
-            supervisor=ProcessSupervisor(adapter=runner_adapter)
+            supervisor=runner_supervisor,
+            settings=runner_settings,
+            runtime_host=RivetRuntimeHost(
+                supervisor=runner_supervisor, settings=runner_settings
+            ),
+            run_repository=WorkflowRunRepository(
+                db_path,
+                maximum_output_bytes=runner_settings.captured_output_bytes,
+                maximum_event_bytes=runner_settings.maximum_event_bytes,
+            ),
         )
         self.workflow_operations = WorkspaceWorkflowOperations(
             WorkflowReviewRepository(db_path), self.workflow_runner

@@ -12,3 +12,18 @@ def test_workflow_index_is_metadata_only_and_scoped_to_workspace(tmp_path):
     repository.mark_deleted("left", "id-1")
     assert repository.list("left") == []
     assert repository.list("left", include_deleted=True)[0].state == "deleted"
+
+
+def test_workflow_index_replaces_stale_slug_with_authoritative_workflow(tmp_path):
+    repository = WorkflowRepository(str(tmp_path / "state.db"))
+    repository.upsert(
+        WorkflowIndexRecord("workspace", "old-id", "flow", 1, "old", "active", 1)
+    )
+    repository.mark_deleted("workspace", "old-id")
+
+    replacement = WorkflowIndexRecord(
+        "workspace", "new-id", "flow", 1, "new", "active", 3
+    )
+    repository.upsert(replacement)
+
+    assert repository.list("workspace", include_deleted=True) == [replacement]

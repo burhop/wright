@@ -19,6 +19,8 @@ from core.secrets import CredentialReference, default_secret_provider
 logger = structlog.get_logger(__name__)
 
 ACTIVE_GATEWAY_SESSION_SETTING = "active_gateway_session_id"
+ACTIVE_RIVET_WORKFLOW_SETTING_PREFIX = "active_rivet_workflow:"
+RIVET_WORKFLOW_SLUG_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}$")
 SYNTHETIC_SESSION_PREFIXES = ("api_", "wright-local-")
 UUID_SESSION_PATTERN = re.compile(
     r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
@@ -343,6 +345,55 @@ def get_active_gateway_session(db_path: str) -> Optional[str]:
             return session_id or None
     except Exception as e:
         logger.debug("failed_to_read_active_gateway_session", error=str(e))
+        return None
+
+
+def _active_rivet_workflow_key(session_id: str) -> str:
+    candidate = str(session_id or "").strip()
+    if not candidate or len(candidate) > 256:
+        raise ValueError("A valid Wright session is required")
+    return f"{ACTIVE_RIVET_WORKFLOW_SETTING_PREFIX}{candidate}"
+
+
+def set_active_rivet_workflow(
+    db_path: str, session_id: str, slug: str | None
+) -> None:
+    """Persist the Rivet workflow currently displayed for a Wright chat session."""
+    key = _active_rivet_workflow_key(session_id)
+    candidate = str(slug or "").strip()
+    if candidate and not RIVET_WORKFLOW_SLUG_PATTERN.fullmatch(candidate):
+        raise ValueError("Invalid Rivet workflow slug")
+
+    with _get_db_conn(db_path) as conn:
+        _ensure_system_settings_table(conn)
+        if candidate:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO system_settings (key, value)
+                VALUES (?, ?)
+                """,
+                (key, candidate),
+            )
+        else:
+            conn.execute("DELETE FROM system_settings WHERE key = ?", (key,))
+        conn.commit()
+
+
+def get_active_rivet_workflow(db_path: str, session_id: str) -> Optional[str]:
+    """Return the Rivet workflow currently displayed for a Wright chat session."""
+    try:
+        key = _active_rivet_workflow_key(session_id)
+        with _get_db_conn(db_path) as conn:
+            _ensure_system_settings_table(conn)
+            row = conn.execute(
+                "SELECT value FROM system_settings WHERE key = ?", (key,)
+            ).fetchone()
+            if not row:
+                return None
+            slug = str(row["value"]).strip()
+            return slug if RIVET_WORKFLOW_SLUG_PATTERN.fullmatch(slug) else None
+    except Exception as e:
+        logger.debug("failed_to_read_active_rivet_workflow", error=str(e))
         return None
 
 

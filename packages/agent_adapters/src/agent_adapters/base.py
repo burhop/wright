@@ -19,6 +19,7 @@ class AgentChatRequest:
     message: str
     trace_id: str | None = None
     attachments: list[str] | None = None
+    active_rivet_slug: str | None = None
 
 
 @dataclass

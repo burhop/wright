@@ -24,13 +24,35 @@ export interface RivetWorkflowOperation {
   reviewed_at: number | null;
 }
 
+export interface RivetWorkflowTemplate {
+  template_id: string;
+  title: string;
+  description: string;
+  kind: "starter" | "advanced" | "example";
+  requirements: string[];
+}
+
 export interface RivetWorkflowRun {
   run_id: string;
   workflow_id: string;
   revision: number;
+  digest: string | null;
+  graph: string | null;
   generation: number;
   state: string;
   reason: string | null;
+  outputs: Record<string, unknown> | null;
+  duration_ms: number | null;
+  output_truncated: boolean;
+}
+
+export interface RivetWorkflowRunOptions {
+  expectedRevision: number;
+  expectedDigest: string;
+  graph?: string;
+  inputs?: Record<string, unknown>;
+  context?: Record<string, unknown>;
+  timeoutSeconds?: number;
 }
 
 export interface RivetWorkflowDocument extends RivetWorkflowOperation {
@@ -42,6 +64,13 @@ export interface RivetEditorSurface {
   availability: "disabled" | "available" | "missing" | "incompatible";
   detail: string | null;
   manifest: Record<string, unknown> | null;
+}
+
+export interface BrepPanelSession {
+  server_id: string;
+  control_url: string;
+  module_url: string;
+  connected: boolean;
 }
 
 export interface RivetWorkflowGraphNode {
@@ -78,6 +107,21 @@ const titleFromSlug = (slug: string) =>
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ") || "Untitled Workflow";
+
+const nextWorkflowSlug = (
+  workflows: RivetWorkflowOperation[],
+  preferredName: string,
+) => {
+  const taken = new Set(workflows.map((workflow) => workflow.slug));
+  const base = slugifyWorkflowName(preferredName);
+  let slug = base;
+  let index = 2;
+  while (taken.has(slug)) {
+    slug = `${base}-${index}`;
+    index += 1;
+  }
+  return slug;
+};
 
 const buildBlankRivetProject = (slug: string, title = titleFromSlug(slug)) =>
   `${JSON.stringify(
@@ -121,6 +165,30 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
+  async openBrepPanel(sessionId: string): Promise<BrepPanelSession> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/brep/panel`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok) {
+      let message = "BREP is unavailable";
+      try {
+        const body = (await response.json()) as { detail?: unknown };
+        if (typeof body.detail === "string" && body.detail.trim()) {
+          message = body.detail;
+        }
+      } catch {
+        // Preserve the stable fallback when an intermediary returned no JSON.
+      }
+      throw new Error(message);
+    }
+    return response.json();
+  }
+
   async getRivetEditorSurface(sessionId: string): Promise<RivetEditorSurface> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/editor/surface`,
@@ -143,6 +211,14 @@ export class WorkspaceService {
     return (await response.json()).workflows || [];
   }
 
+  async listRivetWorkflowTemplates(): Promise<RivetWorkflowTemplate[]> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-templates`,
+    );
+    if (!response.ok) throw new Error("Rivet templates are unavailable");
+    return (await response.json()).templates || [];
+  }
+
   async ensureDefaultRivetWorkflow(
     sessionId: string,
   ): Promise<RivetWorkflowOperation> {
@@ -157,14 +233,7 @@ export class WorkspaceService {
     preferredName = "untitled-workflow",
   ): Promise<RivetWorkflowOperation> {
     const existing = await this.listRivetWorkflowOperations(sessionId);
-    const taken = new Set(existing.map((workflow) => workflow.slug));
-    const base = slugifyWorkflowName(preferredName);
-    let slug = base;
-    let index = 2;
-    while (taken.has(slug)) {
-      slug = `${base}-${index}`;
-      index += 1;
-    }
+    const slug = nextWorkflowSlug(existing, preferredName);
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows`,
       {
@@ -180,7 +249,47 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Unable to create a Rivet workflow");
     const created: RivetWorkflowOperation = await response.json();
-    return { ...created, review_state: null, reviewer: null, reviewed_at: null };
+    return {
+      ...created,
+      review_state: null,
+      reviewer: null,
+      reviewed_at: null,
+    };
+  }
+
+  async createRivetWorkflowFromTemplate(
+    sessionId: string,
+    template: RivetWorkflowTemplate,
+  ): Promise<RivetWorkflowOperation> {
+    const existing = await this.listRivetWorkflowOperations(sessionId);
+    const slug = nextWorkflowSlug(existing, template.title);
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflow-templates/${encodeURIComponent(template.template_id)}/instantiate`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, slug }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Unable to create a workflow from this template";
+      try {
+        const body = (await response.json()) as { detail?: unknown };
+        if (typeof body.detail === "string" && body.detail.trim()) {
+          message = body.detail;
+        }
+      } catch {
+        // Preserve the stable fallback when an intermediary returned no JSON.
+      }
+      throw new Error(message);
+    }
+    const created: RivetWorkflowOperation = await response.json();
+    return {
+      ...created,
+      review_state: null,
+      reviewer: null,
+      reviewed_at: null,
+    };
   }
 
   async readRivetWorkflow(
@@ -257,26 +366,59 @@ export class WorkspaceService {
   async runRivetWorkflow(
     sessionId: string,
     slug: string,
+    options: RivetWorkflowRunOptions,
   ): Promise<RivetWorkflowRun> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/runs`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          expected_revision: options.expectedRevision,
+          expected_digest: options.expectedDigest,
+          graph: options.graph || null,
+          inputs: options.inputs || {},
+          context: options.context || {},
+          timeout_seconds: options.timeoutSeconds || null,
+        }),
       },
     );
-    if (!response.ok)
-      throw new Error(
-        "Workflow could not start; approve its current revision and enable the runner.",
-      );
+    if (!response.ok) {
+      let message =
+        "Workflow could not start; approve its current revision and enable the runner.";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || failure?.detail || message;
+      } catch {
+        // Keep the stable fallback when the host returns no JSON body.
+      }
+      throw new Error(String(message));
+    }
+    return response.json();
+  }
+
+  async getRivetWorkflowRun(
+    sessionId: string,
+    runId: string,
+  ): Promise<RivetWorkflowRun> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Workflow run status is unavailable");
     return response.json();
   }
 
   async getRivetWorkflowHistory(
     sessionId: string,
     runId: string,
-  ): Promise<Array<{ sequence: number; kind: string }>> {
+  ): Promise<
+    Array<{
+      sequence: number;
+      kind: string;
+      payload: Record<string, unknown>;
+    }>
+  > {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/history?session_id=${encodeURIComponent(sessionId)}`,
     );

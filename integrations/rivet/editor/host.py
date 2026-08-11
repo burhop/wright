@@ -1,397 +1,396 @@
-"""Bounded localhost host for Wright's pinned Rivet editor artifact."""
+"""Serve Wright's verified Rivet 2 canvas artifact without runtime mutation."""
 
 from __future__ import annotations
 
 import argparse
+import asyncio
+import ipaddress
 import json
+import secrets
+import threading
+from dataclasses import dataclass, field
+from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import Any, Mapping
+from urllib.parse import unquote, urlsplit
 
-MINIMAL_CSS = """
-:root {
-  --wright-rivet-hosted: 1;
-}
-[aria-label*="Community" i],
-[title*="Community" i],
-[aria-label*="Prompt Designer" i],
-[title*="Prompt Designer" i],
-[aria-label*="Trivet" i],
-[title*="Trivet" i],
-[aria-label*="Chat Viewer" i],
-[title*="Chat Viewer" i],
-[aria-label*="Data Studio" i],
-[title*="Data Studio" i],
-[aria-label*="New Project" i],
-[title*="New Project" i],
-[aria-label*="Open Project" i],
-[title*="Open Project" i],
-[aria-label*="Save Project" i],
-[title*="Save Project" i],
-[data-testid*="community" i],
-[data-testid*="prompt" i],
-[data-testid*="trivet" i],
-[data-testid*="chat" i],
-[data-testid*="data-studio" i] {
-  display: none !important;
-}
-""".strip()
-
-MINIMAL_JS = """
-(() => {
-  const params = new URLSearchParams(window.location.search);
-  const workflowSlug = params.get("workflow") || "rivet";
-  const workflowTitle = params.get("title") || workflowSlug
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ") || "Rivet";
-  const projectPath = `${workflowSlug}.rivet-project`;
-  const projectId = `wright-${workflowSlug}`;
-  let activeProjectText = localStorage.getItem(`wright.rivet.project.${workflowSlug}`)
-    || localStorage.getItem("wright.activeRivetProject")
-    || "";
-
-  const blankProjectFile = () => JSON.stringify({
-    version: 4,
-    data: {
-      graphs: {
-        main: {
-          metadata: { id: "main", name: "Main", description: "" },
-          nodes: {},
-        },
-      },
-      metadata: {
-        id: projectId,
-        title: workflowTitle,
-        description: "",
-        mainGraphId: "main",
-      },
-      plugins: [],
-    },
-  }, null, 2) + "\\n";
-
-  const normalizeGraph = (id, graph) => {
-    const source = graph && typeof graph === "object" ? graph : {};
-    const metadata = source.metadata && typeof source.metadata === "object"
-      ? source.metadata
-      : {};
-    const rawNodes = source.nodes || {};
-    const nodes = Array.isArray(rawNodes)
-      ? rawNodes
-      : Object.entries(rawNodes).map(([nodeId, node]) => ({
-          ...(node && typeof node === "object" ? node : {}),
-          id: (node && typeof node === "object" && node.id) || nodeId,
-        }));
-    return {
-      metadata: {
-        id: metadata.id || id,
-        name: metadata.name || (id === "main" ? "Main" : id),
-        description: metadata.description || "",
-      },
-      nodes,
-      connections: Array.isArray(source.connections) ? source.connections : [],
-    };
-  };
-
-  const projectFromText = (text) => {
-    try {
-      const raw = JSON.parse(text);
-      const data = raw.data && typeof raw.data === "object" ? raw.data : raw;
-      const metadata = data.metadata && typeof data.metadata === "object"
-        ? data.metadata
-        : {};
-      const rawGraphs = data.graphs && typeof data.graphs === "object"
-        ? data.graphs
-        : {};
-      const graphs = Object.fromEntries(
-        Object.entries(rawGraphs).map(([id, graph]) => [id, normalizeGraph(id, graph)]),
-      );
-      if (Object.keys(graphs).length === 0) {
-        graphs.main = normalizeGraph("main", {});
-      }
-      return {
-        metadata: {
-          id: metadata.id || projectId,
-          title: metadata.title || workflowTitle,
-          description: metadata.description || "",
-          mainGraphId: metadata.mainGraphId || "main",
-        },
-        graphs,
-        plugins: Array.isArray(data.plugins) ? data.plugins : [],
-      };
-    } catch {
-      return projectFromText(blankProjectFile());
-    }
-  };
-
-  const putIndexedState = (key, value) => new Promise((resolve) => {
-    if (!window.indexedDB) {
-      resolve();
-      return;
-    }
-    const request = indexedDB.open("jotai-store", 1);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains("state")) db.createObjectStore("state");
-    };
-    request.onerror = () => resolve();
-    request.onsuccess = () => {
-      const db = request.result;
-      const tx = db.transaction("state", "readwrite");
-      tx.objectStore("state").put(JSON.stringify(value), key);
-      tx.oncomplete = () => {
-        db.close();
-        resolve();
-      };
-      tx.onerror = () => {
-        db.close();
-        resolve();
-      };
-    };
-  });
-
-  const seedEditorState = async (projectText) => {
-    activeProjectText = projectText || blankProjectFile();
-    localStorage.setItem("wright.activeRivetProject", activeProjectText);
-    localStorage.setItem(`wright.rivet.project.${workflowSlug}`, activeProjectText);
-    const project = projectFromText(activeProjectText);
-    const graph = project.graphs[project.metadata.mainGraphId] || Object.values(project.graphs)[0] || normalizeGraph("main", {});
-    const projectState = {
-      projectState: project,
-      loadedProjectState: { path: projectPath, loaded: true },
-      projectsState: {
-        openedProjects: {
-          [project.metadata.id]: { project, fsPath: projectPath },
-        },
-        openedProjectsSortedIds: [project.metadata.id],
-      },
-    };
-    const graphState = {
-      graphState: graph,
-      lastCanvasPositionByGraph: {
-        [graph.metadata.id]: { x: 0, y: 0, zoom: 1 },
-      },
-    };
-    localStorage.setItem("project", JSON.stringify(projectState));
-    localStorage.setItem("graph", JSON.stringify(graphState));
-    await Promise.all([
-      putIndexedState("project", projectState),
-      putIndexedState("graph", graphState),
-    ]);
-  };
-
-  const fileHandle = () => ({
-    kind: "file",
-    name: projectPath,
-    async getFile() {
-      return new File([activeProjectText || blankProjectFile()], projectPath, {
-        type: "application/json",
-        lastModified: Date.now(),
-      });
-    },
-    async createWritable() {
-      const chunks = [];
-      return {
-        async write(chunk) {
-          const payload = chunk && typeof chunk === "object" && "data" in chunk
-            ? chunk.data
-            : chunk;
-          if (chunk && typeof chunk === "object" && chunk.type === "truncate") {
-            chunks.length = 0;
-            return;
-          }
-          chunks.push(typeof payload === "string" ? payload : await new Response(payload).text());
-        },
-        async close() {
-          await seedEditorState(chunks.join(""));
-        },
-      };
-    },
-  });
-
-  window.showOpenFilePicker = async () => [fileHandle()];
-  window.showSaveFilePicker = async () => fileHandle();
-  seedEditorState(activeProjectText || blankProjectFile());
-
-  const hiddenLabels = [
-    "Community",
-    "Prompt Designer",
-    "Trivet",
-    "Chat Viewer",
-    "Data Studio",
-    "New Project",
-    "Open Project",
-    "Save Project",
-    "Import Project",
-    "Export Project",
-  ];
-  const candidateSelector = "button,a,[role='button'],[role='tab'],[aria-label],[title]";
-  const startupLabels = [
-    "open a project",
-    "open project",
-    "choose a project",
-    "select a project",
-    "import project",
-  ];
-  const shouldHide = (element) => {
-    const text = [
-      element.textContent,
-      element.getAttribute("aria-label"),
-      element.getAttribute("title"),
-      element.getAttribute("data-testid"),
-    ].filter(Boolean).join(" ");
-    return hiddenLabels.some((label) => text.toLowerCase().includes(label.toLowerCase()));
-  };
-  const hideChrome = () => {
-    document.querySelectorAll(candidateSelector).forEach((element) => {
-      if (shouldHide(element)) {
-        element.setAttribute("data-wright-minimal-hidden", "true");
-        element.style.setProperty("display", "none", "important");
-      }
-    });
-    document.querySelectorAll("button,a,[role='button']").forEach((element) => {
-      const text = (element.textContent || "").trim().toLowerCase();
-      if (startupLabels.some((label) => text.includes(label))) {
-        element.setAttribute("data-wright-minimal-hidden", "true");
-        element.style.setProperty("display", "none", "important");
-      }
-    });
-  };
-  const readProject = () => {
-    if (activeProjectText) return activeProjectText;
-    for (const key of Object.keys(localStorage)) {
-      const value = localStorage.getItem(key) || "";
-      if (
-        key.toLowerCase().includes("rivet") ||
-        key.toLowerCase().includes("project") ||
-        value.includes("mainGraphId") ||
-        value.includes("graphs:")
-      ) {
-        if (value.includes("version:") || value.includes('"version"')) return value;
-      }
-    }
-    return null;
-  };
-  window.addEventListener("message", (event) => {
-    const message = event.data || {};
-    if (message.type === "wright-rivet:set-project" && typeof message.project === "string") {
-      seedEditorState(message.project);
-      event.source?.postMessage({ type: "wright-rivet:project-set", requestId: message.requestId }, event.origin);
-    }
-    if (message.type === "wright-rivet:get-project") {
-      event.source?.postMessage({
-        type: "wright-rivet:project",
-        requestId: message.requestId,
-        project: readProject(),
-      }, event.origin);
-    }
-  });
-  hideChrome();
-  new MutationObserver(hideChrome).observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
-})();
-""".strip()
+from agent_adapters.hermes_config import resolve_hermes_api_settings
+from agent_adapters.hermes_openai_bridge import (
+    HermesBridgeError,
+    HermesOpenAICompatibilityBridge,
+    HermesOpenAIBridgeSettings,
+)
 
 
-def _send_static(handler: SimpleHTTPRequestHandler, body: bytes, content_type: str) -> None:
-    handler.send_response(HTTPStatus.OK)
-    handler.send_header("Content-Type", content_type)
-    handler.send_header("Content-Length", str(len(body)))
-    handler.end_headers()
-    handler.wfile.write(body)
+@dataclass(slots=True)
+class RivetAiHost:
+    bridge: HermesOpenAICompatibilityBridge | None
+    token: str | None
+    expires_at: datetime | None
+    maximum_request_bytes: int
+    token_ttl_seconds: int
+    _token_lock: threading.Lock = field(
+        default_factory=threading.Lock,
+        init=False,
+        repr=False,
+    )
+
+    @property
+    def available(self) -> bool:
+        return self.bridge is not None and self.bridge.available
+
+    def accepts_token(self, supplied: str) -> bool:
+        with self._token_lock:
+            now = datetime.now(UTC)
+            accepted = (
+                self.available
+                and self.token is not None
+                and self.expires_at is not None
+                and now < self.expires_at
+                and secrets.compare_digest(supplied, self.token)
+            )
+            if accepted:
+                # Graph Builder may make many sequential model calls. Keep an
+                # actively used, loopback-only lease alive so a draft cannot
+                # fail halfway through merely because its initial five-minute
+                # window elapsed. Idle and invalid credentials are never
+                # renewed.
+                self.expires_at = now + timedelta(seconds=self.token_ttl_seconds)
+            return accepted
+
+    def config(self) -> dict[str, Any]:
+        if not self.available:
+            return {"available": False, "reason": "hermes_unavailable"}
+        with self._token_lock:
+            now = datetime.now(UTC)
+            if self.token is None or self.expires_at is None or now >= self.expires_at:
+                self.token = secrets.token_urlsafe(32)
+            # Fetching config marks the beginning of a browser operation. Give
+            # it a complete lease even when the token already existed, then
+            # accepts_token extends that lease on each valid AI request.
+            self.expires_at = now + timedelta(seconds=self.token_ttl_seconds)
+        return {
+            "available": True,
+            "provider": "custom",
+            "model": "wright-hermes",
+            "baseUrl": "/wright-ai/v1",
+            "token": self.token,
+            "expiresAt": self.expires_at.isoformat().replace("+00:00", "Z"),
+        }
 
 
-def _inject_minimal_mode(content: bytes) -> bytes:
-    text = content.decode("utf-8")
-    css = '<link rel="stylesheet" href="/wright-minimal-mode.css">'
-    script = '<script src="/wright-minimal-mode.js"></script>'
-    if css not in text:
-        text = (
-            text.replace("</head>", f"{css}</head>", 1)
-            if "</head>" in text
-            else f"{css}{text}"
+class RivetCanvasHandler(SimpleHTTPRequestHandler):
+    """Static host with a bounded health endpoint and SPA route fallback."""
+
+    server_version = "WrightRivetCanvas/2"
+
+    def __init__(self, *args, directory: str, ai_host: RivetAiHost, **kwargs) -> None:
+        self._artifact_root = Path(directory).resolve()
+        self._ai_host = ai_host
+        super().__init__(*args, directory=directory, **kwargs)
+
+    def end_headers(self) -> None:
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header(
+            "Permissions-Policy",
+            "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
         )
-    if script not in text:
-        text = (
-            text.replace("</head>", f"{script}</head>", 1)
-            if "</head>" in text
-            else f"{script}{text}"
+        super().end_headers()
+
+    def _send_health(self, *, include_body: bool) -> None:
+        body = json.dumps({"status": "ok", "mode": "rivet2-canvas"}).encode()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        if include_body:
+            self.wfile.write(body)
+
+    def _send_json(
+        self,
+        status: HTTPStatus,
+        value: Mapping[str, Any] | dict[str, Any],
+        *,
+        include_body: bool = True,
+    ) -> None:
+        body = json.dumps(value, separators=(",", ":")).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        if include_body:
+            self.wfile.write(body)
+
+    def _send_ai_error(self, error: HermesBridgeError) -> None:
+        self._send_json(HTTPStatus(error.status_code), error.envelope())
+
+    def _is_loopback_client(self) -> bool:
+        try:
+            return ipaddress.ip_address(self.client_address[0]).is_loopback
+        except ValueError:
+            return False
+
+    def _bearer_is_valid(self) -> bool:
+        authorization = self.headers.get("Authorization", "")
+        prefix = "Bearer "
+        supplied = (
+            authorization[len(prefix) :] if authorization.startswith(prefix) else ""
         )
-    return text.encode("utf-8")
+        return self._ai_host.accepts_token(supplied)
 
+    def _is_spa_route(self) -> bool:
+        request_path = unquote(urlsplit(self.path).path)
+        relative = request_path.lstrip("/")
+        candidate = (self._artifact_root / relative).resolve()
+        if (
+            candidate != self._artifact_root
+            and self._artifact_root not in candidate.parents
+        ):
+            return False
+        return not candidate.exists() and Path(request_path).suffix == ""
 
-class EditorHandler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, root: Path, **kwargs) -> None:
-        self._root = root
-        super().__init__(*args, directory=str(root), **kwargs)
+    def _serve_index(self, *, include_body: bool) -> None:
+        index = self._artifact_root / "index.html"
+        body = index.read_bytes()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        if include_body:
+            self.wfile.write(body)
 
-    def do_GET(self) -> None:  # noqa: N802
-        requested = self.path.split("?", 1)[0]
-        if requested == "/health":
-            body = json.dumps({"status": "ok", "mode": "wright-workspace"}).encode()
-            _send_static(self, body, "application/json")
+    def do_GET(self) -> None:  # noqa: N802 - stdlib handler API
+        request_path = urlsplit(self.path).path
+        if request_path == "/health":
+            self._send_health(include_body=True)
             return
-        if requested == "/wright-minimal-mode.css":
-            _send_static(self, MINIMAL_CSS.encode("utf-8"), "text/css; charset=utf-8")
+        if request_path == "/wright-ai/config":
+            self._send_json(HTTPStatus.OK, self._ai_host.config())
             return
-        if requested == "/wright-minimal-mode.js":
-            _send_static(
-                self,
-                MINIMAL_JS.encode("utf-8"),
-                "application/javascript; charset=utf-8",
+        if request_path.startswith("/wright-ai/"):
+            self._send_json(
+                HTTPStatus.NOT_FOUND,
+                HermesBridgeError(
+                    "invalid_request", "AI route was not found.", status_code=404
+                ).envelope(),
             )
             return
-        if requested != "/" and "." not in Path(requested).name:
-            self.path = "/index.html"
+        if self._is_spa_route():
+            self._serve_index(include_body=True)
+            return
         super().do_GET()
 
-    def do_HEAD(self) -> None:  # noqa: N802
-        if self.path.split("?", 1)[0] in {
-            "/health",
-            "/wright-minimal-mode.css",
-            "/wright-minimal-mode.js",
-        }:
-            self.send_response(HTTPStatus.OK)
-            self.end_headers()
+    def do_HEAD(self) -> None:  # noqa: N802 - stdlib handler API
+        request_path = urlsplit(self.path).path
+        if request_path == "/health":
+            self._send_health(include_body=False)
+            return
+        if request_path == "/wright-ai/config":
+            self._send_json(HTTPStatus.OK, self._ai_host.config(), include_body=False)
+            return
+        if request_path.startswith("/wright-ai/"):
+            self._send_json(
+                HTTPStatus.NOT_FOUND,
+                {"error": {"code": "invalid_request"}},
+                include_body=False,
+            )
+            return
+        if self._is_spa_route():
+            self._serve_index(include_body=False)
             return
         super().do_HEAD()
 
-    def send_head(self):  # noqa: ANN001
-        requested = self.path.split("?", 1)[0]
-        if requested in {"/", "/index.html"}:
-            path = self.translate_path("/index.html")
-            content = _inject_minimal_mode(Path(path).read_bytes())
+    def do_POST(self) -> None:  # noqa: N802 - stdlib handler API
+        if urlsplit(self.path).path != "/wright-ai/v1/chat/completions":
+            self._send_json(
+                HTTPStatus.NOT_FOUND,
+                HermesBridgeError(
+                    "invalid_request", "AI route was not found.", status_code=404
+                ).envelope(),
+            )
+            return
+        if not self._is_loopback_client():
+            self._send_ai_error(
+                HermesBridgeError(
+                    "invalid_token", "AI request is not authorized.", status_code=403
+                )
+            )
+            return
+        if not self._bearer_is_valid():
+            self._send_ai_error(
+                HermesBridgeError(
+                    "invalid_token",
+                    "AI request token is invalid or expired.",
+                    status_code=401,
+                )
+            )
+            return
+        content_type = (
+            self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        )
+        if content_type != "application/json":
+            self._send_ai_error(
+                HermesBridgeError(
+                    "invalid_request",
+                    "Content-Type must be application/json.",
+                    status_code=415,
+                )
+            )
+            return
+        try:
+            length = int(self.headers.get("Content-Length", ""))
+        except ValueError:
+            length = -1
+        if length < 0 or length > self._ai_host.maximum_request_bytes:
+            self._send_ai_error(
+                HermesBridgeError(
+                    "invalid_request",
+                    "AI request body exceeds the configured limit.",
+                    status_code=413,
+                )
+            )
+            return
+        try:
+            payload = json.loads(self.rfile.read(length))
+        except (UnicodeError, json.JSONDecodeError):
+            self._send_ai_error(
+                HermesBridgeError(
+                    "invalid_request", "AI request body must be valid JSON."
+                )
+            )
+            return
+        if not isinstance(payload, dict) or self._ai_host.bridge is None:
+            self._send_ai_error(
+                HermesBridgeError(
+                    "hermes_unavailable", "Hermes AI is unavailable.", status_code=503
+                )
+            )
+            return
+        request_id = secrets.token_hex(16)
+        if payload.get("stream") is True:
             self.send_response(HTTPStatus.OK)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(content)))
+            self.send_header("Content-Type", "text/event-stream")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Connection", "close")
             self.end_headers()
-            import io
 
-            return io.BytesIO(content)
-        return super().send_head()
+            async def relay() -> None:
+                async for chunk in self._ai_host.bridge.stream(
+                    payload, request_id=request_id
+                ):
+                    self.wfile.write(chunk.encode())
+                    self.wfile.flush()
 
-    def end_headers(self) -> None:
-        self.send_header("Cache-Control", "no-store")
-        self.send_header("X-Content-Type-Options", "nosniff")
-        super().end_headers()
+            try:
+                asyncio.run(relay())
+            except (BrokenPipeError, ConnectionResetError):
+                return
+            except HermesBridgeError as error:
+                self.wfile.write(
+                    f"data: {json.dumps(error.envelope(), separators=(',', ':'))}\n\ndata: [DONE]\n\n".encode()
+                )
+            finally:
+                self.close_connection = True
+            return
+        try:
+            result = asyncio.run(
+                self._ai_host.bridge.complete(payload, request_id=request_id)
+            )
+        except HermesBridgeError as error:
+            self._send_ai_error(error)
+            return
+        self._send_json(HTTPStatus.OK, result)
+
+    def _method_not_allowed(self) -> None:
+        if urlsplit(self.path).path.startswith("/wright-ai/"):
+            self._send_json(
+                HTTPStatus.METHOD_NOT_ALLOWED,
+                HermesBridgeError(
+                    "invalid_request", "HTTP method is not allowed.", status_code=405
+                ).envelope(),
+            )
+            return
+        self.send_error(HTTPStatus.NOT_IMPLEMENTED)
+
+    do_PUT = _method_not_allowed  # type: ignore[assignment]  # noqa: N815
+    do_PATCH = _method_not_allowed  # type: ignore[assignment]  # noqa: N815
+    do_DELETE = _method_not_allowed  # type: ignore[assignment]  # noqa: N815
+    do_OPTIONS = _method_not_allowed  # type: ignore[assignment]  # noqa: N815
+
+    def log_message(self, format: str, *args: object) -> None:
+        return
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Serve the Wright Rivet 2 canvas")
+    parser.add_argument("--root", required=True, type=Path)
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", required=True, type=int)
+    parser.add_argument("--ai-enabled", action="store_true")
+    parser.add_argument("--ai-token-ttl", default=300, type=int)
+    parser.add_argument("--ai-request-bytes", default=2 * 1024 * 1024, type=int)
+    parser.add_argument("--ai-timeout", default=300.0, type=float)
+    return parser.parse_args()
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, required=True)
-    parser.add_argument("--host", required=True)
-    parser.add_argument("--port", type=int, required=True)
-    args = parser.parse_args()
+    args = parse_args()
     root = args.root.resolve()
-    if not (root / "index.html").is_file():
-        raise SystemExit("verified Rivet editor entrypoint is unavailable")
-    server = ThreadingHTTPServer(
-        (args.host, args.port), lambda *a, **kw: EditorHandler(*a, root=root, **kw)
+    if not root.is_dir() or not (root / "index.html").is_file():
+        raise SystemExit(f"Rivet canvas artifact is unavailable: {root}")
+
+    if args.ai_enabled and args.host not in {"127.0.0.1", "::1", "localhost"}:
+        raise SystemExit("Rivet AI bridge may bind only to loopback")
+    if (
+        not 1 <= args.ai_token_ttl <= 3600
+        or not 1024 <= args.ai_request_bytes <= 10 * 1024 * 1024
+    ):
+        raise SystemExit("Rivet AI bridge limits are invalid")
+
+    ai_host = RivetAiHost(
+        None,
+        None,
+        None,
+        args.ai_request_bytes,
+        args.ai_token_ttl,
     )
-    server.serve_forever()
+    if args.ai_enabled:
+        hermes = resolve_hermes_api_settings()
+        bridge = HermesOpenAICompatibilityBridge(
+            HermesOpenAIBridgeSettings(
+                base_url=hermes.base_url,
+                api_key=hermes.api_key,
+                timeout_seconds=args.ai_timeout,
+            )
+        )
+        if bridge.available:
+            ai_host = RivetAiHost(
+                bridge,
+                None,
+                None,
+                args.ai_request_bytes,
+                args.ai_token_ttl,
+            )
+
+    def handler(*handler_args, **handler_kwargs):
+        return RivetCanvasHandler(
+            *handler_args,
+            directory=str(root),
+            ai_host=ai_host,
+            **handler_kwargs,
+        )
+
+    server = ThreadingHTTPServer((args.host, args.port), handler)
+    try:
+        server.serve_forever()
+    finally:
+        server.server_close()
 
 
 if __name__ == "__main__":

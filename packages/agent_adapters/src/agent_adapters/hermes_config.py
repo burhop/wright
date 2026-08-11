@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,37 @@ class HermesApiSettings:
     base_url: str
     api_key: str
     source: str
+
+
+def official_hermes_cli_path(
+    env: Mapping[str, str] | None = None,
+) -> str | None:
+    """Locate the CLI installed by the official Hermes installer.
+
+    Desktop launchers do not always inherit the installer's Scripts directory
+    on PATH, so checking only ``shutil.which("hermes")`` makes a healthy local
+    installation appear absent to Wright.
+    """
+    env = os.environ if env is None else env
+    explicit = (env.get("HERMES_CLI_PATH") or "").strip()
+    if explicit and Path(explicit).is_file():
+        return explicit
+
+    local_app_data = (env.get("LOCALAPPDATA") or "").strip()
+    if local_app_data:
+        candidates = (
+            Path(local_app_data)
+            / "hermes"
+            / "hermes-agent"
+            / "venv"
+            / "Scripts"
+            / "hermes.exe",
+            Path(local_app_data) / "hermes" / "bin" / "hermes.exe",
+        )
+        for candidate in candidates:
+            if candidate.is_file():
+                return str(candidate)
+    return None
 
 
 def _parse_env_value(value: str) -> str:
@@ -64,7 +96,8 @@ def _hermes_config_command(
     env: Mapping[str, str],
 ) -> str | None:
     profile = (env.get("HERMES_PROFILE") or "").strip()
-    args = ["hermes"]
+    executable = shutil.which("hermes") or official_hermes_cli_path(env) or "hermes"
+    args = [executable]
     if profile:
         args.extend(["-p", profile])
     args.extend(["config", command])

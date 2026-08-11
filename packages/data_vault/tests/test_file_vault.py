@@ -20,6 +20,20 @@ def test_store_uses_generated_key_not_client_path(tmp_path: Path):
     assert not (tmp_path / "outside.PDF").exists()
 
 
+def test_resolve_file_id_finds_stored_file_without_client_suffix(tmp_path: Path):
+    vault = FileVault(tmp_path / "vault")
+    stored = vault.store("clipboard.png", b"image-data")
+
+    assert vault.resolve_file_id(stored.file_id) == stored.path
+
+
+def test_resolve_file_id_rejects_non_uuid(tmp_path: Path):
+    vault = FileVault(tmp_path / "vault")
+
+    with pytest.raises(VaultPathError):
+        vault.resolve_file_id("../not-an-upload")
+
+
 @pytest.mark.parametrize(
     "name",
     [

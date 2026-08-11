@@ -84,10 +84,12 @@ async def lifespan(app: FastAPI):
         from tool_registry.catalog_reconcile import (
             reconcile_engineering_catalog,
             reconcile_installed_bundle,
+            reconcile_wright_managed_servers,
         )
 
         reconcile_engineering_catalog(DATABASE_PATH)
         reconcile_installed_bundle(DATABASE_PATH)
+        reconcile_wright_managed_servers(DATABASE_PATH)
     except Exception as exc:
         logger.error(
             "database_readiness_failed",

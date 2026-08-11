@@ -1,0 +1,43 @@
+format_version: 1
+templates:
+  - id: basic-flow
+    title: Basic Flow
+    description: Small input, context, and chat graphs for learning the Rivet canvas.
+    kind: starter
+    resource: templates/basic-flow.rivet-project
+    requirements: []
+    source_repository: https://github.com/valerypopoff/rivet2.0
+    source_revision: 4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053
+    source_path: packages/cli/cli-example.rivet-project
+  - id: ai-agent
+    title: AI Agent
+    description: General tool-using agent loop with a final reply graph.
+    kind: advanced
+    resource: templates/ai-agent.rivet-project
+    requirements:
+      - model-provider
+    source_repository: https://github.com/valerypopoff/rivet2.0
+    source_revision: 4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053
+    source_path: packages/app/src/assets/templates/ai_agent_template.rivet-project
+  - id: mcp-agent
+    title: MCP Agent
+    description: Tool-using agent wired for MCP discovery and tool calls.
+    kind: advanced
+    resource: templates/mcp-agent.rivet-project
+    requirements:
+      - model-provider
+      - mcp-server-configuration
+    source_repository: https://github.com/valerypopoff/rivet2.0
+    source_revision: 4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053
+    source_path: packages/app/src/assets/templates/mcp_ai_agent_template.rivet-project
+  - id: text-rpg
+    title: Text RPG
+    description: Complete chat-loop example using subgraphs, prompts, RNG, and arrays.
+    kind: example
+    resource: examples/text-rpg.rivet-project
+    requirements:
+      - model-provider
+      - interactive-user-input
+    source_repository: https://github.com/valerypopoff/rivet2.0
+    source_revision: 4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053
+    source_path: examples/rpg/RPG.rivet-project

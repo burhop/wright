@@ -65,6 +65,10 @@ export function RivetWorkflowsPanel({
       const result = await workspaceService.runRivetWorkflow(
         sessionId,
         workflow.slug,
+        {
+          expectedRevision: workflow.revision,
+          expectedDigest: workflow.etag,
+        },
       );
       setRuns((current) => ({ ...current, [workflow.workflow_id]: result }));
       setMessage(`Run ${result.run_id} is ${result.state}.`);

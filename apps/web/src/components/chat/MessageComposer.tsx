@@ -380,7 +380,7 @@ export function MessageComposer({
         boxSizing: "border-box",
         boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)",
         position: "relative",
-        overflow: "hidden",
+        overflow: "visible",
       }}
     >
       {showMenu && (

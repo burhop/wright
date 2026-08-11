@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
-  FolderIcon,
+  BookOpenIcon,
+  CloseIcon,
   OpenExternalIcon,
   PlayIcon,
   PlusIcon,
@@ -11,8 +12,10 @@ import {
 import {
   workspaceService,
   type RivetWorkflowDocument,
-  type RivetWorkflowOperation,
+  type RivetWorkflowRun,
+  type RivetWorkflowTemplate,
 } from "../../services/workspace-service";
+import { directRivetCanvasFrameUrl } from "../../services/rivet-editor";
 
 const requestId = () =>
   typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -25,6 +28,7 @@ interface DirectRivetSurfaceProps {
   readonly initialSlug: string;
   readonly onOpenInBrowser: () => void;
   readonly onWorkflowLoaded?: (workflow: RivetWorkflowDocument) => void;
+  readonly externalRevisionToken?: string | null;
 }
 
 export function DirectRivetSurface({
@@ -33,92 +37,249 @@ export function DirectRivetSurface({
   initialSlug,
   onOpenInBrowser,
   onWorkflowLoaded,
+  externalRevisionToken = null,
 }: DirectRivetSurfaceProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const [workflows, setWorkflows] = useState<RivetWorkflowOperation[]>([]);
-  const [selectedSlug, setSelectedSlug] = useState(initialSlug);
+  const readyRef = useRef(false);
+  const postOpenStatusRef = useRef<string | null>(null);
+  const onWorkflowLoadedRef = useRef(onWorkflowLoaded);
+  const lastExternalRevisionTokenRef = useRef<string | null>(null);
   const [document, setDocument] = useState<RivetWorkflowDocument | null>(null);
-  const [status, setStatus] = useState("Rivet workspace controls are ready.");
+  const [templates, setTemplates] = useState<RivetWorkflowTemplate[]>([]);
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+  const [runPanelOpen, setRunPanelOpen] = useState(false);
+  const [runGraph, setRunGraph] = useState("");
+  const [runInputs, setRunInputs] = useState("{}");
+  const [activeRun, setActiveRun] = useState<RivetWorkflowRun | null>(null);
+  const [status, setStatus] = useState("Loading Rivet 2 graph canvas...");
   const [busy, setBusy] = useState(false);
+  const [editorReady, setEditorReady] = useState(false);
+  const [aiStatus, setAiStatus] = useState<
+    "checking" | "available" | "unavailable"
+  >("checking");
 
   const targetOrigin = new URL(url).origin;
+  const frameUrl = directRivetCanvasFrameUrl(url, window.location.origin);
 
-  const sendProjectToFrame = useCallback(
-    (project: string) => {
-      iframeRef.current?.contentWindow?.postMessage(
-        {
-          type: "wright-rivet:set-project",
-          requestId: requestId(),
-          project,
-        },
-        targetOrigin,
-      );
+  useEffect(() => {
+    onWorkflowLoadedRef.current = onWorkflowLoaded;
+  }, [onWorkflowLoaded]);
+
+  const bridgeRequest = useCallback(
+    async <T extends Record<string, unknown>,>(
+      request: Record<string, unknown>,
+      responseType: string,
+    ): Promise<T> => {
+      if (!readyRef.current) throw new Error("Rivet 2 graph canvas is not ready.");
+      const frameWindow = iframeRef.current?.contentWindow;
+      if (!frameWindow) throw new Error("Rivet 2 graph canvas is unavailable.");
+      const id = String(request.requestId);
+      return await new Promise<T>((resolve, reject) => {
+        let timeout = 0;
+        const cleanup = () => {
+          window.clearTimeout(timeout);
+          window.removeEventListener("message", onMessage);
+        };
+        const onMessage = (event: MessageEvent) => {
+          if (event.source !== frameWindow || event.origin !== targetOrigin) return;
+          const message = event.data || {};
+          if (message.requestId !== id) return;
+          if (message.type === "wright-rivet:error") {
+            cleanup();
+            reject(
+              new Error(
+                typeof message.message === "string"
+                  ? message.message
+                  : "Rivet 2 graph canvas rejected the request.",
+              ),
+            );
+            return;
+          }
+          if (message.type === responseType) {
+            cleanup();
+            resolve(message as T);
+          }
+        };
+        timeout = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Rivet 2 graph canvas did not respond in time."));
+        }, 5000);
+        window.addEventListener("message", onMessage);
+        frameWindow.postMessage(request, targetOrigin);
+      });
     },
     [targetOrigin],
   );
 
-  const requestProjectFromFrame = useCallback(async (): Promise<string | null> => {
-    const id = requestId();
-    return await new Promise((resolve) => {
-      let timeout = 0;
-      const onMessage = (event: MessageEvent) => {
-        if (event.origin !== targetOrigin) return;
-        const message = event.data || {};
-        if (
-          message.type === "wright-rivet:project" &&
-          message.requestId === id
-        ) {
-          window.clearTimeout(timeout);
-          window.removeEventListener("message", onMessage);
-          resolve(typeof message.project === "string" ? message.project : null);
-        }
-      };
-      timeout = window.setTimeout(() => {
-        window.removeEventListener("message", onMessage);
-        resolve(null);
-      }, 800);
-      window.addEventListener("message", onMessage);
-      iframeRef.current?.contentWindow?.postMessage(
-        { type: "wright-rivet:get-project", requestId: id },
-        targetOrigin,
+  const sendProjectToFrame = useCallback(
+    async (workflow: RivetWorkflowDocument) => {
+      const id = requestId();
+      await bridgeRequest(
+        {
+          type: "wright-rivet:set-project",
+          requestId: id,
+          project: workflow.project,
+          path: `${workflow.slug}.rivet-project`,
+        },
+        "wright-rivet:project-set",
       );
-    });
-  }, [targetOrigin]);
+    },
+    [bridgeRequest],
+  );
+
+  const requestProjectFromFrame = useCallback(async (): Promise<string> => {
+    const id = requestId();
+    const message = await bridgeRequest<{ project?: unknown }>(
+      { type: "wright-rivet:get-project", requestId: id },
+      "wright-rivet:project",
+    );
+    if (typeof message.project !== "string") {
+      throw new Error("Rivet 2 returned an invalid workflow project.");
+    }
+    return message.project;
+  }, [bridgeRequest]);
 
   const refreshCatalog = useCallback(async () => {
-    const catalog = await workspaceService.listRivetWorkflowOperations(sessionId);
-    setWorkflows(catalog);
-    return catalog;
+    return await workspaceService.listRivetWorkflowOperations(sessionId);
   }, [sessionId]);
 
   const openWorkflow = useCallback(
     async (slug: string) => {
       setBusy(true);
       try {
-        const loaded = await workspaceService.readRivetWorkflow(sessionId, slug);
-        setSelectedSlug(loaded.slug);
+        const loaded = await workspaceService.readRivetWorkflow(
+          sessionId,
+          slug,
+        );
         setDocument(loaded);
-        onWorkflowLoaded?.(loaded);
-        sendProjectToFrame(loaded.project);
-        setStatus(`${loaded.slug}.rivet-project opened from this workspace.`);
+        if (loaded.slug !== initialSlug) {
+          onWorkflowLoadedRef.current?.(loaded);
+        }
+        setStatus(
+          readyRef.current
+            ? "Opening workflow on the graph canvas..."
+            : "Waiting for the graph canvas to open the workflow...",
+        );
       } catch (error) {
         setStatus(
-          error instanceof Error ? error.message : "Unable to open Rivet workflow.",
+          error instanceof Error
+            ? error.message
+            : "Unable to open Rivet workflow.",
         );
       } finally {
         setBusy(false);
       }
     },
-    [onWorkflowLoaded, sendProjectToFrame, sessionId],
+    [initialSlug, sessionId],
   );
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      const frameWindow = iframeRef.current?.contentWindow;
+      if (
+        !frameWindow ||
+        event.source !== frameWindow ||
+        event.origin !== targetOrigin
+      ) {
+        return;
+      }
+      const message = event.data || {};
+      if (message.type === "wright-rivet:ready") {
+        readyRef.current = true;
+        setEditorReady(true);
+        setStatus("Rivet 2 graph canvas is ready.");
+      } else if (message.type === "wright-rivet:ai-status") {
+        const available = message.available === true;
+        setAiStatus(available ? "available" : "unavailable");
+        if (!available) {
+          setStatus("Rivet AI is unavailable; the graph canvas remains usable.");
+        }
+      } else if (
+        message.type === "wright-rivet:error" &&
+        typeof message.requestId !== "string"
+      ) {
+        setStatus(
+          typeof message.message === "string"
+            ? message.message
+            : "Rivet 2 graph canvas reported an error.",
+        );
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [targetOrigin]);
+
+  useEffect(() => {
+    if (!editorReady || !document) return;
+    let cancelled = false;
+    void sendProjectToFrame(document)
+      .then(() => {
+        if (!cancelled) {
+          setStatus(
+            postOpenStatusRef.current || "Workflow opened from this workspace.",
+          );
+          postOpenStatusRef.current = null;
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Unable to place the workflow on the Rivet 2 canvas.",
+          );
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [document, editorReady, sendProjectToFrame]);
+
+  useEffect(() => {
+    if (
+      !externalRevisionToken ||
+      !document ||
+      lastExternalRevisionTokenRef.current === externalRevisionToken
+    ) {
+      return;
+    }
+    lastExternalRevisionTokenRef.current = externalRevisionToken;
+    let cancelled = false;
+    void workspaceService
+      .readRivetWorkflow(sessionId, document.slug)
+      .then((loaded) => {
+        if (cancelled) return;
+        if (
+          loaded.revision !== document.revision ||
+          loaded.etag !== document.etag
+        ) {
+          postOpenStatusRef.current =
+            `Workflow updated by Wright AI at revision ${loaded.revision}.`;
+          setDocument(loaded);
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Unable to refresh the Rivet workflow after Wright AI changed it.",
+          );
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [document, externalRevisionToken, sessionId]);
 
   const createWorkflow = async () => {
     setBusy(true);
     try {
-      const created = await workspaceService.createBlankRivetWorkflow(sessionId);
+      const created =
+        await workspaceService.createBlankRivetWorkflow(sessionId);
       await refreshCatalog();
       await openWorkflow(created.slug);
-      setStatus(`${created.slug}.rivet-project created in this workspace.`);
+      setStatus("Blank workflow created in this workspace.");
     } catch (error) {
       setStatus(
         error instanceof Error
@@ -129,6 +290,50 @@ export function DirectRivetSurface({
       setBusy(false);
     }
   };
+
+  const createWorkflowFromTemplate = async (
+    template: RivetWorkflowTemplate,
+  ) => {
+    setBusy(true);
+    try {
+      const created = await workspaceService.createRivetWorkflowFromTemplate(
+        sessionId,
+        template,
+      );
+      setTemplatePickerOpen(false);
+      await openWorkflow(created.slug);
+      setStatus(`Workflow created from ${template.title}.`);
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : "Unable to create a workflow from this template.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    void workspaceService
+      .listRivetWorkflowTemplates()
+      .then((availableTemplates) => {
+        if (!cancelled) setTemplates(availableTemplates);
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Rivet templates are unavailable.",
+          );
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -158,11 +363,62 @@ export function DirectRivetSurface({
     };
   }, [initialSlug, openWorkflow, refreshCatalog]);
 
+  useEffect(() => {
+    if (
+      !activeRun ||
+      !["queued", "running", "cancelling"].includes(activeRun.state)
+    ) {
+      return;
+    }
+    let cancelled = false;
+    let timer = 0;
+    const poll = async () => {
+      try {
+        const [run, history] = await Promise.all([
+          workspaceService.getRivetWorkflowRun(sessionId, activeRun.run_id),
+          workspaceService.getRivetWorkflowHistory(sessionId, activeRun.run_id),
+        ]);
+        if (cancelled) return;
+        setActiveRun(run);
+        const latest = history.at(-1);
+        const phase =
+          typeof latest?.payload?.phase === "string"
+            ? latest.payload.phase.replaceAll("-", " ")
+            : null;
+        setStatus(
+          run.state === "succeeded"
+            ? `Run ${run.run_id} succeeded.`
+            : run.state === "failed" || run.state === "cancelled"
+              ? `Run ${run.run_id} ${run.state}${run.reason ? `: ${run.reason}` : "."}`
+              : phase
+                ? `Run ${run.run_id}: ${phase}.`
+                : `Run ${run.run_id} is ${run.state}.`,
+        );
+        if (["queued", "running", "cancelling"].includes(run.state)) {
+          timer = window.setTimeout(poll, 250);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Workflow run status is unavailable.",
+          );
+        }
+      }
+    };
+    timer = window.setTimeout(poll, 50);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [activeRun?.run_id, activeRun?.state, sessionId]);
+
   const saveWorkflow = async () => {
     if (!document) return;
     setBusy(true);
     try {
-      const project = (await requestProjectFromFrame()) || document.project;
+      const project = await requestProjectFromFrame();
       const saved = await workspaceService.saveRivetWorkflow(
         sessionId,
         document.slug,
@@ -174,12 +430,19 @@ export function DirectRivetSurface({
         sessionId,
         saved.slug,
       );
+      postOpenStatusRef.current = `Workflow saved at revision ${reloaded.revision}.`;
       setDocument(reloaded);
-      onWorkflowLoaded?.(reloaded);
+      if (reloaded.slug !== initialSlug) {
+        onWorkflowLoadedRef.current?.(reloaded);
+      }
       await refreshCatalog();
-      setStatus(`Saved ${reloaded.slug}.rivet-project revision ${reloaded.revision}.`);
+      setStatus(
+        `Workflow saved at revision ${reloaded.revision}.`,
+      );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to save workflow.");
+      setStatus(
+        error instanceof Error ? error.message : "Unable to save workflow.",
+      );
     } finally {
       setBusy(false);
     }
@@ -189,10 +452,55 @@ export function DirectRivetSurface({
     if (!document) return;
     setBusy(true);
     try {
-      const run = await workspaceService.runRivetWorkflow(sessionId, document.slug);
+      const currentProject = await requestProjectFromFrame();
+      if (currentProject !== document.project) {
+        setStatus("Save the current canvas changes before running this workflow.");
+        return;
+      }
+      const parsedInputs = JSON.parse(runInputs);
+      if (
+        !parsedInputs ||
+        typeof parsedInputs !== "object" ||
+        Array.isArray(parsedInputs)
+      ) {
+        throw new Error("Run inputs must be a JSON object.");
+      }
+      const run = await workspaceService.runRivetWorkflow(
+        sessionId,
+        document.slug,
+        {
+          expectedRevision: document.revision,
+          expectedDigest: document.etag,
+          graph: runGraph.trim() || undefined,
+          inputs: parsedInputs,
+        },
+      );
+      setActiveRun(run);
+      setRunPanelOpen(false);
       setStatus(`Run ${run.run_id} is ${run.state}.`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to run workflow.");
+      setStatus(
+        error instanceof Error ? error.message : "Unable to run workflow.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const cancelRun = async () => {
+    if (!activeRun) return;
+    setBusy(true);
+    try {
+      const cancelled = await workspaceService.cancelRivetWorkflow(
+        sessionId,
+        activeRun,
+      );
+      setActiveRun(cancelled);
+      setStatus(`Run ${cancelled.run_id} is ${cancelled.state}.`);
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Workflow cancellation failed.",
+      );
     } finally {
       setBusy(false);
     }
@@ -212,7 +520,9 @@ export function DirectRivetSurface({
           : "Graph lint passed.",
       );
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Unable to lint workflow.");
+      setStatus(
+        error instanceof Error ? error.message : "Unable to lint workflow.",
+      );
     } finally {
       setBusy(false);
     }
@@ -243,45 +553,17 @@ export function DirectRivetSurface({
       }}
     >
       <div
+        data-testid="direct-rivet-toolbar"
         style={{
           display: "flex",
           alignItems: "center",
           borderBottom: "1px solid var(--color-border)",
           background: "var(--color-surface-elevated)",
           minHeight: 44,
+          padding: "0 8px",
+          position: "relative",
         }}
       >
-        <strong
-          style={{
-            padding: "10px 14px",
-            color: "var(--color-primary)",
-            fontWeight: 600,
-          }}
-        >
-          {document ? `${document.slug}.rivet-project` : "Rivet"}
-        </strong>
-        <select
-          data-testid="direct-rivet-workflow-select"
-          value={selectedSlug}
-          disabled={busy || workflows.length === 0}
-          onChange={(event) => setSelectedSlug(event.target.value)}
-          style={{
-            minWidth: 120,
-            height: 30,
-            background: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
-            borderRadius: "var(--radius-sm, 4px)",
-            color: "var(--color-primary)",
-            fontSize: "0.75rem",
-          }}
-          aria-label="Rivet workflow"
-        >
-          {workflows.map((workflow) => (
-            <option key={workflow.workflow_id} value={workflow.slug}>
-              {workflow.slug}
-            </option>
-          ))}
-        </select>
         <button
           type="button"
           data-testid="direct-rivet-new-workspace"
@@ -293,23 +575,108 @@ export function DirectRivetSurface({
         >
           <PlusIcon size={16} />
         </button>
-        <button
-          type="button"
-          data-testid="direct-rivet-open-workspace"
-          aria-label="Open Rivet workflow from workspace"
-          title="Open Rivet workflow from workspace"
-          disabled={busy || !selectedSlug}
-          onClick={() => void openWorkflow(selectedSlug)}
-          style={iconButtonStyle}
-        >
-          <FolderIcon size={16} />
-        </button>
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            data-testid="direct-rivet-template-picker"
+            aria-label="New Rivet workflow from template"
+            title="New Rivet workflow from template"
+            aria-expanded={templatePickerOpen}
+            disabled={busy}
+            onClick={() => setTemplatePickerOpen((open) => !open)}
+            style={iconButtonStyle}
+          >
+            <BookOpenIcon size={16} />
+          </button>
+          {templatePickerOpen && (
+            <div
+              role="dialog"
+              aria-label="Rivet workflow templates"
+              data-testid="direct-rivet-template-menu"
+              onKeyDown={(event) => {
+                if (event.key === "Escape") setTemplatePickerOpen(false);
+              }}
+              style={{
+                position: "absolute",
+                top: 38,
+                left: 0,
+                zIndex: 20,
+                width: 340,
+                maxHeight: 420,
+                overflowY: "auto",
+                padding: 8,
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md, 6px)",
+                background: "var(--color-surface, #131b2e)",
+                opacity: 1,
+                boxShadow: "var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.35))",
+              }}
+            >
+              {templates.length === 0 ? (
+                <p
+                  role="status"
+                  style={{ margin: 8, color: "var(--color-secondary)" }}
+                >
+                  No workflow templates are available.
+                </p>
+              ) : (
+                templates.map((template) => (
+                  <button
+                    key={template.template_id}
+                    type="button"
+                    data-testid={`direct-rivet-template-${template.template_id}`}
+                    disabled={busy}
+                    onClick={() => void createWorkflowFromTemplate(template)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "10px 12px",
+                      border: 0,
+                      borderRadius: "var(--radius-sm, 4px)",
+                      background: "transparent",
+                      color: "var(--color-primary)",
+                      textAlign: "left",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <span style={{ display: "block", fontWeight: 600 }}>
+                      {template.title}
+                    </span>
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: 2,
+                        color: "var(--color-secondary)",
+                        fontSize: "0.72rem",
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {template.description}
+                    </span>
+                    {template.requirements.length > 0 && (
+                      <span
+                        style={{
+                          display: "block",
+                          marginTop: 5,
+                          color: "var(--color-warning, #f59e0b)",
+                          fontSize: "0.66rem",
+                        }}
+                      >
+                        Requires: {template.requirements.join(", ").replaceAll("-", " ")}
+                      </span>
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
         <button
           type="button"
           data-testid="direct-rivet-save-workspace"
           aria-label="Save Rivet workflow to workspace"
           title="Save Rivet workflow to workspace"
-          disabled={busy || !document}
+          disabled={busy || !document || !editorReady}
           onClick={() => void saveWorkflow()}
           style={iconButtonStyle}
         >
@@ -326,27 +693,138 @@ export function DirectRivetSurface({
         >
           <SearchIcon size={16} />
         </button>
-        <button
-          type="button"
-          data-testid="direct-rivet-run"
-          aria-label="Run Rivet workflow"
-          title="Run Rivet workflow"
-          disabled={busy || !document}
-          onClick={() => void runWorkflow()}
-          style={iconButtonStyle}
-        >
-          <PlayIcon size={16} />
-        </button>
+        {activeRun && ["queued", "running", "cancelling"].includes(activeRun.state) ? (
+          <button
+            type="button"
+            data-testid="direct-rivet-cancel"
+            aria-label="Cancel Rivet workflow run"
+            title="Cancel Rivet workflow run"
+            disabled={busy || activeRun.state === "cancelling"}
+            onClick={() => void cancelRun()}
+            style={iconButtonStyle}
+          >
+            <CloseIcon size={16} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            data-testid="direct-rivet-run"
+            aria-label="Run Rivet workflow"
+            title="Run Rivet workflow"
+            aria-expanded={runPanelOpen}
+            disabled={busy || !document || !editorReady}
+            onClick={() => setRunPanelOpen((open) => !open)}
+            style={iconButtonStyle}
+          >
+            <PlayIcon size={16} />
+          </button>
+        )}
+        {runPanelOpen && document && (
+          <div
+            role="dialog"
+            aria-label="Run Rivet workflow"
+            data-testid="direct-rivet-run-panel"
+            style={{
+              position: "absolute",
+              top: 40,
+              left: 108,
+              zIndex: 20,
+              width: 320,
+              padding: 10,
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-md, 6px)",
+              background: "var(--color-surface-elevated)",
+              boxShadow: "var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.35))",
+            }}
+          >
+            <label style={{ display: "block", fontSize: "0.72rem" }}>
+              Graph (blank uses project main graph)
+              <input
+                data-testid="direct-rivet-run-graph"
+                value={runGraph}
+                onChange={(event) => setRunGraph(event.target.value)}
+                style={{ width: "100%", marginTop: 4 }}
+              />
+            </label>
+            <label style={{ display: "block", marginTop: 8, fontSize: "0.72rem" }}>
+              Inputs (JSON object)
+              <textarea
+                data-testid="direct-rivet-run-inputs"
+                value={runInputs}
+                rows={3}
+                onChange={(event) => setRunInputs(event.target.value)}
+                style={{ width: "100%", marginTop: 4, resize: "vertical" }}
+              />
+            </label>
+            <button
+              type="button"
+              data-testid="direct-rivet-run-start"
+              disabled={busy}
+              onClick={() => void runWorkflow()}
+              style={{ marginTop: 8 }}
+            >
+              Run revision {document.revision}
+            </button>
+          </div>
+        )}
+        {activeRun && (
+          <span
+            data-testid="direct-rivet-run-result"
+            title={
+              activeRun.outputs
+                ? JSON.stringify(activeRun.outputs)
+                : activeRun.reason || `Run ${activeRun.state}`
+            }
+            style={{ marginLeft: 6, fontSize: "0.68rem", color: "var(--color-secondary)" }}
+          >
+            {activeRun.state}
+            {activeRun.duration_ms != null ? ` · ${activeRun.duration_ms} ms` : ""}
+          </span>
+        )}
         <div style={{ flex: 1 }} />
         <span
-          data-testid="direct-rivet-status"
+          data-testid="direct-rivet-ai-status"
+          title={
+            aiStatus === "available"
+              ? "Rivet AI is connected through Hermes"
+              : aiStatus === "unavailable"
+                ? "Rivet AI is unavailable"
+                : "Checking Rivet AI"
+          }
+          aria-label={
+            aiStatus === "available"
+              ? "Rivet AI connected"
+              : aiStatus === "unavailable"
+                ? "Rivet AI unavailable"
+                : "Checking Rivet AI"
+          }
           style={{
+            width: 8,
+            height: 8,
+            marginRight: 8,
+            borderRadius: "50%",
+            background:
+              aiStatus === "available"
+                ? "var(--color-success, #10b981)"
+                : aiStatus === "unavailable"
+                  ? "var(--color-warning, #f59e0b)"
+                  : "var(--color-secondary)",
+          }}
+        />
+        <span
+          data-testid="direct-rivet-status"
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            padding: 0,
+            margin: -1,
             overflow: "hidden",
-            textOverflow: "ellipsis",
+            clip: "rect(0, 0, 0, 0)",
             whiteSpace: "nowrap",
-            maxWidth: "40%",
-            color: "var(--color-secondary)",
-            fontSize: "0.72rem",
+            border: 0,
           }}
         >
           {status}
@@ -376,10 +854,13 @@ export function DirectRivetSurface({
       </div>
       <iframe
         ref={iframeRef}
-        title="Rivet"
-        src={url}
+        title="Rivet graph canvas"
+        src={frameUrl}
         onLoad={() => {
-          if (document) sendProjectToFrame(document.project);
+          readyRef.current = false;
+          setEditorReady(false);
+          setAiStatus("checking");
+          setStatus("Loading Rivet 2 graph canvas...");
         }}
         style={{
           flex: 1,
