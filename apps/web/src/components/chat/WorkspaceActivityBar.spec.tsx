@@ -23,7 +23,7 @@ describe("WorkspaceActivityBar", () => {
     );
 
     expect(
-      [...container.querySelectorAll("button.activity-bar-icon")]
+      Array.from(container.querySelectorAll("button.activity-bar-icon"))
         .slice(1)
         .map((button) => button.getAttribute("data-testid")),
     ).toEqual([
