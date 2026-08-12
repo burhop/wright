@@ -176,7 +176,7 @@ def test_editor_host_ai_config_token_security_and_completion_proxy(tmp_path) -> 
             f"{base_url}/wright-ai/v1/chat/completions",
             method="POST",
             headers={
-                "Authorization": f"Bearer {config['token']}",
+                "X-Rivet-AI-Token": config["token"],
                 "Content-Type": "application/json",
             },
             body=payload,

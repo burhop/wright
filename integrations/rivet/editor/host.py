@@ -135,12 +135,19 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
         except ValueError:
             return False
 
-    def _bearer_is_valid(self) -> bool:
-        authorization = self.headers.get("Authorization", "")
-        prefix = "Bearer "
-        supplied = (
-            authorization[len(prefix) :] if authorization.startswith(prefix) else ""
-        )
+    def _ai_token_is_valid(self) -> bool:
+        supplied = self.headers.get("X-Rivet-AI-Token", "").strip()
+        if not supplied:
+            # Keep direct-host compatibility for local diagnostics. Embedded
+            # browser traffic uses the dedicated header because Wright's
+            # surface boundary strips generic Authorization credentials.
+            authorization = self.headers.get("Authorization", "")
+            prefix = "Bearer "
+            supplied = (
+                authorization[len(prefix) :]
+                if authorization.startswith(prefix)
+                else ""
+            )
         return self._ai_host.accepts_token(supplied)
 
     def _is_spa_route(self) -> bool:
@@ -222,7 +229,7 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
                 )
             )
             return
-        if not self._bearer_is_valid():
+        if not self._ai_token_is_valid():
             self._send_ai_error(
                 HermesBridgeError(
                     "invalid_token",

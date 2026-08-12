@@ -14,6 +14,7 @@ import {
 import {
   MemoryStorage,
   createWrightEnvironmentProvider,
+  createWrightAiFetch,
   loadWrightAiConfig,
   seedWrightAiStorage,
   type WrightAiConfig,
@@ -67,6 +68,9 @@ export function WrightEditorBridge() {
 
   useEffect(() => {
     let active = true;
+    const originalFetch = window.fetch;
+    const bridgedFetch = createWrightAiFetch(originalFetch.bind(window), window.location.origin);
+    window.fetch = bridgedFetch;
     void (async () => {
       const config = await loadWrightAiConfig();
       await seedWrightAiStorage(storage, config);
@@ -74,6 +78,7 @@ export function WrightEditorBridge() {
     })();
     return () => {
       active = false;
+      if (window.fetch === bridgedFetch) window.fetch = originalFetch;
     };
   }, [storage]);
 

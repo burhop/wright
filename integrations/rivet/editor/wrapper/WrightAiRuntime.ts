@@ -31,6 +31,42 @@ export type WrightAiConfig =
     }
   | { available: false; reason: string };
 
+const WRIGHT_AI_TOKEN_HEADER = 'X-Rivet-AI-Token';
+const DEV_SURFACE_AI_ROUTE = /^\/__wright-surface\/[^/]+\/wright-ai\//;
+
+function isWrightAiRequest(url: URL, editorOrigin: string): boolean {
+  return (
+    url.origin === editorOrigin &&
+    (url.pathname.startsWith('/wright-ai/') || DEV_SURFACE_AI_ROUTE.test(url.pathname))
+  );
+}
+
+/**
+ * Keep Rivet's short-lived AI credential separate from the browser's generic
+ * Authorization header. Wright's surface proxy intentionally removes generic
+ * credentials before forwarding an embedded app request.
+ */
+export function createWrightAiFetch(
+  fetchRequest: typeof fetch,
+  editorOrigin = globalThis.location?.origin,
+): typeof fetch {
+  return (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const request = new Request(input, init);
+    if (!editorOrigin || !isWrightAiRequest(new URL(request.url), editorOrigin)) {
+      return fetchRequest(request);
+    }
+
+    const authorization = request.headers.get('Authorization');
+    const token = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
+    if (!token) return fetchRequest(request);
+
+    const headers = new Headers(request.headers);
+    headers.delete('Authorization');
+    headers.set(WRIGHT_AI_TOKEN_HEADER, token);
+    return fetchRequest(new Request(request, { headers }));
+  }) as typeof fetch;
+}
+
 export async function loadWrightAiConfig(
   fetchConfig: typeof fetch = fetch,
 ): Promise<WrightAiConfig> {

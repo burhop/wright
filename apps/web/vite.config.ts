@@ -3,7 +3,12 @@ import react from "@vitejs/plugin-react";
 import license from "rollup-plugin-license";
 import path from "path";
 import { request as httpRequest } from "node:http";
-import type { ClientRequest, IncomingMessage, ServerResponse } from "node:http";
+import type {
+  ClientRequest,
+  IncomingHttpHeaders,
+  IncomingMessage,
+  ServerResponse,
+} from "node:http";
 import type { Plugin } from "vite";
 
 const surfacePreviewHost =
@@ -85,6 +90,17 @@ export function rewriteSurfaceText(body: string, encoded: string): string {
     );
 }
 
+export function surfaceProxyHeaders(
+  source: IncomingHttpHeaders,
+  authority: string,
+): IncomingHttpHeaders {
+  const headers = { ...source };
+  headers.host = authority;
+  headers["accept-encoding"] = "identity";
+  delete headers.connection;
+  return headers;
+}
+
 function surfaceDevProxyPlugin(): Plugin {
   return {
     name: "wright-surface-dev-proxy",
@@ -107,11 +123,7 @@ function surfaceDevProxyPlugin(): Plugin {
             return;
           }
 
-          const headers = { ...req.headers };
-          headers.host = match.authority;
-          headers["accept-encoding"] = "identity";
-          delete headers.connection;
-          delete headers["content-length"];
+          const headers = surfaceProxyHeaders(req.headers, match.authority);
 
           const proxyReq = httpRequest(
             {
