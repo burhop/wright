@@ -34,6 +34,31 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
     expect(development.validateIssuedPreviewUrl(proxy)).toBe(proxy);
   });
 
+  it("opens a validated development proxy at its issued browser origin", async () => {
+    const openDevelopmentWindow = vi.fn();
+    const replace = vi.fn();
+    openDevelopmentWindow.mockReturnValue({
+      opener: {},
+      document: {
+        createElement: () => ({ name: "", content: "" }),
+        head: { append: vi.fn() },
+      },
+      location: { replace },
+      close: vi.fn(),
+    } as unknown as Window);
+    const development = new BrowserHostAdapter({
+      controlUrl: "http://localhost:5173/workspace/ws-1",
+      openWindow: openDevelopmentWindow,
+    });
+    const issued =
+      "http://s-panel.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+    const proxy = development.validateIssuedPreviewUrl(issued);
+
+    await development.openExternal(proxy);
+
+    expect(replace).toHaveBeenCalledWith(issued);
+  });
+
   it.each([
     "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/app#abcdefghijklmnopqrstuvwxyz012345",
     "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#short",

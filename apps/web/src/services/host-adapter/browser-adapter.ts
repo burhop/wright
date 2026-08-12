@@ -30,7 +30,7 @@ function devSurfaceProxyUrl(value: string, control: URL): string {
 function existingDevSurfaceProxyUrl(
   value: string,
   control: URL,
-): string | null {
+): { readonly proxyUrl: string; readonly issuedUrl: string } | null {
   if (!["5173", "5174"].includes(control.port)) return null;
   const proxy = new URL(value);
   if (proxy.origin !== control.origin || proxy.search !== "") return null;
@@ -39,11 +39,11 @@ function existingDevSurfaceProxyUrl(
   );
   if (!match) return null;
   const upstreamHost = decodeURIComponent(match[1]);
-  validateIssuedSurfacePreviewUrl(
+  const issuedUrl = validateIssuedSurfacePreviewUrl(
     `${control.protocol}//${upstreamHost}/__wright/bootstrap${proxy.hash}`,
     control.origin,
   );
-  return proxy.toString();
+  return { proxyUrl: proxy.toString(), issuedUrl };
 }
 
 export class BrowserHostAdapter implements HostAdapter {
@@ -94,7 +94,7 @@ export class BrowserHostAdapter implements HostAdapter {
   validateIssuedPreviewUrl(value: string): string {
     const control = this.controlUrl();
     const existingProxy = existingDevSurfaceProxyUrl(value, control);
-    if (existingProxy) return existingProxy;
+    if (existingProxy) return existingProxy.proxyUrl;
     const validated = validateIssuedSurfacePreviewUrl(value, control.origin);
     return devSurfaceProxyUrl(validated, control);
   }
@@ -103,9 +103,12 @@ export class BrowserHostAdapter implements HostAdapter {
     value: string,
     options: ExternalOpenOptions = {},
   ): Promise<void> {
+    const control = this.controlUrl();
+    const existingProxy = existingDevSurfaceProxyUrl(value, control);
     const validated = options.approvedDirectUrl
       ? validateApprovedDirectSurfaceUrl(value)
-      : this.validateIssuedPreviewUrl(value);
+      : (existingProxy?.issuedUrl ??
+        validateIssuedSurfacePreviewUrl(value, control.origin));
     const openWindow =
       this.configuredOpenWindow ??
       ((url: string, target: string, features: string) =>
