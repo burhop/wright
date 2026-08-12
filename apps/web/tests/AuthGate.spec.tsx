@@ -10,13 +10,38 @@ vi.mock("../src/services/host-adapter", () => ({
   },
 }));
 
+function createLocalStorageMock(): Storage {
+  let items: Record<string, string> = {};
+
+  return {
+    get length() {
+      return Object.keys(items).length;
+    },
+    clear: vi.fn(() => {
+      items = {};
+    }),
+    getItem: vi.fn((key: string) => items[key] ?? null),
+    key: vi.fn((index: number) => Object.keys(items)[index] ?? null),
+    removeItem: vi.fn((key: string) => {
+      delete items[key];
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      items[key] = value;
+    }),
+  };
+}
+
+const localStorageMock = createLocalStorageMock();
+
 describe("AuthGate", () => {
   beforeEach(() => {
+    vi.stubGlobal("localStorage", localStorageMock);
     window.history.replaceState({}, "", "/");
-    localStorage.clear();
+    localStorageMock.clear();
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 

@@ -30,6 +30,7 @@ TEXT_ASSET_SUFFIXES = {
     ".webmanifest",
     ".xml",
 }
+PRESERVED_RUNTIME_WEB_ASSETS = ("third-party-licenses-api.txt",)
 
 
 class CandidateBuildError(RuntimeError):
@@ -126,9 +127,19 @@ def write_asset_manifest(
 
 
 def stage_frontend() -> str:
+    preserved_assets: dict[str, bytes] = {}
     if PACKAGED_WEB.exists():
+        for relative in PRESERVED_RUNTIME_WEB_ASSETS:
+            source = PACKAGED_WEB / relative
+            if source.is_file():
+                preserved_assets[relative] = source.read_bytes()
         shutil.rmtree(PACKAGED_WEB)
     shutil.copytree(WEB_DIST, PACKAGED_WEB)
+    for relative, payload in preserved_assets.items():
+        destination = PACKAGED_WEB / relative
+        if not destination.exists():
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(payload)
     normalize_text_assets(PACKAGED_WEB)
     entries = inspect_web_dist(PACKAGED_WEB)
     return write_asset_manifest(PACKAGED_WEB / "asset-manifest.json", entries)

@@ -1,19 +1,19 @@
 {
   "files": [
     {
-      "path": "assets/index-C8aCd0GN.js",
-      "sha256": "3abf00b1d3d9c5b2a1eac696f4880e00ff8dc6d8f05e9d2d2a7f4ef776bb09af",
-      "size": 1518200
-    },
-    {
       "path": "assets/index-DcfxQA-I.css",
       "sha256": "23896a5ee6234a4f1c7d4ae50249655191dae96a0016834b74116481d21ee49b",
       "size": 14196
     },
     {
-      "path": "assets/plotly.min-CE5geWy4.js",
-      "sha256": "b9c943dc3fb30e43b55da8ba5026eb6015a3d1eb355b767d5ec1ae0bf8d399a7",
-      "size": 4606227
+      "path": "assets/index-FYt0SEAs.js",
+      "sha256": "391f95d90961bd14e88dcac804832813e50d2ea20fdb0b137c6281f1ec870b11",
+      "size": 1520474
+    },
+    {
+      "path": "assets/plotly.min-CZNKUEEE.js",
+      "sha256": "6b3c1599d544c18874d83910a2cd448284a1a76333cc82cb4da4c528ace5bd73",
+      "size": 4603563
     },
     {
       "path": "favicon.svg",
@@ -27,7 +27,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "ec05396fe34b32f8418525526422192e6aa415961e9f63d820df4f29225e06dd",
+      "sha256": "110a006a9e285213ad80d510762eb7bae984eee3afd81aacdafa48e185087e95",
       "size": 917
     },
     {
@@ -47,7 +47,7 @@
     },
     {
       "path": "third-party-licenses-web.txt",
-      "sha256": "f51c415d57849d698dcf5db7cae0ca170dc32681ae20a0a35607f36208591cd8",
+      "sha256": "02ea1751e00393e74c9b022603c83436f3dd6a7babac27b2914896c93c4ca5c3",
       "size": 219335
     }
   ],

@@ -1625,7 +1625,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 ---
 
 Name: react-router
-Version: 7.18.1
+Version: 7.18.2
 License: MIT
 Private: false
 Description: Declarative routing for React
