@@ -99,7 +99,7 @@ async def test_structured_bridge_timing_is_correlated_and_redacted(monkeypatch):
         assert isinstance(values[name], float)
         assert values[name] >= 0
     encoded = json.dumps(captured.events)
-    assert "hermes-secret" not in encoded
+    assert "test-secret-hermes-key" not in encoded
     assert "prompt-secret" not in encoded
 
 
@@ -107,7 +107,7 @@ async def test_structured_bridge_timing_is_correlated_and_redacted(monkeypatch):
 async def test_plain_completion_uses_hermes_api_and_aliases_model():
     async def handler(request: httpx.Request) -> httpx.Response:
         assert request.url == "http://127.0.0.1:8642/v1/chat/completions"
-        assert request.headers["authorization"] == "Bearer hermes-secret"
+        assert request.headers["authorization"] == "Bearer test-secret-hermes-key"
         upstream = json.loads(request.content)
         assert upstream["model"] == "hermes"
         return httpx.Response(
@@ -219,7 +219,7 @@ async def test_translation_fails_closed(content, code):
             _request(tools=[_tool()], tool_choice="required")
         )
     assert caught.value.code == code
-    assert "hermes-secret" not in str(caught.value)
+    assert "test-secret-hermes-key" not in str(caught.value)
 
 
 @pytest.mark.asyncio
@@ -277,18 +277,18 @@ async def test_standard_sse_shape_for_translation():
     assert chunks[-1] == "data: [DONE]\n\n"
     joined = "".join(chunks)
     assert '"tool_calls"' in joined
-    assert "hermes-secret" not in joined
+    assert "test-secret-hermes-key" not in joined
 
 
 @pytest.mark.asyncio
 async def test_upstream_auth_failure_and_payload_validation_are_redacted():
     async def handler(_request: httpx.Request) -> httpx.Response:
-        return httpx.Response(401, text="provider said hermes-secret")
+        return httpx.Response(401, text="provider said test-secret-hermes-key")
 
     with pytest.raises(HermesBridgeError) as caught:
         await _bridge(handler).complete(_request())
     assert caught.value.code == "hermes_auth_failed"
-    assert "hermes-secret" not in str(caught.value)
+    assert "test-secret-hermes-key" not in str(caught.value)
 
     bridge = _bridge(handler)
     with pytest.raises(HermesBridgeError) as invalid:

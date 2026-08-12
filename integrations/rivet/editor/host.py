@@ -60,6 +60,23 @@ class RivetAiHost:
                 self.expires_at = now + timedelta(seconds=self.token_ttl_seconds)
             return accepted
 
+    def renew_token(self, supplied: str) -> None:
+        """Extend a lease after an authenticated model call completes.
+
+        A call can legitimately take most of a short lease. Renewing at both
+        admission and completion keeps the lease about user idle time instead
+        of counting upstream model latency against the next request.
+        """
+        with self._token_lock:
+            if (
+                self.available
+                and self.token is not None
+                and secrets.compare_digest(supplied, self.token)
+            ):
+                self.expires_at = datetime.now(UTC) + timedelta(
+                    seconds=self.token_ttl_seconds
+                )
+
     def config(self) -> dict[str, Any]:
         if not self.available:
             return {"available": False, "reason": "hermes_unavailable"}
@@ -135,7 +152,7 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
         except ValueError:
             return False
 
-    def _ai_token_is_valid(self) -> bool:
+    def _supplied_ai_token(self) -> str:
         supplied = self.headers.get("X-Rivet-AI-Token", "").strip()
         if not supplied:
             # Keep direct-host compatibility for local diagnostics. Embedded
@@ -144,11 +161,9 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
             authorization = self.headers.get("Authorization", "")
             prefix = "Bearer "
             supplied = (
-                authorization[len(prefix) :]
-                if authorization.startswith(prefix)
-                else ""
+                authorization[len(prefix) :] if authorization.startswith(prefix) else ""
             )
-        return self._ai_host.accepts_token(supplied)
+        return supplied
 
     def _is_spa_route(self) -> bool:
         request_path = unquote(urlsplit(self.path).path)
@@ -229,7 +244,8 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
                 )
             )
             return
-        if not self._ai_token_is_valid():
+        supplied_token = self._supplied_ai_token()
+        if not self._ai_host.accepts_token(supplied_token):
             self._send_ai_error(
                 HermesBridgeError(
                     "invalid_token",
@@ -302,6 +318,8 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(
                     f"data: {json.dumps(error.envelope(), separators=(',', ':'))}\n\ndata: [DONE]\n\n".encode()
                 )
+            else:
+                self._ai_host.renew_token(supplied_token)
             finally:
                 self.close_connection = True
             return
@@ -312,6 +330,7 @@ class RivetCanvasHandler(SimpleHTTPRequestHandler):
         except HermesBridgeError as error:
             self._send_ai_error(error)
             return
+        self._ai_host.renew_token(supplied_token)
         self._send_json(HTTPStatus.OK, result)
 
     def _method_not_allowed(self) -> None:
