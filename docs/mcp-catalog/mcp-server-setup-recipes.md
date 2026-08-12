@@ -2096,3 +2096,204 @@ Known notes:
   fixed.
 - `pywin32` should be marked as a Windows-only dependency rather than an
   unconditional Linux install requirement.
+
+## NVIDIA Omniverse USD Code MCP (`nvidia-omniverse-usd-code-mcp`)
+
+Source: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+
+GB10 local preflight:
+
+```bash
+git clone --depth 1 https://github.com/NVIDIA-Omniverse/kit-usd-agents /tmp/kit-usd-agents
+cd /tmp/kit-usd-agents
+git lfs install --local
+git lfs fetch origin --include='source/aiq/usd_code_fns/**'
+git lfs checkout source/aiq/usd_code_fns
+cd source/mcp
+./build-wheels.sh usd
+```
+
+Run MCP through NVIDIA's Docker compose path:
+
+```bash
+cd /tmp/kit-usd-agents/source/mcp
+export NVIDIA_API_KEY=<secret>
+docker compose -f docker-compose.ngc.yaml up usd-code-mcp --build
+```
+
+Validation probes:
+
+- `initialize`
+- `notifications/initialized`
+- `tools/list`
+- one read-only USD/OpenUSD search or docs lookup tool
+
+Known result:
+
+- GB10 host preflight cloned commit
+  `c7ac8c6931b40bc48de84e8d808ed89d51d924da`.
+- `git-lfs` was required before wheel build because the MCP packages include
+  FAISS/search data.
+- `./build-wheels.sh usd` passed with Python 3.13 and Poetry 2.4.1.
+- Built `usd_code_aiq-0.3.0-py3-none-any.whl` at 398798247 bytes.
+- Built `usd_code_mcp-1.0.0-py3-none-any.whl` at 10138 bytes.
+
+Known notes:
+
+- Omniverse Launcher is no longer the preferred install path for this MCP
+  family. Use the official GitHub source and Docker compose path.
+- NVIDIA's recommended NGC/cloud-backed deployment requires `NVIDIA_API_KEY`.
+- Full MCP startup/tool validation was not run in this preflight because the API
+  key was not available.
+- Do not install Omniverse Kit, Isaac Sim, or other full workstation runtimes in
+  the Wright base image merely to make catalog validation pass.
+
+## NVIDIA Elements MCP (`nvidia-elements-mcp`)
+
+Source: https://nvidia.github.io/elements/docs/mcp/
+
+Install/run:
+
+```bash
+npx -y @nvidia-elements/cli@2.1.10 mcp
+```
+
+Validation probes:
+
+- `npx -y @nvidia-elements/cli@2.1.10 mcp --help`
+- `initialize`
+- `notifications/initialized`
+- `tools/list`
+- `skills_list`
+
+Known result:
+
+- npm reported current CLI version `2.1.10`.
+- GB10 local host initialized the MCP with Wright's stdio runner.
+- `tools/list` returned 18 tools.
+- `skills_list` returned Elements design-system skill metadata.
+
+Known notes:
+
+- This is a read-only/docs/design-system MCP, not CAD/CAE solver software.
+- No GPU, CAD host, or license server is required for the tested tools.
+
+## Ansys PyFluent MCP (`ansys-fluent-mcp`)
+
+Source: https://github.com/ansys/pyfluent-mcp
+
+Install/run:
+
+```bash
+uvx --from ansys-fluent-mcp ansys-fluent-mcp
+```
+
+Validation probes:
+
+- `uvx --from ansys-fluent-mcp ansys-fluent-mcp --help`
+- `initialize`
+- `notifications/initialized`
+- `tools/list`
+- `session_status`
+
+Known result:
+
+- GB10 local host installed the package and initialized the MCP.
+- `tools/list` returned 25 tools.
+- `session_status` returned `connected:false`, `backend_kind:"pyfluent"`, and
+  no MCP error when no Fluent session was connected.
+
+Known notes:
+
+- The MCP package can run on GB10/Linux ARM64 as a control-plane/client layer.
+- Live solver operations still require licensed Ansys Fluent locally or a
+  reachable remote Fluent session.
+- Keep Ansys solver products and license managers outside Wright base images.
+
+## Ansys MCP Server Community (`ansys-mcp-server-community`)
+
+Source: https://pypi.org/project/ansys-mcp-server/
+
+Attempted commands:
+
+```bash
+uvx --from ansys-mcp-server ansys-mcp-server --help
+uvx --python 3.12 --from ansys-mcp-server ansys-mcp-server --help
+```
+
+Known result:
+
+- GB10 local host installed package dependencies, but startup failed before MCP
+  initialization on Python 3.13 and Python 3.12.
+- Both attempts failed with
+  `ImportError: cannot import name 'InitializationCapabilities' from 'mcp.server.models'`.
+
+Known notes:
+
+- Treat as non-working until upstream pins a compatible MCP SDK or updates the
+  import path.
+- Full solver validation still requires licensed Ansys products after startup
+  is fixed.
+
+Follow-up: `docs/mcp-catalog/followups/ansys-mcp-server-community.md`
+
+## COMSOL Multiphysics MCP by Suzy-Sa (`comsol-multiphysics-mcp-suzysa`)
+
+Source: https://github.com/Suzy-Sa/COMSOL-Multiphysics-MCP
+
+Setup:
+
+```bash
+git clone --depth 1 https://github.com/Suzy-Sa/COMSOL-Multiphysics-MCP /tmp/comsol-mcp-suzysa
+cd /tmp/comsol-mcp-suzysa
+uv run pytest -q
+uv run python -m comsol_agent_mcp.server
+```
+
+Known result:
+
+- GB10 local host cloned commit
+  `3735fb3276ec6ad44163a55763dad45932367ffe`.
+- Upstream tests passed: 76 tests.
+- MCP startup failed before initialization with
+  `ModuleNotFoundError: No module named 'mcp.server.fastmcp'`.
+
+Known notes:
+
+- Upstream tests currently do not cover the MCP entrypoint import against the
+  latest MCP Python SDK.
+- Validate again after upstream pins a compatible `mcp` version or migrates to
+  the current FastMCP import/API.
+- Licensed COMSOL/mph validation should wait until stdio startup works.
+
+Follow-up: `docs/mcp-catalog/followups/comsol-multiphysics-mcp-suzysa.md`
+
+## COMSOL MCP Server by wjc9011 (`comsol-multiphysics-mcp-wjc9011`)
+
+Source: https://github.com/wjc9011/COMSOL_Multiphysics_MCP
+
+Attempted setup:
+
+```bash
+git clone --depth 1 https://github.com/wjc9011/COMSOL_Multiphysics_MCP /tmp/comsol-mcp-wjc9011
+cd /tmp/comsol-mcp-wjc9011
+uv run pytest -q
+```
+
+Known result:
+
+- GB10 local host cloned commit
+  `99172f8f43c6753c2442c406cd5c6055ea8c5bef`.
+- Install/test probe was interrupted intentionally after dependency resolution
+  began downloading a large `sentence-transformers`/PyTorch/CUDA stack.
+- The repository checkout includes many COMSOL PDF manuals, `.mph` models, lock
+  files, logs, and generated artifacts.
+
+Known notes:
+
+- Do not include this repository or its bundled documentation/models in a Wright
+  image without a license/content review.
+- A slim install strategy is needed before clean-container validation.
+- Treat as source-only and blocked from bundle inclusion until then.
+
+Follow-up: `docs/mcp-catalog/followups/comsol-multiphysics-mcp-wjc9011.md`

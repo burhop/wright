@@ -130,11 +130,19 @@ Recommended next validations:
   community servers
 - Remote credentialed probes for Rescale and NVIDIA CUDA Docs MCPs
 - Docker startup and read-only tool probes for NVIDIA Omniverse Kit/USD/OmniUI/
-  Isaac Sim MCPs
-- Install-only and offline-tool validation for Ansys PyFluent MCP before any
-  licensed solver launch
-- Community COMSOL MCP import/tool-list checks before any licensed COMSOL or
-  desktop automation test
+  Isaac Sim MCPs. GB10 local preflight has already built the USD Code wheels,
+  but `NVIDIA_API_KEY` and Docker/MCP startup evidence are still needed.
+- Clean-container and gateway validation for NVIDIA Elements MCP. GB10 local
+  preflight initialized the npm MCP, listed 18 tools, and called `skills_list`.
+- Licensed-host validation for Ansys PyFluent MCP after clean-container
+  protocol probes. GB10 local preflight initialized the package, listed 25
+  tools, and returned a clean disconnected `session_status`.
+- Upstream fixes before retesting `ansys-mcp-server-community` and
+  `comsol-multiphysics-mcp-suzysa`; both currently fail before MCP
+  initialization against the resolved MCP SDK.
+- Slim-install and license/content review before validating
+  `comsol-multiphysics-mcp-wjc9011`; its source checkout includes COMSOL PDFs
+  and models, and its dependency graph pulls a large PyTorch/CUDA stack.
 - Windows host validation for SolidEdgeMCP and SolidWorks MCPs, with CAD
   licenses kept outside the redistributed image
 - Credential-limited remote probes for Autodesk Fusion Data, APS, Zoo.dev, and

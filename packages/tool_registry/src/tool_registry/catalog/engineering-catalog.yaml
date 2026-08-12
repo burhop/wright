@@ -4555,6 +4555,11 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Official PyAnsys docs describe PyFluent-MCP and its 22-tool Fluent integration.
+  - url: docs/mcp-catalog/evidence/gb10-local-mcp-preflight-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
   locality: local
   weight: heavy
   env_vars:
@@ -4595,9 +4600,9 @@ servers:
       tested: false
       notes: MCP package should run on Linux x64; live solver tools require licensed Fluent or remote Fluent.
     linux_arm64:
-      status: 'no'
+      status: host-dependent
       tested: false
-      notes: Fluent solver availability for GB10/Linux ARM64 container is not established; use remote Fluent from GB10 if needed.
+      notes: GB10 local host preflight showed the MCP package can initialize and report session_status; live Fluent remains local/remote host and license dependent.
     macos_x64:
       status: host-dependent
       tested: false
@@ -4616,11 +4621,14 @@ servers:
   - workspace_write_approval
   - license_server_approval
   validation_result:
-    status: not_tested
-    message: Added from official Ansys/PyAnsys sources; validate offline tools first, then live solver connection on a licensed host.
-    environment: null
+    status: dependency_missing
+    message: GB10 local host preflight initialized PyFluent MCP, listed 25 tools, and session_status returned connected:false/backend_kind:pyfluent without error. Full validation still requires clean-container evidence and a licensed local or remote Fluent session for live solver tools.
+    environment: gb10-linux-arm64-local-host
     missing_dependencies:
     - Ansys Fluent license for live solve tools
+    - clean-container evidence
+    validated_at: '2026-08-12'
+    evidence_status: partial
 - id: ansys-mcp-server-community
   name: Ansys MCP Server
   vendor: vorobjewsen30-max
@@ -4660,6 +4668,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Official MCP Registry lists io.github.vorobjewsen30-max/ansys-mcp-server as active version 1.0.0.
+  - url: docs/mcp-catalog/followups/ansys-mcp-server-community.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host startup failed on Python 3.13 and 3.12 due missing InitializationCapabilities in the resolved MCP SDK.
   locality: local
   weight: heavy
   env_vars:
@@ -4675,7 +4688,7 @@ servers:
     - ansys-mcp-server
     node: []
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -4696,7 +4709,7 @@ servers:
     linux_arm64:
       status: 'no'
       tested: false
-      notes: Ansys solver product support inside GB10/Linux ARM64 containers is not established.
+      notes: GB10 package startup failed before MCP initialization due current MCP SDK API mismatch; solver support is also not established.
     macos_x64:
       status: host-dependent
       tested: false
@@ -4715,11 +4728,14 @@ servers:
   - workspace_write_approval
   - license_server_approval
   validation_result:
-    status: not_tested
-    message: Added from PyPI and official MCP Registry metadata; validate install-only behavior before any licensed solver launch.
-    environment: null
+    status: failed
+    message: GB10 local host install completed, but startup failed before MCP initialization on Python 3.13 and Python 3.12 with ImportError for mcp.server.models.InitializationCapabilities.
+    environment: gb10-linux-arm64-local-host
     missing_dependencies:
-    - Ansys solver license for live tools
+    - upstream MCP SDK compatibility fix
+    - Ansys solver license for live tools after startup is fixed
+    validated_at: '2026-08-12'
+    evidence_status: partial
 - id: comsol-multiphysics-mcp-wjc9011
   name: COMSOL MCP Server
   vendor: wjc9011
@@ -4760,6 +4776,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: COMSOL API docs describe programmatic geometry, mesh, solve, visualization, and results workflows.
+  - url: docs/mcp-catalog/followups/comsol-multiphysics-mcp-wjc9011.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local preflight found heavyweight PyTorch/CUDA dependency downloads and bundled COMSOL PDFs/models requiring review before bundle validation.
   locality: local
   weight: heavy
   env_vars: []
@@ -4769,9 +4790,12 @@ servers:
     - Java runtime
     python:
     - mph
+    - pymupdf
+    - chromadb
+    - sentence-transformers
     node: []
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: blocked
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -4792,7 +4816,7 @@ servers:
     linux_arm64:
       status: 'no'
       tested: false
-      notes: No COMSOL/GB10 Linux ARM64 support evidence found.
+      notes: GB10 preflight was stopped after heavyweight optional dependency downloads; bundled COMSOL docs/models also need license/content review.
     macos_x64:
       status: host-dependent
       tested: false
@@ -4812,11 +4836,15 @@ servers:
   - workspace_write_approval
   - license_server_approval
   validation_result:
-    status: not_tested
-    message: Added from community repository and COMSOL API docs; validate import/tool-list without COMSOL before any licensed solver test.
-    environment: null
+    status: blocked
+    message: GB10 local preflight cloned the source but intentionally stopped install/test when dependency resolution began downloading a large sentence-transformers/PyTorch/CUDA stack; repository also includes COMSOL PDFs, .mph models, logs, and generated artifacts that require review before any image inclusion.
+    environment: gb10-linux-arm64-local-host
     missing_dependencies:
+    - slim reviewed install path
+    - license/content review for bundled COMSOL documents and models
     - COMSOL Multiphysics license
+    validated_at: '2026-08-12'
+    evidence_status: partial
 - id: comsol-multiphysics-mcp-suzysa
   name: COMSOL Multiphysics MCP
   vendor: Suzy-Sa
@@ -4853,6 +4881,11 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: README describes a local COMSOL MCP server, requirements, configuration, and MCP client setup.
+  - url: docs/mcp-catalog/followups/comsol-multiphysics-mcp-suzysa.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local tests passed, but MCP startup failed before initialization because mcp.server.fastmcp was not available in the resolved SDK.
   locality: local
   weight: heavy
   env_vars: []
@@ -4865,7 +4898,7 @@ servers:
     - chromadb
     node: []
   verification_state: community_mcp
-  installability_tier: might_work
+  installability_tier: non_working
   risk_level: high
   deployment_mode: local-bridge
   runtime_requirements:
@@ -4886,7 +4919,7 @@ servers:
     linux_arm64:
       status: 'no'
       tested: false
-      notes: No COMSOL/GB10 Linux ARM64 support evidence found.
+      notes: GB10 package tests passed, but MCP entrypoint failed before initialization due current MCP SDK import mismatch; COMSOL ARM64 backend support is still unverified.
     macos_x64:
       status: host-dependent
       tested: false
@@ -4906,11 +4939,14 @@ servers:
   - desktop_control_approval
   - license_server_approval
   validation_result:
-    status: not_tested
-    message: Added from community repository; validate workflow/RAG smoke tests before any COMSOL Desktop automation.
-    environment: null
+    status: failed
+    message: GB10 local host package tests passed 76 tests, but MCP startup failed before initialization with ModuleNotFoundError for mcp.server.fastmcp. Validate again after upstream pins a compatible MCP SDK or updates the server import/API.
+    environment: gb10-linux-arm64-local-host
     missing_dependencies:
+    - upstream MCP SDK compatibility fix
     - COMSOL Multiphysics license
+    validated_at: '2026-08-12'
+    evidence_status: partial
 - id: nvidia-omniverse-kit-mcp
   name: NVIDIA Omniverse Kit MCP
   vendor: NVIDIA Omniverse
@@ -5033,6 +5069,11 @@ servers:
     primary: true
     observed_at: '2026-08-12'
     notes: Official repository describes USD Code MCP with seven specialized USD/OpenUSD tools.
+  - url: docs/mcp-catalog/evidence/gb10-local-mcp-preflight-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host built the USD Code AIQ and MCP wheels from source after targeted Git LFS checkout.
   locality: local
   weight: medium
   env_vars:
@@ -5065,9 +5106,9 @@ servers:
       tested: false
       notes: Repository provides Linux build scripts and Docker compose deployment; validation needed.
     linux_arm64:
-      status: unknown
+      status: likely
       tested: false
-      notes: Docker image and dependency support must be checked on GB10/Linux ARM64.
+      notes: GB10 local host built the Python wheels successfully; Docker startup, MCP tools/list, and NVIDIA_API_KEY-backed read-only calls remain pending.
     macos_x64:
       status: unknown
       tested: false
@@ -5084,11 +5125,14 @@ servers:
   approval_gates:
   - network_access_approval
   validation_result:
-    status: not_tested
-    message: Added from official NVIDIA Omniverse repository; validate read-only tool calls before enabling.
-    environment: null
+    status: dependency_missing
+    message: GB10 local host built usd_code_aiq and usd_code_mcp wheels from source with Git LFS data resolved. Docker startup, MCP tools/list, and read-only USD search validation remain pending and require NVIDIA_API_KEY for the recommended NGC-backed deployment.
+    environment: gb10-linux-arm64-local-host
     missing_dependencies:
     - NVIDIA API key
+    - Docker/MCP startup evidence
+    validated_at: '2026-08-12'
+    evidence_status: partial
 - id: nvidia-omniverse-omniui-mcp
   name: NVIDIA OmniUI MCP
   vendor: NVIDIA Omniverse
@@ -5387,6 +5431,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: Registry metadata identifies the official source repository and subfolder.
+  - url: docs/mcp-catalog/evidence/gb10-local-mcp-preflight-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
   locality: local
   weight: light
   env_vars: []
@@ -5417,7 +5466,7 @@ servers:
     linux_arm64:
       status: likely
       tested: false
-      notes: npm command should run with Node.js on ARM64 if package has no native blocker; validation needed.
+      notes: GB10 local host preflight initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list; clean-container and gateway validation remain pending.
     macos_x64:
       status: likely
       tested: false
@@ -5432,10 +5481,14 @@ servers:
   default_enabled: false
   approval_gates: []
   validation_result:
-    status: not_tested
-    message: Added from official MCP Registry metadata; validate npm package startup and tools/list before enabling.
-    environment: null
-    missing_dependencies: []
+    status: dependency_missing
+    message: GB10 local host preflight initialized NVIDIA Elements MCP, listed 18 tools, and called the read-only skills_list tool. Full catalog pass still needs clean-container and gateway evidence.
+    environment: gb10-linux-arm64-local-host
+    missing_dependencies:
+    - clean-container evidence
+    - gateway proxy evidence
+    validated_at: '2026-08-12'
+    evidence_status: partial
 - id: nvidia-kit-cae-agent-skills
   name: NVIDIA Omniverse Kit-CAE Agent Skills
   vendor: NVIDIA Omniverse
