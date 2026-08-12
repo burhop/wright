@@ -14,9 +14,7 @@ describe("isBrepToolActivity", () => {
   });
 
   it("recognizes the Wright-owned BREP panel progress title", () => {
-    expect(
-      isBrepToolActivity({ title: "Opening BREP in Wright" }),
-    ).toBe(true);
+    expect(isBrepToolActivity({ title: "Opening BREP in Wright" })).toBe(true);
   });
 
   it("does not react to unrelated MCP activity", () => {

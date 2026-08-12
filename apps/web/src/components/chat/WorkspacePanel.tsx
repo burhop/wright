@@ -1376,13 +1376,7 @@ export function WorkspacePanel({
   );
   const sendMessageWithSurfaceContext = useCallback(
     (message: string, attachments?: string[]) =>
-      sendMessage(
-        message,
-        attachments,
-        false,
-        undefined,
-        activeRivetUiContext,
-      ),
+      sendMessage(message, attachments, false, undefined, activeRivetUiContext),
     [activeRivetUiContext, sendMessage],
   );
   const steerMessageWithSurfaceContext = useCallback(

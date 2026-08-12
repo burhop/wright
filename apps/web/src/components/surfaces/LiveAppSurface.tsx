@@ -35,7 +35,9 @@ function recoveryOperation(
   return null;
 }
 
-function requiresIsolatedAcknowledgement(descriptor: SurfaceDescriptor): boolean {
+function requiresIsolatedAcknowledgement(
+  descriptor: SurfaceDescriptor,
+): boolean {
   return (
     descriptor.instance?.sharing === "isolated" ||
     descriptor.source.sourceId === "wright.rivet-editor"
@@ -54,7 +56,8 @@ function presentationEligible(
 function shouldAutoOpenPanel(descriptor: SurfaceDescriptor): boolean {
   return (
     descriptor.source.sourceId === "wright.rivet-editor" &&
-    (descriptor.lifecycle === "ready" || descriptor.lifecycle === "unhealthy") &&
+    (descriptor.lifecycle === "ready" ||
+      descriptor.lifecycle === "unhealthy") &&
     presentationEligible(descriptor, "panel")
   );
 }

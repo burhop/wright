@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import WorkspacePanel from "../src/components/chat/WorkspacePanel";
@@ -515,7 +521,9 @@ describe("WorkspacePanel session selection", () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByTestId("workspace-surface-pane")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("workspace-surface-pane"),
+    ).toBeInTheDocument();
     await waitFor(() => expect(observers.at(-1)?.target).not.toBeNull());
     const wideRoot = observers.at(-1)?.target;
 
@@ -528,7 +536,9 @@ describe("WorkspacePanel session selection", () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByTestId("workspace-surface-pane")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("workspace-surface-pane"),
+      ).not.toBeInTheDocument();
       expect(observers.at(-1)?.target).not.toBe(wideRoot);
     });
 
@@ -540,7 +550,9 @@ describe("WorkspacePanel session selection", () => {
       );
     });
 
-    expect(await screen.findByTestId("workspace-surface-pane")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("workspace-surface-pane"),
+    ).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 });

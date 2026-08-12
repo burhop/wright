@@ -1,6 +1,7 @@
 export function surfaceRequestId(): string {
   const randomUUID = globalThis.crypto?.randomUUID;
-  if (typeof randomUUID === "function") return randomUUID.call(globalThis.crypto);
+  if (typeof randomUUID === "function")
+    return randomUUID.call(globalThis.crypto);
   const randomValues = globalThis.crypto?.getRandomValues;
   if (typeof randomValues === "function") {
     const bytes = new Uint8Array(16);
