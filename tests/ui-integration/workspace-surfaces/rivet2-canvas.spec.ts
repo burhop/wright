@@ -87,6 +87,7 @@ async function mockRivetWorkflow(page: Page) {
   let revision = 1;
   let savedProject = "";
   let templateCreated = false;
+  let reviewState: "approved" | null = null;
 
   await page.route("**/api/auth/session/status", (route) =>
     route.fulfill({ json: { auth_required: false, authenticated: true } }),
@@ -99,7 +100,7 @@ async function mockRivetWorkflow(page: Page) {
     route.fulfill({
       json: {
         workflows: [
-          { ...workflow, revision },
+          { ...workflow, revision, review_state: reviewState },
           ...(templateCreated ? [basicFlowWorkflow] : []),
         ],
       },
@@ -122,6 +123,58 @@ async function mockRivetWorkflow(page: Page) {
     revision += 1;
     await route.fulfill({ json: { ...workflow, revision } });
   });
+  await page.route("**/api/workspace/workflows/rivet/review", async (route) => {
+    reviewState = "approved";
+    await route.fulfill({
+      json: {
+        ...workflow,
+        revision,
+        review_state: reviewState,
+        reviewer: "local-user",
+        reviewed_at: Date.now(),
+      },
+    });
+  });
+  await page.route("**/api/workspace/workflows/rivet/runs", (route) =>
+    route.fulfill({
+      json: {
+        run_id: "run-1",
+        workflow_id: workflow.workflow_id,
+        revision,
+        digest: workflow.digest,
+        graph: null,
+        generation: 1,
+        state: "running",
+        reason: null,
+        outputs: null,
+        duration_ms: null,
+        output_truncated: false,
+      },
+    }),
+  );
+  await page.route(
+    "**/api/workspace/workflows/runs/run-1?session_id=*",
+    (route) =>
+      route.fulfill({
+        json: {
+          run_id: "run-1",
+          workflow_id: workflow.workflow_id,
+          revision,
+          digest: workflow.digest,
+          graph: null,
+          generation: 1,
+          state: "succeeded",
+          reason: null,
+          outputs: { output: { type: "string", value: "Hello" } },
+          duration_ms: 8,
+          output_truncated: false,
+        },
+      }),
+  );
+  await page.route(
+    "**/api/workspace/workflows/runs/run-1/history?session_id=*",
+    (route) => route.fulfill({ json: { events: [] } }),
+  );
   await page.route(
     "**/api/workspace/workflow-templates/basic-flow/instantiate",
     async (route) => {
@@ -184,6 +237,20 @@ test.describe("Rivet 2 retained canvas", () => {
     await expect(
       toolbar.getByLabel("Open Rivet workflow from workspace"),
     ).toHaveCount(0);
+
+    await page.getByTestId("direct-rivet-run").click();
+    const runPanel = page.getByTestId("direct-rivet-run-panel");
+    await expect(runPanel).toHaveCSS("background-color", "rgb(24, 34, 56)");
+    await expect(page.getByTestId("direct-rivet-review-state")).toContainText(
+      "needs approval",
+    );
+    await expect(page.getByTestId("direct-rivet-run-start")).toBeDisabled();
+    await page.getByTestId("direct-rivet-run-approve").click();
+    await expect(page.getByTestId("direct-rivet-run-start")).toBeEnabled();
+    await page.getByTestId("direct-rivet-run-start").click();
+    await expect(page.getByTestId("direct-rivet-run-feedback")).toContainText(
+      'Run succeeded in 8 ms. Output: output: "Hello"',
+    );
 
     await toolbar.getByTestId("direct-rivet-template-picker").click();
     await expect(page.getByText("Basic Flow", { exact: true })).toBeVisible();
