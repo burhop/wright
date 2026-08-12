@@ -19,6 +19,7 @@ const mockGetWorkspaceMcpStatus = vi.fn();
 const mockGetWorkspaceFiles = vi.fn();
 const mockGetWorkspaceTools = vi.fn();
 const mockGetWorkspaceToolsById = vi.fn();
+const mockListHermesModels = vi.fn();
 
 vi.mock("../src/store/sessions", () => ({
   useChat: () => mockUseChat(),
@@ -41,6 +42,7 @@ vi.mock("../src/services/agent-service", () => ({
     getActiveAgent: vi.fn().mockResolvedValue("hermes"),
     setActiveAgent: vi.fn().mockResolvedValue("hermes"),
     getCommands: vi.fn().mockResolvedValue([]),
+    listHermesModels: (...args: unknown[]) => mockListHermesModels(...args),
   },
 }));
 
@@ -98,6 +100,26 @@ describe("WorkspacePanel session selection", () => {
     });
     mockGetWorkspaceTools.mockResolvedValue([]);
     mockGetWorkspaceToolsById.mockResolvedValue([]);
+    mockListHermesModels.mockResolvedValue({
+      current_value: "local:hermes",
+      current_provider: "local",
+      current_model: "hermes",
+      groups: [
+        {
+          provider: "local",
+          label: "Local",
+          options: [
+            {
+              value: "local:hermes",
+              label: "Hermes (Active)",
+              provider: "local",
+              model: "hermes",
+              is_current: true,
+            },
+          ],
+        },
+      ],
+    });
     mockGetWorkspace.mockResolvedValue({
       workspace_id: "workspace-1",
       workspace_name: "Demo",
@@ -349,7 +371,7 @@ describe("WorkspacePanel session selection", () => {
     ]);
   });
 
-  it("shows only Hermes as selectable and OpenClaw as a disabled future option", async () => {
+  it("renders the model options returned by the Hermes catalog", async () => {
     render(
       <MemoryRouter>
         <ViewerPanelProvider>
@@ -365,10 +387,10 @@ describe("WorkspacePanel session selection", () => {
 
     expect(options.map((option) => option.textContent?.trim())).toEqual([
       "Hermes (Active)",
-      "OpenClaw",
     ]);
     expect(options[0]).not.toBeDisabled();
-    expect(options[1]).toBeDisabled();
+    expect(modelSelect).not.toBeDisabled();
+    expect(mockListHermesModels).toHaveBeenCalledOnce();
   });
 
   it("keeps the agent chat panel visible when the MCP sidebar is toggled closed", async () => {
