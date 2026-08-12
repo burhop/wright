@@ -263,6 +263,20 @@ def _request(key: str) -> LiveAppStartRequest:
     )
 
 
+async def test_safe_environment_exposes_local_config_root_but_not_credentials(
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("LOCALAPPDATA", r"C:\Users\engineer\AppData\Local")
+    monkeypatch.setenv("USERPROFILE", r"C:\Users\engineer")
+    monkeypatch.setenv("HERMES_API_KEY", "must-not-be-inherited")
+
+    environment = LiveAppManager._safe_environment({})
+
+    assert environment["LOCALAPPDATA"] == r"C:\Users\engineer\AppData\Local"
+    assert environment["USERPROFILE"] == r"C:\Users\engineer"
+    assert "HERMES_API_KEY" not in environment
+
+
 async def test_shared_concurrent_and_idempotent_starts_return_one_ready_instance(
     tmp_path,
 ) -> None:

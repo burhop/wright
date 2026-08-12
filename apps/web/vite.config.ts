@@ -56,7 +56,7 @@ function validSurfaceAuthority(authority: string): boolean {
   );
 }
 
-function rewriteSurfaceText(body: string, encoded: string): string {
+export function rewriteSurfaceText(body: string, encoded: string): string {
   const prefix = `${surfaceProxyPrefix}${encoded}`;
   return body
     .replaceAll(
@@ -80,7 +80,7 @@ function rewriteSurfaceText(body: string, encoded: string): string {
     .replace(/\b(src|href|action)=("|')\/(?!\/)/g, `$1=$2${prefix}/`)
     .replace(/\burl\((["']?)\/(?!\/)/g, `url($1${prefix}/`)
     .replace(
-      /(["'`])\/(assets|monacoeditorwork|manifest|favicon|locales|workers|__wright)\//g,
+      /(["'`])\/(assets|monacoeditorwork|manifest|favicon|locales|workers|wright-ai|__wright)\//g,
       `$1${prefix}/$2/`,
     );
 }

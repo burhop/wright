@@ -46,6 +46,31 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
     assert layout.workspaces.is_dir()
 
 
+def test_windows_workstation_startup_enables_rivet_without_eager_launch() -> None:
+    startup_script = (ROOT / "scripts" / "windows" / "start-wright.ps1").read_text(
+        encoding="utf-8"
+    )
+    for feature_flag in (
+        "WRIGHT_RIVET_WORKFLOWS_ENABLED",
+        "WRIGHT_RIVET_EDITOR_ENABLED",
+        "WRIGHT_RIVET_AI_ENABLED",
+        "WRIGHT_RIVET_RUNNER_ENABLED",
+        "WRIGHT_RIVET_REAL_EXECUTION_ENABLED",
+        "WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED",
+        "WRIGHT_SURFACES_ENABLED",
+        "WRIGHT_SURFACES_LIVE_APPS_ENABLED",
+    ):
+        assert f'$env:{feature_flag} = "1"' in startup_script
+
+    api_start = startup_script.index('Start-HiddenProcess -Name "wright-api"')
+    for feature_flag in (
+        "WRIGHT_RIVET_EDITOR_ENABLED",
+        "WRIGHT_SURFACES_ENABLED",
+        "WRIGHT_SURFACES_LIVE_APPS_ENABLED",
+    ):
+        assert startup_script.index(f"$env:{feature_flag}") < api_start
+
+
 def test_runtime_identity_contains_hash_not_raw_challenge(monkeypatch) -> None:
     monkeypatch.setenv("WRIGHT_RUNTIME_CHALLENGE", "unlogged-secret")
     monkeypatch.setenv("WRIGHT_RUNTIME_ID", "runtime-1")

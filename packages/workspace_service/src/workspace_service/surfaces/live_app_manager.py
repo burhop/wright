@@ -124,6 +124,8 @@ _SAFE_BASE_ENVIRONMENT = frozenset(
         "TMP",
         "TMPDIR",
         "HOME",
+        "USERPROFILE",
+        "LOCALAPPDATA",
         "LANG",
         "LC_ALL",
         "SSL_CERT_FILE",

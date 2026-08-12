@@ -92,6 +92,18 @@ if (-not $SkipDocker) {
     }
 }
 
+# The workstation runs Wright's complete local feature profile. These flags
+# expose the routes and lifecycle controller; they do not eagerly launch the
+# Rivet editor or its runner.
+$env:WRIGHT_RIVET_WORKFLOWS_ENABLED = "1"
+$env:WRIGHT_RIVET_EDITOR_ENABLED = "1"
+$env:WRIGHT_RIVET_AI_ENABLED = "1"
+$env:WRIGHT_RIVET_RUNNER_ENABLED = "1"
+$env:WRIGHT_RIVET_REAL_EXECUTION_ENABLED = "1"
+$env:WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED = "1"
+$env:WRIGHT_SURFACES_ENABLED = "1"
+$env:WRIGHT_SURFACES_LIVE_APPS_ENABLED = "1"
+
 $python = Join-Path $repoRoot ".venv\Scripts\python.exe"
 $apiUri = "http://127.0.0.1:8000/api/health"
 if (Test-HttpEndpoint -Uri $apiUri) {
