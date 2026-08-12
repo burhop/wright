@@ -101,6 +101,43 @@ export function surfaceProxyHeaders(
   return headers;
 }
 
+export function rewriteSurfaceSetCookies(
+  value: string | string[] | undefined,
+  encoded: string,
+): string[] | undefined {
+  if (value === undefined) return undefined;
+  const prefix = `${surfaceProxyPrefix}${encoded}`;
+  const cookies = Array.isArray(value) ? value : [value];
+  const rewritten: string[] = [];
+
+  for (const cookie of cookies) {
+    const parts = cookie.split(";");
+    const name = parts[0]?.split("=", 1)[0]?.trim();
+    let foundPath = false;
+    const scoped = parts.map((part) => {
+      const match = /^\s*path\s*=\s*(.*)$/i.exec(part);
+      if (!match) return part;
+      foundPath = true;
+      const pathValue = match[1]?.trim() || "/";
+      const absolutePath = pathValue.startsWith("/")
+        ? pathValue
+        : `/${pathValue}`;
+      return ` Path=${prefix}${absolutePath}`;
+    });
+    if (!foundPath) scoped.push(` Path=${prefix}/`);
+    rewritten.push(scoped.join(";"));
+
+    // Earlier Wright development builds stored preview cookies at the Vite
+    // origin root. Remove that legacy cookie so it cannot shadow the new,
+    // surface-scoped credential in the Cookie request header.
+    if (name === "wright_surface") {
+      rewritten.push("wright_surface=; Max-Age=0; Path=/");
+    }
+  }
+
+  return rewritten;
+}
+
 function surfaceDevProxyPlugin(): Plugin {
   return {
     name: "wright-surface-dev-proxy",
@@ -148,6 +185,15 @@ function surfaceDevProxyPlugin(): Plugin {
                 let body = Buffer.concat(chunks);
                 const outgoing = { ...proxyRes.headers };
                 delete outgoing["content-length"];
+                const scopedCookies = rewriteSurfaceSetCookies(
+                  outgoing["set-cookie"],
+                  match.encoded,
+                );
+                if (scopedCookies === undefined) {
+                  delete outgoing["set-cookie"];
+                } else {
+                  outgoing["set-cookie"] = scopedCookies;
+                }
                 if (
                   typeof outgoing.location === "string" &&
                   outgoing.location.startsWith("/")

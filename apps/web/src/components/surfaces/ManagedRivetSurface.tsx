@@ -39,6 +39,7 @@ export function ManagedRivetSurface({
   const [error, setError] = useState<string | null>(null);
   const [generation, setGeneration] = useState(0);
   const launchRef = useRef<ManagedLaunch | null>(null);
+  const previewRecoveryAttempts = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -121,6 +122,33 @@ export function ManagedRivetSurface({
     await hostAdapter.openExternal(browser.absoluteBootstrapUrl);
   }, [launch, sessionId, workspaceId]);
 
+  const editorReady = useCallback(() => {
+    previewRecoveryAttempts.current = 0;
+  }, []);
+
+  const renewExpiredPreview = useCallback(
+    (reason: string) => {
+      if (previewRecoveryAttempts.current < 1) {
+        previewRecoveryAttempts.current += 1;
+        setGeneration((value) => value + 1);
+        return;
+      }
+      const current = launchRef.current;
+      launchRef.current = null;
+      setLaunch(null);
+      setError(`Rivet preview authorization could not be renewed (${reason}).`);
+      if (current?.surfaceId && current.presentation) {
+        void closePresentation(
+          current.surfaceId,
+          current.presentation.presentationId,
+          workspaceId,
+          sessionId,
+        ).catch(() => undefined);
+      }
+    },
+    [sessionId, workspaceId],
+  );
+
   if (!launch) {
     return (
       <section
@@ -144,7 +172,10 @@ export function ManagedRivetSurface({
             <button
               type="button"
               data-testid="managed-rivet-retry"
-              onClick={() => setGeneration((value) => value + 1)}
+              onClick={() => {
+                previewRecoveryAttempts.current = 0;
+                setGeneration((value) => value + 1);
+              }}
             >
               Retry
             </button>
@@ -161,6 +192,8 @@ export function ManagedRivetSurface({
       initialSlug={initialSlug}
       externalRevisionToken={externalRevisionToken}
       onWorkflowLoaded={onWorkflowLoaded}
+      onEditorReady={editorReady}
+      onEditorUnavailable={renewExpiredPreview}
       onOpenInBrowser={() => void openInBrowser()}
     />
   );

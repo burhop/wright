@@ -365,6 +365,38 @@ describe("DirectRivetSurface", () => {
     );
   });
 
+  it("reports an expired preview instead of leaving raw authorization JSON", async () => {
+    const unavailable = vi.fn();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+        onEditorUnavailable={unavailable}
+      />,
+    );
+    await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
+    const frame = screen.getByTitle("Rivet graph canvas") as HTMLIFrameElement;
+    const previewDocument = window.document.implementation.createHTMLDocument();
+    previewDocument.body.innerHTML =
+      '<pre>{"detail":"SURFACE_PREVIEW_UNAUTHORIZED"}</pre>';
+    Object.defineProperty(frame, "contentDocument", {
+      configurable: true,
+      value: previewDocument,
+    });
+
+    fireEvent.load(frame);
+
+    expect(unavailable).toHaveBeenCalledWith("SURFACE_PREVIEW_UNAUTHORIZED");
+    expect(screen.getByTestId("direct-rivet-status")).toHaveTextContent(
+      "Rivet preview authorization expired. Reconnecting",
+    );
+  });
+
   it("shows Hermes AI availability and saves an AI-applied canvas revision", async () => {
     const user = userEvent.setup();
     mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);

@@ -72,6 +72,8 @@ interface DirectRivetSurfaceProps {
   readonly initialSlug: string;
   readonly onOpenInBrowser: () => void;
   readonly onWorkflowLoaded?: (workflow: RivetWorkflowDocument) => void;
+  readonly onEditorReady?: () => void;
+  readonly onEditorUnavailable?: (reason: string) => void;
   readonly externalRevisionToken?: string | null;
 }
 
@@ -81,12 +83,16 @@ export function DirectRivetSurface({
   initialSlug,
   onOpenInBrowser,
   onWorkflowLoaded,
+  onEditorReady,
+  onEditorUnavailable,
   externalRevisionToken = null,
 }: DirectRivetSurfaceProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const readyRef = useRef(false);
   const postOpenStatusRef = useRef<string | null>(null);
   const onWorkflowLoadedRef = useRef(onWorkflowLoaded);
+  const onEditorReadyRef = useRef(onEditorReady);
+  const onEditorUnavailableRef = useRef(onEditorUnavailable);
   const lastExternalRevisionTokenRef = useRef<string | null>(null);
   const [document, setDocument] = useState<RivetWorkflowDocument | null>(null);
   const [templates, setTemplates] = useState<RivetWorkflowTemplate[]>([]);
@@ -109,6 +115,11 @@ export function DirectRivetSurface({
   useEffect(() => {
     onWorkflowLoadedRef.current = onWorkflowLoaded;
   }, [onWorkflowLoaded]);
+
+  useEffect(() => {
+    onEditorReadyRef.current = onEditorReady;
+    onEditorUnavailableRef.current = onEditorUnavailable;
+  }, [onEditorReady, onEditorUnavailable]);
 
   const bridgeRequest = useCallback(
     async <T extends Record<string, unknown>>(
@@ -252,6 +263,7 @@ export function DirectRivetSurface({
         readyRef.current = true;
         setEditorReady(true);
         setStatus("Rivet 2 graph canvas is ready.");
+        onEditorReadyRef.current?.();
       } else if (message.type === "wright-rivet:ai-status") {
         const available = message.available === true;
         setAiStatus(available ? "available" : "unavailable");
@@ -1120,6 +1132,27 @@ export function DirectRivetSurface({
           readyRef.current = false;
           setEditorReady(false);
           setAiStatus("checking");
+          try {
+            const body = iframeRef.current?.contentDocument?.body;
+            const visibleText =
+              body?.childElementCount === 0
+                ? body.textContent?.trim()
+                : body?.childElementCount === 1 &&
+                    body.firstElementChild?.tagName === "PRE"
+                  ? body.firstElementChild.textContent?.trim()
+                  : "";
+            const previewFailure = visibleText?.match(
+              /SURFACE_PREVIEW_(?:UNAUTHORIZED|GONE)|Preview link expired/i,
+            )?.[0];
+            if (previewFailure) {
+              setStatus("Rivet preview authorization expired. Reconnecting...");
+              onEditorUnavailableRef.current?.(previewFailure);
+              return;
+            }
+          } catch {
+            // Production previews are cross-origin; readiness is confirmed by
+            // the exact-origin bridge message instead of DOM inspection.
+          }
           setStatus("Loading Rivet 2 graph canvas...");
         }}
         style={{
