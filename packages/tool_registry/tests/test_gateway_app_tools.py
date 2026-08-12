@@ -117,6 +117,7 @@ async def test_app_calls_use_workspace_approval_not_client_hints() -> None:
     )
     assert not allowed.is_error
     assert lifecycle.calls[-1][3] == {
+        "session_id": "s1",
         "workspace_id": "w1",
         "workspace_approvals": ["workspace_write"],
     }

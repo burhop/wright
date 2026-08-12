@@ -91,7 +91,7 @@ async def test_gateway_redacts_brep_panel_token_from_model_result() -> None:
     object.__setattr__(tool, "name", "cad__brep_app_status")
     object.__setattr__(tool, "tool_name", "brep.app.status")
     instance.catalog.tools = lambda _: [tool]
-    secret = "this-token-must-stay-inside-wright"
+    secret = "test-secret-brep-token"
     control_url = f"http://127.0.0.1:5199/?token={secret}"
     lifecycle.result = {
         "content": [

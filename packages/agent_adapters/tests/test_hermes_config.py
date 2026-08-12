@@ -88,6 +88,9 @@ def test_parse_top_level_config_file_reads_api_server_values(tmp_path):
 
 def test_hermes_config_path_uses_profile_cli(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
+    monkeypatch.setattr(
+        "agent_adapters.hermes_config.shutil.which", lambda _name: "hermes"
+    )
 
     def fake_run(*args, **kwargs):
         assert args[0] == ["hermes", "-p", "wright", "config", "path"]
@@ -100,6 +103,9 @@ def test_hermes_config_path_uses_profile_cli(monkeypatch, tmp_path):
 
 def test_hermes_env_path_uses_cli(monkeypatch, tmp_path):
     env_file = tmp_path / ".env"
+    monkeypatch.setattr(
+        "agent_adapters.hermes_config.shutil.which", lambda _name: "hermes"
+    )
 
     def fake_run(*args, **kwargs):
         assert args[0] == ["hermes", "config", "env-path"]

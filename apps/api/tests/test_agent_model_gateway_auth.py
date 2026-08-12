@@ -16,11 +16,13 @@ async def test_model_request_uses_running_gateway_credentials_not_model_profile(
         resolver_calls.append((name, env))
         return SimpleNamespace(
             base_url="http://127.0.0.1:8642",
-            api_key="current-gateway-key",
+            api_key="test-secret-current-gateway-key",
         )
 
     async def request(self, method, url, **kwargs):
-        assert kwargs["headers"]["Authorization"] == ("Bearer current-gateway-key")
+        assert kwargs["headers"]["Authorization"] == (
+            "Bearer test-secret-current-gateway-key"
+        )
         return httpx.Response(
             200,
             json={"providers": []},

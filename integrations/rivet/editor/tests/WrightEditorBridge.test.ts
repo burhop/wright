@@ -15,7 +15,7 @@ const available: WrightAiConfig = {
   provider: 'custom',
   model: 'wright-hermes',
   baseUrl: '/wright-ai/v1',
-  token: 'ephemeral-browser-token-value',
+  token: 'test-secret-ephemeral-browser-token',
   expiresAt: '2099-08-05T22:00:00Z',
 };
 
@@ -44,7 +44,7 @@ test('keeps the ephemeral credential in the runtime environment provider', async
 test('refreshes the short-lived browser credential before provider use', async () => {
   const refreshed = {
     ...available,
-    token: 'refreshed-ephemeral-browser-token',
+    token: 'test-secret-refreshed-browser-token',
   };
   const provider = createWrightEnvironmentProvider(
     available,

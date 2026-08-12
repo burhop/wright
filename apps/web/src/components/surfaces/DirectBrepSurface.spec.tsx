@@ -23,8 +23,7 @@ describe("DirectBrepSurface", () => {
     vi.clearAllMocks();
     mocks.openBrepPanel.mockResolvedValue({
       server_id: "brep-server",
-      control_url:
-        "http://127.0.0.1:61234/?token=abcdefghijklmnopqrstuvwxyz012345",
+      control_url: "http://127.0.0.1:61234/?token=test-secret-token-012345",
       module_url: "http://127.0.0.1:5190/src/CAD.ts",
       connected: false,
     });
@@ -53,8 +52,7 @@ describe("DirectBrepSurface", () => {
       .mockRejectedValueOnce(new Error("Port unavailable"))
       .mockResolvedValueOnce({
         server_id: "brep-server",
-        control_url:
-          "http://127.0.0.1:61234/?token=abcdefghijklmnopqrstuvwxyz012345",
+        control_url: "http://127.0.0.1:61234/?token=test-secret-token-012345",
         module_url: "http://127.0.0.1:5190/src/CAD.ts",
         connected: false,
       });

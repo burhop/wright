@@ -43,7 +43,7 @@ def _bridge(handler, *, timeout=5.0):
     return HermesOpenAICompatibilityBridge(
         HermesOpenAIBridgeSettings(
             base_url="http://127.0.0.1:8642",
-            api_key="hermes-secret",
+            api_key="test-secret-hermes-key",
             timeout_seconds=timeout,
         ),
         transport=httpx.MockTransport(handler),

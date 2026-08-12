@@ -46,7 +46,7 @@ def test_status_parser_accepts_tokenized_loopback_control_page():
                     "type": "text",
                     "text": """{
                       "connected": false,
-                      "controlUrl": "http://127.0.0.1:61234/?token=abcdefghijklmnopqrstuvwxyz012345",
+                      "controlUrl": "http://127.0.0.1:61234/?token=test-secret-token-012345",
                       "moduleUrl": "http://127.0.0.1:5190/src/CAD.ts"
                     }""",
                 }
@@ -62,8 +62,8 @@ def test_status_parser_accepts_tokenized_loopback_control_page():
 @pytest.mark.parametrize(
     "control_url",
     [
-        "https://127.0.0.1:61234/?token=abcdefghijklmnopqrstuvwxyz012345",
-        "http://example.com:61234/?token=abcdefghijklmnopqrstuvwxyz012345",
+        "https://127.0.0.1:61234/?token=test-secret-token-012345",
+        "http://example.com:61234/?token=test-secret-token-012345",
         "http://127.0.0.1:61234/",
     ],
 )

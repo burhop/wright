@@ -301,7 +301,7 @@ async def test_ai_node_uses_only_ephemeral_bridge_and_keeps_hermes_key_in_host(
             settings=settings,
             hermes_settings_resolver=lambda: HermesApiSettings(
                 base_url=f"http://127.0.0.1:{hermes.server_port}",
-                api_key="long-lived-hermes-key",
+                api_key="test-secret-long-lived-hermes-key",
                 source="test",
             ),
         )
@@ -319,13 +319,13 @@ async def test_ai_node_uses_only_ephemeral_bridge_and_keeps_hermes_key_in_host(
         assert result.state == "succeeded"
         assert result.outputs is not None
         assert result.outputs["output"]["value"] == "AI through Hermes"
-        assert observed["authorization"] == "Bearer long-lived-hermes-key"
+        assert observed["authorization"] == "Bearer test-secret-long-lived-hermes-key"
         # The bridge accepted the runner's fixed wright-hermes alias and mapped it
         # to Hermes' own local API model name before the long-lived credential hop.
         assert observed["payload"]["model"] == "hermes"
         diagnostics = supervisor.diagnostics(result.runtime_id)
-        assert "long-lived-hermes-key" not in json.dumps(diagnostics)
-        assert "long-lived-hermes-key" not in json.dumps(result.outputs)
+        assert "test-secret-long-lived-hermes-key" not in json.dumps(diagnostics)
+        assert "test-secret-long-lived-hermes-key" not in json.dumps(result.outputs)
     finally:
         hermes.shutdown()
         hermes.server_close()

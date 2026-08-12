@@ -38,7 +38,7 @@ def _request(url: str, *, method="GET", headers=None, body: bytes | None = None)
 
 
 class _HermesHandler(BaseHTTPRequestHandler):
-    api_key = "upstream-hermes-secret"
+    api_key = "test-secret-upstream-hermes-key"
 
     def do_POST(self):  # noqa: N802
         assert self.path == "/v1/chat/completions"
