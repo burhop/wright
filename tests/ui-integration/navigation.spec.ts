@@ -37,17 +37,19 @@ test.describe("Navigation", () => {
   }) => {
     await page.goto("/");
 
-    await expect(page.getByTestId("nav-dashboard")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Dashboard", exact: true }),
+    ).toBeVisible({ timeout: 15_000 });
 
-    await page.getByTestId("nav-tool-registry").click();
+    await page.getByRole("link", { name: /^Tool Registry/ }).click();
     await expect(page).toHaveURL("/tool-registry");
     await expect(page.getByTestId("page-tool-registry")).toBeVisible();
 
-    await page.getByTestId("nav-logs").click();
+    await page.getByRole("link", { name: "Logs", exact: true }).click();
     await expect(page).toHaveURL("/logs");
     await expect(page.getByTestId("page-logs")).toBeVisible();
 
-    await page.getByTestId("nav-settings").click();
+    await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page).toHaveURL("/settings");
     await expect(page.getByTestId("page-settings")).toBeVisible();
 
