@@ -133,10 +133,7 @@ class RunnerAssetCatalog:
             / "manifest.json"
         )
         packaged_manifest = (
-            Path(__file__).resolve().parent
-            / "_rivet"
-            / "runner"
-            / "manifest.json"
+            Path(__file__).resolve().parent / "_rivet" / "runner" / "manifest.json"
         )
         self._manifest_path = manifest_path or (
             checkout_manifest if checkout_manifest.is_file() else packaged_manifest
@@ -155,12 +152,22 @@ class RunnerAssetCatalog:
         self,
     ) -> tuple[RunnerAvailability, RunnerArtifactManifest | None, str | None]:
         if not self._manifest_path.is_file():
-            return RunnerAvailability.MISSING, None, "Runner artifact manifest is missing"
+            return (
+                RunnerAvailability.MISSING,
+                None,
+                "Runner artifact manifest is missing",
+            )
         try:
             raw = json.loads(self._manifest_path.read_text(encoding="utf-8"))
-            if raw.get("schema_version") != 1 or raw.get("runner") != "wright-rivet2-node":
+            if (
+                raw.get("schema_version") != 1
+                or raw.get("runner") != "wright-rivet2-node"
+            ):
                 raise ValueError("Unsupported runner manifest")
-            if raw.get("protocol_version") != 1 or raw.get("rivet_version") != self._RIVET_VERSION:
+            if (
+                raw.get("protocol_version") != 1
+                or raw.get("rivet_version") != self._RIVET_VERSION
+            ):
                 raise ValueError("Unexpected runner version")
             source = raw["source"]
             if source != {
@@ -188,18 +195,30 @@ class RunnerAssetCatalog:
             )
             expected_input = str(build_input_entry["sha256"])
         except (OSError, KeyError, TypeError, ValueError):
-            return RunnerAvailability.INCOMPATIBLE, None, "Runner artifact manifest is invalid"
+            return (
+                RunnerAvailability.INCOMPATIBLE,
+                None,
+                "Runner artifact manifest is invalid",
+            )
         if not entrypoint.is_file() or not build_input.is_file():
             return RunnerAvailability.MISSING, manifest, "Runner artifact is incomplete"
         content = entrypoint.read_bytes()
         if len(content) != manifest.bytes or not secrets.compare_digest(
             hashlib.sha256(content).hexdigest(), manifest.sha256
         ):
-            return RunnerAvailability.INCOMPATIBLE, manifest, "Runner artifact integrity does not match"
+            return (
+                RunnerAvailability.INCOMPATIBLE,
+                manifest,
+                "Runner artifact integrity does not match",
+            )
         if not secrets.compare_digest(
             hashlib.sha256(build_input.read_bytes()).hexdigest(), expected_input
         ):
-            return RunnerAvailability.INCOMPATIBLE, manifest, "Runner build input integrity does not match"
+            return (
+                RunnerAvailability.INCOMPATIBLE,
+                manifest,
+                "Runner build input integrity does not match",
+            )
         return RunnerAvailability.AVAILABLE, manifest, None
 
 

@@ -12,10 +12,7 @@ def test_active_rivet_workflow_is_scoped_to_chat_session(tmp_path) -> None:
     set_active_rivet_workflow(database, "session-1", "untitled-workflow-2")
     set_active_rivet_workflow(database, "session-2", "other-workflow")
 
-    assert (
-        get_active_rivet_workflow(database, "session-1")
-        == "untitled-workflow-2"
-    )
+    assert get_active_rivet_workflow(database, "session-1") == "untitled-workflow-2"
     assert get_active_rivet_workflow(database, "session-2") == "other-workflow"
 
     set_active_rivet_workflow(database, "session-1", None)

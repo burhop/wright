@@ -29,16 +29,12 @@ def test_rivet_tool_defaults_to_currently_displayed_workflow(
     set_active_rivet_workflow(database, "chat-session", "untitled-workflow-2")
 
     assert (
-        composition._resolve_rivet_tool_slug(
-            _session(), {}, require_displayed=True
-        )
+        composition._resolve_rivet_tool_slug(_session(), {}, require_displayed=True)
         == "untitled-workflow-2"
     )
 
 
-def test_rivet_tool_rejects_an_offscreen_workflow_target(
-    tmp_path, monkeypatch
-) -> None:
+def test_rivet_tool_rejects_an_offscreen_workflow_target(tmp_path, monkeypatch) -> None:
     from api import composition
 
     database = str(tmp_path / "wright.db")

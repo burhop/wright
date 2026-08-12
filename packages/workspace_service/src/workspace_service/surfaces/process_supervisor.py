@@ -233,15 +233,11 @@ class ProcessSupervisor:
                 self._idempotency[(workspace_id, idempotency_key)] = runtime_id
             runtime.tasks = (
                 asyncio.create_task(
-                    self._pump(
-                        runtime_id, "stdout", process.stdout(), stdout_callback
-                    ),
+                    self._pump(runtime_id, "stdout", process.stdout(), stdout_callback),
                     name=f"surface-{runtime_id}-stdout",
                 ),
                 asyncio.create_task(
-                    self._pump(
-                        runtime_id, "stderr", process.stderr(), stderr_callback
-                    ),
+                    self._pump(runtime_id, "stderr", process.stderr(), stderr_callback),
                     name=f"surface-{runtime_id}-stderr",
                 ),
                 asyncio.create_task(

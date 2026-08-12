@@ -32,7 +32,9 @@ async def _session(service: RivetWorkflowMcpService):
 async def test_official_sdk_initialize_lists_six_bounded_tools(tmp_path) -> None:
     binding = RivetMcpBinding(str(tmp_path), str(tmp_path / "state.db"), "w1", "s1")
     service = RivetWorkflowMcpService(binding)
-    server, client_write, server_read, server_write, client_read = await _session(service)
+    server, client_write, server_read, server_write, client_read = await _session(
+        service
+    )
     async with anyio.create_task_group() as group:
         group.start_soon(
             server.run,
@@ -43,7 +45,10 @@ async def test_official_sdk_initialize_lists_six_bounded_tools(tmp_path) -> None
         async with ClientSession(client_read, client_write) as client:
             initialized = await client.initialize()
             assert initialized.serverInfo.name == "rivet-workflows"
-            assert initialized.instructions and "bound Wright workspace" in initialized.instructions
+            assert (
+                initialized.instructions
+                and "bound Wright workspace" in initialized.instructions
+            )
             tools = (await client.list_tools()).tools
             assert [tool.name for tool in tools] == [
                 "list_templates",
@@ -89,16 +94,18 @@ async def test_approved_real_run_returns_outputs_and_official_sdk_progress(
     service = create_bound_rivet_service(
         RivetMcpBinding(str(tmp_path), str(database), "w1", "s1")
     )
-    server, client_write, server_read, server_write, client_read = await _session(service)
+    server, client_write, server_read, server_write, client_read = await _session(
+        service
+    )
     progress: list[tuple[float, float | None, str | None]] = []
 
-    async def capture(
-        value: float, total: float | None, message: str | None
-    ) -> None:
+    async def capture(value: float, total: float | None, message: str | None) -> None:
         progress.append((value, total, message))
 
     async with anyio.create_task_group() as group:
-        group.start_soon(server.run, server_read, server_write, initialization_options(server))
+        group.start_soon(
+            server.run, server_read, server_write, initialization_options(server)
+        )
         async with ClientSession(client_read, client_write) as client:
             await client.initialize()
             created = await client.call_tool(
@@ -129,9 +136,14 @@ async def test_approved_real_run_returns_outputs_and_official_sdk_progress(
 
             assert not result.isError
             assert result.structuredContent["state"] == "succeeded"
-            assert result.structuredContent["outputs"]["output"]["value"] == "hello through MCP"
+            assert (
+                result.structuredContent["outputs"]["output"]["value"]
+                == "hello through MCP"
+            )
             assert progress
-            assert [item[0] for item in progress] == sorted(item[0] for item in progress)
+            assert [item[0] for item in progress] == sorted(
+                item[0] for item in progress
+            )
             assert all(item[1] is None for item in progress)
         group.cancel_scope.cancel()
     assert [event for event, _values in captured] == ["rivet_mcp_run_completed"]
@@ -144,10 +156,10 @@ async def test_approved_real_run_returns_outputs_and_official_sdk_progress(
 
 
 @pytest.mark.asyncio
-async def test_official_sdk_cancellation_cancels_the_owned_run_handler(tmp_path) -> None:
-    binding = RivetMcpBinding(
-        str(tmp_path), str(tmp_path / "state.db"), "w1", "s1"
-    )
+async def test_official_sdk_cancellation_cancels_the_owned_run_handler(
+    tmp_path,
+) -> None:
+    binding = RivetMcpBinding(str(tmp_path), str(tmp_path / "state.db"), "w1", "s1")
     started = asyncio.Event()
     cancelled = asyncio.Event()
 
@@ -172,9 +184,13 @@ async def test_official_sdk_cancellation_cancels_the_owned_run_handler(tmp_path)
             int(time.time()),
         )
     )
-    server, client_write, server_read, server_write, client_read = await _session(service)
+    server, client_write, server_read, server_write, client_read = await _session(
+        service
+    )
     async with anyio.create_task_group() as group:
-        group.start_soon(server.run, server_read, server_write, initialization_options(server))
+        group.start_soon(
+            server.run, server_read, server_write, initialization_options(server)
+        )
         async with ClientSession(client_read, client_write) as client:
             await client.initialize()
             call = asyncio.create_task(
@@ -209,9 +225,13 @@ async def test_templates_create_inspect_validate_and_list_round_trip(tmp_path) -
     service = RivetWorkflowMcpService(
         RivetMcpBinding(str(tmp_path), str(tmp_path / "state.db"), "w1", "s1")
     )
-    server, client_write, server_read, server_write, client_read = await _session(service)
+    server, client_write, server_read, server_write, client_read = await _session(
+        service
+    )
     async with anyio.create_task_group() as group:
-        group.start_soon(server.run, server_read, server_write, initialization_options(server))
+        group.start_soon(
+            server.run, server_read, server_write, initialization_options(server)
+        )
         async with ClientSession(client_read, client_write) as client:
             await client.initialize()
             templates = await client.call_tool("list_templates", {})
@@ -227,7 +247,9 @@ async def test_templates_create_inspect_validate_and_list_round_trip(tmp_path) -
             assert len(identity["digest"]) == 64
             assert created.structuredContent["validation"]["valid"] is True
 
-            inspected = await client.call_tool("inspect_workflow", {"slug": "hello-flow"})
+            inspected = await client.call_tool(
+                "inspect_workflow", {"slug": "hello-flow"}
+            )
             assert inspected.structuredContent["workflow"] == identity
             assert "project" not in inspected.structuredContent
             validated = await client.call_tool(
@@ -249,9 +271,13 @@ async def test_run_tool_requires_exact_identity_and_durable_review(tmp_path) -> 
     service = RivetWorkflowMcpService(
         RivetMcpBinding(str(tmp_path), str(tmp_path / "state.db"), "w1", "s1")
     )
-    server, client_write, server_read, server_write, client_read = await _session(service)
+    server, client_write, server_read, server_write, client_read = await _session(
+        service
+    )
     async with anyio.create_task_group() as group:
-        group.start_soon(server.run, server_read, server_write, initialization_options(server))
+        group.start_soon(
+            server.run, server_read, server_write, initialization_options(server)
+        )
         async with ClientSession(client_read, client_write) as client:
             await client.initialize()
             created = await client.call_tool(
@@ -269,5 +295,8 @@ async def test_run_tool_requires_exact_identity_and_durable_review(tmp_path) -> 
                 },
             )
             assert result.isError
-            assert result.structuredContent["error"]["code"] == "RIVET_WORKFLOW_REVIEW_REQUIRED"
+            assert (
+                result.structuredContent["error"]["code"]
+                == "RIVET_WORKFLOW_REVIEW_REQUIRED"
+            )
         group.cancel_scope.cancel()

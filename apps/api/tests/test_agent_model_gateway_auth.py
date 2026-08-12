@@ -20,9 +20,7 @@ async def test_model_request_uses_running_gateway_credentials_not_model_profile(
         )
 
     async def request(self, method, url, **kwargs):
-        assert kwargs["headers"]["Authorization"] == (
-            "Bearer current-gateway-key"
-        )
+        assert kwargs["headers"]["Authorization"] == ("Bearer current-gateway-key")
         return httpx.Response(
             200,
             json={"providers": []},

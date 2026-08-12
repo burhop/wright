@@ -103,15 +103,24 @@ class _AiBridgeHandler(BaseHTTPRequestHandler):
         if self.client_address[0] not in {"127.0.0.1", "::1"} or not self._authorized():
             self._json(HTTPStatus.UNAUTHORIZED, {"error": {"code": "invalid_token"}})
             return
-        if self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower() != "application/json":
-            self._json(HTTPStatus.UNSUPPORTED_MEDIA_TYPE, {"error": {"code": "invalid_request"}})
+        if (
+            self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+            != "application/json"
+        ):
+            self._json(
+                HTTPStatus.UNSUPPORTED_MEDIA_TYPE,
+                {"error": {"code": "invalid_request"}},
+            )
             return
         try:
             length = int(self.headers.get("Content-Length", ""))
         except ValueError:
             length = -1
         if length < 1 or length > self._server.maximum_request_bytes:
-            self._json(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, {"error": {"code": "invalid_request"}})
+            self._json(
+                HTTPStatus.REQUEST_ENTITY_TOO_LARGE,
+                {"error": {"code": "invalid_request"}},
+            )
             return
         try:
             payload = json.loads(self.rfile.read(length))
@@ -189,7 +198,9 @@ class RivetRuntimeHost:
         settings: RunnerSettings | None = None,
         artifact_catalog: RunnerAssetCatalog | None = None,
         node_path: str | None = None,
-        hermes_settings_resolver: Callable[[], HermesApiSettings] = resolve_hermes_api_settings,
+        hermes_settings_resolver: Callable[
+            [], HermesApiSettings
+        ] = resolve_hermes_api_settings,
     ) -> None:
         self._supervisor = supervisor
         self._settings = settings or RunnerSettings.from_env()
@@ -201,10 +212,14 @@ class RivetRuntimeHost:
     def _node(self) -> str:
         candidate = self._node_path or shutil.which("node")
         if not candidate:
-            raise RivetRuntimeError("RIVET_RUNNER_UNAVAILABLE", "Node.js is unavailable.")
+            raise RivetRuntimeError(
+                "RIVET_RUNNER_UNAVAILABLE", "Node.js is unavailable."
+            )
         path = Path(candidate).resolve()
         if not path.is_file():
-            raise RivetRuntimeError("RIVET_RUNNER_UNAVAILABLE", "Node.js is unavailable.")
+            raise RivetRuntimeError(
+                "RIVET_RUNNER_UNAVAILABLE", "Node.js is unavailable."
+            )
         return str(path)
 
     @staticmethod
@@ -216,7 +231,9 @@ class RivetRuntimeHost:
             )
         root = lexical_root.resolve(strict=True)
         if not root.is_dir():
-            raise RivetRuntimeError("RIVET_WORKSPACE_INVALID", "The workflow workspace is invalid.")
+            raise RivetRuntimeError(
+                "RIVET_WORKSPACE_INVALID", "The workflow workspace is invalid."
+            )
         candidate = root / "workflows" / document.slug / "workflow.rivet-project"
         cursor = candidate
         while cursor != root:
@@ -228,7 +245,8 @@ class RivetRuntimeHost:
         project = candidate.resolve(strict=True)
         if root not in project.parents or not project.is_file():
             raise RivetRuntimeError(
-                "RIVET_WORKSPACE_INVALID", "The workflow project is outside its workspace."
+                "RIVET_WORKSPACE_INVALID",
+                "The workflow project is outside its workspace.",
             )
         return project
 
@@ -309,9 +327,13 @@ class RivetRuntimeHost:
         project_path = self._project_path(workspace_dir, document)
         if timeout_seconds is None:
             timeout_seconds = self._settings.run_timeout_seconds
-        timeout_seconds = min(float(timeout_seconds), self._settings.run_timeout_seconds)
+        timeout_seconds = min(
+            float(timeout_seconds), self._settings.run_timeout_seconds
+        )
         if timeout_seconds < 1:
-            raise RivetRuntimeError("RIVET_RUNNER_REQUEST_INVALID", "Run timeout is invalid.")
+            raise RivetRuntimeError(
+                "RIVET_RUNNER_REQUEST_INVALID", "Run timeout is invalid."
+            )
 
         ai_bridge: _RunningAiBridge | None = None
         runtime_id: str | None = None
@@ -325,7 +347,8 @@ class RivetRuntimeHost:
             nonlocal buffer
             if len(buffer) + len(payload) > self._settings.captured_output_bytes:
                 error = RivetRuntimeError(
-                    "RIVET_RUNNER_OUTPUT_TOO_LARGE", "Runner output exceeded the configured limit."
+                    "RIVET_RUNNER_OUTPUT_TOO_LARGE",
+                    "Runner output exceeded the configured limit.",
                 )
                 if not terminal.done():
                     terminal.set_exception(error)
@@ -338,7 +361,8 @@ class RivetRuntimeHost:
                     continue
                 if len(raw) > self._settings.maximum_event_bytes:
                     error = RivetRuntimeError(
-                        "RIVET_RUNNER_EVENT_TOO_LARGE", "Runner event exceeded the configured limit."
+                        "RIVET_RUNNER_EVENT_TOO_LARGE",
+                        "Runner event exceeded the configured limit.",
                     )
                     if not terminal.done():
                         terminal.set_exception(error)
@@ -354,7 +378,8 @@ class RivetRuntimeHost:
                     raise error from caught
                 if not isinstance(event, dict) or event.get("runId") != run_id:
                     error = RivetRuntimeError(
-                        "RIVET_RUNNER_PROTOCOL_INVALID", "Runner emitted an invalid run identity."
+                        "RIVET_RUNNER_PROTOCOL_INVALID",
+                        "Runner emitted an invalid run identity.",
                     )
                     if not terminal.done():
                         terminal.set_exception(error)
@@ -371,14 +396,16 @@ class RivetRuntimeHost:
                     if event.get("state") not in {"succeeded", "failed", "cancelled"}:
                         terminal.set_exception(
                             RivetRuntimeError(
-                                "RIVET_RUNNER_PROTOCOL_INVALID", "Runner terminal state is invalid."
+                                "RIVET_RUNNER_PROTOCOL_INVALID",
+                                "Runner terminal state is invalid.",
                             )
                         )
                     else:
                         terminal.set_result(event)
                 else:
                     error = RivetRuntimeError(
-                        "RIVET_RUNNER_PROTOCOL_INVALID", "Runner emitted an unexpected event."
+                        "RIVET_RUNNER_PROTOCOL_INVALID",
+                        "Runner emitted an unexpected event.",
                     )
                     if not terminal.done():
                         terminal.set_exception(error)
@@ -404,9 +431,9 @@ class RivetRuntimeHost:
                         "token": ai_bridge.token,
                         "model": "wright-hermes",
                     }
-                encoded = json.dumps(request, separators=(",", ":"), default=str).encode(
-                    "utf-8"
-                )
+                encoded = json.dumps(
+                    request, separators=(",", ":"), default=str
+                ).encode("utf-8")
                 snapshot = await self._supervisor.start(
                     workspace_id=workspace_id,
                     instance_id=f"rivet-run-{run_id}",
@@ -442,18 +469,22 @@ class RivetRuntimeHost:
                 state = str(result_event["state"])
                 if state == "succeeded" and exit_code != 0:
                     raise RivetRuntimeError(
-                        "RIVET_RUNNER_PROCESS_EXIT", "Runner exited unsuccessfully after its result."
+                        "RIVET_RUNNER_PROCESS_EXIT",
+                        "Runner exited unsuccessfully after its result.",
                     )
                 outputs = result_event.get("outputs")
                 if outputs is not None and not isinstance(outputs, dict):
                     raise RivetRuntimeError(
-                        "RIVET_RUNNER_PROTOCOL_INVALID", "Runner outputs have an invalid shape."
+                        "RIVET_RUNNER_PROTOCOL_INVALID",
+                        "Runner outputs have an invalid shape.",
                     )
                 raw_error = result_event.get("error")
                 error = (
                     {
                         "code": str(raw_error.get("code") or "RIVET_RUNNER_FAILED"),
-                        "message": str(raw_error.get("message") or "Rivet execution failed."),
+                        "message": str(
+                            raw_error.get("message") or "Rivet execution failed."
+                        ),
                     }
                     if isinstance(raw_error, dict)
                     else None
@@ -483,7 +514,9 @@ class RivetRuntimeHost:
                     "RIVET_RUNNER_TIMEOUT", "Rivet workflow execution timed out."
                 ) from error
             except ProcessSupervisorError as error:
-                raise RivetRuntimeError(error.code, "Rivet runner process launch failed.") from error
+                raise RivetRuntimeError(
+                    error.code, "Rivet runner process launch failed."
+                ) from error
             finally:
                 if runtime_id is not None:
                     await self._stop(runtime_id, generation)

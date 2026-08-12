@@ -49,7 +49,9 @@ class _ControlledHermesRivetEngine:
 
 
 @pytest.mark.asyncio
-async def test_wright_chat_relays_correlated_rivet_progress_and_grounded_result() -> None:
+async def test_wright_chat_relays_correlated_rivet_progress_and_grounded_result() -> (
+    None
+):
     engine = _ControlledHermesRivetEngine()
     request = AgentChatRequest(
         session_id="session-1",
@@ -72,7 +74,9 @@ async def test_wright_chat_relays_correlated_rivet_progress_and_grounded_result(
     assert engine.requests == [request]
     assert [item["status"] for item in rivet_progress] == ["running", "completed"]
     assert {item["correlationId"] for item in rivet_progress} == {"rivet-run-1"}
-    assert all(item["tool"] == "rivet-workflows__run_workflow" for item in rivet_progress)
+    assert all(
+        item["tool"] == "rivet-workflows__run_workflow" for item in rivet_progress
+    )
     assert content == [
         "Workflow chat-basic revision 1 was validated and ran successfully; output was hello through Wright."
     ]

@@ -59,13 +59,17 @@ class RivetMcpBinding:
         canonical = workspace.resolve(strict=True)
         if not canonical.is_dir() or workspace.is_symlink():
             raise ValueError("Rivet MCP workspace must be a canonical directory")
-        if not _SAFE_ID.fullmatch(self.workspace_id) or not _SAFE_ID.fullmatch(self.session_id):
+        if not _SAFE_ID.fullmatch(self.workspace_id) or not _SAFE_ID.fullmatch(
+            self.session_id
+        ):
             raise ValueError("Rivet MCP trusted identity is invalid")
         object.__setattr__(self, "workspace_path", str(canonical))
         object.__setattr__(self, "database_path", str(database.resolve()))
 
     @classmethod
-    def from_environment(cls, env: Mapping[str, str] | None = None) -> "RivetMcpBinding":
+    def from_environment(
+        cls, env: Mapping[str, str] | None = None
+    ) -> "RivetMcpBinding":
         source = os.environ if env is None else env
         values = tuple(
             (source.get(name) or "").strip()
@@ -160,21 +164,39 @@ class RivetWorkflowMcpService:
         try:
             return self.store.read(slug)
         except FileNotFoundError as error:
-            raise RivetMcpError("RIVET_WORKFLOW_NOT_FOUND", "Workflow was not found.") from error
-        except (WorkflowPersistenceError, OSError, ValueError, json.JSONDecodeError) as error:
-            raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow storage is invalid or unsafe.") from error
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_NOT_FOUND", "Workflow was not found."
+            ) from error
+        except (
+            WorkflowPersistenceError,
+            OSError,
+            ValueError,
+            json.JSONDecodeError,
+        ) as error:
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_INVALID", "Workflow storage is invalid or unsafe."
+            ) from error
 
-    def _validate(self, document, arguments: Mapping[str, Any]) -> WorkflowValidationResult:
+    def _validate(
+        self, document, arguments: Mapping[str, Any]
+    ) -> WorkflowValidationResult:
         expected_revision = arguments.get("expectedRevision")
         expected_digest = arguments.get("expectedDigest")
-        if expected_revision is not None and (not isinstance(expected_revision, int) or expected_revision < 1):
-            raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Expected revision is invalid.")
+        if expected_revision is not None and (
+            not isinstance(expected_revision, int) or expected_revision < 1
+        ):
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_INVALID", "Expected revision is invalid."
+            )
         if expected_digest is not None and (
-            not isinstance(expected_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_digest)
+            not isinstance(expected_digest, str)
+            or not re.fullmatch(r"[a-f0-9]{64}", expected_digest)
         ):
             raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Expected digest is invalid.")
         selected_graph = arguments.get("graph")
-        if selected_graph is not None and (not isinstance(selected_graph, str) or len(selected_graph) > 256):
+        if selected_graph is not None and (
+            not isinstance(selected_graph, str) or len(selected_graph) > 256
+        ):
             raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Selected graph is invalid.")
         try:
             return validate_rivet_project(
@@ -209,7 +231,9 @@ class RivetWorkflowMcpService:
     async def list_workflows(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         limit = arguments.get("limit", 50)
         if not isinstance(limit, int) or not 1 <= limit <= 100:
-            raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow list limit must be 1-100.")
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_INVALID", "Workflow list limit must be 1-100."
+            )
         workflows = []
         for slug in sorted(self.store.list_slugs())[:limit]:
             document = self._read(slug)
@@ -218,7 +242,9 @@ class RivetWorkflowMcpService:
                 {
                     **_identity(document),
                     "reviewState": (
-                        review.state if review and review.revision == document.revision else None
+                        review.state
+                        if review and review.revision == document.revision
+                        else None
                     ),
                     "lastRunState": None,
                 }
@@ -247,9 +273,17 @@ class RivetWorkflowMcpService:
             try:
                 project = self.catalog.instantiate(template_id)
             except WorkflowTemplateError as error:
-                raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow template was not found or is invalid.") from error
-        if not isinstance(project, str) or len(project.encode("utf-8")) > _MAX_PROJECT_BYTES:
-            raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow project is invalid or too large.")
+                raise RivetMcpError(
+                    "RIVET_WORKFLOW_INVALID",
+                    "Workflow template was not found or is invalid.",
+                ) from error
+        if (
+            not isinstance(project, str)
+            or len(project.encode("utf-8")) > _MAX_PROJECT_BYTES
+        ):
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_INVALID", "Workflow project is invalid or too large."
+            )
         provisional_digest = hashlib.sha256(project.encode("utf-8")).hexdigest()
         provisional = validate_rivet_project(
             project,
@@ -258,12 +292,21 @@ class RivetWorkflowMcpService:
             digest=provisional_digest,
         )
         if not provisional.valid:
-            raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow project did not pass Rivet validation.")
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_INVALID",
+                "Workflow project did not pass Rivet validation.",
+            )
         try:
             document = self.store.create(slug, project)
         except WorkflowPersistenceError as error:
-            code = "RIVET_WORKFLOW_EXISTS" if "already exists" in str(error) else "RIVET_WORKFLOW_INVALID"
-            raise RivetMcpError(code, "Workflow could not be created in the bound workspace.") from error
+            code = (
+                "RIVET_WORKFLOW_EXISTS"
+                if "already exists" in str(error)
+                else "RIVET_WORKFLOW_INVALID"
+            )
+            raise RivetMcpError(
+                code, "Workflow could not be created in the bound workspace."
+            ) from error
         validation = self._validate(document, {})
         return {"workflow": _identity(document), "validation": _validation(validation)}
 
@@ -286,12 +329,17 @@ class RivetWorkflowMcpService:
         if not validation.valid:
             raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow is not executable.")
         encoded_inputs = json.dumps(
-            {"inputs": arguments.get("inputs", {}), "context": arguments.get("context", {})},
+            {
+                "inputs": arguments.get("inputs", {}),
+                "context": arguments.get("context", {}),
+            },
             separators=(",", ":"),
             default=str,
         ).encode("utf-8")
         if len(encoded_inputs) > _MAX_INPUT_BYTES:
-            raise RivetMcpError("RIVET_WORKFLOW_INVALID", "Workflow inputs exceed the limit.")
+            raise RivetMcpError(
+                "RIVET_WORKFLOW_INVALID", "Workflow inputs exceed the limit."
+            )
         if not self.reviews.approved(
             self.binding.workspace_id, document.workflow_id, document.revision
         ):
@@ -300,7 +348,9 @@ class RivetWorkflowMcpService:
                 "The current workflow revision requires durable Wright approval before execution.",
             )
         if self.run_handler is None:
-            raise RivetMcpError("RIVET_RUNNER_UNAVAILABLE", "The Rivet runtime is unavailable.")
+            raise RivetMcpError(
+                "RIVET_RUNNER_UNAVAILABLE", "The Rivet runtime is unavailable."
+            )
         return await self.run_handler(
             dict(arguments), document, validation, progress_callback
         )
@@ -321,7 +371,9 @@ class RivetWorkflowMcpService:
             "validate_workflow": self.validate_workflow,
         }.get(name)
         if handler is None:
-            raise RivetMcpError("RIVET_TOOL_NOT_FOUND", "Rivet workflow tool was not found.")
+            raise RivetMcpError(
+                "RIVET_TOOL_NOT_FOUND", "Rivet workflow tool was not found."
+            )
         return await handler(arguments)
 
 
@@ -356,7 +408,14 @@ def _tool(
 _SLUG_SCHEMA = {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"}
 _DIGEST_SCHEMA = {"type": "string", "pattern": "^[a-f0-9]{64}$"}
 _TOOLS = (
-    _tool("list_templates", "List reviewed Rivet workflow templates.", {}, read_only=True, destructive=False, idempotent=True),
+    _tool(
+        "list_templates",
+        "List reviewed Rivet workflow templates.",
+        {},
+        read_only=True,
+        destructive=False,
+        idempotent=True,
+    ),
     _tool(
         "list_workflows",
         "List workflow identities in the bound workspace without project content.",
@@ -451,7 +510,11 @@ def create_rivet_mcp_server(service: RivetWorkflowMcpService) -> Server:
                 progress_token,
                 float(update.get("sequence", 0)),
                 None,
-                str(update.get("phase") or update.get("state") or "Running Rivet workflow"),
+                str(
+                    update.get("phase")
+                    or update.get("state")
+                    or "Running Rivet workflow"
+                ),
                 related_request_id=str(request_context.request_id),
             )
 

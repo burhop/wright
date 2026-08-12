@@ -54,6 +54,7 @@ class DatabaseGatewayCatalog:
         if server is None:
             return ()
         policy = McpSafetyPolicy()
+
         def approvals(tool_name: str) -> frozenset[str]:
             required = set(
                 policy.can_call_tool(

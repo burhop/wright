@@ -843,9 +843,7 @@ async def test_rivet_run_api_preserves_review_gate_and_cancel_history_contract(
 
         def history(self, **_kwargs):
             return (
-                WorkflowRunEvent(
-                    "run-cancel", 1, "progress", {"phase": "node-start"}
-                ),
+                WorkflowRunEvent("run-cancel", 1, "progress", {"phase": "node-start"}),
             )
 
     service = SimpleNamespace(

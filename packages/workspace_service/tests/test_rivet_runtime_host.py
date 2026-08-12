@@ -114,9 +114,7 @@ async def test_real_runtime_host_executes_inventoried_rivet_graph_and_relays_pro
         range(1, len(progress) + 1)
     )
     assert all(event["runId"] == result.run_id for event in progress)
-    assert [event for event, _values in captured.events] == [
-        "rivet_runtime_completed"
-    ]
+    assert [event for event, _values in captured.events] == ["rivet_runtime_completed"]
     timing = captured.events[0][1]
     assert timing["run_id"] == result.run_id
     assert timing["duration_ms"] == result.duration_ms
@@ -241,15 +239,16 @@ async def test_ai_node_uses_only_ephemeral_bridge_and_keeps_hermes_key_in_host(
                         "object": "chat.completion.chunk",
                         "created": 1,
                         "model": "controlled-hermes",
-                        "choices": [
-                            {"index": 0, "delta": {}, "finish_reason": "stop"}
-                        ],
+                        "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
                     },
                 ]
-                body = "".join(
-                    f"data: {json.dumps(chunk, separators=(',', ':'))}\n\n"
-                    for chunk in chunks
-                ) + "data: [DONE]\n\n"
+                body = (
+                    "".join(
+                        f"data: {json.dumps(chunk, separators=(',', ':'))}\n\n"
+                        for chunk in chunks
+                    )
+                    + "data: [DONE]\n\n"
+                )
                 encoded = body.encode()
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/event-stream")
@@ -266,7 +265,10 @@ async def test_ai_node_uses_only_ephemeral_bridge_and_keeps_hermes_key_in_host(
                     "choices": [
                         {
                             "index": 0,
-                            "message": {"role": "assistant", "content": "AI through Hermes"},
+                            "message": {
+                                "role": "assistant",
+                                "content": "AI through Hermes",
+                            },
                             "finish_reason": "stop",
                         }
                     ],

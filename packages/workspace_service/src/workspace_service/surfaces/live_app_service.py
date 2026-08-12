@@ -306,10 +306,10 @@ class LiveAppControlService:
             try:
                 instance = await invoke(instance_id, idempotency_key=idempotency_key)
             except LiveAppManagerError as error:
-                if (
-                    error.code == "SURFACE_INSTANCE_NOT_FOUND"
-                    and operation in {"retry", "restart"}
-                ):
+                if error.code == "SURFACE_INSTANCE_NOT_FOUND" and operation in {
+                    "retry",
+                    "restart",
+                }:
                     if descriptor.lifecycle is SurfaceLifecycle.STOPPING:
                         descriptor = await self._project(
                             actor=actor,

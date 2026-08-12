@@ -116,13 +116,13 @@ async def test_graph_lint_accepts_terminal_node_without_outgoing_connections(
     )
     graph = WorkspaceWorkflowGraphOperations(workflows)
     try:
-        await workflows.create(
-            "workspace-a", str(tmp_path), "flow", TERMINAL_PROJECT
-        )
+        await workflows.create("workspace-a", str(tmp_path), "flow", TERMINAL_PROJECT)
 
         result = await graph.lint(workspace_dir=str(tmp_path), slug="flow")
 
-        output = next(node for node in result.graph.nodes if node.node_type == "graphOutput")
+        output = next(
+            node for node in result.graph.nodes if node.node_type == "graphOutput"
+        )
         assert output.outgoing_connections == ()
         assert result.issues == ()
     finally:

@@ -70,9 +70,7 @@ def _nodes(graph: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
     raw = graph.get("nodes")
     if isinstance(raw, dict):
         return [
-            (str(key), value)
-            for key, value in raw.items()
-            if isinstance(value, dict)
+            (str(key), value) for key, value in raw.items() if isinstance(value, dict)
         ]
     if isinstance(raw, list):
         return [

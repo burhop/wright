@@ -41,7 +41,13 @@ def _tool(
 
 
 WRIGHT_MANAGED_TOOLS: tuple[dict[str, Any], ...] = (
-    _tool("list_templates", "List reviewed Rivet workflow templates.", {}, read_only=True, destructive=False),
+    _tool(
+        "list_templates",
+        "List reviewed Rivet workflow templates.",
+        {},
+        read_only=True,
+        destructive=False,
+    ),
     _tool(
         "list_workflows",
         "List workflow identities in the bound workspace without project content.",
@@ -165,12 +171,8 @@ def trusted_managed_launch_environment(
     ):
         raise ValueError("Rivet MCP requires safe workspace and session identities")
     return {
-        "WRIGHT_RIVET_MCP_WORKSPACE": os.path.realpath(
-            os.path.abspath(workspace_path)
-        ),
-        "WRIGHT_RIVET_MCP_DATABASE": os.path.realpath(
-            os.path.abspath(database_path)
-        ),
+        "WRIGHT_RIVET_MCP_WORKSPACE": os.path.realpath(os.path.abspath(workspace_path)),
+        "WRIGHT_RIVET_MCP_DATABASE": os.path.realpath(os.path.abspath(database_path)),
         "WRIGHT_RIVET_MCP_WORKSPACE_ID": workspace_id,
         "WRIGHT_RIVET_MCP_SESSION_ID": session_id,
     }

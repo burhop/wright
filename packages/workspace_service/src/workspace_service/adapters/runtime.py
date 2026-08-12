@@ -355,9 +355,7 @@ def _active_rivet_workflow_key(session_id: str) -> str:
     return f"{ACTIVE_RIVET_WORKFLOW_SETTING_PREFIX}{candidate}"
 
 
-def set_active_rivet_workflow(
-    db_path: str, session_id: str, slug: str | None
-) -> None:
+def set_active_rivet_workflow(db_path: str, session_id: str, slug: str | None) -> None:
     """Persist the Rivet workflow currently displayed for a Wright chat session."""
     key = _active_rivet_workflow_key(session_id)
     candidate = str(slug or "").strip()

@@ -82,14 +82,10 @@ def test_run_events_are_sequenced_and_bounded(tmp_path):
         WorkflowRunEventRecord("run-1", 1, 101, "queued", {"message": "ready"})
     )
     with pytest.raises(ValueError, match="sequence"):
-        repository.append_event(
-            WorkflowRunEventRecord("run-1", 1, 102, "started", {})
-        )
+        repository.append_event(WorkflowRunEventRecord("run-1", 1, 102, "started", {}))
     with pytest.raises(ValueError, match="event"):
         repository.append_event(
-            WorkflowRunEventRecord(
-                "run-1", 2, 103, "progress", {"message": "x" * 100}
-            )
+            WorkflowRunEventRecord("run-1", 2, 103, "progress", {"message": "x" * 100})
         )
     assert repository.events("run-1") == (
         WorkflowRunEventRecord("run-1", 1, 101, "queued", {"message": "ready"}),

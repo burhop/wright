@@ -68,4 +68,6 @@ def test_wright_managed_reconcile_preserves_user_disablement(tmp_path):
 
 
 def test_internal_rivet_server_is_not_in_public_engineering_catalog():
-    assert "rivet-workflows" not in {entry["server_id"] for entry in ENGINEERING_CATALOG}
+    assert "rivet-workflows" not in {
+        entry["server_id"] for entry in ENGINEERING_CATALOG
+    }

@@ -97,7 +97,9 @@ def _main_graph_id(project: Mapping[str, Any], graph_id: str | None) -> str:
     return next(iter(graphs))
 
 
-def _graph(project: Mapping[str, Any], graph_id: str | None) -> tuple[str, dict[str, Any]]:
+def _graph(
+    project: Mapping[str, Any], graph_id: str | None
+) -> tuple[str, dict[str, Any]]:
     resolved = _main_graph_id(project, graph_id)
     graph = _graphs(project).get(resolved)
     if not isinstance(graph, dict):
@@ -130,7 +132,9 @@ def _outgoing_connections(node: object) -> tuple[str, ...]:
     return tuple(str(item) for item in connections if isinstance(item, str))
 
 
-def summarize_graph(project: Mapping[str, Any], graph_id: str | None = None) -> WorkflowGraphSummary:
+def summarize_graph(
+    project: Mapping[str, Any], graph_id: str | None = None
+) -> WorkflowGraphSummary:
     resolved, graph = _graph(project, graph_id)
     metadata = graph.get("metadata")
     nodes = graph.get("nodes")
@@ -161,7 +165,9 @@ def summarize_graph(project: Mapping[str, Any], graph_id: str | None = None) -> 
     )
 
 
-def lint_project(project: Mapping[str, Any], graph_id: str | None = None) -> tuple[Mapping[str, Any], ...]:
+def lint_project(
+    project: Mapping[str, Any], graph_id: str | None = None
+) -> tuple[Mapping[str, Any], ...]:
     issues: list[Mapping[str, Any]] = []
     try:
         graphs = _graphs(project)
@@ -265,7 +271,9 @@ def mutate_project(
         nodes[node_id] = dict(raw_node or {})
         nodes[node_id].setdefault("data", dict(arguments.get("data") or {}))
         nodes[node_id].setdefault("outgoingConnections", [])
-        nodes[node_id].setdefault("visualData", arguments.get("visual_data") or "0/0/180/0")
+        nodes[node_id].setdefault(
+            "visualData", arguments.get("visual_data") or "0/0/180/0"
+        )
         return mutable
 
     if action == "edit_node":

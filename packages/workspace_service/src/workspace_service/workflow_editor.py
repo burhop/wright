@@ -39,9 +39,7 @@ class EditorSettings:
         if not 1 <= self.ai_token_ttl_seconds <= 3600:
             raise ValueError("Editor AI token TTL must be between 1 and 3600 seconds")
         if not 1024 <= self.ai_request_bytes <= 10 * 1024 * 1024:
-            raise ValueError(
-                "Editor AI request limit must be between 1 KiB and 10 MiB"
-            )
+            raise ValueError("Editor AI request limit must be between 1 KiB and 10 MiB")
         if not 1 <= self.ai_timeout_seconds <= 600:
             raise ValueError("Editor AI timeout must be between 1 and 600 seconds")
 
@@ -54,9 +52,7 @@ class EditorSettings:
             grant_ttl_seconds=int(source.get("WRIGHT_RIVET_EDITOR_GRANT_TTL", "60")),
             ai_enabled=source.get("WRIGHT_RIVET_AI_ENABLED", "0").strip().lower()
             in {"1", "true", "yes"},
-            ai_token_ttl_seconds=int(
-                source.get("WRIGHT_RIVET_AI_TOKEN_TTL", "300")
-            ),
+            ai_token_ttl_seconds=int(source.get("WRIGHT_RIVET_AI_TOKEN_TTL", "300")),
             ai_request_bytes=int(
                 source.get("WRIGHT_RIVET_AI_REQUEST_BYTES", str(2 * 1024 * 1024))
             ),
@@ -95,10 +91,7 @@ class EditorAssetCatalog:
             / "manifest.json"
         )
         packaged_manifest = (
-            Path(__file__).resolve().parent
-            / "_rivet"
-            / "editor"
-            / "manifest.json"
+            Path(__file__).resolve().parent / "_rivet" / "editor" / "manifest.json"
         )
         self._manifest_path = manifest_path or (
             checkout_manifest if checkout_manifest.is_file() else packaged_manifest

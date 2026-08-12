@@ -216,7 +216,9 @@ def test_manual_surface_manifest_is_verified_and_collision_safe(tmp_path):
         editor.manual_surface_manifest(str(workspace))
 
 
-def test_manual_surface_manifest_enables_local_ai_without_embedding_credentials(tmp_path):
+def test_manual_surface_manifest_enables_local_ai_without_embedding_credentials(
+    tmp_path,
+):
     workspace = tmp_path / "workspace"
     workspace.mkdir()
     editor = WorkspaceWorkflowEditor(
