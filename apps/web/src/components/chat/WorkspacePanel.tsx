@@ -757,6 +757,7 @@ export function WorkspacePanel({
       viewerContainerRef.current,
       true,
       true,
+      contribution.id === "iframe-viewer",
     );
 
     const subUnresponsive = host.onDidBecomeUnresponsive?.(() => {
