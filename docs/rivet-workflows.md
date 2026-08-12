@@ -103,4 +103,6 @@ WRIGHT_RIVET_LIVE_AI=1 uv run pytest -m rivet_live_ai \
 The canaries make one Rivet-shaped structured tool request and one Wright chat
 request using the Rivet MCP. Without both opt-ins they skip before resolving
 or contacting Hermes. The complete deterministic recipe is in
-[`specs/067-rivet-hermes-ai/quickstart.md`](../specs/067-rivet-hermes-ai/quickstart.md).
+the
+[`specs/067-rivet-hermes-ai/quickstart.md`](https://github.com/burhop/wright/blob/dev/specs/067-rivet-hermes-ai/quickstart.md)
+source guide.
