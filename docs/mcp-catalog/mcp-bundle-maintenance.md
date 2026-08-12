@@ -17,6 +17,11 @@ follow from it.
 - Keep third-party package fixes in Wright-owned launchers or wrappers when a
   runtime workaround is sufficient; do not rewrite installed package files just
   to make the appliance pass validation.
+- Set `target_platform` and `catalog_policy` in every managed bundle.
+- Give each `local_enabled` MCP server a `catalog_id` pointing at the canonical
+  engineering catalog entry.
+- Let `docker/mcp/verify-bundle.py` reject platform-incompatible bundle entries
+  instead of relying on manual review alone.
 
 ## Current Default Set
 
@@ -34,6 +39,11 @@ MCP servers:
 - `brep-mcp`
 - `solid-edge-mcp`
 - `playwright-mcp`
+
+The default Linux bundle targets `linux-amd64`. The GB10 bundle targets
+`gb10-linux-arm64`, and the Windows bundle targets `windows-amd64`. See
+`docs/mcp-catalog/dynamic-engineering-catalog.md` for the catalog-backed
+selection contract.
 
 ## BREP MCP
 
@@ -112,9 +122,11 @@ Linux-compatible MCP server target.
 Run:
 
 ```bash
-python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
-python docker/mcp/generate-config.py docker/mcp-bundle.yaml --output-dir /tmp/wright-mcp-generated-check
-uv run pytest tests/docker/test_mcp_bundle.py
+uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
+uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.linux-arm64.yaml
+uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.windows-amd64.yaml
+uv run python docker/mcp/generate-config.py docker/mcp-bundle.yaml --output-dir /tmp/wright-mcp-generated-check
+uv run pytest packages/tool_registry/tests/test_catalog_resource.py packages/tool_registry/tests/test_catalog_platforms.py tests/docker/test_mcp_bundle.py
 bash -n scripts/docker-mcp-smoke-test.sh
 ```
 

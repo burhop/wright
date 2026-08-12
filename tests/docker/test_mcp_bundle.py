@@ -41,6 +41,8 @@ def test_bundle_manifest_schema_declares_required_fields() -> None:
         assert field in app_required
     for field in ("id", "display_name", "availability", "mcp_source", "launch"):
         assert field in server_required
+    assert "target_platform" in schema["properties"]
+    assert "catalog_id" in schema["properties"]["mcp_servers"]["items"]["properties"]
 
 
 def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> None:
@@ -62,6 +64,16 @@ def test_default_bundle_has_corrected_initial_applications_and_mcp_servers() -> 
     assert "opencascade" not in serialized
     assert "caid" not in serialized
     assert servers["playwright-mcp"]["install"]["playwright_mcp_browsers"] == ["chrome-for-testing"]
+    assert bundle["target_platform"] == "linux-amd64"
+    assert {
+        server_id: entry["catalog_id"] for server_id, entry in servers.items()
+    } == {
+        "openscad-mcp": "openscad-mcp",
+        "freecad-mcp": "freecad-mcp-nekanat",
+        "brep-mcp": "brep-mcp",
+        "solid-edge-mcp": "solid-edge-mcp-burhop",
+        "playwright-mcp": "playwright-mcp",
+    }
 
 
 def test_arm64_bundle_uses_platform_native_freecad_source() -> None:
@@ -120,6 +132,25 @@ def test_validator_accepts_managed_platform_bundles(bundle_name: str) -> None:
     result = verifier.validate_bundle_file(ROOT / "docker" / bundle_name)
 
     assert result["ok"] is True
+
+
+@pytest.mark.parametrize(
+    ("bundle_name", "target_platform"),
+    [
+        ("mcp-bundle.yaml", "linux-amd64"),
+        ("mcp-bundle.linux-arm64.yaml", "gb10-linux-arm64"),
+        ("mcp-bundle.windows-amd64.yaml", "windows-amd64"),
+    ],
+)
+def test_managed_platform_bundles_are_catalog_compatible(
+    bundle_name: str, target_platform: str
+) -> None:
+    from tool_registry.catalog_bundle import bundle_catalog_issues
+
+    bundle = yaml.safe_load(read_text(f"docker/{bundle_name}"))
+
+    assert bundle["target_platform"] == target_platform
+    assert bundle_catalog_issues(bundle) == []
 
 
 def test_validator_accepts_allowed_pinned_permissive_fixture() -> None:

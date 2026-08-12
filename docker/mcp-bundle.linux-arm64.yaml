@@ -1,6 +1,10 @@
 schema_version: 1
 bundle_id: wright-mcp-appliance-linux-arm64
 base_image: wright:standard-linux-arm64
+target_platform: gb10-linux-arm64
+catalog_policy:
+  mode: candidate
+  require_docker: true
 default_license_policy:
   allowed:
     - MIT
@@ -149,6 +153,7 @@ applications:
 
 mcp_servers:
   - id: openscad-mcp
+    catalog_id: openscad-mcp
     display_name: OpenSCAD MCP
     application_id: openscad
     availability: local_enabled
@@ -186,6 +191,7 @@ mcp_servers:
     docs_summary: OpenSCAD MCP server from the validated Quellant source.
 
   - id: freecad-mcp
+    catalog_id: freecad-mcp-nekanat
     display_name: FreeCAD MCP
     application_id: freecad
     availability: local_enabled
@@ -231,6 +237,7 @@ mcp_servers:
     docs_summary: FreeCADMCP addon plus stdio server validated with a Part::Box workflow.
 
   - id: brep-mcp
+    catalog_id: brep-mcp
     display_name: BREP MCP
     application_id: brep
     availability: local_enabled
@@ -269,6 +276,7 @@ mcp_servers:
     docs_summary: BREP MCP server shipped by brepjs-cad, launched through Wright's file-backed CLI compatibility wrapper for the pinned package build.
 
   - id: solid-edge-mcp
+    catalog_id: solid-edge-mcp-burhop
     display_name: SolidEdgeMCP
     application_id: null
     availability: blocked_pending_review
@@ -287,6 +295,7 @@ mcp_servers:
     docs_summary: SolidEdgeMCP is intentionally not installed in Linux images until a Linux-runnable target exists; use the Windows image for this MCP.
 
   - id: playwright-mcp
+    catalog_id: playwright-mcp
     display_name: Playwright MCP
     application_id: playwright
     availability: local_enabled

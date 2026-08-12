@@ -1,6 +1,10 @@
 schema_version: 1
 bundle_id: wright-mcp-appliance-windows-amd64
 base_image: wright:engineering-tools-windows-amd64
+target_platform: windows-amd64
+catalog_policy:
+  mode: host
+  require_docker: true
 default_license_policy:
   allowed:
     - MIT
@@ -81,6 +85,7 @@ applications:
 
 mcp_servers:
   - id: brep-mcp
+    catalog_id: brep-mcp
     display_name: BREP MCP
     application_id: brep
     availability: local_enabled
@@ -115,6 +120,7 @@ mcp_servers:
     docs_summary: BREP MCP server shipped by brepjs-cad.
 
   - id: solid-edge-mcp
+    catalog_id: solid-edge-mcp-burhop
     display_name: SolidEdgeMCP
     application_id: solid-edge
     availability: local_enabled
@@ -163,6 +169,7 @@ mcp_servers:
     docs_summary: SolidEdgeMCP built for Windows; Solid Edge itself must be installed/licensed outside Wright redistribution.
 
   - id: playwright-mcp
+    catalog_id: playwright-mcp
     display_name: Playwright MCP
     application_id: playwright
     availability: local_enabled
