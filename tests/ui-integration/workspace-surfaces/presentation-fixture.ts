@@ -35,7 +35,9 @@ export const liveSurface = (
     {
       kind: "panel",
       eligible: options.panelEligible ?? true,
-      ...(options.panelEligible === false ? { reason: "Application forbids framing" } : {}),
+      ...(options.panelEligible === false
+        ? { reason: "Application forbids framing" }
+        : {}),
     },
     { kind: "browser", eligible: options.browserEligible ?? true },
   ],
@@ -44,6 +46,124 @@ export const liveSurface = (
   createdAt: "2026-07-30T12:00:00Z",
   updatedAt: "2026-07-30T12:04:00Z",
 });
+
+export async function mockManagedRivetSurface(
+  page: Page,
+  canvasHtml: string,
+): Promise<{ startCount: () => number }> {
+  let declared = false;
+  let lifecycle: "declared" | "ready" = "declared";
+  let starts = 0;
+  const token = "r".repeat(43);
+  const surface = () => ({
+    schemaVersion: 1,
+    surfaceId: "surface-rivet",
+    workspaceId: "ws-1",
+    source: {
+      kind: "live_app",
+      sourceId: "wright.rivet-editor",
+      sourceVersion: "a".repeat(64),
+      manifestId: "wright.rivet-editor",
+    },
+    title: "Rivet",
+    lifecycle,
+    instance:
+      lifecycle === "ready"
+        ? {
+            instanceId: "instance-rivet",
+            generation: 1,
+            sharing: "isolated",
+            readyAt: "2026-07-30T12:00:00Z",
+          }
+        : null,
+    presentations:
+      lifecycle === "ready"
+        ? [
+            { kind: "panel", eligible: true },
+            { kind: "browser", eligible: true },
+          ]
+        : [],
+    capabilities: [],
+    revision: lifecycle === "ready" ? 3 : 1,
+    createdAt: "2026-07-30T12:00:00Z",
+    updatedAt: "2026-07-30T12:00:00Z",
+  });
+
+  await page.route("**/api/workspace/workflows/editor/surface", (route) =>
+    route.fulfill({
+      json: {
+        availability: "available",
+        detail: null,
+        manifest: {
+          schemaVersion: 1,
+          id: "wright.rivet-editor",
+          version: "2.0.0",
+          title: "Rivet",
+          launch: { mode: "command", argv: ["python", "host.py"] },
+        },
+      },
+    }),
+  );
+  await page.route("**/api/workspace/surfaces", async (route) => {
+    if (route.request().method() === "POST") {
+      declared = true;
+      await route.fulfill({ status: 201, json: surface() });
+      return;
+    }
+    await route.fulfill({ json: { items: declared ? [surface()] : [] } });
+  });
+  await page.route(
+    "**/api/workspace/surfaces/surface-rivet/start",
+    async (route) => {
+      starts += 1;
+      lifecycle = "ready";
+      await route.fulfill({
+        status: 202,
+        json: {
+          surfaceId: "surface-rivet",
+          instanceId: "instance-rivet",
+          generation: 1,
+          state: "ready",
+          sharing: "isolated",
+          ownership: "launched",
+          platform: "test",
+          lifetimePolicy: "workspace",
+          failure: null,
+          actions: [
+            { operation: "restart", label: "Restart application" },
+            { operation: "stop", label: "Stop application" },
+          ],
+        },
+      });
+    },
+  );
+  await page.route(
+    "**/api/workspace/surfaces/surface-rivet/presentations",
+    async (route) => {
+      const kind = (route.request().postDataJSON() as { kind?: string }).kind;
+      await route.fulfill({
+        status: 201,
+        json: {
+          presentationId: `presentation-rivet-${kind ?? "panel"}`,
+          instanceId: "instance-rivet",
+          generation: 1,
+          kind: kind ?? "panel",
+          absoluteBootstrapUrl: `http://s-rivet.localhost:8000/__wright/bootstrap#${token}`,
+          expiresAt: "2026-07-30T20:00:00Z",
+        },
+      });
+    },
+  );
+  await page.route(
+    "**/api/workspace/surfaces/surface-rivet/presentations/*",
+    (route) => route.fulfill({ status: 204 }),
+  );
+  await page.route("**/__wright-surface/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: canvasHtml }),
+  );
+
+  return { startCount: () => starts };
+}
 
 export async function mockWorkspaceShell(
   page: Page,
@@ -60,9 +180,13 @@ export async function mockWorkspaceShell(
       route.fulfill({ json: { status: "ok" } }),
     );
   }
-  await page.route("**/api/mcp/servers", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/mcp/servers", (route) =>
+    route.fulfill({ json: [] }),
+  );
   await page.route("**/api/mcp/tools", (route) => route.fulfill({ json: [] }));
-  await page.route("**/api/agent/commands", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/agent/commands", (route) =>
+    route.fulfill({ json: [] }),
+  );
   await page.route("**/api/workspace/by-id/ws-1/mcp-status", (route) =>
     route.fulfill({ json: { servers: [] } }),
   );
@@ -103,18 +227,27 @@ export async function mockWorkspaceShell(
   );
   await page.route("**/api/workspace/files?*", (route) =>
     route.fulfill({
-      json: { workspace: { name: "apps", path: "/", type: "directory", children: [] } },
+      json: {
+        workspace: { name: "apps", path: "/", type: "directory", children: [] },
+      },
     }),
   );
   await page.route("**/api/workspace/surfaces", (route) =>
     route.fulfill({ json: { items: surfaces } }),
   );
   await page.route("**/api/workspace/surfaces/events", (route) =>
-    route.fulfill({ contentType: "text/event-stream", body: ": keepalive\n\n" }),
+    route.fulfill({
+      contentType: "text/event-stream",
+      body: ": keepalive\n\n",
+    }),
   );
   await page.route("**/presentation-preference", (route) =>
     route.fulfill({
-      json: { kind: "panel", remembered: false, reason: "No remembered choice" },
+      json: {
+        kind: "panel",
+        remembered: false,
+        reason: "No remembered choice",
+      },
     }),
   );
 }

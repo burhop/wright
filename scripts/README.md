@@ -2,6 +2,19 @@
 
 This directory contains helper scripts to automate local development, manage Docker container environments, perform database cleanups, patch submodules, and run developer diagnostics.
 
+## Quiet Windows workstation startup
+
+`scripts/windows/start-wright.ps1` starts Docker Desktop minimized and launches
+the Wright API and Vite development UI with hidden process windows. It is
+idempotent, writes lifecycle logs under
+`%LOCALAPPDATA%\wright\startup\logs`, and deliberately leaves Rivet, BREP, and
+other managed tools stopped until a Wright surface or MCP call requests them.
+
+For a login startup entry, invoke this script from a hidden `wscript.exe`
+launcher in the user's Startup folder. The workstation setup uses
+`http://127.0.0.1:5173/` for the development UI and
+`http://127.0.0.1:8000/api/health` for the API health check.
+
 ## Script Index
 
 | Script | Language | Purpose | Key Dependencies |

@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { mockWorkspaceShell } from "./presentation-fixture";
+import {
+  mockManagedRivetSurface,
+  mockWorkspaceShell,
+} from "./presentation-fixture";
 
 const workflow = {
   workflow_id: "workflow-rivet",
@@ -88,9 +91,7 @@ async function mockRivetWorkflow(page: Page) {
   await page.route("**/api/auth/session/status", (route) =>
     route.fulfill({ json: { auth_required: false, authenticated: true } }),
   );
-  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):9180\//, (route) =>
-    route.fulfill({ contentType: "text/html", body: canvasFixture }),
-  );
+  const managedSurface = await mockManagedRivetSurface(page, canvasFixture);
   await page.route("**/api/workspace/workflow-templates", (route) =>
     route.fulfill({ json: { templates: [basicFlowTemplate] } }),
   );
@@ -149,6 +150,7 @@ async function mockRivetWorkflow(page: Page) {
 
   return {
     savedProject: () => savedProject,
+    startCount: managedSurface.startCount,
   };
 }
 
@@ -159,6 +161,7 @@ test.describe("Rivet 2 retained canvas", () => {
     await mockWorkspaceShell(page, []);
     const state = await mockRivetWorkflow(page);
     await page.goto("/workspace/ws-1");
+    expect(state.startCount()).toBe(0);
 
     const startedAt = Date.now();
     await page.getByTestId("activity-bar-workflows-btn").click();
@@ -166,6 +169,7 @@ test.describe("Rivet 2 retained canvas", () => {
       "Workflow opened",
       { timeout: 5_000 },
     );
+    expect(state.startCount()).toBe(1);
     expect(Date.now() - startedAt).toBeLessThan(5_000);
 
     const frame = page.frameLocator('iframe[title="Rivet graph canvas"]');

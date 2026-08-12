@@ -10,7 +10,9 @@ function isRetainedRivetEditor(descriptor: SurfaceDescriptor): boolean {
 export function isVisibleWorkspaceSurface(
   descriptor: SurfaceDescriptor,
 ): boolean {
-  return !(isRetainedRivetEditor(descriptor) && descriptor.lifecycle === "failed");
+  // Rivet is rendered inside Wright's retained workflow tab, but its process
+  // and preview authority still belong to the managed live-app service.
+  return !isRetainedRivetEditor(descriptor);
 }
 
 export function visibleWorkspaceSurfaces(

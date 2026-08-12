@@ -27,16 +27,13 @@ const descriptor = (
 });
 
 describe("workspace surface visibility", () => {
-  it("hides failed retained Rivet editor surfaces from the deck", () => {
+  it("keeps managed Rivet editor surfaces in retained workflow tabs", () => {
     const visible = visibleWorkspaceSurfaces([
       descriptor("failed-rivet", "wright.rivet-editor", "failed"),
       descriptor("ready-rivet", "wright.rivet-editor", "ready"),
       descriptor("failed-other", "other.app", "failed"),
     ]);
 
-    expect(visible.map((item) => item.surfaceId)).toEqual([
-      "ready-rivet",
-      "failed-other",
-    ]);
+    expect(visible.map((item) => item.surfaceId)).toEqual(["failed-other"]);
   });
 });

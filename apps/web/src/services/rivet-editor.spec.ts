@@ -6,25 +6,16 @@ import {
 } from "./rivet-editor";
 
 describe("directRivetEditorUrl", () => {
-  it("uses the retained local editor in packaged builds", () => {
-    expect(
-      directRivetEditorUrl({}, { protocol: "http:", hostname: "127.0.0.1" }),
-    ).toBe("http://127.0.0.1:9180/");
+  it("does not guess an unmanaged loopback editor", () => {
+    expect(directRivetEditorUrl({})).toBeNull();
   });
 
   it("honors an explicitly configured editor URL", () => {
     expect(
-      directRivetEditorUrl(
-        { VITE_RIVET_DIRECT_EDITOR_URL: "http://localhost:9190/" },
-        { protocol: "http:", hostname: "127.0.0.1" },
-      ),
+      directRivetEditorUrl({
+        VITE_RIVET_DIRECT_EDITOR_URL: "http://localhost:9190/",
+      }),
     ).toBe("http://localhost:9190/");
-  });
-
-  it("does not guess a loopback editor for remote deployments", () => {
-    expect(
-      directRivetEditorUrl({}, { protocol: "https:", hostname: "wright.example" }),
-    ).toBeNull();
   });
 
   it("passes only the exact Wright origin to the isolated canvas", () => {

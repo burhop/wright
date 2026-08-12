@@ -35,7 +35,7 @@ import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
 import { RivetWorkflowsPanel } from "./RivetWorkflowsPanel";
-import { DirectRivetSurface } from "../surfaces/DirectRivetSurface";
+import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
 import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
@@ -47,11 +47,6 @@ import {
   SurfaceFocusManager,
   installF6HostRegionCycle,
 } from "../../services/surfaces/focus-manager";
-import {
-  directRivetEditorUrl,
-  directRivetWorkflowUrl,
-} from "../../services/rivet-editor";
-import { hostAdapter } from "../../services/host-adapter";
 import { isBrepToolActivity } from "../../services/brep-panel-activity";
 
 const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
@@ -1289,11 +1284,6 @@ export function WorkspacePanel({
   const openRivetWorkflowTab = useCallback(
     async (slug?: string) => {
       if (!workspaceFileSessionId) return;
-      const directUrl = directRivetEditorUrl();
-      if (!directUrl) {
-        handleActivityBarClick("workflows");
-        return;
-      }
       const workflow = slug
         ? await workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
         : await workspaceService.ensureDefaultRivetWorkflow(
@@ -1312,7 +1302,6 @@ export function WorkspacePanel({
       }
     },
     [
-      handleActivityBarClick,
       openTransientTab,
       surfaceLayout.mode,
       surfaceLayoutDispatch,
@@ -1322,11 +1311,6 @@ export function WorkspacePanel({
 
   const createRivetWorkflowTab = useCallback(async () => {
     if (!workspaceFileSessionId) return;
-    const directUrl = directRivetEditorUrl();
-    if (!directUrl) {
-      handleActivityBarClick("workflows");
-      return;
-    }
     const workflow = await workspaceService.createBlankRivetWorkflow(
       workspaceFileSessionId,
     );
@@ -1342,7 +1326,6 @@ export function WorkspacePanel({
       });
     }
   }, [
-    handleActivityBarClick,
     openTransientTab,
     surfaceLayout.mode,
     surfaceLayoutDispatch,
@@ -1386,9 +1369,7 @@ export function WorkspacePanel({
   const activeDirectRivetSlug = activeTabPath
     ? rivetSlugFromTabPath(activeTabPath)
     : null;
-  const activeDirectRivetUrl = activeDirectRivetSlug
-    ? directRivetWorkflowUrl(activeDirectRivetSlug)
-    : null;
+  const activeDirectRivet = activeDirectRivetSlug !== null;
   const activeRivetUiContext = useMemo(
     () => ({ activeRivetSlug: activeDirectRivetSlug }),
     [activeDirectRivetSlug],
@@ -2717,7 +2698,7 @@ export function WorkspacePanel({
                 )}
               </button>
             )}
-            {activeTabPath && !activeDirectRivetUrl && !activeDirectBrep && (
+            {activeTabPath && !activeDirectRivet && !activeDirectBrep && (
               <button
                 data-testid="viewer-inspector-toggle"
                 onClick={() => setIsInspectorOpen(!isInspectorOpen)}
@@ -2753,8 +2734,7 @@ export function WorkspacePanel({
         >
           {directRivetTabs.map((tab) => {
             const slug = rivetSlugFromTabPath(tab.path) || "rivet";
-            const url = directRivetWorkflowUrl(slug);
-            if (!url) return null;
+            if (!_workspaceId || !workspaceFileSessionId) return null;
             const isActive = activeTabPath === tab.path;
             return (
               <div
@@ -2772,9 +2752,9 @@ export function WorkspacePanel({
                   pointerEvents: isActive ? "auto" : "none",
                 }}
               >
-                <DirectRivetSurface
-                  url={url}
-                  sessionId={workspaceFileSessionId || ""}
+                <ManagedRivetSurface
+                  workspaceId={_workspaceId}
+                  sessionId={workspaceFileSessionId}
                   initialSlug={slug}
                   externalRevisionToken={
                     isActive ? rivetExternalRevisionToken : null
@@ -2785,11 +2765,6 @@ export function WorkspacePanel({
                       directRivetTabPath(workflow.slug),
                       `${workflow.slug}.rivet-project`,
                     );
-                  }}
-                  onOpenInBrowser={() => {
-                    void hostAdapter.openExternal(url, {
-                      approvedDirectUrl: true,
-                    });
                   }}
                 />
               </div>
@@ -2817,7 +2792,7 @@ export function WorkspacePanel({
               </div>
             );
           })}
-          {!activeDirectRivetUrl && !activeDirectBrep && activeTabPath ? (
+          {!activeDirectRivet && !activeDirectBrep && activeTabPath ? (
             <>
               <div
                 ref={viewerContainerRef}
@@ -2966,7 +2941,7 @@ export function WorkspacePanel({
                 </div>
               )}
             </>
-          ) : !activeDirectRivetUrl && !activeDirectBrep ? (
+          ) : !activeDirectRivet && !activeDirectBrep ? (
             /* Welcome / landing screen when no tabs are open */
             <div
               data-testid="workspace-empty-state"

@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { mockWorkspaceShell } from "./presentation-fixture";
+import {
+  mockManagedRivetSurface,
+  mockWorkspaceShell,
+} from "./presentation-fixture";
 
 const digest = "a".repeat(64);
 const baseProject = "version: 4\ndata:\n  graphs: {}\n";
@@ -82,11 +85,9 @@ async function mockAiWorkflow(
   await page.route("**/api/auth/session/status", (route) =>
     route.fulfill({ json: { auth_required: false, authenticated: true } }),
   );
-  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):9180\//, (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: canvasFixture(options.aiAvailable !== false),
-    }),
+  await mockManagedRivetSurface(
+    page,
+    canvasFixture(options.aiAvailable !== false),
   );
   await page.route("**/api/workspace/workflow-templates", (route) =>
     route.fulfill({ json: { templates: [] } }),
