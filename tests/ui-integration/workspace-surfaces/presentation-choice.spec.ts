@@ -22,7 +22,7 @@ test.describe("panel and browser presentation choice", () => {
       return route.fulfill({ json: { value: counter } });
     });
     await context.route(
-      "http://s-*.localhost:5173/__wright/bootstrap",
+      /^http:\/\/s-[^.]+\.localhost:5173\/(?:__wright-surface\/[^/]+\/)?__wright\/bootstrap$/,
       (route) =>
         route.fulfill({ contentType: "text/html", body: previewAppHtml }),
     );
