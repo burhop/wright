@@ -2,7 +2,7 @@ import { hostAdapter } from "./host-adapter";
 
 // Change this with each pinned editor artifact so an already-open Wright
 // workspace reloads its isolated Rivet iframe instead of retaining old code.
-const RIVET_EDITOR_ARTIFACT_REVISION = "f15c55fe";
+const RIVET_EDITOR_ARTIFACT_REVISION = "6b12fce1";
 
 export function directRivetEditorUrl(
   environment: Record<string, unknown> = import.meta.env,

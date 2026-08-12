@@ -30,6 +30,25 @@ data:
     mainGraphId: main
 """
 
+TERMINAL_PROJECT = """version: 4
+data:
+  graphs:
+    main:
+      metadata:
+        id: main
+        name: Main
+      nodes:
+        '[graph-output]:graphOutput "Output"':
+          data:
+            id: result
+            dataType: string
+          visualData: 220/0/180/0
+  metadata:
+    id: project
+    title: Fixture
+    mainGraphId: main
+"""
+
 
 @pytest.mark.asyncio
 async def test_graph_operations_save_workspace_revision(tmp_path) -> None:
@@ -83,5 +102,28 @@ async def test_graph_edit_rejects_invalid_shape_without_saving(tmp_path) -> None
             )
 
         assert (await workflows.read(str(tmp_path), "flow")).revision == 1
+    finally:
+        await executor.close()
+
+
+@pytest.mark.asyncio
+async def test_graph_lint_accepts_terminal_node_without_outgoing_connections(
+    tmp_path,
+) -> None:
+    executor = BoundedExecutor()
+    workflows = WorkspaceWorkflowUseCases(
+        executor, WorkflowRepository(str(tmp_path / "state.db"))
+    )
+    graph = WorkspaceWorkflowGraphOperations(workflows)
+    try:
+        await workflows.create(
+            "workspace-a", str(tmp_path), "flow", TERMINAL_PROJECT
+        )
+
+        result = await graph.lint(workspace_dir=str(tmp_path), slug="flow")
+
+        output = next(node for node in result.graph.nodes if node.node_type == "graphOutput")
+        assert output.outgoing_connections == ()
+        assert result.issues == ()
     finally:
         await executor.close()

@@ -23,6 +23,7 @@ const checkout = resolve(process.env.WRIGHT_RIVET2_CHECKOUT || defaultCheckout);
 const patchPaths = [
   resolve(editorRoot, 'patches', 'rivet2-canvas-only.patch'),
   resolve(editorRoot, 'patches', 'rivet2-graph-builder-recovery.patch'),
+  resolve(editorRoot, 'patches', 'rivet2-legacy-node-catalog.patch'),
 ];
 const wrappers = ['App.tsx', 'WrightAiRuntime.ts', 'WrightEditorBridge.tsx', 'index.html'];
 const output = resolve(editorRoot, 'dist');
@@ -91,6 +92,7 @@ const expectedChangedPaths = new Set([
   'packages/app/src/components/RivetApp.tsx',
   'packages/app/src/components/RivetAppHostLifecycle.tsx',
   'packages/app/src/components/RivetAppLoader.tsx',
+  'packages/app/graphs/graph-creator.rivet-project',
   'packages/app/src/features/graphBuilder/authoringCatalog.ts',
   'packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts',
   'packages/app/src/features/graphBuilder/legacyDraftRunner.ts',

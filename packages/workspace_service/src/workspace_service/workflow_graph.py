@@ -121,6 +121,15 @@ def _node_title(node_id: str) -> str | None:
     return parts[1] if len(parts) >= 3 else None
 
 
+def _outgoing_connections(node: object) -> tuple[str, ...]:
+    if not isinstance(node, dict):
+        return ()
+    connections = node.get("outgoingConnections")
+    if not isinstance(connections, list):
+        return ()
+    return tuple(str(item) for item in connections if isinstance(item, str))
+
+
 def summarize_graph(project: Mapping[str, Any], graph_id: str | None = None) -> WorkflowGraphSummary:
     resolved, graph = _graph(project, graph_id)
     metadata = graph.get("metadata")
@@ -145,15 +154,7 @@ def summarize_graph(project: Mapping[str, Any], graph_id: str | None = None) -> 
                     if isinstance(node, dict) and isinstance(node.get("data"), dict)
                     else {}
                 ),
-                outgoing_connections=tuple(
-                    str(item)
-                    for item in (
-                        node.get("outgoingConnections")
-                        if isinstance(node, dict)
-                        else []
-                    )
-                    if isinstance(item, str)
-                ),
+                outgoing_connections=_outgoing_connections(node),
             )
             for node_id, node in nodes.items()
         ),
