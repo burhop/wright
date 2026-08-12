@@ -27,6 +27,25 @@ function devSurfaceProxyUrl(value: string, control: URL): string {
   return new URL(path, control.origin).toString();
 }
 
+function existingDevSurfaceProxyUrl(
+  value: string,
+  control: URL,
+): string | null {
+  if (!["5173", "5174"].includes(control.port)) return null;
+  const proxy = new URL(value);
+  if (proxy.origin !== control.origin || proxy.search !== "") return null;
+  const match = proxy.pathname.match(
+    /^\/__wright-surface\/([^/]+)\/__wright\/bootstrap$/,
+  );
+  if (!match) return null;
+  const upstreamHost = decodeURIComponent(match[1]);
+  validateIssuedSurfacePreviewUrl(
+    `${control.protocol}//${upstreamHost}/__wright/bootstrap${proxy.hash}`,
+    control.origin,
+  );
+  return proxy.toString();
+}
+
 export class BrowserHostAdapter implements HostAdapter {
   readonly mode = "browser";
   readonly surfaceCapabilities = {
@@ -74,6 +93,8 @@ export class BrowserHostAdapter implements HostAdapter {
 
   validateIssuedPreviewUrl(value: string): string {
     const control = this.controlUrl();
+    const existingProxy = existingDevSurfaceProxyUrl(value, control);
+    if (existingProxy) return existingProxy;
     const validated = validateIssuedSurfacePreviewUrl(value, control.origin);
     return devSurfaceProxyUrl(validated, control);
   }

@@ -20,6 +20,33 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
     expect(adapter.validateIssuedPreviewUrl(issued)).toBe(issued);
   });
 
+  it("validates a development proxy exactly once and accepts its own result", () => {
+    const development = new BrowserHostAdapter({
+      controlUrl: "http://localhost:5173/workspace/ws-1",
+    });
+    const issued =
+      "http://s-panel.localhost:5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+    const proxy = development.validateIssuedPreviewUrl(issued);
+
+    expect(proxy).toBe(
+      "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+    );
+    expect(development.validateIssuedPreviewUrl(proxy)).toBe(proxy);
+  });
+
+  it.each([
+    "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/app#abcdefghijklmnopqrstuvwxyz012345",
+    "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#short",
+    "http://localhost:5173/__wright-surface/user%3Asecret%40preview.test/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+  ])("rejects malformed development preview proxies: %s", (url) => {
+    const development = new BrowserHostAdapter({
+      controlUrl: "http://localhost:5173/workspace/ws-1",
+    });
+    expect(() => development.validateIssuedPreviewUrl(url)).toThrow(
+      SurfaceHostAdapterError,
+    );
+  });
+
   it.each([
     "/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
     "javascript:alert(1)",
