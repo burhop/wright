@@ -29,9 +29,21 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
     const proxy = development.validateIssuedPreviewUrl(issued);
 
     expect(proxy).toBe(
-      "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+      "http://s-panel.localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
     );
     expect(development.validateIssuedPreviewUrl(proxy)).toBe(proxy);
+  });
+
+  it("upgrades a legacy same-origin development proxy to an isolated origin", () => {
+    const development = new BrowserHostAdapter({
+      controlUrl: "http://localhost:5173/workspace/ws-1",
+    });
+    const legacy =
+      "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345";
+
+    expect(development.validateIssuedPreviewUrl(legacy)).toBe(
+      "http://s-panel.localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+    );
   });
 
   it("opens a validated development proxy at its issued browser origin", async () => {
@@ -60,9 +72,10 @@ describe("BrowserHostAdapter surface presentation boundary", () => {
   });
 
   it.each([
-    "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/app#abcdefghijklmnopqrstuvwxyz012345",
-    "http://localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#short",
-    "http://localhost:5173/__wright-surface/user%3Asecret%40preview.test/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+    "http://s-panel.localhost:5173/__wright-surface/s-panel.localhost%3A5173/app#abcdefghijklmnopqrstuvwxyz012345",
+    "http://s-panel.localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#short",
+    "http://s-panel.localhost:5173/__wright-surface/user%3Asecret%40preview.test/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
+    "http://s-other.localhost:5173/__wright-surface/s-panel.localhost%3A5173/__wright/bootstrap#abcdefghijklmnopqrstuvwxyz012345",
   ])("rejects malformed development preview proxies: %s", (url) => {
     const development = new BrowserHostAdapter({
       controlUrl: "http://localhost:5173/workspace/ws-1",

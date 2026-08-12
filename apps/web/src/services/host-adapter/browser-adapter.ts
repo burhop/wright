@@ -24,7 +24,8 @@ function devSurfaceProxyUrl(value: string, control: URL): string {
   if (!["5173", "5174"].includes(control.port)) return value;
   if (preview.origin === control.origin) return value;
   const path = `/__wright-surface/${encodeURIComponent(preview.host)}${preview.pathname}${preview.search}${preview.hash}`;
-  return new URL(path, control.origin).toString();
+  const proxyOrigin = `${control.protocol}//${preview.hostname}:${control.port}`;
+  return new URL(path, proxyOrigin).toString();
 }
 
 function existingDevSurfaceProxyUrl(
@@ -33,7 +34,12 @@ function existingDevSurfaceProxyUrl(
 ): { readonly proxyUrl: string; readonly issuedUrl: string } | null {
   if (!["5173", "5174"].includes(control.port)) return null;
   const proxy = new URL(value);
-  if (proxy.origin !== control.origin || proxy.search !== "") return null;
+  if (
+    proxy.protocol !== control.protocol ||
+    proxy.port !== control.port ||
+    proxy.search !== ""
+  )
+    return null;
   const match = proxy.pathname.match(
     /^\/__wright-surface\/([^/]+)\/__wright\/bootstrap$/,
   );
@@ -43,7 +49,10 @@ function existingDevSurfaceProxyUrl(
     `${control.protocol}//${upstreamHost}/__wright/bootstrap${proxy.hash}`,
     control.origin,
   );
-  return { proxyUrl: proxy.toString(), issuedUrl };
+  const issued = new URL(issuedUrl);
+  if (proxy.origin !== control.origin && proxy.hostname !== issued.hostname)
+    return null;
+  return { proxyUrl: devSurfaceProxyUrl(issuedUrl, control), issuedUrl };
 }
 
 export class BrowserHostAdapter implements HostAdapter {
