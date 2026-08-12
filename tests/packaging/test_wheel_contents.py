@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_workspace_surface_packages_and_assets_are_declared() -> None:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     wheel = project["tool"]["hatch"]["build"]["targets"]["wheel"]
+    sdist = project["tool"]["hatch"]["build"]["targets"]["sdist"]
 
     assert "src/wright" in wheel["packages"]
     assert "packages/core/src/core" in wheel["packages"]
@@ -26,6 +27,10 @@ def test_workspace_surface_packages_and_assets_are_declared() -> None:
     )
     assert (ROOT / "integrations/rivet/runner/manifest.json").is_file()
     assert (ROOT / "integrations/rivet/runner/src/wright-runner.ts").is_file()
+    assert {
+        "/integrations/rivet/editor/dist",
+        "/integrations/rivet/runner/dist",
+    } <= set(sdist["artifacts"])
 
 
 def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(

@@ -139,6 +139,13 @@ packages = [
 "integrations/rivet/runner/src" = "workspace_service/_rivet/runner/src"
 
 [tool.hatch.build.targets.sdist]
+# Rivet's generated runtime bundles are intentionally gitignored. Mark them as
+# build artifacts so the sdist can rebuild the same self-contained wheel rather
+# than retaining force-include paths whose sources disappeared from the archive.
+artifacts = [
+    "/integrations/rivet/editor/dist",
+    "/integrations/rivet/runner/dist",
+]
 include = [
     "/src/wright",
     "/src/wright_engineering",
