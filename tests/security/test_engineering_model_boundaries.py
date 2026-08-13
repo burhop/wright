@@ -66,8 +66,8 @@ def test_structured_model_events_and_spans_drop_secrets_paths_and_authority() ->
             "content_digest": "a" * 64,
             "api_token": "synthetic-private-value",
             "artifact_path": "C:/Users/private/model.onnx",
-            "runtime_command": "python adapter.py --token=synthetic-private-value",
-            "diagnostic": "token=synthetic-private-value",
+            "runtime_command": "python adapter.py --token=test-secret-value",
+            "diagnostic": "token=test-secret-value",
         },
     )
 

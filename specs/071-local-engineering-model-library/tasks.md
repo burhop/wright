@@ -88,27 +88,27 @@
 
 ### Tests first
 
-- [ ] T041 [P] [US2] Write failing immutable/expiring/principal-bound effect-plan tests for exact network/token/license/runtime requirements, compatibility, prompts, locations, bytes, references, rollback, cleanup, and every invalidation condition in `packages/model_registry/tests/test_planning.py`.
-- [ ] T042 [P] [US2] Write failing bounded HTTPS/source tests for exact revision/files, redirects, auth stripping, content length, streaming ceiling, truncation, digest, timeout, and cancellation in `packages/model_registry/tests/test_http_source.py`.
-- [ ] T043 [P] [US2] Write failing range-resume tests for strong validators, `If-Range`, `206 Content-Range`, changed representation, restart, and zero-byte cache reuse in `packages/model_registry/tests/test_http_resume.py`.
-- [ ] T044 [P] [US2] Write failing offline archive tests for paths, normalization collisions, links, executables, nested archives, undeclared files, expansion, formats, checksums, and license in `packages/model_registry/tests/test_offline_import.py`.
-- [ ] T045 [P] [US2] Write failing lifecycle tests for plan confirmation, acquire/import, verify, install, cancellation, disk exhaustion, concurrency, atomic activation, idempotency, and cleanup in `packages/model_registry/tests/test_install_lifecycle.py`.
-- [ ] T046 [P] [US2] Write failing plan/confirm/operation/events/cancel API tests in `apps/api/tests/test_engineering_model_install_api.py`.
-- [ ] T047 [P] [US2] Write failing plan/progress/cancel/failure/recovery component tests in `apps/web/tests/EngineeringModelInstallFlow.spec.tsx`.
+- [x] T041 [P] [US2] Write failing immutable/expiring/principal-bound effect-plan tests for exact network/token/license/runtime requirements, compatibility, prompts, locations, bytes, references, rollback, cleanup, and every invalidation condition in `packages/model_registry/tests/test_planning.py`.
+- [x] T042 [P] [US2] Write failing bounded HTTPS/source tests for exact revision/files, redirects, auth stripping, content length, streaming ceiling, truncation, digest, timeout, and cancellation in `packages/model_registry/tests/test_http_source.py`.
+- [x] T043 [P] [US2] Write failing range-resume tests for strong validators, `If-Range`, `206 Content-Range`, changed representation, restart, and zero-byte cache reuse in `packages/model_registry/tests/test_http_resume.py`.
+- [x] T044 [P] [US2] Write failing offline archive tests for paths, normalization collisions, links, executables, nested archives, undeclared files, expansion, formats, checksums, and license in `packages/model_registry/tests/test_offline_import.py`.
+- [x] T045 [P] [US2] Write failing lifecycle tests for plan confirmation, acquire/import, verify, install, cancellation, disk exhaustion, concurrency, atomic activation, idempotency, and cleanup in `packages/model_registry/tests/test_install_lifecycle.py`.
+- [x] T046 [P] [US2] Write failing plan/confirm/operation/events/cancel API tests in `apps/api/tests/test_engineering_model_install_api.py`.
+- [x] T047 [P] [US2] Write failing plan/progress/cancel/failure/recovery component tests in `apps/web/tests/EngineeringModelInstallFlow.spec.tsx`.
 
 ### Implementation
 
-- [ ] T048 [US2] Implement canonical expiring effect planning with explicit requirements/compatibility/prompts/rollback/cleanup and digest-bound one-time confirmation in `packages/model_registry/src/model_registry/planning.py`.
-- [ ] T049 [US2] Define injected source/stream/resume/offline-package ports and bounded transfer records in `packages/model_registry/src/model_registry/sources.py`.
-- [ ] T050 [US2] Implement approved HTTPS acquisition, safe redirects, validator-bound resume, byte ceilings, digest verification, and opaque token references in `packages/model_registry/src/model_registry/http_source.py`.
-- [ ] T051 [US2] Implement safe offline package inspection/extraction through the same artifact policy in `packages/model_registry/src/model_registry/offline_source.py`.
-- [ ] T052 [US2] Implement durable acquire/import/verify/install/cancel/cleanup state machines and cache reuse in `packages/model_registry/src/model_registry/lifecycle.py`.
-- [ ] T053 [US2] Compose authenticated plan/confirm/operation/cancel/import use cases in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
-- [ ] T054 [US2] Add plan, operation, progress, failure, and confirmation schemas in `apps/api/src/api/schemas/engineering_models.py`.
-- [ ] T055 [US2] Add thin plan/confirm/operation/SSE/cancel/import routes in `apps/api/src/api/routers/engineering_models.py`.
-- [ ] T056 [US2] Implement typed plan/operation/event/cancel/import methods in `apps/web/src/services/engineering-model-service.ts`.
-- [ ] T057 [US2] Implement effects review, progress, cancellation, blocker, cleanup, and recovery patterns in `apps/web/src/components/models/EngineeringModelInstallFlow.tsx`.
-- [ ] T058 [US2] Integrate install/import actions into `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx` without implicit runtime/source effects.
+- [x] T048 [US2] Implement canonical expiring effect planning with explicit requirements/compatibility/prompts/rollback/cleanup and digest-bound one-time confirmation in `packages/model_registry/src/model_registry/planning.py`.
+- [x] T049 [US2] Define injected source/stream/resume/offline-package ports and bounded transfer records in `packages/model_registry/src/model_registry/sources.py`.
+- [x] T050 [US2] Implement approved HTTPS acquisition, safe redirects, validator-bound resume, byte ceilings, digest verification, and opaque token references in `packages/model_registry/src/model_registry/http_source.py`.
+- [x] T051 [US2] Implement safe offline package inspection/extraction through the same artifact policy in `packages/model_registry/src/model_registry/offline_source.py`.
+- [x] T052 [US2] Implement durable acquire/import/verify/install/cancel/cleanup state machines and cache reuse in `packages/model_registry/src/model_registry/lifecycle.py`.
+- [x] T053 [US2] Compose authenticated plan/confirm/operation/cancel/import use cases in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
+- [x] T054 [US2] Add plan, operation, progress, failure, and confirmation schemas in `apps/api/src/api/schemas/engineering_models.py`.
+- [x] T055 [US2] Add thin plan/confirm/operation/SSE/cancel/import routes in `apps/api/src/api/routers/engineering_models.py`.
+- [x] T056 [US2] Implement typed plan/operation/event/cancel/import methods in `apps/web/src/services/engineering-model-service.ts`.
+- [x] T057 [US2] Implement effects review, progress, cancellation, blocker, cleanup, and recovery patterns in `apps/web/src/components/models/EngineeringModelInstallFlow.tsx`.
+- [x] T058 [US2] Integrate install/import actions into `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx` without implicit runtime/source effects.
 
 **Checkpoint**: Generated packages install atomically from deterministic sources; every negative acquisition/import case fails closed.
 

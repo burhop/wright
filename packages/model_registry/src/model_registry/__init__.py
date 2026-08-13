@@ -29,6 +29,12 @@ from .catalog import (
     ModelCatalogPage as ModelCatalogPage,
     ModelCatalogSnapshot as ModelCatalogSnapshot,
 )
+from .planning import (
+    ModelEffectPlan as ModelEffectPlan,
+    ModelPlanError as ModelPlanError,
+    confirm_effect_plan as confirm_effect_plan,
+    create_effect_plan as create_effect_plan,
+)
 
 
 def schema_root():
@@ -41,6 +47,8 @@ __all__ = [
     "FailureCategory",
     "HostObservation",
     "ModelPackage",
+    "ModelEffectPlan",
+    "ModelPlanError",
     "ModelPolicy",
     "ModelRegistryError",
     "ModelTestVector",
@@ -49,5 +57,7 @@ __all__ = [
     "PolicyState",
     "canonical_digest",
     "canonical_json",
+    "confirm_effect_plan",
+    "create_effect_plan",
     "schema_root",
 ]

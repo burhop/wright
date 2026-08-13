@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 from typing import Callable
 
 from workspace_service import (  # type: ignore[import-untyped]
@@ -14,12 +15,19 @@ from workspace_service import (  # type: ignore[import-untyped]
     RivetGatewayBridge,
     RivetMcpGatewaySettings,
     RivetRunAuthorityService,
+    observe_local_model_host,
 )
 from workspace_service.composition import (
     SurfaceApplication,
     build_surface_application,
 )
-from data_vault import GatewayRepository, RivetMcpRepository
+from data_vault import (
+    GatewayRepository,
+    ModelArtifactStore,
+    ModelRepository,
+    RivetMcpRepository,
+    upgrade_database,
+)
 from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.gateway_adapters import (
     DatabaseGatewayAudit,
@@ -315,7 +323,14 @@ def surface_application() -> SurfaceApplication:
 
 @lru_cache(maxsize=1)
 def engineering_model_application() -> EngineeringModelService:
-    return EngineeringModelService()
+    database = Path(DATABASE_PATH)
+    upgrade_database(database)
+    data_root = database.parent / "wright-data"
+    return EngineeringModelService(
+        repository=ModelRepository(str(database)),
+        artifact_store=ModelArtifactStore(data_root),
+        host_observer=lambda: observe_local_model_host(data_root),
+    )
 
 
 async def close_application_services() -> None:

@@ -12,6 +12,11 @@ from core.rivet_mcp import canonical_json, reject_secret_material
 from .state_store import connect_state_db
 
 _TERMINAL_OPERATION_STATES = {"blocked", "succeeded", "failed", "cancelled"}
+_DECLARATIVE_CREDENTIAL_STATES = {
+    "none",
+    "read_token_reference",
+    "external_action",
+}
 
 
 def _epoch(value: datetime) -> int:
@@ -19,7 +24,23 @@ def _epoch(value: datetime) -> int:
 
 
 def _bounded_json(value: Any, *, maximum: int = 64 * 1024) -> str:
-    reject_secret_material(value)
+    def public_projection(item: Any) -> Any:
+        if isinstance(item, Mapping):
+            result: dict[str, Any] = {}
+            for key, child in item.items():
+                name = str(key)
+                if name == "credential" and child in _DECLARATIVE_CREDENTIAL_STATES:
+                    result["access_requirement_state"] = child
+                elif name == "credential_reference_present" and isinstance(child, bool):
+                    result["opaque_reference_present"] = child
+                else:
+                    result[name] = public_projection(child)
+            return result
+        if isinstance(item, (list, tuple)):
+            return [public_projection(child) for child in item]
+        return item
+
+    reject_secret_material(public_projection(value))
     encoded = canonical_json(value)
     if len(encoded.encode("utf-8")) > maximum:
         label = "1 MiB" if maximum == 1024 * 1024 else "64 KiB"

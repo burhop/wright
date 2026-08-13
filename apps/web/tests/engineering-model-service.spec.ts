@@ -92,4 +92,85 @@ describe("EngineeringModelService", () => {
       }),
     );
   });
+
+  it("uses typed lifecycle, import, cancellation, and SSE endpoints", async () => {
+    const plan = {
+      schema_version: "1.0",
+      plan_id: "plan-1",
+      plan_digest: "a".repeat(64),
+      model_id: "wright-affine-test",
+      variant_id: "json-cpu-f64",
+      state: "confirmable",
+      effects: [],
+      blockers: [],
+      requirements: {
+        network: "none",
+        credential: "none",
+        license_action: "none",
+        runtime_change: "separate_plan_only",
+      },
+      rollback: "Remove inactive state.",
+      cleanup: "Delete staging.",
+      expires_at: "2026-08-13T12:10:00Z",
+    };
+    const operation = {
+      operation_id: "operation-1",
+      state: "running",
+      phase: "acquiring",
+      progress: {
+        completed_items: 0,
+        total_items: 1,
+        completed_bytes: 0,
+        maximum_bytes: 10,
+      },
+      cleanup_state: "not_needed",
+    };
+    mocks.fetch
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(plan), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(plan), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(plan), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(operation), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ...operation, state: "cancelling" }), {
+          status: 200,
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          `id: 1\nevent: operation\ndata: ${JSON.stringify({ sequence: 1, operation })}\n\n`,
+          { status: 200, headers: { "Content-Type": "text/event-stream" } },
+        ),
+      );
+    const service = new EngineeringModelService();
+
+    await service.createPlan("wright-affine-test", "json-cpu-f64");
+    await service.createImportPlan(new Blob(["archive"]));
+    await service.getPlan("plan-1");
+    await service.confirmPlan("plan-1", "a".repeat(64));
+    await service.cancelOperation("operation-1");
+    const events = await service.readOperationEvents("operation-1", 0);
+
+    expect(mocks.fetch.mock.calls[0][1]).toEqual(
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          operation_kind: "install",
+          model_id: "wright-affine-test",
+          variant_id: "json-cpu-f64",
+        }),
+      }),
+    );
+    expect(mocks.fetch.mock.calls[1][1].body).toBeInstanceOf(FormData);
+    expect(mocks.fetch.mock.calls[4][0]).toContain("operation-1/cancel");
+    expect(mocks.fetch.mock.calls[5][1].headers["Last-Event-ID"]).toBe("0");
+    expect(events).toEqual([{ sequence: 1, operation }]);
+  });
 });

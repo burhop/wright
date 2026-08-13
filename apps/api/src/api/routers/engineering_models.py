@@ -2,7 +2,20 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+import json
+
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Header,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    status,
+)
+from fastapi.responses import StreamingResponse
 from tool_registry.model_library_port import (
     EngineeringModelApplicationPort,
     EngineeringModelPortError,
@@ -11,6 +24,11 @@ from tool_registry.model_library_port import (
 from api.schemas.engineering_models import (
     EngineeringModelListResponse,
     EngineeringModelResponse,
+    ModelOperationEventResponse,
+    ModelOperationResponse,
+    ModelPlanConfirmationRequest,
+    ModelPlanRequest,
+    ModelPlanResponse,
 )
 
 router = APIRouter()
@@ -39,7 +57,20 @@ def get_engineering_model_application(
 
 
 def _port_error(error: EngineeringModelPortError) -> HTTPException:
-    status_code = 404 if error.category == "model_not_found" else 400
+    if error.category in {"model_not_found", "plan_not_found", "operation_not_found"}:
+        status_code = 404
+    elif error.category in {
+        "plan_invalidated",
+        "plan_blocked",
+        "model_not_installable",
+    }:
+        status_code = 409
+    elif error.category in {"insufficient_disk", "size_exceeded"}:
+        status_code = 413
+    elif error.category in {"source_unavailable", "model_lifecycle_unavailable"}:
+        status_code = 503
+    else:
+        status_code = 400
     return HTTPException(
         status_code=status_code,
         detail={
@@ -48,6 +79,14 @@ def _port_error(error: EngineeringModelPortError) -> HTTPException:
             "recovery": error.recovery,
         },
     )
+
+
+def _request_actor(request: Request) -> str:
+    return str(getattr(request.state, "principal_id", "local-admin"))
+
+
+def _request_trace(request: Request) -> str:
+    return str(getattr(request.state, "trace_id", "no-active-span"))
 
 
 @router.get(
@@ -113,6 +152,187 @@ def get_engineering_model(
                 "recovery": "Choose a model from the active offline catalog snapshot.",
             },
         ) from error
+
+
+@router.post(
+    "/plans",
+    response_model=ModelPlanResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def create_engineering_model_plan(
+    body: ModelPlanRequest,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.create_plan(
+            **body.model_dump(), principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/imports",
+    response_model=ModelPlanResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+async def create_engineering_model_import_plan(
+    request: Request,
+    package: UploadFile = File(...),
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    maximum = 256 * 1024 * 1024
+    content = bytearray()
+    while chunk := await package.read(1024 * 1024):
+        content.extend(chunk)
+        if len(content) > maximum:
+            raise HTTPException(
+                status_code=413,
+                detail={
+                    "category": "size_exceeded",
+                    "message": "The offline package exceeds the 256 MiB upload ceiling.",
+                    "recovery": "Choose a smaller reviewed package.",
+                },
+            )
+    try:
+        return application.create_import_plan(
+            archive=bytes(content), principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.get(
+    "/plans/{plan_id}",
+    response_model=ModelPlanResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def get_engineering_model_plan(
+    plan_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.get_plan(plan_id, principal_id=_request_actor(request))
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/plans/{plan_id}/confirm",
+    response_model=ModelOperationResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def confirm_engineering_model_plan(
+    plan_id: str,
+    body: ModelPlanConfirmationRequest,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.confirm_plan(
+            plan_id,
+            principal_id=_request_actor(request),
+            plan_digest=body.plan_digest,
+            trace_id=_request_trace(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.get(
+    "/operations/{operation_id}",
+    response_model=ModelOperationResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def get_engineering_model_operation(
+    operation_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.get_operation(
+            operation_id, principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/operations/{operation_id}/cancel",
+    response_model=ModelOperationResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def cancel_engineering_model_operation(
+    operation_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.cancel_operation(
+            operation_id, principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.get(
+    "/operations/{operation_id}/events",
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def engineering_model_operation_events(
+    operation_id: str,
+    request: Request,
+    last_event_id: str | None = Header(default=None, alias="Last-Event-ID"),
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        after = int(last_event_id or 0)
+        if not 0 <= after <= 1000:
+            raise ValueError
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail="Invalid event cursor") from error
+    try:
+        events = application.operation_events(
+            operation_id, principal_id=_request_actor(request), after=after
+        )
+        bounded = tuple(
+            ModelOperationEventResponse.model_validate(item).model_dump(
+                mode="json", exclude_none=True
+            )
+            for item in events[:1000]
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+    def stream():
+        for event in bounded:
+            yield (
+                f"id: {event['sequence']}\n"
+                "event: operation\n"
+                f"data: {json.dumps(event, separators=(',', ':'))}\n\n"
+            )
+
+    return StreamingResponse(
+        stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+    )
 
 
 __all__ = ["get_engineering_model_application", "router"]

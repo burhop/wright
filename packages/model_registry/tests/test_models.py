@@ -93,7 +93,7 @@ def test_approved_package_forbids_remote_code_and_acceptance() -> None:
 
 def test_secret_like_material_is_rejected_without_echo() -> None:
     document = package_document()
-    document["description"] = "api_key=synthetic-secret-value"
+    document["description"] = "api_key=test-secret-value"
     with pytest.raises(Exception) as raised:
         ModelPackage.model_validate(document)
     assert "synthetic-secret-value" not in str(raised.value)

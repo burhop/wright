@@ -9,6 +9,7 @@ import {
   ModelReadinessBadge,
   ModelResourceSummary,
 } from "../models/ModelTrustPrimitives";
+import { EngineeringModelInstallFlow } from "../models/EngineeringModelInstallFlow";
 
 function DetailPanel({
   model,
@@ -97,6 +98,14 @@ function DetailPanel({
                 {variant.format} · {variant.accelerator ?? "unspecified"}
               </p>
               <ModelResourceSummary variant={variant} />
+              {model.readiness === "approved" &&
+              model.blockers.length === 0 &&
+              variant.compatibility?.state !== "incompatible" ? (
+                <EngineeringModelInstallFlow
+                  modelId={model.model_id}
+                  variantId={variant.variant_id}
+                />
+              ) : null}
             </article>
           ))
         ) : (

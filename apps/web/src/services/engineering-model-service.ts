@@ -89,6 +89,59 @@ export interface EngineeringModelCatalogQuery {
   limit?: number;
 }
 
+export interface EngineeringModelEffect {
+  kind: string;
+  description: string;
+  source?: string;
+  safe_location?: string;
+  exact_bytes?: number;
+  maximum_bytes: number;
+  reversible: boolean;
+}
+
+export interface EngineeringModelPlan {
+  schema_version: "1.0";
+  plan_id: string;
+  plan_digest: string;
+  model_id: string;
+  variant_id: string;
+  state: string;
+  effects: EngineeringModelEffect[];
+  blockers: EngineeringModelBlocker[];
+  requirements: {
+    network: string;
+    credential: string;
+    license_action: string;
+    runtime_change: string;
+  };
+  rollback: string;
+  cleanup: string;
+  expires_at: string;
+}
+
+export interface EngineeringModelProgress {
+  completed_items: number;
+  total_items: number;
+  completed_bytes: number;
+  maximum_bytes: number;
+  message?: string;
+}
+
+export interface EngineeringModelOperation {
+  operation_id: string;
+  state: string;
+  phase: string;
+  progress: EngineeringModelProgress;
+  cleanup_state: string;
+  result?: Record<string, unknown> | null;
+  failure?: EngineeringModelBlocker | null;
+}
+
+export interface EngineeringModelOperationEvent {
+  sequence: number;
+  operation: EngineeringModelOperation;
+}
+
 export class EngineeringModelServiceError extends Error {
   readonly category: string;
   readonly recovery: string;
@@ -148,6 +201,122 @@ export class EngineeringModelService {
       ),
     );
     return readResponse<EngineeringModelView>(response);
+  }
+
+  async createPlan(
+    modelId: string,
+    variantId: string,
+    operationKind: "install" | "import" = "install",
+  ): Promise<EngineeringModelPlan> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl("/api/v1/engineering-models/plans"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          operation_kind: operationKind,
+          model_id: modelId,
+          variant_id: variantId,
+        }),
+      },
+    );
+    return readResponse<EngineeringModelPlan>(response);
+  }
+
+  async createImportPlan(
+    archive: Blob,
+    filename = "model.wright-model.zip",
+  ): Promise<EngineeringModelPlan> {
+    const body = new FormData();
+    body.append("package", archive, filename);
+    const response = await hostAdapter.fetch(
+      this.apiUrl("/api/v1/engineering-models/imports"),
+      { method: "POST", body },
+    );
+    return readResponse<EngineeringModelPlan>(response);
+  }
+
+  async getPlan(planId: string): Promise<EngineeringModelPlan> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/plans/${encodeURIComponent(planId)}`,
+      ),
+    );
+    return readResponse<EngineeringModelPlan>(response);
+  }
+
+  async confirmPlan(
+    planId: string,
+    planDigest: string,
+  ): Promise<EngineeringModelOperation> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/plans/${encodeURIComponent(planId)}/confirm`,
+      ),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan_digest: planDigest }),
+      },
+    );
+    return readResponse<EngineeringModelOperation>(response);
+  }
+
+  async getOperation(operationId: string): Promise<EngineeringModelOperation> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/operations/${encodeURIComponent(operationId)}`,
+      ),
+    );
+    return readResponse<EngineeringModelOperation>(response);
+  }
+
+  async cancelOperation(
+    operationId: string,
+  ): Promise<EngineeringModelOperation> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/operations/${encodeURIComponent(operationId)}/cancel`,
+      ),
+      { method: "POST" },
+    );
+    return readResponse<EngineeringModelOperation>(response);
+  }
+
+  async readOperationEvents(
+    operationId: string,
+    after = 0,
+  ): Promise<EngineeringModelOperationEvent[]> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/operations/${encodeURIComponent(operationId)}/events`,
+      ),
+      {
+        headers: {
+          Accept: "text/event-stream",
+          "Last-Event-ID": String(after),
+        },
+      },
+    );
+    if (!response.ok)
+      return readResponse<EngineeringModelOperationEvent[]>(response);
+    const text = await response.text();
+    const events = text
+      .split(/\r?\n\r?\n/)
+      .filter(Boolean)
+      .map((block) => {
+        const data = block
+          .split(/\r?\n/)
+          .filter((line) => line.startsWith("data:"))
+          .map((line) => line.slice(5).trimStart())
+          .join("\n");
+        if (!data) throw new Error("Engineering model event data is missing.");
+        return JSON.parse(data) as EngineeringModelOperationEvent;
+      });
+    if (events.length > 1000) {
+      throw new Error("Engineering model event history exceeds its bound.");
+    }
+    return events;
   }
 }
 
