@@ -171,19 +171,19 @@
 
 ### Tests for User Story 5
 
-- [ ] T068 [P] [US5] Add manifest-draft immutable identity, exactly-once terminal finalization, orphaned-restart interruption, canonical digest, truncation, authorized artifact reference, and secret-pattern tests in `packages/data_vault/tests/test_rivet_run_manifest.py`
-- [ ] T069 [P] [US5] Add correlated event ordering, denied-before-child, stale-diff, and recovery projection tests in `packages/workspace_service/tests/test_rivet_run_evidence.py`
-- [ ] T070 [P] [US5] Add run-manifest/history/export API bounds and RBAC tests in `apps/api/tests/test_rivet_mcp_run_api.py`
-- [ ] T071 [P] [US5] Add complete timeline, stale comparison, artifact, redaction, responsive, and accessibility component tests in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
-- [ ] T072 [P] [US5] Complete mocked success/denial/restart/recovery browser journeys with secret scans in `tests/ui-integration/rivet-mcp-gateway.spec.ts`
+- [x] T068 [P] [US5] Add manifest-draft immutable identity, exactly-once terminal finalization, orphaned-restart interruption, canonical digest, truncation, authorized artifact reference, and secret-pattern tests in `packages/data_vault/tests/test_rivet_run_manifest.py`
+- [x] T069 [P] [US5] Add correlated event ordering, denied-before-child, stale-diff, and recovery projection tests in `packages/workspace_service/tests/test_rivet_run_evidence.py`
+- [x] T070 [P] [US5] Add run-manifest/history/export API bounds and RBAC tests in `apps/api/tests/test_rivet_mcp_run_api.py`
+- [x] T071 [P] [US5] Add complete timeline, stale comparison, artifact, redaction, responsive, and accessibility component tests in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
+- [x] T072 [P] [US5] Complete mocked success/denial/restart/recovery browser journeys with secret scans in `tests/ui-integration/rivet-mcp-gateway.spec.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T073 [US5] Finalize the canonical Run Manifest exactly once from its immutable-identity draft and complete append-only call/event/approval/authorized-artifact persistence with bounded projections in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
-- [ ] T074 [US5] Implement reproducibility comparison and actionable stale/recovery summaries in `packages/workspace_service/src/workspace_service/rivet_evidence.py`
-- [ ] T075 [US5] Add authenticated manifest/history/export orchestration and thin API routes in `packages/workspace_service/src/workspace_service/workflow_operations.py` and `apps/api/src/api/routers/workspace.py`
-- [ ] T076 [US5] Implement the accessible correlated run timeline, artifact references, stale comparison, residue, and recovery UI in `apps/web/src/components/chat/RivetWorkflowRun.tsx`
-- [ ] T077 [US5] Run success/denial/restart evidence acceptance and record 100% node/call/approval/artifact accounting plus zero secret findings in `docs/engineering-capability-program-progress.md`
+- [x] T073 [US5] Finalize the canonical Run Manifest exactly once from its immutable-identity draft and complete append-only call/event/approval/authorized-artifact persistence with bounded projections in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
+- [x] T074 [US5] Implement reproducibility comparison and actionable stale/recovery summaries in `packages/workspace_service/src/workspace_service/rivet_evidence.py`
+- [x] T075 [US5] Add authenticated manifest/history/export orchestration and thin API routes in `packages/workspace_service/src/workspace_service/workflow_operations.py` and `apps/api/src/api/routers/workspace.py`
+- [x] T076 [US5] Implement the accessible correlated run timeline, artifact references, stale comparison, residue, and recovery UI in `apps/web/src/components/chat/RivetWorkflowRun.tsx`
+- [x] T077 [US5] Run success/denial/restart evidence acceptance and record 100% node/call/approval/artifact accounting plus zero secret findings in `docs/engineering-capability-program-progress.md`
 
 **Checkpoint**: Durable evidence is complete, bounded, redacted, correlated, reproducible, and unable to resume an old authority.
 

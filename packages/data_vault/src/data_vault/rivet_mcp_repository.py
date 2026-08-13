@@ -69,6 +69,9 @@ def _draft_document(draft: RunManifestDraft) -> dict[str, Any]:
         "cancellation_acknowledged": draft.cancellation_acknowledged,
         "residue_possible": draft.residue_possible,
         "recovery_code": draft.recovery_code,
+        "runtime_identity": dict(draft.runtime_identity),
+        "authority_expires_at": draft.authority_expires_at,
+        "bindings": tuple(dict(item) for item in draft.bindings),
     }
 
 
@@ -181,6 +184,18 @@ class RivetMcpRepository:
         document = _draft_document(draft)
         identity_digest = canonical_digest(document)
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            existing = connection.execute(
+                """SELECT run_id, identity_digest
+                FROM workspace_workflow_run_manifests WHERE manifest_id=?""",
+                (manifest_id,),
+            ).fetchone()
+            if existing is not None:
+                if (
+                    str(existing["run_id"]) != draft.run_id
+                    or str(existing["identity_digest"]) != identity_digest
+                ):
+                    raise ValueError("Run manifest draft identity is immutable")
+                return
             connection.execute(
                 """INSERT INTO workspace_workflow_run_manifests
                 (manifest_id, run_id, state, identity_digest, draft_json,
@@ -335,6 +350,13 @@ class RivetMcpRepository:
                     if document.get("recovery_code")
                     else None
                 ),
+                runtime_identity=dict(document.get("runtime_identity") or {}),
+                authority_expires_at=(
+                    _datetime(str(document["authority_expires_at"]))
+                    if document.get("authority_expires_at")
+                    else None
+                ),
+                bindings=tuple(dict(item) for item in document.get("bindings") or ()),
             )
             manifest = draft.finalize(
                 terminal_state="failed",

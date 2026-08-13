@@ -136,6 +136,28 @@ export interface RivetWorkflowRun {
   manifest?: Record<string, unknown> | null;
 }
 
+export interface RivetRunEvidence {
+  schema_version: 1;
+  run_id: string;
+  manifest: Record<string, unknown>;
+  bindings: Array<Record<string, unknown>>;
+  child_calls: Array<Record<string, unknown>>;
+  approvals: Array<Record<string, unknown>>;
+  artifacts: Array<Record<string, unknown>>;
+  timeline: Array<Record<string, unknown>>;
+  reproducibility: {
+    reproducible: boolean;
+    differences: Array<{
+      code: string;
+      recorded: string;
+      current: string;
+      recovery_action: string;
+    }>;
+    summary: string;
+  };
+  accounting: Record<string, unknown>;
+}
+
 export interface RivetCallApproval {
   approval_id: string;
   run_id: string;
@@ -597,6 +619,37 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Workflow history is unavailable");
     return (await response.json()).events || [];
+  }
+
+  async getRivetRunEvidence(
+    sessionId: string,
+    runId: string,
+  ): Promise<RivetRunEvidence> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/evidence?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Run evidence is unavailable");
+    return response.json();
+  }
+
+  async exportRivetRunEvidence(
+    sessionId: string,
+    runId: string,
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/evidence/export?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Run evidence export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-rivet-run-${runId}-evidence.json`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
 
   async getRivetCallApprovals(

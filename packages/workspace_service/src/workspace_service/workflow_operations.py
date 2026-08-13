@@ -25,6 +25,7 @@ from .rivet_capabilities import (
     RivetCapabilityService,
     RivetDiscoverySnapshot,
 )
+from .rivet_evidence import build_run_evidence
 from .rivet_approvals import RivetApprovalService
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_validation import (
@@ -700,3 +701,44 @@ class WorkspaceWorkflowOperations:
     ) -> dict | None:
         self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
         return self._runner.manifest(run_id)
+
+    def run_evidence(self, *, workspace_id: str, session_id: str, run_id: str) -> dict:
+        run = self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
+        if self._mcp_repository is None:
+            raise WorkflowOperationsError(
+                "RIVET_MCP_EVIDENCE_UNAVAILABLE", "Run evidence is unavailable"
+            )
+        manifest = self._runner.manifest(run_id)
+        if manifest is None:
+            raise WorkflowOperationsError(
+                "RIVET_MCP_EVIDENCE_UNAVAILABLE", "Run evidence is unavailable"
+            )
+        child_calls, approvals = self._mcp_repository.run_evidence_documents(run_id)
+        review = self._reviews.get(workspace_id, run.workflow_id)
+        current: dict[str, object] = {
+            "workflow_digest": review.workflow_digest if review else None,
+            "review_digest": review.review_digest if review else None,
+            "binding_set_digest": review.binding_set_digest if review else None,
+            "policy_snapshot_digest": (
+                review.policy_snapshot_digest if review else None
+            ),
+        }
+        runtime = self._runner.runtime_identity()
+        if runtime is not None:
+            current["runner_sha256"] = runtime["runner_sha256"]
+        events = tuple(
+            {
+                "sequence": event.sequence,
+                "kind": event.kind,
+                "payload": dict(event.payload),
+                "occurred_at": event.occurred_at,
+            }
+            for event in self._runner.events(run_id)
+        )
+        return build_run_evidence(
+            manifest=manifest,
+            child_calls=child_calls,
+            approvals=approvals,
+            events=events,
+            current=current,
+        )

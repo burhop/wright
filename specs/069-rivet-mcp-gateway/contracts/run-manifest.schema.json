@@ -112,6 +112,7 @@
     "completed_at": { "$ref": "#/$defs/timestamp" },
     "terminal_state": { "enum": ["cancelled", "succeeded", "failed"] },
     "reason_code": { "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "type": "null" }] },
+    "recovery_code": { "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "type": "null" }] },
     "cancellation": {
       "oneOf": [
         { "type": "null" },

@@ -18,6 +18,8 @@ vi.mock("../../services/workspace-service", async (loadOriginal) => {
       getRivetWorkflowRun: vi.fn(),
       getRivetCallApprovals: vi.fn(),
       getRivetWorkflowHistory: vi.fn(),
+      getRivetRunEvidence: vi.fn(),
+      exportRivetRunEvidence: vi.fn(),
       decideRivetCallApproval: vi.fn(),
     },
   };
@@ -68,6 +70,10 @@ describe("RivetWorkflowRun", () => {
         payload: { phase: "mcp-approval-required" },
       },
     ]);
+    vi.mocked(workspaceService.getRivetRunEvidence).mockRejectedValue(
+      new Error("Evidence is not terminal yet"),
+    );
+    vi.mocked(workspaceService.exportRivetRunEvidence).mockResolvedValue();
     vi.mocked(workspaceService.decideRivetCallApproval).mockResolvedValue({
       ...approval,
       state: "approved",
@@ -96,6 +102,11 @@ describe("RivetWorkflowRun", () => {
     expect(
       screen.getByRole("button", { name: "Review pending call" }),
     ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Review pending call" }),
+      ).toHaveFocus(),
+    );
   });
 
   it("sends the server-issued digest and one explicit approval decision", async () => {
@@ -130,9 +141,12 @@ describe("RivetWorkflowRun", () => {
       manifest: {
         terminal_state: "cancelled",
         manifest_digest: "f".repeat(64),
-        cancellation_acknowledged: false,
-        residue_possible: true,
-        recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+        cancellation: {
+          authority_revoked: true,
+          child_acknowledged: false,
+          residue_state: "possible",
+          recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+        },
       },
     });
     const { rerender } = render(
@@ -143,9 +157,12 @@ describe("RivetWorkflowRun", () => {
           manifest: {
             terminal_state: "cancelled",
             manifest_digest: "f".repeat(64),
-            cancellation_acknowledged: false,
-            residue_possible: true,
-            recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+            cancellation: {
+              authority_revoked: true,
+              child_acknowledged: false,
+              residue_state: "possible",
+              recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+            },
           },
         }}
         onRunUpdate={vi.fn()}
@@ -177,5 +194,93 @@ describe("RivetWorkflowRun", () => {
     expect(
       screen.getByText("Cancellation was acknowledged and cleanup completed."),
     ).toBeInTheDocument();
+  });
+
+  it("shows complete durable accounting, stale recovery, artifacts, and export", async () => {
+    const user = userEvent.setup();
+    vi.mocked(workspaceService.getRivetCallApprovals).mockResolvedValue([]);
+    vi.mocked(workspaceService.getRivetRunEvidence).mockResolvedValue({
+      schema_version: 1,
+      run_id: "run-1",
+      manifest: {
+        terminal_state: "succeeded",
+        manifest_digest: "f".repeat(64),
+        cancellation: null,
+      },
+      bindings: [
+        { node_id: "node-alpha", qualified_tool_name: "alpha__inspect" },
+      ],
+      child_calls: [{ call_id: "call-1", state: "succeeded" }],
+      approvals: [{ approval_id: "approval-1", state: "consumed" }],
+      artifacts: [{ artifact_id: "mesh.vtk", label: "Validated mesh" }],
+      timeline: [
+        {
+          kind: "binding",
+          node_id: "node-alpha",
+          qualified_tool_name: "alpha__inspect",
+          state: "reviewed",
+        },
+        {
+          kind: "child-call",
+          call_id: "call-1",
+          qualified_tool_name: "alpha__inspect",
+          state: "succeeded",
+        },
+      ],
+      reproducibility: {
+        reproducible: false,
+        summary: "A new review is required before reproducing this run.",
+        differences: [
+          {
+            code: "tool_schema_changed",
+            recorded: "a".repeat(64),
+            current: "b".repeat(64),
+            recovery_action: "review_current_bindings",
+          },
+        ],
+      },
+      accounting: {
+        binding_count: 1,
+        child_call_count: 1,
+        approval_count: 1,
+        artifact_count: 1,
+        redaction_count: 1,
+        truncated: false,
+      },
+    });
+    render(
+      <RivetWorkflowRun
+        sessionId="session-1"
+        run={{
+          ...run,
+          manifest: {
+            terminal_state: "succeeded",
+            manifest_digest: "f".repeat(64),
+          },
+        }}
+        onRunUpdate={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    expect(await screen.findByText(/1 bindings/)).toHaveTextContent(
+      "1 child calls",
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("new review");
+    expect(screen.getByText(/tool_schema_changed/)).toHaveTextContent(
+      "review_current_bindings",
+    );
+    expect(screen.getByText("Validated mesh")).toBeInTheDocument();
+    expect(screen.getByTestId("rivet-run-timeline")).toHaveTextContent(
+      "alpha__inspect",
+    );
+    expect(document.body.textContent).not.toContain("Bearer");
+    await user.click(
+      screen.getByRole("button", { name: "Export evidence JSON" }),
+    );
+    expect(workspaceService.exportRivetRunEvidence).toHaveBeenCalledWith(
+      "session-1",
+      "run-1",
+    );
   });
 });

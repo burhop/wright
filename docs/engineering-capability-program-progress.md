@@ -244,9 +244,18 @@ The documentation-complete exact tree was gated again before publication. The fe
 - Added opt-in live BREP and available-host probes. Both are skipped by default and require explicit environment authorization plus an already installed/configured application; no proprietary app, license acceptance, credential, or installation entered the normal gate.
 - Focused evidence: 24 deterministic Python lifecycle, Gateway, BREP API, cancellation, and Run Manifest checks passed; two live probes skipped as designed. Ruff and `git diff --check` passed.
 
+### Implementation checkpoint 6 - durable diagnosis and reproducibility
+
+- Reconciled the durable Run Manifest implementation with its published JSON Schema: the exact workflow/graph, pinned runner protocol/version/hash/source revision, reviewed binding summaries, policy identity, non-reusable authority identity/expiry, bounded call/approval/artifact references, terminal reason, cancellation/residue, redaction/truncation facts, trace identity, and canonical manifest digest now form one schema-valid immutable document.
+- Draft creation is idempotent only for the same immutable identity; conflicting reuse fails. Finalization remains exactly once, caps bindings/calls/approvals/artifacts to contract limits with explicit truncation, and startup terminalizes orphaned drafts as `runner_restarted` without recreating authority.
+- Historical runs and ordered events are restored from SQLite after process restart. A bounded evidence builder correlates bindings, run events, exact approvals, child receipts, trace/request identities, authorized artifacts, denials before child receipt, and stable recovery codes while removing internal Gateway sessions/authority linkage and re-redacting safe summaries.
+- Reproducibility comparison reports exact workflow, review, binding-set, policy, runner-artifact, and current validation differences. Every difference carries a stable review/verification recovery action; no silent rebinding occurs.
+- Added workspace-scoped manifest/evidence/export APIs with 2 MiB export enforcement, `no-store`, download-safe JSON, and cross-session concealment. The responsive UI shows up to 50 correlated timeline entries, complete accounting, artifact labels, stale differences, recovery guidance, residue truth, and keyboard-focus-safe exact approvals.
+- Acceptance evidence: 24 focused Python manifest/persistence/evidence/runner/bridge/API checks passed; four component tests and the production web build passed; four mocked Chromium journeys covered exact review, successful evidence/export, denied-before-child, restart/stale recovery, narrow layout, serious/critical accessibility, and browser text secret scans. All manifest-referenced calls and approvals in the fixtures were accounted for, all artifact references were authorized IDs/digests, and zero reusable authority or secret values were found.
+
 ### Next checkpoint
 
-Implement User Story 5: bounded durable run timelines, redacted evidence export, and reproducibility comparison across restart and changed current state.
+Complete cross-cutting performance, security, compatibility, packaging, system-smoke, documentation, quickstart, and exact-tree merge-gate work (T078-T089).
 
 ## Program guardrails
 

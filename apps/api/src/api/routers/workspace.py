@@ -7,6 +7,7 @@ All handlers are decorated with @traced for OTel span creation.
 """
 
 import asyncio
+import json
 import time
 
 import structlog
@@ -117,6 +118,7 @@ from api.schemas.workspace import (
     RivetMcpBindingResponse,
     WorkflowOperationsListResponse,
     WorkflowRunHistoryResponse,
+    WorkflowRunEvidenceResponse,
     WorkflowEditorAvailabilityResponse,
     WorkflowEditorSurfaceRequest,
     WorkflowEditorSurfaceResponse,
@@ -1205,6 +1207,74 @@ async def workflow_run_history_endpoint(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/manifest", response_model=WorkflowRunEvidenceResponse
+)
+@traced("workspace.workflows.manifest")
+async def workflow_run_manifest_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
+        )
+    try:
+        return service.workflow_operations.run_evidence(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+    except (WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/evidence", response_model=WorkflowRunEvidenceResponse
+)
+@traced("workspace.workflows.evidence")
+async def workflow_run_evidence_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    return await workflow_run_manifest_endpoint(run_id, session_id, service)
+
+
+@router.get("/workflows/runs/{run_id}/evidence/export")
+@traced("workspace.workflows.evidence.export")
+async def workflow_run_evidence_export_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    evidence = await workflow_run_manifest_endpoint(run_id, session_id, service)
+    document = (
+        evidence.model_dump(mode="json")
+        if isinstance(evidence, WorkflowRunEvidenceResponse)
+        else evidence
+    )
+    encoded = json.dumps(document, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
+    return Response(
+        content=encoded,
+        media_type="application/json",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                f'attachment; filename="wright-rivet-run-{run_id}-evidence.json"'
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
 
 
 @router.get("/workflows/{slug}/graph", response_model=WorkflowGraphResponse)

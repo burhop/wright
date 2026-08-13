@@ -1,10 +1,168 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { mockWorkspaceShell } from "./workspace-surfaces/presentation-fixture";
 
 const digest = "d".repeat(64);
 const bindingSetDigest = "8".repeat(64);
+
+type EvidenceScenario = "success" | "denied" | "restarted";
+
+async function mockEvidenceJourney(page: Page, scenario: EvidenceScenario) {
+  await page.route("**/api/auth/session/status", (route) =>
+    route.fulfill({ json: { auth_required: false, authenticated: true } }),
+  );
+  await mockWorkspaceShell(page, []);
+  const runId = `run-${scenario}`;
+  const state = scenario === "success" ? "succeeded" : "failed";
+  const reason =
+    scenario === "denied"
+      ? "RIVET_CALL_APPROVAL_DENIED"
+      : scenario === "restarted"
+        ? "runner_restarted"
+        : null;
+  const workflow = {
+    workflow_id: "workflow-evidence",
+    slug: "evidence-flow",
+    revision: 1,
+    etag: digest,
+    review_state: "approved",
+    reviewer: "local-user",
+    reviewed_at: 1,
+    workflow_digest: digest,
+    graph_id: "graph-a",
+    binding_set_id: "binding-set-a",
+    binding_set_digest: bindingSetDigest,
+    policy_snapshot_digest: "f".repeat(64),
+    review_digest: "9".repeat(64),
+    stale_reasons: [],
+  };
+  const run = {
+    run_id: runId,
+    workflow_id: "workflow-evidence",
+    revision: 1,
+    digest,
+    graph: "Main",
+    generation: 1,
+    state,
+    reason,
+    outputs: scenario === "success" ? { inspected: true } : null,
+    duration_ms: 12,
+    output_truncated: false,
+    manifest: {
+      terminal_state: state,
+      reason_code: reason,
+      manifest_digest: "7".repeat(64),
+    },
+  };
+  const denied = scenario === "denied";
+  const restarted = scenario === "restarted";
+  const evidence = {
+    schema_version: 1,
+    run_id: runId,
+    manifest: run.manifest,
+    bindings: [
+      {
+        node_id: "node-alpha",
+        qualified_tool_name: "alpha__inspect",
+        binding_digest: "6".repeat(64),
+      },
+    ],
+    child_calls: denied
+      ? []
+      : [{ call_id: "call-1", state: state, child_received: true }],
+    approvals: denied ? [{ approval_id: "approval-1", state: "denied" }] : [],
+    artifacts:
+      scenario === "success"
+        ? [{ artifact_id: "mesh.vtk", label: "Validated mesh" }]
+        : [],
+    timeline: [
+      {
+        kind: "binding",
+        node_id: "node-alpha",
+        qualified_tool_name: "alpha__inspect",
+        state: "reviewed",
+      },
+      ...(denied
+        ? [{ kind: "approval", state: "denied", request_id: "request-1" }]
+        : [{ kind: "child-call", state, call_id: "call-1" }]),
+    ],
+    reproducibility: {
+      reproducible: !restarted,
+      summary: restarted
+        ? "A new review is required before reproducing this run."
+        : "Recorded identities match the current reviewed configuration.",
+      differences: restarted
+        ? [
+            {
+              code: "binding_set_changed",
+              recorded: bindingSetDigest,
+              current: "5".repeat(64),
+              recovery_action: "review_current_bindings",
+            },
+          ]
+        : [],
+    },
+    accounting: {
+      binding_count: 1,
+      child_call_count: denied ? 0 : 1,
+      approval_count: denied ? 1 : 0,
+      artifact_count: scenario === "success" ? 1 : 0,
+      denied_before_child_count: denied ? 1 : 0,
+      redaction_count: 1,
+      truncated: false,
+    },
+  };
+  await page.route("**/api/workspace/workflow-templates", (route) =>
+    route.fulfill({ json: { templates: [] } }),
+  );
+  await page.route("**/api/workspace/workflows?session_id=*", (route) =>
+    route.fulfill({ json: { workflows: [workflow] } }),
+  );
+  await page.route("**/api/workspace/workflows/evidence-flow/runs", (route) =>
+    route.fulfill({ json: run }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/approvals?*`,
+    (route) => route.fulfill({ json: { approvals: evidence.approvals } }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/history?*`,
+    (route) =>
+      route.fulfill({
+        json: {
+          run_id: runId,
+          events: [
+            { sequence: 1, kind: "started", payload: {} },
+            { sequence: 2, kind: state, payload: { code: reason } },
+          ],
+        },
+      }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/evidence/export?*`,
+    (route) =>
+      route.fulfill({
+        contentType: "application/json",
+        headers: {
+          "Content-Disposition": `attachment; filename="${runId}.json"`,
+        },
+        body: JSON.stringify(evidence),
+      }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/evidence?*`,
+    (route) => route.fulfill({ json: evidence }),
+  );
+  await page.route(`**/api/workspace/workflows/runs/${runId}?*`, (route) =>
+    route.fulfill({ json: run }),
+  );
+  await page.goto("/workspace/ws-1");
+  await page.getByTestId("activity-bar-workflows-btn").click();
+  await page.getByTestId("rivet-workflow-run-evidence-flow").click();
+  await expect(page.getByTestId(`rivet-run-${runId}`)).toBeVisible();
+  return { runId };
+}
 
 test("reviews an exact namespaced MCP binding without starting a child", async ({
   page,
@@ -158,4 +316,56 @@ test("reviews an exact namespaced MCP binding without starting a child", async (
     binding_set_digest: bindingSetDigest,
   });
   expect(childReceipts).toBe(0);
+});
+
+test("exports complete successful run evidence without secret text", async ({
+  page,
+}) => {
+  await mockEvidenceJourney(page, "success");
+  await page.getByText("Run evidence", { exact: true }).click();
+  await expect(page.getByText(/1 bindings/)).toContainText("1 child calls");
+  await expect(page.getByText("Validated mesh")).toBeVisible();
+  await expect(page.getByRole("status")).toContainText(
+    "Recorded identities match",
+  );
+  await expect(page.getByTestId("rivet-run-timeline")).toContainText(
+    "alpha__inspect",
+  );
+  await page.getByRole("button", { name: "Export evidence JSON" }).click();
+  await expect(page.locator("body")).not.toContainText("super-secret");
+
+  const accessibility = await new AxeBuilder({ page })
+    .include('[data-testid="rivet-run-evidence"]')
+    .analyze();
+  expect(
+    accessibility.violations.filter((violation) =>
+      ["serious", "critical"].includes(violation.impact || ""),
+    ),
+  ).toEqual([]);
+});
+
+test("attributes a denied call before any child receipt", async ({ page }) => {
+  await mockEvidenceJourney(page, "denied");
+  await page.getByText("Run evidence", { exact: true }).click();
+  await expect(page.getByText(/Failure boundary/)).toContainText(
+    "RIVET_CALL_APPROVAL_DENIED",
+  );
+  await expect(page.getByText(/denied before any child/)).toContainText("1");
+  await expect(page.getByText(/0 child calls/)).toBeVisible();
+});
+
+test("explains restart evidence and exact recovery review", async ({
+  page,
+}) => {
+  await mockEvidenceJourney(page, "restarted");
+  await page.getByText("Run evidence", { exact: true }).click();
+  await expect(page.getByText(/Failure boundary/)).toContainText(
+    "runner_restarted",
+  );
+  await expect(page.getByRole("status")).toContainText("new review");
+  await expect(page.getByText(/binding_set_changed/)).toContainText(
+    "review_current_bindings",
+  );
+  await page.setViewportSize({ width: 420, height: 800 });
+  await expect(page.getByTestId("rivet-run-evidence")).toBeVisible();
 });

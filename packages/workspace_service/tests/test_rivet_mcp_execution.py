@@ -6,6 +6,7 @@ import shutil
 import sqlite3
 import time
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 
 import pytest
 from api.rivet_runner_bridge import RivetRunnerBridgeApplication
@@ -478,7 +479,17 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
 
     class Assets:
         def status(self):
-            return RunnerAvailability.AVAILABLE, object(), None
+            return (
+                RunnerAvailability.AVAILABLE,
+                SimpleNamespace(
+                    protocol_version=2,
+                    rivet_version="2.8.9",
+                    package_version="2.1.9",
+                    sha256="1" * 64,
+                    source_revision="fixture-revision",
+                ),
+                None,
+            )
 
     class Host:
         grant = None
@@ -566,5 +577,7 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
     assert manifest["reason_code"] == reason_code
     assert manifest["recovery_code"] == recovery_code
     assert manifest["binding_set_digest"] == binding_set.binding_set_digest
+    assert manifest["runtime"]["protocol_version"] == 2
+    assert len(manifest["bindings"]) == 2
     assert host.grant.token not in str(manifest)
     assert authorities.snapshot(host.grant.authority_id).state == "terminal"

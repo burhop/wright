@@ -198,3 +198,67 @@ async def test_cancel_is_idempotent_and_projects_generation_conflict_and_residue
         )
     assert stale.value.status_code == 400
     assert stale.value.detail["code"] == "RIVET_RUNNER_STALE_GENERATION"
+
+
+@pytest.mark.asyncio
+async def test_manifest_evidence_and_export_are_scoped_bounded_and_non_cacheable():
+    evidence = {
+        "schema_version": 1,
+        "run_id": "run-1",
+        "manifest": {
+            "run_id": "run-1",
+            "terminal_state": "succeeded",
+            "manifest_digest": "f" * 64,
+        },
+        "bindings": [{"node_id": "node-1"}],
+        "child_calls": [{"call_id": "call-1", "child_received": True}],
+        "approvals": [],
+        "artifacts": [],
+        "timeline": [{"kind": "child-call", "call_id": "call-1"}],
+        "reproducibility": {"reproducible": True, "differences": []},
+        "accounting": {"child_call_count": 1, "truncated": False},
+    }
+    calls = []
+
+    class Operations:
+        def run_evidence(self, **kwargs):
+            calls.append(kwargs)
+            return evidence
+
+    service = SimpleNamespace(
+        lifecycle=SimpleNamespace(
+            get_by_session=lambda session: (
+                {"workspace_id": "workspace-1"} if session == "session-1" else None
+            )
+        ),
+        workflow_operations=Operations(),
+    )
+    manifest = await workspace_router.workflow_run_manifest_endpoint(
+        "run-1", "session-1", service
+    )
+    assert manifest == evidence
+    exported = await workspace_router.workflow_run_evidence_export_endpoint(
+        "run-1", "session-1", service
+    )
+    assert len(exported.body) < 2 * 1024 * 1024
+    assert exported.headers["cache-control"] == "no-store"
+    assert "attachment" in exported.headers["content-disposition"]
+    assert b"authority_token" not in exported.body
+    assert calls == [
+        {
+            "workspace_id": "workspace-1",
+            "session_id": "session-1",
+            "run_id": "run-1",
+        },
+        {
+            "workspace_id": "workspace-1",
+            "session_id": "session-1",
+            "run_id": "run-1",
+        },
+    ]
+
+    with pytest.raises(HTTPException) as hidden:
+        await workspace_router.workflow_run_manifest_endpoint(
+            "run-1", "session-other", service
+        )
+    assert hidden.value.status_code == 404

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   workspaceService,
   type RivetCallApproval,
+  type RivetRunEvidence,
   type RivetWorkflowRun,
 } from "../../services/workspace-service";
 
@@ -27,9 +28,11 @@ export function RivetWorkflowRun({
 }) {
   const [approvals, setApprovals] = useState<RivetCallApproval[]>([]);
   const [events, setEvents] = useState<RunEvent[]>([]);
+  const [evidence, setEvidence] = useState<RivetRunEvidence | null>(null);
   const [selected, setSelected] = useState<RivetCallApproval | null>(null);
   const [message, setMessage] = useState("Run evidence is current.");
   const dialogRef = useRef<HTMLDivElement>(null);
+  const reviewButtonRef = useRef<HTMLButtonElement>(null);
   const offeredApprovals = useRef(new Set<string>());
   const onRunUpdateRef = useRef(onRunUpdate);
 
@@ -39,14 +42,19 @@ export function RivetWorkflowRun({
 
   const refresh = useCallback(async () => {
     try {
-      const [current, currentApprovals, history] = await Promise.all([
-        workspaceService.getRivetWorkflowRun(sessionId, run.run_id),
-        workspaceService.getRivetCallApprovals(sessionId, run.run_id),
-        workspaceService.getRivetWorkflowHistory(sessionId, run.run_id),
-      ]);
+      const [current, currentApprovals, history, durableEvidence] =
+        await Promise.all([
+          workspaceService.getRivetWorkflowRun(sessionId, run.run_id),
+          workspaceService.getRivetCallApprovals(sessionId, run.run_id),
+          workspaceService.getRivetWorkflowHistory(sessionId, run.run_id),
+          workspaceService
+            .getRivetRunEvidence(sessionId, run.run_id)
+            .catch(() => null),
+        ]);
       onRunUpdateRef.current(current);
       setApprovals(currentApprovals);
       setEvents(history);
+      setEvidence(durableEvidence);
       const pending = currentApprovals.find((item) => item.state === "pending");
       if (
         pending &&
@@ -79,6 +87,11 @@ export function RivetWorkflowRun({
     if (selected) dialogRef.current?.focus();
   }, [selected]);
 
+  const closeApproval = () => {
+    setSelected(null);
+    window.setTimeout(() => reviewButtonRef.current?.focus(), 0);
+  };
+
   const decide = async (decision: "approved" | "denied") => {
     if (!selected) return;
     try {
@@ -88,7 +101,7 @@ export function RivetWorkflowRun({
         selected,
         decision,
       );
-      setSelected(null);
+      closeApproval();
       await refresh();
     } catch (error) {
       setMessage(
@@ -96,6 +109,27 @@ export function RivetWorkflowRun({
       );
     }
   };
+
+  const manifest = evidence?.manifest || run.manifest || null;
+  const cancellation =
+    manifest?.cancellation && typeof manifest.cancellation === "object"
+      ? (manifest.cancellation as Record<string, unknown>)
+      : null;
+  const residuePossible =
+    cancellation?.residue_state === "possible" ||
+    manifest?.residue_possible === true;
+  const cancellationAcknowledged =
+    cancellation?.child_acknowledged === true ||
+    manifest?.cancellation_acknowledged === true;
+  const recoveryCode =
+    cancellation?.recovery_code || manifest?.recovery_code || "unavailable";
+  const timeline: Array<Record<string, unknown>> = evidence
+    ? evidence.timeline
+    : events.map((event) => ({
+        sequence: event.sequence,
+        kind: event.kind,
+        ...event.payload,
+      }));
 
   return (
     <section
@@ -106,13 +140,22 @@ export function RivetWorkflowRun({
       <p aria-live="polite" style={{ fontSize: "0.72rem" }}>
         {message}
       </p>
-      <ol aria-label="Run timeline" style={{ paddingLeft: "1.25rem" }}>
-        {events.slice(-12).map((event) => (
-          <li key={event.sequence} style={{ fontSize: "0.7rem" }}>
-            {event.kind}
-            {typeof event.payload.phase === "string"
-              ? ` · ${event.payload.phase}`
+      <ol
+        aria-label="Run timeline"
+        data-testid="rivet-run-timeline"
+        style={{ paddingLeft: "1.25rem", overflowWrap: "anywhere" }}
+      >
+        {timeline.slice(-50).map((event, index) => (
+          <li
+            key={String(event.sequence || event.call_id || index)}
+            style={{ fontSize: "0.7rem" }}
+          >
+            {String(event.kind || "evidence")}
+            {typeof event.phase === "string" ? ` · ${event.phase}` : ""}
+            {typeof event.qualified_tool_name === "string"
+              ? ` · ${event.qualified_tool_name}`
               : ""}
+            {typeof event.state === "string" ? ` · ${event.state}` : ""}
           </li>
         ))}
       </ol>
@@ -121,26 +164,98 @@ export function RivetWorkflowRun({
           Cancel run
         </button>
       )}
-      {run.manifest && (
-        <details>
+      {manifest && (
+        <details data-testid="rivet-run-evidence">
           <summary>Run evidence</summary>
           <small>
-            Terminal state {String(run.manifest.terminal_state || run.state)} ·{" "}
+            Terminal state {String(manifest.terminal_state || run.state)} ·
             manifest{" "}
-            {String(run.manifest.manifest_digest || "unavailable").slice(0, 12)}
+            {String(manifest.manifest_digest || "unavailable").slice(0, 12)}
           </small>
-          {run.manifest.residue_possible === true && (
+          {Boolean(manifest.reason_code) && (
+            <p>Failure boundary: {String(manifest.reason_code)}.</p>
+          )}
+          {residuePossible && (
             <p role="alert">
               Cleanup could not be confirmed. The child application may still
               contain partial changes. Inspect its status before retrying.
-              Recovery code:{" "}
-              {String(run.manifest.recovery_code || "unavailable")}.
+              Recovery code: {String(recoveryCode)}.
             </p>
           )}
-          {run.manifest.cancellation_acknowledged === true &&
-            run.manifest.residue_possible !== true && (
-              <p>Cancellation was acknowledged and cleanup completed.</p>
-            )}
+          {cancellationAcknowledged && !residuePossible && (
+            <p>Cancellation was acknowledged and cleanup completed.</p>
+          )}
+          {evidence && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(13rem, 1fr))",
+                gap: "var(--space-sm)",
+                marginTop: "var(--space-sm)",
+              }}
+            >
+              <section aria-label="Evidence accounting">
+                <h4>Accounting</h4>
+                <p>
+                  {String(evidence.accounting.binding_count || 0)} bindings ·{" "}
+                  {String(evidence.accounting.child_call_count || 0)} child
+                  calls · {String(evidence.accounting.approval_count || 0)}{" "}
+                  approvals · {String(evidence.accounting.artifact_count || 0)}{" "}
+                  artifacts
+                </p>
+                {Number(evidence.accounting.denied_before_child_count || 0) >
+                  0 && (
+                  <p>
+                    {String(evidence.accounting.denied_before_child_count)}{" "}
+                    denied before any child received the call.
+                  </p>
+                )}
+              </section>
+              <section aria-label="Reproducibility comparison">
+                <h4>Reproducibility</h4>
+                <p role="status">{evidence.reproducibility.summary}</p>
+                {evidence.reproducibility.differences.length > 0 && (
+                  <ul>
+                    {evidence.reproducibility.differences.map((difference) => (
+                      <li key={difference.code}>
+                        {difference.code}: {difference.recovery_action}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+              <section aria-label="Authorized artifacts">
+                <h4>Artifacts</h4>
+                {evidence.artifacts.length ? (
+                  <ul>
+                    {evidence.artifacts.map((artifact, index) => (
+                      <li key={String(artifact.artifact_id || index)}>
+                        {String(artifact.label || artifact.artifact_id)}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No authorized artifacts recorded.</p>
+                )}
+              </section>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() =>
+              void workspaceService
+                .exportRivetRunEvidence(sessionId, run.run_id)
+                .catch((error) =>
+                  setMessage(
+                    error instanceof Error
+                      ? error.message
+                      : "Run evidence export failed.",
+                  ),
+                )
+            }
+          >
+            Export evidence JSON
+          </button>
         </details>
       )}
       {selected && (
@@ -151,7 +266,23 @@ export function RivetWorkflowRun({
           aria-labelledby="rivet-call-approval-title"
           tabIndex={-1}
           onKeyDown={(event) => {
-            if (event.key === "Escape") setSelected(null);
+            if (event.key === "Escape") closeApproval();
+            if (event.key !== "Tab" || !dialogRef.current) return;
+            const controls = Array.from(
+              dialogRef.current.querySelectorAll<HTMLButtonElement>(
+                "button:not([disabled])",
+              ),
+            );
+            if (!controls.length) return;
+            const first = controls[0];
+            const last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first.focus();
+            }
           }}
           style={{
             border: "1px solid var(--color-border)",
@@ -177,13 +308,14 @@ export function RivetWorkflowRun({
           <button type="button" onClick={() => void decide("denied")}>
             Deny
           </button>{" "}
-          <button type="button" onClick={() => setSelected(null)}>
+          <button type="button" onClick={closeApproval}>
             Close
           </button>
         </div>
       )}
       {!selected && approvals.some((item) => item.state === "pending") && (
         <button
+          ref={reviewButtonRef}
           type="button"
           onClick={() =>
             setSelected(

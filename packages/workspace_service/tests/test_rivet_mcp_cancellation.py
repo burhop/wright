@@ -5,6 +5,7 @@ import sqlite3
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from core.rivet_mcp import CapabilityBinding, WorkflowBindingSet
@@ -61,7 +62,17 @@ class ManifestRepository:
 
 class Assets:
     def status(self):
-        return RunnerAvailability.AVAILABLE, object(), None
+        return (
+            RunnerAvailability.AVAILABLE,
+            SimpleNamespace(
+                protocol_version=2,
+                rivet_version="2.8.9",
+                package_version="2.1.9",
+                sha256="1" * 64,
+                source_revision="fixture-revision",
+            ),
+            None,
+        )
 
 
 class SlowHost:

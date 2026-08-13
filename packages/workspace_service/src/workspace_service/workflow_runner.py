@@ -121,6 +121,7 @@ class RunnerArtifactManifest:
     entrypoint: Path
     sha256: str
     bytes: int
+    source_revision: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -256,6 +257,7 @@ class RunnerAssetCatalog:
                 entrypoint=entrypoint,
                 sha256=str(raw["sha256"]),
                 bytes=int(raw["bytes"]),
+                source_revision=str(source["revision"]),
             )
             expected_input = str(build_input_entry["sha256"])
         except (OSError, KeyError, TypeError, ValueError):
@@ -487,6 +489,12 @@ class WorkspaceWorkflowRunner:
                 for binding in binding_set.bindings
             ),
         )
+        availability, runner_manifest, _detail = self._artifact_catalog.status()
+        if availability is not RunnerAvailability.AVAILABLE or runner_manifest is None:
+            raise WorkflowRunnerError(
+                "RIVET_RUNNER_UNAVAILABLE",
+                "The verified Rivet runtime is unavailable",
+            )
         manifest_id = f"manifest-{run.run_id}"
         draft = RunManifestDraft(
             run_id=run.run_id,
@@ -504,6 +512,25 @@ class WorkspaceWorkflowRunner:
             authority_digest=issued.token_digest,
             started_at=now,
             trace_id=uuid.uuid4().hex,
+            runtime_identity={
+                "protocol_version": runner_manifest.protocol_version,
+                "rivet_version": runner_manifest.rivet_version,
+                "package_version": runner_manifest.package_version,
+                "runner_sha256": runner_manifest.sha256,
+                "source_revision": runner_manifest.source_revision,
+            },
+            authority_expires_at=issued.claims.expires_at,
+            bindings=tuple(
+                {
+                    "node_id": binding.node_id,
+                    "qualified_tool_name": binding.qualified_tool_name,
+                    "server_revision": binding.server_revision,
+                    "schema_digest": binding.schema_digest,
+                    "validation_evidence_id": binding.validation_evidence_id,
+                    "binding_digest": binding.binding_digest,
+                }
+                for binding in binding_set.bindings
+            ),
         )
         try:
             self._mcp_repository.create_manifest_draft(manifest_id, draft)
@@ -530,10 +557,15 @@ class WorkspaceWorkflowRunner:
             self._mcp_repository.run_evidence_documents(run_id)
         )
         context.draft.child_call_ids.extend(
-            str(item["call_id"]) for item in child_documents
+            str(item["call_id"]) for item in child_documents[:1000]
         )
         context.draft.approval_ids.extend(
-            str(item["approval_id"]) for item in approval_documents
+            str(item["approval_id"]) for item in approval_documents[:1000]
+        )
+        if len(child_documents) > 1000 or len(approval_documents) > 1000:
+            context.draft.event_truncated = True
+        context.draft.redaction_count += sum(
+            max(0, int(item.get("redaction_count") or 0)) for item in child_documents
         )
         artifacts: list[ArtifactReference] = []
         seen_artifacts: set[str] = set()
@@ -552,7 +584,7 @@ class WorkspaceWorkflowRunner:
             terminal_state=terminal_state,
             completed_at=datetime.now(UTC),
             reason_code=reason_code,
-            artifacts=artifacts,
+            artifacts=artifacts[:1000],
         )
         self._mcp_repository.finalize_manifest(context.manifest_id, manifest)
         if self._mcp_authorities is not None:
@@ -565,6 +597,18 @@ class WorkspaceWorkflowRunner:
         if self._mcp_repository is None:
             return None
         return self._mcp_repository.get_manifest_document(run_id)
+
+    def runtime_identity(self) -> dict[str, Any] | None:
+        availability, manifest, _detail = self._artifact_catalog.status()
+        if availability is not RunnerAvailability.AVAILABLE or manifest is None:
+            return None
+        return {
+            "protocol_version": manifest.protocol_version,
+            "rivet_version": manifest.rivet_version,
+            "package_version": manifest.package_version,
+            "runner_sha256": manifest.sha256,
+            "source_revision": manifest.source_revision,
+        }
 
     async def start(
         self,
@@ -910,9 +954,25 @@ class WorkspaceWorkflowRunner:
         try:
             run = self._runs[run_id]
         except KeyError as error:
-            raise WorkflowRunnerError(
-                "RIVET_RUN_NOT_FOUND", "Workflow run was not found"
-            ) from error
+            record = self._run_repository.get(run_id) if self._run_repository else None
+            if record is None:
+                raise WorkflowRunnerError(
+                    "RIVET_RUN_NOT_FOUND", "Workflow run was not found"
+                ) from error
+            run = WorkflowRun(
+                run_id=record.run_id,
+                workspace_id=record.workspace_id,
+                session_id=record.session_id,
+                workflow_id=record.workflow_id,
+                revision=record.revision,
+                generation=record.generation,
+                state=WorkflowRunState(record.state),
+                reason=record.reason_code,
+            )
+            self._runs[run_id] = run
+            persisted = self._run_repository.events(run_id, limit=256)
+            if persisted:
+                self._next_sequence[run_id] = persisted[-1].sequence
         if (
             not self._settings.real_execution_enabled
             and run.runtime_id
@@ -1068,6 +1128,19 @@ class WorkspaceWorkflowRunner:
         self, run_id: str, *, after_sequence: int = 0
     ) -> tuple[WorkflowRunEvent, ...]:
         self.get(run_id)
+        if self._run_repository is not None:
+            return tuple(
+                WorkflowRunEvent(
+                    event.run_id,
+                    event.sequence,
+                    event.kind,
+                    event.payload,
+                    event.occurred_at,
+                )
+                for event in self._run_repository.events(
+                    run_id, after_sequence=after_sequence, limit=256
+                )
+            )
         return tuple(
             event
             for event in self._events.get(run_id, ())

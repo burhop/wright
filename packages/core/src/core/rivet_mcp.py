@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, Mapping, Sequence
@@ -384,6 +384,7 @@ class RivetChildCallRecord:
     completed_at: datetime | None = None
     reason_code: str | None = None
     artifacts: tuple[ArtifactReference, ...] = ()
+    redaction_count: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -416,26 +417,56 @@ class RunManifest:
     residue_possible: bool
     recovery_code: str | None
     manifest_digest: str
+    runtime_identity: Mapping[str, Any] = field(default_factory=dict)
+    authority_expires_at: datetime | None = None
+    bindings: tuple[Mapping[str, Any], ...] = ()
 
     def digest_material(self) -> dict[str, Any]:
         return {
+            "schema_version": 1,
             "run_id": self.run_id,
             "generation": self.generation,
             "workspace_id": self.workspace_id,
             "session_id": self.session_id,
-            "workflow_id": self.workflow_id,
-            "workflow_revision": self.workflow_revision,
-            "workflow_digest": self.workflow_digest,
-            "graph_id": self.graph_id,
+            "workflow": {
+                "workflow_id": self.workflow_id,
+                "revision": self.workflow_revision,
+                "digest": self.workflow_digest,
+                "graph_id": self.graph_id,
+            },
+            "runtime": {
+                "protocol_version": int(
+                    self.runtime_identity.get("protocol_version", 2)
+                ),
+                "rivet_version": str(
+                    self.runtime_identity.get("rivet_version", "unknown")
+                ),
+                "package_version": str(
+                    self.runtime_identity.get("package_version", "unknown")
+                ),
+                "runner_sha256": str(
+                    self.runtime_identity.get("runner_sha256", "0" * 64)
+                ),
+                "source_revision": str(
+                    self.runtime_identity.get("source_revision", "unknown")
+                ),
+            },
             "review_digest": self.review_digest,
             "binding_set_digest": self.binding_set_digest,
             "policy_snapshot_digest": self.policy_snapshot_digest,
-            "authority_id": self.authority_id,
-            "authority_digest": self.authority_digest,
+            "authority": {
+                "authority_id": self.authority_id,
+                "authority_digest": self.authority_digest,
+                "issued_at": self.started_at,
+                "expires_at": self.authority_expires_at or self.started_at,
+                "revoked_at": self.completed_at,
+            },
+            "bindings": [dict(item) for item in self.bindings],
             "started_at": self.started_at,
             "completed_at": self.completed_at,
             "terminal_state": self.terminal_state,
             "reason_code": self.reason_code,
+            "recovery_code": self.recovery_code,
             "trace_id": self.trace_id,
             "artifacts": [item.canonical() for item in self.artifacts],
             "child_call_ids": self.child_call_ids,
@@ -443,9 +474,18 @@ class RunManifest:
             "redaction_count": self.redaction_count,
             "event_truncated": self.event_truncated,
             "output_truncated": self.output_truncated,
-            "cancellation_acknowledged": self.cancellation_acknowledged,
-            "residue_possible": self.residue_possible,
-            "recovery_code": self.recovery_code,
+            "cancellation": (
+                {
+                    "authority_revoked": True,
+                    "child_acknowledged": bool(self.cancellation_acknowledged),
+                    "residue_state": ("possible" if self.residue_possible else "none"),
+                    "recovery_code": self.recovery_code,
+                }
+                if self.cancellation_acknowledged is not None
+                or self.residue_possible
+                or self.terminal_state == "cancelled"
+                else None
+            ),
         }
 
 
@@ -474,6 +514,9 @@ class RunManifestDraft:
     cancellation_acknowledged: bool | None = None
     residue_possible: bool = False
     recovery_code: str | None = None
+    runtime_identity: Mapping[str, Any] = field(default_factory=dict)
+    authority_expires_at: datetime | None = None
+    bindings: tuple[Mapping[str, Any], ...] = ()
     _finalized: bool = field(default=False, init=False, repr=False)
 
     def finalize(
@@ -488,43 +531,14 @@ class RunManifestDraft:
             raise ValueError("Run manifest draft is already finalized")
         if terminal_state not in {"cancelled", "succeeded", "failed"}:
             raise ValueError("Run manifest terminal state is invalid")
-        material = {
-            "run_id": self.run_id,
-            "generation": self.generation,
-            "workspace_id": self.workspace_id,
-            "session_id": self.session_id,
-            "workflow_id": self.workflow_id,
-            "workflow_revision": self.workflow_revision,
-            "workflow_digest": self.workflow_digest,
-            "graph_id": self.graph_id,
-            "review_digest": self.review_digest,
-            "binding_set_digest": self.binding_set_digest,
-            "policy_snapshot_digest": self.policy_snapshot_digest,
-            "authority_id": self.authority_id,
-            "authority_digest": self.authority_digest,
-            "started_at": self.started_at,
-            "trace_id": self.trace_id,
-            "redaction_count": self.redaction_count,
-            "event_truncated": self.event_truncated,
-            "output_truncated": self.output_truncated,
-            "cancellation_acknowledged": self.cancellation_acknowledged,
-            "residue_possible": self.residue_possible,
-            "recovery_code": self.recovery_code,
-        }
-        material.update(
-            {
-                "completed_at": completed_at,
-                "terminal_state": terminal_state,
-                "reason_code": reason_code,
-                "artifacts": [item.canonical() for item in artifacts],
-                "child_call_ids": tuple(self.child_call_ids),
-                "approval_ids": tuple(self.approval_ids),
-            }
-        )
-        reject_secret_material(material)
-        manifest_digest = canonical_digest(material)
-        self._finalized = True
-        return RunManifest(
+        if (
+            len(self.child_call_ids) > 1000
+            or len(self.approval_ids) > 1000
+            or len(self.bindings) > 100
+            or len(artifacts) > 1000
+        ):
+            self.event_truncated = True
+        manifest = RunManifest(
             run_id=self.run_id,
             generation=self.generation,
             workspace_id=self.workspace_id,
@@ -543,17 +557,24 @@ class RunManifestDraft:
             terminal_state=terminal_state,
             reason_code=reason_code,
             trace_id=self.trace_id,
-            artifacts=tuple(artifacts),
-            child_call_ids=tuple(self.child_call_ids),
-            approval_ids=tuple(self.approval_ids),
+            artifacts=tuple(artifacts[:1000]),
+            child_call_ids=tuple(self.child_call_ids[:1000]),
+            approval_ids=tuple(self.approval_ids[:1000]),
             redaction_count=self.redaction_count,
             event_truncated=self.event_truncated,
             output_truncated=self.output_truncated,
             cancellation_acknowledged=self.cancellation_acknowledged,
             residue_possible=self.residue_possible,
             recovery_code=self.recovery_code,
-            manifest_digest=manifest_digest,
+            manifest_digest="",
+            runtime_identity=dict(self.runtime_identity),
+            authority_expires_at=self.authority_expires_at,
+            bindings=tuple(dict(item) for item in self.bindings[:100]),
         )
+        material = manifest.digest_material()
+        reject_secret_material(material)
+        self._finalized = True
+        return replace(manifest, manifest_digest=canonical_digest(material))
 
 
 __all__ = [

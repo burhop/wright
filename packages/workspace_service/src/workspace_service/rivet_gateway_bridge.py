@@ -314,6 +314,7 @@ class RivetGatewayBridge:
                     str(sanitized.error_code) if sanitized.error_code else None
                 ),
                 artifacts=tuple(artifacts),
+                redaction_count=redactions,
             )
             if self._repository is not None:
                 self._repository.append_child_call(call_record)

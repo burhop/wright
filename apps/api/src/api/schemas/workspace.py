@@ -340,6 +340,19 @@ class WorkflowRunHistoryResponse(BaseModel):
     events: list[dict]
 
 
+class WorkflowRunEvidenceResponse(BaseModel):
+    schema_version: Literal[1]
+    run_id: str
+    manifest: Dict[str, Any]
+    bindings: list[dict]
+    child_calls: list[dict]
+    approvals: list[dict]
+    artifacts: list[dict]
+    timeline: list[dict]
+    reproducibility: Dict[str, Any]
+    accounting: Dict[str, Any]
+
+
 class WorkflowEditorAvailabilityResponse(BaseModel):
     availability: str
     detail: str | None = None
