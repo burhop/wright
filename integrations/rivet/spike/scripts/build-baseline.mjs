@@ -6,7 +6,7 @@ import { readBaseline, spikeRoot, writeEvidence } from "./evidence.mjs";
 
 const baseline = await readBaseline();
 const upstream = resolve(spikeRoot, ".work", "rivet");
-const yarn = resolve(upstream, ".yarn", "releases", "yarn-4.6.0.cjs");
+const yarn = resolve(upstream, ".yarn", "releases", "yarn-4.17.1.cjs");
 if (!existsSync(yarn)) throw new Error("Pinned Rivet source and bundled Yarn are required; run spike:acquire first.");
 
 const allowNetwork = process.env.SPIKE_ALLOW_NETWORK === "1";
@@ -17,11 +17,13 @@ try {
     env: buildEnvironment,
     stdio: "inherit"
   });
-  execFileSync(process.execPath, [yarn, "workspace", "@ironclad/rivet-app", "run", "build"], {
-    cwd: upstream,
-    env: buildEnvironment,
-    stdio: "inherit"
-  });
+  for (const workspace of ["@valerypopoff/rivet2-core", "@valerypopoff/trivet", "@valerypopoff/rivet-app"]) {
+    execFileSync(process.execPath, [yarn, "workspace", workspace, "run", "build"], {
+      cwd: upstream,
+      env: buildEnvironment,
+      stdio: "inherit"
+    });
+  }
 } catch (error) {
   const { target } = await writeEvidence("build", "blocked", {
     sourceRevision: baseline.sourceRevision,

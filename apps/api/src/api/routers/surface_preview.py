@@ -74,7 +74,7 @@ _BOOTSTRAP_SCRIPT = """(() => {
     headers: {'Content-Type': 'application/json'}, body: JSON.stringify({token})
   }).then((response) => {
     if (!response.ok) throw new Error('bootstrap failed');
-    location.replace('/');
+    location.replace('/' + location.search);
   }).catch(() => { document.body.textContent = 'Preview link expired. Reopen it from Wright.'; });
 })();"""
 _SCRIPT_DIGEST = base64.b64encode(

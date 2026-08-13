@@ -1,0 +1,325 @@
+diff --git a/packages/app/src/components/RivetApp.tsx b/packages/app/src/components/RivetApp.tsx
+index 31d78738..b370e102 100644
+--- a/packages/app/src/components/RivetApp.tsx
++++ b/packages/app/src/components/RivetApp.tsx
+@@ -58,6 +58,7 @@ import type { EditorGraphRunOptions } from '../hooks/editorGraphRunOptions.js';
+ import { useProjectWorkspaceTarget } from '../hooks/useProjectWorkspaceTarget.js';
+ import { getProjectWorkspaceTargetCapabilities } from '../domain/workspace/projectWorkspaceTarget.js';
+ import { sidebarOpenState } from '../state/graphBuilder.js';
++import { useRivetAppHostUiConfig } from '../providers/HostUiConfigContext.js';
+ import { getDataBusFullRowsHeight } from './nodeCanvas/dataBusRailLayout.js';
+
+ const styles = css`
+@@ -104,6 +105,7 @@ setGlobalTheme({
+ });
+
+ export const RivetApp: FC = () => {
++  const { canvasOnly = false } = useRivetAppHostUiConfig();
+   const selectedExecutor = useAtomValue(selectedExecutorState);
+   const setSelectedExecutor = useSetAtom(selectedExecutorState);
+
+@@ -121,6 +123,7 @@ export const RivetApp: FC = () => {
+   const uiFontSize = useAtomValue(uiFontSizeState);
+   const dataBusFullRowCount = useAtomValue(dataBusFullRowCountState);
+   const leftSidebarOpen = useAtomValue(sidebarOpenState);
++  const setLeftSidebarOpen = useSetAtom(sidebarOpenState);
+   const leftSidebarLiveWidth = useAtomValue(leftSidebarLiveWidthState);
+   const openOverlay = useAtomValue(overlayOpenState);
+   const workspaceVisibleTabCount = useAtomValue(workspaceVisibleTabCountState);
+@@ -158,9 +161,11 @@ export const RivetApp: FC = () => {
+           rowCount: dataBusFullRowCount,
+           uiFontScale: getUiFontScale(uiFontSize),
+         })}px`,
+-        '--data-bus-full-row-left': leftSidebarOpen ? `${leftSidebarLiveWidth}px` : '0px',
++        '--data-bus-full-row-left': !canvasOnly && leftSidebarOpen ? `${leftSidebarLiveWidth}px` : '0px',
++        '--project-selector-height': canvasOnly ? '0px' : undefined,
+       }) as CSSProperties,
+     [
++      canvasOnly,
+       dataBusFullRowCount,
+       leftSidebarLiveWidth,
+       leftSidebarOpen,
+@@ -181,6 +186,12 @@ export const RivetApp: FC = () => {
+   useRestorePersistedWorkspace();
+   useProjectPlugins();
+
++  useEffect(() => {
++    if (canvasOnly) {
++      setLeftSidebarOpen(false);
++    }
++  }, [canvasOnly, setLeftSidebarOpen]);
++
+   const runGraph = wrapAsync(async (options?: EditorGraphRunOptions) => {
+     if (!workspaceCapabilities.canRun) {
+       return;
+@@ -199,8 +210,10 @@ export const RivetApp: FC = () => {
+   const checkForUpdate = useCheckForUpdate();
+
+   useAsyncEffect(async () => {
+-    await checkForUpdate();
+-  }, []);
++    if (!canvasOnly) {
++      await checkForUpdate();
++    }
++  }, [canvasOnly]);
+
+   useWindowTitle();
+
+@@ -276,23 +289,27 @@ export const RivetApp: FC = () => {
+   return (
+     <div className={clsx('app', theme ? `theme-${theme}` : 'theme-default')} css={styles} style={appCssVariables}>
+       {noProjectOpen ? (
+-        <>
+-          <ProjectSelector mode="workspace" />
+-          <NoProject />
+-          <PromptDesignerRenderer />
+-          <TrivetRenderer tryRunTests={tryRunTests} />
+-          <ChatViewerRenderer />
+-          <DataStudioRenderer />
+-          <NewProjectModalRenderer />
+-          <AppErrorBoundary context="Settings Modal" fallback={<div>Failed to render Settings</div>}>
+-            <SettingsModal />
+-          </AppErrorBoundary>
+-        </>
++        canvasOnly ? (
++          <OpeningProjectPlaceholder title="Waiting for Wright workflow…" />
++        ) : (
++          <>
++            <ProjectSelector mode="workspace" />
++            <NoProject />
++            <PromptDesignerRenderer />
++            <TrivetRenderer tryRunTests={tryRunTests} />
++            <ChatViewerRenderer />
++            <DataStudioRenderer />
++            <NewProjectModalRenderer />
++            <AppErrorBoundary context="Settings Modal" fallback={<div>Failed to render Settings</div>}>
++              <SettingsModal />
++            </AppErrorBoundary>
++          </>
++        )
+       ) : (
+         <>
+-          <ProjectSelector />
++          {!canvasOnly && <ProjectSelector />}
+           {openingProjectSelected ? <OpeningProjectPlaceholder /> : null}
+-          {isCanvasMode && !openingProjectSelected && !nodeLibraryOpen && !uiGraphOpen && (
++          {!canvasOnly && isCanvasMode && !openingProjectSelected && !nodeLibraryOpen && !uiGraphOpen && (
+             <ActionBar
+               onRunGraph={runGraph}
+               onRunTests={runTests}
+@@ -301,10 +318,13 @@ export const RivetApp: FC = () => {
+               onResumeGraph={tryResumeGraph}
+             />
+           )}
+-          {!openingProjectSelected && !nodeLibraryOpen && !uiGraphOpen && <StatusBar />}
+-          {isCanvasMode && !openingProjectSelected && !nodeLibraryOpen && !uiGraphOpen && <DebuggerPanelRenderer />}
+-          {!openingProjectSelected && <LeftSidebar />}
+-          {!openingProjectSelected &&
++          {!canvasOnly && !openingProjectSelected && !nodeLibraryOpen && !uiGraphOpen && <StatusBar />}
++          {!canvasOnly && isCanvasMode && !openingProjectSelected && !nodeLibraryOpen && !uiGraphOpen && (
++            <DebuggerPanelRenderer />
++          )}
++          {!canvasOnly && !openingProjectSelected && <LeftSidebar />}
++          {!openingProjectSelected && canvasOnly && <GraphBuilder />}
++          {!openingProjectSelected && !canvasOnly &&
+             (nodeLibraryOpen ? (
+               <NodeLibraryBuilder />
+             ) : uiGraphOpen ? (
+@@ -312,22 +332,26 @@ export const RivetApp: FC = () => {
+             ) : (
+               <GraphBuilder />
+             ))}
+-          <AppErrorBoundary context="Settings Modal" fallback={<div>Failed to render Settings</div>}>
+-            <SettingsModal />
+-          </AppErrorBoundary>
+-          <PromptDesignerRenderer />
+-          <TrivetRenderer tryRunTests={tryRunTests} />
+-          <ChatViewerRenderer />
+-          <DataStudioRenderer />
+-          <NewProjectModalRenderer />
+-          <MissingAppPluginsModalRenderer />
+-          <DeleteGraphInputConfirmModalRenderer />
++          {!canvasOnly && (
++            <>
++              <AppErrorBoundary context="Settings Modal" fallback={<div>Failed to render Settings</div>}>
++                <SettingsModal />
++              </AppErrorBoundary>
++              <PromptDesignerRenderer />
++              <TrivetRenderer tryRunTests={tryRunTests} />
++              <ChatViewerRenderer />
++              <DataStudioRenderer />
++              <NewProjectModalRenderer />
++            </>
++          )}
+         </>
+       )}
++      {!noProjectOpen && <MissingAppPluginsModalRenderer />}
++      {!noProjectOpen && <DeleteGraphInputConfirmModalRenderer />}
+       <AppErrorBoundary context="Fullscreen Output Modal" fallback={<div>Failed to render Fullscreen Output</div>}>
+         <FullscreenNodeOutputModalRenderer />
+       </AppErrorBoundary>
+-      <HelpModal />
++      {!canvasOnly && <HelpModal />}
+       <ToastContainer enableMultiContainer position="bottom-right" hideProgressBar newestOnTop />
+       <ToastContainer
+         enableMultiContainer
+@@ -341,7 +365,7 @@ export const RivetApp: FC = () => {
+   );
+ };
+
+-const OpeningProjectPlaceholder: FC = () => {
++const OpeningProjectPlaceholder: FC<{ title?: string }> = ({ title = 'Opening project...' }) => {
+   const canvasBackgroundColorMode = useAtomValue(canvasBackgroundColorModeState);
+   const canvasBackgroundCustomColor = useAtomValue(canvasBackgroundCustomColorState);
+   const canvasBackgroundColor = getCanvasBackgroundColor({
+@@ -358,7 +382,7 @@ const OpeningProjectPlaceholder: FC = () => {
+       <div className="opening-project-placeholder-spinner">
+         <NodeRunningIndicator isRunning delayMs={0} label="Opening project" />
+       </div>
+-      <div className="opening-project-placeholder-title">Opening project...</div>
++      <div className="opening-project-placeholder-title">{title}</div>
+     </div>
+   );
+ };
+diff --git a/packages/app/src/components/RivetAppHostLifecycle.tsx b/packages/app/src/components/RivetAppHostLifecycle.tsx
+index b75dbf05..22d1f0b5 100644
+--- a/packages/app/src/components/RivetAppHostLifecycle.tsx
++++ b/packages/app/src/components/RivetAppHostLifecycle.tsx
+@@ -1,6 +1,6 @@
+ import { useEffect } from 'react';
+ import { useAtomValue } from 'jotai';
+-import { loadedProjectState, openedProjectsSortedIdsState, projectState } from '../state/savedGraphs.js';
++import { loadedProjectState, openedProjectsSortedIdsState, projectDataState, projectState } from '../state/savedGraphs.js';
+ import { useRivetAppHostCallbacks } from '../providers/HostCallbacksContext.js';
+ import { selectedOpeningProjectTabIdState, workspaceVisibleTabCountState } from '../state/openingProjectTabs.js';
+
+@@ -8,6 +8,7 @@ export function RivetAppHostLifecycle() {
+   const callbacks = useRivetAppHostCallbacks();
+   const project = useAtomValue(projectState);
+   const loadedProject = useAtomValue(loadedProjectState);
++  const projectData = useAtomValue(projectDataState);
+   const openedProjectIds = useAtomValue(openedProjectsSortedIdsState);
+   const selectedOpeningProjectTabId = useAtomValue(selectedOpeningProjectTabIdState);
+   const workspaceVisibleTabCount = useAtomValue(workspaceVisibleTabCountState);
+@@ -17,10 +18,11 @@ export function RivetAppHostLifecycle() {
+
+     callbacks.onActiveProjectChanged?.({
+       project: realProjectSelected ? project : null,
++      data: realProjectSelected ? projectData : undefined,
+       projectId: realProjectSelected ? project.metadata.id : null,
+       path: realProjectSelected ? loadedProject.path : null,
+     });
+-  }, [callbacks, loadedProject.path, openedProjectIds, project, selectedOpeningProjectTabId]);
++  }, [callbacks, loadedProject.path, openedProjectIds, project, projectData, selectedOpeningProjectTabId]);
+
+   useEffect(() => {
+     callbacks.onOpenProjectCountChanged?.({
+diff --git a/packages/app/src/components/RivetAppLoader.tsx b/packages/app/src/components/RivetAppLoader.tsx
+index c44e4120..e84cc405 100644
+--- a/packages/app/src/components/RivetAppLoader.tsx
++++ b/packages/app/src/components/RivetAppLoader.tsx
+@@ -8,6 +8,7 @@ import { useDependsOnPlugins } from '../hooks/useDependsOnPlugins.js';
+ import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri.js';
+ import { prefetchChatV2DiscoveredModelOptions } from '../utils/chatV2ModelCatalog.js';
+ import { useEnvironmentProvider } from '../providers/ProvidersContext.js';
++import { useRivetAppHostUiConfig } from '../providers/HostUiConfigContext.js';
+
+ // Storage-backed atoms read synchronously on mount, so this subtree must stay behind the
+ // async hybrid-storage bootstrap or settings/theme atoms can lock in default values.
+@@ -15,16 +16,19 @@ const InitializedRivetApp = ({ children }: { children?: ReactNode }) => {
+   const settings = useAtomValue(settingsState);
+   const plugins = useDependsOnPlugins();
+   const environmentProvider = useEnvironmentProvider();
++  const { canvasOnly = false } = useRivetAppHostUiConfig();
+
+   useAsyncEffect(async () => {
+     const resolvedSettings = await fillMissingSettingsFromEnvironmentVariables(settings, plugins, {
+       environmentProvider,
+     });
+-    prefetchChatV2DiscoveredModelOptions({
+-      settings: resolvedSettings,
+-      plugins,
+-    });
+-  }, [environmentProvider, plugins, settings]);
++    if (!canvasOnly) {
++      prefetchChatV2DiscoveredModelOptions({
++        settings: resolvedSettings,
++        plugins,
++      });
++    }
++  }, [canvasOnly, environmentProvider, plugins, settings]);
+
+   return (
+     <>
+diff --git a/packages/app/src/providers/HostCallbacksContext.tsx b/packages/app/src/providers/HostCallbacksContext.tsx
+index bfd41cca..f25277dd 100644
+--- a/packages/app/src/providers/HostCallbacksContext.tsx
++++ b/packages/app/src/providers/HostCallbacksContext.tsx
+@@ -9,6 +9,7 @@ export type RivetAppHostProjectSavedEvent = {
+
+ export type RivetAppHostActiveProjectChangedEvent = {
+   project: Omit<Project, 'data'> | null;
++  data?: Project['data'];
+   projectId: ProjectId | null;
+   path: string | null;
+ };
+diff --git a/packages/app/src/providers/HostUiConfigContext.tsx b/packages/app/src/providers/HostUiConfigContext.tsx
+index 60119211..ae8849f6 100644
+--- a/packages/app/src/providers/HostUiConfigContext.tsx
++++ b/packages/app/src/providers/HostUiConfigContext.tsx
+@@ -2,6 +2,7 @@ import { createContext, useContext, type FC, type ReactNode } from 'react';
+ import type { FileMenuConfig } from '../utils/fileMenuConfiguration.js';
+
+ export type RivetAppHostUiConfig = {
++  canvasOnly?: boolean;
+   fileMenu?: FileMenuConfig;
+   webApps?: {
+     desktopPreview?: boolean;
+diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts b/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
+index ecded01a..1c73b93e 100644
+--- a/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
++++ b/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
+@@ -43,8 +43,12 @@ test('resolveAiGraphBuilderNodeType accepts model-friendly node type labels', ()
+   assert.equal(resolveAiGraphBuilderNodeType(registry, 'Extract JSON'), 'extractJson');
++  assert.equal(resolveAiGraphBuilderNodeType(registry, 'JSON Parse'), 'extractJson');
+   assert.equal(resolveAiGraphBuilderNodeType(registry, 'Code node'), 'codeNew');
+   assert.equal(resolveAiGraphBuilderNodeType(registry, 'Chat node'), 'llmChatV2');
+   assert.equal(resolveAiGraphBuilderNodeType(registry, 'OpenAI Chat'), 'llmChatV2');
+   assert.equal(resolveAiGraphBuilderNodeType(registry, { nodeType: 'LLMChatV2Node' }), 'llmChatV2');
++  assert.equal(resolveAiGraphBuilderNodeType(registry, 'MCP'), 'mcpToolCall');
++  assert.equal(resolveAiGraphBuilderNodeType(registry, 'MCP node'), 'mcpToolCall');
++  assert.equal(resolveAiGraphBuilderNodeType(registry, 'MCP Tool Definition'), 'mcpDiscovery');
+ });
+
+ test('createNode normalizes model-friendly node type labels before creating nodes', async () => {
+diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.ts b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
+index cd60da2e..60dfcd44 100644
+--- a/packages/app/src/hooks/aiGraphBuilderHelpers.ts
++++ b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
+@@ -221,6 +221,26 @@ export function resolveLegacyGraphBuilderAuthoringChoice(
+ }
+
+ function getAiGraphBuilderNodeTypeAlias(requestedKey: string): string | undefined {
++  if (['jsonparse', 'jsonparser', 'parsejson'].includes(requestedKey)) {
++    return 'extractJson';
++  }
++
++  if (
++    [
++      'mcpdiscoverynode',
++      'mcpfunctiondefinition',
++      'mcptooldefinition',
++      'mcptooldefinitions',
++      'mcptools',
++    ].includes(requestedKey)
++  ) {
++    return 'mcpDiscovery';
++  }
++
++  if (['mcp', 'mcpnode', 'mcptool', 'mcptoolnode', 'mcptoolcall', 'mcptoolcallnode'].includes(requestedKey)) {
++    return 'mcpToolCall';
++  }
++
+   if (
+     [
+       'chat',

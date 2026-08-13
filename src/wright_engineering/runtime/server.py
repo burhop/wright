@@ -43,6 +43,12 @@ def prepare_runtime_environment(
         "WRIGHT_WORKSPACES_DIR": str(layout.workspaces),
         "WRIGHT_LOG_DIR": str(layout.logs),
         "WRIGHT_BIND_HOST": bind_host,
+        "WRIGHT_RIVET_WORKFLOWS_ENABLED": "1",
+        "WRIGHT_RIVET_RUNNER_ENABLED": "1",
+        "WRIGHT_RIVET_EDITOR_ENABLED": "1",
+        "WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED": "1",
+        "WRIGHT_SURFACES_ENABLED": "1",
+        "WRIGHT_SURFACES_LIVE_APPS_ENABLED": "1",
         "WRIGHT_ALLOWED_ORIGINS": ",".join(
             dict.fromkeys(
                 (

@@ -64,6 +64,27 @@ printf '%s\n' "$PIP_CHECK_OUTPUT" | "${PYTHON_CMD[@]}" \
   scripts/reconcile_hermes_pip_check.py --exit-code "$PIP_CHECK_EXIT"
 echo -e "${GREEN}✓ Hermes environment dependency contract is satisfied.${NC}"
 
+echo -e "Testing packaged Rivet runtime dependencies..."
+NODE_VERSION=$(docker run --rm --entrypoint node "$IMAGE_TAG" --version)
+if [[ "$NODE_VERSION" != v26.* ]]; then
+  echo -e "${RED}Packaged Node.js runtime is missing or unexpected: ${NODE_VERSION}${NC}"
+  exit 1
+fi
+docker run --rm --entrypoint /workspace/.venv/bin/python "$IMAGE_TAG" -c '
+from core.workflow_editor import EditorAvailability
+from core.workflow_runs import RunnerAvailability
+from workspace_service.workflow_editor import EditorAssetCatalog, EditorSettings
+from workspace_service.workflow_runner import RunnerAssetCatalog, RunnerSettings
+
+editor_status, _, editor_detail = EditorAssetCatalog().status()
+runner_status, _, runner_detail = RunnerAssetCatalog().status()
+assert editor_status is EditorAvailability.AVAILABLE, editor_detail
+assert runner_status is RunnerAvailability.AVAILABLE, runner_detail
+assert EditorSettings.from_env().enabled
+assert RunnerSettings.from_env().enabled
+'
+echo -e "${GREEN}Node.js and the offline Rivet editor/runner assets are ready.${NC}"
+
 # 3. Check container-manifest.md existence and permissions
 echo -e "\n${YELLOW}Step 3: Checking container-manifest.md...${NC}"
 MANIFEST_EXISTS=$(docker run --rm --entrypoint test "$IMAGE_TAG" -f /container-manifest.md && echo "yes" || echo "no")

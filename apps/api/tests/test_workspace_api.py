@@ -724,6 +724,167 @@ def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
     assert row is None
 
 
+@pytest.mark.asyncio
+async def test_rivet_run_api_forwards_exact_identity_graph_inputs_and_projects_output(
+    monkeypatch,
+):
+    from types import SimpleNamespace
+
+    from api.routers import workspace as workspace_router
+    from api.schemas.workspace import WorkflowRunStartRequest
+    from core.workflow_runs import WorkflowRun, WorkflowRunState
+
+    monkeypatch.setattr(workspace_router, "_runner_feature_enabled", lambda: None)
+    monkeypatch.setattr(workspace_router, "_operations_feature_enabled", lambda: None)
+    calls = []
+    run = WorkflowRun(
+        "run-api",
+        "workspace-1",
+        "session-1",
+        "workflow-1",
+        3,
+        1,
+        WorkflowRunState.SUCCEEDED,
+    )
+    record = SimpleNamespace(
+        digest="a" * 64,
+        graph="Passthrough",
+        output_summary={"outputs": {"output": {"value": "hello"}}, "durationMs": 17},
+        output_truncated=False,
+    )
+
+    class Operations:
+        async def start(self, **kwargs):
+            calls.append(kwargs)
+            return run
+
+    service = SimpleNamespace(
+        lifecycle=SimpleNamespace(
+            get_by_session=lambda _session: {"workspace_id": "workspace-1"}
+        ),
+        resolve_workspace_dir=lambda *_args: _resolved("C:/workspace"),
+        workflow_operations=Operations(),
+        workflow_runner=SimpleNamespace(result=lambda _run_id: record),
+    )
+
+    async def _resolved(value):
+        return value
+
+    response = await workspace_router.start_workflow_run_endpoint(
+        "flow",
+        WorkflowRunStartRequest(
+            session_id="session-1",
+            expected_revision=3,
+            expected_digest="a" * 64,
+            graph="Passthrough",
+            inputs={"input": "hello"},
+            context={"mode": "test"},
+            timeout_seconds=30,
+        ),
+        object(),
+        service,
+    )
+
+    assert calls == [
+        {
+            "workspace_id": "workspace-1",
+            "session_id": "session-1",
+            "workspace_dir": "C:/workspace",
+            "slug": "flow",
+            "expected_generation": None,
+            "expected_revision": 3,
+            "expected_digest": "a" * 64,
+            "graph": "Passthrough",
+            "inputs": {"input": "hello"},
+            "context": {"mode": "test"},
+            "timeout_seconds": 30,
+        }
+    ]
+    assert response.digest == "a" * 64
+    assert response.graph == "Passthrough"
+    assert response.outputs == {"output": {"value": "hello"}}
+    assert response.duration_ms == 17
+
+
+@pytest.mark.asyncio
+async def test_rivet_run_api_preserves_review_gate_and_cancel_history_contract(
+    monkeypatch,
+):
+    from types import SimpleNamespace
+
+    from fastapi import HTTPException
+
+    from api.routers import workspace as workspace_router
+    from api.schemas.workspace import WorkflowRunCancelRequest, WorkflowRunStartRequest
+    from core.workflow_runs import WorkflowRun, WorkflowRunEvent, WorkflowRunState
+    from workspace_service.workflow_operations import WorkflowOperationsError
+
+    monkeypatch.setattr(workspace_router, "_runner_feature_enabled", lambda: None)
+    monkeypatch.setattr(workspace_router, "_operations_feature_enabled", lambda: None)
+    cancelled = WorkflowRun(
+        "run-cancel",
+        "workspace-1",
+        "session-1",
+        "workflow-1",
+        1,
+        2,
+        WorkflowRunState.CANCELLED,
+        reason="cancelled",
+    )
+
+    class Operations:
+        async def start(self, **_kwargs):
+            raise WorkflowOperationsError(
+                "RIVET_WORKFLOW_REVIEW_REQUIRED", "Current revision requires review"
+            )
+
+        async def cancel(self, **_kwargs):
+            return cancelled
+
+        def history(self, **_kwargs):
+            return (
+                WorkflowRunEvent("run-cancel", 1, "progress", {"phase": "node-start"}),
+            )
+
+    service = SimpleNamespace(
+        lifecycle=SimpleNamespace(
+            get_by_session=lambda _session: {"workspace_id": "workspace-1"}
+        ),
+        resolve_workspace_dir=lambda *_args: _resolved("C:/workspace"),
+        workflow_operations=Operations(),
+        workflow_runner=SimpleNamespace(result=lambda _run_id: None),
+    )
+
+    async def _resolved(value):
+        return value
+
+    with pytest.raises(HTTPException) as error:
+        await workspace_router.start_workflow_run_endpoint(
+            "flow",
+            WorkflowRunStartRequest(
+                session_id="session-1",
+                expected_revision=1,
+                expected_digest="b" * 64,
+            ),
+            object(),
+            service,
+        )
+    assert error.value.detail["code"] == "RIVET_WORKFLOW_REVIEW_REQUIRED"
+
+    cancel_response = await workspace_router.cancel_workflow_run_endpoint(
+        "run-cancel",
+        WorkflowRunCancelRequest(session_id="session-1", generation=2),
+        service,
+    )
+    assert cancel_response.state == "cancelled"
+    history = await workspace_router.workflow_run_history_endpoint(
+        "run-cancel", "session-1", 0, service
+    )
+    assert history.events == [
+        {"sequence": 1, "kind": "progress", "payload": {"phase": "node-start"}}
+    ]
+
+
 def test_workspace_recent_and_list(client):
     # Ensure test-session exists by listing files first
     client.get("/api/workspace/files", params={"session_id": "test-session"})

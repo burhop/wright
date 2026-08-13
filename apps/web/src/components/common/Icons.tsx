@@ -385,6 +385,48 @@ export const BookOpenIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   </svg>
 );
 
+export const WorkflowIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="3" y="4" width="6" height="6" rx="1" />
+    <rect x="15" y="4" width="6" height="6" rx="1" />
+    <rect x="9" y="14" width="6" height="6" rx="1" />
+    <path d="M9 7h6" />
+    <path d="m7 10 4 4" />
+    <path d="m17 10-4 4" />
+  </svg>
+);
+
+export const BrepIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+    <path d="m3 7 9 5 9-5" />
+    <path d="M3 7v10l9 5 9-5V7" />
+    <path d="M12 12v10" />
+  </svg>
+);
+
 export const BackIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -440,5 +482,67 @@ export const SplitIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
   >
     <rect width="18" height="18" x="3" y="3" rx="2" />
     <line x1="12" x2="12" y1="3" y2="21" />
+  </svg>
+);
+
+export const MaximizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+    <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+    <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+  </svg>
+);
+
+export const MinimizeIcon: React.FC<IconProps> = ({ size = 18, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+    <path d="M16 3v3a2 2 0 0 0 2 2h3" />
+    <path d="M8 21v-3a2 2 0 0 0-2-2H3" />
+    <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+  </svg>
+);
+
+export const OpenExternalIcon: React.FC<IconProps> = ({
+  size = 18,
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M15 3h6v6" />
+    <path d="M10 14 21 3" />
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
   </svg>
 );

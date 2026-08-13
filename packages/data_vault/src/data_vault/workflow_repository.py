@@ -43,6 +43,15 @@ class WorkflowRepository:
     def upsert(self, record: WorkflowIndexRecord) -> None:
         with connect_state_db(self.db_path, ensure_parent=True) as conn:
             self._ensure(conn)
+            # Workflow files are authoritative and this table is only a
+            # rebuildable index. A deleted (or otherwise stale) record may
+            # retain a slug that has since been recreated with a new workflow
+            # id. Remove that stale alias before indexing the current file.
+            conn.execute(
+                """DELETE FROM workspace_workflows
+                WHERE workspace_id = ? AND slug = ? AND workflow_id <> ?""",
+                (record.workspace_id, record.slug, record.workflow_id),
+            )
             conn.execute(
                 """INSERT INTO workspace_workflows
                 (workspace_id, workflow_id, slug, revision, digest, state, updated_at)

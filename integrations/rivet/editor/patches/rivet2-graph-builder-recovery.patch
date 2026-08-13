@@ -1,0 +1,139 @@
+diff --git a/packages/app/src/features/graphBuilder/authoringCatalog.ts b/packages/app/src/features/graphBuilder/authoringCatalog.ts
+index 137f6f94..82f585bd 100644
+--- a/packages/app/src/features/graphBuilder/authoringCatalog.ts
++++ b/packages/app/src/features/graphBuilder/authoringCatalog.ts
+@@ -233,6 +233,21 @@ const STATIC_BUILT_IN_SETTINGS: Readonly<Record<string, readonly GraphBuilderSet
+     setting('id', 'string', 'Stable graph output identifier.'),
+     setting('dataType', 'string-enum', 'Graph output data type.', { allowedValues: dataTypes }),
+   ],
++  mcpDiscovery: [
++    setting('serverId', 'string', 'Configured MCP server identifier.'),
++    setting('useToolsOutput', 'boolean', 'Expose discovered tools.'),
++    setting('usePromptsOutput', 'boolean', 'Expose discovered prompts.'),
++  ],
++  mcpToolCall: [
++    setting('serverId', 'string', 'Configured MCP server identifier.'),
++    setting('toolName', 'string', 'Exact MCP tool name to call.'),
++    setting('toolArguments', 'string', 'JSON object containing the static MCP tool arguments.', {
++      projection: 'on-demand',
++    }),
++    setting('useToolNameInput', 'boolean', 'Read the MCP tool name from an input port.'),
++    setting('useToolArgumentsInput', 'boolean', 'Read the MCP tool arguments from an input port.'),
++    setting('useToolCallIdInput', 'boolean', 'Read the optional tool-call ID from an input port.'),
++  ],
+   number: [
+     setting('value', 'number', 'The constant numeric value.'),
+     setting('useValueInput', 'boolean', 'Read the value from an input port.'),
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+index c6445085..98fe6529 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.test.ts
+@@ -172,6 +172,82 @@ test('legacy draft runner propagates agent failures without changing the base pr
+   assert.deepEqual(baseProject, original);
+ });
+
++test('legacy draft runner returns command validation errors so the agent can recover', async () => {
++  let rejectedResult: unknown;
++  const result = await runLegacyGraphBuilderDraft(
++    options(async ({ externalFunctions, onUserEvent }) => {
++      rejectedResult = await externalFunctions.createNode!(
++        {} as ExternalFunctionProcessContext,
++        'Not A Registered Node Type',
++      );
++      await externalFunctions.createNode!({} as ExternalFunctionProcessContext, 'Text');
++      onUserEvent.finalMessage?.({ type: 'string', value: 'Recovered and created a text node.' });
++    }),
++  );
++
++  assert.equal(result.status, 'ready-for-preview');
++  assert.equal(result.status === 'ready-for-preview' ? result.draft.graphs[graphId]?.nodes.length : 0, 1);
++  assert.deepEqual(rejectedResult, {
++    type: 'object',
++    value: {
++      draftRevision: 0,
++      error: 'Unknown or unsupported node type: Not A Registered Node Type',
++      retryable: true,
++    },
++  });
++});
++
++test('legacy draft runner can configure MCP discovery and static tool calls', async () => {
++  const result = await runLegacyGraphBuilderDraft(
++    options(async ({ externalFunctions, onUserEvent }) => {
++      const discovery = await externalFunctions.createNode!(
++        {} as ExternalFunctionProcessContext,
++        'MCP Discovery',
++      );
++      const toolCall = await externalFunctions.createNode!({} as ExternalFunctionProcessContext, 'MCP Tool Call');
++      const discoveryId = (discovery.value as { result: string }).result;
++      const toolCallId = (toolCall.value as { result: string }).result;
++
++      await externalFunctions.editNode!({} as ExternalFunctionProcessContext, discoveryId, 'serverId', 'brep-server');
++      await externalFunctions.editNode!({} as ExternalFunctionProcessContext, toolCallId, 'serverId', 'brep-server');
++      await externalFunctions.editNode!({} as ExternalFunctionProcessContext, toolCallId, 'toolName', 'create_model');
++      await externalFunctions.editNode!(
++        {} as ExternalFunctionProcessContext,
++        toolCallId,
++        'toolArguments',
++        '{"width":40,"height":20,"depth":10}',
++      );
++      await externalFunctions.editNode!(
++        {} as ExternalFunctionProcessContext,
++        toolCallId,
++        'useToolNameInput',
++        false,
++      );
++      await externalFunctions.editNode!(
++        {} as ExternalFunctionProcessContext,
++        toolCallId,
++        'useToolArgumentsInput',
++        false,
++      );
++      onUserEvent.finalMessage?.({ type: 'string', value: 'Configured the BREP MCP nodes.' });
++    }),
++  );
++
++  assert.equal(result.status, 'ready-for-preview');
++  if (result.status !== 'ready-for-preview') return;
++  const discovery = result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'mcpDiscovery')!;
++  const toolCall = result.draft.graphs[graphId]!.nodes.find((node) => node.type === 'mcpToolCall')!;
++  assert.equal((discovery.data as { serverId?: string }).serverId, 'brep-server');
++  assert.deepEqual(toolCall.data, {
++    ...(toolCall.data as Record<string, unknown>),
++    serverId: 'brep-server',
++    toolName: 'create_model',
++    toolArguments: '{"width":40,"height":20,"depth":10}',
++    useToolNameInput: false,
++    useToolArgumentsInput: false,
++  });
++});
++
+ test('legacy production layout terminates for a source-reachable cycle and preserves existing positions', async () => {
+   const sourceId = 'source' as NodeId;
+   const leftCycleId = 'left-cycle' as NodeId;
+diff --git a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+index 066f2ac8..a017e6c2 100644
+--- a/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
++++ b/packages/app/src/features/graphBuilder/legacyDraftRunner.ts
+@@ -439,8 +439,19 @@ function wrapLoggedExternalFunctions(
+           log(`OK ${name} -> ${summarizeLegacyGraphBuilderResult(versionedResult)}`);
+           return versionedResult;
+         } catch (error) {
+-          log(`ERROR ${name}: failed`);
+-          throw error;
++          const message =
++            error instanceof Error && error.message.trim()
++              ? error.message.replaceAll(/[\r\n]+/g, ' ').slice(0, 500)
++              : 'The command could not be applied.';
++          log(`REJECTED ${name}: ${message}`);
++          return {
++            type: 'object',
++            value: {
++              draftRevision: getDraftRevision(),
++              error: message,
++              retryable: true,
++            },
++          };
+         }
+       },
+     ]),

@@ -1,8 +1,10 @@
 from tool_registry.gateway_management import GatewayManagementTools
 from tool_registry.gateway_models import GatewaySessionContext
+import pytest
 
 
-def test_management_tools_are_task_oriented_read_only_and_bound() -> None:
+@pytest.mark.asyncio
+async def test_management_tools_are_task_oriented_read_only_and_bound() -> None:
     management = GatewayManagementTools(
         server_status=lambda session: {
             "servers": [],
@@ -20,4 +22,6 @@ def test_management_tools_are_task_oriented_read_only_and_bound() -> None:
     assert all(tool.annotations["readOnlyHint"] is True for tool in tools)
     assert all(tool.provenance["source"] == "built-in" for tool in tools)
     bound = GatewaySessionContext("s1", "p1", "w1", "/w1", "stdio")
-    assert management.call(bound, "wright__workspace_status") == {"workspace_id": "w1"}
+    assert await management.call(bound, "wright__workspace_status") == {
+        "workspace_id": "w1"
+    }

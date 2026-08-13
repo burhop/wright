@@ -29,6 +29,10 @@ export type AgentEvent =
   | { type: "done"; session: ChatSession }
   | { type: "error"; message: string };
 
+export interface AgentUiContext {
+  activeRivetSlug?: string | null;
+}
+
 interface ServiceHealthResult {
   state: "connected" | "disconnected" | "unknown";
   latencyMs?: number;
@@ -40,6 +44,36 @@ export interface AgentCommand {
   name: string;
   description: string;
   prefix: string;
+}
+
+export interface HermesModelOption {
+  value: string;
+  label: string;
+  provider: string;
+  model: string;
+  is_current: boolean;
+}
+
+export interface HermesModelOptionGroup {
+  provider: string;
+  label: string;
+  options: HermesModelOption[];
+}
+
+export interface HermesModelOptionsResponse {
+  current_value?: string | null;
+  current_provider?: string | null;
+  current_model?: string | null;
+  groups: HermesModelOptionGroup[];
+}
+
+export interface SetHermesModelResponse {
+  ok: boolean;
+  provider: string;
+  model: string;
+  session_locked: boolean;
+  confirm_required: boolean;
+  confirm_message?: string | null;
 }
 
 export interface VaultFile {
@@ -252,6 +286,7 @@ export class HermesAgentService {
     sessionId: string,
     message: string,
     attachments?: string[],
+    uiContext?: AgentUiContext,
   ): AsyncIterable<AgentEvent> {
     agentLogger.info("Sending message", {
       sessionId,
@@ -271,7 +306,12 @@ export class HermesAgentService {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ session_id: sessionId, message, attachments }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          message,
+          attachments,
+          active_rivet_slug: uiContext?.activeRivetSlug ?? null,
+        }),
         signal: abortController.signal,
       });
 
@@ -519,6 +559,41 @@ export class HermesAgentService {
     }
     const data = await response.json();
     return data.agent;
+  }
+
+  async listHermesModels(refresh = false): Promise<HermesModelOptionsResponse> {
+    const response = await fetch(
+      `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to list Hermes models: ${response.statusText}`);
+    }
+    return response.json();
+  }
+
+  async setHermesModel(
+    provider: string,
+    model: string,
+    sessionId?: string | null,
+  ): Promise<SetHermesModelResponse> {
+    const response = await fetch(`${API_BASE}/api/agent/model`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        provider,
+        model,
+        session_id: sessionId || null,
+      }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(
+        data.detail || `Failed to set Hermes model: ${response.statusText}`,
+      );
+    }
+    return response.json();
   }
 
   async saveContext(

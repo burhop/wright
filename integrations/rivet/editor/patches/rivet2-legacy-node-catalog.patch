@@ -1,0 +1,261 @@
+diff --git a/packages/app/graphs/graph-creator.rivet-project b/packages/app/graphs/graph-creator.rivet-project
+index da671ed6..8f0eb633 100644
+--- a/packages/app/graphs/graph-creator.rivet-project
++++ b/packages/app/graphs/graph-creator.rivet-project
+@@ -254,12 +254,60 @@ data:
+           outgoingConnections:
+             - output->"Graph Output" MXQWZdpPtexuhaA7KVZDr/value
+           visualData: 622/614/330/3//
++    WrightListNodeTypes01:
++      metadata:
++        description: ""
++        id: WrightListNodeTypes01
++        name: "Function: listNodeTypes"
++      nodes:
++        '[WrightListQueryIn01]:graphInput "Graph Input"':
++          data:
++            dataType: string
++            id: query
++            useDefaultValueInput: false
++          outgoingConnections:
++            - data->"External Call" WrightListExternal01/arguments
++          visualData: 200/400/330/1//
++        '[WrightListExternal01]:externalCall "External Call"':
++          data:
++            functionName: listNodeTypes
++            useErrorOutput: false
++            useFunctionNameInput: false
++          outgoingConnections:
++            - result->"Graph Output" WrightListOutput01/value
++          visualData: 650/400/230/2//
++        '[WrightListOutput01]:graphOutput "Graph Output"':
++          data:
++            dataType: string
++            id: output
++          visualData: 1050/400/330/3//
+     K8xT505hvFD7lGCIfcjTf:
+       metadata:
+         description: ""
+         id: K8xT505hvFD7lGCIfcjTf
+         name: All Functions
+       nodes:
++        '[WrightListToolDef01]:gptFunction "GPT Function"':
++          data:
++            description: Searches the live safe node catalog. Call this before createNode;
++              use a short capability query such as "input output text" and pass
++              the returned authoringChoiceId to createNode.
++            name: listNodeTypes
++            schema: |-
++              {
++                "type": "object",
++                "properties": {
++                  "query": {
++                    "type": "string",
++                    "description": "Short capability or node-name search. Use an empty string to list starter choices."
++                  }
++                },
++                "required": ["query"],
++                "additionalProperties": false
++              }
++          outgoingConnections:
++            - function->"Array" sAnxJ1k5aqXR_fckQIop5/input13
++          visualData: -695/1108/280/68//
+         '[0fSAlrZUgERZRoRLQn5FU]:gptFunction "GPT Function"':
+           data:
+             description: Edits one allowlisted setting on a built-in node. getNodeData lists
+@@ -311,6 +359,7 @@ data:
+         '[3qC1uQHv8uARl-Ba8gV7d]:gptFunction "GPT Function"':
+           data:
+             description: Creates a deterministically resolved node type and returns its node
+-              ID. Use getNodePorts and getNodeData after creation.
++              ID. Call listNodeTypes first, pass its authoringChoiceId here, then
++              use getNodePorts and getNodeData after creation.
+             name: createNode
+             schema: |-
+@@ -983,16 +1032,17 @@ data:
+         '[r-EN1bzcNXmEUYbNZE2KX]:text "Text"':
+           data:
+             text: >-
+-              Use createNode, getNodeData, getNodePorts, editNode, connectNodes,
+-              disconnectNodes, deleteNode, toggleSplitting, reviewGraph,
+-              updateUser, and finished.
++              Use listNodeTypes, createNode, getNodeData, getNodePorts, editNode,
++              connectNodes, disconnectNodes, deleteNode, toggleSplitting,
++              reviewGraph, updateUser, and finished.
+
+
+-              Node types are resolved deterministically from the live project
+-              catalog. getNodeData returns only settings that the legacy
++              Call listNodeTypes before createNode to search the live project
++              catalog, then pass an exact returned authoringChoiceId to
++              createNode. getNodeData returns only settings that the legacy
+               assistant is authorized to inspect and edit. getNodePorts reports
+-              the live project-aware port definitions, including conditional and
+-              dynamic ports. Unknown plugin settings are intentionally
++              the live project-aware port definitions, including conditional
++              and dynamic ports. Unknown plugin settings are intentionally
+               unavailable.
+
+
+@@ -1114,6 +1164,8 @@ data:
+         '[0cqheENSin-CqueDgmCU4]:delegateFunctionCall "Delegate Function Call"':
+           data:
+             handlers:
++              - key: listNodeTypes
++                value: WrightListNodeTypes01
+               - key: createNode
+                 value: DNpnkEaXvzD3ZbRxQEg-d
+               - key: finished
+@@ -1288,6 +1340,9 @@ data:
+
+               - Make one function call per assistant turn.
+
++              - Call listNodeTypes before createNode. Pass an exact returned
++              authoringChoiceId to createNode; never invent a node type.
++
+               - Use getNodePorts before connecting unfamiliar or dynamically
+               configured nodes.
+
+diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts b/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
+index 42fa92e6..8a0a0f7b 100644
+--- a/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
++++ b/packages/app/src/hooks/aiGraphBuilderHelpers.test.ts
+@@ -85,6 +85,46 @@ test('createNode normalizes model-friendly node type labels before creating node
+   assert.equal(workingGraph.nodes[0]?.type, 'text');
+ });
+
++test('listNodeTypes exposes the live safe authoring catalog without changing the graph', async () => {
++  const registry = createBuiltInRegistry();
++  let workingGraph: NodeGraph = {
++    metadata: { id: 'graph-1' as GraphId, name: 'Graph', description: '' },
++    nodes: [],
++    connections: [],
++  };
++  const project = {
++    metadata: { id: 'project-1' as ProjectId, title: 'Project', description: '' },
++    graphs: { [workingGraph.metadata!.id!]: workingGraph },
++    plugins: [],
++  } as Project;
++  const helpers = buildAiGraphBuilderExternalFunctions({
++    project,
++    referencedProjects: {},
++    registry,
++    catalog: createCatalog(registry, project),
++    showChanges: () => assert.fail('listNodeTypes must not publish graph changes'),
++    workingGraph: () => workingGraph,
++    setWorkingGraph: (nextGraph) => {
++      workingGraph = nextGraph;
++    },
++  });
++
++  const result = (await helpers.listNodeTypes?.({} as ExternalFunctionProcessContext, {
++    query: 'input output text',
++  })) as { type: 'string'; value: string };
++  const catalogResult = JSON.parse(result.value) as {
++    choices: Array<{ authoringChoiceId: string; nodeType: string }>;
++    guidance: string;
++  };
++
++  assert.equal(result.type, 'string');
++  assert.deepEqual(workingGraph.nodes, []);
++  assert.ok(catalogResult.choices.some((entry) => entry.nodeType === 'graphInput'));
++  assert.ok(catalogResult.choices.some((entry) => entry.nodeType === 'graphOutput'));
++  assert.ok(catalogResult.choices.some((entry) => entry.nodeType === 'text'));
++  assert.match(catalogResult.guidance, /authoringChoiceId/);
++});
++
+ test('createNode keeps working after app state freezes a published graph snapshot', async () => {
+   const registry = createBuiltInRegistry();
+   let workingGraph: NodeGraph = {
+diff --git a/packages/app/src/hooks/aiGraphBuilderHelpers.ts b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
+index 5f97bc3a..46ca1a0e 100644
+--- a/packages/app/src/hooks/aiGraphBuilderHelpers.ts
++++ b/packages/app/src/hooks/aiGraphBuilderHelpers.ts
+@@ -74,6 +74,76 @@ function readStringField(record: Record<string, unknown>, key: string): string |
+   return typeof value === 'string' ? value : undefined;
+ }
+
++function resolveAiGraphBuilderNodeTypeQuery(rawQuery: unknown): string {
++  const query = isRecord(rawQuery) ? readStringField(rawQuery, 'query') : rawQuery;
++  return typeof query === 'string' ? stripStringWrapper(query).slice(0, 200) : '';
++}
++
++function listAiGraphBuilderNodeTypes(catalog: GraphBuilderAuthoringCatalogSnapshot, rawQuery: unknown): string {
++  const query = resolveAiGraphBuilderNodeTypeQuery(rawQuery);
++  const queryTokens = query
++    .toLowerCase()
++    .split(/[^a-z0-9]+/)
++    .filter((token) => token.length > 1);
++  const entries = catalog.listEntries().filter((entry) => entry.capabilities.createWithDefaults);
++  const scoredEntries = entries
++    .map((entry) => {
++      const exactLabels = [entry.authoringChoiceId, entry.nodeType, entry.displayName, ...entry.aliases].map((label) =>
++        label.toLowerCase(),
++      );
++      const searchableText = [...exactLabels, entry.description].join(' ').toLowerCase();
++      const score = queryTokens.reduce((total, token) => {
++        if (exactLabels.some((label) => label === token)) {
++          return total + 4;
++        }
++        if (exactLabels.some((label) => label.includes(token))) {
++          return total + 2;
++        }
++        return searchableText.includes(token) ? total + 1 : total;
++      }, 0);
++      return { entry, score };
++    })
++    .filter(({ score }) => queryTokens.length === 0 || score > 0)
++    .sort((left, right) => right.score - left.score || left.entry.displayName.localeCompare(right.entry.displayName));
++
++  const starterNodeTypes = new Set([
++    'graphInput',
++    'graphOutput',
++    'text',
++    'number',
++    'boolean',
++    'expression',
++    'passthrough',
++    'comment',
++  ]);
++  const starterEntries = entries
++    .filter((entry) => entry.family === 'registered' && starterNodeTypes.has(entry.nodeType))
++    .sort((left, right) => left.displayName.localeCompare(right.displayName));
++  const selectedEntries = [...scoredEntries.map(({ entry }) => entry), ...starterEntries]
++    .filter(
++      (entry, index, all) =>
++        all.findIndex((candidate) => candidate.authoringChoiceId === entry.authoringChoiceId) === index,
++    )
++    .slice(0, 40);
++
++  return JSON.stringify({
++    query,
++    totalAvailable: entries.length,
++    matchCount: scoredEntries.length,
++    choices: selectedEntries.map((entry) => ({
++      authoringChoiceId: entry.authoringChoiceId,
++      nodeType: entry.nodeType,
++      displayName: entry.displayName,
++      description: entry.description,
++      aliases: entry.aliases,
++    })),
++    guidance:
++      scoredEntries.length === 0 && queryTokens.length > 0
++        ? 'No direct matches were found. The choices include safe starter nodes; try a shorter capability query if needed.'
++        : 'Pass authoringChoiceId to createNode. Use getNodePorts and getNodeData after creation.',
++  });
++}
++
+ export function resolveAiGraphBuilderNodeId(rawNodeId: unknown): NodeId {
+   const nodeId = isRecord(rawNodeId) ? readStringField(rawNodeId, 'nodeId') : rawNodeId;
+
+@@ -276,6 +346,10 @@ export function buildAiGraphBuilderExternalFunctions(options: {
+   const getProject = () => (typeof options.project === 'function' ? options.project() : options.project);
+
+   return {
++    listNodeTypes: async (_ctx: unknown, rawQuery: unknown) => ({
++      type: 'string',
++      value: listAiGraphBuilderNodeTypes(options.catalog, rawQuery),
++    }),
+     createNode: async (_ctx: unknown, nodeType: unknown) => {
+       const graph = getWorkingGraph();
+       const authoringChoiceId = resolveLegacyGraphBuilderAuthoringChoice(options.catalog, nodeType);

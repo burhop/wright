@@ -1,3 +1,5 @@
+import { surfaceRequestId } from "../ids";
+
 const MAX_MESSAGE_BYTES = 1_048_576;
 
 export interface WrightSurfaceToolCallContext {
@@ -279,8 +281,8 @@ export class WrightSurfaceSdk {
     return {
       protocolVersion: "1.0",
       kind,
-      messageId: crypto.randomUUID(),
-      correlationId: crypto.randomUUID(),
+      messageId: surfaceRequestId(),
+      correlationId: surfaceRequestId(),
       binding: this.binding,
       operation,
       toolName,

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "runner": "wright-rivet2-node",
+  "protocol_version": 1,
+  "rivet_version": "2.8.9",
+  "source": {
+    "repository": "https://github.com/valerypopoff/rivet2.0.git",
+    "revision": "4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053",
+    "package": "@valerypopoff/rivet2-node",
+    "package_version": "2.1.9"
+  },
+  "entrypoint": "dist/wright-runner.mjs",
+  "sha256": "3a688dafc88d20a0716f509c679ac5438b159c2d65886cecd2ad2f94115ad607",
+  "bytes": 13492582,
+  "build_input": {
+    "path": "src/wright-runner.ts",
+    "sha256": "8276dd79bc5f7ba3635efff7c8778fe92b755e213b0a2a8adc0929720aed120b"
+  },
+  "runtime_network_policy": "wright-bridge-only"
+}

@@ -42,6 +42,7 @@ def test_request_strips_wright_forwarded_csrf_and_hop_by_hop_authority() -> None
             ("X-Private", "remove-me"),
             ("Host", "preview.test"),
             ("Accept", "text/html"),
+            ("X-Rivet-AI-Token", "short-lived-app-token"),
         ],
         pin=_pin(),
     )
@@ -49,6 +50,7 @@ def test_request_strips_wright_forwarded_csrf_and_hop_by_hop_authority() -> None
     assert lowered["host"] == "app.example.test:8443"
     assert lowered["cookie"] == "theme=dark; app_session=target"
     assert lowered["accept"] == "text/html"
+    assert lowered["x-rivet-ai-token"] == "short-lived-app-token"
     for forbidden in (
         "authorization",
         "x-wright-workspace-id",

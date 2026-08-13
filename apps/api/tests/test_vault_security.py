@@ -1,4 +1,5 @@
 from pathlib import Path
+import base64
 
 import pytest
 
@@ -50,3 +51,23 @@ async def test_vault_read_rejects_encoded_windows_traversal(
 
     assert response.status_code == 404
     assert "outside" not in response.text
+
+
+def test_attachment_ids_resolve_to_hermes_image_data_urls(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(vault_router, "VAULT_DIR", tmp_path / "vault")
+    stored = vault_router._vault().store("spec.png", b"png-data")
+
+    result = vault_router.attachment_data_urls([stored.file_id])
+
+    assert result == [
+        f"data:image/png;base64,{base64.b64encode(b'png-data').decode('ascii')}"
+    ]
+
+
+def test_attachment_ids_reject_missing_upload(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(vault_router, "VAULT_DIR", tmp_path / "vault")
+
+    with pytest.raises(vault_router.HTTPException) as error:
+        vault_router.attachment_data_urls(["00000000-0000-0000-0000-000000000000"])
+
+    assert error.value.status_code == 400

@@ -1,4 +1,4 @@
-const n=`
+const n = `
 html[data-theme~="typography:typography"] {
   --ds-font-body: normal 400 0.875rem/1.25rem var(--ds-font-family-body);
   --ds-font-body-large: normal 400 1rem/1.5rem var(--ds-font-family-body);
@@ -25,4 +25,7 @@ html[data-theme~="typography:typography"] {
   --ds-font-family-sans: ui-sans-serif, "Segoe UI", Ubuntu, system-ui, "Helvetica Neue", sans-serif;
   --ds-font-family-brand: Charlie Sans;
 }
-`;export{n as default};
+`;
+export {
+  n as default
+};

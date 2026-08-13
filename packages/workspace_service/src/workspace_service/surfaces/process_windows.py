@@ -502,7 +502,11 @@ class WindowsProcessAdapter:
                 *request.argv,
                 cwd=request.cwd,
                 env=dict(request.environment),
-                stdin=asyncio.subprocess.DEVNULL,
+                stdin=(
+                    asyncio.subprocess.PIPE
+                    if request.stdin_payload is not None
+                    else asyncio.subprocess.DEVNULL
+                ),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 creationflags=creation_flags,
@@ -514,6 +518,11 @@ class WindowsProcessAdapter:
             executable = str(Path(identity.exe()).resolve())
             job.assign(process.pid)
             self._resume_primary_thread(process.pid)
+            if request.stdin_payload is not None and process.stdin is not None:
+                process.stdin.write(request.stdin_payload)
+                await process.stdin.drain()
+                process.stdin.close()
+                await process.stdin.wait_closed()
         except BaseException as error:
             if process is not None and process.returncode is None:
                 try:

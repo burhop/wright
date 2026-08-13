@@ -34,10 +34,41 @@ def test_packaged_server_bootstrap_uses_stable_data_and_prebuilt_ui(
 
     assert values["DATABASE_PATH"] == str(layout.data / "wright.db")
     assert values["FRONTEND_DIST_DIR"] == str(static.resolve())
+    assert values["WRIGHT_RIVET_WORKFLOWS_ENABLED"] == "1"
+    assert values["WRIGHT_RIVET_RUNNER_ENABLED"] == "1"
+    assert values["WRIGHT_RIVET_EDITOR_ENABLED"] == "1"
+    assert values["WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED"] == "1"
+    assert values["WRIGHT_SURFACES_ENABLED"] == "1"
+    assert values["WRIGHT_SURFACES_LIVE_APPS_ENABLED"] == "1"
     assert values["WRIGHT_WORKSPACE_ROOT"] == str(layout.workspaces)
     assert values["WRIGHT_WORKSPACES_DIR"] == str(layout.workspaces)
     assert environment == values
     assert layout.workspaces.is_dir()
+
+
+def test_windows_workstation_startup_enables_rivet_without_eager_launch() -> None:
+    startup_script = (ROOT / "scripts" / "windows" / "start-wright.ps1").read_text(
+        encoding="utf-8"
+    )
+    for feature_flag in (
+        "WRIGHT_RIVET_WORKFLOWS_ENABLED",
+        "WRIGHT_RIVET_EDITOR_ENABLED",
+        "WRIGHT_RIVET_AI_ENABLED",
+        "WRIGHT_RIVET_RUNNER_ENABLED",
+        "WRIGHT_RIVET_REAL_EXECUTION_ENABLED",
+        "WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED",
+        "WRIGHT_SURFACES_ENABLED",
+        "WRIGHT_SURFACES_LIVE_APPS_ENABLED",
+    ):
+        assert f'$env:{feature_flag} = "1"' in startup_script
+
+    api_start = startup_script.index('Start-HiddenProcess -Name "wright-api"')
+    for feature_flag in (
+        "WRIGHT_RIVET_EDITOR_ENABLED",
+        "WRIGHT_SURFACES_ENABLED",
+        "WRIGHT_SURFACES_LIVE_APPS_ENABLED",
+    ):
+        assert startup_script.index(f"$env:{feature_flag}") < api_start
 
 
 def test_runtime_identity_contains_hash_not_raw_challenge(monkeypatch) -> None:

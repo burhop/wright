@@ -13,7 +13,11 @@ from .base import (
 )
 from .hermes import HermesAdapter
 from .openclaw import OpenClawStubEngine
-from .hermes_config import HermesApiSettings, resolve_hermes_api_settings
+from .hermes_config import (
+    HermesApiSettings,
+    official_hermes_cli_path,
+    resolve_hermes_api_settings,
+)
 from .registry import (
     AgentApiSettings,
     AgentEngineRegistry,
@@ -32,6 +36,11 @@ from .context import (
 )
 from .progress import GenericProgressProjector
 from .health_probe import HealthProbeResult, probe_health
+from .hermes_openai_bridge import (
+    HermesBridgeError,
+    HermesOpenAICompatibilityBridge,
+    HermesOpenAIBridgeSettings,
+)
 
 __all__ = [
     "BaseAgentEngine",
@@ -42,6 +51,7 @@ __all__ = [
     "HermesAdapter",
     "OpenClawStubEngine",
     "HermesApiSettings",
+    "official_hermes_cli_path",
     "resolve_hermes_api_settings",
     "AgentApiSettings",
     "AgentEngineRegistry",
@@ -59,4 +69,7 @@ __all__ = [
     "GenericProgressProjector",
     "HealthProbeResult",
     "probe_health",
+    "HermesBridgeError",
+    "HermesOpenAICompatibilityBridge",
+    "HermesOpenAIBridgeSettings",
 ]

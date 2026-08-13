@@ -6,6 +6,7 @@ site/
 mkdocs.yml
 ci_failures.md
 tests/screenshots/
+integrations/rivet/spike/
 .git/
 .venv/
 venv/
@@ -17,6 +18,10 @@ __pycache__/
 .ruff_cache/
 test-results/
 dist/
+!integrations/rivet/editor/dist/
+!integrations/rivet/editor/dist/**
+!integrations/rivet/runner/dist/
+!integrations/rivet/runner/dist/**
 build/
 **/build/
 /native-candidate/

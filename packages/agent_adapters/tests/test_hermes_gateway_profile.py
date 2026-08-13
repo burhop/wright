@@ -74,3 +74,13 @@ def test_wright_system_hint_has_no_solid_edge_tool_recipe():
     assert "providerid=solid_edge" not in lowered
     assert "cad.create_part_from_recipe" not in lowered
     assert "advertised descriptions and schemas" in lowered
+
+
+def test_wright_system_hint_retries_deterministic_non_mutating_validation_errors():
+    lowered = WRIGHT_SYSTEM_HINT.lower()
+
+    assert "retryable validation errors" in lowered
+    assert "no external state was changed" in lowered
+    assert "apply every deterministic correction" in lowered
+    assert "one revised tool call and retry" in lowered
+    assert "repeats the same failure" in lowered

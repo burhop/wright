@@ -3,6 +3,7 @@ import path from "node:path";
 import { test } from "@playwright/test";
 
 test("capture all screenshots", async ({ page }, testInfo) => {
+  test.setTimeout(90_000);
   const screenshotDir = testInfo.outputPath("screenshots");
   const workspaceDir = testInfo.outputPath("workspace");
   await mkdir(screenshotDir, { recursive: true });

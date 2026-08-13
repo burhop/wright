@@ -131,6 +131,23 @@ async def _read(response) -> bytes:
     return b"".join([chunk async for chunk in response.body])
 
 
+async def test_bodyless_get_does_not_add_chunked_request_framing() -> None:
+    async with _upstream() as (port, observations):
+        proxy = SurfaceHttpProxy()
+        response = await proxy.forward(
+            ProxyHttpRequest.get("/asset.js", presentation_id="presentation-1"),
+            pin=_pin(port),
+            limits=_limits(),
+        )
+        await _read(response)
+        await proxy.aclose()
+
+    _method, _target, headers, _body_value = observations[0]
+    assert not any(
+        name.lower() == "transfer-encoding" for name, _value in headers
+    )
+
+
 async def test_preserves_method_path_query_body_duplicates_and_target_cookies() -> None:
     async with _upstream() as (port, observations):
         proxy = SurfaceHttpProxy()

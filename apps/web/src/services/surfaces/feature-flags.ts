@@ -21,5 +21,6 @@ export function rivetWorkflowsTabEnabled(
   environment: Record<string, unknown> = import.meta.env,
 ): boolean {
   const value = environment.VITE_RIVET_WORKFLOWS_TAB_ENABLED;
-  return ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
+  if (value === undefined || value === null || value === "") return true;
+  return !["0", "false", "no", "off"].includes(String(value).toLowerCase());
 }

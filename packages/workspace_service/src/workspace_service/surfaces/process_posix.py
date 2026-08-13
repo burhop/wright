@@ -277,7 +277,11 @@ class PosixProcessAdapter:
             *request.argv,
             cwd=request.cwd,
             env=dict(request.environment),
-            stdin=asyncio.subprocess.DEVNULL,
+            stdin=(
+                asyncio.subprocess.PIPE
+                if request.stdin_payload is not None
+                else asyncio.subprocess.DEVNULL
+            ),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             start_new_session=True,
@@ -292,6 +296,11 @@ class PosixProcessAdapter:
                 "SURFACE_PROCESS_IDENTITY_UNAVAILABLE",
                 "Could not capture POSIX process creation identity",
             ) from error
+        if request.stdin_payload is not None and process.stdin is not None:
+            process.stdin.write(request.stdin_payload)
+            await process.stdin.drain()
+            process.stdin.close()
+            await process.stdin.wait_closed()
         return PosixManagedProcess(
             process=process,
             request=request,

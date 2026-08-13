@@ -157,6 +157,48 @@ class LiveAppControlService:
             ),
         )
 
+    async def _start_from_starting(
+        self,
+        *,
+        actor: SurfaceActor,
+        surface_id: SurfaceId,
+        source: LiveAppSurfaceSource,
+        descriptor: SurfaceDescriptor,
+        manager: LiveAppControlManager,
+        idempotency_key: str,
+    ) -> LiveAppInstance:
+        try:
+            instance = await manager.start(
+                LiveAppStartRequest(
+                    workspace_id=actor.workspace_id,
+                    surface_id=str(surface_id),
+                    manifest_id=source.manifest_id,
+                    user_id=actor.user_id,
+                    session_id=actor.session_id,
+                    idempotency_key=idempotency_key,
+                )
+            )
+        except LiveAppManagerError as error:
+            if error.instance is not None:
+                await self._project(
+                    actor=actor,
+                    descriptor=descriptor,
+                    target=SurfaceLifecycle.FAILED,
+                    manager=manager,
+                    instance=error.instance,
+                )
+            raise LiveAppControlError(
+                error.code, str(error), retryable=error.retryable
+            ) from error
+        await self._project(
+            actor=actor,
+            descriptor=descriptor,
+            target=SurfaceLifecycle.READY,
+            manager=manager,
+            instance=instance,
+        )
+        return instance
+
     async def start(
         self,
         *,
@@ -178,37 +220,14 @@ class LiveAppControlService:
                 target=SurfaceLifecycle.STARTING,
                 manager=manager,
             )
-            try:
-                instance = await manager.start(
-                    LiveAppStartRequest(
-                        workspace_id=actor.workspace_id,
-                        surface_id=str(surface_id),
-                        manifest_id=source.manifest_id,
-                        user_id=actor.user_id,
-                        session_id=actor.session_id,
-                        idempotency_key=idempotency_key,
-                    )
-                )
-            except LiveAppManagerError as error:
-                if error.instance is not None:
-                    await self._project(
-                        actor=actor,
-                        descriptor=descriptor,
-                        target=SurfaceLifecycle.FAILED,
-                        manager=manager,
-                        instance=error.instance,
-                    )
-                raise LiveAppControlError(
-                    error.code, str(error), retryable=error.retryable
-                ) from error
-            await self._project(
+            return await self._start_from_starting(
                 actor=actor,
+                surface_id=surface_id,
+                source=source,
                 descriptor=descriptor,
-                target=SurfaceLifecycle.READY,
                 manager=manager,
-                instance=instance,
+                idempotency_key=idempotency_key,
             )
-            return instance
 
     async def _existing_operation(
         self,
@@ -220,7 +239,7 @@ class LiveAppControlService:
     ) -> LiveAppInstance:
         lock = await self._lock(actor, surface_id)
         async with lock:
-            descriptor, _source, manager = await self._surface(actor, surface_id)
+            descriptor, source, manager = await self._surface(actor, surface_id)
             instance_id = self._instance_id(descriptor)
             if operation == "stop":
                 allowed = {SurfaceLifecycle.READY, SurfaceLifecycle.UNHEALTHY}
@@ -287,6 +306,31 @@ class LiveAppControlService:
             try:
                 instance = await invoke(instance_id, idempotency_key=idempotency_key)
             except LiveAppManagerError as error:
+                if error.code == "SURFACE_INSTANCE_NOT_FOUND" and operation in {
+                    "retry",
+                    "restart",
+                }:
+                    if descriptor.lifecycle is SurfaceLifecycle.STOPPING:
+                        descriptor = await self._project(
+                            actor=actor,
+                            descriptor=descriptor,
+                            target=SurfaceLifecycle.STOPPED,
+                            manager=manager,
+                        )
+                        descriptor = await self._project(
+                            actor=actor,
+                            descriptor=descriptor,
+                            target=SurfaceLifecycle.STARTING,
+                            manager=manager,
+                        )
+                    return await self._start_from_starting(
+                        actor=actor,
+                        surface_id=surface_id,
+                        source=source,
+                        descriptor=descriptor,
+                        manager=manager,
+                        idempotency_key=idempotency_key,
+                    )
                 if error.instance is not None:
                     await self._project(
                         actor=actor,
@@ -342,7 +386,12 @@ class LiveAppControlService:
         self, *, actor: SurfaceActor, surface_id: SurfaceId
     ) -> LiveAppInstance:
         descriptor, _source, manager = await self._surface(actor, surface_id)
-        instance = manager.get(self._instance_id(descriptor))
+        try:
+            instance = manager.get(self._instance_id(descriptor))
+        except LiveAppManagerError as error:
+            raise LiveAppControlError(
+                error.code, str(error), retryable=error.retryable
+            ) from error
         if instance.workspace_id != actor.workspace_id or instance.surface_id != str(
             surface_id
         ):
@@ -355,7 +404,12 @@ class LiveAppControlService:
         self, *, actor: SurfaceActor, surface_id: SurfaceId
     ) -> LiveAppInstance:
         descriptor, _source, manager = await self._surface(actor, surface_id)
-        return await manager.check_health(self._instance_id(descriptor))
+        try:
+            return await manager.check_health(self._instance_id(descriptor))
+        except LiveAppManagerError as error:
+            raise LiveAppControlError(
+                error.code, str(error), retryable=error.retryable
+            ) from error
 
     async def logs(
         self,

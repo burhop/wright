@@ -181,6 +181,28 @@ def test_mcp_router_uses_generic_wright_gateway_sync():
     )
 
 
+def test_rivet_management_writes_use_only_the_scoped_rivet_grant() -> None:
+    from api.composition import _rivet_gateway_tools
+    from tool_registry.wright_managed_servers import RIVET_WORKFLOW_MUTATION_APPROVAL
+
+    specs = {spec.name: spec for spec, _handler in _rivet_gateway_tools()}
+    mutation_names = {
+        "wright__rivet_add_node",
+        "wright__rivet_edit_node",
+        "wright__rivet_delete_node",
+        "wright__rivet_connect_ports",
+        "wright__rivet_disconnect_ports",
+        "wright__rivet_save_revision",
+        "wright__rivet_run_workflow",
+    }
+    for name in mutation_names:
+        assert specs[name].required_approvals == frozenset(
+            {RIVET_WORKFLOW_MUTATION_APPROVAL}
+        )
+    assert specs["wright__rivet_inspect_graph"].required_approvals == frozenset()
+    assert specs["wright__rivet_lint"].required_approvals == frozenset()
+
+
 def test_gateway_diagnostics_summarize_persisted_timings(sync_client, tmp_path) -> None:
     server_id, session_id, workspace_id, _ = _seed(tmp_path)
     GatewayRepository(DATABASE_PATH).record_audit(

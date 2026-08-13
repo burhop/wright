@@ -214,14 +214,15 @@ def test_generate_config_outputs_hermes_config_and_compliance_artifacts(tmp_path
     assert "NO WARRANTY" in no_warranty
 
 
-def test_dockerfile_mcp_derives_from_existing_appliance_contract_and_adds_node_runtime() -> None:
+def test_dockerfile_mcp_derives_from_existing_appliance_contract_and_reuses_node_runtime() -> None:
     dockerfile = read_text("docker/Dockerfile.mcp")
 
     assert "# syntax=docker/dockerfile:1.7" in dockerfile
     assert "ARG WRIGHT_BASE_IMAGE=wright:test" in dockerfile
     assert "FROM ${WRIGHT_BASE_IMAGE}" in dockerfile
-    assert "FROM node:26.5.1-slim" in dockerfile
-    assert "COPY --from=node-runtime" in dockerfile
+    assert "RUN node --version && npm --version" in dockerfile
+    assert "FROM node:" not in dockerfile
+    assert "COPY --from=node-runtime" not in dockerfile
     assert "WRIGHT_MCP_BUNDLE_FILE" in dockerfile
     assert "mcp-bundle*.yaml" in dockerfile
     assert "WRIGHT_SOLIDEDGE_MCP_GIT_URL" in dockerfile
@@ -260,6 +261,7 @@ def test_mcp_install_is_manifest_driven_and_uses_build_time_caches() -> None:
         "freecad-mcp-wrapped",
         "brep-mcp-wrapped",
         "brep-mcp-launcher.cjs",
+        "sed -i 's/\\r$//'",
         "solid-edge-mcp",
         "WRIGHT_SOLIDEDGE_MCP_GIT_URL",
         "WRIGHT_MCP_GITHUB_TOKEN_FILE",
@@ -339,6 +341,7 @@ def test_smoke_script_covers_services_entries_and_local_tooling() -> None:
 
 def test_brep_mcp_launcher_wraps_pinned_package_without_editing_it() -> None:
     launcher = read_text("docker/mcp/brep-mcp-launcher.cjs")
+    attributes = read_text(".gitattributes")
 
     assert "BREPJS_CAD_ROOT" in launcher
     assert "APPDATA" in launcher
@@ -348,6 +351,7 @@ def test_brep_mcp_launcher_wraps_pinned_package_without_editing_it() -> None:
     assert "global.URL" in launcher
     assert "url.fileURLToPath" in launcher
     assert "require(mcpEntry)" in launcher
+    assert "docker/mcp/brep-mcp-launcher.cjs text eol=lf" in attributes
 
 
 def test_image_family_declares_four_managed_images_with_persisted_paths() -> None:

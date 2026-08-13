@@ -18,8 +18,8 @@
     "spike:all": "npm run spike:acquire && npm run spike:build && npm run spike:editor && npm run spike:runner && npm run spike:offline && npm run spike:inventory"
   },
   "dependencies": {
-    "@ironclad/rivet-core": "1.25.0",
-    "@ironclad/rivet-node": "1.25.0",
+    "@valerypopoff/rivet2-core": "2.1.9",
+    "@valerypopoff/rivet2-node": "2.1.9",
     "ws": "8.18.0"
   }
 }

@@ -19,6 +19,42 @@ interface BrowserHostAdapterOptions {
   ) => Window | null;
 }
 
+function devSurfaceProxyUrl(value: string, control: URL): string {
+  const preview = new URL(value);
+  if (!["5173", "5174"].includes(control.port)) return value;
+  if (preview.origin === control.origin) return value;
+  const path = `/__wright-surface/${encodeURIComponent(preview.host)}${preview.pathname}${preview.search}${preview.hash}`;
+  const proxyOrigin = `${control.protocol}//${preview.hostname}:${control.port}`;
+  return new URL(path, proxyOrigin).toString();
+}
+
+function existingDevSurfaceProxyUrl(
+  value: string,
+  control: URL,
+): { readonly proxyUrl: string; readonly issuedUrl: string } | null {
+  if (!["5173", "5174"].includes(control.port)) return null;
+  const proxy = new URL(value);
+  if (
+    proxy.protocol !== control.protocol ||
+    proxy.port !== control.port ||
+    proxy.search !== ""
+  )
+    return null;
+  const match = proxy.pathname.match(
+    /^\/__wright-surface\/([^/]+)\/__wright\/bootstrap$/,
+  );
+  if (!match) return null;
+  const upstreamHost = decodeURIComponent(match[1]);
+  const issuedUrl = validateIssuedSurfacePreviewUrl(
+    `${control.protocol}//${upstreamHost}/__wright/bootstrap${proxy.hash}`,
+    control.origin,
+  );
+  const issued = new URL(issuedUrl);
+  if (proxy.origin !== control.origin && proxy.hostname !== issued.hostname)
+    return null;
+  return { proxyUrl: devSurfaceProxyUrl(issuedUrl, control), issuedUrl };
+}
+
 export class BrowserHostAdapter implements HostAdapter {
   readonly mode = "browser";
   readonly surfaceCapabilities = {
@@ -65,16 +101,23 @@ export class BrowserHostAdapter implements HostAdapter {
   }
 
   validateIssuedPreviewUrl(value: string): string {
-    return validateIssuedSurfacePreviewUrl(value, this.controlUrl().origin);
+    const control = this.controlUrl();
+    const existingProxy = existingDevSurfaceProxyUrl(value, control);
+    if (existingProxy) return existingProxy.proxyUrl;
+    const validated = validateIssuedSurfacePreviewUrl(value, control.origin);
+    return devSurfaceProxyUrl(validated, control);
   }
 
   async openExternal(
     value: string,
     options: ExternalOpenOptions = {},
   ): Promise<void> {
+    const control = this.controlUrl();
+    const existingProxy = existingDevSurfaceProxyUrl(value, control);
     const validated = options.approvedDirectUrl
       ? validateApprovedDirectSurfaceUrl(value)
-      : this.validateIssuedPreviewUrl(value);
+      : (existingProxy?.issuedUrl ??
+        validateIssuedSurfacePreviewUrl(value, control.origin));
     const openWindow =
       this.configuredOpenWindow ??
       ((url: string, target: string, features: string) =>

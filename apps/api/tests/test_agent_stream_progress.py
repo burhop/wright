@@ -98,6 +98,31 @@ def test_restart_hermes_gateway_uses_supported_cli(monkeypatch):
     assert captured["kwargs"]["timeout"] == 30
 
 
+def test_restart_hermes_gateway_finds_official_windows_install(monkeypatch):
+    captured = {}
+    executable = (
+        "C:\\Users\\tester\\AppData\\Local\\hermes\\hermes-agent"
+        "\\venv\\Scripts\\hermes.exe"
+    )
+    monkeypatch.setattr("api.routers.agent.shutil.which", lambda _name: None)
+    monkeypatch.setattr(
+        "api.routers.agent.official_hermes_cli_path", lambda: executable
+    )
+    monkeypatch.setattr("api.routers.agent.Path.is_file", lambda _path: False)
+
+    def run(command, **kwargs):
+        captured["command"] = command
+        captured["kwargs"] = kwargs
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr("api.routers.agent.subprocess.run", run)
+
+    _restart_hermes_gateway_process()
+
+    assert captured["command"] == [executable, "gateway", "restart"]
+    assert captured["kwargs"]["timeout"] == 30
+
+
 def test_restart_hermes_gateway_prefers_supervisor_in_appliance(monkeypatch):
     captured = {}
 

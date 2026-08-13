@@ -551,6 +551,44 @@ MIGRATIONS: tuple[Migration, ...] = (
                 ON workspace_workflow_reviews(workspace_id, workflow_id, revision)"""),
         ),
     ),
+    Migration(
+        12,
+        "workspace_workflow_runs",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_runs (
+                run_id TEXT PRIMARY KEY,
+                workspace_id TEXT NOT NULL,
+                session_id TEXT NOT NULL,
+                workflow_id TEXT NOT NULL,
+                revision INTEGER NOT NULL CHECK(revision >= 1),
+                digest TEXT NOT NULL CHECK(length(digest) = 64),
+                graph TEXT NOT NULL,
+                state TEXT NOT NULL CHECK(state IN
+                    ('queued', 'running', 'cancelling', 'cancelled', 'succeeded', 'failed')),
+                generation INTEGER NOT NULL CHECK(generation >= 1),
+                started_at INTEGER,
+                completed_at INTEGER,
+                reason_code TEXT,
+                output_json TEXT,
+                output_truncated INTEGER NOT NULL DEFAULT 0
+                    CHECK(output_truncated IN (0, 1)),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE CASCADE
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workspace_workflow_runs_scope
+                ON workspace_workflow_runs(workspace_id, session_id, started_at)"""),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_run_events (
+                run_id TEXT NOT NULL,
+                sequence INTEGER NOT NULL CHECK(sequence >= 1),
+                occurred_at INTEGER NOT NULL,
+                kind TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                PRIMARY KEY (run_id, sequence),
+                FOREIGN KEY (run_id) REFERENCES workspace_workflow_runs(run_id)
+                    ON DELETE CASCADE
+            )"""),
+        ),
+    ),
 )
 
 

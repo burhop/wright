@@ -6,5 +6,8 @@ import { spikeRoot, writeEvidence } from "./evidence.mjs";
 const patches = resolve(spikeRoot, "baseline", "patches");
 const entries = existsSync(patches) ? await readdir(patches) : [];
 const patchFiles = entries.filter((entry) => entry.endsWith(".patch"));
-const { target } = await writeEvidence("patches", "passed", { patchFiles, policy: "No patches are permitted for baseline rivet-v1.25.0." });
+const { target } = await writeEvidence("patches", "passed", {
+  patchFiles,
+  policy: "The runtime baseline is unpatched; the reviewed canvas-only UI patch is tracked under integrations/rivet/editor/patches."
+});
 console.log(target);

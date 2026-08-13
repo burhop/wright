@@ -1,15 +1,16 @@
 {
   "contractVersion": 1,
-  "baselineId": "rivet-v1.25.0",
-  "sourceRepository": "https://github.com/Ironclad/rivet.git",
-  "sourceTag": "v1.25.0",
-  "sourceRevision": "02777a59583be8e8a2730ac9fb1e3e259795e4fd",
+  "baselineId": "rivet2-v2.8.9",
+  "sourceRepository": "https://github.com/valerypopoff/rivet2.0.git",
+  "sourceTag": null,
+  "sourceRevision": "4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053",
   "packages": {
-    "@ironclad/rivet-core": "1.25.0",
-    "@ironclad/rivet-node": "1.25.0"
+    "@valerypopoff/rivet-app": "2.8.9",
+    "@valerypopoff/rivet2-core": "2.1.9",
+    "@valerypopoff/rivet2-node": "2.1.9"
   },
-  "upstreamNodeVersion": "20.4.0",
+  "upstreamNodeVersion": "22.21.1",
   "sourcePackageManager": "yarn",
   "patches": [],
-  "disposition": "candidate"
+  "disposition": "canvas-integration"
 }

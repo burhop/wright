@@ -62,6 +62,11 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         lambda path: events.append("catalog"),
     )
     monkeypatch.setattr(
+        catalog_reconcile,
+        "reconcile_wright_managed_servers",
+        lambda path: events.append("wright-managed"),
+    )
+    monkeypatch.setattr(
         main,
         "create_agent_engine",
         lambda **kwargs: events.append("agent") or object(),
@@ -93,6 +98,7 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
         "migration",
         "secret",
         "catalog",
+        "wright-managed",
         "agent",
         "sync",
         "mcp",
