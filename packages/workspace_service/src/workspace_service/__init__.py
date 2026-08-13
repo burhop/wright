@@ -43,6 +43,7 @@ from .engineering_scenario_artifacts import (
 from .engineering_scenario_assertions import EngineeringAssertionRegistry
 from .engineering_scenario_catalog_service import EngineeringScenarioCatalog
 from .engineering_scenario_service import EngineeringScenarioService
+from .engineering_model_service import EngineeringModelService, observe_local_model_host
 from .rivet_validation import (
     GraphPortSummary,
     GraphSummary,
@@ -134,6 +135,8 @@ __all__ = [
     "EngineeringAssertionRegistry",
     "EngineeringScenarioCatalog",
     "EngineeringScenarioService",
+    "EngineeringModelService",
+    "observe_local_model_host",
     "artifact_content_digest",
     "normalize_artifact",
     "GraphPortSummary",

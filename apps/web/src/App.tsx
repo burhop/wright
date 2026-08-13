@@ -15,6 +15,7 @@ import NotFoundPage from "./components/pages/NotFoundPage";
 import LogsPage from "./components/pages/LogsPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import ModelSetupPage from "./components/pages/ModelSetupPage";
+import EngineeringModelLibraryPage from "./components/pages/EngineeringModelLibraryPage";
 import { AuthGate } from "./components/common/AuthGate";
 
 import { ToolsProvider } from "./store/tools";
@@ -59,6 +60,10 @@ function App() {
               <Route path="/file-vault" element={<FileVaultPage />} />
               <Route path="/logs" element={<LogsPage />} />
               <Route path="/setup/model" element={<ModelSetupPage />} />
+              <Route
+                path="/engineering-models"
+                element={<EngineeringModelLibraryPage />}
+              />
               <Route path="/settings" element={<SettingsPage />} />
               {/* Backward compatibility: redirect old /agent-chat route to dashboard */}
               <Route path="/agent-chat" element={<Navigate to="/" replace />} />

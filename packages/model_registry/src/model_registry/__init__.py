@@ -21,6 +21,14 @@ from .observability import (
     MODEL_BOUNDARY_EVENTS as MODEL_BOUNDARY_EVENTS,
     ModelBoundaryObserver as ModelBoundaryObserver,
 )
+from .catalog import (
+    ModelCatalog as ModelCatalog,
+    ModelCatalogEntry as ModelCatalogEntry,
+    ModelCatalogError as ModelCatalogError,
+    ModelCatalogFilters as ModelCatalogFilters,
+    ModelCatalogPage as ModelCatalogPage,
+    ModelCatalogSnapshot as ModelCatalogSnapshot,
+)
 
 
 def schema_root():

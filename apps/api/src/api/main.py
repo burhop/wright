@@ -27,6 +27,7 @@ from api.routers.setup import router as setup_router
 from api.routers.logs import router as logs_router
 from api.routers.settings import router as settings_router
 from api.routers.gateway import router as gateway_router
+from api.routers.engineering_models import router as engineering_models_router
 from api.routers.surface_events import router as surface_events_router
 from api.routers.surface_displays import router as surface_displays_router
 from api.routers.live_apps import router as live_apps_router
@@ -45,6 +46,7 @@ from api.composition import (
     close_application_services,
     close_surface_application_services,
     surface_application,
+    engineering_model_application,
     workspace_service,
 )
 from api.mcp_transport import AuthenticatedMcpTransport, McpTransportMount
@@ -136,6 +138,7 @@ async def lifespan(app: FastAPI):
     )
     try:
         app.state.workspace_service = workspace_service()
+        app.state.engineering_model_application = engineering_model_application()
         if app.state.workspace_surface_settings.flags.model:
             app.state.surface_application = surface_application()
             await app.state.surface_application.reconcile_startup()
@@ -277,6 +280,11 @@ app.include_router(setup_router, prefix="/api/setup")
 app.include_router(logs_router, prefix="/api/logs", tags=["Logs"])
 app.include_router(settings_router, prefix="/api/settings", tags=["Settings"])
 app.include_router(gateway_router, prefix="/api/gateway", tags=["Gateway"])
+app.include_router(
+    engineering_models_router,
+    prefix="/api/v1/engineering-models",
+    tags=["Engineering Models"],
+)
 if app.state.workspace_surface_settings.flags.model:
     # Events must be registered before the dynamic /surfaces/{surface_id} path.
     app.include_router(

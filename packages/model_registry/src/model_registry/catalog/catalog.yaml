@@ -1,0 +1,173 @@
+format_version: 1
+snapshot:
+  snapshot_id: wright-models-bundled-1
+  channel: bundled
+  sequence: 1
+  schema_version: "1.0"
+  source_kind: bundled
+  trust_state: bundled
+  freshness: bundled
+entries:
+  - model_id: wright-affine-test
+    package_resource: generated-affine-package.json
+    maturity: deterministic_fixture
+    readiness: approved
+    evidence:
+      source: bundled
+      license: bundled
+      artifact: bundled
+      runtime: bundled
+      compatibility: cached
+      security: bundled
+      test: bundled
+    blockers: []
+    generator:
+      kind: deterministic_recipe
+      recipe: Generate canonical JSON coefficients with scale=2.0 and offset=1.0, MIT attribution, and the seeded predict-two vector.
+      inputs:
+        scale: 2.0
+        offset: 1.0
+        deterministic_seed: 0
+      constraints:
+        - JSON data only; no executable code or model weights.
+        - Generated only beneath caller-owned temporary state.
+      manifest_digest: 3546ec1598a496d71e7ad5aa215ec10f2b41c06ac75fd5223f26c328cffb90f9
+      artifact_set_digest: 31bed5805ed7f530de2df3a368faa0db5d26025e790c081f367ad450aea4f047
+
+  - model_id: keras-io-pointnet
+    display_name: Keras PointNet ModelNet10 Candidate
+    description: Public pinned point-cloud classification candidate; evaluation-only until Gate D closes license, runtime, resources, and real-vector evidence.
+    maturity: external_candidate
+    readiness: needs_review
+    source:
+      kind: hugging_face
+      uri: https://huggingface.co/keras-io/PointNet
+      immutable_revision: 308acfe5d36d9bb34215d1766f13fac612abe18c
+      access: public
+    tasks:
+      - point_cloud_classification
+    license:
+      expression: Apache-2.0
+      attribution: Keras PointNet example and repository publishers; standalone selected-artifact license evidence remains unresolved.
+      redistribution: review_required
+    limitations:
+      - limitation_id: evaluation-only
+        description: No real deterministic Wright vector, approved SavedModel adapter, or conservative CPU envelope has been recorded yet.
+        severity: critical
+      - limitation_id: modelnet10-domain
+        description: Intended for ModelNet10-style normalized point clouds, not arbitrary production scan classification.
+        severity: caution
+    variants:
+      - variant_id: tensorflow-savedmodel-cpu
+        format: tensorflow-savedmodel
+        precision: float32
+        platforms: [linux/x86_64, windows/x86_64, macos/aarch64]
+        accelerator: cpu
+        runtime:
+          adapter_id: tensorflow-savedmodel
+          version_specifier: unapproved
+        resources:
+          download_bytes: 5383840
+          installed_bytes: 5383840
+          ram_bytes: 1073741824
+          vram_bytes: 0
+        artifacts:
+          - {path: keras_metadata.pb, size: 227087, sha256: 49de5bb4c0894223b551f658c63a0930b52be488419c2927ea9c7f25ced26822}
+          - {path: saved_model.pb, size: 2086305, sha256: 2924bd9cb2435445398f8e86ebc2522df96251b6f9b4dd73e695bd89e24a6411}
+          - {path: variables/variables.data-00000-of-00001, size: 3064233, sha256: 15d3ba92731f58a4f88938b6fc84f034be34b7dcf5dffeebe287a0bf1a40479c}
+          - {path: variables/variables.index, size: 6215, sha256: 87a5668ed6f992d2233dba73419abda6a51fd6b4c484f69b02e27fddb5e708d7}
+    evidence:
+      source: cached
+      license: partial
+      artifact: cached
+      runtime: absent
+      compatibility: partial
+      security: partial
+      test: absent
+    blockers:
+      - category: license_unapproved
+        message: Selected-artifact license and redistribution evidence is incomplete.
+        recovery: Record authoritative license evidence before approval.
+      - category: runtime_missing
+        message: No separately approved TensorFlow SavedModel adapter is installed.
+        recovery: Review the adapter through a separate runtime plan.
+      - category: test_evidence_missing
+        message: No real seeded test vector has passed against the exact artifact.
+        recovery: Run the bounded Gate D validation before approval.
+      - category: unsafe_format
+        message: TensorFlow SavedModel is not on the current data-only allowlist.
+        recovery: Complete an explicit format and adapter review or select a safer candidate.
+
+  - model_id: blocked-gated-geometry-model
+    display_name: Gated Geometry Segmentation Candidate
+    description: Representative private/gated entry that Wright can explain but cannot acquire or approve automatically.
+    maturity: external_candidate
+    readiness: gated_external_action
+    source:
+      kind: hugging_face
+      uri: https://huggingface.co/example/gated-geometry-model
+      immutable_revision: "1111111111111111111111111111111111111111"
+      access: gated
+    tasks: [geometry_segmentation]
+    license:
+      expression: LicenseRef-Publisher-Terms
+      attribution: Publisher-controlled candidate metadata only.
+      redistribution: review_required
+    limitations:
+      - {limitation_id: gated, description: Access requires an independent publisher decision and may disclose user information., severity: critical}
+    variants: []
+    evidence: {source: stale, license: absent, artifact: absent, runtime: absent, compatibility: absent, security: absent, test: absent}
+    blockers:
+      - {category: source_gated, message: Publisher-controlled access is required., recovery: Complete any access decision independently; Wright will not request access or accept terms.}
+
+  - model_id: blocked-remote-code-model
+    display_name: Remote-Code Mesh Candidate
+    description: Representative entry blocked because loading it requires repository Python code.
+    maturity: blocked_candidate
+    readiness: blocked
+    source:
+      kind: hugging_face
+      uri: https://huggingface.co/example/remote-code-mesh-model
+      immutable_revision: "2222222222222222222222222222222222222222"
+      access: public
+    tasks: [mesh_classification]
+    license:
+      expression: Apache-2.0
+      attribution: Example blocked candidate.
+      redistribution: review_required
+    limitations:
+      - {limitation_id: remote-code, description: Repository Python execution is required by the publisher workflow., severity: critical}
+    variants: []
+    evidence: {source: bundled, license: partial, artifact: partial, runtime: absent, compatibility: absent, security: bundled, test: absent}
+    blockers:
+      - {category: remote_code_required, message: The candidate requires repository code execution., recovery: Select a reviewed data-only artifact and adapter; there is no trust_remote_code bypass.}
+
+  - model_id: incompatible-cuda-mesh-model
+    display_name: CUDA Mesh Quality Candidate
+    description: Representative reviewed-metadata variant that is incompatible with the reference CPU-only Windows host.
+    maturity: external_candidate
+    readiness: incompatible
+    source:
+      kind: https
+      uri: https://example.invalid/models/cuda-mesh-quality
+      immutable_revision: "3333333333333333333333333333333333333333"
+      access: public
+    tasks: [mesh_quality_estimation]
+    license:
+      expression: MIT
+      attribution: Example compatibility-only catalog fixture.
+      redistribution: allowed
+    limitations:
+      - {limitation_id: cuda-only, description: This variant declares CUDA execution only., severity: caution}
+    variants:
+      - variant_id: cuda-f32
+        format: onnx
+        precision: float32
+        platforms: [linux/x86_64]
+        accelerator: cuda
+        runtime: {adapter_id: onnx-runtime-cuda, version_specifier: "==1.22.0"}
+        resources: {download_bytes: 1048576, installed_bytes: 1048576, ram_bytes: 536870912, vram_bytes: 1073741824}
+        artifacts: []
+    evidence: {source: bundled, license: bundled, artifact: partial, runtime: absent, compatibility: cached, security: partial, test: absent}
+    blockers:
+      - {category: incompatible_platform, message: The reference host does not provide the declared Linux CUDA platform., recovery: Choose a separately reviewed CPU variant or a compatible machine.}

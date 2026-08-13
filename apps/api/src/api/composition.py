@@ -6,6 +6,7 @@ from functools import lru_cache
 from typing import Callable
 
 from workspace_service import (  # type: ignore[import-untyped]
+    EngineeringModelService,
     WorkspaceService,
     build_workspace_service,
     RivetApprovalService,
@@ -312,6 +313,11 @@ def surface_application() -> SurfaceApplication:
     return build_surface_application(DATABASE_PATH)
 
 
+@lru_cache(maxsize=1)
+def engineering_model_application() -> EngineeringModelService:
+    return EngineeringModelService()
+
+
 async def close_application_services() -> None:
     if surface_application.cache_info().currsize:
         await surface_application().close()
@@ -319,6 +325,7 @@ async def close_application_services() -> None:
     if workspace_service.cache_info().currsize:
         await workspace_service().close()
         workspace_service.cache_clear()
+    engineering_model_application.cache_clear()
 
 
 async def close_surface_application_services() -> None:

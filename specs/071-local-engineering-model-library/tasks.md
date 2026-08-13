@@ -56,25 +56,25 @@
 
 ### Tests first
 
-- [ ] T025 [P] [US1] Write failing catalog schema/resource/duplicate/version/canonical-digest tests in `packages/model_registry/tests/test_catalog.py`.
-- [ ] T026 [P] [US1] Write failing evidence-facet, readiness, compatibility, blocker/recovery, sorting, filtering, pagination, and offline-freshness tests in `packages/model_registry/tests/test_catalog_views.py`.
-- [ ] T027 [P] [US1] Write failing API contract/RBAC/zero-side-effect tests for catalog list/detail in `apps/api/tests/test_engineering_model_catalog_api.py`.
-- [ ] T028 [P] [US1] Write failing web client/filter/state tests in `apps/web/tests/engineering-model-service.spec.ts`.
-- [ ] T029 [P] [US1] Write failing component tests for task, trust, license, resources, evidence, limitations, blocked recovery, offline, keyboard, and narrow layouts in `apps/web/tests/EngineeringModelLibraryPage.spec.tsx`.
+- [x] T025 [P] [US1] Write failing catalog schema/resource/duplicate/version/canonical-digest tests in `packages/model_registry/tests/test_catalog.py`.
+- [x] T026 [P] [US1] Write failing evidence-facet, readiness, compatibility, blocker/recovery, sorting, filtering, pagination, and offline-freshness tests in `packages/model_registry/tests/test_catalog_views.py`.
+- [x] T027 [P] [US1] Write failing API contract/RBAC/zero-side-effect tests for catalog list/detail in `apps/api/tests/test_engineering_model_catalog_api.py`.
+- [x] T028 [P] [US1] Write failing web client/filter/state tests in `apps/web/tests/engineering-model-service.spec.ts`.
+- [x] T029 [P] [US1] Write failing component tests for task, trust, license, resources, evidence, limitations, blocked recovery, offline, keyboard, and narrow layouts in `apps/web/tests/EngineeringModelLibraryPage.spec.tsx`.
 
 ### Implementation
 
-- [ ] T030 [US1] Implement package-owned catalog loading, semantic validation, canonical snapshots, and safe readiness projections in `packages/model_registry/src/model_registry/catalog.py`.
-- [ ] T031 [US1] Add catalog metadata for the generated Wright affine fixture and representative gated/unsafe/incompatible entries in `packages/model_registry/src/model_registry/catalog/catalog.yaml`.
-- [ ] T032 [US1] Add the provisional exact-revision PointNet metadata and Gate D blockers without weights or installable status in `packages/model_registry/src/model_registry/catalog/catalog.yaml`.
-- [ ] T033 [US1] Implement filtered/paginated inspection and host-compatibility composition in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
-- [ ] T034 [US1] Add bounded catalog/detail response models in `apps/api/src/api/schemas/engineering_models.py`.
-- [ ] T035 [US1] Add thin authenticated read-only catalog/detail routes that delegate immediately to an injected `EngineeringModelApplicationPort` in `apps/api/src/api/routers/engineering_models.py` and `packages/tool_registry/src/tool_registry/model_library_port.py`.
-- [ ] T036 [US1] Wire the model catalog and read service into `apps/api/src/api/composition.py` without contacting sources at startup.
-- [ ] T037 [US1] Implement typed catalog/detail/filter clients in `apps/web/src/services/engineering-model-service.ts`.
-- [ ] T038 [P] [US1] Implement reusable model trust/readiness/resource/evidence primitives in `apps/web/src/components/models/ModelTrustPrimitives.tsx`.
-- [ ] T039 [US1] Implement the dedicated library/detail/filter/offline page, including exact generated-fixture recipe/inputs/constraints/digests and honest external source provenance, in `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx`.
-- [ ] T040 [US1] Add a distinct Engineering Models route/navigation entry while preserving `/setup/model` in `apps/web/src/App.tsx` and `apps/web/src/components/layout/Sidebar.tsx`.
+- [x] T030 [US1] Implement package-owned catalog loading, semantic validation, canonical snapshots, and safe readiness projections in `packages/model_registry/src/model_registry/catalog.py`.
+- [x] T031 [US1] Add catalog metadata for the generated Wright affine fixture and representative gated/unsafe/incompatible entries in `packages/model_registry/src/model_registry/catalog/catalog.yaml`.
+- [x] T032 [US1] Add the provisional exact-revision PointNet metadata and Gate D blockers without weights or installable status in `packages/model_registry/src/model_registry/catalog/catalog.yaml`.
+- [x] T033 [US1] Implement filtered/paginated inspection and host-compatibility composition in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
+- [x] T034 [US1] Add bounded catalog/detail response models in `apps/api/src/api/schemas/engineering_models.py`.
+- [x] T035 [US1] Add thin authenticated read-only catalog/detail routes that delegate immediately to an injected `EngineeringModelApplicationPort` in `apps/api/src/api/routers/engineering_models.py` and `packages/tool_registry/src/tool_registry/model_library_port.py`.
+- [x] T036 [US1] Wire the model catalog and read service into `apps/api/src/api/composition.py` without contacting sources at startup.
+- [x] T037 [US1] Implement typed catalog/detail/filter clients in `apps/web/src/services/engineering-model-service.ts`.
+- [x] T038 [P] [US1] Implement reusable model trust/readiness/resource/evidence primitives in `apps/web/src/components/models/ModelTrustPrimitives.tsx`.
+- [x] T039 [US1] Implement the dedicated library/detail/filter/offline page, including exact generated-fixture recipe/inputs/constraints/digests and honest external source provenance, in `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx`.
+- [x] T040 [US1] Add a distinct Engineering Models route/navigation entry while preserving `/setup/model` in `apps/web/src/App.tsx` and `apps/web/src/components/layout/Sidebar.tsx`.
 
 **Checkpoint**: User Story 1 is a useful offline no-mutation MVP and remains separate from conversational model setup.
 

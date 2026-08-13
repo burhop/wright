@@ -11,6 +11,14 @@ vi.mock("../src/components/layout/AppShell", () => ({
 vi.mock("../src/components/pages/DashboardPage", () => ({
   default: () => <div data-testid="page-dashboard">Wright dashboard</div>,
 }));
+vi.mock("../src/components/pages/EngineeringModelLibraryPage", () => ({
+  default: () => (
+    <div data-testid="page-engineering-models">Engineering Models</div>
+  ),
+}));
+vi.mock("../src/components/pages/ModelSetupPage", () => ({
+  default: () => <div data-testid="page-model-setup">Model Setup</div>,
+}));
 
 vi.mock("../src/store/sessions", () => ({
   ChatProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -52,5 +60,30 @@ describe("App startup", () => {
 
     expect(await screen.findByTestId("page-dashboard")).toBeInTheDocument();
     expect(screen.queryByText("Welcome to Wright")).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["/engineering-models", "page-engineering-models"],
+    ["/setup/model", "page-model-setup"],
+  ])("preserves the distinct %s route", async (path, testId) => {
+    window.history.replaceState({}, "", path);
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({ auth_required: false, authenticated: true }),
+            { status: 200 },
+          ),
+        ),
+    );
+    vi.spyOn(hostAdapter, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ theme: "dark" }), { status: 200 }),
+    );
+
+    render(<App />);
+
+    expect(await screen.findByTestId(testId)).toBeInTheDocument();
   });
 });

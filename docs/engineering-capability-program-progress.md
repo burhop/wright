@@ -327,7 +327,7 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - [x] `speckit-checklist`: 40/40 identity, source/license, artifact safety, runtime/gateway, lifecycle/recovery, UX, compatibility, and extension requirements-quality checks pass.
 - [x] `speckit-tasks`: 113 dependency-ordered setup, foundation, five-story, cross-story hardening, external-evidence, and focused-gate tasks generated with tests-first checkpoints.
 - [x] `speckit-analyze` and remediation: all 63 buildable FR/NFR/SC items map to 113 unique tasks with no placeholders, unmapped tasks, or constitution conflicts. Repaired the external-model completion condition, `BaseTool` and API-port boundaries, structured logging/tracing coverage, adapter verify/progress, seeded limitation-aware vectors, complete plan effects, cache-cleanup recovery, 1,000-entry performance scale, and deterministic material-versus-observation evidence digests; repeat analysis has no critical/high findings.
-- [ ] `speckit-implement`
+- [ ] `speckit-implement`: T001-T040 are complete. Public schemas, immutable domain/policy values, migration 16, transaction-safe persistence, content-addressed artifact storage/recovery, generated fixtures, boundary observability, the offline catalog/read service, thin authenticated API, and the dedicated Engineering Models UI are implemented; installation/runtime/maintenance work remains.
 - [ ] Focused, integration, UI, packaging, and documentation verification
 - [ ] Final program exact-tree dev gate after loops 072-073
 - [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
@@ -340,9 +340,17 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - Generated deterministic affine artifacts exercise the entire normal lifecycle without network, model weights in Git, or an ML framework.
 - `keras-io/PointNet` at exact revision `308acfe5d36d9bb34215d1766f13fac612abe18c` remains evaluation-only until exact license, selected files/digests, TensorFlow adapter, CPU resources, input/output semantics, real vectors, cancellation, cleanup, cache, and removal evidence all pass. The general contracts will not be weakened to admit it.
 
+### Implementation checkpoints
+
+- Setup/contracts commit `1649e32` established the separately packaged model registry, package-resource JSON Schemas, bounded contract fixtures, and dependency guard; 11 focused contract tests passed without adding an ML framework, model-hub SDK, driver, compiler, unsafe serializer, or model weights.
+- Foundation commit `a9ce872` completed T008-T024: `BaseTool`, immutable model identities and canonical digests, fail-closed source/license/path/format/resource/actuation policy, additive migration 16, optimistic SQLite repository transitions, immutable content-addressed storage, crash reconciliation, deterministic fixture helpers, and redacted structured boundary telemetry. The focused foundation gate passed 71 tests plus Ruff check/format.
+- The T025-T040 offline catalog slice now exposes five bounded representative entries, including the approved generated affine fixture and exact-revision evaluation-only PointNet record. Catalog readiness, evidence facets, blockers, compatibility, filtering, sorting, cursor pagination, RBAC, and no-source/no-runtime startup behavior are covered by 14 Python tests.
+- The dedicated Engineering Models page remains separate from conversational model setup and shows task, trust, license, resources, evidence, limitations, generated-recipe digests, external provenance, and exact recovery without offering an install action prematurely. Four focused Vitest files passed 13 tests; targeted ESLint, Prettier, TypeScript build, Ruff check/format, and a real composed API probe returning HTTP 200 with all five entries also passed.
+- Gate D remains conservative: no source download, gated access, license acceptance, model weights, unreviewed remote code, runtime framework, credential, GPU, proprietary application, paid service, hardware, host mutation, or physical actuation occurred. Rollback for the read-only slice is to disable the API composition and navigation entries; migration 16 remains additive and inert for workspaces with no model state.
+
 ### Next checkpoint
 
-Generate the Loop 071 custom checklist, dependency-ordered tasks, and cross-artifact analysis. Then implement test-first slices on the shared integration branch with focused gates; keep the authoritative dev gate deferred to program closeout.
+Commit the verified T025-T040 catalog/UI slice, then implement T041-T058 test-first: immutable expiring effect plans, bounded HTTPS/resume and offline-import sources, durable install lifecycle, thin API, and explicit review/progress/recovery UI. Keep the authoritative dev gate deferred to program closeout.
 
 ## Program guardrails
 
