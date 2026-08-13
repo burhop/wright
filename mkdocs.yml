@@ -45,6 +45,7 @@ nav:
       - Overview: getting-started/overview.md
       - Prerequisites: getting-started/prerequisites.md
       - Install Matrix: getting-started/install-matrix.md
+      - Engineering Program State Lifecycle: getting-started/program-state-lifecycle.md
       - Docker Appliance: getting-started/quickstart-docker.md
       - Windows 11: getting-started/windows-11.md
       - Linux and GB10: getting-started/linux-gb10.md
@@ -85,6 +86,7 @@ nav:
       - Container Hardening: security/container-hardening.md
   - Operations:
       - Database Migration and Recovery: operations/database-recovery.md
+      - Engineering Support Diagnostics: operations/engineering-support-diagnostics.md
       - MCP Gateway: operations/mcp-gateway.md
       - Solid Edge Diagnostics: operations/solid-edge-diagnostics.md
   - Integrations:
@@ -95,6 +97,7 @@ nav:
       - Spec-Kit Workflow: contributing/spec-kit.md
       - Code Style: contributing/code-style.md
       - Testing Guidelines: contributing/testing.md
+      - Engineering Program Usability: testing/engineering-program-usability.md
       - CI/CD Workflows: contributing/ci-cd-workflows.md
       - Pull Requests: contributing/pull-requests.md
       - Public Launch Checklist: public-launch-checklist.md

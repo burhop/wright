@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   workspaceService,
   type EngineeringScenarioReport,
 } from "../../services/workspace-service";
+import { SupportDiagnosticsPanel } from "../support/SupportDiagnosticsPanel";
 
 const TERMINAL = new Set(["passed", "failed", "cancelled", "blocked", "error"]);
 
@@ -22,6 +23,10 @@ export function RivetScenarioReport({
 }) {
   const [report, setReport] = useState<EngineeringScenarioReport | null>(null);
   const [message, setMessage] = useState("Loading engineering evidence...");
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const observedAt = useRef(Date.now());
+  const terminalSummary = useRef<HTMLDivElement>(null);
+  const terminalFocused = useRef(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -31,6 +36,9 @@ export function RivetScenarioReport({
       );
       setReport(next);
       setMessage(`Scenario is ${next.state}.`);
+      setElapsedSeconds(
+        Math.max(0, Math.floor((Date.now() - observedAt.current) / 1000)),
+      );
     } catch (error) {
       setMessage(
         error instanceof Error
@@ -42,11 +50,22 @@ export function RivetScenarioReport({
 
   useEffect(() => {
     void refresh();
+  }, [refresh]);
+
+  useEffect(() => {
+    if (report && TERMINAL.has(report.state)) return;
     const timer = window.setInterval(() => {
-      if (!report || !TERMINAL.has(report.state)) void refresh();
+      void refresh();
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [refresh, report]);
+  }, [refresh, report?.state]);
+
+  useEffect(() => {
+    if (report && TERMINAL.has(report.state) && !terminalFocused.current) {
+      terminalFocused.current = true;
+      terminalSummary.current?.focus();
+    }
+  }, [report]);
 
   const cancel = async () => {
     try {
@@ -79,6 +98,32 @@ export function RivetScenarioReport({
       <p role="status" aria-live="polite">
         {message}
       </p>
+      <div
+        ref={terminalSummary}
+        tabIndex={report && TERMINAL.has(report.state) ? -1 : undefined}
+        data-testid="scenario-phase-summary"
+      >
+        <p>
+          <strong>Phase:</strong>{" "}
+          {!report
+            ? "loading durable report"
+            : TERMINAL.has(report.state)
+              ? "review evidence and recovery"
+              : report.state === "cancelling"
+                ? "cancelling and checking cleanup"
+                : "running reviewed workflow"}
+          . <strong>Progress:</strong>{" "}
+          {report && TERMINAL.has(report.state)
+            ? "terminal"
+            : "in progress; no percentage is available"}
+          . <strong>Observed:</strong> {elapsedSeconds} seconds.{" "}
+          <strong>Cancellation:</strong>{" "}
+          {!report || !TERMINAL.has(report.state)
+            ? "available"
+            : "not available after a terminal result"}
+          .
+        </p>
+      </div>
       {!report || !TERMINAL.has(report.state) ? (
         <button
           data-testid={`scenario-cancel-${scenarioRunId}`}
@@ -168,6 +213,12 @@ export function RivetScenarioReport({
               ))}
             </section>
           ) : null}
+          <h5>Material engineering evidence</h5>
+          <p>
+            Artifact identities and content digests describe deterministic
+            engineering material. Run timing and resource values remain
+            observations and do not change these identities.
+          </p>
           <ul style={{ paddingLeft: "var(--space-lg)" }}>
             {report.artifacts.slice(0, 100).map((artifact, index) => (
               <li
@@ -206,6 +257,12 @@ export function RivetScenarioReport({
               index.
             </p>
           ) : null}
+          <h5>Observed assertion results</h5>
+          <p>
+            Each result names the producing Rivet node and exact reviewed
+            capability. Assertion values are observations, not reusable tool or
+            machine authority.
+          </p>
           <ol style={{ paddingLeft: "var(--space-lg)" }}>
             {report.assertions.slice(0, 100).map((assertion) => (
               <li
@@ -249,6 +306,11 @@ export function RivetScenarioReport({
               report.
             </p>
           ) : null}
+          <SupportDiagnosticsPanel
+            workspaceId={report.workspace_id}
+            sessionId={sessionId}
+            scenarioRunId={scenarioRunId}
+          />
         </>
       ) : null}
     </section>

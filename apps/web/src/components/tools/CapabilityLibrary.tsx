@@ -17,10 +17,12 @@ export function CapabilityLibrary({
   refreshToken = 0,
   onSearchContextChange,
   onReportMissing,
+  onPlanOnboarding,
 }: {
   refreshToken?: number;
   onSearchContextChange?: (context: MissingCapabilitySearchContext) => void;
   onReportMissing?: (context: MissingCapabilitySearchContext) => void;
+  onPlanOnboarding?: (capabilityId: string) => void;
 }) {
   const [filters, setFilters] = useState<CapabilityFilterState>(() =>
     readCapabilityFilters(),
@@ -30,6 +32,7 @@ export function CapabilityLibrary({
   const [loading, setLoading] = useState(true);
   const [observing, setObserving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryToken, setRetryToken] = useState(0);
 
   const query = useMemo(
     () => ({
@@ -100,7 +103,41 @@ export function CapabilityLibrary({
     return () => {
       active = false;
     };
-  }, [query, refreshToken]);
+  }, [query, refreshToken, retryToken]);
+
+  const firstMatch = result?.capabilities[0] || null;
+  const blockerOrigin = firstMatch?.compatibility.reasons[0]?.source
+    ? firstMatch.compatibility.reasons[0].source.startsWith("machine.")
+      ? "this machine"
+      : firstMatch.compatibility.reasons[0].source.startsWith("policy.")
+        ? "local Wright policy"
+        : "recorded capability evidence"
+    : null;
+  const primaryAction = firstMatch
+    ? firstMatch.compatibility.status === "incompatible"
+      ? {
+          label: "Review the incompatibility",
+          consequence:
+            "This opens evidence and alternatives; it does not install or enable anything.",
+        }
+      : firstMatch.compatibility.status === "uncertain"
+        ? {
+            label: "Review compatibility evidence",
+            consequence:
+              "This explains what is known before you create an onboarding plan; it does not install anything.",
+          }
+        : firstMatch.user_state?.active
+          ? {
+              label: "Review workspace availability",
+              consequence:
+                "This confirms the scope before you prepare a Rivet workflow.",
+            }
+          : {
+              label: "Review and plan onboarding",
+              consequence:
+                "You will review an exact plan before Wright changes anything.",
+            }
+    : null;
 
   const observeSelected = async () => {
     if (!selected) return;
@@ -163,7 +200,50 @@ export function CapabilityLibrary({
         </div>
       )}
       {loading && <div role="status">Loading capabilities…</div>}
-      {error && <div role="alert">{error}</div>}
+      {error && (
+        <div role="alert">
+          <p>{error}</p>
+          <button
+            type="button"
+            onClick={() => setRetryToken((value) => value + 1)}
+          >
+            Try loading again
+          </button>
+        </div>
+      )}
+      {!loading && !error && firstMatch && primaryAction ? (
+        <aside
+          aria-labelledby="capability-next-action-title"
+          data-testid="capability-next-action"
+        >
+          <h2 id="capability-next-action-title">Next action</h2>
+          <p>
+            <strong>{primaryAction.label}.</strong> {primaryAction.consequence}
+          </p>
+          {blockerOrigin && firstMatch.compatibility.status !== "compatible" ? (
+            <p>
+              Blocker origin: <strong>{blockerOrigin}</strong>.{" "}
+              {firstMatch.compatibility.reasons[0]?.message}
+            </p>
+          ) : null}
+          <button
+            type="button"
+            data-testid="capability-primary-next-action"
+            onClick={() => {
+              setSelected(firstMatch);
+              if (
+                onPlanOnboarding &&
+                firstMatch.compatibility.status === "compatible" &&
+                !firstMatch.user_state?.active
+              ) {
+                onPlanOnboarding(firstMatch.capability_id);
+              }
+            }}
+          >
+            {primaryAction.label}
+          </button>
+        </aside>
+      ) : null}
       {!loading && !error && result?.capabilities.length === 0 && (
         <div data-testid="capability-empty-state">
           <h2>No capabilities match these filters</h2>

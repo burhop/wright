@@ -887,6 +887,11 @@ class NativeLifecycle:
                 target = manifest.runtimes[target_id]
                 schema = self.migration_manager.current_schema(self.layout.data)
                 if not target.data_schema_min <= schema <= target.data_schema_max:
+                    quarantine = self.store.record_newer_state_quarantine(
+                        data_schema=schema,
+                        candidate_runtime_id=target.runtime_id,
+                        supported_max=target.data_schema_max,
+                    )
                     return self._result(
                         manifest,
                         operation_id,
@@ -899,6 +904,7 @@ class NativeLifecycle:
                             "current_schema": schema,
                             "supported_min": target.data_schema_min,
                             "supported_max": target.data_schema_max,
+                            "newer_state": quarantine,
                         },
                         remediation=[
                             "Use the documented explicit backup recovery procedure."

@@ -118,6 +118,21 @@ export function RivetScenarioLibrary({
           !workflow.stale_reasons?.length,
         );
         const scenarioRunId = runs[scenario.scenario_id];
+        const firstBlocker = exact?.blockers[0];
+        const blockerOrigin = firstBlocker
+          ? /credential|license|host|tier|resource/i.test(firstBlocker.code)
+            ? "optional external prerequisite"
+            : "local reviewed workspace state"
+          : null;
+        const nextAction = scenarioRunId
+          ? "Review the terminal evidence, cleanup, and recovery below."
+          : !exact
+            ? "Check and prepare. This is read-only and does not run providers."
+            : exact.state !== "ready"
+              ? `Resolve the blocker from ${blockerOrigin}, then create a fresh preflight.`
+              : !reviewed
+                ? "Review the exact prepared workflow and binding identities; no run starts during review."
+                : "Run the reviewed scenario. This starts only the displayed Tier 1 provider fixtures.";
         return (
           <article
             key={scenario.scenario_id}
@@ -144,6 +159,10 @@ export function RivetScenarioLibrary({
               .
             </p>
             <p>Safety: static engineering evidence; no physical actuation.</p>
+            <p data-testid={`scenario-next-action-${scenario.scenario_id}`}>
+              <strong>Next action:</strong> {nextAction}
+              {firstBlocker ? ` ${firstBlocker.message}` : ""}
+            </p>
             <button
               data-testid={`scenario-preflight-${scenario.scenario_id}`}
               type="button"

@@ -414,6 +414,88 @@ Commit the verified Loop 071 closeout on the integration branch, then begin Loop
 - The private source path was not reachable on this host within the bounded probe, so the real qualification lifecycle remains explicitly skipped rather than being inferred from generated evidence.
 - The authoritative repository-wide dev gate, push, and merge remain deferred until Loop 073 as approved.
 
+## Loop 073
+
+### Baseline and Spec Kit scope
+
+- Loop 073 is the non-publishing program hardening/closeout loop on the
+  user-approved shared `codex/rivet-engineering-program` branch. It preserves
+  Loops 069-072 for one final no-fast-forward merge to `dev`; it authorizes no
+  `main` merge or release action.
+- The baseline exposed a shipped data-schema ceiling of 14 while the additive
+  migration registry already ended at schema 16. It also lacked a bounded
+  user-previewed support export, exact whole-program retained-state inventory,
+  newer-state quarantine record, complete platform-evidence contract, and a
+  dedicated deterministic program tranche in the development gate.
+- Spec Kit specification, clarification, plan, research, data model, quickstart,
+  contracts, 48/48 requirements/hardening checklist checks, 67 tasks, and final
+  cross-artifact analysis are recorded in `specs/073-program-hardening/`.
+  Analysis covers 40 functional requirements, ten non-functional requirements,
+  and eleven success criteria with no unresolved critical/high/medium finding.
+
+### Implemented hardening evidence
+
+- Compatibility now declares schema 16. Native activation records exact-plan
+  receipts, is idempotent for the same plan, rejects mixed operation identity,
+  captures bounded catalog/model/workflow/scenario inventories, creates the
+  required backup, and preserves an explicit newer-state quarantine record when
+  an older rollback runtime cannot read current data.
+- Local support diagnostics use allowlisted typed projections, recursive
+  redaction, exact catalog/model/binding/report material digests, current
+  read-only WAL-aware state, five-minute principal/workspace/scope-bound
+  single-use grants, state-change invalidation, safe logs/traces/errors, a 2 MiB
+  ceiling, and no upload destination or executable authority. The Rivet report
+  supplies accessible preview, confirmation, expiry, one-use export, and fresh-
+  preview recovery.
+- The Capability Library presents one primary next action, consequence, and
+  blocker origin. Workspace handoff survives refresh without replay. Rivet
+  reports separate material evidence from observations and show honest phase,
+  elapsed observation, cancellation availability, cleanup, terminal recovery,
+  and scoped support diagnostics.
+- The focused hardening tranche passes 74 Python tests with two transparent
+  non-supporting host skips. Seventeen focused web client/component tests and
+  the production web build pass. Two automated Chromium program journeys and
+  the validated human-repeatable continuation pass; each journey used six
+  primary interactions, stayed below five minutes, ran keyboard-only at 320
+  CSS pixels and 200% zoom with reduced motion, and reported zero serious or
+  critical scoped Axe findings. The walkthrough preserves two earlier harness-
+  isolation stops before the 15.2-second passing continuation.
+- The offline restart drill retained an active catalog, model package/content/
+  workspace binding, and scenario report with zero network calls. Deterministic
+  Compose contracts continue to require named volumes for data, workspaces,
+  config, and Hermes across every supported profile. Host/container lifecycle
+  evidence remains non-supporting wherever the exact artifact/platform host is
+  unavailable.
+- Gate E remains closed: distribution and diagnostic scans prohibit credentials,
+  private paths/payloads, reusable authority, commands, and physical-actuation
+  configuration. Normal evidence uses no paid/proprietary service, credential,
+  GPU, hardware, large download, license acceptance, or production mutation.
+
+### Local non-publishing candidate rehearsal
+
+- The final Windows-host local rehearsal built and inspected
+  `wright_engineering-0.1.9-py3-none-any.whl` (15,837,524 bytes,
+  SHA-256 `c0a11d7cd0c532359cb5766f929e9cf9b7a36c84a3a76092871725cece498ccc`)
+  and `wright_engineering-0.1.9.tar.gz` (15,480,550 bytes, SHA-256
+  `01d8613ebbb8e7ed1f8cfe895fd7294dd6ba9f11258de7346304f5fa81b9d973`).
+- Both candidates contain the native application modules and the staged
+  production UI. The inspected compatibility digest is
+  `0d2cddae96c0d608bc5b82504c1165ece027794358d3e160fdcfaae089f2fc1a`,
+  UI-manifest digest is
+  `3793c635c47ebfffb6253e6c1b27329993b4edecdf351d59d01f44ca0900bc89`,
+  and runtime-extra lock digest is
+  `cb951e989ebbbbce4a294d14afc14fba3a1fb1ccf8dd031147176580b882ac07`.
+  The artifacts and machine-readable rehearsal record remain under ignored
+  `.local-run/`; nothing was published.
+
+### Remaining closeout
+
+- Run the complete quickstart, documentation, packaging, release/native
+  rehearsal, and authoritative development gate on the exact clean integration
+  tree. Then fetch/reconcile latest `origin/dev` and the engineering catalog
+  branch, rerun the gate, push the integration branch, merge once into `dev`,
+  push `dev`, and verify matching local/remote tree hashes.
+
 ## Program guardrails
 
 - No paid usage, license acceptance, external production mutation, user-data deletion, physical actuation, `dev` to `main` merge, or release publication.

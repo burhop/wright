@@ -32,6 +32,12 @@ type WizardStep =
   | "enabling"
   | "complete";
 
+export interface CapabilityOnboardingHandoff {
+  capabilityId: string;
+  workspaceId: string;
+  state: "workspace-enabled";
+}
+
 function errorMessage(error: unknown): string {
   if (error instanceof CapabilityApiError) {
     return `${error.message} (${error.errorCode})${error.recovery ? ` ${error.recovery}` : ""}`;
@@ -47,7 +53,7 @@ export function OnboardingWizard({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onCompleted?: () => void;
+  onCompleted?: (handoff: CapabilityOnboardingHandoff) => void;
   initialCapabilityId?: string;
 }) {
   const [step, setStep] = useState<WizardStep>("source");
@@ -81,10 +87,11 @@ export function OnboardingWizard({
 
   useEffect(() => {
     if (isOpen) {
+      setCapabilityId(initialCapabilityId);
       previousFocus.current = document.activeElement as HTMLElement | null;
       closeButton.current?.focus();
     }
-  }, [isOpen]);
+  }, [initialCapabilityId, isOpen]);
 
   const normalizedConfiguration = useMemo(() => {
     if (sourceKind === "import") return configuration;
@@ -238,7 +245,11 @@ export function OnboardingWizard({
       );
       setEnablement(result);
       setStep("complete");
-      onCompleted?.();
+      onCompleted?.({
+        capabilityId: plan.capability_id,
+        workspaceId: selectedWorkspaceId,
+        state: "workspace-enabled",
+      });
     } catch (caught) {
       setError(errorMessage(caught));
       setStep("workspace");

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { workspaceService } from "../../services/workspace-service";
@@ -117,6 +117,48 @@ describe("RivetScenarioReport", () => {
     expect(artifact).toHaveTextContent("valid");
     expect(screen.queryByText(/Cancel scenario/)).not.toBeInTheDocument();
     expect(screen.queryByTestId("scenario-advisory")).toBeNull();
+    expect(screen.getByTestId("scenario-phase-summary")).toHaveTextContent(
+      "review evidence and recovery",
+    );
+    expect(screen.getByTestId("scenario-phase-summary")).toHaveTextContent(
+      "Progress: terminal",
+    );
+    expect(
+      screen.getByRole("heading", { name: "Material engineering evidence" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Observed assertion results" }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId("scenario-phase-summary")).toHaveFocus(),
+    );
+    expect(screen.getByTestId("support-diagnostics-panel")).toHaveTextContent(
+      "Nothing is uploaded automatically",
+    );
+  });
+
+  it("reports running progress honestly when no percentage is available", async () => {
+    const terminal = await workspaceService.getEngineeringScenarioReport(
+      "session",
+      "scenario-run",
+    );
+    vi.mocked(workspaceService.getEngineeringScenarioReport).mockResolvedValue({
+      ...terminal!,
+      state: "running",
+      report_digest: null,
+    });
+
+    render(
+      <RivetScenarioReport sessionId="session" scenarioRunId="scenario-run" />,
+    );
+
+    expect(await screen.findByText(/Scenario is running/)).toBeInTheDocument();
+    expect(screen.getByTestId("scenario-phase-summary")).toHaveTextContent(
+      "in progress; no percentage is available",
+    );
+    expect(
+      screen.getByRole("button", { name: "Cancel scenario" }),
+    ).toBeEnabled();
   });
 
   it("suppresses a stale advisory after cancellation and shows residue recovery", async () => {

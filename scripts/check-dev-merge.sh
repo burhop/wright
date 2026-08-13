@@ -87,6 +87,33 @@ run uv run python -m pytest -q \
   packages/workspace_service/tests/test_workspace_path.py \
   packages/workspace_service/tests/test_workspace_service.py
 
+# Keep the Loops 068-073 program findings visible as one deterministic tranche.
+# Full suites below remain authoritative; this early slice gives maintainers a
+# direct failure for compatibility, diagnostics, persistence, offline, evidence,
+# packaging, accessibility, and Gate E regressions.
+run uv run --extra runtime python -m pytest -q \
+  tests/program_hardening \
+  tests/native_runtime/test_program_state_compatibility.py \
+  tests/native_runtime/test_rollback.py \
+  tests/native_runtime/test_security.py \
+  tests/e2e/test_engineering_program_offline.py \
+  tests/e2e/test_engineering_program_journey.py \
+  packages/workspace_service/tests/test_engineering_program_recovery.py \
+  packages/workspace_service/tests/test_engineering_scenario_performance.py \
+  packages/workspace_service/tests/test_rivet_mcp_cancellation.py \
+  packages/workspace_service/tests/test_support_diagnostics.py \
+  packages/workspace_service/tests/test_support_diagnostic_service.py \
+  packages/workspace_service/tests/test_support_diagnostics_performance.py \
+  apps/api/tests/test_support_diagnostics_api.py \
+  tests/release/test_program_compatibility_evidence.py \
+  tests/packaging/test_program_hardening_contents.py
+run npm run test --workspace=apps/web -- --run \
+  CapabilityLibrary \
+  RivetScenarioReport \
+  SupportDiagnosticsPanel \
+  workspace-service \
+  ToolRegistryLayout
+
 run uv run python -m pytest
 run uv run --isolated --reinstall-package hermes-plugin-wright \
   --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx --with PyYAML \

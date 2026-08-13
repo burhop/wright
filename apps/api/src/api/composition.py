@@ -8,6 +8,7 @@ from typing import Callable
 
 from workspace_service import (  # type: ignore[import-untyped]
     EngineeringModelService,
+    SupportDiagnosticService,
     WorkspaceService,
     build_workspace_service,
     RivetApprovalService,
@@ -327,6 +328,11 @@ def engineering_model_application() -> EngineeringModelService:
     return build_engineering_model_application(DATABASE_PATH)
 
 
+@lru_cache(maxsize=1)
+def support_diagnostic_application() -> SupportDiagnosticService:
+    return SupportDiagnosticService(DATABASE_PATH)
+
+
 def build_engineering_model_application(db_path: str) -> EngineeringModelService:
     database = Path(db_path)
     upgrade_database(database)
@@ -339,6 +345,9 @@ def build_engineering_model_application(db_path: str) -> EngineeringModelService
 
 
 async def close_application_services() -> None:
+    if support_diagnostic_application.cache_info().currsize:
+        support_diagnostic_application().invalidate_all()
+        support_diagnostic_application.cache_clear()
     if surface_application.cache_info().currsize:
         await surface_application().close()
         surface_application.cache_clear()

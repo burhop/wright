@@ -283,6 +283,68 @@ export interface EngineeringScenarioComparison {
   assertion_changes: Array<Record<string, unknown>>;
 }
 
+export interface SupportDiagnosticScope {
+  session_id?: string;
+  scenario_run_id?: string;
+}
+
+export interface SupportDiagnosticSnapshot {
+  schema_version: "1.0";
+  snapshot_id: string;
+  created_at: string;
+  expires_at: string;
+  workspace_id: string;
+  principal_digest: string;
+  scope: SupportDiagnosticScope;
+  summary: {
+    status: "healthy" | "degraded" | "blocked" | "failed";
+    reason: string;
+    next_action: string;
+  };
+  providers: Array<{
+    kind: "mcp" | "model" | "rivet" | "gateway" | "runtime" | "storage";
+    provider_id: string;
+    status: "ready" | "degraded" | "blocked" | "failed" | "unknown";
+    identity_digest: string;
+  }>;
+  state_inventory: {
+    schema_version: "1.0";
+    data_schema: number;
+    catalog_snapshot: {
+      channel: string;
+      sequence: number;
+      digest: string;
+      state: "bundled" | "active" | "rollback" | "unavailable";
+    };
+    counts: Record<string, number>;
+    digests: Record<string, string>;
+    storage: Array<Record<string, unknown>>;
+  };
+  failures: Array<{
+    stage: string;
+    provider_kind:
+      "mcp" | "model" | "rivet" | "gateway" | "runtime" | "storage";
+    reason: string;
+    cleanup: "clean" | "residue-possible" | "unknown";
+    recovery: string;
+  }>;
+  categories: Array<{
+    name: string;
+    disposition: "included" | "omitted" | "redacted" | "truncated";
+    item_count: number;
+    reason: string;
+  }>;
+  snapshot_digest: string;
+}
+
+export interface SupportDiagnosticPreview {
+  snapshot: SupportDiagnosticSnapshot;
+  snapshot_digest: string;
+  confirmation_token: string;
+  expires_at: string;
+  filename: string;
+}
+
 export interface RivetCallApproval {
   approval_id: string;
   run_id: string;
@@ -975,6 +1037,83 @@ export class WorkspaceService {
       const anchor = document.createElement("a");
       anchor.href = url;
       anchor.download = `wright-engineering-scenario-${scenarioRunId}.json`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async previewSupportDiagnostics(
+    workspaceId: string,
+    scope: SupportDiagnosticScope = {},
+  ): Promise<SupportDiagnosticPreview> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/support-diagnostics/preview`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, scope }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Support preview is unavailable. Create a fresh preview.";
+      try {
+        const failure = (await response.json()) as {
+          detail?: { code?: unknown; message?: unknown };
+        };
+        const code = String(failure.detail?.code || "");
+        if (code === "DIAGNOSTIC_PREVIEW_EXPIRED") {
+          message = "Preview expired. Create a fresh preview.";
+        } else if (code === "DIAGNOSTIC_PREVIEW_STALE") {
+          message = "Local state changed. Create a fresh preview.";
+        } else if (code === "DIAGNOSTIC_SCOPE_FORBIDDEN") {
+          message = "This diagnostic scope is unavailable.";
+        }
+      } catch {
+        // Preserve the stable, non-sensitive fallback.
+      }
+      throw new Error(message);
+    }
+    return response.json();
+  }
+
+  async exportSupportDiagnostics(
+    preview: SupportDiagnosticPreview,
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/support-diagnostics/export`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspace_id: preview.snapshot.workspace_id,
+          snapshot_digest: preview.snapshot_digest,
+          confirmation_token: preview.confirmation_token,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Support file export was denied. Create a fresh preview.";
+      try {
+        const failure = (await response.json()) as {
+          detail?: { code?: unknown };
+        };
+        if (failure.detail?.code === "DIAGNOSTIC_PREVIEW_EXPIRED") {
+          message = "Preview expired. Create a fresh preview.";
+        } else if (failure.detail?.code === "DIAGNOSTIC_PREVIEW_STALE") {
+          message = "Local state changed. Create a fresh preview.";
+        }
+      } catch {
+        // Preserve the stable, non-sensitive fallback.
+      }
+      throw new Error(message);
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = preview.filename;
       anchor.click();
     } finally {
       URL.revokeObjectURL(url);

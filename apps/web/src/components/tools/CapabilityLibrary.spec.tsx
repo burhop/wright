@@ -164,6 +164,15 @@ describe("CapabilityLibrary", () => {
     expect(
       screen.getByTestId("compatibility-badge-uncertain"),
     ).toHaveTextContent("Compatibility uncertain");
+    expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
+      "Review compatibility evidence",
+    );
+    expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
+      "Blocker origin: this machine",
+    );
+    expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
+      "does not install",
+    );
 
     await user.click(screen.getByRole("button", { name: /view details/i }));
     const dialog = screen.getByRole("dialog");
@@ -285,5 +294,8 @@ describe("CapabilityLibrary", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "bundled Capability Library could not be loaded",
     );
+    expect(
+      screen.getByRole("button", { name: "Try loading again" }),
+    ).toBeEnabled();
   });
 });

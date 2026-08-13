@@ -8,12 +8,23 @@ from typing import Any, Callable, Collection
 
 
 _SENSITIVE_KEY = re.compile(
-    r"(?:token|secret|password|passwd|api[_-]?key|authorization|credential)",
+    r"(?:token|secret|password|passwd|api[_-]?key|authorization|credential|"
+    r"cookie|environment|command|arguments?|prompt|request|response|body|"
+    r"model[_-]?features?|artifact|filename|path|endpoint|authority|database|"
+    r"tool[_-]?(?:input|output|result)|raw[_-]?log)",
     re.IGNORECASE,
 )
 _ASSIGNMENT = re.compile(
-    r"(?i)\b(token|secret|password|passwd|api[_-]?key|authorization)\s*[=:]\s*[^\s,;]+"
+    r"(?i)\b(token|secret|password|passwd|api[_-]?key|authorization|cookie)"
+    r"\s*[=:]\s*[^\s,;]+"
 )
+_BEARER = re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/-]+=*")
+_WINDOWS_PATH = re.compile(r"(?i)(?:[A-Z]:\\|\\\\)[^\s\"']+")
+_POSIX_PATH = re.compile(r"(?<![:A-Za-z0-9])/(?:home|users|private|tmp|var)/[^\s\"']+")
+_LOCAL_ENDPOINT = re.compile(
+    r"(?i)\b(?:https?|wss?)://(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?[^\s\"']*"
+)
+_MAX_COLLECTION_ITEMS = 100
 
 
 def redact(value: Any, *, max_string_length: int = 4096) -> Any:
@@ -22,12 +33,19 @@ def redact(value: Any, *, max_string_length: int = 4096) -> Any:
             str(key): "[REDACTED]"
             if _SENSITIVE_KEY.search(str(key))
             else redact(item, max_string_length=max_string_length)
-            for key, item in value.items()
+            for key, item in list(value.items())[:_MAX_COLLECTION_ITEMS]
         }
     if isinstance(value, (list, tuple, set)):
-        return [redact(item, max_string_length=max_string_length) for item in value]
+        return [
+            redact(item, max_string_length=max_string_length)
+            for item in list(value)[:_MAX_COLLECTION_ITEMS]
+        ]
     if isinstance(value, str):
         cleaned = _ASSIGNMENT.sub(lambda match: f"{match.group(1)}=[REDACTED]", value)
+        cleaned = _BEARER.sub("Bearer [REDACTED]", cleaned)
+        cleaned = _WINDOWS_PATH.sub("[REDACTED_PATH]", cleaned)
+        cleaned = _POSIX_PATH.sub("[REDACTED_PATH]", cleaned)
+        cleaned = _LOCAL_ENDPOINT.sub("[REDACTED_ENDPOINT]", cleaned)
         if len(cleaned) > max_string_length:
             return cleaned[: max_string_length - 1] + "…"
         return cleaned

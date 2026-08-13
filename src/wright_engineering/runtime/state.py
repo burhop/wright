@@ -31,6 +31,7 @@ class ManifestStore:
         self.manifest_path = layout.manifest
         self.snapshot_path = layout.state / "installation.previous.json"
         self.corrupt_dir = layout.state / "corrupt"
+        self.quarantine_path = layout.state / "quarantine" / "newer-data.json"
 
     def load(self, *, create: bool = True) -> Manifest:
         if not self.manifest_path.exists():
@@ -69,6 +70,51 @@ class ManifestStore:
             except OSError:
                 pass
             raise StateError("manifest_write_failed", str(exc)) from exc
+
+    def record_newer_state_quarantine(
+        self,
+        *,
+        data_schema: int,
+        candidate_runtime_id: str,
+        supported_max: int,
+    ) -> dict[str, object]:
+        """Persist an explicit non-destructive rollback compatibility record."""
+
+        record: dict[str, object] = {
+            "schema_version": "1.0",
+            "state": "quarantined-from-older-runtime",
+            "reason": "DATA_SCHEMA_NEWER_THAN_CANDIDATE",
+            "data_schema": data_schema,
+            "candidate_runtime_id": candidate_runtime_id,
+            "supported_max": supported_max,
+            "recovery": "USE_COMPATIBLE_RUNTIME_OR_EXPLICIT_BACKUP_RECOVERY",
+        }
+        if self.quarantine_path.is_file():
+            try:
+                existing = json.loads(self.quarantine_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                existing = None
+            if existing == record:
+                return record
+        self.quarantine_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = self.quarantine_path.with_suffix(".json.tmp")
+        temporary.write_text(
+            json.dumps(record, sort_keys=True, indent=2, ensure_ascii=True) + "\n",
+            encoding="utf-8",
+        )
+        os.replace(temporary, self.quarantine_path)
+        return record
+
+    def load_newer_state_quarantine(self) -> dict[str, object] | None:
+        if not self.quarantine_path.is_file():
+            return None
+        try:
+            value = json.loads(self.quarantine_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise StateError("quarantine_record_corrupt") from exc
+        if not isinstance(value, dict):
+            raise StateError("quarantine_record_corrupt")
+        return value
 
     @contextmanager
     def lock(

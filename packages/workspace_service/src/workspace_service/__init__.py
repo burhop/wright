@@ -44,6 +44,13 @@ from .engineering_scenario_assertions import EngineeringAssertionRegistry
 from .engineering_scenario_catalog_service import EngineeringScenarioCatalog
 from .engineering_scenario_service import EngineeringScenarioService
 from .engineering_model_service import EngineeringModelService, observe_local_model_host
+from .support_diagnostics import SupportDiagnosticSnapshot
+from .support_diagnostic_service import (
+    SupportDiagnosticError,
+    SupportDiagnosticExport,
+    SupportDiagnosticPreview,
+    SupportDiagnosticService,
+)
 from .rivet_validation import (
     GraphPortSummary,
     GraphSummary,
@@ -137,6 +144,11 @@ __all__ = [
     "EngineeringScenarioService",
     "EngineeringModelService",
     "observe_local_model_host",
+    "SupportDiagnosticError",
+    "SupportDiagnosticExport",
+    "SupportDiagnosticPreview",
+    "SupportDiagnosticService",
+    "SupportDiagnosticSnapshot",
     "artifact_content_digest",
     "normalize_artifact",
     "GraphPortSummary",

@@ -523,3 +523,70 @@ a {
   height: auto;
   border-radius: var(--radius-md);
 }
+
+.support-diagnostics {
+  min-width: 0;
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+  overflow-wrap: anywhere;
+}
+
+.support-diagnostics > :first-child {
+  margin-top: 0;
+}
+
+.support-diagnostics > :last-child {
+  margin-bottom: 0;
+}
+
+.support-diagnostics__preview ul {
+  max-width: 100%;
+  padding-left: var(--space-lg);
+}
+
+.support-diagnostics__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-block: var(--space-sm);
+}
+
+.support-diagnostics__confirmation {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-sm);
+  max-width: 52rem;
+  margin-block: var(--space-md);
+}
+
+.support-diagnostics__confirmation input {
+  margin-top: 0.2em;
+}
+
+.support-diagnostics button:focus-visible,
+.support-diagnostics input:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .support-diagnostics,
+  .support-diagnostics button,
+  .support-diagnostics input {
+    border: 1px solid ButtonText;
+  }
+}
+
+@media (max-width: 34rem) {
+  .support-diagnostics {
+    padding: var(--space-sm);
+  }
+
+  .support-diagnostics__actions > button {
+    width: 100%;
+  }
+}

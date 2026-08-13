@@ -46,6 +46,16 @@ def test_rollback_refuses_runtime_that_cannot_open_current_schema(
     assert result.code == "rollback_schema_incompatible"
     assert processes.stops == []
     assert runtime.store.load().active_runtime_id == "current"
+    assert result.details["newer_state"] == {
+        "schema_version": "1.0",
+        "state": "quarantined-from-older-runtime",
+        "reason": "DATA_SCHEMA_NEWER_THAN_CANDIDATE",
+        "data_schema": 5,
+        "candidate_runtime_id": "previous",
+        "supported_max": 4,
+        "recovery": "USE_COMPATIBLE_RUNTIME_OR_EXPLICIT_BACKUP_RECOVERY",
+    }
+    assert runtime.store.load_newer_state_quarantine() == result.details["newer_state"]
 
 
 def test_rollback_without_predecessor_is_actionable(tmp_path: Path) -> None:

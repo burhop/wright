@@ -4,6 +4,34 @@ import { ToolRegistryPage } from "../components/pages/ToolRegistryPage";
 import { mcpService } from "../services/mcp-service";
 import { useTools } from "../store/tools";
 
+class MemoryStorage implements Storage {
+  private readonly values = new Map<string, string>();
+
+  get length() {
+    return this.values.size;
+  }
+
+  clear() {
+    this.values.clear();
+  }
+
+  getItem(key: string) {
+    return this.values.get(key) ?? null;
+  }
+
+  key(index: number) {
+    return [...this.values.keys()][index] ?? null;
+  }
+
+  removeItem(key: string) {
+    this.values.delete(key);
+  }
+
+  setItem(key: string, value: string) {
+    this.values.set(key, value);
+  }
+}
+
 vi.mock("../store/tools", () => ({ useTools: vi.fn() }));
 vi.mock("../services/mcp-service", async (loadOriginal) => {
   const original =
@@ -29,6 +57,11 @@ vi.mock("../hooks/useLogger", () => ({
 describe("ToolRegistryPage capability layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      value: new MemoryStorage(),
+    });
+    window.localStorage.clear();
     (useTools as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       fetchServersAndTools: vi.fn(),
     });
@@ -57,6 +90,29 @@ describe("ToolRegistryPage capability layout", () => {
       diagnostic: null,
       history: [],
     });
+  });
+
+  it("restores a safe workspace handoff without replaying onboarding", async () => {
+    window.localStorage.setItem(
+      "wright.capability-workspace-handoff.v1",
+      JSON.stringify({
+        capabilityId: "onshape-official",
+        workspaceId: "workspace-1",
+        state: "workspace-enabled",
+      }),
+    );
+    render(<ToolRegistryPage />);
+
+    const restored = screen.getByTestId("capability-handoff-restored");
+    expect(restored).toHaveTextContent(
+      "No install, enable, or workflow action was replayed",
+    );
+    expect(
+      screen.getByRole("link", {
+        name: "Open the workspace and prepare Rivet",
+      }),
+    ).toHaveAttribute("href", "/workspace/workspace-1");
+    expect(await screen.findByTestId("capability-empty-state")).toBeVisible();
   });
 
   it("renders the Capability Library information architecture", async () => {

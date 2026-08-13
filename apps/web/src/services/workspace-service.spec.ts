@@ -10,6 +10,7 @@ import {
   workspaceService,
   type EngineeringScenarioPreflight,
   type RivetWorkflowOperation,
+  type SupportDiagnosticPreview,
 } from "./workspace-service";
 
 const digest = "d".repeat(64);
@@ -221,5 +222,112 @@ describe("engineering scenario workspace client", () => {
       ),
     ).rejects.toThrow("Review the exact prepared scenario workflow first");
     expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("support diagnostic workspace client", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    mocks.fetch.mockReset();
+  });
+
+  it("binds export to the exact preview and downloads the inert response", async () => {
+    const preview: SupportDiagnosticPreview = {
+      snapshot: {
+        schema_version: "1.0",
+        snapshot_id: "snapshot_12345678",
+        created_at: "2026-08-13T12:00:00Z",
+        expires_at: "2099-08-13T12:05:00Z",
+        workspace_id: "workspace-1",
+        principal_digest: `sha256:${"a".repeat(64)}`,
+        scope: { session_id: "session-1" },
+        summary: {
+          status: "healthy",
+          reason: "READY",
+          next_action: "REVIEW_PREVIEW",
+        },
+        providers: [],
+        state_inventory: {
+          schema_version: "1.0",
+          data_schema: 16,
+          catalog_snapshot: {
+            channel: "stable",
+            sequence: 1,
+            digest: `sha256:${"b".repeat(64)}`,
+            state: "active",
+          },
+          counts: {},
+          digests: {},
+          storage: [],
+        },
+        failures: [],
+        categories: [
+          {
+            name: "provider-status",
+            disposition: "included",
+            item_count: 0,
+            reason: "INCLUDED",
+          },
+        ],
+        snapshot_digest: `sha256:${"c".repeat(64)}`,
+      },
+      snapshot_digest: `sha256:${"c".repeat(64)}`,
+      confirmation_token: "one-use-token",
+      expires_at: "2099-08-13T12:05:00Z",
+      filename: "wright-support-workspace-1.json",
+    };
+    mocks.fetch.mockResolvedValueOnce(response(preview)).mockResolvedValueOnce(
+      new Response(JSON.stringify(preview.snapshot), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    const exact = await workspaceService.previewSupportDiagnostics(
+      "workspace-1",
+      { session_id: "session-1" },
+    );
+    expect(exact).toEqual(preview);
+    expect(JSON.parse(String(mocks.fetch.mock.calls[0]?.[1]?.body))).toEqual({
+      workspace_id: "workspace-1",
+      scope: { session_id: "session-1" },
+    });
+
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => undefined);
+    const createObjectURL = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:support-diagnostic");
+    const revokeObjectURL = vi
+      .spyOn(URL, "revokeObjectURL")
+      .mockImplementation(() => undefined);
+    await workspaceService.exportSupportDiagnostics(exact);
+
+    expect(JSON.parse(String(mocks.fetch.mock.calls[1]?.[1]?.body))).toEqual({
+      workspace_id: "workspace-1",
+      snapshot_digest: preview.snapshot_digest,
+      confirmation_token: preview.confirmation_token,
+    });
+    expect(createObjectURL).toHaveBeenCalledOnce();
+    expect(click).toHaveBeenCalledOnce();
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:support-diagnostic");
+  });
+
+  it("maps server reason codes to safe recovery without exposing response data", async () => {
+    mocks.fetch.mockResolvedValueOnce(
+      response(
+        {
+          detail: {
+            code: "DIAGNOSTIC_PREVIEW_STALE",
+            message: "raw private server detail",
+          },
+        },
+        409,
+      ),
+    );
+    await expect(
+      workspaceService.previewSupportDiagnostics("workspace-1"),
+    ).rejects.toThrow("Local state changed. Create a fresh preview.");
   });
 });
