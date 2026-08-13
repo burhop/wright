@@ -76,7 +76,8 @@ Tool names observed:
 
 Remaining:
 
-- Clean Linux ARM64 container validation.
+- Clean Linux ARM64 container validation was later recorded in
+  `docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md`.
 - Gateway proxy validation.
 
 ## Ansys PyFluent MCP
@@ -97,7 +98,8 @@ Evidence:
 
 Remaining:
 
-- Clean-container protocol validation.
+- Clean-container protocol/status validation was later recorded in
+  `docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md`.
 - Live Ansys Fluent validation on a licensed local or remote Fluent session.
 
 ## Ansys MCP Server Community

@@ -1677,6 +1677,23 @@ Result:
   Clean-container and gateway validation remain pending.
 
 Problem:
+  `nvidia-elements-mcp` still needed clean Wright ARM64 container validation
+  after the local host preflight.
+
+Solution:
+  Started a disposable `wright:standard-linux-arm64` container, installed
+  Node.js/npm as selected-server dependencies only inside that container, then
+  ran `npx -y @nvidia-elements/cli@2.1.10 mcp` with newline-delimited MCP
+  probes.
+
+Result:
+  Clean Wright ARM64 validation installed Node 20.19.2 and npm 9.2.0 inside the
+  disposable container. The MCP initialized as `io.github.NVIDIA/elements`
+  version `2.1.10`, listed 18 tools, and `skills_list` returned Elements
+  design-system skill metadata. Wright/Hermes gateway validation remains
+  pending.
+
+Problem:
   `ansys-fluent-mcp` needed to distinguish package/platform viability from live
   Ansys Fluent solver availability.
 
@@ -1689,6 +1706,21 @@ Result:
   GB10 local host initialized the MCP, listed 25 tools, and `session_status`
   returned `connected:false`, `backend_kind:"pyfluent"`, and no MCP error. Live
   solve validation remains dependent on licensed local or remote Fluent.
+
+Problem:
+  `ansys-fluent-mcp` still needed clean Wright ARM64 container validation after
+  the local host preflight.
+
+Solution:
+  Started a disposable `wright:standard-linux-arm64` container and ran
+  `uv tool run --from ansys-fluent-mcp ansys-fluent-mcp` with newline-delimited
+  MCP probes.
+
+Result:
+  Clean Wright ARM64 validation initialized `ansys-fluent-mcp` version `3.4.7`,
+  listed 25 tools, and `session_status` returned `connected:false`,
+  `backend_kind:"pyfluent"`, and no MCP error. Wright/Hermes gateway validation
+  and licensed Fluent live-session validation remain pending.
 
 Problem:
   `ansys-mcp-server-community` failed before MCP startup on GB10.

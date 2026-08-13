@@ -4560,6 +4560,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: GB10 local host initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
+  - url: docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Clean Wright ARM64 container installed the package, initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
   locality: local
   weight: heavy
   env_vars:
@@ -4602,7 +4607,7 @@ servers:
     linux_arm64:
       status: host-dependent
       tested: false
-      notes: GB10 local host preflight showed the MCP package can initialize and report session_status; live Fluent remains local/remote host and license dependent.
+      notes: Clean Wright ARM64 container installed the MCP package, initialized it, listed 25 tools, and reported session_status; live Fluent remains local/remote host and license dependent.
     macos_x64:
       status: host-dependent
       tested: false
@@ -4622,11 +4627,11 @@ servers:
   - license_server_approval
   validation_result:
     status: dependency_missing
-    message: GB10 local host preflight initialized PyFluent MCP, listed 25 tools, and session_status returned connected:false/backend_kind:pyfluent without error. Full validation still requires clean-container evidence and a licensed local or remote Fluent session for live solver tools.
-    environment: gb10-linux-arm64-local-host
+    message: Clean Wright ARM64 container installed PyFluent MCP, initialized it, listed 25 tools, and session_status returned connected:false/backend_kind:pyfluent without error. Full validation still requires Wright/Hermes gateway evidence and a licensed local or remote Fluent session for live solver tools.
+    environment: gb10-linux-arm64-clean-container
     missing_dependencies:
     - Ansys Fluent license for live solve tools
-    - clean-container evidence
+    - gateway proxy evidence
     validated_at: '2026-08-12'
     evidence_status: partial
 - id: ansys-mcp-server-community
@@ -5436,6 +5441,11 @@ servers:
     primary: false
     observed_at: '2026-08-12'
     notes: GB10 local host initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
+  - url: docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
   locality: local
   weight: light
   env_vars: []
@@ -5466,7 +5476,7 @@ servers:
     linux_arm64:
       status: likely
       tested: false
-      notes: GB10 local host preflight initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list; clean-container and gateway validation remain pending.
+      notes: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list; gateway validation remains pending.
     macos_x64:
       status: likely
       tested: false
@@ -5482,10 +5492,9 @@ servers:
   approval_gates: []
   validation_result:
     status: dependency_missing
-    message: GB10 local host preflight initialized NVIDIA Elements MCP, listed 18 tools, and called the read-only skills_list tool. Full catalog pass still needs clean-container and gateway evidence.
-    environment: gb10-linux-arm64-local-host
+    message: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized NVIDIA Elements MCP, listed 18 tools, and called the read-only skills_list tool. Full catalog pass still needs Wright/Hermes gateway evidence.
+    environment: gb10-linux-arm64-clean-container
     missing_dependencies:
-    - clean-container evidence
     - gateway proxy evidence
     validated_at: '2026-08-12'
     evidence_status: partial

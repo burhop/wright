@@ -2172,11 +2172,16 @@ Known result:
 - GB10 local host initialized the MCP with Wright's stdio runner.
 - `tools/list` returned 18 tools.
 - `skills_list` returned Elements design-system skill metadata.
+- Clean Wright ARM64 container validation installed Node 20.19.2/npm 9.2.0 only
+  as a selected-server dependency, initialized the MCP, listed 18 tools, and
+  called `skills_list`.
 
 Known notes:
 
 - This is a read-only/docs/design-system MCP, not CAD/CAE solver software.
 - No GPU, CAD host, or license server is required for the tested tools.
+- Wright/Hermes gateway validation is still required before marking the catalog
+  entry fully passed.
 
 ## Ansys PyFluent MCP (`ansys-fluent-mcp`)
 
@@ -2202,6 +2207,8 @@ Known result:
 - `tools/list` returned 25 tools.
 - `session_status` returned `connected:false`, `backend_kind:"pyfluent"`, and
   no MCP error when no Fluent session was connected.
+- Clean Wright ARM64 container validation installed the package, initialized the
+  MCP, listed 25 tools, and returned the same disconnected `session_status`.
 
 Known notes:
 
@@ -2209,6 +2216,8 @@ Known notes:
 - Live solver operations still require licensed Ansys Fluent locally or a
   reachable remote Fluent session.
 - Keep Ansys solver products and license managers outside Wright base images.
+- Wright/Hermes gateway validation is still required before marking the catalog
+  entry fully passed.
 
 ## Ansys MCP Server Community (`ansys-mcp-server-community`)
 

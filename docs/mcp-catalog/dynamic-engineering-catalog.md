@@ -132,11 +132,11 @@ Recommended next validations:
 - Docker startup and read-only tool probes for NVIDIA Omniverse Kit/USD/OmniUI/
   Isaac Sim MCPs. GB10 local preflight has already built the USD Code wheels,
   but `NVIDIA_API_KEY` and Docker/MCP startup evidence are still needed.
-- Clean-container and gateway validation for NVIDIA Elements MCP. GB10 local
-  preflight initialized the npm MCP, listed 18 tools, and called `skills_list`.
-- Licensed-host validation for Ansys PyFluent MCP after clean-container
-  protocol probes. GB10 local preflight initialized the package, listed 25
-  tools, and returned a clean disconnected `session_status`.
+- Gateway validation for NVIDIA Elements MCP. Clean Wright ARM64 validation
+  initialized the npm MCP, listed 18 tools, and called `skills_list`.
+- Gateway validation plus licensed-host validation for Ansys PyFluent MCP. Clean
+  Wright ARM64 validation initialized the package, listed 25 tools, and returned
+  a clean disconnected `session_status`.
 - Upstream fixes before retesting `ansys-mcp-server-community` and
   `comsol-multiphysics-mcp-suzysa`; both currently fail before MCP
   initialization against the resolved MCP SDK.
