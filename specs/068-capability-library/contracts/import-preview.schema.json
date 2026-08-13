@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.invalid/schemas/mcp-import-preview-v1.json",
+  "title": "Wright MCP Import Preview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "preview_id",
+    "detected_format",
+    "drafts",
+    "document_errors",
+    "created_at",
+    "expires_at",
+    "source_discarded"
+  ],
+  "properties": {
+    "preview_id": { "type": "string", "minLength": 1 },
+    "detected_format": {
+      "enum": ["claude_mcp_servers", "vscode_servers", "plain_server", "unknown"]
+    },
+    "drafts": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "draft_id",
+          "name",
+          "source_format",
+          "transport",
+          "arguments",
+          "environment_requirements",
+          "header_requirements",
+          "warnings",
+          "errors",
+          "redacted_preview",
+          "draft_digest"
+        ],
+        "properties": {
+          "draft_id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "source_format": {
+            "enum": ["claude_mcp_servers", "vscode_servers", "plain_server"]
+          },
+          "transport": {
+            "enum": ["stdio", "streamable_http", "sse", "webmcp"]
+          },
+          "command": { "type": ["string", "null"] },
+          "arguments": { "type": "array", "items": { "type": "string" } },
+          "endpoint": { "type": ["string", "null"], "format": "uri" },
+          "environment_requirements": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/requirement" }
+          },
+          "header_requirements": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/requirement" }
+          },
+          "warnings": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } },
+          "errors": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } },
+          "redacted_preview": { "type": "object" },
+          "draft_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "document_errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/diagnostic" }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "source_discarded": { "const": true }
+  },
+  "$defs": {
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "credential_required", "value_supplied"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "credential_required": { "type": "boolean" },
+        "value_supplied": { "type": "boolean" }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "code", "message"],
+      "properties": {
+        "path": { "type": "string" },
+        "code": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "message": { "type": "string" }
+      }
+    }
+  }
+}

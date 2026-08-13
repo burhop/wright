@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.invalid/schemas/mcp-install-plan-v1.json",
+  "title": "Wright MCP Install Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_id",
+    "plan_version",
+    "state",
+    "capability_id",
+    "snapshot_id",
+    "capability_digest",
+    "machine_observation_id",
+    "machine_observation_digest",
+    "backend_kind",
+    "requested_scope",
+    "requirements",
+    "effects",
+    "steps",
+    "validation_steps",
+    "rollback_steps",
+    "approval_gates",
+    "blocking_reasons",
+    "created_by",
+    "created_at",
+    "expires_at",
+    "plan_digest"
+  ],
+  "properties": {
+    "plan_id": { "type": "string", "minLength": 1 },
+    "plan_version": { "const": 1 },
+    "state": {
+      "enum": [
+        "draft", "reviewable", "blocked", "approved", "applying",
+        "validating", "completed", "failed", "rolling_back", "rolled_back",
+        "rollback_failed", "invalidated", "expired"
+      ]
+    },
+    "capability_id": { "type": "string", "minLength": 1 },
+    "snapshot_id": { "type": "string", "minLength": 1 },
+    "capability_digest": { "$ref": "#/$defs/digest" },
+    "import_draft_id": { "type": ["string", "null"] },
+    "import_draft_digest": { "anyOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+    "machine_observation_id": { "type": "string", "minLength": 1 },
+    "machine_observation_digest": { "$ref": "#/$defs/digest" },
+    "backend_kind": {
+      "enum": ["local_package", "remote_endpoint", "host_bridge", "local_command"]
+    },
+    "requested_scope": { "enum": ["global_registered", "workspace"] },
+    "workspace_id": { "type": ["string", "null"] },
+    "source": { "type": "object" },
+    "requirements": {
+      "type": "object",
+      "required": ["platform", "runtimes", "credentials", "network", "storage", "host"],
+      "properties": {
+        "platform": { "type": "array", "items": { "type": "string" } },
+        "runtimes": { "type": "array", "items": { "type": "string" } },
+        "credentials": { "type": "array", "items": { "type": "string" } },
+        "network": { "type": "array", "items": { "type": "string" } },
+        "storage": { "type": "array", "items": { "type": "string" } },
+        "host": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "effects": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "validation_steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "rollback_steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
+    "approval_gates": { "type": "array", "items": { "type": "string" } },
+    "blocking_reasons": { "type": "array", "items": { "$ref": "#/$defs/reason" } },
+    "created_by": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "approved_by": { "type": ["string", "null"] },
+    "approved_at": { "type": ["string", "null"], "format": "date-time" },
+    "plan_digest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "kind", "description", "reversible"],
+      "properties": {
+        "step_id": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "target": { "type": ["string", "null"] },
+        "reversible": { "type": "boolean" },
+        "rollback_step_id": { "type": ["string", "null"] }
+      }
+    },
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "recovery"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "message": { "type": "string" },
+        "recovery": { "type": "string" }
+      }
+    }
+  }
+}
