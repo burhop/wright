@@ -206,7 +206,7 @@ def test_brep_panel_remains_wright_owned_loopback_application():
         {
             "structuredContent": {
                 "connected": False,
-                "controlUrl": "http://127.0.0.1:61234/?token=fixture-panel-token-012345",
+                "controlUrl": "http://127.0.0.1:61234/?token=ci-test-panel-token-012345",
                 "moduleUrl": environment["BREP_CAD_MODULE_URL"],
             }
         }

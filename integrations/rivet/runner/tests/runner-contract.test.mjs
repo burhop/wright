@@ -202,7 +202,7 @@ function mcpGrant(baseUrl, changes = {}) {
   return {
     authorityId: "authority-contract",
     bridgeBaseUrl: baseUrl,
-    token: "0123456789012345678901234567890123456789012",
+    token: "ci-test-authority-token-012345678901234567890123",
     expiresAt: "2099-01-01T00:00:00Z",
     bindingSetDigest: "e".repeat(64),
     discoveryHandle: "wright-workspace",
@@ -473,7 +473,7 @@ test("protocol v2 rejects missing, extra, and secret-like binding material", asy
   const secretLike = await invokeAsync(
     project.replace(
       "name: wright-rivet",
-      "name: wright-rivet\n            apiKey: must-not-cross",
+      "name: wright-rivet\n            apiKey: ci-test-must-not-cross",
     ),
     { mcp: mcpGrant(baseUrl) },
   );
@@ -481,5 +481,5 @@ test("protocol v2 rejects missing, extra, and secret-like binding material", asy
     secretLike.stdout.includes("RIVET_MCP_PROJECT_CONFIG_DENIED"),
     true,
   );
-  assert.equal(secretLike.stdout.includes("must-not-cross"), false);
+  assert.equal(secretLike.stdout.includes("ci-test-must-not-cross"), false);
 });
