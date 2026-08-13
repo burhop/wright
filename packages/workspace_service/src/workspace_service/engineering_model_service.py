@@ -6,6 +6,7 @@ import platform as platform_module
 import os
 import shutil
 import uuid
+import asyncio
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Callable
@@ -27,6 +28,17 @@ from model_registry.planning import (
 )
 from model_registry.offline_source import OfflinePackageError, inspect_offline_package
 from model_registry.policy import HostObservation
+from model_registry.gateway_provider import engineering_model_tool_name
+from model_registry.models import canonical_digest
+from model_registry.runtime import (
+    RuntimeFailure,
+    RuntimeProgress,
+    RuntimeSession,
+    RuntimeSupervisor,
+    built_in_runtime_registry,
+    current_runtime_platform,
+)
+from model_registry.testing import EvidenceFailure, evaluate_test_vector
 from tool_registry.model_library_port import EngineeringModelPortError
 
 
@@ -55,7 +67,7 @@ def observe_local_model_host(data_root: str | Path | None = None) -> HostObserva
         available_disk_bytes=available_disk,
         available_ram_bytes=int(psutil.virtual_memory().available),
         accelerators=frozenset({"cpu"}),
-        runtime_adapters={"wright-deterministic": "1.0.0"},
+        runtime_adapters=built_in_runtime_registry().versions(),
     )
 
 
@@ -70,6 +82,7 @@ class EngineeringModelService:
         repository: ModelRepository | None = None,
         artifact_store: ModelArtifactStore | None = None,
         lifecycle: ModelInstallLifecycle | None = None,
+        runtime_supervisor: RuntimeSupervisor | None = None,
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         self.catalog = catalog or ModelCatalog.load_bundled()
@@ -88,6 +101,18 @@ class EngineeringModelService:
             )
         else:
             self.lifecycle = None
+        if runtime_supervisor is not None:
+            self.runtime_supervisor = runtime_supervisor
+        elif artifact_store is not None:
+            self.runtime_supervisor = RuntimeSupervisor(
+                built_in_runtime_registry(),
+                scratch_root=artifact_store.root / "runtime-scratch",
+                observer=artifact_store.observer,
+            )
+        else:
+            self.runtime_supervisor = None
+        self._runtime_requests: dict[tuple[str, str], RuntimeSession] = {}
+        self._runtime_lock = asyncio.Lock()
 
     def list_catalog(
         self,
@@ -513,6 +538,627 @@ class EngineeringModelService:
                 ),
             },
         )
+
+    def _require_runtime(
+        self,
+    ) -> tuple[ModelRepository, ModelArtifactStore, RuntimeSupervisor]:
+        repository, _ = self._require_lifecycle()
+        if self.artifact_store is None or self.runtime_supervisor is None:
+            raise EngineeringModelPortError(
+                "runtime_missing",
+                "The reviewed engineering-model runtime is unavailable.",
+                "Restart Wright with its owned model data root available.",
+            )
+        return repository, self.artifact_store, self.runtime_supervisor
+
+    def _installation_package(self, installation: dict[str, Any]):
+        package = self._entry_package(str(installation["model_id"]))
+        if (
+            package.package_revision != int(installation["package_revision"])
+            or package.digest != installation["manifest_digest"]
+        ):
+            raise EngineeringModelPortError(
+                "stale_binding",
+                "The installation package identity is no longer current.",
+                "Reinstall and rerun the standard test.",
+            )
+        try:
+            variant = package.variant(str(installation["variant_id"]))
+        except KeyError as error:
+            raise EngineeringModelPortError(
+                "stale_binding",
+                "The installed variant is no longer available.",
+                "Reinstall and rerun the standard test.",
+            ) from error
+        return package, variant
+
+    def _artifact_paths(self, installation_id: str) -> dict[str, Path]:
+        repository, store, _ = self._require_runtime()
+        rows = repository.installation_artifacts(installation_id)
+        if not rows:
+            activation = store.read_activation(installation_id)
+            raw = activation.get("artifacts") if activation else None
+            if isinstance(raw, dict):
+                rows = tuple(
+                    {"artifact_path": key, "content_digest": value}
+                    for key, value in raw.items()
+                )
+        try:
+            return {
+                str(row["artifact_path"]): store.verified_path(
+                    str(row["content_digest"])
+                )
+                for row in rows
+            }
+        except KeyError as error:
+            raise EngineeringModelPortError(
+                "artifact_missing",
+                "One or more installed artifacts are unavailable.",
+                "Reinstall the exact package before testing it.",
+            ) from error
+
+    async def _runtime_session(
+        self,
+        installation: dict[str, Any],
+        task_id: str,
+        *,
+        trace_id: str,
+    ) -> RuntimeSession:
+        _, _, supervisor = self._require_runtime()
+        package, variant = self._installation_package(installation)
+        platform_name, architecture = current_runtime_platform()
+        return await supervisor.start_session(
+            adapter_id=variant.runtime.adapter_id,
+            installation_id=str(installation["installation_id"]),
+            artifacts=self._artifact_paths(str(installation["installation_id"])),
+            model_format=variant.format,
+            task_id=task_id,
+            platform=platform_name,
+            architecture=architecture,
+            execution_provider="cpu",
+            maximum_artifact_bytes=max(
+                variant.resources.installed_bytes,
+                sum(item.size for item in variant.artifacts),
+            ),
+            trace_id=trace_id,
+        )
+
+    async def run_standard_test(
+        self, installation_id: str, *, principal_id: str, trace_id: str
+    ) -> dict[str, Any]:
+        repository, _, _ = self._require_runtime()
+        installation = repository.get_installation(installation_id)
+        if installation is None or installation["state"] not in {
+            "installed",
+            "testing",
+            "ready",
+            "unhealthy",
+        }:
+            raise EngineeringModelPortError(
+                "installation_not_found",
+                "The installation is unavailable for testing.",
+                "Install the exact package before running its standard test.",
+            )
+        package, variant = self._installation_package(installation)
+        if installation["state"] == "ready":
+            return self.get_standard_test_evidence(
+                installation_id, principal_id=principal_id
+            )
+        session: RuntimeSession | None = None
+        evidence_rows: list[dict[str, Any]] = []
+        try:
+            session = await self._runtime_session(
+                installation,
+                variant.test_vectors[0].task_id,
+                trace_id=trace_id,
+            )
+            await session.verify(timeout=variant.resources.load_timeout_ms / 1000)
+            handle = await session.load(
+                timeout=variant.resources.load_timeout_ms / 1000
+            )
+            for vector in variant.test_vectors:
+                if not vector.mandatory:
+                    continue
+                task = next(
+                    item for item in package.tasks if item.task_id == vector.task_id
+                )
+                result = await session.infer(
+                    handle,
+                    vector.input,
+                    schema_digest=canonical_digest(task.input_schema),
+                    timeout=vector.limits.inference_timeout_ms / 1000,
+                    maximum_output_bytes=vector.limits.max_output_bytes,
+                )
+                evidence = evaluate_test_vector(
+                    package=package,
+                    variant=variant,
+                    vector=vector,
+                    output=result["output"],
+                    installation_id=installation_id,
+                    installation_digest=str(installation["installation_digest"]),
+                    artifact_set_digest=session.artifact_set_digest,
+                    adapter_id=session.descriptor.adapter_id,
+                    adapter_version=session.descriptor.adapter_version,
+                    adapter_contract_version=session.descriptor.contract_version,
+                    environment_policy_digest=canonical_digest(
+                        {
+                            "platform": current_runtime_platform()[0],
+                            "architecture": current_runtime_platform()[1],
+                            "provider": "cpu",
+                        }
+                    ),
+                    timing_ms=int(result.get("timing_ms") or 0),
+                    resources={"provider": "cpu"},
+                    trace_id=trace_id,
+                )
+                evidence_id = (
+                    "evidence-"
+                    + canonical_digest(
+                        {
+                            "material_digest": evidence.material_digest,
+                            "observation_digest": evidence.observation_digest,
+                        }
+                    )[:24]
+                )
+                repository.record_test_evidence(
+                    evidence_id=evidence_id,
+                    installation_id=installation_id,
+                    vector_id=vector.vector_id,
+                    material_digest=evidence.material_digest,
+                    observation_digest=evidence.observation_digest,
+                    state=evidence.state,
+                    evidence=evidence.projection(),
+                    created_at=self.clock(),
+                    trace_id=trace_id,
+                )
+                evidence_rows.append(
+                    {
+                        "evidence_id": evidence_id,
+                        **evidence.projection(),
+                    }
+                )
+            evidence_id = str(evidence_rows[-1]["evidence_id"])
+            if not repository.mark_installation_tested(
+                installation_id,
+                expected_state=str(installation["state"]),
+                state="ready",
+                adapter_version=session.descriptor.adapter_version,
+                evidence_id=evidence_id,
+                observed_at=self.clock(),
+            ):
+                raise EngineeringModelPortError(
+                    "stale_binding",
+                    "The installation changed while its evidence was being recorded.",
+                    "Reload the installation before retrying its standard test.",
+                )
+            return {
+                "installation_id": installation_id,
+                "installation_state": "ready",
+                "adapter_id": session.descriptor.adapter_id,
+                "adapter_version": session.descriptor.adapter_version,
+                "evidence": evidence_rows,
+            }
+        except (RuntimeFailure, EvidenceFailure) as error:
+            repository.mark_installation_tested(
+                installation_id,
+                expected_state=str(installation["state"]),
+                state="unhealthy",
+                adapter_version=str(installation["runtime_adapter_version"]),
+                evidence_id=None,
+                observed_at=self.clock(),
+            )
+            raise EngineeringModelPortError(
+                getattr(error, "category", "test_failed"),
+                str(error),
+                "Repair the exact installation/runtime and run the standard test again.",
+            ) from error
+        finally:
+            if session is not None:
+                cleanup = await session.shutdown()
+                if cleanup != "clean":
+                    raise EngineeringModelPortError(
+                        "cleanup_residue",
+                        "The runtime left cleanup residue.",
+                        "Inspect Wright runtime diagnostics before retrying.",
+                    )
+
+    def get_standard_test_evidence(
+        self, installation_id: str, *, principal_id: str
+    ) -> dict[str, Any]:
+        repository, _, _ = self._require_runtime()
+        installation = repository.get_installation(installation_id)
+        if installation is None:
+            raise EngineeringModelPortError(
+                "installation_not_found",
+                "The model installation was not found.",
+                "Choose an installed model.",
+            )
+        return {
+            "installation_id": installation_id,
+            "installation_state": installation["state"],
+            "adapter_id": installation["runtime_adapter_id"],
+            "adapter_version": installation["runtime_adapter_version"],
+            "evidence": list(repository.list_test_evidence(installation_id)),
+        }
+
+    def create_workspace_binding(
+        self,
+        installation_id: str,
+        *,
+        task_id: str,
+        workspace_id: str,
+        principal_id: str,
+    ) -> dict[str, Any]:
+        repository, _, _ = self._require_runtime()
+        installation = repository.get_installation(installation_id)
+        if installation is None or installation["state"] != "ready":
+            raise EngineeringModelPortError(
+                "runtime_unhealthy",
+                "The exact installation is not ready.",
+                "Run the mandatory standard test first.",
+            )
+        package, _ = self._installation_package(installation)
+        if task_id not in {item.task_id for item in package.tasks}:
+            raise EngineeringModelPortError(
+                "unsupported_task",
+                "The installation does not provide this engineering task.",
+                "Choose a declared task.",
+            )
+        tool_name = engineering_model_tool_name(package.model_id, task_id)
+        policy_digest = canonical_digest(
+            {"workspace_id": workspace_id, "policy": "gateway-model-v1"}
+        )
+        binding_material = {
+            "workspace_id": workspace_id,
+            "installation_id": installation_id,
+            "installation_digest": installation["installation_digest"],
+            "task_id": task_id,
+            "tool_name": tool_name,
+            "policy_snapshot_digest": policy_digest,
+        }
+        binding_digest = canonical_digest(binding_material)
+        binding_id = "binding-" + binding_digest[:24]
+        try:
+            repository.bind_workspace(
+                binding_id=binding_id,
+                workspace_id=workspace_id,
+                installation_id=installation_id,
+                task_id=task_id,
+                tool_name=tool_name,
+                binding_digest=binding_digest,
+                policy_snapshot_digest=policy_digest,
+                state="enabled",
+                created_at=self.clock(),
+            )
+        except Exception as error:
+            existing = repository.get_binding(binding_id)
+            if existing is None:
+                raise EngineeringModelPortError(
+                    "stale_binding",
+                    "A conflicting workspace binding already exists.",
+                    "Disable the conflicting binding and review a fresh one.",
+                ) from error
+            if existing["state"] == "disabled":
+                if not repository.set_binding_state(
+                    binding_id,
+                    expected_state="disabled",
+                    state="enabled",
+                    observed_at=self.clock(),
+                ):
+                    raise EngineeringModelPortError(
+                        "stale_binding",
+                        "The existing workspace binding changed concurrently.",
+                        "Reload and review the current binding.",
+                    ) from error
+            elif existing["state"] != "enabled":
+                raise EngineeringModelPortError(
+                    "stale_binding",
+                    "The existing workspace binding is stale or blocked.",
+                    "Review a fresh binding before enabling the capability.",
+                ) from error
+        return {
+            "binding_id": binding_id,
+            "binding_digest": binding_digest,
+            "workspace_id": workspace_id,
+            "installation_id": installation_id,
+            "task_id": task_id,
+            "tool_name": tool_name,
+            "policy_snapshot_digest": policy_digest,
+            "state": "enabled",
+        }
+
+    def set_workspace_binding_state(
+        self,
+        binding_id: str,
+        *,
+        state: str,
+        workspace_id: str,
+        principal_id: str,
+    ) -> dict[str, Any]:
+        repository, _, _ = self._require_runtime()
+        if state not in {"enabled", "disabled"}:
+            raise EngineeringModelPortError(
+                "binding_state_invalid",
+                "Binding state is invalid.",
+                "Choose enabled or disabled.",
+            )
+        binding = repository.get_binding(binding_id)
+        if binding is None or binding["workspace_id"] != workspace_id:
+            raise EngineeringModelPortError(
+                "binding_not_found",
+                "The workspace binding was not found.",
+                "Choose a current workspace binding.",
+            )
+        if state == "enabled":
+            return self.create_workspace_binding(
+                str(binding["installation_id"]),
+                task_id=str(binding["task_id"]),
+                workspace_id=workspace_id,
+                principal_id=principal_id,
+            )
+        if binding["state"] != state:
+            if not repository.set_binding_state(
+                binding_id,
+                expected_state=str(binding["state"]),
+                state=state,
+                observed_at=self.clock(),
+            ):
+                raise EngineeringModelPortError(
+                    "stale_binding",
+                    "The binding changed concurrently.",
+                    "Reload and try again.",
+                )
+        return {**binding, "state": state}
+
+    def declared_model_tool_names(self) -> frozenset[str]:
+        names = set()
+        for entry in self.catalog.entries:
+            if entry.package is None:
+                continue
+            for task in entry.package.tasks:
+                names.add(
+                    engineering_model_tool_name(entry.package.model_id, task.task_id)
+                )
+        return frozenset(names)
+
+    def discover_model_capabilities(
+        self, *, principal_id: str, workspace_id: str, session_id: str
+    ) -> tuple[dict[str, Any], ...]:
+        repository, _, _ = self._require_runtime()
+        results = []
+        for binding in repository.list_bindings(workspace_id):
+            installation = repository.get_installation(str(binding["installation_id"]))
+            if installation is None:
+                continue
+            try:
+                package, _ = self._installation_package(installation)
+                task = next(
+                    item for item in package.tasks if item.task_id == binding["task_id"]
+                )
+            except (EngineeringModelPortError, StopIteration):
+                continue
+            evidence = repository.list_test_evidence(
+                str(installation["installation_id"])
+            )
+            current = next(
+                (
+                    item
+                    for item in reversed(evidence)
+                    if item["evidence_id"] == installation["standard_test_evidence_id"]
+                ),
+                None,
+            )
+            if current is None:
+                continue
+            expected_policy = canonical_digest(
+                {"workspace_id": workspace_id, "policy": "gateway-model-v1"}
+            )
+            results.append(
+                {
+                    "model_id": package.model_id,
+                    "task_id": task.task_id,
+                    "description": f"{task.description} Limitation: {package.limitations[0].description}",
+                    "input_schema": task.input_schema,
+                    "output_schema": task.output_schema,
+                    "workspace_id": workspace_id,
+                    "binding_id": binding["binding_id"],
+                    "binding_digest": binding["binding_digest"],
+                    "binding_state": binding["state"],
+                    "installation_id": installation["installation_id"],
+                    "installation_digest": installation["installation_digest"],
+                    "installation_state": installation["state"],
+                    "adapter_id": installation["runtime_adapter_id"],
+                    "adapter_version": installation["runtime_adapter_version"],
+                    "evidence_id": current["evidence_id"],
+                    "evidence_state": current["state"],
+                    "material_digest": current["material_digest"],
+                    "policy_snapshot_digest": binding["policy_snapshot_digest"],
+                    "policy_current": binding["policy_snapshot_digest"]
+                    == expected_policy,
+                }
+            )
+        return tuple(results)
+
+    async def invoke_model_capability(
+        self,
+        *,
+        principal_id: str,
+        workspace_id: str,
+        session_id: str,
+        request_id: str,
+        trace_id: str,
+        tool_name: str,
+        binding_digest: str,
+        arguments: dict[str, Any],
+        approval_context: Any,
+        progress_callback,
+    ) -> dict[str, Any]:
+        repository, _, _ = self._require_runtime()
+        binding = repository.get_binding_by_digest(binding_digest)
+        if (
+            binding is None
+            or binding["workspace_id"] != workspace_id
+            or binding["tool_name"] != tool_name
+            or binding["state"] != "enabled"
+        ):
+            raise EngineeringModelPortError(
+                "stale_binding",
+                "The reviewed model binding changed.",
+                "Review the workflow binding again.",
+            )
+        installation = repository.get_installation(str(binding["installation_id"]))
+        if installation is None or installation["state"] != "ready":
+            raise EngineeringModelPortError(
+                "runtime_unhealthy",
+                "The bound installation is no longer ready.",
+                "Run its standard test again.",
+            )
+        package, variant = self._installation_package(installation)
+        task = next(
+            item for item in package.tasks if item.task_id == binding["task_id"]
+        )
+        session = await self._runtime_session(
+            installation, task.task_id, trace_id=trace_id
+        )
+        key = (session_id, request_id)
+        async with self._runtime_lock:
+            if key in self._runtime_requests:
+                await session.shutdown()
+                raise EngineeringModelPortError(
+                    "runtime_unhealthy",
+                    "The model request identity is already active.",
+                    "Use a unique request identity.",
+                )
+            self._runtime_requests[key] = session
+
+        async def forward(event: RuntimeProgress) -> None:
+            if progress_callback is None:
+                return
+            result = progress_callback(
+                {
+                    "sequence": event.sequence,
+                    "phase": event.phase,
+                    "completed": event.completed_items,
+                    "total": event.total_items,
+                    "message": event.message,
+                }
+            )
+            if result is not None:
+                await result
+
+        handle = None
+        try:
+            await session.verify(
+                timeout=variant.resources.load_timeout_ms / 1000,
+                progress_callback=forward,
+            )
+            handle = await session.load(
+                timeout=variant.resources.load_timeout_ms / 1000,
+                progress_callback=forward,
+            )
+            result = await session.infer(
+                handle,
+                arguments,
+                schema_digest=canonical_digest(task.input_schema),
+                timeout=variant.resources.inference_timeout_ms / 1000,
+                maximum_output_bytes=variant.resources.max_output_bytes,
+                progress_callback=forward,
+            )
+            assert self.artifact_store is not None
+            self.artifact_store.observer.record(
+                "model.gateway.call",
+                trace_id=trace_id,
+                attributes={
+                    "request_id": request_id,
+                    "workspace_id": workspace_id,
+                    "binding_digest": binding_digest,
+                    "installation_digest": installation["installation_digest"],
+                    "adapter_id": session.descriptor.adapter_id,
+                    "task_id": task.task_id,
+                    "result_digest": canonical_digest(result["output"]),
+                },
+            )
+            return {
+                "content": [
+                    {"type": "text", "text": "Engineering model inference completed."}
+                ],
+                "structuredContent": dict(result["output"]),
+                "_meta": {
+                    "binding_digest": binding_digest,
+                    "installation_digest": installation["installation_digest"],
+                    "adapter_id": session.descriptor.adapter_id,
+                    "adapter_version": session.descriptor.adapter_version,
+                    "input_digest": canonical_digest(arguments),
+                    "output_digest": canonical_digest(result["output"]),
+                    "trace_id": trace_id,
+                },
+            }
+        except asyncio.CancelledError:
+            assert self.artifact_store is not None
+            self.artifact_store.observer.record(
+                "model.gateway.call",
+                trace_id=trace_id,
+                state="cancelled",
+                attributes={
+                    "request_id": request_id,
+                    "workspace_id": workspace_id,
+                    "binding_digest": binding_digest,
+                    "task_id": task.task_id,
+                },
+            )
+            raise
+        except RuntimeFailure as error:
+            assert self.artifact_store is not None
+            self.artifact_store.observer.record(
+                "model.gateway.call",
+                trace_id=trace_id,
+                state="failed",
+                attributes={
+                    "request_id": request_id,
+                    "workspace_id": workspace_id,
+                    "binding_digest": binding_digest,
+                    "task_id": task.task_id,
+                    "failure_category": error.category,
+                },
+            )
+            raise EngineeringModelPortError(
+                error.category,
+                str(error),
+                "Rerun the mandatory test or inspect runtime diagnostics.",
+            ) from error
+        finally:
+            if handle is not None:
+                try:
+                    await session.unload(handle)
+                except RuntimeFailure:
+                    pass
+            await session.shutdown()
+            async with self._runtime_lock:
+                self._runtime_requests.pop(key, None)
+
+    async def cancel_model_request(self, *, session_id: str, request_id: str) -> None:
+        session = self._runtime_requests.get((session_id, request_id))
+        if session is not None:
+            await session.cancel_current()
+
+    async def close_model_session(self, *, session_id: str) -> None:
+        owned = [
+            (key, runtime)
+            for key, runtime in self._runtime_requests.items()
+            if key[0] == session_id
+        ]
+        await asyncio.gather(
+            *(runtime.shutdown() for _, runtime in owned), return_exceptions=True
+        )
+        async with self._runtime_lock:
+            for key, _ in owned:
+                self._runtime_requests.pop(key, None)
+
+    async def shutdown_model_runtime(self) -> None:
+        if self.runtime_supervisor is not None:
+            await self.runtime_supervisor.shutdown()
+        async with self._runtime_lock:
+            self._runtime_requests.clear()
 
 
 __all__ = ["EngineeringModelService", "observe_local_model_host"]

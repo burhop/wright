@@ -218,6 +218,14 @@ class ModelArtifactStore:
             raise ValueError("Verified content is corrupt")
         return value
 
+    def verified_path(self, content_digest: str) -> Path:
+        """Return one private verified object path for an owned runtime supervisor."""
+
+        path = self._object_path(content_digest)
+        if not path.is_file() or _sha256(path) != content_digest:
+            raise KeyError(content_digest)
+        return path
+
     def activate(
         self,
         *,

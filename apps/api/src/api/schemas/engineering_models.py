@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any, Literal
 
 from core.rivet_mcp import reject_secret_material
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 _FORBIDDEN_PUBLIC_KEYS = {
     "adapter_command",
@@ -232,6 +232,71 @@ class ModelOperationEventResponse(BaseModel):
     operation: ModelOperationResponse
 
 
+class ModelRuntimeEvidenceResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    evidence_id: str = Field(min_length=1, max_length=128)
+    state: Literal["passed", "failed", "blocked", "error"]
+    material_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    observation_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    material: dict[str, Any] = Field(default_factory=dict)
+    observation: dict[str, Any] = Field(default_factory=dict)
+    evidence: dict[str, Any] | None = None
+
+
+class ModelRuntimeTestResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    installation_id: str = Field(min_length=1, max_length=128)
+    installation_state: Literal["installed", "testing", "ready", "unhealthy"]
+    adapter_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+    adapter_version: str = Field(min_length=1, max_length=128)
+    evidence: list[ModelRuntimeEvidenceResponse] = Field(max_length=32)
+
+    @model_validator(mode="after")
+    def validate_boundary(self) -> "ModelRuntimeTestResponse":
+        document = self.model_dump(mode="json", exclude_none=True)
+        reject_secret_material(document)
+        _validate_public(document)
+        if len(json.dumps(document, separators=(",", ":")).encode()) > 1024 * 1024:
+            raise ValueError("Engineering model evidence exceeds 1 MiB")
+        return self
+
+
+class ModelWorkspaceBindingRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    installation_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+    task_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+
+    @field_validator("task_id")
+    @classmethod
+    def reject_physical_actuation(cls, value: str) -> str:
+        normalized = value.replace("-", "_").replace(".", "_")
+        if "physical" in normalized and "actuation" in normalized:
+            raise ValueError("Physical actuation is outside the model capability gate")
+        return value
+
+
+class ModelWorkspaceBindingStateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    state: Literal["enabled", "disabled"]
+
+
+class ModelWorkspaceBindingResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    binding_id: str = Field(min_length=1, max_length=128)
+    binding_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    workspace_id: str = Field(min_length=1, max_length=128)
+    installation_id: str = Field(min_length=1, max_length=128)
+    task_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+    tool_name: str = Field(pattern=r"^wright_model__[a-z0-9_]+__[a-z0-9_]+$")
+    policy_snapshot_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    state: Literal["enabled", "disabled", "stale", "blocked"]
+
+
 __all__ = [
     "CatalogSnapshotResponse",
     "EngineeringModelListResponse",
@@ -242,4 +307,8 @@ __all__ = [
     "ModelPlanConfirmationRequest",
     "ModelPlanRequest",
     "ModelPlanResponse",
+    "ModelRuntimeTestResponse",
+    "ModelWorkspaceBindingRequest",
+    "ModelWorkspaceBindingResponse",
+    "ModelWorkspaceBindingStateRequest",
 ]

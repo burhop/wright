@@ -18,6 +18,7 @@ dependencies = [
     "wright-agent-adapters",
     "wright-tool-registry",
     "wright-data-vault",
+    "wright-model-registry",
     "wright-workspace-service",
     "httpx>=0.28",
     "httpx-sse>=0.4",
@@ -29,6 +30,7 @@ wright-core = { workspace = true }
 wright-agent-adapters = { workspace = true }
 wright-tool-registry = { workspace = true }
 wright-data-vault = { workspace = true }
+wright-model-registry = { workspace = true }
 wright-workspace-service = { workspace = true }
 
 [build-system]

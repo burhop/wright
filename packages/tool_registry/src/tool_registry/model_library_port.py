@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Any, Mapping, Protocol
+
+from .runners.base import ProgressCallback
 
 
 class EngineeringModelPortError(ValueError):
@@ -66,6 +69,61 @@ class EngineeringModelApplicationPort(Protocol):
     def operation_events(
         self, operation_id: str, *, principal_id: str, after: int
     ) -> tuple[Mapping[str, Any], ...]: ...
+
+    async def run_standard_test(
+        self, installation_id: str, *, principal_id: str, trace_id: str
+    ) -> Mapping[str, Any]: ...
+
+    def get_standard_test_evidence(
+        self, installation_id: str, *, principal_id: str
+    ) -> Mapping[str, Any]: ...
+
+    def create_workspace_binding(
+        self,
+        installation_id: str,
+        *,
+        task_id: str,
+        workspace_id: str,
+        principal_id: str,
+    ) -> Mapping[str, Any]: ...
+
+    def set_workspace_binding_state(
+        self,
+        binding_id: str,
+        *,
+        state: str,
+        workspace_id: str,
+        principal_id: str,
+    ) -> Mapping[str, Any]: ...
+
+    def declared_model_tool_names(self) -> frozenset[str]: ...
+
+    def discover_model_capabilities(
+        self, *, principal_id: str, workspace_id: str, session_id: str
+    ) -> Sequence[Mapping[str, Any]]: ...
+
+    async def invoke_model_capability(
+        self,
+        *,
+        principal_id: str,
+        workspace_id: str,
+        session_id: str,
+        request_id: str,
+        trace_id: str,
+        tool_name: str,
+        binding_digest: str,
+        arguments: Mapping[str, Any],
+        approval_context: Any,
+        progress_callback: ProgressCallback | None,
+    ) -> Mapping[str, Any]: ...
+
+    async def cancel_model_request(
+        self, *, session_id: str, request_id: str
+    ) -> None: ...
+
+    async def close_model_session(self, *, session_id: str) -> None: ...
+
+    async def shutdown_model_runtime(self) -> None: ...
 
 
 __all__ = ["EngineeringModelApplicationPort", "EngineeringModelPortError"]

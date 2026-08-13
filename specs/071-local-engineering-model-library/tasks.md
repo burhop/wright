@@ -122,29 +122,29 @@
 
 ### Tests first
 
-- [ ] T059 [P] [US3] Write failing adapter identity/contract/format/task/platform/provider/health/verify/progress tests in `packages/model_registry/tests/test_runtime_adapter.py`.
-- [ ] T060 [P] [US3] Add a protocol-conformant deterministic child adapter with verify/load/infer/progress/cancel/unload/shutdown and fault profiles in `tests/fixtures/engineering_model_runtime.py`.
-- [ ] T061 [P] [US3] Write failing runtime-supervisor tests for clean environment, artifact confinement, verification, monotonic redacted progress, message/output bounds, resources, deadlines, crash, cancellation, late output, unload, shutdown, and residue in `packages/model_registry/tests/test_runtime_supervisor.py`.
-- [ ] T062 [P] [US3] Write failing vector evaluation tests for deterministic seed, limitation coverage, input/output schema digests, units/coordinates, exact/range/absolute/relative/category predicates, finite values, tolerance, timing, and split material/observation evidence digests in `packages/model_registry/tests/test_model_testing.py`.
-- [ ] T063 [P] [US3] Write failing generic provider collision/discovery/call/cancel/session-close/backward-compatibility tests in `packages/tool_registry/tests/test_gateway_capability_providers.py`.
-- [ ] T064 [P] [US3] Write failing model provider tests for exact healthy workspace bindings, typed schemas, stale/disabled/cross-workspace hiding, policy, audit, and identity evidence in `packages/model_registry/tests/test_gateway_provider.py`.
-- [ ] T065 [P] [US3] Write failing installation-test and workspace-binding API tests in `apps/api/tests/test_engineering_model_runtime_api.py`.
-- [ ] T066 [P] [US3] Write failing component tests for standard test evidence, resource rejection, enablement, stale bindings, and recovery in `apps/web/tests/EngineeringModelRuntimePanel.spec.tsx`.
-- [ ] T067 [US3] Write a failing real Rivet-worker/system test for typed model discovery/call/cancellation through GatewayService in `tests/e2e/test_rivet_engineering_models.py`.
+- [x] T059 [P] [US3] Write failing adapter identity/contract/format/task/platform/provider/health/verify/progress tests in `packages/model_registry/tests/test_runtime_adapter.py`.
+- [x] T060 [P] [US3] Add a protocol-conformant deterministic child adapter with verify/load/infer/progress/cancel/unload/shutdown and fault profiles in `tests/fixtures/engineering_model_runtime.py`.
+- [x] T061 [P] [US3] Write failing runtime-supervisor tests for clean environment, artifact confinement, verification, monotonic redacted progress, message/output bounds, resources, deadlines, crash, cancellation, late output, unload, shutdown, and residue in `packages/model_registry/tests/test_runtime_supervisor.py`.
+- [x] T062 [P] [US3] Write failing vector evaluation tests for deterministic seed, limitation coverage, input/output schema digests, units/coordinates, exact/range/absolute/relative/category predicates, finite values, tolerance, timing, and split material/observation evidence digests in `packages/model_registry/tests/test_model_testing.py`.
+- [x] T063 [P] [US3] Write failing generic provider collision/discovery/call/cancel/session-close/backward-compatibility tests in `packages/tool_registry/tests/test_gateway_capability_providers.py`.
+- [x] T064 [P] [US3] Write failing model provider tests for exact healthy workspace bindings, typed schemas, stale/disabled/cross-workspace hiding, policy, audit, and identity evidence in `packages/model_registry/tests/test_gateway_provider.py`.
+- [x] T065 [P] [US3] Write failing installation-test and workspace-binding API tests in `apps/api/tests/test_engineering_model_runtime_api.py`.
+- [x] T066 [P] [US3] Write failing component tests for standard test evidence, resource rejection, enablement, stale bindings, and recovery in `apps/web/tests/EngineeringModelRuntimePanel.spec.tsx`.
+- [x] T067 [US3] Write a failing real Rivet-worker/system test for typed model discovery/call/cancellation through GatewayService in `tests/e2e/test_rivet_engineering_models.py`.
 
 ### Implementation
 
-- [ ] T068 [US3] Implement the adapter registry, verify/progress protocol records, supervisor, process ownership, deadlines, cancellation, and cleanup in `packages/model_registry/src/model_registry/runtime.py`.
-- [ ] T069 [US3] Implement mandatory seeded test-vector validation/evaluation and bounded evidence with deterministic material and variable observation digests in `packages/model_registry/src/model_registry/testing.py`.
-- [ ] T070 [US3] Add `GatewayCapabilityProvider`, `EngineeringModelApplicationPort`, and progress/cancel protocol types in `packages/tool_registry/src/tool_registry/gateway_ports.py` and `packages/tool_registry/src/tool_registry/model_library_port.py`.
-- [ ] T071 [US3] Integrate unique provider discovery/call/policy/audit/cancellation/session-close/shutdown in `packages/tool_registry/src/tool_registry/gateway_service.py` without changing existing MCP behavior.
-- [ ] T072 [US3] Implement `EngineeringModelTool(BaseTool)`, workspace-scoped model tool projection, and runtime invocation in `packages/model_registry/src/model_registry/model_tool.py` and `packages/model_registry/src/model_registry/gateway_provider.py`.
-- [ ] T073 [US3] Compose standard-test, enable/disable, binding, provider, and supervisor services with structured `structlog` events and OpenTelemetry spans in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
-- [ ] T074 [US3] Wire the dynamic provider into the existing gateway composition in `apps/api/src/api/composition.py`.
-- [ ] T075 [US3] Add test/evidence/binding request and response models in `apps/api/src/api/schemas/engineering_models.py`.
-- [ ] T076 [US3] Add thin standard-test/evidence/workspace-binding routes in `apps/api/src/api/routers/engineering_models.py`.
-- [ ] T077 [US3] Implement test/evidence/binding client methods and runtime status patterns in `apps/web/src/services/engineering-model-service.ts` and `apps/web/src/components/models/EngineeringModelRuntimePanel.tsx`.
-- [ ] T078 [US3] Integrate test and workspace enablement into `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx` with exact evidence and recovery.
+- [x] T068 [US3] Implement the adapter registry, verify/progress protocol records, supervisor, process ownership, deadlines, cancellation, and cleanup in `packages/model_registry/src/model_registry/runtime.py`.
+- [x] T069 [US3] Implement mandatory seeded test-vector validation/evaluation and bounded evidence with deterministic material and variable observation digests in `packages/model_registry/src/model_registry/testing.py`.
+- [x] T070 [US3] Add `GatewayCapabilityProvider`, `EngineeringModelApplicationPort`, and progress/cancel protocol types in `packages/tool_registry/src/tool_registry/gateway_ports.py` and `packages/tool_registry/src/tool_registry/model_library_port.py`.
+- [x] T071 [US3] Integrate unique provider discovery/call/policy/audit/cancellation/session-close/shutdown in `packages/tool_registry/src/tool_registry/gateway_service.py` without changing existing MCP behavior.
+- [x] T072 [US3] Implement `EngineeringModelTool(BaseTool)`, workspace-scoped model tool projection, and runtime invocation in `packages/model_registry/src/model_registry/model_tool.py` and `packages/model_registry/src/model_registry/gateway_provider.py`.
+- [x] T073 [US3] Compose standard-test, enable/disable, binding, provider, and supervisor services with structured `structlog` events and OpenTelemetry spans in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
+- [x] T074 [US3] Wire the dynamic provider into the existing gateway composition in `apps/api/src/api/composition.py`.
+- [x] T075 [US3] Add test/evidence/binding request and response models in `apps/api/src/api/schemas/engineering_models.py`.
+- [x] T076 [US3] Add thin standard-test/evidence/workspace-binding routes in `apps/api/src/api/routers/engineering_models.py`.
+- [x] T077 [US3] Implement test/evidence/binding client methods and runtime status patterns in `apps/web/src/services/engineering-model-service.ts` and `apps/web/src/components/models/EngineeringModelRuntimePanel.tsx`.
+- [x] T078 [US3] Integrate test and workspace enablement into `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx` with exact evidence and recovery.
 
 **Checkpoint**: Exact ready models become typed workspace capabilities; Rivet calls them only through Wright's governed gateway.
 

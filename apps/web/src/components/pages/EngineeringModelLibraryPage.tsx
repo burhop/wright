@@ -10,14 +10,20 @@ import {
   ModelResourceSummary,
 } from "../models/ModelTrustPrimitives";
 import { EngineeringModelInstallFlow } from "../models/EngineeringModelInstallFlow";
+import { EngineeringModelRuntimePanel } from "../models/EngineeringModelRuntimePanel";
 
 function DetailPanel({
   model,
   onClose,
+  workspaceId,
 }: {
   model: EngineeringModelView;
   onClose: () => void;
+  workspaceId: string;
 }) {
+  const [installations, setInstallations] = useState<Record<string, string>>(
+    {},
+  );
   return (
     <div
       role="dialog"
@@ -104,7 +110,27 @@ function DetailPanel({
                 <EngineeringModelInstallFlow
                   modelId={model.model_id}
                   variantId={variant.variant_id}
+                  onInstalled={(installationId) =>
+                    setInstallations((current) => ({
+                      ...current,
+                      [variant.variant_id]: installationId,
+                    }))
+                  }
                 />
+              ) : null}
+              {installations[variant.variant_id] ? (
+                workspaceId ? (
+                  <EngineeringModelRuntimePanel
+                    installationId={installations[variant.variant_id]}
+                    taskId={model.tasks[0]}
+                    workspaceId={workspaceId}
+                  />
+                ) : (
+                  <p role="status">
+                    Enter the target workspace identity below before enabling
+                    this tested capability.
+                  </p>
+                )
               ) : null}
             </article>
           ))
@@ -146,6 +172,7 @@ export function EngineeringModelLibraryPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<EngineeringModelView | null>(null);
+  const [workspaceId, setWorkspaceId] = useState("");
 
   const loadCatalog = useCallback(async () => {
     setLoading(true);
@@ -234,6 +261,16 @@ export function EngineeringModelLibraryPage() {
           />
         </label>
         <label>
+          Target workspace identity
+          <input
+            data-testid="model-workspace-id"
+            value={workspaceId}
+            maxLength={128}
+            onChange={(event) => setWorkspaceId(event.target.value.trim())}
+            placeholder="Choose the workspace that may use this model"
+          />
+        </label>
+        <label>
           Engineering task
           <select
             data-testid="model-task-filter"
@@ -306,7 +343,11 @@ export function EngineeringModelLibraryPage() {
       </section>
 
       {selected ? (
-        <DetailPanel model={selected} onClose={() => setSelected(null)} />
+        <DetailPanel
+          model={selected}
+          workspaceId={workspaceId}
+          onClose={() => setSelected(null)}
+        />
       ) : null}
     </main>
   );

@@ -336,7 +336,16 @@ class ModelInstallLifecycle:
                     artifacts=artifacts,
                     trace_id=trace_id,
                 )
-                installation_digest = canonical_digest(activation)
+                runtime_adapter_version = (
+                    variant.runtime.version_specifier.removeprefix("==")
+                )
+                installation_digest = canonical_digest(
+                    {
+                        "activation": activation,
+                        "runtime_adapter_id": variant.runtime.adapter_id,
+                        "runtime_adapter_version": runtime_adapter_version,
+                    }
+                )
                 self.repository.save_installation(
                     installation_id=installation_id,
                     model_id=package.model_id,
@@ -345,11 +354,20 @@ class ModelInstallLifecycle:
                     manifest_digest=package.digest,
                     installation_digest=installation_digest,
                     runtime_adapter_id=variant.runtime.adapter_id,
-                    runtime_adapter_version=variant.runtime.version_specifier,
+                    runtime_adapter_version=runtime_adapter_version,
                     state="installed",
                     active=True,
                     installed_at=self.clock(),
                 )
+                record_artifacts = getattr(
+                    self.repository, "record_installation_artifacts", None
+                )
+                if callable(record_artifacts):
+                    record_artifacts(
+                        installation_id,
+                        artifacts,
+                        created_at=self.clock(),
+                    )
                 cleanup = self.store.cleanup_staging(operation_id, trace_id=trace_id)
                 self.repository.transition_operation(
                     operation_id,

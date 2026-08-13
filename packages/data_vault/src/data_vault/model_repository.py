@@ -401,6 +401,87 @@ class ModelRepository:
                 ),
             )
 
+    def get_installation(self, installation_id: str) -> dict[str, Any] | None:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            row = connection.execute(
+                "SELECT * FROM model_installations WHERE installation_id=?",
+                (installation_id,),
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def list_installations(self) -> tuple[dict[str, Any], ...]:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            rows = connection.execute(
+                "SELECT * FROM model_installations ORDER BY model_id, installed_at"
+            ).fetchall()
+        return tuple(dict(row) for row in rows)
+
+    def mark_installation_tested(
+        self,
+        installation_id: str,
+        *,
+        expected_state: str,
+        state: str,
+        adapter_version: str,
+        evidence_id: str | None,
+        observed_at: datetime,
+    ) -> bool:
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_installations
+                SET state=?, runtime_adapter_version=?, standard_test_evidence_id=?,
+                    last_verified_at=?
+                WHERE installation_id=? AND state=?""",
+                (
+                    state,
+                    adapter_version,
+                    evidence_id,
+                    _epoch(observed_at),
+                    installation_id,
+                    expected_state,
+                ),
+            )
+            return cursor.rowcount == 1
+
+    def installation_artifacts(
+        self, installation_id: str
+    ) -> tuple[dict[str, Any], ...]:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            rows = connection.execute(
+                """SELECT * FROM model_installation_artifacts
+                WHERE installation_id=? ORDER BY artifact_path""",
+                (installation_id,),
+            ).fetchall()
+        return tuple(dict(row) for row in rows)
+
+    def record_installation_artifacts(
+        self,
+        installation_id: str,
+        artifacts: Mapping[str, str],
+        *,
+        created_at: datetime,
+    ) -> None:
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            for path, digest in sorted(artifacts.items()):
+                row = connection.execute(
+                    """SELECT content_digest FROM model_installation_artifacts
+                    WHERE installation_id=? AND artifact_path=?""",
+                    (installation_id, path),
+                ).fetchone()
+                if row is not None:
+                    if row["content_digest"] != digest:
+                        raise ValueError(
+                            "Model installation artifact identity is immutable"
+                        )
+                    continue
+                connection.execute(
+                    """INSERT INTO model_installation_artifacts
+                    (installation_id, artifact_path, content_digest, created_at)
+                    VALUES (?, ?, ?, ?)""",
+                    (installation_id, path, digest, _epoch(created_at)),
+                )
+
     def bind_workspace(
         self,
         *,
@@ -434,6 +515,38 @@ class ModelRepository:
                     at,
                 ),
             )
+
+    def get_binding(self, binding_id: str) -> dict[str, Any] | None:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            row = connection.execute(
+                "SELECT * FROM model_capability_bindings WHERE binding_id=?",
+                (binding_id,),
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def get_binding_by_digest(self, binding_digest: str) -> dict[str, Any] | None:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            row = connection.execute(
+                "SELECT * FROM model_capability_bindings WHERE binding_digest=?",
+                (binding_digest,),
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def set_binding_state(
+        self,
+        binding_id: str,
+        *,
+        expected_state: str,
+        state: str,
+        observed_at: datetime,
+    ) -> bool:
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_capability_bindings SET state=?, updated_at=?
+                WHERE binding_id=? AND state=?""",
+                (state, _epoch(observed_at), binding_id, expected_state),
+            )
+            return cursor.rowcount == 1
 
     def list_bindings(self, workspace_id: str) -> tuple[dict[str, Any], ...]:
         with connect_state_db(self.db_path, read_only=True, wal=False) as connection:

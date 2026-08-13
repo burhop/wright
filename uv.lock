@@ -1753,6 +1753,7 @@ dependencies = [
     { name = "wright-agent-adapters" },
     { name = "wright-core" },
     { name = "wright-data-vault" },
+    { name = "wright-model-registry" },
     { name = "wright-tool-registry" },
     { name = "wright-workspace-service" },
 ]
@@ -1773,6 +1774,7 @@ requires-dist = [
     { name = "wright-agent-adapters", editable = "packages/agent_adapters" },
     { name = "wright-core", editable = "packages/core" },
     { name = "wright-data-vault", editable = "packages/data_vault" },
+    { name = "wright-model-registry", editable = "packages/model_registry" },
     { name = "wright-tool-registry", editable = "packages/tool_registry" },
     { name = "wright-workspace-service", editable = "packages/workspace_service" },
 ]

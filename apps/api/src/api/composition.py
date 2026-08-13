@@ -28,6 +28,7 @@ from data_vault import (
     RivetMcpRepository,
     upgrade_database,
 )
+from model_registry.gateway_provider import EngineeringModelGatewayProvider
 from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.gateway_adapters import (
     DatabaseGatewayAudit,
@@ -323,7 +324,11 @@ def surface_application() -> SurfaceApplication:
 
 @lru_cache(maxsize=1)
 def engineering_model_application() -> EngineeringModelService:
-    database = Path(DATABASE_PATH)
+    return build_engineering_model_application(DATABASE_PATH)
+
+
+def build_engineering_model_application(db_path: str) -> EngineeringModelService:
+    database = Path(db_path)
     upgrade_database(database)
     data_root = database.parent / "wright-data"
     return EngineeringModelService(
@@ -340,6 +345,8 @@ async def close_application_services() -> None:
     if workspace_service.cache_info().currsize:
         await workspace_service().close()
         workspace_service.cache_clear()
+    if engineering_model_application.cache_info().currsize:
+        await engineering_model_application().shutdown_model_runtime()
     engineering_model_application.cache_clear()
 
 
@@ -423,6 +430,11 @@ def build_api_gateway_service(
             pass
         else:
             lifecycle = BrepPanelGatewayLifecycle(lifecycle, brep_server.server_id)
+    model_application = (
+        engineering_model_application()
+        if Path(db_path).resolve() == Path(DATABASE_PATH).resolve()
+        else build_engineering_model_application(db_path)
+    )
     gateway = GatewayService(
         workspaces=DatabaseGatewayWorkspace(repository),
         catalog=catalog,
@@ -432,6 +444,7 @@ def build_api_gateway_service(
         resources=GatewayResourceProvider(),
         management=management,
         mcp_ui_resources=ui_resources,
+        capability_providers=(EngineeringModelGatewayProvider(model_application),),
         operation_timeout=settings.operation_timeout_seconds,
         maximum_timeout=settings.maximum_timeout_seconds,
     )

@@ -35,6 +35,20 @@ from .planning import (
     confirm_effect_plan as confirm_effect_plan,
     create_effect_plan as create_effect_plan,
 )
+from .runtime import (
+    AdapterDescriptor as AdapterDescriptor,
+    AdapterRegistration as AdapterRegistration,
+    RuntimeAdapterRegistry as RuntimeAdapterRegistry,
+    RuntimeFailure as RuntimeFailure,
+    RuntimeSupervisor as RuntimeSupervisor,
+    built_in_runtime_registry as built_in_runtime_registry,
+)
+from .testing import (
+    EvidenceFailure as EvidenceFailure,
+    ModelValidationEvidence as ModelValidationEvidence,
+    evaluate_test_vector as evaluate_test_vector,
+    validate_mandatory_vectors as validate_mandatory_vectors,
+)
 
 
 def schema_root():
@@ -45,6 +59,9 @@ def schema_root():
 
 __all__ = [
     "FailureCategory",
+    "AdapterDescriptor",
+    "AdapterRegistration",
+    "EvidenceFailure",
     "HostObservation",
     "ModelPackage",
     "ModelEffectPlan",
@@ -53,11 +70,18 @@ __all__ = [
     "ModelRegistryError",
     "ModelTestVector",
     "ModelVariant",
+    "ModelValidationEvidence",
     "PolicyResult",
     "PolicyState",
+    "RuntimeAdapterRegistry",
+    "RuntimeFailure",
+    "RuntimeSupervisor",
+    "built_in_runtime_registry",
     "canonical_digest",
     "canonical_json",
     "confirm_effect_plan",
     "create_effect_plan",
+    "evaluate_test_vector",
     "schema_root",
+    "validate_mandatory_vectors",
 ]

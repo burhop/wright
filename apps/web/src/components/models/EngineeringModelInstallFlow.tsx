@@ -35,9 +35,11 @@ function failureMessage(error: unknown): { message: string; recovery: string } {
 export function EngineeringModelInstallFlow({
   modelId,
   variantId,
+  onInstalled,
 }: {
   modelId: string;
   variantId: string;
+  onInstalled?: (installationId: string) => void;
 }) {
   const [plan, setPlan] = useState<EngineeringModelPlan | null>(null);
   const [operation, setOperation] = useState<EngineeringModelOperation | null>(
@@ -67,12 +69,15 @@ export function EngineeringModelInstallFlow({
     setBusy(true);
     setFailure(null);
     try {
-      setOperation(
-        await engineeringModelService.confirmPlan(
-          plan.plan_id,
-          plan.plan_digest,
-        ),
+      const next = await engineeringModelService.confirmPlan(
+        plan.plan_id,
+        plan.plan_digest,
       );
+      setOperation(next);
+      const installationId = next.result?.installation_id;
+      if (next.state === "succeeded" && typeof installationId === "string") {
+        onInstalled?.(installationId);
+      }
     } catch (error) {
       setFailure(failureMessage(error));
     } finally {

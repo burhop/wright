@@ -29,6 +29,10 @@ from api.schemas.engineering_models import (
     ModelPlanConfirmationRequest,
     ModelPlanRequest,
     ModelPlanResponse,
+    ModelRuntimeTestResponse,
+    ModelWorkspaceBindingRequest,
+    ModelWorkspaceBindingResponse,
+    ModelWorkspaceBindingStateRequest,
 )
 
 router = APIRouter()
@@ -333,6 +337,121 @@ def engineering_model_operation_events(
         media_type="text/event-stream",
         headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
     )
+
+
+@router.post(
+    "/installations/{installation_id}/standard-test",
+    response_model=ModelRuntimeTestResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+async def run_engineering_model_standard_test(
+    installation_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return await application.run_standard_test(
+            installation_id,
+            principal_id=_request_actor(request),
+            trace_id=_request_trace(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.get(
+    "/installations/{installation_id}/evidence",
+    response_model=ModelRuntimeTestResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def get_engineering_model_test_evidence(
+    installation_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.get_standard_test_evidence(
+            installation_id, principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/workspaces/{workspace_id}/bindings",
+    response_model=ModelWorkspaceBindingResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def create_engineering_model_workspace_binding(
+    workspace_id: str,
+    body: ModelWorkspaceBindingRequest,
+    request: Request,
+    bound_workspace_id: str = Header(
+        alias="X-Wright-Workspace-ID", min_length=1, max_length=128
+    ),
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    if bound_workspace_id != workspace_id:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "category": "invalid_binding",
+                "message": "The requested and authenticated workspace identities differ.",
+                "recovery": "Reload the target workspace before enabling this capability.",
+            },
+        )
+    try:
+        return application.create_workspace_binding(
+            body.installation_id,
+            task_id=body.task_id,
+            workspace_id=workspace_id,
+            principal_id=_request_actor(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.patch(
+    "/workspaces/{workspace_id}/bindings/{binding_id}",
+    response_model=ModelWorkspaceBindingResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def set_engineering_model_workspace_binding_state(
+    workspace_id: str,
+    binding_id: str,
+    body: ModelWorkspaceBindingStateRequest,
+    request: Request,
+    bound_workspace_id: str = Header(
+        alias="X-Wright-Workspace-ID", min_length=1, max_length=128
+    ),
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    if bound_workspace_id != workspace_id:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "category": "invalid_binding",
+                "message": "The requested and authenticated workspace identities differ.",
+                "recovery": "Reload the target workspace before changing this capability.",
+            },
+        )
+    try:
+        return application.set_workspace_binding_state(
+            binding_id,
+            state=body.state,
+            workspace_id=workspace_id,
+            principal_id=_request_actor(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
 
 
 __all__ = ["get_engineering_model_application", "router"]

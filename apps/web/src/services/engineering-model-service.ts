@@ -142,6 +142,35 @@ export interface EngineeringModelOperationEvent {
   operation: EngineeringModelOperation;
 }
 
+export interface EngineeringModelEvidence {
+  evidence_id: string;
+  state: "passed" | "failed" | "blocked" | "error";
+  material_digest: string;
+  observation_digest: string;
+  material?: Record<string, unknown>;
+  observation?: Record<string, unknown>;
+  evidence?: Record<string, unknown>;
+}
+
+export interface EngineeringModelRuntimeTest {
+  installation_id: string;
+  installation_state: "installed" | "testing" | "ready" | "unhealthy";
+  adapter_id: string;
+  adapter_version: string;
+  evidence: EngineeringModelEvidence[];
+}
+
+export interface EngineeringModelWorkspaceBinding {
+  binding_id: string;
+  binding_digest: string;
+  workspace_id: string;
+  installation_id: string;
+  task_id: string;
+  tool_name: string;
+  policy_snapshot_digest: string;
+  state: "enabled" | "disabled" | "stale" | "blocked";
+}
+
 export class EngineeringModelServiceError extends Error {
   readonly category: string;
   readonly recovery: string;
@@ -317,6 +346,74 @@ export class EngineeringModelService {
       throw new Error("Engineering model event history exceeds its bound.");
     }
     return events;
+  }
+
+  async runStandardTest(
+    installationId: string,
+  ): Promise<EngineeringModelRuntimeTest> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/installations/${encodeURIComponent(installationId)}/standard-test`,
+      ),
+      { method: "POST" },
+    );
+    return readResponse<EngineeringModelRuntimeTest>(response);
+  }
+
+  async getStandardTestEvidence(
+    installationId: string,
+  ): Promise<EngineeringModelRuntimeTest> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/installations/${encodeURIComponent(installationId)}/evidence`,
+      ),
+    );
+    return readResponse<EngineeringModelRuntimeTest>(response);
+  }
+
+  async createWorkspaceBinding(
+    workspaceId: string,
+    installationId: string,
+    taskId: string,
+  ): Promise<EngineeringModelWorkspaceBinding> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/workspaces/${encodeURIComponent(workspaceId)}/bindings`,
+      ),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Wright-Workspace-ID": workspaceId,
+        },
+        body: JSON.stringify({
+          installation_id: installationId,
+          task_id: taskId,
+        }),
+      },
+    );
+    return readResponse<EngineeringModelWorkspaceBinding>(response);
+  }
+
+  async setWorkspaceBindingState(
+    workspaceId: string,
+    bindingId: string,
+    state: "enabled" | "disabled",
+  ): Promise<EngineeringModelWorkspaceBinding> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/workspaces/${encodeURIComponent(workspaceId)}/bindings/${encodeURIComponent(bindingId)}`,
+      ),
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Wright-Workspace-ID": workspaceId,
+        },
+        body: JSON.stringify({ state }),
+      },
+    );
+    return readResponse<EngineeringModelWorkspaceBinding>(response);
   }
 }
 

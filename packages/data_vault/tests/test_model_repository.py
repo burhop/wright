@@ -168,6 +168,17 @@ def test_installations_bindings_references_leases_and_evidence_are_scoped(
         verification={"algorithm": "sha256", "size": 7},
         observed_at=now,
     )
+    repo.record_installation_artifacts(
+        "installation-1", {"model/data.bin": DIGEST}, created_at=now
+    )
+    repo.record_installation_artifacts(
+        "installation-1", {"model/data.bin": DIGEST}, created_at=now
+    )
+    assert repo.installation_artifacts("installation-1")[0]["content_digest"] == DIGEST
+    with pytest.raises(ValueError, match="immutable"):
+        repo.record_installation_artifacts(
+            "installation-1", {"model/data.bin": OTHER_DIGEST}, created_at=now
+        )
     repo.add_reference(
         reference_id="reference-1",
         content_digest=DIGEST,

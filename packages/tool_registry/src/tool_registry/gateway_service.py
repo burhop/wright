@@ -25,6 +25,7 @@ from .gateway_management import GatewayManagementTools
 from .gateway_resources import GatewayResourceProvider, ResourceContent
 from .gateway_ports import (
     GatewayAuditPort,
+    GatewayCapabilityProvider,
     GatewayCatalogPort,
     GatewayLifecyclePort,
     GatewayNotifierPort,
@@ -128,6 +129,7 @@ class GatewayService:
         policy: GatewayPolicy | None = None,
         ui_policy: McpUiPolicy | None = None,
         mcp_ui_resources: McpUiResourceStore | None = None,
+        capability_providers: tuple[GatewayCapabilityProvider, ...] = (),
         operation_timeout: float = 30.0,
         maximum_timeout: float = 120.0,
     ) -> None:
@@ -147,7 +149,41 @@ class GatewayService:
         self._requests: dict[
             tuple[str, str], tuple[GatewayRequest, asyncio.Task[Any]]
         ] = {}
+        self._request_providers: dict[tuple[str, str], GatewayCapabilityProvider] = {}
+        self._provider_cancellations: set[tuple[str, str]] = set()
+        self._capability_providers: dict[str, GatewayCapabilityProvider] = {}
         self._closing = False
+        for provider in capability_providers:
+            self.add_capability_provider(provider)
+
+    def add_capability_provider(self, provider: GatewayCapabilityProvider) -> None:
+        """Register one provider while failing closed on every stable collision."""
+
+        provider_id = str(provider.provider_id).strip()
+        if not provider_id or provider_id in self._capability_providers:
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability provider identity is missing or duplicated",
+            )
+        declared = frozenset(str(item) for item in provider.declared_tool_names)
+        if not declared or any(not item for item in declared):
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability provider declared no valid tool identities",
+            )
+        occupied: set[str] = set()
+        for server in self.catalog.servers():
+            occupied.update(tool.name for tool in self.catalog.tools(server.server_id))
+        if self.management is not None:
+            occupied.update(tool.name for tool in self.management.tools())
+        for existing in self._capability_providers.values():
+            occupied.update(existing.declared_tool_names)
+        if occupied.intersection(declared):
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability tool name collision",
+            )
+        self._capability_providers[provider_id] = provider
 
     def open_session(
         self,
@@ -255,7 +291,49 @@ class GatewayService:
                 )
                 if decision.allowed:
                     result.append(tool)
+        names = {tool.name for tool in result}
+        for provider in self._capability_providers.values():
+            for tool in provider.tools(session):
+                if tool.name not in provider.declared_tool_names:
+                    raise GatewayError(
+                        GatewayErrorCode.INVALID_BINDING,
+                        "Gateway capability provider returned an undeclared tool",
+                    )
+                if tool.name in names:
+                    raise GatewayError(
+                        GatewayErrorCode.INVALID_BINDING,
+                        "Gateway capability tool name collision",
+                    )
+                names.add(tool.name)
+                decision = self.policy.can_list(session, tool)
+                self._audit(
+                    session,
+                    "",
+                    tool,
+                    decision.allowed,
+                    decision.reason_code,
+                    "listed" if decision.allowed else "hidden",
+                    0,
+                    operation="tool.list",
+                )
+                if decision.allowed:
+                    result.append(tool)
         return tuple(result)
+
+    def _provider_for_tool(
+        self, session: GatewaySessionContext, tool: GatewayTool
+    ) -> GatewayCapabilityProvider | None:
+        matches = [
+            provider
+            for provider in self._capability_providers.values()
+            if tool.name in provider.declared_tool_names
+        ]
+        if len(matches) > 1:
+            raise GatewayError(
+                GatewayErrorCode.INVALID_BINDING,
+                "Gateway capability tool name collision",
+            )
+        return matches[0] if matches else None
 
     def workspace_approvals_for_model_call(
         self, session_id: str, name: str
@@ -736,6 +814,11 @@ class GatewayService:
             now + self.maximum_timeout,
         )
         request.transition(RequestState.RUNNING)
+        capability_provider = (
+            None
+            if _app_server_id is not None
+            else self._provider_for_tool(session, tool)
+        )
         lifecycle_projection = _safe_lifecycle_projection(
             self.lifecycle, tool.server_id
         )
@@ -788,6 +871,17 @@ class GatewayService:
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
                 return await self.management.call(session, tool.name, dict(arguments))
+            if capability_provider is not None:
+                return await capability_provider.call(
+                    session,
+                    tool,
+                    arguments,
+                    request_id=request_id,
+                    approval_context=approval_context,
+                    progress_callback=(
+                        forward_progress if progress_callback is not None else None
+                    ),
+                )
             specialized = lifecycle_projection["kind"] != "ordinary"
             try:
                 if specialized:
@@ -857,6 +951,8 @@ class GatewayService:
         task = asyncio.create_task(execute())
         key = (session_id, request_id)
         self._requests[key] = (request, task)
+        if capability_provider is not None:
+            self._request_providers[key] = capability_provider
         try:
             raw_result = dict(await asyncio.wait_for(task, bounded))
             normalized = GatewayToolResult.from_upstream(raw_result)
@@ -904,6 +1000,10 @@ class GatewayService:
                 is_error=normalized.is_error,
             )
         except TimeoutError:
+            if capability_provider is not None:
+                await self._cancel_provider_once(
+                    key, capability_provider, session, request_id
+                )
             request.transition(RequestState.TIMED_OUT)
             self._audit(
                 session,
@@ -965,6 +1065,8 @@ class GatewayService:
             ) from exc
         finally:
             self._requests.pop(key, None)
+            self._request_providers.pop(key, None)
+            self._provider_cancellations.discard(key)
 
     def list_resources(self, session_id: str) -> tuple[GatewayResource, ...]:
         session = self._session(session_id)
@@ -991,8 +1093,24 @@ class GatewayService:
         if request.state.terminal:
             return False
         request.cancellation_reason = reason
+        provider = self._request_providers.get((session_id, request_id))
+        if provider is not None:
+            self._provider_cancellations.add((session_id, request_id))
+            asyncio.create_task(provider.cancel(self._session(session_id), request_id))
         task.cancel()
         return True
+
+    async def _cancel_provider_once(
+        self,
+        key: tuple[str, str],
+        provider: GatewayCapabilityProvider,
+        session: GatewaySessionContext,
+        request_id: str,
+    ) -> None:
+        if key in self._provider_cancellations:
+            return
+        self._provider_cancellations.add(key)
+        await provider.cancel(session, request_id)
 
     async def close_session(self, session_id: str) -> None:
         session = self._sessions.get(session_id)
@@ -1005,6 +1123,13 @@ class GatewayService:
             await asyncio.gather(*(task for _, task in owned), return_exceptions=True)
         if self.mcp_ui_resources is not None:
             self.mcp_ui_resources.close_session(session)
+        await asyncio.gather(
+            *(
+                provider.close_session(session)
+                for provider in self._capability_providers.values()
+            ),
+            return_exceptions=True,
+        )
         self._sessions[session_id] = session.close()
 
     async def shutdown(self) -> None:
@@ -1014,6 +1139,10 @@ class GatewayService:
             return_exceptions=True,
         )
         await self.lifecycle.shutdown()
+        await asyncio.gather(
+            *(provider.shutdown() for provider in self._capability_providers.values()),
+            return_exceptions=True,
+        )
 
     def publish_list_changes(
         self,

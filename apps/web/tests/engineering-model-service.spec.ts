@@ -173,4 +173,78 @@ describe("EngineeringModelService", () => {
     expect(mocks.fetch.mock.calls[5][1].headers["Last-Event-ID"]).toBe("0");
     expect(events).toEqual([{ sequence: 1, operation }]);
   });
+
+  it("uses typed standard-test evidence and workspace binding endpoints", async () => {
+    const runtime = {
+      installation_id: "installation-one",
+      installation_state: "ready",
+      adapter_id: "wright-deterministic",
+      adapter_version: "1.0.0",
+      evidence: [],
+    };
+    const binding = {
+      binding_id: "binding-one",
+      binding_digest: "a".repeat(64),
+      workspace_id: "workspace-one",
+      installation_id: "installation-one",
+      task_id: "predict",
+      tool_name: "wright_model__wright_affine_test__predict",
+      policy_snapshot_digest: "b".repeat(64),
+      state: "enabled",
+    };
+    mocks.fetch
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(runtime), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(runtime), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(binding), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ...binding, state: "disabled" }), {
+          status: 200,
+        }),
+      );
+    const service = new EngineeringModelService();
+
+    await service.runStandardTest("installation-one");
+    await service.getStandardTestEvidence("installation-one");
+    await service.createWorkspaceBinding(
+      "workspace-one",
+      "installation-one",
+      "predict",
+    );
+    await service.setWorkspaceBindingState(
+      "workspace-one",
+      "binding-one",
+      "disabled",
+    );
+
+    expect(mocks.fetch.mock.calls[0][0]).toContain(
+      "installation-one/standard-test",
+    );
+    expect(mocks.fetch.mock.calls[0][1]).toEqual({ method: "POST" });
+    expect(mocks.fetch.mock.calls[1][0]).toContain("installation-one/evidence");
+    expect(mocks.fetch.mock.calls[2][1].body).toBe(
+      JSON.stringify({
+        installation_id: "installation-one",
+        task_id: "predict",
+      }),
+    );
+    expect(mocks.fetch.mock.calls[2][1].headers).toEqual(
+      expect.objectContaining({
+        "X-Wright-Workspace-ID": "workspace-one",
+      }),
+    );
+    expect(mocks.fetch.mock.calls[3][1].body).toBe(
+      JSON.stringify({ state: "disabled" }),
+    );
+    expect(mocks.fetch.mock.calls[3][1].headers).toEqual(
+      expect.objectContaining({
+        "X-Wright-Workspace-ID": "workspace-one",
+      }),
+    );
+  });
 });
