@@ -227,9 +227,18 @@ The documentation-complete exact tree was gated again before publication. The fe
 - A real pinned Node worker executed one graph containing colliding `inspect` tools from deterministic Alpha and Beta children. Both calls crossed the Gateway, Beta paused for an exact Wright approval, progress and structured results returned, two child receipts and Gateway audits were recorded, and the run token appeared in no output/evidence.
 - Focused evidence: nine Node worker contract tests passed; 92 Python persistence/authority/capability/bridge/approval/real-worker/API/workspace tests passed; seven capability/run/activity component tests passed; production TypeScript/Vite build passed.
 
+### Implementation checkpoint 4 - authority-first cancellation and residue truth
+
+- Cancellation now revokes the run authority first, cancels pending approvals, sends explicit cancellation to every active Gateway request, waits only the configured bounded acknowledgement interval, and then terminates the owned Rivet worker.
+- A child result that races or arrives after revocation is rejected by a second exact authority check and can never become a successful Rivet result. Active bridge entries are removed in all terminal paths, and an old/restarted authority remains unusable.
+- The immutable Run Manifest records whether Gateway cancellation cleared, whether partial child residue is possible, and a stable recovery code. Acknowledged cleanup records `RIVET_MCP_CANCELLED_CLEAN`; unconfirmed cleanup records `RIVET_MCP_RESIDUE_POSSIBLE` without pretending the external application rolled back.
+- Run status/cancel APIs retain generation conflicts and idempotent terminal cancellation while projecting the safe manifest. The UI presents acknowledged cleanup in ordinary text and possible residue as an alert with an inspect-before-retry instruction.
+- Deterministic evidence exercised both acknowledgement variants, verified revocation-before-cancel ordering, rejected a released late success, cleared the active request, and proved the Node provider fetch ends without a late success. On Windows, process ownership supplies the terminal cancellation because POSIX signal aliases terminate rather than enter Node's handler.
+- Focused evidence: 20 Python cancellation/bridge/runner/manifest/API tests, ten Node runner contract tests, and three cancellation/approval UI tests passed; the production web build passed.
+
 ### Next checkpoint
 
-Implement User Story 3: cancel a slow governed child call, revoke its run authority before stopping the worker, distinguish acknowledged cancellation from possible residue, and make recovery evidence explicit.
+Implement User Story 4 with deterministic BREP panel and Solid Edge/host-bridge lifecycle doubles, preserving the same provider, progress, cancellation, cleanup, and evidence contract without requiring proprietary software.
 
 ## Program guardrails
 

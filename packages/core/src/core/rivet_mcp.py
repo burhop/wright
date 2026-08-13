@@ -412,6 +412,9 @@ class RunManifest:
     redaction_count: int
     event_truncated: bool
     output_truncated: bool
+    cancellation_acknowledged: bool | None
+    residue_possible: bool
+    recovery_code: str | None
     manifest_digest: str
 
     def digest_material(self) -> dict[str, Any]:
@@ -440,6 +443,9 @@ class RunManifest:
             "redaction_count": self.redaction_count,
             "event_truncated": self.event_truncated,
             "output_truncated": self.output_truncated,
+            "cancellation_acknowledged": self.cancellation_acknowledged,
+            "residue_possible": self.residue_possible,
+            "recovery_code": self.recovery_code,
         }
 
 
@@ -465,6 +471,9 @@ class RunManifestDraft:
     redaction_count: int = 0
     event_truncated: bool = False
     output_truncated: bool = False
+    cancellation_acknowledged: bool | None = None
+    residue_possible: bool = False
+    recovery_code: str | None = None
     _finalized: bool = field(default=False, init=False, repr=False)
 
     def finalize(
@@ -498,6 +507,9 @@ class RunManifestDraft:
             "redaction_count": self.redaction_count,
             "event_truncated": self.event_truncated,
             "output_truncated": self.output_truncated,
+            "cancellation_acknowledged": self.cancellation_acknowledged,
+            "residue_possible": self.residue_possible,
+            "recovery_code": self.recovery_code,
         }
         material.update(
             {
@@ -537,6 +549,9 @@ class RunManifestDraft:
             redaction_count=self.redaction_count,
             event_truncated=self.event_truncated,
             output_truncated=self.output_truncated,
+            cancellation_acknowledged=self.cancellation_acknowledged,
+            residue_possible=self.residue_possible,
+            recovery_code=self.recovery_code,
             manifest_digest=manifest_digest,
         )
 

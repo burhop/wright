@@ -139,7 +139,9 @@ class RivetRunnerBridgePort(Protocol):
 
     async def close(self) -> None: ...
 
-    def cancel_authority(self, authority_id: str, *, reason: str) -> int: ...
+    async def cancel_authority(
+        self, authority_id: str, *, reason: str, timeout_seconds: float
+    ) -> tuple[int, bool]: ...
 
 
 class RivetManifestRepositoryPort(Protocol):
@@ -152,6 +154,10 @@ class RivetManifestRepositoryPort(Protocol):
     ) -> None: ...
 
     def set_manifest_state(self, manifest_id: str, state: str) -> None: ...
+
+    def set_manifest_cancellation(
+        self, manifest_id: str, draft: RunManifestDraft
+    ) -> None: ...
 
     def finalize_manifest(self, manifest_id: str, manifest) -> None: ...
 
@@ -818,13 +824,21 @@ class WorkspaceWorkflowRunner:
             )
         except asyncio.CancelledError:
             current = self._runs.get(run.run_id, run)
+            mcp_context = self._mcp_runs.get(run.run_id)
+            cancellation_reason = (
+                "RIVET_MCP_RESIDUE_POSSIBLE"
+                if mcp_context is not None and mcp_context.draft.residue_possible
+                else "cancelled"
+            )
             if current.state not in {
                 WorkflowRunState.CANCELLED,
                 WorkflowRunState.SUCCEEDED,
                 WorkflowRunState.FAILED,
             }:
                 self._runs[run.run_id] = replace(
-                    current, state=WorkflowRunState.CANCELLED, reason="cancelled"
+                    current,
+                    state=WorkflowRunState.CANCELLED,
+                    reason=cancellation_reason,
                 )
                 if self._run_repository is not None:
                     record = self._run_repository.get(run.run_id)
@@ -836,9 +850,23 @@ class WorkspaceWorkflowRunner:
                             run.run_id,
                             "cancelled",
                             completed_at=int(time.time()),
-                            reason_code="cancelled",
+                            reason_code=cancellation_reason,
                         )
-                self._append_event(run.run_id, "cancelled", code="cancelled")
+                self._append_event(
+                    run.run_id,
+                    "cancelled",
+                    code=cancellation_reason,
+                    cancellation_acknowledged=(
+                        mcp_context.draft.cancellation_acknowledged
+                        if mcp_context is not None
+                        else None
+                    ),
+                    residue_possible=(
+                        mcp_context.draft.residue_possible
+                        if mcp_context is not None
+                        else False
+                    ),
+                )
             raise
         except RivetRuntimeError as error:
             self._runs[run.run_id] = replace(
@@ -928,13 +956,24 @@ class WorkspaceWorkflowRunner:
                     )
                 if self._mcp_approvals is not None:
                     self._mcp_approvals.cancel_run(run_id)
+                issued = 0
+                acknowledged = True
                 if self._mcp_bridge is not None:
-                    self._mcp_bridge.cancel_authority(
-                        mcp_context.grant.authority_id, reason="run_cancelled"
+                    issued, acknowledged = await self._mcp_bridge.cancel_authority(
+                        mcp_context.grant.authority_id,
+                        reason="run_cancelled",
+                        timeout_seconds=self._settings.cancellation_seconds,
                     )
+                mcp_context.draft.cancellation_acknowledged = acknowledged
+                mcp_context.draft.residue_possible = bool(issued and not acknowledged)
+                mcp_context.draft.recovery_code = (
+                    "RIVET_MCP_RESIDUE_POSSIBLE"
+                    if mcp_context.draft.residue_possible
+                    else "RIVET_MCP_CANCELLED_CLEAN"
+                )
                 if self._mcp_repository is not None:
-                    self._mcp_repository.set_manifest_state(
-                        mcp_context.manifest_id, "cancelling"
+                    self._mcp_repository.set_manifest_cancellation(
+                        mcp_context.manifest_id, mcp_context.draft
                     )
             if self._run_repository is not None:
                 record = self._run_repository.get(run_id)
@@ -948,7 +987,14 @@ class WorkspaceWorkflowRunner:
             current = self._runs[run_id]
             if current.state is WorkflowRunState.CANCELLING:
                 current = replace(
-                    current, state=WorkflowRunState.CANCELLED, reason="cancelled"
+                    current,
+                    state=WorkflowRunState.CANCELLED,
+                    reason=(
+                        "RIVET_MCP_RESIDUE_POSSIBLE"
+                        if mcp_context is not None
+                        and mcp_context.draft.residue_possible
+                        else "cancelled"
+                    ),
                 )
                 self._runs[run_id] = current
                 if self._run_repository is not None:
@@ -958,9 +1004,23 @@ class WorkspaceWorkflowRunner:
                             run_id,
                             "cancelled",
                             completed_at=int(time.time()),
-                            reason_code="cancelled",
+                            reason_code=current.reason,
                         )
-                self._append_event(run_id, "cancelled", code="cancelled")
+                self._append_event(
+                    run_id,
+                    "cancelled",
+                    code=current.reason,
+                    cancellation_acknowledged=(
+                        mcp_context.draft.cancellation_acknowledged
+                        if mcp_context is not None
+                        else None
+                    ),
+                    residue_possible=(
+                        mcp_context.draft.residue_possible
+                        if mcp_context is not None
+                        else False
+                    ),
+                )
             return current
         if not run.runtime_id:
             updated = replace(
@@ -1014,8 +1074,10 @@ class WorkspaceWorkflowRunner:
             if self._mcp_approvals is not None:
                 self._mcp_approvals.cancel_run(run_id)
             if self._mcp_bridge is not None:
-                self._mcp_bridge.cancel_authority(
-                    context.grant.authority_id, reason="runner_restarted"
+                await self._mcp_bridge.cancel_authority(
+                    context.grant.authority_id,
+                    reason="runner_restarted",
+                    timeout_seconds=self._settings.cancellation_seconds,
                 )
         tasks = tuple(self._tasks.values())
         for task in tasks:

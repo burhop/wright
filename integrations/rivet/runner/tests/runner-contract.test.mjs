@@ -147,6 +147,45 @@ async function invokeAsync(project, overrides = {}) {
   }
 }
 
+async function invokeCancellable(project, overrides, onStarted) {
+  const directory = mkdtempSync(resolve(tmpdir(), "wright-rivet-cancel-"));
+  const projectPath = resolve(directory, "workflow.rivet-project");
+  writeFileSync(projectPath, project, "utf8");
+  const digest = createHash("sha256")
+    .update(readFileSync(projectPath))
+    .digest("hex");
+  const request = {
+    protocolVersion: 2,
+    runId: "run-cancel",
+    projectPath,
+    expectedDigest: digest,
+    graph: "Main",
+    inputs: {},
+    context: {},
+    capabilities: ["mcp"],
+    ...overrides,
+  };
+  try {
+    return await new Promise((resolveResult, reject) => {
+      const child = spawn(process.execPath, [runner], {
+        stdio: ["pipe", "pipe", "pipe"],
+      });
+      let stdout = "";
+      let stderr = "";
+      child.stdout.setEncoding("utf8").on("data", (value) => (stdout += value));
+      child.stderr.setEncoding("utf8").on("data", (value) => (stderr += value));
+      child.once("error", reject);
+      child.once("close", (status) =>
+        resolveResult({ status, stdout, stderr }),
+      );
+      child.stdin.end(JSON.stringify(request));
+      onStarted(child);
+    });
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
 async function loopbackBridge(handler) {
   const server = createServer(handler);
   await new Promise((resolveListen) =>
@@ -295,6 +334,54 @@ test("protocol v2 discovers only through the reserved Wright handle", async () =
       },
     ]);
     assert.equal(result.stdout.includes(mcpGrant(bridge.baseUrl).token), false);
+  } finally {
+    await bridge.close();
+  }
+});
+
+test("protocol v2 aborts an active provider fetch and suppresses late success", async () => {
+  let childRequest;
+  let receivedResolve;
+  const received = new Promise((resolveReceived) => {
+    receivedResolve = resolveReceived;
+  });
+  const bridge = await loopbackBridge((request, _response) => {
+    childRequest = request;
+    request.resume();
+    request.on("end", receivedResolve);
+  });
+  try {
+    const project = readFileSync(
+      resolve(fixtures, "valid-bound-mcp.rivet-project"),
+      "utf8",
+    );
+    let child;
+    const resultPromise = invokeCancellable(
+      project,
+      { mcp: mcpGrant(bridge.baseUrl) },
+      (running) => (child = running),
+    );
+    await received;
+    child.kill("SIGINT");
+    const result = await resultPromise;
+    const events = result.stdout.trim().split(/\r?\n/).map(JSON.parse);
+    const terminal = events.findLast((event) => event.type === "result");
+    if (process.platform === "win32") {
+      // Windows terminates for these POSIX signal aliases instead of
+      // delivering Node's handler. The owned process still ends without
+      // accepting a late result; Python records the cancel terminal.
+      assert.equal(terminal, undefined);
+      assert.notEqual(result.status, 0);
+    } else {
+      assert.equal(terminal.state, "cancelled");
+      assert.equal(terminal.error.code, "RIVET_RUNNER_CANCELLED");
+    }
+    assert.equal(
+      events.some((event) => event.state === "succeeded"),
+      false,
+    );
+    assert.equal(result.stdout.includes(mcpGrant(bridge.baseUrl).token), false);
+    assert.equal(childRequest.destroyed, true);
   } finally {
     await bridge.close();
   }

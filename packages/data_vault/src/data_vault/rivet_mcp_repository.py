@@ -66,6 +66,9 @@ def _draft_document(draft: RunManifestDraft) -> dict[str, Any]:
         "redaction_count": draft.redaction_count,
         "event_truncated": draft.event_truncated,
         "output_truncated": draft.output_truncated,
+        "cancellation_acknowledged": draft.cancellation_acknowledged,
+        "residue_possible": draft.residue_possible,
+        "recovery_code": draft.recovery_code,
     }
 
 
@@ -216,6 +219,19 @@ class RivetMcpRepository:
             if result.rowcount != 1:
                 raise ValueError("Run manifest draft is unavailable")
 
+    def set_manifest_cancellation(
+        self, manifest_id: str, draft: RunManifestDraft
+    ) -> None:
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            result = connection.execute(
+                """UPDATE workspace_workflow_run_manifests
+                SET state='cancelling', draft_json=?
+                WHERE manifest_id=? AND state!='finalized'""",
+                (_json(_draft_document(draft)), manifest_id),
+            )
+            if result.rowcount != 1:
+                raise ValueError("Run manifest draft is unavailable")
+
     def finalize_manifest(self, manifest_id: str, manifest: RunManifest) -> None:
         document = _manifest_document(manifest)
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
@@ -312,6 +328,13 @@ class RivetMcpRepository:
                 redaction_count=int(document.get("redaction_count") or 0),
                 event_truncated=bool(document.get("event_truncated")),
                 output_truncated=bool(document.get("output_truncated")),
+                cancellation_acknowledged=document.get("cancellation_acknowledged"),
+                residue_possible=bool(document.get("residue_possible")),
+                recovery_code=(
+                    str(document["recovery_code"])
+                    if document.get("recovery_code")
+                    else None
+                ),
             )
             manifest = draft.finalize(
                 terminal_state="failed",

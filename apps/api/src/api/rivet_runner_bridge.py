@@ -82,8 +82,16 @@ class RivetRunnerBridgeApplication:
             await server.wait_closed()
             logger.info("rivet_runner_bridge_stopped")
 
-    def cancel_authority(self, authority_id: str, *, reason: str) -> int:
-        return self._bridge.cancel_authority(authority_id, reason=reason)
+    async def cancel_authority(
+        self, authority_id: str, *, reason: str, timeout_seconds: float
+    ) -> tuple[int, bool]:
+        issued = self._bridge.cancel_authority(authority_id, reason=reason)
+        deadline = asyncio.get_running_loop().time() + max(0.01, timeout_seconds)
+        while self._bridge.active_count(authority_id) and (
+            asyncio.get_running_loop().time() < deadline
+        ):
+            await asyncio.sleep(0.01)
+        return issued, self._bridge.active_count(authority_id) == 0
 
     async def _handle(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter

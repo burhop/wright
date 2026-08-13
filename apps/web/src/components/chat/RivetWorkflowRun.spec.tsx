@@ -120,4 +120,62 @@ describe("RivetWorkflowRun", () => {
       ),
     );
   });
+
+  it("distinguishes acknowledged cancellation from possible residue", async () => {
+    vi.mocked(workspaceService.getRivetCallApprovals).mockResolvedValue([]);
+    vi.mocked(workspaceService.getRivetWorkflowRun).mockResolvedValue({
+      ...run,
+      state: "cancelled",
+      reason: "RIVET_MCP_RESIDUE_POSSIBLE",
+      manifest: {
+        terminal_state: "cancelled",
+        manifest_digest: "f".repeat(64),
+        cancellation_acknowledged: false,
+        residue_possible: true,
+        recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+      },
+    });
+    const { rerender } = render(
+      <RivetWorkflowRun
+        sessionId="session-1"
+        run={{
+          ...run,
+          manifest: {
+            terminal_state: "cancelled",
+            manifest_digest: "f".repeat(64),
+            cancellation_acknowledged: false,
+            residue_possible: true,
+            recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+          },
+        }}
+        onRunUpdate={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+    await screen.findByText(/Cleanup could not be confirmed/);
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "RIVET_MCP_RESIDUE_POSSIBLE",
+    );
+
+    rerender(
+      <RivetWorkflowRun
+        sessionId="session-1"
+        run={{
+          ...run,
+          manifest: {
+            terminal_state: "cancelled",
+            manifest_digest: "e".repeat(64),
+            cancellation_acknowledged: true,
+            residue_possible: false,
+            recovery_code: "RIVET_MCP_CANCELLED_CLEAN",
+          },
+        }}
+        onRunUpdate={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByText("Cancellation was acknowledged and cleanup completed."),
+    ).toBeInTheDocument();
+  });
 });

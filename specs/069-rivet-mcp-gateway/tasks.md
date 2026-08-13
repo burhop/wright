@@ -123,18 +123,18 @@
 
 ### Tests for User Story 3
 
-- [ ] T052 [P] [US3] Add cancellation-order, concurrent completion, active-request cleanup, post-revoke denial, and restart-revocation tests in `packages/workspace_service/tests/test_rivet_mcp_cancellation.py`
-- [ ] T053 [P] [US3] Add runner abort/provider-fetch cancellation and late-result suppression tests in `integrations/rivet/runner/tests/runner-contract.test.mjs`
-- [ ] T054 [P] [US3] Add API idempotent cancel/generation conflict/residue projection tests in `apps/api/tests/test_rivet_mcp_run_api.py`
-- [ ] T055 [P] [US3] Add cancellation, acknowledgement, unconfirmed residue, and recovery UI states in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
+- [x] T052 [P] [US3] Add cancellation-order, concurrent completion, active-request cleanup, post-revoke denial, and restart-revocation tests in `packages/workspace_service/tests/test_rivet_mcp_cancellation.py`
+- [x] T053 [P] [US3] Add runner abort/provider-fetch cancellation and late-result suppression tests in `integrations/rivet/runner/tests/runner-contract.test.mjs`
+- [x] T054 [P] [US3] Add API idempotent cancel/generation conflict/residue projection tests in `apps/api/tests/test_rivet_mcp_run_api.py`
+- [x] T055 [P] [US3] Add cancellation, acknowledgement, unconfirmed residue, and recovery UI states in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
 
 ### Implementation for User Story 3
 
-- [ ] T056 [US3] Implement authority-first cancellation, explicit `GatewayService.cancel(session_id, request_id, reason)`, bounded acknowledgement, runner termination, and late-result rejection in `packages/workspace_service/src/workspace_service/workflow_runner.py`
-- [ ] T057 [US3] Add bridge/provider abort propagation and terminal suppression in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py` and `integrations/rivet/runner/src/wright-runner.ts`
-- [ ] T058 [US3] Persist cancellation acknowledgement, residue, recovery code, and immutable terminal manifest evidence in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
-- [ ] T059 [US3] Project cancelling/clean/residue/recovery states through run APIs and `apps/web/src/components/chat/RivetWorkflowRun.tsx`
-- [ ] T060 [US3] Run both deterministic cancellation variants and record timing, child acknowledgement, zero later calls, late-result rejection, and residue truth in `docs/engineering-capability-program-progress.md`
+- [x] T056 [US3] Implement authority-first cancellation, explicit `GatewayService.cancel(session_id, request_id, reason)`, bounded acknowledgement, runner termination, and late-result rejection in `packages/workspace_service/src/workspace_service/workflow_runner.py`
+- [x] T057 [US3] Add bridge/provider abort propagation and terminal suppression in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py` and `integrations/rivet/runner/src/wright-runner.ts`
+- [x] T058 [US3] Persist cancellation acknowledgement, residue, recovery code, and immutable terminal manifest evidence in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
+- [x] T059 [US3] Project cancelling/clean/residue/recovery states through run APIs and `apps/web/src/components/chat/RivetWorkflowRun.tsx`
+- [x] T060 [US3] Run both deterministic cancellation variants and record timing, child acknowledgement, zero later calls, late-result rejection, and residue truth in `docs/engineering-capability-program-progress.md`
 
 **Checkpoint**: Cancellation reaches the child and revokes authority within required thresholds; late success is impossible; residue is never hidden.
 

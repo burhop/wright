@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 
@@ -10,6 +11,8 @@ from core.rivet_mcp import ApprovalState, PendingRivetCallApproval
 from core.workflow_runs import WorkflowRun, WorkflowRunState
 from fastapi import HTTPException
 from workspace_service.workflow_operations import WorkflowOperationsError
+from api.schemas.workspace import WorkflowRunCancelRequest
+from core.workflow_runs import WorkflowRunnerError
 
 
 def _run(workspace_id="workspace-1", session_id="session-1"):
@@ -141,3 +144,57 @@ async def test_approval_decision_forwards_exact_digest_and_hides_cross_run_recor
             service,
         )
     assert hidden.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_cancel_is_idempotent_and_projects_generation_conflict_and_residue():
+    cancelled = replace(
+        _run(),
+        state=WorkflowRunState.CANCELLED,
+        reason="RIVET_MCP_RESIDUE_POSSIBLE",
+    )
+
+    class Operations:
+        async def cancel(self, **kwargs):
+            if kwargs["generation"] != 1:
+                raise WorkflowRunnerError(
+                    "RIVET_RUNNER_STALE_GENERATION", "generation is stale"
+                )
+            return cancelled
+
+    manifest = {
+        "terminal_state": "cancelled",
+        "cancellation_acknowledged": False,
+        "residue_possible": True,
+        "recovery_code": "RIVET_MCP_RESIDUE_POSSIBLE",
+        "manifest_digest": "f" * 64,
+    }
+    service = SimpleNamespace(
+        lifecycle=SimpleNamespace(
+            get_by_session=lambda _session: {"workspace_id": "workspace-1"}
+        ),
+        workflow_operations=Operations(),
+        workflow_runner=SimpleNamespace(
+            result=lambda _run_id: None,
+            manifest=lambda _run_id: manifest,
+        ),
+    )
+    request = WorkflowRunCancelRequest(session_id="session-1", generation=1)
+    first = await workspace_router.cancel_workflow_run_endpoint(
+        "run-1", request, service
+    )
+    second = await workspace_router.cancel_workflow_run_endpoint(
+        "run-1", request, service
+    )
+    assert first == second
+    assert first.reason == "RIVET_MCP_RESIDUE_POSSIBLE"
+    assert first.manifest["residue_possible"] is True
+
+    with pytest.raises(HTTPException) as stale:
+        await workspace_router.cancel_workflow_run_endpoint(
+            "run-1",
+            WorkflowRunCancelRequest(session_id="session-1", generation=2),
+            service,
+        )
+    assert stale.value.status_code == 400
+    assert stale.value.detail["code"] == "RIVET_RUNNER_STALE_GENERATION"

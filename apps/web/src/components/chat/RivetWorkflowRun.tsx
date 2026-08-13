@@ -129,6 +129,18 @@ export function RivetWorkflowRun({
             manifest{" "}
             {String(run.manifest.manifest_digest || "unavailable").slice(0, 12)}
           </small>
+          {run.manifest.residue_possible === true && (
+            <p role="alert">
+              Cleanup could not be confirmed. The child application may still
+              contain partial changes. Inspect its status before retrying.
+              Recovery code:{" "}
+              {String(run.manifest.recovery_code || "unavailable")}.
+            </p>
+          )}
+          {run.manifest.cancellation_acknowledged === true &&
+            run.manifest.residue_possible !== true && (
+              <p>Cancellation was acknowledged and cleanup completed.</p>
+            )}
         </details>
       )}
       {selected && (

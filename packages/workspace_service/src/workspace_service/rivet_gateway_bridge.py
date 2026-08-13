@@ -260,6 +260,17 @@ class RivetGatewayBridge:
                 client_approval_hint=False,
                 progress_callback=project_progress,
             )
+            # A child that ignores cancellation cannot turn a revoked run into
+            # a late success. Revalidate the exact authority before accepting
+            # or persisting its terminal result.
+            self._authorities.validate(
+                token,
+                audience=audience,
+                run_id=invocation.run_id,
+                generation=invocation.generation,
+                node_handle=invocation.node_handle,
+                binding_digest=invocation.binding_digest,
+            )
             sanitized, artifacts, redactions = sanitize_gateway_result(
                 result, workspace_id=authority.claims.workspace_id
             )
@@ -336,6 +347,9 @@ class RivetGatewayBridge:
             if self._gateway.cancel(session_id, request_id, reason):
                 cancelled += 1
         return cancelled
+
+    def active_count(self, authority_id: str) -> int:
+        return sum(1 for key in self._active if key[0] == authority_id)
 
 
 __all__ = [

@@ -488,9 +488,10 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
         async def close(self):
             return None
 
-        def cancel_authority(self, authority_id, *, reason):
+        async def cancel_authority(self, authority_id, *, reason, timeout_seconds):
+            del timeout_seconds
             self.cancelled.append((authority_id, reason))
-            return 0
+            return 0, True
 
     host = Host()
     private_bridge = PrivateBridge()
