@@ -325,9 +325,9 @@ test("exports complete successful run evidence without secret text", async ({
   await page.getByText("Run evidence", { exact: true }).click();
   await expect(page.getByText(/1 bindings/)).toContainText("1 child calls");
   await expect(page.getByText("Validated mesh")).toBeVisible();
-  await expect(page.getByRole("status")).toContainText(
-    "Recorded identities match",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "Recorded identities match" }),
+  ).toContainText("Recorded identities match");
   await expect(page.getByTestId("rivet-run-timeline")).toContainText(
     "alpha__inspect",
   );
@@ -362,7 +362,9 @@ test("explains restart evidence and exact recovery review", async ({
   await expect(page.getByText(/Failure boundary/)).toContainText(
     "runner_restarted",
   );
-  await expect(page.getByRole("status")).toContainText("new review");
+  await expect(
+    page.getByRole("status").filter({ hasText: "new review" }),
+  ).toContainText("new review");
   await expect(page.getByText(/binding_set_changed/)).toContainText(
     "review_current_bindings",
   );
