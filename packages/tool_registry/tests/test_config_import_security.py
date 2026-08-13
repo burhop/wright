@@ -2,7 +2,10 @@ import json
 from datetime import UTC, datetime
 
 import pytest
-from fixtures.mcp_imports import ADVERSARIAL_LOCAL, OVERSIZED_DOCUMENT
+from mcp_import_fixtures import (
+    ADVERSARIAL_LOCAL,
+    OVERSIZED_DOCUMENT,
+)
 from tool_registry.config_import import (
     ConfigurationImportError,
     ImportPreviewRepository,

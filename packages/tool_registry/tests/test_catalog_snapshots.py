@@ -13,7 +13,7 @@ from tool_registry.catalog_snapshots import (
     prune_snapshots,
     store_verified_snapshot,
 )
-from fixtures.catalog_updates import (
+from catalog_update_fixtures import (
     TEST_KEY_ID,
     TEST_PUBLIC_KEY,
     candidate_70_catalog,

@@ -7,7 +7,7 @@ from data_vault import upgrade_database
 from tool_registry.catalog_signing import CatalogTrustRoot
 from tool_registry.catalog_snapshots import bootstrap_bundled_snapshot
 from tool_registry.catalog_updates import catalog_diff, preview_catalog_update
-from fixtures.catalog_updates import (
+from catalog_update_fixtures import (
     TEST_KEY_ID,
     TEST_PUBLIC_KEY,
     candidate_70_catalog,

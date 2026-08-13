@@ -11,7 +11,10 @@ from tool_registry.canonical_catalog import (
     fetch_catalog_envelope,
     load_catalog_document_from_url,
 )
-from fixtures.catalog_updates import candidate_70_catalog, signed_catalog
+from catalog_update_fixtures import (
+    candidate_70_catalog,
+    signed_catalog,
+)
 
 
 def test_approved_channel_is_exact_bounded_and_forwards_no_ambient_credentials() -> (

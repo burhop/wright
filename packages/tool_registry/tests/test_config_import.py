@@ -1,6 +1,10 @@
 from datetime import UTC, datetime
 
-from fixtures.mcp_imports import CLAUDE_MULTI_SERVER, PLAIN_LOCAL, VSCODE_WITH_INPUT
+from mcp_import_fixtures import (
+    CLAUDE_MULTI_SERVER,
+    PLAIN_LOCAL,
+    VSCODE_WITH_INPUT,
+)
 from tool_registry.config_import import preview_configuration
 
 NOW = datetime(2026, 8, 12, 12, tzinfo=UTC)

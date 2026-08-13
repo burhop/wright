@@ -24,7 +24,7 @@ from tool_registry.catalog_updates import (
     rollback_catalog,
 )
 from tool_registry.secrets import read_secrets, write_secrets
-from fixtures.catalog_updates import (
+from catalog_update_fixtures import (
     TEST_KEY_ID,
     TEST_PUBLIC_KEY,
     candidate_70_catalog,

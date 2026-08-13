@@ -7,6 +7,12 @@ from datetime import UTC, datetime
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
+from catalog_update_fixtures import (
+    TEST_KEY_ID,
+    TEST_PUBLIC_KEY,
+    prior_69_catalog,
+    signed_catalog,
+)
 from core.secrets import configure_default_secret_provider
 from data_vault import upgrade_database
 from data_vault.secret_provider import (
@@ -52,18 +58,6 @@ LEGACY_CATALOG_SERVER_ID = _FIXTURE.LEGACY_CATALOG_SERVER_ID
 LEGACY_TOOL_ID = _FIXTURE.LEGACY_TOOL_ID
 WORKSPACE_ID = _FIXTURE.WORKSPACE_ID
 create_capability_library_v12_database = _FIXTURE.create_capability_library_v12_database
-_CATALOG_FIXTURE_PATH = Path(__file__).parent / "fixtures" / "catalog_updates.py"
-_CATALOG_FIXTURE_SPEC = spec_from_file_location(
-    "capability_catalog_updates", _CATALOG_FIXTURE_PATH
-)
-assert _CATALOG_FIXTURE_SPEC is not None and _CATALOG_FIXTURE_SPEC.loader is not None
-_CATALOG_FIXTURE = module_from_spec(_CATALOG_FIXTURE_SPEC)
-_CATALOG_FIXTURE_SPEC.loader.exec_module(_CATALOG_FIXTURE)
-TEST_KEY_ID = _CATALOG_FIXTURE.TEST_KEY_ID
-TEST_PUBLIC_KEY = _CATALOG_FIXTURE.TEST_PUBLIC_KEY
-prior_69_catalog = _CATALOG_FIXTURE.prior_69_catalog
-signed_catalog = _CATALOG_FIXTURE.signed_catalog
-
 NOW = datetime(2026, 8, 12, 12, 0, tzinfo=UTC)
 ROOT = CatalogTrustRoot("test", TEST_KEY_ID, TEST_PUBLIC_KEY)
 WORKSPACE_ONLY_SERVER_ID = "zoo-dev-cloud-cad"

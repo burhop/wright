@@ -2,7 +2,9 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 from data_vault import upgrade_database
-from fixtures.onboarding_adapters import FakeOnboardingAdapter
+from onboarding_adapter_fixtures import (
+    FakeOnboardingAdapter,
+)
 from tool_registry.capability_models import MachineCompatibilityObservation
 from tool_registry.canonical_catalog import load_canonical_entries
 from tool_registry.catalog_snapshots import bootstrap_bundled_snapshot

@@ -14,7 +14,7 @@ from tool_registry.catalog_signing import (
     parse_json_strict,
     verify_catalog_envelope,
 )
-from fixtures.catalog_updates import (
+from catalog_update_fixtures import (
     TEST_KEY_ID,
     TEST_PRIVATE_KEY,
     TEST_PUBLIC_KEY,
