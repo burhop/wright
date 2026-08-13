@@ -23,8 +23,8 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 **Purpose**: Establish dependencies, packaged schemas, and deterministic fixture boundaries without changing product behavior.
 
-- [ ] T001 Add an explicit bounded `cryptography` dependency for standalone signature verification in `packages/tool_registry/pyproject.toml` and synchronize `uv.lock`
-- [ ] T002 [P] Copy the approved catalog envelope, import preview, and install plan JSON Schemas plus a versioned public-only trust-root resource with no default network channel into `packages/tool_registry/src/tool_registry/catalog/` and declare them as packaged resources in `packages/tool_registry/pyproject.toml`
+- [X] T001 Add an explicit bounded `cryptography` dependency for standalone signature verification in `packages/tool_registry/pyproject.toml` and synchronize `uv.lock`
+- [X] T002 [P] Copy the approved catalog envelope, import preview, and install plan JSON Schemas plus a versioned public-only trust-root resource with no default network channel into `packages/tool_registry/src/tool_registry/catalog/` and declare them as packaged resources in `packages/tool_registry/pyproject.toml`
 - [ ] T003 [P] Add deterministic Ed25519 test-key helpers and a prior 69-record snapshot without Onshape plus signed 70-record Onshape candidate, tampered, expired, and replayed fixtures in `packages/tool_registry/tests/fixtures/catalog_updates.py`
 - [ ] T004 [P] Add Claude, VS Code, plain-server, adversarial, and oversized import fixtures in `packages/tool_registry/tests/fixtures/mcp_imports.py`
 - [ ] T005 [P] Add deterministic fake local-package, remote-endpoint, and host-bridge adapter fixtures in `packages/tool_registry/tests/fixtures/onboarding_adapters.py`
@@ -37,10 +37,10 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 **Critical**: No user-story implementation starts until this phase passes focused tests.
 
-- [ ] T006 Write migration definition, upgrade, restart, compatibility, and failure-recovery tests for catalog/onboarding tables in `packages/data_vault/tests/test_migrations.py`
-- [ ] T007 Implement additive migration 13 for snapshots, state, previews, activations, observations, plans, runs, validation evidence, missing reports, and `mcp_servers.transport_variant` in `packages/data_vault/src/data_vault/migrations.py`
-- [ ] T008 [P] Write Pydantic model and JSON Schema conformance tests for snapshot, capability, import, observation, plan, run, evidence, and report records in `packages/tool_registry/tests/test_capability_models.py`
-- [ ] T009 Implement evidence classes and immutable domain records with secret-rejecting validators in `packages/tool_registry/src/tool_registry/capability_models.py`
+- [X] T006 Write migration definition, upgrade, restart, compatibility, and failure-recovery tests for catalog/onboarding tables in `packages/data_vault/tests/test_migrations.py`
+- [X] T007 Implement additive migration 13 for snapshots, state, previews, activations, observations, plans, runs, validation evidence, missing reports, and `mcp_servers.transport_variant` in `packages/data_vault/src/data_vault/migrations.py`
+- [X] T008 [P] Write Pydantic model and JSON Schema conformance tests for snapshot, capability, import, observation, plan, run, evidence, and report records in `packages/tool_registry/tests/test_capability_models.py`
+- [X] T009 Implement evidence classes and immutable domain records with secret-rejecting validators in `packages/tool_registry/src/tool_registry/capability_models.py`
 - [ ] T010 Extend canonical catalog models/schema with `evidence_class`, exact `streamable_http` versus legacy `sse` catalog values, internal network-runner normalization, and conservative legacy mapping in `packages/tool_registry/src/tool_registry/catalog_models.py`, `packages/tool_registry/src/tool_registry/models.py`, and `packages/tool_registry/src/tool_registry/catalog/schema.json`
 - [ ] T011 [P] Add stable redacted catalog/import/plan/onboarding diagnostic codes and error types in `packages/tool_registry/src/tool_registry/capability_errors.py`
 - [ ] T012 Add repository/service construction seams for database path, clock, trust roots, detectors, and adapters in `packages/tool_registry/src/tool_registry/capability_services.py`

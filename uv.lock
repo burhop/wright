@@ -1891,6 +1891,7 @@ name = "wright-tool-registry"
 version = "0.1.0"
 source = { editable = "packages/tool_registry" }
 dependencies = [
+    { name = "cryptography" },
     { name = "httpx" },
     { name = "httpx-sse" },
     { name = "jsonschema" },
@@ -1902,6 +1903,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "cryptography", specifier = ">=45,<50" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "httpx-sse", specifier = ">=0.4" },
     { name = "jsonschema", specifier = ">=4.26" },

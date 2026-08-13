@@ -50,7 +50,15 @@
 
 ### Next checkpoint
 
-Begin test-first implementation with the storage/domain foundation and independently validate each user-story checkpoint.
+Complete the shared catalog transport/evidence models, stable diagnostics, dependency injection, and setup fixtures before the first offline discovery story.
+
+### Implementation checkpoint 1
+
+- Added explicit standalone Ed25519 verification dependency and synchronized the lock file.
+- Packaged the three JSON contracts and a public-only trust root with no default update channel.
+- Added additive migration 13 for snapshots, active/previous state, previews, activations, observations, plans, runs, validation evidence, reports, and exact transport variant metadata.
+- Added strict domain records with digest/time invariants, external-license blocking, secret-like field rejection, and honest passed-evidence requirements.
+- Focused evidence: 17 migration/model/schema tests passed; Ruff check passed; formatting and `git diff --check` passed.
 
 ## Program guardrails
 

@@ -589,6 +589,165 @@ MIGRATIONS: tuple[Migration, ...] = (
             )"""),
         ),
     ),
+    Migration(
+        13,
+        "capability_library_onboarding",
+        (
+            add_column("mcp_servers", "transport_variant", "TEXT"),
+            sql("""CREATE TABLE IF NOT EXISTS catalog_snapshots (
+                snapshot_id TEXT PRIMARY KEY,
+                channel TEXT NOT NULL,
+                sequence INTEGER NOT NULL CHECK(sequence >= 1),
+                schema_version INTEGER NOT NULL CHECK(schema_version >= 1),
+                issued_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                payload_sha256 TEXT NOT NULL CHECK(length(payload_sha256) = 64),
+                payload_json TEXT NOT NULL,
+                envelope_json TEXT,
+                signer_key_id TEXT,
+                signature TEXT,
+                verification_state TEXT NOT NULL CHECK(verification_state IN
+                    ('bundled', 'candidate', 'verified', 'rejected', 'active',
+                     'previous', 'superseded')),
+                verified_at INTEGER,
+                rejection_code TEXT,
+                UNIQUE(channel, sequence),
+                UNIQUE(channel, payload_sha256),
+                CHECK(expires_at > issued_at)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS catalog_state (
+                state_id INTEGER PRIMARY KEY CHECK(state_id = 1),
+                active_snapshot_id TEXT NOT NULL,
+                previous_snapshot_id TEXT,
+                active_generation INTEGER NOT NULL CHECK(active_generation >= 1),
+                updated_at INTEGER NOT NULL,
+                updated_by TEXT NOT NULL,
+                FOREIGN KEY (active_snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                FOREIGN KEY (previous_snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                CHECK(previous_snapshot_id IS NULL OR
+                      previous_snapshot_id != active_snapshot_id)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS catalog_update_previews (
+                preview_id TEXT PRIMARY KEY,
+                active_snapshot_id TEXT NOT NULL,
+                candidate_snapshot_id TEXT NOT NULL,
+                diff_json TEXT NOT NULL,
+                preview_digest TEXT NOT NULL CHECK(length(preview_digest) = 64),
+                actor TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                state TEXT NOT NULL CHECK(state IN
+                    ('open', 'activated', 'expired', 'superseded', 'rejected')),
+                FOREIGN KEY (active_snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                FOREIGN KEY (candidate_snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                CHECK(expires_at > created_at)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS catalog_activations (
+                activation_id TEXT PRIMARY KEY,
+                from_snapshot_id TEXT,
+                to_snapshot_id TEXT NOT NULL,
+                kind TEXT NOT NULL CHECK(kind IN
+                    ('bootstrap', 'activate', 'rollback', 'recovery')),
+                preview_digest TEXT,
+                actor TEXT NOT NULL,
+                trace_id TEXT NOT NULL,
+                occurred_at INTEGER NOT NULL,
+                result TEXT NOT NULL CHECK(result IN
+                    ('succeeded', 'rejected', 'recovered')),
+                reason_code TEXT,
+                FOREIGN KEY (from_snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                FOREIGN KEY (to_snapshot_id) REFERENCES catalog_snapshots(snapshot_id)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS machine_compatibility_observations (
+                observation_id TEXT PRIMARY KEY,
+                observed_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                platform_key TEXT NOT NULL,
+                os_name TEXT NOT NULL,
+                os_version TEXT NOT NULL,
+                architecture TEXT NOT NULL,
+                distribution_mode TEXT NOT NULL,
+                observation_json TEXT NOT NULL,
+                digest TEXT NOT NULL CHECK(length(digest) = 64),
+                CHECK(expires_at > observed_at)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS mcp_install_plans (
+                plan_id TEXT PRIMARY KEY,
+                plan_digest TEXT NOT NULL CHECK(length(plan_digest) = 64),
+                state TEXT NOT NULL,
+                capability_id TEXT NOT NULL,
+                snapshot_id TEXT NOT NULL,
+                observation_id TEXT NOT NULL,
+                requested_scope TEXT NOT NULL,
+                workspace_id TEXT,
+                created_by TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                approved_by TEXT,
+                approved_at INTEGER,
+                plan_json TEXT NOT NULL,
+                FOREIGN KEY (snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                FOREIGN KEY (observation_id)
+                    REFERENCES machine_compatibility_observations(observation_id),
+                CHECK(expires_at > created_at)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS mcp_onboarding_runs (
+                run_id TEXT PRIMARY KEY,
+                plan_id TEXT NOT NULL,
+                plan_digest TEXT NOT NULL CHECK(length(plan_digest) = 64),
+                state TEXT NOT NULL,
+                adapter_kind TEXT NOT NULL,
+                adapter_version TEXT NOT NULL,
+                started_at INTEGER NOT NULL,
+                completed_at INTEGER,
+                effects_json TEXT NOT NULL,
+                validation_evidence_id TEXT,
+                trace_id TEXT NOT NULL,
+                failure_code TEXT,
+                rollback_state TEXT,
+                FOREIGN KEY (plan_id) REFERENCES mcp_install_plans(plan_id)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS mcp_validation_evidence (
+                evidence_id TEXT PRIMARY KEY,
+                capability_id TEXT NOT NULL,
+                server_id TEXT NOT NULL,
+                snapshot_id TEXT NOT NULL,
+                observation_id TEXT NOT NULL,
+                state TEXT NOT NULL,
+                schema_digest TEXT,
+                evidence_json TEXT NOT NULL,
+                observed_at INTEGER NOT NULL,
+                trace_id TEXT,
+                FOREIGN KEY (snapshot_id) REFERENCES catalog_snapshots(snapshot_id),
+                FOREIGN KEY (observation_id)
+                    REFERENCES machine_compatibility_observations(observation_id)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS missing_capability_reports (
+                report_id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                vendor TEXT NOT NULL,
+                source_url TEXT,
+                domains_json TEXT NOT NULL,
+                expected_task TEXT NOT NULL,
+                platform TEXT,
+                host_application TEXT,
+                notes TEXT,
+                search_context_json TEXT NOT NULL,
+                reporter TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                state TEXT NOT NULL CHECK(state IN
+                    ('submitted', 'exported', 'under_review', 'matched', 'closed')),
+                matched_capability_id TEXT
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_catalog_snapshots_channel_sequence
+                ON catalog_snapshots(channel, sequence DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_validation_evidence_server_time
+                ON mcp_validation_evidence(server_id, observed_at DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_missing_capability_state_time
+                ON missing_capability_reports(state, created_at DESC)"""),
+        ),
+    ),
 )
 
 
