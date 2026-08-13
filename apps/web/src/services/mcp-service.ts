@@ -143,6 +143,13 @@ export interface CapabilityView {
     approval_gates?: string[];
   };
   validation_result: ValidationSummary;
+  local_validation?: {
+    evidence_id: string;
+    state: CapabilityValidationEvidence["state"];
+    observed_at: string;
+    reason_codes: string[];
+    limitation?: string;
+  } | null;
   user_state: {
     server_id?: string;
     installed: boolean;
@@ -415,6 +422,53 @@ export interface OnboardingRun {
   rollback_state?: string;
 }
 
+export interface CapabilityValidationEvidence {
+  evidence_id: string;
+  capability_id: string;
+  server_id: string;
+  snapshot_id: string;
+  capability_digest: string;
+  observation_id: string;
+  platform_key: string;
+  architecture: string;
+  server_revision: string;
+  credential_binding_digest: string;
+  state:
+    | "not_checked"
+    | "queued"
+    | "running"
+    | "passed"
+    | "partially_passed"
+    | "failed"
+    | "blocked"
+    | "stale"
+    | "unavailable";
+  protocol_steps: Record<string, "pending" | "passed" | "failed" | "skipped">;
+  schema_digest?: string;
+  tool_count?: number;
+  read_only_probe?: {
+    name: string;
+    argument_digest: string;
+    result_digest: string;
+    status: string;
+    limitation: string;
+  };
+  observed_at: string;
+  trace_id?: string;
+  reason_codes: string[];
+  missing_requirements: string[];
+}
+
+export interface WorkspaceCapabilityEnablement {
+  workspace_id: string;
+  capability_id: string;
+  server_id: string;
+  enabled: boolean;
+  validation_evidence_id: string;
+  invocation_approved: false;
+  message: string;
+}
+
 export interface McpTool {
   tool_id: string;
   server_id: string;
@@ -614,6 +668,25 @@ export class McpService {
   async cancelOnboardingRun(runId: string): Promise<OnboardingRun> {
     return this.catalogRequest(
       `/api/mcp/onboarding-runs/${encodeURIComponent(runId)}/cancel`,
+      { method: "POST" },
+    );
+  }
+
+  async runCapabilityValidation(
+    serverId: string,
+  ): Promise<CapabilityValidationEvidence> {
+    return this.catalogRequest(
+      `/api/mcp/servers/${encodeURIComponent(serverId)}/validation-runs`,
+      { method: "POST" },
+    );
+  }
+
+  async enableCapabilityForWorkspace(
+    serverId: string,
+    workspaceId: string,
+  ): Promise<WorkspaceCapabilityEnablement> {
+    return this.catalogRequest(
+      `/api/mcp/workspaces/${encodeURIComponent(workspaceId)}/capabilities/${encodeURIComponent(serverId)}/enable`,
       { method: "POST" },
     );
   }

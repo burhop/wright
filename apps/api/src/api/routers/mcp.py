@@ -25,6 +25,7 @@ from tool_registry.catalog_updates import CatalogUpdateError
 from tool_registry.config_import import ConfigurationImportError
 from tool_registry.install_plans import InstallPlanError
 from tool_registry.onboarding import OnboardingError
+from tool_registry.validation_evidence import ValidationEvidenceError
 from api.security import require_admin
 
 logger = structlog.get_logger(__name__)
@@ -156,6 +157,17 @@ class InstallPlanRequest(BaseModel):
 
 class PlanDigestRequest(BaseModel):
     plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+def require_engineer_or_admin(request: Request) -> None:
+    settings = request.app.state.security_settings
+    if not settings.enforced:
+        return
+    if getattr(request.state, "principal_role", None) not in {"engineer", "admin"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Engineer or administrator role required",
+        )
 
 
 def _request_actor(request: Request) -> str:
@@ -560,6 +572,45 @@ async def validate_server_endpoint(
         return ValidateServerResponse(**result.model_dump())
     except McpServiceError as e:
         raise mcp_service_http_exception(e)
+
+
+@router.post(
+    "/servers/{server_id}/validation-runs",
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+@traced("mcp.capability.validation.run")
+async def run_capability_validation_endpoint(
+    server_id: str,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return await service.run_capability_validation(
+            server_id, trace_id=_request_trace(request)
+        )
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
+    except ValidationEvidenceError as error:
+        raise _operation_http_exception(error, _request_trace(request))
+
+
+@router.post(
+    "/workspaces/{workspace_id}/capabilities/{server_id}/enable",
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+@traced("mcp.capability.workspace.enable")
+async def enable_capability_for_workspace_endpoint(
+    workspace_id: str,
+    server_id: str,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.enable_capability_for_workspace(server_id, workspace_id)
+    except ValidationEvidenceError as error:
+        raise _operation_http_exception(error, _request_trace(request))
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
 
 
 @router.post(

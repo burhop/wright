@@ -73,7 +73,16 @@ const capability: CapabilityView = {
     process_status: "inactive",
     explicit_disabled: false,
     credentials_configured: {},
-    enabled_workspaces: [],
+    enabled_workspaces: [
+      { workspace_id: "workspace-a", label: "Bracket workspace" },
+    ],
+  },
+  local_validation: {
+    evidence_id: "validation-1",
+    state: "passed",
+    observed_at: "2026-08-12T12:30:00Z",
+    reason_codes: [],
+    limitation: "Read-only probe only; no tool-call approval was granted.",
   },
   custom: false,
   available_actions: ["view_details", "observe", "plan_onboarding"],
@@ -139,6 +148,11 @@ describe("CapabilityLibrary", () => {
     expect(dialog).toHaveTextContent("App Store subscription");
     expect(dialog).toHaveTextContent("Wright has not contacted the endpoint");
     expect(dialog).toHaveTextContent("jarvis-onshape-mcp");
+    expect(dialog).toHaveTextContent("Local validation: passed");
+    expect(dialog).toHaveTextContent("Bracket workspace");
+    expect(dialog).toHaveTextContent(
+      "does not approve individual tool calls or destructive actions",
+    );
   });
 
   it("keeps filter state in the URL and sends each dimension", async () => {

@@ -7,7 +7,9 @@ import {
   type ImportPreview,
   type InstallPlan,
   type OnboardingRun,
+  type CapabilityValidationEvidence,
 } from "../../services/mcp-service";
+import { workspaceService } from "../../services/workspace-service";
 import { OnboardingWizard } from "./OnboardingWizard";
 
 vi.mock("../../services/mcp-service", async (loadOriginal) => {
@@ -20,9 +22,16 @@ vi.mock("../../services/mcp-service", async (loadOriginal) => {
       createInstallPlan: vi.fn(),
       approveInstallPlan: vi.fn(),
       applyInstallPlan: vi.fn(),
+      getCredentialStatus: vi.fn(),
+      runCapabilityValidation: vi.fn(),
+      enableCapabilityForWorkspace: vi.fn(),
     },
   };
 });
+
+vi.mock("../../services/workspace-service", () => ({
+  workspaceService: { getAllWorkspaces: vi.fn() },
+}));
 
 const preview: ImportPreview = {
   preview_id: "import-1",
@@ -102,6 +111,37 @@ const run: OnboardingRun = {
   trace_id: "trace-1",
 };
 
+const validation: CapabilityValidationEvidence = {
+  evidence_id: "validation-1",
+  capability_id: plan.capability_id,
+  server_id: plan.capability_id,
+  snapshot_id: plan.snapshot_id,
+  capability_digest: "c".repeat(64),
+  observation_id: plan.machine_observation_id,
+  platform_key: "windows_11_x64",
+  architecture: "amd64",
+  server_revision: "1.0.0",
+  credential_binding_digest: "d".repeat(64),
+  state: "passed",
+  protocol_steps: {
+    initialize: "passed",
+    "notifications/initialized": "passed",
+    "tools/list": "passed",
+  },
+  schema_digest: "e".repeat(64),
+  tool_count: 1,
+  read_only_probe: {
+    name: "health",
+    argument_digest: "f".repeat(64),
+    result_digest: "1".repeat(64),
+    status: "passed",
+    limitation: "Fixture health only",
+  },
+  observed_at: "2026-08-12T12:00:01Z",
+  reason_codes: [],
+  missing_requirements: [],
+};
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((done) => {
@@ -120,6 +160,44 @@ describe("OnboardingWizard", () => {
       state: "approved",
     });
     vi.mocked(mcpService.applyInstallPlan).mockResolvedValue(run);
+    vi.mocked(mcpService.getCredentialStatus).mockResolvedValue({
+      server_id: plan.capability_id,
+      env_vars: [],
+      configured: { API_TOKEN: true },
+    });
+    vi.mocked(mcpService.runCapabilityValidation).mockResolvedValue(validation);
+    vi.mocked(workspaceService.getAllWorkspaces).mockResolvedValue([
+      {
+        workspace_id: "workspace-a",
+        session_id: "session-a",
+        workspace_name: "Bracket project",
+        local_path: "D:/workspace/a",
+        git_remote_url: null,
+        git_username: null,
+        enabled_tools: [],
+        updated_at: 1,
+      },
+      {
+        workspace_id: "workspace-b",
+        session_id: "session-b",
+        workspace_name: "Pump project",
+        local_path: "D:/workspace/b",
+        git_remote_url: null,
+        git_username: null,
+        enabled_tools: [],
+        updated_at: 1,
+      },
+    ]);
+    vi.mocked(mcpService.enableCapabilityForWorkspace).mockResolvedValue({
+      workspace_id: "workspace-a",
+      capability_id: plan.capability_id,
+      server_id: plan.capability_id,
+      enabled: true,
+      validation_evidence_id: validation.evidence_id,
+      invocation_approved: false,
+      message:
+        "Available in this workspace. Individual tool invocation remains separate.",
+    });
   });
 
   it("starts with all supported sources and makes no request", () => {
@@ -239,17 +317,59 @@ describe("OnboardingWizard", () => {
     await user.click(
       await screen.findByRole("button", { name: "Continue to credentials" }),
     );
-    expect(screen.getByText(/API_TOKEN/)).toHaveTextContent(
-      "secure credential flow",
+    expect(screen.getByText(/secure credential flow/)).toHaveTextContent(
+      "API_TOKEN",
     );
+    expect(
+      screen.getByTestId("credential-configuration-status"),
+    ).toHaveTextContent("API_TOKEN: configured");
     await user.click(
       screen.getByRole("button", { name: "Approve and apply exact plan" }),
     );
     expect(screen.getByText(/Applying the approved plan/)).toBeVisible();
     pending.resolve(run);
+    expect(await screen.findByText("Choose one workspace")).toBeVisible();
+    expect(screen.getByLabelText("Workspace")).toHaveValue("workspace-a");
+    expect(screen.getByText(/does not mean approved/)).toBeVisible();
+    await user.click(
+      screen.getByRole("button", {
+        name: "Make available in this workspace",
+      }),
+    );
+    expect(await screen.findByText("Onboarding completed")).toBeVisible();
+    expect(screen.getByText(/Fixture health only/)).toBeVisible();
+    expect(
+      screen.getByText(/Individual tool invocation remains separate/),
+    ).toBeVisible();
+    expect(completed).toHaveBeenCalledOnce();
+  });
+
+  it("shows failed validation and does not offer workspace enablement", async () => {
+    const user = userEvent.setup();
+    vi.mocked(mcpService.runCapabilityValidation).mockResolvedValue({
+      ...validation,
+      state: "failed",
+      schema_digest: undefined,
+      tool_count: undefined,
+      read_only_probe: undefined,
+      reason_codes: ["validation_tools_list_failed"],
+    });
+    render(<OnboardingWizard isOpen onClose={vi.fn()} />);
+    await user.type(screen.getByLabelText("Capability ID"), "fixture");
+    await user.click(
+      screen.getByRole("button", { name: "Create read-only plan" }),
+    );
+    await user.click(
+      await screen.findByRole("button", { name: "Continue to credentials" }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Approve and apply exact plan" }),
+    );
 
     expect(await screen.findByText("Onboarding completed")).toBeVisible();
-    expect(completed).toHaveBeenCalledOnce();
+    expect(screen.getByText("Validation: failed")).toBeVisible();
+    expect(screen.queryByTestId("workspace-selection")).not.toBeInTheDocument();
+    expect(mcpService.enableCapabilityForWorkspace).not.toHaveBeenCalled();
   });
 
   it("returns to exact review on a changed-plan failure", async () => {

@@ -101,6 +101,25 @@ export function CapabilityDetails({
 
       <h3>Evidence and validation</h3>
       <p>{capability.validation_result.message}</p>
+      {capability.local_validation ? (
+        <div data-testid="local-validation-summary">
+          <p>
+            Local validation:{" "}
+            <strong>{capability.local_validation.state}</strong> at{" "}
+            {capability.local_validation.observed_at}
+          </p>
+          {capability.local_validation.limitation && (
+            <p>Limitation: {capability.local_validation.limitation}</p>
+          )}
+          {capability.local_validation.reason_codes.length > 0 && (
+            <p>
+              Reasons: {capability.local_validation.reason_codes.join(", ")}
+            </p>
+          )}
+        </div>
+      ) : (
+        <p>No current local MCP protocol validation has been recorded.</p>
+      )}
       <ul>
         {capability.source_records.map((source) => (
           <li key={source.url}>
@@ -116,6 +135,20 @@ export function CapabilityDetails({
         <>
           <h3>Compatible alternatives</h3>
           <p>{capability.alternatives.join(", ")}</p>
+        </>
+      )}
+      {capability.user_state.enabled_workspaces.length > 0 && (
+        <>
+          <h3>Available in workspaces</h3>
+          <ul>
+            {capability.user_state.enabled_workspaces.map((workspace) => (
+              <li key={workspace.workspace_id}>{workspace.label}</li>
+            ))}
+          </ul>
+          <p>
+            Workspace availability does not approve individual tool calls or
+            destructive actions.
+          </p>
         </>
       )}
     </aside>

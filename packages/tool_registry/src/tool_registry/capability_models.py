@@ -18,6 +18,9 @@ EvidenceClass = Literal[
     "excluded_or_stale",
 ]
 TransportVariant = Literal["stdio", "streamable_http", "sse", "webmcp"]
+EMPTY_BINDING_DIGEST = (
+    "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+)
 
 
 def _is_digest(value: str) -> bool:
@@ -220,6 +223,7 @@ class CapabilityView(StrictModel):
     source_records: list[dict[str, Any]] = Field(default_factory=list)
     requirements: dict[str, Any] = Field(default_factory=dict)
     validation_result: dict[str, Any] = Field(default_factory=dict)
+    local_validation: dict[str, Any] | None = None
     user_state: CapabilityUserState = Field(default_factory=CapabilityUserState)
     custom: bool = False
     available_actions: list[str] = Field(default_factory=list)
@@ -360,6 +364,8 @@ class ValidationEvidence(StrictModel):
     observation_id: str
     platform_key: str
     architecture: str
+    server_revision: str = "unknown"
+    credential_binding_digest: Digest = EMPTY_BINDING_DIGEST
     state: Literal[
         "not_checked",
         "queued",
@@ -380,10 +386,12 @@ class ValidationEvidence(StrictModel):
     observed_at: datetime
     trace_id: str | None = None
     reason_codes: list[str] = Field(default_factory=list)
+    missing_requirements: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_evidence(self) -> "ValidationEvidence":
         _require_digest(self.capability_digest, "capability_digest")
+        _require_digest(self.credential_binding_digest, "credential_binding_digest")
         if self.schema_digest:
             _require_digest(self.schema_digest, "schema_digest")
         required = {"initialize", "notifications/initialized", "tools/list"}
@@ -391,4 +399,12 @@ class ValidationEvidence(StrictModel):
             self.protocol_steps.get(step) == "passed" for step in required
         ):
             raise ValueError("passed evidence requires required protocol steps")
+        if self.state == "passed" and (
+            self.schema_digest is None or self.tool_count is None
+        ):
+            raise ValueError("passed evidence requires discovered tool schema evidence")
+        if self.state in {"failed", "blocked", "stale", "unavailable"} and not (
+            self.reason_codes or self.missing_requirements
+        ):
+            raise ValueError(f"{self.state} evidence requires an explicit reason")
         return self

@@ -101,9 +101,18 @@
 - Existing server, tool, credential, install, and toggle endpoints retain their established response models and persisted-row semantics after migration.
 - Focused evidence: all 76 data-vault tests passed with one platform skip; 14 catalog/projection preservation tests passed; 29 neighboring API/startup/catalog compatibility tests passed. Ruff and Python formatting checks passed.
 
+### Implementation checkpoint 7 - validation and workspace enablement
+
+- Added append-only, digest-bound local validation evidence with explicit protocol-step results, failure/blocked/stale states, schema and server-revision binding, credential-binding digests, limitations, and redacted reason codes.
+- Added deterministic MCP initialize, initialized notification, tools/list, optional catalog-approved read-only probe, cancellation, and gateway-visibility validation through injected lifecycle boundaries. Production remains fail-closed when no reviewed client is configured.
+- Added engineer/administrator validation and exact single-workspace enablement APIs. Enablement requires current passed evidence for the active catalog snapshot, machine observation, capability schema, server revision, and configured credential binding.
+- Extended onboarding and capability details with configured/not-configured credential booleans, local evidence, workspace selection, enabled-workspace visibility, and an explicit warning that availability never grants invocation or destructive-action authority.
+- Added negative secret-boundary scans across snapshots, imports, plans, evidence, workspaces, workflows, database rows, and serialized logs.
+- Focused evidence: 27 validation/workspace/security/API tests passed; 12 onboarding/library component tests passed; production web build passed; all three mocked onboarding Playwright journeys passed. Prettier and `git diff --check` passed.
+
 ### Next checkpoint
 
-Add honest MCP protocol validation evidence and explicit single-workspace enablement without granting invocation authority.
+Replace prompt-based missing-capability requests with structured, reviewable user-owned reports that can never become trusted catalog entries implicitly.
 
 ## Program guardrails
 

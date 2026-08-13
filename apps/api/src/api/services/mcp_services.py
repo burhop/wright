@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import hashlib
+from datetime import timedelta
+
 from fastapi import Depends, HTTPException, Request, status
 
 from api.services.wright_gateway_sync import sync_mcp_server_to_wright_gateway
@@ -19,6 +22,7 @@ from tool_registry.capability_models import CapabilitySnapshotSummary
 from tool_registry.canonical_catalog import CatalogFetchError, fetch_catalog_envelope
 from tool_registry.catalog_models import CatalogEntry
 from tool_registry.catalog_signing import CatalogTrustRoot
+from tool_registry.catalog_signing import canonical_json
 from tool_registry.catalog_snapshots import (
     bootstrap_bundled_snapshot,
     get_catalog_state,
@@ -48,6 +52,12 @@ from tool_registry.onboarding import (
     cancel_onboarding_run,
     get_onboarding_run,
 )
+from tool_registry.db import get_server
+from tool_registry.validation_evidence import (
+    latest_capability_validation_evidence,
+    require_current_passed_validation,
+)
+from tool_registry.validation_runner import run_capability_validation
 from tool_registry.services import (
     McpConflictError,
     McpInvalidOperationError,
@@ -137,13 +147,40 @@ class McpApiService:
         return observation
 
     def _capability_views(self, entries, observation):
-        return build_capability_views(
+        views = build_capability_views(
             entries,
             self.list_servers(),
             observation,
             workspace_membership=load_workspace_membership(self.db_path),
             known_catalog_ids=frozenset(known_catalog_server_ids(self.db_path)),
         )
+        now = self.capability_dependencies.clock()
+        for view in views:
+            server_id = view.user_state.server_id
+            if not server_id:
+                continue
+            evidence = latest_capability_validation_evidence(self.db_path, server_id)
+            if evidence is None:
+                continue
+            state = evidence.state
+            reasons = list(evidence.reason_codes)
+            if now - evidence.observed_at > timedelta(hours=24):
+                state = "stale"
+                reasons.append("validation_evidence_expired")
+            limitation = (
+                str(evidence.read_only_probe.get("limitation"))
+                if evidence.read_only_probe
+                and evidence.read_only_probe.get("limitation")
+                else None
+            )
+            view.local_validation = {
+                "evidence_id": evidence.evidence_id,
+                "state": state,
+                "observed_at": evidence.observed_at.isoformat(),
+                "reason_codes": sorted(set(reasons)),
+                "limitation": limitation,
+            }
+        return views
 
     def list_capabilities(
         self,
@@ -192,6 +229,128 @@ class McpApiService:
             self._capability_views(entries, observation), capability_id
         )
         return {"observation": observation, "compatibility": view.compatibility}
+
+    def _validation_context(self, identity: str, *, refresh_observation: bool):
+        entries, snapshot = self._capability_context()
+        observation = self._machine_observation(entries, refresh=refresh_observation)
+        view = find_capability(self._capability_views(entries, observation), identity)
+        if view is None:
+            raise McpNotFoundError(f"Capability '{identity}' not found.")
+        server_id = view.user_state.server_id or identity
+        server = get_server(self.db_path, server_id)
+        if server is None:
+            raise McpInvalidOperationError(
+                "Register or install the capability before validation."
+            )
+        entry = next(
+            (item for item in entries if item.id == view.canonical_id),
+            None,
+        )
+        capability_document = (
+            entry.model_dump(mode="json")
+            if entry is not None
+            else {
+                "id": view.canonical_id,
+                "name": server.name,
+                "transport": server.transport_variant or server.type,
+                "command": server.command,
+                "source_url": server.source_url,
+            }
+        )
+        credential_status = registry_services.get_credential_status(
+            self.db_path, server_id
+        )["configured"]
+        revision_material = {
+            "installed_version": server.installed_version,
+            "transport": server.transport_variant or server.type,
+            "command": server.command,
+        }
+        server_revision = server.installed_version or (
+            "configuration:"
+            + hashlib.sha256(canonical_json(revision_material)).hexdigest()
+        )
+        capability_digest = hashlib.sha256(
+            canonical_json(capability_document)
+        ).hexdigest()
+        credential_binding_digest = hashlib.sha256(
+            canonical_json(
+                {
+                    str(key): bool(value)
+                    for key, value in sorted(credential_status.items())
+                }
+            )
+        ).hexdigest()
+        return {
+            "view": view,
+            "server": server,
+            "snapshot": snapshot,
+            "observation": observation,
+            "capability_document": capability_document,
+            "capability_digest": capability_digest,
+            "credential_status": credential_status,
+            "credential_binding_digest": credential_binding_digest,
+            "server_revision": server_revision,
+        }
+
+    async def run_capability_validation(self, identity: str, *, trace_id: str):
+        context = self._validation_context(identity, refresh_observation=True)
+        server_id = context["server"].server_id
+        canonical_id = context["view"].canonical_id
+        clients = self.capability_dependencies.validation_clients
+        gateway_clients = self.capability_dependencies.validation_gateway_clients
+        probes = self.capability_dependencies.validation_read_only_probes
+        return await run_capability_validation(
+            self.db_path,
+            capability_id=canonical_id,
+            server_id=server_id,
+            snapshot_id=context["snapshot"].snapshot_id,
+            capability_document=context["capability_document"],
+            observation=context["observation"],
+            server_revision=context["server_revision"],
+            credential_status=context["credential_status"],
+            client=clients.get(server_id) or clients.get(canonical_id),
+            gateway_client=gateway_clients.get(server_id)
+            or gateway_clients.get(canonical_id),
+            read_only_probe=probes.get(server_id) or probes.get(canonical_id),
+            clock=self.capability_dependencies.clock,
+            trace_id=trace_id,
+        )
+
+    def enable_capability_for_workspace(self, identity: str, workspace_id: str):
+        context = self._validation_context(identity, refresh_observation=False)
+        server_id = context["server"].server_id
+        evidence = require_current_passed_validation(
+            self.db_path,
+            server_id,
+            snapshot_id=context["snapshot"].snapshot_id,
+            capability_digest=context["capability_digest"],
+            observation_id=context["observation"].observation_id,
+            server_revision=context["server_revision"],
+            credential_binding_digest=context["credential_binding_digest"],
+            now=self.capability_dependencies.clock(),
+        )
+        workspace_service = getattr(self.app_state, "workspace_service", None)
+        repository = getattr(workspace_service, "repository", None)
+        if workspace_service is None or repository is None:
+            raise McpOperationError("Workspace service is unavailable.")
+        if repository.get_by_id(workspace_id) is None:
+            raise McpNotFoundError(f"Workspace '{workspace_id}' not found.")
+        state = workspace_service.set_workspace_tool_enabled_by_workspace(
+            workspace_id, server_id, True
+        )
+        self._notify_gateway_changes()
+        return {
+            "workspace_id": workspace_id,
+            "capability_id": context["view"].canonical_id,
+            "server_id": server_id,
+            "enabled": server_id in (state.enabled_tools or []),
+            "validation_evidence_id": evidence.evidence_id,
+            "invocation_approved": False,
+            "message": (
+                "Available in this workspace. Individual tool invocation and "
+                "destructive-action approval remain separate."
+            ),
+        }
 
     def get_catalog_state(self):
         bootstrap_bundled_snapshot(self.db_path)

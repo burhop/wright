@@ -27,6 +27,11 @@ class CapabilityServiceDependencies:
     catalog_fetcher: Callable[[ApprovedCatalogChannel], dict[str, Any]] | None = None
     machine_detectors: Mapping[str, MachineDetector] = field(default_factory=dict)
     onboarding_adapters: Mapping[str, OnboardingAdapter] = field(default_factory=dict)
+    validation_clients: Mapping[str, Any] = field(default_factory=dict)
+    validation_gateway_clients: Mapping[str, Any] = field(default_factory=dict)
+    validation_read_only_probes: Mapping[str, Mapping[str, Any]] = field(
+        default_factory=dict
+    )
     import_preview_repository: Any | None = None
 
     @classmethod

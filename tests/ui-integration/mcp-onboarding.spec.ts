@@ -76,6 +76,34 @@ test.describe("Guided MCP onboarding", () => {
     await page.route("**/api/mcp/tools", (route) =>
       route.fulfill({ json: { tools: [] } }),
     );
+    await page.route("**/api/workspace/list", (route) =>
+      route.fulfill({
+        json: {
+          workspaces: [
+            {
+              workspace_id: "workspace-a",
+              session_id: "session-a",
+              workspace_name: "Bracket project",
+              local_path: "D:/workspace/a",
+              git_remote_url: null,
+              git_username: null,
+              enabled_tools: [],
+              updated_at: 1,
+            },
+            {
+              workspace_id: "workspace-b",
+              session_id: "session-b",
+              workspace_name: "Pump project",
+              local_path: "D:/workspace/b",
+              git_remote_url: null,
+              git_username: null,
+              enabled_tools: [],
+              updated_at: 1,
+            },
+          ],
+        },
+      }),
+    );
     await page.route("**/api/mcp/capabilities**", (route) =>
       route.fulfill({
         json: {
@@ -162,6 +190,59 @@ test.describe("Guided MCP onboarding", () => {
         },
       });
     });
+    await page.route("**/api/mcp/servers/*/credentials", (route) =>
+      route.fulfill({
+        json: { server_id: "fixture-mcp", env_vars: [], configured: {} },
+      }),
+    );
+    await page.route("**/api/mcp/servers/*/validation-runs", (route) =>
+      route.fulfill({
+        json: {
+          evidence_id: "validation-1",
+          capability_id: "fixture-mcp",
+          server_id: "fixture-mcp",
+          snapshot_id: "bundled-70",
+          capability_digest: "c".repeat(64),
+          observation_id: "machine-1",
+          platform_key: "windows_11_x64",
+          architecture: "amd64",
+          server_revision: "1.0.0",
+          credential_binding_digest: "d".repeat(64),
+          state: "passed",
+          protocol_steps: {
+            initialize: "passed",
+            "notifications/initialized": "passed",
+            "tools/list": "passed",
+          },
+          schema_digest: "e".repeat(64),
+          tool_count: 1,
+          read_only_probe: {
+            name: "health",
+            argument_digest: "f".repeat(64),
+            result_digest: "1".repeat(64),
+            status: "passed",
+            limitation: "Reads fixture status only",
+          },
+          observed_at: "2026-08-12T12:00:01Z",
+          reason_codes: [],
+          missing_requirements: [],
+        },
+      }),
+    );
+    await page.route("**/api/mcp/workspaces/*/capabilities/*/enable", (route) =>
+      route.fulfill({
+        json: {
+          workspace_id: "workspace-a",
+          capability_id: "fixture-mcp",
+          server_id: "fixture-mcp",
+          enabled: true,
+          validation_evidence_id: "validation-1",
+          invocation_approved: false,
+          message:
+            "Available in this workspace. Individual tool invocation remains separate.",
+        },
+      }),
+    );
   });
 
   test("uses the keyboard for catalog review, credentials, and exact apply", async ({
@@ -187,7 +268,15 @@ test.describe("Guided MCP onboarding", () => {
     await page
       .getByRole("button", { name: "Approve and apply exact plan" })
       .click();
+    await expect(page.getByText("Choose one workspace")).toBeVisible();
+    await expect(page.getByLabel("Workspace")).toHaveValue("workspace-a");
+    await page
+      .getByRole("button", { name: "Make available in this workspace" })
+      .click();
     await expect(page.getByText("Onboarding completed")).toBeVisible();
+    await expect(
+      page.getByText(/Individual tool invocation remains separate/),
+    ).toBeVisible();
     expect(installRequests).toEqual([]);
   });
 

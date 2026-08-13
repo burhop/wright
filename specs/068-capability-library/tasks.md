@@ -192,21 +192,21 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Tests for User Story 4
 
-- [ ] T084 [P] [US4] Write validation transition, required-step, partial, failed, blocked, stale, schema-change, and redaction tests in `packages/tool_registry/tests/test_validation_evidence.py`
-- [ ] T085 [P] [US4] Write deterministic initialize/notifications/tools-list/read-only-probe and cancellation tests in `packages/tool_registry/tests/test_validation_runner.py`
-- [ ] T086 [P] [US4] Write validation-run and single-workspace enablement scope/role/staleness API tests in `apps/api/tests/test_capability_enablement_api.py`
-- [ ] T087 [P] [US4] Write credential-boundary negative scans across snapshot/import/plan/evidence/workspace/workflow/log serialization in `tests/security/test_capability_secret_boundary.py`
-- [ ] T088 [P] [US4] Extend wizard/detail component tests for validation evidence and workspace selection in `apps/web/src/components/tools/OnboardingWizard.spec.tsx`
-- [ ] T089 [P] [US4] Extend mocked Playwright with validate/credential/workspace-A-versus-B/no-invocation-authority journey in `tests/ui-integration/mcp-onboarding.spec.ts`
+- [x] T084 [P] [US4] Write validation transition, required-step, partial, failed, blocked, stale, schema-change, and redaction tests in `packages/tool_registry/tests/test_validation_evidence.py`
+- [x] T085 [P] [US4] Write deterministic initialize/notifications/tools-list/read-only-probe and cancellation tests in `packages/tool_registry/tests/test_validation_runner.py`
+- [x] T086 [P] [US4] Write validation-run and single-workspace enablement scope/role/staleness API tests in `apps/api/tests/test_capability_enablement_api.py`
+- [x] T087 [P] [US4] Write credential-boundary negative scans across snapshot/import/plan/evidence/workspace/workflow/log serialization in `tests/security/test_capability_secret_boundary.py`
+- [x] T088 [P] [US4] Extend wizard/detail component tests for validation evidence and workspace selection in `apps/web/src/components/tools/OnboardingWizard.spec.tsx`
+- [x] T089 [P] [US4] Extend mocked Playwright with validate/credential/workspace-A-versus-B/no-invocation-authority journey in `tests/ui-integration/mcp-onboarding.spec.ts`
 
 ### Implementation for User Story 4
 
-- [ ] T090 [US4] Implement append-only ValidationEvidence repository and strict transition/staleness policy in `packages/tool_registry/src/tool_registry/validation_evidence.py`
-- [ ] T091 [US4] Implement MCP initialize/discovery and optional catalog-approved read-only probe runner using existing lifecycle boundaries in `packages/tool_registry/src/tool_registry/validation_runner.py`
-- [ ] T092 [US4] Add thin validation-run and workspace capability enablement routes while preserving existing workspace authority in `apps/api/src/api/routers/mcp.py`
-- [ ] T093 [US4] Integrate configured/not-configured credential booleans without reading values back in `apps/web/src/components/tools/OnboardingWizard.tsx`
-- [ ] T094 [US4] Add validation evidence, staleness, limitations, and choose-workspace completion UI in `apps/web/src/components/tools/CapabilityDetails.tsx`
-- [ ] T095 [US4] Run validation, gateway lifecycle, secret boundary, workspace isolation, component, and mocked Playwright tests for US4
+- [x] T090 [US4] Implement append-only ValidationEvidence repository and strict transition/staleness policy in `packages/tool_registry/src/tool_registry/validation_evidence.py`
+- [x] T091 [US4] Implement MCP initialize/discovery and optional catalog-approved read-only probe runner using existing lifecycle boundaries in `packages/tool_registry/src/tool_registry/validation_runner.py`
+- [x] T092 [US4] Add thin validation-run and workspace capability enablement routes while preserving existing workspace authority in `apps/api/src/api/routers/mcp.py`
+- [x] T093 [US4] Integrate configured/not-configured credential booleans without reading values back in `apps/web/src/components/tools/OnboardingWizard.tsx`
+- [x] T094 [US4] Add validation evidence, staleness, limitations, and choose-workspace completion UI in `apps/web/src/components/tools/CapabilityDetails.tsx`
+- [x] T095 [US4] Run validation, gateway lifecycle, secret boundary, workspace isolation, component, and mocked Playwright tests for US4
 
 **Checkpoint**: Honest evidence supports explicit single-workspace availability and never becomes blanket tool-call approval.
 

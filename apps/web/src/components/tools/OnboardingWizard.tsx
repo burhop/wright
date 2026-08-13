@@ -5,11 +5,26 @@ import {
   type ImportPreview,
   type InstallPlan,
   type OnboardingRun,
+  type CapabilityValidationEvidence,
+  type CredentialStatusResponse,
+  type WorkspaceCapabilityEnablement,
 } from "../../services/mcp-service";
+import {
+  workspaceService,
+  type WorkspaceInfo,
+} from "../../services/workspace-service";
 
 type SourceKind = "catalog" | "import" | "remote" | "local" | "host";
 type WizardStep =
-  "source" | "normalizing" | "review" | "credentials" | "applying" | "complete";
+  | "source"
+  | "normalizing"
+  | "review"
+  | "credentials"
+  | "applying"
+  | "validating"
+  | "workspace"
+  | "enabling"
+  | "complete";
 
 function errorMessage(error: unknown): string {
   if (error instanceof CapabilityApiError) {
@@ -45,6 +60,14 @@ export function OnboardingWizard({
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [plan, setPlan] = useState<InstallPlan | null>(null);
   const [run, setRun] = useState<OnboardingRun | null>(null);
+  const [credentialStatus, setCredentialStatus] =
+    useState<CredentialStatusResponse | null>(null);
+  const [validation, setValidation] =
+    useState<CapabilityValidationEvidence | null>(null);
+  const [workspaces, setWorkspaces] = useState<WorkspaceInfo[]>([]);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("");
+  const [enablement, setEnablement] =
+    useState<WorkspaceCapabilityEnablement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
 
@@ -74,6 +97,11 @@ export function OnboardingWizard({
     setPreview(null);
     setPlan(null);
     setRun(null);
+    setCredentialStatus(null);
+    setValidation(null);
+    setWorkspaces([]);
+    setSelectedWorkspaceId("");
+    setEnablement(null);
     setError(null);
     onClose();
   };
@@ -126,11 +154,58 @@ export function OnboardingWizard({
         approved.plan_digest,
       );
       setRun(result);
-      setStep("complete");
-      if (result.state === "completed") onCompleted?.();
+      if (result.state !== "completed") {
+        setStep("complete");
+        return;
+      }
+      setStep("validating");
+      const evidence = await mcpService.runCapabilityValidation(
+        plan.capability_id,
+      );
+      setValidation(evidence);
+      if (evidence.state !== "passed") {
+        setStep("complete");
+        return;
+      }
+      const availableWorkspaces = await workspaceService.getAllWorkspaces();
+      setWorkspaces(availableWorkspaces);
+      setSelectedWorkspaceId(
+        plan.workspace_id || availableWorkspaces[0]?.workspace_id || "",
+      );
+      setStep(availableWorkspaces.length ? "workspace" : "complete");
     } catch (caught) {
       setError(errorMessage(caught));
       setStep("review");
+    }
+  };
+
+  const continueToCredentials = async () => {
+    if (!plan) return;
+    setError(null);
+    try {
+      const status = await mcpService.getCredentialStatus(plan.capability_id);
+      setCredentialStatus(status);
+    } catch {
+      setCredentialStatus(null);
+    }
+    setStep("credentials");
+  };
+
+  const enableWorkspace = async () => {
+    if (!plan || !selectedWorkspaceId) return;
+    setStep("enabling");
+    setError(null);
+    try {
+      const result = await mcpService.enableCapabilityForWorkspace(
+        plan.capability_id,
+        selectedWorkspaceId,
+      );
+      setEnablement(result);
+      setStep("complete");
+      onCompleted?.();
+    } catch (caught) {
+      setError(errorMessage(caught));
+      setStep("workspace");
     }
   };
 
@@ -343,7 +418,7 @@ export function OnboardingWizard({
             <button
               type="button"
               disabled={plan.state !== "reviewable"}
-              onClick={() => setStep("credentials")}
+              onClick={continueToCredentials}
             >
               Continue to credentials
             </button>
@@ -354,12 +429,24 @@ export function OnboardingWizard({
           <div>
             <h3>Credential boundary</h3>
             {plan.requirements.credentials.length ? (
-              <p>
-                Required credential names:{" "}
-                {plan.requirements.credentials.join(", ")}. Values are saved
-                only through Wright&apos;s secure credential flow and are never
-                included in this plan.
-              </p>
+              <>
+                <p>
+                  Required credential names:{" "}
+                  {plan.requirements.credentials.join(", ")}. Values are saved
+                  only through Wright&apos;s secure credential flow and are
+                  never included in this plan.
+                </p>
+                <ul data-testid="credential-configuration-status">
+                  {plan.requirements.credentials.map((credential) => (
+                    <li key={credential}>
+                      {credential}:{" "}
+                      {credentialStatus?.configured[credential]
+                        ? "configured"
+                        : "not configured"}
+                    </li>
+                  ))}
+                </ul>
+              </>
             ) : (
               <p>This plan does not declare credential values.</p>
             )}
@@ -378,6 +465,49 @@ export function OnboardingWizard({
           </p>
         )}
 
+        {step === "validating" && (
+          <p role="status">
+            Validating MCP initialize, initialized notification, tool discovery,
+            and any catalog-approved read-only probeâ€¦
+          </p>
+        )}
+
+        {step === "workspace" && validation?.state === "passed" && (
+          <div data-testid="workspace-selection">
+            <h3>Choose one workspace</h3>
+            <p>
+              Validation passed with {validation.tool_count ?? 0} discovered
+              tools. Available in a workspace does not mean approved to run
+              every tool.
+            </p>
+            <label>
+              Workspace
+              <select
+                value={selectedWorkspaceId}
+                onChange={(event) => setSelectedWorkspaceId(event.target.value)}
+              >
+                {workspaces.map((workspace) => (
+                  <option
+                    key={workspace.workspace_id}
+                    value={workspace.workspace_id}
+                  >
+                    {workspace.workspace_name || workspace.workspace_id}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button type="button" onClick={enableWorkspace}>
+              Make available in this workspace
+            </button>
+          </div>
+        )}
+
+        {step === "enabling" && (
+          <p role="status">
+            Enabling this capability for one workspace onlyâ€¦
+          </p>
+        )}
+
         {step === "complete" && run && (
           <div>
             <h3>Onboarding {run.state}</h3>
@@ -385,6 +515,15 @@ export function OnboardingWizard({
               Run {run.run_id} finished with rollback state{" "}
               {run.rollback_state || "not needed"}.
             </p>
+            {validation && (
+              <p>
+                Validation: {validation.state}
+                {validation.read_only_probe
+                  ? ` â€” ${validation.read_only_probe.limitation}`
+                  : ""}
+              </p>
+            )}
+            {enablement && <p>{enablement.message}</p>}
             <button type="button" onClick={resetAndClose}>
               Done
             </button>
