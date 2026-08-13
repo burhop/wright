@@ -27,6 +27,7 @@ export function RivetScenarioReport({
   const observedAt = useRef(Date.now());
   const terminalSummary = useRef<HTMLDivElement>(null);
   const terminalFocused = useRef(false);
+  const reportState = report?.state;
 
   const refresh = useCallback(async () => {
     try {
@@ -53,12 +54,12 @@ export function RivetScenarioReport({
   }, [refresh]);
 
   useEffect(() => {
-    if (report && TERMINAL.has(report.state)) return;
+    if (reportState && TERMINAL.has(reportState)) return;
     const timer = window.setInterval(() => {
       void refresh();
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [refresh, report?.state]);
+  }, [refresh, reportState]);
 
   useEffect(() => {
     if (report && TERMINAL.has(report.state) && !terminalFocused.current) {

@@ -1,9 +1,9 @@
 {
   "files": [
     {
-      "path": "assets/index-DUYfkiYy.js",
-      "sha256": "79f44dc3687a3eda433d93eb3ba4ec293c32bb877a26d6ebd6e16debefa8e794",
-      "size": 1620841
+      "path": "assets/index-CGGrdss9.js",
+      "sha256": "bdf4e3d003ea1d589611f152490a611572968b69fd845dae355a0fe89e8d4284",
+      "size": 1620697
     },
     {
       "path": "assets/index-PogmyOEv.css",
@@ -11,9 +11,9 @@
       "size": 15257
     },
     {
-      "path": "assets/plotly.min-BIZwgJ0u.js",
-      "sha256": "31d04de8091a2f0d74ea98f07fe792d48aa40d05161435a1767832b97c824210",
-      "size": 4603736
+      "path": "assets/plotly.min-C00CiI3O.js",
+      "sha256": "5657096c6bac2f459b87b9463197fdc7cdc90146e42df2ff996b920f3141c823",
+      "size": 4603563
     },
     {
       "path": "favicon.svg",
@@ -27,7 +27,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "68ab5443cd213f48991d52bb32a9f5e62008a2776d5e12ce373f96c8fd666cd9",
+      "sha256": "d00b955df8d0a3db28dd1a5590556e44e14b95c248f5953c41d941a8fe68190e",
       "size": 917
     },
     {
@@ -47,7 +47,7 @@
     },
     {
       "path": "third-party-licenses-web.txt",
-      "sha256": "25216c4861aa244bad9f133c6c16f49dbd3b1e55de9e562470d0572d4dd779e5",
+      "sha256": "02ea1751e00393e74c9b022603c83436f3dd6a7babac27b2914896c93c4ca5c3",
       "size": 219335
     }
   ],

@@ -114,7 +114,22 @@ run npm run test --workspace=apps/web -- --run \
   workspace-service \
   ToolRegistryLayout
 
-run uv run python -m pytest
+# The whole workspace includes the optional NumPy-backed engineering-model
+# slice and several package-local test roots with intentionally repeated module
+# and conftest names. Exercise every configured root in an isolated pytest
+# process with both reviewed extras so collection cannot leak between packages.
+for python_suite in \
+  apps/api/tests \
+  packages/agent_adapters/tests \
+  packages/core/tests \
+  packages/data_vault/tests \
+  packages/model_registry/tests \
+  packages/tool_registry/tests \
+  packages/workspace_service/tests \
+  tests; do
+  run uv run --extra runtime --extra engineering-models \
+    python -m pytest "$python_suite"
+done
 run uv run --isolated --reinstall-package hermes-plugin-wright \
   --package hermes-plugin-wright --with pytest --with pytest-asyncio --with respx --with PyYAML \
   python -m pytest hermes-plugin-wright/tests

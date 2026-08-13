@@ -474,15 +474,15 @@ Commit the verified Loop 071 closeout on the integration branch, then begin Loop
 ### Local non-publishing candidate rehearsal
 
 - The final Windows-host local rehearsal built and inspected
-  `wright_engineering-0.1.9-py3-none-any.whl` (15,837,524 bytes,
-  SHA-256 `c0a11d7cd0c532359cb5766f929e9cf9b7a36c84a3a76092871725cece498ccc`)
-  and `wright_engineering-0.1.9.tar.gz` (15,480,550 bytes, SHA-256
-  `01d8613ebbb8e7ed1f8cfe895fd7294dd6ba9f11258de7346304f5fa81b9d973`).
+  `wright_engineering-0.1.9-py3-none-any.whl` (15,837,433 bytes,
+  SHA-256 `971d9ac104bc7dcbd8f03118d0cae62c3a0be0c89fab6518728bcb80079b9afa`)
+  and `wright_engineering-0.1.9.tar.gz` (15,480,503 bytes, SHA-256
+  `936db124be787d993a11b9baf9987d4a338999bd6b0b8114a91efc64a28d0e32`).
 - Both candidates contain the native application modules and the staged
   production UI. The inspected compatibility digest is
   `0d2cddae96c0d608bc5b82504c1165ece027794358d3e160fdcfaae089f2fc1a`,
   UI-manifest digest is
-  `3793c635c47ebfffb6253e6c1b27329993b4edecdf351d59d01f44ca0900bc89`,
+  `1ad6382a3bb3c740df8661ef3e266331e4884e237f930b90643dcfa283f1a211`,
   and runtime-extra lock digest is
   `cb951e989ebbbbce4a294d14afc14fba3a1fb1ccf8dd031147176580b882ac07`.
   The artifacts and machine-readable rehearsal record remain under ignored

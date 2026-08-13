@@ -36,3 +36,19 @@ def test_gate_e_scan_is_part_of_the_program_tranche() -> None:
     ).read_text(encoding="utf-8")
     for prohibited_fixture in ("M3 S12000", "G28", "reusable-authority"):
         assert prohibited_fixture in leak_test
+
+
+def test_full_python_gate_isolates_package_roots_with_reviewed_extras() -> None:
+    gate = (ROOT / "scripts" / "check-dev-merge.sh").read_text(encoding="utf-8")
+    assert "--extra runtime --extra engineering-models" in gate
+    for test_root in (
+        "apps/api/tests",
+        "packages/agent_adapters/tests",
+        "packages/core/tests",
+        "packages/data_vault/tests",
+        "packages/model_registry/tests",
+        "packages/tool_registry/tests",
+        "packages/workspace_service/tests",
+        "tests",
+    ):
+        assert test_root in gate
