@@ -35,12 +35,23 @@ export function CapabilityLibrary({
     () => ({
       search: filters.search || undefined,
       domain: filters.domain ? [filters.domain] : undefined,
+      lifecycle_stage: filters.lifecycleStage
+        ? [filters.lifecycleStage]
+        : undefined,
+      platform: filters.platform ? [filters.platform] : undefined,
+      maturity: filters.maturity ? [filters.maturity] : undefined,
       evidence_class: filters.evidenceClass
         ? [filters.evidenceClass]
         : undefined,
       compatibility: filters.compatibility
         ? [filters.compatibility]
         : undefined,
+      risk: filters.risk ? [filters.risk] : undefined,
+      locality: filters.locality ? [filters.locality] : undefined,
+      host: filters.host ? [filters.host] : undefined,
+      validation: filters.validation ? [filters.validation] : undefined,
+      installed:
+        filters.installed === "" ? undefined : filters.installed === "true",
       limit: 200,
     }),
     [filters],
@@ -51,8 +62,16 @@ export function CapabilityLibrary({
       query: filters.search,
       filters: {
         domain: filters.domain,
+        lifecycle_stage: filters.lifecycleStage,
+        platform: filters.platform,
+        maturity: filters.maturity,
         evidence_class: filters.evidenceClass,
         compatibility: filters.compatibility,
+        risk: filters.risk,
+        locality: filters.locality,
+        host: filters.host,
+        validation: filters.validation,
+        installed: filters.installed,
       },
     }),
     [filters],
@@ -152,6 +171,7 @@ export function CapabilityLibrary({
           {onReportMissing && (
             <button
               type="button"
+              data-testid="capability-report-empty-result"
               onClick={() => onReportMissing(searchContext)}
             >
               Report this missing capability

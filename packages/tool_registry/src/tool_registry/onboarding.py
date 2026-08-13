@@ -46,6 +46,11 @@ def _invoke(adapter, method: str, plan: InstallPlan) -> dict[str, Any]:
             "onboarding_adapter_contract",
             f"Adapter {method} returned invalid evidence.",
         )
+    if result.get("status") not in {"succeeded", "completed", "passed"}:
+        raise OnboardingError(
+            "onboarding_adapter_reported_failure",
+            f"Adapter {method} did not report a successful outcome.",
+        )
     return result
 
 

@@ -365,3 +365,30 @@ test.describe("Offline Capability Library", () => {
     ).toEqual([]);
   });
 });
+
+test.describe("Live local Capability Library", () => {
+  test("loads the actual local capability projection without vendor traffic @live", async ({
+    page,
+  }) => {
+    const vendorRequests: string[] = [];
+    page.on("request", (request) => {
+      if (
+        !new URL(request.url()).hostname.match(/^(localhost|127\.0\.0\.1)$/)
+      ) {
+        vendorRequests.push(request.url());
+      }
+    });
+    const response = page.waitForResponse(
+      (candidate) =>
+        candidate.url().includes("/api/mcp/capabilities") &&
+        candidate.request().method() === "GET",
+    );
+    await page.goto("/tool-registry");
+    expect((await response).status()).toBe(200);
+    await expect(
+      page.getByRole("heading", { name: "Engineering Capability Library" }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Capability filters")).toBeVisible();
+    expect(vendorRequests).toEqual([]);
+  });
+});

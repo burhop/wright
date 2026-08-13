@@ -44,6 +44,8 @@ class CapabilityFilters:
     search: str | None = None
     domains: frozenset[str] = field(default_factory=frozenset)
     platforms: frozenset[str] = field(default_factory=frozenset)
+    lifecycle_stages: frozenset[str] = field(default_factory=frozenset)
+    maturities: frozenset[str] = field(default_factory=frozenset)
     evidence_classes: frozenset[str] = field(default_factory=frozenset)
     compatibility: frozenset[str] = field(default_factory=frozenset)
     risks: frozenset[str] = field(default_factory=frozenset)
@@ -181,6 +183,16 @@ def _catalog_view(
         tags=entry.tags,
         aliases=sorted(entry.aliases),
         capability_summary=entry.capability_summary,
+        field_provenance={
+            "catalog_metadata": "active_catalog_snapshot",
+            "compatibility": "current_machine_observation",
+            "user_state": "local_registry_and_workspace_state",
+        },
+        data_touched=entry.data_touched,
+        examples=entry.examples,
+        validation_history=[entry.validation_result.model_dump(mode="json")],
+        lifecycle_stage=entry.verification_state,
+        maturity=entry.maturity,
         evidence_class=entry.evidence_class or "community_candidate",
         transport=entry.transport,
         locality=entry.locality,
@@ -197,6 +209,10 @@ def _catalog_view(
             "credentials": entry.credentials_required,
             "license": entry.license,
             "approval_gates": entry.approval_gates,
+            "supported_platforms": {
+                key: value.model_dump(mode="json")
+                for key, value in entry.platform_support.items()
+            },
         },
         validation_result=entry.validation_result.model_dump(mode="json"),
         user_state=user,
@@ -310,6 +326,8 @@ def _search_text(view: CapabilityView) -> str:
             *view.domains,
             *view.tags,
             *view.capability_summary,
+            *view.data_touched,
+            *view.examples,
             source_text,
             requirements,
         ]
@@ -323,6 +341,13 @@ def _matches(view: CapabilityView, filters: CapabilityFilters) -> bool:
         return False
     if filters.platforms and view.compatibility.platform_key not in filters.platforms:
         return False
+    if (
+        filters.lifecycle_stages
+        and view.lifecycle_stage not in filters.lifecycle_stages
+    ):
+        return False
+    if filters.maturities and view.maturity not in filters.maturities:
+        return False
     if filters.evidence_classes and view.evidence_class not in filters.evidence_classes:
         return False
     if filters.compatibility and view.compatibility.status not in filters.compatibility:
@@ -334,7 +359,11 @@ def _matches(view: CapabilityView, filters: CapabilityFilters) -> bool:
     hosts = set(view.requirements.get("host_software", []))
     if filters.hosts and not filters.hosts.intersection(hosts):
         return False
-    validation = str(view.validation_result.get("status", "not_tested"))
+    validation = (
+        str(view.local_validation.get("state", "not_checked"))
+        if view.local_validation is not None
+        else str(view.validation_result.get("status", "not_tested"))
+    )
     if filters.validation and validation not in filters.validation:
         return False
     if filters.installed is not None and view.user_state.installed != filters.installed:

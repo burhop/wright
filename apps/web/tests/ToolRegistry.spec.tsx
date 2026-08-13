@@ -32,6 +32,12 @@ const baseCapability = {
   tags: ["geometry"],
   aliases: [],
   capability_summary: ["Extract geometry"],
+  field_provenance: {},
+  data_touched: [],
+  examples: [],
+  validation_history: [],
+  lifecycle_stage: "community_mcp",
+  maturity: "community",
   evidence_class: "verified_community" as const,
   transport: "stdio" as const,
   locality: "local" as const,
@@ -94,7 +100,9 @@ describe("ToolRegistryPage", () => {
     expect(
       screen.getByTestId("compatibility-badge-compatible"),
     ).toHaveTextContent("Compatible");
-    expect(screen.getByText(/Installed/)).toBeInTheDocument();
+    expect(
+      screen.getByTestId("capability-card-cad-extractor"),
+    ).toHaveTextContent("Installed");
   });
 
   it("sends search and domain filters to the capability endpoint", async () => {

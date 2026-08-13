@@ -214,6 +214,12 @@ class CapabilityView(StrictModel):
     tags: list[str] = Field(default_factory=list)
     aliases: list[str] = Field(default_factory=list)
     capability_summary: list[str] = Field(default_factory=list)
+    field_provenance: dict[str, str] = Field(default_factory=dict)
+    data_touched: list[str] = Field(default_factory=list)
+    examples: list[str] = Field(default_factory=list)
+    validation_history: list[dict[str, Any]] = Field(default_factory=list)
+    lifecycle_stage: str
+    maturity: str
     evidence_class: EvidenceClass
     transport: TransportVariant
     locality: Literal["local", "remote"]

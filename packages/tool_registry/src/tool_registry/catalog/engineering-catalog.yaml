@@ -5807,6 +5807,11 @@ servers:
   - Generate FeatureScript from natural-language mechanical design requirements
   - Test and refine FeatureScript for use in Onshape documents
   - Remote preview service; not locally executed or validated by Wright
+  data_touched:
+  - FeatureScript source supplied by the user
+  - Onshape account and document context governed by the remote preview service
+  examples:
+  - Generate a parameterized mounting bracket FeatureScript from design constraints
   source_records:
   - url: https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad
     kind: vendor_docs

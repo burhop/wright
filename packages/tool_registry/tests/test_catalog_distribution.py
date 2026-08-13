@@ -17,14 +17,22 @@ def test_wheel_and_sdist_contain_canonical_catalog_resources(tmp_path) -> None:
     wheel = next(tmp_path.glob("*.whl"))
     sdist = next(tmp_path.glob("*.tar.gz"))
     required = {
+        "tool_registry/catalog/catalog-snapshot-envelope.schema.json",
         "tool_registry/catalog/engineering-catalog.yaml",
+        "tool_registry/catalog/import-preview.schema.json",
+        "tool_registry/catalog/install-plan.schema.json",
         "tool_registry/catalog/schema.json",
+        "tool_registry/catalog/trust-root.json",
     }
     with zipfile.ZipFile(wheel) as archive:
         assert required <= set(archive.namelist())
     with tarfile.open(sdist, "r:gz") as archive:
         names = {"/".join(name.split("/")[1:]) for name in archive.getnames()}
         assert {
+            "src/tool_registry/catalog/catalog-snapshot-envelope.schema.json",
             "src/tool_registry/catalog/engineering-catalog.yaml",
+            "src/tool_registry/catalog/import-preview.schema.json",
+            "src/tool_registry/catalog/install-plan.schema.json",
             "src/tool_registry/catalog/schema.json",
+            "src/tool_registry/catalog/trust-root.json",
         } <= names

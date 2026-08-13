@@ -11,6 +11,7 @@ from tool_registry.capability_models import ValidationEvidence
 from tool_registry.validation_evidence import (
     ValidationEvidenceError,
     latest_capability_validation_evidence,
+    list_capability_validation_evidence,
     require_current_passed_validation,
     save_capability_validation_evidence,
     validation_staleness_reasons,
@@ -125,6 +126,18 @@ def test_repository_is_append_only_and_returns_latest_redacted_record(tmp_path) 
     with pytest.raises(ValidationEvidenceError, match="append-only"):
         save_capability_validation_evidence(database, evidence)
     assert "secret" not in evidence.model_dump_json().lower()
+
+    newer = _evidence(
+        evidence_id="validation-two",
+        observed_at=NOW + timedelta(minutes=1),
+    )
+    save_capability_validation_evidence(database, newer)
+    assert list_capability_validation_evidence(database, evidence.server_id) == [
+        newer,
+        evidence,
+    ]
+    with pytest.raises(ValueError, match="between 1 and 100"):
+        list_capability_validation_evidence(database, evidence.server_id, limit=0)
 
 
 @pytest.mark.parametrize(

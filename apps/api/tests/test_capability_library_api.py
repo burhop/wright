@@ -41,6 +41,8 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
         params=[
             ("search", "FeatureScript"),
             ("domain", "cad"),
+            ("lifecycle_stage", "verified_mcp"),
+            ("maturity", "official"),
             ("evidence_class", "official_preview"),
         ],
     )
@@ -54,6 +56,12 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
         "onshape-labs-featurescript-mcp"
     )
     assert body["capabilities"][0]["compatibility"]["reasons"]
+    assert body["capabilities"][0]["lifecycle_stage"] == "verified_mcp"
+    assert body["capabilities"][0]["maturity"] == "official"
+    assert body["capabilities"][0]["data_touched"]
+    assert body["capabilities"][0]["examples"]
+    assert body["capabilities"][0]["field_provenance"]
+    assert body["capabilities"][0]["requirements"]["supported_platforms"]
 
     first = client.get("/api/mcp/capabilities", params={"limit": 1}).json()
     assert first["total"] == 70

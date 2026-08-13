@@ -73,6 +73,7 @@ export function CapabilityCard({
         </span>
         <button
           type="button"
+          data-testid={`capability-details-open-${capability.capability_id}`}
           onClick={() => onOpen(capability)}
           aria-label={`View details for ${capability.name}`}
           style={{

@@ -30,6 +30,22 @@ const capability: CapabilityView = {
   tags: ["onshape", "featurescript"],
   aliases: ["onshape-featurescript-mcp-official"],
   capability_summary: ["Generate FeatureScript", "Test and refine code"],
+  field_provenance: {
+    catalog_metadata: "active_catalog_snapshot",
+    compatibility: "current_machine_observation",
+    user_state: "local_registry_and_workspace_state",
+  },
+  data_touched: ["FeatureScript source"],
+  examples: ["Generate a mounting bracket"],
+  validation_history: [
+    {
+      status: "not_tested",
+      message: "Wright has not contacted the endpoint.",
+      missing_dependencies: [],
+    },
+  ],
+  lifecycle_stage: "verified_mcp",
+  maturity: "official",
   evidence_class: "official_preview",
   transport: "streamable_http",
   locality: "remote",
@@ -61,6 +77,13 @@ const capability: CapabilityView = {
     credentials: [],
     license: "App Store subscription completed independently.",
     approval_gates: ["network_access_approval"],
+    supported_platforms: {
+      windows_11_x64: {
+        status: "likely",
+        tested: false,
+        notes: "Remote preview should be platform neutral.",
+      },
+    },
   },
   validation_result: {
     status: "not_tested",
@@ -146,6 +169,11 @@ describe("CapabilityLibrary", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveTextContent("Network access was not confirmed");
     expect(dialog).toHaveTextContent("App Store subscription");
+    expect(dialog).toHaveTextContent("FeatureScript source");
+    expect(dialog).toHaveTextContent("Generate a mounting bracket");
+    expect(dialog).toHaveTextContent("network_access_approval");
+    expect(dialog).toHaveTextContent("windows_11_x64: likely");
+    expect(dialog).toHaveTextContent("active catalog snapshot");
     expect(dialog).toHaveTextContent("Wright has not contacted the endpoint");
     expect(dialog).toHaveTextContent("jarvis-onshape-mcp");
     expect(dialog).toHaveTextContent("Local validation: passed");
@@ -165,8 +193,36 @@ describe("CapabilityLibrary", () => {
     fireEvent.change(screen.getByLabelText("Engineering domain"), {
       target: { value: "cad" },
     });
+    fireEvent.change(screen.getByLabelText("Lifecycle stage"), {
+      target: { value: "verified_mcp" },
+    });
+    fireEvent.change(
+      screen.getByLabelText("Current platform and architecture"),
+      { target: { value: "windows_11_x64" } },
+    );
+    fireEvent.change(screen.getByLabelText("Maturity"), {
+      target: { value: "official" },
+    });
     fireEvent.change(screen.getByLabelText("Evidence class"), {
       target: { value: "official_preview" },
+    });
+    fireEvent.change(screen.getByLabelText("Compatibility"), {
+      target: { value: "uncertain" },
+    });
+    fireEvent.change(screen.getByLabelText("Risk level"), {
+      target: { value: "medium" },
+    });
+    fireEvent.change(screen.getByLabelText("Locality"), {
+      target: { value: "remote" },
+    });
+    fireEvent.change(screen.getByLabelText("Required host software"), {
+      target: { value: "Solid Edge" },
+    });
+    fireEvent.change(screen.getByLabelText("Validation state"), {
+      target: { value: "not_tested" },
+    });
+    fireEvent.change(screen.getByLabelText("Installed state"), {
+      target: { value: "false" },
     });
 
     await waitFor(() =>
@@ -174,12 +230,22 @@ describe("CapabilityLibrary", () => {
         expect.objectContaining({
           search: "bracket",
           domain: ["cad"],
+          lifecycle_stage: ["verified_mcp"],
+          platform: ["windows_11_x64"],
+          maturity: ["official"],
           evidence_class: ["official_preview"],
+          compatibility: ["uncertain"],
+          risk: ["medium"],
+          locality: ["remote"],
+          host: ["Solid Edge"],
+          validation: ["not_tested"],
+          installed: false,
         }),
       ),
     );
     expect(window.location.search).toContain("search=bracket");
     expect(window.location.search).toContain("domain=cad");
+    expect(window.location.search).toContain("installed=false");
   });
 
   it("supports keyboard detail opening and local observation", async () => {
@@ -188,12 +254,16 @@ describe("CapabilityLibrary", () => {
     const button = await screen.findByRole("button", { name: /view details/i });
     button.focus();
     await user.keyboard("{Enter}");
+    expect(screen.getByTestId("capability-details-close")).toHaveFocus();
     await user.click(
       screen.getByRole("button", { name: /check this machine again/i }),
     );
     expect(mcpService.observeCapability).toHaveBeenCalledWith(
       "onshape-labs-featurescript-mcp",
     );
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(button).toHaveFocus();
   });
 
   it("renders honest empty and unavailable states", async () => {

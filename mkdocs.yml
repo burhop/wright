@@ -56,6 +56,7 @@ nav:
       - GB10 and DGX Workstations: getting-started/workstation-gb10-dgx.md
       - Native Wright for Hermes: getting-started/hermes-plugin.md
       - Wright for Codex: getting-started/codex.md
+      - Capability Library: getting-started/capability-library.md
   - User Guide:
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Open Web Applications: workspace-surfaces/opening-surfaces.md

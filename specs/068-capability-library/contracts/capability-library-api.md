@@ -26,7 +26,7 @@ Messages and logs never include raw pasted configuration, credential/header valu
 Query parameters:
 
 - `search`
-- repeated `domain`, `platform`, `evidence_class`, `compatibility`, `risk`, `locality`, `host`, `validation`, `installed`
+- repeated `domain`, `lifecycle_stage`, `platform`, `maturity`, `evidence_class`, `compatibility`, `risk`, `locality`, `host`, `validation`, `installed`
 - `limit` (1-200, default 100)
 - opaque `cursor`
 
@@ -47,7 +47,7 @@ Returns:
 }
 ```
 
-The `capabilities` items are `CapabilityView` projections. Cursor order is stable by evidence/installability rank, name, and canonical id.
+The `capabilities` items are `CapabilityView` projections, including explicit field provenance, data touched, examples, supported-platform claims, and catalog/local validation history. Cursor order is stable by evidence/installability rank, name, and canonical id.
 
 ### `GET /capabilities/{capability_id}`
 
@@ -141,7 +141,7 @@ Supersedes the new UI's use of the legacy validation endpoint while preserving t
 
 ### `POST /workspaces/{workspace_id}/capabilities/{server_id}/enable`
 
-Requires a current accepted validation record and returns the existing workspace capability status. It does not start the server beyond established lifecycle policy and does not grant invocation approval.
+Requires an installed capability or completed endpoint/host connection plus a current accepted validation record, then returns the existing workspace capability status. It does not start the server beyond established lifecycle policy and does not grant invocation approval.
 
 ## Missing capability reports
 

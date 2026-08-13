@@ -449,6 +449,7 @@ def create_install_plan(
         capability_id = f"import:{import_id}"
         capability_digest = import_digest
         source = {
+            "name": import_draft.get("name"),
             "transport": import_draft.get("transport"),
             "command": import_draft.get("command"),
             "arguments": import_draft.get("arguments", []),

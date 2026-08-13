@@ -104,7 +104,39 @@ def test_projection_search_filters_and_cursor_are_stable() -> None:
     )
     assert page.total == 1
     assert page.capabilities[0].capability_id == "canonical-cad"
+    assert page.capabilities[0].lifecycle_stage == "user_reported_url_needed"
+    assert page.capabilities[0].maturity == "community"
+    assert page.capabilities[0].field_provenance["compatibility"] == (
+        "current_machine_observation"
+    )
+    assert "supported_platforms" in page.capabilities[0].requirements
+    assert page.capabilities[0].validation_history[0]["status"] == "not_tested"
     assert page.snapshot.offline is True
+
+    all_dimensions = paginate_capabilities(
+        entries,
+        views,
+        filters=CapabilityFilters(
+            platforms=frozenset({_observation().platform_key}),
+            lifecycle_stages=frozenset({"user_reported_url_needed"}),
+            maturities=frozenset({"community"}),
+            evidence_classes=frozenset({"user_reported_source_needed"}),
+            compatibility=frozenset({"compatible"}),
+            risks=frozenset({"low"}),
+            localities=frozenset({"local"}),
+            validation=frozenset({"not_tested"}),
+            installed=False,
+        ),
+    )
+    assert all_dimensions.total == 1
+
+    views[0].local_validation = {"state": "partially_passed"}
+    local_validation = paginate_capabilities(
+        entries,
+        views,
+        filters=CapabilityFilters(validation=frozenset({"partially_passed"})),
+    )
+    assert local_validation.total == 1
 
     empty = paginate_capabilities(
         entries,

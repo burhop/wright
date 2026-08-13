@@ -120,6 +120,22 @@ export interface CapabilityView {
   tags: string[];
   aliases: string[];
   capability_summary: string[];
+  field_provenance: Record<string, string>;
+  data_touched: string[];
+  examples: string[];
+  validation_history: Array<{
+    status: string;
+    message?: string;
+    source?: string;
+    evidence_id?: string;
+    observed_at?: string;
+    reason_codes?: string[];
+    limitation?: string | null;
+    environment?: string;
+    missing_dependencies?: string[];
+  }>;
+  lifecycle_stage: string;
+  maturity: string;
   evidence_class: EvidenceClass;
   transport: TransportVariant;
   locality: "local" | "remote";
@@ -141,6 +157,7 @@ export interface CapabilityView {
     credentials?: string[];
     license?: string | null;
     approval_gates?: string[];
+    supported_platforms?: Record<string, PlatformSupportRecord>;
   };
   validation_result: ValidationSummary;
   local_validation?: {
@@ -194,6 +211,8 @@ export interface CapabilityQuery {
   search?: string;
   domain?: string[];
   platform?: string[];
+  lifecycle_stage?: string[];
+  maturity?: string[];
   evidence_class?: EvidenceClass[];
   compatibility?: CompatibilityStatus[];
   risk?: RiskLevel[];

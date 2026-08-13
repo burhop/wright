@@ -52,9 +52,11 @@ from tool_registry.onboarding import (
     cancel_onboarding_run,
     get_onboarding_run,
 )
+from tool_registry.registry_onboarding import RegistryOnboardingAdapter
 from tool_registry.missing_reports import submit_missing_capability_report
 from tool_registry.db import get_server
 from tool_registry.validation_evidence import (
+    list_capability_validation_evidence,
     latest_capability_validation_evidence,
     require_current_passed_validation,
 )
@@ -66,6 +68,42 @@ from tool_registry.services import (
     McpOperationError,
     McpServiceError,
 )
+from tool_registry.safety import ApprovalContext
+
+
+class _EngineValidationClient:
+    def __init__(self, engine: McpEngine, server_id: str, approvals: set[str]) -> None:
+        self.engine = engine
+        self.server_id = server_id
+        self.approval_context = ApprovalContext(machine_approvals=approvals)
+
+    async def initialize(self):
+        server = await self.engine.start_server(
+            self.server_id, approval_context=self.approval_context
+        )
+        if server is None or server.status == "error":
+            raise RuntimeError("The MCP server could not initialize")
+        return {
+            "serverInfo": {
+                "name": server.name,
+                "version": server.installed_version or "unknown",
+            }
+        }
+
+    async def initialized(self):
+        return None
+
+    def _runner(self):
+        runner = self.engine.lifecycle.runner_for(self.server_id)
+        if runner is None:
+            raise RuntimeError("The MCP validation runner is unavailable")
+        return runner
+
+    async def list_tools(self):
+        return await self._runner().list_tools()
+
+    async def call_tool(self, name: str, arguments: dict):
+        return await self._runner().call_tool(name, arguments)
 
 
 def get_mcp_engine(request: Request) -> McpEngine:
@@ -181,6 +219,30 @@ class McpApiService:
                 "reason_codes": sorted(set(reasons)),
                 "limitation": limitation,
             }
+            for historic in list_capability_validation_evidence(
+                self.db_path, server_id
+            ):
+                historic_state = historic.state
+                historic_reasons = list(historic.reason_codes)
+                if now - historic.observed_at > timedelta(hours=24):
+                    historic_state = "stale"
+                    historic_reasons.append("validation_evidence_expired")
+                historic_limitation = (
+                    str(historic.read_only_probe.get("limitation"))
+                    if historic.read_only_probe
+                    and historic.read_only_probe.get("limitation")
+                    else None
+                )
+                view.validation_history.append(
+                    {
+                        "source": "local_validation_evidence",
+                        "evidence_id": historic.evidence_id,
+                        "status": historic_state,
+                        "observed_at": historic.observed_at.isoformat(),
+                        "reason_codes": sorted(set(historic_reasons)),
+                        "limitation": historic_limitation,
+                    }
+                )
         return views
 
     def list_capabilities(
@@ -243,6 +305,11 @@ class McpApiService:
             raise McpInvalidOperationError(
                 "Register or install the capability before validation."
             )
+        if not server.is_installed:
+            raise McpInvalidOperationError(
+                "Install the capability or complete its endpoint/host connection "
+                "before validation and workspace enablement."
+            )
         entry = next(
             (item for item in entries if item.id == view.canonical_id),
             None,
@@ -300,22 +367,35 @@ class McpApiService:
         clients = self.capability_dependencies.validation_clients
         gateway_clients = self.capability_dependencies.validation_gateway_clients
         probes = self.capability_dependencies.validation_read_only_probes
-        return await run_capability_validation(
-            self.db_path,
-            capability_id=canonical_id,
-            server_id=server_id,
-            snapshot_id=context["snapshot"].snapshot_id,
-            capability_document=context["capability_document"],
-            observation=context["observation"],
-            server_revision=context["server_revision"],
-            credential_status=context["credential_status"],
-            client=clients.get(server_id) or clients.get(canonical_id),
-            gateway_client=gateway_clients.get(server_id)
-            or gateway_clients.get(canonical_id),
-            read_only_probe=probes.get(server_id) or probes.get(canonical_id),
-            clock=self.capability_dependencies.clock,
-            trace_id=trace_id,
-        )
+        client = clients.get(server_id) or clients.get(canonical_id)
+        managed_client = client is None
+        was_active = bool(context["server"].is_active)
+        if managed_client:
+            client = _EngineValidationClient(
+                self.engine,
+                server_id,
+                set(context["server"].approval_gates),
+            )
+        try:
+            return await run_capability_validation(
+                self.db_path,
+                capability_id=canonical_id,
+                server_id=server_id,
+                snapshot_id=context["snapshot"].snapshot_id,
+                capability_document=context["capability_document"],
+                observation=context["observation"],
+                server_revision=context["server_revision"],
+                credential_status=context["credential_status"],
+                client=client,
+                gateway_client=gateway_clients.get(server_id)
+                or gateway_clients.get(canonical_id),
+                read_only_probe=probes.get(server_id) or probes.get(canonical_id),
+                clock=self.capability_dependencies.clock,
+                trace_id=trace_id,
+            )
+        finally:
+            if managed_client and not was_active:
+                await self.engine.stop_server(server_id)
 
     def enable_capability_for_workspace(self, identity: str, workspace_id: str):
         context = self._validation_context(identity, refresh_observation=False)
@@ -540,11 +620,13 @@ class McpApiService:
     def apply_install_plan(
         self, plan_id: str, digest: str, *, actor: str, trace_id: str
     ):
+        plan = get_install_plan(self.db_path, plan_id)
+        adapters = self._onboarding_adapters(plan.backend_kind)
         return apply_install_plan(
             self.db_path,
             plan_id,
             digest,
-            adapters=dict(self.capability_dependencies.onboarding_adapters),
+            adapters=adapters,
             actor=actor,
             now=self.capability_dependencies.clock(),
             trace_id=trace_id,
@@ -554,12 +636,23 @@ class McpApiService:
         return get_onboarding_run(self.db_path, run_id)
 
     def cancel_onboarding_run(self, run_id: str):
+        run = get_onboarding_run(self.db_path, run_id)
+        plan = get_install_plan(self.db_path, run["plan_id"])
         return cancel_onboarding_run(
             self.db_path,
             run_id,
-            adapters=dict(self.capability_dependencies.onboarding_adapters),
+            adapters=self._onboarding_adapters(plan.backend_kind),
             now=self.capability_dependencies.clock(),
         )
+
+    def _onboarding_adapters(self, backend_kind: str) -> dict[str, object]:
+        adapters: dict[str, object] = {}
+        if backend_kind in {"local_package", "local_command", "remote_endpoint"}:
+            adapters[backend_kind] = RegistryOnboardingAdapter(
+                self.db_path, kind=backend_kind
+            )
+        adapters.update(self.capability_dependencies.onboarding_adapters)
+        return adapters
 
     def register_server(self, body):
         return registry_services.register_server(self.db_path, body)

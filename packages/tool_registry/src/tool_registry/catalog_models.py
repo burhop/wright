@@ -214,6 +214,8 @@ class CatalogEntry(BaseModel):
     ] = "community"
     evidence_class: EvidenceClass | None = None
     capability_summary: list[str] = Field(default_factory=list)
+    data_touched: list[str] = Field(default_factory=list)
+    examples: list[str] = Field(default_factory=list)
     source_records: list[CatalogSourceRecord] = Field(default_factory=list)
     runtime_requirements: RuntimeRequirements = Field(
         default_factory=RuntimeRequirements

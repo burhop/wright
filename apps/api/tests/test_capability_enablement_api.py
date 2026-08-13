@@ -12,7 +12,7 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from tool_registry import McpEngine, McpServer
 from tool_registry.capability_services import CapabilityServiceDependencies
-from tool_registry.db import insert_server, update_server
+from tool_registry.db import get_server, insert_server, update_server
 
 from api.main import app
 from api.routers.mcp import require_engineer_or_admin
@@ -167,6 +167,16 @@ def test_missing_failed_or_stale_validation_blocks_enablement(
     assert stale.json()["error_code"] == "validation_stale"
 
 
+def test_uninstalled_or_unconnected_server_cannot_validate(enablement_client) -> None:
+    client, database = enablement_client
+    update_server(str(database), SERVER_ID, {"is_installed": False})
+
+    response = client.post(f"/api/mcp/servers/{SERVER_ID}/validation-runs")
+
+    assert response.status_code == 400
+    assert "complete its endpoint/host connection" in response.text
+
+
 def test_validation_and_workspace_enablement_enforce_role(enablement_client) -> None:
     client, _ = enablement_client
 
@@ -183,3 +193,40 @@ def test_validation_and_workspace_enablement_enforce_role(enablement_client) -> 
         ).status_code
         == 403
     )
+
+
+@pytest.mark.asyncio
+async def test_default_service_validates_through_engine_lifecycle(
+    tmp_path, monkeypatch
+) -> None:
+    database = tmp_path / "default-validation.db"
+    upgrade_database(database)
+    insert_server(
+        str(database),
+        McpServer(
+            server_id="default-validation-mcp",
+            name="Default validation MCP",
+            type="stdio",
+            command=["fixture-mcp"],
+            is_active=False,
+            is_installed=True,
+            status="inactive",
+            category="utilities",
+            created_at=1,
+            updated_at=1,
+        ),
+    )
+    monkeypatch.setenv("WRIGHT_TESTING", "1")
+    service = McpApiService(
+        McpEngine(str(database)),
+        SimpleNamespace(),
+        CapabilityServiceDependencies(database_path=database, clock=lambda: NOW),
+    )
+
+    evidence = await service.run_capability_validation(
+        "default-validation-mcp", trace_id="trace-default-validation"
+    )
+
+    assert evidence.state == "passed"
+    assert evidence.tool_count == 0
+    assert get_server(str(database), "default-validation-mcp").is_active is False

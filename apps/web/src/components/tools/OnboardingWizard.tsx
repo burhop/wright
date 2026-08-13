@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import {
   CapabilityApiError,
   mcpService,
@@ -70,9 +76,14 @@ export function OnboardingWizard({
     useState<WorkspaceCapabilityEnablement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (isOpen) closeButton.current?.focus();
+    if (isOpen) {
+      previousFocus.current = document.activeElement as HTMLElement | null;
+      closeButton.current?.focus();
+    }
   }, [isOpen]);
 
   const normalizedConfiguration = useMemo(() => {
@@ -104,6 +115,31 @@ export function OnboardingWizard({
     setEnablement(null);
     setError(null);
     onClose();
+    window.setTimeout(() => previousFocus.current?.focus(), 0);
+  };
+
+  const keepFocusInDialog = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      resetAndClose();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(
+      dialog.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+      ) || [],
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   };
 
   const buildPlan = async () => {
@@ -211,9 +247,11 @@ export function OnboardingWizard({
 
   return (
     <div
+      ref={dialog}
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-wizard-title"
+      onKeyDown={keepFocusInDialog}
       style={{
         position: "fixed",
         inset: 0,
@@ -253,6 +291,7 @@ export function OnboardingWizard({
           <button
             ref={closeButton}
             type="button"
+            data-testid="onboarding-close"
             onClick={resetAndClose}
             aria-label="Close onboarding"
           >
@@ -270,6 +309,7 @@ export function OnboardingWizard({
             <label>
               Source
               <select
+                data-testid="onboarding-source-kind"
                 value={sourceKind}
                 onChange={(event) =>
                   setSourceKind(event.target.value as SourceKind)
@@ -286,6 +326,7 @@ export function OnboardingWizard({
               <label>
                 Capability ID
                 <input
+                  data-testid="onboarding-capability-id"
                   value={capabilityId}
                   onChange={(event) => setCapabilityId(event.target.value)}
                 />
@@ -295,6 +336,7 @@ export function OnboardingWizard({
               <label>
                 MCP configuration JSON
                 <textarea
+                  data-testid="onboarding-configuration"
                   rows={9}
                   value={configuration}
                   onChange={(event) => setConfiguration(event.target.value)}
@@ -305,6 +347,7 @@ export function OnboardingWizard({
               <label>
                 Display name
                 <input
+                  data-testid="onboarding-display-name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                 />
@@ -314,6 +357,7 @@ export function OnboardingWizard({
               <label>
                 HTTPS MCP endpoint
                 <input
+                  data-testid="onboarding-endpoint"
                   value={endpoint}
                   onChange={(event) => setEndpoint(event.target.value)}
                 />
@@ -324,6 +368,7 @@ export function OnboardingWizard({
                 <label>
                   Literal executable
                   <input
+                    data-testid="onboarding-command"
                     value={command}
                     onChange={(event) => setCommand(event.target.value)}
                   />
@@ -331,6 +376,7 @@ export function OnboardingWizard({
                 <label>
                   Literal arguments
                   <input
+                    data-testid="onboarding-arguments"
                     value={argumentsText}
                     onChange={(event) => setArgumentsText(event.target.value)}
                   />
@@ -340,6 +386,7 @@ export function OnboardingWizard({
             <label>
               Availability
               <select
+                data-testid="onboarding-scope"
                 value={scope}
                 onChange={(event) =>
                   setScope(event.target.value as typeof scope)
@@ -353,6 +400,7 @@ export function OnboardingWizard({
               <label>
                 Workspace ID
                 <input
+                  data-testid="onboarding-workspace-id"
                   value={workspaceId}
                   onChange={(event) => setWorkspaceId(event.target.value)}
                 />
@@ -361,6 +409,7 @@ export function OnboardingWizard({
             {(sourceKind === "catalog" || sourceKind === "host") && (
               <label>
                 <input
+                  data-testid="onboarding-terms-complete"
                   type="checkbox"
                   checked={externalCompleted}
                   onChange={(event) =>
@@ -371,7 +420,11 @@ export function OnboardingWizard({
                 Capability Library
               </label>
             )}
-            <button type="button" onClick={buildPlan}>
+            <button
+              type="button"
+              data-testid="onboarding-create-plan"
+              onClick={buildPlan}
+            >
               Create read-only plan
             </button>
           </div>
@@ -412,11 +465,16 @@ export function OnboardingWizard({
                 ))}
               </div>
             )}
-            <button type="button" onClick={() => setStep("source")}>
+            <button
+              type="button"
+              data-testid="onboarding-review-back"
+              onClick={() => setStep("source")}
+            >
               Back
             </button>{" "}
             <button
               type="button"
+              data-testid="onboarding-review-continue"
               disabled={plan.state !== "reviewable"}
               onClick={continueToCredentials}
             >
@@ -450,10 +508,18 @@ export function OnboardingWizard({
             ) : (
               <p>This plan does not declare credential values.</p>
             )}
-            <button type="button" onClick={() => setStep("review")}>
+            <button
+              type="button"
+              data-testid="onboarding-credentials-back"
+              onClick={() => setStep("review")}
+            >
               Back to plan
             </button>{" "}
-            <button type="button" onClick={applyPlan}>
+            <button
+              type="button"
+              data-testid="onboarding-apply-plan"
+              onClick={applyPlan}
+            >
               Approve and apply exact plan
             </button>
           </div>
@@ -483,6 +549,7 @@ export function OnboardingWizard({
             <label>
               Workspace
               <select
+                data-testid="onboarding-workspace-select"
                 value={selectedWorkspaceId}
                 onChange={(event) => setSelectedWorkspaceId(event.target.value)}
               >
@@ -496,7 +563,11 @@ export function OnboardingWizard({
                 ))}
               </select>
             </label>
-            <button type="button" onClick={enableWorkspace}>
+            <button
+              type="button"
+              data-testid="onboarding-enable-workspace"
+              onClick={enableWorkspace}
+            >
               Make available in this workspace
             </button>
           </div>
@@ -524,7 +595,11 @@ export function OnboardingWizard({
               </p>
             )}
             {enablement && <p>{enablement.message}</p>}
-            <button type="button" onClick={resetAndClose}>
+            <button
+              type="button"
+              data-testid="onboarding-done"
+              onClick={resetAndClose}
+            >
               Done
             </button>
           </div>

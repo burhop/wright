@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mcpService } from "../../services/mcp-service";
@@ -129,5 +129,24 @@ describe("MissingCapabilityForm", () => {
     expect(
       screen.getByTestId("missing-capability-search-context"),
     ).toHaveTextContent("enclosure cooling");
+  });
+
+  it("traps focus and closes with Escape", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(
+      <MissingCapabilityForm
+        isOpen
+        searchContext={context}
+        onClose={onClose}
+      />,
+    );
+
+    const close = screen.getByTestId("missing-capability-close");
+    await waitFor(() => expect(close).toHaveFocus());
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(screen.getByTestId("missing-capability-submit")).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(onClose).toHaveBeenCalledOnce();
   });
 });

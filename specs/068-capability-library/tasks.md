@@ -242,18 +242,18 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 **Purpose**: Package the feature, document it, prove performance/accessibility/security/recovery, and run the authoritative merge process.
 
-- [ ] T106 [P] Add package-resource and standalone wheel/sdist assertions for schemas, trust metadata, catalog, and cryptographic dependency in `tests/packaging/test_wheel_contents.py` and `tests/test_public_python_distribution.py`
-- [ ] T107 [P] Add 1,000-record search and 100-server import bounded-performance tests in `packages/tool_registry/tests/test_capability_performance.py`
-- [ ] T108 [P] Add unsafe-channel redirect, size/timeout, no-ambient-credential, replay, and concurrent-writer security tests in `packages/tool_registry/tests/test_catalog_update_security.py`
-- [ ] T109 [P] Add local FastAPI plus deterministic child MCP system smoke for the complete add/validate/workspace journey in `tests/e2e/test_capability_onboarding.py`
-- [ ] T110 [P] Add live-local Capability Library Playwright smoke to `tests/ui-integration/capability-library.spec.ts` and `tests/ui-integration/mcp-onboarding.spec.ts`
-- [ ] T111 Add Onshape Labs source/evidence, signed update operation, rollback, import, compatibility, onboarding, and external-validation follow-up documentation in `docs/mcp-catalog/dynamic-engineering-catalog.md` and `docs/mcp-catalog/mcp-server-setup-recipes.md`
-- [ ] T112 Add administrator and engineer Capability Library journeys plus clear discovery/install/enable/invocation terminology in `docs/getting-started/capability-library.md` and `mkdocs.yml`
-- [ ] T113 Update `docs/engineering-capability-program-progress.md` with implementation checkpoints, test evidence, commits, rollback proof, and deferred Onshape live validation
-- [ ] T114 Run Ruff check/format, focused Python tests, catalog bundle verifiers, web ESLint/Prettier/TypeScript/Vitest, focused Playwright, packaging, strict docs, and `git diff --check`
-- [ ] T115 Re-run every acceptance step in `specs/068-capability-library/quickstart.md` and record deterministic versus deferred-live evidence in `docs/engineering-capability-program-progress.md`
-- [ ] T116 Re-run `speckit-analyze`, remediate all critical/high findings without changing the constitution, and record any justified medium/low deferrals in `specs/068-capability-library/analysis.md`
-- [ ] T117 Mark every completed task in `specs/068-capability-library/tasks.md` and require both checklists in `specs/068-capability-library/checklists/` to remain fully checked
+- [x] T106 [P] Add package-resource and standalone wheel/sdist assertions for schemas, trust metadata, catalog, and cryptographic dependency in `tests/packaging/test_wheel_contents.py` and `tests/test_public_python_distribution.py`
+- [x] T107 [P] Add 1,000-record search and 100-server import bounded-performance tests in `packages/tool_registry/tests/test_capability_performance.py`
+- [x] T108 [P] Add unsafe-channel redirect, size/timeout, no-ambient-credential, replay, and concurrent-writer security tests in `packages/tool_registry/tests/test_catalog_update_security.py`
+- [x] T109 [P] Add local FastAPI plus deterministic child MCP system smoke for the complete add/validate/workspace journey in `tests/e2e/test_capability_onboarding.py`
+- [x] T110 [P] Add live-local Capability Library Playwright smoke to `tests/ui-integration/capability-library.spec.ts` and `tests/ui-integration/mcp-onboarding.spec.ts`
+- [x] T111 Add Onshape Labs source/evidence, signed update operation, rollback, import, compatibility, onboarding, and external-validation follow-up documentation in `docs/mcp-catalog/dynamic-engineering-catalog.md` and `docs/mcp-catalog/mcp-server-setup-recipes.md`
+- [x] T112 Add administrator and engineer Capability Library journeys plus clear discovery/install/enable/invocation terminology in `docs/getting-started/capability-library.md` and `mkdocs.yml`
+- [x] T113 Update `docs/engineering-capability-program-progress.md` with implementation checkpoints, test evidence, commits, rollback proof, and deferred Onshape live validation
+- [x] T114 Run Ruff check/format, focused Python tests, catalog bundle verifiers, web ESLint/Prettier/TypeScript/Vitest, focused Playwright, packaging, strict docs, and `git diff --check`
+- [x] T115 Re-run every acceptance step in `specs/068-capability-library/quickstart.md` and record deterministic versus deferred-live evidence in `docs/engineering-capability-program-progress.md`
+- [x] T116 Re-run `speckit-analyze`, remediate all critical/high findings without changing the constitution, and record any justified medium/low deferrals in `specs/068-capability-library/analysis.md`
+- [x] T117 Mark every completed task in `specs/068-capability-library/tasks.md` and require both checklists in `specs/068-capability-library/checklists/` to remain fully checked
 - [ ] T118 Fetch current `origin/dev`, integrate it into `068-capability-library`, resolve conflicts, and rerun `scripts/check-dev-merge.sh` against the exact resulting tree
 - [ ] T119 Require a clean worktree, commit intentionally, push `068-capability-library`, merge with `--no-ff` into current `dev`, verify matching feature/merged tree hashes, push `dev`, and verify local/remote commit ids
 

@@ -7,7 +7,9 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from tool_registry import McpEngine
 from tool_registry.capability_services import CapabilityServiceDependencies
+from tool_registry.catalog_reconcile import reconcile_engineering_catalog
 from tool_registry.config_import import ImportPreviewRepository
+from tool_registry.db import get_server
 
 from api.main import app
 from api.routers.mcp import require_admin
@@ -176,3 +178,40 @@ def test_approve_and_apply_require_administrator(onboarding_client) -> None:
     )
     assert response.status_code == 403
     assert response.json()["message"] == "Administrator role required"
+
+
+def test_default_service_applies_reviewed_remote_plan_to_registry(tmp_path) -> None:
+    database = tmp_path / "default-onboarding.db"
+    upgrade_database(database)
+    reconcile_engineering_catalog(database)
+    service = McpApiService(
+        McpEngine(str(database)),
+        SimpleNamespace(),
+        CapabilityServiceDependencies(database_path=database, clock=lambda: NOW),
+    )
+    plan = service.create_install_plan(
+        capability_id="onshape-labs-featurescript-mcp",
+        import_preview_id=None,
+        draft_id=None,
+        draft_digest=None,
+        requested_scope="global_registered",
+        workspace_id=None,
+        independently_completed_license=True,
+        actor="administrator",
+    )
+    approved = service.approve_install_plan(
+        plan.plan_id, plan.plan_digest, actor="administrator"
+    )
+
+    run = service.apply_install_plan(
+        approved.plan_id,
+        approved.plan_digest,
+        actor="administrator",
+        trace_id="trace-default-onboarding",
+    )
+
+    assert run["state"] == "completed"
+    server = get_server(str(database), "onshape-labs-featurescript-mcp")
+    assert server is not None
+    assert server.is_installed is True
+    assert server.is_active is False

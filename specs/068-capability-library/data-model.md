@@ -103,6 +103,8 @@ Key fields from the existing `CatalogEntry` remain. New or clarified fields:
 | `kind` | enum | `mcp_server` in this loop; future model/template values reserved but not emitted |
 | `evidence_class` | enum | One of the nine classes in research Decision 4 |
 | `source_records` | EvidenceSource[] | At least one for official classes; authoritative vendor record required for official status |
+| `data_touched` | string[] | Data categories the capability may read or change; empty means the available evidence does not specify them |
+| `examples` | string[] | Reviewed engineering examples when available |
 | `transport` | enum | `stdio`, `streamable_http`, `sse`, `webmcp`, `none` |
 | `install_method` | existing enum | `remote-http`, `uvx`, `pip`, `npm`, `source`, etc. |
 | `command` | string[] or URL | Literal data; never executed directly from snapshot activation |
@@ -118,7 +120,7 @@ Read-only projection returned to the UI.
 
 | Field group | Source |
 |-------------|--------|
-| identity, description, evidence, requirements, sources | Active CatalogSnapshot |
+| identity, description, evidence, requirements, sources, data touched, examples, field provenance | Active CatalogSnapshot |
 | compatibility status/reasons/observation age | MachineCompatibilityObservation |
 | installed version/state, process status, explicit disablement | Existing `mcp_servers` row |
 | credential configured flags | Existing secret-boundary status service; booleans only |

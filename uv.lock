@@ -1815,6 +1815,7 @@ dependencies = [
 
 [package.optional-dependencies]
 runtime = [
+    { name = "cryptography" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "httpx-sse" },
@@ -1853,6 +1854,7 @@ dev = [
 requires-dist = [
     { name = "build", marker = "extra == 'workspace-surfaces-test'", specifier = ">=1.2,<2" },
     { name = "check-wheel-contents", marker = "extra == 'workspace-surfaces-test'", specifier = "==0.6.3" },
+    { name = "cryptography", marker = "extra == 'runtime'", specifier = ">=45,<50" },
     { name = "fastapi", marker = "extra == 'runtime'", specifier = ">=0.115,<1" },
     { name = "hatchling", marker = "extra == 'workspace-surfaces-test'", specifier = ">=1.27,<2" },
     { name = "httpx", marker = "extra == 'runtime'", specifier = ">=0.28,<1" },

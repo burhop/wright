@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import {
   mcpService,
   type MissingCapabilityReport,
@@ -46,18 +52,51 @@ export function MissingCapabilityForm({
     `missing-capability-${Date.now()}-${Math.random()}`,
   );
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      previousFocus.current = document.activeElement as HTMLElement | null;
       setDomain(searchContext.filters.domain || "cad");
       setError(null);
       setSubmitted(null);
       idempotencyKey.current = `missing-capability-${Date.now()}-${Math.random()}`;
-      window.setTimeout(() => titleRef.current?.focus(), 0);
+      window.setTimeout(() => closeButtonRef.current?.focus(), 0);
     }
   }, [isOpen, searchContext]);
 
   if (!isOpen) return null;
+
+  const closeAndRestore = () => {
+    onClose();
+    window.setTimeout(() => previousFocus.current?.focus(), 0);
+  };
+
+  const keepFocusInDialog = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeAndRestore();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+      ) || [],
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -93,9 +132,11 @@ export function MissingCapabilityForm({
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="missing-capability-title"
+      onKeyDown={keepFocusInDialog}
       style={{
         position: "fixed",
         inset: 0,
@@ -124,8 +165,10 @@ export function MissingCapabilityForm({
             Report a missing capability
           </h2>
           <button
+            ref={closeButtonRef}
             type="button"
-            onClick={onClose}
+            data-testid="missing-capability-close"
+            onClick={closeAndRestore}
             aria-label="Close missing capability form"
           >
             Close
@@ -149,7 +192,11 @@ export function MissingCapabilityForm({
               Reference {submitted.report_id}. Its state is {submitted.state};
               it is not an installable capability.
             </p>
-            <button type="button" onClick={onClose}>
+            <button
+              type="button"
+              data-testid="missing-capability-done"
+              onClick={closeAndRestore}
+            >
               Done
             </button>
           </div>
@@ -158,6 +205,7 @@ export function MissingCapabilityForm({
             <label>
               Capability or MCP name
               <input
+                data-testid="missing-capability-name"
                 required
                 maxLength={200}
                 value={name}
@@ -167,6 +215,7 @@ export function MissingCapabilityForm({
             <label>
               Vendor or publisher
               <input
+                data-testid="missing-capability-vendor"
                 required
                 maxLength={200}
                 value={vendor}
@@ -176,6 +225,7 @@ export function MissingCapabilityForm({
             <label>
               Public source URL
               <input
+                data-testid="missing-capability-source-url"
                 type="url"
                 maxLength={2048}
                 value={sourceUrl}
@@ -185,6 +235,7 @@ export function MissingCapabilityForm({
             <label>
               Engineering domain
               <select
+                data-testid="missing-capability-domain"
                 value={domain}
                 onChange={(event) => setDomain(event.target.value)}
               >
@@ -198,6 +249,7 @@ export function MissingCapabilityForm({
             <label>
               What engineering task should it perform?
               <textarea
+                data-testid="missing-capability-task"
                 required
                 maxLength={2000}
                 value={expectedTask}
@@ -207,6 +259,7 @@ export function MissingCapabilityForm({
             <label>
               Required platform
               <input
+                data-testid="missing-capability-platform"
                 maxLength={200}
                 value={platform}
                 onChange={(event) => setPlatform(event.target.value)}
@@ -216,6 +269,7 @@ export function MissingCapabilityForm({
             <label>
               Host application
               <input
+                data-testid="missing-capability-host"
                 maxLength={200}
                 value={hostApplication}
                 onChange={(event) => setHostApplication(event.target.value)}
@@ -225,13 +279,18 @@ export function MissingCapabilityForm({
             <label>
               Notes
               <textarea
+                data-testid="missing-capability-notes"
                 maxLength={4000}
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
               />
             </label>
             {error && <p role="alert">{error}</p>}
-            <button type="submit" disabled={submitting}>
+            <button
+              type="submit"
+              data-testid="missing-capability-submit"
+              disabled={submitting}
+            >
               {submitting ? "Saving report…" : "Submit review request"}
             </button>
           </form>

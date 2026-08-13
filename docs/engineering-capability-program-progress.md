@@ -1,6 +1,6 @@
 # Wright Engineering Capability Program Progress
 
-**Last updated**: 2026-08-12
+**Last updated**: 2026-08-13
 **Current loop**: 068 - Capability Library and MCP onboarding
 **Program state**: Active; Gate E closed; no `main` merge or release authorized.
 
@@ -25,11 +25,12 @@
 - [x] `speckit-specify`: `spec.md` and specification quality checklist completed; all checklist items pass.
 - [x] `speckit-clarify`: no critical ambiguity; the program's safest reversible defaults cover scope, roles, trust, lifecycle, error, and recovery behavior.
 - [x] `speckit-plan`: research, plan, data model, API/schema/UI contracts, Gate A record, and quickstart drafted.
-- [x] `speckit-checklist`: 40 UX, security, compatibility, recovery, and testability requirements-quality checks pass.
+- [x] `speckit-checklist`: 56 UX, security, compatibility, recovery, and testability requirements-quality checks pass.
 - [x] `speckit-tasks`: 119 dependency-ordered tasks with story checkpoints, test-first slices, traceability, hardening, and merge verification.
-- [x] `speckit-analyze` and remediation: initial two high/two medium findings repaired; rerun has 45/45 requirement coverage, zero critical/high findings, and no constitution conflict.
-- [ ] `speckit-implement`
-- [ ] Focused, integration, UI, packaging, docs, and full dev gate
+- [x] `speckit-analyze` and remediation: final rerun has 45/45 requirement coverage, zero critical/high findings, and no constitution conflict. The production adapter seam, complete filter/detail contract, installed precondition, three-backend journey, and dialog accessibility findings were repaired before the rerun.
+- [x] `speckit-implement`: T001-T117 complete; merge-only tasks T118-T119 remain.
+- [x] Focused, integration, UI, packaging, and docs verification
+- [ ] Full dev gate
 - [ ] Push feature, merge to `dev`, push `dev`, verify synchronization
 
 ### Gate A decision
@@ -87,10 +88,10 @@
 
 - Added bounded, duplicate-safe Claude, VS Code, and plain JSON import previews that normalize configuration without executing commands, expanding variables, contacting endpoints, registering servers, retaining pasted source, or exposing credential values.
 - Added immutable, expiry- and digest-bound Install Plans for catalog, remote endpoint, local package/command, and host-bridge sources. Plans show exact requirements, steps, effects, validation, rollback, approval gates, license state, and external-term blockers; Wright never accepts vendor terms.
-- Added injected local, remote, and host-bridge adapter boundaries with fail-closed defaults plus idempotent apply, structured progress, cancellation, validation, rollback, and explicit residue reporting.
+- Added injected local, remote, and host-bridge adapter boundaries plus idempotent apply, structured progress, cancellation, validation, rollback, and explicit residue reporting.
 - Added administrator approval/apply/cancel APIs and an accessible multi-source onboarding wizard covering normalization, current-machine observations, exact plan review, credential boundaries, apply progress, completion, changed-plan conflicts, and failure states.
 - Focused evidence: 22 parser/security/plan/adapter/API tests passed; 8 web component/layout tests passed; production web build, TypeScript, ESLint, Ruff, Prettier, and Python format checks passed; all three mocked onboarding Playwright journeys passed.
-- Default production adapters remain fail-closed until a reviewed capability-specific backend is configured. Tests use deterministic fakes and did not install software, contact vendors, accept licenses, or mutate proprietary hosts.
+- Production local-package, local-command, and remote-endpoint plans now have reversible registry-backed application adapters; normal validation uses Wright's existing MCP lifecycle. Proprietary host effects remain allowlisted and fail closed until a reviewed host adapter is configured. Tests use deterministic fixtures and did not install software, contact vendors, accept licenses, or mutate proprietary hosts.
 
 ### Implementation checkpoint 6 - legacy and user-state preservation
 
@@ -104,7 +105,7 @@
 ### Implementation checkpoint 7 - validation and workspace enablement
 
 - Added append-only, digest-bound local validation evidence with explicit protocol-step results, failure/blocked/stale states, schema and server-revision binding, credential-binding digests, limitations, and redacted reason codes.
-- Added deterministic MCP initialize, initialized notification, tools/list, optional catalog-approved read-only probe, cancellation, and gateway-visibility validation through injected lifecycle boundaries. Production remains fail-closed when no reviewed client is configured.
+- Added deterministic MCP initialize, initialized notification, tools/list, optional catalog-approved read-only probe, cancellation, and gateway-visibility validation through injected lifecycle boundaries. The production default delegates to Wright's real MCP engine; tests can inject a deterministic client.
 - Added engineer/administrator validation and exact single-workspace enablement APIs. Enablement requires current passed evidence for the active catalog snapshot, machine observation, capability schema, server revision, and configured credential binding.
 - Extended onboarding and capability details with configured/not-configured credential booleans, local evidence, workspace selection, enabled-workspace visibility, and an explicit warning that availability never grants invocation or destructive-action authority.
 - Added negative secret-boundary scans across snapshots, imports, plans, evidence, workspaces, workflows, database rows, and serialized logs.
@@ -118,9 +119,46 @@
 - Added role enforcement and redacted validation failures. Credential-bearing URLs and secret-like context fields are rejected without persisting or echoing their values.
 - Focused evidence: 5 repository tests and 23 report/neighboring API tests passed; 8 report/library/layout component tests passed; production web build passed; all six mocked Capability Library Playwright journeys passed, including empty-result reporting with no browser prompts.
 
+### Implementation checkpoint 9 - cross-cutting hardening
+
+- Added public wheel/sdist assertions for the catalog, JSON contracts, public-only trust metadata, and the explicit `cryptography` dependency. The standalone distribution can verify signed catalogs without relying on Wright's monorepo dependency graph.
+- Added bounded 1,000-record discovery and 100-server import performance coverage plus hostile update-channel coverage for redirects, size/timeout limits, ambient credentials, replay, and concurrent writers.
+- Completed every promised discovery filter and detail group, including lifecycle, platform/architecture, maturity, evidence, compatibility, risk, locality, host, validation, installation, field provenance, data touched, reviewed examples, supported-platform claims, and bounded validation history.
+- Added an installed/connected precondition before validation. Workspace enablement still requires current digest-bound passed evidence and never grants invocation authority.
+- Added reversible default registry adapters for local-package, local-command, and remote-endpoint plans. Adapter-reported failure rolls back; local changes restore prior state, newly imported remote rows are deleted, and residue is surfaced rather than hidden. Proprietary host effects remain separately reviewed and fail closed.
+- Added stable IDs to feature-owned controls and complete Escape, focus-trap, and focus-restore behavior to all dialogs. Mocked browser acceptance now completes apply, validation, and workspace-A-only enablement for local-package, remote-endpoint, and host-bridge backends.
+- Added an actual local FastAPI plus deterministic child MCP system smoke and live-local browser annotations without turning external services into a routine gate.
+- Feature implementation commits before final hardening: `eaf5cc1`, `92c47dd`, `8347adb`, `5f29566`, `ac4903c`, `16564fb`, `13f2e73`, and `60166c2`.
+
+Focused evidence against the hardened tree:
+
+- 75 capability/package/API/system Python tests passed.
+- 285 web component/service tests passed.
+- 10 focused mocked Playwright journeys passed.
+- Linux AMD64, Linux ARM64/GB10, and Windows AMD64 MCP bundle verifiers passed.
+- Four standalone packaging tests passed.
+- Ruff, Python format, ESLint, Prettier, TypeScript, production web build, strict MkDocs, and `git diff --check` passed. ESLint retained three pre-existing warnings and no errors.
+
+Rollback proof is deterministic: signed catalog activation restores the named prior snapshot; failed adapter effects invoke rollback; local registry rows restore their prior values; newly imported remote rows are removed; cancellation records residue explicitly; and no routine test writes credentials, accepts a license, contacts Onshape, mutates a proprietary host, or actuates hardware.
+
+### Quickstart acceptance rerun
+
+| Quickstart section | Evidence status | Result |
+|---|---|---|
+| 1. Bundled catalog | Deterministic | Passed offline discovery, source labeling, compatibility/recovery reasons, and zero-process/zero-user-state mutation tests. |
+| 2. Signed update and rollback | Deterministic | Passed activation, restart, rollback, adversarial-envelope, interrupted-write, and user-state preservation tests. |
+| 3. Onshape evidence | Deterministic metadata | Passed distinct identity, vendor source, official-preview, prerequisite, and unvalidated-limitation checks; no endpoint contact occurred. |
+| 4. Safe configuration import | Deterministic | Passed Claude, VS Code, plain-server, malformed, mixed, duplicate, secret-bearing, shell-like, and oversized input coverage with zero preview effects. |
+| 5. Exact preflights | Deterministic | Passed local-package, remote-endpoint, host-bridge, missing-requirement, stale-observation, blocked-record, digest, and material-change coverage. |
+| 6. Apply, validate, workspace | Deterministic | Passed all three backends through ordered effects, MCP lifecycle validation, workspace-A-only availability, no invocation authority, and rollback/residue checks. |
+| 7. User journey/accessibility | Deterministic | Passed component states, keyboard journeys, focus behavior, live regions, non-color status text, and serious/critical automated accessibility scans. |
+| Optional Onshape live validation | Deferred external | Requires the user to accept external terms and provide permitted credentials. It remains explicitly unvalidated and is not a normal gate. |
+
+SC-009's five-person moderated usability target also remains unvalidated until the study occurs. Automated journey and accessibility evidence is not represented as a substitute for human study evidence.
+
 ### Next checkpoint
 
-Complete packaging, bounded-performance, security, local system smoke, documentation, accessibility, quickstart, and authoritative merge-gate hardening for Loop 068.
+Fetch current `origin/dev`, integrate it into the feature branch, run the authoritative dev gate against the exact tree, then push and merge Loop 068 only if feature and merged tree hashes match.
 
 ## Program guardrails
 

@@ -86,6 +86,21 @@ def latest_capability_validation_evidence(
     return _evidence_from_row(row) if row else None
 
 
+def list_capability_validation_evidence(
+    database_path: str | Path, server_id: str, *, limit: int = 20
+) -> list[CapabilityValidationEvidence]:
+    """Return a bounded newest-first projection of append-only local history."""
+    if limit < 1 or limit > 100:
+        raise ValueError("validation evidence history limit must be between 1 and 100")
+    with _connection(database_path) as connection:
+        rows = connection.execute(
+            """SELECT evidence_json FROM mcp_validation_evidence
+               WHERE server_id=? ORDER BY observed_at DESC, evidence_id DESC LIMIT ?""",
+            (server_id, limit),
+        ).fetchall()
+    return [_evidence_from_row(row) for row in rows]
+
+
 def validation_staleness_reasons(
     evidence: CapabilityValidationEvidence,
     *,

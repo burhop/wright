@@ -1733,6 +1733,45 @@ Known notes:
   referenced `PS1`. Export `/root/.bun/bin` directly in noninteractive
   validation scripts.
 
+## Onshape Labs FeatureScript MCP (`onshape-labs-featurescript-mcp`)
+
+Vendor evidence:
+
+- https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad
+
+Published endpoint:
+
+```text
+https://fs-mcp.labs.onshape.app/mcp
+```
+
+Wright status:
+
+- Evidence class: `official_preview`.
+- Transport: `streamable_http`.
+- Discovery and compatibility checks are offline/local and do not contact the
+  endpoint.
+- Onshape account, App Store subscription, license, and terms steps must be
+  completed independently by the user; Wright must not accept them.
+- Live protocol and FeatureScript validation is deferred because no approved
+  subscription or credentials were supplied during Loop 068.
+
+Future authorized validation sequence:
+
+1. Record independent completion of the external Onshape terms gate.
+2. Store required credential values only through Wright's secret provider;
+   UI, plans, evidence, workflows, logs, and exports retain booleans/digests.
+3. Review the exact remote-endpoint Install Plan and its network effect.
+4. Initialize, send `notifications/initialized`, and list tools through the
+   existing Wright lifecycle/gateway boundary.
+5. Run only a vendor-documented, catalog-approved read-only FeatureScript probe
+   before any mutating operation is considered.
+6. Enable the capability for one selected workspace. This does not authorize
+   any individual tool invocation.
+
+Do not copy the community Onshape credential names or validation claims onto
+this official-preview record. They are separate servers.
+
 ## Onshape MCP (`onshape-mcp-hedless`)
 
 Source: https://github.com/hedless/onshape-mcp

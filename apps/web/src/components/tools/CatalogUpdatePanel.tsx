@@ -150,6 +150,7 @@ export function CatalogUpdatePanel({
         >
           <button
             type="button"
+            data-testid="catalog-check-updates"
             disabled={!hasChannel || busy}
             onClick={checkForUpdates}
           >
@@ -157,6 +158,7 @@ export function CatalogUpdatePanel({
           </button>
           <button
             type="button"
+            data-testid="catalog-rollback"
             disabled={!state?.previous_snapshot_id || busy}
             onClick={rollback}
           >
@@ -191,7 +193,12 @@ export function CatalogUpdatePanel({
             changed · {preview.diff.summary.removed} removed
           </p>
           <p>{preview.risk_summary.note}</p>
-          <button type="button" disabled={busy} onClick={activate}>
+          <button
+            type="button"
+            data-testid="catalog-activate-update"
+            disabled={busy}
+            onClick={activate}
+          >
             {operation === "activating" ? "Activating…" : "Activate update"}
           </button>
         </div>
@@ -199,7 +206,9 @@ export function CatalogUpdatePanel({
 
       {state && state.history.length > 0 && (
         <details style={{ marginTop: "var(--space-lg)" }}>
-          <summary>Catalog history</summary>
+          <summary data-testid="catalog-history-toggle">
+            Catalog history
+          </summary>
           <ol aria-label="Catalog history">
             {state.history.map((item) => (
               <li key={item.activation_id}>

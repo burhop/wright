@@ -442,6 +442,20 @@
       "title": "Capability Summary",
       "type": "array"
     },
+    "data_touched": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Data Touched",
+      "type": "array"
+    },
+    "examples": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Examples",
+      "type": "array"
+    },
     "source_records": {
       "items": {
         "$ref": "#/$defs/CatalogSourceRecord"

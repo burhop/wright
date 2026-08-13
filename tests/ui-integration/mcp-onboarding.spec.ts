@@ -165,8 +165,11 @@ test.describe("Guided MCP onboarding", () => {
       const backend = body.capability_id
         ? body.capability_id.includes("solid-edge")
           ? "host_bridge"
-          : "remote_endpoint"
+          : body.capability_id.includes("nvidia-elements")
+            ? "local_package"
+            : "remote_endpoint"
         : importedBackend;
+      importedBackend = backend;
       await route.fulfill({ json: plan(backend, body.capability_id) });
     });
     await page.route("**/api/mcp/install-plans/*/approve", async (route) => {
@@ -312,6 +315,59 @@ test.describe("Guided MCP onboarding", () => {
     }
   });
 
+  test("completes local-package, remote-endpoint, and host-bridge journeys", async ({
+    page,
+  }) => {
+    const journeys = [
+      {
+        source: "catalog",
+        capability: "nvidia-elements-mcp",
+        backend: "local_package",
+      },
+      { source: "remote", backend: "remote_endpoint" },
+      {
+        source: "host",
+        capability: "solid-edge-mcp",
+        backend: "host_bridge",
+      },
+    ] as const;
+
+    for (const journey of journeys) {
+      await page.goto("/tool-registry");
+      await page.getByRole("button", { name: "Add capability" }).click();
+      await page.getByLabel("Source").selectOption(journey.source);
+      if ("capability" in journey) {
+        await page.getByLabel("Capability ID").fill(journey.capability);
+        await page.getByLabel(/independently completed/).check();
+      } else {
+        await page
+          .getByLabel("HTTPS MCP endpoint")
+          .fill("https://example.invalid/mcp");
+      }
+
+      await page.getByRole("button", { name: "Create read-only plan" }).click();
+      await expect(page.getByTestId("onboarding-plan-review")).toContainText(
+        journey.backend,
+      );
+      await page
+        .getByRole("button", { name: "Continue to credentials" })
+        .click();
+      await page
+        .getByRole("button", { name: "Approve and apply exact plan" })
+        .click();
+      await expect(page.getByText("Choose one workspace")).toBeVisible();
+      await expect(page.getByLabel("Workspace")).toHaveValue("workspace-a");
+      await page
+        .getByRole("button", { name: "Make available in this workspace" })
+        .click();
+      await expect(page.getByText("Onboarding completed")).toBeVisible();
+      await expect(
+        page.getByText(/Individual tool invocation remains separate/),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Done" }).click();
+    }
+  });
+
   test("shows a changed-plan conflict and returns to review", async ({
     page,
   }) => {
@@ -338,5 +394,35 @@ test.describe("Guided MCP onboarding", () => {
       "install_plan_invalidated",
     );
     await expect(page.getByText("Review exact plan")).toBeVisible();
+  });
+});
+
+test.describe("Live local guided onboarding", () => {
+  test("opens the real read-only source step without applying effects @live", async ({
+    page,
+  }) => {
+    const effectRequests: string[] = [];
+    page.on("request", (request) => {
+      if (
+        request.method() !== "GET" &&
+        /\/(apply|install|activate|enable)$/.test(
+          new URL(request.url()).pathname,
+        )
+      ) {
+        effectRequests.push(request.url());
+      }
+    });
+    await page.goto("/tool-registry");
+    await page.getByRole("button", { name: "Add capability" }).click();
+    const dialog = page.getByRole("dialog", {
+      name: "Add an engineering capability",
+    });
+    await expect(dialog.getByLabel("Source")).toHaveValue("catalog");
+    await expect(dialog.getByLabel("Capability ID")).toBeVisible();
+    await expect(dialog).toContainText(
+      "Nothing is installed, connected, or enabled during this step",
+    );
+    await dialog.getByRole("button", { name: "Close onboarding" }).click();
+    expect(effectRequests).toEqual([]);
   });
 });

@@ -89,7 +89,11 @@ packages/tool_registry/src/tool_registry/
 |-- compatibility.py              # read-only machine observations
 |-- install_plans.py              # immutable exact preflight and approval digest
 |-- onboarding.py                 # adapter lifecycle orchestration
+|-- registry_onboarding.py        # reversible reviewed registry application
+|-- installers/                   # deterministic local/remote/host adapter boundaries
+|-- missing_reports.py            # user-owned non-catalog review requests
 |-- validation_evidence.py        # validation state transitions and persistence
+|-- validation_runner.py          # MCP protocol and optional read-only probe evidence
 `-- catalog/
     |-- engineering-catalog.yaml  # final offline recovery snapshot, including Onshape Labs
     |-- schema.json
@@ -118,6 +122,7 @@ tests/ui-integration/
 `-- mcp-onboarding.spec.ts
 
 tests/packaging/
+tests/e2e/test_capability_onboarding.py
 docs/engineering-capability-program-progress.md
 docs/mcp-catalog/
 ```

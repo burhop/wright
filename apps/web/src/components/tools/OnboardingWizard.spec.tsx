@@ -401,4 +401,29 @@ describe("OnboardingWizard", () => {
     );
     expect(screen.getByText("Review exact plan")).toBeVisible();
   });
+
+  it("traps keyboard focus, closes with Escape, and restores the trigger", async () => {
+    const user = userEvent.setup();
+    const trigger = document.createElement("button");
+    trigger.textContent = "Open onboarding";
+    document.body.appendChild(trigger);
+    trigger.focus();
+    const close = vi.fn();
+    render(<OnboardingWizard isOpen onClose={close} />);
+
+    const closeButton = screen.getByRole("button", {
+      name: "Close onboarding",
+    });
+    expect(closeButton).toHaveFocus();
+    await user.tab({ shift: true });
+    expect(
+      screen.getByRole("button", { name: "Create read-only plan" }),
+    ).toHaveFocus();
+    await user.tab();
+    expect(closeButton).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(close).toHaveBeenCalledOnce();
+    await waitFor(() => expect(trigger).toHaveFocus());
+    trigger.remove();
+  });
 });
