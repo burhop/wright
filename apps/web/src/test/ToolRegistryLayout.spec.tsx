@@ -29,7 +29,6 @@ describe("ToolRegistryPage capability layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useTools as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      registerCustomServer: vi.fn(),
       fetchServersAndTools: vi.fn(),
     });
     vi.mocked(mcpService.getCapabilities).mockResolvedValue({
@@ -68,7 +67,7 @@ describe("ToolRegistryPage capability layout", () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Capability filters")).toBeInTheDocument();
     expect(screen.getByTestId("tool-registry-register-btn")).toHaveTextContent(
-      "Add custom MCP",
+      "Add capability",
     );
     expect(
       await screen.findByTestId("capability-empty-state"),

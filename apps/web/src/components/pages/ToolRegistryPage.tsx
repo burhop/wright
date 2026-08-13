@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import useLogger from "../../hooks/useLogger";
 import { mcpService } from "../../services/mcp-service";
 import { useTools } from "../../store/tools";
-import { AddToolModal } from "../tools/AddToolModal";
 import { CapabilityLibrary } from "../tools/CapabilityLibrary";
 import { CatalogUpdatePanel } from "../tools/CatalogUpdatePanel";
+import { OnboardingWizard } from "../tools/OnboardingWizard";
 
 export function ToolRegistryPage() {
   const logger = useLogger("ToolRegistryPage");
-  const { registerCustomServer, fetchServersAndTools } = useTools();
+  const { fetchServersAndTools } = useTools();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
 
@@ -62,7 +62,7 @@ export function ToolRegistryPage() {
             cursor: "pointer",
           }}
         >
-          Add custom MCP
+          Add capability
         </button>
         <button
           type="button"
@@ -94,11 +94,11 @@ export function ToolRegistryPage() {
         />
         <CapabilityLibrary refreshToken={refreshToken} />
       </main>
-      <AddToolModal
+      <OnboardingWizard
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSave={async (name, type, command, category) => {
-          await registerCustomServer(name, type, command, category);
+        onCompleted={() => {
+          void fetchServersAndTools();
           setRefreshToken((value) => value + 1);
         }}
       />

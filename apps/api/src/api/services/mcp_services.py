@@ -36,6 +36,18 @@ from tool_registry.compatibility import (
     observe_machine,
     save_machine_observation,
 )
+from tool_registry.config_import import ImportPreviewRepository
+from tool_registry.install_plans import (
+    InstallPlanError,
+    approve_install_plan,
+    create_install_plan,
+    get_install_plan,
+)
+from tool_registry.onboarding import (
+    apply_install_plan,
+    cancel_onboarding_run,
+    get_onboarding_run,
+)
 from tool_registry.services import (
     McpConflictError,
     McpInvalidOperationError,
@@ -67,6 +79,10 @@ class McpApiService:
         self.capability_dependencies = (
             capability_dependencies
             or CapabilityServiceDependencies.for_database(engine.db_path)
+        )
+        self.import_previews = (
+            self.capability_dependencies.import_preview_repository
+            or ImportPreviewRepository()
         )
 
     @property
@@ -105,11 +121,15 @@ class McpApiService:
         executables = {
             dependency for entry in entries for dependency in entry.dependencies.system
         }
-        return observe_machine(
+        observation = observe_machine(
             clock=self.capability_dependencies.clock,
             required_executables=executables,
             host_detectors=self.capability_dependencies.machine_detectors,
         )
+        save_machine_observation(
+            self.capability_dependencies.database_path, observation
+        )
+        return observation
 
     def _capability_views(self, entries, observation):
         return build_capability_views(
@@ -283,6 +303,97 @@ class McpApiService:
             actor=actor,
             now=self.capability_dependencies.clock(),
             trace_id=trace_id,
+        )
+
+    def preview_import(self, configuration: str):
+        return self.import_previews.create(
+            configuration, now=self.capability_dependencies.clock()
+        )
+
+    def create_install_plan(
+        self,
+        *,
+        capability_id: str | None,
+        import_preview_id: str | None,
+        draft_id: str | None,
+        draft_digest: str | None,
+        requested_scope: str,
+        workspace_id: str | None,
+        independently_completed_license: bool,
+        actor: str,
+    ):
+        entries, snapshot = self._capability_context()
+        entry = (
+            next((item for item in entries if item.id == capability_id), None)
+            if capability_id
+            else None
+        )
+        import_draft = None
+        if import_preview_id:
+            preview = self.import_previews.get(
+                import_preview_id, now=self.capability_dependencies.clock()
+            )
+            import_draft = next(
+                (item for item in preview["drafts"] if item["draft_id"] == draft_id),
+                None,
+            )
+            if import_draft is None:
+                raise McpNotFoundError("Imported MCP draft was not found.")
+            if import_draft["draft_digest"] != draft_digest:
+                raise InstallPlanError(
+                    "import_draft_digest_mismatch",
+                    "Imported MCP draft digest does not match.",
+                )
+        if capability_id and entry is None:
+            raise McpNotFoundError(f"Capability '{capability_id}' not found.")
+        observation = self._machine_observation(entries)
+        return create_install_plan(
+            self.db_path,
+            snapshot_id=snapshot.snapshot_id,
+            observation=observation,
+            actor=actor,
+            requested_scope=requested_scope,
+            workspace_id=workspace_id,
+            entry=entry,
+            import_draft=import_draft,
+            independently_completed_license=independently_completed_license,
+            now=self.capability_dependencies.clock(),
+        )
+
+    def get_install_plan(self, plan_id: str):
+        return get_install_plan(self.db_path, plan_id)
+
+    def approve_install_plan(self, plan_id: str, digest: str, *, actor: str):
+        return approve_install_plan(
+            self.db_path,
+            plan_id,
+            digest,
+            actor=actor,
+            now=self.capability_dependencies.clock(),
+        )
+
+    def apply_install_plan(
+        self, plan_id: str, digest: str, *, actor: str, trace_id: str
+    ):
+        return apply_install_plan(
+            self.db_path,
+            plan_id,
+            digest,
+            adapters=dict(self.capability_dependencies.onboarding_adapters),
+            actor=actor,
+            now=self.capability_dependencies.clock(),
+            trace_id=trace_id,
+        )
+
+    def get_onboarding_run(self, run_id: str):
+        return get_onboarding_run(self.db_path, run_id)
+
+    def cancel_onboarding_run(self, run_id: str):
+        return cancel_onboarding_run(
+            self.db_path,
+            run_id,
+            adapters=dict(self.capability_dependencies.onboarding_adapters),
+            now=self.capability_dependencies.clock(),
         )
 
     def register_server(self, body):

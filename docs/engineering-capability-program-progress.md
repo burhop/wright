@@ -83,9 +83,18 @@
 - Focused evidence: 20 signing/snapshot/diff/activation/fetch/API tests passed; 10 component/layout tests passed; production web build and TypeScript/lint/Prettier checks passed; five mocked Playwright journeys passed, including activation/restart projection/rollback and zero install requests.
 - The signed update flow changes reviewed metadata only. It does not install, enable, start, authenticate to, or contact any catalog capability.
 
+### Implementation checkpoint 5 - guided MCP onboarding
+
+- Added bounded, duplicate-safe Claude, VS Code, and plain JSON import previews that normalize configuration without executing commands, expanding variables, contacting endpoints, registering servers, retaining pasted source, or exposing credential values.
+- Added immutable, expiry- and digest-bound Install Plans for catalog, remote endpoint, local package/command, and host-bridge sources. Plans show exact requirements, steps, effects, validation, rollback, approval gates, license state, and external-term blockers; Wright never accepts vendor terms.
+- Added injected local, remote, and host-bridge adapter boundaries with fail-closed defaults plus idempotent apply, structured progress, cancellation, validation, rollback, and explicit residue reporting.
+- Added administrator approval/apply/cancel APIs and an accessible multi-source onboarding wizard covering normalization, current-machine observations, exact plan review, credential boundaries, apply progress, completion, changed-plan conflicts, and failure states.
+- Focused evidence: 22 parser/security/plan/adapter/API tests passed; 8 web component/layout tests passed; production web build, TypeScript, ESLint, Ruff, Prettier, and Python format checks passed; all three mocked onboarding Playwright journeys passed.
+- Default production adapters remain fail-closed until a reviewed capability-specific backend is configured. Tests use deterministic fakes and did not install software, contact vendors, accept licenses, or mutate proprietary hosts.
+
 ### Next checkpoint
 
-Implement guided multi-source MCP import and exact digest-bound onboarding plans with no parsing or preflight effects.
+Prove additive migration and catalog activation/restart/rollback preserve every legacy and user-owned MCP state class.
 
 ## Program guardrails
 

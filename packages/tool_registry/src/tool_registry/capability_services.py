@@ -27,6 +27,7 @@ class CapabilityServiceDependencies:
     catalog_fetcher: Callable[[ApprovedCatalogChannel], dict[str, Any]] | None = None
     machine_detectors: Mapping[str, MachineDetector] = field(default_factory=dict)
     onboarding_adapters: Mapping[str, OnboardingAdapter] = field(default_factory=dict)
+    import_preview_repository: Any | None = None
 
     @classmethod
     def for_database(cls, database_path: str | Path) -> "CapabilityServiceDependencies":

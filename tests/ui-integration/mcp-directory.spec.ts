@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 const liveExpect = expect.configure({ timeout: 15_000 });
 
 test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
-  test("should register, list, toggle, and delete a custom MCP server", async ({
+  test("previews an advanced local MCP without registering it", async ({
     page,
   }) => {
     test.setTimeout(90_000);
@@ -18,42 +18,25 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
       page.getByRole("heading", { name: "CalculiX Simulation" }),
     ).toBeVisible();
 
-    // 3. Click custom registration button
-    await page.getByRole("button", { name: "Add custom MCP" }).click();
-    await liveExpect(page.getByTestId("add-tool-modal-overlay")).toBeVisible();
+    // 3. Open the guided flow and choose an advanced local command.
+    await page.getByRole("button", { name: "Add capability" }).click();
+    await liveExpect(page.getByRole("dialog")).toBeVisible();
+    await page.getByLabel("Source").selectOption("local");
 
-    // 4. Fill form inputs
+    // 4. Fill only literal, non-shell fields.
     const serverName = `Playwright Test CLI - ${Date.now()}`;
-    await page.locator("#mcp-name").fill(serverName);
-    await page.locator("#mcp-type").selectOption("stdio");
-    await page.locator("#mcp-category").selectOption("simulation");
-    await page.locator("#mcp-command").fill("python scripts/dummy.py");
+    await page.getByLabel("Display name").fill(serverName);
+    await page.getByLabel("Literal executable").fill("python");
+    await page.getByLabel("Literal arguments").fill("scripts/dummy.py");
 
-    // 5. Submit registration
-    await page.getByRole("button", { name: "Register", exact: true }).click();
+    // 5. Preflight is read-only and imported sources remain blocked until the
+    // independent publisher/license review is complete.
+    await page.getByRole("button", { name: "Create read-only plan" }).click();
+    await liveExpect(page.getByText("Review exact plan")).toBeVisible();
+    await liveExpect(page.getByText("Plan is blocked")).toBeVisible();
 
-    // 6. Verify card is displayed in the list
-    await liveExpect(
-      page.getByRole("heading", { name: serverName }),
-    ).toBeVisible();
-
-    // 7. Test removing/deleting the custom server card
-    // Set up a listener for the window confirmation prompt
-    page.once("dialog", async (dialog) => {
-      liveExpect(dialog.message()).toContain("Are you sure you want to remove");
-      await dialog.accept();
-    });
-
-    // Click remove link on our newly created card
-    const card = page
-      .locator('[data-testid^="server-card-"]')
-      .filter({ hasText: serverName });
-    await card.getByRole("button", { name: /Show details/ }).click();
-    const removeBtn = card.getByRole("button", { name: "Remove" });
-    await liveExpect(removeBtn).toBeVisible();
-    await removeBtn.click();
-
-    // Verify card is removed from directory
+    // 6. The preview did not register a server row.
+    await page.getByRole("button", { name: "Close onboarding" }).click();
     await liveExpect(
       page.getByRole("heading", { name: serverName }),
     ).not.toBeVisible();

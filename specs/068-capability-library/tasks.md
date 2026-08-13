@@ -130,30 +130,30 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Tests for User Story 3
 
-- [ ] T054 [P] [US3] Write Claude `mcpServers`, VS Code `servers`/`inputs`, and plain-server grammar tests in `packages/tool_registry/tests/test_config_import.py`
-- [ ] T055 [P] [US3] Write adversarial secret, header, shell, duplicate, mixed-validity, unknown-field, invalid-URL, oversized, and no-persistence tests in `packages/tool_registry/tests/test_config_import_security.py`
-- [ ] T056 [P] [US3] Write Install Plan completeness, canonical digest, expiry, license/terms state and no-Wright-acceptance blocker, material-change, and no-secret tests in `packages/tool_registry/tests/test_install_plans.py`
-- [ ] T057 [P] [US3] Write local-package, remote-endpoint, host-bridge, and advanced-local-command adapter contract/rollback/residue tests in `packages/tool_registry/tests/test_onboarding_adapters.py`
-- [ ] T058 [P] [US3] Write import preview, plan creation, approve/apply, stale/conflict, role, and redaction API tests in `apps/api/tests/test_mcp_onboarding_api.py`
-- [ ] T059 [P] [US3] Write wizard source/normalize/observe/review/credentials/apply/failure state component tests in `apps/web/src/components/tools/OnboardingWizard.spec.tsx`
-- [ ] T060 [P] [US3] Write mocked catalog/import/remote/local/host/changed-plan keyboard journeys in `tests/ui-integration/mcp-onboarding.spec.ts`
+- [x] T054 [P] [US3] Write Claude `mcpServers`, VS Code `servers`/`inputs`, and plain-server grammar tests in `packages/tool_registry/tests/test_config_import.py`
+- [x] T055 [P] [US3] Write adversarial secret, header, shell, duplicate, mixed-validity, unknown-field, invalid-URL, oversized, and no-persistence tests in `packages/tool_registry/tests/test_config_import_security.py`
+- [x] T056 [P] [US3] Write Install Plan completeness, canonical digest, expiry, license/terms state and no-Wright-acceptance blocker, material-change, and no-secret tests in `packages/tool_registry/tests/test_install_plans.py`
+- [x] T057 [P] [US3] Write local-package, remote-endpoint, host-bridge, and advanced-local-command adapter contract/rollback/residue tests in `packages/tool_registry/tests/test_onboarding_adapters.py`
+- [x] T058 [P] [US3] Write import preview, plan creation, approve/apply, stale/conflict, role, and redaction API tests in `apps/api/tests/test_mcp_onboarding_api.py`
+- [x] T059 [P] [US3] Write wizard source/normalize/observe/review/credentials/apply/failure state component tests in `apps/web/src/components/tools/OnboardingWizard.spec.tsx`
+- [x] T060 [P] [US3] Write mocked catalog/import/remote/local/host/changed-plan keyboard journeys in `tests/ui-integration/mcp-onboarding.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T061 [US3] Implement bounded JSON detection and normalized no-execution drafts with field diagnostics in `packages/tool_registry/src/tool_registry/config_import.py`
-- [ ] T062 [US3] Implement secret/header/environment redaction and credential-requirement extraction in `packages/tool_registry/src/tool_registry/config_import.py`
-- [ ] T063 [US3] Implement immutable exact Install Plan generation including license/terms state and independent-completion blocker plus digest/expiry/material-change validation in `packages/tool_registry/src/tool_registry/install_plans.py`
-- [ ] T064 [US3] Implement adapter protocols and effect/result/rollback contracts in `packages/tool_registry/src/tool_registry/onboarding.py`
-- [ ] T065 [P] [US3] Implement isolated local-package/local-command adapter using reviewed literal recipes only in `packages/tool_registry/src/tool_registry/installers/local.py`
-- [ ] T066 [P] [US3] Implement bounded remote HTTP/SSE registration and probe adapter in `packages/tool_registry/src/tool_registry/installers/remote.py`
-- [ ] T067 [P] [US3] Implement allowlisted proprietary-host detection/add-on/handshake/read-only-probe adapter without host installation in `packages/tool_registry/src/tool_registry/installers/host_bridge.py`
-- [ ] T068 [US3] Implement plan repository, approval, idempotent apply, progress, cancellation, rollback, and residue recording in `packages/tool_registry/src/tool_registry/onboarding.py`
-- [ ] T069 [US3] Add thin import/plan/approval/apply/run/cancel API routes with request-size limits in `apps/api/src/api/routers/mcp.py`
-- [ ] T070 [US3] Implement import, plan, and onboarding-run client methods in `apps/web/src/services/mcp-service.ts`
-- [ ] T071 [US3] Replace the custom-server modal with the multi-source guided wizard in `apps/web/src/components/tools/OnboardingWizard.tsx`
-- [ ] T072 [US3] Integrate the wizard and current plan/run state into `apps/web/src/components/pages/ToolRegistryPage.tsx`
-- [ ] T073 [US3] Add structured redacted traces for import, observation, plan, approval, effects, cancellation, rollback, and residue in `packages/tool_registry/src/tool_registry/onboarding.py`
-- [ ] T074 [US3] Run parser/security/plan/adapter/API/component/mocked Playwright tests for US3
+- [x] T061 [US3] Implement bounded JSON detection and normalized no-execution drafts with field diagnostics in `packages/tool_registry/src/tool_registry/config_import.py`
+- [x] T062 [US3] Implement secret/header/environment redaction and credential-requirement extraction in `packages/tool_registry/src/tool_registry/config_import.py`
+- [x] T063 [US3] Implement immutable exact Install Plan generation including license/terms state and independent-completion blocker plus digest/expiry/material-change validation in `packages/tool_registry/src/tool_registry/install_plans.py`
+- [x] T064 [US3] Implement adapter protocols and effect/result/rollback contracts in `packages/tool_registry/src/tool_registry/onboarding.py`
+- [x] T065 [P] [US3] Implement isolated local-package/local-command adapter using reviewed literal recipes only in `packages/tool_registry/src/tool_registry/installers/local.py`
+- [x] T066 [P] [US3] Implement bounded remote HTTP/SSE registration and probe adapter in `packages/tool_registry/src/tool_registry/installers/remote.py`
+- [x] T067 [P] [US3] Implement allowlisted proprietary-host detection/add-on/handshake/read-only-probe adapter without host installation in `packages/tool_registry/src/tool_registry/installers/host_bridge.py`
+- [x] T068 [US3] Implement plan repository, approval, idempotent apply, progress, cancellation, rollback, and residue recording in `packages/tool_registry/src/tool_registry/onboarding.py`
+- [x] T069 [US3] Add thin import/plan/approval/apply/run/cancel API routes with request-size limits in `apps/api/src/api/routers/mcp.py`
+- [x] T070 [US3] Implement import, plan, and onboarding-run client methods in `apps/web/src/services/mcp-service.ts`
+- [x] T071 [US3] Replace the custom-server modal with the multi-source guided wizard in `apps/web/src/components/tools/OnboardingWizard.tsx`
+- [x] T072 [US3] Integrate the wizard and current plan/run state into `apps/web/src/components/pages/ToolRegistryPage.tsx`
+- [x] T073 [US3] Add structured redacted traces for import, observation, plan, approval, effects, cancellation, rollback, and residue in `packages/tool_registry/src/tool_registry/onboarding.py`
+- [x] T074 [US3] Run parser/security/plan/adapter/API/component/mocked Playwright tests for US3
 
 **Checkpoint**: All guided sources reach an exact preflight; deterministic backends prove lifecycle and rollback; parsing and preflight have zero effects.
 

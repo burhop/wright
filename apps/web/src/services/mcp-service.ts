@@ -353,15 +353,66 @@ export interface InstallPlan {
   machine_observation_id: string;
   backend_kind:
     "local_package" | "remote_endpoint" | "host_bridge" | "local_command";
-  requirements: Record<string, unknown>;
-  effects: Array<Record<string, unknown>>;
-  steps: Array<Record<string, unknown>>;
-  validation_steps: Array<Record<string, unknown>>;
-  rollback_steps: Array<Record<string, unknown>>;
+  requested_scope: "global_registered" | "workspace";
+  workspace_id?: string;
+  source: Record<string, unknown>;
+  requirements: {
+    platform: string[];
+    runtimes: string[];
+    license: {
+      state: string;
+      reference?: string;
+      independent_completion_required: boolean;
+      independent_completion_recorded_at?: string;
+    };
+    credentials: string[];
+    network: string[];
+    storage: string[];
+    host: string[];
+  };
+  effects: InstallPlanStep[];
+  steps: InstallPlanStep[];
+  validation_steps: InstallPlanStep[];
+  rollback_steps: InstallPlanStep[];
   approval_gates: string[];
   blocking_reasons: CapabilityDiagnostic[];
   expires_at: string;
   plan_digest: string;
+}
+
+export interface InstallPlanStep {
+  step_id: string;
+  kind: string;
+  description: string;
+  target?: string;
+  reversible: boolean;
+  rollback_step_id?: string;
+}
+
+export interface InstallPlanRequest {
+  capability_id?: string;
+  import_preview_id?: string;
+  draft_id?: string;
+  draft_digest?: string;
+  requested_scope: "global_registered" | "workspace";
+  workspace_id?: string;
+  independently_completed_license?: boolean;
+}
+
+export interface OnboardingRun {
+  run_id: string;
+  plan_id: string;
+  plan_digest: string;
+  state: string;
+  adapter_kind: string;
+  adapter_version: string;
+  started_at: string;
+  completed_at?: string;
+  effects: Array<Record<string, unknown>>;
+  validation_evidence_id?: string;
+  trace_id: string;
+  failure_code?: string;
+  rollback_state?: string;
 }
 
 export interface McpTool {
@@ -502,6 +553,69 @@ export class McpService {
         previous_snapshot_id: previousSnapshotId,
       }),
     });
+  }
+
+  async previewImport(configuration: string): Promise<ImportPreview> {
+    return this.catalogRequest("/api/mcp/imports/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ configuration }),
+    });
+  }
+
+  async createInstallPlan(request: InstallPlanRequest): Promise<InstallPlan> {
+    return this.catalogRequest("/api/mcp/install-plans", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+  }
+
+  async getInstallPlan(planId: string): Promise<InstallPlan> {
+    return this.catalogRequest(
+      `/api/mcp/install-plans/${encodeURIComponent(planId)}`,
+    );
+  }
+
+  async approveInstallPlan(
+    planId: string,
+    planDigest: string,
+  ): Promise<InstallPlan> {
+    return this.catalogRequest(
+      `/api/mcp/install-plans/${encodeURIComponent(planId)}/approve`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan_digest: planDigest }),
+      },
+    );
+  }
+
+  async applyInstallPlan(
+    planId: string,
+    planDigest: string,
+  ): Promise<OnboardingRun> {
+    return this.catalogRequest(
+      `/api/mcp/install-plans/${encodeURIComponent(planId)}/apply`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan_digest: planDigest }),
+      },
+    );
+  }
+
+  async getOnboardingRun(runId: string): Promise<OnboardingRun> {
+    return this.catalogRequest(
+      `/api/mcp/onboarding-runs/${encodeURIComponent(runId)}`,
+    );
+  }
+
+  async cancelOnboardingRun(runId: string): Promise<OnboardingRun> {
+    return this.catalogRequest(
+      `/api/mcp/onboarding-runs/${encodeURIComponent(runId)}/cancel`,
+      { method: "POST" },
+    );
   }
 
   async getCapabilities(

@@ -1,7 +1,7 @@
 import structlog
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, Response
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 from tool_registry import (
     McpServer,
     McpServerCreate,
@@ -22,6 +22,9 @@ from tool_registry.capability_models import (
 )
 from tool_registry.capability_views import CapabilityFilters
 from tool_registry.catalog_updates import CatalogUpdateError
+from tool_registry.config_import import ConfigurationImportError
+from tool_registry.install_plans import InstallPlanError
+from tool_registry.onboarding import OnboardingError
 from api.security import require_admin
 
 logger = structlog.get_logger(__name__)
@@ -126,6 +129,35 @@ class CatalogRollbackRequest(BaseModel):
     previous_snapshot_id: str
 
 
+class ImportPreviewRequest(BaseModel):
+    configuration: str = Field(max_length=256 * 1024)
+
+
+class InstallPlanRequest(BaseModel):
+    capability_id: str | None = None
+    import_preview_id: str | None = None
+    draft_id: str | None = None
+    draft_digest: str | None = None
+    requested_scope: str = "global_registered"
+    workspace_id: str | None = None
+    independently_completed_license: bool = False
+
+    @model_validator(mode="after")
+    def exactly_one_source(self):
+        catalog = self.capability_id is not None
+        imported = all(
+            value is not None
+            for value in (self.import_preview_id, self.draft_id, self.draft_digest)
+        )
+        if catalog == imported:
+            raise ValueError("Choose exactly one catalog or imported MCP source")
+        return self
+
+
+class PlanDigestRequest(BaseModel):
+    plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
 def _request_actor(request: Request) -> str:
     return str(getattr(request.state, "principal_id", "local-admin"))
 
@@ -141,6 +173,18 @@ def _catalog_http_exception(error: CatalogUpdateError, trace_id: str) -> HTTPExc
             "code": error.code,
             "message": str(error),
             "recovery": error.recovery,
+            "trace_id": trace_id,
+        },
+    )
+
+
+def _operation_http_exception(error, trace_id: str) -> HTTPException:
+    return HTTPException(
+        status_code=error.status_code,
+        detail={
+            "code": error.code,
+            "message": str(error),
+            "recovery": "Review the exact input and create a fresh preview or plan.",
             "trace_id": trace_id,
         },
     )
@@ -287,6 +331,119 @@ async def observe_capability(
         return service.observe_capability(capability_id)
     except McpServiceError as error:
         raise mcp_service_http_exception(error)
+
+
+@router.post("/imports/preview")
+@traced("mcp.import.preview")
+async def preview_mcp_import(
+    body: ImportPreviewRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    trace_id = _request_trace(request)
+    try:
+        return service.preview_import(body.configuration)
+    except ConfigurationImportError as error:
+        raise _operation_http_exception(error, trace_id)
+
+
+@router.post("/install-plans")
+@traced("mcp.install_plan.create")
+async def create_mcp_install_plan(
+    body: InstallPlanRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    trace_id = _request_trace(request)
+    try:
+        return service.create_install_plan(
+            capability_id=body.capability_id,
+            import_preview_id=body.import_preview_id,
+            draft_id=body.draft_id,
+            draft_digest=body.draft_digest,
+            requested_scope=body.requested_scope,
+            workspace_id=body.workspace_id,
+            independently_completed_license=body.independently_completed_license,
+            actor=_request_actor(request),
+        )
+    except (ConfigurationImportError, InstallPlanError) as error:
+        raise _operation_http_exception(error, trace_id)
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
+
+
+@router.get("/install-plans/{plan_id}")
+@traced("mcp.install_plan.get")
+async def get_mcp_install_plan(
+    plan_id: str,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.get_install_plan(plan_id)
+    except InstallPlanError as error:
+        raise _operation_http_exception(error, _request_trace(request))
+
+
+@router.post("/install-plans/{plan_id}/approve", dependencies=[Depends(require_admin)])
+@traced("mcp.install_plan.approve")
+async def approve_mcp_install_plan(
+    plan_id: str,
+    body: PlanDigestRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.approve_install_plan(
+            plan_id, body.plan_digest, actor=_request_actor(request)
+        )
+    except InstallPlanError as error:
+        raise _operation_http_exception(error, _request_trace(request))
+
+
+@router.post("/install-plans/{plan_id}/apply", dependencies=[Depends(require_admin)])
+@traced("mcp.install_plan.apply")
+async def apply_mcp_install_plan(
+    plan_id: str,
+    body: PlanDigestRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.apply_install_plan(
+            plan_id,
+            body.plan_digest,
+            actor=_request_actor(request),
+            trace_id=_request_trace(request),
+        )
+    except (InstallPlanError, OnboardingError) as error:
+        raise _operation_http_exception(error, _request_trace(request))
+
+
+@router.get("/onboarding-runs/{run_id}")
+@traced("mcp.onboarding_run.get")
+async def get_mcp_onboarding_run(
+    run_id: str,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.get_onboarding_run(run_id)
+    except OnboardingError as error:
+        raise _operation_http_exception(error, _request_trace(request))
+
+
+@router.post("/onboarding-runs/{run_id}/cancel", dependencies=[Depends(require_admin)])
+@traced("mcp.onboarding_run.cancel")
+async def cancel_mcp_onboarding_run(
+    run_id: str,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.cancel_onboarding_run(run_id)
+    except OnboardingError as error:
+        raise _operation_http_exception(error, _request_trace(request))
 
 
 @router.get("/servers", response_model=ServersListResponse)
