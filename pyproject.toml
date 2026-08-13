@@ -65,6 +65,7 @@ wright-rivet-mcp = "workspace_service.rivet_mcp:main"
 [tool.uv.sources]
 wright-engineering = { workspace = true }
 wright-workspace-service = { workspace = true }
+wright-model-registry = { workspace = true }
 
 [tool.uv.workspace]
 members = [
@@ -74,6 +75,7 @@ members = [
     "packages/agent_adapters",
     "packages/tool_registry",
     "packages/data_vault",
+    "packages/model_registry",
     "packages/workspace_service",
 ]
 
@@ -128,6 +130,7 @@ packages = [
     "packages/agent_adapters/src/agent_adapters",
     "packages/tool_registry/src/tool_registry",
     "packages/data_vault/src/data_vault",
+    "packages/model_registry/src/model_registry",
     "packages/workspace_service/src/workspace_service",
 ]
 
@@ -157,6 +160,7 @@ include = [
     "/packages/agent_adapters/src/agent_adapters",
     "/packages/tool_registry/src/tool_registry",
     "/packages/data_vault/src/data_vault",
+    "/packages/model_registry/src/model_registry",
     "/packages/workspace_service/src/workspace_service",
     "/integrations/rivet/editor/host.py",
     "/integrations/rivet/editor/manifest.json",

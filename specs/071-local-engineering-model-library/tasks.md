@@ -12,13 +12,13 @@
 
 **Purpose**: Establish a separately packaged model domain without adding model weights or runtime frameworks.
 
-- [ ] T001 Create `packages/model_registry/pyproject.toml` and `packages/model_registry/src/model_registry/__init__.py` with only bounded domain/runtime-port dependencies.
-- [ ] T002 Add `packages/model_registry` to the uv workspace and public wheel/sdist package lists in `pyproject.toml`.
-- [ ] T003 Copy the finalized package, seeded test-vector, complete install-plan, and operation JSON Schemas into `packages/model_registry/src/model_registry/schemas/`.
-- [ ] T004 [P] Add package-resource discovery and exact contract-copy tests in `packages/model_registry/tests/test_contract_resources.py`.
-- [ ] T005 [P] Add valid/invalid public contract fixtures under `packages/model_registry/tests/fixtures/contracts/`.
-- [ ] T006 Add JSON Schema meta-validation, supported-version, bounds, extra-field, and cross-reference tests in `packages/model_registry/tests/test_contract_schemas.py`.
-- [ ] T007 Update `uv.lock` and assert the new package adds no ML framework, model hub SDK, driver, compiler, or unsafe serialization dependency.
+- [x] T001 Create `packages/model_registry/pyproject.toml` and `packages/model_registry/src/model_registry/__init__.py` with only bounded domain/runtime-port dependencies.
+- [x] T002 Add `packages/model_registry` to the uv workspace and public wheel/sdist package lists in `pyproject.toml`.
+- [x] T003 Copy the finalized package, seeded test-vector, complete install-plan, and operation JSON Schemas into `packages/model_registry/src/model_registry/schemas/`.
+- [x] T004 [P] Add package-resource discovery and exact contract-copy tests in `packages/model_registry/tests/test_contract_resources.py`.
+- [x] T005 [P] Add valid/invalid public contract fixtures under `packages/model_registry/tests/fixtures/contracts/`.
+- [x] T006 Add JSON Schema meta-validation, supported-version, bounds, extra-field, and cross-reference tests in `packages/model_registry/tests/test_contract_schemas.py`.
+- [x] T007 Update `uv.lock` and assert the new package adds no ML framework, model hub SDK, driver, compiler, or unsafe serialization dependency.
 
 ---
 

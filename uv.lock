@@ -15,6 +15,7 @@ members = [
     "wright-core",
     "wright-data-vault",
     "wright-engineering",
+    "wright-model-registry",
     "wright-tool-registry",
     "wright-workspace-service",
 ]
@@ -1889,6 +1890,33 @@ dev = [
 ]
 
 [[package]]
+name = "wright-model-registry"
+version = "0.1.0"
+source = { editable = "packages/model_registry" }
+dependencies = [
+    { name = "httpx" },
+    { name = "jsonschema" },
+    { name = "packaging" },
+    { name = "psutil" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "wright-core" },
+    { name = "wright-tool-registry" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28,<1" },
+    { name = "jsonschema", specifier = ">=4.26,<5" },
+    { name = "packaging", specifier = ">=24,<27" },
+    { name = "psutil", specifier = ">=6,<8" },
+    { name = "pydantic", specifier = ">=2.7,<3" },
+    { name = "pyyaml", specifier = ">=6,<7" },
+    { name = "wright-core", editable = "packages/core" },
+    { name = "wright-tool-registry", editable = "packages/tool_registry" },
+]
+
+[[package]]
 name = "wright-tool-registry"
 version = "0.1.0"
 source = { editable = "packages/tool_registry" }
@@ -1927,6 +1955,7 @@ dependencies = [
     { name = "wright-agent-adapters" },
     { name = "wright-core" },
     { name = "wright-data-vault" },
+    { name = "wright-model-registry" },
     { name = "wright-tool-registry" },
 ]
 
@@ -1939,5 +1968,6 @@ requires-dist = [
     { name = "wright-agent-adapters", editable = "packages/agent_adapters" },
     { name = "wright-core", editable = "packages/core" },
     { name = "wright-data-vault", editable = "packages/data_vault" },
+    { name = "wright-model-registry", editable = "packages/model_registry" },
     { name = "wright-tool-registry", editable = "packages/tool_registry" },
 ]

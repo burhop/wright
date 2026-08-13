@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "vector_id": "invalid-extra",
+  "version": 1,
+  "task_id": "predict",
+  "input_schema_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "output_schema_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "deterministic_seed": 0,
+  "input": { "x": 2.0 },
+  "expected": { "kind": "exact", "value": { "y": 5.0 } },
+  "limitations_exercised": ["test-only"],
+  "limits": {
+    "load_timeout_ms": 1000,
+    "inference_timeout_ms": 1000,
+    "max_output_bytes": 4096
+  },
+  "mandatory": true,
+  "unexpected": true
+}

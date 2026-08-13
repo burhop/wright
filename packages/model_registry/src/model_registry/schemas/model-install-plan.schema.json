@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-model-install-plan-1.0.json",
+  "title": "Wright Engineering Model Effect Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "plan_id", "plan_digest", "principal_id", "operation_kind",
+    "model_id", "package_revision", "variant_id", "snapshot_id", "manifest_digest",
+    "effects", "blockers", "requirements", "compatibility", "prompts",
+    "runtime_requirement", "rollback", "cleanup", "created_at", "expires_at", "state"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "plan_id": { "$ref": "#/$defs/id" },
+    "plan_digest": { "$ref": "#/$defs/sha256" },
+    "principal_id": { "$ref": "#/$defs/id" },
+    "operation_kind": {
+      "enum": ["install", "import", "update", "rollback", "export", "uninstall", "purge"]
+    },
+    "model_id": { "$ref": "#/$defs/id" },
+    "package_revision": { "type": "integer", "minimum": 1 },
+    "variant_id": { "$ref": "#/$defs/id" },
+    "snapshot_id": { "$ref": "#/$defs/id" },
+    "manifest_digest": { "$ref": "#/$defs/sha256" },
+    "effects": {
+      "type": "array", "maxItems": 256,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["kind", "description", "maximum_bytes", "reversible"],
+        "properties": {
+          "kind": {
+            "enum": ["network", "read", "write", "cache_reuse", "activate", "deactivate", "export", "retain", "delete"]
+          },
+          "description": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "source": { "type": "string", "maxLength": 2048 },
+          "safe_location": { "type": "string", "maxLength": 256 },
+          "exact_bytes": { "type": "integer", "minimum": 0 },
+          "maximum_bytes": { "type": "integer", "minimum": 0 },
+          "reversible": { "type": "boolean" }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array", "maxItems": 128,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["category", "message", "recovery"],
+        "properties": {
+          "category": { "$ref": "#/$defs/id" },
+          "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "recovery": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        }
+      }
+    },
+    "requirements": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network", "credential", "license_action", "runtime_change"],
+      "properties": {
+        "network": { "enum": ["none", "required", "optional"] },
+        "credential": { "enum": ["none", "read_token_reference", "external_action"] },
+        "license_action": { "enum": ["none", "review", "external_acceptance"] },
+        "runtime_change": { "const": "separate_plan_only" }
+      }
+    },
+    "compatibility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "observed_at", "reasons"],
+      "properties": {
+        "state": { "enum": ["compatible", "incompatible", "uncertain", "blocked"] },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "reasons": {
+          "type": "array", "maxItems": 128,
+          "items": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        }
+      }
+    },
+    "prompts": {
+      "type": "array", "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["prompt_id", "message", "required"],
+        "properties": {
+          "prompt_id": { "$ref": "#/$defs/id" },
+          "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "runtime_requirement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["adapter_id", "version_specifier", "state", "separate_plan_required"],
+      "properties": {
+        "adapter_id": { "$ref": "#/$defs/id" },
+        "version_specifier": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "state": { "enum": ["available", "missing", "incompatible", "unhealthy", "blocked"] },
+        "separate_plan_required": { "type": "boolean" }
+      }
+    },
+    "credential_reference_present": { "type": "boolean", "default": false },
+    "references": {
+      "type": "array", "maxItems": 1000,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["kind", "owner_id", "effect"],
+        "properties": {
+          "kind": { "$ref": "#/$defs/id" },
+          "owner_id": { "$ref": "#/$defs/id" },
+          "effect": { "enum": ["create", "retain", "detach", "block"] }
+        }
+      }
+    },
+    "rollback": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "cleanup": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "state": { "enum": ["preview", "confirmable", "blocked", "confirmed", "expired", "invalidated"] }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+coverage/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+integrations/rivet/editor/dist/
+integrations/rivet/runner/dist/
+integrations/rivet/spike/.work/
+test-results/
+playwright-report/
+blob-report/
+.local-run/
