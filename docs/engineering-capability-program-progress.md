@@ -1,7 +1,7 @@
 # Wright Engineering Capability Program Progress
 
 **Last updated**: 2026-08-13
-**Current loop**: 068 - Capability Library and MCP onboarding
+**Current loop**: 069 - Rivet workspace MCP execution through the Wright gateway
 **Program state**: Active; Gate E closed; no `main` merge or release authorized.
 
 ## Completed foundation
@@ -168,9 +168,37 @@ SC-009's five-person moderated usability target also remains unvalidated until t
 - Gate evidence: 1,592 Python tests collected with 1,540 passed and 52 skipped; 86 release tests passed; 140 native/release tests passed and 9 skipped; 206 coverage tests passed and 9 skipped at 85.48%; 44 security-boundary tests passed and 2 skipped; standalone wheel and source distributions built and clean-installed; 285 web tests and 13 Hermes plugin tests passed; production web build and strict documentation passed; 135 live Playwright tests passed and 1 skipped.
 - The broad mypy pass retained its established warning-mode duplicate `conftest` diagnostic. Focused release-source mypy passed, and the authoritative gate treats the broad diagnostic as a warning rather than a failure.
 
+### Integration checkpoint (completed)
+
+The documentation-complete exact tree was gated again before publication. The feature was pushed and merged only after the final `origin/dev` race check, and its feature/merged tree hashes were required to match.
+
+### Integration result
+
+- Exact-tree confirmation gate passed on feature tip `538ede1` with the same authoritative suite profile recorded above.
+- Pushed `origin/068-capability-library` at `538ede1`.
+- Merged with `--no-ff` into `dev` as `7093b55` (`Merge capability library and MCP onboarding`) and pushed GitHub.
+- Local/remote feature commit identities matched, local/remote `dev` commit identities matched, and the feature and merged tree hashes both equaled `87f8e70cd3de2d21e58aeee62a2c66bff4867645`.
+- Worktree was clean after integration; no `main` merge or release action occurred.
+
+## Loop 069
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: branch `069-rivet-mcp-gateway` created from clean synchronized `dev` at `7093b55`.
+- [x] `speckit-specify`: five prioritized user journeys, 34 functional requirements, nine measurable outcomes, and a 16/16 specification-quality checklist completed in `f01b04b`.
+- [x] `speckit-clarify`: no critical ambiguity required a user question. Safest reversible defaults are explicit for run-bound authority, exact capability binding, stale-review invalidation, existing per-call approval policy, cancellation truthfulness, deterministic normal tests, optional live applications, and closed Gate E.
+- [ ] `speckit-plan` and Gate B decision
+- [ ] `speckit-checklist`
+- [ ] `speckit-tasks`
+- [ ] `speckit-analyze` and remediation
+- [ ] `speckit-implement`
+- [ ] Focused, integration, UI, packaging, and documentation verification
+- [ ] Full exact-tree dev gate
+- [ ] Push feature, merge to `dev`, push `dev`, verify synchronization
+
 ### Next checkpoint
 
-Run the authoritative dev gate once more on this documentation-complete exact tree. Only after it passes, push the feature, merge it into the then-current `dev` with `--no-ff`, require matching feature and merged tree hashes, push `dev`, and verify local/remote commit identities. If `origin/dev` advances first, integrate it and repeat the exact-tree gate.
+Research Rivet 2's current MCP provider/node contracts and Wright's existing runner/gateway seams from primary sources and repository evidence. Then complete the technical plan, Gate B authority/binding decision, data model, contracts, quickstart, and post-design constitution re-check without granting Rivet independent child-MCP ownership.
 
 ## Program guardrails
 
