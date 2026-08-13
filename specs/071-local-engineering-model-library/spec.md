@@ -8,6 +8,16 @@
 
 **Input**: User description: "Let engineers list, inspect, download or import, verify, install, test, enable, update, roll back, and remove safe local engineering models, beginning with Wright's Chatter model foundation and an appropriately licensed external engineering model, without committing weights or silently executing repository code."
 
+## Clarifications
+
+### Session 2026-08-13
+
+- **Q: May Wright acquire gated or private Hugging Face content?** -> **A:** Wright may describe it as blocked and explain the publisher-controlled steps. It never requests access or accepts terms. After a user independently has access, an explicitly stored fine-grained read-only token may be referenced by a fresh plan, but the token never enters model files, runtimes, logs, evidence, or exports. Public ungated acquisition and offline import remain the first supported paths.
+- **Q: May installing a model silently install its runtime or hardware dependencies?** -> **A:** No. Runtime adapters and their dependencies have a separate reviewed lifecycle and install plan. A model plan may depend on an already approved runtime or remain blocked with an action to review that runtime; it cannot add packages, drivers, compilers, services, containers, or global settings as an incidental step.
+- **Q: What does removal mean when reproducibility references still exist?** -> **A:** Disable and uninstall remove workspace availability and the active installation, while purge removes content bytes. Uninstall may preserve referenced content in the verified cache; purge is blocked until every workspace, workflow, retained run, and export reference is safely detached or archived with an explicit portable package.
+- **Q: What evidence makes the first external model genuinely supported?** -> **A:** Model-card metadata alone is insufficient. Gate D must approve exact license evidence, immutable files and digests, data-only format, adapter/runtime, resource envelope, honest limitations, and real deterministic test-vector results against the downloaded artifact. Until then the candidate is evaluation-only, and a safer candidate may replace it without changing the library contracts.
+- **Q: How broadly may verified content be shared?** -> **A:** Content may be deduplicated within one Wright-managed user data root while retaining package and workspace references. Private/gated content remains locally access-controlled and is never exported or made visible through another user/workspace merely because its digest matches; public artifacts still require source/license attribution.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Evaluate a model before changing the machine (Priority: P1)
