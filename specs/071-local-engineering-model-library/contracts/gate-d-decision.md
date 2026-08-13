@@ -1,7 +1,9 @@
 # Gate D Decision: Model Supply Chain and Runtime Boundary
 
-**Decision date**: 2026-08-13  
-**Authority**: Advance authorization in the Wright Engineering Capability Program goal  
+**Decision date**: 2026-08-13
+
+**Authority**: Advance authorization in the Wright Engineering Capability Program goal
+
 **Outcome**: **APPROVED WITH A CLOSED EXTERNAL-MODEL CONDITION**
 
 ## Approved for implementation

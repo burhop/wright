@@ -324,7 +324,7 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - [x] `speckit-specify`: five prioritized lifecycle/extensibility stories, 43 functional requirements, eight non-functional requirements, twelve measurable outcomes, and a 17/17 specification-quality checklist completed.
 - [x] `speckit-clarify`: public/offline acquisition first; no automated gated access; separate runtime plans; uninstall versus reference-safe purge; actual-artifact Gate D evidence; and user-root-scoped deduplication are explicit.
 - [x] `speckit-plan` and Gate D: separate model domain/UI, immutable manifests and plans, strict data-only policy, content-addressed atomic storage, supervised typed runtime adapters, gateway-mediated workspace capabilities, deterministic generated fixtures, and conditional external-model approval are specified.
-- [ ] `speckit-checklist`
+- [x] `speckit-checklist`: 40/40 identity, source/license, artifact safety, runtime/gateway, lifecycle/recovery, UX, compatibility, and extension requirements-quality checks pass.
 - [ ] `speckit-tasks`
 - [ ] `speckit-analyze`
 - [ ] `speckit-implement`
