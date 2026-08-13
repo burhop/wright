@@ -18,10 +18,10 @@
 
 **Purpose**: Establish fail-closed protocol fixtures and local child MCPs without external services.
 
-- [ ] T001 Inventory the schema-13 workflow review/run baseline and add preservation assertions for migration 14 in `packages/data_vault/tests/test_migrations.py`
-- [ ] T002 [P] Add two deterministic MCP child fixtures with colliding unqualified names, structured output, progress, approval, slow-call cancellation, receipt counters, and late-result modes in `packages/workspace_service/tests/fixtures/rivet_mcp_servers.py`
-- [ ] T003 [P] Add valid and hostile protocol-v2 request/project fixtures covering exact bindings, direct child configuration, dynamic tool names, missing/extra handles, and secret-like values in `integrations/rivet/runner/tests/fixtures/`
-- [ ] T004 [P] Add explicit optional-live environment markers for BREP and Solid Edge/available-host validation in `pyproject.toml` and `docs/rivet/testing.md`
+- [x] T001 Inventory the schema-13 workflow review/run baseline and add preservation assertions for migration 14 in `packages/data_vault/tests/test_migrations.py`
+- [x] T002 [P] Add two deterministic MCP child fixtures with colliding unqualified names, structured output, progress, approval, slow-call cancellation, receipt counters, and late-result modes in `packages/workspace_service/tests/fixtures/rivet_mcp_servers.py`
+- [x] T003 [P] Add valid and hostile protocol-v2 request/project fixtures covering exact bindings, direct child configuration, dynamic tool names, missing/extra handles, and secret-like values in `integrations/rivet/runner/tests/fixtures/`
+- [x] T004 [P] Add explicit optional-live environment markers for BREP and Solid Edge/available-host validation in `pyproject.toml` and `docs/rivet/testing.md`
 
 ---
 
@@ -31,20 +31,20 @@
 
 **CRITICAL**: No user-story implementation begins until this phase passes its focused tests.
 
-- [ ] T005 [P] Add model/digest/secret-rejection contract tests for CapabilityBinding, WorkflowBindingSet, review v2, PendingRivetCallApproval, RunManifest, and child-call evidence in `packages/core/tests/test_rivet_mcp_contracts.py`
-- [ ] T006 [P] Add migration-14 upgrade, idempotency, rollback, legacy non-MCP review, and repository round-trip tests in `packages/data_vault/tests/test_rivet_mcp_persistence.py`
-- [ ] T007 [P] Add authority entropy, audience, expiry, run/generation/workspace/node scope, constant-time lookup, replay, revocation, restart, and concurrent-call tests in `packages/workspace_service/tests/test_rivet_authority.py`
-- [ ] T008 [P] Extend Node contract tests for protocol-v1 non-MCP compatibility and protocol-v2 validation/network-guard/provider-injection failures in `integrations/rivet/runner/tests/runner-contract.test.mjs`
-- [ ] T009 Add additive migration 14 tables/columns/indexes and schema-version compatibility in `packages/data_vault/src/data_vault/migrations.py`
-- [ ] T010 Implement canonical Rivet MCP binding, review, approval, child-call, artifact, and manifest values with bounded/redacted serialization in `packages/core/src/core/rivet_mcp.py`
-- [ ] T011 Implement immutable binding-set, review-v2, pending-approval, manifest, and child-call repositories with legacy adapters in `packages/data_vault/src/data_vault/rivet_mcp_repository.py` and export them from `packages/data_vault/src/data_vault/__init__.py`
-- [ ] T012 Implement memory-only `RivetRunAuthorityService` mint/validate/activate/revoke/terminal lifecycle with raw-token exclusion in `packages/workspace_service/src/workspace_service/rivet_authority.py`
-- [ ] T013 [P] Add shared secret-like field rejection, safe summaries, byte ceilings, and redaction counters in `packages/workspace_service/src/workspace_service/rivet_evidence.py`
-- [ ] T014 Extend the governed bridge with authoritative node-handle lookup, current-binding revalidation seam, active-request registry, progress projection, and stable denial reasons in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
-- [ ] T015 Wire authority/repository/gateway dependencies and MCP feature settings into application composition without adding route business logic in `apps/api/src/api/composition.py`
-- [ ] T016 Upgrade request types, strict validation, exact-origin network guard, static binding map, and injected-provider shell for runner protocol v2 in `integrations/rivet/runner/src/wright-runner.ts`
-- [ ] T017 Rebuild the pinned Rivet worker deterministically and update source/build/output integrity metadata in `integrations/rivet/runner/dist/wright-runner.mjs` and `integrations/rivet/runner/manifest.json`
-- [ ] T018 Run and record the focused foundational migration, model, authority, runner-contract, manifest-integrity, Ruff, TypeScript, formatting, and diff checks in `docs/engineering-capability-program-progress.md`
+- [x] T005 [P] Add model/digest/secret-rejection contract tests for CapabilityBinding, WorkflowBindingSet, review v2, PendingRivetCallApproval, RunManifest, and child-call evidence in `packages/core/tests/test_rivet_mcp_contracts.py`
+- [x] T006 [P] Add migration-14 upgrade, idempotency, rollback, legacy non-MCP review, and repository round-trip tests in `packages/data_vault/tests/test_rivet_mcp_persistence.py`
+- [x] T007 [P] Add authority entropy, audience, expiry, run/generation/workspace/node scope, constant-time lookup, replay, revocation, restart, and concurrent-call tests in `packages/workspace_service/tests/test_rivet_authority.py`
+- [x] T008 [P] Extend Node contract tests for protocol-v1 non-MCP compatibility and protocol-v2 validation/network-guard/provider-injection failures in `integrations/rivet/runner/tests/runner-contract.test.mjs`
+- [x] T009 Add additive migration 14 tables/columns/indexes and schema-version compatibility in `packages/data_vault/src/data_vault/migrations.py`
+- [x] T010 Implement canonical Rivet MCP binding, review, approval, child-call, artifact, and manifest values with bounded/redacted serialization in `packages/core/src/core/rivet_mcp.py`
+- [x] T011 Implement immutable binding-set, review-v2, pending-approval, manifest, and child-call repositories with legacy adapters in `packages/data_vault/src/data_vault/rivet_mcp_repository.py` and export them from `packages/data_vault/src/data_vault/__init__.py`
+- [x] T012 Implement memory-only `RivetRunAuthorityService` mint/validate/activate/revoke/terminal lifecycle with raw-token exclusion in `packages/workspace_service/src/workspace_service/rivet_authority.py`
+- [x] T013 [P] Add shared secret-like field rejection, safe summaries, byte ceilings, and redaction counters in `packages/workspace_service/src/workspace_service/rivet_evidence.py`
+- [x] T014 Extend the governed bridge with authoritative node-handle lookup, current-binding revalidation seam, active-request registry, progress projection, and stable denial reasons in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
+- [x] T015 Wire authority/repository/gateway dependencies and MCP feature settings into application composition without adding route business logic in `apps/api/src/api/composition.py`
+- [x] T016 Upgrade request types, strict validation, exact-origin network guard, static binding map, and injected-provider shell for runner protocol v2 in `integrations/rivet/runner/src/wright-runner.ts`
+- [x] T017 Rebuild the pinned Rivet worker deterministically and update source/build/output integrity metadata in `integrations/rivet/runner/dist/wright-runner.mjs` and `integrations/rivet/runner/manifest.json`
+- [x] T018 Run and record the focused foundational migration, model, authority, runner-contract, manifest-integrity, Ruff, TypeScript, formatting, and diff checks in `docs/engineering-capability-program-progress.md`
 
 **Checkpoint**: Migration 14 preserves schema-13 state, protocol v2 fails closed, raw authority is memory-only, and a bound bridge call cannot choose its own workspace/server/tool.
 

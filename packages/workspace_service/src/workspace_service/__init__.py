@@ -43,6 +43,15 @@ from .rivet_validation import (
     WorkflowValidationResult,
     validate_rivet_project,
 )
+from .rivet_approvals import RivetApprovalError, RivetApprovalService
+from .rivet_authority import (
+    AuthorityClaims,
+    IssuedAuthority,
+    RivetRunAuthorityService,
+)
+from .rivet_capabilities import RivetCapabilityService, RivetDiscoverySnapshot
+from .rivet_gateway_bridge import RivetGatewayBridge
+from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_mcp import (
     RivetMcpBinding,
     RivetMcpError,
@@ -114,6 +123,15 @@ __all__ = [
     "WorkflowIdentityMismatch",
     "WorkflowValidationResult",
     "validate_rivet_project",
+    "RivetApprovalError",
+    "RivetApprovalService",
+    "AuthorityClaims",
+    "IssuedAuthority",
+    "RivetRunAuthorityService",
+    "RivetCapabilityService",
+    "RivetDiscoverySnapshot",
+    "RivetGatewayBridge",
+    "RivetMcpGatewaySettings",
     "RivetMcpBinding",
     "RivetMcpError",
     "RivetWorkflowMcpService",

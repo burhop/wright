@@ -165,7 +165,7 @@ class RunnerAssetCatalog:
             ):
                 raise ValueError("Unsupported runner manifest")
             if (
-                raw.get("protocol_version") != 1
+                raw.get("protocol_version") != 2
                 or raw.get("rivet_version") != self._RIVET_VERSION
             ):
                 raise ValueError("Unexpected runner version")
@@ -186,7 +186,7 @@ class RunnerAssetCatalog:
             if entrypoint is None or build_input is None:
                 raise ValueError("Unconfined runner path")
             manifest = RunnerArtifactManifest(
-                protocol_version=1,
+                protocol_version=2,
                 rivet_version=self._RIVET_VERSION,
                 package_version=self._PACKAGE_VERSION,
                 entrypoint=entrypoint,

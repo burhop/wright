@@ -1,16 +1,22 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from functools import lru_cache
 
 from workspace_service import (  # type: ignore[import-untyped]
     WorkspaceService,
     build_workspace_service,
+    RivetApprovalService,
+    RivetCapabilityService,
+    RivetGatewayBridge,
+    RivetMcpGatewaySettings,
+    RivetRunAuthorityService,
 )
 from workspace_service.composition import (
     SurfaceApplication,
     build_surface_application,
 )
-from data_vault import GatewayRepository
+from data_vault import GatewayRepository, RivetMcpRepository
 from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.gateway_adapters import (
     DatabaseGatewayAudit,
@@ -359,7 +365,7 @@ def build_api_gateway_service(
             pass
         else:
             lifecycle = BrepPanelGatewayLifecycle(lifecycle, brep_server.server_id)
-    return GatewayService(
+    gateway = GatewayService(
         workspaces=DatabaseGatewayWorkspace(repository),
         catalog=catalog,
         lifecycle=lifecycle,
@@ -370,4 +376,54 @@ def build_api_gateway_service(
         mcp_ui_resources=ui_resources,
         operation_timeout=settings.operation_timeout_seconds,
         maximum_timeout=settings.maximum_timeout_seconds,
+    )
+    application = build_rivet_mcp_application(db_path, gateway)
+    service = workspace_service()
+    service.rivet_mcp_application = application
+    return gateway
+
+
+@dataclass(frozen=True, slots=True)
+class RivetMcpApplication:
+    settings: RivetMcpGatewaySettings
+    repository: RivetMcpRepository
+    authorities: RivetRunAuthorityService
+    approvals: RivetApprovalService
+    capabilities: RivetCapabilityService
+    bridge: RivetGatewayBridge
+
+
+def build_rivet_mcp_application(
+    db_path: str, gateway: GatewayService
+) -> RivetMcpApplication:
+    """Build the local MCP run boundary once; routes only delegate into it."""
+
+    settings = RivetMcpGatewaySettings.from_env()
+    repository = RivetMcpRepository(db_path)
+    authorities = RivetRunAuthorityService()
+    approvals = RivetApprovalService(repository=repository)
+    capabilities = RivetCapabilityService(gateway)
+    bridge = RivetGatewayBridge(
+        gateway,
+        authorities=authorities,
+        resolve_binding=repository.get_binding_by_digest,
+        validate_current=lambda binding, session_id, workspace_id: (
+            capabilities.stale_reasons(
+                binding,
+                capabilities.discover(
+                    session_id=session_id,
+                    workspace_id=workspace_id,
+                ),
+            )
+        ),
+        approvals=approvals,
+        approval_ttl_seconds=settings.approval_ttl_seconds,
+    )
+    return RivetMcpApplication(
+        settings,
+        repository,
+        authorities,
+        approvals,
+        capabilities,
+        bridge,
     )

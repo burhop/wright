@@ -91,6 +91,8 @@ markers = [
     "gateway: provider-neutral GatewayService contract and isolation tests",
     "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
     "rivet_live_ai: explicit opt-in tests that use the local Hermes/Codex subscription; also requires WRIGHT_RIVET_LIVE_AI=1",
+    "rivet_live_brep: explicit opt-in BREP application test; also requires WRIGHT_RIVET_LIVE_BREP=1 and a current workspace-enabled server",
+    "rivet_live_host: explicit opt-in Solid Edge or available host-bridge test; also requires WRIGHT_RIVET_LIVE_HOST=1 and an already installed proprietary host",
     "release: exact-artifact release identity, supply-chain, and recovery contracts",
     "workspace_surfaces: Workspace Surfaces contract, lifecycle, security, and presentation tests",
 ]

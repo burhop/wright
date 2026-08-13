@@ -196,9 +196,20 @@ The documentation-complete exact tree was gated again before publication. The fe
 - [ ] Full exact-tree dev gate
 - [ ] Push feature, merge to `dev`, push `dev`, verify synchronization
 
+### Implementation checkpoint 1 - authority, persistence, and runner protocol
+
+- Added migration 14 with additive immutable binding-set/binding, Run Manifest, child-call, and exact-call approval storage while preserving schema-13 workflow reviews and runs.
+- Added canonical secret-rejecting models for exact bindings, binding sets, pending approvals, child evidence, authorized artifacts, and exactly-once terminal manifests.
+- Added memory-only 256-bit run authority with exact loopback audience, run/generation/node/binding scope, expiry, revocation, terminal, and restart invalidation.
+- Added workspace-scoped capability discovery and deterministic binding projection, current-state stale comparison, bounded result/evidence redaction, authorized Wright artifact enforcement, and exact one-shot approval waiting in the governed gateway bridge.
+- Upgraded the pinned Rivet worker to protocol v2 while retaining protocol-v1 non-MCP execution. It validates exact loopback grants, transforms MCP nodes only in memory, injects a Wright provider, sends no server/tool namespace as call authority, rejects project child configuration/dynamic names/prompts/missing-or-extra bindings, and redacts run tokens from output.
+- Added the API composition graph for feature settings, repository, authority, approvals, discovery, and the gateway bridge. The feature defaults off until a reviewed MCP execution path is issued.
+- Rebuilt and integrity-pinned the 12.9 MiB Node worker at Rivet source revision `4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053`, package `2.1.9`, protocol `2`.
+- Focused evidence: 47 Python migration/model/authority/discovery/evidence/bridge/validation/runtime tests and eight Node runner contract tests passed; runner manifest integrity reported `available`; Ruff, Python formatting, Prettier, and `git diff --check` passed.
+
 ### Next checkpoint
 
-Begin `speckit-implement` with Phase 1 fixtures and Phase 2 authority/persistence/runner foundations. Keep MCP execution disabled until the exact review/binding and injected-provider gateway tests pass.
+Implement User Story 1: preview only current workspace-enabled capabilities, resolve every MCP node to one exact binding, persist/review the immutable binding set, expose stale reasons, and add the binding/review API and accessible UI without invoking a child.
 
 ## Program guardrails
 

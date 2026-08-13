@@ -748,6 +748,111 @@ MIGRATIONS: tuple[Migration, ...] = (
                 ON missing_capability_reports(state, created_at DESC)"""),
         ),
     ),
+    Migration(
+        14,
+        "rivet_workspace_mcp_gateway",
+        (
+            add_column("workspace_workflow_reviews", "workflow_digest", "TEXT"),
+            add_column("workspace_workflow_reviews", "graph_id", "TEXT"),
+            add_column("workspace_workflow_reviews", "binding_set_id", "TEXT"),
+            add_column("workspace_workflow_reviews", "binding_set_digest", "TEXT"),
+            add_column("workspace_workflow_reviews", "policy_snapshot_digest", "TEXT"),
+            add_column("workspace_workflow_reviews", "review_digest", "TEXT"),
+            add_column("workspace_workflow_runs", "manifest_id", "TEXT"),
+            add_column("workspace_workflow_runs", "review_digest", "TEXT"),
+            add_column("workspace_workflow_runs", "binding_set_digest", "TEXT"),
+            add_column("workspace_workflow_runs", "authority_digest", "TEXT"),
+            add_column("workspace_workflow_runs", "trace_id", "TEXT"),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_binding_sets (
+                binding_set_id TEXT PRIMARY KEY,
+                workspace_id TEXT NOT NULL,
+                workflow_id TEXT NOT NULL,
+                workflow_revision INTEGER NOT NULL CHECK(workflow_revision >= 1),
+                workflow_digest TEXT NOT NULL CHECK(length(workflow_digest) = 64),
+                graph_id TEXT NOT NULL,
+                discovery_snapshot_digest TEXT NOT NULL
+                    CHECK(length(discovery_snapshot_digest) = 64),
+                policy_snapshot_digest TEXT NOT NULL
+                    CHECK(length(policy_snapshot_digest) = 64),
+                binding_set_digest TEXT NOT NULL UNIQUE
+                    CHECK(length(binding_set_digest) = 64),
+                created_at INTEGER NOT NULL,
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_capability_bindings (
+                binding_id TEXT PRIMARY KEY,
+                binding_set_id TEXT NOT NULL,
+                node_id TEXT NOT NULL,
+                node_handle TEXT NOT NULL,
+                qualified_tool_name TEXT NOT NULL,
+                binding_digest TEXT NOT NULL UNIQUE CHECK(length(binding_digest) = 64),
+                binding_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                UNIQUE(binding_set_id, node_id),
+                UNIQUE(binding_set_id, node_handle),
+                FOREIGN KEY (binding_set_id)
+                    REFERENCES workspace_workflow_binding_sets(binding_set_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_run_manifests (
+                manifest_id TEXT PRIMARY KEY,
+                run_id TEXT NOT NULL UNIQUE,
+                state TEXT NOT NULL CHECK(state IN
+                    ('prepared', 'running', 'cancelling', 'finalized')),
+                identity_digest TEXT NOT NULL CHECK(length(identity_digest) = 64),
+                draft_json TEXT NOT NULL,
+                manifest_json TEXT,
+                manifest_digest TEXT,
+                created_at INTEGER NOT NULL,
+                finalized_at INTEGER,
+                terminal_state TEXT CHECK(terminal_state IS NULL OR terminal_state IN
+                    ('cancelled', 'succeeded', 'failed')),
+                reason_code TEXT,
+                FOREIGN KEY (run_id) REFERENCES workspace_workflow_runs(run_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_child_calls (
+                call_id TEXT PRIMARY KEY,
+                run_id TEXT NOT NULL,
+                request_id TEXT NOT NULL,
+                node_id TEXT NOT NULL,
+                binding_digest TEXT NOT NULL CHECK(length(binding_digest) = 64),
+                state TEXT NOT NULL,
+                child_received INTEGER NOT NULL CHECK(child_received IN (0, 1)),
+                call_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                completed_at INTEGER,
+                UNIQUE(run_id, request_id),
+                FOREIGN KEY (run_id) REFERENCES workspace_workflow_runs(run_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS workspace_workflow_call_approvals (
+                approval_id TEXT PRIMARY KEY,
+                run_id TEXT NOT NULL,
+                request_id TEXT NOT NULL,
+                argument_digest TEXT NOT NULL CHECK(length(argument_digest) = 64),
+                approval_digest TEXT NOT NULL UNIQUE CHECK(length(approval_digest) = 64),
+                state TEXT NOT NULL CHECK(state IN
+                    ('pending', 'approved', 'denied', 'expired', 'consumed', 'cancelled')),
+                approval_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                decided_at INTEGER,
+                consumed_at INTEGER,
+                CHECK(expires_at > created_at),
+                FOREIGN KEY (run_id) REFERENCES workspace_workflow_runs(run_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workflow_binding_sets_scope
+                ON workspace_workflow_binding_sets(
+                    workspace_id, workflow_id, workflow_revision, graph_id)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workflow_child_calls_run
+                ON workspace_workflow_child_calls(run_id, created_at)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_workflow_call_approvals_run_state
+                ON workspace_workflow_call_approvals(run_id, state, expires_at)"""),
+        ),
+    ),
 )
 
 
