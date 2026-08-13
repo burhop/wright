@@ -218,6 +218,11 @@ describe("OnboardingWizard", () => {
     expect(
       screen.getByRole("option", { name: "Engineering host bridge" }),
     ).toBeVisible();
+    expect(
+      screen.getByText(
+        "Nothing is installed, connected, or enabled during this step.",
+      ),
+    ).toBeVisible();
     expect(mcpService.previewImport).not.toHaveBeenCalled();
   });
 

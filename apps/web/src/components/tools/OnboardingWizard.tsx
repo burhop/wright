@@ -306,6 +306,7 @@ export function OnboardingWizard({
 
         {step === "source" && (
           <div style={{ display: "grid", gap: "var(--space-md)" }}>
+            <p>Nothing is installed, connected, or enabled during this step.</p>
             <label>
               Source
               <select
