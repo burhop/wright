@@ -171,6 +171,40 @@ export interface EngineeringModelWorkspaceBinding {
   state: "enabled" | "disabled" | "stale" | "blocked";
 }
 
+export interface EngineeringModelUpdateComparison {
+  current_manifest_digest?: string;
+  candidate_manifest_digest?: string;
+  changed_facets: string[];
+  diff_digest: string;
+  requires_retest: boolean;
+  requires_license_review?: boolean;
+}
+
+export interface EngineeringModelMaintenanceStatus {
+  installation_id?: string;
+  state: string;
+  active?: boolean;
+  reclaimable_bytes?: number;
+  reclaimed_bytes?: number;
+  blockers: Array<Record<string, unknown>>;
+  references: Array<Record<string, unknown>>;
+  target_installation_id?: string;
+  current_installation_id?: string;
+  active_installation_id?: string;
+  predecessor_id?: string;
+  cached_content_reused?: boolean;
+  cleanup_state?: string;
+  category?: string;
+  message?: string;
+}
+
+export interface EngineeringModelOfflineExport {
+  artifact_id: string;
+  sha256: string;
+  size: number;
+  filename?: string;
+}
+
 export class EngineeringModelServiceError extends Error {
   readonly category: string;
   readonly recovery: string;
@@ -414,6 +448,87 @@ export class EngineeringModelService {
       },
     );
     return readResponse<EngineeringModelWorkspaceBinding>(response);
+  }
+
+  async getInstallationMaintenance(
+    installationId: string,
+  ): Promise<EngineeringModelMaintenanceStatus> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/installations/${encodeURIComponent(installationId)}/maintenance`,
+      ),
+    );
+    return readResponse<EngineeringModelMaintenanceStatus>(response);
+  }
+
+  async compareInstallationUpdate(
+    installationId: string,
+    modelId: string,
+    variantId: string,
+  ): Promise<EngineeringModelUpdateComparison> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/installations/${encodeURIComponent(installationId)}/compare-update`,
+      ),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model_id: modelId, variant_id: variantId }),
+      },
+    );
+    return readResponse<EngineeringModelUpdateComparison>(response);
+  }
+
+  async maintainInstallation(
+    installationId: string,
+    action: "disable" | "uninstall" | "purge" | "update" | "rollback",
+    targetInstallationId?: string,
+  ): Promise<EngineeringModelMaintenanceStatus> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/installations/${encodeURIComponent(installationId)}/maintenance`,
+      ),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          ...(targetInstallationId
+            ? { target_installation_id: targetInstallationId }
+            : {}),
+        }),
+      },
+    );
+    return readResponse<EngineeringModelMaintenanceStatus>(response);
+  }
+
+  async setModelReferenceState(
+    referenceId: string,
+    state: "detached" | "archived",
+  ): Promise<{ reference_id: string; state: string }> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/references/${encodeURIComponent(referenceId)}`,
+      ),
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state }),
+      },
+    );
+    return readResponse<{ reference_id: string; state: string }>(response);
+  }
+
+  async createOfflineExport(
+    installationId: string,
+  ): Promise<EngineeringModelOfflineExport> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl(
+        `/api/v1/engineering-models/installations/${encodeURIComponent(installationId)}/exports`,
+      ),
+      { method: "POST" },
+    );
+    return readResponse<EngineeringModelOfflineExport>(response);
   }
 }
 

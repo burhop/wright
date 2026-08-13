@@ -49,6 +49,16 @@ from .testing import (
     evaluate_test_vector as evaluate_test_vector,
     validate_mandatory_vectors as validate_mandatory_vectors,
 )
+from .extensions import (
+    EngineeringExtensionRegistries as EngineeringExtensionRegistries,
+    ExtensionError as ExtensionError,
+    built_in_extension_registries as built_in_extension_registries,
+)
+from .conformance import (
+    ConformanceFinding as ConformanceFinding,
+    ConformanceReport as ConformanceReport,
+    run_package_conformance as run_package_conformance,
+)
 
 
 def schema_root():
@@ -59,6 +69,10 @@ def schema_root():
 
 __all__ = [
     "FailureCategory",
+    "ConformanceFinding",
+    "ConformanceReport",
+    "EngineeringExtensionRegistries",
+    "ExtensionError",
     "AdapterDescriptor",
     "AdapterRegistration",
     "EvidenceFailure",
@@ -77,11 +91,13 @@ __all__ = [
     "RuntimeFailure",
     "RuntimeSupervisor",
     "built_in_runtime_registry",
+    "built_in_extension_registries",
     "canonical_digest",
     "canonical_json",
     "confirm_effect_plan",
     "create_effect_plan",
     "evaluate_test_vector",
+    "run_package_conformance",
     "schema_root",
     "validate_mandatory_vectors",
 ]

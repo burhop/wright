@@ -158,22 +158,22 @@
 
 ### Tests first
 
-- [ ] T079 [P] [US4] Write failing semantic update-diff tests for license, artifacts, adapter, schemas, units, coordinates, resources, vectors, limitations, and redistribution in `packages/model_registry/tests/test_model_updates.py`.
-- [ ] T080 [P] [US4] Write failing update failure, atomic successor activation, rollback/retest, and cached-content tests in `packages/model_registry/tests/test_model_updates.py`.
-- [ ] T081 [P] [US4] Write failing durable reference/lease, disable, uninstall, purge-blocker, detach/archive, exact reclaimable-byte preview, cancellable cleanup, restart recovery, and cleanup tests in `packages/model_registry/tests/test_model_removal.py`.
-- [ ] T082 [P] [US4] Write failing deterministic public export/private exclusion/redistribution and fresh-root re-import tests in `packages/model_registry/tests/test_offline_export.py`.
-- [ ] T083 [P] [US4] Write failing update/rollback/reference/export/uninstall/purge API tests in `apps/api/tests/test_engineering_model_maintenance_api.py`.
-- [ ] T084 [P] [US4] Write failing compare/update/rollback/reference/removal/export component tests in `apps/web/tests/EngineeringModelMaintenance.spec.tsx`.
+- [x] T079 [P] [US4] Write failing semantic update-diff tests for license, artifacts, adapter, schemas, units, coordinates, resources, vectors, limitations, and redistribution in `packages/model_registry/tests/test_model_updates.py`.
+- [x] T080 [P] [US4] Write failing update failure, atomic successor activation, rollback/retest, and cached-content tests in `packages/model_registry/tests/test_model_updates.py`.
+- [x] T081 [P] [US4] Write failing durable reference/lease, disable, uninstall, purge-blocker, detach/archive, exact reclaimable-byte preview, cancellable cleanup, restart recovery, and cleanup tests in `packages/model_registry/tests/test_model_removal.py`.
+- [x] T082 [P] [US4] Write failing deterministic public export/private exclusion/redistribution and fresh-root re-import tests in `packages/model_registry/tests/test_offline_export.py`.
+- [x] T083 [P] [US4] Write failing update/rollback/reference/export/uninstall/purge API tests in `apps/api/tests/test_engineering_model_maintenance_api.py`.
+- [x] T084 [P] [US4] Write failing compare/update/rollback/reference/removal/export component tests in `apps/web/tests/EngineeringModelMaintenance.spec.tsx`.
 
 ### Implementation
 
-- [ ] T085 [US4] Implement semantic revision comparison and update/rollback orchestration in `packages/model_registry/src/model_registry/lifecycle.py`.
-- [ ] T086 [US4] Implement reference/lease-aware disable, uninstall, purge, detach/archive, exact reclaimable-byte preview, cancellable cleanup, and restart recovery in `packages/model_registry/src/model_registry/lifecycle.py`.
-- [ ] T087 [US4] Implement deterministic policy-aware offline export in `packages/model_registry/src/model_registry/offline_source.py`.
-- [ ] T088 [US4] Compose maintenance/reference/export use cases in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
-- [ ] T089 [US4] Add maintenance/reference/export schemas and thin routes in `apps/api/src/api/schemas/engineering_models.py` and `apps/api/src/api/routers/engineering_models.py`.
-- [ ] T090 [US4] Implement maintenance client methods and compare/reference/removal/export UI in `apps/web/src/services/engineering-model-service.ts` and `apps/web/src/components/models/EngineeringModelMaintenance.tsx`.
-- [ ] T091 [US4] Integrate maintenance journeys into `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx` with blocked purge and rollback focus recovery.
+- [x] T085 [US4] Implement semantic revision comparison and update/rollback orchestration in `packages/model_registry/src/model_registry/lifecycle.py`.
+- [x] T086 [US4] Implement reference/lease-aware disable, uninstall, purge, detach/archive, exact reclaimable-byte preview, cancellable cleanup, and restart recovery in `packages/model_registry/src/model_registry/lifecycle.py`.
+- [x] T087 [US4] Implement deterministic policy-aware offline export in `packages/model_registry/src/model_registry/offline_source.py`.
+- [x] T088 [US4] Compose maintenance/reference/export use cases in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
+- [x] T089 [US4] Add maintenance/reference/export schemas and thin routes in `apps/api/src/api/schemas/engineering_models.py` and `apps/api/src/api/routers/engineering_models.py`.
+- [x] T090 [US4] Implement maintenance client methods and compare/reference/removal/export UI in `apps/web/src/services/engineering-model-service.ts` and `apps/web/src/components/models/EngineeringModelMaintenance.tsx`.
+- [x] T091 [US4] Integrate maintenance journeys into `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx` with blocked purge and rollback focus recovery.
 
 **Checkpoint**: Lifecycle changes are reversible and portable, and content deletion is evidence/reference safe.
 
@@ -185,11 +185,11 @@
 
 **Independent Test**: A test-only package/adapter traverses the normal lifecycle; duplicate, unsupported, unsafe, unknown-license, undeclared, and schema-incompatible extensions fail before acquisition.
 
-- [ ] T092 [P] [US5] Write failing package/adapter full-lifecycle extension, no-lifecycle-service-edit, duplicate identity, unknown version, unsafe format, incomplete license, and schema mismatch tests in `packages/model_registry/tests/test_extensions.py`.
-- [ ] T093 [US5] Expose documented duplicate-safe catalog, source, adapter, and predicate registry interfaces in `packages/model_registry/src/model_registry/extensions.py`.
-- [ ] T094 [US5] Add a package/adapter conformance runner that uses only generated fixtures in `packages/model_registry/src/model_registry/conformance.py`.
-- [ ] T095 [US5] Write command tests first, then add catalog and adapter validation commands to `tests/test_cli.py` and `src/wright_engineering/cli.py` without acquiring content or starting unapproved runtimes.
-- [ ] T096 [US5] Document model package authoring, adapter conformance, format/license review, and no-weight fixture generation in `docs/models/local-engineering-models.md`.
+- [x] T092 [P] [US5] Write failing package/adapter full-lifecycle extension, no-lifecycle-service-edit, duplicate identity, unknown version, unsafe format, incomplete license, and schema mismatch tests in `packages/model_registry/tests/test_extensions.py`.
+- [x] T093 [US5] Expose documented duplicate-safe catalog, source, adapter, and predicate registry interfaces in `packages/model_registry/src/model_registry/extensions.py`.
+- [x] T094 [US5] Add a package/adapter conformance runner that uses only generated fixtures in `packages/model_registry/src/model_registry/conformance.py`.
+- [x] T095 [US5] Write command tests first, then add catalog and adapter validation commands to `tests/test_cli.py` and `src/wright_engineering/cli.py` without acquiring content or starting unapproved runtimes.
+- [x] T096 [US5] Document model package authoring, adapter conformance, format/license review, and no-weight fixture generation in `docs/models/local-engineering-models.md`.
 
 **Checkpoint**: New engineering model types follow one safe lifecycle and unknown extensions fail closed.
 

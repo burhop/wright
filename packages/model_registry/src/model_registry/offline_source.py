@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import stat
 import unicodedata
 import zipfile
@@ -12,7 +13,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from .models import ModelPackage, ModelRegistryError
+from .models import ModelPackage, ModelRegistryError, canonical_json
 from .policy import validate_artifact_path
 
 _MANIFEST = "engineering-model-package.json"
@@ -30,6 +31,13 @@ class InspectedOfflinePackage:
     package: ModelPackage
     artifacts: dict[str, bytes]
     manifest_digest: str
+
+
+@dataclass(frozen=True, slots=True)
+class OfflineExportResult:
+    archive_sha256: str
+    size: int
+    artifact_count: int
 
 
 def _safe_entry(info: zipfile.ZipInfo) -> str:
@@ -152,4 +160,78 @@ def inspect_offline_package(
         return InspectedOfflinePackage(package, artifacts, package.digest)
 
 
-__all__ = ["InspectedOfflinePackage", "OfflinePackageError", "inspect_offline_package"]
+def export_offline_package(
+    package: ModelPackage,
+    artifacts: dict[str, bytes],
+    destination: str | Path,
+) -> OfflineExportResult:
+    """Write one deterministic public, redistributable, data-only archive."""
+
+    target = Path(destination)
+    if target.parent == target:
+        raise OfflinePackageError("path_unsafe", "Export destination is unsafe")
+    if package.source.access in {"gated", "private"}:
+        raise OfflinePackageError(
+            "export_forbidden", "Private or gated model material cannot be exported"
+        )
+    if package.license.redistribution != "allowed":
+        raise OfflinePackageError(
+            "export_forbidden", "The model license does not allow redistribution"
+        )
+    declarations = {
+        item.path: item for variant in package.variants for item in variant.artifacts
+    }
+    if set(artifacts) != set(declarations):
+        raise OfflinePackageError(
+            "undeclared_file", "Export artifacts do not match the package manifest"
+        )
+    for path, declaration in declarations.items():
+        value = artifacts[path]
+        if not declaration.redistributable:
+            raise OfflinePackageError(
+                "export_forbidden", "One declared artifact is not redistributable"
+            )
+        if (
+            len(value) != declaration.size
+            or hashlib.sha256(value).hexdigest() != declaration.sha256
+        ):
+            raise OfflinePackageError(
+                "digest_mismatch", "One export artifact failed exact verification"
+            )
+    manifest = canonical_json(
+        package.model_dump(mode="json", exclude_none=True)
+    ).encode("utf-8")
+    if len(manifest) > 64 * 1024:
+        raise OfflinePackageError("size_exceeded", "Export manifest exceeds 64 KiB")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_name(f".{target.name}.tmp")
+    temporary.unlink(missing_ok=True)
+    try:
+        with zipfile.ZipFile(
+            temporary, "w", compression=zipfile.ZIP_STORED, strict_timestamps=True
+        ) as archive:
+            for name, value in sorted({**artifacts, _MANIFEST: manifest}.items()):
+                info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+                info.compress_type = zipfile.ZIP_STORED
+                info.create_system = 3
+                info.external_attr = 0o100644 << 16
+                archive.writestr(info, value)
+        with temporary.open("r+b") as stream:
+            os.fsync(stream.fileno())
+        os.replace(temporary, target)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
+    value = target.read_bytes()
+    return OfflineExportResult(
+        hashlib.sha256(value).hexdigest(), len(value), len(artifacts)
+    )
+
+
+__all__ = [
+    "InspectedOfflinePackage",
+    "OfflineExportResult",
+    "OfflinePackageError",
+    "export_offline_package",
+    "inspect_offline_package",
+]

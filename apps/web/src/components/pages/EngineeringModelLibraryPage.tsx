@@ -11,6 +11,7 @@ import {
 } from "../models/ModelTrustPrimitives";
 import { EngineeringModelInstallFlow } from "../models/EngineeringModelInstallFlow";
 import { EngineeringModelRuntimePanel } from "../models/EngineeringModelRuntimePanel";
+import { EngineeringModelMaintenance } from "../models/EngineeringModelMaintenance";
 
 function DetailPanel({
   model,
@@ -131,6 +132,13 @@ function DetailPanel({
                     this tested capability.
                   </p>
                 )
+              ) : null}
+              {installations[variant.variant_id] ? (
+                <EngineeringModelMaintenance
+                  installationId={installations[variant.variant_id]}
+                  modelId={model.model_id}
+                  variantId={variant.variant_id}
+                />
               ) : null}
             </article>
           ))

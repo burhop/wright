@@ -96,6 +96,39 @@ class EngineeringModelApplicationPort(Protocol):
         principal_id: str,
     ) -> Mapping[str, Any]: ...
 
+    def get_installation_maintenance(
+        self, installation_id: str, *, principal_id: str
+    ) -> Mapping[str, Any]: ...
+
+    def compare_installation_update(
+        self,
+        installation_id: str,
+        *,
+        model_id: str,
+        variant_id: str,
+        principal_id: str,
+    ) -> Mapping[str, Any]: ...
+
+    def maintain_installation(
+        self,
+        installation_id: str,
+        *,
+        action: str,
+        target_installation_id: str | None,
+        principal_id: str,
+        trace_id: str,
+    ) -> Mapping[str, Any]: ...
+
+    def set_model_reference_state(
+        self, reference_id: str, *, state: str, principal_id: str
+    ) -> Mapping[str, Any]: ...
+
+    def create_offline_export(
+        self, installation_id: str, *, principal_id: str, trace_id: str
+    ) -> Mapping[str, Any]: ...
+
+    def read_offline_export(self, artifact_id: str, *, principal_id: str) -> bytes: ...
+
     def declared_model_tool_names(self) -> frozenset[str]: ...
 
     def discover_model_capabilities(

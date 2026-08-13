@@ -299,6 +299,31 @@ class ModelArtifactStore:
             raise ValueError("Installation activation is invalid")
         return value
 
+    def remove_activation(self, installation_id: str) -> bool:
+        installation = _identity(installation_id, "Installation identity")
+        target = self.installations_root / f"{installation}.json"
+        if not target.exists():
+            return False
+        target.unlink()
+        return True
+
+    def remove_verified(self, content_digest: str) -> int:
+        """Remove one verified object after the repository proves zero holds."""
+
+        target = self._object_path(content_digest)
+        if not target.is_file():
+            return 0
+        if _sha256(target) != content_digest:
+            raise ValueError("Verified content is corrupt")
+        size = target.stat().st_size
+        target.chmod(stat.S_IWRITE | stat.S_IREAD)
+        target.unlink()
+        try:
+            target.parent.rmdir()
+        except OSError:
+            pass
+        return size
+
     def cleanup_staging(
         self, operation_id: str, *, trace_id: str = "no-active-span"
     ) -> CleanupResult:

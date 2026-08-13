@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import threading
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 import shutil
@@ -455,10 +456,330 @@ class ModelInstallLifecycle:
         )
 
 
+_UPDATE_FACETS = (
+    "license",
+    "redistribution",
+    "artifacts",
+    "adapter",
+    "schemas",
+    "units",
+    "coordinates",
+    "resources",
+    "vectors",
+    "limitations",
+)
+
+
+@dataclass(frozen=True, slots=True)
+class ModelRevisionDifference:
+    current_manifest_digest: str
+    candidate_manifest_digest: str
+    changed_facets: tuple[str, ...]
+    diff_digest: str
+    requires_retest: bool
+    requires_license_review: bool
+
+    def projection(self) -> dict[str, Any]:
+        return {
+            "current_manifest_digest": self.current_manifest_digest,
+            "candidate_manifest_digest": self.candidate_manifest_digest,
+            "changed_facets": list(self.changed_facets),
+            "diff_digest": self.diff_digest,
+            "requires_retest": self.requires_retest,
+            "requires_license_review": self.requires_license_review,
+        }
+
+
+def compare_model_revisions(
+    current: ModelPackage,
+    candidate: ModelPackage,
+    *,
+    current_variant_id: str | None = None,
+    candidate_variant_id: str | None = None,
+) -> ModelRevisionDifference:
+    """Compare every semantic facet that can change engineering behavior or trust."""
+
+    if current.model_id != candidate.model_id:
+        raise LifecycleFailure("model_identity_changed", "Model identity changed")
+    current_variant = current.variant(
+        current_variant_id or current.variants[0].variant_id
+    )
+    candidate_variant = candidate.variant(
+        candidate_variant_id or candidate.variants[0].variant_id
+    )
+    current_tasks = [item.model_dump(mode="json") for item in current.tasks]
+    candidate_tasks = [item.model_dump(mode="json") for item in candidate.tasks]
+    materials: dict[str, tuple[Any, Any]] = {
+        "license": (
+            current.license.model_dump(mode="json", exclude={"redistribution"}),
+            candidate.license.model_dump(mode="json", exclude={"redistribution"}),
+        ),
+        "redistribution": (
+            current.license.redistribution,
+            candidate.license.redistribution,
+        ),
+        "artifacts": (
+            [item.model_dump(mode="json") for item in current_variant.artifacts],
+            [item.model_dump(mode="json") for item in candidate_variant.artifacts],
+        ),
+        "adapter": (
+            current_variant.runtime.model_dump(mode="json"),
+            candidate_variant.runtime.model_dump(mode="json"),
+        ),
+        "schemas": (
+            [
+                (item["task_id"], item["input_schema"], item["output_schema"])
+                for item in current_tasks
+            ],
+            [
+                (item["task_id"], item["input_schema"], item["output_schema"])
+                for item in candidate_tasks
+            ],
+        ),
+        "units": (
+            [(item["task_id"], item.get("units", {})) for item in current_tasks],
+            [(item["task_id"], item.get("units", {})) for item in candidate_tasks],
+        ),
+        "coordinates": (
+            [
+                (item["task_id"], item.get("coordinate_convention"))
+                for item in current_tasks
+            ],
+            [
+                (item["task_id"], item.get("coordinate_convention"))
+                for item in candidate_tasks
+            ],
+        ),
+        "resources": (
+            current_variant.resources.model_dump(mode="json"),
+            candidate_variant.resources.model_dump(mode="json"),
+        ),
+        "vectors": (
+            [item.model_dump(mode="json") for item in current_variant.test_vectors],
+            [item.model_dump(mode="json") for item in candidate_variant.test_vectors],
+        ),
+        "limitations": (
+            [item.model_dump(mode="json") for item in current.limitations],
+            [item.model_dump(mode="json") for item in candidate.limitations],
+        ),
+    }
+    changed = tuple(
+        name for name in _UPDATE_FACETS if materials[name][0] != materials[name][1]
+    )
+    material = {
+        "current_manifest_digest": current.digest,
+        "candidate_manifest_digest": candidate.digest,
+        "changes": {
+            name: {"before": materials[name][0], "after": materials[name][1]}
+            for name in changed
+        },
+    }
+    return ModelRevisionDifference(
+        current.digest,
+        candidate.digest,
+        changed,
+        canonical_digest(material),
+        bool(changed),
+        bool({"license", "redistribution"}.intersection(changed)),
+    )
+
+
+class ModelMaintenanceLifecycle:
+    """Reference-safe update, rollback, removal, and recovery orchestration."""
+
+    def __init__(self, *, repository, store, clock: Callable[[], datetime]) -> None:
+        self.repository = repository
+        self.store = store
+        self.clock = clock
+        self._guard = threading.Lock()
+
+    def activate_successor(
+        self, current_installation_id: str, successor_installation_id: str
+    ) -> dict[str, Any]:
+        with self._guard:
+            current = self.repository.get_installation(current_installation_id)
+            successor = self.repository.get_installation(successor_installation_id)
+            if current is None or successor is None:
+                raise LifecycleFailure(
+                    "installation_not_found", "Installation was not found"
+                )
+            if successor["state"] != "ready":
+                return {
+                    "state": "blocked",
+                    "category": "test_failed",
+                    "message": "The successor must pass its exact standard test before activation.",
+                }
+            changed = self.repository.activate_installation(
+                successor_installation_id,
+                predecessor_id=current_installation_id,
+                observed_at=self.clock(),
+            )
+            if not changed:
+                raise LifecycleFailure(
+                    "stale_binding", "Active revision changed concurrently"
+                )
+            return {
+                "state": "succeeded",
+                "active_installation_id": successor_installation_id,
+                "predecessor_id": current_installation_id,
+            }
+
+    def prepare_rollback(
+        self, current_installation_id: str, target_installation_id: str
+    ) -> dict[str, Any]:
+        current = self.repository.get_installation(current_installation_id)
+        target = self.repository.get_installation(target_installation_id)
+        if (
+            current is None
+            or target is None
+            or current["model_id"] != target["model_id"]
+            or not current["active_revision"]
+        ):
+            raise LifecycleFailure(
+                "installation_not_found", "Rollback target is unavailable"
+            )
+        artifacts = self.repository.installation_artifacts(target_installation_id)
+        cached = bool(artifacts) and all(
+            self.store.has_verified(str(item["content_digest"])) for item in artifacts
+        )
+        if not cached:
+            raise LifecycleFailure(
+                "source_unavailable", "Rollback content is not cached"
+            )
+        if not self.repository.prepare_installation_retest(
+            target_installation_id, observed_at=self.clock()
+        ):
+            raise LifecycleFailure(
+                "stale_binding", "Rollback target changed concurrently"
+            )
+        return {
+            "state": "testing_required",
+            "current_installation_id": current_installation_id,
+            "target_installation_id": target_installation_id,
+            "cached_content_reused": True,
+        }
+
+    def disable(self, installation_id: str) -> dict[str, Any]:
+        changed = self.repository.set_installation_lifecycle_state(
+            installation_id,
+            expected_states=("installed", "testing", "ready", "unhealthy"),
+            state="disabled",
+            active=False,
+            observed_at=self.clock(),
+        )
+        current = self.repository.get_installation(installation_id)
+        if current is None:
+            raise LifecycleFailure(
+                "installation_not_found", "Installation was not found"
+            )
+        if not changed and current["state"] != "disabled":
+            raise LifecycleFailure("stale_binding", "Installation changed concurrently")
+        return {"installation_id": installation_id, "state": "disabled"}
+
+    def uninstall(self, installation_id: str) -> dict[str, Any]:
+        changed = self.repository.set_installation_lifecycle_state(
+            installation_id,
+            expected_states=("disabled",),
+            state="uninstalled",
+            active=False,
+            observed_at=self.clock(),
+        )
+        current = self.repository.get_installation(installation_id)
+        if current is None:
+            raise LifecycleFailure(
+                "installation_not_found", "Installation was not found"
+            )
+        if not changed and current["state"] != "uninstalled":
+            raise LifecycleFailure(
+                "installation_enabled",
+                "Disable the installation before uninstalling it",
+            )
+        return {"installation_id": installation_id, "state": "uninstalled"}
+
+    def preview_purge(self, installation_id: str) -> dict[str, Any]:
+        snapshot = self.repository.removal_snapshot(installation_id, at=self.clock())
+        if snapshot is None:
+            raise LifecycleFailure(
+                "installation_not_found", "Installation was not found"
+            )
+        installation = snapshot["installation"]
+        blockers = list(snapshot["blockers"])
+        if installation["state"] != "uninstalled":
+            blockers.insert(
+                0,
+                {
+                    "kind": "package",
+                    "owner_id": installation_id,
+                    "message": "Disable and uninstall before purging verified bytes.",
+                },
+            )
+        return {
+            "installation_id": installation_id,
+            "state": installation["state"],
+            "active": bool(installation["active_revision"]),
+            "reclaimable_bytes": 0 if blockers else snapshot["reclaimable_bytes"],
+            "blockers": blockers,
+            "references": snapshot["references"],
+        }
+
+    def set_reference_state(self, reference_id: str, state: str) -> dict[str, Any]:
+        row = self.repository.set_reference_state(
+            reference_id, state=state, observed_at=self.clock()
+        )
+        if row is None:
+            raise LifecycleFailure("reference_not_found", "Reference was not found")
+        return row
+
+    def purge(
+        self,
+        installation_id: str,
+        *,
+        cancellation: CancellationSignal | None = None,
+    ) -> dict[str, Any]:
+        signal = cancellation or CancellationSignal()
+        with self._guard:
+            preview = self.preview_purge(installation_id)
+            if signal.requested():
+                raise LifecycleFailure("cancelled", "Purge was cancelled safely")
+            if preview["blockers"]:
+                raise LifecycleFailure(
+                    "reference_blocked", "Verified content is still referenced"
+                )
+            snapshot = self.repository.removal_snapshot(
+                installation_id, at=self.clock()
+            )
+            assert snapshot is not None
+            reclaimed = 0
+            for digest in sorted(
+                {str(item["content_digest"]) for item in snapshot["artifacts"]}
+            ):
+                reclaimed += self.store.remove_verified(digest)
+                self.repository.mark_content_missing(digest, observed_at=self.clock())
+            self.store.remove_activation(installation_id)
+            return {
+                "installation_id": installation_id,
+                "state": "succeeded",
+                "reclaimed_bytes": reclaimed,
+                "cleanup_state": "clean",
+            }
+
+    def recover_cleanup(self, operation_id: str) -> dict[str, Any]:
+        result = self.store.cleanup_staging(operation_id)
+        return {
+            "operation_id": operation_id,
+            "cleanup_state": result.state,
+            "removed_items": result.removed_items,
+            "residue": list(result.residue),
+        }
+
+
 __all__ = [
     "CancellationSignal",
     "DiskReservationManager",
     "LifecycleFailure",
     "MappingArtifactSource",
+    "ModelMaintenanceLifecycle",
     "ModelInstallLifecycle",
+    "ModelRevisionDifference",
+    "compare_model_revisions",
 ]

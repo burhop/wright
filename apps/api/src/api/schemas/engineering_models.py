@@ -297,6 +297,87 @@ class ModelWorkspaceBindingResponse(BaseModel):
     state: Literal["enabled", "disabled", "stale", "blocked"]
 
 
+class ModelUpdateCompareRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    model_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+    variant_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+
+
+class ModelUpdateComparisonResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    current_manifest_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    candidate_manifest_digest: str | None = Field(
+        default=None, pattern=r"^[a-f0-9]{64}$"
+    )
+    changed_facets: list[str] = Field(max_length=16)
+    diff_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    requires_retest: bool
+    requires_license_review: bool = False
+
+
+class ModelMaintenanceRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    action: Literal["disable", "uninstall", "purge", "update", "rollback"]
+    target_installation_id: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    )
+
+    @model_validator(mode="after")
+    def require_target(self) -> "ModelMaintenanceRequest":
+        if self.action in {"update", "rollback"} and not self.target_installation_id:
+            raise ValueError("Update and rollback require an exact target installation")
+        if self.action not in {"update", "rollback"} and self.target_installation_id:
+            raise ValueError("This maintenance action does not accept a target")
+        return self
+
+
+class ModelMaintenanceResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    installation_id: str | None = Field(default=None, max_length=128)
+    state: str = Field(min_length=1, max_length=64)
+    active: bool | None = None
+    reclaimable_bytes: int | None = Field(default=None, ge=0)
+    reclaimed_bytes: int | None = Field(default=None, ge=0)
+    blockers: list[dict[str, Any]] = Field(default_factory=list, max_length=1000)
+    references: list[dict[str, Any]] = Field(default_factory=list, max_length=1000)
+    target_installation_id: str | None = Field(default=None, max_length=128)
+    current_installation_id: str | None = Field(default=None, max_length=128)
+    active_installation_id: str | None = Field(default=None, max_length=128)
+    predecessor_id: str | None = Field(default=None, max_length=128)
+    cached_content_reused: bool | None = None
+    cleanup_state: str | None = Field(default=None, max_length=32)
+    category: str | None = Field(default=None, max_length=128)
+    message: str | None = Field(default=None, max_length=1000)
+
+
+class ModelReferenceStateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    state: Literal["detached", "archived"]
+
+
+class ModelReferenceResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    reference_id: str = Field(min_length=1, max_length=128)
+    state: Literal["active", "detached", "archived"]
+    kind: str | None = Field(default=None, max_length=128)
+    owner_id: str | None = Field(default=None, max_length=128)
+
+
+class ModelOfflineExportResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    artifact_id: str = Field(pattern=r"^export-[a-f0-9]{1,120}$")
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    size: int = Field(ge=0, le=512 * 1024 * 1024)
+    filename: str | None = Field(default=None, max_length=256)
+
+
 __all__ = [
     "CatalogSnapshotResponse",
     "EngineeringModelListResponse",
@@ -308,6 +389,13 @@ __all__ = [
     "ModelPlanRequest",
     "ModelPlanResponse",
     "ModelRuntimeTestResponse",
+    "ModelMaintenanceRequest",
+    "ModelMaintenanceResponse",
+    "ModelOfflineExportResponse",
+    "ModelReferenceResponse",
+    "ModelReferenceStateRequest",
+    "ModelUpdateCompareRequest",
+    "ModelUpdateComparisonResponse",
     "ModelWorkspaceBindingRequest",
     "ModelWorkspaceBindingResponse",
     "ModelWorkspaceBindingStateRequest",

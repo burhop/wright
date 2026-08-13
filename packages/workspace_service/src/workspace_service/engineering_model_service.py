@@ -19,6 +19,8 @@ from model_registry.lifecycle import (
     DiskReservationManager,
     MappingArtifactSource,
     ModelInstallLifecycle,
+    ModelMaintenanceLifecycle,
+    compare_model_revisions,
 )
 from model_registry.planning import (
     ModelEffectPlan,
@@ -26,7 +28,11 @@ from model_registry.planning import (
     confirm_effect_plan,
     create_effect_plan,
 )
-from model_registry.offline_source import OfflinePackageError, inspect_offline_package
+from model_registry.offline_source import (
+    OfflinePackageError,
+    export_offline_package,
+    inspect_offline_package,
+)
 from model_registry.policy import HostObservation
 from model_registry.gateway_provider import engineering_model_tool_name
 from model_registry.models import canonical_digest
@@ -113,6 +119,12 @@ class EngineeringModelService:
             self.runtime_supervisor = None
         self._runtime_requests: dict[tuple[str, str], RuntimeSession] = {}
         self._runtime_lock = asyncio.Lock()
+        self.maintenance: ModelMaintenanceLifecycle | None = None
+        if repository is not None and artifact_store is not None:
+            self.maintenance = ModelMaintenanceLifecycle(
+                repository=repository, store=artifact_store, clock=self.clock
+            )
+        self._authorized_exports: dict[str, str] = {}
 
     def list_catalog(
         self,
@@ -550,6 +562,203 @@ class EngineeringModelService:
                 "Restart Wright with its owned model data root available.",
             )
         return repository, self.artifact_store, self.runtime_supervisor
+
+    def _require_maintenance(
+        self,
+    ) -> tuple[ModelRepository, ModelArtifactStore, ModelMaintenanceLifecycle]:
+        repository, _, _ = self._require_runtime()
+        if self.artifact_store is None or self.maintenance is None:
+            raise EngineeringModelPortError(
+                "model_lifecycle_unavailable",
+                "Engineering-model maintenance is unavailable.",
+                "Restart Wright with its owned model data root available.",
+            )
+        return repository, self.artifact_store, self.maintenance
+
+    def get_installation_maintenance(
+        self, installation_id: str, *, principal_id: str
+    ) -> dict[str, Any]:
+        _, _, maintenance = self._require_maintenance()
+        try:
+            return maintenance.preview_purge(installation_id)
+        except ValueError as error:
+            raise EngineeringModelPortError(
+                getattr(error, "code", "maintenance_failed"),
+                str(error),
+                "Reload the exact installation and its current references.",
+            ) from error
+
+    def compare_installation_update(
+        self,
+        installation_id: str,
+        *,
+        model_id: str,
+        variant_id: str,
+        principal_id: str,
+    ) -> dict[str, Any]:
+        repository, _, _ = self._require_maintenance()
+        installation = repository.get_installation(installation_id)
+        if installation is None:
+            raise EngineeringModelPortError(
+                "installation_not_found",
+                "The model installation was not found.",
+                "Choose a current installation.",
+            )
+        current, _ = self._installation_package(installation)
+        candidate = self._entry_package(model_id)
+        try:
+            difference = compare_model_revisions(
+                current,
+                candidate,
+                current_variant_id=str(installation["variant_id"]),
+                candidate_variant_id=variant_id,
+            )
+        except (KeyError, ValueError) as error:
+            raise EngineeringModelPortError(
+                getattr(error, "code", "update_invalid"),
+                str(error),
+                "Choose a reviewed revision and compatible variant of the same model.",
+            ) from error
+        return difference.projection()
+
+    def maintain_installation(
+        self,
+        installation_id: str,
+        *,
+        action: str,
+        target_installation_id: str | None,
+        principal_id: str,
+        trace_id: str,
+    ) -> dict[str, Any]:
+        _, _, maintenance = self._require_maintenance()
+        try:
+            if action == "disable":
+                result = maintenance.disable(installation_id)
+            elif action == "uninstall":
+                result = maintenance.uninstall(installation_id)
+            elif action == "purge":
+                result = maintenance.purge(installation_id)
+            elif action == "update":
+                if not target_installation_id:
+                    raise ValueError("A tested successor installation is required")
+                result = maintenance.activate_successor(
+                    installation_id, target_installation_id
+                )
+            elif action == "rollback":
+                if not target_installation_id:
+                    raise ValueError("A rollback installation is required")
+                result = maintenance.prepare_rollback(
+                    installation_id, target_installation_id
+                )
+            else:
+                raise ValueError("Maintenance action is invalid")
+        except ValueError as error:
+            raise EngineeringModelPortError(
+                getattr(error, "code", "maintenance_failed"),
+                str(error),
+                "Review current state, references, evidence, and the exact target.",
+            ) from error
+        return result
+
+    def set_model_reference_state(
+        self, reference_id: str, *, state: str, principal_id: str
+    ) -> dict[str, Any]:
+        _, _, maintenance = self._require_maintenance()
+        try:
+            return maintenance.set_reference_state(reference_id, state)
+        except ValueError as error:
+            raise EngineeringModelPortError(
+                getattr(error, "code", "reference_not_found"),
+                str(error),
+                "Reload the current reference list.",
+            ) from error
+
+    def create_offline_export(
+        self, installation_id: str, *, principal_id: str, trace_id: str
+    ) -> dict[str, Any]:
+        repository, store, _ = self._require_maintenance()
+        installation = repository.get_installation(installation_id)
+        if installation is None or installation["state"] in {"uninstalled", "missing"}:
+            raise EngineeringModelPortError(
+                "installation_not_found",
+                "The installed model is unavailable for export.",
+                "Choose an installed, tested, or disabled revision.",
+            )
+        package, variant = self._installation_package(installation)
+        declarations = {item.path: item for item in variant.artifacts}
+        rows = repository.installation_artifacts(installation_id)
+        if {str(row["artifact_path"]) for row in rows} != set(declarations):
+            raise EngineeringModelPortError(
+                "artifact_missing",
+                "The installed artifact set is incomplete.",
+                "Repair the exact installation before exporting it.",
+            )
+        try:
+            artifacts = {
+                str(row["artifact_path"]): store.read_verified(
+                    str(row["content_digest"]),
+                    maximum_bytes=declarations[str(row["artifact_path"])].size,
+                )
+                for row in rows
+            }
+            artifact_id = (
+                "export-"
+                + canonical_digest(
+                    {
+                        "installation_digest": installation["installation_digest"],
+                        "manifest_digest": package.digest,
+                        "artifact_digests": sorted(
+                            str(row["content_digest"]) for row in rows
+                        ),
+                    }
+                )[:24]
+            )
+            export_root = store.root / "exports"
+            export_root.mkdir(parents=True, exist_ok=True)
+            target = export_root / f"{artifact_id}.wright-model.zip"
+            result = export_offline_package(package, artifacts, target)
+        except (KeyError, ValueError, OfflinePackageError) as error:
+            raise EngineeringModelPortError(
+                getattr(error, "code", "export_failed"),
+                str(error),
+                "Review redistribution and installation integrity before retrying.",
+            ) from error
+        repository.add_reference(
+            reference_id=f"reference-{artifact_id}",
+            content_digest=None,
+            installation_id=installation_id,
+            kind="export",
+            owner_id=artifact_id,
+            created_at=self.clock(),
+        )
+        self._authorized_exports[artifact_id] = principal_id
+        return {
+            "artifact_id": artifact_id,
+            "sha256": result.archive_sha256,
+            "size": result.size,
+            "filename": f"{package.model_id}-r{package.package_revision}.wright-model.zip",
+        }
+
+    def read_offline_export(self, artifact_id: str, *, principal_id: str) -> bytes:
+        _, store, _ = self._require_maintenance()
+        if (
+            self._authorized_exports.get(artifact_id) != principal_id
+            or not artifact_id.startswith("export-")
+            or len(artifact_id) > 128
+        ):
+            raise EngineeringModelPortError(
+                "export_not_found",
+                "The offline export is unavailable.",
+                "Create a fresh authorized export.",
+            )
+        target = store.root / "exports" / f"{artifact_id}.wright-model.zip"
+        if not target.is_file() or target.stat().st_size > 512 * 1024 * 1024:
+            raise EngineeringModelPortError(
+                "export_not_found",
+                "The offline export is unavailable.",
+                "Create a fresh authorized export.",
+            )
+        return target.read_bytes()
 
     def _installation_package(self, installation: dict[str, Any]):
         package = self._entry_package(str(installation["model_id"]))

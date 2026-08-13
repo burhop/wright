@@ -10,6 +10,7 @@ from data_vault import ModelArtifactStore, ModelRepository, upgrade_database
 from model_registry import ModelCatalog, canonical_json
 from model_registry.generated import affine_artifacts
 from model_registry.policy import HostObservation
+from model_registry.offline_source import inspect_offline_package
 from workspace_service.engineering_model_service import EngineeringModelService
 
 
@@ -206,3 +207,77 @@ async def test_standard_test_binding_and_runtime_call_use_exact_reviewed_identit
     )
     assert reenabled["binding_id"] == binding["binding_id"]
     assert repository.get_binding(binding["binding_id"])["state"] == "enabled"
+
+
+def test_service_export_reference_safe_uninstall_and_purge_round_trip(tmp_path) -> None:
+    database = tmp_path / "state.db"
+    upgrade_database(database)
+    repository = ModelRepository(str(database))
+    store = ModelArtifactStore(tmp_path / "data")
+    service = EngineeringModelService(
+        host_observer=HostObservation.reference,
+        repository=repository,
+        artifact_store=store,
+        clock=lambda: datetime(2026, 8, 13, 12, 0, tzinfo=UTC),
+    )
+    plan = service.create_plan(
+        operation_kind="install",
+        model_id="wright-affine-test",
+        variant_id="json-cpu-f64",
+        principal_id="engineer-one",
+    )
+    operation = service.confirm_plan(
+        plan["plan_id"],
+        principal_id="engineer-one",
+        plan_digest=plan["plan_digest"],
+        trace_id="trace-install-export",
+    )
+    installation_id = operation["result"]["installation_id"]
+
+    exported = service.create_offline_export(
+        installation_id,
+        principal_id="engineer-one",
+        trace_id="trace-export",
+    )
+    payload = service.read_offline_export(
+        exported["artifact_id"], principal_id="engineer-one"
+    )
+    selected = tmp_path / "selected.wright-model.zip"
+    selected.write_bytes(payload)
+    assert inspect_offline_package(selected).package.model_id == "wright-affine-test"
+    assert "path" not in canonical_json(exported).lower()
+
+    service.maintain_installation(
+        installation_id,
+        action="disable",
+        target_installation_id=None,
+        principal_id="engineer-one",
+        trace_id="trace-disable",
+    )
+    service.maintain_installation(
+        installation_id,
+        action="uninstall",
+        target_installation_id=None,
+        principal_id="engineer-one",
+        trace_id="trace-uninstall",
+    )
+    blocked = service.get_installation_maintenance(
+        installation_id, principal_id="engineer-one"
+    )
+    assert blocked["reclaimable_bytes"] == 0
+    assert blocked["blockers"][0]["kind"] == "export"
+    service.set_model_reference_state(
+        f"reference-{exported['artifact_id']}",
+        state="archived",
+        principal_id="engineer-one",
+    )
+    purged = service.maintain_installation(
+        installation_id,
+        action="purge",
+        target_installation_id=None,
+        principal_id="engineer-one",
+        trace_id="trace-purge",
+    )
+    assert purged["state"] == "succeeded"
+    assert purged["reclaimed_bytes"] > 0
+    assert not tuple(store.objects_root.glob("sha256/*/*"))

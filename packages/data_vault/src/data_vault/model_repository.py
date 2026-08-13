@@ -416,6 +416,98 @@ class ModelRepository:
             ).fetchall()
         return tuple(dict(row) for row in rows)
 
+    def activate_installation(
+        self,
+        installation_id: str,
+        *,
+        predecessor_id: str,
+        observed_at: datetime,
+    ) -> bool:
+        """Atomically switch one tested successor into the active slot."""
+
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            target = connection.execute(
+                "SELECT model_id, state FROM model_installations WHERE installation_id=?",
+                (installation_id,),
+            ).fetchone()
+            predecessor = connection.execute(
+                "SELECT model_id, active_revision FROM model_installations WHERE installation_id=?",
+                (predecessor_id,),
+            ).fetchone()
+            if (
+                target is None
+                or predecessor is None
+                or target["model_id"] != predecessor["model_id"]
+                or target["state"] != "ready"
+                or not predecessor["active_revision"]
+            ):
+                return False
+            connection.execute(
+                "UPDATE model_installations SET active_revision=0 WHERE model_id=?",
+                (target["model_id"],),
+            )
+            cursor = connection.execute(
+                """UPDATE model_installations
+                SET active_revision=1, predecessor_id=?, last_verified_at=COALESCE(last_verified_at, ?)
+                WHERE installation_id=? AND state='ready'""",
+                (predecessor_id, _epoch(observed_at), installation_id),
+            )
+            connection.execute(
+                """UPDATE model_capability_bindings SET state='stale', updated_at=?
+                WHERE installation_id=? AND state='enabled'""",
+                (_epoch(observed_at), predecessor_id),
+            )
+            return cursor.rowcount == 1
+
+    def prepare_installation_retest(
+        self, installation_id: str, *, observed_at: datetime
+    ) -> bool:
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_installations
+                SET state='installed', standard_test_evidence_id=NULL, active_revision=0,
+                    last_verified_at=?
+                WHERE installation_id=? AND active_revision=0
+                  AND state IN ('ready', 'disabled', 'unhealthy')""",
+                (_epoch(observed_at), installation_id),
+            )
+            return cursor.rowcount == 1
+
+    def set_installation_lifecycle_state(
+        self,
+        installation_id: str,
+        *,
+        expected_states: tuple[str, ...],
+        state: str,
+        active: bool,
+        observed_at: datetime,
+    ) -> bool:
+        if not expected_states:
+            raise ValueError("Expected installation states are required")
+        placeholders = ",".join("?" for _ in expected_states)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            cursor = connection.execute(
+                f"""UPDATE model_installations
+                SET state=?, active_revision=?, last_verified_at=?
+                WHERE installation_id=? AND state IN ({placeholders})""",  # noqa: S608
+                (
+                    state,
+                    int(active),
+                    _epoch(observed_at),
+                    installation_id,
+                    *expected_states,
+                ),
+            )
+            if cursor.rowcount == 1 and state in {"disabled", "uninstalled"}:
+                connection.execute(
+                    """UPDATE model_capability_bindings SET state='disabled', updated_at=?
+                    WHERE installation_id=? AND state='enabled'""",
+                    (_epoch(observed_at), installation_id),
+                )
+            return cursor.rowcount == 1
+
     def mark_installation_tested(
         self,
         installation_id: str,
@@ -569,6 +661,31 @@ class ModelRepository:
         access_scope: str | None = None,
     ) -> None:
         with connect_state_db(self.db_path) as connection:
+            row = connection.execute(
+                "SELECT * FROM model_references WHERE reference_id=?",
+                (reference_id,),
+            ).fetchone()
+            identity = (
+                content_digest,
+                installation_id,
+                kind,
+                owner_id,
+                access_scope,
+            )
+            if row is not None:
+                actual = tuple(
+                    row[key]
+                    for key in (
+                        "content_digest",
+                        "installation_id",
+                        "kind",
+                        "owner_id",
+                        "access_scope",
+                    )
+                )
+                if actual != identity:
+                    raise ValueError("Model reference identity is immutable")
+                return
             connection.execute(
                 """INSERT INTO model_references
                 (reference_id, content_digest, installation_id, kind, owner_id,
@@ -591,6 +708,167 @@ class ModelRepository:
                 """UPDATE model_references SET state='detached', detached_at=?
                 WHERE reference_id=? AND state='active'""",
                 (_epoch(detached_at), reference_id),
+            )
+            return cursor.rowcount == 1
+
+    def set_reference_state(
+        self, reference_id: str, *, state: str, observed_at: datetime
+    ) -> dict[str, Any] | None:
+        if state not in {"detached", "archived"}:
+            raise ValueError("Reference state is invalid")
+        with connect_state_db(self.db_path) as connection:
+            connection.execute(
+                """UPDATE model_references SET state=?, detached_at=?
+                WHERE reference_id=? AND state='active'""",
+                (state, _epoch(observed_at), reference_id),
+            )
+            row = connection.execute(
+                "SELECT * FROM model_references WHERE reference_id=?",
+                (reference_id,),
+            ).fetchone()
+        return dict(row) if row is not None else None
+
+    def list_references(self, installation_id: str) -> tuple[dict[str, Any], ...]:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            rows = connection.execute(
+                """SELECT * FROM model_references
+                WHERE installation_id=? ORDER BY state, kind, owner_id, reference_id""",
+                (installation_id,),
+            ).fetchall()
+        return tuple(dict(row) for row in rows)
+
+    def removal_snapshot(
+        self, installation_id: str, *, at: datetime
+    ) -> dict[str, Any] | None:
+        """Return an exact, transactionally observed purge preview."""
+
+        observed = _epoch(at)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            installation = connection.execute(
+                "SELECT * FROM model_installations WHERE installation_id=?",
+                (installation_id,),
+            ).fetchone()
+            if installation is None:
+                return None
+            connection.execute(
+                """UPDATE model_leases SET state='expired'
+                WHERE state='active' AND expires_at<=?""",
+                (observed,),
+            )
+            artifacts = connection.execute(
+                """SELECT ia.artifact_path, ia.content_digest, co.size, co.state
+                FROM model_installation_artifacts ia
+                JOIN model_content_objects co ON co.content_digest=ia.content_digest
+                WHERE ia.installation_id=? ORDER BY ia.artifact_path""",
+                (installation_id,),
+            ).fetchall()
+            digests = tuple(sorted({str(row["content_digest"]) for row in artifacts}))
+            references = connection.execute(
+                """SELECT * FROM model_references
+                WHERE installation_id=? ORDER BY state, kind, owner_id, reference_id""",
+                (installation_id,),
+            ).fetchall()
+            blockers: list[dict[str, Any]] = []
+            active_installation_refs = [
+                row for row in references if row["state"] == "active"
+            ]
+            for row in active_installation_refs:
+                blockers.append(
+                    {
+                        "kind": row["kind"],
+                        "owner_id": row["owner_id"],
+                        "reference_id": row["reference_id"],
+                        "content_digest": row["content_digest"],
+                    }
+                )
+            blocked_digests: set[str] = {
+                str(row["content_digest"])
+                for row in active_installation_refs
+                if row["content_digest"]
+            }
+            for digest in digests:
+                rows = connection.execute(
+                    """SELECT kind, owner_id, reference_id FROM model_references
+                    WHERE content_digest=? AND state='active' AND installation_id IS NULL""",
+                    (digest,),
+                ).fetchall()
+                for row in rows:
+                    blockers.append(
+                        {
+                            "kind": row["kind"],
+                            "owner_id": row["owner_id"],
+                            "reference_id": row["reference_id"],
+                            "content_digest": digest,
+                        }
+                    )
+                    blocked_digests.add(digest)
+                leases = connection.execute(
+                    """SELECT lease_id, owner_id FROM model_leases
+                    WHERE content_digest=? AND state='active' AND expires_at>?""",
+                    (digest, observed),
+                ).fetchall()
+                for lease in leases:
+                    blockers.append(
+                        {
+                            "kind": "lease",
+                            "owner_id": lease["owner_id"],
+                            "lease_id": lease["lease_id"],
+                            "content_digest": digest,
+                        }
+                    )
+                    blocked_digests.add(digest)
+                other = connection.execute(
+                    """SELECT mi.installation_id FROM model_installation_artifacts ia
+                    JOIN model_installations mi ON mi.installation_id=ia.installation_id
+                    WHERE ia.content_digest=? AND ia.installation_id<>?
+                      AND mi.state NOT IN ('uninstalled', 'missing')""",
+                    (digest, installation_id),
+                ).fetchall()
+                for row in other:
+                    blockers.append(
+                        {
+                            "kind": "package",
+                            "owner_id": row["installation_id"],
+                            "content_digest": digest,
+                        }
+                    )
+                    blocked_digests.add(digest)
+            if active_installation_refs:
+                blocked_digests.update(digests)
+            sizes = {str(row["content_digest"]): int(row["size"]) for row in artifacts}
+            reclaimable = sum(
+                sizes[digest]
+                for digest in digests
+                if digest not in blocked_digests
+                and any(
+                    row["content_digest"] == digest and row["state"] == "verified"
+                    for row in artifacts
+                )
+            )
+        return {
+            "installation": dict(installation),
+            "artifacts": [dict(row) for row in artifacts],
+            "references": [dict(row) for row in references],
+            "blockers": sorted(
+                blockers,
+                key=lambda item: (
+                    str(item.get("kind")),
+                    str(item.get("owner_id")),
+                    str(item.get("reference_id", item.get("lease_id", ""))),
+                ),
+            ),
+            "reclaimable_bytes": reclaimable,
+        }
+
+    def mark_content_missing(
+        self, content_digest: str, *, observed_at: datetime
+    ) -> bool:
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_content_objects SET state='missing', updated_at=?
+                WHERE content_digest=? AND state='verified'""",
+                (_epoch(observed_at), content_digest),
             )
             return cursor.rowcount == 1
 

@@ -26,10 +26,17 @@ from api.schemas.engineering_models import (
     EngineeringModelResponse,
     ModelOperationEventResponse,
     ModelOperationResponse,
+    ModelMaintenanceRequest,
+    ModelMaintenanceResponse,
+    ModelOfflineExportResponse,
     ModelPlanConfirmationRequest,
     ModelPlanRequest,
     ModelPlanResponse,
     ModelRuntimeTestResponse,
+    ModelReferenceResponse,
+    ModelReferenceStateRequest,
+    ModelUpdateCompareRequest,
+    ModelUpdateComparisonResponse,
     ModelWorkspaceBindingRequest,
     ModelWorkspaceBindingResponse,
     ModelWorkspaceBindingStateRequest,
@@ -67,8 +74,12 @@ def _port_error(error: EngineeringModelPortError) -> HTTPException:
         "plan_invalidated",
         "plan_blocked",
         "model_not_installable",
+        "reference_blocked",
+        "stale_binding",
     }:
         status_code = 409
+    elif error.category == "export_forbidden":
+        status_code = 403
     elif error.category in {"insufficient_disk", "size_exceeded"}:
         status_code = 413
     elif error.category in {"source_unavailable", "model_lifecycle_unavailable"}:
@@ -452,6 +463,146 @@ def set_engineering_model_workspace_binding_state(
         )
     except EngineeringModelPortError as error:
         raise _port_error(error) from error
+
+
+@router.get(
+    "/installations/{installation_id}/maintenance",
+    response_model=ModelMaintenanceResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def get_engineering_model_maintenance(
+    installation_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.get_installation_maintenance(
+            installation_id, principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/installations/{installation_id}/compare-update",
+    response_model=ModelUpdateComparisonResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def compare_engineering_model_update(
+    installation_id: str,
+    body: ModelUpdateCompareRequest,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.compare_installation_update(
+            installation_id,
+            **body.model_dump(),
+            principal_id=_request_actor(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/installations/{installation_id}/maintenance",
+    response_model=ModelMaintenanceResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def maintain_engineering_model_installation(
+    installation_id: str,
+    body: ModelMaintenanceRequest,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.maintain_installation(
+            installation_id,
+            **body.model_dump(),
+            principal_id=_request_actor(request),
+            trace_id=_request_trace(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.patch(
+    "/references/{reference_id}",
+    response_model=ModelReferenceResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def set_engineering_model_reference_state(
+    reference_id: str,
+    body: ModelReferenceStateRequest,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.set_model_reference_state(
+            reference_id,
+            state=body.state,
+            principal_id=_request_actor(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.post(
+    "/installations/{installation_id}/exports",
+    response_model=ModelOfflineExportResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def create_engineering_model_export(
+    installation_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.create_offline_export(
+            installation_id,
+            principal_id=_request_actor(request),
+            trace_id=_request_trace(request),
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.get(
+    "/exports/{artifact_id}",
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def download_engineering_model_export(
+    artifact_id: str,
+    request: Request,
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        payload = application.read_offline_export(
+            artifact_id, principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+    return StreamingResponse(
+        iter((payload,)),
+        media_type="application/vnd.wright.engineering-model+zip",
+        headers={
+            "Content-Disposition": (
+                'attachment; filename="wright-engineering-model.wright-model.zip"'
+            )
+        },
+    )
 
 
 __all__ = ["get_engineering_model_application", "router"]
