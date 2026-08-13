@@ -1,7 +1,7 @@
 # Wright Engineering Capability Program Progress
 
 **Last updated**: 2026-08-13
-**Current loop**: 069 - Rivet workspace MCP execution through the Wright gateway
+**Current loop**: 071 - Safe local engineering model library
 **Program state**: Active; Gate E closed; no `main` merge or release authorized.
 
 ## Completed foundation
@@ -315,6 +315,34 @@ Begin Loop 070, the deterministic multi-domain engineering scenario harness, on 
 ### Next checkpoint
 
 Commit the complete Loop 070 evidence on the integration branch. Then begin Loop 071, the safe local engineering model library, without running the authoritative dev gate until program closeout.
+
+## Loop 071
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: feature identity `071-local-engineering-model-library` continues on the user-approved `codex/rivet-engineering-program` integration branch; the default new-branch hook was an expected no-op because this shared branch already exists.
+- [x] `speckit-specify`: five prioritized lifecycle/extensibility stories, 43 functional requirements, eight non-functional requirements, twelve measurable outcomes, and a 17/17 specification-quality checklist completed.
+- [x] `speckit-clarify`: public/offline acquisition first; no automated gated access; separate runtime plans; uninstall versus reference-safe purge; actual-artifact Gate D evidence; and user-root-scoped deduplication are explicit.
+- [x] `speckit-plan` and Gate D: separate model domain/UI, immutable manifests and plans, strict data-only policy, content-addressed atomic storage, supervised typed runtime adapters, gateway-mediated workspace capabilities, deterministic generated fixtures, and conditional external-model approval are specified.
+- [ ] `speckit-checklist`
+- [ ] `speckit-tasks`
+- [ ] `speckit-analyze`
+- [ ] `speckit-implement`
+- [ ] Focused, integration, UI, packaging, and documentation verification
+- [ ] Final program exact-tree dev gate after loops 072-073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Gate D planning decision
+
+- Approved provider-neutral package, artifact, plan, operation, adapter, test-vector, evidence, reference, and workspace-binding contracts plus additive SQLite/content-vault implementation.
+- Rivet discovers and invokes exact enabled typed model tasks through a generic GatewayCapabilityProvider. It never launches or contacts a model runtime directly, and models are not represented as fake MCP servers.
+- Model install cannot silently install TensorFlow, PyTorch, CUDA, drivers, compilers, services, containers, or global dependencies. Adapters have their own reviewed lifecycle.
+- Generated deterministic affine artifacts exercise the entire normal lifecycle without network, model weights in Git, or an ML framework.
+- `keras-io/PointNet` at exact revision `308acfe5d36d9bb34215d1766f13fac612abe18c` remains evaluation-only until exact license, selected files/digests, TensorFlow adapter, CPU resources, input/output semantics, real vectors, cancellation, cleanup, cache, and removal evidence all pass. The general contracts will not be weakened to admit it.
+
+### Next checkpoint
+
+Generate the Loop 071 custom checklist, dependency-ordered tasks, and cross-artifact analysis. Then implement test-first slices on the shared integration branch with focused gates; keep the authoritative dev gate deferred to program closeout.
 
 ## Program guardrails
 

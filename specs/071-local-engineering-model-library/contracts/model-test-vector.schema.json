@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-model-test-vector-1.0.json",
+  "title": "Wright Engineering Model Test Vector",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "vector_id", "version", "task_id", "input_schema_sha256", "input", "expected", "limits", "mandatory"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "vector_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "task_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
+    "input_schema_sha256": { "$ref": "#/$defs/sha256" },
+    "input": {},
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": { "enum": ["exact", "absolute_tolerance", "relative_tolerance", "range", "category"] },
+        "value": {},
+        "absolute_tolerance": { "type": "number", "minimum": 0 },
+        "relative_tolerance": { "type": "number", "minimum": 0 },
+        "minimum": { "type": "number" },
+        "maximum": { "type": "number" }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["load_timeout_ms", "inference_timeout_ms", "max_output_bytes"],
+      "properties": {
+        "load_timeout_ms": { "type": "integer", "minimum": 1, "maximum": 3600000 },
+        "inference_timeout_ms": { "type": "integer", "minimum": 1, "maximum": 3600000 },
+        "max_output_bytes": { "type": "integer", "minimum": 1, "maximum": 16777216 }
+      }
+    },
+    "mandatory": { "type": "boolean" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

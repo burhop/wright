@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-model-operation-1.0.json",
+  "title": "Wright Engineering Model Operation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "operation_id", "plan_id", "plan_digest", "kind", "state",
+    "phase", "progress", "trace_id", "cleanup_state", "created_at", "updated_at"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "operation_id": { "$ref": "#/$defs/id" },
+    "plan_id": { "$ref": "#/$defs/id" },
+    "plan_digest": { "$ref": "#/$defs/sha256" },
+    "kind": {
+      "enum": ["acquire", "import", "verify", "install", "test", "enable", "update", "rollback", "export", "disable", "uninstall", "purge", "cleanup"]
+    },
+    "state": {
+      "enum": ["prepared", "running", "verifying", "testing", "activating", "cancelling", "cleaning", "blocked", "succeeded", "failed", "cancelled"]
+    },
+    "phase": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "progress": {
+      "type": "object", "additionalProperties": false,
+      "required": ["completed_items", "total_items", "completed_bytes", "maximum_bytes"],
+      "properties": {
+        "completed_items": { "type": "integer", "minimum": 0 },
+        "total_items": { "type": "integer", "minimum": 0 },
+        "completed_bytes": { "type": "integer", "minimum": 0 },
+        "maximum_bytes": { "type": "integer", "minimum": 0 },
+        "message": { "type": "string", "maxLength": 1000 }
+      }
+    },
+    "result": { "type": ["object", "null"], "maxProperties": 128 },
+    "failure": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["category", "message", "recovery"],
+      "properties": {
+        "category": { "$ref": "#/$defs/id" },
+        "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "recovery": { "type": "string", "minLength": 1, "maxLength": 1000 }
+      }
+    },
+    "trace_id": { "$ref": "#/$defs/id" },
+    "cancellation_requested_at": { "type": ["string", "null"], "format": "date-time" },
+    "cleanup_state": { "enum": ["not_needed", "pending", "clean", "residue", "unknown"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

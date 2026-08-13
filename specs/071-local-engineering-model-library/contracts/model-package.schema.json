@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-model-package-1.0.json",
+  "title": "Wright Engineering Model Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "model_id", "package_revision", "display_name",
+    "publisher", "source", "tasks", "license", "limitations",
+    "remote_code_policy", "variants"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "model_id": { "$ref": "#/$defs/slug" },
+    "package_revision": { "type": "integer", "minimum": 1 },
+    "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "maxLength": 4096 },
+    "publisher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "source_uri"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "source_uri": { "type": "string", "format": "uri", "maxLength": 2048 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "uri", "immutable_revision", "access"],
+      "properties": {
+        "kind": { "enum": ["wright", "hugging_face", "https", "offline"] },
+        "uri": { "type": "string", "format": "uri-reference", "maxLength": 2048 },
+        "immutable_revision": { "type": "string", "minLength": 7, "maxLength": 128 },
+        "access": { "enum": ["public", "gated", "private", "offline_only"] },
+        "allowed_hosts": {
+          "type": "array", "maxItems": 16, "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 253 }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array", "minItems": 1, "maxItems": 32,
+      "items": { "$ref": "#/$defs/task" }
+    },
+    "license": { "$ref": "#/$defs/license" },
+    "limitations": {
+      "type": "array", "minItems": 1, "maxItems": 64,
+      "items": { "type": "string", "minLength": 1, "maxLength": 1000 }
+    },
+    "remote_code_policy": { "const": "forbidden" },
+    "review_state": {
+      "enum": ["approved", "needs_review", "blocked", "deprecated", "withdrawn"]
+    },
+    "variants": {
+      "type": "array", "minItems": 1, "maxItems": 64,
+      "items": { "$ref": "#/$defs/variant" }
+    }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "relativePath": {
+      "type": "string", "minLength": 1, "maxLength": 512,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "jsonSchema": { "type": "object", "maxProperties": 128 },
+    "task": {
+      "type": "object", "additionalProperties": false,
+      "required": ["task_id", "description", "input_schema", "output_schema"],
+      "properties": {
+        "task_id": { "$ref": "#/$defs/slug" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "input_schema": { "$ref": "#/$defs/jsonSchema" },
+        "output_schema": { "$ref": "#/$defs/jsonSchema" },
+        "units": { "type": "object", "maxProperties": 64 },
+        "coordinate_convention": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "license": {
+      "type": "object", "additionalProperties": false,
+      "required": ["expression", "evidence", "attribution", "redistribution"],
+      "properties": {
+        "expression": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "evidence": {
+          "type": "array", "minItems": 1, "maxItems": 16,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["kind", "location", "sha256"],
+            "properties": {
+              "kind": { "enum": ["artifact", "source_page", "publisher_statement"] },
+              "location": { "type": "string", "minLength": 1, "maxLength": 2048 },
+              "sha256": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        },
+        "attribution": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "redistribution": { "enum": ["allowed", "prohibited", "review_required"] },
+        "acceptance_required": { "type": "boolean", "default": false }
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "role", "media_type", "size", "sha256", "source_uri", "redistributable"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "role": {
+          "enum": ["model_data", "metadata", "license", "attribution", "test_input", "test_expected"]
+        },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "size": { "type": "integer", "minimum": 0, "maximum": 1099511627776 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "source_uri": { "type": "string", "format": "uri-reference", "maxLength": 4096 },
+        "redistributable": { "type": "boolean" }
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["adapter_id", "contract_version", "version_specifier"],
+      "properties": {
+        "adapter_id": { "$ref": "#/$defs/slug" },
+        "contract_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+        "version_specifier": { "type": "string", "minLength": 1, "maxLength": 128 }
+      }
+    },
+    "resources": {
+      "type": "object", "additionalProperties": false,
+      "required": ["download_bytes", "installed_bytes", "ram_bytes", "load_timeout_ms", "inference_timeout_ms", "max_output_bytes"],
+      "properties": {
+        "download_bytes": { "type": "integer", "minimum": 0 },
+        "installed_bytes": { "type": "integer", "minimum": 0 },
+        "ram_bytes": { "type": "integer", "minimum": 0 },
+        "vram_bytes": { "type": "integer", "minimum": 0, "default": 0 },
+        "load_timeout_ms": { "type": "integer", "minimum": 1, "maximum": 3600000 },
+        "inference_timeout_ms": { "type": "integer", "minimum": 1, "maximum": 3600000 },
+        "max_output_bytes": { "type": "integer", "minimum": 1, "maximum": 16777216 }
+      }
+    },
+    "variant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["variant_id", "format", "precision", "platforms", "accelerator", "runtime", "resources", "artifacts", "test_vectors"],
+      "properties": {
+        "variant_id": { "$ref": "#/$defs/slug" },
+        "format": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "precision": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "platforms": {
+          "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9_-]+/[a-z0-9_-]+$" }
+        },
+        "accelerator": { "enum": ["none", "cpu", "cuda", "directml", "coreml"] },
+        "runtime": { "$ref": "#/$defs/runtime" },
+        "resources": { "$ref": "#/$defs/resources" },
+        "artifacts": {
+          "type": "array", "minItems": 1, "maxItems": 1000,
+          "items": { "$ref": "#/$defs/artifact" }
+        },
+        "test_vectors": {
+          "type": "array", "minItems": 1, "maxItems": 32,
+          "items": { "$ref": "model-test-vector.schema.json" }
+        }
+      }
+    }
+  }
+}
