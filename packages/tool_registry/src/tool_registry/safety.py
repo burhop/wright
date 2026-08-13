@@ -27,6 +27,7 @@ class ApprovalContext:
     machine_approvals: set[str] = field(default_factory=set)
     workspace_approvals: set[str] = field(default_factory=set)
     workspace_id: str | None = None
+    session_id: str | None = None
 
     def approvals_for(self, operation: PolicyOperation) -> set[str]:
         if operation == "install":

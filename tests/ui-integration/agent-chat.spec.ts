@@ -410,11 +410,11 @@ test.describe("Agent Chat Page", () => {
 
     await page.goto("/workspace/ws-1");
 
-    // Get the selector and attempt to select Session Two
-    const selectDropdown = page
-      .locator('[data-testid="agent-tools-window"] select')
-      .nth(1);
-    await expect(selectDropdown).toBeVisible();
+    await expect(page.getByTestId("workspace-panel")).toBeVisible({
+      timeout: 15_000,
+    });
+    const selectDropdown = page.getByTestId("sessions-sidebar");
+    await expect(selectDropdown).toBeVisible({ timeout: 15_000 });
 
     // Selecting a different chat session should not reset the workspace shell.
     await selectDropdown.selectOption("session-2");

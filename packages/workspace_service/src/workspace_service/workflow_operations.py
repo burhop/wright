@@ -142,9 +142,24 @@ class WorkspaceWorkflowOperations:
         workspace_dir: str,
         slug: str,
         expected_generation: int | None = None,
+        expected_revision: int | None = None,
+        expected_digest: str | None = None,
+        graph: str | None = None,
+        inputs: Mapping[str, object] | None = None,
+        context: Mapping[str, object] | None = None,
+        timeout_seconds: float | None = None,
+        progress_callback=None,
     ) -> WorkflowRun:
         self._enabled()
         document = WorkspaceWorkflowStore(workspace_dir).read(slug)
+        if expected_revision is not None and document.revision != expected_revision:
+            raise WorkflowOperationsError(
+                "RIVET_WORKFLOW_REVISION_CONFLICT", "Workflow revision changed"
+            )
+        if expected_digest is not None and document.digest != expected_digest:
+            raise WorkflowOperationsError(
+                "RIVET_WORKFLOW_REVISION_CONFLICT", "Workflow contents changed"
+            )
         if not self._reviews.approved(
             workspace_id, document.workflow_id, document.revision
         ):
@@ -158,6 +173,13 @@ class WorkspaceWorkflowOperations:
             workspace_dir=workspace_dir,
             slug=slug,
             expected_generation=expected_generation,
+            expected_revision=expected_revision,
+            expected_digest=expected_digest,
+            graph=graph,
+            inputs=inputs,
+            context=context,
+            timeout_seconds=timeout_seconds,
+            progress_callback=progress_callback,
         )
 
     def history(

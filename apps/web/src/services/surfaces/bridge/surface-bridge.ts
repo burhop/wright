@@ -1,3 +1,5 @@
+import { surfaceRequestId } from "../ids";
+
 export interface SurfaceBridgeBinding {
   workspaceId: string;
   sessionId: string;
@@ -171,7 +173,7 @@ export class SurfaceBridge {
       ...options,
       maximumMessageBytes,
       deadlineMilliseconds,
-      idFactory: options.idFactory ?? (() => crypto.randomUUID()),
+      idFactory: options.idFactory ?? surfaceRequestId,
       now: options.now ?? (() => new Date()),
       onSecurityEvent: options.onSecurityEvent ?? (() => undefined),
     };

@@ -77,6 +77,9 @@ class _Manager:
         self.instance = _instance()
         self.calls: list[str] = []
         self.start_error: LiveAppManagerError | None = None
+        self.restart_error: LiveAppManagerError | None = None
+        self.health_error: LiveAppManagerError | None = None
+        self.get_error: LiveAppManagerError | None = None
 
     async def start(self, request):
         self.calls.append(f"start:{request.idempotency_key}")
@@ -86,6 +89,8 @@ class _Manager:
 
     async def restart(self, instance_id: str, *, idempotency_key: str):
         self.calls.append(f"restart:{instance_id}:{idempotency_key}")
+        if self.restart_error:
+            raise self.restart_error
         self.instance = replace(
             self.instance,
             generation=self.instance.generation + 1,
@@ -103,6 +108,8 @@ class _Manager:
         return self.instance
 
     def get(self, instance_id: str):
+        if self.get_error:
+            raise self.get_error
         assert instance_id == self.instance.instance_id
         return self.instance
 
@@ -112,6 +119,12 @@ class _Manager:
             {"kind": "panel", "eligible": True},
             {"kind": "browser", "eligible": True},
         )
+
+    async def check_health(self, instance_id: str):
+        assert instance_id == self.instance.instance_id
+        if self.health_error:
+            raise self.health_error
+        return self.instance
 
 
 def _service(tmp_path: Path):
@@ -233,3 +246,91 @@ async def test_failed_start_projects_safe_retryable_diagnostic(tmp_path: Path) -
         "message": "App failed",
         "retryable": True,
     }
+
+
+async def test_health_translates_manager_lifecycle_error(tmp_path: Path) -> None:
+    control, _surfaces, manager = _service(tmp_path)
+    await control.start(
+        actor=_actor(),
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="start-before-health-0001",
+    )
+    failed = _instance(state="failed")
+    manager.health_error = LiveAppManagerError(
+        "SURFACE_LIFECYCLE_CONFLICT",
+        "Health cannot be checked from failed",
+        instance=failed,
+        retryable=False,
+    )
+
+    with pytest.raises(LiveAppControlError) as error:
+        await control.health(
+            actor=_actor(),
+            surface_id=SurfaceId("surface-app"),
+        )
+
+    assert error.value.code == "SURFACE_LIFECYCLE_CONFLICT"
+    assert str(error.value) == "Health cannot be checked from failed"
+
+
+async def test_inspect_translates_missing_runtime_after_restart(tmp_path: Path) -> None:
+    control, _surfaces, manager = _service(tmp_path)
+    await control.start(
+        actor=_actor(),
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="start-before-inspect-0001",
+    )
+    manager.get_error = LiveAppManagerError(
+        "SURFACE_INSTANCE_NOT_FOUND",
+        "Live-app instance was not found",
+        retryable=True,
+    )
+
+    with pytest.raises(LiveAppControlError) as error:
+        await control.inspect(
+            actor=_actor(),
+            surface_id=SurfaceId("surface-app"),
+        )
+
+    assert error.value.code == "SURFACE_INSTANCE_NOT_FOUND"
+    assert str(error.value) == "Live-app instance was not found"
+    assert error.value.retryable is True
+
+
+async def test_restart_recovers_terminal_surface_when_manager_lost_runtime(
+    tmp_path: Path,
+) -> None:
+    control, surfaces, manager = _service(tmp_path)
+    actor = _actor()
+    await control.start(
+        actor=actor,
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="start-before-stale-restart-0001",
+    )
+    await control.stop(
+        actor=actor,
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="stop-before-stale-restart-0001",
+    )
+    manager.restart_error = LiveAppManagerError(
+        "SURFACE_INSTANCE_NOT_FOUND",
+        "Live-app instance was not found",
+        retryable=True,
+    )
+    manager.instance = _instance(generation=3)
+
+    restarted = await control.restart(
+        actor=actor,
+        surface_id=SurfaceId("surface-app"),
+        idempotency_key="restart-stale-runtime-0001",
+    )
+    current = await surfaces.get(actor=actor, surface_id=SurfaceId("surface-app"))
+
+    assert restarted.state == "ready"
+    assert restarted.generation == 3
+    assert current.lifecycle is SurfaceLifecycle.READY
+    assert current.instance["generation"] == 3
+    assert manager.calls[-2:] == [
+        "restart:instance-1:restart-stale-runtime-0001",
+        "start:restart-stale-runtime-0001",
+    ]

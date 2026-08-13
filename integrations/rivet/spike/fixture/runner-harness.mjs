@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { runGraphInFile } from "@ironclad/rivet-node";
+import { runGraphInFile } from "@valerypopoff/rivet2-node";
 import { spikeRoot, writeEvidence } from "../scripts/evidence.mjs";
 
 const fixture = resolve(spikeRoot, "fixture", "mock-workflow.rivet-project");

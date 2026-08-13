@@ -21,13 +21,45 @@ from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
 from .adapters.runtime import WorkspaceManager as WorkspaceManager
 from .workflows import WorkspaceWorkflowStore
-from .workflow_runner import RunnerSettings, RunnerStatus, WorkspaceWorkflowRunner
+from .workflow_runner import (
+    RunnerArtifactManifest,
+    RunnerAssetCatalog,
+    RunnerSettings,
+    RunnerStatus,
+    WorkspaceWorkflowRunner,
+)
 from .workflow_editor import EditorAssetCatalog, EditorSettings, WorkspaceWorkflowEditor
 from .workflow_operations import (
     WorkflowOperationRecord,
     WorkflowOperationsError,
     WorkflowOperationsSettings,
     WorkspaceWorkflowOperations,
+)
+from .rivet_validation import (
+    GraphPortSummary,
+    GraphSummary,
+    ValidationIssue,
+    WorkflowIdentityMismatch,
+    WorkflowValidationResult,
+    validate_rivet_project,
+)
+from .rivet_mcp import (
+    RivetMcpBinding,
+    RivetMcpError,
+    RivetWorkflowMcpService,
+    create_rivet_mcp_server,
+)
+from .workflow_catalog import (
+    WorkflowTemplate,
+    WorkflowTemplateCatalog,
+    WorkflowTemplateError,
+)
+from .workflow_graph import (
+    WorkflowGraphError,
+    WorkflowGraphNode,
+    WorkflowGraphResult,
+    WorkflowGraphSummary,
+    WorkspaceWorkflowGraphOperations,
 )
 from core.workflows import (
     WorkflowDocument,
@@ -58,12 +90,32 @@ __all__ = [
     "WorkspaceWorkflowStore",
     "RunnerSettings",
     "RunnerStatus",
+    "RunnerArtifactManifest",
+    "RunnerAssetCatalog",
     "WorkspaceWorkflowRunner",
     "EditorAssetCatalog",
     "EditorSettings",
     "WorkspaceWorkflowEditor",
+    "WorkflowTemplate",
+    "WorkflowTemplateCatalog",
+    "WorkflowTemplateError",
+    "WorkflowGraphError",
+    "WorkflowGraphNode",
+    "WorkflowGraphResult",
+    "WorkflowGraphSummary",
+    "WorkspaceWorkflowGraphOperations",
     "WorkflowOperationRecord",
     "WorkflowOperationsError",
     "WorkflowOperationsSettings",
     "WorkspaceWorkflowOperations",
+    "GraphPortSummary",
+    "GraphSummary",
+    "ValidationIssue",
+    "WorkflowIdentityMismatch",
+    "WorkflowValidationResult",
+    "validate_rivet_project",
+    "RivetMcpBinding",
+    "RivetMcpError",
+    "RivetWorkflowMcpService",
+    "create_rivet_mcp_server",
 ]

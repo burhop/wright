@@ -321,11 +321,48 @@ class LiveAppRuntimeRegistry:
                     WHERE state NOT IN ('closed', 'expired')""",
                     (now,),
                 )
-                surface_ids = [
-                    str(row["surface_id"])
+                surface_transitions = [
+                    (
+                        str(row["surface_id"]),
+                        str(row["reconciled_lifecycle"]),
+                        str(row["diagnostic_code"]),
+                        str(row["diagnostic_message"]),
+                    )
                     for row in connection.execute(
-                        """SELECT DISTINCT surface_id FROM surface_runtimes
-                        WHERE state NOT IN ('stopped', 'failed')"""
+                        """SELECT surface_id,
+                            CASE
+                                WHEN SUM(CASE
+                                    WHEN state NOT IN ('stopped', 'failed')
+                                    THEN 1 ELSE 0 END) > 0 THEN 'failed'
+                                WHEN SUM(CASE
+                                    WHEN state='failed'
+                                    THEN 1 ELSE 0 END) > 0 THEN 'failed'
+                                ELSE 'stopped'
+                            END AS reconciled_lifecycle,
+                            CASE
+                                WHEN SUM(CASE
+                                    WHEN state NOT IN ('stopped', 'failed')
+                                    THEN 1 ELSE 0 END) > 0
+                                    THEN 'SURFACE_RECONCILE_OWNERSHIP_UNPROVABLE'
+                                WHEN SUM(CASE
+                                    WHEN state='failed'
+                                    THEN 1 ELSE 0 END) > 0
+                                    THEN 'SURFACE_RECONCILE_OWNERSHIP_UNPROVABLE'
+                                ELSE 'SURFACE_RECONCILE_RUNTIME_STOPPED'
+                            END AS diagnostic_code,
+                            CASE
+                                WHEN SUM(CASE
+                                    WHEN state NOT IN ('stopped', 'failed')
+                                    THEN 1 ELSE 0 END) > 0
+                                    THEN 'Runtime authority was revoked during startup reconciliation.'
+                                WHEN SUM(CASE
+                                    WHEN state='failed'
+                                    THEN 1 ELSE 0 END) > 0
+                                    THEN 'Runtime authority was revoked during startup reconciliation.'
+                                ELSE 'Runtime was stopped during startup reconciliation.'
+                            END AS diagnostic_message
+                        FROM surface_runtimes
+                        GROUP BY surface_id"""
                     ).fetchall()
                 ]
                 connection.execute(
@@ -334,16 +371,28 @@ class LiveAppRuntimeRegistry:
                     WHERE state NOT IN ('stopped', 'failed')""",
                     (now,),
                 )
-                for surface_id in surface_ids:
+                for (
+                    surface_id,
+                    reconciled_lifecycle,
+                    diagnostic_code,
+                    diagnostic_message,
+                ) in surface_transitions:
                     connection.execute(
-                        """UPDATE workspace_surfaces SET lifecycle='failed',
+                        """UPDATE workspace_surfaces SET lifecycle=?,
                             diagnostic_summary_json=?, revision=revision+1,
                             updated_at=? WHERE surface_id=?
                             AND lifecycle NOT IN ('stopped', 'failed')""",
                         (
-                            '{"code":"SURFACE_RECONCILE_OWNERSHIP_UNPROVABLE",'
-                            '"message":"Runtime authority was revoked during startup '
-                            'reconciliation.","retryable":true}',
+                            reconciled_lifecycle,
+                            json.dumps(
+                                {
+                                    "code": diagnostic_code,
+                                    "message": diagnostic_message,
+                                    "retryable": True,
+                                },
+                                sort_keys=True,
+                                separators=(",", ":"),
+                            ),
                             now,
                             surface_id,
                         ),

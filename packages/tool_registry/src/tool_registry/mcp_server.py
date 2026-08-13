@@ -116,6 +116,9 @@ def create_mcp_server(
                 request_id,
                 name,
                 arguments,
+                workspace_approvals=service.workspace_approvals_for_model_call(
+                    gateway_session_id, name
+                ),
                 progress_callback=(
                     relay_progress if progress_token is not None else None
                 ),

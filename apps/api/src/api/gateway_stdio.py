@@ -12,7 +12,10 @@ from api.database.migrate import run_migrations
 from api.logging_config import configure_logging
 from core.logging import get_logger
 from tool_registry import McpEngine
-from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+from tool_registry.catalog_reconcile import (
+    reconcile_engineering_catalog,
+    reconcile_wright_managed_servers,
+)
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.mcp_stdio import StdioGatewayBinding, serve_stdio
 
@@ -40,6 +43,7 @@ def _arguments() -> argparse.Namespace:
 async def _serve(values: argparse.Namespace) -> None:
     run_migrations()
     reconcile_engineering_catalog(DATABASE_PATH)
+    reconcile_wright_managed_servers(DATABASE_PATH)
     settings = McpTransportSettings.from_env()
     engine = McpEngine(
         DATABASE_PATH,
@@ -55,7 +59,12 @@ async def _serve(values: argparse.Namespace) -> None:
     # The explicit gateway binding is the source of the child workspace. Do not
     # eagerly start persisted "active" servers without it; GatewayService starts
     # the selected child lazily on the first authorized call with workspace_path.
-    service = build_api_gateway_service(DATABASE_PATH, engine, settings)
+    service = build_api_gateway_service(
+        DATABASE_PATH,
+        engine,
+        settings,
+        proxy_brep_via_api=True,
+    )
     service.notifier = GatewayNotificationHub()
     probe_task = None
     probe_path = os.getenv("WRIGHT_MCP_COMPATIBILITY_PROBE")

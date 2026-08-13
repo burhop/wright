@@ -59,6 +59,7 @@ Releases = "https://github.com/burhop/wright/releases"
 
 [project.scripts]
 wright = "wright_engineering.cli:main"
+wright-rivet-mcp = "workspace_service.rivet_mcp:main"
 
 [tool.uv.sources]
 wright-engineering = { workspace = true }
@@ -88,6 +89,7 @@ testpaths = [
 markers = [
     "gateway: provider-neutral GatewayService contract and isolation tests",
     "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
+    "rivet_live_ai: explicit opt-in tests that use the local Hermes/Codex subscription; also requires WRIGHT_RIVET_LIVE_AI=1",
     "release: exact-artifact release identity, supply-chain, and recovery contracts",
     "workspace_surfaces: Workspace Surfaces contract, lifecycle, security, and presentation tests",
 ]
@@ -126,7 +128,24 @@ packages = [
     "packages/workspace_service/src/workspace_service",
 ]
 
+[tool.hatch.build.targets.wheel.force-include]
+"integrations/rivet/editor/host.py" = "workspace_service/_rivet/editor/host.py"
+"integrations/rivet/editor/manifest.json" = "workspace_service/_rivet/editor/manifest.json"
+"integrations/rivet/editor/dist" = "workspace_service/_rivet/editor/dist"
+"integrations/rivet/editor/patches" = "workspace_service/_rivet/editor/patches"
+"integrations/rivet/editor/wrapper" = "workspace_service/_rivet/editor/wrapper"
+"integrations/rivet/runner/manifest.json" = "workspace_service/_rivet/runner/manifest.json"
+"integrations/rivet/runner/dist" = "workspace_service/_rivet/runner/dist"
+"integrations/rivet/runner/src" = "workspace_service/_rivet/runner/src"
+
 [tool.hatch.build.targets.sdist]
+# Rivet's generated runtime bundles are intentionally gitignored. Mark them as
+# build artifacts so the sdist can rebuild the same self-contained wheel rather
+# than retaining force-include paths whose sources disappeared from the archive.
+artifacts = [
+    "/integrations/rivet/editor/dist",
+    "/integrations/rivet/runner/dist",
+]
 include = [
     "/src/wright",
     "/src/wright_engineering",
@@ -136,6 +155,14 @@ include = [
     "/packages/tool_registry/src/tool_registry",
     "/packages/data_vault/src/data_vault",
     "/packages/workspace_service/src/workspace_service",
+    "/integrations/rivet/editor/host.py",
+    "/integrations/rivet/editor/manifest.json",
+    "/integrations/rivet/editor/dist",
+    "/integrations/rivet/editor/patches",
+    "/integrations/rivet/editor/wrapper",
+    "/integrations/rivet/runner/manifest.json",
+    "/integrations/rivet/runner/dist",
+    "/integrations/rivet/runner/src",
     "/README.md",
     "/LICENSE",
     "/pyproject.toml",

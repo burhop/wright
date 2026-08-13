@@ -383,6 +383,7 @@ install_npm_tools() {
 install_brep_mcp_launcher() {
   if [ -f "${MCP_ROOT}/brep-mcp-launcher.cjs" ]; then
     install -m 755 "${MCP_ROOT}/brep-mcp-launcher.cjs" "${BIN_DIR}/brep-mcp-wrapped"
+    sed -i 's/\r$//' "${BIN_DIR}/brep-mcp-wrapped"
   fi
 }
 

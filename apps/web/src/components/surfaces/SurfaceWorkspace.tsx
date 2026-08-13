@@ -4,6 +4,7 @@ import {
   createPresentation,
   listSurfaces,
 } from "../../services/surfaces/surface-client";
+import { visibleWorkspaceSurfaces } from "../../services/surfaces/surface-visibility";
 import { hostAdapter } from "../../services/host-adapter";
 import {
   createSurfaceState,
@@ -17,6 +18,7 @@ import { LiveAppSurface } from "./LiveAppSurface";
 import { McpAppSurface } from "./McpAppSurface";
 import { SurfaceDeck } from "./SurfaceDeck";
 import { SurfaceTabs } from "./SurfaceTabs";
+import type { SurfaceDescriptor } from "../../services/surfaces/surface-contract";
 
 interface Props {
   readonly workspaceId: string;
@@ -24,6 +26,18 @@ interface Props {
   readonly focusMode?: boolean;
   readonly onEnterFocus?: () => void;
   readonly onExitFocus?: () => void;
+}
+
+function surfaceTabLabel(descriptor: SurfaceDescriptor): string {
+  const title = descriptor.title.trim();
+  if (
+    descriptor.source.sourceId === "wright.rivet-editor" &&
+    (!title || title === "Rivet editor (manual import/export)")
+  ) {
+    return "Rivet";
+  }
+  const fileName = title.split(/[\\/]/).pop()?.trim();
+  return fileName || title || "Surface";
 }
 
 export function SurfaceWorkspace({
@@ -51,7 +65,10 @@ export function SurfaceWorkspace({
   useEffect(() => {
     const reconcile = () => {
       void listSurfaces(workspaceId, sessionId).then((items) => {
-        dispatch({ type: "reconcile", descriptors: items });
+        dispatch({
+          type: "reconcile",
+          descriptors: visibleWorkspaceSurfaces(items),
+        });
       });
     };
     window.addEventListener("wright-surfaces-changed", reconcile);
@@ -91,7 +108,10 @@ export function SurfaceWorkspace({
     void listSurfaces(workspaceId, sessionId)
       .then((items) => {
         if (!active) return;
-        dispatch({ type: "reconcile", descriptors: items });
+        dispatch({
+          type: "reconcile",
+          descriptors: visibleWorkspaceSurfaces(items),
+        });
         setReconciledStorageKey(storageKey);
       })
       .catch(() => {
@@ -151,7 +171,7 @@ export function SurfaceWorkspace({
           <SurfaceTabs
             tabs={descriptors.map((descriptor) => ({
               id: descriptor.surfaceId,
-              label: descriptor.title,
+              label: surfaceTabLabel(descriptor),
               closable: true,
               status: descriptor.lifecycle,
             }))}

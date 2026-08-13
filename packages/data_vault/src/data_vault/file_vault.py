@@ -91,3 +91,21 @@ class FileVault:
         if not path.is_file():
             raise FileNotFoundError(name)
         return path
+
+    def resolve_file_id(self, file_id: str) -> Path:
+        """Resolve an opaque upload ID without trusting a client-supplied suffix."""
+        try:
+            normalized_id = str(uuid.UUID(file_id))
+        except (ValueError, AttributeError, TypeError) as exc:
+            raise VaultPathError("Invalid vault file ID") from exc
+
+        root = self.ensure_exists()
+        candidates = [
+            path for path in root.glob(f"{normalized_id}.*") if path.is_file()
+        ]
+        extensionless = root / normalized_id
+        if extensionless.is_file():
+            candidates.append(extensionless)
+        if len(candidates) != 1:
+            raise FileNotFoundError(file_id)
+        return self.resolve(candidates[0].name)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 
+import httpx
 import pytest
 
 from core.surfaces.live_app_manifest import Probe
@@ -65,6 +66,29 @@ async def test_readiness_retries_transport_failures_then_succeeds() -> None:
     clock = Clock()
     transport = FakeTransport(
         ConnectionRefusedError(),
+        ProbeResponse(status=200, body_bytes=0),
+    )
+    result = await HealthProber(
+        transport=transport,
+        monotonic=clock.monotonic,
+        sleep=clock.sleep,
+    ).wait_ready(
+        target=_target(),
+        probe=_probe(),
+        process_alive=lambda: True,
+        ownership_valid=lambda: True,
+    )
+
+    assert result.ok is True
+    assert result.attempts == 2
+    assert result.last_failure_kind == "target-transport"
+
+
+@pytest.mark.asyncio
+async def test_readiness_retries_httpx_transport_failures_then_succeeds() -> None:
+    clock = Clock()
+    transport = FakeTransport(
+        httpx.ConnectError("All connection attempts failed"),
         ProbeResponse(status=200, body_bytes=0),
     )
     result = await HealthProber(

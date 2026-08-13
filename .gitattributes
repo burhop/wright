@@ -1,5 +1,6 @@
 # Force LF line endings for shell scripts so they run correctly in bash/Docker
 *.sh text eol=lf
+docker/mcp/brep-mcp-launcher.cjs text eol=lf
 
 # Versioned Workspace Surface contracts are byte-hashed. Keep their source and
 # packaged copies identical on Windows and POSIX checkouts.
@@ -9,3 +10,7 @@ packages/core/src/core/surfaces/schemas/** text eol=lf
 # Generated Vite bundles are byte-addressed release inputs. Preserve their exact
 # bytes across platforms; shader source also contains significant whitespace.
 src/wright_engineering/static/web/** -text -whitespace
+
+# The pinned Rivet 2 bundle is verified byte-for-byte. Monaco language data uses
+# significant trailing spaces inside generated JavaScript template literals.
+integrations/rivet/editor/dist/** -text -whitespace

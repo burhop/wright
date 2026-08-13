@@ -53,6 +53,7 @@ interface ViewerPanelContextType {
   openTabs: EditorTab[];
   activeTabPath: string | null;
   openTab: (file: FileDescriptor, mode?: ViewerMode) => Promise<void>;
+  openTransientTab: (tab: EditorTab) => void;
   closeTab: (path: string) => void;
   setActiveTabPath: (path: string | null) => void;
   setTabDirty: (path: string, isDirty: boolean) => void;
@@ -249,6 +250,21 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
       activateTabPath(normalizedUri);
     },
     [openTabs, chatState.activeSessionId, setTabDirty, activateTabPath],
+  );
+
+  const openTransientTab = useCallback(
+    (tab: EditorTab) => {
+      const normalizedPath = normalizeEditorTabPath(tab.path);
+      const normalizedTab: EditorTab = {
+        ...tab,
+        path: normalizedPath,
+        name: tab.name || normalizedPath.split("/").pop() || normalizedPath,
+        isDirty: Boolean(tab.isDirty),
+      };
+      setOpenTabs((prev) => dedupeEditorTabs([...prev, normalizedTab]));
+      activateTabPath(normalizedPath);
+    },
+    [activateTabPath],
   );
 
   const closeTab = useCallback(
@@ -574,6 +590,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         openTabs,
         activeTabPath,
         openTab,
+        openTransientTab,
         closeTab,
         setActiveTabPath: activateTabPath,
         setTabDirty,

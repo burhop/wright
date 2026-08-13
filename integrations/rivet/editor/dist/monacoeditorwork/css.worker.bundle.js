@@ -414,60 +414,6 @@
   };
   Disposable.None = Object.freeze({ dispose() {
   } });
-  var DisposableMap = class {
-    constructor() {
-      this._store = /* @__PURE__ */ new Map();
-      this._isDisposed = false;
-      trackDisposable(this);
-    }
-    /**
-     * Disposes of all stored values and mark this object as disposed.
-     *
-     * Trying to use this object after it has been disposed of is an error.
-     */
-    dispose() {
-      markAsDisposed(this);
-      this._isDisposed = true;
-      this.clearAndDisposeAll();
-    }
-    /**
-     * Disposes of all stored values and clear the map, but DO NOT mark this object as disposed.
-     */
-    clearAndDisposeAll() {
-      if (!this._store.size) {
-        return;
-      }
-      try {
-        dispose(this._store.values());
-      } finally {
-        this._store.clear();
-      }
-    }
-    get(key) {
-      return this._store.get(key);
-    }
-    set(key, value, skipDisposeOnOverwrite = false) {
-      var _a5;
-      if (this._isDisposed) {
-        console.warn(new Error("Trying to add a disposable to a DisposableMap that has already been disposed of. The added object will be leaked!").stack);
-      }
-      if (!skipDisposeOnOverwrite) {
-        (_a5 = this._store.get(key)) === null || _a5 === void 0 ? void 0 : _a5.dispose();
-      }
-      this._store.set(key, value);
-    }
-    /**
-     * Delete the value stored for `key` from this map and also dispose of it.
-     */
-    deleteAndDispose(key) {
-      var _a5;
-      (_a5 = this._store.get(key)) === null || _a5 === void 0 ? void 0 : _a5.dispose();
-      this._store.delete(key);
-    }
-    [Symbol.iterator]() {
-      return this._store[Symbol.iterator]();
-    }
-  };
 
   // ../../.yarn/cache/monaco-editor-npm-0.44.0-888dafb151-759ea7f2af.zip/node_modules/monaco-editor/esm/vs/base/common/linkedList.js
   var Node = class _Node {
@@ -5922,6 +5868,8 @@
               case 125:
                 chClass = hasOpenCurlyBracket ? 0 : 1;
                 break;
+              // The following three rules make it that ' or " or ` are allowed inside links
+              // only if the link is wrapped by some other quote character
               case 39:
               case 34:
               case 96:
@@ -8585,54 +8533,53 @@
       let ambiguousCharacterCount = 0;
       let invisibleCharacterCount = 0;
       let nonBasicAsciiCharacterCount = 0;
-      forLoop:
-        for (let lineNumber = startLine, lineCount = endLine; lineNumber <= lineCount; lineNumber++) {
-          const lineContent = model.getLineContent(lineNumber);
-          const lineLength = lineContent.length;
-          searcher.reset(0);
-          do {
-            m = searcher.next(lineContent);
-            if (m) {
-              let startIndex = m.index;
-              let endIndex = m.index + m[0].length;
-              if (startIndex > 0) {
-                const charCodeBefore = lineContent.charCodeAt(startIndex - 1);
-                if (isHighSurrogate(charCodeBefore)) {
-                  startIndex--;
-                }
-              }
-              if (endIndex + 1 < lineLength) {
-                const charCodeBefore = lineContent.charCodeAt(endIndex - 1);
-                if (isHighSurrogate(charCodeBefore)) {
-                  endIndex++;
-                }
-              }
-              const str = lineContent.substring(startIndex, endIndex);
-              let word = getWordAtText(startIndex + 1, DEFAULT_WORD_REGEXP, lineContent, 0);
-              if (word && word.endColumn <= startIndex + 1) {
-                word = null;
-              }
-              const highlightReason = codePointHighlighter.shouldHighlightNonBasicASCII(str, word ? word.word : null);
-              if (highlightReason !== 0) {
-                if (highlightReason === 3) {
-                  ambiguousCharacterCount++;
-                } else if (highlightReason === 2) {
-                  invisibleCharacterCount++;
-                } else if (highlightReason === 1) {
-                  nonBasicAsciiCharacterCount++;
-                } else {
-                  assertNever(highlightReason);
-                }
-                const MAX_RESULT_LENGTH = 1e3;
-                if (ranges.length >= MAX_RESULT_LENGTH) {
-                  hasMore = true;
-                  break forLoop;
-                }
-                ranges.push(new Range(lineNumber, startIndex + 1, lineNumber, endIndex + 1));
+      forLoop: for (let lineNumber = startLine, lineCount = endLine; lineNumber <= lineCount; lineNumber++) {
+        const lineContent = model.getLineContent(lineNumber);
+        const lineLength = lineContent.length;
+        searcher.reset(0);
+        do {
+          m = searcher.next(lineContent);
+          if (m) {
+            let startIndex = m.index;
+            let endIndex = m.index + m[0].length;
+            if (startIndex > 0) {
+              const charCodeBefore = lineContent.charCodeAt(startIndex - 1);
+              if (isHighSurrogate(charCodeBefore)) {
+                startIndex--;
               }
             }
-          } while (m);
-        }
+            if (endIndex + 1 < lineLength) {
+              const charCodeBefore = lineContent.charCodeAt(endIndex - 1);
+              if (isHighSurrogate(charCodeBefore)) {
+                endIndex++;
+              }
+            }
+            const str = lineContent.substring(startIndex, endIndex);
+            let word = getWordAtText(startIndex + 1, DEFAULT_WORD_REGEXP, lineContent, 0);
+            if (word && word.endColumn <= startIndex + 1) {
+              word = null;
+            }
+            const highlightReason = codePointHighlighter.shouldHighlightNonBasicASCII(str, word ? word.word : null);
+            if (highlightReason !== 0) {
+              if (highlightReason === 3) {
+                ambiguousCharacterCount++;
+              } else if (highlightReason === 2) {
+                invisibleCharacterCount++;
+              } else if (highlightReason === 1) {
+                nonBasicAsciiCharacterCount++;
+              } else {
+                assertNever(highlightReason);
+              }
+              const MAX_RESULT_LENGTH = 1e3;
+              if (ranges.length >= MAX_RESULT_LENGTH) {
+                hasMore = true;
+                break forLoop;
+              }
+              ranges.push(new Range(lineNumber, startIndex + 1, lineNumber, endIndex + 1));
+            }
+          }
+        } while (m);
+      }
       return {
         ranges,
         hasMore,
@@ -9932,34 +9879,33 @@
       const paths = new FastArrayNegativeIndices();
       paths.set(0, V.get(0) === 0 ? null : new SnakePath(null, 0, 0, V.get(0)));
       let k = 0;
-      loop:
-        while (true) {
-          d++;
-          if (!timeout.isValid()) {
-            return DiffAlgorithmResult.trivialTimedOut(seqX, seqY);
+      loop: while (true) {
+        d++;
+        if (!timeout.isValid()) {
+          return DiffAlgorithmResult.trivialTimedOut(seqX, seqY);
+        }
+        const lowerBound = -Math.min(d, seqY.length + d % 2);
+        const upperBound = Math.min(d, seqX.length + d % 2);
+        for (k = lowerBound; k <= upperBound; k += 2) {
+          let step = 0;
+          const maxXofDLineTop = k === upperBound ? -1 : V.get(k + 1);
+          const maxXofDLineLeft = k === lowerBound ? -1 : V.get(k - 1) + 1;
+          step++;
+          const x = Math.min(Math.max(maxXofDLineTop, maxXofDLineLeft), seqX.length);
+          const y = x - k;
+          step++;
+          if (x > seqX.length || y > seqY.length) {
+            continue;
           }
-          const lowerBound = -Math.min(d, seqY.length + d % 2);
-          const upperBound = Math.min(d, seqX.length + d % 2);
-          for (k = lowerBound; k <= upperBound; k += 2) {
-            let step = 0;
-            const maxXofDLineTop = k === upperBound ? -1 : V.get(k + 1);
-            const maxXofDLineLeft = k === lowerBound ? -1 : V.get(k - 1) + 1;
-            step++;
-            const x = Math.min(Math.max(maxXofDLineTop, maxXofDLineLeft), seqX.length);
-            const y = x - k;
-            step++;
-            if (x > seqX.length || y > seqY.length) {
-              continue;
-            }
-            const newMaxX = getXAfterSnake(x, y);
-            V.set(k, newMaxX);
-            const lastPath = x === maxXofDLineTop ? paths.get(k + 1) : paths.get(k - 1);
-            paths.set(k, newMaxX !== x ? new SnakePath(lastPath, x, y, newMaxX - x) : lastPath);
-            if (V.get(k) === seqX.length && V.get(k) - k === seqY.length) {
-              break loop;
-            }
+          const newMaxX = getXAfterSnake(x, y);
+          V.set(k, newMaxX);
+          const lastPath = x === maxXofDLineTop ? paths.get(k + 1) : paths.get(k - 1);
+          paths.set(k, newMaxX !== x ? new SnakePath(lastPath, x, y, newMaxX - x) : lastPath);
+          if (V.get(k) === seqX.length && V.get(k) - k === seqY.length) {
+            break loop;
           }
         }
+      }
       let path = paths.get(k);
       const result = [];
       let lastAligningPosS1 = seqX.length;
@@ -12346,22 +12292,21 @@
         const sw = new StopWatch();
         const wordDefRegExp = new RegExp(wordDef, wordDefFlags);
         const seen = /* @__PURE__ */ new Set();
-        outer:
-          for (const url of modelUrls) {
-            const model = this._getModel(url);
-            if (!model) {
+        outer: for (const url of modelUrls) {
+          const model = this._getModel(url);
+          if (!model) {
+            continue;
+          }
+          for (const word of model.words(wordDefRegExp)) {
+            if (word === leadingWord || !isNaN(Number(word))) {
               continue;
             }
-            for (const word of model.words(wordDefRegExp)) {
-              if (word === leadingWord || !isNaN(Number(word))) {
-                continue;
-              }
-              seen.add(word);
-              if (seen.size > _EditorSimpleWorker._suggestionsLimit) {
-                break outer;
-              }
+            seen.add(word);
+            if (seen.size > _EditorSimpleWorker._suggestionsLimit) {
+              break outer;
             }
           }
+        }
         return { words: Array.from(seen), duration: sw.elapsed() };
       });
     }
@@ -12526,7 +12471,7 @@
     TokenType2[TokenType2["EOF"] = 41] = "EOF";
     TokenType2[TokenType2["CustomToken"] = 42] = "CustomToken";
   })(TokenType || (TokenType = {}));
-  var MultiLineStream = function() {
+  var MultiLineStream = (function() {
     function MultiLineStream2(source) {
       this.source = source;
       this.len = source.length;
@@ -12596,7 +12541,7 @@
       return this.position - posNow;
     };
     return MultiLineStream2;
-  }();
+  })();
   var _a4 = "a".charCodeAt(0);
   var _f = "f".charCodeAt(0);
   var _z = "z".charCodeAt(0);
@@ -12671,7 +12616,7 @@
   staticUnitTable["fr"] = TokenType.Percentage;
   staticUnitTable["dpi"] = TokenType.Resolution;
   staticUnitTable["dpcm"] = TokenType.Resolution;
-  var Scanner = function() {
+  var Scanner = (function() {
     function Scanner2() {
       this.stream = new MultiLineStream("");
       this.ignoreComment = true;
@@ -13028,7 +12973,7 @@
       return false;
     };
     return Scanner2;
-  }();
+  })();
   function startsWith(haystack, needle) {
     if (haystack.length < needle.length) {
       return false;
@@ -13108,7 +13053,7 @@
     }
     return s;
   }
-  var __extends = function() {
+  var __extends = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -13128,7 +13073,7 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var NodeType;
   (function(NodeType2) {
     NodeType2[NodeType2["Undefined"] = 0] = "Undefined";
@@ -13265,7 +13210,7 @@
     }
     return null;
   }
-  var Node2 = function() {
+  var Node2 = (function() {
     function Node22(offset, len, nodeType) {
       if (offset === void 0) {
         offset = -1;
@@ -13504,8 +13449,8 @@
       return this.options[key];
     };
     return Node22;
-  }();
-  var Nodelist = function(_super) {
+  })();
+  var Nodelist = (function(_super) {
     __extends(Nodelist2, _super);
     function Nodelist2(parent, index) {
       if (index === void 0) {
@@ -13518,8 +13463,8 @@
       return _this;
     }
     return Nodelist2;
-  }(Node2);
-  var UnicodeRange = function(_super) {
+  })(Node2);
+  var UnicodeRange = (function(_super) {
     __extends(UnicodeRange2, _super);
     function UnicodeRange2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13544,8 +13489,8 @@
       return this.rangeEnd;
     };
     return UnicodeRange2;
-  }(Node2);
-  var Identifier = function(_super) {
+  })(Node2);
+  var Identifier = (function(_super) {
     __extends(Identifier2, _super);
     function Identifier2(offset, length) {
       var _this = _super.call(this, offset, length) || this;
@@ -13563,8 +13508,8 @@
       return this.hasChildren();
     };
     return Identifier2;
-  }(Node2);
-  var Stylesheet = function(_super) {
+  })(Node2);
+  var Stylesheet = (function(_super) {
     __extends(Stylesheet2, _super);
     function Stylesheet2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13577,8 +13522,8 @@
       configurable: true
     });
     return Stylesheet2;
-  }(Node2);
-  var Declarations = function(_super) {
+  })(Node2);
+  var Declarations = (function(_super) {
     __extends(Declarations2, _super);
     function Declarations2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13591,8 +13536,8 @@
       configurable: true
     });
     return Declarations2;
-  }(Node2);
-  var BodyDeclaration = function(_super) {
+  })(Node2);
+  var BodyDeclaration = (function(_super) {
     __extends(BodyDeclaration2, _super);
     function BodyDeclaration2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13604,8 +13549,8 @@
       return this.setNode("declarations", decls);
     };
     return BodyDeclaration2;
-  }(Node2);
-  var RuleSet = function(_super) {
+  })(Node2);
+  var RuleSet = (function(_super) {
     __extends(RuleSet2, _super);
     function RuleSet2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13627,8 +13572,8 @@
       return !!this.parent && this.parent.findParent(NodeType.Declarations) !== null;
     };
     return RuleSet2;
-  }(BodyDeclaration);
-  var Selector = function(_super) {
+  })(BodyDeclaration);
+  var Selector = (function(_super) {
     __extends(Selector2, _super);
     function Selector2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13641,8 +13586,8 @@
       configurable: true
     });
     return Selector2;
-  }(Node2);
-  var SimpleSelector = function(_super) {
+  })(Node2);
+  var SimpleSelector = (function(_super) {
     __extends(SimpleSelector2, _super);
     function SimpleSelector2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13655,8 +13600,8 @@
       configurable: true
     });
     return SimpleSelector2;
-  }(Node2);
-  var AtApplyRule = function(_super) {
+  })(Node2);
+  var AtApplyRule = (function(_super) {
     __extends(AtApplyRule2, _super);
     function AtApplyRule2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13678,15 +13623,15 @@
       return this.identifier ? this.identifier.getText() : "";
     };
     return AtApplyRule2;
-  }(Node2);
-  var AbstractDeclaration = function(_super) {
+  })(Node2);
+  var AbstractDeclaration = (function(_super) {
     __extends(AbstractDeclaration2, _super);
     function AbstractDeclaration2(offset, length) {
       return _super.call(this, offset, length) || this;
     }
     return AbstractDeclaration2;
-  }(Node2);
-  var CustomPropertySet = function(_super) {
+  })(Node2);
+  var CustomPropertySet = (function(_super) {
     __extends(CustomPropertySet2, _super);
     function CustomPropertySet2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13699,8 +13644,8 @@
       configurable: true
     });
     return CustomPropertySet2;
-  }(BodyDeclaration);
-  var Declaration = function(_super) {
+  })(BodyDeclaration);
+  var Declaration = (function(_super) {
     __extends(Declaration2, _super);
     function Declaration2(offset, length) {
       var _this = _super.call(this, offset, length) || this;
@@ -13753,8 +13698,8 @@
       return this.nestedProperties;
     };
     return Declaration2;
-  }(AbstractDeclaration);
-  var CustomPropertyDeclaration = function(_super) {
+  })(AbstractDeclaration);
+  var CustomPropertyDeclaration = (function(_super) {
     __extends(CustomPropertyDeclaration2, _super);
     function CustomPropertyDeclaration2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13773,8 +13718,8 @@
       return this.propertySet;
     };
     return CustomPropertyDeclaration2;
-  }(Declaration);
-  var Property = function(_super) {
+  })(Declaration);
+  var Property = (function(_super) {
     __extends(Property2, _super);
     function Property2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13799,8 +13744,8 @@
       return !!this.identifier && this.identifier.isCustomProperty;
     };
     return Property2;
-  }(Node2);
-  var Invocation = function(_super) {
+  })(Node2);
+  var Invocation = (function(_super) {
     __extends(Invocation2, _super);
     function Invocation2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13819,8 +13764,8 @@
       return this.arguments;
     };
     return Invocation2;
-  }(Node2);
-  var Function = function(_super) {
+  })(Node2);
+  var Function = (function(_super) {
     __extends(Function2, _super);
     function Function2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13842,8 +13787,8 @@
       return this.identifier ? this.identifier.getText() : "";
     };
     return Function2;
-  }(Invocation);
-  var FunctionParameter = function(_super) {
+  })(Invocation);
+  var FunctionParameter = (function(_super) {
     __extends(FunctionParameter2, _super);
     function FunctionParameter2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13871,8 +13816,8 @@
       return this.defaultValue;
     };
     return FunctionParameter2;
-  }(Node2);
-  var FunctionArgument = function(_super) {
+  })(Node2);
+  var FunctionArgument = (function(_super) {
     __extends(FunctionArgument2, _super);
     function FunctionArgument2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13900,8 +13845,8 @@
       return this.value;
     };
     return FunctionArgument2;
-  }(Node2);
-  var IfStatement = function(_super) {
+  })(Node2);
+  var IfStatement = (function(_super) {
     __extends(IfStatement2, _super);
     function IfStatement2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13920,8 +13865,8 @@
       return this.setNode("elseClause", elseClause);
     };
     return IfStatement2;
-  }(BodyDeclaration);
-  var ForStatement = function(_super) {
+  })(BodyDeclaration);
+  var ForStatement = (function(_super) {
     __extends(ForStatement2, _super);
     function ForStatement2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13937,8 +13882,8 @@
       return this.setNode("variable", node, 0);
     };
     return ForStatement2;
-  }(BodyDeclaration);
-  var EachStatement = function(_super) {
+  })(BodyDeclaration);
+  var EachStatement = (function(_super) {
     __extends(EachStatement2, _super);
     function EachStatement2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13957,8 +13902,8 @@
       return this.variables;
     };
     return EachStatement2;
-  }(BodyDeclaration);
-  var WhileStatement = function(_super) {
+  })(BodyDeclaration);
+  var WhileStatement = (function(_super) {
     __extends(WhileStatement2, _super);
     function WhileStatement2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13971,8 +13916,8 @@
       configurable: true
     });
     return WhileStatement2;
-  }(BodyDeclaration);
-  var ElseStatement = function(_super) {
+  })(BodyDeclaration);
+  var ElseStatement = (function(_super) {
     __extends(ElseStatement2, _super);
     function ElseStatement2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -13985,8 +13930,8 @@
       configurable: true
     });
     return ElseStatement2;
-  }(BodyDeclaration);
-  var FunctionDeclaration = function(_super) {
+  })(BodyDeclaration);
+  var FunctionDeclaration = (function(_super) {
     __extends(FunctionDeclaration2, _super);
     function FunctionDeclaration2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14014,8 +13959,8 @@
       return this.parameters;
     };
     return FunctionDeclaration2;
-  }(BodyDeclaration);
-  var ViewPort = function(_super) {
+  })(BodyDeclaration);
+  var ViewPort = (function(_super) {
     __extends(ViewPort2, _super);
     function ViewPort2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14028,8 +13973,8 @@
       configurable: true
     });
     return ViewPort2;
-  }(BodyDeclaration);
-  var FontFace = function(_super) {
+  })(BodyDeclaration);
+  var FontFace = (function(_super) {
     __extends(FontFace2, _super);
     function FontFace2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14042,8 +13987,8 @@
       configurable: true
     });
     return FontFace2;
-  }(BodyDeclaration);
-  var NestedProperties = function(_super) {
+  })(BodyDeclaration);
+  var NestedProperties = (function(_super) {
     __extends(NestedProperties2, _super);
     function NestedProperties2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14056,8 +14001,8 @@
       configurable: true
     });
     return NestedProperties2;
-  }(BodyDeclaration);
-  var Keyframe = function(_super) {
+  })(BodyDeclaration);
+  var Keyframe = (function(_super) {
     __extends(Keyframe2, _super);
     function Keyframe2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14085,8 +14030,8 @@
       return this.identifier ? this.identifier.getText() : "";
     };
     return Keyframe2;
-  }(BodyDeclaration);
-  var KeyframeSelector = function(_super) {
+  })(BodyDeclaration);
+  var KeyframeSelector = (function(_super) {
     __extends(KeyframeSelector2, _super);
     function KeyframeSelector2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14099,8 +14044,8 @@
       configurable: true
     });
     return KeyframeSelector2;
-  }(BodyDeclaration);
-  var Import = function(_super) {
+  })(BodyDeclaration);
+  var Import = (function(_super) {
     __extends(Import2, _super);
     function Import2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14120,8 +14065,8 @@
       return false;
     };
     return Import2;
-  }(Node2);
-  var Use = function(_super) {
+  })(Node2);
+  var Use = (function(_super) {
     __extends(Use2, _super);
     function Use2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14146,8 +14091,8 @@
       return this.identifier;
     };
     return Use2;
-  }(Node2);
-  var ModuleConfiguration = function(_super) {
+  })(Node2);
+  var ModuleConfiguration = (function(_super) {
     __extends(ModuleConfiguration2, _super);
     function ModuleConfiguration2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14175,8 +14120,8 @@
       return this.value;
     };
     return ModuleConfiguration2;
-  }(Node2);
-  var Forward = function(_super) {
+  })(Node2);
+  var Forward = (function(_super) {
     __extends(Forward2, _super);
     function Forward2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14207,8 +14152,8 @@
       return this.parameters;
     };
     return Forward2;
-  }(Node2);
-  var ForwardVisibility = function(_super) {
+  })(Node2);
+  var ForwardVisibility = (function(_super) {
     __extends(ForwardVisibility2, _super);
     function ForwardVisibility2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14227,8 +14172,8 @@
       return this.identifier;
     };
     return ForwardVisibility2;
-  }(Node2);
-  var Namespace = function(_super) {
+  })(Node2);
+  var Namespace = (function(_super) {
     __extends(Namespace2, _super);
     function Namespace2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14241,8 +14186,8 @@
       configurable: true
     });
     return Namespace2;
-  }(Node2);
-  var Media = function(_super) {
+  })(Node2);
+  var Media = (function(_super) {
     __extends(Media2, _super);
     function Media2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14255,8 +14200,8 @@
       configurable: true
     });
     return Media2;
-  }(BodyDeclaration);
-  var Supports = function(_super) {
+  })(BodyDeclaration);
+  var Supports = (function(_super) {
     __extends(Supports2, _super);
     function Supports2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14269,8 +14214,8 @@
       configurable: true
     });
     return Supports2;
-  }(BodyDeclaration);
-  var Document = function(_super) {
+  })(BodyDeclaration);
+  var Document = (function(_super) {
     __extends(Document2, _super);
     function Document2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14283,8 +14228,8 @@
       configurable: true
     });
     return Document2;
-  }(BodyDeclaration);
-  var Medialist = function(_super) {
+  })(BodyDeclaration);
+  var Medialist = (function(_super) {
     __extends(Medialist2, _super);
     function Medialist2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14296,8 +14241,8 @@
       return this.mediums;
     };
     return Medialist2;
-  }(Node2);
-  var MediaQuery = function(_super) {
+  })(Node2);
+  var MediaQuery = (function(_super) {
     __extends(MediaQuery2, _super);
     function MediaQuery2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14310,8 +14255,8 @@
       configurable: true
     });
     return MediaQuery2;
-  }(Node2);
-  var MediaCondition = function(_super) {
+  })(Node2);
+  var MediaCondition = (function(_super) {
     __extends(MediaCondition2, _super);
     function MediaCondition2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14324,8 +14269,8 @@
       configurable: true
     });
     return MediaCondition2;
-  }(Node2);
-  var MediaFeature = function(_super) {
+  })(Node2);
+  var MediaFeature = (function(_super) {
     __extends(MediaFeature2, _super);
     function MediaFeature2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14338,8 +14283,8 @@
       configurable: true
     });
     return MediaFeature2;
-  }(Node2);
-  var SupportsCondition = function(_super) {
+  })(Node2);
+  var SupportsCondition = (function(_super) {
     __extends(SupportsCondition2, _super);
     function SupportsCondition2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14352,8 +14297,8 @@
       configurable: true
     });
     return SupportsCondition2;
-  }(Node2);
-  var Page = function(_super) {
+  })(Node2);
+  var Page = (function(_super) {
     __extends(Page2, _super);
     function Page2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14366,8 +14311,8 @@
       configurable: true
     });
     return Page2;
-  }(BodyDeclaration);
-  var PageBoxMarginBox = function(_super) {
+  })(BodyDeclaration);
+  var PageBoxMarginBox = (function(_super) {
     __extends(PageBoxMarginBox2, _super);
     function PageBoxMarginBox2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14380,8 +14325,8 @@
       configurable: true
     });
     return PageBoxMarginBox2;
-  }(BodyDeclaration);
-  var Expression = function(_super) {
+  })(BodyDeclaration);
+  var Expression = (function(_super) {
     __extends(Expression2, _super);
     function Expression2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14394,8 +14339,8 @@
       configurable: true
     });
     return Expression2;
-  }(Node2);
-  var BinaryExpression = function(_super) {
+  })(Node2);
+  var BinaryExpression = (function(_super) {
     __extends(BinaryExpression2, _super);
     function BinaryExpression2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14426,8 +14371,8 @@
       return this.operator;
     };
     return BinaryExpression2;
-  }(Node2);
-  var Term = function(_super) {
+  })(Node2);
+  var Term = (function(_super) {
     __extends(Term2, _super);
     function Term2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14452,8 +14397,8 @@
       return this.expression;
     };
     return Term2;
-  }(Node2);
-  var AttributeSelector = function(_super) {
+  })(Node2);
+  var AttributeSelector = (function(_super) {
     __extends(AttributeSelector2, _super);
     function AttributeSelector2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14490,8 +14435,8 @@
       return this.value;
     };
     return AttributeSelector2;
-  }(Node2);
-  var Operator = function(_super) {
+  })(Node2);
+  var Operator = (function(_super) {
     __extends(Operator2, _super);
     function Operator2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14504,8 +14449,8 @@
       configurable: true
     });
     return Operator2;
-  }(Node2);
-  var HexColorValue = function(_super) {
+  })(Node2);
+  var HexColorValue = (function(_super) {
     __extends(HexColorValue2, _super);
     function HexColorValue2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14518,8 +14463,8 @@
       configurable: true
     });
     return HexColorValue2;
-  }(Node2);
-  var RatioValue = function(_super) {
+  })(Node2);
+  var RatioValue = (function(_super) {
     __extends(RatioValue2, _super);
     function RatioValue2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14532,11 +14477,11 @@
       configurable: true
     });
     return RatioValue2;
-  }(Node2);
+  })(Node2);
   var _dot = ".".charCodeAt(0);
   var _02 = "0".charCodeAt(0);
   var _92 = "9".charCodeAt(0);
-  var NumericValue = function(_super) {
+  var NumericValue = (function(_super) {
     __extends(NumericValue2, _super);
     function NumericValue2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14565,8 +14510,8 @@
       };
     };
     return NumericValue2;
-  }(Node2);
-  var VariableDeclaration = function(_super) {
+  })(Node2);
+  var VariableDeclaration = (function(_super) {
     __extends(VariableDeclaration2, _super);
     function VariableDeclaration2(offset, length) {
       var _this = _super.call(this, offset, length) || this;
@@ -14608,8 +14553,8 @@
       return this.value;
     };
     return VariableDeclaration2;
-  }(AbstractDeclaration);
-  var Interpolation = function(_super) {
+  })(AbstractDeclaration);
+  var Interpolation = (function(_super) {
     __extends(Interpolation2, _super);
     function Interpolation2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14622,8 +14567,8 @@
       configurable: true
     });
     return Interpolation2;
-  }(Node2);
-  var Variable = function(_super) {
+  })(Node2);
+  var Variable = (function(_super) {
     __extends(Variable2, _super);
     function Variable2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14639,8 +14584,8 @@
       return this.getText();
     };
     return Variable2;
-  }(Node2);
-  var ExtendsReference = function(_super) {
+  })(Node2);
+  var ExtendsReference = (function(_super) {
     __extends(ExtendsReference2, _super);
     function ExtendsReference2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14659,8 +14604,8 @@
       return this.selectors;
     };
     return ExtendsReference2;
-  }(Node2);
-  var MixinContentReference = function(_super) {
+  })(Node2);
+  var MixinContentReference = (function(_super) {
     __extends(MixinContentReference2, _super);
     function MixinContentReference2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14679,8 +14624,8 @@
       return this.arguments;
     };
     return MixinContentReference2;
-  }(Node2);
-  var MixinContentDeclaration = function(_super) {
+  })(Node2);
+  var MixinContentDeclaration = (function(_super) {
     __extends(MixinContentDeclaration2, _super);
     function MixinContentDeclaration2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14699,8 +14644,8 @@
       return this.parameters;
     };
     return MixinContentDeclaration2;
-  }(BodyDeclaration);
-  var MixinReference = function(_super) {
+  })(BodyDeclaration);
+  var MixinReference = (function(_super) {
     __extends(MixinReference2, _super);
     function MixinReference2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14740,8 +14685,8 @@
       return this.content;
     };
     return MixinReference2;
-  }(Node2);
-  var MixinDeclaration = function(_super) {
+  })(Node2);
+  var MixinDeclaration = (function(_super) {
     __extends(MixinDeclaration2, _super);
     function MixinDeclaration2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14776,8 +14721,8 @@
       return false;
     };
     return MixinDeclaration2;
-  }(BodyDeclaration);
-  var UnknownAtRule = function(_super) {
+  })(BodyDeclaration);
+  var UnknownAtRule = (function(_super) {
     __extends(UnknownAtRule2, _super);
     function UnknownAtRule2(offset, length) {
       return _super.call(this, offset, length) || this;
@@ -14796,8 +14741,8 @@
       return this.atRuleName;
     };
     return UnknownAtRule2;
-  }(BodyDeclaration);
-  var ListEntry = function(_super) {
+  })(BodyDeclaration);
+  var ListEntry = (function(_super) {
     __extends(ListEntry2, _super);
     function ListEntry2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14816,8 +14761,8 @@
       return this.setNode("value", node, 1);
     };
     return ListEntry2;
-  }(Node2);
-  var LessGuard = function(_super) {
+  })(Node2);
+  var LessGuard = (function(_super) {
     __extends(LessGuard2, _super);
     function LessGuard2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14829,8 +14774,8 @@
       return this.conditions;
     };
     return LessGuard2;
-  }(Node2);
-  var GuardCondition = function(_super) {
+  })(Node2);
+  var GuardCondition = (function(_super) {
     __extends(GuardCondition2, _super);
     function GuardCondition2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14839,8 +14784,8 @@
       return this.setNode("variable", node);
     };
     return GuardCondition2;
-  }(Node2);
-  var Module = function(_super) {
+  })(Node2);
+  var Module = (function(_super) {
     __extends(Module3, _super);
     function Module3() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -14859,14 +14804,14 @@
       return this.identifier;
     };
     return Module3;
-  }(Node2);
+  })(Node2);
   var Level;
   (function(Level2) {
     Level2[Level2["Ignore"] = 1] = "Ignore";
     Level2[Level2["Warning"] = 2] = "Warning";
     Level2[Level2["Error"] = 4] = "Error";
   })(Level || (Level = {}));
-  var Marker = function() {
+  var Marker = (function() {
     function Marker2(node, rule, level, message, offset, length) {
       if (offset === void 0) {
         offset = node.offset;
@@ -14900,8 +14845,8 @@
       return this.message;
     };
     return Marker2;
-  }();
-  var ParseErrorCollector = function() {
+  })();
+  var ParseErrorCollector = (function() {
     function ParseErrorCollector2() {
       this.entries = [];
     }
@@ -14917,7 +14862,7 @@
       return true;
     };
     return ParseErrorCollector2;
-  }();
+  })();
   function format(message, args) {
     let result;
     if (args.length === 0) {
@@ -14937,13 +14882,13 @@
     return localize2;
   }
   var localize22 = loadMessageBundle();
-  var CSSIssueType = function() {
+  var CSSIssueType = /* @__PURE__ */ (function() {
     function CSSIssueType2(id, message) {
       this.id = id;
       this.message = message;
     }
     return CSSIssueType2;
-  }();
+  })();
   var ParseError = {
     NumberExpected: new CSSIssueType("css-numberexpected", localize22("expected.number", "number expected")),
     ConditionExpected: new CSSIssueType("css-conditionexpected", localize22("expected.condt", "condition expected")),
@@ -15369,7 +15314,7 @@
     }
     WorkspaceEdit2.is = is;
   })(WorkspaceEdit || (WorkspaceEdit = {}));
-  var TextEditChangeImpl = function() {
+  var TextEditChangeImpl = (function() {
     function TextEditChangeImpl2(edits, changeAnnotations) {
       this.edits = edits;
       this.changeAnnotations = changeAnnotations;
@@ -15443,8 +15388,8 @@
       }
     };
     return TextEditChangeImpl2;
-  }();
-  var ChangeAnnotations = function() {
+  })();
+  var ChangeAnnotations = (function() {
     function ChangeAnnotations2(annotations) {
       this._annotations = annotations === void 0 ? /* @__PURE__ */ Object.create(null) : annotations;
       this._counter = 0;
@@ -15483,8 +15428,8 @@
       return this._counter.toString();
     };
     return ChangeAnnotations2;
-  }();
-  var WorkspaceChange = function() {
+  })();
+  var WorkspaceChange = (function() {
     function WorkspaceChange2(workspaceEdit) {
       var _this = this;
       this._textEditChanges = /* @__PURE__ */ Object.create(null);
@@ -15643,7 +15588,7 @@
       }
     };
     return WorkspaceChange2;
-  }();
+  })();
   var TextDocumentIdentifier;
   (function(TextDocumentIdentifier2) {
     function create(uri) {
@@ -16083,7 +16028,7 @@
       return data;
     }
   })(TextDocument || (TextDocument = {}));
-  var FullTextDocument = function() {
+  var FullTextDocument = (function() {
     function FullTextDocument3(uri, languageId, version, content) {
       this._uri = uri;
       this._languageId = languageId;
@@ -16185,7 +16130,7 @@
       configurable: true
     });
     return FullTextDocument3;
-  }();
+  })();
   var Is;
   (function(Is2) {
     var toString = Object.prototype.toString;
@@ -17357,7 +17302,7 @@
       }
     return to.concat(ar || Array.prototype.slice.call(from));
   };
-  var Parser = function() {
+  var Parser = (function() {
     function Parser2(scnr) {
       if (scnr === void 0) {
         scnr = new Scanner();
@@ -18772,7 +18717,7 @@
       }
     };
     return Parser2;
-  }();
+  })();
   function findFirst(array, p) {
     var low = 0, high = array.length;
     if (high === 0) {
@@ -18808,7 +18753,7 @@
     }
     return result;
   }
-  var __extends2 = function() {
+  var __extends2 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -18828,8 +18773,8 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
-  var Scope = function() {
+  })();
+  var Scope = (function() {
     function Scope2(offset, length) {
       this.offset = offset;
       this.length = length;
@@ -18886,15 +18831,15 @@
       return this.symbols;
     };
     return Scope2;
-  }();
-  var GlobalScope = function(_super) {
+  })();
+  var GlobalScope = (function(_super) {
     __extends2(GlobalScope2, _super);
     function GlobalScope2() {
       return _super.call(this, 0, Number.MAX_VALUE) || this;
     }
     return GlobalScope2;
-  }(Scope);
-  var Symbol2 = function() {
+  })(Scope);
+  var Symbol2 = /* @__PURE__ */ (function() {
     function Symbol3(name, value, node, type) {
       this.name = name;
       this.value = value;
@@ -18902,8 +18847,8 @@
       this.type = type;
     }
     return Symbol3;
-  }();
-  var ScopeBuilder = function() {
+  })();
+  var ScopeBuilder = (function() {
     function ScopeBuilder2(scope) {
       this.scope = scope;
     }
@@ -19019,8 +18964,8 @@
       }
     };
     return ScopeBuilder2;
-  }();
-  var Symbols = function() {
+  })();
+  var Symbols = (function() {
     function Symbols2(node) {
       this.global = new GlobalScope();
       node.acceptVisitor(new ScopeBuilder(this.global));
@@ -19141,7 +19086,7 @@
       return null;
     };
     return Symbols2;
-  }();
+  })();
   var LIB;
   LIB = (() => {
     "use strict";
@@ -19293,10 +19238,10 @@
       }, format: function(t3) {
         if (null === t3 || "object" != typeof t3)
           throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof t3);
-        return function(t4, e3) {
+        return (function(t4, e3) {
           var r3 = e3.dir || e3.root, n2 = e3.base || (e3.name || "") + (e3.ext || "");
           return r3 ? r3 === e3.root ? r3 + n2 : r3 + "/" + n2 : n2;
-        }(0, t3);
+        })(0, t3);
       }, parse: function(t3) {
         e2(t3);
         var r3 = { root: "", dir: "", base: "", ext: "", name: "" };
@@ -19350,11 +19295,11 @@
             throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
         }
       }
-      var l = "", p = "/", g = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/, d = function() {
+      var l = "", p = "/", g = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/, d = (function() {
         function t3(t4, e3, r3, n2, o2, i2) {
-          void 0 === i2 && (i2 = false), "object" == typeof t4 ? (this.scheme = t4.scheme || l, this.authority = t4.authority || l, this.path = t4.path || l, this.query = t4.query || l, this.fragment = t4.fragment || l) : (this.scheme = function(t5, e4) {
+          void 0 === i2 && (i2 = false), "object" == typeof t4 ? (this.scheme = t4.scheme || l, this.authority = t4.authority || l, this.path = t4.path || l, this.query = t4.query || l, this.fragment = t4.fragment || l) : (this.scheme = /* @__PURE__ */ (function(t5, e4) {
             return t5 || e4 ? t5 : "file";
-          }(t4, i2), this.authority = e3 || l, this.path = function(t5, e4) {
+          })(t4, i2), this.authority = e3 || l, this.path = (function(t5, e4) {
             switch (t5) {
               case "https":
               case "http":
@@ -19362,7 +19307,7 @@
                 e4 ? e4[0] !== p && (e4 = p + e4) : e4 = p;
             }
             return e4;
-          }(this.scheme, r3 || l), this.query = n2 || l, this.fragment = o2 || l, u(this, i2));
+          })(this.scheme, r3 || l), this.query = n2 || l, this.fragment = o2 || l, u(this, i2));
         }
         return t3.isUri = function(e3) {
           return e3 instanceof t3 || !!e3 && "string" == typeof e3.authority && "string" == typeof e3.fragment && "string" == typeof e3.path && "string" == typeof e3.query && "string" == typeof e3.scheme && "string" == typeof e3.fsPath && "function" == typeof e3.with && "function" == typeof e3.toString;
@@ -19400,7 +19345,7 @@
           }
           return e3;
         }, t3;
-      }(), v = n ? 1 : void 0, y = function(t3) {
+      })(), v = n ? 1 : void 0, y = (function(t3) {
         function e3() {
           var e4 = null !== t3 && t3.apply(this, arguments) || this;
           return e4._formatted = null, e4._fsPath = null, e4;
@@ -19413,7 +19358,7 @@
           var t4 = { $mid: 1 };
           return this._fsPath && (t4.fsPath = this._fsPath, t4._sep = v), this._formatted && (t4.external = this._formatted), this.path && (t4.path = this.path), this.scheme && (t4.scheme = this.scheme), this.authority && (t4.authority = this.authority), this.query && (t4.query = this.query), this.fragment && (t4.fragment = this.fragment), t4;
         }, e3;
-      }(d), m = ((a2 = {})[58] = "%3A", a2[47] = "%2F", a2[63] = "%3F", a2[35] = "%23", a2[91] = "%5B", a2[93] = "%5D", a2[64] = "%40", a2[33] = "%21", a2[36] = "%24", a2[38] = "%26", a2[39] = "%27", a2[40] = "%28", a2[41] = "%29", a2[42] = "%2A", a2[43] = "%2B", a2[44] = "%2C", a2[59] = "%3B", a2[61] = "%3D", a2[32] = "%20", a2);
+      })(d), m = ((a2 = {})[58] = "%3A", a2[47] = "%2F", a2[63] = "%3F", a2[35] = "%23", a2[91] = "%5B", a2[93] = "%5D", a2[64] = "%40", a2[33] = "%21", a2[36] = "%24", a2[38] = "%26", a2[39] = "%27", a2[40] = "%28", a2[41] = "%29", a2[42] = "%2A", a2[43] = "%2B", a2[44] = "%2C", a2[59] = "%3B", a2[61] = "%3D", a2[32] = "%20", a2);
       function b(t3, e3) {
         for (var r3 = void 0, n2 = -1, o2 = 0; o2 < t3.length; o2++) {
           var i2 = t3.charCodeAt(o2);
@@ -19478,7 +19423,7 @@
             !n2 && o2 in e3 || (n2 || (n2 = Array.prototype.slice.call(e3, 0, o2)), n2[o2] = e3[o2]);
         return t3.concat(n2 || Array.prototype.slice.call(e3));
       }, I = j.posix || j;
-      !function(t3) {
+      !(function(t3) {
         t3.joinPath = function(t4) {
           for (var e3 = [], r3 = 1; r3 < arguments.length; r3++)
             e3[r3 - 1] = arguments[r3];
@@ -19496,7 +19441,7 @@
         }, t3.extname = function(t4) {
           return I.extname(t4.path);
         };
-      }(P || (P = {}));
+      })(P || (P = {}));
     } }, e = {};
     function r(n) {
       if (e[n])
@@ -19636,7 +19581,7 @@
       return { value: op[0] ? op[1] : void 0, done: true };
     }
   };
-  var PathCompletionParticipant = function() {
+  var PathCompletionParticipant = (function() {
     function PathCompletionParticipant2(readDirectory) {
       this.readDirectory = readDirectory;
       this.literalCompletions = [];
@@ -19761,7 +19706,7 @@
       });
     };
     return PathCompletionParticipant2;
-  }();
+  })();
   var CharCode_dot = ".".charCodeAt(0);
   function stripQuotes(fullValue) {
     if (startsWith(fullValue, "'") || startsWith(fullValue, '"')) {
@@ -19937,7 +19882,7 @@
     SortTexts2["Term"] = "y";
     SortTexts2["Variable"] = "z";
   })(SortTexts || (SortTexts = {}));
-  var CSSCompletion = function() {
+  var CSSCompletion = (function() {
     function CSSCompletion2(variablePrefix, lsOptions, cssDataManager) {
       if (variablePrefix === void 0) {
         variablePrefix = null;
@@ -20894,14 +20839,14 @@
       return this.supportsMarkdown;
     };
     return CSSCompletion2;
-  }();
+  })();
   function isDeprecated(entry) {
     if (entry.status && (entry.status === "nonstandard" || entry.status === "obsolete")) {
       return true;
     }
     return false;
   }
-  var Set2 = function() {
+  var Set2 = (function() {
     function Set22() {
       this.entries = {};
     }
@@ -20915,7 +20860,7 @@
       return Object.keys(this.entries);
     };
     return Set22;
-  }();
+  })();
   function moveCursorInsideParenthesis(text) {
     return text.replace(/\(\)$/, "($1)");
   }
@@ -20946,7 +20891,7 @@
     styleSheet.accept(vistNode);
     return entries;
   }
-  var ColorValueCollector = function() {
+  var ColorValueCollector = (function() {
     function ColorValueCollector2(entries, currentOffset) {
       this.entries = entries;
       this.currentOffset = currentOffset;
@@ -20960,8 +20905,8 @@
       return true;
     };
     return ColorValueCollector2;
-  }();
-  var VariableCollector = function() {
+  })();
+  var VariableCollector = (function() {
     function VariableCollector2(entries, currentOffset) {
       this.entries = entries;
       this.currentOffset = currentOffset;
@@ -20975,7 +20920,7 @@
       return true;
     };
     return VariableCollector2;
-  }();
+  })();
   function getCurrentWord(document2, offset) {
     var i = offset - 1;
     var text = document2.getText();
@@ -20987,7 +20932,7 @@
   function isColorString(s) {
     return s.toLowerCase() in colors || /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(s);
   }
-  var __extends3 = function() {
+  var __extends3 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -21007,9 +20952,9 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var localize5 = loadMessageBundle();
-  var Element = function() {
+  var Element = (function() {
     function Element3() {
       this.parent = null;
       this.children = null;
@@ -21106,15 +21051,15 @@
       return clone;
     };
     return Element3;
-  }();
-  var RootElement = function(_super) {
+  })();
+  var RootElement = (function(_super) {
     __extends3(RootElement2, _super);
     function RootElement2() {
       return _super !== null && _super.apply(this, arguments) || this;
     }
     return RootElement2;
-  }(Element);
-  var LabelElement = function(_super) {
+  })(Element);
+  var LabelElement = (function(_super) {
     __extends3(LabelElement2, _super);
     function LabelElement2(label) {
       var _this = _super.call(this) || this;
@@ -21122,8 +21067,8 @@
       return _this;
     }
     return LabelElement2;
-  }(Element);
-  var MarkedStringPrinter = function() {
+  })(Element);
+  var MarkedStringPrinter = (function() {
     function MarkedStringPrinter2(quote) {
       this.quote = quote;
       this.result = [];
@@ -21183,7 +21128,7 @@
       this.writeLine(indent, content.join(""));
     };
     return MarkedStringPrinter2;
-  }();
+  })();
   var quotes;
   (function(quotes2) {
     function ensure(value, which) {
@@ -21199,14 +21144,14 @@
     }
     quotes2.remove = remove;
   })(quotes || (quotes = {}));
-  var Specificity = function() {
+  var Specificity = /* @__PURE__ */ (function() {
     function Specificity2() {
       this.id = 0;
       this.attr = 0;
       this.tag = 0;
     }
     return Specificity2;
-  }();
+  })();
   function toElement(node, parentElement) {
     var result = new Element();
     for (var _i = 0, _a22 = node.getChildren(); _i < _a22.length; _i++) {
@@ -21299,7 +21244,7 @@
     }
     return content;
   }
-  var SelectorPrinting = function() {
+  var SelectorPrinting = (function() {
     function SelectorPrinting2(cssDataManager) {
       this.cssDataManager = cssDataManager;
     }
@@ -21409,8 +21354,8 @@
       return localize5("specificity", "[Selector Specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity): ({0}, {1}, {2})", specificity.id, specificity.attr, specificity.tag);
     };
     return SelectorPrinting2;
-  }();
-  var SelectorElementBuilder = function() {
+  })();
+  var SelectorElementBuilder = (function() {
     function SelectorElementBuilder2(element) {
       this.prev = null;
       this.element = element;
@@ -21454,7 +21399,7 @@
       }
     };
     return SelectorElementBuilder2;
-  }();
+  })();
   function isNewSelectorContext(node) {
     switch (node.type) {
       case NodeType.MixinDeclaration:
@@ -21492,7 +21437,7 @@
     builder.processSelector(node);
     return root;
   }
-  var CSSHover = function() {
+  var CSSHover = (function() {
     function CSSHover2(clientCapabilities, cssDataManager) {
       this.clientCapabilities = clientCapabilities;
       this.cssDataManager = cssDataManager;
@@ -21614,7 +21559,7 @@
       return this.supportsMarkdown;
     };
     return CSSHover2;
-  }();
+  })();
   var __awaiter32 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve2) {
@@ -21721,7 +21666,7 @@
   var localize6 = loadMessageBundle();
   var startsWithSchemeRegex = /^\w+:\/\//;
   var startsWithData = /^data:/;
-  var CSSNavigation = function() {
+  var CSSNavigation = (function() {
     function CSSNavigation2(fileSystemProvider, resolveModuleReferences) {
       this.fileSystemProvider = fileSystemProvider;
       this.resolveModuleReferences = resolveModuleReferences;
@@ -22090,7 +22035,7 @@
       });
     };
     return CSSNavigation2;
-  }();
+  })();
   function getColorInformation(node, document2) {
     var color = getColorValue(node);
     if (color) {
@@ -22139,22 +22084,22 @@
   var Warning = Level.Warning;
   var Error2 = Level.Error;
   var Ignore = Level.Ignore;
-  var Rule = function() {
+  var Rule = /* @__PURE__ */ (function() {
     function Rule2(id, message, defaultValue) {
       this.id = id;
       this.message = message;
       this.defaultValue = defaultValue;
     }
     return Rule2;
-  }();
-  var Setting = function() {
+  })();
+  var Setting = /* @__PURE__ */ (function() {
     function Setting2(id, message, defaultValue) {
       this.id = id;
       this.message = message;
       this.defaultValue = defaultValue;
     }
     return Setting2;
-  }();
+  })();
   var Rules = {
     AllVendorPrefixes: new Rule("compatibleVendorPrefixes", localize7("rule.vendorprefixes.all", "When using a vendor-specific prefix make sure to also include all other vendor-specific properties"), Ignore),
     IncludeStandardPropertyWhenUsingVendorPrefix: new Rule("vendorPrefix", localize7("rule.standardvendorprefix.all", "When using a vendor-specific prefix also include the standard property"), Warning),
@@ -22179,7 +22124,7 @@
   var Settings = {
     ValidProperties: new Setting("validProperties", localize7("rule.validProperties", "A list of properties that are not validated against the `unknownProperties` rule."), [])
   };
-  var LintConfigurationSettings = function() {
+  var LintConfigurationSettings = (function() {
     function LintConfigurationSettings2(conf) {
       if (conf === void 0) {
         conf = {};
@@ -22199,7 +22144,7 @@
       return this.conf[setting.id];
     };
     return LintConfigurationSettings2;
-  }();
+  })();
   function toLevel(level) {
     switch (level) {
       case "ignore":
@@ -22212,7 +22157,7 @@
     return null;
   }
   var localize8 = loadMessageBundle();
-  var CSSCodeActions = function() {
+  var CSSCodeActions = (function() {
     function CSSCodeActions2(cssDataManager) {
       this.cssDataManager = cssDataManager;
     }
@@ -22279,14 +22224,14 @@
       }
     };
     return CSSCodeActions2;
-  }();
-  var Element2 = function() {
+  })();
+  var Element2 = /* @__PURE__ */ (function() {
     function Element3(decl) {
       this.fullPropertyName = decl.getFullPropertyName().toLowerCase();
       this.node = decl;
     }
     return Element3;
-  }();
+  })();
   function setSide(model, side, value, property) {
     var state = model[side];
     state.value = value;
@@ -22466,7 +22411,7 @@
     return model;
   }
   var localize9 = loadMessageBundle();
-  var NodesByRootMap = function() {
+  var NodesByRootMap = (function() {
     function NodesByRootMap2() {
       this.data = {};
     }
@@ -22482,8 +22427,8 @@
       }
     };
     return NodesByRootMap2;
-  }();
-  var LintVisitor = function() {
+  })();
+  var LintVisitor = (function() {
     function LintVisitor2(document2, settings, cssDataManager) {
       var _this = this;
       this.cssDataManager = cssDataManager;
@@ -22939,8 +22884,8 @@
       "-webkit-"
     ];
     return LintVisitor2;
-  }();
-  var CSSValidation = function() {
+  })();
+  var CSSValidation = (function() {
     function CSSValidation2(cssDataManager) {
       this.cssDataManager = cssDataManager;
     }
@@ -22977,8 +22922,8 @@
       }).map(toDiagnostic);
     };
     return CSSValidation2;
-  }();
-  var __extends4 = function() {
+  })();
+  var __extends4 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -22998,7 +22943,7 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var _FSL2 = "/".charCodeAt(0);
   var _NWL2 = "\n".charCodeAt(0);
   var _CAR2 = "\r".charCodeAt(0);
@@ -23022,7 +22967,7 @@
   var SmallerEqualsOperator = customTokenValue++;
   var Ellipsis = customTokenValue++;
   var Module2 = customTokenValue++;
-  var SCSSScanner = function(_super) {
+  var SCSSScanner = (function(_super) {
     __extends4(SCSSScanner2, _super);
     function SCSSScanner2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -23083,21 +23028,21 @@
       }
     };
     return SCSSScanner2;
-  }(Scanner);
+  })(Scanner);
   var localize10 = loadMessageBundle();
-  var SCSSIssueType = function() {
+  var SCSSIssueType = /* @__PURE__ */ (function() {
     function SCSSIssueType2(id, message) {
       this.id = id;
       this.message = message;
     }
     return SCSSIssueType2;
-  }();
+  })();
   var SCSSParseError = {
     FromExpected: new SCSSIssueType("scss-fromexpected", localize10("expected.from", "'from' expected")),
     ThroughOrToExpected: new SCSSIssueType("scss-throughexpected", localize10("expected.through", "'through' or 'to' expected")),
     InExpected: new SCSSIssueType("scss-fromexpected", localize10("expected.in", "'in' expected"))
   };
-  var __extends5 = function() {
+  var __extends5 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -23117,8 +23062,8 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
-  var SCSSParser = function(_super) {
+  })();
+  var SCSSParser = (function(_super) {
     __extends5(SCSSParser2, _super);
     function SCSSParser2() {
       return _super.call(this, new SCSSScanner()) || this;
@@ -23842,8 +23787,8 @@
       return this._parseInterpolation() || _super.prototype._parseSupportsCondition.call(this);
     };
     return SCSSParser2;
-  }(Parser);
-  var __extends6 = function() {
+  })(Parser);
+  var __extends6 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -23863,9 +23808,9 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var localize11 = loadMessageBundle();
-  var SCSSCompletion = function(_super) {
+  var SCSSCompletion = (function(_super) {
     __extends6(SCSSCompletion2, _super);
     function SCSSCompletion2(lsServiceOptions, cssDataManager) {
       var _this = _super.call(this, "$", lsServiceOptions, cssDataManager) || this;
@@ -24197,7 +24142,7 @@
       }
     ];
     return SCSSCompletion2;
-  }(CSSCompletion);
+  })(CSSCompletion);
   function addReferencesToDocumentation(items) {
     items.forEach(function(i) {
       if (i.documentation && i.references && i.references.length > 0) {
@@ -24210,7 +24155,7 @@
       }
     });
   }
-  var __extends7 = function() {
+  var __extends7 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -24230,7 +24175,7 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var _FSL3 = "/".charCodeAt(0);
   var _NWL3 = "\n".charCodeAt(0);
   var _CAR3 = "\r".charCodeAt(0);
@@ -24239,7 +24184,7 @@
   var _DOT3 = ".".charCodeAt(0);
   var customTokenValue2 = TokenType.CustomToken;
   var Ellipsis2 = customTokenValue2++;
-  var LESSScanner = function(_super) {
+  var LESSScanner = (function(_super) {
     __extends7(LESSScanner2, _super);
     function LESSScanner2() {
       return _super !== null && _super.apply(this, arguments) || this;
@@ -24286,8 +24231,8 @@
       return null;
     };
     return LESSScanner2;
-  }(Scanner);
-  var __extends8 = function() {
+  })(Scanner);
+  var __extends8 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -24307,8 +24252,8 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
-  var LESSParser = function(_super) {
+  })();
+  var LESSParser = (function(_super) {
     __extends8(LESSParser2, _super);
     function LESSParser2() {
       return _super.call(this, new LESSScanner()) || this;
@@ -24972,8 +24917,8 @@
       return node;
     };
     return LESSParser2;
-  }(Parser);
-  var __extends9 = function() {
+  })(Parser);
+  var __extends9 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -24993,9 +24938,9 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var localize12 = loadMessageBundle();
-  var LESSCompletion = function(_super) {
+  var LESSCompletion = (function(_super) {
     __extends9(LESSCompletion2, _super);
     function LESSCompletion2(lsOptions, cssDataManager) {
       return _super.call(this, "@", lsOptions, cssDataManager) || this;
@@ -25365,7 +25310,7 @@
       }
     ];
     return LESSCompletion2;
-  }(CSSCompletion);
+  })(CSSCompletion);
   function getFoldingRanges(document2, context) {
     var ranges = computeFoldingRanges(document2);
     return limitFoldingRanges(ranges, context);
@@ -48614,7 +48559,7 @@
       }
     ]
   };
-  var CSSDataProvider = function() {
+  var CSSDataProvider = (function() {
     function CSSDataProvider2(data) {
       this._properties = [];
       this._atDirectives = [];
@@ -48669,7 +48614,7 @@
       }
     };
     return CSSDataProvider2;
-  }();
+  })();
   function isPropertyData(d) {
     return typeof d.name === "string";
   }
@@ -48682,7 +48627,7 @@
   function isPseudoElementData(d) {
     return typeof d.name === "string";
   }
-  var CSSDataManager = function() {
+  var CSSDataManager = (function() {
     function CSSDataManager2(options) {
       this.dataProviders = [];
       this._propertySet = {};
@@ -48768,7 +48713,7 @@
       return this.isKnownProperty(name) && (!this._propertySet[name.toLowerCase()].status || this._propertySet[name.toLowerCase()].status === "standard");
     };
     return CSSDataManager2;
-  }();
+  })();
   function getSelectionRanges(document2, positions, stylesheet) {
     function getSelectionRange(position) {
       var applicableRanges = getApplicableRanges(position);
@@ -48805,7 +48750,7 @@
       return result;
     }
   }
-  var __extends10 = function() {
+  var __extends10 = /* @__PURE__ */ (function() {
     var extendStatics = function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -48825,7 +48770,7 @@
       }
       d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-  }();
+  })();
   var __awaiter4 = function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P ? value : new P(function(resolve2) {
@@ -48929,7 +48874,7 @@
       return { value: op[0] ? op[1] : void 0, done: true };
     }
   };
-  var SCSSNavigation = function(_super) {
+  var SCSSNavigation = (function(_super) {
     __extends10(SCSSNavigation2, _super);
     function SCSSNavigation2(fileSystemProvider) {
       return _super.call(this, fileSystemProvider, true) || this;
@@ -49018,7 +48963,7 @@
       });
     };
     return SCSSNavigation2;
-  }(CSSNavigation);
+  })(CSSNavigation);
   function newCSSDataProvider(data) {
     return new CSSDataProvider(data);
   }

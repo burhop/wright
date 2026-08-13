@@ -8,6 +8,10 @@ from .gateway_models import GatewayResource, GatewaySessionContext, GatewayTool
 from .manager import McpEngine
 from .safety import ApprovalContext, McpSafetyPolicy
 from .runners.base import ProgressCallback
+from .wright_managed_servers import (
+    RIVET_WORKFLOW_MUTATION_APPROVAL,
+    RIVET_WORKFLOWS_SERVER_ID,
+)
 
 
 class DatabaseGatewayWorkspace:
@@ -50,6 +54,20 @@ class DatabaseGatewayCatalog:
         if server is None:
             return ()
         policy = McpSafetyPolicy()
+
+        def approvals(tool_name: str) -> frozenset[str]:
+            required = set(
+                policy.can_call_tool(
+                    server, tool_name, ApprovalContext()
+                ).required_approvals
+            )
+            if server.server_id == RIVET_WORKFLOWS_SERVER_ID and tool_name in {
+                "create_workflow",
+                "run_workflow",
+            }:
+                required.add(RIVET_WORKFLOW_MUTATION_APPROVAL)
+            return frozenset(required)
+
         return tuple(
             GatewayTool(
                 name=f"{server_id}__{tool.name}",
@@ -62,11 +80,7 @@ class DatabaseGatewayCatalog:
                 annotations=tool.annotations,
                 upstream_meta=tool.meta,
                 ui=tool.ui,
-                required_approvals=frozenset(
-                    policy.can_call_tool(
-                        server, tool.name, ApprovalContext()
-                    ).required_approvals
-                ),
+                required_approvals=approvals(tool.name),
                 provenance={
                     "server_id": server.server_id,
                     "source_url": server.source_url,
@@ -129,6 +143,7 @@ def _approval_context(value: Any) -> ApprovalContext:
     if isinstance(value, Mapping):
         return ApprovalContext(
             workspace_id=str(value.get("workspace_id") or "") or None,
+            session_id=str(value.get("session_id") or "") or None,
             workspace_approvals=set(value.get("workspace_approvals") or ()),
         )
     return ApprovalContext()

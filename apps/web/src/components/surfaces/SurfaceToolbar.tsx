@@ -49,6 +49,11 @@ export function SurfaceToolbar({
 }: Props) {
   const ready =
     descriptor.lifecycle === "ready" || descriptor.lifecycle === "unhealthy";
+  const canOpen =
+    ready ||
+    descriptor.lifecycle === "declared" ||
+    descriptor.lifecycle === "stopped" ||
+    descriptor.lifecycle === "failed";
   const panelEligible = eligibility(descriptor, "panel");
   const browserEligible = eligibility(descriptor, "browser");
   const sharing = descriptor.instance?.sharing;
@@ -67,9 +72,7 @@ export function SurfaceToolbar({
       {sharing === "shared" ? (
         <p>Panel and browser use the same running instance.</p>
       ) : sharing === "isolated" ? (
-        <p>
-          Each presentation creates a separate isolated application instance.
-        </p>
+        <p>Each presentation uses isolated preview credentials.</p>
       ) : null}
       {activeKinds.length > 0 && (
         <p>
@@ -78,7 +81,7 @@ export function SurfaceToolbar({
       )}
       {preferredKind && <p>Preferred presentation: {preferredKind}.</p>}
       <div role="toolbar" aria-label="Surface presentation actions">
-        {ready && panelEligible && !panelActive && (
+        {canOpen && panelEligible && !panelActive && (
           <button
             type="button"
             data-testid="surface-open-panel"
@@ -88,7 +91,7 @@ export function SurfaceToolbar({
             Open in panel{preferredKind === "panel" ? " (preferred)" : ""}
           </button>
         )}
-        {ready && browserEligible && !browserActive && (
+        {canOpen && browserEligible && !browserActive && (
           <button
             type="button"
             data-testid="surface-open-browser"

@@ -10,14 +10,17 @@ const envelope = {
 
 async function mountOuter(page: Page): Promise<Frame> {
   await page.goto("/");
-  await page.setContent("<!doctype html><title>Sandbox host test</title><main></main>");
+  await page.setContent(
+    "<!doctype html><title>Sandbox host test</title><main></main>",
+  );
   await page.evaluate(
     ({ sandboxOriginValue, envelopeValue }) => {
       const frame = document.createElement("iframe");
       frame.id = "outer-sandbox";
       frame.sandbox.value = "allow-scripts allow-same-origin";
       frame.referrerPolicy = "no-referrer";
-      frame.allow = "camera *; microphone 'none'; geolocation 'none'; clipboard-write 'none'";
+      frame.allow =
+        "camera *; microphone 'none'; geolocation 'none'; clipboard-write 'none'";
       const url = new URL("/surface-sandbox/index.html", sandboxOriginValue);
       url.searchParams.set("hostOrigin", window.location.origin);
       url.searchParams.set("surfaceId", envelopeValue.surfaceId);
@@ -26,25 +29,41 @@ async function mountOuter(page: Page): Promise<Frame> {
       frame.src = url.href;
       (window as Window & { sandboxMessages?: unknown[] }).sandboxMessages = [];
       window.addEventListener("message", (event) => {
-        if (event.source === frame.contentWindow && event.origin === sandboxOriginValue) {
-          (window as Window & { sandboxMessages: unknown[] }).sandboxMessages.push(event.data);
+        if (
+          event.source === frame.contentWindow &&
+          event.origin === sandboxOriginValue
+        ) {
+          (
+            window as Window & { sandboxMessages: unknown[] }
+          ).sandboxMessages.push(event.data);
         }
       });
       document.querySelector("main")?.append(frame);
     },
     { sandboxOriginValue: sandboxOrigin, envelopeValue: envelope },
   );
-  await expect.poll(() => page.frames().some((frame) => frame.url().startsWith(sandboxOrigin))).toBe(true);
-  const outer = page.frames().find((frame) => frame.url().startsWith(sandboxOrigin));
-  if (!outer) throw new Error("outer sandbox did not load on its distinct origin");
-  await expect.poll(() => outer.evaluate(() => document.body.dataset.proxyReady)).toBe("true");
+  await expect
+    .poll(() =>
+      page.frames().some((frame) => frame.url().startsWith(sandboxOrigin)),
+    )
+    .toBe(true);
+  const outer = page
+    .frames()
+    .find((frame) => frame.url().startsWith(sandboxOrigin));
+  if (!outer)
+    throw new Error("outer sandbox did not load on its distinct origin");
+  await expect
+    .poll(() => outer.evaluate(() => document.body.dataset.proxyReady))
+    .toBe("true");
   await expect
     .poll(() =>
       page.evaluate(() =>
-        (window as Window & { sandboxMessages?: Array<{ method?: string }> })
-          .sandboxMessages?.some(
-            (message) => message.method === "ui/notifications/sandbox-proxy-ready",
-          ),
+        (
+          window as Window & { sandboxMessages?: Array<{ method?: string }> }
+        ).sandboxMessages?.some(
+          (message) =>
+            message.method === "ui/notifications/sandbox-proxy-ready",
+        ),
       ),
     )
     .toBe(true);
@@ -71,10 +90,13 @@ async function sendToOuter(
   );
 }
 
-test("uses a distinct-origin double iframe with restrictive defaults", async ({ page }) => {
+test("uses a distinct-origin double iframe with restrictive defaults", async ({
+  page,
+}) => {
   const attempted: string[] = [];
   page.on("request", (request) => {
-    if (request.url().includes("undeclared.invalid")) attempted.push(request.url());
+    if (request.url().includes("undeclared.invalid"))
+      attempted.push(request.url());
   });
   const outer = await mountOuter(page);
   expect(new URL(outer.url()).origin).not.toBe(new URL(page.url()).origin);
@@ -104,12 +126,18 @@ test("uses a distinct-origin double iframe with restrictive defaults", async ({ 
   await expect.poll(() => outer.childFrames().length).toBe(1);
   const inner = outer.childFrames()[0];
   expect(inner).toBeDefined();
-  await expect.poll(() => inner.evaluate(() => document.querySelector("#app")?.textContent)).toBe(
-    "sandboxed app",
-  );
-  await expect.poll(() => inner.evaluate(() => (window as Window & { fetchState?: string }).fetchState)).toBe(
-    "blocked",
-  );
+  await expect
+    .poll(() =>
+      inner.evaluate(() => document.querySelector("#app")?.textContent),
+    )
+    .toBe("sandboxed app");
+  await expect
+    .poll(() =>
+      inner.evaluate(
+        () => (window as Window & { fetchState?: string }).fetchState,
+      ),
+    )
+    .toBe("blocked");
   expect(attempted).toEqual([]);
   const innerElement = await outer.locator("iframe").first();
   await expect(innerElement).toHaveAttribute("sandbox", "allow-scripts");
@@ -121,7 +149,9 @@ test("uses a distinct-origin double iframe with restrictive defaults", async ({ 
   expect(await inner.evaluate(() => window.origin)).toBe("null");
 });
 
-test("rejects invalid domain and permission declarations before mounting content", async ({ page }) => {
+test("rejects invalid domain and permission declarations before mounting content", async ({
+  page,
+}) => {
   const outer = await mountOuter(page);
   await sendToOuter(page, {
     jsonrpc: "2.0",
@@ -150,7 +180,9 @@ test("rejects invalid domain and permission declarations before mounting content
   await expect(outer.locator("iframe")).toHaveAttribute("allow", "camera");
 });
 
-test("drops host messages sent before resource initialization", async ({ page }) => {
+test("drops host messages sent before resource initialization", async ({
+  page,
+}) => {
   const outer = await mountOuter(page);
   await sendToOuter(page, {
     jsonrpc: "2.0",
@@ -163,7 +195,12 @@ test("drops host messages sent before resource initialization", async ({ page })
     params: {
       html: `<script>
         window.received = [];
-        addEventListener("message", (event) => window.received.push(event.data));
+        document.documentElement.dataset.receiverReady = "true";
+        addEventListener("message", (event) => {
+          window.received.push(event.data);
+          document.documentElement.dataset.receivedCount = String(window.received.length);
+          document.documentElement.dataset.firstMethod = event.data?.method ?? "";
+        });
       </script>`,
       sandbox: "allow-scripts",
       csp: {},
@@ -171,20 +208,19 @@ test("drops host messages sent before resource initialization", async ({ page })
     },
   });
   await expect.poll(() => outer.childFrames().length).toBe(1);
-  const inner = outer.childFrames()[0];
-  await expect.poll(() => inner.evaluate(() => Array.isArray((window as Window & { received?: unknown[] }).received))).toBe(true);
-  expect(await inner.evaluate(() => (window as Window & { received: unknown[] }).received)).toEqual([]);
+  const inner = outer.locator("iframe").contentFrame();
+  const innerDocument = inner.locator("html");
+  await expect(innerDocument).toHaveAttribute("data-receiver-ready", "true");
+  await expect(innerDocument).not.toHaveAttribute("data-received-count");
 
   await sendToOuter(page, {
     jsonrpc: "2.0",
     method: "ui/notifications/tool-input",
     params: { arguments: { phase: "ready" } },
   });
-  await expect
-    .poll(() =>
-      inner.evaluate(
-        () => (window as Window & { received: Array<{ method?: string }> }).received[0]?.method,
-      ),
-    )
-    .toBe("ui/notifications/tool-input");
+  await expect(innerDocument).toHaveAttribute("data-received-count", "1");
+  await expect(innerDocument).toHaveAttribute(
+    "data-first-method",
+    "ui/notifications/tool-input",
+  );
 });

@@ -292,12 +292,14 @@ jwt_secret.txt
 
 # Test outputs
 outputs/
+/output/
 tests/screenshots/
 tests_output*.txt
 docker/.env.bak
 ci_failures.md
 
 # Stale logs and local runtime databases
+.local-run/
 phase*.log
 ps_debug.log
 test-*-output.log

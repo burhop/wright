@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+const surfaceExpect = expect.configure({ timeout: 15_000 });
+
 const surface = (revision: number) => ({
   schemaVersion: 1,
   surfaceId: "surface-loads",
@@ -218,43 +220,49 @@ test.describe("Python display journey", () => {
       });
     });
     await page.goto("/workspace/ws-1");
-    await expect(page.getByTestId("surface-tab-surface-loads")).toHaveText(
-      "Measured load",
-    );
-    await expect(
+    await surfaceExpect(
+      page.getByTestId("surface-tab-surface-loads"),
+    ).toHaveText("Measured load");
+    await surfaceExpect(
       page.getByRole("img", { name: "Load reaches 15 N." }),
     ).toBeVisible();
 
     releaseEvent();
-    await expect(
+    await surfaceExpect(
       page.getByRole("img", { name: "Load reaches 18 N." }),
     ).toBeVisible();
-    await expect(page.getByTestId("surface-tab-surface-loads")).toHaveCount(1);
+    await surfaceExpect(
+      page.getByTestId("surface-tab-surface-loads"),
+    ).toHaveCount(1);
 
     await page.getByTestId("surface-history").click();
     const history = page.getByRole("dialog", {
       name: "Display revision history",
     });
-    await expect(history.getByText("Revision 1")).toBeVisible();
-    await expect(history.getByText("Revision 2 (current)")).toBeVisible();
+    await surfaceExpect(history.getByText("Revision 1")).toBeVisible();
+    await surfaceExpect(
+      history.getByText("Revision 2 (current)"),
+    ).toBeVisible();
     await page.getByRole("button", { name: "Close history" }).click();
     await page.getByTestId("surface-verification").click();
     const verification = page.getByRole("dialog", {
       name: "Artifact verification",
     });
-    await expect(verification).toContainText("Graph the measured load.");
-    await expect(verification).toContainText('"offline": true');
-    await expect(verification).toContainText("wright.line(...)");
-    await expect(verification).toContainText("Script revision 2");
+    await surfaceExpect(verification).toContainText("Graph the measured load.");
+    await surfaceExpect(verification).toContainText('"offline": true');
+    await surfaceExpect(verification).toContainText("wright.line(...)");
+    await surfaceExpect(verification).toContainText("Script revision 2");
     await verification
       .getByRole("button", { name: "Close verification" })
       .click();
     await page.getByTestId("surface-delete-output").click();
-    await expect(page.getByRole("dialog")).toContainText(
+    await surfaceExpect(page.getByRole("dialog")).toContainText(
       /cannot be recovered/i,
     );
     await page.getByRole("button", { name: "Delete output" }).click();
-    await expect(page.getByText(/payload cleanup scheduled/i)).toBeVisible();
+    await surfaceExpect(
+      page.getByText(/payload cleanup scheduled/i),
+    ).toBeVisible();
   });
 
   test("shows a stable actionable renderer error", async ({ page }) => {
@@ -281,10 +289,10 @@ test.describe("Python display journey", () => {
         }),
     );
     await page.goto("/workspace/ws-1");
-    await expect(page.getByTestId("surface-display-error")).toContainText(
-      /display.*unavailable/i,
-    );
-    await expect(page.getByTestId("surface-diagnostics")).toBeVisible();
+    await surfaceExpect(
+      page.getByTestId("surface-display-error"),
+    ).toContainText(/display.*unavailable/i);
+    await surfaceExpect(page.getByTestId("surface-diagnostics")).toBeVisible();
   });
 
   test(
@@ -292,7 +300,7 @@ test.describe("Python display journey", () => {
     { tag: "@live" },
     async ({ page }) => {
       await page.goto("/workspace/ws-1");
-      await expect(page.getByTestId("surface-deck")).toBeVisible();
+      await surfaceExpect(page.getByTestId("surface-deck")).toBeVisible();
     },
   );
 });

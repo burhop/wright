@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { startDebuggerServer } from "@ironclad/rivet-node";
+import { startDebuggerServer } from "@valerypopoff/rivet2-node";
 import { writeEvidence } from "../scripts/evidence.mjs";
 
 const debuggerServer = startDebuggerServer({ host: "127.0.0.1", port: 0, allowGraphUpload: false });

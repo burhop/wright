@@ -23,14 +23,20 @@ import {
   type WorkspaceInfo,
   MergeConflictError,
 } from "../../services/workspace-service";
-import { agentService } from "../../services/agent-service";
+import {
+  agentService,
+  type HermesModelOptionGroup,
+} from "../../services/agent-service";
 import useHealthStatus from "../../hooks/useHealthStatus";
 import ChatTranscript from "./ChatTranscript";
 import MessageComposer from "./MessageComposer";
+import { MaximizeIcon, MinimizeIcon, SearchIcon } from "../common/Icons";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
 import { RivetWorkflowsPanel } from "./RivetWorkflowsPanel";
+import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
+import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
 import { usePersistentSurfaceLayout } from "../../store/surface-layout";
 import { WorkspaceLayout } from "../workspace/WorkspaceLayout";
@@ -41,6 +47,42 @@ import {
   SurfaceFocusManager,
   installF6HostRegionCycle,
 } from "../../services/surfaces/focus-manager";
+import { isBrepToolActivity } from "../../services/brep-panel-activity";
+
+const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
+const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
+
+function directRivetTabPath(slug: string): string {
+  return `${DIRECT_RIVET_TAB_PREFIX}/${slug}/workflow.rivet-project`;
+}
+
+function isDirectRivetTab(path: string | null): boolean {
+  return normalizeEditorTabPath(path ?? "").startsWith(
+    `${DIRECT_RIVET_TAB_PREFIX}/`,
+  );
+}
+
+function rivetSlugFromTabPath(path: string): string | null {
+  const normalized = normalizeEditorTabPath(path);
+  if (!isDirectRivetTab(normalized)) return null;
+  return (
+    normalized.slice(DIRECT_RIVET_TAB_PREFIX.length + 1).split("/")[0] || null
+  );
+}
+
+function isDirectBrepTab(path: string | null): boolean {
+  return normalizeEditorTabPath(path ?? "") === DIRECT_BREP_TAB_PATH;
+}
+
+function isVisibleBrepServer(server: {
+  name?: string;
+  source_url?: string;
+}): boolean {
+  return (
+    server.name?.trim().toLowerCase() === "brep mcp" &&
+    server.source_url?.toLowerCase().includes("brep-mcp") === true
+  );
+}
 
 function findFileInTree(
   node: WorkspaceNode,
@@ -112,6 +154,12 @@ export function WorkspacePanel({
 
   const [panelWidth, setPanelWidth] = useState<number>(window.innerWidth);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [observedContainer, setObservedContainer] =
+    useState<HTMLDivElement | null>(null);
+  const attachContainerRef = useCallback((node: HTMLDivElement | null) => {
+    containerRef.current = node;
+    setObservedContainer(node);
+  }, []);
   const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(
     null,
   );
@@ -133,15 +181,15 @@ export function WorkspacePanel({
 
   useEffect(() => {
     if (typeof ResizeObserver === "undefined") return;
-    if (!containerRef.current) return;
+    if (!observedContainer) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setPanelWidth(entry.contentRect.width);
       }
     });
-    observer.observe(containerRef.current);
+    observer.observe(observedContainer);
     return () => observer.disconnect();
-  }, []);
+  }, [observedContainer]);
 
   const isThin = panelWidth < 768 && !surfacesEnabled;
 
@@ -208,34 +256,93 @@ export function WorkspacePanel({
       )
     : [];
 
-  // Load active agent on mount
+  const loadHermesModels = useCallback(async () => {
+    setIsLoadingModels(true);
+    try {
+      const options = await agentService.listHermesModels();
+      setModelGroups(options.groups);
+      setSelectedModel(
+        options.current_value || options.groups[0]?.options[0]?.value || "",
+      );
+      setModelError(null);
+    } catch (err) {
+      console.error("Failed to fetch Hermes model options", err);
+      setModelGroups([]);
+      setSelectedModel("");
+      setModelError("Model list unavailable");
+    } finally {
+      setIsLoadingModels(false);
+    }
+  }, []);
+
+  // Load active agent and model catalog on mount
   useEffect(() => {
-    const fetchActiveAgent = async () => {
+    const initializeAgent = async () => {
       try {
         const active = await agentService.getActiveAgent();
         if (active !== "hermes") {
           await agentService.setActiveAgent("hermes");
         }
-        setSelectedModel("Hermes");
       } catch (err) {
         console.error("Failed to fetch active agent from backend", err);
       }
+      await loadHermesModels();
     };
-    fetchActiveAgent();
-  }, []);
+    initializeAgent();
+  }, [loadHermesModels]);
 
   const handleModelChange = async (newModel: string) => {
-    if (newModel !== "Hermes") {
-      setSelectedModel("Hermes");
+    const option = modelGroups
+      .flatMap((group) => group.options)
+      .find((item) => item.value === newModel);
+    if (!option) {
+      setSelectedModel(newModel);
       return;
     }
 
-    setSelectedModel("Hermes");
+    const previousModel = selectedModel;
+    setSelectedModel(newModel);
+    setModelError(null);
     try {
       await agentService.setActiveAgent("hermes", activeSessionId);
+      const result = await agentService.setHermesModel(
+        option.provider,
+        option.model,
+        activeSessionId,
+      );
+      if (result.confirm_required) {
+        setSelectedModel(previousModel);
+        setModelError(
+          result.confirm_message || "Model selection needs confirmation",
+        );
+        return;
+      }
+      await loadHermesModels();
     } catch (err) {
-      console.error("Failed to change active agent on backend", err);
+      console.error("Failed to change Hermes model", err);
+      setSelectedModel(previousModel);
+      setModelError(
+        err instanceof Error ? err.message : "Failed to change model",
+      );
     }
+  };
+
+  const renderModelOptions = () => {
+    if (isLoadingModels) {
+      return <option value="">Loading models...</option>;
+    }
+    if (modelGroups.length === 0) {
+      return <option value="">Hermes models unavailable</option>;
+    }
+    return modelGroups.map((group) => (
+      <optgroup key={group.provider} label={group.label}>
+        {group.options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </optgroup>
+    ));
   };
 
   // --- Layout state persistence via localStorage ---
@@ -270,6 +377,7 @@ export function WorkspacePanel({
     openTabs,
     activeTabPath,
     openTab,
+    openTransientTab,
     closeTab,
     setActiveTabPath,
     getDocument,
@@ -288,7 +396,10 @@ export function WorkspacePanel({
   );
   const [isLeftDragging, setIsLeftDragging] = useState<boolean>(false);
   const [isRightDragging, setIsRightDragging] = useState<boolean>(false);
-  const [selectedModel, setSelectedModel] = useState<string>("Hermes");
+  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [modelGroups, setModelGroups] = useState<HermesModelOptionGroup[]>([]);
+  const [isLoadingModels, setIsLoadingModels] = useState<boolean>(true);
+  const [modelError, setModelError] = useState<string | null>(null);
   const normalSurfacePaneWidth = Math.max(
     1,
     panelWidth -
@@ -527,6 +638,23 @@ export function WorkspacePanel({
       const syncTabs = async () => {
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
           const tabPath = normalizeEditorTabPath(tab.path);
+          if (isDirectRivetTab(tabPath) || tab.type === "rivet") {
+            const slug = rivetSlugFromTabPath(tabPath) || "rivet";
+            openTransientTab({
+              name: `${slug}.rivet-project`,
+              path: directRivetTabPath(slug),
+              type: "rivet",
+            });
+            continue;
+          }
+          if (isDirectBrepTab(tabPath) || tab.type === "brep") {
+            openTransientTab({
+              name: "BREP",
+              path: DIRECT_BREP_TAB_PATH,
+              type: "brep",
+            });
+            continue;
+          }
           const fileNode = workspaceRootRef.current
             ? findFileInTree(workspaceRootRef.current, tabPath)
             : null;
@@ -561,11 +689,21 @@ export function WorkspacePanel({
       };
       syncTabs();
     }
-  }, [savedLayout, workspaceFileSessionId, openTab, setActiveTabPath]);
+  }, [
+    savedLayout,
+    workspaceFileSessionId,
+    openTab,
+    openTransientTab,
+    setActiveTabPath,
+  ]);
 
   // Pluggable resolution of active tab viewer
   useEffect(() => {
     if (!activeTabPath || !viewerContainerRef.current) return;
+    if (isDirectRivetTab(activeTabPath) || isDirectBrepTab(activeTabPath)) {
+      viewerContainerRef.current.replaceChildren();
+      return;
+    }
 
     const fileNode = workspaceRootRef.current
       ? findFileInTree(workspaceRootRef.current, activeTabPath)
@@ -619,6 +757,7 @@ export function WorkspacePanel({
       viewerContainerRef.current,
       true,
       true,
+      contribution.id === "iframe-viewer",
     );
 
     const subUnresponsive = host.onDidBecomeUnresponsive?.(() => {
@@ -1082,10 +1221,8 @@ export function WorkspacePanel({
 
   // Helper to construct API URL
   const getApiUrl = (path: string) => {
-    const host = window.location.hostname;
     const port = window.location.port;
-    const base =
-      port === "5173" || port === "5174" ? `http://${host}:8000` : "";
+    const base = port === "5173" || port === "5174" ? "" : "";
     return `${base}${path}`;
   };
 
@@ -1145,10 +1282,124 @@ export function WorkspacePanel({
     }
   };
 
+  const openRivetWorkflowTab = useCallback(
+    async (slug?: string) => {
+      if (!workspaceFileSessionId) return;
+      const workflow = slug
+        ? await workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
+        : await workspaceService.ensureDefaultRivetWorkflow(
+            workspaceFileSessionId,
+          );
+      openTransientTab({
+        name: `${workflow.slug}.rivet-project`,
+        path: directRivetTabPath(workflow.slug),
+        type: "rivet",
+      });
+      if (surfaceLayout.mode === "narrow") {
+        surfaceLayoutDispatch({
+          type: "select_narrow_pane",
+          pane: "surface",
+        });
+      }
+    },
+    [
+      openTransientTab,
+      surfaceLayout.mode,
+      surfaceLayoutDispatch,
+      workspaceFileSessionId,
+    ],
+  );
+
+  const createRivetWorkflowTab = useCallback(async () => {
+    if (!workspaceFileSessionId) return;
+    const workflow = await workspaceService.createBlankRivetWorkflow(
+      workspaceFileSessionId,
+    );
+    openTransientTab({
+      name: `${workflow.slug}.rivet-project`,
+      path: directRivetTabPath(workflow.slug),
+      type: "rivet",
+    });
+    if (surfaceLayout.mode === "narrow") {
+      surfaceLayoutDispatch({
+        type: "select_narrow_pane",
+        pane: "surface",
+      });
+    }
+  }, [
+    openTransientTab,
+    surfaceLayout.mode,
+    surfaceLayoutDispatch,
+    workspaceFileSessionId,
+  ]);
+
+  const openBrepPanelTab = useCallback(() => {
+    if (!workspaceFileSessionId) return;
+    openTransientTab({
+      name: "BREP",
+      path: DIRECT_BREP_TAB_PATH,
+      type: "brep",
+    });
+    if (surfaceLayout.mode === "narrow") {
+      surfaceLayoutDispatch({
+        type: "select_narrow_pane",
+        pane: "surface",
+      });
+    }
+  }, [
+    openTransientTab,
+    surfaceLayout.mode,
+    surfaceLayoutDispatch,
+    workspaceFileSessionId,
+  ]);
+
+  const lastBrepActivityRef = useRef<string | null>(null);
+  useEffect(() => {
+    const activity = [...activeSessionStreamActivity]
+      .reverse()
+      .find(isBrepToolActivity);
+    if (!activity || lastBrepActivityRef.current === activity.id) return;
+
+    lastBrepActivityRef.current = activity.id;
+    openBrepPanelTab();
+  }, [activeSessionStreamActivity, openBrepPanelTab]);
+
+  const directRivetTabs = openTabs.filter(
+    (tab) => isDirectRivetTab(tab.path) || tab.type === "rivet",
+  );
+  const activeDirectRivetSlug = activeTabPath
+    ? rivetSlugFromTabPath(activeTabPath)
+    : null;
+  const activeDirectRivet = activeDirectRivetSlug !== null;
+  const activeRivetUiContext = useMemo(
+    () => ({ activeRivetSlug: activeDirectRivetSlug }),
+    [activeDirectRivetSlug],
+  );
+  const sendMessageWithSurfaceContext = useCallback(
+    (message: string, attachments?: string[]) =>
+      sendMessage(message, attachments, false, undefined, activeRivetUiContext),
+    [activeRivetUiContext, sendMessage],
+  );
+  const steerMessageWithSurfaceContext = useCallback(
+    (message: string, attachments?: string[]) =>
+      steerMessage(message, attachments, activeRivetUiContext),
+    [activeRivetUiContext, steerMessage],
+  );
+  const rivetMutationVersion =
+    activeSessionStreamState?.rivetMutationVersion || 0;
+  const rivetExternalRevisionToken =
+    activeSessionId && !isActiveSessionStreaming && rivetMutationVersion > 0
+      ? `${activeSessionId}:${rivetMutationVersion}`
+      : null;
+  const directBrepTabs = openTabs.filter(
+    (tab) => isDirectBrepTab(tab.path) || tab.type === "brep",
+  );
+  const activeDirectBrep = isDirectBrepTab(activeTabPath);
+
   if (isThin) {
     return (
       <div
-        ref={containerRef}
+        ref={attachContainerRef}
         data-testid="workspace-panel"
         style={{
           display: "flex",
@@ -1221,6 +1472,7 @@ export function WorkspacePanel({
                 data-testid="llm-model-select"
                 value={selectedModel}
                 onChange={(e) => handleModelChange(e.target.value)}
+                disabled={isLoadingModels || modelGroups.length === 0}
                 style={{
                   flex: 1,
                   backgroundColor: "var(--color-surface-subtle)",
@@ -1233,13 +1485,21 @@ export function WorkspacePanel({
                   cursor: "pointer",
                   transition: "border-color var(--transition-fast)",
                 }}
-                title="Select LLM Model"
+                title={modelError || "Select LLM Model"}
               >
-                <option value="Hermes">Hermes (Active)</option>
-                <option value="OpenClaw" disabled>
-                  OpenClaw
-                </option>
+                {renderModelOptions()}
               </select>
+              {modelError ? (
+                <span
+                  style={{
+                    color: "var(--color-warning)",
+                    fontSize: "0.65rem",
+                  }}
+                  title={modelError}
+                >
+                  !
+                </span>
+              ) : null}
 
               <label
                 htmlFor="workspace-session-select"
@@ -1382,8 +1642,8 @@ export function WorkspacePanel({
                 }}
               >
                 <MessageComposer
-                  onSend={sendMessage}
-                  onSteer={steerMessage}
+                  onSend={sendMessageWithSurfaceContext}
+                  onSteer={steerMessageWithSurfaceContext}
                   isStreaming={isActiveSessionStreaming}
                   onCancel={cancelActiveStream}
                   sessionId={activeSessionId || undefined}
@@ -1400,7 +1660,7 @@ export function WorkspacePanel({
 
   return (
     <WorkspaceLayout
-      ref={containerRef}
+      ref={attachContainerRef}
       data-testid="workspace-panel"
       {...(surfacesEnabled ? { "data-workspace-surfaces": "enabled" } : {})}
       layout={surfaceLayout}
@@ -1428,6 +1688,10 @@ export function WorkspacePanel({
           isSidebarCollapsed={isSidebarCollapsed}
           onBack={() => navigate("/")}
           onSelectSidebar={handleActivityBarClick}
+          onOpenRivetEditor={() => {
+            void openRivetWorkflowTab();
+          }}
+          onOpenBrepPanel={openBrepPanelTab}
           workflowsEnabled={workflowsTabEnabled}
         />
       )}
@@ -1495,6 +1759,7 @@ export function WorkspacePanel({
                       enabledTools.includes(server.name) ||
                       enabledTools.includes(server.server_id);
                     const isGloballyActive = server.is_active;
+                    const isBrep = isVisibleBrepServer(server);
 
                     return (
                       <div
@@ -1569,15 +1834,44 @@ export function WorkspacePanel({
                             </span>
                           </div>
                         </div>
-                        <input
-                          data-testid={`mcp-toggle-${server.name.toLowerCase()}`}
-                          type="checkbox"
-                          checked={isEnabled}
-                          onChange={() =>
-                            handleToggleMcpTool(server.server_id, isEnabled)
-                          }
-                          style={{ cursor: "pointer" }}
-                        />
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "flex-end",
+                            gap: "var(--space-xs, 4px)",
+                          }}
+                        >
+                          <input
+                            data-testid={`mcp-toggle-${server.name.toLowerCase()}`}
+                            type="checkbox"
+                            checked={isEnabled}
+                            onChange={() =>
+                              handleToggleMcpTool(server.server_id, isEnabled)
+                            }
+                            style={{ cursor: "pointer" }}
+                          />
+                          {isBrep && (
+                            <button
+                              type="button"
+                              data-testid="open-brep-panel"
+                              onClick={openBrepPanelTab}
+                              disabled={!isEnabled}
+                              title={
+                                isEnabled
+                                  ? "Open BREP in a Wright panel"
+                                  : "Enable BREP MCP before opening its panel"
+                              }
+                              style={{
+                                cursor: isEnabled ? "pointer" : "not-allowed",
+                                fontSize: "0.65rem",
+                                padding: "2px 6px",
+                              }}
+                            >
+                              Open panel
+                            </button>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
@@ -1590,6 +1884,8 @@ export function WorkspacePanel({
           <RivetWorkflowsPanel
             sessionId={workspaceFileSessionId}
             workspaceId={_workspaceId ?? null}
+            onOpenEditor={(slug) => openRivetWorkflowTab(slug)}
+            onCreateWorkflow={() => createRivetWorkflowTab()}
           />
         )}
 
@@ -2192,7 +2488,7 @@ export function WorkspacePanel({
                     <button
                       key={label}
                       type="button"
-                      onClick={() => sendMessage(prompt)}
+                      onClick={() => sendMessageWithSurfaceContext(prompt)}
                       disabled={!activeSessionId || isActiveSessionStreaming}
                       style={{
                         backgroundColor: "var(--color-surface-subtle)",
@@ -2343,6 +2639,62 @@ export function WorkspacePanel({
             </div>
             {activeTabPath && (
               <button
+                data-testid="workspace-tab-focus"
+                aria-label={
+                  surfaceLayout.wideMode === "focus"
+                    ? "Restore workspace layout"
+                    : "Maximize active tab"
+                }
+                onClick={() => {
+                  if (surfaceLayout.wideMode === "focus") {
+                    surfaceLayoutDispatch({
+                      type: "exit_focus",
+                      containerWidth: normalSurfacePaneWidth,
+                    });
+                  } else {
+                    surfaceFocusManager.rememberInitiator(
+                      document.activeElement instanceof HTMLElement
+                        ? document.activeElement
+                        : null,
+                    );
+                    setIsAgentCollapsed(false);
+                    surfaceLayoutDispatch({
+                      type: "enter_focus",
+                      containerWidth: panelWidth,
+                    });
+                  }
+                }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "transparent",
+                  border: "1px solid transparent",
+                  borderRadius: "var(--radius-sm, 4px)",
+                  color:
+                    surfaceLayout.wideMode === "focus"
+                      ? "var(--color-secondary, #aaaaaa)"
+                      : "var(--color-primary, #ffffff)",
+                  opacity: 0.75,
+                  cursor: "pointer",
+                }}
+                title={
+                  surfaceLayout.wideMode === "focus"
+                    ? "Restore workspace layout"
+                    : "Maximize active tab"
+                }
+              >
+                {surfaceLayout.wideMode === "focus" ? (
+                  <MinimizeIcon size={16} />
+                ) : (
+                  <MaximizeIcon size={16} />
+                )}
+              </button>
+            )}
+            {activeTabPath && !activeDirectRivet && !activeDirectBrep && (
+              <button
                 data-testid="viewer-inspector-toggle"
                 onClick={() => setIsInspectorOpen(!isInspectorOpen)}
                 style={{
@@ -2361,7 +2713,7 @@ export function WorkspacePanel({
                 }}
                 title="Inspect Viewer Details"
               >
-                🔍
+                <SearchIcon size={16} />
               </button>
             )}
           </div>
@@ -2375,7 +2727,67 @@ export function WorkspacePanel({
             position: "relative",
           }}
         >
-          {activeTabPath ? (
+          {directRivetTabs.map((tab) => {
+            const slug = rivetSlugFromTabPath(tab.path) || "rivet";
+            if (!_workspaceId || !workspaceFileSessionId) return null;
+            const isActive = activeTabPath === tab.path;
+            return (
+              <div
+                key={tab.path}
+                data-testid={`retained-direct-rivet-panel-${slug}`}
+                aria-hidden={!isActive}
+                style={{
+                  position: isActive ? "relative" : "absolute",
+                  inset: isActive ? undefined : 0,
+                  zIndex: isActive ? 1 : 0,
+                  display: isActive ? "flex" : "none",
+                  width: "100%",
+                  height: "100%",
+                  visibility: isActive ? "visible" : "hidden",
+                  pointerEvents: isActive ? "auto" : "none",
+                }}
+              >
+                <ManagedRivetSurface
+                  workspaceId={_workspaceId}
+                  sessionId={workspaceFileSessionId}
+                  initialSlug={slug}
+                  externalRevisionToken={
+                    isActive ? rivetExternalRevisionToken : null
+                  }
+                  onWorkflowLoaded={(workflow) => {
+                    updateTabPath(
+                      tab.path,
+                      directRivetTabPath(workflow.slug),
+                      `${workflow.slug}.rivet-project`,
+                    );
+                  }}
+                />
+              </div>
+            );
+          })}
+          {directBrepTabs.map((tab) => {
+            const isActive = activeTabPath === tab.path;
+            return (
+              <div
+                key={tab.path}
+                data-testid="retained-direct-brep-panel"
+                aria-hidden={!isActive}
+                style={{
+                  position: isActive ? "relative" : "absolute",
+                  inset: isActive ? undefined : 0,
+                  zIndex: isActive ? 1 : 0,
+                  display: isActive ? "flex" : "none",
+                  width: "100%",
+                  height: "100%",
+                  visibility: isActive ? "visible" : "hidden",
+                  pointerEvents: isActive ? "auto" : "none",
+                }}
+              >
+                <DirectBrepSurface sessionId={workspaceFileSessionId || ""} />
+              </div>
+            );
+          })}
+          {!activeDirectRivet && !activeDirectBrep && activeTabPath ? (
             <>
               <div
                 ref={viewerContainerRef}
@@ -2524,7 +2936,7 @@ export function WorkspacePanel({
                 </div>
               )}
             </>
-          ) : (
+          ) : !activeDirectRivet && !activeDirectBrep ? (
             /* Welcome / landing screen when no tabs are open */
             <div
               data-testid="workspace-empty-state"
@@ -2564,7 +2976,7 @@ export function WorkspacePanel({
                 viewer or code editor tab.
               </div>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Diff Overlay Panel (if viewing git diff) */}
@@ -2767,6 +3179,7 @@ export function WorkspacePanel({
               data-testid="llm-model-select"
               value={selectedModel}
               onChange={(e) => handleModelChange(e.target.value)}
+              disabled={isLoadingModels || modelGroups.length === 0}
               style={{
                 flex: 1,
                 backgroundColor: "var(--color-surface-subtle)",
@@ -2779,13 +3192,21 @@ export function WorkspacePanel({
                 cursor: "pointer",
                 transition: "border-color var(--transition-fast)",
               }}
-              title="Select LLM Model"
+              title={modelError || "Select LLM Model"}
             >
-              <option value="Hermes">Hermes (Active)</option>
-              <option value="OpenClaw" disabled>
-                OpenClaw
-              </option>
+              {renderModelOptions()}
             </select>
+            {modelError ? (
+              <span
+                style={{
+                  color: "var(--color-warning)",
+                  fontSize: "0.65rem",
+                }}
+                title={modelError}
+              >
+                !
+              </span>
+            ) : null}
 
             <label
               htmlFor="workspace-session-select"
@@ -2926,8 +3347,8 @@ export function WorkspacePanel({
               }}
             >
               <MessageComposer
-                onSend={sendMessage}
-                onSteer={steerMessage}
+                onSend={sendMessageWithSurfaceContext}
+                onSteer={steerMessageWithSurfaceContext}
                 isStreaming={isActiveSessionStreaming}
                 onCancel={cancelActiveStream}
                 sessionId={activeSessionId || undefined}

@@ -53,6 +53,14 @@ def test_private_mcp_build_helpers_accept_active_gh_token_with_stale_accounts() 
         assert "gh auth status" not in script
 
 
+def test_mcp_smoke_executes_brep_cli_and_stdio_handshake() -> None:
+    smoke = read_text("scripts/docker-mcp-smoke-test.sh")
+
+    assert "brep --help >/dev/null" in smoke
+    assert 'command="/opt/wright/mcp/bin/brep-mcp-wrapped"' in smoke
+    assert 'if "run_program" not in names:' in smoke
+
+
 def test_docker_smoke_script_keeps_gateway_process_name() -> None:
     workflow = read_text(".github/workflows/docker-build.yml")
     smoke = read_text("scripts/docker-smoke-test.sh")
@@ -73,6 +81,7 @@ def test_dockerfile_pins_hermes_runtime_for_reproducible_gateway() -> None:
 
 def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     dockerfile = read_text("docker/Dockerfile")
+    dockerignore = read_text(".dockerignore")
     supervisor = read_text("docker/supervisord.conf")
     mcp_run = read_text("scripts/docker-mcp-run.sh")
     mcp_dockerfile = read_text("docker/Dockerfile.mcp")
@@ -83,6 +92,22 @@ def test_docker_runtime_serves_image_built_frontend_dist() -> None:
     assert "ENV WRIGHT_MCP_BUNDLE=" in dockerfile
     assert "ENV WRIGHT_MCP_HERMES_CONFIG=" in dockerfile
     assert "ENV WRIGHT_MCP_STATUS=" in dockerfile
+    assert "COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node" in dockerfile
+    assert "COPY --from=web-builder /usr/local/lib/node_modules" in dockerfile
+    assert "integrations/rivet/editor/ integrations/rivet/editor/" in dockerfile
+    assert "integrations/rivet/runner/ integrations/rivet/runner/" in dockerfile
+    assert "integrations/rivet/spike/" in dockerignore
+    assert "!integrations/rivet/editor/dist/**" in dockerignore
+    assert "!integrations/rivet/runner/dist/**" in dockerignore
+    for feature_flag in (
+        "WRIGHT_RIVET_WORKFLOWS_ENABLED=1",
+        "WRIGHT_RIVET_RUNNER_ENABLED=1",
+        "WRIGHT_RIVET_EDITOR_ENABLED=1",
+        "WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED=1",
+        "WRIGHT_SURFACES_ENABLED=1",
+        "WRIGHT_SURFACES_LIVE_APPS_ENABLED=1",
+    ):
+        assert f"ENV {feature_flag}" in dockerfile
     assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in dockerfile
     assert "mkdir -p /home/agent/.config /home/agent/.cache /home/agent/.local/share" in mcp_dockerfile
     assert 'FRONTEND_DIST_DIR="%(ENV_FRONTEND_DIST_DIR)s"' in supervisor
@@ -106,6 +131,16 @@ def test_docker_smoke_strictly_reconciles_hermes_security_overrides() -> None:
     assert "openssl-provider-legacy" in dockerfile
     assert "pip check --python /opt/hermes/.venv/bin/python" in smoke
     assert "reconcile_hermes_pip_check.py" in smoke
+
+
+def test_docker_smoke_checks_offline_rivet_first_run_runtime() -> None:
+    smoke = read_text("scripts/docker-smoke-test.sh")
+
+    assert "NODE_VERSION=$(docker run" in smoke
+    assert "EditorAssetCatalog().status()" in smoke
+    assert "RunnerAssetCatalog().status()" in smoke
+    assert "EditorSettings.from_env().enabled" in smoke
+    assert "RunnerSettings.from_env().enabled" in smoke
 
 
 def test_docker_smoke_does_not_require_host_jq() -> None:

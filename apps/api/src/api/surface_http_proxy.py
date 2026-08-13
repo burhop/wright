@@ -283,17 +283,25 @@ class SurfaceHttpProxy:
             else pin.numeric_address
         )
         url = f"{pin.scheme}://{host}:{pin.port}{target}"
-        upstream = self._client.build_request(
-            method,
-            url,
-            headers=filtered,
-            content=self._request_body(
+        body_declared = content_length is not None or any(
+            name.lower() == "transfer-encoding" for name, _value in request.headers
+        )
+        content = (
+            self._request_body(
                 request,
                 headers=filtered,
                 limits=limits,
                 authority_valid=authority_valid,
                 target_valid=target_valid,
-            ),
+            )
+            if body_declared or method in {"POST", "PUT", "PATCH"}
+            else None
+        )
+        upstream = self._client.build_request(
+            method,
+            url,
+            headers=filtered,
+            content=content,
         )
         if pin.server_name:
             upstream.extensions["sni_hostname"] = pin.server_name.encode("ascii")

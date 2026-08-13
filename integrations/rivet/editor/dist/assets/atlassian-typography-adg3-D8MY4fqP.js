@@ -1,4 +1,4 @@
-const n=`
+const n = `
 html[data-theme~="typography:typography-adg3"] {
   --ds-UNSAFE-textTransformUppercase: uppercase;
   --ds-font-body: normal 400 0.875rem/1.25rem var(--ds-font-family-body);
@@ -45,4 +45,7 @@ html[data-theme~="typography:typography-adg3"] {
   --ds-font-lineHeight-500: 2rem;
   --ds-font-lineHeight-600: 2.5rem;
 }
-`;export{n as default};
+`;
+export {
+  n as default
+};

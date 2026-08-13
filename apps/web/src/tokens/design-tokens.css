@@ -4,6 +4,7 @@
   /* Default Theme: Space Slate Dark */
   --color-neutral: #090d16; /* deep rich dark space-black background */
   --color-surface: #131b2e; /* card and panel surfaces */
+  --color-surface-elevated: #182238; /* menus, dialogs, and floating controls */
   --color-surface-subtle: #0d1220; /* secondary darker cards and input fields */
   --color-surface-hover: #1d2942; /* hover states for cards and list items */
   --color-primary: #f1f5f9; /* bright text */
@@ -70,6 +71,7 @@
 [data-theme="dark"] {
   --color-neutral: #090d16;
   --color-surface: #131b2e;
+  --color-surface-elevated: #182238;
   --color-surface-subtle: #0d1220;
   --color-surface-hover: #1d2942;
   --color-primary: #f1f5f9;
@@ -92,6 +94,7 @@
   /* Premium Glassmorphism Light Theme */
   --color-neutral: #e8edf5; /* light slate-blue background */
   --color-surface: #f1f5f9; /* card surface background */
+  --color-surface-elevated: #ffffff; /* menus, dialogs, and floating controls */
   --color-surface-subtle: #f8fafc; /* inset/input background */
   --color-surface-hover: #e2e8f0; /* card hover background */
   --color-primary: #0f172a; /* dark slate main text */

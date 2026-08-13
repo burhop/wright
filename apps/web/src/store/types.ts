@@ -31,6 +31,10 @@ export interface StreamActivityEntry {
   title: string;
   detail?: string;
   percentage?: number;
+  server?: string;
+  tool?: string;
+  status?: string;
+  correlationId?: string;
   timestamp: number;
 }
 

@@ -9,6 +9,7 @@ import {
 import type { ReactNode } from "react";
 import type { ChatSession, ChatMessage, StreamActivityEntry } from "./types";
 import agentService from "../services/agent-service";
+import type { AgentUiContext } from "../services/agent-service";
 
 export interface ChatStreamState {
   isStreaming: boolean;
@@ -16,6 +17,7 @@ export interface ChatStreamState {
   streamActivity: StreamActivityEntry[];
   streamedText: string;
   activeStreamId: string | null;
+  rivetMutationVersion: number;
 }
 
 export interface QueuedPrompt {
@@ -23,6 +25,7 @@ export interface QueuedPrompt {
   sessionId: string;
   content: string;
   attachments?: string[];
+  uiContext?: AgentUiContext;
   mode: "queue" | "steer";
 }
 
@@ -74,7 +77,8 @@ type ChatAction =
       prompt: QueuedPrompt;
     }
   | { type: "DEQUEUE_PROMPT"; promptId: string }
-  | { type: "CLEAR_STREAM_ID"; sessionId: string };
+  | { type: "CLEAR_STREAM_ID"; sessionId: string }
+  | { type: "MARK_RIVET_MUTATION"; sessionId: string };
 
 const initialState: ChatState = {
   sessions: [],
@@ -96,6 +100,7 @@ function emptyStreamState(): ChatStreamState {
     streamActivity: [],
     streamedText: "",
     activeStreamId: null,
+    rivetMutationVersion: 0,
   };
 }
 
@@ -607,6 +612,17 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         }),
       );
       break;
+
+    case "MARK_RIVET_MUTATION":
+      newState = setSessionStreamState(
+        state,
+        action.sessionId,
+        (streamState) => ({
+          ...streamState,
+          rivetMutationVersion: streamState.rivetMutationVersion + 1,
+        }),
+      );
+      break;
   }
 
   if (action.type === "DELETE_SESSION") {
@@ -630,10 +646,15 @@ interface ChatContextProps {
     attachments?: string[],
     isQueuedExecution?: boolean,
     targetSessionId?: string,
+    uiContext?: AgentUiContext,
   ) => Promise<void>;
   refreshSessions: (workspaceId?: string) => Promise<void>;
   cancelActiveStream: () => Promise<void>;
-  steerMessage: (content: string, attachments?: string[]) => Promise<void>;
+  steerMessage: (
+    content: string,
+    attachments?: string[],
+    uiContext?: AgentUiContext,
+  ) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -812,6 +833,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       attachments?: string[],
       isQueuedExecution?: boolean,
       targetSessionId?: string,
+      uiContext?: AgentUiContext,
     ) => {
       const sessionId = targetSessionId || state.activeSessionId;
       if (!sessionId) return;
@@ -826,6 +848,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             sessionId,
             content,
             attachments,
+            uiContext,
             mode: "queue",
           },
         });
@@ -864,6 +887,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           sessionId,
           content,
           attachments,
+          uiContext,
         );
         for await (const event of stream) {
           if (event.type === "stream_start") {
@@ -889,6 +913,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               text: event.text,
             });
           } else if (event.type === "tool") {
+            if (event.name.toLowerCase().includes("rivet")) {
+              dispatch({ type: "MARK_RIVET_MUTATION", sessionId });
+            }
             dispatch({
               type: "SET_ACTIVE_TOOL",
               sessionId,
@@ -904,6 +931,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 title: event.name ? `Calling ${event.name}` : "Calling a tool",
                 detail: event.preview || undefined,
                 percentage: event.percentage,
+                tool: event.name,
               },
             });
           } else if (event.type === "progress") {
@@ -921,6 +949,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 title: event.title,
                 detail: event.detail,
                 percentage: event.percentage,
+                server: event.server,
+                tool: event.tool,
+                status: event.status,
+                correlationId: event.correlationId,
               },
             });
           } else if (event.type === "done") {
@@ -1055,12 +1087,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [state.activeSessionId]);
 
   const steerMessage = useCallback(
-    async (content: string, attachments?: string[]) => {
+    async (
+      content: string,
+      attachments?: string[],
+      uiContext?: AgentUiContext,
+    ) => {
       const sessionId = state.activeSessionId;
       if (!sessionId || (!content.trim() && !attachments?.length)) return;
 
       if (!state.streamStates[sessionId]?.isStreaming) {
-        await sendMessage(content, attachments);
+        await sendMessage(content, attachments, false, undefined, uiContext);
         return;
       }
 
@@ -1071,6 +1107,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           sessionId,
           content,
           attachments,
+          uiContext,
           mode: "steer",
         },
       });
@@ -1097,6 +1134,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       nextPrompt.attachments,
       true,
       nextPrompt.sessionId,
+      nextPrompt.uiContext,
     );
   }, [state.promptQueue, state.streamStates, sendMessage]);
 

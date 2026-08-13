@@ -140,6 +140,7 @@ def test_fragment_bootstrap_document_never_receives_or_reflects_token(
     assert "location.hash" in response.text
     assert "history.replaceState" in response.text
     assert "method: 'POST'" in response.text
+    assert "location.replace('/' + location.search)" in response.text
     assert response.headers["referrer-policy"] == "no-referrer"
     assert "default-src 'none'" in response.headers["content-security-policy"]
 

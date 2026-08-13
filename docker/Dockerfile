@@ -52,9 +52,16 @@ ENV WRIGHT_WORKSPACE_PATH=/home/agent/workspace
 ENV WRIGHT_MCP_BUNDLE=
 ENV WRIGHT_MCP_HERMES_CONFIG=
 ENV WRIGHT_MCP_STATUS=
+ENV WRIGHT_RIVET_WORKFLOWS_ENABLED=1
+ENV WRIGHT_RIVET_RUNNER_ENABLED=1
+ENV WRIGHT_RIVET_EDITOR_ENABLED=1
+ENV WRIGHT_RIVET_WORKFLOW_OPERATIONS_ENABLED=1
+ENV WRIGHT_SURFACES_ENABLED=1
+ENV WRIGHT_SURFACES_LIVE_APPS_ENABLED=1
 
 # System packages: Wright operator utilities and supervisor. Hermes, Python,
-# Node.js, and uv come from the Hermes base image.
+# and uv come from the Hermes base image. The Rivet runtime uses the same
+# pinned Node.js distribution as the frontend build stage.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bzip2 \
     ca-certificates \
@@ -70,6 +77,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     supervisor \
     && rm -rf /var/lib/apt/lists/*
+
+COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node
+COPY --from=web-builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx && \
+    node --version && npm --version
 
 # micromamba supports dynamic MCP package/dependency installation. Keep the
 # archive URL/checksum architecture-specific so native GB10/arm64 builds do not
@@ -135,6 +148,8 @@ COPY --chown=agent:agent apps/api/ apps/api/
 COPY --chown=agent:agent hermes-plugin-wright/ hermes-plugin-wright/
 COPY --chown=agent:agent README.md README.md
 COPY --chown=agent:agent src/ src/
+COPY --chown=agent:agent integrations/rivet/editor/ integrations/rivet/editor/
+COPY --chown=agent:agent integrations/rivet/runner/ integrations/rivet/runner/
 
 USER root
 

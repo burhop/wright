@@ -1,4 +1,4 @@
-const e=`
+const e = `
 html[data-theme~="spacing:spacing"] {
   --ds-space-0: 0rem;
   --ds-space-025: 0.125rem;
@@ -24,4 +24,7 @@ html[data-theme~="spacing:spacing"] {
   --ds-space-negative-300: -1.5rem;
   --ds-space-negative-400: -2rem;
 }
-`;export{e as default};
+`;
+export {
+  e as default
+};

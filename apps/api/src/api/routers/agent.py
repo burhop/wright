@@ -8,13 +8,14 @@ import shutil
 import subprocess
 import time
 from typing import Optional, List, AsyncIterator
+import httpx
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import structlog
 from opentelemetry import trace
 from core.tracing import traced
-from api.config import api_mcp_autostart_enabled
+from api.config import DATABASE_PATH, api_mcp_autostart_enabled
 
 from agent_adapters import (
     BaseAgentEngine,
@@ -23,19 +24,43 @@ from agent_adapters import (
     create_agent_engine,
     default_agent_registry,
     GenericProgressProjector,
+    official_hermes_cli_path,
+    resolve_agent_api_settings,
 )
 from workspace_service import WorkspaceInvalidRequestError, WorkspaceService
 from workspace_service.adapters.runtime import (
+    get_active_gateway_session,
     get_workspace_by_session,
     get_workspace_enabled_tools,
+    set_active_rivet_workflow,
     update_workspace_agent_session_title,
     update_workspace_session,
 )
 from tool_registry import ApprovalContext
 from tool_registry.db import get_servers
+from api.routers.vault import attachment_data_urls
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
+
+
+def _mirror_active_rivet_workflow_to_gateway_binding(
+    session_id: str, slug: str | None
+) -> None:
+    """Copy UI context onto Hermes' stable per-workspace gateway binding."""
+    gateway_session_id = get_active_gateway_session(DATABASE_PATH)
+    if not gateway_session_id or gateway_session_id == session_id:
+        return
+    chat_workspace = get_workspace_by_session(DATABASE_PATH, session_id)
+    gateway_workspace = get_workspace_by_session(DATABASE_PATH, gateway_session_id)
+    if (
+        not chat_workspace
+        or not gateway_workspace
+        or str(chat_workspace.get("workspace_id"))
+        != str(gateway_workspace.get("workspace_id"))
+    ):
+        return
+    set_active_rivet_workflow(DATABASE_PATH, gateway_session_id, slug)
 
 
 def _run_gateway_restart_command(command: list[str], label: str) -> None:
@@ -74,7 +99,7 @@ def _restart_hermes_gateway_process() -> None:
         )
         return
 
-    executable = shutil.which("hermes")
+    executable = shutil.which("hermes") or official_hermes_cli_path()
     if not executable:
         raise RuntimeError("Hermes CLI was not found; gateway binding cannot refresh")
     _run_gateway_restart_command(
@@ -393,6 +418,43 @@ class SetActiveAgentRequest(BaseModel):
     agent: str
 
 
+class HermesModelOption(BaseModel):
+    value: str
+    label: str
+    provider: str
+    model: str
+    is_current: bool = False
+
+
+class HermesModelOptionGroup(BaseModel):
+    provider: str
+    label: str
+    options: List[HermesModelOption]
+
+
+class HermesModelOptionsResponse(BaseModel):
+    current_value: Optional[str] = None
+    current_provider: Optional[str] = None
+    current_model: Optional[str] = None
+    groups: List[HermesModelOptionGroup]
+
+
+class SetHermesModelRequest(BaseModel):
+    provider: str
+    model: str
+    session_id: Optional[str] = None
+    confirm_expensive_model: bool = False
+
+
+class SetHermesModelResponse(BaseModel):
+    ok: bool
+    provider: str
+    model: str
+    session_locked: bool = False
+    confirm_required: bool = False
+    confirm_message: Optional[str] = None
+
+
 class NewSessionRequest(BaseModel):
     workspace: Optional[str] = None
 
@@ -423,6 +485,7 @@ class ChatRequest(BaseModel):
     session_id: str
     message: str
     attachments: Optional[List[str]] = None
+    active_rivet_slug: Optional[str] = None
 
 
 MAX_SESSION_TITLE_LENGTH = 200
@@ -438,6 +501,134 @@ def title_from_slash_command(message: str) -> str | None:
         return None
     title = remainder.strip().strip("\"'“”")
     return title[:MAX_SESSION_TITLE_LENGTH] or None
+
+
+def _hermes_profile() -> str:
+    return (
+        os.getenv("WRIGHT_HERMES_PROFILE") or os.getenv("HERMES_PROFILE") or "wright"
+    ).strip() or "wright"
+
+
+def _model_option_value(provider: str, model: str) -> str:
+    return f"{provider}::{model}"
+
+
+async def _hermes_json_request(
+    method: str,
+    path: str,
+    *,
+    params: dict | None = None,
+    json_body: dict | None = None,
+) -> dict:
+    # The model profile selects Hermes configuration data; it does not select
+    # the gateway process Wright is connected to. Resolve authentication for
+    # the running gateway independently. Otherwise a stale profile-local
+    # API_SERVER_KEY can make model calls fail even while gateway health is OK.
+    settings = resolve_agent_api_settings("hermes")
+    headers = {"Accept": "application/json"}
+    if settings.api_key:
+        headers["Authorization"] = f"Bearer {settings.api_key}"
+
+    url = f"{settings.base_url.rstrip('/')}{path}"
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.request(
+                method,
+                url,
+                params=params,
+                json=json_body,
+                headers=headers,
+            )
+            response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        detail = exc.response.text or exc.response.reason_phrase
+        raise HTTPException(
+            status_code=exc.response.status_code,
+            detail=f"Hermes model request failed: {detail}",
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=f"Hermes model service is unavailable: {exc}",
+        ) from exc
+
+    data = response.json()
+    return data if isinstance(data, dict) else {}
+
+
+def _build_model_options_response(payload: dict) -> HermesModelOptionsResponse:
+    current_provider = str(payload.get("provider") or "").strip() or None
+    current_model = str(payload.get("model") or "").strip() or None
+    current_value = (
+        _model_option_value(current_provider, current_model)
+        if current_provider and current_model
+        else None
+    )
+
+    groups: list[HermesModelOptionGroup] = []
+    for provider_row in payload.get("providers") or []:
+        if not isinstance(provider_row, dict):
+            continue
+        provider = str(provider_row.get("slug") or "").strip()
+        if not provider:
+            continue
+        models = [
+            str(model).strip()
+            for model in (provider_row.get("models") or [])
+            if str(model).strip()
+        ]
+        if not models:
+            continue
+        provider_label = str(provider_row.get("name") or provider).strip()
+        groups.append(
+            HermesModelOptionGroup(
+                provider=provider,
+                label=provider_label,
+                options=[
+                    HermesModelOption(
+                        value=_model_option_value(provider, model),
+                        label=model,
+                        provider=provider,
+                        model=model,
+                        is_current=provider == current_provider
+                        and model == current_model,
+                    )
+                    for model in models
+                ],
+            )
+        )
+
+    if current_value and not any(
+        option.value == current_value for group in groups for option in group.options
+    ):
+        provider = current_provider or "hermes"
+        model = current_model or current_value
+        groups.insert(
+            0,
+            HermesModelOptionGroup(
+                provider=provider,
+                label=provider,
+                options=[
+                    HermesModelOption(
+                        value=current_value,
+                        label=model,
+                        provider=provider,
+                        model=model,
+                        is_current=True,
+                    )
+                ],
+            ),
+        )
+
+    if current_provider:
+        groups.sort(key=lambda group: 0 if group.provider == current_provider else 1)
+
+    return HermesModelOptionsResponse(
+        current_value=current_value,
+        current_provider=current_provider,
+        current_model=current_model,
+        groups=groups,
+    )
 
 
 class ChatHistoryMessage(BaseModel):
@@ -715,6 +906,16 @@ async def chat(
     log = logger.bind(trace_id=trace_id, session_id=body.session_id)
     log.info("chat_requested")
 
+    try:
+        set_active_rivet_workflow(
+            DATABASE_PATH, body.session_id, body.active_rivet_slug
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        ) from exc
+
     # Sync and activate workspace tools before chat turn. Chat should not begin
     # until the MCP servers assigned to this workspace are available.
     sync_manager = getattr(request.app.state, "agent_sync_manager", None)
@@ -743,13 +944,15 @@ async def chat(
                 detail=str(exc),
             ) from exc
 
+    _mirror_active_rivet_workflow_to_gateway_binding(
+        body.session_id, body.active_rivet_slug
+    )
+
     await ensure_llm_backend_ready(engine)
     await ensure_workspace_mcp_servers_active(request, body.session_id)
 
     requested_title = title_from_slash_command(body.message)
     if requested_title:
-        from api.config import DATABASE_PATH
-
         updated = update_workspace_agent_session_title(
             DATABASE_PATH, body.session_id, requested_title
         )
@@ -759,7 +962,8 @@ async def chat(
         session_id=body.session_id,
         message=body.message,
         trace_id=trace_id,
-        attachments=body.attachments,
+        attachments=attachment_data_urls(body.attachments),
+        active_rivet_slug=body.active_rivet_slug,
     )
     registry = get_chat_stream_registry(request)
     job = await registry.start(chat_request, engine)
@@ -783,6 +987,75 @@ async def chat(
             "Connection": "keep-alive",
             "X-Trace-Id": trace_id,
         },
+    )
+
+
+@router.get("/models", response_model=HermesModelOptionsResponse)
+@traced("agent.models.list")
+async def list_hermes_models(refresh: bool = False):
+    payload = await _hermes_json_request(
+        "GET",
+        "/api/model/options",
+        params={
+            "profile": _hermes_profile(),
+            "explicit_only": "true",
+            "include_unconfigured": "false",
+            "refresh": "true" if refresh else "false",
+        },
+    )
+    return _build_model_options_response(payload)
+
+
+@router.post("/model", response_model=SetHermesModelResponse)
+@traced("agent.model.set")
+async def set_hermes_model(body: SetHermesModelRequest):
+    provider = body.provider.strip()
+    model = body.model.strip()
+    if not provider or not model:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="provider and model are required",
+        )
+
+    assignment = await _hermes_json_request(
+        "POST",
+        "/api/model/set",
+        params={"profile": _hermes_profile()},
+        json_body={
+            "scope": "main",
+            "provider": provider,
+            "model": model,
+            "profile": _hermes_profile(),
+            "confirm_expensive_model": body.confirm_expensive_model,
+        },
+    )
+    if assignment.get("confirm_required"):
+        return SetHermesModelResponse(
+            ok=False,
+            provider=provider,
+            model=model,
+            confirm_required=True,
+            confirm_message=str(assignment.get("confirm_message") or ""),
+        )
+
+    session_locked = False
+    if body.session_id:
+        await _hermes_json_request(
+            "POST",
+            f"/api/sessions/{body.session_id}/model",
+            json_body={
+                "provider": provider,
+                "model": model,
+                "require_model_lock": True,
+            },
+        )
+        session_locked = True
+
+    return SetHermesModelResponse(
+        ok=bool(assignment.get("ok", True)),
+        provider=provider,
+        model=model,
+        session_locked=session_locked,
     )
 
 

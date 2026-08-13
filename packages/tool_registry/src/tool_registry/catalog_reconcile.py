@@ -10,6 +10,117 @@ from typing import Any
 import yaml
 
 from .engineering_catalog import ENGINEERING_CATALOG
+from .wright_managed_servers import WRIGHT_MANAGED_SERVERS, WRIGHT_MANAGED_TOOLS
+
+
+def reconcile_wright_managed_servers(database_path: str) -> int:
+    """Seed Wright-shipped MCPs as installed while preserving user disablement."""
+
+    now = int(time.time())
+    connection = sqlite3.connect(database_path)
+    try:
+        connection.execute("PRAGMA foreign_keys = ON")
+        connection.execute("BEGIN IMMEDIATE")
+        for entry in WRIGHT_MANAGED_SERVERS:
+            command = json.dumps(entry["command"])
+            connection.execute(
+                """INSERT OR IGNORE INTO mcp_servers (
+                    server_id, name, type, command, is_active, is_installed,
+                    status, error_message, category, created_at, updated_at,
+                    description, instructions, verification_state,
+                    installability_tier, risk_level, deployment_mode,
+                    platform_support, host_software_required,
+                    credentials_required, default_enabled, approval_gates,
+                    validation_result
+                ) VALUES (?, ?, ?, ?, 1, 1, 'active', NULL, ?, ?, ?, ?, ?, ?, ?,
+                          ?, ?, ?, ?, ?, 1, ?, ?)""",
+                (
+                    entry["server_id"],
+                    entry["name"],
+                    entry["type"],
+                    command,
+                    entry["category"],
+                    now,
+                    now,
+                    entry["description"],
+                    entry["instructions"],
+                    entry["verification_state"],
+                    entry["installability_tier"],
+                    entry["risk_level"],
+                    entry["deployment_mode"],
+                    json.dumps(entry["platform_support"]),
+                    json.dumps(entry["host_software_required"]),
+                    json.dumps(entry["credentials_required"]),
+                    json.dumps(entry["approval_gates"]),
+                    json.dumps(entry["validation_result"]),
+                ),
+            )
+            for tool in WRIGHT_MANAGED_TOOLS:
+                tool_id = f"{entry['server_id']}:{tool['name']}"
+                connection.execute(
+                    """INSERT OR IGNORE INTO mcp_tools
+                    (tool_id, server_id, name, title, description, input_schema,
+                     output_schema, annotations, is_enabled, created_at)
+                    VALUES (?, ?, ?, NULL, ?, ?, NULL, ?, 1, ?)""",
+                    (
+                        tool_id,
+                        entry["server_id"],
+                        tool["name"],
+                        tool["description"],
+                        json.dumps(tool["input_schema"]),
+                        json.dumps(tool["annotations"]),
+                        now,
+                    ),
+                )
+                connection.execute(
+                    """UPDATE mcp_tools SET description=?, input_schema=?,
+                       annotations=? WHERE tool_id=?""",
+                    (
+                        tool["description"],
+                        json.dumps(tool["input_schema"]),
+                        json.dumps(tool["annotations"]),
+                        tool_id,
+                    ),
+                )
+            connection.execute(
+                """UPDATE mcp_servers SET
+                    name=?, type=?, command=?, is_installed=1, category=?,
+                    updated_at=?, description=?, instructions=?,
+                    verification_state=?, installability_tier=?, risk_level=?,
+                    deployment_mode=?, platform_support=?,
+                    host_software_required=?, credentials_required=?,
+                    default_enabled=1, approval_gates=?, validation_result=?,
+                    error_message=CASE WHEN status='error' THEN NULL ELSE error_message END,
+                    status=CASE WHEN status='error' THEN 'inactive' ELSE status END,
+                    is_active=CASE WHEN status='error' THEN 0 ELSE is_active END
+                   WHERE server_id=?""",
+                (
+                    entry["name"],
+                    entry["type"],
+                    command,
+                    entry["category"],
+                    now,
+                    entry["description"],
+                    entry["instructions"],
+                    entry["verification_state"],
+                    entry["installability_tier"],
+                    entry["risk_level"],
+                    entry["deployment_mode"],
+                    json.dumps(entry["platform_support"]),
+                    json.dumps(entry["host_software_required"]),
+                    json.dumps(entry["credentials_required"]),
+                    json.dumps(entry["approval_gates"]),
+                    json.dumps(entry["validation_result"]),
+                    entry["server_id"],
+                ),
+            )
+        connection.commit()
+        return len(WRIGHT_MANAGED_SERVERS)
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
 
 
 def reconcile_engineering_catalog(database_path: str) -> int:

@@ -354,6 +354,68 @@ async def test_hermes_messages_include_wright_onshape_search_hint(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_hermes_messages_bind_rivet_tools_to_displayed_workflow(monkeypatch):
+    adapter = HermesAdapter("http://127.0.0.1:8642", "")
+
+    async def fake_history(_session_id):
+        return []
+
+    async def fake_workspace(_session_id):
+        return "/workspace/demo"
+
+    monkeypatch.setattr(adapter, "get_chat_history", fake_history)
+    monkeypatch.setattr(adapter, "get_session_workspace", fake_workspace)
+
+    messages = await adapter._build_messages(
+        AgentChatRequest(
+            session_id="session-1",
+            message="Add a text node.",
+            active_rivet_slug="untitled-workflow-2",
+        )
+    )
+
+    assert messages[1]["role"] == "system"
+    assert 'slug is "untitled-workflow-2"' in messages[1]["content"]
+    assert "Do not target, create, or open another" in messages[1]["content"]
+
+
+@pytest.mark.asyncio
+async def test_hermes_messages_include_image_attachments_as_multimodal_parts(
+    monkeypatch,
+):
+    adapter = HermesAdapter("http://127.0.0.1:8642", "")
+
+    async def fake_history(_session_id):
+        return []
+
+    async def fake_workspace(_session_id):
+        return "/workspace/demo"
+
+    monkeypatch.setattr(adapter, "get_chat_history", fake_history)
+    monkeypatch.setattr(adapter, "get_session_workspace", fake_workspace)
+    image_url = "data:image/png;base64,aW1hZ2U="
+
+    messages = await adapter._build_messages(
+        AgentChatRequest(
+            session_id="session-1",
+            message="Use this specification.",
+            attachments=[image_url],
+        )
+    )
+
+    assert messages[-1] == {
+        "role": "user",
+        "content": [
+            {
+                "type": "text",
+                "text": "[Workspace::v1: /workspace/demo] Use this specification.",
+            },
+            {"type": "image_url", "image_url": {"url": image_url}},
+        ],
+    }
+
+
+@pytest.mark.asyncio
 @respx.mock
 async def test_hermes_list_sessions_explains_gateway_is_required(monkeypatch):
     monkeypatch.setenv("HERMES_API_DISABLE_DEFAULT_CANDIDATES", "1")

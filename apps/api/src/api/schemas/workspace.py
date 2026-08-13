@@ -79,6 +79,70 @@ class WorkflowDocumentResponse(WorkflowResponse):
     datasets: Dict[str, str]
 
 
+class WorkflowTemplateResponse(BaseModel):
+    template_id: str
+    title: str
+    description: str
+    kind: Literal["starter", "advanced", "example"]
+    requirements: List[str] = Field(default_factory=list)
+
+
+class WorkflowTemplateListResponse(BaseModel):
+    templates: List[WorkflowTemplateResponse]
+
+
+class WorkflowTemplateInstantiateRequest(BaseModel):
+    session_id: str
+    slug: str
+
+
+class WorkflowGraphNodeResponse(BaseModel):
+    node_id: str
+    node_type: str | None = None
+    title: str | None = None
+    data: Dict[str, Any] = Field(default_factory=dict)
+    outgoing_connections: List[str] = Field(default_factory=list)
+
+
+class WorkflowGraphSummaryResponse(BaseModel):
+    graph_id: str
+    name: str | None = None
+    main: bool
+    node_count: int
+    nodes: List[WorkflowGraphNodeResponse] = Field(default_factory=list)
+
+
+class WorkflowGraphResponse(WorkflowResponse):
+    graph: WorkflowGraphSummaryResponse
+    issues: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class WorkflowGraphActionRequest(BaseModel):
+    session_id: str
+    action: Literal[
+        "add_node",
+        "edit_node",
+        "delete_node",
+        "connect_ports",
+        "disconnect_ports",
+        "save_revision",
+    ]
+    expected_revision: int = Field(ge=1)
+    graph_id: str | None = None
+    node_id: str | None = None
+    source_node_id: str | None = None
+    source_port: str | None = None
+    target_node_ref: str | None = None
+    target_port: str | None = None
+    connection: str | None = None
+    visual_data: str | None = None
+    node: Dict[str, Any] | None = None
+    node_patch: Dict[str, Any] | None = None
+    data: Dict[str, Any] | None = None
+    project: str | None = None
+    datasets: Dict[str, str] | None = None
+
+
 class WorkflowRunnerStatusResponse(BaseModel):
     availability: str
     generation: int
@@ -88,6 +152,12 @@ class WorkflowRunnerStatusResponse(BaseModel):
 class WorkflowRunStartRequest(BaseModel):
     session_id: str
     expected_generation: int | None = Field(default=None, ge=1)
+    expected_revision: int = Field(ge=1)
+    expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    graph: str | None = Field(default=None, max_length=256)
+    inputs: Dict[str, Any] = Field(default_factory=dict)
+    context: Dict[str, Any] = Field(default_factory=dict)
+    timeout_seconds: float | None = Field(default=None, ge=1, le=300)
 
 
 class WorkflowRunCancelRequest(BaseModel):
@@ -101,9 +171,14 @@ class WorkflowRunResponse(BaseModel):
     session_id: str
     workflow_id: str
     revision: int
+    digest: str | None = None
+    graph: str | None = None
     generation: int
     state: str
     reason: str | None = None
+    outputs: Dict[str, Any] | None = None
+    duration_ms: int | None = None
+    output_truncated: bool = False
 
 
 class WorkflowReviewRequest(BaseModel):
@@ -142,6 +217,23 @@ class WorkflowEditorSurfaceRequest(BaseModel):
 
 class WorkflowEditorSurfaceResponse(WorkflowEditorAvailabilityResponse):
     manifest: Dict[str, Any] | None = None
+
+
+class BrepPanelRequest(BaseModel):
+    session_id: str
+
+
+class BrepPanelResponse(BaseModel):
+    server_id: str
+    control_url: str
+    module_url: str
+    connected: bool
+
+
+class BrepToolRequest(BaseModel):
+    session_id: str
+    tool_name: str = Field(min_length=1, max_length=256)
+    arguments: Dict[str, Any] = Field(default_factory=dict)
 
 
 class WorkflowEditorBootstrapRequest(BaseModel):

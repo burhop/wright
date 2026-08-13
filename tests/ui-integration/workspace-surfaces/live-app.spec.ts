@@ -160,19 +160,23 @@ test.describe("managed FastAPI dashboard journey", () => {
       /^http:\/\/s-[^.]+\.localhost:5173\/.*/,
       async (route) => {
         const url = new URL(route.request().url());
-        if (url.pathname === "/__wright/bootstrap") {
+        const surfacePath = url.pathname.replace(
+          /^\/__wright-surface\/[^/]+/,
+          "",
+        );
+        if (surfacePath === "/__wright/bootstrap") {
           await route.fulfill({
             contentType: "text/html",
             body: dashboardHtml,
           });
-        } else if (url.pathname === "/assets/dashboard.js") {
+        } else if (surfacePath === "/assets/dashboard.js") {
           await route.fulfill({
             contentType: "application/javascript",
             body: dashboardScript,
           });
-        } else if (url.pathname === "/assets/data/dashboard.json") {
+        } else if (surfacePath === "/assets/data/dashboard.json") {
           await route.fulfill({ json: { label: "nested asset loaded" } });
-        } else if (url.pathname === "/events") {
+        } else if (surfacePath === "/events") {
           await route.fulfill({
             headers: {
               "Cache-Control": "no-cache",
@@ -180,17 +184,17 @@ test.describe("managed FastAPI dashboard journey", () => {
             },
             body: "event: dashboard\ndata: SSE connected\n\n",
           });
-        } else if (url.pathname === "/reports/daily") {
+        } else if (surfacePath === "/reports/daily") {
           await route.fulfill({
             contentType: "text/html",
             body: '<h1 id="deep-report">Daily report deep link</h1><a id="redirect-link" href="/go/latest">Follow redirect</a>',
           });
-        } else if (url.pathname === "/go/latest") {
+        } else if (surfacePath === "/go/latest") {
           await route.fulfill({
             contentType: "text/html",
             body: '<!doctype html><meta http-equiv="refresh" content="0;url=/reports/latest">',
           });
-        } else if (url.pathname === "/reports/latest") {
+        } else if (surfacePath === "/reports/latest") {
           await route.fulfill({
             contentType: "text/html",
             body: '<h1 id="redirect-report">Latest report after redirect</h1>',

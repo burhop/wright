@@ -3,10 +3,40 @@ import subprocess
 from agent_adapters.hermes_config import (
     hermes_config_path,
     hermes_env_path,
+    official_hermes_cli_path,
     parse_env_file,
     parse_top_level_config_file,
     resolve_hermes_api_settings,
 )
+
+
+def test_official_hermes_cli_path_finds_windows_installer_layout(tmp_path):
+    executable = (
+        tmp_path / "hermes" / "hermes-agent" / "venv" / "Scripts" / "hermes.exe"
+    )
+    executable.parent.mkdir(parents=True)
+    executable.touch()
+
+    assert official_hermes_cli_path({"LOCALAPPDATA": str(tmp_path)}) == str(executable)
+
+
+def test_hermes_config_path_uses_official_installer_cli(monkeypatch, tmp_path):
+    executable = (
+        tmp_path / "hermes" / "hermes-agent" / "venv" / "Scripts" / "hermes.exe"
+    )
+    executable.parent.mkdir(parents=True)
+    executable.touch()
+    config_file = tmp_path / "config.yaml"
+
+    monkeypatch.setattr("agent_adapters.hermes_config.shutil.which", lambda _name: None)
+
+    def fake_run(*args, **kwargs):
+        assert args[0] == [str(executable), "config", "path"]
+        return subprocess.CompletedProcess(args[0], 0, stdout=f"{config_file}\n")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    assert hermes_config_path({"LOCALAPPDATA": str(tmp_path)}) == str(config_file)
 
 
 def test_parse_env_file_reads_api_server_values(tmp_path):
@@ -58,6 +88,9 @@ def test_parse_top_level_config_file_reads_api_server_values(tmp_path):
 
 def test_hermes_config_path_uses_profile_cli(monkeypatch, tmp_path):
     config_file = tmp_path / "config.yaml"
+    monkeypatch.setattr(
+        "agent_adapters.hermes_config.shutil.which", lambda _name: "hermes"
+    )
 
     def fake_run(*args, **kwargs):
         assert args[0] == ["hermes", "-p", "wright", "config", "path"]
@@ -70,6 +103,9 @@ def test_hermes_config_path_uses_profile_cli(monkeypatch, tmp_path):
 
 def test_hermes_env_path_uses_cli(monkeypatch, tmp_path):
     env_file = tmp_path / ".env"
+    monkeypatch.setattr(
+        "agent_adapters.hermes_config.shutil.which", lambda _name: "hermes"
+    )
 
     def fake_run(*args, **kwargs):
         assert args[0] == ["hermes", "config", "env-path"]

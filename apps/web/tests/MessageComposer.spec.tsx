@@ -206,5 +206,8 @@ describe("MessageComposer", () => {
     expect(screen.getByText("MCP Status: Needs attention")).toBeInTheDocument();
     expect(screen.getByText("Jarvis OnShape MCP")).toBeInTheDocument();
     expect(screen.getByText("inactive")).toBeInTheDocument();
+    expect(screen.getByTestId("message-composer")).toHaveStyle({
+      overflow: "visible",
+    });
   });
 });

@@ -27,10 +27,10 @@ export const ToolsMarketplace: React.FC<ToolsMarketplaceProps> = ({
     try {
       setLoading(true);
       setError(null);
-      const host =
-        typeof window !== "undefined" ? window.location.hostname : "127.0.0.1";
       const serversResponse = await fetch(
-        `http://${host}:8000/api/mcp/servers`,
+        typeof window === "undefined"
+          ? "http://127.0.0.1:8000/api/mcp/servers"
+          : "/api/mcp/servers",
       );
       if (!serversResponse.ok) {
         throw new Error("Failed to fetch MCP servers list");

@@ -193,6 +193,46 @@ async def test_startup_reconciliation_revokes_credentials_and_pins_fail_closed(
         await registry.shutdown()
 
 
+@pytest.mark.anyio
+async def test_startup_reconciliation_aligns_ready_surface_with_stopped_runtime(
+    tmp_path: Path,
+) -> None:
+    database = _database(tmp_path)
+    with sqlite3.connect(database) as connection:
+        connection.execute(
+            """UPDATE surface_runtimes
+               SET state='stopped', target_pin_json=NULL
+               WHERE instance_id='instance-1'"""
+        )
+        connection.commit()
+    registry = LiveAppRuntimeRegistry(
+        database,
+        settings=_settings(),
+        revocation=RevocationCoordinator(database),
+        monitor_seconds=60,
+    )
+    await registry.reconcile_startup()
+    try:
+        with sqlite3.connect(database) as connection:
+            connection.row_factory = sqlite3.Row
+            runtime = connection.execute(
+                "SELECT state, target_pin_json, revision FROM surface_runtimes"
+            ).fetchone()
+            surface = connection.execute(
+                "SELECT lifecycle, diagnostic_summary_json FROM workspace_surfaces"
+            ).fetchone()
+
+        assert dict(runtime) == {
+            "state": "stopped",
+            "target_pin_json": None,
+            "revision": 1,
+        }
+        assert surface["lifecycle"] == "stopped"
+        assert "SURFACE_RECONCILE_RUNTIME_STOPPED" in surface["diagnostic_summary_json"]
+    finally:
+        await registry.shutdown()
+
+
 class _Revocation:
     def __init__(self, events: list[str]) -> None:
         self.events = events

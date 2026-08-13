@@ -1,3 +1,6 @@
 # Patch policy
 
-The selected Rivet v1.25.0 baseline has no local patches. A later slice must add every patch here, document its upstream revision and rationale, and make its clean application part of the acquisition gate.
+The Rivet 2 runtime baseline has no local runtime patches. Wright's reviewed
+canvas-only application patch is tracked separately at
+`integrations/rivet/editor/patches/rivet2-canvas-only.patch`; its digest and
+exact upstream revision are enforced by the editor artifact manifest.

@@ -6,6 +6,8 @@ import {
   closePresentation,
   createPresentation,
   getPresentationPreference,
+  operateLiveApp,
+  type LiveAppOperation,
   type PresentationLaunch,
 } from "../../services/surfaces/surface-client";
 import {
@@ -24,11 +26,48 @@ interface Props {
 
 type ActiveLaunches = Partial<Record<"panel" | "browser", PresentationLaunch>>;
 
+function recoveryOperation(
+  lifecycle: SurfaceDescriptor["lifecycle"],
+): LiveAppOperation | null {
+  if (lifecycle === "declared") return "start";
+  if (lifecycle === "stopped") return "restart";
+  if (lifecycle === "failed") return "retry";
+  return null;
+}
+
+function requiresIsolatedAcknowledgement(
+  descriptor: SurfaceDescriptor,
+): boolean {
+  return (
+    descriptor.instance?.sharing === "isolated" ||
+    descriptor.source.sourceId === "wright.rivet-editor"
+  );
+}
+
+function presentationEligible(
+  descriptor: SurfaceDescriptor,
+  kind: "panel" | "browser",
+): boolean {
+  return descriptor.presentations.some(
+    (value) => value.kind === kind && value.eligible === true,
+  );
+}
+
+function shouldAutoOpenPanel(descriptor: SurfaceDescriptor): boolean {
+  return (
+    descriptor.source.sourceId === "wright.rivet-editor" &&
+    (descriptor.lifecycle === "ready" ||
+      descriptor.lifecycle === "unhealthy") &&
+    presentationEligible(descriptor, "panel")
+  );
+}
+
 export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const panelHost = useRef<HTMLDivElement>(null);
   const runtimeControls = useRef<HTMLDivElement>(null);
   const presenter = useRef<LiveAppPresenter | null>(null);
+  const autoPanelKeys = useRef(new Set<string>());
   const [launches, setLaunches] = useState<ActiveLaunches>({});
   const [rememberPreference, setRememberPreference] = useState(false);
   const [preferredKind, setPreferredKind] = useState<
@@ -100,6 +139,16 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
     setError(null);
     let launch: PresentationLaunch | null = null;
     try {
+      const operation = recoveryOperation(descriptor.lifecycle);
+      if (operation) {
+        await operateLiveApp(
+          descriptor.surfaceId,
+          descriptor.workspaceId,
+          sessionId,
+          operation,
+        );
+        window.dispatchEvent(new Event("wright-surfaces-changed"));
+      }
       launch = await createPresentation(
         descriptor.surfaceId,
         descriptor.workspaceId,
@@ -107,7 +156,7 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
         kind,
         {
           rememberPreference,
-          isolatedAcknowledged: descriptor.instance?.sharing === "isolated",
+          isolatedAcknowledged: requiresIsolatedAcknowledgement(descriptor),
         },
       );
       if (kind === "browser") {
@@ -137,6 +186,23 @@ export function LiveAppSurface({ descriptor, sessionId, onFocusMode }: Props) {
       setBusy(false);
     }
   };
+
+  useEffect(() => {
+    const instance = descriptor.instance;
+    const generation = instance?.generation ?? 0;
+    const instanceId = instance?.instanceId ?? "none";
+    const key = `${descriptor.surfaceId}:${instanceId}:${generation}`;
+    if (
+      busy ||
+      launches.panel ||
+      autoPanelKeys.current.has(key) ||
+      !shouldAutoOpenPanel(descriptor)
+    ) {
+      return;
+    }
+    autoPanelKeys.current.add(key);
+    void open("panel");
+  }, [busy, descriptor, launches.panel]);
 
   const close = async (kind: "panel" | "browser") => {
     const launch = launches[kind];

@@ -25,6 +25,7 @@ from workspace_service.surfaces.live_app_manager import (
 from workspace_service.surfaces.manifests import AttachApproval, DiscoveredManifest
 from workspace_service.surfaces.process_supervisor import (
     PlatformProcessIdentity,
+    ProcessSupervisorError,
     ProcessStopResult,
     RuntimeSnapshot,
 )
@@ -152,9 +153,12 @@ class FakeSupervisor:
         self.stops = []
         self.snapshots = {}
         self.before_stop = None
+        self.start_error = None
 
     async def start(self, **request):
         self.starts.append(request)
+        if self.start_error is not None:
+            raise self.start_error
         generation = request["generation"]
         runtime_id = f"runtime-{len(self.starts)}"
         snapshot = RuntimeSnapshot(
@@ -259,6 +263,20 @@ def _request(key: str) -> LiveAppStartRequest:
     )
 
 
+async def test_safe_environment_exposes_local_config_root_but_not_credentials(
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("LOCALAPPDATA", r"C:\Users\engineer\AppData\Local")
+    monkeypatch.setenv("USERPROFILE", r"C:\Users\engineer")
+    monkeypatch.setenv("HERMES_API_KEY", "must-not-be-inherited")
+
+    environment = LiveAppManager._safe_environment({})
+
+    assert environment["LOCALAPPDATA"] == r"C:\Users\engineer\AppData\Local"
+    assert environment["USERPROFILE"] == r"C:\Users\engineer"
+    assert "HERMES_API_KEY" not in environment
+
+
 async def test_shared_concurrent_and_idempotent_starts_return_one_ready_instance(
     tmp_path,
 ) -> None:
@@ -361,6 +379,28 @@ async def test_failed_start_can_be_retried_with_a_new_generation(tmp_path) -> No
     assert retried.state == "ready"
     assert retried.generation == 2
     assert len(supervisor.starts) == 2
+
+
+async def test_process_supervisor_start_error_preserves_code_and_message(
+    tmp_path,
+) -> None:
+    manager, supervisor, _pins, _clock = _manager(tmp_path)
+    supervisor.start_error = ProcessSupervisorError(
+        "SURFACE_PROCESS_CWD_INVALID",
+        "Process working directory must be absolute",
+    )
+
+    with pytest.raises(LiveAppManagerError) as raised:
+        await manager.start(_request("bad-process-launch"))
+
+    failed = raised.value.instance
+    assert raised.value.code == "SURFACE_PROCESS_CWD_INVALID"
+    assert str(raised.value) == "Process working directory must be absolute"
+    assert failed is not None
+    assert failed.state == "failed"
+    assert failed.failure is not None
+    assert failed.failure.code == "SURFACE_PROCESS_CWD_INVALID"
+    assert failed.failure.message == "Process working directory must be absolute"
 
 
 async def test_approved_attach_is_probed_and_pinned_without_process_ownership(

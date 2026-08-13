@@ -18,6 +18,6 @@
     "uvicorn[standard]>=0.30,<1"
   ],
   "schema_version": 1,
-  "uv_lock_sha256": "492146a71acc537a25ba08f3fb332a855c08bdfa8d1091e5fa864bcd4ea9bae6",
+  "uv_lock_sha256": "0e8191f9dcfc166183b83678796e569bf07dcd1560bb601d15998506f3487808",
   "version": "0.1.9"
 }

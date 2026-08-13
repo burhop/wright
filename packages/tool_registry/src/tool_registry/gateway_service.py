@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import re
 import time
 import uuid
 from collections.abc import Mapping
@@ -31,8 +32,51 @@ from .gateway_ports import (
 from .runners.base import ProgressCallback
 from .ui.policy import McpUiPolicy
 from .ui.resources import McpUiBinding, McpUiResourceStore
+from .wright_managed_servers import (
+    RIVET_WORKFLOW_MUTATION_APPROVAL,
+    RIVET_WORKFLOWS_SERVER_ID,
+)
 
 SUPPORTED_PROTOCOL_VERSION = "2025-11-25"
+_BREP_APPLICATION_STATUS_TOOL = "brep.app.status"
+_URL_SECRET_PATTERN = re.compile(
+    r"(?i)([?&](?:token|access_token|api_key)=)[^&\s\"'\\]+"
+)
+
+
+def _redact_url_secrets(value: Any) -> Any:
+    """Remove URL credentials before a child result crosses the model boundary."""
+
+    if isinstance(value, str):
+        return _URL_SECRET_PATTERN.sub(r"\1[redacted]", value)
+    if isinstance(value, Mapping):
+        return {str(key): _redact_url_secrets(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_redact_url_secrets(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_redact_url_secrets(item) for item in value)
+    return value
+
+
+def _sanitize_model_result(
+    tool: GatewayTool, result: GatewayToolResult
+) -> GatewayToolResult:
+    """Keep BREP's panel token inside Wright instead of exposing it to an LLM."""
+
+    if tool.tool_name != _BREP_APPLICATION_STATUS_TOOL:
+        return result
+    structured = (
+        _redact_url_secrets(result.structured_content)
+        if result.structured_content is not None
+        else None
+    )
+    return GatewayToolResult(
+        content=tuple(_redact_url_secrets(item) for item in result.content),
+        structured_content=structured,
+        meta=_redact_url_secrets(result.meta),
+        is_error=result.is_error,
+        error_code=result.error_code,
+    )
 
 
 class GatewayService:
@@ -177,6 +221,38 @@ class GatewayService:
                 if decision.allowed:
                     result.append(tool)
         return tuple(result)
+
+    def workspace_approvals_for_model_call(
+        self, session_id: str, name: str
+    ) -> set[str]:
+        """Project a narrow operator grant for enabled Wright-managed tools.
+
+        Enabling the workspace-confined Rivet server authorizes only its own
+        revision-checked workflow mutations. Generic workspace and machine
+        approvals are never inferred from server enablement.
+        """
+
+        session = self._session(session_id)
+        tool = next(
+            (item for item in self.list_tools(session_id) if item.name == name), None
+        )
+        if (
+            tool is None
+            or RIVET_WORKFLOW_MUTATION_APPROVAL not in tool.required_approvals
+        ):
+            return set()
+        is_rivet_tool = tool.server_id == RIVET_WORKFLOWS_SERVER_ID or (
+            tool.server_id == "wright" and tool.name.startswith("wright__rivet_")
+        )
+        if not is_rivet_tool:
+            return set()
+        enabled = self.workspaces.enabled_server_ids(session)
+        if enabled is not None and not {
+            RIVET_WORKFLOWS_SERVER_ID,
+            "Rivet Workflows",
+        }.intersection(enabled):
+            return set()
+        return {RIVET_WORKFLOW_MUTATION_APPROVAL}
 
     def list_app_tools(
         self,
@@ -326,7 +402,10 @@ class GatewayService:
             await self.lifecycle.ensure_started(
                 resource_server_id,
                 workspace_path=session.workspace_path,
-                approval_context={"workspace_id": session.workspace_id},
+                approval_context={
+                    "workspace_id": session.workspace_id,
+                    "session_id": session.session_id,
+                },
             )
             return await self.mcp_ui_resources.read(
                 session,
@@ -484,7 +563,10 @@ class GatewayService:
             await self.lifecycle.ensure_started(
                 app_server_id,
                 workspace_path=session.workspace_path,
-                approval_context={"workspace_id": session.workspace_id},
+                approval_context={
+                    "workspace_id": session.workspace_id,
+                    "session_id": session.session_id,
+                },
             )
             reader = self.mcp_ui_resources.reader
             if collection == "resources":
@@ -635,13 +717,16 @@ class GatewayService:
             operation=audit_operation,
         )
 
-        approval_context: dict[str, Any] = {"workspace_id": session.workspace_id}
+        approval_context: dict[str, Any] = {
+            "workspace_id": session.workspace_id,
+            "session_id": session.session_id,
+        }
         if workspace_approvals:
             approval_context["workspace_approvals"] = sorted(workspace_approvals)
 
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
-                return self.management.call(session, tool.name)
+                return await self.management.call(session, tool.name, dict(arguments))
             await self.lifecycle.ensure_started(
                 tool.server_id,
                 workspace_path=session.workspace_path,
@@ -661,9 +746,14 @@ class GatewayService:
                         **dict(update),
                         "server": tool.server_id,
                         "tool": tool.name,
-                        "title": tool.title or tool.description or tool.tool_name,
+                        "title": (
+                            update.get("title")
+                            or tool.title
+                            or tool.description
+                            or tool.tool_name
+                        ),
                         "correlationId": request.correlation_id,
-                        "status": "running",
+                        "status": update.get("status") or "running",
                     }
                 )
                 if callback_result is not None:
@@ -684,7 +774,12 @@ class GatewayService:
             raw_result = dict(await asyncio.wait_for(task, bounded))
             normalized = GatewayToolResult.from_upstream(raw_result)
             structured = normalized.structured_content
-            if tool.output_schema is not None:
+            # A child's advertised output schema describes successful structured
+            # results. MCP error results commonly carry provider-authored text and
+            # either omit structuredContent or use a small error envelope. Preserve
+            # those results so callers can act on the real provider failure instead
+            # of replacing it with Wright's INVALID_OUTPUT error.
+            if tool.output_schema is not None and not normalized.is_error:
                 try:
                     if structured is None:
                         raise ValidationError(
@@ -696,6 +791,8 @@ class GatewayService:
                         GatewayErrorCode.INVALID_OUTPUT,
                         f"Invalid output from tool: {name}",
                     ) from exc
+            normalized = _sanitize_model_result(tool, normalized)
+            structured = normalized.structured_content
             request.transition(RequestState.SUCCEEDED)
             result_text = _result_text(structured or raw_result)
             self._audit(

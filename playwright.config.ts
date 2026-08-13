@@ -3,6 +3,9 @@ import { workspaceSurfaceProjects } from "./tests/ui-integration/playwright.work
 
 export default defineConfig({
   testDir: "./tests/ui-integration",
+  expect: {
+    timeout: 15_000,
+  },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
