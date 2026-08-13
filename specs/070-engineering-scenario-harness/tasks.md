@@ -166,7 +166,7 @@
 - [x] T075 Run affected web lint/type/Vitest and Loop 070 Playwright journeys.
 - [x] T076 Run schema validation, catalog validation, security/redaction tests, and `git diff --check`.
 - [x] T077 Perform Spec Kit cross-artifact analysis, remediate every critical/high finding, and rerun until clean.
-- [ ] T078 Mark completed tasks and use the Spec Kit implementation commit hook for the Loop 070 evidence state.
+- [x] T078 Mark completed tasks and use the Spec Kit implementation commit hook for the Loop 070 evidence state.
 - [x] T079 Defer the authoritative `scripts/check-dev-merge.sh`, no-ff merge to `dev`, and push until Loop 073 program closeout; keep Loop 070 focused evidence reproducible on the integration branch.
 
 ## Dependencies and execution order
