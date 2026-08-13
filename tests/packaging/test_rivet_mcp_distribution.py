@@ -83,9 +83,7 @@ def test_public_rivet_contract_copies_match_specification() -> None:
         / "_rivet"
         / "contracts"
     )
-    specification_contracts = (
-        ROOT / "specs" / "069-rivet-mcp-gateway" / "contracts"
-    )
+    specification_contracts = ROOT / "specs" / "069-rivet-mcp-gateway" / "contracts"
     for contract in (
         "capability-binding.schema.json",
         "run-manifest.schema.json",
