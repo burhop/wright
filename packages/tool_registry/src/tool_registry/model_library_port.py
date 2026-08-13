@@ -34,12 +34,18 @@ class EngineeringModelApplicationPort(Protocol):
 
     def get_catalog_model(self, model_id: str) -> Mapping[str, Any]: ...
 
+    def list_installations(
+        self, *, model_id: str | None = None, principal_id: str
+    ) -> Mapping[str, Any]: ...
+
     def create_plan(
         self,
         *,
         operation_kind: str,
-        model_id: str,
-        variant_id: str,
+        model_id: str | None = None,
+        variant_id: str | None = None,
+        installation_id: str | None = None,
+        target_installation_id: str | None = None,
         principal_id: str,
     ) -> Mapping[str, Any]: ...
 

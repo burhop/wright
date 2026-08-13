@@ -25,6 +25,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+engineering-models = [
+    "numpy>=1.26,<3",
+]
 runtime = [
     "cryptography>=45,<50",
     "fastapi>=0.115,<1",
@@ -85,11 +88,13 @@ testpaths = [
     "packages/agent_adapters/tests",
     "packages/core/tests",
     "packages/data_vault/tests",
+    "packages/model_registry/tests",
     "packages/tool_registry/tests",
     "packages/workspace_service/tests",
     "tests",
 ]
 markers = [
+    "external_model: explicit opt-in exact-revision public engineering-model validation under .local-run",
     "gateway: provider-neutral GatewayService contract and isolation tests",
     "mcp_protocol: official MCP SDK transport and protocol compatibility tests",
     "rivet_live_ai: explicit opt-in tests that use the local Hermes/Codex subscription; also requires WRIGHT_RIVET_LIVE_AI=1",

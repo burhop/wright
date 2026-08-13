@@ -137,6 +137,7 @@ COPY --chown=agent:agent packages/core/pyproject.toml packages/core/pyproject.to
 COPY --chown=agent:agent packages/agent_adapters/pyproject.toml packages/agent_adapters/pyproject.toml
 COPY --chown=agent:agent packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
 COPY --chown=agent:agent packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
+COPY --chown=agent:agent packages/model_registry/pyproject.toml packages/model_registry/pyproject.toml
 COPY --chown=agent:agent packages/workspace_service/pyproject.toml packages/workspace_service/pyproject.toml
 
 # Sync dependencies using Python 3.13 without dev packages.

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import {
   engineeringModelService,
   type EngineeringModelCatalogResponse,
@@ -25,12 +32,87 @@ function DetailPanel({
   const [installations, setInstallations] = useState<Record<string, string>>(
     {},
   );
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void engineeringModelService
+      .listInstallations(model.model_id)
+      .then((rows) => {
+        if (cancelled) return;
+        setInstallations(
+          Object.fromEntries(
+            rows
+              .filter((row) => !["uninstalled", "missing"].includes(row.state))
+              .sort(
+                (left, right) => left.package_revision - right.package_revision,
+              )
+              .map((row) => [row.variant_id, row.installation_id]),
+          ),
+        );
+      })
+      .catch(() => {
+        // Catalog inspection remains available if durable lifecycle state is unavailable.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [model.model_id]);
+
+  useEffect(() => {
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    closeButtonRef.current?.focus();
+    return () => previousFocusRef.current?.focus();
+  }, []);
+
+  const close = () => {
+    const previousFocus = previousFocusRef.current;
+    onClose();
+    queueMicrotask(() => previousFocus?.focus());
+  };
+
+  const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
+    ).filter((element) => !element.hasAttribute("hidden"));
+    if (!focusable.length) {
+      event.preventDefault();
+      dialogRef.current?.focus();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="engineering-model-detail-title"
       data-testid="engineering-model-detail"
+      tabIndex={-1}
+      onKeyDown={handleDialogKeyDown}
       style={{
         position: "fixed",
         inset: "var(--space-xl)",
@@ -55,10 +137,11 @@ function DetailPanel({
           <ModelReadinessBadge readiness={model.readiness} />
         </div>
         <button
+          ref={closeButtonRef}
           type="button"
           data-testid="model-detail-close"
           aria-label="Close model details"
-          onClick={onClose}
+          onClick={close}
         >
           Close
         </button>
@@ -107,7 +190,7 @@ function DetailPanel({
               <ModelResourceSummary variant={variant} />
               {model.readiness === "approved" &&
               model.blockers.length === 0 &&
-              variant.compatibility?.state !== "incompatible" ? (
+              variant.compatibility?.state === "compatible" ? (
                 <EngineeringModelInstallFlow
                   modelId={model.model_id}
                   variantId={variant.variant_id}

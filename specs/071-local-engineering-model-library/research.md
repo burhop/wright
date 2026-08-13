@@ -130,7 +130,20 @@ Research used primary product, format, security, and standards sources plus Wrig
 - TensorFlow SavedModel is a legacy, framework-specific runtime requiring a separately approved adapter/dependency plan.
 - A deterministic labelled test vector and CPU resource envelope must be produced against the exact artifact rather than inferred from the example.
 
-**Decision**: Evaluation-only at planning time. It is useful as a realistic acquisition/trust candidate but is not installable until every Gate D blocker closes. The architecture does not depend on it.
+**Decision**: Evaluation-only. It is useful as a realistic acquisition/trust candidate, but the standalone selected-artifact license evidence, legacy TensorFlow SavedModel boundary, runtime footprint, and deterministic vectors did not close safely. The architecture does not depend on it.
+
+### Approved replacement: `peterdsharpe/NeuralFoil`
+
+**Exact revision**: `bb8a775199d1dafb5f410e68e027ba6eca1af9bc` (NeuralFoil 0.3.3)
+
+**Decision evidence**:
+
+- Public, ungated, MIT-licensed source with an immutable revision and publisher-maintained golden vector.
+- The selected package is only `LICENSE.txt`, `model/nn-medium.npz`, and `model/scaled_input_distribution.npz`: 112,237 bytes total with exact SHA-256 digests recorded in Gate D. Checkout line-ending conversion is not trusted; immutable raw-source bytes are authoritative.
+- Wright's reviewed adapter uses optional NumPy, `np.load(..., allow_pickle=False)`, exact array keys/shapes, finite-number validation, bounded direct-Kulfan input, and private JSON stdio. It imports or executes no NeuralFoil repository code, AeroSandbox, PyTorch, training code, native library, or remote code.
+- The official medium-model golden vector passed independently through Wright and the published 0.3.3 package at relative tolerance `1e-6`. Acquisition, verified-cache reuse, installation, isolated inference, workspace gateway invocation, export inspection, disable/uninstall, reference archive, purge, resource observation, and cleanup also passed.
+
+**Decision**: Approve `neuralfoil-medium` only for the exact package identity, selected bytes, schema, optional `wright-neuralfoil-numpy` adapter version `1.0.0`, resources, limitations, and vector recorded in Gate D. Hosts without the optional runtime keep the entry inspectable but incompatible. NeuralFoil is an XFoil surrogate, not certification evidence; the first adapter excludes coordinate fitting, compressibility, post-stall, control surfaces, and repository extensions.
 
 ### Alternatives assessed
 

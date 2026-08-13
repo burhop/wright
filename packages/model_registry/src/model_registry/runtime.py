@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import importlib.util
 import inspect
 import json
 import math
@@ -889,21 +890,38 @@ def current_runtime_platform() -> tuple[str, str]:
 def built_in_runtime_registry() -> RuntimeAdapterRegistry:
     system, architecture = current_runtime_platform()
     child = Path(__file__).with_name("affine_runtime.py")
-    return RuntimeAdapterRegistry(
-        (
+    registrations = [
+        AdapterRegistration(
+            adapter_id="wright-deterministic",
+            adapter_version="1.0.0",
+            contract_version="1.0",
+            command=(sys.executable, "-I", str(child)),
+            formats=frozenset({"wright-affine-json"}),
+            tasks=frozenset({"predict"}),
+            platforms=frozenset({system}),
+            architectures=frozenset({architecture}),
+            execution_providers=frozenset({"cpu"}),
+        )
+    ]
+    if importlib.util.find_spec("numpy") is not None:
+        registrations.append(
             AdapterRegistration(
-                adapter_id="wright-deterministic",
+                adapter_id="wright-neuralfoil-numpy",
                 adapter_version="1.0.0",
                 contract_version="1.0",
-                command=(sys.executable, "-I", str(child)),
-                formats=frozenset({"wright-affine-json"}),
-                tasks=frozenset({"predict"}),
+                command=(
+                    sys.executable,
+                    "-I",
+                    str(Path(__file__).with_name("neuralfoil_runtime.py")),
+                ),
+                formats=frozenset({"numpy-npz"}),
+                tasks=frozenset({"airfoil_aerodynamics"}),
                 platforms=frozenset({system}),
                 architectures=frozenset({architecture}),
                 execution_providers=frozenset({"cpu"}),
-            ),
+            )
         )
-    )
+    return RuntimeAdapterRegistry(registrations)
 
 
 __all__ = [

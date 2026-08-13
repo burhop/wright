@@ -7,7 +7,7 @@ import os
 import shutil
 import uuid
 import asyncio
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Callable
 
@@ -15,8 +15,10 @@ import psutil
 from data_vault import ModelArtifactStore, ModelRepository
 from model_registry.catalog import ModelCatalog, ModelCatalogError, ModelCatalogFilters
 from model_registry.generated import affine_artifacts
+from model_registry.http_source import HttpPackageArtifactSource
 from model_registry.lifecycle import (
     DiskReservationManager,
+    LifecycleFailure,
     MappingArtifactSource,
     ModelInstallLifecycle,
     ModelMaintenanceLifecycle,
@@ -27,6 +29,7 @@ from model_registry.planning import (
     ModelPlanError,
     confirm_effect_plan,
     create_effect_plan,
+    create_maintenance_effect_plan,
 )
 from model_registry.offline_source import (
     OfflinePackageError,
@@ -35,7 +38,7 @@ from model_registry.offline_source import (
 )
 from model_registry.policy import HostObservation
 from model_registry.gateway_provider import engineering_model_tool_name
-from model_registry.models import canonical_digest
+from model_registry.models import ModelPackage, canonical_digest
 from model_registry.runtime import (
     RuntimeFailure,
     RuntimeProgress,
@@ -124,7 +127,7 @@ class EngineeringModelService:
             self.maintenance = ModelMaintenanceLifecycle(
                 repository=repository, store=artifact_store, clock=self.clock
             )
-        self._authorized_exports: dict[str, str] = {}
+        self._authorized_exports: dict[str, tuple[str, datetime]] = {}
 
     def list_catalog(
         self,
@@ -181,6 +184,40 @@ class EngineeringModelService:
                 "Choose a model from the active offline catalog snapshot.",
             ) from error
 
+    def list_installations(
+        self, *, model_id: str | None = None, principal_id: str
+    ) -> dict[str, Any]:
+        repository, _ = self._require_lifecycle()
+        rows = tuple(
+            row
+            for row in repository.list_installations()
+            if model_id is None or row["model_id"] == model_id
+        )
+        installations: list[dict[str, Any]] = []
+        for row in rows:
+            projection = {
+                "installation_id": row["installation_id"],
+                "model_id": row["model_id"],
+                "package_revision": row["package_revision"],
+                "variant_id": row["variant_id"],
+                "manifest_digest": row["manifest_digest"],
+                "state": row["state"],
+                "active_revision": bool(row["active_revision"]),
+                "runtime_adapter_id": row["runtime_adapter_id"],
+                "runtime_adapter_version": row["runtime_adapter_version"],
+                "standard_test_evidence_id": row.get("standard_test_evidence_id"),
+                "installed_at": self._time_projection(row["installed_at"]),
+                "last_verified_at": (
+                    self._time_projection(row["last_verified_at"])
+                    if row.get("last_verified_at")
+                    else None
+                ),
+            }
+            installations.append(
+                {key: value for key, value in projection.items() if value is not None}
+            )
+        return {"installations": installations}
+
     def _require_lifecycle(self) -> tuple[ModelRepository, ModelInstallLifecycle]:
         if self.repository is None or self.lifecycle is None:
             raise EngineeringModelPortError(
@@ -207,20 +244,261 @@ class EngineeringModelService:
             )
         return entry.package
 
+    def _create_maintenance_plan(
+        self,
+        *,
+        operation_kind: str,
+        installation_id: str,
+        target_installation_id: str | None,
+        principal_id: str,
+        now: datetime | None = None,
+        ttl: timedelta = timedelta(minutes=10),
+    ) -> ModelEffectPlan:
+        repository, store, maintenance = self._require_maintenance()
+        installation = repository.get_installation(installation_id)
+        if installation is None:
+            raise EngineeringModelPortError(
+                "installation_not_found",
+                "The model installation was not found.",
+                "Choose a current exact installation.",
+            )
+        observed = now or self.clock()
+        snapshot = repository.removal_snapshot(installation_id, at=observed)
+        assert snapshot is not None
+        artifacts = tuple(snapshot["artifacts"])
+        target = (
+            repository.get_installation(target_installation_id)
+            if target_installation_id
+            else None
+        )
+        target_snapshot = (
+            repository.removal_snapshot(target_installation_id, at=observed)
+            if target_installation_id and target is not None
+            else None
+        )
+        blockers: list[dict[str, str]] = []
+
+        def block(category: str, message: str, recovery: str) -> None:
+            blockers.append(
+                {"category": category, "message": message, "recovery": recovery}
+            )
+
+        state = str(installation["state"])
+        if operation_kind == "disable" and state in {"uninstalled", "missing"}:
+            block(
+                "installation_not_found",
+                "An uninstalled or missing revision cannot be disabled.",
+                "Choose a currently installed revision.",
+            )
+        elif operation_kind == "uninstall" and state not in {
+            "disabled",
+            "uninstalled",
+        }:
+            block(
+                "installation_enabled",
+                "The installation must be disabled before uninstall.",
+                "Preview and confirm disable first.",
+            )
+        elif operation_kind == "purge":
+            preview = maintenance.preview_purge(installation_id)
+            for item in preview["blockers"]:
+                block(
+                    "reference_blocked",
+                    str(
+                        item.get("message")
+                        or "Verified content is still referenced or leased."
+                    ),
+                    "Detach or archive the exact reference, or release the lease, then create a fresh purge plan.",
+                )
+        elif operation_kind == "export":
+            if state in {"uninstalled", "missing"}:
+                block(
+                    "installation_not_found",
+                    "The installed model is unavailable for export.",
+                    "Choose a verified installed revision.",
+                )
+            try:
+                package, variant = self._installation_package(installation)
+            except EngineeringModelPortError as error:
+                block(error.category, str(error), error.recovery)
+            else:
+                if (
+                    package.source.access in {"gated", "private"}
+                    or package.license.redistribution != "allowed"
+                    or any(not item.redistributable for item in variant.artifacts)
+                ):
+                    block(
+                        "export_forbidden",
+                        "The exact package is not approved for redistribution.",
+                        "Keep it local or obtain an independently reviewed redistribution decision.",
+                    )
+                if any(
+                    item.get("state") != "verified"
+                    or not store.has_verified(str(item["content_digest"]))
+                    for item in artifacts
+                ):
+                    block(
+                        "artifact_missing",
+                        "One or more exact export artifacts are unavailable.",
+                        "Repair the installation before exporting it.",
+                    )
+        elif operation_kind in {"update", "rollback"}:
+            if target is None or target_installation_id is None:
+                block(
+                    "installation_not_found",
+                    "The exact target installation was not found.",
+                    "Choose an installed tested target revision.",
+                )
+            elif (
+                target["model_id"] != installation["model_id"]
+                or not installation["active_revision"]
+                or target["active_revision"]
+            ):
+                block(
+                    "stale_binding",
+                    "The current and target revision relationship is stale.",
+                    "Reload the active revision and choose its exact inactive target.",
+                )
+            elif operation_kind == "update" and target["state"] != "ready":
+                block(
+                    "test_failed",
+                    "The successor must pass its exact standard test before update activation.",
+                    "Run the mandatory standard test against the successor first.",
+                )
+            elif operation_kind == "rollback" and (
+                target_snapshot is None
+                or not target_snapshot["artifacts"]
+                or any(
+                    item.get("state") != "verified"
+                    or not store.has_verified(str(item["content_digest"]))
+                    for item in target_snapshot["artifacts"]
+                )
+            ):
+                block(
+                    "source_unavailable",
+                    "The exact rollback content is not available in verified cache.",
+                    "Restore or reacquire the exact predecessor before rollback.",
+                )
+
+        references: list[dict[str, str]] = [
+            {
+                "kind": "current_installation",
+                "owner_id": installation_id,
+                "effect": "retain",
+            },
+            {
+                "kind": "installation_state",
+                "owner_id": canonical_digest(
+                    {
+                        "installation_id": installation_id,
+                        "state": state,
+                        "active": bool(installation["active_revision"]),
+                    }
+                ),
+                "effect": "retain",
+            },
+        ]
+        if target is not None:
+            references.append(
+                {
+                    "kind": "target_state",
+                    "owner_id": canonical_digest(
+                        {
+                            "installation_id": target_installation_id,
+                            "state": target["state"],
+                            "active": bool(target["active_revision"]),
+                        }
+                    ),
+                    "effect": "retain",
+                }
+            )
+        for item in snapshot["references"]:
+            references.append(
+                {
+                    "kind": f"reference_{item['kind']}",
+                    "owner_id": str(item["reference_id"]),
+                    "effect": "block" if item["state"] == "active" else "retain",
+                }
+            )
+        plan_artifacts = (
+            tuple(target_snapshot["artifacts"])
+            if operation_kind == "rollback" and target_snapshot is not None
+            else artifacts
+        )
+        return create_maintenance_effect_plan(
+            operation_kind=operation_kind,
+            installation=installation,
+            target_installation=target,
+            artifacts=plan_artifacts,
+            snapshot_id=self.catalog.snapshot.snapshot_id,
+            principal_id=principal_id,
+            now=observed,
+            ttl=ttl,
+            blockers=tuple(blockers),
+            references=tuple(references),
+            reclaimable_bytes=int(snapshot["reclaimable_bytes"]),
+        )
+
     def create_plan(
         self,
         *,
         operation_kind: str,
-        model_id: str,
-        variant_id: str,
+        model_id: str | None = None,
+        variant_id: str | None = None,
+        installation_id: str | None = None,
+        target_installation_id: str | None = None,
         principal_id: str,
     ) -> dict[str, Any]:
         repository, _ = self._require_lifecycle()
+        maintenance_kinds = {
+            "update",
+            "rollback",
+            "export",
+            "disable",
+            "uninstall",
+            "purge",
+        }
+        if operation_kind in maintenance_kinds:
+            if not installation_id:
+                raise EngineeringModelPortError(
+                    "installation_not_found",
+                    "This maintenance plan requires an exact installation.",
+                    "Choose the installation to change.",
+                )
+            try:
+                plan = self._create_maintenance_plan(
+                    operation_kind=operation_kind,
+                    installation_id=installation_id,
+                    target_installation_id=target_installation_id,
+                    principal_id=principal_id,
+                )
+            except (LifecycleFailure, ModelPlanError, ValueError) as error:
+                raise EngineeringModelPortError(
+                    getattr(error, "code", "plan_invalid"),
+                    str(error),
+                    "Reload the exact installation state and create a fresh plan.",
+                ) from error
+            repository.save_plan(
+                plan_id=plan.plan_id,
+                principal_id=plan.principal_id,
+                plan_digest=plan.plan_digest,
+                state=plan.state,
+                plan=plan.model_dump(mode="json", exclude_none=True),
+                created_at=plan.created_at,
+                expires_at=plan.expires_at,
+            )
+            return plan.model_dump(mode="json", exclude_none=True)
         if operation_kind not in {"install", "import"}:
             raise EngineeringModelPortError(
                 "operation_unsupported",
-                "This lifecycle operation is not available in the install slice.",
-                "Choose install or offline import.",
+                "This lifecycle operation is not supported.",
+                "Choose a published engineering-model operation.",
+            )
+        if not model_id or not variant_id:
+            raise EngineeringModelPortError(
+                "plan_invalid",
+                "Install plans require an exact model and variant.",
+                "Choose an approved model variant.",
             )
         package = self._entry_package(model_id)
         cached = {
@@ -378,6 +656,20 @@ class EngineeringModelService:
     ) -> dict[str, Any]:
         repository, lifecycle = self._require_lifecycle()
         plan = self._load_plan(plan_id, principal_id)
+        if plan.operation_kind in {
+            "update",
+            "rollback",
+            "export",
+            "disable",
+            "uninstall",
+            "purge",
+        }:
+            return self._confirm_maintenance_plan(
+                plan,
+                principal_id=principal_id,
+                plan_digest=plan_digest,
+                trace_id=trace_id,
+            )
         import_path: Path | None = None
         if plan.operation_kind == "import":
             import_path = self._import_path(plan.plan_id)
@@ -414,6 +706,18 @@ class EngineeringModelService:
             operation_kind=plan.operation_kind,
             cached_digests=cached,
         )
+        source = None
+        if import_path is None:
+            if package.source.kind == "wright":
+                source = MappingArtifactSource(affine_artifacts(package))
+            elif package.source.kind == "https" and package.source.access == "public":
+                source = HttpPackageArtifactSource()
+            else:
+                raise EngineeringModelPortError(
+                    "source_unavailable",
+                    "No reviewed source adapter is enabled for this package.",
+                    "Use an approved public HTTPS or offline package source.",
+                )
         try:
             confirmed = confirm_effect_plan(
                 plan,
@@ -436,19 +740,13 @@ class EngineeringModelService:
                 "The plan was already used or changed.",
                 "Create and review a fresh plan.",
             )
-        if plan.operation_kind != "import" and package.source.kind != "wright":
-            raise EngineeringModelPortError(
-                "source_unavailable",
-                "No reviewed source adapter is enabled for this package.",
-                "Use an approved offline package or keep the entry evaluation-only.",
-            )
         try:
             if import_path is not None:
                 operation = lifecycle.import_archive(
                     confirmed, import_path, trace_id=trace_id
                 )
             else:
-                source = MappingArtifactSource(affine_artifacts(package))
+                assert source is not None
                 operation = lifecycle.install(
                     confirmed, package, source, trace_id=trace_id
                 )
@@ -462,6 +760,209 @@ class EngineeringModelService:
             if import_path is not None:
                 import_path.unlink(missing_ok=True)
         return self._operation_projection(operation)
+
+    @staticmethod
+    def _plan_reference_owner(plan: ModelEffectPlan, kind: str) -> str | None:
+        return next(
+            (item.owner_id for item in plan.references if item.kind == kind), None
+        )
+
+    def _confirm_maintenance_plan(
+        self,
+        plan: ModelEffectPlan,
+        *,
+        principal_id: str,
+        plan_digest: str,
+        trace_id: str,
+    ) -> dict[str, Any]:
+        repository, _ = self._require_lifecycle()
+        installation_id = self._plan_reference_owner(plan, "current_installation")
+        target_installation_id = self._plan_reference_owner(plan, "target_installation")
+        if installation_id is None:
+            raise EngineeringModelPortError(
+                "plan_invalid",
+                "The maintenance plan does not identify its exact installation.",
+                "Create and review a fresh plan.",
+            )
+        try:
+            current = self._create_maintenance_plan(
+                operation_kind=plan.operation_kind,
+                installation_id=installation_id,
+                target_installation_id=target_installation_id,
+                principal_id=principal_id,
+                now=plan.created_at,
+                ttl=plan.expires_at - plan.created_at,
+            )
+            confirmed = confirm_effect_plan(
+                plan,
+                principal_id=principal_id,
+                plan_digest=plan_digest,
+                now=self.clock(),
+                current_plan=current,
+            )
+        except (LifecycleFailure, ModelPlanError, ValueError) as error:
+            raise EngineeringModelPortError(
+                getattr(error, "code", "plan_invalidated"),
+                str(error),
+                "Reload current state and create a fresh maintenance plan.",
+            ) from error
+        if not repository.transition_plan(
+            plan.plan_id,
+            expected_state="confirmable",
+            state="confirmed",
+            trace_id=trace_id,
+        ):
+            raise EngineeringModelPortError(
+                "plan_invalidated",
+                "The plan was already used or changed.",
+                "Create and review a fresh plan.",
+            )
+        return self._execute_maintenance_plan(
+            confirmed,
+            installation_id=installation_id,
+            target_installation_id=target_installation_id,
+            principal_id=principal_id,
+            trace_id=trace_id,
+        )
+
+    def _execute_maintenance_plan(
+        self,
+        plan: ModelEffectPlan,
+        *,
+        installation_id: str,
+        target_installation_id: str | None,
+        principal_id: str,
+        trace_id: str,
+    ) -> dict[str, Any]:
+        repository, _, maintenance = self._require_maintenance()
+        operation_id = f"operation-{plan.plan_digest[:24]}"
+        existing = repository.get_operation(operation_id)
+        if existing is not None:
+            return self._operation_projection(existing)
+        repository.create_operation(
+            operation_id=operation_id,
+            plan_id=plan.plan_id,
+            plan_digest=plan.plan_digest,
+            kind=plan.operation_kind,
+            trace_id=trace_id,
+            created_at=self.clock(),
+        )
+        repository.transition_operation(
+            operation_id,
+            expected_state="prepared",
+            state="running",
+            phase="applying",
+            progress={
+                "completed_items": 0,
+                "total_items": 1,
+                "completed_bytes": 0,
+                "maximum_bytes": sum(item.maximum_bytes for item in plan.effects),
+                "message": f"Applying confirmed {plan.operation_kind} effects.",
+            },
+            updated_at=self.clock(),
+            trace_id=trace_id,
+        )
+        try:
+            if plan.operation_kind == "disable":
+                result = maintenance.disable(installation_id)
+            elif plan.operation_kind == "uninstall":
+                result = maintenance.uninstall(installation_id)
+            elif plan.operation_kind == "purge":
+                result = maintenance.purge(installation_id)
+            elif plan.operation_kind == "update":
+                if target_installation_id is None:
+                    raise LifecycleFailure(
+                        "plan_invalidated", "The update target is unavailable"
+                    )
+                result = maintenance.activate_successor(
+                    installation_id, target_installation_id
+                )
+                if result.get("state") == "blocked":
+                    raise LifecycleFailure(
+                        str(result.get("category") or "update_blocked"),
+                        str(result.get("message") or "Update activation was blocked"),
+                    )
+            elif plan.operation_kind == "rollback":
+                if target_installation_id is None:
+                    raise LifecycleFailure(
+                        "plan_invalidated", "The rollback target is unavailable"
+                    )
+                result = maintenance.prepare_rollback(
+                    installation_id, target_installation_id
+                )
+            elif plan.operation_kind == "export":
+                result = self._create_offline_export_unchecked(
+                    installation_id,
+                    principal_id=principal_id,
+                    trace_id=trace_id,
+                )
+            else:  # pragma: no cover - guarded by the validated plan model
+                raise LifecycleFailure(
+                    "operation_unsupported", "Maintenance operation is unsupported"
+                )
+            cleanup_state = str(result.get("cleanup_state") or "not_needed")
+            repository.transition_operation(
+                operation_id,
+                expected_state="running",
+                state="succeeded",
+                phase="complete",
+                progress={
+                    "completed_items": 1,
+                    "total_items": 1,
+                    "completed_bytes": sum(
+                        item.exact_bytes or 0 for item in plan.effects
+                    ),
+                    "maximum_bytes": sum(item.maximum_bytes for item in plan.effects),
+                    "message": f"Confirmed {plan.operation_kind} effects completed.",
+                },
+                result=result,
+                cleanup_state=cleanup_state,
+                updated_at=self.clock(),
+                trace_id=trace_id,
+            )
+        except (EngineeringModelPortError, LifecycleFailure, ValueError) as error:
+            code = getattr(
+                error, "category", getattr(error, "code", "maintenance_failed")
+            )
+            terminal = (
+                "blocked"
+                if code
+                in {
+                    "installation_enabled",
+                    "reference_blocked",
+                    "source_unavailable",
+                    "stale_binding",
+                    "test_failed",
+                }
+                else "failed"
+            )
+            repository.transition_operation(
+                operation_id,
+                expected_state="running",
+                state=terminal,
+                phase=terminal,
+                progress={
+                    "completed_items": 0,
+                    "total_items": 1,
+                    "completed_bytes": 0,
+                    "maximum_bytes": sum(item.maximum_bytes for item in plan.effects),
+                    "message": f"Confirmed {plan.operation_kind} effects did not complete.",
+                },
+                failure={
+                    "category": code,
+                    "message": str(error),
+                    "recovery": "Reload exact state, inspect cleanup, and create a fresh plan.",
+                },
+                cleanup_state=(
+                    "residue" if plan.operation_kind == "purge" else "not_needed"
+                ),
+                updated_at=self.clock(),
+                trace_id=trace_id,
+            )
+        row = repository.get_operation(operation_id)
+        if row is None:  # pragma: no cover - durable repository invariant
+            raise RuntimeError("Model maintenance operation persistence failed")
+        return self._operation_projection(row)
 
     @staticmethod
     def _time_projection(value: Any) -> str:
@@ -630,35 +1131,11 @@ class EngineeringModelService:
         principal_id: str,
         trace_id: str,
     ) -> dict[str, Any]:
-        _, _, maintenance = self._require_maintenance()
-        try:
-            if action == "disable":
-                result = maintenance.disable(installation_id)
-            elif action == "uninstall":
-                result = maintenance.uninstall(installation_id)
-            elif action == "purge":
-                result = maintenance.purge(installation_id)
-            elif action == "update":
-                if not target_installation_id:
-                    raise ValueError("A tested successor installation is required")
-                result = maintenance.activate_successor(
-                    installation_id, target_installation_id
-                )
-            elif action == "rollback":
-                if not target_installation_id:
-                    raise ValueError("A rollback installation is required")
-                result = maintenance.prepare_rollback(
-                    installation_id, target_installation_id
-                )
-            else:
-                raise ValueError("Maintenance action is invalid")
-        except ValueError as error:
-            raise EngineeringModelPortError(
-                getattr(error, "code", "maintenance_failed"),
-                str(error),
-                "Review current state, references, evidence, and the exact target.",
-            ) from error
-        return result
+        raise EngineeringModelPortError(
+            "effect_plan_required",
+            f"The {action} action requires an exact reviewed effect plan.",
+            "Create the maintenance plan, review every effect, then confirm it once.",
+        )
 
     def set_model_reference_state(
         self, reference_id: str, *, state: str, principal_id: str
@@ -674,6 +1151,15 @@ class EngineeringModelService:
             ) from error
 
     def create_offline_export(
+        self, installation_id: str, *, principal_id: str, trace_id: str
+    ) -> dict[str, Any]:
+        raise EngineeringModelPortError(
+            "effect_plan_required",
+            "Offline export requires an exact reviewed effect plan.",
+            "Create an export plan, review redistribution and bytes, then confirm it once.",
+        )
+
+    def _create_offline_export_unchecked(
         self, installation_id: str, *, principal_id: str, trace_id: str
     ) -> dict[str, Any]:
         repository, store, _ = self._require_maintenance()
@@ -731,7 +1217,10 @@ class EngineeringModelService:
             owner_id=artifact_id,
             created_at=self.clock(),
         )
-        self._authorized_exports[artifact_id] = principal_id
+        self._authorized_exports[artifact_id] = (
+            principal_id,
+            self.clock() + timedelta(minutes=10),
+        )
         return {
             "artifact_id": artifact_id,
             "sha256": result.archive_sha256,
@@ -740,9 +1229,20 @@ class EngineeringModelService:
         }
 
     def read_offline_export(self, artifact_id: str, *, principal_id: str) -> bytes:
-        _, store, _ = self._require_maintenance()
+        repository, store, _ = self._require_maintenance()
+        authorization = self._authorized_exports.get(artifact_id)
+        if authorization is None and artifact_id.startswith("export-"):
+            durable = repository.find_export_authorization(artifact_id)
+            if durable is not None:
+                authorization = (
+                    str(durable["principal_id"]),
+                    datetime.fromtimestamp(durable["updated_at"] / 1000, UTC)
+                    + timedelta(minutes=10),
+                )
         if (
-            self._authorized_exports.get(artifact_id) != principal_id
+            authorization is None
+            or authorization[0] != principal_id
+            or self.clock() >= authorization[1]
             or not artifact_id.startswith("export-")
             or len(artifact_id) > 128
         ):
@@ -761,7 +1261,22 @@ class EngineeringModelService:
         return target.read_bytes()
 
     def _installation_package(self, installation: dict[str, Any]):
-        package = self._entry_package(str(installation["model_id"]))
+        try:
+            package = self._entry_package(str(installation["model_id"]))
+        except EngineeringModelPortError:
+            package = None
+        if package is None or (
+            package.package_revision != int(installation["package_revision"])
+            or package.digest != installation["manifest_digest"]
+        ):
+            try:
+                package = ModelPackage.model_validate(installation.get("package"))
+            except ValueError as error:
+                raise EngineeringModelPortError(
+                    "stale_binding",
+                    "The exact installed package declaration is unavailable.",
+                    "Restore the installation database backup or reinstall the exact revision.",
+                ) from error
         if (
             package.package_revision != int(installation["package_revision"])
             or package.digest != installation["manifest_digest"]

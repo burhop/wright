@@ -3,6 +3,7 @@ import {
   engineeringModelService,
   type EngineeringModelMaintenanceStatus,
   type EngineeringModelOfflineExport,
+  type EngineeringModelPlan,
   type EngineeringModelUpdateComparison,
 } from "../../services/engineering-model-service";
 
@@ -27,6 +28,9 @@ export function EngineeringModelMaintenance({
     useState<EngineeringModelUpdateComparison | null>(null);
   const [offlineExport, setOfflineExport] =
     useState<EngineeringModelOfflineExport | null>(null);
+  const [pendingPlan, setPendingPlan] = useState<EngineeringModelPlan | null>(
+    null,
+  );
   const [rollbackTarget, setRollbackTarget] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -76,22 +80,50 @@ export function EngineeringModelMaintenance({
     }
   };
 
-  const maintain = async (
-    action: "disable" | "uninstall" | "purge" | "rollback",
+  const prepare = async (
+    action: "disable" | "uninstall" | "purge" | "rollback" | "export",
     target?: string,
   ) => {
     setBusy(true);
     setError(null);
     try {
-      const result = await engineeringModelService.maintainInstallation(
-        installationId,
-        action,
-        target,
+      setPendingPlan(
+        await engineeringModelService.createMaintenancePlan(
+          installationId,
+          action,
+          target,
+        ),
       );
-      setMaintenance((current) => ({
-        ...(current ?? { blockers: [], references: [] }),
-        ...result,
-      }));
+      complete();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Maintenance failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirm = async () => {
+    if (!pendingPlan || pendingPlan.state !== "confirmable") return;
+    setBusy(true);
+    setError(null);
+    try {
+      const operation = await engineeringModelService.confirmPlan(
+        pendingPlan.plan_id,
+        pendingPlan.plan_digest,
+      );
+      if (operation.state !== "succeeded") {
+        throw new Error(
+          operation.failure?.message ??
+            `The ${pendingPlan.operation_kind} operation did not complete.`,
+        );
+      }
+      if (pendingPlan.operation_kind === "export") {
+        setOfflineExport(
+          operation.result as unknown as EngineeringModelOfflineExport,
+        );
+      }
+      setPendingPlan(null);
+      await load();
       complete();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Maintenance failed.");
@@ -128,21 +160,6 @@ export function EngineeringModelMaintenance({
       setError(
         cause instanceof Error ? cause.message : "Reference update failed.",
       );
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const createExport = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      setOfflineExport(
-        await engineeringModelService.createOfflineExport(installationId),
-      );
-      complete();
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Export failed.");
     } finally {
       setBusy(false);
     }
@@ -191,7 +208,7 @@ export function EngineeringModelMaintenance({
       <button
         type="button"
         disabled={busy || !rollbackTarget}
-        onClick={() => void maintain("rollback", rollbackTarget)}
+        onClick={() => void prepare("rollback", rollbackTarget)}
       >
         Prepare rollback
       </button>
@@ -200,14 +217,14 @@ export function EngineeringModelMaintenance({
         <button
           type="button"
           disabled={busy || maintenance?.state === "disabled"}
-          onClick={() => void maintain("disable")}
+          onClick={() => void prepare("disable")}
         >
           Disable installation
         </button>
         <button
           type="button"
           disabled={busy || maintenance?.state !== "disabled"}
-          onClick={() => void maintain("uninstall")}
+          onClick={() => void prepare("uninstall")}
         >
           Uninstall but retain verified bytes
         </button>
@@ -216,7 +233,7 @@ export function EngineeringModelMaintenance({
           disabled={
             busy || maintenance?.state !== "uninstalled" || blockers.length > 0
           }
-          onClick={() => void maintain("purge")}
+          onClick={() => void prepare("purge")}
         >
           Purge verified bytes
         </button>
@@ -251,9 +268,54 @@ export function EngineeringModelMaintenance({
         </div>
       ) : null}
 
-      <button type="button" disabled={busy} onClick={() => void createExport()}>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => void prepare("export")}
+      >
         Create offline export
       </button>
+      {pendingPlan ? (
+        <section aria-label="Review exact maintenance effects">
+          <h5>Review {pendingPlan.operation_kind} before confirmation</h5>
+          <ul>
+            {pendingPlan.effects.map((effect, index) => (
+              <li key={`${effect.kind}-${index}`}>
+                {effect.description} Maximum bytes: {effect.maximum_bytes}.{" "}
+                {effect.reversible ? "Reversible." : "Not reversible."}
+              </li>
+            ))}
+          </ul>
+          {pendingPlan.blockers.length ? (
+            <div role="alert">
+              <p>This plan cannot be confirmed:</p>
+              <ul>
+                {pendingPlan.blockers.map((blocker) => (
+                  <li key={`${blocker.category}-${blocker.message}`}>
+                    {blocker.message} {blocker.recovery}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          <p>Rollback: {pendingPlan.rollback}</p>
+          <p>Cleanup: {pendingPlan.cleanup}</p>
+          <button
+            type="button"
+            disabled={busy || pendingPlan.state !== "confirmable"}
+            onClick={() => void confirm()}
+          >
+            Confirm {pendingPlan.operation_kind}
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => setPendingPlan(null)}
+          >
+            Cancel review
+          </button>
+        </section>
+      ) : null}
       {offlineExport ? (
         <p role="status">
           Export {offlineExport.artifact_id} is ready ({offlineExport.size}{" "}

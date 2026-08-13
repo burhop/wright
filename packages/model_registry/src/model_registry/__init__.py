@@ -34,6 +34,7 @@ from .planning import (
     ModelPlanError as ModelPlanError,
     confirm_effect_plan as confirm_effect_plan,
     create_effect_plan as create_effect_plan,
+    create_maintenance_effect_plan as create_maintenance_effect_plan,
 )
 from .runtime import (
     AdapterDescriptor as AdapterDescriptor,
@@ -96,6 +97,7 @@ __all__ = [
     "canonical_json",
     "confirm_effect_plan",
     "create_effect_plan",
+    "create_maintenance_effect_plan",
     "evaluate_test_vector",
     "run_package_conformance",
     "schema_root",

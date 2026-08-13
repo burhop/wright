@@ -16,7 +16,7 @@ from packaging.version import InvalidVersion, Version
 
 from .models import ModelPackage
 
-SAFE_FORMATS = frozenset({"onnx", "safetensors", "wright-affine-json"})
+SAFE_FORMATS = frozenset({"onnx", "safetensors", "numpy-npz", "wright-affine-json"})
 UNSAFE_SUFFIXES = frozenset(
     {
         ".bat",

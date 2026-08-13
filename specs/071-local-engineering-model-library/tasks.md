@@ -197,28 +197,28 @@
 
 ## Phase 8: Cross-story journeys, external evidence, and hardening
 
-- [ ] T097 Add mocked Playwright journeys for an instrumented under-two-minute no-download decision path, offline discovery, blocked candidate, install/cancel/recovery, test/enable, update/rollback, export, and reference-blocked purge in `tests/ui-integration/engineering-model-library.spec.ts`.
-- [ ] T098 Add keyboard-only, focus trap/restore, live-region, non-color status, narrow-width, and 200% zoom coverage with no serious/critical findings in `tests/ui-integration/engineering-model-library.spec.ts`.
-- [ ] T099 Add local FastAPI + deterministic source + isolated adapter + gateway + real Rivet worker lifecycle coverage in `tests/e2e/test_engineering_model_library.py`.
-- [ ] T100 Add hostile manifest/archive/source/adapter/API concurrency, physical-actuation rejection, structured logging/tracing, field-bound, and redaction coverage in `tests/security/test_engineering_model_boundaries.py`.
-- [ ] T101 Add performance tests for 1,000-entry discovery under 500 ms p95, 100-file planning/manifest validation under one second p95, 1,000-artifact validation, cancellation delivery, gateway overhead, and bounded evidence in `packages/model_registry/tests/test_performance.py`.
-- [ ] T102 Add migration 15-to-16, existing Gateway/MCP/Rivet, conversational model setup, backup/restore, native package, and Docker compatibility regressions in `tests/compatibility/test_engineering_model_compatibility.py`.
-- [ ] T103 Resolve Gate D using primary sources and actual artifacts: approve PointNet only if every condition passes, otherwise select and validate a safer public external engineering model; record the decision in `specs/071-local-engineering-model-library/contracts/gate-d-decision.md` and `docs/models/local-engineering-models.md`.
-- [ ] T104 Run the goal-authorized bounded exact-revision public external-model probe under `.local-run/`, exercise catalog-through-offline-removal lifecycle with real vectors, and record artifact/runtime/vector/cleanup evidence without staging payloads in `docs/model-evidence/external-model-validation-2026-08-13.md`.
-- [ ] T105 Add no-model-weight, unsafe-format, source-code, secret, raw-path, runtime-command, and physical-actuation public artifact scans in `tests/security/test_engineering_model_distribution.py`.
-- [ ] T106 Add wheel/sdist/runtime-package assertions for model schemas/catalog/docs-required resources and absence of payloads in `tests/packaging/test_engineering_model_package.py`.
+- [x] T097 Add mocked Playwright journeys for an instrumented under-two-minute no-download decision path, offline discovery, blocked candidate, install/cancel/recovery, test/enable, update/rollback, export, and reference-blocked purge in `tests/ui-integration/engineering-model-library.spec.ts`.
+- [x] T098 Add keyboard-only, focus trap/restore, live-region, non-color status, narrow-width, and 200% zoom coverage with no serious/critical findings in `tests/ui-integration/engineering-model-library.spec.ts`.
+- [x] T099 Add local FastAPI + deterministic source + isolated adapter + gateway + real Rivet worker lifecycle coverage in `tests/e2e/test_engineering_model_library.py`.
+- [x] T100 Add hostile manifest/archive/source/adapter/API concurrency, physical-actuation rejection, structured logging/tracing, field-bound, and redaction coverage in `tests/security/test_engineering_model_boundaries.py`.
+- [x] T101 Add performance tests for 1,000-entry discovery under 500 ms p95, 100-file planning/manifest validation under one second p95, 1,000-artifact validation, cancellation delivery, gateway overhead, and bounded evidence in `packages/model_registry/tests/test_performance.py`.
+- [x] T102 Add migration 15-to-16, existing Gateway/MCP/Rivet, conversational model setup, backup/restore, native package, and Docker compatibility regressions in `tests/compatibility/test_engineering_model_compatibility.py`.
+- [x] T103 Resolve Gate D using primary sources and actual artifacts: approve PointNet only if every condition passes, otherwise select and validate a safer public external engineering model; record the decision in `specs/071-local-engineering-model-library/contracts/gate-d-decision.md` and `docs/models/local-engineering-models.md`.
+- [x] T104 Run the goal-authorized bounded exact-revision public external-model probe under `.local-run/`, exercise catalog-through-offline-removal lifecycle with real vectors, and record artifact/runtime/vector/cleanup evidence without staging payloads in `docs/model-evidence/external-model-validation-2026-08-13.md`.
+- [x] T105 Add no-model-weight, unsafe-format, source-code, secret, raw-path, runtime-command, and physical-actuation public artifact scans in `tests/security/test_engineering_model_distribution.py`.
+- [x] T106 Add wheel/sdist assertions for packaged model schemas/catalog resources, require the repository model guide/evidence documents, and prove distribution artifacts contain no model payloads in `tests/packaging/test_engineering_model_package.py`.
 
 ---
 
 ## Phase 9: Focused validation and handoff
 
-- [ ] T107 Run affected Python Ruff lint/format and resolve all findings under `packages/model_registry/`, `packages/data_vault/`, `packages/workspace_service/`, `packages/tool_registry/`, and `apps/api/`.
-- [ ] T108 Run the model-registry, data-vault, workspace-service, tool-registry, API, E2E, security, compatibility, and packaging focused tests under `packages/`, `apps/api/tests/`, and `tests/`.
-- [ ] T109 Run TypeScript, ESLint, Prettier, Vitest, production build, and Loop 071 Playwright journeys from `apps/web/` and `tests/ui-integration/engineering-model-library.spec.ts`.
-- [ ] T110 Run JSON Schema, docs strict build, bundle/resource, lock/dependency, public leak, and `git diff --check` validation.
-- [ ] T111 Perform Spec Kit cross-artifact analysis across `specs/071-local-engineering-model-library/`, remediate every critical/high finding, and rerun until clean.
-- [ ] T112 Update `docs/engineering-capability-program-progress.md`, mark Loop 071 tasks/spec complete, and commit focused evidence on the integration branch.
-- [ ] T113 Defer the authoritative `scripts/check-dev-merge.sh`, integration-branch push, no-ff merge to `dev`, and `dev` push until Loop 073 closeout.
+- [x] T107 Run affected Python Ruff lint/format and resolve all findings under `packages/model_registry/`, `packages/data_vault/`, `packages/workspace_service/`, `packages/tool_registry/`, and `apps/api/`.
+- [x] T108 Run the model-registry, data-vault, workspace-service, tool-registry, API, E2E, security, compatibility, and packaging focused tests under `packages/`, `apps/api/tests/`, and `tests/`.
+- [x] T109 Run TypeScript, ESLint, Prettier, Vitest, production build, and Loop 071 Playwright journeys from `apps/web/` and `tests/ui-integration/engineering-model-library.spec.ts`.
+- [x] T110 Run JSON Schema, docs strict build, bundle/resource, lock/dependency, public leak, and `git diff --check` validation.
+- [x] T111 Perform Spec Kit cross-artifact analysis across `specs/071-local-engineering-model-library/`, remediate every critical/high finding, and rerun until clean.
+- [x] T112 Update `docs/engineering-capability-program-progress.md`, mark Loop 071 tasks/spec complete, and commit focused evidence on the integration branch.
+- [x] T113 Defer the authoritative `scripts/check-dev-merge.sh`, integration-branch push, no-ff merge to `dev`, and `dev` push until Loop 073 closeout.
 
 ## Dependencies and execution order
 

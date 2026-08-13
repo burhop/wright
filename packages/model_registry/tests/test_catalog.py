@@ -26,6 +26,7 @@ def test_bundled_catalog_resource_has_stable_valid_identity() -> None:
         "blocked-remote-code-model",
         "incompatible-cuda-mesh-model",
         "keras-io-pointnet",
+        "neuralfoil-medium",
         "wright-affine-test",
     )
     generated = catalog.get("wright-affine-test")

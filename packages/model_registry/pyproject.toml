@@ -25,6 +25,11 @@ dependencies = [
     "wright-tool-registry>=0.1.0,<0.2.0",
 ]
 
+[project.optional-dependencies]
+neuralfoil = [
+    "numpy>=1.26,<3",
+]
+
 [tool.uv.sources]
 wright-core = { workspace = true }
 wright-tool-registry = { workspace = true }

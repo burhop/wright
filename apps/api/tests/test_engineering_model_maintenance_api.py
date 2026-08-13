@@ -19,10 +19,61 @@ MAINTENANCE = {
     "references": [],
 }
 
+PLAN = {
+    "schema_version": "1.0",
+    "plan_id": "plan-purge",
+    "plan_digest": "a" * 64,
+    "principal_id": "local-compat",
+    "operation_kind": "purge",
+    "model_id": "wright-affine-test",
+    "package_revision": 1,
+    "variant_id": "json-cpu-f64",
+    "snapshot_id": "bundled-models-1",
+    "manifest_digest": "b" * 64,
+    "effects": [],
+    "blockers": [],
+    "requirements": {},
+    "compatibility": {},
+    "prompts": [],
+    "runtime_requirement": {},
+    "credential_reference_present": False,
+    "references": [],
+    "rollback": "Retain exact content until commit.",
+    "cleanup": "Report residue truthfully.",
+    "created_at": "2026-08-13T12:00:00Z",
+    "expires_at": "2026-08-13T12:10:00Z",
+    "state": "confirmable",
+}
+
 
 @dataclass(slots=True)
 class FakeApplication:
     calls: list[tuple[str, dict[str, Any]]] = field(default_factory=list)
+
+    def create_plan(self, **values):
+        self.calls.append(("create_plan", values))
+        return {**PLAN, "principal_id": values["principal_id"]}
+
+    def list_installations(self, *, model_id, principal_id):
+        self.calls.append(
+            ("list_installations", {"model_id": model_id, "principal_id": principal_id})
+        )
+        return {
+            "installations": [
+                {
+                    "installation_id": "installation-one",
+                    "model_id": "wright-affine-test",
+                    "package_revision": 1,
+                    "variant_id": "json-cpu-f64",
+                    "manifest_digest": "b" * 64,
+                    "state": "ready",
+                    "active_revision": True,
+                    "runtime_adapter_id": "wright-deterministic",
+                    "runtime_adapter_version": "1.0.0",
+                    "installed_at": "2026-08-13T12:00:00Z",
+                }
+            ]
+        }
 
     def get_installation_maintenance(self, installation_id, *, principal_id):
         self.calls.append(("get_installation_maintenance", locals() | {"self": None}))
@@ -123,3 +174,50 @@ def test_maintenance_request_actions_are_bounded() -> None:
         )
     assert bad.status_code == 422
     assert fake.calls == []
+
+
+def test_maintenance_plan_requires_exact_operation_identity() -> None:
+    client, fake = _client()
+    with client:
+        planned = client.post(
+            "/api/v1/engineering-models/plans",
+            json={
+                "operation_kind": "purge",
+                "installation_id": "installation-one",
+            },
+        )
+        ambiguous = client.post(
+            "/api/v1/engineering-models/plans",
+            json={
+                "operation_kind": "purge",
+                "installation_id": "installation-one",
+                "model_id": "wright-affine-test",
+            },
+        )
+        missing_target = client.post(
+            "/api/v1/engineering-models/plans",
+            json={
+                "operation_kind": "rollback",
+                "installation_id": "installation-one",
+            },
+        )
+
+    assert planned.status_code == 200
+    assert ambiguous.status_code == 422
+    assert missing_target.status_code == 422
+    assert fake.calls[0][0] == "create_plan"
+    assert fake.calls[0][1]["installation_id"] == "installation-one"
+
+
+def test_installation_listing_rehydrates_opaque_durable_state() -> None:
+    client, fake = _client()
+    with client:
+        response = client.get(
+            "/api/v1/engineering-models/installations",
+            params={"model_id": "wright-affine-test"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["installations"][0]["installation_id"] == "installation-one"
+    assert "path" not in str(response.json()).lower()
+    assert fake.calls[0][0] == "list_installations"

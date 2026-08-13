@@ -143,16 +143,16 @@ Rollback proof is deterministic: signed catalog activation restores the named pr
 
 ### Quickstart acceptance rerun
 
-| Quickstart section | Evidence status | Result |
-|---|---|---|
-| 1. Bundled catalog | Deterministic | Passed offline discovery, source labeling, compatibility/recovery reasons, and zero-process/zero-user-state mutation tests. |
-| 2. Signed update and rollback | Deterministic | Passed activation, restart, rollback, adversarial-envelope, interrupted-write, and user-state preservation tests. |
-| 3. Onshape evidence | Deterministic metadata | Passed distinct identity, vendor source, official-preview, prerequisite, and unvalidated-limitation checks; no endpoint contact occurred. |
-| 4. Safe configuration import | Deterministic | Passed Claude, VS Code, plain-server, malformed, mixed, duplicate, secret-bearing, shell-like, and oversized input coverage with zero preview effects. |
-| 5. Exact preflights | Deterministic | Passed local-package, remote-endpoint, host-bridge, missing-requirement, stale-observation, blocked-record, digest, and material-change coverage. |
-| 6. Apply, validate, workspace | Deterministic | Passed all three backends through ordered effects, MCP lifecycle validation, workspace-A-only availability, no invocation authority, and rollback/residue checks. |
-| 7. User journey/accessibility | Deterministic | Passed component states, keyboard journeys, focus behavior, live regions, non-color status text, and serious/critical automated accessibility scans. |
-| Optional Onshape live validation | Deferred external | Requires the user to accept external terms and provide permitted credentials. It remains explicitly unvalidated and is not a normal gate. |
+| Quickstart section               | Evidence status        | Result                                                                                                                                                            |
+| -------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Bundled catalog               | Deterministic          | Passed offline discovery, source labeling, compatibility/recovery reasons, and zero-process/zero-user-state mutation tests.                                       |
+| 2. Signed update and rollback    | Deterministic          | Passed activation, restart, rollback, adversarial-envelope, interrupted-write, and user-state preservation tests.                                                 |
+| 3. Onshape evidence              | Deterministic metadata | Passed distinct identity, vendor source, official-preview, prerequisite, and unvalidated-limitation checks; no endpoint contact occurred.                         |
+| 4. Safe configuration import     | Deterministic          | Passed Claude, VS Code, plain-server, malformed, mixed, duplicate, secret-bearing, shell-like, and oversized input coverage with zero preview effects.            |
+| 5. Exact preflights              | Deterministic          | Passed local-package, remote-endpoint, host-bridge, missing-requirement, stale-observation, blocked-record, digest, and material-change coverage.                 |
+| 6. Apply, validate, workspace    | Deterministic          | Passed all three backends through ordered effects, MCP lifecycle validation, workspace-A-only availability, no invocation authority, and rollback/residue checks. |
+| 7. User journey/accessibility    | Deterministic          | Passed component states, keyboard journeys, focus behavior, live regions, non-color status text, and serious/critical automated accessibility scans.              |
+| Optional Onshape live validation | Deferred external      | Requires the user to accept external terms and provide permitted credentials. It remains explicitly unvalidated and is not a normal gate.                         |
 
 SC-009's five-person moderated usability target also remains unvalidated until the study occurs. Automated journey and accessibility evidence is not represented as a substitute for human study evidence.
 
@@ -327,8 +327,8 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - [x] `speckit-checklist`: 40/40 identity, source/license, artifact safety, runtime/gateway, lifecycle/recovery, UX, compatibility, and extension requirements-quality checks pass.
 - [x] `speckit-tasks`: 113 dependency-ordered setup, foundation, five-story, cross-story hardening, external-evidence, and focused-gate tasks generated with tests-first checkpoints.
 - [x] `speckit-analyze` and remediation: all 63 buildable FR/NFR/SC items map to 113 unique tasks with no placeholders, unmapped tasks, or constitution conflicts. Repaired the external-model completion condition, `BaseTool` and API-port boundaries, structured logging/tracing coverage, adapter verify/progress, seeded limitation-aware vectors, complete plan effects, cache-cleanup recovery, 1,000-entry performance scale, and deterministic material-versus-observation evidence digests; repeat analysis has no critical/high findings.
-- [ ] `speckit-implement`: T001-T096 are complete. Public schemas, immutable domain/policy values, migration 16, transaction-safe persistence, content-addressed artifact storage/recovery, generated fixtures, boundary observability, offline catalog/UI, exact effect plans, safe acquisition/import/export, durable atomic installation, isolated runtime verification, mandatory evidence, workspace-scoped gateway projection, real Rivet execution, semantic update/rollback, reference-safe removal, and duplicate-safe extension/conformance interfaces are implemented; cross-story journeys, external evidence, and hardening remain.
-- [ ] Focused, integration, UI, packaging, and documentation verification
+- [x] `speckit-implement`: all T001-T113 are complete. Public schemas, immutable domain/policy values, migration 16, transaction-safe persistence, content-addressed artifact storage/recovery, generated fixtures, boundary observability, offline catalog/UI, exact effect plans, safe acquisition/import/export, durable atomic installation and maintenance, isolated runtime verification, mandatory evidence, workspace-scoped gateway projection, real Rivet execution, semantic update/rollback, reference-safe removal, duplicate-safe extension/conformance interfaces, cross-story journeys, Gate D external evidence, and hardening are implemented.
+- [x] Focused, integration, UI, packaging, and documentation verification
 - [ ] Final program exact-tree dev gate after loops 072-073
 - [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
 
@@ -338,7 +338,8 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - Rivet discovers and invokes exact enabled typed model tasks through a generic GatewayCapabilityProvider. It never launches or contacts a model runtime directly, and models are not represented as fake MCP servers.
 - Model install cannot silently install TensorFlow, PyTorch, CUDA, drivers, compilers, services, containers, or global dependencies. Adapters have their own reviewed lifecycle.
 - Generated deterministic affine artifacts exercise the entire normal lifecycle without network, model weights in Git, or an ML framework.
-- `keras-io/PointNet` at exact revision `308acfe5d36d9bb34215d1766f13fac612abe18c` remains evaluation-only until exact license, selected files/digests, TensorFlow adapter, CPU resources, input/output semantics, real vectors, cancellation, cleanup, cache, and removal evidence all pass. The general contracts will not be weakened to admit it.
+- `keras-io/PointNet` at exact revision `308acfe5d36d9bb34215d1766f13fac612abe18c` remains evaluation-only: standalone selected-artifact license evidence, the legacy TensorFlow SavedModel boundary, runtime footprint, and deterministic vector material did not close safely. The general contracts were not weakened to admit it.
+- `neuralfoil-medium` is approved as the safer first public external package only at `peterdsharpe/NeuralFoil` revision `bb8a775199d1dafb5f410e68e027ba6eca1af9bc`, with the exact 1,074-byte MIT license, 103,467-byte medium NPZ, 7,696-byte input-distribution NPZ, reviewed optional `wright-neuralfoil-numpy` 1.0.0 adapter, declared resource ceiling, limitations, and official golden vector.
 
 ### Implementation checkpoints
 
@@ -362,9 +363,19 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - The T079-T096 checkpoint passed 203 Python tests across the complete model registry plus persistence, workspace composition, Gateway compatibility, API, and public CLI; 17 focused Vitest tests, TypeScript compilation, Prettier, Ruff, dependency lock, public leak, and diff checks also passed. ESLint reports only three pre-existing unrelated hook warnings after the new maintenance hook warning was removed.
 - User Story 4 rollback disables the maintenance routes/UI and archives any generated export reference before removing its opaque export file; verified model content remains reference-safe. User Story 5 rollback removes the optional registries/conformance commands without changing the core lifecycle or existing built-in adapter. Gate D remains conservative and no external content or executable adapter entered this checkpoint.
 
+### Implementation checkpoint 8 - cross-story hardening and Gate D closure
+
+- Every update, rollback, export, disable, uninstall, and purge mutation now requires a durable one-use effect plan that revalidates exact current installation/reference state at confirmation. The prior healthy revision remains active until a separately confirmed tested successor is activated; export authorization and installed-package manifests survive restart, and direct legacy mutation methods fail closed.
+- The Engineering Models UI rehydrates durable installations after reopen and presents exact effects, blockers, rollback, cleanup, explicit confirmation, focus trap/restore, live status, non-color state, narrow-width layout, and 200% zoom behavior. Three Chromium journeys cover offline no-download evaluation, cancellation/recovery through maintenance, and keyboard/accessibility behavior with no serious/critical Axe findings.
+- The local system test composes real FastAPI routes, catalog, durable plans, deterministic acquisition, isolated child adapter, workspace binding, `GatewayService`, and the integrity-pinned Rivet worker. Security, compatibility, performance, packaging, and distribution tests cover hostile manifests/archives/redirects/paths, redaction, concurrency, physical-actuation rejection, migration 15-to-16, existing MCP/Rivet/conversational behavior, 1,000-entry/1,000-artifact budgets, cancellation, bounded evidence, wheel/sdist resources, and absence of shipped payloads.
+- Gate D rejected PointNet for the first approved package and selected NeuralFoil 0.3.3. The opt-in ignored `.local-run/` probe acquired only three immutable raw files totaling 112,237 bytes, rejected a line-ending-mutated license representation by digest, installed and verified through content-addressed storage, matched the publisher's official golden values through Wright's independent NumPy adapter, reused cache with zero network effects, invoked the typed workspace capability, inspected export, disabled/uninstalled, proved the export reference blocked purge, archived that reference, purged exactly 112,237 bytes, and left no content or runtime scratch. No downloaded byte, checkout, export, or environment is tracked.
+- Focused Python evidence: model-registry/data-vault 257 passed and 1 skipped; workspace/tool-registry 643 passed and 7 skipped; API/system/security/compatibility/packaging 34 passed; schema/resource/distribution 50 passed; the explicit external lifecycle probe 1 passed. All 322 web tests, the production build, and three Chromium journeys passed. Full ESLint has zero errors and the same three unrelated warnings.
+- Ruff lint/format, Prettier, strict MkDocs, JSON Schema/resource checks, all three catalog-aware bundle verifiers, `uv lock --check`, untracked-aware public leak scan, and `git diff --check` pass. Repeat Spec Kit analysis maps all 63 buildable requirements to 113 tasks and has no critical/high findings or constitution conflict.
+- Rollback disables the model-library composition/navigation and dynamic model provider, then uses the exact planned disable/uninstall/reference archive/purge paths for user-selected state. Migration 16 remains additive and inert; existing conversational provider, MCP catalog, Gateway, and Rivet paths remain unchanged. The authoritative dev gate, integration-branch push, and no-ff merge remain intentionally deferred to Loop 073.
+
 ### Next checkpoint
 
-Commit the verified T079-T096 maintenance/export/extension slice. Then implement T097-T106 cross-story UI/system/security/performance/compatibility/packaging coverage and resolve Gate D with bounded primary-source evidence. Keep the authoritative dev gate deferred to program closeout.
+Commit the verified Loop 071 closeout on the integration branch, then begin Loop 072 Chatter and model-enabled Rivet scenarios. Keep the authoritative dev gate, integration-branch push, and merge deferred to Loop 073 program closeout.
 
 ## Program guardrails
 

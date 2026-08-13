@@ -86,12 +86,78 @@ class EngineeringModelListResponse(BaseModel):
     total: int = Field(ge=0, le=1000)
 
 
+class ModelInstallationResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    installation_id: str = Field(min_length=1, max_length=128)
+    model_id: str = Field(min_length=1, max_length=128)
+    package_revision: int = Field(ge=1)
+    variant_id: str = Field(min_length=1, max_length=128)
+    manifest_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    state: Literal[
+        "installed",
+        "testing",
+        "ready",
+        "unhealthy",
+        "disabled",
+        "uninstalled",
+        "missing",
+    ]
+    active_revision: bool
+    runtime_adapter_id: str = Field(min_length=1, max_length=128)
+    runtime_adapter_version: str = Field(min_length=1, max_length=128)
+    standard_test_evidence_id: str | None = Field(
+        default=None, min_length=1, max_length=128
+    )
+    installed_at: datetime
+    last_verified_at: datetime | None = None
+
+
+class ModelInstallationListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    installations: list[ModelInstallationResponse] = Field(max_length=1000)
+
+
 class ModelPlanRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    operation_kind: Literal["install", "import"]
-    model_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
-    variant_id: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+    operation_kind: Literal[
+        "install",
+        "import",
+        "update",
+        "rollback",
+        "export",
+        "disable",
+        "uninstall",
+        "purge",
+    ]
+    model_id: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+    variant_id: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9._-]{0,95}$")
+    installation_id: str | None = Field(default=None, min_length=1, max_length=128)
+    target_installation_id: str | None = Field(
+        default=None, min_length=1, max_length=128
+    )
+
+    @model_validator(mode="after")
+    def validate_operation_identity(self) -> "ModelPlanRequest":
+        install = self.operation_kind in {"install", "import"}
+        target_required = self.operation_kind in {"update", "rollback"}
+        if install:
+            if not self.model_id or not self.variant_id or self.installation_id:
+                raise ValueError("Install plans require model_id and variant_id only")
+            if self.target_installation_id:
+                raise ValueError("Install plans cannot identify a maintenance target")
+        elif (
+            not self.installation_id
+            or self.model_id
+            or self.variant_id
+            or target_required != bool(self.target_installation_id)
+        ):
+            raise ValueError(
+                "Maintenance plans require the exact installation and only update or rollback require a target"
+            )
+        return self
 
 
 class ModelPlanConfirmationRequest(BaseModel):
@@ -138,7 +204,14 @@ class ModelPlanResponse(BaseModel):
     plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
     principal_id: str = Field(min_length=1, max_length=128)
     operation_kind: Literal[
-        "install", "import", "update", "rollback", "export", "uninstall", "purge"
+        "install",
+        "import",
+        "update",
+        "rollback",
+        "export",
+        "disable",
+        "uninstall",
+        "purge",
     ]
     model_id: str = Field(min_length=1, max_length=128)
     package_revision: int = Field(ge=1)
@@ -385,6 +458,7 @@ __all__ = [
     "ModelEffectResponse",
     "ModelOperationEventResponse",
     "ModelOperationResponse",
+    "ModelInstallationListResponse",
     "ModelPlanConfirmationRequest",
     "ModelPlanRequest",
     "ModelPlanResponse",

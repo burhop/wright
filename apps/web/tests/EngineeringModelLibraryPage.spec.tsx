@@ -13,6 +13,7 @@ vi.mock("../src/services/engineering-model-service", async (loadOriginal) => {
     engineeringModelService: {
       listCatalog: vi.fn(),
       getCatalogModel: vi.fn(),
+      listInstallations: vi.fn(),
     },
   };
 });
@@ -115,6 +116,7 @@ const pointnet = {
 describe("EngineeringModelLibraryPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(engineeringModelService.listInstallations).mockResolvedValue([]);
     vi.mocked(engineeringModelService.listCatalog).mockResolvedValue({
       snapshot,
       models: [generated, pointnet],

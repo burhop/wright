@@ -980,6 +980,7 @@ MIGRATIONS: tuple[Migration, ...] = (
                 package_revision INTEGER NOT NULL CHECK(package_revision >= 1),
                 variant_id TEXT NOT NULL,
                 manifest_digest TEXT NOT NULL CHECK(length(manifest_digest) = 64),
+                package_json TEXT,
                 installation_digest TEXT NOT NULL UNIQUE
                     CHECK(length(installation_digest) = 64),
                 state TEXT NOT NULL CHECK(state IN

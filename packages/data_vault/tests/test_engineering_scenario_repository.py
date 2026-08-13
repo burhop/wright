@@ -60,7 +60,7 @@ def test_migration_15_adds_scenario_report_tables(tmp_path) -> None:
     result = upgrade_database(path, migrations=MIGRATIONS[:14])
     assert result.ending_version == 14
 
-    result = upgrade_database(path)
+    result = upgrade_database(path, migrations=MIGRATIONS[:15])
 
     assert result.applied == (
         {"version": 15, "name": "rivet_engineering_scenario_reports"},

@@ -26,26 +26,26 @@ Add a distinct engineering model library that lets an engineer inspect trust and
 
 **Constraints**: Offline normal gates; no network, credentials, gated terms, paid services, proprietary apps, GPU, hardware, large downloads, global dependency changes, committed weights, or physical actuation; metadata <=64 KiB per record and evidence <=1 MiB per operation; confirmed plans set all byte ceilings; data-only formats; no pickle, repository code, native libraries, plugins, macros, shell commands, or `trust_remote_code`; all paths confined to Wright data root; model and runtime installation remain separate
 
-**Scale/Scope**: Initial catalog with one generated Wright deterministic model, one approved public external engineering model, and representative blocked/gated/incompatible entries; at least 1,000 cached variants and up to 1,000 artifacts per package; concurrent reads and serialized mutations per package/content digest; one deterministic adapter plus public adapter contracts
+**Scale/Scope**: Initial catalog with one generated Wright deterministic model, one approved public external engineering model, and representative blocked/gated/incompatible entries; at least 1,000 cached variants and up to 1,000 artifacts per package; concurrent reads and serialized mutations per package/content digest; one deterministic test adapter plus the reviewed optional `wright-neuralfoil-numpy` adapter and public extension contracts
 
 ## Constitution Check
 
-*GATE: Passed before Phase 0 research and re-checked after Phase 1 design.*
+_GATE: Passed before Phase 0 research and re-checked after Phase 1 design._
 
-| Principle | Evaluation |
-|-----------|------------|
+| Principle                      | Evaluation                                                                                                                                                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Modular monorepo / thin routes | PASS: `model_registry` owns the domain, `data_vault` owns state/bytes, `workspace_service` implements use cases behind a `tool_registry` application port, and routes only validate/delegate to that injected port. |
-| Offline-first | PASS: bundled/cached inspection, import, verification, test, enablement, inference, rollback, and removal remain local. |
-| Native and Docker distribution | PASS: contracts enter existing artifacts; payloads stay in the data root; adapters declare support independently. |
-| Thick base / thin code | PASS: no model, runtime, GPU stack, compiler, or vendor dependency is added merely to pass validation. |
-| Manager neutrality | PASS: Rivet and every manager reach typed model capabilities only through Wright's workspace gateway. |
-| Embedded state | PASS: migration 16 uses SQLite WAL and content uses the local vault; no server database is added. |
-| Authentication / RBAC | PASS: effects, runtime changes, workspace enablement, export, and purge use existing authenticated roles/scopes. |
-| Engineering isolation | PASS: sources acquire declared bytes only; adapters are separate supervised processes with typed I/O; every LLM-facing model capability is a `BaseTool` implementation. |
-| UI / 3-tier tests | PASS: tokenized primitives and patterns receive component, mocked journey, and local system coverage plus `data-testid`. |
-| Observability | PASS: plan, operation, artifact, installation, adapter, binding, request, trace, test, cancellation, cleanup, and reference identities are recorded without secrets. |
-| Phase/manual gates | PASS WITH RECORDED ADVANCE APPROVAL: the durable goal authorizes safe reversible choices and uninterrupted loops; Gate D is explicit and the full merge gate is deferred to program closeout. |
-| Branch discipline | PASS: Loop 071 keeps its numbered identity on the user-approved `codex/rivet-engineering-program`; no work targets `main`. |
+| Offline-first                  | PASS: bundled/cached inspection, import, verification, test, enablement, inference, rollback, and removal remain local.                                                                                             |
+| Native and Docker distribution | PASS: contracts enter existing artifacts; payloads stay in the data root; adapters declare support independently.                                                                                                   |
+| Thick base / thin code         | PASS: no model, runtime, GPU stack, compiler, or vendor dependency is added merely to pass validation.                                                                                                              |
+| Manager neutrality             | PASS: Rivet and every manager reach typed model capabilities only through Wright's workspace gateway.                                                                                                               |
+| Embedded state                 | PASS: migration 16 uses SQLite WAL and content uses the local vault; no server database is added.                                                                                                                   |
+| Authentication / RBAC          | PASS: effects, runtime changes, workspace enablement, export, and purge use existing authenticated roles/scopes.                                                                                                    |
+| Engineering isolation          | PASS: sources acquire declared bytes only; adapters are separate supervised processes with typed I/O; every LLM-facing model capability is a `BaseTool` implementation.                                             |
+| UI / 3-tier tests              | PASS: tokenized primitives and patterns receive component, mocked journey, and local system coverage plus `data-testid`.                                                                                            |
+| Observability                  | PASS: plan, operation, artifact, installation, adapter, binding, request, trace, test, cancellation, cleanup, and reference identities are recorded without secrets.                                                |
+| Phase/manual gates             | PASS WITH RECORDED ADVANCE APPROVAL: the durable goal authorizes safe reversible choices and uninterrupted loops; Gate D is explicit and the full merge gate is deferred to program closeout.                       |
+| Branch discipline              | PASS: Loop 071 keeps its numbered identity on the user-approved `codex/rivet-engineering-program`; no work targets `main`.                                                                                          |
 
 No constitution violation requires an exception.
 
@@ -88,9 +88,11 @@ packages/model_registry/
 |   |-- lifecycle.py
 |   |-- sources.py
 |   |-- runtime.py
+|   |-- neuralfoil_runtime.py
 |   |-- model_tool.py
 |   |-- gateway_provider.py
-|   |-- catalog/*.yaml
+|   |-- catalog/catalog.yaml
+|   |-- catalog/neuralfoil-medium-package.json
 |   `-- schemas/*.json
 `-- tests/
 
@@ -120,8 +122,13 @@ apps/web/src/
 `-- **/*.spec.tsx
 
 tests/e2e/test_engineering_model_library.py
+tests/external/test_neuralfoil_external_model.py
+tests/compatibility/test_engineering_model_compatibility.py
+tests/packaging/test_engineering_model_package.py
+tests/security/test_engineering_model_distribution.py
 tests/ui-integration/engineering-model-library.spec.ts
 docs/models/local-engineering-models.md
+docs/model-evidence/external-model-validation-2026-08-13.md
 docs/engineering-capability-program-progress.md
 ```
 
@@ -138,7 +145,7 @@ Details and primary sources are in [research.md](research.md).
 5. Use staged content-addressed storage: partial state is untrusted, verified objects are immutable by digest, activation is an atomic manifest/reference update, and purge is reference/lease guarded.
 6. Resume HTTP only when validators and declared identity make the range safe; otherwise restart. Offline archives receive identical path, declaration, size, digest, license, compatibility, and vector checks.
 7. Expose models as typed namespaced Wright capabilities through a generic gateway provider. Runtime processes stay private; managers and Rivet never receive their endpoint, token, command, or handle.
-8. Start with a generated affine test model/adapter for exhaustive normal-gate coverage. Keep `keras-io/PointNet` at revision `308acfe5d36d9bb34215d1766f13fac612abe18c` evaluation-only until Gate D proves license files, TensorFlow SavedModel adapter, resources, and real vectors; if it fails, research and validate a safer public external data-only model before Loop 071 closes.
+8. Start with a generated affine test model/adapter for exhaustive normal-gate coverage. Keep `keras-io/PointNet` at revision `308acfe5d36d9bb34215d1766f13fac612abe18c` evaluation-only because its standalone license evidence, legacy TensorFlow SavedModel boundary, resource footprint, and vectors did not close safely. Approve `neuralfoil-medium` only at immutable revision `bb8a775199d1dafb5f410e68e027ba6eca1af9bc`, with three exact MIT/NPZ artifacts and the separately reviewed optional `wright-neuralfoil-numpy` adapter.
 
 ## Phase 1 Design
 
@@ -187,7 +194,7 @@ Details and primary sources are in [research.md](research.md).
 
 ## Gate D Decision
 
-[Gate D](contracts/gate-d-decision.md) approves the provider-neutral contracts, content-addressed storage, strict data-only policy, separate adapter lifecycle, deterministic runtime slice, gateway mediation, and UI/API design. It does **not** yet approve `keras-io/PointNet` as installable: the catalog may show it as evaluation-only while implementation gathers actual license/runtime/resource/vector evidence. If evidence is incomplete, unsafe, or disproportionate, the entry remains blocked and a safer public external candidate must be selected and validated before Loop 071 is complete. No remote code, gated terms, or model weights enter Git.
+[Gate D](contracts/gate-d-decision.md) approves the provider-neutral contracts, content-addressed storage, strict data-only policy, separate adapter lifecycle, deterministic runtime slice, gateway mediation, UI/API design, and `neuralfoil-medium` as the first public external package. Approval is limited to immutable revision `bb8a775199d1dafb5f410e68e027ba6eca1af9bc`, the exact selected MIT license and two NPZ artifacts, the published golden vector, and `wright-neuralfoil-numpy` adapter version `1.0.0`. The adapter uses `allow_pickle=False`, executes no publisher code, and remains an optional NumPy runtime rather than a model-plan side effect. PointNet remains evaluation-only. No remote code, gated terms, or model weights enter Git.
 
 ## Post-design Constitution Re-check
 

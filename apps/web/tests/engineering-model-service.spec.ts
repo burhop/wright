@@ -98,6 +98,7 @@ describe("EngineeringModelService", () => {
       schema_version: "1.0",
       plan_id: "plan-1",
       plan_digest: "a".repeat(64),
+      operation_kind: "install",
       model_id: "wright-affine-test",
       variant_id: "json-cpu-f64",
       state: "confirmable",
@@ -172,6 +173,41 @@ describe("EngineeringModelService", () => {
     expect(mocks.fetch.mock.calls[4][0]).toContain("operation-1/cancel");
     expect(mocks.fetch.mock.calls[5][1].headers["Last-Event-ID"]).toBe("0");
     expect(events).toEqual([{ sequence: 1, operation }]);
+  });
+
+  it("creates maintenance plans without using legacy mutation endpoints", async () => {
+    const plan = {
+      schema_version: "1.0",
+      plan_id: "plan-purge",
+      plan_digest: "a".repeat(64),
+      operation_kind: "purge",
+      model_id: "wright-affine-test",
+      variant_id: "json-cpu-f64",
+      state: "confirmable",
+      effects: [],
+      blockers: [],
+      requirements: {},
+      rollback: "Retain until commit.",
+      cleanup: "Report residue.",
+      expires_at: "2026-08-13T12:10:00Z",
+    };
+    mocks.fetch.mockResolvedValue(
+      new Response(JSON.stringify(plan), { status: 200 }),
+    );
+    const service = new EngineeringModelService();
+
+    await service.createMaintenancePlan("installation-one", "purge");
+
+    expect(mocks.fetch).toHaveBeenCalledWith(
+      "/api/v1/engineering-models/plans",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          operation_kind: "purge",
+          installation_id: "installation-one",
+        }),
+      }),
+    );
   });
 
   it("uses typed standard-test evidence and workspace binding endpoints", async () => {

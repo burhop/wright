@@ -21,10 +21,13 @@ WORKDIR /workspace
 # Copy only workspace config for dependency resolution
 COPY pyproject.toml ./
 COPY apps/api/pyproject.toml apps/api/pyproject.toml
+COPY hermes-plugin-wright/pyproject.toml hermes-plugin-wright/pyproject.toml
 COPY packages/core/pyproject.toml packages/core/pyproject.toml
 COPY packages/agent_adapters/pyproject.toml packages/agent_adapters/pyproject.toml
 COPY packages/tool_registry/pyproject.toml packages/tool_registry/pyproject.toml
 COPY packages/data_vault/pyproject.toml packages/data_vault/pyproject.toml
+COPY packages/model_registry/pyproject.toml packages/model_registry/pyproject.toml
+COPY packages/workspace_service/pyproject.toml packages/workspace_service/pyproject.toml
 
 # Install dependencies (source code is mounted as volumes, not copied)
 RUN uv sync --no-install-workspace

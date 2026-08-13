@@ -85,6 +85,38 @@ def test_install_is_idempotent_and_reuses_verified_content(tmp_path) -> None:
     assert source.calls == calls
 
 
+def test_successor_install_stays_inactive_until_separate_activation(tmp_path) -> None:
+    current = generate_affine_fixture(tmp_path / "current")
+    successor = generate_affine_fixture(tmp_path / "successor", revision=2, scale=3.0)
+    repository, _, service = lifecycle(tmp_path)
+
+    first = service.install(
+        confirmed_plan(current),
+        current.package,
+        MappingArtifactSource(current.artifacts),
+    )
+    second = service.install(
+        confirmed_plan(successor),
+        successor.package,
+        MappingArtifactSource(successor.artifacts),
+    )
+
+    assert first["state"] == "succeeded"
+    assert second["state"] == "succeeded"
+    assert (
+        repository.get_installation(first["result"]["installation_id"])[
+            "active_revision"
+        ]
+        == 1
+    )
+    assert (
+        repository.get_installation(second["result"]["installation_id"])[
+            "active_revision"
+        ]
+        == 0
+    )
+
+
 def test_concurrent_installers_converge_on_one_operation_and_activation(
     tmp_path,
 ) -> None:

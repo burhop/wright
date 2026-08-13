@@ -24,6 +24,7 @@ from tool_registry.model_library_port import (
 from api.schemas.engineering_models import (
     EngineeringModelListResponse,
     EngineeringModelResponse,
+    ModelInstallationListResponse,
     ModelOperationEventResponse,
     ModelOperationResponse,
     ModelMaintenanceRequest,
@@ -184,6 +185,26 @@ def create_engineering_model_plan(
     try:
         return application.create_plan(
             **body.model_dump(), principal_id=_request_actor(request)
+        )
+    except EngineeringModelPortError as error:
+        raise _port_error(error) from error
+
+
+@router.get(
+    "/installations",
+    response_model=ModelInstallationListResponse,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+def list_engineering_model_installations(
+    request: Request,
+    model_id: str | None = Query(default=None, max_length=128),
+    application: EngineeringModelApplicationPort = Depends(
+        get_engineering_model_application
+    ),
+):
+    try:
+        return application.list_installations(
+            model_id=model_id, principal_id=_request_actor(request)
         )
     except EngineeringModelPortError as error:
         raise _port_error(error) from error

@@ -357,8 +357,12 @@ class ModelInstallLifecycle:
                     runtime_adapter_id=variant.runtime.adapter_id,
                     runtime_adapter_version=runtime_adapter_version,
                     state="installed",
-                    active=True,
+                    # The repository atomically makes only the first revision active.
+                    # Later revisions remain candidates until standard test and an
+                    # independently confirmed update plan activate them.
+                    active=None,
                     installed_at=self.clock(),
+                    package=package.model_dump(mode="json", exclude_none=True),
                 )
                 record_artifacts = getattr(
                     self.repository, "record_installation_artifacts", None

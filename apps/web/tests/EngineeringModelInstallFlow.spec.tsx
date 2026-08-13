@@ -26,6 +26,7 @@ const plan: EngineeringModelPlan = {
   schema_version: "1.0",
   plan_id: "plan-1",
   plan_digest: "a".repeat(64),
+  operation_kind: "install",
   model_id: "wright-affine-test",
   variant_id: "json-cpu-f64",
   state: "confirmable",

@@ -282,6 +282,26 @@ class ModelRepository:
             ).fetchone()
         return _decode_row(row, "progress", "result", "failure")
 
+    def find_export_authorization(self, artifact_id: str) -> dict[str, Any] | None:
+        """Resolve a bounded successful export without trusting caller-supplied paths."""
+
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            rows = connection.execute(
+                """SELECT mo.result_json, mo.updated_at, mp.principal_id
+                FROM model_operations mo
+                JOIN model_install_plans mp ON mp.plan_id = mo.plan_id
+                WHERE mo.kind='export' AND mo.state='succeeded'
+                ORDER BY mo.updated_at DESC LIMIT 1000"""
+            ).fetchall()
+        for row in rows:
+            result = json.loads(row["result_json"]) if row["result_json"] else {}
+            if result.get("artifact_id") == artifact_id:
+                return {
+                    "principal_id": row["principal_id"],
+                    "updated_at": row["updated_at"],
+                }
+        return None
+
     def record_content_object(
         self,
         *,
@@ -338,11 +358,13 @@ class ModelRepository:
         runtime_adapter_id: str,
         runtime_adapter_version: str,
         state: str,
-        active: bool,
+        active: bool | None,
         installed_at: datetime,
         predecessor_id: str | None = None,
+        package: Mapping[str, Any] | None = None,
     ) -> None:
         at = _epoch(installed_at)
+        package_json = _bounded_json(package) if package is not None else None
         with connect_state_db(self.db_path) as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
@@ -374,7 +396,16 @@ class ModelRepository:
                 if actual != identity:
                     raise ValueError("Model installation identity is immutable")
                 return
-            if active:
+            effective_active = active
+            if effective_active is None:
+                effective_active = (
+                    connection.execute(
+                        "SELECT 1 FROM model_installations WHERE model_id=? AND active_revision=1",
+                        (model_id,),
+                    ).fetchone()
+                    is None
+                )
+            if effective_active:
                 connection.execute(
                     "UPDATE model_installations SET active_revision=0 WHERE model_id=?",
                     (model_id,),
@@ -382,20 +413,21 @@ class ModelRepository:
             connection.execute(
                 """INSERT INTO model_installations
                 (installation_id, model_id, package_revision, variant_id,
-                 manifest_digest, installation_digest, state, runtime_adapter_id,
+                 manifest_digest, package_json, installation_digest, state, runtime_adapter_id,
                  runtime_adapter_version, active_revision, predecessor_id, installed_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     installation_id,
                     model_id,
                     package_revision,
                     variant_id,
                     manifest_digest,
+                    package_json,
                     installation_digest,
                     state,
                     runtime_adapter_id,
                     runtime_adapter_version,
-                    int(active),
+                    int(effective_active),
                     predecessor_id,
                     at,
                 ),
@@ -407,14 +439,14 @@ class ModelRepository:
                 "SELECT * FROM model_installations WHERE installation_id=?",
                 (installation_id,),
             ).fetchone()
-        return dict(row) if row is not None else None
+        return _decode_row(row, "package")
 
     def list_installations(self) -> tuple[dict[str, Any], ...]:
         with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
             rows = connection.execute(
                 "SELECT * FROM model_installations ORDER BY model_id, installed_at"
             ).fetchall()
-        return tuple(dict(row) for row in rows)
+        return tuple(_decode_row(row, "package") for row in rows)
 
     def activate_installation(
         self,

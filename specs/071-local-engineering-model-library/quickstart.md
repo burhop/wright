@@ -8,9 +8,9 @@ Launch Wright normally with networking disabled. Open **Engineering Models**.
 
 Expected:
 
-- The generated Wright test model, provisional external candidate, and representative blocked entries appear from bundled metadata.
+- The generated Wright test model, approved NeuralFoil package, provisional PointNet candidate, and representative blocked entries appear from bundled metadata.
 - Each card shows engineering task, source revision, trust/readiness, license, artifact size, runtime, platform/resource needs, evidence, and limitations.
-- The PointNet candidate remains **Needs review** until Gate D evidence is complete.
+- NeuralFoil is **Approved** only when the optional NumPy adapter is compatible; otherwise it remains inspectable with a `runtime_missing` explanation. PointNet remains **Needs review**.
 - Opening or filtering the catalog starts no download and no runtime.
 
 ## 2. Generate and import the deterministic fixture
@@ -80,21 +80,26 @@ Expected:
 - secrets, host paths, source tokens, runtime endpoints/commands, mutable authority, and private catalog data are absent;
 - the imported package passes the same verification/test path and produces the same result within declared tolerance.
 
-## 7. External candidate evidence (explicit opt-in only)
+## 7. Approved external package evidence (explicit opt-in only)
 
-External validation is not part of normal gates. If Gate D permits the bounded probe, use `.local-run/` for the exact `keras-io/PointNet` revision and never stage downloaded files.
+External validation is not part of normal gates. To reproduce the completed Gate D evidence, place only the exact immutable raw files from `peterdsharpe/NeuralFoil@bb8a775199d1dafb5f410e68e027ba6eca1af9bc` beneath `.local-run/neuralfoil-selected/` and never stage downloaded files. Install the optional runtime only for the probe, then run:
 
-Required evidence before approval:
+```powershell
+$env:WRIGHT_EXTERNAL_MODEL_ROOT=(Resolve-Path .local-run/neuralfoil-selected).Path
+uv run --with numpy==2.3.2 pytest tests/external/test_neuralfoil_external_model.py -q --basetemp .local-run/neuralfoil-pytest
+```
+
+The probe requires:
 
 1. exact selected paths, byte sizes, and SHA-256 digests match the manifest;
 2. license/attribution and redistribution decision are explicit;
 3. no repository code, pickle, native library, macro, plugin, or undeclared file is needed;
 4. the separately reviewed adapter loads the artifact CPU-only within its resource envelope;
-5. real deterministic vectors validate input shape/order/units, label order, finite output, tolerance, timing, and cleanup;
+5. the publisher's real deterministic direct-Kulfan vector validates input order/units, finite coefficients, tolerance, timing, and cleanup;
 6. offline repeat uses zero network bytes;
 7. removal cleans test state without touching unrelated user content.
 
-If any item fails, keep the candidate evaluation-only or replace it. Do not weaken the general contracts.
+If any item fails, the exact package is no longer supported on that host and must remain unavailable or incompatible. Do not weaken the general contracts. PointNet remains evaluation-only unless a future separate Gate D decision closes its existing blockers.
 
 ## 8. Focused verification
 

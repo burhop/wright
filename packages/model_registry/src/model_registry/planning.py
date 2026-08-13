@@ -83,7 +83,14 @@ class ModelEffectPlan(FrozenModel):
     plan_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
     principal_id: str = Field(min_length=1, max_length=128)
     operation_kind: Literal[
-        "install", "import", "update", "rollback", "export", "uninstall", "purge"
+        "install",
+        "import",
+        "update",
+        "rollback",
+        "export",
+        "disable",
+        "uninstall",
+        "purge",
     ]
     model_id: str = Field(min_length=1, max_length=128)
     package_revision: int = Field(ge=1)
@@ -222,8 +229,14 @@ def create_effect_plan(
         for item in policy.blockers
     )
     categories = {item.category for item in blockers}
-    network_required = package.source.kind in {"https", "hugging_face"} and any(
-        artifact.sha256 not in cached_digests for artifact in variant.artifacts
+    network_required = (
+        operation_kind == "install"
+        and package.source.kind
+        in {
+            "https",
+            "hugging_face",
+        }
+        and any(artifact.sha256 not in cached_digests for artifact in variant.artifacts)
     )
     license_action = (
         "external_acceptance"
@@ -308,6 +321,204 @@ def create_effect_plan(
     return ModelEffectPlan.model_validate(base)
 
 
+def create_maintenance_effect_plan(
+    *,
+    operation_kind: Literal[
+        "update", "rollback", "export", "disable", "uninstall", "purge"
+    ],
+    installation: Mapping[str, Any],
+    artifacts: tuple[Mapping[str, Any], ...],
+    snapshot_id: str,
+    principal_id: str,
+    now: datetime,
+    ttl: timedelta = timedelta(minutes=10),
+    target_installation: Mapping[str, Any] | None = None,
+    blockers: tuple[Mapping[str, str], ...] = (),
+    references: tuple[Mapping[str, str], ...] = (),
+    reclaimable_bytes: int = 0,
+) -> ModelEffectPlan:
+    """Build a deterministic no-side-effect preview for an installed revision."""
+
+    observed = now.astimezone(UTC)
+    if ttl <= timedelta(0) or ttl > timedelta(hours=1):
+        raise ModelPlanError("plan_ttl_invalid", "Plan expiry is invalid")
+    total_bytes = sum(max(0, int(item.get("size", 0))) for item in artifacts)
+    effects: list[PlanEffect]
+    if operation_kind == "export":
+        effects = [
+            PlanEffect(
+                kind="read",
+                description="Read the exact verified installation content for export.",
+                safe_location="Wright engineering-model content store",
+                exact_bytes=total_bytes,
+                maximum_bytes=total_bytes,
+                reversible=True,
+            ),
+            PlanEffect(
+                kind="export",
+                description="Create one deterministic redistribution-approved offline package.",
+                safe_location="Wright engineering-model export store",
+                maximum_bytes=total_bytes + 1024 * 1024,
+                reversible=True,
+            ),
+        ]
+    elif operation_kind == "disable":
+        effects = [
+            PlanEffect(
+                kind="deactivate",
+                description="Disable this exact installation and all of its workspace bindings.",
+                safe_location="Wright engineering-model installation registry",
+                exact_bytes=0,
+                maximum_bytes=0,
+                reversible=True,
+            )
+        ]
+    elif operation_kind == "uninstall":
+        effects = [
+            PlanEffect(
+                kind="deactivate",
+                description="Remove active installation availability without deleting verified bytes.",
+                safe_location="Wright engineering-model installation registry",
+                exact_bytes=0,
+                maximum_bytes=0,
+                reversible=True,
+            ),
+            PlanEffect(
+                kind="retain",
+                description="Retain verified bytes for reproducibility, rollback, and shared references.",
+                safe_location="Wright engineering-model content store",
+                exact_bytes=total_bytes,
+                maximum_bytes=total_bytes,
+                reversible=True,
+            ),
+        ]
+    elif operation_kind == "purge":
+        effects = [
+            PlanEffect(
+                kind="delete",
+                description="Delete only unreferenced verified bytes from this exact installation.",
+                safe_location="Wright engineering-model content store",
+                exact_bytes=max(0, reclaimable_bytes),
+                maximum_bytes=max(0, reclaimable_bytes),
+                reversible=False,
+            )
+        ]
+    elif operation_kind == "rollback":
+        effects = [
+            PlanEffect(
+                kind="cache_reuse",
+                description="Reuse the exact cached predecessor bytes without network transfer.",
+                safe_location="Wright engineering-model content store",
+                exact_bytes=total_bytes,
+                maximum_bytes=total_bytes,
+                reversible=True,
+            ),
+            PlanEffect(
+                kind="write",
+                description="Invalidate old readiness and prepare the predecessor for mandatory retest.",
+                safe_location="Wright engineering-model installation registry",
+                exact_bytes=0,
+                maximum_bytes=0,
+                reversible=True,
+            ),
+        ]
+    else:
+        effects = [
+            PlanEffect(
+                kind="deactivate",
+                description="Deactivate the current tested revision after the successor is rechecked.",
+                safe_location="Wright engineering-model installation registry",
+                exact_bytes=0,
+                maximum_bytes=0,
+                reversible=True,
+            ),
+            PlanEffect(
+                kind="activate",
+                description="Atomically activate the exact tested successor revision.",
+                safe_location="Wright engineering-model installation registry",
+                exact_bytes=0,
+                maximum_bytes=0,
+                reversible=True,
+            ),
+        ]
+
+    parsed_blockers = tuple(
+        PlanBlocker(
+            category=str(item["category"]),
+            message=str(item["message"]),
+            recovery=str(item["recovery"]),
+        )
+        for item in blockers
+    )
+    adapter_version = str(installation.get("runtime_adapter_version") or "unknown")
+    base: dict[str, Any] = {
+        "schema_version": "1.0",
+        "principal_id": principal_id,
+        "operation_kind": operation_kind,
+        "model_id": str(installation["model_id"]),
+        "package_revision": int(installation["package_revision"]),
+        "variant_id": str(installation["variant_id"]),
+        "snapshot_id": snapshot_id,
+        "manifest_digest": str(installation["manifest_digest"]),
+        "effects": [item.model_dump(mode="json") for item in effects],
+        "blockers": [item.model_dump(mode="json") for item in parsed_blockers],
+        "requirements": {
+            "network": "none",
+            "credential": "none",
+            "license_action": "none",
+            "runtime_change": "separate_plan_only",
+        },
+        "compatibility": {
+            "state": "blocked" if parsed_blockers else "compatible",
+            "observed_at": observed.isoformat().replace("+00:00", "Z"),
+            "reasons": [item.message for item in parsed_blockers],
+        },
+        "prompts": [
+            {
+                "prompt_id": f"confirm-{operation_kind}",
+                "message": (
+                    f"Confirm the exact {operation_kind} effects for installation "
+                    f"{installation['installation_id']}."
+                ),
+                "required": True,
+            }
+        ],
+        "runtime_requirement": {
+            "adapter_id": str(installation["runtime_adapter_id"]),
+            "version_specifier": f"=={adapter_version}",
+            "state": "available",
+            "separate_plan_required": False,
+        },
+        "credential_reference_present": False,
+        "references": [dict(item) for item in references],
+        "rollback": (
+            "Keep the previously active revision and verified bytes until this exact "
+            "operation commits; rollback preparation never deactivates the current revision."
+        ),
+        "cleanup": (
+            "Release operation state and report residue truthfully; deletion is limited "
+            "to the exact unreferenced bytes shown in this preview."
+        ),
+        "created_at": observed.isoformat().replace("+00:00", "Z"),
+        "expires_at": (observed + ttl).isoformat().replace("+00:00", "Z"),
+        "state": "blocked" if parsed_blockers else "confirmable",
+    }
+    if target_installation is not None:
+        base["references"].append(
+            {
+                "kind": "target_installation",
+                "owner_id": str(target_installation["installation_id"]),
+                "effect": "retain",
+            }
+        )
+    identity = canonical_digest(base)
+    base["plan_id"] = f"plan-{identity[:24]}"
+    base["plan_digest"] = canonical_digest(
+        {key: value for key, value in base.items() if key != "state"}
+    )
+    return ModelEffectPlan.model_validate(base)
+
+
 def confirm_effect_plan(
     plan: ModelEffectPlan,
     *,
@@ -345,4 +556,5 @@ __all__ = [
     "PlanEffect",
     "confirm_effect_plan",
     "create_effect_plan",
+    "create_maintenance_effect_plan",
 ]

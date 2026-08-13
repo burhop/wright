@@ -34,6 +34,20 @@ entries:
       manifest_digest: 3546ec1598a496d71e7ad5aa215ec10f2b41c06ac75fd5223f26c328cffb90f9
       artifact_set_digest: 31bed5805ed7f530de2df3a368faa0db5d26025e790c081f367ad450aea4f047
 
+  - model_id: neuralfoil-medium
+    package_resource: neuralfoil-medium-package.json
+    maturity: reviewed_external
+    readiness: approved
+    evidence:
+      source: cached
+      license: cached
+      artifact: live
+      runtime: cached
+      compatibility: cached
+      security: cached
+      test: live
+    blockers: []
+
   - model_id: keras-io-pointnet
     display_name: Keras PointNet ModelNet10 Candidate
     description: Public pinned point-cloud classification candidate; evaluation-only until Gate D closes license, runtime, resources, and real-vector evidence.

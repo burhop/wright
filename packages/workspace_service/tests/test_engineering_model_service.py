@@ -7,10 +7,12 @@ import zipfile
 
 import pytest
 from data_vault import ModelArtifactStore, ModelRepository, upgrade_database
-from model_registry import ModelCatalog, canonical_json
+from model_registry import ModelCatalog, ModelPackage, canonical_digest, canonical_json
+from model_registry.catalog import ModelCatalogEntry
 from model_registry.generated import affine_artifacts
 from model_registry.policy import HostObservation
 from model_registry.offline_source import inspect_offline_package
+from tool_registry.model_library_port import EngineeringModelPortError
 from workspace_service.engineering_model_service import EngineeringModelService
 
 
@@ -67,6 +69,20 @@ def test_service_installs_generated_package_only_after_exact_confirmation(
     assert operation["state"] == "succeeded"
     assert operation["result"]["readiness"] == "installed_unverified"
     assert len(list(store.installations_root.glob("*.json"))) == 1
+    restarted = EngineeringModelService(
+        host_observer=HostObservation.reference,
+        repository=ModelRepository(str(database)),
+        artifact_store=ModelArtifactStore(tmp_path / "data"),
+        clock=lambda: datetime(2026, 8, 13, 12, 1, tzinfo=UTC),
+    )
+    durable = restarted.list_installations(
+        model_id="wright-affine-test", principal_id="engineer-1"
+    )
+    assert (
+        durable["installations"][0]["installation_id"]
+        == operation["result"]["installation_id"]
+    )
+    assert "path" not in canonical_json(durable).lower()
 
 
 def test_service_uploads_inspects_and_imports_without_exposing_a_host_path(
@@ -234,33 +250,105 @@ def test_service_export_reference_safe_uninstall_and_purge_round_trip(tmp_path) 
     )
     installation_id = operation["result"]["installation_id"]
 
-    exported = service.create_offline_export(
-        installation_id,
+    bundled = ModelCatalog.load_bundled()
+    bundled_entry = bundled.get("wright-affine-test")
+    assert bundled_entry.package is not None
+    successor_document = bundled_entry.package.model_dump(mode="json")
+    successor_document["package_revision"] = 2
+    successor = ModelPackage.model_validate(successor_document)
+    successor_entry = ModelCatalogEntry(
+        document=bundled_entry.document,
+        package=successor,
+        digest=canonical_digest(successor_document),
+    )
+    service = EngineeringModelService(
+        catalog=ModelCatalog(bundled.snapshot, (successor_entry,)),
+        host_observer=HostObservation.reference,
+        repository=repository,
+        artifact_store=store,
+        clock=lambda: datetime(2026, 8, 13, 12, 0, tzinfo=UTC),
+    )
+
+    with pytest.raises(EngineeringModelPortError) as legacy_export:
+        service.create_offline_export(
+            installation_id,
+            principal_id="engineer-one",
+            trace_id="trace-legacy-export",
+        )
+    assert getattr(legacy_export.value, "category", None) == "effect_plan_required"
+    with pytest.raises(EngineeringModelPortError) as legacy_maintenance:
+        service.maintain_installation(
+            installation_id,
+            action="disable",
+            target_installation_id=None,
+            principal_id="engineer-one",
+            trace_id="trace-legacy-disable",
+        )
+    assert getattr(legacy_maintenance.value, "category", None) == "effect_plan_required"
+
+    export_plan = service.create_plan(
+        operation_kind="export",
+        installation_id=installation_id,
         principal_id="engineer-one",
+    )
+    export_operation = service.confirm_plan(
+        export_plan["plan_id"],
+        principal_id="engineer-one",
+        plan_digest=export_plan["plan_digest"],
         trace_id="trace-export",
     )
-    payload = service.read_offline_export(
+    exported = export_operation["result"]
+    restarted_service = EngineeringModelService(
+        catalog=ModelCatalog(bundled.snapshot, (successor_entry,)),
+        host_observer=HostObservation.reference,
+        repository=ModelRepository(str(database)),
+        artifact_store=ModelArtifactStore(tmp_path / "data"),
+        clock=lambda: datetime(2026, 8, 13, 12, 5, tzinfo=UTC),
+    )
+    payload = restarted_service.read_offline_export(
         exported["artifact_id"], principal_id="engineer-one"
     )
     selected = tmp_path / "selected.wright-model.zip"
     selected.write_bytes(payload)
     assert inspect_offline_package(selected).package.model_id == "wright-affine-test"
     assert "path" not in canonical_json(exported).lower()
+    expired_service = EngineeringModelService(
+        catalog=ModelCatalog(bundled.snapshot, (successor_entry,)),
+        host_observer=HostObservation.reference,
+        repository=ModelRepository(str(database)),
+        artifact_store=ModelArtifactStore(tmp_path / "data"),
+        clock=lambda: datetime(2026, 8, 13, 12, 11, tzinfo=UTC),
+    )
+    with pytest.raises(EngineeringModelPortError) as expired:
+        expired_service.read_offline_export(
+            exported["artifact_id"], principal_id="engineer-one"
+        )
+    assert expired.value.category == "export_not_found"
 
-    service.maintain_installation(
-        installation_id,
-        action="disable",
-        target_installation_id=None,
+    disable_plan = service.create_plan(
+        operation_kind="disable",
+        installation_id=installation_id,
         principal_id="engineer-one",
+    )
+    disabled = service.confirm_plan(
+        disable_plan["plan_id"],
+        principal_id="engineer-one",
+        plan_digest=disable_plan["plan_digest"],
         trace_id="trace-disable",
     )
-    service.maintain_installation(
-        installation_id,
-        action="uninstall",
-        target_installation_id=None,
+    assert disabled["kind"] == "disable"
+    uninstall_plan = service.create_plan(
+        operation_kind="uninstall",
+        installation_id=installation_id,
         principal_id="engineer-one",
+    )
+    uninstalled = service.confirm_plan(
+        uninstall_plan["plan_id"],
+        principal_id="engineer-one",
+        plan_digest=uninstall_plan["plan_digest"],
         trace_id="trace-uninstall",
     )
+    assert uninstalled["kind"] == "uninstall"
     blocked = service.get_installation_maintenance(
         installation_id, principal_id="engineer-one"
     )
@@ -271,13 +359,25 @@ def test_service_export_reference_safe_uninstall_and_purge_round_trip(tmp_path) 
         state="archived",
         principal_id="engineer-one",
     )
-    purged = service.maintain_installation(
-        installation_id,
-        action="purge",
-        target_installation_id=None,
+    purge_plan = service.create_plan(
+        operation_kind="purge",
+        installation_id=installation_id,
         principal_id="engineer-one",
+    )
+    purged = service.confirm_plan(
+        purge_plan["plan_id"],
+        principal_id="engineer-one",
+        plan_digest=purge_plan["plan_digest"],
         trace_id="trace-purge",
     )
     assert purged["state"] == "succeeded"
-    assert purged["reclaimed_bytes"] > 0
+    assert purged["result"]["reclaimed_bytes"] > 0
+    assert {
+        row["kind"]
+        for row in (
+            repository.get_operation(disabled["operation_id"]),
+            repository.get_operation(uninstalled["operation_id"]),
+            repository.get_operation(purged["operation_id"]),
+        )
+    } == {"disable", "uninstall", "purge"}
     assert not tuple(store.objects_root.glob("sha256/*/*"))

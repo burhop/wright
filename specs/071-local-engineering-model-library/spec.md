@@ -4,7 +4,7 @@
 
 **Created**: 2026-08-13
 
-**Status**: Draft
+**Status**: Complete
 
 **Input**: User description: "Let engineers list, inspect, download or import, verify, install, test, enable, update, roll back, and remove safe local engineering models, beginning with Wright's Chatter model foundation and an appropriately licensed external engineering model, without committing weights or silently executing repository code."
 
@@ -18,7 +18,7 @@
 - **Q: What evidence makes the first external model genuinely supported?** -> **A:** Model-card metadata alone is insufficient. Gate D must approve exact license evidence, immutable files and digests, data-only format, adapter/runtime, resource envelope, honest limitations, and real deterministic test-vector results against the downloaded artifact. Until then the candidate is evaluation-only, and a safer candidate may replace it without changing the library contracts.
 - **Q: How broadly may verified content be shared?** -> **A:** Content may be deduplicated within one Wright-managed user data root while retaining package and workspace references. Private/gated content remains locally access-controlled and is never exported or made visible through another user/workspace merely because its digest matches; public artifacts still require source/license attribution.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Evaluate a model before changing the machine (Priority: P1)
 
@@ -26,7 +26,7 @@ An engineer opens the local engineering model library, filters by engineering ta
 
 **Why this priority**: Engineers need to understand trust, storage, hardware, and usefulness before Wright downloads bytes or installs a runtime.
 
-**Independent Test**: Load a bundled catalog containing a Wright-owned deterministic test model, an approved public point-cloud model, an incompatible variant, a gated model, and an unreviewed-code model; confirm that the library explains which variants are eligible and why without contacting any source.
+**Independent Test**: Load a bundled catalog containing a Wright-owned deterministic test model, the approved public NeuralFoil aerodynamic surrogate, an incompatible variant, a gated model, and an unreviewed-code model; confirm that the library explains which variants are eligible and why without contacting any source.
 
 **Acceptance Scenarios**:
 
@@ -119,7 +119,7 @@ A maintainer can add another model, variant, or runtime adapter through public v
 - Offline import is valid but the required runtime is absent or incompatible.
 - An engineer clears a token or cache while an operation is running.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -193,7 +193,7 @@ A maintainer can add another model, variant, or runtime adapter through public v
 - **Model Reference**: Durable reason an installation or artifact must be preserved, such as a workspace, workflow, run, or offline export.
 - **Model Validation Evidence**: Immutable bounded record of catalog, compatibility, integrity, runtime, test, security, cleanup, and limitation results.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -213,7 +213,7 @@ A maintainer can add another model, variant, or runtime adapter through public v
 ## Assumptions
 
 - Loop 071 establishes the provider-neutral model library and deterministic runtime contract; Loop 072 supplies the production Chatter package and Chatter-aware Rivet scenario.
-- The current public `keras-io/PointNet` repository is a provisional external-candidate baseline because it is public, ungated, small, Apache-2.0-tagged, pinned at an immutable revision, and describes a ModelNet10 point-cloud classification task. Gate D must still approve its license evidence, legacy runtime cost, artifact format, test vectors, and limitations before Wright labels it installable. If it cannot pass safely, Loop 071 must select and validate another public, ungated, permissively licensed, bounded, data-only engineering model rather than treating the deterministic Wright fixture as satisfying the external-model requirement.
+- The public `keras-io/PointNet` baseline remains evaluation-only because its standalone selected-artifact license evidence, legacy TensorFlow SavedModel boundary, resource footprint, and deterministic vectors did not close safely. Gate D instead approves `neuralfoil-medium` at immutable revision `bb8a775199d1dafb5f410e68e027ba6eca1af9bc`: only the MIT license and two exact data-only NPZ artifacts are selected, and Wright's optional NumPy adapter executes no publisher repository code.
 - Models whose public metadata requires repository code, pickle-style deserialization, gated access, unknown terms, or unbounded runtime dependencies remain evaluation-only or blocked even when technically downloadable.
 - Model payloads live in a Wright-managed user data root outside the source tree. Git tracks only manifests, schemas, small generated non-weight fixtures, and bounded evidence.
 - Existing local authentication, secret storage, workspace enablement, gateway policy/review/run authority, content-addressed storage conventions, and durable embedded state remain authoritative boundaries.

@@ -89,6 +89,28 @@ export interface EngineeringModelCatalogQuery {
   limit?: number;
 }
 
+export interface EngineeringModelInstallation {
+  installation_id: string;
+  model_id: string;
+  package_revision: number;
+  variant_id: string;
+  manifest_digest: string;
+  state:
+    | "installed"
+    | "testing"
+    | "ready"
+    | "unhealthy"
+    | "disabled"
+    | "uninstalled"
+    | "missing";
+  active_revision: boolean;
+  runtime_adapter_id: string;
+  runtime_adapter_version: string;
+  standard_test_evidence_id?: string;
+  installed_at: string;
+  last_verified_at?: string;
+}
+
 export interface EngineeringModelEffect {
   kind: string;
   description: string;
@@ -103,6 +125,15 @@ export interface EngineeringModelPlan {
   schema_version: "1.0";
   plan_id: string;
   plan_digest: string;
+  operation_kind:
+    | "install"
+    | "import"
+    | "update"
+    | "rollback"
+    | "export"
+    | "disable"
+    | "uninstall"
+    | "purge";
   model_id: string;
   variant_id: string;
   state: string;
@@ -266,6 +297,19 @@ export class EngineeringModelService {
     return readResponse<EngineeringModelView>(response);
   }
 
+  async listInstallations(
+    modelId?: string,
+  ): Promise<EngineeringModelInstallation[]> {
+    const suffix = modelId ? `?model_id=${encodeURIComponent(modelId)}` : "";
+    const response = await hostAdapter.fetch(
+      this.apiUrl(`/api/v1/engineering-models/installations${suffix}`),
+    );
+    const result = await readResponse<{
+      installations: EngineeringModelInstallation[];
+    }>(response);
+    return result.installations;
+  }
+
   async createPlan(
     modelId: string,
     variantId: string,
@@ -280,6 +324,29 @@ export class EngineeringModelService {
           operation_kind: operationKind,
           model_id: modelId,
           variant_id: variantId,
+        }),
+      },
+    );
+    return readResponse<EngineeringModelPlan>(response);
+  }
+
+  async createMaintenancePlan(
+    installationId: string,
+    operationKind:
+      "update" | "rollback" | "export" | "disable" | "uninstall" | "purge",
+    targetInstallationId?: string,
+  ): Promise<EngineeringModelPlan> {
+    const response = await hostAdapter.fetch(
+      this.apiUrl("/api/v1/engineering-models/plans"),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          operation_kind: operationKind,
+          installation_id: installationId,
+          ...(targetInstallationId
+            ? { target_installation_id: targetInstallationId }
+            : {}),
         }),
       },
     );

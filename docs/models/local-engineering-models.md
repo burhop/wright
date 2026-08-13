@@ -8,6 +8,20 @@ A package is data and metadata, not an installer. It may declare exact model dat
 
 Normal validation is offline and CPU-first. It requires no credential, paid service, proprietary application, GPU, hardware, license acceptance, or physical actuation. Model weights and downloaded model repositories stay outside Git under Wright's owned data root or an ignored `.local-run/` probe root.
 
+## First reviewed external model
+
+The first approved public package is `neuralfoil-medium`, pinned to [`peterdsharpe/NeuralFoil@bb8a775199d1dafb5f410e68e027ba6eca1af9bc`](https://github.com/peterdsharpe/NeuralFoil/tree/bb8a775199d1dafb5f410e68e027ba6eca1af9bc). It estimates bounded subsonic airfoil coefficients from direct eight-weight-per-side Kulfan parameters. The package selects only the MIT license, 103,467-byte medium NPZ weights, and 7,696-byte scaled-input distribution. Wright does not select or execute the repository source, PyTorch `.pth` training checkpoints, AeroSandbox extensions, or any mutable revision.
+
+The adapter requires the separately chosen NumPy runtime extra:
+
+```console
+pip install "wright-engineering[engineering-models]"
+```
+
+Without that extra, the catalog entry remains inspectable but reports `runtime_missing`; installing a model never installs NumPy implicitly. The adapter uses `np.load(..., allow_pickle=False)`, exact array keys and shapes, finite-number checks, a private artifact copy, bounded JSON stdio, deadlines, cancellation, and cleanup. Gate D provenance, digests, limitations, and official golden-vector values are recorded in `specs/071-local-engineering-model-library/contracts/gate-d-decision.md` and the [external validation evidence](../model-evidence/external-model-validation-2026-08-13.md).
+
+NeuralFoil is a physics-informed surrogate primarily trained against XFoil, not certification-grade CFD or experimental evidence. `analysis_confidence` is an out-of-distribution indicator, not a calibrated probability of accuracy. The first Wright adapter deliberately excludes coordinate fitting, compressibility, post-stall, and control-surface features.
+
 ## Author a package
 
 Start from the versioned JSON contracts in `packages/model_registry/src/model_registry/schemas/` and the generated affine example in `packages/model_registry/src/model_registry/catalog/`. A package identity is the exact tuple of model ID, package revision, variant ID, and manifest digest. Never change an existing revision in place.

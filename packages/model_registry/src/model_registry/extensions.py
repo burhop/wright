@@ -147,9 +147,9 @@ def _declarative_predicate(
 def built_in_extension_registries() -> EngineeringExtensionRegistries:
     registries = EngineeringExtensionRegistries()
     registries.sources.register("wright", MappingArtifactSource)
-    registries.adapters.register(
-        built_in_runtime_registry().get("wright-deterministic")
-    )
+    runtime_registry = built_in_runtime_registry()
+    for adapter_id in runtime_registry.versions():
+        registries.adapters.register(runtime_registry.get(adapter_id))
     for name in (
         "exact",
         "absolute_tolerance",
