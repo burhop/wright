@@ -187,7 +187,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 - [x] `speckit-git-feature`: branch `069-rivet-mcp-gateway` created from clean synchronized `dev` at `7093b55`.
 - [x] `speckit-specify`: five prioritized user journeys, 34 functional requirements, nine measurable outcomes, and a 16/16 specification-quality checklist completed in `f01b04b`.
 - [x] `speckit-clarify`: no critical ambiguity required a user question. Safest reversible defaults are explicit for run-bound authority, exact capability binding, stale-review invalidation, existing per-call approval policy, cancellation truthfulness, deterministic normal tests, optional live applications, and closed Gate E.
-- [ ] `speckit-plan` and Gate B decision
+- [x] `speckit-plan` and Gate B decision: native Rivet MCP nodes use an injected Wright provider over an exact-origin loopback bridge; opaque authority is memory-only and bound to one run/workspace/review/binding set; exact external bindings invalidate on workflow, graph, node, schema, server, validation, grant, or policy change; approval remains exact-call and Wright-owned; cancellation revokes authority and explicitly reaches the gateway child request; bounded Run Manifest evidence records truth without credentials.
 - [ ] `speckit-checklist`
 - [ ] `speckit-tasks`
 - [ ] `speckit-analyze` and remediation
@@ -198,7 +198,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 
 ### Next checkpoint
 
-Research Rivet 2's current MCP provider/node contracts and Wright's existing runner/gateway seams from primary sources and repository evidence. Then complete the technical plan, Gate B authority/binding decision, data model, contracts, quickstart, and post-design constitution re-check without granting Rivet independent child-MCP ownership.
+Generate the feature-specific requirements checklist, derive the dependency-ordered task plan from the approved Gate B artifacts, and run the non-destructive cross-artifact analysis. Remediate every material finding before implementation, preserving the injected-provider and Wright-owned gateway boundary.
 
 ## Program guardrails
 

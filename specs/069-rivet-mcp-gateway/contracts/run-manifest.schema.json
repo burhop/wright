@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/rivet-run-manifest-v1.json",
+  "title": "Rivet MCP Run Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "generation",
+    "workspace_id",
+    "session_id",
+    "workflow",
+    "runtime",
+    "review_digest",
+    "binding_set_digest",
+    "policy_snapshot_digest",
+    "authority",
+    "bindings",
+    "child_call_ids",
+    "approval_ids",
+    "artifacts",
+    "started_at",
+    "terminal_state",
+    "redaction_count",
+    "event_truncated",
+    "output_truncated",
+    "trace_id",
+    "manifest_digest"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "run_id": { "$ref": "#/$defs/nonempty" },
+    "generation": { "type": "integer", "minimum": 1 },
+    "workspace_id": { "$ref": "#/$defs/nonempty" },
+    "session_id": { "$ref": "#/$defs/nonempty" },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workflow_id", "revision", "digest", "graph_id"],
+      "properties": {
+        "workflow_id": { "$ref": "#/$defs/nonempty" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "digest": { "$ref": "#/$defs/digest" },
+        "graph_id": { "$ref": "#/$defs/nonempty" }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol_version", "rivet_version", "package_version", "runner_sha256", "source_revision"],
+      "properties": {
+        "protocol_version": { "type": "integer", "minimum": 2 },
+        "rivet_version": { "$ref": "#/$defs/nonempty" },
+        "package_version": { "$ref": "#/$defs/nonempty" },
+        "runner_sha256": { "$ref": "#/$defs/digest" },
+        "source_revision": { "$ref": "#/$defs/nonempty" }
+      }
+    },
+    "review_digest": { "$ref": "#/$defs/digest" },
+    "binding_set_digest": { "$ref": "#/$defs/digest" },
+    "policy_snapshot_digest": { "$ref": "#/$defs/digest" },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_id", "authority_digest", "issued_at", "expires_at"],
+      "properties": {
+        "authority_id": { "$ref": "#/$defs/nonempty" },
+        "authority_digest": { "$ref": "#/$defs/digest" },
+        "issued_at": { "$ref": "#/$defs/timestamp" },
+        "expires_at": { "$ref": "#/$defs/timestamp" },
+        "revoked_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["node_id", "qualified_tool_name", "server_revision", "schema_digest", "validation_evidence_id", "binding_digest"],
+        "properties": {
+          "node_id": { "$ref": "#/$defs/nonempty" },
+          "qualified_tool_name": { "$ref": "#/$defs/nonempty" },
+          "server_revision": { "$ref": "#/$defs/nonempty" },
+          "schema_digest": { "$ref": "#/$defs/digest" },
+          "validation_evidence_id": { "$ref": "#/$defs/nonempty" },
+          "binding_digest": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "child_call_ids": { "type": "array", "items": { "$ref": "#/$defs/nonempty" }, "maxItems": 1000 },
+    "approval_ids": { "type": "array", "items": { "$ref": "#/$defs/nonempty" }, "maxItems": 1000 },
+    "artifacts": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "media_type", "sha256", "bytes", "label"],
+        "properties": {
+          "artifact_id": { "$ref": "#/$defs/nonempty" },
+          "media_type": { "$ref": "#/$defs/nonempty" },
+          "sha256": { "$ref": "#/$defs/digest" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "label": { "$ref": "#/$defs/nonempty" }
+        }
+      }
+    },
+    "started_at": { "$ref": "#/$defs/timestamp" },
+    "completed_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
+    "terminal_state": { "enum": ["running", "cancelling", "cancelled", "succeeded", "failed"] },
+    "reason_code": { "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "type": "null" }] },
+    "cancellation": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["authority_revoked", "child_acknowledged", "residue_state"],
+          "properties": {
+            "authority_revoked": { "type": "boolean" },
+            "child_acknowledged": { "type": "boolean" },
+            "residue_state": { "enum": ["none", "possible", "confirmed"] },
+            "recovery_code": { "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "type": "null" }] }
+          }
+        }
+      ]
+    },
+    "redaction_count": { "type": "integer", "minimum": 0 },
+    "event_truncated": { "type": "boolean" },
+    "output_truncated": { "type": "boolean" },
+    "trace_id": { "$ref": "#/$defs/nonempty" },
+    "manifest_digest": { "$ref": "#/$defs/digest" }
+  },
+  "$defs": {
+    "nonempty": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  }
+}
