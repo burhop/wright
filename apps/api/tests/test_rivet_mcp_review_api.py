@@ -13,7 +13,7 @@ from api.schemas.workspace import (
     RivetMcpBindingSelectionRequest,
     WorkflowReviewRequest,
 )
-from core.rivet_mcp import CapabilityBinding, WorkflowBindingSet
+from core.rivet_mcp import CapabilityBinding, ProviderEvidence, WorkflowBindingSet
 from data_vault import WorkflowReview
 from workspace_service.rivet_capabilities import (
     RivetCapabilityProjection,
@@ -27,6 +27,22 @@ from workspace_service.workflow_operations import (
     WorkflowMcpCapabilityRecord,
     WorkflowMcpNodePreview,
 )
+
+
+def _provider(server_id: str = "alpha") -> ProviderEvidence:
+    return ProviderEvidence(
+        provider_kind="mcp",
+        provider_id=server_id,
+        capability_id=f"{server_id}__inspect",
+        resource_class="small",
+        evidence={
+            "server_id": server_id,
+            "server_revision": f"{server_id}-v1",
+            "tool_name": "inspect",
+            "validation_evidence_id": f"validation-{server_id[0]}",
+            "workspace_grant_digest": "b" * 64,
+        },
+    )
 
 
 def _projection() -> RivetCapabilityProjection:
@@ -49,6 +65,7 @@ def _projection() -> RivetCapabilityProjection:
         compatibility="compatible",
         binding_eligible=True,
         blocking_reasons=(),
+        provider=_provider(),
     )
 
 
@@ -309,6 +326,9 @@ async def test_two_workspace_discovery_and_review_scope_never_crosses_or_starts_
                     else "beta__inspect"
                 ),
                 server_id="alpha" if workspace_id == "workspace-a" else "beta",
+                provider=_provider(
+                    "alpha" if workspace_id == "workspace-a" else "beta"
+                ),
             )
             snapshot = RivetDiscoverySnapshot(
                 workspace_id,
