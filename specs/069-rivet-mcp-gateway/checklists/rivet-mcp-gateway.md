@@ -21,7 +21,7 @@
 - [x] CHK007 Is short-lived authority bounded by an objectively defined run/expiry/revocation lifetime rather than left qualitative? [Clarity, Spec FR-008-FR-009, NFR-001]
 - [x] CHK008 Is workspace-enabled distinguished clearly from installation, health, validation, visibility, review, and invocation approval? [Clarity, Spec FR-001, FR-013-FR-016, Key Entities]
 - [x] CHK009 Is namespace-qualified tool identity defined sufficiently to prevent collisions when server and tool display names overlap? [Clarity, Spec FR-002]
-- [x] CHK010 Is the permitted runtime variability of tool arguments separated unambiguously from prohibited dynamic server/tool selection? [Clarity, Spec FR-005, FR-012-FR-013, Gate B]
+- [x] CHK010 Is the permitted runtime variability of tool arguments separated unambiguously from prohibited dynamic server/tool selection and out-of-scope MCP prompt operations? [Clarity, Spec FR-005, FR-012-FR-013, FR-035, Gate B]
 - [x] CHK011 Is material review-bound data clarified for argument defaults, units, materials, schemas, and policy changes? [Clarity, Spec FR-006-FR-007, Key Entities]
 - [x] CHK012 Are bounded progress, output, evidence, and child-content requirements associated with concrete limits or an authoritative configurable ceiling? [Clarity, Spec FR-017-FR-018, FR-025-FR-026, NFR-004]
 - [x] CHK013 Is cancellation success distinguished explicitly from cancellation requested, cancellation acknowledged, and external cleanup unconfirmed? [Clarity, Spec FR-019-FR-021]

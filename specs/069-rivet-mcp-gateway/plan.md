@@ -154,19 +154,19 @@ The evidence, alternatives, and primary sources are in [research.md](research.md
 - `RivetRunAuthorityService` mints 256-bit opaque tokens with claims for one run, workspace, session, workflow digest/revision, graph, review, binding set, expiry, and allowed node handles.
 - Raw tokens exist only in the API process and the supervised Node process. The request sends the bridge origin, token, authority ID, and non-secret binding handles over the existing one-shot stdin payload. Logs and SQLite receive only token/claim digests.
 - The runner network guard permits only the exact Wright AI bridge origin and exact Wright MCP bridge origin. The injected provider adds the token itself; graph HTTP nodes and project data cannot read it.
-- Each provider operation includes authority ID, run ID, binding handle, request ID, operation, and bounded arguments. Wright ignores graph-supplied workspace/server/tool identities and resolves the handle from authority claims.
+- Each provider operation includes authority ID, run ID, binding handle, request ID, operation, and bounded arguments. A Wright-issued runner grant may contain the exact safe tool label needed for Rivet's in-memory node transform, but the runner never submits a tool namespace as call authority. Wright resolves the handle from authority claims and ignores graph-supplied workspace/server/tool identities.
 - Before every list or call, Wright rechecks expiry/revocation, active run/generation, exact review/binding digest, workspace membership, server enablement, validation/schema/revision identity, and policy. A failed recheck stops before child invocation.
 
 ### Approval, progress, result, and cancellation
 
 - A read-only call proceeds under current gateway policy. If a tool requires approval, the bridge records an exact pending call digest and returns/streams `approval_required`; an existing authenticated Wright approval endpoint can approve only that pending call and argument digest. A workflow review is never converted to a tool approval.
 - Gateway progress is normalized to bounded phases and streamed as newline-delimited JSON from the loopback bridge. The Node provider emits correlated runner progress events without exposing raw child logs.
-- MCP content and structured content are size-limited and returned to the correct node. Errors preserve stable Wright reason codes. Artifacts are represented by Wright vault IDs, media types, digests, and display labels.
+- MCP content and structured content are size-limited and returned to the correct node. Errors preserve stable Wright reason codes. Only already authorized Wright gateway resource identities or content deliberately ingested through the contained `FileVault` may become artifacts; raw child paths, arbitrary URIs, and unvalidated claims are rejected. Artifacts are represented by Wright vault IDs, media types, digests, and display labels.
 - Cancellation first revokes authority, then cancels every active `(session_id, request_id)` through `GatewayService`, then asks the supervised Node tree to stop. The durable manifest records acknowledged/unconfirmed cleanup and ignores completion received after the terminal boundary.
 
 ### Storage and migration
 
-- Additive migration 14 extends workflow reviews with workflow digest, selected graph, binding-set digest, review digest, and policy snapshot identity; it adds immutable binding records, run-manifest records, child-call records, and pending exact-call approvals.
+- Additive migration 14 extends workflow reviews with workflow digest, selected graph, binding-set digest, review digest, and policy snapshot identity; it adds immutable binding records, run-manifest draft/final records, child-call records, and pending exact-call approvals. A draft has immutable identity fields and append-only evidence references; it is finalized exactly once into an immutable terminal manifest. Application startup marks orphaned nonterminal drafts interrupted without reconstructing authority.
 - Existing workflows without MCP nodes remain compatible: their review may be upgraded lazily to a no-binding review digest, and their runner protocol-v1 behavior remains accepted during the migration window.
 - Runtime repository `_ensure` methods mirror migration 14 only for independently created test/workspace state and never destructively rewrite existing rows.
 
@@ -178,7 +178,7 @@ The evidence, alternatives, and primary sources are in [research.md](research.md
 
 ### Test strategy
 
-- Unit/contract: canonical digests, authority claims, expiry/replay/revocation, schema comparison, runner request validation, injected provider behavior, direct-child denial, result bounds, redaction, migrations.
+- Unit/contract: canonical digests, authority claims, expiry/replay/revocation, schema comparison, runner request validation, injected provider behavior, direct-child and MCP-prompt denial, result/artifact bounds, redaction, migrations, structured logs, and OpenTelemetry correlation.
 - Integration: one reviewed graph calls two fake MCP servers with colliding unqualified tool names, progress, one exact approval, structured results, artifacts, audit, and deterministic order.
 - Negative: disabled, cross-workspace, unreviewed, unbound, dynamic-name, stale schema/revision/validation, expired/replayed token, changed arguments after approval, and post-cancellation calls prove zero child receipt.
 - Lifecycle: deterministic panel-backed BREP and host-bridge doubles prove preparation, status, failure, progress, cancellation, and cleanup behind the same bridge contract.

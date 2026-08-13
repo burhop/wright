@@ -37,7 +37,7 @@ Expected:
 
 Expected:
 
-- The runner receives only reserved node handles, the exact loopback bridge origin, and an opaque run token.
+- The runner receives reserved node handles, non-secret exact binding labels/digests for its in-memory transform, the exact loopback bridge origin, and an opaque run token; it receives no child endpoint, command, environment, header, credential, or lifecycle configuration.
 - Both calls appear in gateway audit evidence and fake-child receipt logs with the same workspace/session/run correlation.
 - Approval is required only for Beta and cannot be reused with changed arguments.
 - The terminal Run Manifest identifies the exact review, bindings, child calls, approvals, outputs, and artifacts without containing a usable token or secret.

@@ -126,7 +126,7 @@ An engineer or administrator can inspect a bounded timeline that connects each R
 - **FR-015**: Approval aggregation MAY reduce duplicate prompts only when existing policy declares the calls equivalent; it MUST NOT broaden per-call scope, arguments, duration, or destructive authority.
 - **FR-016**: Non-idempotent or destructive calls MUST retain exact per-call policy and approval evidence even when a workflow-level review exists.
 - **FR-017**: Child progress MUST be projected to the correct Rivet run and node using ordered, bounded events and stable phases.
-- **FR-018**: Structured child results and errors MUST return to the correct node with bounded content, stable reason codes, and artifact references rather than unrestricted filesystem paths.
+- **FR-018**: Structured child results and errors MUST return to the correct node with bounded content, stable reason codes, and Wright-authorized vault/resource artifact references; raw child filesystem paths, arbitrary resource URIs, and unvalidated artifact claims MUST NOT cross the bridge.
 - **FR-019**: Cancellation MUST propagate from the Wright run to the runner and active child call, revoke run authority, block later calls, and record cleanup or residue truthfully.
 - **FR-020**: Late results after cancellation or terminal failure MUST NOT change the terminal state or publish success artifacts.
 - **FR-021**: A timeout, gateway disconnect, child crash, or application-lifecycle failure MUST be attributed to the exact node and boundary and MUST NOT silently retry a non-idempotent call.
@@ -143,6 +143,7 @@ An engineer or administrator can inspect a bounded timeline that connects each R
 - **FR-032**: Existing workflows without MCP nodes MUST retain their current review, execution, result, and rollback behavior.
 - **FR-033**: Existing agent-manager and chat clients MUST continue to use the same gateway policy and workspace boundaries; Rivet MUST not introduce a privileged parallel path.
 - **FR-034**: No workflow or test in this feature may start physical machinery, motion, heat, a spindle, a printer, a robot, or a PLC.
+- **FR-035**: MCP prompt nodes and prompt retrieval MUST fail closed in this tool-execution loop; enabling them requires a separately specified, reviewed, and bound contract rather than inheriting the tool grant.
 
 ### Non-Functional Requirements
 

@@ -166,7 +166,7 @@ The authority token is unrecoverable after process restart. A restarted applicat
 
 ## Decision 9: Protocol versioning and rollback
 
-**Decision**: Introduce runner protocol v2 with an optional `mcp` grant. Protocol v1 remains valid for non-MCP workflows during the transition. An MCP graph without a current v2 grant fails closed. A feature switch can stop discovery, binding issuance, and run authority minting while leaving existing non-MCP workflows and durable history readable.
+**Decision**: Introduce runner protocol v2 with an optional `mcp` tool grant. Protocol v1 remains valid for non-MCP workflows during the transition. An MCP tool graph without a current v2 grant fails closed, and MCP prompt nodes remain denied because this loop has no reviewed prompt contract. A feature switch can stop discovery, binding issuance, and run authority minting while leaving existing non-MCP workflows and durable history readable.
 
 The runner artifact is rebuilt deterministically and its source/build/output digests are updated in the checked-in manifest. Rollback never re-enables direct MCP execution.
 

@@ -92,6 +92,7 @@ Durable exact approval request created only after gateway policy reports require
 - `approval_id`
 - run, authority, node, binding, session, server, tool, and request identities
 - `argument_digest`
+- bounded redacted `argument_summary`; never a credential value or authority-bearing field
 - sorted `required_gates[]`
 - `state`: `pending`, `approved`, `denied`, `expired`, `consumed`, `cancelled`
 - requesting actor, deciding actor, reason, created/expiry/decided/consumed times
@@ -99,9 +100,9 @@ Durable exact approval request created only after gateway policy reports require
 
 Approval can be consumed once by the same run/node/tool/argument digest. Repeated non-idempotent calls need distinct approval records unless existing gateway policy explicitly proves equivalence.
 
-## RunManifest
+## RunManifestDraft and RunManifest
 
-Immutable run identity plus terminal summary. JSON contract is `contracts/run-manifest.schema.json`.
+`RunManifestDraft` is created before launch with immutable run/review/binding/runtime/authority identity fields and append-only evidence references. It may move from `prepared` to `running` or `cancelling`. Exactly one terminal operation finalizes it as the immutable `RunManifest` governed by `contracts/run-manifest.schema.json`. Application startup finalizes any orphaned nonterminal draft as failed/interrupted without recreating an authority.
 
 - schema/protocol/runner versions and source digest
 - run/generation/workspace/session/workflow/revision/digest/graph
@@ -115,6 +116,8 @@ Immutable run identity plus terminal summary. JSON contract is `contracts/run-ma
 - cancellation acknowledgement and residue summary
 - event/output truncation and redaction counters
 - trace ID and manifest digest
+
+Final terminal states are `cancelled`, `succeeded`, and `failed`. A finalized manifest is never updated; late evidence is recorded only as rejected diagnostic audit and cannot enter the manifest or publish an artifact.
 
 ## RivetChildCallRecord
 
@@ -186,3 +189,4 @@ Foreign keys use restrictive deletion for review/run evidence. Workflow deletion
 8. Terminal or revoked authority rejects every later call, and late results cannot change terminal state.
 9. Denied pre-child calls record `child_received=false`.
 10. Existing non-MCP workflows retain behavior during migration and rollback.
+11. A manifest draft finalizes exactly once; a final manifest has a terminal state and cannot accept late child evidence or artifact publication.

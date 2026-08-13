@@ -58,7 +58,7 @@
 
 ### Tests for User Story 1
 
-- [ ] T019 [P] [US1] Add requirement extraction, direct-config rejection, dynamic-tool rejection, duplicate-node, selected-graph, and exact binding validation tests in `packages/workspace_service/tests/test_rivet_capabilities.py`
+- [ ] T019 [P] [US1] Add requirement extraction, direct-config rejection, MCP-prompt rejection, dynamic-tool rejection, duplicate-node, selected-graph, and exact binding validation tests in `packages/workspace_service/tests/test_rivet_capabilities.py`
 - [ ] T020 [P] [US1] Add discovery namespacing, eligibility, bounded schema, validation/grant identity, ambiguity, refresh, and zero-child-start tests in `packages/workspace_service/tests/test_rivet_capability_discovery.py`
 - [ ] T021 [P] [US1] Add review-v2 API contract tests for preview, exact digest approval, stale conflicts, cross-workspace denial, and legacy non-MCP compatibility in `apps/api/tests/test_rivet_mcp_review_api.py`
 - [ ] T022 [P] [US1] Add component tests for binding rows, ambiguity, risk/schema details, stale reasons, keyboard operation, narrow layout, and secret-free text in `apps/web/src/components/chat/RivetWorkflowCapabilities.spec.tsx`
@@ -89,10 +89,10 @@
 
 ### Tests for User Story 2
 
-- [ ] T034 [P] [US2] Add injected-provider discovery/call/structured-result/progress/token-redaction and exact-origin tests in `integrations/rivet/runner/tests/runner-contract.test.mjs`
-- [ ] T035 [P] [US2] Add loopback bridge authentication, audience, request/body/event limits, handle lookup, current-state revalidation, policy denial, and NDJSON result tests in `apps/api/tests/test_rivet_runner_bridge.py`
+- [ ] T034 [P] [US2] Add injected-provider discovery/call/structured-result/progress/token-redaction, MCP-prompt denial, no-tool-namespace submission, and exact-origin tests in `integrations/rivet/runner/tests/runner-contract.test.mjs`
+- [ ] T035 [P] [US2] Add dedicated-loopback bridge authentication, bind isolation, audience, request/body/event limits, handle lookup, current-state revalidation, policy denial, trace/log correlation, and NDJSON result tests in `apps/api/tests/test_rivet_runner_bridge.py`
 - [ ] T036 [P] [US2] Add exact-call approval digest, expiry, changed-argument, one-shot consumption, deny, and no-client-hint tests in `packages/workspace_service/tests/test_rivet_call_approvals.py`
-- [ ] T037 [P] [US2] Add real Node plus two-fake-child gateway integration coverage with colliding names, progress, structured outputs, artifact references, audit, and ordered node attribution in `packages/workspace_service/tests/test_rivet_mcp_execution.py`
+- [ ] T037 [P] [US2] Add real Node plus two-fake-child gateway integration coverage with colliding names, progress, structured outputs, authorized gateway/vault artifact references, raw-path/URI rejection, audit, and ordered node attribution in `packages/workspace_service/tests/test_rivet_mcp_execution.py`
 - [ ] T038 [P] [US2] Add public run/approval API role, workspace, stale-start, response-redaction, and compatibility tests in `apps/api/tests/test_rivet_mcp_run_api.py`
 - [ ] T039 [P] [US2] Add approval-modal and executing-timeline component states with keyboard/focus/live-region coverage in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
 
@@ -101,10 +101,10 @@
 - [ ] T040 [US2] Complete the injected Rivet `MCPProvider`, in-memory node transform, reserved discovery handle, bound tool call, NDJSON parsing, and safe result mapping in `integrations/rivet/runner/src/wright-runner.ts`
 - [ ] T041 [US2] Rebuild and integrity-pin the protocol-v2 worker after provider completion in `integrations/rivet/runner/dist/wright-runner.mjs` and `integrations/rivet/runner/manifest.json`
 - [ ] T042 [P] [US2] Implement exact pending-call approval lifecycle and argument/gate digest validation in `packages/workspace_service/src/workspace_service/rivet_approvals.py`
-- [ ] T043 [US2] Implement bridge discovery/call streams that resolve authority claims, revalidate current bindings, delegate to `GatewayService` with `client_approval_hint=False`, and normalize results/artifacts in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
-- [ ] T044 [US2] Implement the internal loopback bridge application with exact bearer audience, no CORS, bounded NDJSON, safe errors, and active-call cancellation registration in `apps/api/src/api/rivet_runner_bridge.py`
+- [ ] T043 [US2] Implement bridge discovery/call streams that accept no caller tool namespace, resolve authoritative bindings, revalidate current state, delegate to `GatewayService` with `client_approval_hint=False`, accept only Wright-authorized gateway/vault artifacts, and emit structured logs/OpenTelemetry spans in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
+- [ ] T044 [US2] Implement the separately owned `127.0.0.1` ephemeral-port runner bridge application with exact bearer audience/path, no external mounting or CORS, bounded NDJSON, safe errors, active-call registration, and deterministic shutdown in `apps/api/src/api/rivet_runner_bridge.py`
 - [ ] T045 [US2] Extend `RivetRuntimeHost` protocol-v2 request creation, secret registration, exact MCP origin allowance, binding grant, and event validation in `packages/workspace_service/src/workspace_service/rivet_runtime_host.py`
-- [ ] T046 [US2] Extend `WorkspaceWorkflowRunner` start lifecycle to verify review/bindings, create manifest, mint authority, grant MCP only when required, and terminalize/revoke safely in `packages/workspace_service/src/workspace_service/workflow_runner.py`
+- [ ] T046 [US2] Extend `WorkspaceWorkflowRunner` start lifecycle to verify review/bindings, create an immutable-identity manifest draft, reconcile orphaned drafts as interrupted without recreating authority, mint current authority, grant MCP only when required, and terminalize/revoke safely in `packages/workspace_service/src/workspace_service/workflow_runner.py`
 - [ ] T047 [US2] Add exact-call approval list/decision and manifest-safe run response orchestration in `packages/workspace_service/src/workspace_service/workflow_operations.py`
 - [ ] T048 [P] [US2] Extend public approval/run schemas and safe artifact/manifest projections in `apps/api/src/api/schemas/workspace.py`
 - [ ] T049 [US2] Add thin authenticated pending-approval and decision routes while extending start/status/history in `apps/api/src/api/routers/workspace.py`
@@ -130,7 +130,7 @@
 
 ### Implementation for User Story 3
 
-- [ ] T056 [US3] Implement authority-first cancellation, explicit `GatewayService.cancel_request`, bounded acknowledgement, runner termination, and late-result rejection in `packages/workspace_service/src/workspace_service/workflow_runner.py`
+- [ ] T056 [US3] Implement authority-first cancellation, explicit `GatewayService.cancel(session_id, request_id, reason)`, bounded acknowledgement, runner termination, and late-result rejection in `packages/workspace_service/src/workspace_service/workflow_runner.py`
 - [ ] T057 [US3] Add bridge/provider abort propagation and terminal suppression in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py` and `integrations/rivet/runner/src/wright-runner.ts`
 - [ ] T058 [US3] Persist cancellation acknowledgement, residue, recovery code, and immutable terminal manifest evidence in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
 - [ ] T059 [US3] Project cancelling/clean/residue/recovery states through run APIs and `apps/web/src/components/chat/RivetWorkflowRun.tsx`
@@ -171,7 +171,7 @@
 
 ### Tests for User Story 5
 
-- [ ] T068 [P] [US5] Add manifest completeness, canonical digest, restart readability, truncation, artifact reference, and secret-pattern tests in `packages/data_vault/tests/test_rivet_run_manifest.py`
+- [ ] T068 [P] [US5] Add manifest-draft immutable identity, exactly-once terminal finalization, orphaned-restart interruption, canonical digest, truncation, authorized artifact reference, and secret-pattern tests in `packages/data_vault/tests/test_rivet_run_manifest.py`
 - [ ] T069 [P] [US5] Add correlated event ordering, denied-before-child, stale-diff, and recovery projection tests in `packages/workspace_service/tests/test_rivet_run_evidence.py`
 - [ ] T070 [P] [US5] Add run-manifest/history/export API bounds and RBAC tests in `apps/api/tests/test_rivet_mcp_run_api.py`
 - [ ] T071 [P] [US5] Add complete timeline, stale comparison, artifact, redaction, responsive, and accessibility component tests in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
@@ -179,7 +179,7 @@
 
 ### Implementation for User Story 5
 
-- [ ] T073 [US5] Finalize canonical Run Manifest and append-only call/event/approval/artifact persistence with bounded projections in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
+- [ ] T073 [US5] Finalize the canonical Run Manifest exactly once from its immutable-identity draft and complete append-only call/event/approval/authorized-artifact persistence with bounded projections in `packages/data_vault/src/data_vault/rivet_mcp_repository.py`
 - [ ] T074 [US5] Implement reproducibility comparison and actionable stale/recovery summaries in `packages/workspace_service/src/workspace_service/rivet_evidence.py`
 - [ ] T075 [US5] Add authenticated manifest/history/export orchestration and thin API routes in `packages/workspace_service/src/workspace_service/workflow_operations.py` and `apps/api/src/api/routers/workspace.py`
 - [ ] T076 [US5] Implement the accessible correlated run timeline, artifact references, stale comparison, residue, and recovery UI in `apps/web/src/components/chat/RivetWorkflowRun.tsx`
@@ -194,7 +194,7 @@
 **Purpose**: Close performance, security, accessibility, compatibility, packaging, documentation, and authoritative integration gates.
 
 - [ ] T078 [P] Add deterministic 500-tool discovery, authority issuance, bridge overhead, progress projection, and cancellation latency measurements for NFR-002/NFR-003 in `packages/workspace_service/tests/test_rivet_mcp_performance.py`
-- [ ] T079 [P] Add cross-surface token/credential/header/environment/path/secret-like scans for workflow files, SQLite, logs, events, API responses, runner output, and UI text in `tests/security/test_rivet_mcp_secret_boundary.py`
+- [ ] T079 [P] Add cross-surface token/credential/header/environment/raw-child-path/arbitrary-URI/secret-like scans for workflow files, SQLite, structured logs, traces, events, API responses, runner output, and UI text in `tests/security/test_rivet_mcp_secret_boundary.py`
 - [ ] T080 [P] Add hostile local-client, token replay, origin/path/method/content-type, oversized payload, malformed stream, and concurrent revocation tests in `apps/api/tests/test_rivet_runner_bridge_security.py`
 - [ ] T081 [P] Add regression coverage for non-MCP workflows, agent-manager/chat gateway clients, BREP panel ownership, and schema-13 fixture upgrade in `tests/e2e/test_rivet_mcp_compatibility.py`
 - [ ] T082 [P] Add standalone wheel/sdist assertions for protocol-v2 runner artifacts, JSON contracts, and migration/repository modules in `tests/packaging/test_rivet_mcp_distribution.py`

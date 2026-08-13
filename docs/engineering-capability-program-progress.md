@@ -185,12 +185,12 @@ The documentation-complete exact tree was gated again before publication. The fe
 ### Spec Kit phases
 
 - [x] `speckit-git-feature`: branch `069-rivet-mcp-gateway` created from clean synchronized `dev` at `7093b55`.
-- [x] `speckit-specify`: five prioritized user journeys, 34 functional requirements, nine measurable outcomes, and a 16/16 specification-quality checklist completed in `f01b04b`.
+- [x] `speckit-specify`: five prioritized user journeys, 35 functional requirements, five non-functional requirements, ten measurable outcomes, and a 16/16 specification-quality checklist completed and subsequently strengthened by checklist/analysis remediation.
 - [x] `speckit-clarify`: no critical ambiguity required a user question. Safest reversible defaults are explicit for run-bound authority, exact capability binding, stale-review invalidation, existing per-call approval policy, cancellation truthfulness, deterministic normal tests, optional live applications, and closed Gate E.
 - [x] `speckit-plan` and Gate B decision: native Rivet MCP nodes use an injected Wright provider over an exact-origin loopback bridge; opaque authority is memory-only and bound to one run/workspace/review/binding set; exact external bindings invalidate on workflow, graph, node, schema, server, validation, grant, or policy change; approval remains exact-call and Wright-owned; cancellation revokes authority and explicitly reaches the gateway child request; bounded Run Manifest evidence records truth without credentials.
 - [x] `speckit-checklist`: 42/42 security, authority, binding, approval, cancellation, lifecycle, evidence, UX, dependency, and recovery requirements-quality checks passed after adding explicit authority lifetime, performance, evidence-bound, and accessibility NFRs plus a deterministic performance outcome.
 - [x] `speckit-tasks`: 89 dependency-ordered tasks cover shared authority/persistence/runner foundations; all five user stories with tests-first checkpoints; deterministic two-child, cancellation, BREP/host lifecycle, evidence, performance, security, accessibility, packaging, exact-tree gate, and merge work. All tasks pass the required checkbox/ID/story/path format.
-- [ ] `speckit-analyze` and remediation
+- [x] `speckit-analyze` and remediation: all 49 buildable FR/NFR/SC items map to the 89-task graph; the separate five-engineer SC-009 remains explicitly deferred, with zero unmapped tasks and no constitution conflict. Repaired the stable API path, runner-supplied tool-name contradiction, actual gateway cancellation API, explicit tracing/logging work, authorized artifact boundary, exactly-once terminal manifest lifecycle, dedicated loopback isolation, and fail-closed MCP prompt scope.
 - [ ] `speckit-implement`
 - [ ] Focused, integration, UI, packaging, and documentation verification
 - [ ] Full exact-tree dev gate
@@ -198,7 +198,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 
 ### Next checkpoint
 
-Run the non-destructive Spec Kit cross-artifact analysis over the specification, plan, contracts, checklist, and 89-task graph. Remediate every material finding before implementation while preserving the injected-provider and Wright-owned gateway boundary.
+Begin `speckit-implement` with Phase 1 fixtures and Phase 2 authority/persistence/runner foundations. Keep MCP execution disabled until the exact review/binding and injected-provider gateway tests pass.
 
 ## Program guardrails
 

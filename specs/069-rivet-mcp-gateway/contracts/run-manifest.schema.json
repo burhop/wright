@@ -21,6 +21,7 @@
     "approval_ids",
     "artifacts",
     "started_at",
+    "completed_at",
     "terminal_state",
     "redaction_count",
     "event_truncated",
@@ -108,8 +109,8 @@
       }
     },
     "started_at": { "$ref": "#/$defs/timestamp" },
-    "completed_at": { "oneOf": [{ "$ref": "#/$defs/timestamp" }, { "type": "null" }] },
-    "terminal_state": { "enum": ["running", "cancelling", "cancelled", "succeeded", "failed"] },
+    "completed_at": { "$ref": "#/$defs/timestamp" },
+    "terminal_state": { "enum": ["cancelled", "succeeded", "failed"] },
     "reason_code": { "oneOf": [{ "$ref": "#/$defs/nonempty" }, { "type": "null" }] },
     "cancellation": {
       "oneOf": [

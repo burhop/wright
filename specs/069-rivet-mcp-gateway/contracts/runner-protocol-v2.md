@@ -38,6 +38,7 @@ Rules:
 - `mcp` is present only when `capabilities` contains `mcp` and the exact review is current.
 - The runner validates origin, path, expiry shape, unique static node IDs/handles, namespaced tool names, and digests before loading the project.
 - After project digest verification and project load, the runner validates the selected graph's MCP nodes against the binding set, rejects dynamic tool-name input, rejects any extra/missing MCP tool-call node, and creates an in-memory transformed project or provider lookup. It does not write the project.
+- MCP prompt nodes and prompt retrieval are rejected because protocol v2 grants tools only.
 - The token is never included in output, errors, URLs, project metadata, or child requests. The custom provider adds it as `Authorization: Bearer` only for exact-origin bridge calls.
 - The network guard allows the exact AI origin (when present) and exact MCP bridge origin. It continues to deny graph `httpCall`, code, filesystem, dataset, or interactive capabilities unless independently granted; possession of an MCP bridge does not grant generic network access.
 
@@ -46,8 +47,8 @@ Rules:
 The injected provider maps Rivet calls to the bridge:
 
 - `discoverTools(serverConfig)` -> `POST /discover` with reserved discovery handle
-- `callTool(serverConfig, toolName, args)` -> `POST /calls` with node handle, exact tool, request ID, and arguments
-- prompt operations are denied in this loop unless separately specified and bound
+- `callTool(serverConfig, toolName, args)` verifies `toolName` against the Wright-issued in-memory binding and then sends `POST /calls` with only the node handle, binding digest, request ID, and arguments; the tool namespace is not submitted as call authority
+- prompt operations are denied in this loop unless separately specified and bound by a later protocol
 
 Project-provided URL, command, args, env, headers, or authorization fields are never forwarded.
 

@@ -10,10 +10,10 @@
 2. The project file is not an MCP authority. Direct endpoint, command, environment, header, credential, and dynamic tool-name configuration is rejected. Wright verifies the workflow digest and rewrites eligible nodes in memory to reserved node handles and exact bound namespaced tools.
 3. Capability bindings live outside the graph and pin workspace, workflow revision/digest, selected graph, node, server revision, validation evidence, schemas, grant/policy facts, engineering assumptions, and material defaults. Any material change invalidates review.
 4. One opaque 256-bit token grants one run access to one exact loopback Wright bridge origin, workspace/session, review, binding set, node-handle map, and short expiry. Raw tokens are memory-only, audience-bound, never forwarded, and revoked on cancel/terminal/restart.
-5. Every operation revalidates authority, run generation, review, binding, workspace grant, server/tool/schema/validation identity, and current gateway policy before a child receives a call.
+5. Every operation revalidates authority, run generation, review, binding, workspace grant, server/tool/schema/validation identity, and current gateway policy before a child receives a call. The runner submits only the bound handle/digest, request identity, and arguments; Wright resolves the server/tool.
 6. Workflow review does not satisfy tool approval gates. Wright owns exact-call approval records; the runner cannot grant approval and its client hint remains false.
 7. Progress is bounded and correlated. Cancellation revokes authority, explicitly cancels active gateway requests, then terminates the runner. Late results cannot change terminal state; unconfirmed external residue is reported.
-8. Run evidence is a bounded/redacted manifest plus append-only child-call records and vault artifact references. It contains authority digests, not usable authority.
+8. Run evidence is a bounded/redacted draft finalized exactly once as an immutable terminal manifest, plus append-only child-call records and Wright-authorized vault/resource artifact references. It contains authority digests, not usable authority.
 9. Specialized BREP panel and Solid Edge/host-bridge lifecycles remain behind Wright's gateway/lifecycle contract. Deterministic doubles are required; live probes are opt-in.
 
 ## Boundary

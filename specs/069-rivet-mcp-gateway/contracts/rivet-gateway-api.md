@@ -4,35 +4,35 @@ All public endpoints use existing Wright authentication, role, session, and work
 
 ## Public authoring and review
 
-### `GET /api/workspaces/{session_id}/workflows/{slug}/mcp-capabilities`
+### `GET /api/workspace/workflows/{slug}/mcp-capabilities`
 
-Query: `graph`, optional `after`, `limit` (bounded).
+Query: `session_id`, `graph`, optional `after`, `limit` (bounded).
 
 Returns the exact workflow identity, selected graph, extracted MCP requirements/nodes, discovery snapshot digest, and current workspace-enabled namespaced tool projections. Does not start a child solely for authoring.
 
-### `POST /api/workspaces/{session_id}/workflows/{slug}/mcp-bindings/preview`
+### `POST /api/workspace/workflows/{slug}/mcp-bindings/preview`
 
-Request contains expected workflow revision/digest, graph, and proposed `{node_id, qualified_tool_name}` selections. It cannot contain server configuration or credential material.
+Request contains `session_id`, expected workflow revision/digest, graph, and proposed `{node_id, qualified_tool_name}` selections. It cannot contain server configuration or credential material.
 
 Returns canonical binding previews, ambiguity/blocking reasons, binding-set digest, expiry, and safe policy/risk/schema facts. Preview has no execution authority.
 
-### `POST /api/workspaces/{session_id}/workflows/{slug}/review`
+### `POST /api/workspace/workflows/{slug}/review`
 
 Extends the existing review request with expected workflow digest, graph, and binding-set digest for MCP graphs. On approval, Wright rebuilds/compares every binding and stores a v2 review digest atomically. A stale preview returns `409` with a reason-coded diff.
 
-### `POST /api/workspaces/{session_id}/workflows/{slug}/runs`
+### `POST /api/workspace/workflows/{slug}/runs`
 
 Extends the current start request with expected review digest and binding-set digest. The service verifies current review and bindings, creates the run/manifest, mints authority, and starts protocol v2. Neither token nor internal bridge address appears in the public response.
 
 ## Public exact-call approval
 
-### `GET /api/workspaces/{session_id}/workflow-runs/{run_id}/approvals`
+### `GET /api/workspace/workflows/runs/{run_id}/approvals`
 
-Returns pending/decided exact-call approvals with node, namespaced tool, safe argument summary/digest, required gates, effect/risk information, expiry, and current state.
+Query: `session_id`. Returns pending/decided exact-call approvals with node, namespaced tool, safe argument summary/digest, required gates, effect/risk information, expiry, and current state.
 
-### `POST /api/workspaces/{session_id}/workflow-runs/{run_id}/approvals/{approval_id}`
+### `POST /api/workspace/workflows/runs/{run_id}/approvals/{approval_id}`
 
-Request: `decision` (`approved` or `denied`), expected `approval_digest`, optional bounded reason.
+Request: `session_id`, `decision` (`approved` or `denied`), expected `approval_digest`, optional bounded reason.
 
 The authenticated service verifies workspace/run/node/tool/argument/gate/expiry identities. Approval is one-shot and cannot be supplied by the runner.
 
@@ -59,7 +59,7 @@ Response: only the authority's reviewed binding-set tool projections. This opera
 
 ### `POST /internal/rivet-mcp/v1/calls`
 
-Request: authority ID, run ID, node handle, binding digest, request ID, exact qualified tool name, arguments.
+Request: authority ID, run ID, node handle, binding digest, request ID, and arguments. It contains no server or tool namespace.
 
 Response is bounded NDJSON:
 
@@ -70,7 +70,7 @@ Response is bounded NDJSON:
 {"type":"result","callId":"...","content":[],"structuredContent":{},"isError":false,"artifacts":[]}
 ```
 
-The server resolves the node handle to the authoritative binding, ignores caller claims as lookup authority, validates arguments/schema/policy, and invokes `GatewayService.call_tool` with `client_approval_hint=false`.
+The server resolves the node handle to the authoritative server/tool binding, validates arguments/schema/policy, and invokes `GatewayService.call_tool` with `client_approval_hint=false`.
 
 ### `POST /internal/rivet-mcp/v1/calls/{request_id}/cancel`
 
@@ -92,4 +92,4 @@ Representative public reason codes:
 
 - No raw token, credential, authorization/header value, child environment, command, endpoint query, unrestricted path, or full secret-like argument is returned or logged.
 - Schemas, arguments, content, structured results, progress, and error text are bounded using the runner/gateway limits.
-- Artifact responses contain vault identities/digests and separately authorized download routes.
+- Artifact responses contain only Wright-authorized gateway resource or contained-vault identities/digests and separately authorized download routes. Raw child paths, arbitrary URIs, and unvalidated artifact claims are rejected.
