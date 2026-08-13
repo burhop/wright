@@ -12,7 +12,7 @@
   ],
   "data_schema": {
     "min": 0,
-    "max": 12
+    "max": 13
   },
   "manager_protocols": {
     "cli": {
