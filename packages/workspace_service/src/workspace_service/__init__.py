@@ -35,6 +35,14 @@ from .workflow_operations import (
     WorkflowOperationsSettings,
     WorkspaceWorkflowOperations,
 )
+from .engineering_scenario_artifacts import (
+    EngineeringArtifactNormalizerRegistry,
+    artifact_content_digest,
+    normalize_artifact,
+)
+from .engineering_scenario_assertions import EngineeringAssertionRegistry
+from .engineering_scenario_catalog_service import EngineeringScenarioCatalog
+from .engineering_scenario_service import EngineeringScenarioService
 from .rivet_validation import (
     GraphPortSummary,
     GraphSummary,
@@ -122,6 +130,12 @@ __all__ = [
     "WorkflowOperationsError",
     "WorkflowOperationsSettings",
     "WorkspaceWorkflowOperations",
+    "EngineeringArtifactNormalizerRegistry",
+    "EngineeringAssertionRegistry",
+    "EngineeringScenarioCatalog",
+    "EngineeringScenarioService",
+    "artifact_content_digest",
+    "normalize_artifact",
     "GraphPortSummary",
     "GraphSummary",
     "ValidationIssue",

@@ -40,3 +40,18 @@ from .rivet_mcp import (
     canonical_digest as canonical_digest,
     reject_secret_material as reject_secret_material,
 )
+from .engineering_scenarios import (
+    ArtifactProducer as ArtifactProducer,
+    AssertionCategory as AssertionCategory,
+    AssertionResult as AssertionResult,
+    AssertionState as AssertionState,
+    EngineeringScenarioError as EngineeringScenarioError,
+    NormalizedArtifact as NormalizedArtifact,
+    ResourceClass as ResourceClass,
+    ScenarioCatalogEntry as ScenarioCatalogEntry,
+    ScenarioState as ScenarioState,
+    ScenarioTier as ScenarioTier,
+    UnitDefinition as UnitDefinition,
+    convert_unit as convert_unit,
+    unit_definition as unit_definition,
+)

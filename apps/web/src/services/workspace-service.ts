@@ -143,7 +143,15 @@ export interface RivetRunEvidence {
   bindings: Array<Record<string, unknown>>;
   child_calls: Array<Record<string, unknown>>;
   approvals: Array<Record<string, unknown>>;
-  artifacts: Array<Record<string, unknown>>;
+  artifacts: Array<{
+    artifact_id?: string;
+    domain?: string;
+    kind?: string;
+    content_digest?: string;
+    validation_state?: string;
+    producer?: { node_id?: string; capability?: string; call_id?: string };
+    [key: string]: unknown;
+  }>;
   timeline: Array<Record<string, unknown>>;
   reproducibility: {
     reproducible: boolean;
@@ -156,6 +164,96 @@ export interface RivetRunEvidence {
     summary: string;
   };
   accounting: Record<string, unknown>;
+}
+
+export interface EngineeringScenarioEntry {
+  scenario_id: string;
+  revision: number;
+  title: string;
+  summary: string;
+  domains: string[];
+  tier: "tier1" | "tier2" | "tier3";
+  resource_class: "small" | "medium" | "large" | "external";
+  expected_duration_seconds: number;
+  manifest_digest: string;
+}
+
+export interface EngineeringScenarioDetail {
+  manifest: Record<string, unknown>;
+  manifest_digest: string;
+}
+
+export interface EngineeringScenarioPreflight {
+  preflight_id: string;
+  scenario_id: string;
+  scenario_revision: number;
+  manifest_digest: string;
+  workflow_slug: string;
+  workflow_revision: number | null;
+  workflow_digest: string | null;
+  graph_id: string;
+  binding_set_digest: string | null;
+  state: "ready" | "blocked" | "skipped";
+  capabilities: Array<{
+    node_id: string;
+    requested_tool: string;
+    selected_tool: string | null;
+    binding_digest: string | null;
+    blockers: string[];
+  }>;
+  environment: Record<string, unknown>;
+  blockers: Array<{ code: string; message: string; recovery: string }>;
+  expires_at: string;
+}
+
+export interface EngineeringScenarioReport {
+  scenario_run_id: string;
+  workflow_run_id: string;
+  workspace_id: string;
+  session_id: string;
+  scenario_id: string;
+  scenario_revision: number;
+  manifest_digest: string;
+  workflow_digest: string;
+  binding_set_digest: string | null;
+  state: string;
+  identity: Record<string, unknown>;
+  artifacts: Array<{
+    artifact_id: string;
+    domain: string;
+    kind: string;
+    content_digest: string;
+    validation_state: string;
+    producer: {
+      run_id: string;
+      node_id: string;
+      call_id: string;
+      capability: string;
+    };
+  }>;
+  environment: Record<string, unknown>;
+  cleanup_state: string;
+  residue: Record<string, unknown>;
+  assertions: Array<{
+    assertion_id: string;
+    plugin: string;
+    state: "pass" | "fail" | "skip" | "error";
+    reason_code: string;
+    artifact_digests?: string[];
+    expected?: unknown;
+    observed?: unknown;
+    units?: Record<string, unknown>;
+    producer: { node_id: string; capability: string; call_id?: string };
+    message?: string;
+    recovery?: string;
+  }>;
+  report_digest: string | null;
+}
+
+export interface EngineeringScenarioComparison {
+  strictly_reproducible: boolean;
+  differences: Array<Record<string, unknown>>;
+  assertion_changes: Array<Record<string, unknown>>;
 }
 
 export interface RivetCallApproval {
@@ -706,6 +804,154 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Workflow cancellation failed");
     return response.json();
+  }
+
+  async listEngineeringScenarios(): Promise<EngineeringScenarioEntry[]> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios`,
+    );
+    if (!response.ok) throw new Error("Engineering scenarios are unavailable");
+    return (await response.json()).scenarios || [];
+  }
+
+  async getEngineeringScenarioDetail(
+    scenarioId: string,
+  ): Promise<EngineeringScenarioDetail> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(scenarioId)}`,
+    );
+    if (!response.ok) throw new Error("Engineering scenario is unavailable");
+    return response.json();
+  }
+
+  async preflightEngineeringScenario(
+    sessionId: string,
+    scenarioId: string,
+  ): Promise<EngineeringScenarioPreflight> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(scenarioId)}/preflight`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Scenario preflight failed";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || message;
+      } catch {
+        // Keep the safe fallback.
+      }
+      throw new Error(String(message));
+    }
+    return response.json();
+  }
+
+  async startEngineeringScenario(
+    sessionId: string,
+    preflight: EngineeringScenarioPreflight,
+    workflow: RivetWorkflowOperation,
+  ): Promise<{
+    scenario_run_id: string;
+    workflow_run: RivetWorkflowRun;
+    state: "running";
+  }> {
+    if (
+      !preflight.workflow_revision ||
+      !preflight.workflow_digest ||
+      !workflow.review_digest ||
+      !workflow.binding_set_digest
+    ) {
+      throw new Error("Review the exact prepared scenario workflow first");
+    }
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/${encodeURIComponent(preflight.scenario_id)}/runs`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          manifest_digest: preflight.manifest_digest,
+          workflow_revision: preflight.workflow_revision,
+          workflow_digest: preflight.workflow_digest,
+          review_digest: workflow.review_digest,
+          binding_set_digest: workflow.binding_set_digest,
+          seed: 0,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Engineering scenario could not start";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || message;
+      } catch {
+        // Keep the safe fallback.
+      }
+      throw new Error(String(message));
+    }
+    return response.json();
+  }
+
+  async getEngineeringScenarioReport(
+    sessionId: string,
+    scenarioRunId: string,
+  ): Promise<EngineeringScenarioReport> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(scenarioRunId)}?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Scenario report is unavailable");
+    return response.json();
+  }
+
+  async cancelEngineeringScenario(
+    sessionId: string,
+    scenarioRunId: string,
+  ): Promise<RivetWorkflowRun> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(scenarioRunId)}/cancel`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId }),
+      },
+    );
+    if (!response.ok) throw new Error("Scenario cancellation failed");
+    return response.json();
+  }
+
+  async compareEngineeringScenarioReports(
+    sessionId: string,
+    left: string,
+    right: string,
+  ): Promise<EngineeringScenarioComparison> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(left)}/compare/${encodeURIComponent(right)}?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Scenario comparison is unavailable");
+    return response.json();
+  }
+
+  async exportEngineeringScenarioReport(
+    sessionId: string,
+    scenarioRunId: string,
+  ): Promise<void> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/engineering-scenarios/runs/${encodeURIComponent(scenarioRunId)}/export?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Scenario report export is unavailable");
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    try {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `wright-engineering-scenario-${scenarioRunId}.json`;
+      anchor.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   }
 
   async getWorkspaceFiles(sessionId: string): Promise<WorkspaceNode> {

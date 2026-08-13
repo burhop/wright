@@ -12,6 +12,7 @@ import {
 } from "../../services/surfaces/surface-client";
 import { RivetWorkflowCapabilities } from "./RivetWorkflowCapabilities";
 import { RivetWorkflowRun } from "./RivetWorkflowRun";
+import { RivetScenarioLibrary } from "./RivetScenarioLibrary";
 
 export function RivetWorkflowsPanel({
   sessionId,
@@ -307,6 +308,19 @@ export function RivetWorkflowsPanel({
           )}
         </div>
       ))}
+      {sessionId ? (
+        <RivetScenarioLibrary
+          sessionId={sessionId}
+          workflows={workflows}
+          onPrepared={async (slug) => {
+            await refresh();
+            setReviewingSlug(slug);
+            setMessage(
+              `Scenario workflow ${slug} is prepared for capability review.`,
+            );
+          }}
+        />
+      ) : null}
       <p
         style={{
           color: "var(--color-secondary)",

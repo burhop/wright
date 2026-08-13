@@ -353,6 +353,102 @@ class WorkflowRunEvidenceResponse(BaseModel):
     accounting: Dict[str, Any]
 
 
+class EngineeringScenarioCatalogEntryResponse(BaseModel):
+    scenario_id: str
+    revision: int
+    title: str
+    summary: str
+    domains: list[str]
+    tier: str
+    resource_class: str
+    expected_duration_seconds: int
+    manifest_digest: str
+
+
+class EngineeringScenarioListResponse(BaseModel):
+    scenarios: list[EngineeringScenarioCatalogEntryResponse]
+
+
+class EngineeringScenarioDetailResponse(BaseModel):
+    manifest: Dict[str, Any]
+    manifest_digest: str
+
+
+class EngineeringScenarioPreflightRequest(BaseModel):
+    session_id: str
+    allow_tier2: bool = False
+    platform: str | None = Field(default=None, max_length=40)
+
+
+class EngineeringScenarioBlockerResponse(BaseModel):
+    code: str
+    message: str
+    recovery: str
+
+
+class EngineeringScenarioPreflightResponse(BaseModel):
+    preflight_id: str
+    scenario_id: str
+    scenario_revision: int
+    manifest_digest: str
+    workflow_slug: str
+    workflow_revision: int | None = None
+    workflow_digest: str | None = None
+    graph_id: str
+    binding_set_digest: str | None = None
+    state: Literal["ready", "blocked", "skipped"]
+    capabilities: list[Dict[str, Any]]
+    environment: Dict[str, Any]
+    blockers: list[EngineeringScenarioBlockerResponse]
+    expires_at: str
+
+
+class EngineeringScenarioStartRequest(BaseModel):
+    session_id: str
+    manifest_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    workflow_revision: int = Field(ge=1)
+    workflow_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    review_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    binding_set_digest: str = Field(pattern="^[a-f0-9]{64}$")
+    seed: int = Field(default=0, ge=0, le=2147483647)
+
+
+class EngineeringScenarioStartResponse(BaseModel):
+    scenario_run_id: str
+    workflow_run: WorkflowRunResponse
+    state: Literal["running"]
+
+
+class EngineeringScenarioReportResponse(BaseModel):
+    scenario_run_id: str
+    workflow_run_id: str
+    workspace_id: str
+    session_id: str
+    scenario_id: str
+    scenario_revision: int
+    manifest_digest: str
+    workflow_digest: str
+    binding_set_digest: str | None = None
+    state: str
+    identity: Dict[str, Any]
+    artifacts: list[Dict[str, Any]]
+    environment: Dict[str, Any]
+    cleanup_state: str
+    residue: Dict[str, Any]
+    assertions: list[Dict[str, Any]]
+    report_digest: str | None = None
+
+
+class EngineeringScenarioCancelRequest(BaseModel):
+    session_id: str
+
+
+class EngineeringScenarioCompareResponse(BaseModel):
+    strictly_reproducible: bool
+    differences: list[Dict[str, Any]]
+    assertion_changes: list[Dict[str, Any]]
+
+
 class WorkflowEditorAvailabilityResponse(BaseModel):
     availability: str
     detail: str | None = None

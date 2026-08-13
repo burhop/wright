@@ -119,6 +119,17 @@ from api.schemas.workspace import (
     WorkflowOperationsListResponse,
     WorkflowRunHistoryResponse,
     WorkflowRunEvidenceResponse,
+    EngineeringScenarioCatalogEntryResponse,
+    EngineeringScenarioListResponse,
+    EngineeringScenarioDetailResponse,
+    EngineeringScenarioPreflightRequest,
+    EngineeringScenarioPreflightResponse,
+    EngineeringScenarioBlockerResponse,
+    EngineeringScenarioStartRequest,
+    EngineeringScenarioStartResponse,
+    EngineeringScenarioReportResponse,
+    EngineeringScenarioCancelRequest,
+    EngineeringScenarioCompareResponse,
     WorkflowEditorAvailabilityResponse,
     WorkflowEditorSurfaceRequest,
     WorkflowEditorSurfaceResponse,
@@ -140,6 +151,7 @@ from workspace_service.workflow_operations import WorkflowOperationsError
 from workspace_service.rivet_approvals import RivetApprovalError
 from workspace_service.workflow_graph import WorkflowGraphError
 from workspace_service.workflow_catalog import WorkflowTemplateError
+from core.engineering_scenarios import EngineeringScenarioError
 from workspace_service.brep_panel import (
     BREP_APPLICATION_STATUS_TOOL,
     BrepPanelError,
@@ -310,6 +322,24 @@ def _mcp_error(error: WorkflowOperationsError) -> HTTPException:
     )
 
 
+def _scenario_error(error: EngineeringScenarioError) -> HTTPException:
+    conflict_codes = {
+        "scenario_preflight_stale",
+        "scenario_workflow_modified",
+        "scenario_binding_stale",
+    }
+    return HTTPException(
+        status_code=(
+            status.HTTP_404_NOT_FOUND
+            if error.code in {"scenario_not_found", "scenario_report_unavailable"}
+            else status.HTTP_409_CONFLICT
+            if error.code in conflict_codes
+            else status.HTTP_400_BAD_REQUEST
+        ),
+        detail={"code": error.code, "message": str(error)},
+    )
+
+
 def _graph_response(result) -> WorkflowGraphResponse:
     return WorkflowGraphResponse(
         **_workflow_response(result.document).model_dump(),
@@ -357,6 +387,309 @@ async def _workflow_scope(
     return workspace["workspace_id"], await service.resolve_workspace_dir(
         session_id, engine
     )
+
+
+def _scenario_entry_response(entry) -> EngineeringScenarioCatalogEntryResponse:
+    return EngineeringScenarioCatalogEntryResponse(
+        scenario_id=entry.scenario_id,
+        revision=entry.revision,
+        title=entry.title,
+        summary=entry.summary,
+        domains=list(entry.domains),
+        tier=str(entry.tier),
+        resource_class=str(entry.resource_class),
+        expected_duration_seconds=entry.expected_duration_seconds,
+        manifest_digest=entry.manifest_digest,
+    )
+
+
+def _scenario_report_response(report: dict) -> EngineeringScenarioReportResponse:
+    return EngineeringScenarioReportResponse(
+        scenario_run_id=report["scenario_run_id"],
+        workflow_run_id=report["workflow_run_id"],
+        workspace_id=report["workspace_id"],
+        session_id=report["session_id"],
+        scenario_id=report["scenario_id"],
+        scenario_revision=report["scenario_revision"],
+        manifest_digest=report["manifest_digest"],
+        workflow_digest=report["workflow_digest"],
+        binding_set_digest=report.get("binding_set_digest"),
+        state=report["state"],
+        identity=dict(report["identity"]),
+        artifacts=list(report["artifacts"]),
+        environment=dict(report["environment"]),
+        cleanup_state=report["cleanup_state"],
+        residue=dict(report["residue"]),
+        assertions=list(report["assertions"]),
+        report_digest=report.get("report_digest"),
+    )
+
+
+def _assert_scenario_scope(report: dict, *, workspace_id: str, session_id: str) -> None:
+    if report["workspace_id"] != workspace_id or report["session_id"] != session_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "scenario_report_unavailable",
+                "message": "Scenario report was not found",
+            },
+        )
+
+
+@router.get("/engineering-scenarios", response_model=EngineeringScenarioListResponse)
+@traced("workspace.engineering_scenarios.list")
+async def list_engineering_scenarios_endpoint(
+    domain: list[str] = Query(default=[]),
+    tier: str | None = Query(default=None, pattern="^tier[123]$"),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    return EngineeringScenarioListResponse(
+        scenarios=[
+            _scenario_entry_response(entry)
+            for entry in service.engineering_scenarios.list(domains=domain, tier=tier)
+        ]
+    )
+
+
+@router.get(
+    "/engineering-scenarios/{scenario_id}",
+    response_model=EngineeringScenarioDetailResponse,
+)
+@traced("workspace.engineering_scenarios.detail")
+async def engineering_scenario_detail_endpoint(
+    scenario_id: str,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    try:
+        manifest = service.engineering_scenarios.detail(scenario_id)
+        return EngineeringScenarioDetailResponse(
+            manifest=dict(manifest.document), manifest_digest=manifest.digest
+        )
+    except EngineeringScenarioError as error:
+        raise _scenario_error(error) from error
+
+
+@router.post(
+    "/engineering-scenarios/{scenario_id}/preflight",
+    response_model=EngineeringScenarioPreflightResponse,
+)
+@traced("workspace.engineering_scenarios.preflight")
+async def engineering_scenario_preflight_endpoint(
+    scenario_id: str,
+    body: EngineeringScenarioPreflightRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    _operations_feature_enabled()
+    workspace_id, workspace_dir = await _workflow_scope(
+        body.session_id, engine, service
+    )
+    try:
+        preflight = await service.engineering_scenarios.preflight(
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_dir=workspace_dir,
+            scenario_id=scenario_id,
+            allow_tier2=body.allow_tier2,
+            platform_tag=body.platform,
+        )
+        return EngineeringScenarioPreflightResponse(
+            preflight_id=preflight.preflight_id,
+            scenario_id=preflight.scenario_id,
+            scenario_revision=preflight.scenario_revision,
+            manifest_digest=preflight.manifest_digest,
+            workflow_slug=preflight.workflow_slug,
+            workflow_revision=preflight.workflow_revision,
+            workflow_digest=preflight.workflow_digest,
+            graph_id=preflight.graph_id,
+            binding_set_digest=preflight.binding_set_digest,
+            state=preflight.state,
+            capabilities=[dict(value) for value in preflight.capabilities],
+            environment=dict(preflight.environment),
+            blockers=[
+                EngineeringScenarioBlockerResponse(
+                    code=value.code,
+                    message=value.message,
+                    recovery=value.recovery,
+                )
+                for value in preflight.blockers
+            ],
+            expires_at=preflight.expires_at.isoformat(),
+        )
+    except EngineeringScenarioError as error:
+        raise _scenario_error(error) from error
+
+
+@router.post(
+    "/engineering-scenarios/{scenario_id}/runs",
+    response_model=EngineeringScenarioStartResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+@traced("workspace.engineering_scenarios.start")
+async def start_engineering_scenario_endpoint(
+    scenario_id: str,
+    body: EngineeringScenarioStartRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _workflow_feature_enabled()
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace_id, workspace_dir = await _workflow_scope(
+        body.session_id, engine, service
+    )
+    try:
+        scenario_run_id, run = await service.engineering_scenarios.start(
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_dir=workspace_dir,
+            scenario_id=scenario_id,
+            manifest_digest=body.manifest_digest,
+            workflow_revision=body.workflow_revision,
+            workflow_digest=body.workflow_digest,
+            review_digest=body.review_digest,
+            binding_set_digest=body.binding_set_digest,
+            seed=body.seed,
+        )
+        return EngineeringScenarioStartResponse(
+            scenario_run_id=scenario_run_id,
+            workflow_run=_run_response(
+                run,
+                service.workflow_runner.result(run.run_id),
+                _run_manifest(service, run.run_id),
+            ),
+            state="running",
+        )
+    except EngineeringScenarioError as error:
+        raise _scenario_error(error) from error
+    except (WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise _mcp_error(error) from error
+
+
+@router.get(
+    "/engineering-scenarios/runs/{scenario_run_id}",
+    response_model=EngineeringScenarioReportResponse,
+)
+@traced("workspace.engineering_scenarios.report")
+async def engineering_scenario_report_endpoint(
+    scenario_run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        report = service.engineering_scenarios.report(scenario_run_id)
+        if report is None:
+            raise EngineeringScenarioError(
+                "scenario_report_unavailable", "Scenario report was not found"
+            )
+        _assert_scenario_scope(
+            report, workspace_id=workspace["workspace_id"], session_id=session_id
+        )
+        return _scenario_report_response(report)
+    except EngineeringScenarioError as error:
+        raise _scenario_error(error) from error
+
+
+@router.get("/engineering-scenarios/runs/{scenario_run_id}/export")
+@traced("workspace.engineering_scenarios.export")
+async def engineering_scenario_export_endpoint(
+    scenario_run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    report = await engineering_scenario_report_endpoint(
+        scenario_run_id, session_id, service
+    )
+    document = report.model_dump(mode="json")
+    encoded = json.dumps(document, sort_keys=True, separators=(",", ":")).encode(
+        "utf-8"
+    )
+    return Response(
+        content=encoded,
+        media_type="application/json",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": (
+                f'attachment; filename="wright-engineering-scenario-{scenario_run_id}.json"'
+            ),
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
+@router.post(
+    "/engineering-scenarios/runs/{scenario_run_id}/cancel",
+    response_model=WorkflowRunResponse,
+)
+@traced("workspace.engineering_scenarios.cancel")
+async def cancel_engineering_scenario_endpoint(
+    scenario_run_id: str,
+    body: EngineeringScenarioCancelRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        run = await service.engineering_scenarios.cancel(
+            workspace_id=workspace["workspace_id"],
+            session_id=body.session_id,
+            scenario_run_id=scenario_run_id,
+        )
+        return _run_response(
+            run,
+            service.workflow_runner.result(run.run_id),
+            _run_manifest(service, run.run_id),
+        )
+    except EngineeringScenarioError as error:
+        raise _scenario_error(error) from error
+
+
+@router.get(
+    "/engineering-scenarios/runs/{left}/compare/{right}",
+    response_model=EngineeringScenarioCompareResponse,
+)
+@traced("workspace.engineering_scenarios.compare")
+async def compare_engineering_scenario_runs_endpoint(
+    left: str,
+    right: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        first = service.engineering_scenarios.report(left)
+        second = service.engineering_scenarios.report(right)
+        if first is None or second is None:
+            raise EngineeringScenarioError(
+                "scenario_report_unavailable", "Scenario report was not found"
+            )
+        _assert_scenario_scope(
+            first, workspace_id=workspace["workspace_id"], session_id=session_id
+        )
+        _assert_scenario_scope(
+            second, workspace_id=workspace["workspace_id"], session_id=session_id
+        )
+        result = service.engineering_scenarios.compare(left, right)
+        return EngineeringScenarioCompareResponse(
+            strictly_reproducible=result["strictly_reproducible"],
+            differences=list(result["differences"]),
+            assertion_changes=list(result["assertion_changes"]),
+        )
+    except EngineeringScenarioError as error:
+        raise _scenario_error(error) from error
 
 
 @router.get("/workflow-templates", response_model=WorkflowTemplateListResponse)

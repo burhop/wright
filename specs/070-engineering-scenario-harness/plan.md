@@ -83,7 +83,7 @@ packages/data_vault/src/data_vault/
 `-- engineering_scenario_repository.py  # report identity/evidence persistence
 
 packages/workspace_service/src/workspace_service/
-|-- engineering_scenario_catalog.py     # resource loading and manifest validation
+|-- engineering_scenario_catalog_service.py # resource loading and manifest validation
 |-- engineering_scenario_assertions.py  # registry and domain assertion plugins
 |-- engineering_scenario_artifacts.py   # normalization, unit/coordinate enforcement
 |-- engineering_scenario_service.py     # preflight/start/evaluate/compare orchestration
@@ -121,6 +121,10 @@ docs/engineering-capability-program-progress.md
 ```
 
 **Structure Decision**: Extend the existing workflow/gateway and data-vault packages rather than create another runner or test application. Scenario code owns only catalog, preflight, artifact normalization, assertions, and report projection; Loop 069 remains authoritative for MCP discovery, binding, review, execution, approvals, cancellation, and child lifecycle.
+
+The catalog loader uses the `_service.py` suffix because
+`engineering_scenario_catalog/` is also the importable package-resource directory;
+Python cannot expose a module and package with the same qualified name.
 
 ## Phase 0 Research Decisions
 

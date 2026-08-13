@@ -853,6 +853,56 @@ MIGRATIONS: tuple[Migration, ...] = (
                 ON workspace_workflow_call_approvals(run_id, state, expires_at)"""),
         ),
     ),
+    Migration(
+        15,
+        "rivet_engineering_scenario_reports",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS engineering_scenario_runs (
+                scenario_run_id TEXT PRIMARY KEY,
+                workflow_run_id TEXT NOT NULL UNIQUE,
+                workspace_id TEXT NOT NULL,
+                session_id TEXT NOT NULL,
+                scenario_id TEXT NOT NULL,
+                scenario_revision INTEGER NOT NULL CHECK(scenario_revision >= 1),
+                manifest_digest TEXT NOT NULL CHECK(length(manifest_digest) = 64),
+                workflow_digest TEXT NOT NULL CHECK(length(workflow_digest) = 64),
+                binding_set_digest TEXT CHECK(binding_set_digest IS NULL OR length(binding_set_digest) = 64),
+                state TEXT NOT NULL CHECK(state IN
+                    ('preflight', 'blocked', 'running', 'passed', 'failed', 'cancelled', 'error')),
+                identity_json TEXT NOT NULL,
+                artifacts_json TEXT NOT NULL DEFAULT '[]',
+                environment_json TEXT NOT NULL DEFAULT '{}',
+                cleanup_state TEXT NOT NULL DEFAULT 'not_started' CHECK(cleanup_state IN
+                    ('not_started', 'clean', 'residue', 'unknown')),
+                residue_json TEXT NOT NULL DEFAULT '{}',
+                report_digest TEXT CHECK(report_digest IS NULL OR length(report_digest) = 64),
+                created_at INTEGER NOT NULL,
+                finalized_at INTEGER,
+                FOREIGN KEY (workflow_run_id) REFERENCES workspace_workflow_runs(run_id)
+                    ON DELETE RESTRICT,
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS engineering_scenario_assertions (
+                result_id TEXT PRIMARY KEY,
+                scenario_run_id TEXT NOT NULL,
+                sequence INTEGER NOT NULL CHECK(sequence >= 1),
+                assertion_id TEXT NOT NULL,
+                state TEXT NOT NULL CHECK(state IN ('pass', 'fail', 'skip', 'error')),
+                result_digest TEXT NOT NULL CHECK(length(result_digest) = 64),
+                result_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                UNIQUE(scenario_run_id, sequence),
+                UNIQUE(scenario_run_id, assertion_id),
+                FOREIGN KEY (scenario_run_id) REFERENCES engineering_scenario_runs(scenario_run_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_engineering_scenario_runs_scope
+                ON engineering_scenario_runs(workspace_id, session_id, created_at DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_engineering_scenario_runs_scenario
+                ON engineering_scenario_runs(scenario_id, scenario_revision, created_at DESC)"""),
+        ),
+    ),
 )
 
 

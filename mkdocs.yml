@@ -61,6 +61,7 @@ nav:
       - Python Graphics in the Workspace: workspace-surfaces/python-graphics.md
       - Open Web Applications: workspace-surfaces/opening-surfaces.md
       - Rivet MCP Workflows: rivet/mcp-gateway.md
+      - Rivet Engineering Scenarios: rivet/engineering-scenarios.md
       - Rivet Workflow Testing: rivet/testing.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md

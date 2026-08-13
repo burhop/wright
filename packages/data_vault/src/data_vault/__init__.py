@@ -19,6 +19,7 @@ from .workflow_runs import (
     WorkflowRunRepository,
 )
 from .rivet_mcp_repository import RivetMcpRepository
+from .engineering_scenario_repository import EngineeringScenarioRepository
 from .gateway_repository import GatewayBindingError, GatewayRepository
 from .file_vault import FileVault, StoredVaultFile, VaultPathError
 from .surface_repository import (
@@ -65,6 +66,7 @@ __all__ = [
     "WorkflowRunRecord",
     "WorkflowRunRepository",
     "RivetMcpRepository",
+    "EngineeringScenarioRepository",
     "GatewayBindingError",
     "GatewayRepository",
     "FileVault",

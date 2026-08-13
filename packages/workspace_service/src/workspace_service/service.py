@@ -70,6 +70,7 @@ from .workflow_editor import WorkspaceWorkflowEditor
 from .workflow_graph import WorkspaceWorkflowGraphOperations
 from .workflow_operations import WorkspaceWorkflowOperations
 from .workflow_catalog import WorkflowTemplateCatalog
+from .engineering_scenario_service import EngineeringScenarioService
 from .workspace_path import WorkspacePath
 
 logger = get_logger(__name__)
@@ -205,6 +206,9 @@ class WorkspaceService:
         )
         self.workflow_operations = WorkspaceWorkflowOperations(
             WorkflowReviewRepository(db_path), self.workflow_runner
+        )
+        self.engineering_scenarios = EngineeringScenarioService(
+            db_path, operations=self.workflow_operations
         )
         process = LocalProcessRunner()
         self.git = WorkspaceGitUseCases(

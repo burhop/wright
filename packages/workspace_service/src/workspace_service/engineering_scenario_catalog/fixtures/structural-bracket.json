@@ -1,0 +1,26 @@
+[
+  {
+    "schema_version": "1.0", "artifact_id": "bracket-geometry", "domain": "cad", "kind": "mesh",
+    "source_schema": {"name": "wright-mesh-summary", "version": "1.0", "media_type": "application/vnd.wright.mesh+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-cad", "call_id": "structural-cad", "capability": "cad__build_bracket"},
+    "upstream_digests": [], "units": {"bounds": "mm", "volume": "mm3"},
+    "coordinate_system": {"name": "wright-right-handed-z-up", "handedness": "right", "length_unit": "mm"},
+    "content": {"vertex_count": 48, "face_count": 92, "bounds": [0, 80, 0, 60, 0, 6], "degenerate_faces": 0, "manifold": true, "volume": 50400},
+    "content_digest": "3bce869280fdcba6dbc72d830e1eb94234cf0296e61428c888365082c7ca8126",
+    "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "bracket-mass", "domain": "python", "kind": "numeric-table",
+    "source_schema": {"name": "wright-numeric-table", "version": "1.0", "media_type": "application/vnd.wright.numeric+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-python", "call_id": "structural-python", "capability": "python__mass_properties"},
+    "upstream_digests": ["3bce869280fdcba6dbc72d830e1eb94234cf0296e61428c888365082c7ca8126"], "units": {"mass": "kg", "volume": "mm3"},
+    "content": {"mass": 0.13608, "volume": 50400, "center_of_mass": [40, 30, 3]}, "content_digest": "afeb36b2bacbda4e6db8f9e1555e6a78c4ccc8a3996b7e86e759c8cbd44c2e76", "validation_state": "valid"
+  },
+  {
+    "schema_version": "1.0", "artifact_id": "bracket-fea", "domain": "fea", "kind": "fea-result",
+    "source_schema": {"name": "wright-fea-summary", "version": "1.0", "media_type": "application/vnd.wright.fea+json"},
+    "producer": {"run_id": "{run_id}", "node_id": "node-fea", "call_id": "structural-fea", "capability": "fea__solve_static"},
+    "upstream_digests": ["3bce869280fdcba6dbc72d830e1eb94234cf0296e61428c888365082c7ca8126"], "units": {"maximum_stress": "MPa", "maximum_displacement": "mm"},
+    "content": {"completed": true, "converged": true, "residual": 0.00004, "residual_limit": 0.001, "input_digest": "3bce869280fdcba6dbc72d830e1eb94234cf0296e61428c888365082c7ca8126", "maximum_stress": 82.5, "maximum_displacement": 0.42}, "content_digest": "638860be939b786fb98a4318784ba33b70da2fd07c378bfa6d97e1f195fa1822", "validation_state": "valid"
+  }
+]

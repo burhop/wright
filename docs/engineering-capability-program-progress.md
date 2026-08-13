@@ -279,6 +279,42 @@ The documentation-complete exact tree was gated again before publication. The fe
 
 Begin Loop 070, the deterministic multi-domain engineering scenario harness, on the same integration branch. Run the full Spec Kit artifact workflow and focused loop gates; do not repeat the repository-wide dev merge gate until program closeout.
 
+## Loop 070
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: feature identity `070-engineering-scenario-harness` continues on the user-approved `codex/rivet-engineering-program` integration branch.
+- [x] `speckit-specify` and `speckit-clarify`: five prioritized stories, 37 functional requirements, deterministic Tier 1 boundaries, explicit Tier 2/3 classification, engineering-valid artifact/assertion evidence, restart/compare behavior, and closed Gate E.
+- [x] `speckit-plan` and Gate B: package-owned scenario manifests, three multi-domain Rivet graphs, existing Loop 069 gateway/run authority, SI-aware artifact normalization, versioned assertion plugins, additive report persistence, existing Rivet panel integration, and evidence-only clean-container adapters.
+- [x] `speckit-checklist`: 40/40 UX, safety, security, compatibility, recovery, testability, evidence, and extension requirements-quality checks passed.
+- [x] `speckit-tasks`: 79 dependency-ordered contract, foundation, scenario, diagnosis, evidence, extension, Tier 2, UI, and focused-gate tasks generated and analyzed.
+- [x] Initial `speckit-analyze`: no critical/high cross-artifact findings; implementation-path naming was reconciled after the catalog package/module collision was discovered.
+- [x] `speckit-implement`: all 79 tasks are implemented or intentionally deferred to the approved program closeout boundary; focused acceptance, packaging, docs, and repeat analysis are complete.
+- [ ] Final program exact-tree dev gate after loops 071-073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Implementation checkpoint - deterministic engineering scenarios
+
+- Added three package-owned Tier 1 scenarios: structural CAD/Python/FEA, electronics ECAD/CAD/CFD/Python, and parametric Grasshopper/CAD/additive/slicer/static-CAM. Together they cover all nine requested engineering domains with exact static Rivet MCP node names and no direct child configuration.
+- Added public manifest, artifact-envelope, and assertion-result contracts; resource-confining catalog validation; Wright-generated fixture provenance; deterministic content digests; explicit units/coordinates; and 64 KiB artifact/1 MiB report bounds.
+- Added dimensional SI conversion with absolute-versus-delta temperature rules and plugins for numeric relationships, geometry, ECAD, solver convergence/correlation, data-tree topology, additive/3MF, slicer summaries, and physical-actuation-rejecting static CAM lint.
+- Added migration 15 and immutable/idempotent scenario report persistence linked to existing workflow runs. Reports survive restart, reject rebuild after material identity drift, compare scenario/workflow/binding/assertion/environment identities, and export only bounded metadata/hashes.
+- Added thin authenticated list/detail/preflight/start/report/export/compare/cancel APIs and typed web clients. The existing Rivet panel now provides scenario cards, exact-capability preflight, reviewed start, polling/cancel, engineering assertion details, cleanup/residue truth, and evidence export without changing ordinary workflow cards.
+- Added fail-closed Tier 2 environment planning for platform, network, credentials, proprietary apps, GPU, hardware, large downloads, license review, interactive prompts, host mutation, disposable containers, and catalog state. NVIDIA Elements and official Ansys PyFluent remain evidence-only partial adapters; no network install or live solver action was run in Loop 070.
+- Deterministic gateway evidence: all three packaged graphs ran through the integrity-pinned real Rivet Node worker, Wright loopback bridge, run authority, GatewayService, and independent stdio MCP subprocesses; every expected artifact/assertion passed and the three E2E cases completed in about 17 seconds.
+- Final focused evidence: 134 Python tests passed across core units/contracts, migrations and backward compatibility, catalog/artifact/assertion/service/API behavior, extension/environment/failure/restart/compare/performance coverage, packaging, real MCP protocol faults, and all three real Rivet/gateway/multi-process fixture scenarios. Five web client/component tests, the production TypeScript/Vite build, and four Chromium journeys passed; the journeys cover pass/export/accessibility, blocked recovery at narrow width with keyboard and 200% zoom, exact engineering failure recovery, and cancellation/residue. ESLint reported zero errors and the same three unrelated hook warnings. Strict MkDocs, all three catalog-aware bundle verifiers, Ruff lint/format, schema/catalog/security validation, and `git diff --check` passed.
+- Repeat `speckit-analyze` found and remediated artifact-lineage placeholders, incomplete MCP fixture fault/progress/cancel behavior, missing generic assertion variants, incomplete public extension registries, under-specified terminal failure categories/material run comparison, absent UI artifact provenance, and missing reusable contract-boundary fixtures. The final cross-artifact pass has no unresolved critical or high findings.
+
+### Deferred external evidence
+
+- NVIDIA Elements retains the recorded GB10 protocol/tool evidence, but its catalog license metadata is still unknown and Wright gateway proxy evidence is absent. New unattended execution remains blocked.
+- PyFluent retains the recorded GB10 `session_status` evidence. Wright gateway proxy validation is pending, and live solver calls remain blocked without an explicitly authorized licensed Fluent environment.
+- No proprietary application, credential, paid service, GPU, hardware, large download, license acceptance, host mutation, or physical actuation entered normal tests.
+
+### Next checkpoint
+
+Commit the complete Loop 070 evidence on the integration branch. Then begin Loop 071, the safe local engineering model library, without running the authoritative dev gate until program closeout.
+
 ## Program guardrails
 
 - No paid usage, license acceptance, external production mutation, user-data deletion, physical actuation, `dev` to `main` merge, or release publication.

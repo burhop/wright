@@ -1,0 +1,32 @@
+schema_version: "1.0"
+scenario_id: parametric-manufacturing
+revision: 1
+title: Parametric manufacturing
+summary: Preserve a Grasshopper-style data tree through geometry, 3MF packaging, slicing summary, and static CAM safety lint.
+domains: [grasshopper, cad, additive, slicing, cam]
+tier: tier1
+resource: {class: small, expected_duration_seconds: 25, memory_mib: 256}
+workflow: {resource: workflows/parametric-manufacturing.rivet-project, graph_id: graph-parametric, revision: 1}
+capabilities:
+  - {requirement_id: parametric-tree, node_id: node-grasshopper, domain: grasshopper, tool_name: grasshopper__generate_tree, risk: compute}
+  - {requirement_id: geometry-build, node_id: node-cad, domain: cad, tool_name: cad__build_parametric, risk: compute}
+  - {requirement_id: additive-package, node_id: node-additive, domain: additive, tool_name: additive__build_3mf, risk: compute}
+  - {requirement_id: slice-summary, node_id: node-slicer, domain: slicing, tool_name: slicer__summarize, risk: compute}
+  - {requirement_id: cam-lint, node_id: node-cam, domain: cam, tool_name: cam__static_lint, risk: read}
+inputs: {branch_count: 2, layer_height: {value: 0.2, unit: mm}, cam_dialect: rs274ngc-static}
+artifacts:
+  - {artifact_id: parameter-tree, producer_node_id: node-grasshopper, domain: grasshopper, kind: data-tree, schema_version: "1.0"}
+  - {artifact_id: parametric-geometry, producer_node_id: node-cad, domain: cad, kind: mesh, schema_version: "1.0"}
+  - {artifact_id: additive-package, producer_node_id: node-additive, domain: additive, kind: 3mf-summary, schema_version: "1.0"}
+  - {artifact_id: slice-summary, producer_node_id: node-slicer, domain: slicing, kind: slicer-summary, schema_version: "1.0"}
+  - {artifact_id: cam-program, producer_node_id: node-cam, domain: cam, kind: gcode-static, schema_version: "1.0"}
+assertions:
+  - {assertion_id: tree-topology, plugin: data_tree, plugin_version: "1.0", artifact_ids: [parameter-tree], rule: {kind: topology, paths: ["{0;0}", "{0;1}"]}, severity: error, guidance: "Preserve branch paths, order, and typed items."}
+  - {assertion_id: geometry-valid, plugin: geometry, plugin_version: "1.0", artifact_ids: [parametric-geometry], rule: {kind: geometry_valid}, severity: error, guidance: "Inspect parametric geometry generation."}
+  - {assertion_id: package-valid, plugin: additive, plugin_version: "1.0", artifact_ids: [additive-package], rule: {kind: package_valid}, severity: error, guidance: "Inspect 3MF units, meshes, relationships, and build items."}
+  - {assertion_id: slice-bounded, plugin: slicer, plugin_version: "1.0", artifact_ids: [slice-summary], rule: {kind: range, path: layer_count, minimum: 1, maximum: 1000, unit: "1"}, severity: error, guidance: "Inspect object height and layer height."}
+  - {assertion_id: cam-safe, plugin: cam, plugin_version: "1.0", artifact_ids: [cam-program], rule: {kind: static_safe}, severity: error, guidance: "Remove physical actuation or ambiguous modal commands."}
+environment: {network: false, credentials: false, proprietary_application: false, gpu: false, hardware: false, large_download: false, platforms: [windows-amd64, linux-amd64, linux-arm64, macos]}
+safety: {physical_actuation: false, static_outputs_only: true, notes: "3MF and CAM outputs are static validation data and never sent to equipment."}
+cleanup: {timeout_seconds: 5, residue_policy: fail}
+provenance: {owner: Wright Project, fixture_origin: wright-generated, license: MIT}

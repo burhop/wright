@@ -235,7 +235,7 @@ def test_schema_13_database_upgrades_in_place_to_rivet_gateway_schema(tmp_path):
                     'Main', 'succeeded', 1, 1, 0)""",
             ("a" * 64,),
         )
-    result = upgrade_database(database)
+    result = upgrade_database(database, migrations=MIGRATIONS[:14])
     assert result.starting_version == 13
     assert result.ending_version == 14
     assert database_status(database).current_version == 14

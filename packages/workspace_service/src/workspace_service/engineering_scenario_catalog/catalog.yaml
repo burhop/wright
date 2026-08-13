@@ -1,0 +1,8 @@
+format_version: 1
+scenarios:
+  - scenario_id: structural-bracket
+    manifest: scenarios/structural-bracket.yaml
+  - scenario_id: electronics-enclosure-cooling
+    manifest: scenarios/electronics-enclosure-cooling.yaml
+  - scenario_id: parametric-manufacturing
+    manifest: scenarios/parametric-manufacturing.yaml

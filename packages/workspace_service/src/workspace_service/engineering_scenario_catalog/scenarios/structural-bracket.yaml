@@ -1,0 +1,28 @@
+schema_version: "1.0"
+scenario_id: structural-bracket
+revision: 1
+title: Structural bracket
+summary: Build a bracket, calculate mass properties, and verify a deterministic static structural result.
+domains: [cad, python, fea]
+tier: tier1
+resource: {class: small, expected_duration_seconds: 20, memory_mib: 256}
+workflow: {resource: workflows/structural-bracket.rivet-project, graph_id: graph-structural, revision: 1}
+capabilities:
+  - {requirement_id: cad-build, node_id: node-cad, domain: cad, tool_name: cad__build_bracket, risk: compute}
+  - {requirement_id: mass-properties, node_id: node-python, domain: python, tool_name: python__mass_properties, risk: compute}
+  - {requirement_id: static-analysis, node_id: node-fea, domain: fea, tool_name: fea__solve_static, risk: compute}
+inputs: {width: {value: 80, unit: mm}, height: {value: 60, unit: mm}, thickness: {value: 6, unit: mm}, density: {value: 2700, unit: kg/m3}}
+artifacts:
+  - {artifact_id: bracket-geometry, producer_node_id: node-cad, domain: cad, kind: mesh, schema_version: "1.0"}
+  - {artifact_id: bracket-mass, producer_node_id: node-python, domain: python, kind: numeric-table, schema_version: "1.0"}
+  - {artifact_id: bracket-fea, producer_node_id: node-fea, domain: fea, kind: fea-result, schema_version: "1.0"}
+assertions:
+  - {assertion_id: geometry-valid, plugin: geometry, plugin_version: "1.0", artifact_ids: [bracket-geometry], rule: {kind: geometry_valid}, severity: error, guidance: "Inspect CAD units and mesh construction."}
+  - {assertion_id: mass-range, plugin: numeric, plugin_version: "1.0", artifact_ids: [bracket-mass], rule: {kind: range, path: mass, minimum: 0.05, maximum: 0.5, unit: kg}, severity: error, guidance: "Inspect density, volume, and unit conversion."}
+  - {assertion_id: mass-properties, plugin: geometry, plugin_version: "1.0", artifact_ids: [bracket-geometry, bracket-mass], rule: {kind: mass_properties, density: 2700, unit: kg/m3, relative_tolerance: 0.000001}, severity: error, guidance: "Inspect geometry volume, material density, mass, and artifact lineage."}
+  - {assertion_id: fea-converged, plugin: fea, plugin_version: "1.0", artifact_ids: [bracket-fea], rule: {kind: converged}, severity: error, guidance: "Inspect solver convergence and input mesh correlation."}
+  - {assertion_id: stress-limit, plugin: fea, plugin_version: "1.0", artifact_ids: [bracket-fea], rule: {kind: range, path: maximum_stress, maximum: 120, unit: MPa}, severity: error, guidance: "Inspect load, constraints, material, and geometry."}
+environment: {network: false, credentials: false, proprietary_application: false, gpu: false, hardware: false, large_download: false, platforms: [windows-amd64, linux-amd64, linux-arm64, macos]}
+safety: {physical_actuation: false, static_outputs_only: true, notes: "Deterministic geometry and solver summaries only."}
+cleanup: {timeout_seconds: 5, residue_policy: fail}
+provenance: {owner: Wright Project, fixture_origin: wright-generated, license: MIT}

@@ -1,0 +1,34 @@
+version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-parametric:
+      metadata: {id: graph-parametric, name: Parametric manufacturing, description: Deterministic parametric, additive, slicing, and CAM chain}
+      nodes:
+        '[node-grasshopper]:mcpToolCall "Parameter tree"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: grasshopper__generate_tree, toolArguments: '{"fixture":"parametric-manufacturing"}', toolCallId: parametric-tree, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Tree" output-tree/value']
+          visualData: 0/0/280/null//
+        '[node-cad]:mcpToolCall "Build geometry"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: cad__build_parametric, toolArguments: '{"fixture":"parametric-manufacturing"}', toolCallId: parametric-cad, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Geometry" output-cad/value']
+          visualData: 0/220/280/null//
+        '[node-additive]:mcpToolCall "Build 3MF"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: additive__build_3mf, toolArguments: '{"fixture":"parametric-manufacturing"}', toolCallId: parametric-3mf, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"3MF" output-additive/value']
+          visualData: 0/440/280/null//
+        '[node-slicer]:mcpToolCall "Slice summary"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: slicer__summarize, toolArguments: '{"fixture":"parametric-manufacturing"}', toolCallId: parametric-slicer, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Slice" output-slicer/value']
+          visualData: 0/660/280/null//
+        '[node-cam]:mcpToolCall "Static CAM lint"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: cam__static_lint, toolArguments: '{"fixture":"parametric-manufacturing"}', toolCallId: parametric-cam, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"CAM" output-cam/value']
+          visualData: 0/880/280/null//
+        '[output-tree]:graphOutput "Tree"': {data: {id: tree, dataType: "object[]"}, visualData: 400/0/280/null//}
+        '[output-cad]:graphOutput "Geometry"': {data: {id: geometry, dataType: "object[]"}, visualData: 400/220/280/null//}
+        '[output-additive]:graphOutput "3MF"': {data: {id: additive, dataType: "object[]"}, visualData: 400/440/280/null//}
+        '[output-slicer]:graphOutput "Slice"': {data: {id: slice, dataType: "object[]"}, visualData: 400/660/280/null//}
+        '[output-cam]:graphOutput "CAM"': {data: {id: cam, dataType: "object[]"}, visualData: 400/880/280/null//}
+  metadata: {id: scenario-parametric-manufacturing, title: Parametric manufacturing, description: Deterministic engineering scenario, mainGraphId: graph-parametric}
+  plugins: []

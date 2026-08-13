@@ -1,0 +1,24 @@
+version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-structural:
+      metadata: {id: graph-structural, name: Structural bracket, description: Deterministic CAD, mass-property, and FEA chain}
+      nodes:
+        '[node-cad]:mcpToolCall "Build bracket"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: cad__build_bracket, toolArguments: '{"fixture":"structural-bracket"}', toolCallId: structural-cad, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"CAD geometry" output-cad/value']
+          visualData: 0/0/280/null//
+        '[node-python]:mcpToolCall "Mass properties"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: python__mass_properties, toolArguments: '{"fixture":"structural-bracket"}', toolCallId: structural-python, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Mass properties" output-python/value']
+          visualData: 0/300/280/null//
+        '[node-fea]:mcpToolCall "Static analysis"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: fea__solve_static, toolArguments: '{"fixture":"structural-bracket"}', toolCallId: structural-fea, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"FEA result" output-fea/value']
+          visualData: 0/600/280/null//
+        '[output-cad]:graphOutput "CAD geometry"': {data: {id: cad, dataType: "object[]"}, visualData: 400/0/280/null//}
+        '[output-python]:graphOutput "Mass properties"': {data: {id: mass, dataType: "object[]"}, visualData: 400/300/280/null//}
+        '[output-fea]:graphOutput "FEA result"': {data: {id: fea, dataType: "object[]"}, visualData: 400/600/280/null//}
+  metadata: {id: scenario-structural-bracket, title: Structural bracket, description: Deterministic engineering scenario, mainGraphId: graph-structural}
+  plugins: []

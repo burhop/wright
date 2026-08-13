@@ -1,0 +1,29 @@
+version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-electronics:
+      metadata: {id: graph-electronics, name: Electronics enclosure cooling, description: Deterministic ECAD, CAD, CFD, and Python chain}
+      nodes:
+        '[node-ecad]:mcpToolCall "Board envelope"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: ecad__board_envelope, toolArguments: '{"fixture":"electronics-enclosure"}', toolCallId: electronics-ecad, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Board" output-ecad/value']
+          visualData: 0/0/280/null//
+        '[node-cad]:mcpToolCall "Build enclosure"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: cad__build_enclosure, toolArguments: '{"fixture":"electronics-enclosure"}', toolCallId: electronics-cad, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Enclosure" output-cad/value']
+          visualData: 0/250/280/null//
+        '[node-cfd]:mcpToolCall "Thermal flow"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: cfd__solve_thermal, toolArguments: '{"fixture":"electronics-enclosure"}', toolCallId: electronics-cfd, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Thermal" output-cfd/value']
+          visualData: 0/500/280/null//
+        '[node-python]:mcpToolCall "Thermal margin"':
+          data: {name: wright-rivet, version: 2.0.0, transportType: http, toolName: python__thermal_margin, toolArguments: '{"fixture":"electronics-enclosure"}', toolCallId: electronics-python, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}
+          outgoingConnections: ['response->"Margin" output-python/value']
+          visualData: 0/750/280/null//
+        '[output-ecad]:graphOutput "Board"': {data: {id: board, dataType: "object[]"}, visualData: 400/0/280/null//}
+        '[output-cad]:graphOutput "Enclosure"': {data: {id: enclosure, dataType: "object[]"}, visualData: 400/250/280/null//}
+        '[output-cfd]:graphOutput "Thermal"': {data: {id: thermal, dataType: "object[]"}, visualData: 400/500/280/null//}
+        '[output-python]:graphOutput "Margin"': {data: {id: margin, dataType: "object[]"}, visualData: 400/750/280/null//}
+  metadata: {id: scenario-electronics-enclosure, title: Electronics enclosure cooling, description: Deterministic engineering scenario, mainGraphId: graph-electronics}
+  plugins: []

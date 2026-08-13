@@ -82,7 +82,7 @@ def test_migration_14_is_additive_and_preserves_legacy_reviews(tmp_path):
             VALUES ('workspace-1', 'workflow-1', 1, 'approved', 'reviewer', 1)"""
         )
         connection.commit()
-    result = upgrade_database(path)
+    result = upgrade_database(path, migrations=MIGRATIONS[:14])
     assert result.applied == ({"version": 14, "name": "rivet_workspace_mcp_gateway"},)
     with sqlite3.connect(path) as connection:
         row = connection.execute(
