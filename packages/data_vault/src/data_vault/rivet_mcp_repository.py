@@ -10,6 +10,7 @@ from typing import Any
 from core.rivet_mcp import (
     CapabilityBinding,
     PendingRivetCallApproval,
+    ProviderEvidence,
     RivetChildCallRecord,
     RunManifest,
     RunManifestDraft,
@@ -41,6 +42,8 @@ def _binding_from_document(value: dict[str, Any]) -> CapabilityBinding:
     document = dict(value)
     document.pop("schema_version", None)
     document["created_at"] = _datetime(str(document["created_at"]))
+    if isinstance(document.get("provider"), dict):
+        document["provider"] = ProviderEvidence.parse(document["provider"])
     return CapabilityBinding(**document)
 
 
@@ -72,6 +75,8 @@ def _draft_document(draft: RunManifestDraft) -> dict[str, Any]:
         "runtime_identity": dict(draft.runtime_identity),
         "authority_expires_at": draft.authority_expires_at,
         "bindings": tuple(dict(item) for item in draft.bindings),
+        "schema_version": draft.schema_version,
+        "child_calls": tuple(dict(item) for item in draft.child_calls),
     }
 
 
@@ -357,6 +362,10 @@ class RivetMcpRepository:
                     else None
                 ),
                 bindings=tuple(dict(item) for item in document.get("bindings") or ()),
+                schema_version=int(document.get("schema_version") or 1),
+                child_calls=tuple(
+                    dict(item) for item in document.get("child_calls") or ()
+                ),
             )
             manifest = draft.finalize(
                 terminal_state="failed",

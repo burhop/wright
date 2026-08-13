@@ -6,3 +6,5 @@ scenarios:
     manifest: scenarios/electronics-enclosure-cooling.yaml
   - scenario_id: parametric-manufacturing
     manifest: scenarios/parametric-manufacturing.yaml
+  - scenario_id: chatter-candidate-review
+    manifest: scenarios/chatter-candidate-review.yaml

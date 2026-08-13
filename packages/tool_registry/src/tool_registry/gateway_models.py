@@ -6,6 +6,8 @@ from enum import StrEnum
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from core.rivet_mcp import ProviderEvidence
+
 from .models import McpUiResourceMetadata, McpUiToolMetadata
 
 
@@ -219,6 +221,17 @@ class GatewayTool:
     ui: McpUiToolMetadata = field(default_factory=McpUiToolMetadata)
     required_approvals: frozenset[str] = field(default_factory=frozenset)
     provenance: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        raw = self.provenance.get("provider")
+        if raw is None:
+            return
+        if not isinstance(raw, Mapping):
+            raise ValueError("Gateway provider evidence is invalid")
+        provider = ProviderEvidence.parse(raw)
+        claimed = self.provenance.get("provider_evidence_digest")
+        if claimed not in {None, provider.provider_evidence_digest}:
+            raise ValueError("Gateway provider evidence digest changed")
 
 
 @dataclass(frozen=True, slots=True)

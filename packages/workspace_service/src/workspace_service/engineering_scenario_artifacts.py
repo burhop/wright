@@ -15,6 +15,7 @@ from core.engineering_scenarios import (
     NormalizedArtifact,
 )
 from core.rivet_mcp import canonical_json, reject_secret_material
+from model_registry.chatter_contracts import validate_schema as validate_chatter_schema
 
 
 _UNSAFE_TEXT = re.compile(
@@ -49,8 +50,73 @@ _DEFAULT_SOURCE_SCHEMAS = {
     ("3mf-summary", "3mf-core", "1.3"),
     ("slicer-summary", "wright-slicer-summary", "1.0"),
     ("gcode-static", "rs274ngc-static-summary", "3"),
+    ("candidate-batch", "wright-chatter-candidate-batch", "1.0"),
+    ("model-result-batch", "wright-chatter-result-batch", "1.0"),
+    ("chatter-advisory-report", "wright-chatter-advisory-report", "1.0"),
 }
 NormalizerValidator = Callable[[Mapping[str, Any]], None]
+
+
+def _chatter_contract_validator(schema_name: str) -> NormalizerValidator:
+    def validate(raw: Mapping[str, Any]) -> None:
+        content = raw.get("content")
+        if not isinstance(content, Mapping):
+            raise EngineeringScenarioError(
+                "artifact_content_invalid",
+                "Chatter artifact content must be a structured object",
+            )
+        validate_chatter_schema(content, schema_name)
+
+    return validate
+
+
+def _chatter_advisory_validator(raw: Mapping[str, Any]) -> None:
+    content = raw.get("content")
+    if not isinstance(content, Mapping) or set(content) != {
+        "schema_version",
+        "simulation_only",
+        "machine_authority",
+        "score_semantics",
+        "selected_candidate_id",
+        "candidate_outcomes",
+        "notices",
+        "provider_evidence",
+    }:
+        raise EngineeringScenarioError(
+            "artifact_content_invalid", "Chatter advisory fields are invalid"
+        )
+    if (
+        content.get("schema_version") != "1.0"
+        or content.get("simulation_only") is not True
+        or content.get("machine_authority") is not False
+        or content.get("score_semantics") != "uncalibrated_screening_score"
+        or not isinstance(content.get("selected_candidate_id"), str)
+        or not 1 <= len(content.get("candidate_outcomes", ())) <= 100
+        or not 1 <= len(content.get("notices", ())) <= 16
+        or not 1 <= len(content.get("provider_evidence", ())) <= 100
+    ):
+        raise EngineeringScenarioError(
+            "artifact_content_invalid", "Chatter advisory is incomplete or unsafe"
+        )
+
+
+_DEFAULT_VALIDATORS: dict[tuple[str, str, str], NormalizerValidator] = {
+    (
+        "candidate-batch",
+        "wright-chatter-candidate-batch",
+        "1.0",
+    ): _chatter_contract_validator("chatter-candidate-batch.schema.json"),
+    (
+        "model-result-batch",
+        "wright-chatter-result-batch",
+        "1.0",
+    ): _chatter_contract_validator("chatter-result-batch.schema.json"),
+    (
+        "chatter-advisory-report",
+        "wright-chatter-advisory-report",
+        "1.0",
+    ): _chatter_advisory_validator,
+}
 
 
 class EngineeringArtifactNormalizerRegistry:
@@ -60,7 +126,12 @@ class EngineeringArtifactNormalizerRegistry:
         self._normalizers: dict[tuple[str, str, str], NormalizerValidator | None] = {}
         if include_defaults:
             for kind, name, version in sorted(_DEFAULT_SOURCE_SCHEMAS):
-                self.register(kind, name, version)
+                self.register(
+                    kind,
+                    name,
+                    version,
+                    _DEFAULT_VALIDATORS.get((kind, name, version)),
+                )
 
     def register(
         self,

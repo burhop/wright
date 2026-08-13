@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/chatter-serving-metadata-1.0.json",
+  "title": "Wright Chatter Forest Serving Metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "format", "model_id", "package_revision", "variant_id", "source", "input_contract", "preprocessing", "classifier", "decision", "resources", "limitations", "metadata_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "format": {"const": "wright-chatter-forest-npz-1.0"},
+    "model_id": {"$ref": "#/$defs/id"},
+    "package_revision": {"type": "integer", "minimum": 1},
+    "variant_id": {"$ref": "#/$defs/id"},
+    "source": {"$ref": "#/$defs/source"},
+    "input_contract": {"type": "array", "minItems": 37, "maxItems": 37, "items": {"$ref": "#/$defs/feature"}},
+    "preprocessing": {"$ref": "#/$defs/preprocessing"},
+    "classifier": {"$ref": "#/$defs/classifier"},
+    "decision": {"$ref": "#/$defs/decision"},
+    "resources": {"$ref": "#/$defs/resources"},
+    "limitations": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "metadata_digest": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_revision", "dataset_digest", "membership_digest", "recipe_digest", "environment_lock_digest", "exporter_digest", "qualification_id"],
+      "properties": {
+        "source_revision": {"type": "string", "pattern": "^[a-f0-9]{40,64}$"},
+        "dataset_digest": {"$ref": "#/$defs/digest"},
+        "membership_digest": {"$ref": "#/$defs/digest"},
+        "recipe_digest": {"$ref": "#/$defs/digest"},
+        "environment_lock_digest": {"$ref": "#/$defs/digest"},
+        "exporter_digest": {"$ref": "#/$defs/digest"},
+        "qualification_id": {"$ref": "#/$defs/id"}
+      }
+    },
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "meaning", "unit", "allowed_origins", "contract_min", "contract_max", "population_min", "population_max"],
+      "properties": {
+        "name": {"$ref": "#/$defs/id"},
+        "meaning": {"type": "string", "minLength": 1, "maxLength": 500},
+        "unit": {"type": "string", "minLength": 1, "maxLength": 32},
+        "allowed_origins": {"type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true, "items": {"enum": ["simulated", "identified", "measured", "assumed"]}},
+        "contract_min": {"type": "number"},
+        "contract_max": {"type": "number"},
+        "population_min": {"type": "number"},
+        "population_max": {"type": "number"}
+      }
+    },
+    "preprocessing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_order", "output_order", "log_features", "binary_features", "missing_value_policy", "means", "scales", "tree_input_dtype"],
+      "properties": {
+        "input_order": {"type": "array", "minItems": 37, "maxItems": 37, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "output_order": {"type": "array", "minItems": 37, "maxItems": 37, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "log_features": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "binary_features": {"type": "array", "minItems": 5, "maxItems": 5, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "missing_value_policy": {"const": "reject_input; qualification-imputer-constant-zero-recorded-only"},
+        "means": {"type": "array", "minItems": 32, "maxItems": 32, "items": {"type": "number"}},
+        "scales": {"type": "array", "minItems": 32, "maxItems": 32, "items": {"type": "number", "exclusiveMinimum": 0}},
+        "tree_input_dtype": {"const": "float32"}
+      }
+    },
+    "classifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["family", "classes", "tree_count", "node_count", "max_depth", "forest_member", "forest_sha256", "arrays"],
+      "properties": {
+        "family": {"const": "binary_random_forest"},
+        "classes": {"const": [0, 1]},
+        "tree_count": {"type": "integer", "minimum": 1, "maximum": 500},
+        "node_count": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "max_depth": {"type": "integer", "minimum": 1, "maximum": 25},
+        "forest_member": {"const": "model/forest.npz"},
+        "forest_sha256": {"$ref": "#/$defs/digest"},
+        "arrays": {
+          "const": {
+            "tree_offsets": "int64",
+            "children_left": "int32",
+            "children_right": "int32",
+            "feature": "int32",
+            "threshold": "float64",
+            "leaf_class_fraction": "float64"
+          }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["positive_class", "threshold", "comparison", "near_threshold_band", "score_semantics", "calibration_status"],
+      "properties": {
+        "positive_class": {"const": 1},
+        "threshold": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "comparison": {"const": "score_greater_than_or_equal_is_chatter"},
+        "near_threshold_band": {"type": "number", "minimum": 0, "maximum": 0.25},
+        "score_semantics": {"const": "mean_tree_leaf_chatter_fraction"},
+        "calibration_status": {"const": "uncalibrated_model_score"}
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maximum_artifact_bytes", "maximum_ram_bytes", "load_timeout_ms", "inference_timeout_ms", "maximum_output_bytes", "maximum_batch"],
+      "properties": {
+        "maximum_artifact_bytes": {"type": "integer", "minimum": 1, "maximum": 268435456},
+        "maximum_ram_bytes": {"type": "integer", "minimum": 1, "maximum": 2147483648},
+        "load_timeout_ms": {"type": "integer", "minimum": 1, "maximum": 30000},
+        "inference_timeout_ms": {"type": "integer", "minimum": 1, "maximum": 30000},
+        "maximum_output_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576},
+        "maximum_batch": {"const": 100}
+      }
+    }
+  }
+}

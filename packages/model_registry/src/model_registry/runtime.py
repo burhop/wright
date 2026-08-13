@@ -524,6 +524,7 @@ class RuntimeSession:
         maximum_output_bytes: int,
         progress_callback: ProgressHandler | None = None,
         fault_profile: str | None = None,
+        model_evidence: Mapping[str, Any] | None = None,
     ) -> Mapping[str, Any]:
         try:
             result = await self._exchange(
@@ -534,6 +535,11 @@ class RuntimeSession:
                     "schema_digest": schema_digest,
                     "input": dict(input_value),
                     "maximum_output_bytes": maximum_output_bytes,
+                    **(
+                        {"model_evidence": dict(model_evidence)}
+                        if model_evidence is not None
+                        else {}
+                    ),
                 },
                 timeout=timeout,
                 progress_callback=progress_callback,
@@ -647,6 +653,8 @@ class RuntimeSupervisor:
         *,
         scratch_root: str | Path,
         observer: ModelBoundaryObserver | None = None,
+        maximum_reserved_ram_bytes: int | None = None,
+        maximum_reserved_disk_bytes: int | None = None,
     ) -> None:
         self.registry = registry
         root = Path(scratch_root).resolve()
@@ -657,10 +665,53 @@ class RuntimeSupervisor:
         self._sessions: set[RuntimeSession] = set()
         self.observer = observer or ModelBoundaryObserver()
         self.last_environment_keys: frozenset[str] = frozenset()
+        self.maximum_reserved_ram_bytes = maximum_reserved_ram_bytes
+        self.maximum_reserved_disk_bytes = maximum_reserved_disk_bytes
+        self._reserved_ram_bytes = 0
+        self._reserved_disk_bytes = 0
+        for value in (maximum_reserved_ram_bytes, maximum_reserved_disk_bytes):
+            if value is not None and not 1 <= value <= 1024**5:
+                raise RuntimeFailure(
+                    "resource_rejected", "Runtime reservation limit is invalid"
+                )
 
     @property
     def active_process_count(self) -> int:
         return sum(session.process.returncode is None for session in self._sessions)
+
+    @property
+    def active_resource_reservations(self) -> tuple[int, int]:
+        return self._reserved_ram_bytes, self._reserved_disk_bytes
+
+    def _reserve(self, ram_bytes: int, disk_bytes: int) -> None:
+        if not 0 <= ram_bytes <= 1024**5 or not 0 <= disk_bytes <= 1024**5:
+            raise RuntimeFailure(
+                "resource_rejected", "Runtime resource declaration is invalid"
+            )
+        next_ram = self._reserved_ram_bytes + ram_bytes
+        next_disk = self._reserved_disk_bytes + disk_bytes
+        if (
+            self.maximum_reserved_ram_bytes is not None
+            and next_ram > self.maximum_reserved_ram_bytes
+        ) or (
+            self.maximum_reserved_disk_bytes is not None
+            and next_disk > self.maximum_reserved_disk_bytes
+        ):
+            raise RuntimeFailure(
+                "resource_rejected", "Runtime resource reservation is unavailable"
+            )
+        self._reserved_ram_bytes = next_ram
+        self._reserved_disk_bytes = next_disk
+
+    def _release(self, ram_bytes: int, disk_bytes: int) -> None:
+        self._reserved_ram_bytes = max(0, self._reserved_ram_bytes - ram_bytes)
+        self._reserved_disk_bytes = max(0, self._reserved_disk_bytes - disk_bytes)
+
+    def _close_session(
+        self, session: RuntimeSession, ram_bytes: int, disk_bytes: int
+    ) -> None:
+        self._sessions.discard(session)
+        self._release(ram_bytes, disk_bytes)
 
     @staticmethod
     def _clean_environment() -> dict[str, str]:
@@ -769,6 +820,8 @@ class RuntimeSupervisor:
         execution_provider: str,
         health_fault_profile: str | None = None,
         maximum_artifact_bytes: int = 1024 * 1024 * 1024,
+        required_ram_bytes: int = 0,
+        required_disk_bytes: int = 0,
         trace_id: str = "no-active-span",
     ) -> RuntimeSession:
         registration = self.registry.get(adapter_id)
@@ -786,6 +839,8 @@ class RuntimeSupervisor:
             raise RuntimeFailure(
                 "resource_rejected", "Runtime artifact limit is invalid"
             )
+        self._reserve(required_ram_bytes, required_disk_bytes)
+        reservation_active = True
         scratch = self.scratch_root / ("runtime-" + uuid.uuid4().hex)
         scratch.mkdir(parents=True)
         process: asyncio.subprocess.Process | None = None
@@ -841,7 +896,9 @@ class RuntimeSupervisor:
                 descriptor=placeholder,
                 observer=self.observer,
                 trace_id=trace_id,
-                on_close=self._sessions.discard,
+                on_close=lambda value: self._close_session(
+                    value, required_ram_bytes, required_disk_bytes
+                ),
             )
             self._sessions.add(session)
             health = await session._exchange(
@@ -850,10 +907,12 @@ class RuntimeSupervisor:
             descriptor = AdapterDescriptor.parse(health)
             self._check_descriptor(registration, descriptor)
             session.descriptor = descriptor
+            reservation_active = False
             return session
         except Exception:
             if session is not None:
                 await session.shutdown()
+                reservation_active = False
             elif process is not None and process.returncode is None:
                 process.kill()
                 await process.wait()
@@ -861,6 +920,8 @@ class RuntimeSupervisor:
                 _remove_tree(scratch)
             except OSError:
                 pass
+            if reservation_active:
+                self._release(required_ram_bytes, required_disk_bytes)
             raise
 
     async def shutdown(self) -> tuple[str, ...]:
@@ -916,6 +977,23 @@ def built_in_runtime_registry() -> RuntimeAdapterRegistry:
                 ),
                 formats=frozenset({"numpy-npz"}),
                 tasks=frozenset({"airfoil_aerodynamics"}),
+                platforms=frozenset({system}),
+                architectures=frozenset({architecture}),
+                execution_providers=frozenset({"cpu"}),
+            )
+        )
+        registrations.append(
+            AdapterRegistration(
+                adapter_id="wright-chatter-forest-numpy",
+                adapter_version="1.0.0",
+                contract_version="1.0",
+                command=(
+                    sys.executable,
+                    "-I",
+                    str(Path(__file__).with_name("chatter_runtime.py")),
+                ),
+                formats=frozenset({"wright-chatter-forest-npz-1.0"}),
+                tasks=frozenset({"screen_chatter_candidates"}),
                 platforms=frozenset({system}),
                 architectures=frozenset({architecture}),
                 execution_providers=frozenset({"cpu"}),

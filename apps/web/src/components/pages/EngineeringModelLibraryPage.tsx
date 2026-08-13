@@ -173,6 +173,31 @@ function DetailPanel({
         </section>
       ) : null}
 
+      {model.qualification ? (
+        <section data-testid="model-local-qualification">
+          <h3>Local qualification required</h3>
+          <p>{model.qualification.serving_boundary}</p>
+          <p>
+            Dataset: {model.qualification.dataset} (
+            {model.qualification.feature_count} ordered features)
+          </p>
+          <p>Dataset digest: {model.qualification.dataset_digest}</p>
+          <p>
+            Grouped membership: {JSON.stringify(model.qualification.membership)}
+          </p>
+          <p>Reviewed recipe: {JSON.stringify(model.qualification.recipe)}</p>
+          <p>
+            Required parity:{" "}
+            {JSON.stringify(model.qualification.parity_requirements)}
+          </p>
+          <p role="note">
+            Qualification creates a private, non-redistributable package in a
+            location you own. Wright does not download, publish, or silently
+            install source data or a training environment.
+          </p>
+        </section>
+      ) : null}
+
       <section>
         <h3>Evidence</h3>
         <ModelEvidenceGrid evidence={model.evidence} />

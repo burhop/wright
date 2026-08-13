@@ -25,13 +25,20 @@ PAYLOAD_SUFFIXES = {
 REQUIRED_RUNTIME_RESOURCES = {
     "model_registry/affine_runtime.py",
     "model_registry/neuralfoil_runtime.py",
+    "model_registry/chatter_runtime.py",
+    "model_registry/chatter_contracts.py",
     "model_registry/catalog/catalog.yaml",
     "model_registry/catalog/generated-affine-package.json",
+    "model_registry/catalog/generated-chatter-package.json",
     "model_registry/catalog/neuralfoil-medium-package.json",
     "model_registry/schemas/model-package.schema.json",
     "model_registry/schemas/model-install-plan.schema.json",
     "model_registry/schemas/model-operation.schema.json",
     "model_registry/schemas/model-test-vector.schema.json",
+    "model_registry/schemas/chatter-candidate-batch.schema.json",
+    "model_registry/schemas/chatter-result-batch.schema.json",
+    "model_registry/schemas/chatter-serving-metadata.schema.json",
+    "model_registry/schemas/conversion-parity-evidence.schema.json",
 }
 
 
@@ -80,6 +87,4 @@ def test_wheel_and_sdist_ship_model_contracts_without_model_payloads(tmp_path) -
     model_project = tomllib.loads(
         (ROOT / "packages/model_registry/pyproject.toml").read_text(encoding="utf-8")
     )
-    assert model_project["project"]["optional-dependencies"]["neuralfoil"] == [
-        "numpy>=1.26,<3"
-    ]
+    assert "numpy>=1.26,<3" in model_project["project"]["dependencies"]

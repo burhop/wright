@@ -67,6 +67,32 @@ describe("RivetScenarioReport", () => {
           recovery: "Inspect load, constraints, material, and geometry.",
         },
       ],
+      advisory: {
+        schema_version: "1.0",
+        simulation_only: true,
+        machine_authority: false,
+        score_semantics: "uncalibrated_screening_score",
+        selected_candidate_id: "candidate-a",
+        candidate_outcomes: [
+          {
+            candidate_id: "candidate-a",
+            review_status: "selected_for_review",
+            reason: "Lowest eligible score.",
+            chatter_score: 0.1,
+          },
+          {
+            candidate_id: "candidate-b",
+            review_status: "rejected",
+            reason: "Classified as chatter.",
+            chatter_score: 0.9,
+          },
+        ],
+        notices: ["Human engineering review is required."],
+        provider_evidence: [
+          { provider_kind: "mcp" },
+          { provider_kind: "engineering_model" },
+        ],
+      },
       report_digest: "d".repeat(64),
     });
   });
@@ -90,5 +116,33 @@ describe("RivetScenarioReport", () => {
     expect(artifact).toHaveTextContent("fea__solve_static");
     expect(artifact).toHaveTextContent("valid");
     expect(screen.queryByText(/Cancel scenario/)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("scenario-advisory")).toBeNull();
+  });
+
+  it("suppresses a stale advisory after cancellation and shows residue recovery", async () => {
+    const previous = await workspaceService.getEngineeringScenarioReport(
+      "session",
+      "scenario-run",
+    );
+    vi.mocked(workspaceService.getEngineeringScenarioReport).mockResolvedValue({
+      ...previous!,
+      state: "cancelled",
+      cleanup_state: "residue",
+      residue: {
+        kinds: ["model_runtime"],
+        recovery: "Inspect cleanup before retrying.",
+      },
+    });
+    render(
+      <RivetScenarioReport sessionId="session" scenarioRunId="scenario-run" />,
+    );
+    expect(
+      await screen.findByText(/Scenario is cancelled/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Inspect cleanup before retrying",
+    );
+    expect(screen.queryByTestId("scenario-advisory")).toBeNull();
+    expect(screen.queryByText(/Selected discrete candidate/)).toBeNull();
   });
 });

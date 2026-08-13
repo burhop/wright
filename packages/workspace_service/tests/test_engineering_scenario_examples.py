@@ -18,6 +18,7 @@ def test_every_packaged_example_has_exact_nodes_artifacts_and_fixture_provenance
     catalog = EngineeringScenarioCatalog()
     expected_domains = {
         "structural-bracket": {"cad", "python", "fea"},
+        "chatter-candidate-review": {"cad", "cam", "python"},
         "electronics-enclosure-cooling": {"ecad", "cad", "cfd", "python"},
         "parametric-manufacturing": {
             "grasshopper",
@@ -86,6 +87,10 @@ def test_fixture_lineage_references_actual_upstream_content_digests() -> None:
             "slice-summary": "additive-package",
             "cam-program": "slice-summary",
         },
+        "chatter-candidate-review": {
+            "chatter-candidates": "chatter-cad-context",
+            "chatter-results": "chatter-candidates",
+        },
     }
     for scenario_id, parents in expected_parent.items():
         artifacts = {
@@ -98,4 +103,9 @@ def test_fixture_lineage_references_actual_upstream_content_digests() -> None:
         for child_id, parent_id in parents.items():
             assert artifacts[child_id].upstream_digests == (
                 artifacts[parent_id].content_digest,
+            )
+        if scenario_id == "chatter-candidate-review":
+            assert artifacts["chatter-advisory"].upstream_digests == (
+                artifacts["chatter-candidates"].content_digest,
+                artifacts["chatter-results"].content_digest,
             )

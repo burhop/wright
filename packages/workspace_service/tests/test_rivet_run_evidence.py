@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from pathlib import Path
 from datetime import UTC, datetime, timedelta
 
 from core.rivet_mcp import RunManifestDraft
@@ -9,9 +10,15 @@ from data_vault import WorkflowRunRepository, upgrade_database
 from workspace_service.rivet_evidence import (
     build_run_evidence,
     compare_run_manifest,
+    run_material_projection,
+    run_observation_projection,
 )
 from workspace_service.workflow_runner import RunnerSettings, WorkspaceWorkflowRunner
 from data_vault.workflow_runs import WorkflowRunEventRecord, WorkflowRunRecord
+from jsonschema import Draft202012Validator
+
+
+ROOT = Path(__file__).resolve().parents[3]
 
 
 def _manifest() -> dict:
@@ -196,3 +203,99 @@ def test_run_and_ordered_events_are_restored_after_process_restart(tmp_path) -> 
     events = restarted.events("restart-run")
     assert [event.sequence for event in events] == [1, 2]
     assert events[-1].occurred_at == 3
+
+
+def test_provider_neutral_v2_contracts_are_valid_and_v1_resources_are_unchanged() -> (
+    None
+):
+    contracts = (
+        ROOT
+        / "packages"
+        / "workspace_service"
+        / "src"
+        / "workspace_service"
+        / "_rivet"
+        / "contracts"
+    )
+    archived = ROOT / "specs" / "069-rivet-mcp-gateway" / "contracts"
+    for name in ("capability-binding.schema.json", "run-manifest.schema.json"):
+        assert (contracts / name).read_bytes() == (archived / name).read_bytes()
+    for name in ("capability-binding-v2.schema.json", "run-manifest-v2.schema.json"):
+        Draft202012Validator.check_schema(
+            json.loads((contracts / name).read_text(encoding="utf-8"))
+        )
+
+
+def test_capability_v2_schema_rejects_kind_evidence_mismatch() -> None:
+    path = (
+        ROOT
+        / "packages"
+        / "workspace_service"
+        / "src"
+        / "workspace_service"
+        / "_rivet"
+        / "contracts"
+        / "capability-binding-v2.schema.json"
+    )
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    provider = {
+        "schema_version": "1.0",
+        "provider_kind": "engineering_model",
+        "provider_id": "model-1",
+        "capability_id": "screen",
+        "resource_class": "small",
+        "evidence": {
+            "server_id": "server-1",
+            "server_revision": "1",
+            "tool_name": "inspect",
+            "validation_evidence_id": "validation-1",
+            "workspace_grant_digest": "a" * 64,
+        },
+    }
+    provider_schema = schema["$defs"]["provider"]
+    errors = list(
+        Draft202012Validator(schema)
+        .evolve(schema=provider_schema)
+        .iter_errors(provider)
+    )
+    assert errors
+
+
+def test_provider_material_is_compared_while_observation_is_non_material() -> None:
+    manifest = _manifest()
+    provider = {
+        "schema_version": "1.0",
+        "provider_kind": "mcp",
+        "provider_id": "fixture-cad",
+        "capability_id": "inspect_context",
+        "resource_class": "small",
+        "evidence": {
+            "server_id": "fixture-cad",
+            "server_revision": "fixture-v1",
+            "tool_name": "inspect_context",
+            "validation_evidence_id": "validation-fixture-cad",
+            "workspace_grant_digest": "4" * 64,
+        },
+    }
+    manifest["schema_version"] = 2
+    manifest["bindings"][0]["provider"] = provider
+    first_material = run_material_projection(manifest)
+    first_observation = run_observation_projection(manifest)
+    changed_observation = dict(manifest)
+    changed_observation.update(
+        {
+            "run_id": "another-run",
+            "trace_id": "another-trace",
+            "started_at": "2026-08-13T00:10:00Z",
+            "completed_at": "2026-08-13T00:10:01Z",
+        }
+    )
+    assert run_material_projection(changed_observation) == first_material
+    assert run_observation_projection(changed_observation) != first_observation
+
+    report = compare_run_manifest(
+        manifest,
+        {"provider_evidence_digests": ["9" * 64]},
+    )
+    assert report["reproducible"] is False
+    assert report["differences"][0]["code"] == "provider_evidence_changed"

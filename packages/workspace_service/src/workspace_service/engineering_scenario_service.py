@@ -338,6 +338,10 @@ def _extract_artifact_claims(value: Any) -> tuple[Mapping[str, Any], ...]:
     return tuple(found)
 
 
+def _binding_provider(binding: Any):
+    return getattr(binding, "provider", None) if binding is not None else None
+
+
 class EngineeringScenarioService:
     def __init__(
         self,
@@ -430,16 +434,50 @@ class EngineeringScenarioService:
                         value.binding.binding_digest if value.binding else None
                     ),
                     "blockers": value.blockers,
+                    "provider": (
+                        _binding_provider(value.binding).canonical()
+                        if _binding_provider(value.binding)
+                        else None
+                    ),
+                    "provider_evidence_digest": (
+                        _binding_provider(value.binding).provider_evidence_digest
+                        if _binding_provider(value.binding)
+                        else None
+                    ),
                 }
                 for value in preview.nodes
             )
+            declared_providers = {
+                str(value["node_id"]): value.get("provider_kind")
+                for value in manifest.document["capabilities"]
+            }
             for value in preview.nodes:
+                provider_label = (
+                    "engineering model"
+                    if declared_providers.get(value.requirement.node_id)
+                    == "engineering_model"
+                    else "MCP capability"
+                )
                 for code in value.blockers:
                     blockers.append(
                         ScenarioBlocker(
                             f"scenario_{code}",
                             f"Capability for node {value.requirement.node_id} is not ready: {code}",
-                            "Enable and validate the exact workspace MCP capability, then refresh preflight.",
+                            f"Enable and validate the exact workspace {provider_label}, then refresh preflight.",
+                        )
+                    )
+                expected_provider = declared_providers.get(value.requirement.node_id)
+                actual_provider = (
+                    _binding_provider(value.binding).provider_kind
+                    if _binding_provider(value.binding)
+                    else None
+                )
+                if expected_provider and actual_provider != expected_provider:
+                    blockers.append(
+                        ScenarioBlocker(
+                            "scenario_provider_kind_mismatch",
+                            f"Capability for node {value.requirement.node_id} has the wrong provider kind",
+                            "Refresh discovery and review an exact capability from the declared provider kind.",
                         )
                     )
         except WorkflowOperationsError as error:
@@ -565,7 +603,11 @@ class EngineeringScenarioService:
                     {
                         name: contract_document(name)
                         for name in (
-                            "scenario-manifest.schema.json",
+                            (
+                                "scenario-manifest-1.1.schema.json"
+                                if manifest.document["schema_version"] == "1.1"
+                                else "scenario-manifest.schema.json"
+                            ),
                             "artifact-envelope.schema.json",
                             "assertion-result.schema.json",
                         )
@@ -586,7 +628,7 @@ class EngineeringScenarioService:
     def report(self, scenario_run_id: str) -> dict[str, Any] | None:
         current = self._repository.get(scenario_run_id)
         if current is None or current["state"] != "running":
-            return current
+            return _report_projection(current)
         workflow = self._workflow_runs.get(str(current["workflow_run_id"]))
         if workflow is None or workflow.state in {"queued", "running", "cancelling"}:
             return current
@@ -737,7 +779,7 @@ class EngineeringScenarioService:
         )
         result = self._repository.get(str(current["scenario_run_id"]))
         assert result is not None
-        return result
+        return _report_projection(result)
 
     async def cancel(
         self,
@@ -832,6 +874,25 @@ class EngineeringScenarioService:
 
 def canonical_assertion_digest(manifest: EngineeringScenarioManifest) -> str:
     return canonical_digest(manifest.document["assertions"])
+
+
+def _report_projection(value: Mapping[str, Any] | None) -> dict[str, Any] | None:
+    if value is None:
+        return None
+    result = dict(value)
+    advisory = None
+    if result.get("state") == "passed":
+        advisory = next(
+            (
+                artifact.get("content")
+                for artifact in result.get("artifacts", ())
+                if str(artifact.get("kind", "")).endswith("-advisory-report")
+                and isinstance(artifact.get("content"), Mapping)
+            ),
+            None,
+        )
+    result["advisory"] = advisory
+    return result
 
 
 def _stable_reason(value: str) -> str:

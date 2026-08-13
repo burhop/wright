@@ -35,6 +35,7 @@ _CATEGORIES = {
     "additive": AssertionCategory.ADDITIVE,
     "slicer": AssertionCategory.ADDITIVE,
     "cam": AssertionCategory.CAM_SAFETY,
+    "chatter_advisory": AssertionCategory.CAM_SAFETY,
 }
 
 
@@ -492,6 +493,57 @@ def _cam(
     )
 
 
+def _chatter_advisory(
+    rule: Mapping[str, Any], artifacts: Sequence[NormalizedArtifact]
+) -> tuple[bool, Any, str]:
+    del rule
+    contents = {artifact.kind: _content(artifact) for artifact in artifacts}
+    candidates = contents.get("candidate-batch")
+    results = contents.get("model-result-batch")
+    report = contents.get("chatter-advisory-report")
+    if candidates is None or results is None or report is None:
+        raise EngineeringScenarioError(
+            "chatter_advisory_artifact_missing",
+            "Candidate, model-result, and advisory artifacts are required",
+        )
+    candidate_ids = [str(item["candidate_id"]) for item in candidates["candidates"]]
+    result_ids = [str(item["candidate_id"]) for item in results["results"]]
+    outcomes = list(report["candidate_outcomes"])
+    outcome_ids = [str(item.get("candidate_id", "")) for item in outcomes]
+    selected = str(report["selected_candidate_id"])
+    selected_rows = [
+        item
+        for item in outcomes
+        if item.get("candidate_id") == selected
+        and item.get("review_status") == "selected_for_review"
+    ]
+    invariant_failures = [
+        item["candidate_id"]
+        for item in candidates["candidates"]
+        if any(value["state"] != "pass" for value in item["engineering_invariants"])
+    ]
+    passed = bool(
+        candidate_ids == result_ids == outcome_ids
+        and selected in candidate_ids
+        and len(selected_rows) == 1
+        and selected not in invariant_failures
+        and report["simulation_only"] is True
+        and report["machine_authority"] is False
+        and report["score_semantics"] == "uncalibrated_screening_score"
+    )
+    return (
+        passed,
+        {
+            "candidate_ids": candidate_ids,
+            "selected_candidate_id": selected,
+            "invariant_failures": invariant_failures,
+            "simulation_only": report["simulation_only"],
+            "machine_authority": report["machine_authority"],
+        },
+        "chatter_advisory_valid" if passed else "chatter_advisory_invalid",
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class _RegisteredPlugin:
     name: str
@@ -513,6 +565,7 @@ class EngineeringAssertionRegistry:
             "additive": _additive,
             "slicer": _numeric,
             "cam": _cam,
+            "chatter_advisory": _chatter_advisory,
         }.items():
             self.register(name, "1.0", function)
 

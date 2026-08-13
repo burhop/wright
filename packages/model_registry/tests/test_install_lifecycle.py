@@ -13,6 +13,10 @@ from model_registry.lifecycle import (
 )
 from model_registry.planning import confirm_effect_plan, create_effect_plan
 from model_registry.policy import HostObservation
+from model_registry.generated import (
+    chatter_fixture_artifacts,
+    generated_chatter_package,
+)
 
 
 NOW = datetime(2026, 8, 13, 12, 0, tzinfo=UTC)
@@ -192,3 +196,42 @@ def test_offline_import_uses_the_same_policy_and_activation_path(tmp_path) -> No
     )
     assert operation["state"] == "succeeded"
     assert store.read_activation(operation["result"]["installation_id"]) is not None
+
+
+def test_generated_chatter_installs_only_exact_data_artifacts(tmp_path) -> None:
+    package = generated_chatter_package()
+    artifacts = chatter_fixture_artifacts(package)
+    host = HostObservation(
+        platform="windows",
+        architecture="x86_64",
+        available_disk_bytes=1_000_000_000,
+        available_ram_bytes=1_000_000_000,
+        accelerators=frozenset({"cpu"}),
+        runtime_adapters={"wright-chatter-forest-numpy": "1.0.0"},
+    )
+    plan = create_effect_plan(
+        package,
+        variant_id="generated-forest-cpu-f64",
+        snapshot_id="snapshot-chatter",
+        principal_id="engineer-1",
+        host=host,
+        now=NOW,
+    )
+    confirmed = confirm_effect_plan(
+        plan,
+        principal_id="engineer-1",
+        plan_digest=plan.plan_digest,
+        now=NOW,
+        current_plan=plan,
+    )
+    _, store, service = lifecycle(tmp_path)
+    operation = service.install(confirmed, package, MappingArtifactSource(artifacts))
+    assert operation["state"] == "succeeded"
+    activation = store.read_activation(operation["result"]["installation_id"])
+    assert activation is not None
+    assert set(activation["artifacts"]) == {
+        "INTERNAL-USE-NOTICE.txt",
+        "evidence/conversion-parity.json",
+        "model/forest.npz",
+        "model/serving-metadata.json",
+    }

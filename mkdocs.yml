@@ -62,7 +62,9 @@ nav:
       - Open Web Applications: workspace-surfaces/opening-surfaces.md
       - Rivet MCP Workflows: rivet/mcp-gateway.md
       - Rivet Engineering Scenarios: rivet/engineering-scenarios.md
+      - Model-enabled Rivet Scenarios: rivet/model-enabled-scenarios.md
       - Rivet Workflow Testing: rivet/testing.md
+      - Local Chatter Model: models/chatter-local-model.md
       - Docker Deployment: user-guide/docker.md
       - Environment Variables: user-guide/env-vars.md
       - Makefile Targets: user-guide/makefile.md

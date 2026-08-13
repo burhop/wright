@@ -1,0 +1,596 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/rivet-run-manifest-v2.json",
+  "title": "Rivet Provider-Neutral Run Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "generation",
+    "workspace_id",
+    "session_id",
+    "workflow",
+    "runtime",
+    "review_digest",
+    "binding_set_digest",
+    "policy_snapshot_digest",
+    "authority",
+    "bindings",
+    "child_call_ids",
+    "approval_ids",
+    "artifacts",
+    "started_at",
+    "completed_at",
+    "terminal_state",
+    "redaction_count",
+    "event_truncated",
+    "output_truncated",
+    "trace_id",
+    "manifest_digest",
+    "child_calls"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "run_id": {
+      "$ref": "#/$defs/nonempty"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "workspace_id": {
+      "$ref": "#/$defs/nonempty"
+    },
+    "session_id": {
+      "$ref": "#/$defs/nonempty"
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow_id",
+        "revision",
+        "digest",
+        "graph_id"
+      ],
+      "properties": {
+        "workflow_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "graph_id": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol_version",
+        "rivet_version",
+        "package_version",
+        "runner_sha256",
+        "source_revision"
+      ],
+      "properties": {
+        "protocol_version": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "rivet_version": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "package_version": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "runner_sha256": {
+          "$ref": "#/$defs/digest"
+        },
+        "source_revision": {
+          "$ref": "#/$defs/nonempty"
+        }
+      }
+    },
+    "review_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "binding_set_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "policy_snapshot_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_id",
+        "authority_digest",
+        "issued_at",
+        "expires_at"
+      ],
+      "properties": {
+        "authority_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "authority_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "issued_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "revoked_at": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "node_id",
+          "qualified_tool_name",
+          "server_revision",
+          "schema_digest",
+          "validation_evidence_id",
+          "binding_digest",
+          "provider"
+        ],
+        "properties": {
+          "node_id": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "qualified_tool_name": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "server_revision": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "schema_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "validation_evidence_id": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "binding_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "provider": {
+            "$ref": "#/$defs/provider"
+          }
+        }
+      }
+    },
+    "child_call_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonempty"
+      },
+      "maxItems": 1000
+    },
+    "approval_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonempty"
+      },
+      "maxItems": 1000
+    },
+    "artifacts": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_id",
+          "media_type",
+          "sha256",
+          "bytes",
+          "label"
+        ],
+        "properties": {
+          "artifact_id": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "media_type": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "sha256": {
+            "$ref": "#/$defs/digest"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "label": {
+            "$ref": "#/$defs/nonempty"
+          }
+        }
+      }
+    },
+    "started_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "completed_at": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "terminal_state": {
+      "enum": [
+        "cancelled",
+        "succeeded",
+        "failed"
+      ]
+    },
+    "reason_code": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nonempty"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recovery_code": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nonempty"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cancellation": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authority_revoked",
+            "child_acknowledged",
+            "residue_state"
+          ],
+          "properties": {
+            "authority_revoked": {
+              "type": "boolean"
+            },
+            "child_acknowledged": {
+              "type": "boolean"
+            },
+            "residue_state": {
+              "enum": [
+                "none",
+                "possible",
+                "confirmed"
+              ]
+            },
+            "recovery_code": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/nonempty"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "redaction_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "event_truncated": {
+      "type": "boolean"
+    },
+    "output_truncated": {
+      "type": "boolean"
+    },
+    "trace_id": {
+      "$ref": "#/$defs/nonempty"
+    },
+    "manifest_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "child_calls": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "call_id",
+          "node_id",
+          "qualified_tool_name",
+          "binding_digest",
+          "provider_evidence_digest",
+          "terminal_state"
+        ],
+        "properties": {
+          "call_id": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "node_id": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "qualified_tool_name": {
+            "$ref": "#/$defs/nonempty"
+          },
+          "binding_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "provider_evidence_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "terminal_state": {
+            "enum": [
+              "cancelled",
+              "succeeded",
+              "failed"
+            ]
+          },
+          "input_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "output_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "cleanup_state": {
+            "enum": [
+              "clean",
+              "possible_residue",
+              "confirmed_residue"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "nonempty": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "provider_kind",
+        "provider_id",
+        "capability_id",
+        "resource_class",
+        "evidence"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "provider_kind": {
+          "enum": [
+            "mcp",
+            "engineering_model"
+          ]
+        },
+        "provider_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "capability_id": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "resource_class": {
+          "enum": [
+            "small",
+            "medium",
+            "large",
+            "external"
+          ]
+        },
+        "evidence": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "server_id",
+                "server_revision",
+                "tool_name",
+                "validation_evidence_id",
+                "workspace_grant_digest"
+              ],
+              "properties": {
+                "server_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "server_revision": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "tool_name": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "validation_evidence_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "workspace_grant_digest": {
+                  "$ref": "#/$defs/digest"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "model_id",
+                "package_revision",
+                "manifest_digest",
+                "variant_id",
+                "artifact_set_digest",
+                "installation_id",
+                "installation_digest",
+                "adapter_id",
+                "adapter_version",
+                "runtime_version",
+                "test_evidence_id",
+                "test_material_digest",
+                "workspace_binding_digest",
+                "task_id",
+                "input_schema_digest",
+                "output_schema_digest",
+                "threshold",
+                "resource_digest"
+              ],
+              "properties": {
+                "model_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "package_revision": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "manifest_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "variant_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "artifact_set_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "installation_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "installation_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "adapter_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "adapter_version": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "runtime_version": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "test_evidence_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "test_material_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "workspace_binding_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "task_id": {
+                  "$ref": "#/$defs/nonempty"
+                },
+                "input_schema_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "output_schema_digest": {
+                  "$ref": "#/$defs/digest"
+                },
+                "threshold": {
+                  "oneOf": [
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "exclusiveMaximum": 1
+                    }
+                  ]
+                },
+                "resource_digest": {
+                  "$ref": "#/$defs/digest"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "provider_kind": {
+                "const": "mcp"
+              }
+            },
+            "required": [
+              "provider_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "required": [
+                  "server_id"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "provider_kind": {
+                "const": "engineering_model"
+              }
+            },
+            "required": [
+              "provider_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence": {
+                "required": [
+                  "model_id"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

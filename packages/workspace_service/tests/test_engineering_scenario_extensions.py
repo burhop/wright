@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 import pytest
+import yaml
 
 from core.engineering_scenarios import AssertionState, EngineeringScenarioError
 from workspace_service.engineering_scenario_assertions import (
@@ -13,6 +15,7 @@ from workspace_service.engineering_scenario_catalog_service import (
     fixture_documents,
     validate_manifest,
 )
+import workspace_service.engineering_scenario_catalog_service as catalog_service
 from workspace_service.engineering_scenario_artifacts import (
     EngineeringArtifactNormalizerRegistry,
     artifact_content_digest,
@@ -139,3 +142,42 @@ def test_third_party_and_unsafe_extension_variants_are_rejected() -> None:
         "scenario_manifest_invalid",
         "scenario_connection_material_forbidden",
     }
+
+
+def test_second_generated_model_scenario_uses_the_same_provider_neutral_contract(
+    monkeypatch,
+) -> None:
+    fixture = (
+        Path(__file__).with_name("fixtures")
+        / "engineering_scenarios"
+        / "model-enabled-affine.yaml"
+    )
+    document = yaml.safe_load(fixture.read_text(encoding="utf-8"))
+    workflow = (
+        Path(catalog_service.__file__).with_name("engineering_scenario_catalog")
+        / "workflows"
+        / "chatter-candidate-review.rivet-project"
+    ).read_text(encoding="utf-8")
+    for before, after in {
+        "graph-chatter-review": "graph-affine-review",
+        "node-cad-context": "node-input",
+        "node-cam-candidates": "node-context",
+        "node-chatter-model": "node-model",
+        "fixture_cad__inspect_setup": "fixture_cad__inspect_setup",
+        "fixture_cam__generate_candidates": "fixture_python__build_affine_input",
+        "wright_model__wright_chatter_generated_test__screen_chatter_candidates": "wright_model__wright_affine_test__predict",
+    }.items():
+        workflow = workflow.replace(before, after)
+    original_resource_text = catalog_service._resource_text
+    monkeypatch.setattr(
+        catalog_service,
+        "_resource_text",
+        lambda path: (
+            workflow if path.startswith("workflows/") else original_resource_text(path)
+        ),
+    )
+    validate_manifest(document)
+    kinds = [item["provider_kind"] for item in document["capabilities"]]
+    assert kinds.count("mcp") == 2
+    assert kinds.count("engineering_model") == 1
+    assert document["safety"]["physical_actuation"] is False

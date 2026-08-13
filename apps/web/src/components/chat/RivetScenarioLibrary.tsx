@@ -98,9 +98,10 @@ export function RivetScenarioLibrary({
     >
       <h3 id="engineering-scenario-library-title">Engineering scenarios</h3>
       <p>
-        Curated Rivet examples call multiple workspace MCPs and check
-        engineering meaning, units, provenance, and cleanup. Tier 1 stays local
-        and never controls physical equipment.
+        Curated Rivet examples call reviewed workspace capabilities, including
+        MCP tools and local engineering models, and check engineering meaning,
+        units, provenance, resources, and cleanup. Tier 1 stays local and never
+        controls physical equipment.
       </p>
       <p role="status" aria-live="polite">
         {message}
@@ -179,10 +180,25 @@ export function RivetScenarioLibrary({
                   </p>
                 ))}
                 {exact.capabilities.map((capability) => (
-                  <p key={capability.node_id}>
-                    {capability.node_id}:{" "}
-                    {capability.selected_tool || "not bound"}
-                  </p>
+                  <div key={capability.node_id}>
+                    <p>
+                      {capability.node_id}:{" "}
+                      {capability.selected_tool || "not bound"}
+                    </p>
+                    {capability.provider ? (
+                      <p>
+                        Provider:{" "}
+                        {capability.provider.provider_kind === "mcp"
+                          ? "MCP"
+                          : "local engineering model"}{" "}
+                        / {capability.provider.provider_id} / resource{" "}
+                        {capability.provider.resource_class}. Evidence{" "}
+                        {capability.provider_evidence_digest || "not recorded"}.
+                      </p>
+                    ) : (
+                      <p>Provider evidence is not ready.</p>
+                    )}
+                  </div>
                 ))}
                 {!reviewed && exact.state === "ready" ? (
                   <p>

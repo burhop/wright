@@ -32,6 +32,7 @@ from core.workflow_runs import (
 )
 from core.rivet_mcp import (
     ArtifactReference,
+    ProviderEvidence,
     RunManifestDraft,
     WorkflowBindingSet,
 )
@@ -496,6 +497,12 @@ class WorkspaceWorkflowRunner:
                 "The verified Rivet runtime is unavailable",
             )
         manifest_id = f"manifest-{run.run_id}"
+        manifest_schema_version = (
+            2
+            if binding_set.bindings
+            and all(binding.provider is not None for binding in binding_set.bindings)
+            else 1
+        )
         draft = RunManifestDraft(
             run_id=run.run_id,
             generation=run.generation,
@@ -528,9 +535,15 @@ class WorkspaceWorkflowRunner:
                     "schema_digest": binding.schema_digest,
                     "validation_evidence_id": binding.validation_evidence_id,
                     "binding_digest": binding.binding_digest,
+                    **(
+                        {"provider": binding.provider.canonical()}
+                        if manifest_schema_version == 2 and binding.provider is not None
+                        else {}
+                    ),
                 }
                 for binding in binding_set.bindings
             ),
+            schema_version=manifest_schema_version,
         )
         try:
             self._mcp_repository.create_manifest_draft(manifest_id, draft)
@@ -567,6 +580,36 @@ class WorkspaceWorkflowRunner:
         context.draft.redaction_count += sum(
             max(0, int(item.get("redaction_count") or 0)) for item in child_documents
         )
+        if context.draft.schema_version == 2:
+            providers = {
+                str(item["binding_digest"]): ProviderEvidence.parse(item["provider"])
+                for item in context.draft.bindings
+            }
+            terminal_states = {
+                "succeeded": "succeeded",
+                "cancelled": "cancelled",
+            }
+            context.draft.child_calls = tuple(
+                {
+                    "call_id": str(child["call_id"]),
+                    "node_id": str(child["node_id"]),
+                    "qualified_tool_name": str(child["qualified_tool_name"]),
+                    "binding_digest": str(child["binding_digest"]),
+                    "provider_evidence_digest": providers[
+                        str(child["binding_digest"])
+                    ].provider_evidence_digest,
+                    "terminal_state": terminal_states.get(
+                        str(child.get("state")), "failed"
+                    ),
+                    **(
+                        {"input_digest": str(child["argument_digest"])}
+                        if child.get("argument_digest")
+                        else {}
+                    ),
+                }
+                for child in child_documents[:1000]
+                if str(child.get("binding_digest")) in providers
+            )
         artifacts: list[ArtifactReference] = []
         seen_artifacts: set[str] = set()
         for child in child_documents:

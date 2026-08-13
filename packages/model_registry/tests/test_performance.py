@@ -14,6 +14,11 @@ from model_registry.catalog import (
     ModelCatalogEntry,
     ModelCatalogFilters,
 )
+from model_registry.chatter_runtime import load_forest, predict_batch
+from model_registry.generated import (
+    chatter_fixture_artifacts,
+    generated_chatter_package,
+)
 from model_registry.gateway_provider import EngineeringModelGatewayProvider
 from model_registry.generated import affine_artifacts
 from model_registry.models import ModelPackage, canonical_digest
@@ -227,10 +232,20 @@ class TimedApplication:
             "installation_id": "installation-performance",
             "installation_digest": "b" * 64,
             "installation_state": "ready",
+            "package_revision": 1,
+            "manifest_digest": "e" * 64,
+            "variant_id": "json-cpu-f64",
+            "artifact_set_digest": "f" * 64,
             "adapter_id": "timed-adapter",
             "adapter_version": "1.0.0",
+            "runtime_version": "1.0.0",
             "evidence_id": "evidence-performance",
             "evidence_state": "passed",
+            "test_material_digest": "1" * 64,
+            "input_schema_digest": "2" * 64,
+            "output_schema_digest": "3" * 64,
+            "resource_digest": "4" * 64,
+            "threshold": None,
             "material_digest": "c" * 64,
             "policy_snapshot_digest": "d" * 64,
             "policy_current": True,
@@ -305,3 +320,33 @@ def test_validation_evidence_remains_below_one_megabyte() -> None:
     )
     encoded = json.dumps(evidence.projection(), separators=(",", ":")).encode()
     assert len(encoded) < 1024 * 1024
+
+
+def test_chatter_one_and_hundred_candidate_batches_stay_within_cpu_budget(
+    tmp_path,
+) -> None:
+    package = generated_chatter_package()
+    for name, value in chatter_fixture_artifacts(package).items():
+        target = tmp_path.joinpath(*name.split("/"))
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(value)
+    metadata, arrays = load_forest(tmp_path)
+    vector = package.variants[0].test_vectors[0]
+    evidence = vector.expected.value["model_evidence"]
+    samples = {}
+    for count in (1, 100):
+        batch = deepcopy(vector.input)
+        template = batch["candidates"][0]
+        batch["candidates"] = [
+            {**deepcopy(template), "candidate_id": f"candidate-{index:03d}"}
+            for index in range(count)
+        ]
+        timings = []
+        for _ in range(5):
+            started = time.perf_counter()
+            result = predict_batch(batch, metadata, arrays, evidence)
+            timings.append(time.perf_counter() - started)
+            assert len(result["results"]) == count
+        samples[count] = _p95(timings)
+    assert samples[1] < 1.0
+    assert samples[100] < 3.0

@@ -5,6 +5,7 @@ import time
 
 import pytest
 
+from core.rivet_mcp import ProviderEvidence
 from tool_registry.gateway_models import GatewayError, GatewayResource, GatewayTool
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.gateway_service import GatewayService
@@ -344,3 +345,45 @@ def test_unsupported_protocol_fails_with_stable_error() -> None:
             client_capabilities={},
         )
     assert captured.value.code.value == "unsupported_protocol"
+
+
+def test_gateway_tool_provider_evidence_is_validated_at_the_projection_boundary() -> (
+    None
+):
+    provider = ProviderEvidence(
+        provider_kind="mcp",
+        provider_id="cad",
+        capability_id="inspect",
+        resource_class="small",
+        evidence={
+            "server_id": "cad",
+            "server_revision": "cad-v1",
+            "tool_name": "inspect",
+            "validation_evidence_id": "validation-cad-v1",
+            "workspace_grant_digest": "a" * 64,
+        },
+    )
+    tool = GatewayTool(
+        name="cad__inspect",
+        server_id="cad",
+        tool_name="inspect",
+        description="Inspect the exact CAD context.",
+        input_schema={"type": "object"},
+        provenance={
+            "provider": provider.canonical(),
+            "provider_evidence_digest": provider.provider_evidence_digest,
+        },
+    )
+    assert tool.provenance["provider"]["provider_kind"] == "mcp"
+    with pytest.raises(ValueError, match="digest changed"):
+        GatewayTool(
+            name="cad__changed",
+            server_id="cad",
+            tool_name="changed",
+            description="Changed provider evidence.",
+            input_schema={"type": "object"},
+            provenance={
+                "provider": provider.canonical(),
+                "provider_evidence_digest": "f" * 64,
+            },
+        )

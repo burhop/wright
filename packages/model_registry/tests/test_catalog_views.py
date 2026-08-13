@@ -64,7 +64,7 @@ def test_filter_sort_and_cursor_pagination_are_bounded_and_deterministic() -> No
         limit=2,
         cursor=first.next_cursor,
     )
-    assert first.total == 6
+    assert first.total == 8
     assert first.next_cursor
     assert not {item["model_id"] for item in first.items}.intersection(
         item["model_id"] for item in second.items

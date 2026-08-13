@@ -63,6 +63,15 @@ export interface EngineeringModelView {
     manifest_digest: string;
     artifact_set_digest: string;
   } | null;
+  qualification?: {
+    dataset: string;
+    dataset_digest: string;
+    feature_count: number;
+    membership: Record<string, unknown>;
+    recipe: Record<string, unknown>;
+    serving_boundary: string;
+    parity_requirements: Record<string, unknown>;
+  } | null;
   manifest_digest: string;
   entry_digest: string;
   snapshot: ModelCatalogSnapshot;

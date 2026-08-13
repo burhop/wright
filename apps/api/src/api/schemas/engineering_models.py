@@ -63,6 +63,7 @@ class EngineeringModelResponse(BaseModel):
     variants: list[dict[str, Any]] = Field(max_length=64)
     blockers: list[dict[str, Any]] = Field(max_length=128)
     generator: dict[str, Any] | None = None
+    qualification: dict[str, Any] | None = None
     manifest_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
     entry_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
     snapshot: CatalogSnapshotResponse

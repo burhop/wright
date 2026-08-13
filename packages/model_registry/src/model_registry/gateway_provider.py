@@ -6,6 +6,7 @@ import re
 from collections.abc import Mapping
 from typing import Any
 
+from core.rivet_mcp import ProviderEvidence
 from core.tools import ToolContext
 from tool_registry.gateway_models import (
     GatewayError,
@@ -43,8 +44,10 @@ def _valid_capability(value: Mapping[str, Any], session: GatewaySessionContext) 
         identities = (
             value["binding_id"],
             value["installation_id"],
+            value["variant_id"],
             value["adapter_id"],
             value["adapter_version"],
+            value["runtime_version"],
             value["evidence_id"],
         )
         description = value["description"]
@@ -54,6 +57,12 @@ def _valid_capability(value: Mapping[str, Any], session: GatewaySessionContext) 
             value["installation_digest"],
             value["material_digest"],
             value["policy_snapshot_digest"],
+            value["manifest_digest"],
+            value["artifact_set_digest"],
+            value["test_material_digest"],
+            value["input_schema_digest"],
+            value["output_schema_digest"],
+            value["resource_digest"],
         )
     except (KeyError, TypeError, ValueError):
         return False
@@ -66,6 +75,8 @@ def _valid_capability(value: Mapping[str, Any], session: GatewaySessionContext) 
             isinstance(identity, str) and 1 <= len(identity) <= 128
             for identity in identities
         )
+        and isinstance(value.get("package_revision"), int)
+        and value["package_revision"] >= 1
         and value.get("workspace_id") == session.workspace_id
         and value.get("binding_state") == "enabled"
         and value.get("installation_state") == "ready"
@@ -119,6 +130,32 @@ class EngineeringModelGatewayProvider:
             executor=unavailable,
         )
         contract = base.contract()
+        provider = ProviderEvidence(
+            provider_kind="engineering_model",
+            provider_id=str(value["model_id"]),
+            capability_id=str(value["task_id"]),
+            resource_class="small",
+            evidence={
+                "model_id": value["model_id"],
+                "package_revision": value["package_revision"],
+                "manifest_digest": value["manifest_digest"],
+                "variant_id": value["variant_id"],
+                "artifact_set_digest": value["artifact_set_digest"],
+                "installation_id": value["installation_id"],
+                "installation_digest": value["installation_digest"],
+                "adapter_id": value["adapter_id"],
+                "adapter_version": value["adapter_version"],
+                "runtime_version": value["runtime_version"],
+                "test_evidence_id": value["evidence_id"],
+                "test_material_digest": value["test_material_digest"],
+                "workspace_binding_digest": value["binding_digest"],
+                "task_id": value["task_id"],
+                "input_schema_digest": value["input_schema_digest"],
+                "output_schema_digest": value["output_schema_digest"],
+                "threshold": value.get("threshold"),
+                "resource_digest": value["resource_digest"],
+            },
+        )
         return GatewayTool(
             name=name,
             server_id="wright-models",
@@ -149,6 +186,8 @@ class EngineeringModelGatewayProvider:
                 "installation_digest": value["installation_digest"],
                 "material_evidence_digest": value["material_digest"],
                 "policy_snapshot_digest": value["policy_snapshot_digest"],
+                "provider": provider.canonical(),
+                "provider_evidence_digest": provider.provider_evidence_digest,
             },
         )
 

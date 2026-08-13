@@ -48,6 +48,65 @@ entries:
       test: live
     blockers: []
 
+  - model_id: wright-chatter
+    display_name: Wright Chatter Screening Source
+    description: Private internal Chatter source record; visible for exact local qualification but never remotely acquired or installed as source artifacts.
+    maturity: private_internal_source
+    readiness: needs_review
+    source:
+      kind: offline
+      uri: wright://internal/chatter/source
+      immutable_revision: 4eeb36dbfede3c194c43b3d2039abd5860a675f6
+      access: offline_only
+    tasks: [screen_chatter_candidates]
+    license:
+      expression: LicenseRef-Wright-Internal-Chatter
+      attribution: Wright-owned source boundary; no public license file or redistribution grant is recorded.
+      redistribution: prohibited
+    limitations:
+      - {limitation_id: source-only, description: This record has no installable payload until explicit local qualification produces exact data-only artifacts and parity evidence., severity: critical}
+      - {limitation_id: uncalibrated-screening, description: Chatter scores are uncalibrated screening outputs and not safety probabilities or machining guarantees., severity: critical}
+    qualification:
+      dataset: Dataset 2 process-only features
+      dataset_digest: 1d7880d3fd321a86885c825003bfc8c1ba3ccd15cf0e0e7b9c283a48b0d51d5f
+      feature_count: 37
+      membership: {splitter: GroupShuffleSplit, test_size: 0.2, random_state: 42, train_groups: 96, validation_groups: 24, overlap_groups: 0}
+      recipe: {family: RandomForestClassifier, n_estimators: 500, max_depth: 25, min_samples_split: 10, min_samples_leaf: 5, max_features: sqrt, class_weight: balanced, criterion: gini, random_state: 42}
+      serving_boundary: Explicit trusted local retraining and numeric export only; normal install never loads Joblib, trains, or contacts Data Vault.
+      parity_requirements: {class_agreement_minimum: 0.995, mean_score_delta_maximum: 0.01, maximum_score_delta: 0.05, mandatory_boundaries: required}
+    variants: []
+    evidence: {source: cached, license: partial, artifact: absent, runtime: cached, compatibility: partial, security: bundled, test: absent}
+    blockers:
+      - {category: local_qualification_required, message: No exact locally qualified serving revision is attached., recovery: Run the explicit trusted local qualification with the pinned source, Dataset 2, Data Vault recipe evidence, and a caller-owned output path.}
+      - {category: redistribution_prohibited, message: No public source/model/data redistribution grant is recorded., recovery: Keep all real source, data, environments, and serving packages local and untracked unless an owner decision changes the terms.}
+
+  - model_id: wright-chatter-generated-test
+    package_resource: generated-chatter-package.json
+    maturity: deterministic_fixture
+    readiness: approved
+    evidence:
+      source: bundled
+      license: bundled
+      artifact: bundled
+      runtime: cached
+      compatibility: cached
+      security: bundled
+      test: bundled
+    blockers: []
+    generator:
+      kind: deterministic_recipe
+      recipe: Generate two numeric decision stumps, strict serving metadata, an internal-use notice, and generated-only parity evidence.
+      inputs:
+        tree_count: 2
+        decision_threshold: 0.5
+        deterministic_seed: 0
+      constraints:
+        - Contract proof only; it is not trained on or derived from private Chatter data.
+        - JSON and numeric NPZ only; pickle and executable model content are prohibited.
+        - Every artifact is generated beneath caller-owned temporary state.
+      manifest_digest: 9362d4f1c20ffc8314a3562fddd773c409e1fef31aed1dd3660d320aa8fa2347
+      artifact_set_digest: 0c2078933a72affc33be76de8ac90e7151c3a6fb33c3a67c18e5a18277c6edf9
+
   - model_id: keras-io-pointnet
     display_name: Keras PointNet ModelNet10 Candidate
     description: Public pinned point-cloud classification candidate; evaluation-only until Gate D closes license, runtime, resources, and real-vector evidence.

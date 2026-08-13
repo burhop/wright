@@ -23,6 +23,7 @@ from workspace_service.engineering_scenario_assertions import (
 def test_public_scenario_contracts_are_valid_draft_2020_12() -> None:
     for name in (
         "scenario-manifest.schema.json",
+        "scenario-manifest-1.1.schema.json",
         "artifact-envelope.schema.json",
         "assertion-result.schema.json",
     ):
@@ -47,14 +48,45 @@ def test_public_scenario_contracts_match_the_reviewed_specification() -> None:
         "assertion-result.schema.json",
     ):
         assert (public / name).read_bytes() == (specification / name).read_bytes()
+    assert (public / "scenario-manifest-1.1.schema.json").read_bytes() == (
+        root
+        / "specs"
+        / "072-chatter-rivet-scenarios"
+        / "contracts"
+        / "scenario-manifest-1.1.schema.json"
+    ).read_bytes()
 
 
-def test_packaged_manifests_validate_against_public_contract() -> None:
-    validator = Draft202012Validator(contract_document("scenario-manifest.schema.json"))
-
+def test_packaged_manifests_validate_against_versioned_public_contract() -> None:
     for entry in EngineeringScenarioCatalog().list():
         manifest = EngineeringScenarioCatalog().get(entry.scenario_id)
-        assert list(validator.iter_errors(manifest.document)) == []
+        document = dict(manifest.document)
+        if document["schema_version"] == "1.1":
+            base = dict(document)
+            base["schema_version"] = "1.0"
+            base["capabilities"] = [
+                {key: value for key, value in item.items() if key != "provider_kind"}
+                for item in document["capabilities"]
+            ]
+            assert (
+                list(
+                    Draft202012Validator(
+                        contract_document("scenario-manifest.schema.json")
+                    ).iter_errors(base)
+                )
+                == []
+            )
+            schema_name = "scenario-manifest-1.1.schema.json"
+        else:
+            schema_name = "scenario-manifest.schema.json"
+        assert (
+            list(
+                Draft202012Validator(contract_document(schema_name)).iter_errors(
+                    document
+                )
+            )
+            == []
+        )
 
 
 def test_packaged_artifacts_and_assertion_examples_validate_public_contracts() -> None:

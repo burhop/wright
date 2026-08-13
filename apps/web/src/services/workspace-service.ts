@@ -183,6 +183,15 @@ export interface EngineeringScenarioDetail {
   manifest_digest: string;
 }
 
+export interface EngineeringProviderEvidence {
+  schema_version: "1.0";
+  provider_kind: "mcp" | "engineering_model";
+  provider_id: string;
+  capability_id: string;
+  resource_class: "small" | "medium" | "large" | "external";
+  evidence: Record<string, unknown>;
+}
+
 export interface EngineeringScenarioPreflight {
   preflight_id: string;
   scenario_id: string;
@@ -200,6 +209,8 @@ export interface EngineeringScenarioPreflight {
     selected_tool: string | null;
     binding_digest: string | null;
     blockers: string[];
+    provider?: EngineeringProviderEvidence | null;
+    provider_evidence_digest?: string | null;
   }>;
   environment: Record<string, unknown>;
   blockers: Array<{ code: string; message: string; recovery: string }>;
@@ -230,6 +241,7 @@ export interface EngineeringScenarioReport {
       call_id: string;
       capability: string;
     };
+    content?: unknown;
   }>;
   environment: Record<string, unknown>;
   cleanup_state: string;
@@ -247,6 +259,21 @@ export interface EngineeringScenarioReport {
     message?: string;
     recovery?: string;
   }>;
+  advisory?: {
+    schema_version: string;
+    simulation_only: boolean;
+    machine_authority: boolean;
+    score_semantics: string;
+    selected_candidate_id: string;
+    candidate_outcomes: Array<{
+      candidate_id: string;
+      review_status: string;
+      reason: string;
+      chatter_score?: number;
+    }>;
+    notices: string[];
+    provider_evidence: Array<Record<string, unknown>>;
+  } | null;
   report_digest: string | null;
 }
 

@@ -11,6 +11,7 @@ from model_registry.catalog import (
     catalog_document,
     validate_catalog_document,
 )
+from model_registry.policy import HostObservation
 
 
 def test_bundled_catalog_resource_has_stable_valid_identity() -> None:
@@ -28,6 +29,8 @@ def test_bundled_catalog_resource_has_stable_valid_identity() -> None:
         "keras-io-pointnet",
         "neuralfoil-medium",
         "wright-affine-test",
+        "wright-chatter",
+        "wright-chatter-generated-test",
     )
     generated = catalog.get("wright-affine-test")
     assert generated.package is not None
@@ -94,3 +97,19 @@ def test_catalog_contains_no_payload_or_runtime_install_material() -> None:
         "model_weights",
         "api_token",
     }.intersection(keys)
+
+
+def test_private_chatter_source_is_visible_but_never_installable() -> None:
+    catalog = ModelCatalog.load_bundled()
+    entry = catalog.get("wright-chatter")
+    view = catalog.get_view("wright-chatter", host=HostObservation.reference())
+    assert entry.package is None
+    assert view["source"]["access"] == "offline_only"
+    assert view["license"]["redistribution"] == "prohibited"
+    assert view["variants"] == []
+    assert view["readiness"] == "needs_review"
+    assert {item["category"] for item in view["blockers"]} == {
+        "local_qualification_required",
+        "redistribution_prohibited",
+    }
+    assert view["evidence"]["artifact"] == "absent"

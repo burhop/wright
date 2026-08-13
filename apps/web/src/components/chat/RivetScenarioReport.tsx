@@ -118,6 +118,56 @@ export function RivetScenarioReport({
             {report.artifacts.length} normalized artifacts and{" "}
             {report.assertions.length} engineering assertions.
           </p>
+          {report.state === "passed" && report.advisory ? (
+            <section
+              aria-labelledby={`scenario-advisory-title-${scenarioRunId}`}
+              data-testid="scenario-advisory"
+            >
+              <h5 id={`scenario-advisory-title-${scenarioRunId}`}>
+                Human-review advisory
+              </h5>
+              <p>
+                Selected discrete candidate for review:{" "}
+                <strong>{report.advisory.selected_candidate_id}</strong>.
+              </p>
+              <p>
+                Simulation only:{" "}
+                {report.advisory.simulation_only ? "yes" : "no"}. Machine
+                authority: {report.advisory.machine_authority ? "yes" : "no"}.
+                Score semantics:{" "}
+                {report.advisory.score_semantics.replaceAll("_", " ")}.
+              </p>
+              <p role="note">
+                Scores are uncalibrated screening values, not probabilities or
+                machining guarantees. A qualified engineer must review every
+                invariant and limitation before taking any separate action.
+              </p>
+              <ul style={{ paddingLeft: "var(--space-lg)" }}>
+                {report.advisory.candidate_outcomes.map((outcome) => (
+                  <li key={outcome.candidate_id}>
+                    <strong>
+                      {outcome.candidate_id}:{" "}
+                      {outcome.review_status.replaceAll("_", " ")}
+                    </strong>{" "}
+                    — {outcome.reason}
+                    {typeof outcome.chatter_score === "number" ? (
+                      <small>
+                        {" "}
+                        Uncalibrated score {outcome.chatter_score}.
+                      </small>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              <p>
+                Provider evidence records:{" "}
+                {report.advisory.provider_evidence.length}.
+              </p>
+              {report.advisory.notices.map((notice) => (
+                <p key={notice}>{notice}</p>
+              ))}
+            </section>
+          ) : null}
           <ul style={{ paddingLeft: "var(--space-lg)" }}>
             {report.artifacts.slice(0, 100).map((artifact, index) => (
               <li
@@ -168,8 +218,8 @@ export function RivetScenarioReport({
                 </strong>
                 <br />
                 <small>
-                  {assertion.producer.node_id} / {assertion.producer.capability} /{" "}
-                  {assertion.reason_code}
+                  {assertion.producer.node_id} / {assertion.producer.capability}{" "}
+                  / {assertion.reason_code}
                 </small>
                 <br />
                 <small>

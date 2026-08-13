@@ -13,12 +13,20 @@ SCHEMA_NAMES = (
     "model-install-plan.schema.json",
     "model-operation.schema.json",
 )
+CHATTER_SCHEMA_NAMES = (
+    "chatter-candidate-batch.schema.json",
+    "chatter-result-batch.schema.json",
+    "chatter-serving-metadata.schema.json",
+    "conversion-parity-evidence.schema.json",
+)
 
 
 def test_public_schemas_are_package_resources() -> None:
     root = model_registry.schema_root()
     assert root == files("model_registry.schemas")
-    assert {item.name for item in root.iterdir()} >= set(SCHEMA_NAMES)
+    assert {item.name for item in root.iterdir()} >= set(
+        SCHEMA_NAMES + CHATTER_SCHEMA_NAMES
+    )
 
 
 def test_packaged_schemas_match_feature_contracts() -> None:
@@ -26,6 +34,14 @@ def test_packaged_schemas_match_feature_contracts() -> None:
     source = repository / "specs" / "071-local-engineering-model-library" / "contracts"
     packaged = model_registry.schema_root()
     for name in SCHEMA_NAMES:
+        assert packaged.joinpath(name).read_bytes() == (source / name).read_bytes()
+
+
+def test_packaged_chatter_schemas_match_feature_contracts() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    source = repository / "specs" / "072-chatter-rivet-scenarios" / "contracts"
+    packaged = model_registry.schema_root()
+    for name in CHATTER_SCHEMA_NAMES:
         assert packaged.joinpath(name).read_bytes() == (source / name).read_bytes()
 
 

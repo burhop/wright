@@ -14,7 +14,7 @@ from typing import Any, Callable
 import psutil
 from data_vault import ModelArtifactStore, ModelRepository
 from model_registry.catalog import ModelCatalog, ModelCatalogError, ModelCatalogFilters
-from model_registry.generated import affine_artifacts
+from model_registry.generated import affine_artifacts, chatter_fixture_artifacts
 from model_registry.http_source import HttpPackageArtifactSource
 from model_registry.lifecycle import (
     DiskReservationManager,
@@ -708,8 +708,10 @@ class EngineeringModelService:
         )
         source = None
         if import_path is None:
-            if package.source.kind == "wright":
+            if package.model_id == "wright-affine-test":
                 source = MappingArtifactSource(affine_artifacts(package))
+            elif package.model_id == "wright-chatter-generated-test":
+                source = MappingArtifactSource(chatter_fixture_artifacts(package))
             elif package.source.kind == "https" and package.source.access == "public":
                 source = HttpPackageArtifactSource()
             else:
@@ -1344,6 +1346,8 @@ class EngineeringModelService:
                 variant.resources.installed_bytes,
                 sum(item.size for item in variant.artifacts),
             ),
+            required_ram_bytes=variant.resources.ram_bytes,
+            required_disk_bytes=variant.resources.installed_bytes,
             trace_id=trace_id,
         )
 
@@ -1699,6 +1703,33 @@ class EngineeringModelService:
                     "policy_snapshot_digest": binding["policy_snapshot_digest"],
                     "policy_current": binding["policy_snapshot_digest"]
                     == expected_policy,
+                    "package_revision": package.package_revision,
+                    "manifest_digest": package.digest,
+                    "variant_id": installation["variant_id"],
+                    "artifact_set_digest": canonical_digest(
+                        {
+                            str(item["artifact_path"]): str(item["content_digest"])
+                            for item in repository.installation_artifacts(
+                                str(installation["installation_id"])
+                            )
+                        }
+                    ),
+                    "runtime_version": (
+                        "numpy-compatible-1"
+                        if package.model_id.startswith("wright-chatter")
+                        else str(installation["runtime_adapter_version"])
+                    ),
+                    "test_material_digest": current["material_digest"],
+                    "input_schema_digest": canonical_digest(task.input_schema),
+                    "output_schema_digest": canonical_digest(task.output_schema),
+                    "threshold": (
+                        0.5 if package.model_id.startswith("wright-chatter") else None
+                    ),
+                    "resource_digest": canonical_digest(
+                        package.variant(
+                            str(installation["variant_id"])
+                        ).resources.model_dump(mode="json")
+                    ),
                 }
             )
         return tuple(results)
@@ -1787,6 +1818,25 @@ class EngineeringModelService:
                 timeout=variant.resources.inference_timeout_ms / 1000,
                 maximum_output_bytes=variant.resources.max_output_bytes,
                 progress_callback=forward,
+                model_evidence=(
+                    {
+                        "model_id": package.model_id,
+                        "package_revision": package.package_revision,
+                        "variant_id": variant.variant_id,
+                        "artifact_set_digest": session.artifact_set_digest,
+                        "installation_digest": installation["installation_digest"],
+                        "adapter_id": session.descriptor.adapter_id,
+                        "adapter_version": session.descriptor.adapter_version,
+                        "runtime_version": "numpy-compatible-1",
+                        "test_evidence_id": installation["standard_test_evidence_id"],
+                        "task_id": task.task_id,
+                        "input_schema_digest": canonical_digest(task.input_schema),
+                        "output_schema_digest": canonical_digest(task.output_schema),
+                        "threshold": 0.5,
+                    }
+                    if package.model_id.startswith("wright-chatter")
+                    else None
+                ),
             )
             assert self.artifact_store is not None
             self.artifact_store.observer.record(

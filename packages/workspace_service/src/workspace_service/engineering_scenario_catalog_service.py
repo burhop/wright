@@ -47,6 +47,7 @@ _PLUGINS = {
     "additive",
     "slicer",
     "cam",
+    "chatter_advisory",
 }
 _TIER1_FORBIDDEN_ENVIRONMENT = {
     "network",
@@ -101,6 +102,7 @@ def _resource_text(path: str) -> str:
 def contract_document(name: str) -> dict[str, Any]:
     if name not in {
         "scenario-manifest.schema.json",
+        "scenario-manifest-1.1.schema.json",
         "artifact-envelope.schema.json",
         "assertion-result.schema.json",
     }:
@@ -143,8 +145,30 @@ def _walk_forbidden(value: Any, path: str = "$") -> None:
 
 
 def _validate_schema(document: Mapping[str, Any]) -> None:
+    version = document.get("schema_version")
+    if version not in {"1.0", "1.1"}:
+        raise EngineeringScenarioError(
+            "scenario_manifest_version_unsupported",
+            "Scenario manifest version is unsupported",
+        )
+    base_document = dict(document)
+    if version == "1.1":
+        base_document["schema_version"] = "1.0"
+        base_document["capabilities"] = [
+            {key: value for key, value in item.items() if key != "provider_kind"}
+            for item in document.get("capabilities", ())
+        ]
     validator = Draft202012Validator(contract_document("scenario-manifest.schema.json"))
-    errors = sorted(validator.iter_errors(document), key=lambda item: list(item.path))
+    errors = sorted(
+        validator.iter_errors(base_document), key=lambda item: list(item.path)
+    )
+    if not errors and version == "1.1":
+        extension = Draft202012Validator(
+            contract_document("scenario-manifest-1.1.schema.json")
+        )
+        errors = sorted(
+            extension.iter_errors(document), key=lambda item: list(item.path)
+        )
     if errors:
         error = errors[0]
         field = ".".join(str(part) for part in error.path) or "$"
@@ -164,6 +188,27 @@ def _validate_cross_fields(document: Mapping[str, Any]) -> None:
         raise EngineeringScenarioError(
             "scenario_manifest_invalid", "Capability node identities must be unique"
         )
+    if document["schema_version"] == "1.1":
+        model_capabilities = [
+            value
+            for value in capabilities
+            if value.get("provider_kind") == "engineering_model"
+        ]
+        mcp_capabilities = [
+            value for value in capabilities if value.get("provider_kind") == "mcp"
+        ]
+        mcp_providers = {
+            str(value["tool_name"]).split("__", 1)[0] for value in mcp_capabilities
+        }
+        if (
+            not model_capabilities
+            or len(mcp_capabilities) < 2
+            or len(mcp_providers) < 2
+        ):
+            raise EngineeringScenarioError(
+                "scenario_provider_composition_invalid",
+                "Model-enabled scenarios require one model and two independent MCP providers",
+            )
     artifact_ids = [str(value["artifact_id"]) for value in artifacts]
     if len(artifact_ids) != len(set(artifact_ids)):
         raise EngineeringScenarioError(

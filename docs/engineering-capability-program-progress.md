@@ -377,6 +377,43 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 
 Commit the verified Loop 071 closeout on the integration branch, then begin Loop 072 Chatter and model-enabled Rivet scenarios. Keep the authoritative dev gate, integration-branch push, and merge deferred to Loop 073 program closeout.
 
+## Loop 072
+
+### Spec Kit phases
+
+- [x] `speckit-git-feature`: feature identity `072-chatter-rivet-scenarios` continues on `codex/rivet-engineering-program` under the approved shared-branch strategy.
+- [x] `speckit-specify` and `speckit-clarify`: five stories define private Chatter qualification, typed screening, model-enabled Rivet composition, failure/recovery, and provider-neutral reproduction with Gate E closed.
+- [x] `speckit-plan` and Gate D: exact source/data/recipe boundaries, numeric NPZ serving, explicit local qualification, provider evidence v2, scenario manifest 1.1, resource/cancellation semantics, and generated normal-gate proof are approved.
+- [x] `speckit-checklist`: 60/60 trust/security, scenario engineering, usability, accessibility, recovery, and extension requirements-quality checks pass.
+- [x] `speckit-tasks`: 130 dependency-ordered tasks cover contracts, qualification, runtime, model-enabled scenarios, diagnosis, reproduction, UI, security, packaging, and closeout.
+- [x] Initial `speckit-analyze`: no unresolved critical/high requirement or design finding before implementation.
+- [x] `speckit-implement` and focused Loop 072 acceptance
+- [ ] Final program exact-tree dev gate after Loop 073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
+
+### Implementation checkpoint - Chatter and provider-neutral Rivet models
+
+- Added a visible but inert private Chatter source record pinned to source revision `4eeb36dbfede3c194c43b3d2039abd5860a675f6`, Dataset 2 digest `1d7880d3fd321a86885c825003bfc8c1ba3ccd15cf0e0e7b9c283a48b0d51d5f`, the 37-feature grouped seed-42 recipe, internal-use terms, and exact parity requirements. It offers no remote acquisition or fabricated package identity.
+- Added strict public candidate/result/serving/parity schemas, an exact NumPy-only binary-forest adapter using `allow_pickle=False`, a tiny generated package, supervised lifecycle, typed gateway projection, mandatory vector proof, and private-package parity binding/export prohibition.
+- Added an explicit trusted qualification command that validates the caller-owned source/data/evidence/environment boundary, retrains/exports only after acknowledgement, binds frozen-population and boundary parity, writes a non-redistributable offline archive transactionally, and removes partial state on failure. Real inputs remain outside Git and normal tests.
+- Added provider-neutral MCP/model evidence, Capability Binding v2 and Run Manifest v2 while preserving v1 resources, provider-aware staleness and scenario preflight, and material-versus-observation reproduction projections.
+- Added scenario manifest 1.1 and the statically bound `chatter-candidate-review` CAD/CAM/model/report workflow, normalized artifacts, advisory assertion, provider-aware UI/API contracts, exact human-review advisory, atomic RAM/disk reservations, and a second generated affine extension proof.
+- The integrity-pinned real Rivet worker installed/tested the generated Chatter package and invoked its typed task through Wright's private bridge and Gateway. The simulated CAM MCP's structured response is connected through Rivet into the model node; the test captures all three exact candidates at the model boundary and verifies the persisted child receipt's argument digest. The initial failure was confined to an invalid inline YAML scalar; after quoting `object[]`, the connected end-to-end path passed with no direct runtime contact from Rivet.
+- Normal-gate security/compatibility/packaging checks reject object arrays, changed dtype/shape/topology/index/finiteness, changed schema/units, incompatible hosts, dynamic tool binding, machine authority, private paths, tracked payload suffixes, qualification state, and Chatter-ID branches in generic orchestration.
+
+### Loop 072 acceptance evidence
+
+- Repeat Spec Kit analysis covered 56 requirements/success criteria and 130 unique tasks. It found and remediated the CAM-to-model data-flow gap, conditional-private-qualification wording, and three stale test-path references; no critical/high finding remains.
+- Focused Python evidence includes 214 model/API/security tests with one expected private qualification skip, 100 scenario/Rivet/API/E2E tests, 29 tool-registry/Gateway/capability tests, 24 final catalog/contract/real-worker checks, and 21 final performance/Gateway/real-worker checks. The generated package lifecycle, one- and 100-candidate performance cases, resource conflict/release, cancellation, provider evidence, reproduction, extension, security, compatibility, packaging, and distribution paths pass.
+- Eleven focused component tests and two real Chromium journeys pass. The browser proof covers keyboard use, 320 CSS pixels, 200% zoom, focus/recovery, and zero serious/critical Axe findings. The production web build, wheel/sdist package-resource proof, strict MkDocs, JSON Schema validation, Ruff lint/format, Prettier, dependency lock, and `git diff --check` pass.
+- The real private qualification is an explicit opt-in external test and was skipped transparently because the reviewed private inputs were unavailable. Generated evidence is not represented as private-model parity or approval; no source/data/model/archive byte entered Git.
+
+### Gate and probe status
+
+- Gate E remains closed: no G-code, machine endpoint, controller instruction, physical actuation, paid service, proprietary application, credential, GPU, hardware, or global runtime mutation is authorized.
+- The private source path was not reachable on this host within the bounded probe, so the real qualification lifecycle remains explicitly skipped rather than being inferred from generated evidence.
+- The authoritative repository-wide dev gate, push, and merge remain deferred until Loop 073 as approved.
+
 ## Program guardrails
 
 - No paid usage, license acceptance, external production mutation, user-data deletion, physical actuation, `dev` to `main` merge, or release publication.

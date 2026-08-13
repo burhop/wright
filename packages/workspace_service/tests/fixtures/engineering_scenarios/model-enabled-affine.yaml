@@ -1,0 +1,23 @@
+schema_version: "1.1"
+scenario_id: generated-affine-review
+revision: 1
+title: Generated affine review
+summary: Provider-neutral extension proof combining two fixture MCPs with the generated affine engineering model.
+domains: [cad, python]
+tier: tier1
+resource: {class: small, expected_duration_seconds: 10, memory_mib: 128}
+workflow: {resource: workflows/generated-affine-review.rivet-project, graph_id: graph-affine-review, revision: 1}
+capabilities:
+  - {requirement_id: fixture-input, node_id: node-input, domain: cad, tool_name: fixture_cad__inspect_setup, risk: read, provider_kind: mcp}
+  - {requirement_id: fixture-context, node_id: node-context, domain: python, tool_name: fixture_python__build_affine_input, risk: compute, provider_kind: mcp}
+  - {requirement_id: affine-predict, node_id: node-model, domain: python, tool_name: wright_model__wright_affine_test__predict, risk: compute, provider_kind: engineering_model}
+artifacts:
+  - {artifact_id: affine-context, producer_node_id: node-input, domain: cad, kind: mesh, schema_version: "1.0"}
+  - {artifact_id: affine-input, producer_node_id: node-context, domain: python, kind: numeric-table, schema_version: "1.0"}
+  - {artifact_id: affine-result, producer_node_id: node-model, domain: python, kind: numeric-table, schema_version: "1.0"}
+assertions:
+  - {assertion_id: affine-result-present, plugin: numeric, plugin_version: "1.0", artifact_ids: [affine-result], rule: {kind: presence}, severity: error, guidance: "Inspect the exact generated provider evidence."}
+environment: {network: false, credentials: false, proprietary_application: false, gpu: false, hardware: false, large_download: false, platforms: [windows-amd64, linux-amd64, linux-arm64, macos]}
+safety: {physical_actuation: false, static_outputs_only: true, notes: "Generated numeric extension proof only."}
+cleanup: {timeout_seconds: 5, residue_policy: fail}
+provenance: {owner: Wright Project, fixture_origin: wright-generated, license: MIT}

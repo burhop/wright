@@ -126,6 +126,9 @@ class ModelPackageExtensionRegistry:
 class EngineeringExtensionRegistries:
     def __init__(self) -> None:
         self.packages = ModelPackageExtensionRegistry()
+        self.formats: NamedExtensionRegistry[str] = NamedExtensionRegistry(
+            label="Model format"
+        )
         self.sources: NamedExtensionRegistry[type[SourceAdapter]] = (
             NamedExtensionRegistry(label="Source adapter")
         )
@@ -145,7 +148,11 @@ def _declarative_predicate(
 
 
 def built_in_extension_registries() -> EngineeringExtensionRegistries:
+    from .policy import SAFE_FORMATS
+
     registries = EngineeringExtensionRegistries()
+    for name in sorted(SAFE_FORMATS):
+        registries.formats.register(name, "data-only-1.0")
     registries.sources.register("wright", MappingArtifactSource)
     runtime_registry = built_in_runtime_registry()
     for adapter_id in runtime_registry.versions():

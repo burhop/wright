@@ -6,7 +6,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Callable, Mapping, Protocol, Sequence
 
-from core.rivet_mcp import CapabilityBinding, canonical_digest, canonical_json
+from core.rivet_mcp import (
+    CapabilityBinding,
+    ProviderEvidence,
+    canonical_digest,
+    canonical_json,
+)
 from tool_registry.gateway_models import GatewayTool
 
 from .rivet_validation import RivetMcpNodeRequirement
@@ -36,6 +41,7 @@ class RivetCapabilityProjection:
     compatibility: str
     binding_eligible: bool
     blocking_reasons: tuple[str, ...]
+    provider: ProviderEvidence
 
     def digest_material(self) -> dict[str, Any]:
         return {
@@ -55,6 +61,7 @@ class RivetCapabilityProjection:
             "compatibility": self.compatibility,
             "binding_eligible": self.binding_eligible,
             "blocking_reasons": self.blocking_reasons,
+            "provider": self.provider.canonical(),
         }
 
 
@@ -194,6 +201,44 @@ class RivetCapabilityService:
             }
         )
         blockers: list[str] = []
+        provider_value = tool.provenance.get("provider")
+        try:
+            if isinstance(provider_value, Mapping):
+                provider = ProviderEvidence.parse(provider_value)
+                if tool.provenance.get("provider_evidence_digest") not in {
+                    None,
+                    provider.provider_evidence_digest,
+                }:
+                    raise ValueError("Provider evidence digest changed")
+            else:
+                provider = ProviderEvidence(
+                    provider_kind="mcp",
+                    provider_id=tool.server_id,
+                    capability_id=tool.tool_name,
+                    resource_class="small",
+                    evidence={
+                        "server_id": tool.server_id,
+                        "server_revision": server_revision,
+                        "tool_name": tool.tool_name,
+                        "validation_evidence_id": validation_evidence_id,
+                        "workspace_grant_digest": workspace_grant_digest,
+                    },
+                )
+        except (TypeError, ValueError):
+            provider = ProviderEvidence(
+                provider_kind="mcp",
+                provider_id="invalid-provider",
+                capability_id="invalid-capability",
+                resource_class="small",
+                evidence={
+                    "server_id": "invalid-provider",
+                    "server_revision": "invalid",
+                    "tool_name": "invalid-capability",
+                    "validation_evidence_id": "invalid",
+                    "workspace_grant_digest": workspace_grant_digest,
+                },
+            )
+            blockers.append("provider_evidence_invalid")
         if "__" not in tool.name:
             blockers.append("tool_namespace_invalid")
         if not input_valid:
@@ -225,6 +270,7 @@ class RivetCapabilityService:
             compatibility="compatible" if not blockers else "blocked",
             binding_eligible=not blockers,
             blocking_reasons=tuple(blockers),
+            provider=provider,
         )
 
     def bind(
@@ -303,6 +349,7 @@ class RivetCapabilityService:
             material_defaults=material_defaults,
             argument_constraints=capability.input_schema,
             created_at=created_at,
+            provider=capability.provider,
         )
 
     def stale_reasons(
@@ -336,6 +383,15 @@ class RivetCapabilityService:
                 candidate.workspace_grant_digest,
                 binding.workspace_grant_digest,
                 "workspace_grant_changed",
+            ),
+            (
+                candidate.provider.provider_evidence_digest,
+                (
+                    binding.provider.provider_evidence_digest
+                    if binding.provider is not None
+                    else ""
+                ),
+                "provider_evidence_changed",
             ),
         )
         for actual, expected, code in comparisons:

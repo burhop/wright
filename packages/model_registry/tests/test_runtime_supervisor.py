@@ -153,6 +153,46 @@ async def test_declared_artifact_resource_ceiling_is_enforced_before_launch(
 
 
 @pytest.mark.asyncio
+async def test_resource_reservations_are_atomic_and_release_after_shutdown(
+    tmp_path,
+) -> None:
+    supervisor = RuntimeSupervisor(
+        RuntimeAdapterRegistry((registration(),)),
+        scratch_root=tmp_path / "scratch",
+        maximum_reserved_ram_bytes=3,
+        maximum_reserved_disk_bytes=3,
+    )
+    system, architecture = _platform()
+
+    async def start(installation_id: str):
+        return await supervisor.start_session(
+            adapter_id="wright-deterministic",
+            installation_id=installation_id,
+            artifacts=artifacts(tmp_path / installation_id),
+            model_format="wright-affine-json",
+            task_id="predict",
+            platform=system,
+            architecture=architecture,
+            execution_provider="cpu",
+            required_ram_bytes=2,
+            required_disk_bytes=2,
+        )
+
+    first = await start("installation-first")
+    assert supervisor.active_resource_reservations == (2, 2)
+    with pytest.raises(RuntimeFailure) as caught:
+        await start("installation-conflict")
+    assert caught.value.category == "resource_rejected"
+    assert supervisor.active_resource_reservations == (2, 2)
+
+    await first.shutdown()
+    assert supervisor.active_resource_reservations == (0, 0)
+    replacement = await start("installation-replacement")
+    await replacement.shutdown()
+    assert supervisor.active_resource_reservations == (0, 0)
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("fault", "maximum", "category"),
     [

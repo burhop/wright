@@ -102,6 +102,115 @@ class ArtifactReference:
 
 
 @dataclass(frozen=True, slots=True)
+class ProviderEvidence:
+    """Closed, provider-neutral identity for a reviewed gateway capability."""
+
+    provider_kind: str
+    provider_id: str
+    capability_id: str
+    resource_class: str
+    evidence: Mapping[str, Any]
+    schema_version: str = "1.0"
+
+    def __post_init__(self) -> None:
+        if self.schema_version != "1.0":
+            raise ValueError("Provider evidence schema version is unsupported")
+        if self.provider_kind not in {"mcp", "engineering_model"}:
+            raise ValueError("Provider kind is invalid")
+        if self.resource_class not in {"small", "medium", "large", "external"}:
+            raise ValueError("Provider resource class is invalid")
+        _require_text(self.provider_id, "Provider identity", maximum=128)
+        _require_text(self.capability_id, "Provider capability identity", maximum=128)
+        material = dict(self.evidence)
+        required = (
+            {
+                "server_id",
+                "server_revision",
+                "tool_name",
+                "validation_evidence_id",
+                "workspace_grant_digest",
+            }
+            if self.provider_kind == "mcp"
+            else {
+                "model_id",
+                "package_revision",
+                "manifest_digest",
+                "variant_id",
+                "artifact_set_digest",
+                "installation_id",
+                "installation_digest",
+                "adapter_id",
+                "adapter_version",
+                "runtime_version",
+                "test_evidence_id",
+                "test_material_digest",
+                "workspace_binding_digest",
+                "task_id",
+                "input_schema_digest",
+                "output_schema_digest",
+                "threshold",
+                "resource_digest",
+            }
+        )
+        if set(material) != required:
+            raise ValueError("Provider evidence fields are invalid")
+        digest_fields = (
+            {"workspace_grant_digest"}
+            if self.provider_kind == "mcp"
+            else {
+                "manifest_digest",
+                "artifact_set_digest",
+                "installation_digest",
+                "test_material_digest",
+                "workspace_binding_digest",
+                "input_schema_digest",
+                "output_schema_digest",
+                "resource_digest",
+            }
+        )
+        for name in digest_fields:
+            _require_digest(str(material[name]), name.replace("_", " ").title())
+        if self.provider_kind == "engineering_model":
+            try:
+                revision = int(material["package_revision"])
+            except (TypeError, ValueError) as error:
+                raise ValueError("Model provider evidence is invalid") from error
+            threshold_value = material["threshold"]
+            try:
+                threshold = None if threshold_value is None else float(threshold_value)
+            except (TypeError, ValueError) as error:
+                raise ValueError("Model provider evidence is invalid") from error
+            if revision < 1 or (threshold is not None and not 0 < threshold < 1):
+                raise ValueError("Model provider evidence is invalid")
+        reject_secret_material(self.canonical())
+
+    @property
+    def provider_evidence_digest(self) -> str:
+        return canonical_digest(self.canonical())
+
+    def canonical(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "provider_kind": self.provider_kind,
+            "provider_id": self.provider_id,
+            "capability_id": self.capability_id,
+            "resource_class": self.resource_class,
+            "evidence": dict(self.evidence),
+        }
+
+    @classmethod
+    def parse(cls, value: Mapping[str, Any]) -> "ProviderEvidence":
+        return cls(
+            schema_version=str(value.get("schema_version") or ""),
+            provider_kind=str(value.get("provider_kind") or ""),
+            provider_id=str(value.get("provider_id") or ""),
+            capability_id=str(value.get("capability_id") or ""),
+            resource_class=str(value.get("resource_class") or ""),
+            evidence=dict(value.get("evidence") or {}),
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class CapabilityBinding:
     binding_id: str
     workspace_id: str
@@ -127,6 +236,7 @@ class CapabilityBinding:
     argument_constraints: Mapping[str, Any]
     binding_digest: str
     created_at: datetime
+    provider: ProviderEvidence | None = None
 
     @classmethod
     def build(
@@ -154,7 +264,13 @@ class CapabilityBinding:
         material_defaults: Mapping[str, Any],
         argument_constraints: Mapping[str, Any],
         created_at: datetime,
+        provider: ProviderEvidence | Mapping[str, Any] | None = None,
     ) -> "CapabilityBinding":
+        provider_value = (
+            ProviderEvidence.parse(provider)
+            if isinstance(provider, Mapping)
+            else provider
+        )
         schema_digest = canonical_digest(
             {"input": input_schema, "output": output_schema}
         )
@@ -181,13 +297,20 @@ class CapabilityBinding:
             "material_defaults": material_defaults,
             "argument_constraints": argument_constraints,
         }
+        if provider_value is not None:
+            material["provider"] = provider_value.canonical()
         reject_secret_material(material)
         return cls(
             binding_id=binding_id,
             schema_digest=schema_digest,
             binding_digest=canonical_digest(material),
             created_at=created_at,
-            **{key: value for key, value in material.items() if key != "schema_digest"},
+            provider=provider_value,
+            **{
+                key: value
+                for key, value in material.items()
+                if key not in {"schema_digest", "provider"}
+            },
         )
 
     def __post_init__(self) -> None:
@@ -219,7 +342,7 @@ class CapabilityBinding:
         reject_secret_material(self.digest_material())
 
     def digest_material(self) -> dict[str, Any]:
-        return {
+        material = {
             "workspace_id": self.workspace_id,
             "workflow_id": self.workflow_id,
             "workflow_revision": self.workflow_revision,
@@ -242,10 +365,13 @@ class CapabilityBinding:
             "material_defaults": self.material_defaults,
             "argument_constraints": self.argument_constraints,
         }
+        if self.provider is not None:
+            material["provider"] = self.provider.canonical()
+        return material
 
     def canonical(self) -> dict[str, Any]:
         return {
-            "schema_version": 1,
+            "schema_version": 2 if self.provider is not None else 1,
             "binding_id": self.binding_id,
             **self.digest_material(),
             "binding_digest": self.binding_digest,
@@ -420,10 +546,12 @@ class RunManifest:
     runtime_identity: Mapping[str, Any] = field(default_factory=dict)
     authority_expires_at: datetime | None = None
     bindings: tuple[Mapping[str, Any], ...] = ()
+    schema_version: int = 1
+    child_calls: tuple[Mapping[str, Any], ...] = ()
 
     def digest_material(self) -> dict[str, Any]:
         return {
-            "schema_version": 1,
+            "schema_version": self.schema_version,
             "run_id": self.run_id,
             "generation": self.generation,
             "workspace_id": self.workspace_id,
@@ -470,6 +598,11 @@ class RunManifest:
             "trace_id": self.trace_id,
             "artifacts": [item.canonical() for item in self.artifacts],
             "child_call_ids": self.child_call_ids,
+            **(
+                {"child_calls": [dict(item) for item in self.child_calls]}
+                if self.schema_version == 2
+                else {}
+            ),
             "approval_ids": self.approval_ids,
             "redaction_count": self.redaction_count,
             "event_truncated": self.event_truncated,
@@ -517,6 +650,8 @@ class RunManifestDraft:
     runtime_identity: Mapping[str, Any] = field(default_factory=dict)
     authority_expires_at: datetime | None = None
     bindings: tuple[Mapping[str, Any], ...] = ()
+    schema_version: int = 1
+    child_calls: tuple[Mapping[str, Any], ...] = ()
     _finalized: bool = field(default=False, init=False, repr=False)
 
     def finalize(
@@ -529,6 +664,12 @@ class RunManifestDraft:
     ) -> RunManifest:
         if self._finalized:
             raise ValueError("Run manifest draft is already finalized")
+        if self.schema_version not in {1, 2}:
+            raise ValueError("Run manifest schema version is invalid")
+        if self.schema_version == 2 and any(
+            not isinstance(item.get("provider"), Mapping) for item in self.bindings
+        ):
+            raise ValueError("Run manifest version 2 requires provider evidence")
         if terminal_state not in {"cancelled", "succeeded", "failed"}:
             raise ValueError("Run manifest terminal state is invalid")
         if (
@@ -570,6 +711,8 @@ class RunManifestDraft:
             runtime_identity=dict(self.runtime_identity),
             authority_expires_at=self.authority_expires_at,
             bindings=tuple(dict(item) for item in self.bindings[:100]),
+            schema_version=self.schema_version,
+            child_calls=tuple(dict(item) for item in self.child_calls[:1000]),
         )
         material = manifest.digest_material()
         reject_secret_material(material)
@@ -582,6 +725,7 @@ __all__ = [
     "ArtifactReference",
     "CapabilityBinding",
     "PendingRivetCallApproval",
+    "ProviderEvidence",
     "RivetChildCallRecord",
     "RunManifest",
     "RunManifestDraft",

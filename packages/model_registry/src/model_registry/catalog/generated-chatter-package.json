@@ -1,0 +1,863 @@
+{
+  "schema_version": "1.0",
+  "model_id": "wright-chatter-generated-test",
+  "package_revision": 1,
+  "display_name": "Wright Generated Chatter Contract Model",
+  "description": "Tiny deterministic forest that exercises Chatter contracts without private model or dataset bytes.",
+  "publisher": {
+    "name": "Wright Project",
+    "source_uri": "https://github.com/burhop/wright"
+  },
+  "source": {
+    "kind": "offline",
+    "uri": "wright://generated/chatter-contract",
+    "immutable_revision": "generated-fixture-revision-1",
+    "access": "offline_only",
+    "allowed_hosts": []
+  },
+  "tasks": [
+    {
+      "task_id": "screen_chatter_candidates",
+      "description": "Screen supplied discrete simulated cutting candidates for human review.",
+      "input_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://wright.local/schemas/chatter-candidate-batch-1.0.json",
+        "title": "Wright Chatter Candidate Batch",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "feature_order",
+          "units",
+          "candidates",
+          "batch_provenance"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "1.0"
+          },
+          "feature_order": {
+            "const": [
+              "fntx",
+              "ktx",
+              "zetatx",
+              "fnty",
+              "kty",
+              "zetaty",
+              "fnwx",
+              "kwx",
+              "zetawx",
+              "fnwy",
+              "kwy",
+              "zetawy",
+              "ktc",
+              "knc",
+              "kte",
+              "kne",
+              "Cn",
+              "d",
+              "m",
+              "beta_mean",
+              "et",
+              "ud",
+              "a",
+              "ft_mean",
+              "omega",
+              "b",
+              "tooth_passing_freq",
+              "frf_ratio_xy",
+              "stiffness_ratio_tw",
+              "radial_immersion",
+              "chip_load",
+              "speed_ratio_to_nat",
+              "has_process_damping",
+              "has_runout",
+              "has_edge_coeffs",
+              "n_modes",
+              "tooth_spacing_std"
+            ]
+          },
+          "units": {
+            "const": [
+              "Hz",
+              "N/m",
+              "1",
+              "Hz",
+              "N/m",
+              "1",
+              "Hz",
+              "N/m",
+              "1",
+              "Hz",
+              "N/m",
+              "1",
+              "N/m^2",
+              "N/m^2",
+              "N/m",
+              "N/m",
+              "N/m",
+              "m",
+              "1",
+              "deg",
+              "1",
+              "1",
+              "m",
+              "m",
+              "rpm",
+              "m",
+              "Hz",
+              "1",
+              "1",
+              "1",
+              "m^2",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "deg"
+            ]
+          },
+          "candidates": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/$defs/candidate"
+            }
+          },
+          "batch_provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "simulation_only",
+              "producer_tool",
+              "producer_artifact_id",
+              "producer_schema_digest"
+            ],
+            "properties": {
+              "simulation_only": {
+                "const": true
+              },
+              "producer_tool": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9._-]+__[A-Za-z0-9._-]+$",
+                "maxLength": 200
+              },
+              "producer_artifact_id": {
+                "$ref": "#/$defs/id"
+              },
+              "producer_schema_digest": {
+                "$ref": "#/$defs/digest"
+              }
+            }
+          }
+        },
+        "$defs": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "candidate": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "candidate_id",
+              "values",
+              "origins",
+              "source_artifact_id",
+              "engineering_invariants"
+            ],
+            "properties": {
+              "candidate_id": {
+                "$ref": "#/$defs/id"
+              },
+              "values": {
+                "type": "array",
+                "minItems": 37,
+                "maxItems": 37,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "origins": {
+                "type": "array",
+                "minItems": 37,
+                "maxItems": 37,
+                "items": {
+                  "enum": [
+                    "simulated",
+                    "identified",
+                    "measured",
+                    "assumed"
+                  ]
+                }
+              },
+              "source_artifact_id": {
+                "$ref": "#/$defs/id"
+              },
+              "engineering_invariants": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "invariant_id",
+                    "state",
+                    "evidence_artifact_id"
+                  ],
+                  "properties": {
+                    "invariant_id": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "state": {
+                      "enum": [
+                        "pass",
+                        "fail"
+                      ]
+                    },
+                    "evidence_artifact_id": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "message": {
+                      "type": "string",
+                      "maxLength": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "output_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://wright.local/schemas/chatter-result-batch-1.0.json",
+        "title": "Wright Chatter Result Batch",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "results",
+          "model_evidence",
+          "input_digest",
+          "output_digest",
+          "material_digest"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "1.0"
+          },
+          "results": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/$defs/result"
+            }
+          },
+          "model_evidence": {
+            "$ref": "#/$defs/modelEvidence"
+          },
+          "input_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "output_digest": {
+            "$ref": "#/$defs/digest"
+          },
+          "material_digest": {
+            "$ref": "#/$defs/digest"
+          }
+        },
+        "$defs": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "result": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "candidate_id",
+              "position",
+              "predicted_state",
+              "chatter_score",
+              "decision_threshold",
+              "threshold_margin",
+              "calibration_status",
+              "applicability",
+              "review_required",
+              "eligible_for_preference",
+              "warnings",
+              "limitations"
+            ],
+            "properties": {
+              "candidate_id": {
+                "$ref": "#/$defs/id"
+              },
+              "position": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 99
+              },
+              "predicted_state": {
+                "enum": [
+                  "stable",
+                  "chatter"
+                ]
+              },
+              "chatter_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "decision_threshold": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              "threshold_margin": {
+                "type": "number",
+                "minimum": -1,
+                "maximum": 1
+              },
+              "calibration_status": {
+                "const": "uncalibrated_model_score"
+              },
+              "applicability": {
+                "enum": [
+                  "in_population",
+                  "near_threshold",
+                  "out_of_population"
+                ]
+              },
+              "review_required": {
+                "type": "boolean"
+              },
+              "eligible_for_preference": {
+                "type": "boolean"
+              },
+              "warnings": {
+                "type": "array",
+                "maxItems": 32,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "limitations": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 32,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              }
+            }
+          },
+          "modelEvidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "model_id",
+              "package_revision",
+              "variant_id",
+              "artifact_set_digest",
+              "installation_digest",
+              "adapter_id",
+              "adapter_version",
+              "runtime_version",
+              "test_evidence_id",
+              "task_id",
+              "input_schema_digest",
+              "output_schema_digest",
+              "threshold"
+            ],
+            "properties": {
+              "model_id": {
+                "$ref": "#/$defs/id"
+              },
+              "package_revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "variant_id": {
+                "$ref": "#/$defs/id"
+              },
+              "artifact_set_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "installation_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "adapter_id": {
+                "$ref": "#/$defs/id"
+              },
+              "adapter_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "runtime_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "test_evidence_id": {
+                "$ref": "#/$defs/id"
+              },
+              "task_id": {
+                "$ref": "#/$defs/id"
+              },
+              "input_schema_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "output_schema_digest": {
+                "$ref": "#/$defs/digest"
+              },
+              "threshold": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              }
+            }
+          }
+        }
+      },
+      "units": {
+        "fntx": "Hz",
+        "ktx": "N/m",
+        "zetatx": "1",
+        "fnty": "Hz",
+        "kty": "N/m",
+        "zetaty": "1",
+        "fnwx": "Hz",
+        "kwx": "N/m",
+        "zetawx": "1",
+        "fnwy": "Hz",
+        "kwy": "N/m",
+        "zetawy": "1",
+        "ktc": "N/m^2",
+        "knc": "N/m^2",
+        "kte": "N/m",
+        "kne": "N/m",
+        "Cn": "N/m",
+        "d": "m",
+        "m": "1",
+        "beta_mean": "deg",
+        "et": "1",
+        "ud": "1",
+        "a": "m",
+        "ft_mean": "m",
+        "omega": "rpm",
+        "b": "m",
+        "tooth_passing_freq": "Hz",
+        "frf_ratio_xy": "1",
+        "stiffness_ratio_tw": "1",
+        "radial_immersion": "1",
+        "chip_load": "m^2",
+        "speed_ratio_to_nat": "1",
+        "has_process_damping": "1",
+        "has_runout": "1",
+        "has_edge_coeffs": "1",
+        "n_modes": "1",
+        "tooth_spacing_std": "deg"
+      },
+      "coordinate_convention": "Feature values use the exact ordered Data Vault Chatter process contract; no machine coordinates or commands are accepted."
+    }
+  ],
+  "license": {
+    "expression": "LicenseRef-Wright-Internal-Chatter",
+    "evidence": [
+      {
+        "kind": "artifact",
+        "location": "INTERNAL-USE-NOTICE.txt",
+        "sha256": "5f14848883de959fca7164f88943a6507c630c928f237063ccab154fd08dc07b"
+      }
+    ],
+    "attribution": "Wright-generated contract proof. The private Chatter source has no public redistribution grant recorded.",
+    "redistribution": "prohibited",
+    "acceptance_required": false
+  },
+  "limitations": [
+    {
+      "limitation_id": "generated-proof-only",
+      "description": "This tiny forest proves contracts only and is not the real Chatter classifier.",
+      "severity": "critical"
+    },
+    {
+      "limitation_id": "uncalibrated-screening",
+      "description": "Scores are uncalibrated screening outputs, not safety probabilities or guarantees.",
+      "severity": "critical"
+    },
+    {
+      "limitation_id": "no-machine-authority",
+      "description": "Results select only supplied candidates for human review and carry no machining authority.",
+      "severity": "critical"
+    }
+  ],
+  "remote_code_policy": "forbidden",
+  "review_state": "approved",
+  "variants": [
+    {
+      "variant_id": "generated-forest-cpu-f64",
+      "format": "wright-chatter-forest-npz-1.0",
+      "precision": "f64-metadata-f32-tree-input",
+      "platforms": [
+        "linux/x86_64",
+        "linux/aarch64",
+        "windows/x86_64",
+        "macos/aarch64"
+      ],
+      "accelerator": "cpu",
+      "runtime": {
+        "adapter_id": "wright-chatter-forest-numpy",
+        "contract_version": "1.0",
+        "version_specifier": "==1.0.0"
+      },
+      "resources": {
+        "download_bytes": 16151,
+        "installed_bytes": 16151,
+        "ram_bytes": 268435456,
+        "vram_bytes": 0,
+        "load_timeout_ms": 5000,
+        "inference_timeout_ms": 3000,
+        "max_output_bytes": 1048576
+      },
+      "artifacts": [
+        {
+          "path": "INTERNAL-USE-NOTICE.txt",
+          "role": "license",
+          "media_type": "text/plain",
+          "size": 262,
+          "sha256": "5f14848883de959fca7164f88943a6507c630c928f237063ccab154fd08dc07b",
+          "source_uri": "wright://generated/chatter/INTERNAL-USE-NOTICE.txt",
+          "redistributable": false
+        },
+        {
+          "path": "evidence/conversion-parity.json",
+          "role": "metadata",
+          "media_type": "application/json",
+          "size": 2366,
+          "sha256": "0d2657e0dd970a052b428b0729430673f2265075e893c5e27a496e7fc0b6d1c3",
+          "source_uri": "wright://generated/chatter/evidence/conversion-parity.json",
+          "redistributable": false
+        },
+        {
+          "path": "model/forest.npz",
+          "role": "model_data",
+          "media_type": "application/vnd.numpy.npz",
+          "size": 1634,
+          "sha256": "b77c9781f0a0f3fefe9305f4d2234d23708bcb8b0d744ab0795afa259cf3f15d",
+          "source_uri": "wright://generated/chatter/model/forest.npz",
+          "redistributable": false
+        },
+        {
+          "path": "model/serving-metadata.json",
+          "role": "metadata",
+          "media_type": "application/json",
+          "size": 11889,
+          "sha256": "767b44cd81731f46bbf31c85a517e3acebaff5d31e7872471d91c962555c800d",
+          "source_uri": "wright://generated/chatter/model/serving-metadata.json",
+          "redistributable": false
+        }
+      ],
+      "test_vectors": [
+        {
+          "schema_version": "1.0",
+          "vector_id": "generated-stable-batch",
+          "version": 1,
+          "task_id": "screen_chatter_candidates",
+          "input_schema_sha256": "9f0f7dd26826be5fc0464f37c172e32635e994a0899cb0582f17bdf4b6ce18fc",
+          "output_schema_sha256": "300db6682b2c27cb5f173d50550cc3af38726fcfa942e74ea883fc4910bde6f9",
+          "deterministic_seed": 0,
+          "units": {
+            "fntx": "Hz",
+            "ktx": "N/m",
+            "zetatx": "1",
+            "fnty": "Hz",
+            "kty": "N/m",
+            "zetaty": "1",
+            "fnwx": "Hz",
+            "kwx": "N/m",
+            "zetawx": "1",
+            "fnwy": "Hz",
+            "kwy": "N/m",
+            "zetawy": "1",
+            "ktc": "N/m^2",
+            "knc": "N/m^2",
+            "kte": "N/m",
+            "kne": "N/m",
+            "Cn": "N/m",
+            "d": "m",
+            "m": "1",
+            "beta_mean": "deg",
+            "et": "1",
+            "ud": "1",
+            "a": "m",
+            "ft_mean": "m",
+            "omega": "rpm",
+            "b": "m",
+            "tooth_passing_freq": "Hz",
+            "frf_ratio_xy": "1",
+            "stiffness_ratio_tw": "1",
+            "radial_immersion": "1",
+            "chip_load": "m^2",
+            "speed_ratio_to_nat": "1",
+            "has_process_damping": "1",
+            "has_runout": "1",
+            "has_edge_coeffs": "1",
+            "n_modes": "1",
+            "tooth_spacing_std": "deg"
+          },
+          "coordinate_convention": "Feature values use the exact ordered Data Vault Chatter process contract; no machine coordinates or commands are accepted.",
+          "input": {
+            "schema_version": "1.0",
+            "feature_order": [
+              "fntx",
+              "ktx",
+              "zetatx",
+              "fnty",
+              "kty",
+              "zetaty",
+              "fnwx",
+              "kwx",
+              "zetawx",
+              "fnwy",
+              "kwy",
+              "zetawy",
+              "ktc",
+              "knc",
+              "kte",
+              "kne",
+              "Cn",
+              "d",
+              "m",
+              "beta_mean",
+              "et",
+              "ud",
+              "a",
+              "ft_mean",
+              "omega",
+              "b",
+              "tooth_passing_freq",
+              "frf_ratio_xy",
+              "stiffness_ratio_tw",
+              "radial_immersion",
+              "chip_load",
+              "speed_ratio_to_nat",
+              "has_process_damping",
+              "has_runout",
+              "has_edge_coeffs",
+              "n_modes",
+              "tooth_spacing_std"
+            ],
+            "units": [
+              "Hz",
+              "N/m",
+              "1",
+              "Hz",
+              "N/m",
+              "1",
+              "Hz",
+              "N/m",
+              "1",
+              "Hz",
+              "N/m",
+              "1",
+              "N/m^2",
+              "N/m^2",
+              "N/m",
+              "N/m",
+              "N/m",
+              "m",
+              "1",
+              "deg",
+              "1",
+              "1",
+              "m",
+              "m",
+              "rpm",
+              "m",
+              "Hz",
+              "1",
+              "1",
+              "1",
+              "m^2",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "deg"
+            ],
+            "candidates": [
+              {
+                "candidate_id": "generated-stable",
+                "values": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "origins": [
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated",
+                  "simulated"
+                ],
+                "source_artifact_id": "generated-candidates",
+                "engineering_invariants": [
+                  {
+                    "invariant_id": "fixture-clearance",
+                    "state": "pass",
+                    "evidence_artifact_id": "generated-cad-context"
+                  }
+                ]
+              }
+            ],
+            "batch_provenance": {
+              "simulation_only": true,
+              "producer_tool": "fixture_cam__generate_candidates",
+              "producer_artifact_id": "generated-candidates",
+              "producer_schema_digest": "9f0f7dd26826be5fc0464f37c172e32635e994a0899cb0582f17bdf4b6ce18fc"
+            }
+          },
+          "expected": {
+            "kind": "exact",
+            "value": {
+              "schema_version": "1.0",
+              "results": [
+                {
+                  "candidate_id": "generated-stable",
+                  "position": 0,
+                  "predicted_state": "stable",
+                  "chatter_score": 0.1,
+                  "decision_threshold": 0.5,
+                  "threshold_margin": -0.4,
+                  "calibration_status": "uncalibrated_model_score",
+                  "applicability": "in_population",
+                  "review_required": false,
+                  "eligible_for_preference": true,
+                  "warnings": [],
+                  "limitations": [
+                    "generated-proof-only",
+                    "uncalibrated-screening",
+                    "no-machine-authority"
+                  ]
+                }
+              ],
+              "model_evidence": {
+                "model_id": "wright-chatter-generated-test",
+                "package_revision": 1,
+                "variant_id": "generated-forest-cpu-f64",
+                "artifact_set_digest": "7c7423b5a7bb0ea098838ddbbdff475feb08238512ddb5993151a772c40c6fc4",
+                "installation_digest": "7c7423b5a7bb0ea098838ddbbdff475feb08238512ddb5993151a772c40c6fc4",
+                "adapter_id": "wright-chatter-forest-numpy",
+                "adapter_version": "1.0.0",
+                "runtime_version": "numpy-compatible-1",
+                "test_evidence_id": "runtime-unbound",
+                "task_id": "screen_chatter_candidates",
+                "input_schema_digest": "7c7423b5a7bb0ea098838ddbbdff475feb08238512ddb5993151a772c40c6fc4",
+                "output_schema_digest": "7c7423b5a7bb0ea098838ddbbdff475feb08238512ddb5993151a772c40c6fc4",
+                "threshold": 0.5
+              },
+              "input_digest": "22b1d135fef8aa9a0633b1a6ad8dd201180fd1309a9699662a053d87e6e25430",
+              "output_digest": "5a4333a7ab1e34ada833a036dc0d46aa504a885891e1529ac2c7ffc3258a550f",
+              "material_digest": "77642f564b9f5391d5ec2ffc941191e6f04e54534735a0278fd285ceb8205f1d"
+            }
+          },
+          "limitations_exercised": [
+            "generated-proof-only",
+            "uncalibrated-screening",
+            "no-machine-authority"
+          ],
+          "limits": {
+            "load_timeout_ms": 5000,
+            "inference_timeout_ms": 3000,
+            "max_output_bytes": 1048576
+          },
+          "mandatory": true
+        }
+      ]
+    }
+  ]
+}

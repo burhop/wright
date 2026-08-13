@@ -17,6 +17,7 @@ classifiers = [
 dependencies = [
     "httpx>=0.28,<1",
     "jsonschema>=4.26,<5",
+    "numpy>=1.26,<3",
     "packaging>=24,<27",
     "pydantic>=2.7,<3",
     "psutil>=6,<8",
@@ -26,9 +27,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-neuralfoil = [
-    "numpy>=1.26,<3",
-]
+neuralfoil = []
 
 [tool.uv.sources]
 wright-core = { workspace = true }

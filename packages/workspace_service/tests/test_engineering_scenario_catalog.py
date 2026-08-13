@@ -11,11 +11,12 @@ from workspace_service.engineering_scenario_catalog_service import (
 )
 
 
-def test_catalog_contains_three_multi_domain_tier1_scenarios() -> None:
+def test_catalog_contains_model_enabled_and_multi_domain_tier1_scenarios() -> None:
     catalog = EngineeringScenarioCatalog()
     entries = catalog.list()
 
     assert [entry.scenario_id for entry in entries] == [
+        "chatter-candidate-review",
         "electronics-enclosure-cooling",
         "parametric-manufacturing",
         "structural-bracket",
@@ -34,6 +35,20 @@ def test_catalog_contains_three_multi_domain_tier1_scenarios() -> None:
     }
     for entry in entries:
         assert len(catalog.get(entry.scenario_id).document["capabilities"]) >= 2
+
+
+def test_model_enabled_manifest_requires_independent_mcp_and_model_providers() -> None:
+    document = deepcopy(
+        EngineeringScenarioCatalog().get("chatter-candidate-review").document
+    )
+    document["capabilities"] = [
+        value
+        for value in document["capabilities"]
+        if value["provider_kind"] != "engineering_model"
+    ]
+    with pytest.raises(EngineeringScenarioError) as error:
+        validate_manifest(document)
+    assert error.value.code == "scenario_provider_composition_invalid"
 
 
 def test_catalog_digests_are_stable() -> None:

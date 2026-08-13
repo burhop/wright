@@ -116,6 +116,21 @@ def test_duplicate_and_unknown_adapter_version_fail_before_acquisition(
     assert unknown.value.category == "runtime_incompatible"
 
 
+def test_chatter_format_and_adapter_extensions_are_duplicate_safe() -> None:
+    registries = built_in_extension_registries()
+    assert registries.formats.get("wright-chatter-forest-npz-1.0") == "data-only-1.0"
+    assert (
+        registries.adapters.get("wright-chatter-forest-numpy").adapter_version
+        == "1.0.0"
+    )
+    with pytest.raises(ExtensionError) as duplicate:
+        registries.formats.register("wright-chatter-forest-npz-1.0", "data-only-2.0")
+    assert duplicate.value.category == "extension_duplicate"
+    with pytest.raises(ExtensionError) as missing:
+        registries.formats.get("wright-chatter-forest-npz-2.0")
+    assert missing.value.category == "extension_missing"
+
+
 @pytest.mark.parametrize(
     ("mutation", "category"),
     [

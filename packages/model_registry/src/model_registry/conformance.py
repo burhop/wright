@@ -74,7 +74,10 @@ def validate_package_contract(
         if item.kind == "artifact"
     }
     for variant in package.variants:
-        if variant.format not in SAFE_FORMATS:
+        if (
+            variant.format not in SAFE_FORMATS
+            or variant.format not in registries.formats.names
+        ):
             findings.append(
                 _finding(
                     "unsafe_format",
@@ -235,6 +238,8 @@ def _file_validation_registries(
     from .extensions import EngineeringExtensionRegistries
 
     registries = EngineeringExtensionRegistries()
+    for variant in package.variants:
+        registries.formats.register(variant.format, "static-validation-1.0")
     registries.sources.register(package.source.kind, object)  # type: ignore[arg-type]
     for variant in package.variants:
         registries.adapters.register(

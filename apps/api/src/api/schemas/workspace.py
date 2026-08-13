@@ -386,6 +386,25 @@ class EngineeringScenarioBlockerResponse(BaseModel):
     recovery: str
 
 
+class EngineeringProviderEvidenceResponse(BaseModel):
+    schema_version: Literal["1.0"]
+    provider_kind: Literal["mcp", "engineering_model"]
+    provider_id: str
+    capability_id: str
+    resource_class: Literal["small", "medium", "large", "external"]
+    evidence: Dict[str, Any]
+
+
+class EngineeringScenarioCapabilityResponse(BaseModel):
+    node_id: str
+    requested_tool: str | None = None
+    selected_tool: str | None = None
+    binding_digest: str | None = None
+    blockers: list[str]
+    provider: EngineeringProviderEvidenceResponse | None = None
+    provider_evidence_digest: str | None = Field(default=None, pattern="^[a-f0-9]{64}$")
+
+
 class EngineeringScenarioPreflightResponse(BaseModel):
     preflight_id: str
     scenario_id: str
@@ -397,7 +416,7 @@ class EngineeringScenarioPreflightResponse(BaseModel):
     graph_id: str
     binding_set_digest: str | None = None
     state: Literal["ready", "blocked", "skipped"]
-    capabilities: list[Dict[str, Any]]
+    capabilities: list[EngineeringScenarioCapabilityResponse]
     environment: Dict[str, Any]
     blockers: list[EngineeringScenarioBlockerResponse]
     expires_at: str
@@ -436,6 +455,7 @@ class EngineeringScenarioReportResponse(BaseModel):
     cleanup_state: str
     residue: Dict[str, Any]
     assertions: list[Dict[str, Any]]
+    advisory: Dict[str, Any] | None = None
     report_digest: str | None = None
 
 

@@ -315,6 +315,14 @@ tmp/
 /native-candidate/
 /.native-runtime-cache/
 
+# Private/local model qualification payloads (never repository content)
+/.chatter-qualification/
+*.wright-model.zip
+*.joblib
+*.pickle
+*.pkl
+*.npz
+
 # Local Codex artifact-generation scratch and inspection metadata
 /.codex-tmp/
 *.inspect.ndjson

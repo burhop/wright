@@ -4,12 +4,13 @@ import asyncio
 import os
 import shutil
 import sqlite3
+import time
 from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from api.rivet_runner_bridge import RivetRunnerBridgeApplication
-from core.rivet_mcp import CapabilityBinding, WorkflowBindingSet
+from core.rivet_mcp import CapabilityBinding, WorkflowBindingSet, canonical_digest
 from data_vault import (
     ModelArtifactStore,
     ModelRepository,
@@ -17,9 +18,12 @@ from data_vault import (
     upgrade_database,
 )
 from model_registry.gateway_provider import EngineeringModelGatewayProvider
+from model_registry.generated import generated_chatter_package
+from tool_registry.gateway_models import GatewayTool
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.gateway_resources import GatewayResourceProvider
 from tool_registry.gateway_service import GatewayService
+from tool_registry.models import McpServer
 from workspace_service import (
     AuthorityClaims,
     EngineeringModelService,
@@ -76,6 +80,86 @@ data:
 """
 
 
+def _chatter_arguments() -> dict:
+    arguments = generated_chatter_package().variants[0].test_vectors[0].input
+    source = arguments["candidates"][0]
+    candidates = []
+    for candidate_id, first_value in (
+        ("candidate-a", 0.0),
+        ("candidate-b", 4.9),
+        ("candidate-c", 10.0),
+    ):
+        values = [
+            int(value) if isinstance(value, float) and value.is_integer() else value
+            for value in source["values"]
+        ]
+        values[0] = first_value
+        candidates.append({**source, "candidate_id": candidate_id, "values": values})
+    return {**arguments, "candidates": candidates}
+
+
+CHATTER_ARGUMENTS = _chatter_arguments()
+CHATTER_TOOL = "wright_model__wright_chatter_generated_test__screen_chatter_candidates"
+CHATTER_PROJECT = f"""version: 4
+data:
+  attachedData: {{}}
+  graphs:
+    graph-model:
+      metadata: {{id: graph-model, name: Main, description: ""}}
+      nodes:
+        '[node-cad]:mcpToolCall "CAD context"':
+          data: {{name: wright-rivet, version: 2.0.0, transportType: http, toolName: fixture_cad__inspect_setup, toolArguments: '{{"fixture":"chatter"}}', toolCallId: call-cad, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}}
+          outgoingConnections:
+            - response->"CAD" output-cad/value
+          visualData: 0/300/280/null//
+        '[node-cam]:mcpToolCall "CAM candidates"':
+          data: {{name: wright-rivet, version: 2.0.0, transportType: http, toolName: fixture_cam__generate_candidates, toolArguments: '{{"fixture":"chatter"}}', toolCallId: call-cam, useNameInput: false, useVersionInput: false, useServerUrlInput: false, useServerIdInput: false, useToolNameInput: false, useToolArgumentsInput: false, useToolCallIdInput: false}}
+          outgoingConnections:
+            - response->"CAM response" node-cam-response/array
+            - response->"CAM" output-cam/value
+          visualData: 0/600/280/null//
+        '[node-cam-response]:pop "CAM response"':
+          data: {{fromFront: false}}
+          outgoingConnections:
+            - lastItem->"CAM payload" node-cam-payload/object
+          visualData: 320/600/220/null//
+        '[node-cam-payload]:destructure "CAM payload"':
+          data: {{paths: [$.value]}}
+          outgoingConnections:
+            - match_0->"Chatter screening" node-model/toolArguments
+          visualData: 580/600/240/null//
+        '[node-model]:mcpToolCall "Chatter screening"':
+          data:
+            name: wright-rivet
+            version: 2.0.0
+            transportType: http
+            toolName: {CHATTER_TOOL}
+            toolArguments: '{{}}'
+            toolCallId: call-model
+            useNameInput: false
+            useVersionInput: false
+            useServerUrlInput: false
+            useServerIdInput: false
+            useToolNameInput: false
+            useToolArgumentsInput: true
+            useToolCallIdInput: false
+          outgoingConnections:
+            - response->"Screening" output-model/value
+          visualData: 0/0/280/null//
+        '[output-model]:graphOutput "Screening"':
+          data: {{id: screening, dataType: "object[]"}}
+          visualData: 400/0/280/null//
+        '[output-cad]:graphOutput "CAD"':
+          data: {{id: cad, dataType: "object[]"}}
+          visualData: 400/300/280/null//
+        '[output-cam]:graphOutput "CAM"':
+          data: {{id: cam, dataType: "object[]"}}
+          visualData: 400/600/280/null//
+  metadata: {{id: project-chatter-model, title: Chatter screening, description: "", mainGraphId: graph-model}}
+  plugins: []
+"""
+
+
 class Workspaces:
     def __init__(self, path: str) -> None:
         self.path = path
@@ -90,26 +174,73 @@ class Workspaces:
         }
 
     def enabled_server_ids(self, _session):
-        return set()
+        return {"fixture-cad", "fixture-cam"}
 
 
 class EmptyCatalog:
-    def servers(self):
-        return ()
+    def __init__(self) -> None:
+        now = int(time.time())
+        self._servers = tuple(
+            McpServer(
+                server_id=server_id,
+                name=f"{server_id} deterministic fixture",
+                type="stdio",
+                command="fixture",
+                is_active=True,
+                is_installed=True,
+                status="active",
+                created_at=now,
+                updated_at=now,
+            )
+            for server_id in ("fixture-cad", "fixture-cam")
+        )
 
-    def tools(self, _server_id):
-        return ()
+    def servers(self):
+        return self._servers
+
+    def tools(self, server_id):
+        tool_name = (
+            "inspect_setup" if server_id == "fixture-cad" else "generate_candidates"
+        )
+        return (
+            GatewayTool(
+                name=f"{server_id.replace('-', '_')}__{tool_name}",
+                server_id=server_id,
+                tool_name=tool_name,
+                description="Deterministic proprietary-free engineering fixture.",
+                input_schema={
+                    "type": "object",
+                    "properties": {"fixture": {"type": "string"}},
+                    "required": ["fixture"],
+                    "additionalProperties": False,
+                },
+                output_schema={"type": "object"},
+                provenance={"server_revision": f"{server_id}-v1"},
+            ),
+        )
 
     def resources(self, _session):
         return ()
 
 
 class EmptyLifecycle:
-    async def ensure_started(self, *_args, **_kwargs):
-        raise AssertionError("Model capability bypassed its dynamic provider")
+    def __init__(self) -> None:
+        self.receipts = []
 
-    async def call_tool(self, *_args, **_kwargs):
-        raise AssertionError("Model capability bypassed its dynamic provider")
+    async def ensure_started(self, *_args, **_kwargs):
+        return None
+
+    async def call_tool(self, server_id, tool_name, arguments, **_kwargs):
+        self.receipts.append((server_id, tool_name, dict(arguments)))
+        if server_id == "fixture-cam":
+            return {"structuredContent": CHATTER_ARGUMENTS}
+        return {
+            "structuredContent": {
+                "provider": server_id,
+                "tool": tool_name,
+                "simulation_only": True,
+            }
+        }
 
     async def shutdown(self):
         return None
@@ -137,10 +268,23 @@ def supervisor():
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(shutil.which("node") is None, reason="Node.js is not installed")
-async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_service(
-    tmp_path,
+@pytest.mark.parametrize(
+    ("project", "model_id", "variant_id", "task_id", "fixture_mcps"),
+    [
+        (PROJECT, "wright-affine-test", "json-cpu-f64", "predict", False),
+        (
+            CHATTER_PROJECT,
+            "wright-chatter-generated-test",
+            "generated-forest-cpu-f64",
+            "screen_chatter_candidates",
+            True,
+        ),
+    ],
+)
+async def test_real_rivet_worker_calls_tested_models_only_through_gateway_service(
+    tmp_path, monkeypatch, project, model_id, variant_id, task_id, fixture_mcps
 ) -> None:
-    document = WorkspaceWorkflowStore(str(tmp_path)).create("model-flow", PROJECT)
+    document = WorkspaceWorkflowStore(str(tmp_path)).create("model-flow", project)
     database = tmp_path / "rivet-model.db"
     upgrade_database(database)
     with sqlite3.connect(database) as connection:
@@ -164,10 +308,18 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
         repository=model_repository,
         artifact_store=store,
     )
+    captured_model_arguments = []
+    invoke_model_capability = models.invoke_model_capability
+
+    async def capture_model_arguments(**values):
+        captured_model_arguments.append(dict(values["arguments"]))
+        return await invoke_model_capability(**values)
+
+    monkeypatch.setattr(models, "invoke_model_capability", capture_model_arguments)
     plan = models.create_plan(
         operation_kind="install",
-        model_id="wright-affine-test",
-        variant_id="json-cpu-f64",
+        model_id=model_id,
+        variant_id=variant_id,
         principal_id="engineer-one",
     )
     operation = models.confirm_plan(
@@ -184,15 +336,16 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
     )
     model_binding = models.create_workspace_binding(
         installation_id,
-        task_id="predict",
+        task_id=task_id,
         workspace_id="workspace-one",
         principal_id="engineer-one",
     )
     audit = Audit()
+    lifecycle = EmptyLifecycle()
     gateway = GatewayService(
         workspaces=Workspaces(str(tmp_path)),
         catalog=EmptyCatalog(),
-        lifecycle=EmptyLifecycle(),
+        lifecycle=lifecycle,
         audit=audit,
         notifier=GatewayNotificationHub(),
         resources=GatewayResourceProvider(),
@@ -224,30 +377,52 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
         if item.qualified_tool_name == model_binding["tool_name"]
     )
     assert projected.binding_eligible is True
-    binding = CapabilityBinding.build(
-        binding_id="binding-rivet-model",
-        workspace_id="workspace-one",
-        workflow_id=document.workflow_id,
-        workflow_revision=1,
-        workflow_digest=document.digest,
-        graph_id="graph-model",
-        node_id="node-model",
-        node_handle="wright:abcdefghijklmnop",
-        requirement_id=None,
-        qualified_tool_name=projected.qualified_tool_name,
-        server_id=projected.server_id,
-        server_revision=projected.server_revision,
-        capability_digest=projected.capability_digest,
-        validation_evidence_id=projected.validation_evidence_id,
-        workspace_grant_digest=projected.workspace_grant_digest,
-        input_schema=projected.input_schema,
-        output_schema=projected.output_schema,
-        risk={"required_approvals": [], "idempotency": "idempotent"},
-        units_policy={},
-        material_defaults={},
-        argument_constraints=projected.input_schema,
-        created_at=datetime.now(UTC),
+
+    def make_binding(item, *, node_id, handle):
+        return CapabilityBinding.build(
+            binding_id=f"binding-{node_id}",
+            workspace_id="workspace-one",
+            workflow_id=document.workflow_id,
+            workflow_revision=1,
+            workflow_digest=document.digest,
+            graph_id="graph-model",
+            node_id=node_id,
+            node_handle=handle,
+            requirement_id=None,
+            qualified_tool_name=item.qualified_tool_name,
+            server_id=item.server_id,
+            server_revision=item.server_revision,
+            capability_digest=item.capability_digest,
+            validation_evidence_id=item.validation_evidence_id,
+            workspace_grant_digest=item.workspace_grant_digest,
+            input_schema=item.input_schema,
+            output_schema=item.output_schema,
+            risk={"required_approvals": [], "idempotency": "idempotent"},
+            units_policy={},
+            material_defaults={},
+            argument_constraints=item.input_schema,
+            created_at=datetime.now(UTC),
+            provider=item.provider,
+        )
+
+    binding = make_binding(
+        projected, node_id="node-model", handle="wright:abcdefghijklmnop"
     )
+    bindings = [binding]
+    if fixture_mcps:
+        for name, node_id, handle in (
+            ("fixture_cad__inspect_setup", "node-cad", "wright:cadcadcadcadcadc"),
+            (
+                "fixture_cam__generate_candidates",
+                "node-cam",
+                "wright:camcamcamcamcamc",
+            ),
+        ):
+            capability = next(
+                item for item in snapshot.tools if item.qualified_tool_name == name
+            )
+            assert capability.binding_eligible is True
+            bindings.append(make_binding(capability, node_id=node_id, handle=handle))
     binding_set = WorkflowBindingSet.build(
         binding_set_id="rivet-model-set",
         workspace_id="workspace-one",
@@ -255,7 +430,7 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
         workflow_revision=1,
         workflow_digest=document.digest,
         graph_id="graph-model",
-        bindings=(binding,),
+        bindings=tuple(bindings),
         discovery_snapshot_digest=snapshot.snapshot_digest,
         policy_snapshot_digest="f" * 64,
         created_at=datetime.now(UTC),
@@ -290,7 +465,7 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
             review_digest="9" * 64,
             binding_set_digest=binding_set.binding_set_digest,
             audience=audience,
-            node_bindings={binding.node_handle: binding.binding_digest},
+            node_bindings={item.node_handle: item.binding_digest for item in bindings},
             issued_at=now,
             expires_at=now + timedelta(minutes=1),
         )
@@ -302,13 +477,14 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
         issued.claims.expires_at,
         binding_set.binding_set_digest,
         "wright-workspace",
-        (
+        tuple(
             {
-                "nodeId": binding.node_id,
-                "handle": binding.node_handle,
-                "qualifiedToolName": binding.qualified_tool_name,
-                "bindingDigest": binding.binding_digest,
-            },
+                "nodeId": item.node_id,
+                "handle": item.node_handle,
+                "qualifiedToolName": item.qualified_tool_name,
+                "bindingDigest": item.binding_digest,
+            }
+            for item in bindings
         ),
     )
     host = RivetRuntimeHost(
@@ -331,12 +507,28 @@ async def test_real_rivet_worker_calls_a_tested_model_only_through_gateway_servi
             requirements=("mcp",),
             mcp_grant=grant,
         )
-        assert result.state == "succeeded"
+        assert result.state == "succeeded", result.error
         assert tested["evidence"][0]["state"] == "passed"
         assert model_binding["binding_digest"] == projected.capability_digest
         succeeded = [event for event in audit.events if event["outcome"] == "succeeded"]
-        assert succeeded[-1]["server_id"] == "wright-models"
-        assert succeeded[-1]["target_name"] == "predict"
+        assert any(
+            event["server_id"] == "wright-models" and event["target_name"] == task_id
+            for event in succeeded
+        )
+        assert projected.provider.provider_kind == "engineering_model"
+        assert len(lifecycle.receipts) == (2 if fixture_mcps else 0)
+        if fixture_mcps:
+            child_calls, _approvals = rivet_repository.run_evidence_documents(
+                "model-run"
+            )
+            model_call = next(
+                call for call in child_calls if call["node_id"] == "node-model"
+            )
+            assert len(CHATTER_ARGUMENTS["candidates"]) == 3
+            assert captured_model_arguments == [CHATTER_ARGUMENTS]
+            assert model_call["argument_digest"] == canonical_digest(
+                captured_model_arguments[0]
+            )
         assert not tuple((store.root / "runtime-scratch").glob("runtime-*"))
     finally:
         await application.close()
@@ -362,6 +554,10 @@ async def test_gateway_cancellation_reaches_the_model_provider_and_wins() -> Non
                     "input_schema": {"type": "object", "additionalProperties": False},
                     "output_schema": {"type": "object"},
                     "workspace_id": "workspace-one",
+                    "package_revision": 1,
+                    "manifest_digest": "e" * 64,
+                    "variant_id": "slow-cpu",
+                    "artifact_set_digest": "f" * 64,
                     "binding_id": "binding-slow",
                     "binding_digest": "a" * 64,
                     "binding_state": "enabled",
@@ -370,9 +566,14 @@ async def test_gateway_cancellation_reaches_the_model_provider_and_wins() -> Non
                     "installation_state": "ready",
                     "adapter_id": "slow-adapter",
                     "adapter_version": "1.0.0",
+                    "runtime_version": "runtime-1",
                     "evidence_id": "evidence-slow",
                     "evidence_state": "passed",
                     "material_digest": "c" * 64,
+                    "test_material_digest": "1" * 64,
+                    "input_schema_digest": "2" * 64,
+                    "output_schema_digest": "3" * 64,
+                    "resource_digest": "4" * 64,
                     "policy_snapshot_digest": "d" * 64,
                     "policy_current": True,
                 },

@@ -13,6 +13,11 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from .chatter_contracts import (
+    CHATTER_FORMAT,
+    validate_schema,
+    validate_serving_metadata,
+)
 from .models import ModelPackage, ModelRegistryError, canonical_json
 from .policy import validate_artifact_path
 
@@ -157,6 +162,72 @@ def inspect_offline_package(
             raise OfflinePackageError(
                 "license_unapproved", "License evidence is missing"
             )
+        if any(variant.format == CHATTER_FORMAT for variant in package.variants):
+            required = {
+                "INTERNAL-USE-NOTICE.txt",
+                "evidence/conversion-parity.json",
+                "model/forest.npz",
+                "model/serving-metadata.json",
+            }
+            if set(artifacts) != required:
+                raise OfflinePackageError(
+                    "artifact_invalid", "Chatter package artifact set is invalid"
+                )
+            try:
+                metadata = validate_serving_metadata(
+                    json.loads(artifacts["model/serving-metadata.json"])
+                )
+                parity = json.loads(artifacts["evidence/conversion-parity.json"])
+                validate_schema(parity, "conversion-parity-evidence.schema.json")
+                parity_material = dict(parity)
+                parity_material.pop("material_digest")
+                parity_material.pop("observation_digest")
+                if (
+                    hashlib.sha256(artifacts["model/forest.npz"]).hexdigest()
+                    != metadata["classifier"]["forest_sha256"]
+                ):
+                    raise ValueError
+                package_material_digest = hashlib.sha256(
+                    canonical_json(
+                        {
+                            "notice": hashlib.sha256(
+                                artifacts["INTERNAL-USE-NOTICE.txt"]
+                            ).hexdigest(),
+                            "metadata": hashlib.sha256(
+                                artifacts["model/serving-metadata.json"]
+                            ).hexdigest(),
+                            "forest": hashlib.sha256(
+                                artifacts["model/forest.npz"]
+                            ).hexdigest(),
+                        }
+                    ).encode()
+                ).hexdigest()
+                serving = parity["serving_identity"]
+                source = parity["source_identity"]
+                if (
+                    parity["status"] != "passed"
+                    or parity["material_digest"]
+                    != hashlib.sha256(
+                        canonical_json(parity_material).encode()
+                    ).hexdigest()
+                    or serving["package_material_digest"] != package_material_digest
+                    or serving["metadata_digest"] != metadata["metadata_digest"]
+                    or serving["forest_digest"]
+                    != metadata["classifier"]["forest_sha256"]
+                    or source["source_revision"]
+                    != metadata["source"]["source_revision"]
+                    or source["dataset_digest"] != metadata["source"]["dataset_digest"]
+                    or source["membership_digest"]
+                    != metadata["source"]["membership_digest"]
+                    or source["recipe_digest"] != metadata["source"]["recipe_digest"]
+                    or source["environment_lock_digest"]
+                    != metadata["source"]["environment_lock_digest"]
+                ):
+                    raise ValueError
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+                raise OfflinePackageError(
+                    "parity_invalid", "Chatter conversion evidence is invalid or stale"
+                ) from error
         return InspectedOfflinePackage(package, artifacts, package.digest)
 
 

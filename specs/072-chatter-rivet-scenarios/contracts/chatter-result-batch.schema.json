@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/chatter-result-batch-1.0.json",
+  "title": "Wright Chatter Result Batch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "results", "model_evidence", "input_digest", "output_digest", "material_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "results": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"$ref": "#/$defs/result"}},
+    "model_evidence": {"$ref": "#/$defs/modelEvidence"},
+    "input_digest": {"$ref": "#/$defs/digest"},
+    "output_digest": {"$ref": "#/$defs/digest"},
+    "material_digest": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "position", "predicted_state", "chatter_score", "decision_threshold", "threshold_margin", "calibration_status", "applicability", "review_required", "eligible_for_preference", "warnings", "limitations"],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/id"},
+        "position": {"type": "integer", "minimum": 0, "maximum": 99},
+        "predicted_state": {"enum": ["stable", "chatter"]},
+        "chatter_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "decision_threshold": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "threshold_margin": {"type": "number", "minimum": -1, "maximum": 1},
+        "calibration_status": {"const": "uncalibrated_model_score"},
+        "applicability": {"enum": ["in_population", "near_threshold", "out_of_population"]},
+        "review_required": {"type": "boolean"},
+        "eligible_for_preference": {"type": "boolean"},
+        "warnings": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "maxLength": 128}},
+        "limitations": {"type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "maxLength": 128}}
+      }
+    },
+    "modelEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_id", "package_revision", "variant_id", "artifact_set_digest", "installation_digest", "adapter_id", "adapter_version", "runtime_version", "test_evidence_id", "task_id", "input_schema_digest", "output_schema_digest", "threshold"],
+      "properties": {
+        "model_id": {"$ref": "#/$defs/id"},
+        "package_revision": {"type": "integer", "minimum": 1},
+        "variant_id": {"$ref": "#/$defs/id"},
+        "artifact_set_digest": {"$ref": "#/$defs/digest"},
+        "installation_digest": {"$ref": "#/$defs/digest"},
+        "adapter_id": {"$ref": "#/$defs/id"},
+        "adapter_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "runtime_version": {"type": "string", "minLength": 1, "maxLength": 64},
+        "test_evidence_id": {"$ref": "#/$defs/id"},
+        "task_id": {"$ref": "#/$defs/id"},
+        "input_schema_digest": {"$ref": "#/$defs/digest"},
+        "output_schema_digest": {"$ref": "#/$defs/digest"},
+        "threshold": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}
+      }
+    }
+  }
+}

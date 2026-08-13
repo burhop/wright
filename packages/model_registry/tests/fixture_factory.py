@@ -9,6 +9,10 @@ from pathlib import Path
 from typing import Any
 
 from model_registry import ModelPackage, canonical_digest, canonical_json
+from model_registry.generated import (
+    chatter_fixture_artifacts,
+    generated_chatter_package,
+)
 
 
 def _encoded(value: Any) -> bytes:
@@ -230,4 +234,55 @@ def generate_affine_fixture(
     )
 
 
-__all__ = ["GeneratedModelFixture", "generate_affine_fixture"]
+def generate_chatter_fixture(root: Path) -> GeneratedModelFixture:
+    """Write the tiny reviewed Chatter proof beneath caller-owned test state."""
+
+    target = Path(root)
+    if target.parent == target:
+        raise ValueError("Fixture root cannot be a filesystem root")
+    if target.exists() and any(target.iterdir()):
+        raise FileExistsError("Fixture root must be empty")
+    target.mkdir(parents=True, exist_ok=True)
+    package = generated_chatter_package()
+    artifacts = chatter_fixture_artifacts(package)
+    manifest_bytes = _encoded(package.model_dump(mode="json", exclude_none=True))
+    manifest_path = target / "engineering-model-package.json"
+    manifest_path.write_bytes(manifest_bytes)
+    for relative_path, value in artifacts.items():
+        destination = target.joinpath(*relative_path.split("/"))
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(value)
+
+    archive_path = target / "wright-chatter-generated-test-r1.wright-model.zip"
+    with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_STORED) as archive:
+        for relative_path, value in sorted(
+            {**artifacts, "engineering-model-package.json": manifest_bytes}.items()
+        ):
+            info = zipfile.ZipInfo(relative_path, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_STORED
+            info.create_system = 3
+            info.external_attr = 0o100644 << 16
+            archive.writestr(info, value)
+
+    artifact_set_digest = canonical_digest(
+        [
+            {"path": path, "sha256": _sha256(value), "size": len(value)}
+            for path, value in sorted(artifacts.items())
+        ]
+    )
+    return GeneratedModelFixture(
+        root=target,
+        archive_path=archive_path,
+        manifest_path=manifest_path,
+        package=package,
+        artifacts=artifacts,
+        manifest_digest=package.digest,
+        artifact_set_digest=artifact_set_digest,
+    )
+
+
+__all__ = [
+    "GeneratedModelFixture",
+    "generate_affine_fixture",
+    "generate_chatter_fixture",
+]

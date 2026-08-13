@@ -49,10 +49,20 @@ def descriptor(**changes):
         "installation_id": "installation-one",
         "installation_digest": "b" * 64,
         "installation_state": "ready",
+        "package_revision": 1,
+        "manifest_digest": "e" * 64,
+        "variant_id": "json-cpu-f64",
+        "artifact_set_digest": "f" * 64,
         "adapter_id": "wright-deterministic",
         "adapter_version": "1.0.0",
+        "runtime_version": "1.0.0",
         "evidence_id": "evidence-one",
         "evidence_state": "passed",
+        "test_material_digest": "1" * 64,
+        "input_schema_digest": "2" * 64,
+        "output_schema_digest": "3" * 64,
+        "resource_digest": "4" * 64,
+        "threshold": None,
         "material_digest": "c" * 64,
         "policy_snapshot_digest": "d" * 64,
         "policy_current": True,
@@ -107,15 +117,20 @@ def test_exact_ready_enabled_binding_projects_a_typed_base_tool_contract() -> No
     assert tool.output_schema["required"] == ["y"]
     assert tool.annotations["readOnlyHint"] is True
     assert tool.annotations["model"]["adapter_version"] == "1.0.0"
-    assert tool.provenance == {
-        "server_revision": "b" * 64,
-        "capability_digest": "a" * 64,
-        "validation_evidence_id": "evidence-one",
-        "binding_digest": "a" * 64,
-        "installation_digest": "b" * 64,
-        "material_evidence_digest": "c" * 64,
-        "policy_snapshot_digest": "d" * 64,
-    }
+    assert (
+        tool.provenance.items()
+        >= {
+            "server_revision": "b" * 64,
+            "capability_digest": "a" * 64,
+            "validation_evidence_id": "evidence-one",
+            "binding_digest": "a" * 64,
+            "installation_digest": "b" * 64,
+            "material_evidence_digest": "c" * 64,
+            "policy_snapshot_digest": "d" * 64,
+        }.items()
+    )
+    assert tool.provenance["provider"]["provider_kind"] == "engineering_model"
+    assert len(tool.provenance["provider_evidence_digest"]) == 64
     assert "command" not in repr(tool)
     assert "endpoint" not in repr(tool)
 

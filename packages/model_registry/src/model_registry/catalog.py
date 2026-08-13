@@ -475,6 +475,7 @@ class ModelCatalog:
             "variants": variants,
             "blockers": blockers,
             "generator": copy.deepcopy(entry.generator),
+            "qualification": copy.deepcopy(entry.document.get("qualification")),
             "manifest_digest": entry.manifest_digest,
             "entry_digest": entry.digest,
             "snapshot": self.snapshot.projection(),

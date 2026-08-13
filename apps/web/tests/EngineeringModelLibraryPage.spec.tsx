@@ -113,6 +113,63 @@ const pointnet = {
   generator: null,
 };
 
+const chatterSource = {
+  ...generated,
+  model_id: "wright-chatter",
+  display_name: "Wright Chatter Screening Source",
+  description: "Private source record for explicit local qualification.",
+  tasks: ["screen_chatter_candidates"],
+  source: {
+    kind: "offline",
+    uri: "wright://internal/chatter/source",
+    immutable_revision: "4eeb36dbfede3c194c43b3d2039abd5860a675f6",
+  },
+  license: {
+    expression: "LicenseRef-Wright-Internal-Chatter",
+    attribution: "Wright-owned internal source boundary.",
+    redistribution: "prohibited",
+  },
+  readiness: "needs_review",
+  compatibility: {
+    state: "uncertain",
+    reasons: ["Exact local serving artifacts are absent."],
+  },
+  evidence: {
+    ...generated.evidence,
+    artifact: "absent",
+    test: "absent",
+  },
+  variants: [],
+  blockers: [
+    {
+      category: "local_qualification_required",
+      message: "No exact locally qualified serving revision is attached.",
+      recovery: "Run the explicit trusted local qualification.",
+    },
+  ],
+  generator: null,
+  qualification: {
+    dataset: "Dataset 2 process-only features",
+    dataset_digest: "1".repeat(64),
+    feature_count: 37,
+    membership: {
+      splitter: "GroupShuffleSplit",
+      random_state: 42,
+      train_groups: 96,
+      validation_groups: 24,
+      overlap_groups: 0,
+    },
+    recipe: { family: "RandomForestClassifier", n_estimators: 500 },
+    serving_boundary:
+      "Explicit trusted local retraining and numeric export only.",
+    parity_requirements: {
+      class_agreement_minimum: 0.995,
+      mean_score_delta_maximum: 0.01,
+      maximum_score_delta: 0.05,
+    },
+  },
+};
+
 describe("EngineeringModelLibraryPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -125,7 +182,11 @@ describe("EngineeringModelLibraryPage", () => {
     });
     vi.mocked(engineeringModelService.getCatalogModel).mockImplementation(
       async (modelId) =>
-        modelId === generated.model_id ? generated : pointnet,
+        modelId === generated.model_id
+          ? generated
+          : modelId === chatterSource.model_id
+            ? chatterSource
+            : pointnet,
     );
   });
 
@@ -245,5 +306,29 @@ describe("EngineeringModelLibraryPage", () => {
     expect(screen.getByTestId("model-library-grid")).toHaveStyle({
       gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 20rem), 1fr))",
     });
+  });
+
+  it("shows the private Chatter source as inert until exact local qualification", async () => {
+    vi.mocked(engineeringModelService.listCatalog).mockResolvedValueOnce({
+      snapshot,
+      models: [chatterSource],
+      next_cursor: null,
+      total: 1,
+    });
+    render(<EngineeringModelLibraryPage />);
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /inspect wright chatter screening source/i,
+      }),
+    );
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Local qualification required");
+    expect(dialog).toHaveTextContent("37 ordered features");
+    expect(dialog).toHaveTextContent("GroupShuffleSplit");
+    expect(dialog).toHaveTextContent("private, non-redistributable package");
+    expect(dialog).toHaveTextContent(
+      "Run the explicit trusted local qualification",
+    );
+    expect(screen.queryByRole("button", { name: /^install$/i })).toBeNull();
   });
 });

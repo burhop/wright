@@ -56,6 +56,31 @@ const preflight: EngineeringScenarioPreflight = {
       selected_tool: "cad__build_bracket",
       binding_digest: "d".repeat(64),
       blockers: [],
+      provider: {
+        schema_version: "1.0",
+        provider_kind: "mcp",
+        provider_id: "fixture-cad",
+        capability_id: "build_bracket",
+        resource_class: "small",
+        evidence: {},
+      },
+      provider_evidence_digest: "f".repeat(64),
+    },
+    {
+      node_id: "node-model",
+      requested_tool: "wright_model__fixture__screen",
+      selected_tool: "wright_model__fixture__screen",
+      binding_digest: "1".repeat(64),
+      blockers: [],
+      provider: {
+        schema_version: "1.0",
+        provider_kind: "engineering_model",
+        provider_id: "fixture-model",
+        capability_id: "screen",
+        resource_class: "medium",
+        evidence: {},
+      },
+      provider_evidence_digest: "2".repeat(64),
     },
   ],
   environment: {
@@ -153,6 +178,12 @@ describe("RivetScenarioLibrary", () => {
     await waitFor(() => expect(onPrepared).toHaveBeenCalledWith(workflow.slug));
     expect(
       screen.getByText(/node-cad: cad__build_bracket/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Provider: MCP \/ fixture-cad/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/local engineering model \/ fixture-model/),
     ).toBeInTheDocument();
     const start = screen.getByTestId("scenario-start-structural-bracket");
     expect(start).toBeEnabled();

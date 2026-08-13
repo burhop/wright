@@ -149,6 +149,104 @@ _COMPARISONS = (
 )
 
 
+def run_material_projection(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    """Project reproducible identities while excluding run-local observations."""
+
+    workflow = manifest.get("workflow")
+    runtime = manifest.get("runtime")
+    bindings = []
+    provider_digests = []
+    for item in manifest.get("bindings") or ():
+        if not isinstance(item, Mapping):
+            continue
+        provider = item.get("provider")
+        provider_digest = (
+            canonical_digest(provider) if isinstance(provider, Mapping) else None
+        )
+        if provider_digest:
+            provider_digests.append(provider_digest)
+        bindings.append(
+            {
+                key: item.get(key)
+                for key in (
+                    "node_id",
+                    "qualified_tool_name",
+                    "binding_digest",
+                    "server_revision",
+                    "schema_digest",
+                    "validation_evidence_id",
+                )
+            }
+            | {"provider_evidence_digest": provider_digest}
+        )
+    calls = []
+    for item in manifest.get("child_calls") or ():
+        if not isinstance(item, Mapping):
+            continue
+        calls.append(
+            {
+                key: item.get(key)
+                for key in (
+                    "node_id",
+                    "binding_digest",
+                    "qualified_tool_name",
+                    "server_revision",
+                    "schema_digest",
+                    "validation_evidence_id",
+                    "provider_evidence_digest",
+                    "argument_digest",
+                    "state",
+                    "reason_code",
+                    "child_received",
+                )
+            }
+        )
+    return {
+        "schema_version": manifest.get("schema_version", 1),
+        "workflow": dict(workflow) if isinstance(workflow, Mapping) else {},
+        "runtime": {
+            key: runtime.get(key)
+            for key in (
+                "protocol_version",
+                "rivet_version",
+                "package_version",
+                "runner_sha256",
+                "source_revision",
+            )
+        }
+        if isinstance(runtime, Mapping)
+        else {},
+        "review_digest": manifest.get("review_digest"),
+        "binding_set_digest": manifest.get("binding_set_digest"),
+        "policy_snapshot_digest": manifest.get("policy_snapshot_digest"),
+        "bindings": bindings,
+        "provider_evidence_digests": sorted(provider_digests),
+        "child_calls": calls,
+        "artifacts": list(manifest.get("artifacts") or ()),
+        "terminal_state": manifest.get("terminal_state"),
+        "reason_code": manifest.get("reason_code"),
+    }
+
+
+def run_observation_projection(manifest: Mapping[str, Any]) -> dict[str, Any]:
+    """Project timing/correlation data that never changes material identity."""
+
+    return {
+        "run_id": manifest.get("run_id"),
+        "generation": manifest.get("generation"),
+        "session_id": manifest.get("session_id"),
+        "started_at": manifest.get("started_at"),
+        "completed_at": manifest.get("completed_at"),
+        "trace_id": manifest.get("trace_id"),
+        "authority": dict(manifest.get("authority") or {}),
+        "child_call_ids": list(manifest.get("child_call_ids") or ()),
+        "approval_ids": list(manifest.get("approval_ids") or ()),
+        "redaction_count": manifest.get("redaction_count"),
+        "event_truncated": manifest.get("event_truncated"),
+        "output_truncated": manifest.get("output_truncated"),
+    }
+
+
 def compare_run_manifest(
     manifest: Mapping[str, Any], current: Mapping[str, Any]
 ) -> dict[str, Any]:
@@ -167,6 +265,7 @@ def compare_run_manifest(
             runtime.get("runner_sha256") if isinstance(runtime, Mapping) else None
         ),
     }
+    material = run_material_projection(manifest)
     differences: list[dict[str, str]] = []
     for key, code, recovery in _COMPARISONS:
         if key not in current:
@@ -180,6 +279,20 @@ def compare_run_manifest(
                     "recorded": expected,
                     "current": actual,
                     "recovery_action": recovery,
+                }
+            )
+    if "provider_evidence_digests" in current:
+        expected_providers = canonical_digest(material["provider_evidence_digests"])
+        actual_providers = canonical_digest(
+            sorted(str(item) for item in current["provider_evidence_digests"])
+        )
+        if expected_providers != actual_providers:
+            differences.append(
+                {
+                    "code": "provider_evidence_changed",
+                    "recorded": expected_providers,
+                    "current": actual_providers,
+                    "recovery_action": "review_current_bindings",
                 }
             )
     for code in tuple(dict.fromkeys(current.get("stale_reasons") or ())):
@@ -197,6 +310,8 @@ def compare_run_manifest(
     return {
         "reproducible": not differences,
         "differences": differences[:100],
+        "material_digest": canonical_digest(material),
+        "observation": run_observation_projection(manifest),
         "summary": (
             "Recorded identities match the current reviewed configuration."
             if not differences
@@ -438,6 +553,8 @@ __all__ = [
     "build_run_evidence",
     "compare_run_manifest",
     "redact_value",
+    "run_material_projection",
+    "run_observation_projection",
     "safe_argument_summary",
     "sanitize_gateway_result",
 ]

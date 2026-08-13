@@ -1,0 +1,32 @@
+schema_version: "1.1"
+scenario_id: chatter-candidate-review
+revision: 1
+title: Chatter candidate review
+summary: Compare discrete simulated CAM candidates with the exact enabled local Chatter screening model and produce a human-review advisory.
+domains: [cad, cam, python]
+tier: tier1
+resource: {class: small, expected_duration_seconds: 25, memory_mib: 512}
+workflow: {resource: workflows/chatter-candidate-review.rivet-project, graph_id: graph-chatter-review, revision: 1}
+capabilities:
+  - {requirement_id: cad-context, node_id: node-cad-context, domain: cad, tool_name: fixture_cad__inspect_setup, risk: read, provider_kind: mcp}
+  - {requirement_id: cam-candidates, node_id: node-cam-candidates, domain: cam, tool_name: fixture_cam__generate_candidates, risk: compute, provider_kind: mcp}
+  - {requirement_id: chatter-screen, node_id: node-chatter-model, domain: python, tool_name: wright_model__wright_chatter_generated_test__screen_chatter_candidates, risk: compute, provider_kind: engineering_model}
+  - {requirement_id: advisory-report, node_id: node-advisory, domain: cam, tool_name: fixture_report__compose_advisory, risk: compute, provider_kind: mcp}
+inputs: {candidate_set: generated-discrete-v1, simulation_only: true, comparison_policy: lowest_eligible_score_then_candidate_id}
+artifacts:
+  - {artifact_id: chatter-cad-context, producer_node_id: node-cad-context, domain: cad, kind: mesh, schema_version: "1.0"}
+  - {artifact_id: chatter-candidates, producer_node_id: node-cam-candidates, domain: cam, kind: candidate-batch, schema_version: "1.0"}
+  - {artifact_id: chatter-results, producer_node_id: node-chatter-model, domain: python, kind: model-result-batch, schema_version: "1.0"}
+  - {artifact_id: chatter-advisory, producer_node_id: node-advisory, domain: cam, kind: chatter-advisory-report, schema_version: "1.0"}
+assertions:
+  - assertion_id: advisory-safe-and-correlated
+    plugin: chatter_advisory
+    plugin_version: "1.0"
+    artifact_ids: [chatter-candidates, chatter-results, chatter-advisory]
+    rule: {kind: discrete_human_review}
+    severity: error
+    guidance: Re-run exact candidate, model, invariant, and provider checks; never convert the report into machine instructions.
+environment: {network: false, credentials: false, proprietary_application: false, gpu: false, hardware: false, large_download: false, platforms: [windows-amd64, linux-amd64, linux-arm64, macos]}
+safety: {physical_actuation: false, static_outputs_only: true, notes: "The output is an uncalibrated simulation-only screening advisory with no machine authority."}
+cleanup: {timeout_seconds: 5, residue_policy: fail}
+provenance: {owner: Wright Project, fixture_origin: wright-generated, license: MIT}
