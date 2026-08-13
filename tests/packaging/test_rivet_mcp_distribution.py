@@ -66,8 +66,30 @@ def test_protocol_v2_runner_contracts_and_persistence_ship_in_wheel_and_sdist(
             "integrations/rivet/runner/manifest.json",
             "integrations/rivet/runner/dist/wright-runner.mjs",
             "integrations/rivet/runner/src/wright-runner.ts",
-            "specs/069-rivet-mcp-gateway/contracts/capability-binding.schema.json",
-            "specs/069-rivet-mcp-gateway/contracts/run-manifest.schema.json",
+            "packages/workspace_service/src/workspace_service/_rivet/contracts/capability-binding.schema.json",
+            "packages/workspace_service/src/workspace_service/_rivet/contracts/run-manifest.schema.json",
             "packages/data_vault/src/data_vault/migrations.py",
             "packages/data_vault/src/data_vault/rivet_mcp_repository.py",
         } <= names
+
+
+def test_public_rivet_contract_copies_match_specification() -> None:
+    public_contracts = (
+        ROOT
+        / "packages"
+        / "workspace_service"
+        / "src"
+        / "workspace_service"
+        / "_rivet"
+        / "contracts"
+    )
+    specification_contracts = (
+        ROOT / "specs" / "069-rivet-mcp-gateway" / "contracts"
+    )
+    for contract in (
+        "capability-binding.schema.json",
+        "run-manifest.schema.json",
+    ):
+        assert (public_contracts / contract).read_bytes() == (
+            specification_contracts / contract
+        ).read_bytes()
