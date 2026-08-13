@@ -1,6 +1,6 @@
 # Contract: Engineering Model HTTP API 1.0
 
-Base path: `/api/v1/engineering-models`. All mutating endpoints require local authentication, role checks, CSRF/origin protections where applicable, and an immutable workspace/session binding when workspace-scoped. Responses never expose raw data-root paths, source tokens, adapter commands/endpoints, or reusable authority.
+Base path: `/api/v1/engineering-models`. Routes contain no model-library business logic and delegate immediately to an injected `EngineeringModelApplicationPort` owned by `tool_registry`; the workspace composition supplies its implementation. All mutating endpoints require local authentication, role checks, CSRF/origin protections where applicable, and an immutable workspace/session binding when workspace-scoped. Responses never expose raw data-root paths, source tokens, adapter commands/endpoints, or reusable authority.
 
 ## Catalog
 

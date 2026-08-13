@@ -62,7 +62,7 @@ Research used primary product, format, security, and standards sources plus Wrig
 
 ## Decision 5: Runtime is a separately approved capability
 
-**Decision**: Model install and runtime-adapter install are separate effect plans. A package declares an exact adapter contract/version and may remain blocked until it is present. The adapter runs as a supervised local child with typed load/infer/cancel/unload messages and bounded resources/output.
+**Decision**: Model install and runtime-adapter install are separate effect plans. A package declares an exact adapter contract/version and may remain blocked until it is present. The adapter runs as a supervised local child with typed verify/load/infer/progress/cancel/unload/shutdown messages and bounded resources/output.
 
 **Evidence**: ONNX Runtime separates model execution from hardware Execution Providers and publishes distinct platform/provider packages ([Execution Providers](https://onnxruntime.ai/docs/execution-providers/)). This makes provider availability a deployment decision, not a property that can be inferred from a model file.
 

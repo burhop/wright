@@ -32,6 +32,7 @@ GatewayService receives a sequence of providers. Provider identity and tool name
 
 ## Model tool projection
 
+- Every projected inference capability is implemented by an `EngineeringModelTool` that inherits Wright's `BaseTool`; the gateway view is a serialization of that reviewed tool contract, not a bypass around it.
 - Name: `wright_model__<normalized-model-id>__<task-id>`.
 - `server_id`: `wright-models` for gateway provenance only; it does not correspond to an MCP server row.
 - Input/output schemas: exact package task contracts.

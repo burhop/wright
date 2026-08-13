@@ -14,7 +14,7 @@
 
 - [ ] T001 Create `packages/model_registry/pyproject.toml` and `packages/model_registry/src/model_registry/__init__.py` with only bounded domain/runtime-port dependencies.
 - [ ] T002 Add `packages/model_registry` to the uv workspace and public wheel/sdist package lists in `pyproject.toml`.
-- [ ] T003 Copy the finalized package, test-vector, install-plan, and operation JSON Schemas into `packages/model_registry/src/model_registry/schemas/`.
+- [ ] T003 Copy the finalized package, seeded test-vector, complete install-plan, and operation JSON Schemas into `packages/model_registry/src/model_registry/schemas/`.
 - [ ] T004 [P] Add package-resource discovery and exact contract-copy tests in `packages/model_registry/tests/test_contract_resources.py`.
 - [ ] T005 [P] Add valid/invalid public contract fixtures under `packages/model_registry/tests/fixtures/contracts/`.
 - [ ] T006 Add JSON Schema meta-validation, supported-version, bounds, extra-field, and cross-reference tests in `packages/model_registry/tests/test_contract_schemas.py`.
@@ -26,11 +26,11 @@
 
 **Purpose**: Shared trust and state infrastructure that blocks every user story.
 
-- [ ] T008 Write failing model/package/variant/artifact/task/license/resource/test-vector validation and canonical-digest tests in `packages/model_registry/tests/test_models.py`.
-- [ ] T009 Implement immutable domain values, supported versions, canonical serialization, bounds, and stable failure categories in `packages/model_registry/src/model_registry/models.py`.
+- [ ] T008 Write failing `BaseTool` conformance plus model/package/variant/artifact/task/license/resource/seeded-test-vector validation and canonical-digest tests in `packages/core/tests/test_base_tool.py` and `packages/model_registry/tests/test_models.py`.
+- [ ] T009 Implement Wright's abstract `BaseTool` contract in `packages/core/src/core/tools.py` plus immutable model-domain values, supported versions, canonical serialization, bounds, and stable failure categories in `packages/model_registry/src/model_registry/models.py`.
 - [ ] T010 Export the public domain contracts from `packages/model_registry/src/model_registry/__init__.py` without cyclic package imports.
-- [ ] T011 [P] Write failing path, format, source, redirect, license, access, platform, architecture, accelerator, resource, and secret-boundary policy tests in `packages/model_registry/tests/test_policy.py`.
-- [ ] T012 Implement fail-closed package, artifact, source, license, compatibility, resource, and redaction policy in `packages/model_registry/src/model_registry/policy.py`.
+- [ ] T011 [P] Write failing path, format, source, redirect, license, access, platform, architecture, accelerator, resource, physical-actuation, and secret-boundary policy tests in `packages/model_registry/tests/test_policy.py`.
+- [ ] T012 Implement fail-closed package, artifact, source, license, compatibility, resource, physical-actuation, and redaction policy in `packages/model_registry/src/model_registry/policy.py`.
 - [ ] T013 Write failing migration-16 upgrade, rollback-on-failure, idempotency, contiguous-version, and legacy-state preservation tests in `packages/data_vault/tests/test_model_library_migration.py`.
 - [ ] T014 Add migration 16 tables/indexes for model snapshots, plans, operations, content objects, installations, tests, bindings, references, leases, and evidence in `packages/data_vault/src/data_vault/migrations.py`.
 - [ ] T015 Write failing repository tests for immutable identities, optimistic transitions, idempotency, terminal states, bounded JSON, workspace scope, references, and leases in `packages/data_vault/tests/test_model_repository.py`.
@@ -42,7 +42,7 @@
 - [ ] T021 Implement database/filesystem reconciliation with truthful missing, quarantine, residue, and recovery projections in `packages/data_vault/src/data_vault/model_artifact_store.py`.
 - [ ] T022 [P] Add deterministic fixture package/upgrade/archive generation helpers that write only temporary test state in `packages/model_registry/tests/fixture_factory.py`.
 - [ ] T023 [P] Add shared injected clock, host-observation, disk/resource, secret-reference, and transport doubles in `packages/model_registry/tests/fakes.py`.
-- [ ] T024 Add cross-package secret/path/authority serialization scans for model records, logs, SQLite, evidence, and exports in `tests/security/test_engineering_model_boundaries.py`.
+- [ ] T024 Add cross-package secret/path/authority serialization scans plus structured-log and OpenTelemetry trace contract tests for model records, source/storage/database transitions, adapter/gateway calls, cancellations, cleanup, evidence, and exports in `tests/security/test_engineering_model_boundaries.py`.
 
 **Checkpoint**: Contracts, policy, migration, repository, generated fixtures, and content store work offline and independently.
 
@@ -69,11 +69,11 @@
 - [ ] T032 [US1] Add the provisional exact-revision PointNet metadata and Gate D blockers without weights or installable status in `packages/model_registry/src/model_registry/catalog/catalog.yaml`.
 - [ ] T033 [US1] Implement filtered/paginated inspection and host-compatibility composition in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
 - [ ] T034 [US1] Add bounded catalog/detail response models in `apps/api/src/api/schemas/engineering_models.py`.
-- [ ] T035 [US1] Add thin authenticated read-only catalog/detail routes in `apps/api/src/api/routers/engineering_models.py`.
+- [ ] T035 [US1] Add thin authenticated read-only catalog/detail routes that delegate immediately to an injected `EngineeringModelApplicationPort` in `apps/api/src/api/routers/engineering_models.py` and `packages/tool_registry/src/tool_registry/model_library_port.py`.
 - [ ] T036 [US1] Wire the model catalog and read service into `apps/api/src/api/composition.py` without contacting sources at startup.
 - [ ] T037 [US1] Implement typed catalog/detail/filter clients in `apps/web/src/services/engineering-model-service.ts`.
 - [ ] T038 [P] [US1] Implement reusable model trust/readiness/resource/evidence primitives in `apps/web/src/components/models/ModelTrustPrimitives.tsx`.
-- [ ] T039 [US1] Implement the dedicated library/detail/filter/offline page in `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx`.
+- [ ] T039 [US1] Implement the dedicated library/detail/filter/offline page, including exact generated-fixture recipe/inputs/constraints/digests and honest external source provenance, in `apps/web/src/components/pages/EngineeringModelLibraryPage.tsx`.
 - [ ] T040 [US1] Add a distinct Engineering Models route/navigation entry while preserving `/setup/model` in `apps/web/src/App.tsx` and `apps/web/src/components/layout/Sidebar.tsx`.
 
 **Checkpoint**: User Story 1 is a useful offline no-mutation MVP and remains separate from conversational model setup.
@@ -88,7 +88,7 @@
 
 ### Tests first
 
-- [ ] T041 [P] [US2] Write failing immutable/expiring/principal-bound effect-plan, invalidation, compatibility, storage, license, runtime, reference, rollback, and cleanup tests in `packages/model_registry/tests/test_planning.py`.
+- [ ] T041 [P] [US2] Write failing immutable/expiring/principal-bound effect-plan tests for exact network/token/license/runtime requirements, compatibility, prompts, locations, bytes, references, rollback, cleanup, and every invalidation condition in `packages/model_registry/tests/test_planning.py`.
 - [ ] T042 [P] [US2] Write failing bounded HTTPS/source tests for exact revision/files, redirects, auth stripping, content length, streaming ceiling, truncation, digest, timeout, and cancellation in `packages/model_registry/tests/test_http_source.py`.
 - [ ] T043 [P] [US2] Write failing range-resume tests for strong validators, `If-Range`, `206 Content-Range`, changed representation, restart, and zero-byte cache reuse in `packages/model_registry/tests/test_http_resume.py`.
 - [ ] T044 [P] [US2] Write failing offline archive tests for paths, normalization collisions, links, executables, nested archives, undeclared files, expansion, formats, checksums, and license in `packages/model_registry/tests/test_offline_import.py`.
@@ -98,7 +98,7 @@
 
 ### Implementation
 
-- [ ] T048 [US2] Implement canonical expiring effect planning and digest-bound one-time confirmation in `packages/model_registry/src/model_registry/planning.py`.
+- [ ] T048 [US2] Implement canonical expiring effect planning with explicit requirements/compatibility/prompts/rollback/cleanup and digest-bound one-time confirmation in `packages/model_registry/src/model_registry/planning.py`.
 - [ ] T049 [US2] Define injected source/stream/resume/offline-package ports and bounded transfer records in `packages/model_registry/src/model_registry/sources.py`.
 - [ ] T050 [US2] Implement approved HTTPS acquisition, safe redirects, validator-bound resume, byte ceilings, digest verification, and opaque token references in `packages/model_registry/src/model_registry/http_source.py`.
 - [ ] T051 [US2] Implement safe offline package inspection/extraction through the same artifact policy in `packages/model_registry/src/model_registry/offline_source.py`.
@@ -122,10 +122,10 @@
 
 ### Tests first
 
-- [ ] T059 [P] [US3] Write failing adapter identity/contract/format/task/platform/provider/health tests in `packages/model_registry/tests/test_runtime_adapter.py`.
-- [ ] T060 [P] [US3] Add a protocol-conformant deterministic child adapter with load/infer/cancel/unload/shutdown and fault profiles in `tests/fixtures/engineering_model_runtime.py`.
-- [ ] T061 [P] [US3] Write failing runtime-supervisor tests for clean environment, artifact confinement, message/output bounds, resources, deadlines, crash, cancellation, late output, unload, shutdown, and residue in `packages/model_registry/tests/test_runtime_supervisor.py`.
-- [ ] T062 [P] [US3] Write failing vector evaluation tests for exact/range/absolute/relative/category predicates, schema identity, finite values, tolerance, timing, and evidence in `packages/model_registry/tests/test_model_testing.py`.
+- [ ] T059 [P] [US3] Write failing adapter identity/contract/format/task/platform/provider/health/verify/progress tests in `packages/model_registry/tests/test_runtime_adapter.py`.
+- [ ] T060 [P] [US3] Add a protocol-conformant deterministic child adapter with verify/load/infer/progress/cancel/unload/shutdown and fault profiles in `tests/fixtures/engineering_model_runtime.py`.
+- [ ] T061 [P] [US3] Write failing runtime-supervisor tests for clean environment, artifact confinement, verification, monotonic redacted progress, message/output bounds, resources, deadlines, crash, cancellation, late output, unload, shutdown, and residue in `packages/model_registry/tests/test_runtime_supervisor.py`.
+- [ ] T062 [P] [US3] Write failing vector evaluation tests for deterministic seed, limitation coverage, input/output schema digests, units/coordinates, exact/range/absolute/relative/category predicates, finite values, tolerance, timing, and split material/observation evidence digests in `packages/model_registry/tests/test_model_testing.py`.
 - [ ] T063 [P] [US3] Write failing generic provider collision/discovery/call/cancel/session-close/backward-compatibility tests in `packages/tool_registry/tests/test_gateway_capability_providers.py`.
 - [ ] T064 [P] [US3] Write failing model provider tests for exact healthy workspace bindings, typed schemas, stale/disabled/cross-workspace hiding, policy, audit, and identity evidence in `packages/model_registry/tests/test_gateway_provider.py`.
 - [ ] T065 [P] [US3] Write failing installation-test and workspace-binding API tests in `apps/api/tests/test_engineering_model_runtime_api.py`.
@@ -134,12 +134,12 @@
 
 ### Implementation
 
-- [ ] T068 [US3] Implement the adapter registry, protocol records, supervisor, process ownership, deadlines, cancellation, and cleanup in `packages/model_registry/src/model_registry/runtime.py`.
-- [ ] T069 [US3] Implement mandatory test-vector validation/evaluation and bounded evidence construction in `packages/model_registry/src/model_registry/testing.py`.
-- [ ] T070 [US3] Add `GatewayCapabilityProvider` and progress/cancel protocol types in `packages/tool_registry/src/tool_registry/gateway_ports.py`.
+- [ ] T068 [US3] Implement the adapter registry, verify/progress protocol records, supervisor, process ownership, deadlines, cancellation, and cleanup in `packages/model_registry/src/model_registry/runtime.py`.
+- [ ] T069 [US3] Implement mandatory seeded test-vector validation/evaluation and bounded evidence with deterministic material and variable observation digests in `packages/model_registry/src/model_registry/testing.py`.
+- [ ] T070 [US3] Add `GatewayCapabilityProvider`, `EngineeringModelApplicationPort`, and progress/cancel protocol types in `packages/tool_registry/src/tool_registry/gateway_ports.py` and `packages/tool_registry/src/tool_registry/model_library_port.py`.
 - [ ] T071 [US3] Integrate unique provider discovery/call/policy/audit/cancellation/session-close/shutdown in `packages/tool_registry/src/tool_registry/gateway_service.py` without changing existing MCP behavior.
-- [ ] T072 [US3] Implement workspace-scoped model tool projection and runtime invocation in `packages/model_registry/src/model_registry/gateway_provider.py`.
-- [ ] T073 [US3] Compose standard-test, enable/disable, binding, provider, and supervisor services in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
+- [ ] T072 [US3] Implement `EngineeringModelTool(BaseTool)`, workspace-scoped model tool projection, and runtime invocation in `packages/model_registry/src/model_registry/model_tool.py` and `packages/model_registry/src/model_registry/gateway_provider.py`.
+- [ ] T073 [US3] Compose standard-test, enable/disable, binding, provider, and supervisor services with structured `structlog` events and OpenTelemetry spans in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
 - [ ] T074 [US3] Wire the dynamic provider into the existing gateway composition in `apps/api/src/api/composition.py`.
 - [ ] T075 [US3] Add test/evidence/binding request and response models in `apps/api/src/api/schemas/engineering_models.py`.
 - [ ] T076 [US3] Add thin standard-test/evidence/workspace-binding routes in `apps/api/src/api/routers/engineering_models.py`.
@@ -160,7 +160,7 @@
 
 - [ ] T079 [P] [US4] Write failing semantic update-diff tests for license, artifacts, adapter, schemas, units, coordinates, resources, vectors, limitations, and redistribution in `packages/model_registry/tests/test_model_updates.py`.
 - [ ] T080 [P] [US4] Write failing update failure, atomic successor activation, rollback/retest, and cached-content tests in `packages/model_registry/tests/test_model_updates.py`.
-- [ ] T081 [P] [US4] Write failing durable reference/lease, disable, uninstall, purge-blocker, detach/archive, and cleanup tests in `packages/model_registry/tests/test_model_removal.py`.
+- [ ] T081 [P] [US4] Write failing durable reference/lease, disable, uninstall, purge-blocker, detach/archive, exact reclaimable-byte preview, cancellable cleanup, restart recovery, and cleanup tests in `packages/model_registry/tests/test_model_removal.py`.
 - [ ] T082 [P] [US4] Write failing deterministic public export/private exclusion/redistribution and fresh-root re-import tests in `packages/model_registry/tests/test_offline_export.py`.
 - [ ] T083 [P] [US4] Write failing update/rollback/reference/export/uninstall/purge API tests in `apps/api/tests/test_engineering_model_maintenance_api.py`.
 - [ ] T084 [P] [US4] Write failing compare/update/rollback/reference/removal/export component tests in `apps/web/tests/EngineeringModelMaintenance.spec.tsx`.
@@ -168,7 +168,7 @@
 ### Implementation
 
 - [ ] T085 [US4] Implement semantic revision comparison and update/rollback orchestration in `packages/model_registry/src/model_registry/lifecycle.py`.
-- [ ] T086 [US4] Implement reference/lease-aware disable, uninstall, purge, detach/archive, and cleanup orchestration in `packages/model_registry/src/model_registry/lifecycle.py`.
+- [ ] T086 [US4] Implement reference/lease-aware disable, uninstall, purge, detach/archive, exact reclaimable-byte preview, cancellable cleanup, and restart recovery in `packages/model_registry/src/model_registry/lifecycle.py`.
 - [ ] T087 [US4] Implement deterministic policy-aware offline export in `packages/model_registry/src/model_registry/offline_source.py`.
 - [ ] T088 [US4] Compose maintenance/reference/export use cases in `packages/workspace_service/src/workspace_service/engineering_model_service.py`.
 - [ ] T089 [US4] Add maintenance/reference/export schemas and thin routes in `apps/api/src/api/schemas/engineering_models.py` and `apps/api/src/api/routers/engineering_models.py`.
@@ -185,10 +185,10 @@
 
 **Independent Test**: A test-only package/adapter traverses the normal lifecycle; duplicate, unsupported, unsafe, unknown-license, undeclared, and schema-incompatible extensions fail before acquisition.
 
-- [ ] T092 [P] [US5] Write failing package/adapter registry extension, duplicate identity, unknown version, unsafe format, incomplete license, and schema mismatch tests in `packages/model_registry/tests/test_extensions.py`.
+- [ ] T092 [P] [US5] Write failing package/adapter full-lifecycle extension, no-lifecycle-service-edit, duplicate identity, unknown version, unsafe format, incomplete license, and schema mismatch tests in `packages/model_registry/tests/test_extensions.py`.
 - [ ] T093 [US5] Expose documented duplicate-safe catalog, source, adapter, and predicate registry interfaces in `packages/model_registry/src/model_registry/extensions.py`.
 - [ ] T094 [US5] Add a package/adapter conformance runner that uses only generated fixtures in `packages/model_registry/src/model_registry/conformance.py`.
-- [ ] T095 [US5] Add catalog and adapter validation commands to `src/wright_engineering/cli.py` without acquiring content or starting unapproved runtimes.
+- [ ] T095 [US5] Write command tests first, then add catalog and adapter validation commands to `tests/test_cli.py` and `src/wright_engineering/cli.py` without acquiring content or starting unapproved runtimes.
 - [ ] T096 [US5] Document model package authoring, adapter conformance, format/license review, and no-weight fixture generation in `docs/models/local-engineering-models.md`.
 
 **Checkpoint**: New engineering model types follow one safe lifecycle and unknown extensions fail closed.
@@ -197,15 +197,15 @@
 
 ## Phase 8: Cross-story journeys, external evidence, and hardening
 
-- [ ] T097 Add mocked Playwright journeys for offline discovery, blocked candidate, install/cancel/recovery, test/enable, update/rollback, export, and reference-blocked purge in `tests/ui-integration/engineering-model-library.spec.ts`.
+- [ ] T097 Add mocked Playwright journeys for an instrumented under-two-minute no-download decision path, offline discovery, blocked candidate, install/cancel/recovery, test/enable, update/rollback, export, and reference-blocked purge in `tests/ui-integration/engineering-model-library.spec.ts`.
 - [ ] T098 Add keyboard-only, focus trap/restore, live-region, non-color status, narrow-width, and 200% zoom coverage with no serious/critical findings in `tests/ui-integration/engineering-model-library.spec.ts`.
 - [ ] T099 Add local FastAPI + deterministic source + isolated adapter + gateway + real Rivet worker lifecycle coverage in `tests/e2e/test_engineering_model_library.py`.
-- [ ] T100 Add hostile manifest/archive/source/adapter/API concurrency and redaction coverage in `tests/security/test_engineering_model_boundaries.py`.
-- [ ] T101 Add performance tests for 500-entry discovery, 1,000-artifact validation, planning, cancellation delivery, gateway overhead, and bounded evidence in `packages/model_registry/tests/test_performance.py`.
+- [ ] T100 Add hostile manifest/archive/source/adapter/API concurrency, physical-actuation rejection, structured logging/tracing, field-bound, and redaction coverage in `tests/security/test_engineering_model_boundaries.py`.
+- [ ] T101 Add performance tests for 1,000-entry discovery under 500 ms p95, 100-file planning/manifest validation under one second p95, 1,000-artifact validation, cancellation delivery, gateway overhead, and bounded evidence in `packages/model_registry/tests/test_performance.py`.
 - [ ] T102 Add migration 15-to-16, existing Gateway/MCP/Rivet, conversational model setup, backup/restore, native package, and Docker compatibility regressions in `tests/compatibility/test_engineering_model_compatibility.py`.
-- [ ] T103 Record the exact PointNet Gate D evidence outcome—approved only if every closed condition passes, otherwise explicit blocked/deferred rationale—in `specs/071-local-engineering-model-library/contracts/gate-d-decision.md` and `docs/models/local-engineering-models.md`.
-- [ ] T104 If explicitly permitted and still necessary, run only the bounded exact-revision external probe under `.local-run/`; record artifact/runtime/vector/cleanup evidence without staging payloads in `docs/model-evidence/pointnet-validation-2026-08-13.md`.
-- [ ] T105 Add no-model-weight, unsafe-format, source-code, secret, raw-path, and runtime-command public artifact scans in `tests/security/test_engineering_model_distribution.py`.
+- [ ] T103 Resolve Gate D using primary sources and actual artifacts: approve PointNet only if every condition passes, otherwise select and validate a safer public external engineering model; record the decision in `specs/071-local-engineering-model-library/contracts/gate-d-decision.md` and `docs/models/local-engineering-models.md`.
+- [ ] T104 Run the goal-authorized bounded exact-revision public external-model probe under `.local-run/`, exercise catalog-through-offline-removal lifecycle with real vectors, and record artifact/runtime/vector/cleanup evidence without staging payloads in `docs/model-evidence/external-model-validation-2026-08-13.md`.
+- [ ] T105 Add no-model-weight, unsafe-format, source-code, secret, raw-path, runtime-command, and physical-actuation public artifact scans in `tests/security/test_engineering_model_distribution.py`.
 - [ ] T106 Add wheel/sdist/runtime-package assertions for model schemas/catalog/docs-required resources and absence of payloads in `tests/packaging/test_engineering_model_package.py`.
 
 ---

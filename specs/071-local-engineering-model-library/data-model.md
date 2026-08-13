@@ -191,13 +191,17 @@ Transitions: `installed -> testing -> ready | unhealthy`; `ready -> disabled | u
 | `vector_id` / `version` | identity | Unique within package |
 | `task_id` | string | Must match declared task |
 | `input_schema_digest` | SHA-256 | Exact typed contract |
+| `output_schema_digest` | SHA-256 | Exact typed contract |
+| `deterministic_seed` | integer/string | Required even when adapter declares it unused |
+| `units` / `coordinate_convention` | object/string? | Required when material to the task |
 | `input` or `input_artifact` | JSON/ref | Bounded and deterministic |
 | `expected` | predicate object | Exact/range/tolerance/category, no executable assertion |
+| `limitations_exercised` | string[] | Non-empty links to declared limitation IDs |
 | `limits` | object | Load/infer/output/resource ceilings |
 
 ### Evidence
 
-Records package, variant, artifact set, adapter, host compatibility projection, vector, input/output digests, timing/resources, validation results, cleanup, limitations, and trace. It contains no reusable authority and is bounded to 1 MiB.
+Records package, variant, artifact set, adapter, host compatibility projection, vector, input/output digests, timing/resources, validation results, cleanup, limitations, and trace. It contains no reusable authority and is bounded to 1 MiB. Its deterministic `material_evidence_digest` excludes timestamps, trace IDs, timing, measured resources, and host diagnostics; those live in a separate observation digest.
 
 ## 10. ModelCapabilityBinding
 

@@ -64,7 +64,7 @@ PointNet remains `needs_review` / evaluation-only. It may become `approved` only
 7. cancellation, bad input, resource rejection, adapter crash, unload, and cleanup paths pass with no late success or residue hidden;
 8. cache reuse transfers zero bytes and uninstall/purge preserve all declared references.
 
-If any condition cannot be met safely and proportionately, PointNet remains blocked or is replaced by a better public data-only candidate. No general contract may be weakened to admit it.
+If any condition cannot be met safely and proportionately, PointNet remains blocked and is replaced by a better public data-only candidate. Loop 071 is not complete until one appropriately licensed public external engineering model passes the full bounded lifecycle, unless an external condition leaves no safe candidate after documented primary-source research. No general contract may be weakened to admit a candidate.
 
 ## Rollback
 

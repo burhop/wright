@@ -7,7 +7,8 @@
   "required": [
     "schema_version", "plan_id", "plan_digest", "principal_id", "operation_kind",
     "model_id", "package_revision", "variant_id", "snapshot_id", "manifest_digest",
-    "effects", "blockers", "runtime_requirement", "created_at", "expires_at", "state"
+    "effects", "blockers", "requirements", "compatibility", "prompts",
+    "runtime_requirement", "rollback", "cleanup", "created_at", "expires_at", "state"
   ],
   "properties": {
     "schema_version": { "const": "1.0" },
@@ -49,6 +50,40 @@
           "category": { "$ref": "#/$defs/id" },
           "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
           "recovery": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        }
+      }
+    },
+    "requirements": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network", "credential", "license_action", "runtime_change"],
+      "properties": {
+        "network": { "enum": ["none", "required", "optional"] },
+        "credential": { "enum": ["none", "read_token_reference", "external_action"] },
+        "license_action": { "enum": ["none", "review", "external_acceptance"] },
+        "runtime_change": { "const": "separate_plan_only" }
+      }
+    },
+    "compatibility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "observed_at", "reasons"],
+      "properties": {
+        "state": { "enum": ["compatible", "incompatible", "uncertain", "blocked"] },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "reasons": {
+          "type": "array", "maxItems": 128,
+          "items": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        }
+      }
+    },
+    "prompts": {
+      "type": "array", "maxItems": 32,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["prompt_id", "message", "required"],
+        "properties": {
+          "prompt_id": { "$ref": "#/$defs/id" },
+          "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "required": { "type": "boolean" }
         }
       }
     },

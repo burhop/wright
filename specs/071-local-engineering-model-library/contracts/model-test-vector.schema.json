@@ -4,18 +4,27 @@
   "title": "Wright Engineering Model Test Vector",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "vector_id", "version", "task_id", "input_schema_sha256", "input", "expected", "limits", "mandatory"],
+  "required": ["schema_version", "vector_id", "version", "task_id", "input_schema_sha256", "output_schema_sha256", "deterministic_seed", "input", "expected", "limitations_exercised", "limits", "mandatory"],
   "properties": {
     "schema_version": { "const": "1.0" },
     "vector_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
     "version": { "type": "integer", "minimum": 1 },
     "task_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,95}$" },
     "input_schema_sha256": { "$ref": "#/$defs/sha256" },
+    "output_schema_sha256": { "$ref": "#/$defs/sha256" },
+    "deterministic_seed": {
+      "oneOf": [
+        { "type": "integer", "minimum": 0 },
+        { "type": "string", "minLength": 1, "maxLength": 128 }
+      ]
+    },
+    "units": { "type": "object", "maxProperties": 64 },
+    "coordinate_convention": { "type": "string", "maxLength": 500 },
     "input": {},
     "expected": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "value"],
+      "required": ["kind"],
       "properties": {
         "kind": { "enum": ["exact", "absolute_tolerance", "relative_tolerance", "range", "category"] },
         "value": {},
@@ -23,7 +32,29 @@
         "relative_tolerance": { "type": "number", "minimum": 0 },
         "minimum": { "type": "number" },
         "maximum": { "type": "number" }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["exact", "category"] } } },
+          "then": { "required": ["value"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "absolute_tolerance" } } },
+          "then": { "required": ["value", "absolute_tolerance"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "relative_tolerance" } } },
+          "then": { "required": ["value", "relative_tolerance"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "range" } } },
+          "then": { "required": ["minimum", "maximum"] }
+        }
+      ]
+    },
+    "limitations_exercised": {
+      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 128 }
     },
     "limits": {
       "type": "object",

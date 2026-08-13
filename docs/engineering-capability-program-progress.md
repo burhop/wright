@@ -326,7 +326,7 @@ Commit the complete Loop 070 evidence on the integration branch. Then begin Loop
 - [x] `speckit-plan` and Gate D: separate model domain/UI, immutable manifests and plans, strict data-only policy, content-addressed atomic storage, supervised typed runtime adapters, gateway-mediated workspace capabilities, deterministic generated fixtures, and conditional external-model approval are specified.
 - [x] `speckit-checklist`: 40/40 identity, source/license, artifact safety, runtime/gateway, lifecycle/recovery, UX, compatibility, and extension requirements-quality checks pass.
 - [x] `speckit-tasks`: 113 dependency-ordered setup, foundation, five-story, cross-story hardening, external-evidence, and focused-gate tasks generated with tests-first checkpoints.
-- [ ] `speckit-analyze`
+- [x] `speckit-analyze` and remediation: all 63 buildable FR/NFR/SC items map to 113 unique tasks with no placeholders, unmapped tasks, or constitution conflicts. Repaired the external-model completion condition, `BaseTool` and API-port boundaries, structured logging/tracing coverage, adapter verify/progress, seeded limitation-aware vectors, complete plan effects, cache-cleanup recovery, 1,000-entry performance scale, and deterministic material-versus-observation evidence digests; repeat analysis has no critical/high findings.
 - [ ] `speckit-implement`
 - [ ] Focused, integration, UI, packaging, and documentation verification
 - [ ] Final program exact-tree dev gate after loops 072-073

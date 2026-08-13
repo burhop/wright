@@ -6,7 +6,7 @@ A runtime adapter executes one or more reviewed model formats behind Wright's pr
 
 ## Identity and discovery
 
-Before model load, the supervised adapter returns:
+Before model verification or load, the supervised adapter returns:
 
 - `adapter_id`, `adapter_version`, and `contract_version`;
 - supported model formats, engineering task IDs, platforms, architectures, and execution providers;
@@ -36,11 +36,21 @@ Required fields: `request_id`, exact installation/model/variant/manifest/artifac
 
 Returns either a scoped `model_handle` and measured load resources or a stable failure. It must not fetch content, install dependencies, resolve mutable revisions, or execute repository code.
 
+### `verify`
+
+Required fields: `request_id`, exact installation/model/variant/manifest/artifact-set identities, safe read-only artifact keys, declared format, deadline, and parser/resource limits.
+
+The adapter performs only format-specific structural verification and returns bounded facts plus artifact identities. It cannot supersede Wright's digest/license/source policy, fetch content, or load a reusable inference handle.
+
 ### `infer`
 
 Required fields: `request_id`, `model_handle`, `task_id`, schema digest, typed input, deadline, and output ceiling.
 
 Returns: exact request/handle/task/schema identities, typed output, output digest, timing/resource projection, warnings, and terminal state. Non-finite JSON numbers are prohibited. Output after cancellation/deadline is discarded by Wright even if emitted by the child.
+
+### `progress`
+
+Long-running `verify`, `load`, `infer`, `unload`, and `shutdown` requests may emit monotonic bounded progress events containing request ID, phase, completed/total items or bytes, safe message, and sequence. Progress is advisory, redacted, and cannot carry payload bytes, paths, tokens, commands, or authority.
 
 ### `cancel`
 
@@ -73,4 +83,4 @@ Raw tracebacks, environment variables, host paths, commands, tokens, and unbound
 
 ## Conformance requirements
 
-An adapter cannot be marked healthy until deterministic tests prove identity mismatch rejection, format/task mismatch, malformed/oversized messages, missing/corrupt files, load/inference deadlines, cancellation/late-output suppression, invalid/non-finite output, crash cleanup, handle isolation, idempotent unload/shutdown, and no network acquisition.
+An adapter cannot be marked healthy until deterministic tests prove identity mismatch rejection, format/task mismatch, malformed/oversized messages, missing/corrupt files, bounded verification and progress, load/inference deadlines, cancellation/late-output suppression, invalid/non-finite output, crash cleanup, handle isolation, idempotent unload/shutdown, and no network acquisition.

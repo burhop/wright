@@ -6,11 +6,11 @@
 
 ## Summary
 
-Add a distinct engineering model library that lets an engineer inspect trust and compatibility, preview exact effects, acquire only pinned data artifacts, verify and activate them atomically, run typed tests through an approved runtime adapter, and expose an enabled installation to Rivet through Wright's existing workspace gateway. A new `model_registry` package owns immutable contracts, catalog policy, lifecycle state machines, source adapters, runtime ports, and stable failures. `data_vault` owns migration 16 and content-addressed storage; `workspace_service` composes use cases; FastAPI and React remain thin. Normal evidence uses tiny generated fixtures and an isolated deterministic adapter. An external model advances from evaluation-only only after Gate D records exact license, artifacts, digests, runtime, resources, limitations, and real test-vector evidence. No weights enter Git.
+Add a distinct engineering model library that lets an engineer inspect trust and compatibility, preview exact effects, acquire only pinned data artifacts, verify and activate them atomically, run typed tests through an approved runtime adapter, and expose an enabled installation to Rivet through Wright's existing workspace gateway. A new `model_registry` package owns immutable contracts, catalog policy, lifecycle state machines, source adapters, runtime ports, and stable failures. `data_vault` owns migration 16 and content-addressed storage; `workspace_service` composes use cases behind a `tool_registry` application port; FastAPI and React remain thin. Normal evidence uses tiny generated fixtures and an isolated deterministic adapter. Loop 071 must also approve and exercise one public external engineering model after Gate D records exact license, artifacts, digests, runtime, resources, limitations, and real test-vector evidence, selecting a safer replacement if PointNet cannot qualify. No weights enter Git.
 
 ## Technical Context
 
-**Language/Version**: Python 3.11-3.14 for domain, persistence, source/runtime mediation, and API; TypeScript 5/6 and React 19 for UI; JSON/YAML for manifests
+**Language/Version**: Python 3.11-3.14 for domain, persistence, source/runtime mediation, and API; TypeScript 6.0 and React 19 for UI; JSON/YAML for manifests
 
 **Primary Dependencies**: Pydantic 2, jsonschema, httpx, packaging, psutil, SQLite, FastAPI, existing `tool_registry.GatewayService`, React/Vitest/Playwright, pytest; standard-library hashing, archive, path, subprocess, and atomic-file primitives. Model runtimes are separately reviewed optional adapters.
 
@@ -22,11 +22,11 @@ Add a distinct engineering model library that lets an engineer inspect trust and
 
 **Project Type**: Modular local desktop/web application with Python packages, embedded persistence/file vault, thin FastAPI composition, provider-neutral gateway, React frontend, and native/Docker distribution
 
-**Performance Goals**: List/filter 500 cached variants under 300 ms p95; inspect one cached package under 150 ms; validate 1,000 artifacts under one second; observe cancellation within one second; discover an enabled capability under 300 ms; under 10% orchestration overhead excluding model load/inference
+**Performance Goals**: List/filter 1,000 cached variants under 500 ms p95 (with a 500-entry target under 300 ms); inspect one cached package under 150 ms; create/validate a 100-file plan under one second excluding hashing/network; validate 1,000 declared artifacts under one second; observe cancellation within one second; discover an enabled capability under 300 ms; under 10% orchestration overhead excluding model load/inference
 
 **Constraints**: Offline normal gates; no network, credentials, gated terms, paid services, proprietary apps, GPU, hardware, large downloads, global dependency changes, committed weights, or physical actuation; metadata <=64 KiB per record and evidence <=1 MiB per operation; confirmed plans set all byte ceilings; data-only formats; no pickle, repository code, native libraries, plugins, macros, shell commands, or `trust_remote_code`; all paths confined to Wright data root; model and runtime installation remain separate
 
-**Scale/Scope**: Initial catalog with one generated Wright deterministic model, one provisional public point-cloud model, and representative blocked/gated/incompatible entries; up to 500 variants and 1,000 artifacts per package; concurrent reads and serialized mutations per package/content digest; one deterministic adapter plus public adapter contracts
+**Scale/Scope**: Initial catalog with one generated Wright deterministic model, one approved public external engineering model, and representative blocked/gated/incompatible entries; at least 1,000 cached variants and up to 1,000 artifacts per package; concurrent reads and serialized mutations per package/content digest; one deterministic adapter plus public adapter contracts
 
 ## Constitution Check
 
@@ -34,14 +34,14 @@ Add a distinct engineering model library that lets an engineer inspect trust and
 
 | Principle | Evaluation |
 |-----------|------------|
-| Modular monorepo / thin routes | PASS: `model_registry` owns the domain, `data_vault` owns state/bytes, `workspace_service` composes, and routes only validate/delegate. |
+| Modular monorepo / thin routes | PASS: `model_registry` owns the domain, `data_vault` owns state/bytes, `workspace_service` implements use cases behind a `tool_registry` application port, and routes only validate/delegate to that injected port. |
 | Offline-first | PASS: bundled/cached inspection, import, verification, test, enablement, inference, rollback, and removal remain local. |
 | Native and Docker distribution | PASS: contracts enter existing artifacts; payloads stay in the data root; adapters declare support independently. |
 | Thick base / thin code | PASS: no model, runtime, GPU stack, compiler, or vendor dependency is added merely to pass validation. |
 | Manager neutrality | PASS: Rivet and every manager reach typed model capabilities only through Wright's workspace gateway. |
 | Embedded state | PASS: migration 16 uses SQLite WAL and content uses the local vault; no server database is added. |
 | Authentication / RBAC | PASS: effects, runtime changes, workspace enablement, export, and purge use existing authenticated roles/scopes. |
-| Engineering isolation | PASS: sources acquire declared bytes only; adapters are separate supervised processes with typed I/O. |
+| Engineering isolation | PASS: sources acquire declared bytes only; adapters are separate supervised processes with typed I/O; every LLM-facing model capability is a `BaseTool` implementation. |
 | UI / 3-tier tests | PASS: tokenized primitives and patterns receive component, mocked journey, and local system coverage plus `data-testid`. |
 | Observability | PASS: plan, operation, artifact, installation, adapter, binding, request, trace, test, cancellation, cleanup, and reference identities are recorded without secrets. |
 | Phase/manual gates | PASS WITH RECORDED ADVANCE APPROVAL: the durable goal authorizes safe reversible choices and uninterrupted loops; Gate D is explicit and the full merge gate is deferred to program closeout. |
@@ -88,6 +88,7 @@ packages/model_registry/
 |   |-- lifecycle.py
 |   |-- sources.py
 |   |-- runtime.py
+|   |-- model_tool.py
 |   |-- gateway_provider.py
 |   |-- catalog/*.yaml
 |   `-- schemas/*.json
@@ -103,6 +104,7 @@ packages/workspace_service/src/workspace_service/
 
 packages/tool_registry/src/tool_registry/
 |-- gateway_ports.py
+|-- model_library_port.py
 `-- gateway_service.py
 
 apps/api/src/api/
@@ -123,7 +125,7 @@ docs/models/local-engineering-models.md
 docs/engineering-capability-program-progress.md
 ```
 
-**Structure Decision**: Create `model_registry` rather than place specialized models in conversational provider setup or the MCP catalog. It supplies dependency-inverted source, persistence, storage, runtime, and gateway ports. `data_vault` implements local state and bytes; `workspace_service` binds authenticated use cases; `tool_registry` accepts a generic capability provider so enabled models use the same workspace, policy, audit, result-bound, and cancellation boundary as MCP tools without pretending to be MCP servers.
+**Structure Decision**: Create `model_registry` rather than place specialized models in conversational provider setup or the MCP catalog. It supplies dependency-inverted source, persistence, storage, runtime, and gateway ports. `data_vault` implements local state and bytes; `workspace_service` binds authenticated use cases behind a `tool_registry` application port; `tool_registry` also accepts a generic capability provider so enabled models use the same workspace, policy, audit, result-bound, and cancellation boundary as MCP tools without pretending to be MCP servers. The LLM-facing projection wraps each enabled task in a `BaseTool` implementation before producing its `GatewayTool` view.
 
 ## Phase 0 Research Decisions
 
@@ -136,7 +138,7 @@ Details and primary sources are in [research.md](research.md).
 5. Use staged content-addressed storage: partial state is untrusted, verified objects are immutable by digest, activation is an atomic manifest/reference update, and purge is reference/lease guarded.
 6. Resume HTTP only when validators and declared identity make the range safe; otherwise restart. Offline archives receive identical path, declaration, size, digest, license, compatibility, and vector checks.
 7. Expose models as typed namespaced Wright capabilities through a generic gateway provider. Runtime processes stay private; managers and Rivet never receive their endpoint, token, command, or handle.
-8. Start with a generated affine test model/adapter for exhaustive normal-gate coverage. Keep `keras-io/PointNet` at revision `308acfe5d36d9bb34215d1766f13fac612abe18c` evaluation-only until Gate D proves license files, TensorFlow SavedModel adapter, resources, and real vectors; replace it if necessary.
+8. Start with a generated affine test model/adapter for exhaustive normal-gate coverage. Keep `keras-io/PointNet` at revision `308acfe5d36d9bb34215d1766f13fac612abe18c` evaluation-only until Gate D proves license files, TensorFlow SavedModel adapter, resources, and real vectors; if it fails, research and validate a safer public external data-only model before Loop 071 closes.
 
 ## Phase 1 Design
 
@@ -157,10 +159,10 @@ Details and primary sources are in [research.md](research.md).
 
 ### Runtime and gateway capability
 
-- An adapter advertises versioned tasks, schemas, formats, platforms, and resources and implements health, load, infer, cancel, unload, and shutdown over a bounded local protocol.
+- An adapter advertises versioned tasks, schemas, formats, platforms, and resources and implements health, artifact verification, load, typed inference, progress, cancel, unload, and shutdown over a bounded local protocol.
 - The supervisor enforces deadlines, output ceilings, clean environment, and residue reporting. Inputs and outputs are schema-checked; non-finite/oversized results fail closed; process exit alone is never engineering evidence.
-- Mandatory vectors pass before readiness/enablement. A separately launched deterministic adapter proves process mediation and cancellation without adding an ML framework.
-- A generic `GatewayCapabilityProvider` lists only workspace-enabled healthy exact bindings using `wright_model__<model-id>__<task>`. GatewayService continues to own workspace immutability, policy/review/approval, audit, result bounds, request cancellation, and session close.
+- Mandatory vectors pass before readiness/enablement. Vector contracts include deterministic seed, material limitations exercised, input/output schema digests, units/coordinates where applicable, and bounded expectations. A separately launched deterministic adapter proves process mediation and cancellation without adding an ML framework.
+- A generic `GatewayCapabilityProvider` lists only workspace-enabled healthy exact `BaseTool` bindings using `wright_model__<model-id>__<task>`. GatewayService continues to own workspace immutability, policy/review/approval, audit, result bounds, request cancellation, and session close.
 
 ### Lifecycle and recovery
 
@@ -171,13 +173,21 @@ Details and primary sources are in [research.md](research.md).
 
 ### API, UI, and tests
 
-- Thin `/api/v1/engineering-models` routes expose catalog/detail, plan/confirm, operation/progress/cancel, test, workspace enable/disable, update/rollback, export/import, uninstall/purge, references, and evidence.
-- A dedicated Engineering Models page remains separate from `/setup/model`, leads with task/readiness/license/resources/runtime/evidence/limitations, previews every effect, reports exact blockers/recovery, and stays useful offline.
-- Tests cover contracts, paths/formats/limits, sources/resume/redirects, CAS/concurrency/crash recovery, lifecycle/update/rollback/references, adapter failures/cancellation, gateway isolation/authority, UI states/accessibility, and bounded opt-in external evidence.
+- Thin `/api/v1/engineering-models` routes expose catalog/detail, plan/confirm, operation/progress/cancel, test, workspace enable/disable, update/rollback, export/import, uninstall/purge, references, and evidence by delegating immediately to the injected `tool_registry` application port.
+- A dedicated Engineering Models page remains separate from `/setup/model`, leads with task/readiness/license/resources/runtime/evidence/limitations, previews every effect, reports exact blockers/recovery, and stays useful offline. Generated fixtures also show their exact generator recipe, inputs, constraints, and resulting manifest/artifact digests; external artifacts show source/provenance rather than a fictitious generator.
+- Tests cover contracts, paths/formats/limits, sources/resume/redirects, CAS/concurrency/crash recovery, lifecycle/update/rollback/references, adapter verification/progress/failures/cancellation, gateway isolation/authority/BaseTool conformance, structured logs/traces, UI states/accessibility, and bounded opt-in external evidence.
+
+### Bounded record and deterministic evidence policy
+
+- Catalog/package/plan/operation/evidence records are capped at 64 KiB unless the public contract sets a smaller limit; validation evidence and exports have an independent 1 MiB metadata ceiling; general API/log records never embed model payload bytes.
+- Arrays are bounded at: 1,000 variants per benchmark snapshot, 1,000 artifacts per package, 128 blockers/effects, 32 tasks/vectors/platforms, 64 limitations/units, and 1,000 durable references. User-facing page sizes are capped at 100 and progress/event history at 1,000 entries.
+- Strings use field-specific schema limits, with 128-byte identities, 512-byte relative paths, 1,000-byte safe messages/limitations, 2,048-byte source locations, and 4,096-byte descriptions/attribution as maxima. Typed input/output and adapter control messages have explicit encoded-byte limits before parsing.
+- A `material_evidence_digest` covers deterministic identities, input/output digests, predicates, and outcomes. Timing, observed resources, timestamps, trace IDs, and host diagnostics live in a separate observation projection/digest so repeated supported CPU runs can have identical material evidence within declared tolerances.
+- Structured `structlog` events and OpenTelemetry spans cover source acquisition, database/storage transitions, adapter verify/load/infer/unload, gateway calls, cancellation, cleanup, and failures. Every span carries the existing trace identity and only bounded redacted attributes.
 
 ## Gate D Decision
 
-[Gate D](contracts/gate-d-decision.md) approves the provider-neutral contracts, content-addressed storage, strict data-only policy, separate adapter lifecycle, deterministic runtime slice, gateway mediation, and UI/API design. It does **not** yet approve `keras-io/PointNet` as installable: the catalog may show it as evaluation-only while implementation gathers actual license/runtime/resource/vector evidence. If evidence is incomplete, unsafe, or disproportionate, the entry remains blocked or is replaced. No remote code, gated terms, or model weights enter Git.
+[Gate D](contracts/gate-d-decision.md) approves the provider-neutral contracts, content-addressed storage, strict data-only policy, separate adapter lifecycle, deterministic runtime slice, gateway mediation, and UI/API design. It does **not** yet approve `keras-io/PointNet` as installable: the catalog may show it as evaluation-only while implementation gathers actual license/runtime/resource/vector evidence. If evidence is incomplete, unsafe, or disproportionate, the entry remains blocked and a safer public external candidate must be selected and validated before Loop 071 is complete. No remote code, gated terms, or model weights enter Git.
 
 ## Post-design Constitution Re-check
 
