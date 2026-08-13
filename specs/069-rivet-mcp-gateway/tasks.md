@@ -148,16 +148,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T061 [P] [US4] Add panel-backed BREP lifecycle double integration tests in `packages/workspace_service/tests/test_rivet_brep_lifecycle.py`
-- [ ] T062 [P] [US4] Add proprietary-free Solid Edge/host-bridge lifecycle double integration tests in `packages/workspace_service/tests/test_rivet_host_bridge_lifecycle.py`
-- [ ] T063 [P] [US4] Add explicitly skipped-by-default live BREP and Solid Edge/available-app probes with evidence labels in `tests/e2e/test_rivet_mcp_live_apps.py`
+- [x] T061 [P] [US4] Add panel-backed BREP lifecycle double integration tests in `packages/workspace_service/tests/test_rivet_brep_lifecycle.py`
+- [x] T062 [P] [US4] Add proprietary-free Solid Edge/host-bridge lifecycle double integration tests in `packages/workspace_service/tests/test_rivet_host_bridge_lifecycle.py`
+- [x] T063 [P] [US4] Add explicitly skipped-by-default live BREP and Solid Edge/available-app probes with evidence labels in `tests/e2e/test_rivet_mcp_live_apps.py`
 
 ### Implementation for User Story 4
 
-- [ ] T064 [US4] Preserve BREP panel single-flight preparation, visible-panel status, progress, cancellation, and cleanup when calls originate from Rivet in `apps/api/src/api/brep_gateway.py`
-- [ ] T065 [US4] Add a provider-neutral specialized lifecycle projection seam without child config leakage in `packages/tool_registry/src/tool_registry/gateway_service.py` and `packages/tool_registry/src/tool_registry/lifecycle.py`
-- [ ] T066 [US4] Add stable specialized-host failure/residue/recovery mapping to the bridge and run evidence in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
-- [ ] T067 [US4] Run deterministic lifecycle parity plus any already-authorized available live probe, labeling external prerequisites and limitations in `docs/engineering-capability-program-progress.md`
+- [x] T064 [US4] Preserve BREP panel single-flight preparation, visible-panel status, progress, cancellation, and cleanup when calls originate from Rivet in `apps/api/src/api/brep_gateway.py`
+- [x] T065 [US4] Add a provider-neutral specialized lifecycle projection seam without child config leakage in `packages/tool_registry/src/tool_registry/gateway_service.py` and `packages/tool_registry/src/tool_registry/lifecycle.py`
+- [x] T066 [US4] Add stable specialized-host failure/residue/recovery mapping to the bridge and run evidence in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
+- [x] T067 [US4] Run deterministic lifecycle parity plus any already-authorized available live probe, labeling external prerequisites and limitations in `docs/engineering-capability-program-progress.md`
 
 **Checkpoint**: Specialized applications remain Wright-owned and indistinguishable from ordinary MCPs at the Rivet provider contract; no proprietary prerequisite enters normal gates.
 

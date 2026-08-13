@@ -11,6 +11,7 @@ from jsonschema import ValidationError, validate  # type: ignore[import-untyped]
 from .gateway_models import (
     GatewayError,
     GatewayErrorCode,
+    GatewayLifecycleError,
     GatewayRequest,
     GatewayResource,
     GatewaySessionContext,
@@ -77,6 +78,40 @@ def _sanitize_model_result(
         is_error=result.is_error,
         error_code=result.error_code,
     )
+
+
+def _safe_lifecycle_projection(
+    lifecycle: GatewayLifecyclePort, server_id: str
+) -> dict[str, Any]:
+    """Return the bounded lifecycle facts allowed across the gateway boundary."""
+
+    ordinary = {
+        "kind": "ordinary",
+        "visible_application": False,
+        "cancellation_supported": True,
+        "recovery_action": None,
+    }
+    resolver = getattr(lifecycle, "lifecycle_projection", None)
+    if not callable(resolver):
+        return ordinary
+    try:
+        raw = resolver(server_id)
+    except Exception:
+        return ordinary
+    if not isinstance(raw, Mapping):
+        return ordinary
+    kind = str(raw.get("kind") or "ordinary")
+    if kind not in {"ordinary", "panel", "host_bridge"}:
+        kind = "ordinary"
+    recovery = raw.get("recovery_action")
+    return {
+        "kind": kind,
+        "visible_application": bool(raw.get("visible_application", False)),
+        "cancellation_supported": bool(raw.get("cancellation_supported", True)),
+        "recovery_action": (
+            str(recovery)[:128] if isinstance(recovery, str) and recovery else None
+        ),
+    }
 
 
 class GatewayService:
@@ -701,9 +736,13 @@ class GatewayService:
             now + self.maximum_timeout,
         )
         request.transition(RequestState.RUNNING)
+        lifecycle_projection = _safe_lifecycle_projection(
+            self.lifecycle, tool.server_id
+        )
         audit_metadata = {
             "timeout_ms": int(bounded * 1000),
             "argument_count": len(arguments),
+            "lifecycle_kind": lifecycle_projection["kind"],
         }
         self._audit(
             session,
@@ -724,48 +763,96 @@ class GatewayService:
         if workspace_approvals:
             approval_context["workspace_approvals"] = sorted(workspace_approvals)
 
+        async def forward_progress(update: Mapping[str, Any]) -> None:
+            if progress_callback is None:
+                return
+            event = {
+                **dict(update),
+                "server": tool.server_id,
+                "tool": tool.name,
+                "title": (
+                    update.get("title")
+                    or tool.title
+                    or tool.description
+                    or tool.tool_name
+                ),
+                "correlationId": request.correlation_id,
+                "status": update.get("status") or "running",
+            }
+            if lifecycle_projection["kind"] != "ordinary":
+                event["lifecycle"] = lifecycle_projection
+            callback_result = progress_callback(event)
+            if callback_result is not None:
+                await callback_result
+
         async def execute() -> Mapping[str, Any]:
             if tool.server_id == "wright" and self.management is not None:
                 return await self.management.call(session, tool.name, dict(arguments))
-            await self.lifecycle.ensure_started(
-                tool.server_id,
-                workspace_path=session.workspace_path,
-                approval_context=approval_context,
-            )
-            if progress_callback is None:
+            specialized = lifecycle_projection["kind"] != "ordinary"
+            try:
+                if specialized:
+                    await forward_progress(
+                        {
+                            "phase": "lifecycle-starting",
+                            "message": "Wright is preparing the required application.",
+                        }
+                    )
+                await self.lifecycle.ensure_started(
+                    tool.server_id,
+                    workspace_path=session.workspace_path,
+                    approval_context=approval_context,
+                )
+                if specialized:
+                    await forward_progress(
+                        {
+                            "phase": "lifecycle-ready",
+                            "message": "The required application is ready.",
+                        }
+                    )
+            except asyncio.CancelledError:
+                raise
+            except Exception as error:
+                if not specialized:
+                    raise
+                raise GatewayLifecycleError(
+                    lifecycle_kind=str(lifecycle_projection["kind"]),
+                    recovery_action=(
+                        str(lifecycle_projection["recovery_action"])
+                        if lifecycle_projection["recovery_action"]
+                        else None
+                    ),
+                ) from error
+            try:
+                if progress_callback is None:
+                    return await self.lifecycle.call_tool(
+                        tool.server_id,
+                        tool.tool_name,
+                        arguments,
+                        approval_context=approval_context,
+                    )
+
                 return await self.lifecycle.call_tool(
                     tool.server_id,
                     tool.tool_name,
                     arguments,
                     approval_context=approval_context,
+                    progress_callback=forward_progress,
                 )
-
-            async def forward_progress(update: Mapping[str, Any]) -> None:
-                callback_result = progress_callback(
-                    {
-                        **dict(update),
-                        "server": tool.server_id,
-                        "tool": tool.name,
-                        "title": (
-                            update.get("title")
-                            or tool.title
-                            or tool.description
-                            or tool.tool_name
-                        ),
-                        "correlationId": request.correlation_id,
-                        "status": update.get("status") or "running",
-                    }
-                )
-                if callback_result is not None:
-                    await callback_result
-
-            return await self.lifecycle.call_tool(
-                tool.server_id,
-                tool.tool_name,
-                arguments,
-                approval_context=approval_context,
-                progress_callback=forward_progress,
-            )
+            except asyncio.CancelledError:
+                raise
+            except GatewayLifecycleError:
+                raise
+            except Exception as error:
+                if not specialized:
+                    raise
+                raise GatewayLifecycleError(
+                    lifecycle_kind=str(lifecycle_projection["kind"]),
+                    recovery_action=(
+                        str(lifecycle_projection["recovery_action"])
+                        if lifecycle_projection["recovery_action"]
+                        else None
+                    ),
+                ) from error
 
         task = asyncio.create_task(execute())
         key = (session_id, request_id)
@@ -856,6 +943,7 @@ class GatewayService:
                 "invalid_output",
                 "failed",
                 now,
+                metadata=audit_metadata,
                 operation=audit_operation,
             )
             raise
@@ -869,6 +957,7 @@ class GatewayService:
                 "child_error",
                 "failed",
                 now,
+                metadata=audit_metadata,
                 operation=audit_operation,
             )
             raise GatewayError(

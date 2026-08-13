@@ -48,6 +48,30 @@ class DesiredState(StrEnum):
     RUNNING = "running"
 
 
+class SpecializedLifecycleKind(StrEnum):
+    ORDINARY = "ordinary"
+    PANEL = "panel"
+    HOST_BRIDGE = "host_bridge"
+
+
+@dataclass(frozen=True, slots=True)
+class LifecycleProjection:
+    """Provider-neutral lifecycle facts safe to expose to governed callers."""
+
+    kind: SpecializedLifecycleKind = SpecializedLifecycleKind.ORDINARY
+    visible_application: bool = False
+    cancellation_supported: bool = True
+    recovery_action: str | None = None
+
+    def canonical(self) -> dict[str, Any]:
+        return {
+            "kind": str(self.kind),
+            "visible_application": self.visible_application,
+            "cancellation_supported": self.cancellation_supported,
+            "recovery_action": self.recovery_action,
+        }
+
+
 @dataclass(slots=True)
 class LifecycleSlot:
     server_id: str

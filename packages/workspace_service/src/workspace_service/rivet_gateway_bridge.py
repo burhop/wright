@@ -60,6 +60,15 @@ class RivetBridgeResult:
     call: RivetChildCallRecord | None = None
 
 
+class RivetGatewayBridgeError(RuntimeError):
+    """Stable, safe error projected from Wright-owned application lifecycle."""
+
+    def __init__(self, code: str, recovery_action: str | None = None) -> None:
+        super().__init__("The required engineering application is unavailable")
+        self.code = code
+        self.recovery_action = recovery_action
+
+
 class GatewayPort(Protocol):
     async def call_tool(
         self,
@@ -312,8 +321,28 @@ class RivetGatewayBridge:
                 sanitized, binding, artifacts, redactions, call_record
             )
         except Exception as error:
+            projected_error: Exception = error
+            lifecycle_kind = str(getattr(error, "lifecycle_kind", ""))
+            if lifecycle_kind == "panel":
+                projected_error = RivetGatewayBridgeError(
+                    "RIVET_MCP_PANEL_UNAVAILABLE",
+                    str(
+                        getattr(error, "recovery_action", None)
+                        or "reopen_panel_and_inspect"
+                    ),
+                )
+            elif lifecycle_kind == "host_bridge":
+                projected_error = RivetGatewayBridgeError(
+                    "RIVET_MCP_HOST_BRIDGE_UNAVAILABLE",
+                    str(
+                        getattr(error, "recovery_action", None)
+                        or "inspect_host_application"
+                    ),
+                )
             if self._repository is not None and call_record is None:
-                reason_code = str(getattr(error, "code", "RIVET_MCP_CALL_FAILED"))
+                reason_code = str(
+                    getattr(projected_error, "code", "RIVET_MCP_CALL_FAILED")
+                )
                 self._repository.append_child_call(
                     RivetChildCallRecord(
                         call_id=call_id,
@@ -335,6 +364,8 @@ class RivetGatewayBridge:
                         reason_code=reason_code[:128],
                     )
                 )
+            if projected_error is not error:
+                raise projected_error from error
             raise
         finally:
             self._active.pop(active_key, None)
@@ -355,6 +386,7 @@ class RivetGatewayBridge:
 __all__ = [
     "RivetBoundInvocation",
     "RivetBridgeResult",
+    "RivetGatewayBridgeError",
     "RivetGatewayBridge",
     "RivetNodeInvocation",
 ]

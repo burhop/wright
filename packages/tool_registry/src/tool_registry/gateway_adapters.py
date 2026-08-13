@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 from .db import get_servers, get_tools
@@ -104,8 +104,24 @@ class DatabaseGatewayCatalog:
 
 
 class EngineGatewayLifecycle:
-    def __init__(self, engine: McpEngine) -> None:
+    def __init__(
+        self,
+        engine: McpEngine,
+        *,
+        projection_resolver: Callable[[str], Mapping[str, Any]] | None = None,
+    ) -> None:
         self.engine = engine
+        self._projection_resolver = projection_resolver
+
+    def lifecycle_projection(self, server_id: str) -> Mapping[str, Any]:
+        if self._projection_resolver is None:
+            return {
+                "kind": "ordinary",
+                "visible_application": False,
+                "cancellation_supported": True,
+                "recovery_action": None,
+            }
+        return dict(self._projection_resolver(server_id))
 
     async def ensure_started(
         self, server_id: str, *, workspace_path: str, approval_context: Any

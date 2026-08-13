@@ -360,7 +360,40 @@ def build_api_gateway_service(
     )
     ui_reader = EngineMcpUiResourceReader(engine)
     ui_resources = McpUiResourceStore(ui_reader)
-    lifecycle = EngineGatewayLifecycle(engine)
+
+    runtime_only_hosts = {
+        "bun",
+        "docker",
+        "java runtime",
+        "libgl",
+        "node.js",
+        "node.js 18+",
+        "python",
+        "python 3.11+",
+        "uv",
+        "windows",
+        "xvfb",
+    }
+
+    def lifecycle_projection(server_id: str) -> dict:
+        server = next(
+            (item for item in catalog.servers() if item.server_id == server_id), None
+        )
+        host_required = bool(
+            server
+            and any(
+                str(item).strip().lower() not in runtime_only_hosts
+                for item in server.host_software_required
+            )
+        )
+        return {
+            "kind": "host_bridge" if host_required else "ordinary",
+            "visible_application": host_required,
+            "cancellation_supported": True,
+            "recovery_action": "inspect_host_application" if host_required else None,
+        }
+
+    lifecycle = EngineGatewayLifecycle(engine, projection_resolver=lifecycle_projection)
     if proxy_brep_via_api:
         try:
             brep_server = select_brep_application_server(catalog.servers())

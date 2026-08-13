@@ -29,6 +29,21 @@ class GatewayError(RuntimeError):
         self.code = code
 
 
+class GatewayLifecycleError(GatewayError):
+    """Safe provider-neutral failure for a specialized application lifecycle."""
+
+    def __init__(
+        self,
+        *,
+        lifecycle_kind: str,
+        recovery_action: str | None,
+        message: str = "Specialized application is unavailable",
+    ) -> None:
+        super().__init__(GatewayErrorCode.CHILD_UNAVAILABLE, message)
+        self.lifecycle_kind = lifecycle_kind
+        self.recovery_action = recovery_action
+
+
 class SessionState(StrEnum):
     CREATED = "created"
     INITIALIZED = "initialized"

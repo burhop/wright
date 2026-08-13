@@ -51,7 +51,11 @@ from .rivet_authority import (
     RivetRunAuthorityService,
 )
 from .rivet_capabilities import RivetCapabilityService, RivetDiscoverySnapshot
-from .rivet_gateway_bridge import RivetBoundInvocation, RivetGatewayBridge
+from .rivet_gateway_bridge import (
+    RivetBoundInvocation,
+    RivetGatewayBridge,
+    RivetGatewayBridgeError,
+)
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_mcp import (
     RivetMcpBinding,
@@ -134,6 +138,7 @@ __all__ = [
     "RivetDiscoverySnapshot",
     "RivetBoundInvocation",
     "RivetGatewayBridge",
+    "RivetGatewayBridgeError",
     "RivetMcpGatewaySettings",
     "RivetMcpBinding",
     "RivetMcpError",

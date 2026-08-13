@@ -37,6 +37,8 @@ class GatewayNotifierPort(Protocol):
 
 
 class GatewayLifecyclePort(Protocol):
+    def lifecycle_projection(self, server_id: str) -> Mapping[str, Any]: ...
+
     async def ensure_started(
         self, server_id: str, *, workspace_path: str, approval_context: Any
     ) -> None: ...

@@ -428,8 +428,24 @@ async def test_real_runner_calls_two_fake_children_only_through_gateway_with_app
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("runtime_state", "reason_code", "recovery_code"),
+    [
+        ("succeeded", None, None),
+        (
+            "failed",
+            "RIVET_MCP_PANEL_UNAVAILABLE",
+            "reopen_panel_and_inspect",
+        ),
+        (
+            "failed",
+            "RIVET_MCP_HOST_BRIDGE_UNAVAILABLE",
+            "inspect_host_application",
+        ),
+    ],
+)
 async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
-    tmp_path,
+    tmp_path, runtime_state, reason_code, recovery_code
 ):
     document = WorkspaceWorkflowStore(str(tmp_path)).create("mcp-pair", PROJECT)
     database = tmp_path / "runner-state.db"
@@ -471,9 +487,13 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
             self.grant = kwargs["mcp_grant"]
             return RivetRuntimeResult(
                 kwargs["run_id"],
-                "succeeded",
-                {"ok": True},
-                None,
+                runtime_state,
+                {"ok": True} if runtime_state == "succeeded" else None,
+                (
+                    {"code": reason_code, "message": "Safe runner failure"}
+                    if reason_code
+                    else None
+                ),
                 (),
                 "runtime-1",
                 5,
@@ -530,14 +550,21 @@ async def test_workspace_runner_mints_memory_only_grant_and_finalizes_manifest(
     )
     for _ in range(100):
         completed = runner.get(started.run_id)
-        if completed.state is WorkflowRunState.SUCCEEDED:
+        if completed.state in {WorkflowRunState.SUCCEEDED, WorkflowRunState.FAILED}:
             break
         await asyncio.sleep(0.01)
-    assert completed.state is WorkflowRunState.SUCCEEDED
+    expected_state = (
+        WorkflowRunState.SUCCEEDED
+        if runtime_state == "succeeded"
+        else WorkflowRunState.FAILED
+    )
+    assert completed.state is expected_state
     assert host.grant is not None
     manifest = runner.manifest(started.run_id)
     assert manifest is not None
-    assert manifest["terminal_state"] == "succeeded"
+    assert manifest["terminal_state"] == runtime_state
+    assert manifest["reason_code"] == reason_code
+    assert manifest["recovery_code"] == recovery_code
     assert manifest["binding_set_digest"] == binding_set.binding_set_digest
     assert host.grant.token not in str(manifest)
     assert authorities.snapshot(host.grant.authority_id).state == "terminal"

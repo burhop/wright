@@ -797,6 +797,16 @@ class WorkspaceWorkflowRunner:
             )
             state = WorkflowRunState(result.state)
             reason = result.error["code"] if result.error else None
+            mcp_context = self._mcp_runs.get(run.run_id)
+            if mcp_context is not None and reason in {
+                "RIVET_MCP_PANEL_UNAVAILABLE",
+                "RIVET_MCP_HOST_BRIDGE_UNAVAILABLE",
+            }:
+                mcp_context.draft.recovery_code = (
+                    "reopen_panel_and_inspect"
+                    if reason == "RIVET_MCP_PANEL_UNAVAILABLE"
+                    else "inspect_host_application"
+                )
             updated = replace(
                 self._runs[run.run_id],
                 state=state,

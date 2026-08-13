@@ -236,9 +236,17 @@ The documentation-complete exact tree was gated again before publication. The fe
 - Deterministic evidence exercised both acknowledgement variants, verified revocation-before-cancel ordering, rejected a released late success, cleared the active request, and proved the Node provider fetch ends without a late success. On Windows, process ownership supplies the terminal cancellation because POSIX signal aliases terminate rather than enter Node's handler.
 - Focused evidence: 20 Python cancellation/bridge/runner/manifest/API tests, ten Node runner contract tests, and three cancellation/approval UI tests passed; the production web build passed.
 
+### Implementation checkpoint 5 - specialized application lifecycle parity
+
+- Added a bounded provider-neutral lifecycle projection with only application kind, visible-application status, cancellation support, and a stable recovery action. Gateway progress and audit evidence carry this safe projection; child commands, endpoints, environment, credentials, and private host configuration remain Wright-owned.
+- BREP calls originating in Rivet now traverse the same exact binding and Gateway path while Wright's existing panel API retains concurrent preparation coalescing, visible-panel progress, loopback-only ownership, cancellation, and cleanup. Panel startup/call failures map to `RIVET_MCP_PANEL_UNAVAILABLE` with `reopen_panel_and_inspect` recovery.
+- Added a proprietary-free Solid Edge-style host-bridge double with the same provider result/progress/cancellation contract. Host startup/call failures map to `RIVET_MCP_HOST_BRIDGE_UNAVAILABLE` with `inspect_host_application` recovery, and both codes persist in the terminal Run Manifest without exposing private diagnostics.
+- Added opt-in live BREP and available-host probes. Both are skipped by default and require explicit environment authorization plus an already installed/configured application; no proprietary app, license acceptance, credential, or installation entered the normal gate.
+- Focused evidence: 24 deterministic Python lifecycle, Gateway, BREP API, cancellation, and Run Manifest checks passed; two live probes skipped as designed. Ruff and `git diff --check` passed.
+
 ### Next checkpoint
 
-Implement User Story 4 with deterministic BREP panel and Solid Edge/host-bridge lifecycle doubles, preserving the same provider, progress, cancellation, cleanup, and evidence contract without requiring proprietary software.
+Implement User Story 5: bounded durable run timelines, redacted evidence export, and reproducibility comparison across restart and changed current state.
 
 ## Program guardrails
 
