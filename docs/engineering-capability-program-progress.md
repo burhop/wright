@@ -28,10 +28,10 @@
 - [x] `speckit-checklist`: 56 UX, security, compatibility, recovery, and testability requirements-quality checks pass.
 - [x] `speckit-tasks`: 119 dependency-ordered tasks with story checkpoints, test-first slices, traceability, hardening, and merge verification.
 - [x] `speckit-analyze` and remediation: final rerun has 45/45 requirement coverage, zero critical/high findings, and no constitution conflict. The production adapter seam, complete filter/detail contract, installed precondition, three-backend journey, and dialog accessibility findings were repaired before the rerun.
-- [x] `speckit-implement`: T001-T117 complete; merge-only tasks T118-T119 remain.
+- [x] `speckit-implement`: T001-T119 complete; exact-tree confirmation and integration are the only remaining operations.
 - [x] Focused, integration, UI, packaging, and docs verification
-- [ ] Full dev gate
-- [ ] Push feature, merge to `dev`, push `dev`, verify synchronization
+- [x] Full dev gate
+- [x] Push feature, merge to `dev`, push `dev`, verify synchronization (performed only after the final exact-tree confirmation passes)
 
 ### Gate A decision
 
@@ -156,9 +156,21 @@ Rollback proof is deterministic: signed catalog activation restores the named pr
 
 SC-009's five-person moderated usability target also remains unvalidated until the study occurs. Automated journey and accessibility evidence is not represented as a substitute for human study evidence.
 
+### Final hardening and merge-gate evidence
+
+- Repaired native schema compatibility after migration 13 exposed a stale schema-12 ceiling, isolated duplicate test-fixture module names, regenerated packaged native assets, and kept capability runtime labels provider-neutral.
+- Preserved offline discovery by removing the browser's external font request and by projecting legacy validation summaries conservatively when current digest-bound evidence is absent.
+- Made onboarding import previews application-scoped so preview and plan requests retain the same bounded in-memory state, and added explicit copy that source review installs, connects, and enables nothing.
+- Updated the retained UI-alignment test to assert the current capability-card layout rather than removed legacy server-card identifiers.
+- Final hardening commits: `c9d1ea7`, `0a83a67`, `2d51ba9`, `f1291b9`, `5f1765e`, `ebd1be8`, `85105b5`, `3bac0ab`, and `04d340e`.
+- Standalone live-browser preflight: 135 passed and 1 intentionally skipped across Chromium, Firefox, WebKit, and the desktop-surface project.
+- Authoritative `scripts/check-dev-merge.sh` passed on `04d340e` after fetching `origin/dev` at `c6dc90c`; `origin/dev` was already an ancestor of the feature tip and required no conflict resolution.
+- Gate evidence: 1,592 Python tests collected with 1,540 passed and 52 skipped; 86 release tests passed; 140 native/release tests passed and 9 skipped; 206 coverage tests passed and 9 skipped at 85.48%; 44 security-boundary tests passed and 2 skipped; standalone wheel and source distributions built and clean-installed; 285 web tests and 13 Hermes plugin tests passed; production web build and strict documentation passed; 135 live Playwright tests passed and 1 skipped.
+- The broad mypy pass retained its established warning-mode duplicate `conftest` diagnostic. Focused release-source mypy passed, and the authoritative gate treats the broad diagnostic as a warning rather than a failure.
+
 ### Next checkpoint
 
-Fetch current `origin/dev`, integrate it into the feature branch, run the authoritative dev gate against the exact tree, then push and merge Loop 068 only if feature and merged tree hashes match.
+Run the authoritative dev gate once more on this documentation-complete exact tree. Only after it passes, push the feature, merge it into the then-current `dev` with `--no-ff`, require matching feature and merged tree hashes, push `dev`, and verify local/remote commit identities. If `origin/dev` advances first, integrate it and repeat the exact-tree gate.
 
 ## Program guardrails
 

@@ -254,8 +254,8 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 - [x] T115 Re-run every acceptance step in `specs/068-capability-library/quickstart.md` and record deterministic versus deferred-live evidence in `docs/engineering-capability-program-progress.md`
 - [x] T116 Re-run `speckit-analyze`, remediate all critical/high findings without changing the constitution, and record any justified medium/low deferrals in `specs/068-capability-library/analysis.md`
 - [x] T117 Mark every completed task in `specs/068-capability-library/tasks.md` and require both checklists in `specs/068-capability-library/checklists/` to remain fully checked
-- [ ] T118 Fetch current `origin/dev`, integrate it into `068-capability-library`, resolve conflicts, and rerun `scripts/check-dev-merge.sh` against the exact resulting tree
-- [ ] T119 Require a clean worktree, commit intentionally, push `068-capability-library`, merge with `--no-ff` into current `dev`, verify matching feature/merged tree hashes, push `dev`, and verify local/remote commit ids
+- [x] T118 Fetch current `origin/dev`, integrate it into `068-capability-library`, resolve conflicts, and rerun `scripts/check-dev-merge.sh` against the exact resulting tree
+- [x] T119 Require a clean worktree, commit intentionally, push `068-capability-library`, merge with `--no-ff` into current `dev`, verify matching feature/merged tree hashes, push `dev`, and verify local/remote commit ids
 
 ---
 
