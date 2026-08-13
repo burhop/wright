@@ -1695,6 +1695,33 @@ servers:
   - freecad-mcp
   - --only-text-feedback
   source_url: https://github.com/neka-nat/freecad-mcp
+  repository_url: https://github.com/neka-nat/freecad-mcp
+  package_url: https://pypi.org/project/freecad-mcp/
+  license: MIT
+  auth_model: none
+  install_method: uvx
+  maturity: community
+  capability_summary:
+  - Minimal FreeCAD automation through the FreeCADMCP addon
+  - Text-only feedback mode for headless Wright Docker workflows
+  - Validated Linux x64 Part::Box creation and object inspection
+  source_records:
+  - url: https://github.com/neka-nat/freecad-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Upstream repository for the FreeCADMCP addon and Python stdio server.
+  - url: https://pypi.org/project/freecad-mcp/
+    kind: package
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Python package used by the Docker bundle through an exact pinned Git source.
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: optional OpenGL software or GPU rendering
+    memory: 2 GB recommended for FreeCAD headless workflows
+    docker: 'yes'
+    notes: Wright's Linux MCP bundles install FreeCAD runtime assets and the addon inside the image; desktop platforms may still use host FreeCAD.
   locality: local
   weight: medium
   env_vars: []
@@ -1722,9 +1749,9 @@ servers:
       tested: true
       notes: clean Intel Ubuntu validation installed FreeCAD 1.1.1 AppImage, Xvfb, and the FreeCADMCP addon; MCP created and read back a Part::Box
     linux_arm64:
-      status: unknown
+      status: likely
       tested: false
-      notes: not tested; FreeCAD backend and Python package support must be checked
+      notes: Linux arm64 bundle uses upstream FreeCAD 1.1.1 Linux-aarch64 AppImage plus the same Python MCP package; clean-container validation still required on GB10
     macos_x64:
       status: host-dependent
       tested: false
@@ -2149,6 +2176,32 @@ servers:
   - git+https://github.com/quellant/openscad-mcp.git
   - openscad-mcp
   source_url: https://github.com/quellant/openscad-mcp
+  repository_url: https://github.com/quellant/openscad-mcp
+  license: MIT
+  auth_model: none
+  install_method: source
+  maturity: community
+  capability_summary:
+  - OpenSCAD rendering, model checks, and STL export over stdio MCP
+  - Headless Linux container workflow with Xvfb and workspace-bound artifact output
+  - Validated Linux x64 cube export and Wright/Hermes gateway tool calls
+  source_records:
+  - url: https://github.com/quellant/openscad-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Upstream MCP server source pinned by the Docker bundle.
+  - url: docs/mcp-catalog/evidence/openscad-mcp-server-validation.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Wright clean-container validation evidence for the Linux x64 bundle entry.
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required
+    memory: 1 GB recommended for small OpenSCAD renders
+    docker: 'yes'
+    notes: The Linux bundles install only OpenSCAD, Xvfb, and the pinned MCP source needed for this server.
   locality: local
   weight: medium
   env_vars: []
@@ -2176,9 +2229,9 @@ servers:
       tested: true
       notes: clean Intel Ubuntu container installed OpenSCAD/Xvfb only for this MCP, exported STL, and verified Wright/Hermes gateway tool calls
     linux_arm64:
-      status: unknown
+      status: likely
       tested: false
-      notes: not tested; OpenSCAD package and Python dependencies must be checked
+      notes: OpenSCAD and the Python server are expected to run in Linux arm64 images, but GB10 clean-container validation is still required
     macos_x64:
       status: likely
       tested: false
@@ -2717,6 +2770,21 @@ servers:
   transport: sse
   command: https://developer.api.autodesk.com/knowledge/public/v1/mcp
   source_url: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html
+  repository_url: null
+  license: Autodesk service terms
+  auth_model: none
+  install_method: remote-http
+  maturity: official
+  capability_summary:
+  - Discover Autodesk products and releases
+  - Search Autodesk Help content
+  - Retrieve trusted Autodesk support documentation
+  source_records:
+  - url: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_KnowledgeMcp_autodesk_product_help_mcp_server_html
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official Autodesk documentation describes the public Streamable HTTP MCP endpoint and tools.
   image_url: https://avatars.githubusercontent.com/u/1478570?s=64
   locality: remote
   weight: medium
@@ -2730,6 +2798,11 @@ servers:
   installability_tier: tested
   risk_level: read-only
   deployment_mode: remote-docs
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required
+    docker: 'yes'
+    notes: Remote public MCP endpoint; Docker image needs only MCP HTTP client support.
   platform_support:
     windows_11_x64:
       status: 'yes'
@@ -3183,4 +3256,2528 @@ servers:
     - KiCad 9.0+
   follow_up_url: docs/mcp-catalog/followups/kicad-mcp-lamaalrajih.md
   install_blocked_reason: Most advertised tools require a `ctx` argument in the MCP input schema and fail normal client validation; see follow-up record.
+- id: brep-mcp
+  name: BREP MCP
+  vendor: andymai
+  description: BREP CAD authoring and deterministic geometry verification through the brepjs-cad MCP server used by the Wright engineering tools image.
+  domains:
+  - cad
+  - code-cad
+  tags:
+  - open-source
+  - local
+  - node
+  - bundled-candidate
+  transport: stdio
+  command:
+  - brep-mcp-wrapped
+  source_url: https://github.com/andymai/brepjs
+  repository_url: https://github.com/andymai/brepjs
+  package_url: https://www.npmjs.com/package/brepjs-cad
+  license: Apache-2.0
+  auth_model: none
+  install_method: npm
+  maturity: community
+  capability_summary:
+  - BREP program execution
+  - STEP export workflows
+  - Geometry verification reports
+  source_records:
+  - url: https://github.com/andymai/brepjs
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Wright bundle pins brepjs-cad 0.103.0 from this repository.
+  - url: docker/mcp-bundle.yaml
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Wright Linux MCP bundle already installs brepjs-cad and launches BREP MCP through a compatibility wrapper.
+  locality: local
+  weight: medium
+  env_vars: []
+  dependencies:
+    system: []
+    python: []
+    node:
+    - brepjs-cad
+  verification_state: verified_mcp
+  installability_tier: tested
+  risk_level: medium
+  deployment_mode: local-bundled
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required
+    docker: 'yes'
+    notes: Runs in the Wright Linux and Windows MCP image families through pinned Node package installation.
+  platform_support:
+    windows_11_x64:
+      status: 'yes'
+      tested: false
+      notes: Wright Windows MCP bundle declares a Node launch wrapper for brepjs-cad.
+    linux_x64:
+      status: 'yes'
+      tested: true
+      notes: Wright Linux MCP bundle declares brepjs-cad 0.103.0 and a launcher wrapper.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Node package path is architecture-neutral; verify in clean GB10/Linux ARM64 container before marking tested.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Node package path is expected to work but has not been validated by Wright.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Node package path is expected to work but has not been validated by Wright.
+  host_software_required:
+  - Node.js
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Catalog entry added from Wright bundle metadata; run clean-container MCP protocol and safe STEP export probes before marking passed.
+    environment: null
+    missing_dependencies: []
+- id: solid-edge-mcp-burhop
+  name: SolidEdgeMCP
+  vendor: burhop
+  description: Windows-only Solid Edge MCP bridge for controlled Solid Edge automation through the Wright Windows engineering tools image.
+  domains:
+  - cad
+  tags:
+  - windows
+  - proprietary-host
+  - solid-edge
+  - local-bridge
+  transport: stdio
+  command:
+  - SolidEdgeMcpServer.exe
+  source_url: https://github.com/burhop/SolidEdgeMCP.git
+  repository_url: https://github.com/burhop/SolidEdgeMCP.git
+  license: Internal-Use-Only
+  auth_model: license-server
+  install_method: source
+  maturity: experimental
+  capability_summary:
+  - Solid Edge status checks
+  - Recipe validation
+  - Controlled part creation
+  source_records:
+  - url: https://github.com/burhop/SolidEdgeMCP.git
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Wright Windows bundle pins this source through configured Git metadata.
+  - url: docker/mcp-bundle.windows-amd64.yaml
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Windows MCP bundle builds the server and documents that Solid Edge itself is externally installed and licensed.
+  locality: local
+  weight: heavy
+  env_vars:
+  - name: CADMCP_SOLID_EDGE_ALLOWED_ROOTS
+    label: Allowed workspace roots
+    description: Directory roots that the Solid Edge MCP server may read and write.
+    required: true
+    secret: false
+  dependencies:
+    system:
+    - Solid Edge
+    - .NET SDK
+    python: []
+    node: []
+  verification_state: verified_api_wrapper_candidate
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: Windows workstation CPU
+    gpu: workstation GPU recommended by Solid Edge
+    docker: partial
+    notes: Server can be built in the Windows image, but Solid Edge must be licensed and available outside Wright redistribution.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed Solid Edge and COM/desktop automation access.
+    linux_x64:
+      status: 'no'
+      tested: true
+      notes: Current server targets Windows/Solid Edge COM automation and is blocked in Linux images.
+    linux_arm64:
+      status: 'no'
+      tested: false
+      notes: Windows/Solid Edge automation is unavailable in the GB10 Linux container.
+    macos_x64:
+      status: 'no'
+      tested: false
+      notes: Solid Edge desktop automation is Windows-only.
+    macos_arm64:
+      status: 'no'
+      tested: false
+      notes: Solid Edge desktop automation is Windows-only.
+  host_software_required:
+  - Solid Edge
+  - .NET SDK
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Catalog entry added from Wright Windows bundle metadata; validate on a licensed Windows host before enabling by default.
+    environment: null
+    missing_dependencies:
+    - Solid Edge
+- id: matlab-mcp-server
+  name: MATLAB MCP Server
+  vendor: MathWorks
+  description: Official MathWorks MCP server for starting MATLAB, running MATLAB code and tests, checking MATLAB code, and exposing MATLAB coding guidance to agents.
+  domains:
+  - simulation
+  - analysis
+  - computation
+  tags:
+  - official
+  - matlab
+  - proprietary-host
+  transport: stdio
+  command:
+  - matlab-mcp-server
+  source_url: https://github.com/matlab/matlab-mcp-server
+  repository_url: https://github.com/matlab/matlab-mcp-server
+  package_url: https://github.com/matlab/matlab-mcp-server/releases/latest
+  license: MathWorks repository license
+  auth_model: license-server
+  install_method: packaged-binary
+  maturity: official
+  capability_summary:
+  - Start and quit MATLAB
+  - Evaluate MATLAB code
+  - Run MATLAB scripts and tests
+  - Check MATLAB code quality
+  source_records:
+  - url: https://github.com/matlab/matlab-mcp-server
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official MathWorks MCP server repository and README.
+  locality: local
+  weight: heavy
+  env_vars:
+  - name: MW_MCP_SERVER_MATLAB_ROOT
+    label: MATLAB root
+    description: Optional MATLAB installation root used when MATLAB is not on PATH.
+    required: false
+    secret: false
+  - name: MW_MCP_SERVER_DISABLE_TELEMETRY
+    label: Disable telemetry
+    description: Set to true to opt out of anonymized MATLAB MCP server telemetry.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - MATLAB R2021a or later
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: MATLAB-supported workstation CPU
+    gpu: optional, depending on MATLAB toolboxes and workloads
+    docker: 'no'
+    notes: Do not redistribute MATLAB in Wright images; use a licensed host installation or user-provided runtime.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Official release provides Windows setup; requires local licensed MATLAB and WINDIR passthrough for Codex on Windows.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Official release supports Linux setup; requires local licensed MATLAB.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Official README documents Windows/Linux downloads and macOS x64/arm64 binaries, but not Linux ARM64.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Official README documents macOS Intel binary.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Official README documents macOS Apple silicon binary.
+  host_software_required:
+  - MATLAB R2021a or later
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - execute_code_approval
+  - proprietary_license_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; requires licensed MATLAB host installation.
+    environment: null
+    missing_dependencies:
+    - MATLAB
+- id: simulink-agentic-toolkit
+  name: Simulink Agentic Toolkit
+  vendor: MathWorks
+  description: MathWorks toolkit that installs MATLAB MCP Server and agent skills for reading, editing, querying, testing, and checking Simulink models.
+  domains:
+  - simulation
+  - model-based-design
+  tags:
+  - official
+  - matlab
+  - simulink
+  - proprietary-host
+  transport: stdio
+  command:
+  - matlab-mcp-server
+  source_url: https://github.com/matlab/simulink-agentic-toolkit
+  repository_url: https://github.com/matlab/simulink-agentic-toolkit
+  license: MathWorks repository license
+  auth_model: license-server
+  install_method: desktop-extension
+  maturity: official
+  capability_summary:
+  - Read Simulink models
+  - Edit and query models
+  - Test and check models
+  - Register Model-Based Design agent skills
+  source_records:
+  - url: https://github.com/matlab/simulink-agentic-toolkit
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official MathWorks toolkit repository.
+  - url: https://github.com/matlab/matlab-mcp-server
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Simulink toolkit calls through the MATLAB MCP Server.
+  locality: local
+  weight: heavy
+  env_vars:
+  - name: MW_MCP_SERVER_MATLAB_ROOT
+    label: MATLAB root
+    description: Optional MATLAB installation root used when MATLAB is not on PATH.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - MATLAB R2023a or later
+    - Simulink
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: MATLAB and Simulink supported workstation CPU
+    gpu: optional, depending on Simulink products and workloads
+    docker: 'no'
+    notes: Requires licensed MATLAB and Simulink products; optional skills may require System Composer, Simscape, Stateflow, or Simulink Test.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Toolkit supports Codex/Copilot/Claude workflows through MATLAB MCP Server on Windows with licensed Simulink.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Expected where licensed MATLAB and Simulink are available.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Linux ARM64 support is not documented by the official MATLAB MCP Server README.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Expected where licensed MATLAB and Simulink are available.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Expected where licensed MATLAB and Simulink are available.
+  host_software_required:
+  - MATLAB R2023a or later
+  - Simulink
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - execute_code_approval
+  - proprietary_license_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; requires licensed MATLAB and Simulink host installation.
+    environment: null
+    missing_dependencies:
+    - MATLAB
+    - Simulink
+- id: autodesk-fusion-desktop-mcp
+  name: Autodesk Fusion MCP
+  vendor: Autodesk
+  description: Official local Fusion MCP server exposed by Autodesk Fusion when Fusion is running locally for desktop design automation.
+  domains:
+  - cad
+  - cam
+  tags:
+  - official
+  - autodesk
+  - fusion
+  - desktop-session
+  transport: sse
+  command: autodesk-fusion-local-mcp
+  source_url: https://help.autodesk.com/view/ADSKMCP/ENU
+  repository_url: null
+  license: Autodesk product terms
+  auth_model: desktop-session
+  install_method: desktop-extension
+  maturity: official
+  capability_summary:
+  - Live Fusion desktop automation
+  - Dynamic tool discovery from Fusion
+  - CAD and CAM session actions
+  source_records:
+  - url: https://help.autodesk.com/view/ADSKMCP/ENU
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Autodesk MCP documentation lists Autodesk Fusion MCP as a local server exposed by Fusion.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - Autodesk Fusion
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: Autodesk Fusion supported workstation CPU
+    gpu: Autodesk Fusion supported graphics hardware
+    docker: 'no'
+    notes: Desktop Fusion session cannot be redistributed inside Wright Docker images.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires Autodesk Fusion running locally with the MCP server enabled.
+    linux_x64:
+      status: 'no'
+      tested: false
+      notes: Autodesk Fusion desktop is not a Linux container dependency for Wright.
+    linux_arm64:
+      status: 'no'
+      tested: false
+      notes: Autodesk Fusion desktop is not available in the GB10 Linux container.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires Autodesk Fusion running locally with the MCP server enabled.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Requires Autodesk Fusion running locally with the MCP server enabled.
+  host_software_required:
+  - Autodesk Fusion
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - cloud_upload_approval
+  - proprietary_license_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; requires a live Autodesk Fusion desktop session.
+    environment: null
+    missing_dependencies:
+    - Autodesk Fusion
+- id: autodesk-fusion-data-mcp
+  name: Autodesk Fusion Data MCP
+  vendor: Autodesk
+  description: Official cloud-hosted Autodesk Fusion Data MCP server for Fusion Manufacturing Data Model access, project structures, design metadata, and collaboration administration.
+  domains:
+  - cloud-cad
+  - plm
+  - manufacturing-data
+  tags:
+  - official
+  - autodesk
+  - fusion
+  - cloud
+  transport: sse
+  command: https://developer.api.autodesk.com
+  source_url: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_FusionCloudMcp_autodesk_fusion_data_mcp_server_html
+  repository_url: null
+  license: Autodesk cloud service terms
+  auth_model: oauth
+  install_method: remote-http
+  maturity: official
+  capability_summary:
+  - Access Fusion hubs and projects
+  - Query folders and items
+  - Work with Manufacturing Data Model resources
+  - Manage Fusion design metadata remotely
+  source_records:
+  - url: https://help.autodesk.com/view/ADSKMCP/ENU/?guid=ADSKMCP_FusionCloudMcp_autodesk_fusion_data_mcp_server_html
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Autodesk documentation describes the cloud-hosted Fusion Data MCP server and requirements.
+  locality: remote
+  weight: light
+  env_vars: []
+  dependencies:
+    system: []
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: cloud-saas
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required
+    docker: 'yes'
+    notes: Remote MCP endpoint; Docker image needs only MCP HTTP/OAuth client support.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Remote endpoint works with MCP clients that support the built-in Autodesk auth flow.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Remote endpoint works with MCP clients that support the built-in Autodesk auth flow.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Remote endpoint is platform-neutral when the client supports Autodesk auth.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Remote endpoint works with MCP clients that support the built-in Autodesk auth flow.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Remote endpoint works with MCP clients that support the built-in Autodesk auth flow.
+  host_software_required: []
+  credentials_required:
+  - Autodesk account
+  default_enabled: false
+  approval_gates:
+  - cloud_upload_approval
+  - secrets_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; requires Autodesk account OAuth flow.
+    environment: null
+    missing_dependencies:
+    - Autodesk account
+- id: openfoam-mcp-webworn
+  name: OpenFOAM MCP Server
+  vendor: webworn
+  description: OpenFOAM-focused CFD education and problem-solving MCP server with mesh quality checks, STL analysis, RDE analysis, and pipe-flow workflows.
+  domains:
+  - cfd
+  - simulation
+  - meshing
+  tags:
+  - open-source
+  - openfoam
+  - linux
+  - education
+  transport: stdio
+  command:
+  - openfoam-mcp-server
+  source_url: https://github.com/webworn/openfoam-mcp-server
+  repository_url: https://github.com/webworn/openfoam-mcp-server
+  license: Apache-2.0
+  auth_model: none
+  install_method: source
+  maturity: experimental
+  capability_summary:
+  - OpenFOAM connectivity diagnostics
+  - Mesh quality assessment
+  - STL analysis with snappyHexMesh guidance
+  - Pipe-flow and RDE CFD workflows
+  source_records:
+  - url: https://github.com/webworn/openfoam-mcp-server
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Repository README reports JSON-RPC MCP server with 12 tools and partial OpenFOAM integration.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - OpenFOAM
+    python: []
+    node: []
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-only
+  runtime_requirements:
+    cpu: CFD workstation CPU
+    gpu: not required by OpenFOAM core; optional for external accelerators
+    docker: partial
+    notes: Clean-container validation should install only OpenFOAM dependencies needed for safe read-only/status probes first.
+  platform_support:
+    windows_11_x64:
+      status: unknown
+      tested: false
+      notes: OpenFOAM support on Windows is host-dependent and not validated.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: OpenFOAM is Linux-friendly, but this MCP has not been validated by Wright.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: OpenFOAM package availability and solver compatibility must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: OpenFOAM host setup is not validated.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: OpenFOAM host setup is not validated.
+  host_software_required:
+  - OpenFOAM
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; run clean-container OpenFOAM status, tools/list, and safe mesh/STL probes.
+    environment: null
+    missing_dependencies:
+    - OpenFOAM
+- id: freecad-mcp-sergiudanstan
+  name: FreeCAD MCP Full-Module Server
+  vendor: sergiudanstan
+  description: Node.js FreeCAD MCP server advertising broad parametric CAD coverage across document management, primitives, booleans, sketching, part design, meshing, FEM, and BIM.
+  domains:
+  - cad
+  - fea
+  - bim
+  - meshing
+  tags:
+  - open-source
+  - freecad
+  - node
+  transport: stdio
+  command:
+  - node
+  - build/index.js
+  source_url: https://github.com/sergiudanstan/freecad-mcp
+  repository_url: https://github.com/sergiudanstan/freecad-mcp
+  license: unknown
+  auth_model: local-host
+  install_method: source
+  maturity: community
+  capability_summary:
+  - FreeCAD document management
+  - Primitive and Boolean solid modeling
+  - Sketching and Part Design operations
+  - Meshing, FEM, and BIM modules
+  source_records:
+  - url: https://github.com/sergiudanstan/freecad-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: README advertises 165 tools across 15 modules and requires Node.js plus FreeCAD 0.21 or later.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - FreeCAD 0.21+
+    python: []
+    node:
+    - npm
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: CAD workstation CPU
+    gpu: optional for FreeCAD GUI mode
+    docker: partial
+    notes: GUI mode is recommended upstream; headless fallback and container behavior need Wright validation.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires local FreeCAD and Node.js.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Requires local FreeCAD 0.21+ and Node.js; not validated by Wright.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: FreeCAD and Node dependencies must be checked in GB10/Linux ARM64 container.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires local FreeCAD and Node.js.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Requires local FreeCAD and Node.js.
+  host_software_required:
+  - FreeCAD 0.21+
+  - Node.js 18+
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; run clean-container startup and safe FreeCAD status/list-object probes.
+    environment: null
+    missing_dependencies:
+    - FreeCAD
+- id: freecad-mcp-proximile
+  name: FreeCAD MCP AI 3D Server
+  vendor: proximile
+  description: Docker-oriented FreeCAD MCP server with CAD operations, headless FreeCAD, vision analysis, AI 3D generation, Gradio UI, and service management tools.
+  domains:
+  - cad
+  - mesh
+  - ai-3d
+  tags:
+  - open-source
+  - freecad
+  - docker
+  - gpu
+  transport: stdio
+  command:
+  - freecad-mcp
+  source_url: https://github.com/proximile/FreeCAD-MCP
+  repository_url: https://github.com/proximile/FreeCAD-MCP
+  container_url: https://github.com/proximile/FreeCAD-MCP/blob/main/docker-compose.yml
+  license: MIT
+  auth_model: local-host
+  install_method: docker
+  maturity: experimental
+  capability_summary:
+  - FreeCAD CAD operations
+  - Dockerized headless execution
+  - Vision model analysis
+  - Text/image-to-3D generation
+  - Gradio debug interface
+  source_records:
+  - url: https://github.com/proximile/FreeCAD-MCP
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: README advertises 57 MCP tools, Dockerized FreeCAD, VLM/segmentation, and dual GPU optimization.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - Docker
+    - FreeCAD
+    python: []
+    node: []
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-only
+  runtime_requirements:
+    cpu: CAD workstation CPU
+    gpu: dual 24GB GPU setup recommended upstream for AI generation paths
+    memory: High memory recommended for AI 3D generation services.
+    docker: 'yes'
+    notes: Treat AI generation services as optional; validate basic FreeCAD tools separately from GPU-heavy services.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Docker/GPU stack and FreeCAD container behavior not validated on Windows.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Upstream includes docker-compose.yml; Wright has not validated it.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: GPU image and FreeCAD container compatibility must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: Docker/GPU stack not validated on macOS.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: Docker/GPU stack not validated on macOS ARM64.
+  host_software_required:
+  - Docker
+  - FreeCAD
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; start with non-GPU FreeCAD status/list tools before attempting AI generation services.
+    environment: null
+    missing_dependencies:
+    - Docker
+    - FreeCAD
+- id: rhino-mcp-easehee
+  name: Rhino MCP
+  vendor: EaseHee
+  description: Rhino and Grasshopper MCP server with standalone rhino3dm file authoring plus optional Rhino 8 bridge mode for RhinoCommon and Grasshopper automation.
+  domains:
+  - cad
+  - mesh
+  - bim
+  - code-cad
+  tags:
+  - open-source
+  - rhino
+  - grasshopper
+  - docker
+  transport: stdio
+  command:
+  - uvx
+  - rhino3dm-mcp
+  source_url: https://github.com/easehee/rhino-mcp
+  repository_url: https://github.com/easehee/rhino-mcp
+  package_url: https://pypi.org/project/rhino3dm-mcp/
+  container_url: https://github.com/easehee/rhino-mcp/tree/main/docker
+  license: MIT
+  auth_model: local-host
+  install_method: uvx
+  maturity: community
+  capability_summary:
+  - Standalone rhino3dm geometry authoring
+  - Rhino 8 and Grasshopper bridge automation
+  - STEP, IGES, STL, OBJ, IFC, and gbXML workflows
+  - Geometry validation and schedule extraction
+  source_records:
+  - url: https://github.com/easehee/rhino-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: README documents standalone mode without Rhino, bridge mode with Rhino 8, three transports, and Docker support.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: RHINO_MCP_FORCE_MODE
+    label: Rhino MCP mode
+    description: Optional runtime mode such as standalone, bridge, or auto.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - optional Rhino 8
+    - optional .NET 8 SDK
+    python:
+    - rhino3dm-mcp
+    node: []
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: standard CPU for standalone; Rhino workstation CPU for bridge mode
+    gpu: optional for Rhino bridge rendering workflows
+    docker: 'yes'
+    notes: Standalone mode is suitable for container validation; bridge mode requires live Rhino 8.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Standalone Python expected; full bridge requires Rhino 8 and optional .NET plugin.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Standalone rhino3dm mode and Docker path are documented upstream; not validated by Wright.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: rhino3dm wheel availability and Docker path must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Standalone Python expected; full bridge requires Rhino 8 and optional .NET plugin.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Standalone Python expected; full bridge requires Rhino 8 and optional .NET plugin.
+  host_software_required:
+  - optional Rhino 8
+  - Python 3.11+
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; validate standalone rhino3dm mode before bridge mode.
+    environment: null
+    missing_dependencies: []
+- id: blender-mcp-harveyxiacn
+  name: Blender MCP Comprehensive Server
+  vendor: harveyxiacn
+  description: Blender MCP server with a FastMCP bridge and Blender add-on, advertising broad modeling, materials, animation, rendering, rigging, and validation tool coverage.
+  domains:
+  - mesh
+  - rendering
+  - animation
+  tags:
+  - open-source
+  - blender
+  - python
+  - local-bridge
+  transport: stdio
+  command:
+  - uv
+  - run
+  - blender-mcp
+  source_url: https://github.com/harveyxiacn/blender-mcp
+  repository_url: https://github.com/harveyxiacn/blender-mcp
+  package_url: https://pypi.org/project/blender-mcp/
+  license: MIT
+  auth_model: local-host
+  install_method: pip
+  maturity: community
+  capability_summary:
+  - Blender scene and object control
+  - Materials, animation, rendering, and rigging
+  - Viewport/render snapshots
+  - Tool profiles and skill loading
+  source_records:
+  - url: https://github.com/harveyxiacn/blender-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: README advertises 359 tools, Blender 4.x/5.x compatibility, and install from source or PyPI.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - Blender 4.0+
+    python:
+    - blender-mcp
+    node: []
+  verification_state: community_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: Blender workstation CPU
+    gpu: optional but recommended for rendering
+    docker: partial
+    notes: Requires Blender add-on and a live Blender process for most workflows; headless validation should start with tool discovery and read-only scene probes.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires local Blender and add-on installation.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Blender can run on Linux, but this server has not been validated by Wright.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Blender and Python package compatibility must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires local Blender and add-on installation.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Requires local Blender and add-on installation.
+  host_software_required:
+  - Blender 4.0+
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  - execute_code_approval
+  validation_result:
+    status: not_tested
+    message: Not yet validated by Wright; run clean-container protocol probes and safe scene read/primitive creation before enabling.
+    environment: null
+    missing_dependencies:
+    - Blender
+- id: playwright-mcp
+  name: Playwright MCP
+  vendor: Microsoft
+  description: Official Microsoft Playwright MCP server for browser automation through structured accessibility snapshots, useful for engineering web apps and browser-based CAD tooling.
+  domains:
+  - utilities
+  - browser-automation
+  tags:
+  - official
+  - browser
+  - web-cad
+  - bundled-candidate
+  transport: stdio
+  command:
+  - playwright-mcp
+  source_url: https://github.com/microsoft/playwright-mcp
+  repository_url: https://github.com/microsoft/playwright-mcp
+  package_url: https://www.npmjs.com/package/@playwright/mcp
+  container_url: https://github.com/microsoft/playwright-mcp/blob/main/Dockerfile
+  license: Apache-2.0
+  auth_model: none
+  install_method: npm
+  maturity: official
+  capability_summary:
+  - Browser navigation and interaction
+  - Accessibility snapshot inspection
+  - Screenshots and browser state control
+  - Web application validation
+  source_records:
+  - url: https://github.com/microsoft/playwright-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official repository describes Playwright MCP as browser automation through structured accessibility snapshots.
+  - url: https://github.com/microsoft/playwright-mcp/blob/main/package.json
+    kind: package
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Package metadata identifies @playwright/mcp 0.0.78 and Apache-2.0 licensing.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: PLAYWRIGHT_BROWSERS_PATH
+    label: Playwright browsers path
+    description: Optional browser cache/install path used by the MCP runtime.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - Chromium or Chrome for Testing
+    python: []
+    node:
+    - '@playwright/mcp'
+  verification_state: verified_docs_mcp
+  installability_tier: tested
+  risk_level: medium
+  deployment_mode: local-bundled
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required
+    docker: 'yes'
+    notes: Wright bundles browser dependencies in Linux and Windows MCP images.
+  platform_support:
+    windows_11_x64:
+      status: 'yes'
+      tested: false
+      notes: Wright Windows MCP bundle installs @playwright/mcp and Chromium.
+    linux_x64:
+      status: 'yes'
+      tested: true
+      notes: Wright Linux MCP bundle installs @playwright/mcp and Chrome for Testing.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Wright Linux ARM64 bundle declares Playwright MCP; validate browser install on GB10/Linux ARM64 before marking tested.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Official package is expected to run where Node.js and supported browsers are available.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Official package is expected to run where Node.js and supported browsers are available.
+  host_software_required:
+  - Node.js 18+
+  - Chromium or Chrome for Testing
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - browser_automation_approval
+  validation_result:
+    status: not_tested
+    message: Catalog entry added from official package metadata and Wright bundle metadata; run browser_navigate/browser_snapshot probes in each managed image.
+    environment: null
+    missing_dependencies: []
+- id: backflip-ai-watchlist
+  name: Backflip AI CAD Candidate
+  vendor: Backflip AI
+  description: Backflip provides AI-assisted 3D/CAD generation, mesh and scan conversion, STEP output, and an Autodesk Fusion add-in, but no public MCP server was found in the official MCP Registry, GitHub search, or Backflip docs.
+  domains:
+  - cad
+  - mesh
+  - cloud-cad
+  tags:
+  - watchlist
+  - ai-cad
+  - fusion-addin
+  - no-public-mcp
+  transport: stdio
+  command:
+  - backflip-mcp-not-public
+  source_url: https://www.backflip.ai/
+  repository_url: null
+  license: proprietary
+  auth_model: unknown
+  install_method: desktop-extension
+  maturity: watchlist
+  capability_summary:
+  - Mesh, image, and scan to CAD workflows
+  - Autodesk Fusion add-in distribution
+  - STEP output and feature-tree style CAD workflows
+  - No verified public MCP server as of the latest sweep
+  source_records:
+  - url: https://www.backflip.ai/
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official site describes the CAD copilot and product workflow.
+  - url: https://www.backflip.ai/downloads
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Downloads page lists Autodesk Fusion installers and says more plugins are coming soon.
+  - url: https://registry.modelcontextprotocol.io/v0.1/servers?search=backflip&version=latest
+    kind: directory
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Official MCP Registry query returned no Backflip entries during the sweep.
+  locality: remote
+  weight: medium
+  env_vars: []
+  dependencies:
+    system:
+    - Autodesk Fusion for the current add-in
+    python: []
+    node: []
+  verification_state: watchlist
+  installability_tier: blocked
+  risk_level: medium
+  deployment_mode: vendor-plugin-or-cloud
+  runtime_requirements:
+    cpu: standard CPU for web use; CAD workstation CPU for Fusion plugin
+    gpu: optional CAD workstation GPU
+    docker: 'unknown'
+    notes: Track as a high-value integration target; do not expose as an MCP until Backflip publishes one or Wright builds a reviewed wrapper.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Fusion add-in is offered for Windows; no MCP verified.
+    linux_x64:
+      status: unknown
+      tested: false
+      notes: Web app may work through a browser, but Fusion add-in and MCP support are unverified.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: No GB10/Linux ARM64 MCP evidence found.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Fusion add-in is offered for macOS; no MCP verified.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Fusion add-in is offered for macOS; no MCP verified.
+  host_software_required:
+  - Autodesk Fusion add-in for current desktop workflow
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - workspace_write_approval
+  validation_result:
+    status: blocked
+    message: No public Backflip MCP server was found; keep as a watchlist integration candidate.
+    environment: null
+    missing_dependencies:
+    - public MCP server
+- id: rescale-mcp-hosted
+  name: Rescale Hosted MCP Server
+  vendor: Rescale
+  description: Official hosted MCP server for driving the Rescale HPC and simulation platform over streamable HTTP with a Rescale API key.
+  domains:
+  - simulation
+  - cfd
+  - fea
+  - hpc
+  tags:
+  - official
+  - hosted
+  - cloud-compute
+  - remote-http
+  transport: sse
+  command: https://mcp.services.platform.rescale.com/mcp
+  source_url: https://rescale.com/documentation/mcp-server-getting-started/
+  repository_url: null
+  license: Rescale service terms
+  auth_model: api-key
+  install_method: remote-http
+  maturity: official
+  capability_summary:
+  - Create and submit Rescale simulation jobs and workstations
+  - Monitor workloads, logs, and status
+  - Upload inputs and download results
+  - Access regional hosted MCP endpoints
+  source_records:
+  - url: https://rescale.com/documentation/mcp-server-getting-started/
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official docs describe hosted streamable HTTP MCP endpoints, X-Rescale-Api-Key authentication, and core job/file/workstation capabilities.
+  - url: https://engineering.rescale.com/api-docs/
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Rescale API docs cover cloud job submission, simulation file management, and VDI/workstation operations.
+  locality: remote
+  weight: medium
+  env_vars:
+  - name: RESCALE_API_KEY
+    label: Rescale API key
+    description: API key sent as X-Rescale-Api-Key to the hosted MCP endpoint.
+    required: true
+    secret: true
+  dependencies:
+    system: []
+    python: []
+    node: []
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: cloud-saas
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required locally
+    docker: 'yes'
+    notes: Hosted remote MCP; local image needs only HTTP MCP client support and secret handling.
+  platform_support:
+    windows_11_x64:
+      status: 'yes'
+      tested: false
+      notes: Remote HTTP endpoint is client-platform neutral when custom headers are supported.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Remote HTTP endpoint should work from Wright; credentialed probe not yet run.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Remote HTTP endpoint should work from GB10 images; credentialed probe not yet run.
+    macos_x64:
+      status: 'yes'
+      tested: false
+      notes: Remote HTTP endpoint is client-platform neutral when custom headers are supported.
+    macos_arm64:
+      status: 'yes'
+      tested: false
+      notes: Remote HTTP endpoint is client-platform neutral when custom headers are supported.
+  host_software_required: []
+  credentials_required:
+  - Rescale API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  - cloud_job_submission_approval
+  - workspace_write_approval
+  validation_result:
+    status: not_tested
+    message: Added from official Rescale MCP documentation; run a credential-limited tools/list and read-only job status probe before enabling.
+    environment: null
+    missing_dependencies:
+    - Rescale API key
+- id: ansys-fluent-mcp
+  name: PyFluent MCP
+  vendor: Ansys
+  description: Official PyAnsys MCP server that lets AI assistants connect to and drive Ansys Fluent sessions through PyFluent.
+  domains:
+  - cfd
+  - simulation
+  tags:
+  - official
+  - ansys
+  - fluent
+  - pyansys
+  - local-bridge
+  transport: stdio
+  command:
+  - ansys-fluent-mcp
+  source_url: https://github.com/ansys/pyfluent-mcp
+  repository_url: https://github.com/ansys/pyfluent-mcp
+  package_url: https://pypi.org/project/ansys-fluent-mcp/
+  license: Apache-2.0
+  auth_model: license-server
+  install_method: pip
+  maturity: official
+  capability_summary:
+  - Launch or attach to local or remote Fluent sessions
+  - Inspect Fluent settings and named objects
+  - Validate and execute sandboxed Fluent Python
+  - Summarize setup, mesh quality, fields, screenshots, and file comparisons
+  source_records:
+  - url: https://github.com/ansys/pyfluent-mcp
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official Ansys repository documents PyFluent-MCP, supported transports, requirements, and tool surface.
+  - url: https://fluent-mcp.docs.pyansys.com/
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official PyAnsys docs describe PyFluent-MCP and its 22-tool Fluent integration.
+  - url: docs/mcp-catalog/evidence/gb10-local-mcp-preflight-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
+  - url: docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Clean Wright ARM64 container installed the package, initialized the MCP, listed 25 tools, and session_status returned connected:false without error.
+  locality: local
+  weight: heavy
+  env_vars:
+  - name: ANSYSLI_SERVER
+    label: Ansys license server
+    description: Optional Ansys license server pointer used by Fluent/PyAnsys.
+    required: false
+    secret: false
+  - name: ANSYSLMD_LICENSE_FILE
+    label: Ansys license file
+    description: Optional Ansys license file or server pointer.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - Ansys Fluent 2024 R1 or newer for live solver tools
+    python:
+    - ansys-fluent-mcp
+    - ansys-fluent-core
+    node: []
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: Fluent workstation or remote solver CPU
+    gpu: optional depending on Fluent solver configuration
+    memory: solver dependent
+    docker: partial
+    notes: The MCP package can run locally, but live solve tools require licensed Fluent locally or a reachable remote Fluent instance.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed Fluent/PyFluent environment or remote Fluent.
+    linux_x64:
+      status: host-dependent
+      tested: false
+      notes: MCP package should run on Linux x64; live solver tools require licensed Fluent or remote Fluent.
+    linux_arm64:
+      status: host-dependent
+      tested: false
+      notes: Clean Wright ARM64 container installed the MCP package, initialized it, listed 25 tools, and reported session_status; live Fluent remains local/remote host and license dependent.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: MCP package may run, but live Fluent solver support is host/license dependent.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: MCP package may run, but live Fluent solver support is host/license dependent.
+  host_software_required:
+  - Ansys Fluent for live solver tools
+  credentials_required:
+  - Ansys license
+  default_enabled: false
+  approval_gates:
+  - execute_code_approval
+  - workspace_write_approval
+  - license_server_approval
+  validation_result:
+    status: dependency_missing
+    message: Clean Wright ARM64 container installed PyFluent MCP, initialized it, listed 25 tools, and session_status returned connected:false/backend_kind:pyfluent without error. Full validation still requires Wright/Hermes gateway evidence and a licensed local or remote Fluent session for live solver tools.
+    environment: gb10-linux-arm64-clean-container
+    missing_dependencies:
+    - Ansys Fluent license for live solve tools
+    - gateway proxy evidence
+    validated_at: '2026-08-12'
+    evidence_status: partial
+- id: ansys-mcp-server-community
+  name: Ansys MCP Server
+  vendor: vorobjewsen30-max
+  description: Community PyPI MCP server wrapping PyAnsys for Fluent CFD, Mechanical FEA, MAPDL, DPF post-processing, Prime meshing, and System Coupling workflows.
+  domains:
+  - cfd
+  - fea
+  - meshing
+  - simulation
+  tags:
+  - community
+  - ansys
+  - pyansys
+  - local-bridge
+  transport: stdio
+  command:
+  - ansys-mcp-server
+  source_url: https://pypi.org/project/ansys-mcp-server/
+  repository_url: https://github.com/vorobjewsen30-max/ansys-mcp-server
+  package_url: https://pypi.org/project/ansys-mcp-server/
+  license: MIT
+  auth_model: license-server
+  install_method: pip
+  maturity: community
+  capability_summary:
+  - Fluent CFD, Mechanical FEA, MAPDL, DPF, Prime Meshing, and System Coupling wrappers
+  - PyAnsys-based simulation launch and post-processing
+  - Community package registered in the official MCP Registry
+  source_records:
+  - url: https://pypi.org/project/ansys-mcp-server/
+    kind: package
+    primary: true
+    observed_at: '2026-08-12'
+    notes: PyPI page describes a 24-tool PyAnsys MCP server and lists optional extras for Fluent, Mechanical, DPF, MAPDL, meshing, and System Coupling.
+  - url: https://registry.modelcontextprotocol.io/v0.1/servers?search=ansys&version=latest
+    kind: directory
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Official MCP Registry lists io.github.vorobjewsen30-max/ansys-mcp-server as active version 1.0.0.
+  - url: docs/mcp-catalog/followups/ansys-mcp-server-community.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host startup failed on Python 3.13 and 3.12 due missing InitializationCapabilities in the resolved MCP SDK.
+  locality: local
+  weight: heavy
+  env_vars:
+  - name: ANSYSLI_SERVER
+    label: Ansys license server
+    description: Optional Ansys license server pointer used by PyAnsys.
+    required: false
+    secret: false
+  dependencies:
+    system:
+    - Ansys solver products for live tools
+    python:
+    - ansys-mcp-server
+    node: []
+  verification_state: community_mcp
+  installability_tier: non_working
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: solver dependent
+    gpu: optional depending on selected Ansys solver
+    memory: solver dependent
+    docker: partial
+    notes: Package can install without solvers, but useful operations require licensed Ansys products or remote solver sessions.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed Ansys products.
+    linux_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed Ansys products or reachable remote solvers.
+    linux_arm64:
+      status: 'no'
+      tested: false
+      notes: GB10 package startup failed before MCP initialization due current MCP SDK API mismatch; solver support is also not established.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Package may install, but solver availability is host dependent.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Package may install, but solver availability is host dependent.
+  host_software_required:
+  - Ansys Fluent, Mechanical, MAPDL, DPF, Prime, or System Coupling as needed
+  credentials_required:
+  - Ansys license
+  default_enabled: false
+  approval_gates:
+  - execute_code_approval
+  - workspace_write_approval
+  - license_server_approval
+  validation_result:
+    status: failed
+    message: GB10 local host install completed, but startup failed before MCP initialization on Python 3.13 and Python 3.12 with ImportError for mcp.server.models.InitializationCapabilities.
+    environment: gb10-linux-arm64-local-host
+    missing_dependencies:
+    - upstream MCP SDK compatibility fix
+    - Ansys solver license for live tools after startup is fixed
+    validated_at: '2026-08-12'
+    evidence_status: partial
+- id: comsol-multiphysics-mcp-wjc9011
+  name: COMSOL MCP Server
+  vendor: wjc9011
+  description: Community COMSOL Multiphysics MCP server for model management, geometry, physics setup, meshing, solving, results, and local documentation retrieval.
+  domains:
+  - fea
+  - cfd
+  - multiphysics
+  - simulation
+  tags:
+  - community
+  - comsol
+  - python
+  - local-bridge
+  transport: stdio
+  command:
+  - python
+  - -m
+  - src.server
+  source_url: https://github.com/wjc9011/COMSOL_Multiphysics_MCP
+  repository_url: https://github.com/wjc9011/COMSOL_Multiphysics_MCP
+  license: unknown
+  auth_model: license-server
+  install_method: source
+  maturity: community
+  capability_summary:
+  - COMSOL model create, load, save, and versioning workflows
+  - Geometry primitives, physics setup, mesh generation, studies, solving, and result export
+  - Optional local PDF knowledge-base retrieval
+  source_records:
+  - url: https://github.com/wjc9011/COMSOL_Multiphysics_MCP
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: README describes a COMSOL MCP server, install steps, requirements, and server command.
+  - url: https://www.comsol.com/support/learning-center/article/overview-of-the-comsol-api-107912
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: COMSOL API docs describe programmatic geometry, mesh, solve, visualization, and results workflows.
+  - url: docs/mcp-catalog/followups/comsol-multiphysics-mcp-wjc9011.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local preflight found heavyweight PyTorch/CUDA dependency downloads and bundled COMSOL PDFs/models requiring review before bundle validation.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - COMSOL Multiphysics 5.x or 6.x
+    - Java runtime
+    python:
+    - mph
+    - pymupdf
+    - chromadb
+    - sentence-transformers
+    node: []
+  verification_state: community_mcp
+  installability_tier: blocked
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: COMSOL workstation or server CPU
+    gpu: optional depending on model and visualization
+    memory: solver dependent
+    docker: 'no'
+    notes: COMSOL is proprietary and licensed; do not add COMSOL runtime to Wright base images.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed local COMSOL installation.
+    linux_x64:
+      status: host-dependent
+      tested: false
+      notes: COMSOL supports Linux/server workflows, but the MCP has not been validated by Wright.
+    linux_arm64:
+      status: 'no'
+      tested: false
+      notes: GB10 preflight was stopped after heavyweight optional dependency downloads; bundled COMSOL docs/models also need license/content review.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed local COMSOL installation.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Requires licensed local COMSOL installation; ARM64 support not verified.
+  host_software_required:
+  - COMSOL Multiphysics
+  - Java runtime
+  credentials_required:
+  - COMSOL license
+  default_enabled: false
+  approval_gates:
+  - execute_code_approval
+  - workspace_write_approval
+  - license_server_approval
+  validation_result:
+    status: blocked
+    message: GB10 local preflight cloned the source but intentionally stopped install/test when dependency resolution began downloading a large sentence-transformers/PyTorch/CUDA stack; repository also includes COMSOL PDFs, .mph models, logs, and generated artifacts that require review before any image inclusion.
+    environment: gb10-linux-arm64-local-host
+    missing_dependencies:
+    - slim reviewed install path
+    - license/content review for bundled COMSOL documents and models
+    - COMSOL Multiphysics license
+    validated_at: '2026-08-12'
+    evidence_status: partial
+- id: comsol-multiphysics-mcp-suzysa
+  name: COMSOL Multiphysics MCP
+  vendor: Suzy-Sa
+  description: Community local COMSOL MCP server for COMSOL automation, Desktop assistance, guided modeling, validation, result extraction, and local RAG over licensed documentation.
+  domains:
+  - fea
+  - cfd
+  - multiphysics
+  - simulation
+  tags:
+  - community
+  - comsol
+  - desktop-assist
+  - rag
+  transport: stdio
+  command:
+  - python
+  - -m
+  - comsol_agent_mcp.server
+  source_url: https://github.com/Suzy-Sa/COMSOL-Multiphysics-MCP
+  repository_url: https://github.com/Suzy-Sa/COMSOL-Multiphysics-MCP
+  license: unknown
+  auth_model: license-server
+  install_method: source
+  maturity: community
+  capability_summary:
+  - COMSOL model automation through mph backend
+  - Desktop window inspection and Java Shell fallback actions
+  - Guided multiphysics workflows and model validation
+  - Local ChromaDB RAG over user-provided COMSOL documentation
+  source_records:
+  - url: https://github.com/Suzy-Sa/COMSOL-Multiphysics-MCP
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: README describes a local COMSOL MCP server, requirements, configuration, and MCP client setup.
+  - url: docs/mcp-catalog/followups/comsol-multiphysics-mcp-suzysa.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local tests passed, but MCP startup failed before initialization because mcp.server.fastmcp was not available in the resolved SDK.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - COMSOL Multiphysics
+    - optional Windows interactive desktop for GUI tools
+    python:
+    - mph
+    - chromadb
+    node: []
+  verification_state: community_mcp
+  installability_tier: non_working
+  risk_level: high
+  deployment_mode: local-bridge
+  runtime_requirements:
+    cpu: COMSOL workstation or server CPU
+    gpu: optional depending on model and visualization
+    memory: solver dependent
+    docker: 'no'
+    notes: Licensed COMSOL and user-provided documentation remain outside Wright images.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Windows desktop access is required for GUI/Java Shell tools; mph automation requires local COMSOL.
+    linux_x64:
+      status: host-dependent
+      tested: false
+      notes: mph automation may work with COMSOL server workflows, but GUI tools are Windows-oriented.
+    linux_arm64:
+      status: 'no'
+      tested: false
+      notes: GB10 package tests passed, but MCP entrypoint failed before initialization due current MCP SDK import mismatch; COMSOL ARM64 backend support is still unverified.
+    macos_x64:
+      status: host-dependent
+      tested: false
+      notes: Local COMSOL/mph support must be validated.
+    macos_arm64:
+      status: host-dependent
+      tested: false
+      notes: Local COMSOL/mph support must be validated.
+  host_software_required:
+  - COMSOL Multiphysics
+  credentials_required:
+  - COMSOL license
+  default_enabled: false
+  approval_gates:
+  - execute_code_approval
+  - workspace_write_approval
+  - desktop_control_approval
+  - license_server_approval
+  validation_result:
+    status: failed
+    message: GB10 local host package tests passed 76 tests, but MCP startup failed before initialization with ModuleNotFoundError for mcp.server.fastmcp. Validate again after upstream pins a compatible MCP SDK or updates the server import/API.
+    environment: gb10-linux-arm64-local-host
+    missing_dependencies:
+    - upstream MCP SDK compatibility fix
+    - COMSOL Multiphysics license
+    validated_at: '2026-08-12'
+    evidence_status: partial
+- id: nvidia-omniverse-kit-mcp
+  name: NVIDIA Omniverse Kit MCP
+  vendor: NVIDIA Omniverse
+  description: Official Omniverse Kit MCP server for Kit extension search, dependency graphs, API docs, code examples, and app-template development support.
+  domains:
+  - visualization
+  - digital-twin
+  - usd
+  tags:
+  - official
+  - nvidia
+  - omniverse
+  - kit
+  - docker
+  transport: stdio
+  command:
+  - kit-mcp
+  source_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  repository_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  license: Apache-2.0
+  auth_model: api-key
+  install_method: source
+  maturity: official
+  capability_summary:
+  - Search 400+ Omniverse Kit extensions
+  - Explore extension APIs, dependencies, examples, tests, docs, and settings
+  - Support Omniverse Kit SDK and application development workflows
+  source_records:
+  - url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official NVIDIA Omniverse repository lists Kit MCP as one of four standalone MCP servers and documents Docker/Python deployment.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: NVIDIA_API_KEY
+    label: NVIDIA API key
+    description: API key used for NVIDIA-hosted embedder, reranker, and LLM services in recommended Docker deployment.
+    required: true
+    secret: true
+  dependencies:
+    system:
+    - Docker recommended
+    python: []
+    node: []
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: local-container
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required for cloud-hosted embedding/reranking; two NVIDIA GPUs for advanced local model deployment
+    docker: 'yes'
+    notes: NVIDIA recommends Docker with NVIDIA API key; local GPU deployment is advanced and separate.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Windows build scripts; Docker/local validation still needed.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Linux build scripts and Docker compose deployment; Wright validation still needed.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Docker image and Python wheel support must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: No explicit macOS deployment evidence found in the sweep.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: No explicit macOS ARM64 deployment evidence found in the sweep.
+  host_software_required:
+  - Docker recommended
+  credentials_required:
+  - NVIDIA API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  validation_result:
+    status: not_tested
+    message: Added from official NVIDIA Omniverse repository; validate Docker compose startup and tools/list before image inclusion.
+    environment: null
+    missing_dependencies:
+    - NVIDIA API key
+- id: nvidia-omniverse-usd-code-mcp
+  name: NVIDIA USD Code MCP
+  vendor: NVIDIA Omniverse
+  description: Official Omniverse USD/OpenUSD development MCP server for API assistance, class browsing, method docs, code examples, and knowledge-base search.
+  domains:
+  - usd
+  - cad
+  - visualization
+  tags:
+  - official
+  - nvidia
+  - omniverse
+  - openusd
+  transport: stdio
+  command:
+  - usd-code-mcp
+  source_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  repository_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  license: Apache-2.0
+  auth_model: api-key
+  install_method: source
+  maturity: official
+  capability_summary:
+  - Browse OpenUSD modules, classes, and methods
+  - Retrieve API docs and examples
+  - Search USD knowledge base content
+  - Assist USD scene and pipeline development
+  source_records:
+  - url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official repository describes USD Code MCP with seven specialized USD/OpenUSD tools.
+  - url: docs/mcp-catalog/evidence/gb10-local-mcp-preflight-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host built the USD Code AIQ and MCP wheels from source after targeted Git LFS checkout.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: NVIDIA_API_KEY
+    label: NVIDIA API key
+    description: API key used for NVIDIA-hosted embedder, reranker, and LLM services.
+    required: true
+    secret: true
+  dependencies:
+    system:
+    - Docker recommended
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: read-only
+  deployment_mode: local-container
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required for cloud-hosted embedding/reranking
+    docker: 'yes'
+    notes: Read-mostly documentation/code-search MCP; local GPU deployment is optional and advanced.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Windows build scripts; validation needed.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Linux build scripts and Docker compose deployment; validation needed.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: GB10 local host built the Python wheels successfully; Docker startup, MCP tools/list, and NVIDIA_API_KEY-backed read-only calls remain pending.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: No explicit macOS deployment evidence found.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: No explicit macOS ARM64 deployment evidence found.
+  host_software_required:
+  - Docker recommended
+  credentials_required:
+  - NVIDIA API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  validation_result:
+    status: dependency_missing
+    message: GB10 local host built usd_code_aiq and usd_code_mcp wheels from source with Git LFS data resolved. Docker startup, MCP tools/list, and read-only USD search validation remain pending and require NVIDIA_API_KEY for the recommended NGC-backed deployment.
+    environment: gb10-linux-arm64-local-host
+    missing_dependencies:
+    - NVIDIA API key
+    - Docker/MCP startup evidence
+    validated_at: '2026-08-12'
+    evidence_status: partial
+- id: nvidia-omniverse-omniui-mcp
+  name: NVIDIA OmniUI MCP
+  vendor: NVIDIA Omniverse
+  description: Official Omniverse OmniUI MCP server for UI class/module browsing, widget documentation, examples, styling docs, and scene-system APIs.
+  domains:
+  - visualization
+  - utilities
+  tags:
+  - official
+  - nvidia
+  - omniverse
+  - omniui
+  transport: stdio
+  command:
+  - omni-ui-mcp
+  source_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  repository_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  license: Apache-2.0
+  auth_model: api-key
+  install_method: source
+  maturity: official
+  capability_summary:
+  - Browse OmniUI classes, modules, methods, widgets, and examples
+  - Retrieve styling docs and system instructions
+  - Assist Omniverse extension UI development
+  source_records:
+  - url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official repository describes OmniUI MCP with ten specialized OmniUI development tools.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: NVIDIA_API_KEY
+    label: NVIDIA API key
+    description: API key used for NVIDIA-hosted embedder, reranker, and LLM services.
+    required: true
+    secret: true
+  dependencies:
+    system:
+    - Docker recommended
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: read-only
+  deployment_mode: local-container
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required for cloud-hosted embedding/reranking
+    docker: 'yes'
+    notes: Read-mostly UI development MCP; local GPU deployment is optional and advanced.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Windows build scripts; validation needed.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Linux build scripts and Docker compose deployment; validation needed.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Docker image and dependency support must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: No explicit macOS deployment evidence found.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: No explicit macOS ARM64 deployment evidence found.
+  host_software_required:
+  - Docker recommended
+  credentials_required:
+  - NVIDIA API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  validation_result:
+    status: not_tested
+    message: Added from official NVIDIA Omniverse repository; validate read-only tool calls before enabling.
+    environment: null
+    missing_dependencies:
+    - NVIDIA API key
+- id: nvidia-omniverse-isaac-sim-mcp
+  name: NVIDIA Isaac Sim MCP
+  vendor: NVIDIA Omniverse
+  description: Official Omniverse Isaac Sim MCP server for Isaac Sim extension/API search, examples, documentation, best practices, and configuration settings.
+  domains:
+  - robotics
+  - simulation
+  - digital-twin
+  tags:
+  - official
+  - nvidia
+  - omniverse
+  - isaac-sim
+  - robotics
+  transport: stdio
+  command:
+  - isaac-sim-mcp
+  source_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  repository_url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+  license: Apache-2.0
+  auth_model: api-key
+  install_method: source
+  maturity: official
+  capability_summary:
+  - Search Isaac Sim extensions, APIs, examples, docs, best practices, and settings
+  - Assist robotics simulation development workflows
+  - Supports Omniverse/Isaac Sim application development rather than controlling a live robot
+  source_records:
+  - url: https://github.com/NVIDIA-Omniverse/kit-usd-agents
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official repository describes Isaac Sim MCP with five specialized Isaac Sim development tools.
+  locality: local
+  weight: medium
+  env_vars:
+  - name: NVIDIA_API_KEY
+    label: NVIDIA API key
+    description: API key used for NVIDIA-hosted embedder, reranker, and LLM services.
+    required: true
+    secret: true
+  dependencies:
+    system:
+    - Docker recommended
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: local-container
+  runtime_requirements:
+    cpu: standard CPU for docs/search MCP; Isaac Sim itself requires workstation CPU
+    gpu: not required for MCP docs/search; NVIDIA RTX GPU required for live Isaac Sim workflows
+    docker: 'yes'
+    notes: MCP is for Isaac Sim development assistance; live simulation runtime remains separate.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Windows build scripts; validation needed.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Repository provides Linux build scripts and Docker compose deployment; validation needed.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: Docker image and dependency support must be checked on GB10/Linux ARM64.
+    macos_x64:
+      status: unknown
+      tested: false
+      notes: Isaac Sim live runtime is not generally macOS-hosted; docs/search MCP support is unverified.
+    macos_arm64:
+      status: unknown
+      tested: false
+      notes: Isaac Sim live runtime is not generally macOS-hosted; docs/search MCP support is unverified.
+  host_software_required:
+  - Docker recommended
+  credentials_required:
+  - NVIDIA API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  validation_result:
+    status: not_tested
+    message: Added from official NVIDIA Omniverse repository; validate docs/search tool calls before live Isaac Sim integration work.
+    environment: null
+    missing_dependencies:
+    - NVIDIA API key
+- id: nvidia-cuda-docs-mcp
+  name: NVIDIA CUDA Docs MCP
+  vendor: NVIDIA
+  description: Official remote NVIDIA Nsight AI MCP server for searching CUDA documentation and code samples from AI coding agents.
+  domains:
+  - hpc
+  - utilities
+  tags:
+  - official
+  - nvidia
+  - cuda
+  - docs
+  - remote-http
+  transport: sse
+  command: https://api.copilot.nsight.ngc.nvidia.com/mcp/cuda-docs
+  source_url: https://developer.nvidia.com/nsight-ai
+  repository_url: null
+  license: NVIDIA service terms
+  auth_model: unknown
+  install_method: remote-http
+  maturity: official
+  capability_summary:
+  - Search CUDA documentation
+  - Retrieve NVIDIA code samples
+  - Support CUDA/HPC development from MCP-compatible coding agents
+  source_records:
+  - url: https://registry.modelcontextprotocol.io/v0.1/servers?search=nvidia&version=latest
+    kind: directory
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official MCP Registry lists com.nvidia.ngc.nsight.copilot.api/cuda-docs with a streamable HTTP endpoint.
+  - url: https://developer.nvidia.com/nsight-ai
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Registry metadata points to NVIDIA Nsight AI as the product site.
+  locality: remote
+  weight: light
+  env_vars: []
+  dependencies:
+    system: []
+    python: []
+    node: []
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: read-only
+  deployment_mode: remote-docs
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required locally
+    docker: 'yes'
+    notes: Remote docs MCP; local image needs only HTTP MCP client support.
+  platform_support:
+    windows_11_x64:
+      status: 'yes'
+      tested: false
+      notes: Remote endpoint is client-platform neutral.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Remote endpoint should work from Wright; probe not yet run.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Remote endpoint should work from GB10 images; probe not yet run.
+    macos_x64:
+      status: 'yes'
+      tested: false
+      notes: Remote endpoint is client-platform neutral.
+    macos_arm64:
+      status: 'yes'
+      tested: false
+      notes: Remote endpoint is client-platform neutral.
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  validation_result:
+    status: not_tested
+    message: Added from official MCP Registry metadata; run tools/list and sample CUDA docs search before enabling.
+    environment: null
+    missing_dependencies: []
+- id: nvidia-elements-mcp
+  name: NVIDIA Elements MCP
+  vendor: NVIDIA
+  description: Official NVIDIA Elements MCP for NVIDIA's UI design system and agent tools used across AI, robotics, and autonomous-vehicle applications.
+  domains:
+  - utilities
+  - robotics
+  tags:
+  - official
+  - nvidia
+  - ui
+  - robotics
+  transport: stdio
+  command:
+  - npx
+  - '@nvidia-elements/cli'
+  - mcp
+  source_url: https://nvidia.github.io/elements/docs/mcp/
+  repository_url: https://github.com/NVIDIA/elements
+  package_url: https://www.npmjs.com/package/@nvidia-elements/cli
+  license: unknown
+  auth_model: none
+  install_method: npm
+  maturity: official
+  capability_summary:
+  - NVIDIA Elements design-system guidance
+  - Agent tools for NVIDIA AI, robotics, and autonomous-vehicle UI workflows
+  - npm stdio MCP command from official registry metadata
+  source_records:
+  - url: https://registry.modelcontextprotocol.io/v0.1/servers?search=nvidia&version=latest
+    kind: directory
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official MCP Registry lists io.github.NVIDIA/elements and npm package @nvidia-elements/cli with mcp argument.
+  - url: https://github.com/NVIDIA/elements
+    kind: repository
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Registry metadata identifies the official source repository and subfolder.
+  - url: docs/mcp-catalog/evidence/gb10-local-mcp-preflight-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: GB10 local host initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
+  - url: docs/mcp-catalog/evidence/gb10-clean-container-mcp-validation-2026-08-12.md
+    kind: evidence
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list.
+  locality: local
+  weight: light
+  env_vars: []
+  dependencies:
+    system:
+    - Node.js
+    python: []
+    node:
+    - '@nvidia-elements/cli'
+  verification_state: verified_docs_mcp
+  installability_tier: might_work
+  risk_level: read-only
+  deployment_mode: local-docs
+  runtime_requirements:
+    cpu: standard CPU
+    gpu: not required
+    docker: 'yes'
+    notes: Local npm stdio docs/design-system MCP; useful for NVIDIA-adjacent app UI work, not a solver.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: npm command should run with Node.js; validation needed.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: npm command should run with Node.js; validation needed.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized @nvidia-elements/cli 2.1.10, listed 18 tools, and called skills_list; gateway validation remains pending.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: npm command should run with Node.js; validation needed.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: npm command should run with Node.js; validation needed.
+  host_software_required:
+  - Node.js
+  credentials_required: []
+  default_enabled: false
+  approval_gates: []
+  validation_result:
+    status: dependency_missing
+    message: Clean Wright ARM64 container installed Node as a selected-server dependency, initialized NVIDIA Elements MCP, listed 18 tools, and called the read-only skills_list tool. Full catalog pass still needs Wright/Hermes gateway evidence.
+    environment: gb10-linux-arm64-clean-container
+    missing_dependencies:
+    - gateway proxy evidence
+    validated_at: '2026-08-12'
+    evidence_status: partial
+- id: nvidia-kit-cae-agent-skills
+  name: NVIDIA Omniverse Kit-CAE Agent Skills
+  vendor: NVIDIA Omniverse
+  description: Omniverse Kit-CAE ships agent skills for programmatic CAE/scientific-data workflows, including importing data, setting visualizations, and capturing renders; this is not currently a standalone MCP server.
+  domains:
+  - cae
+  - cfd
+  - visualization
+  - digital-twin
+  tags:
+  - nvidia
+  - omniverse
+  - cae
+  - agent-skills
+  - no-public-mcp
+  transport: stdio
+  command:
+  - kit-cae-agent-skills
+  source_url: https://github.com/NVIDIA-Omniverse/kit-cae
+  repository_url: https://github.com/NVIDIA-Omniverse/kit-cae
+  license: NVIDIA Omniverse terms plus third-party notices
+  auth_model: unknown
+  install_method: source
+  maturity: reference
+  capability_summary:
+  - OpenUSD schemas and data delegates for CAE and scientific datasets
+  - CGNS, EnSight, VTK, OpenFOAM, and related data access patterns
+  - NVIDIA Warp and RTX/IndeX visualization workflows
+  - Agent skills for programmatic Kit-CAE control, not MCP transport
+  source_records:
+  - url: https://github.com/NVIDIA-Omniverse/kit-cae
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official repository documents CAE/scientific-data workflows and agent skills under skills/.
+  locality: local
+  weight: heavy
+  env_vars: []
+  dependencies:
+    system:
+    - Omniverse Kit SDK
+    - NVIDIA RTX GPU recommended
+    python: []
+    node: []
+  verification_state: ui_or_web_standard
+  installability_tier: blocked
+  risk_level: medium
+  deployment_mode: agent-skill
+  runtime_requirements:
+    cpu: workstation CPU
+    gpu: NVIDIA RTX GPU recommended for Omniverse visualization
+    memory: dataset dependent
+    docker: partial
+    notes: Track as an Omniverse support path; do not treat as MCP until a server wrapper exists.
+  platform_support:
+    windows_11_x64:
+      status: host-dependent
+      tested: false
+      notes: Omniverse Kit workflows require supported workstation setup.
+    linux_x64:
+      status: host-dependent
+      tested: false
+      notes: Omniverse Kit workflows require supported Linux workstation setup.
+    linux_arm64:
+      status: unknown
+      tested: false
+      notes: GB10/Linux ARM64 support for the Kit-CAE workflow must be investigated.
+    macos_x64:
+      status: 'no'
+      tested: false
+      notes: Omniverse Kit/RTX workflow support is not established for macOS.
+    macos_arm64:
+      status: 'no'
+      tested: false
+      notes: Omniverse Kit/RTX workflow support is not established for macOS ARM64.
+  host_software_required:
+  - Omniverse Kit SDK
+  - NVIDIA GPU drivers
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - gpu_access_approval
+  - workspace_write_approval
+  validation_result:
+    status: not_tested
+    message: Added as non-MCP Omniverse CAE agent-skill support path; evaluate whether Wright should wrap these skills or use upstream MCP servers.
+    environment: null
+    missing_dependencies:
+    - Omniverse Kit SDK
+- id: simscale-api-candidate
+  name: SimScale Simulation API Candidate
+  vendor: SimScale
+  description: SimScale exposes cloud CFD, FEA, thermal, electromagnetics, and multiphysics workflows through REST APIs and official SDKs, but no public MCP server was found in the sweep.
+  domains:
+  - cfd
+  - fea
+  - simulation
+  - cloud-cae
+  tags:
+  - api-candidate
+  - cloud-simulation
+  - no-public-mcp
+  transport: stdio
+  command:
+  - simscale-mcp-not-public
+  source_url: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
+  repository_url: https://github.com/SimScaleGmbH/simscale-python-sdk
+  package_url: https://pypi.org/project/simscale-sdk/
+  license: SimScale service terms
+  auth_model: api-key
+  install_method: unknown
+  maturity: watchlist
+  capability_summary:
+  - CAD import, simulation setup, runs, parameter sweeps, and results through API/SDK
+  - Cloud CFD, structural, thermal, electromagnetics, and multiphysics analyses
+  - No verified public MCP server as of the latest sweep
+  source_records:
+  - url: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
+    kind: vendor_docs
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official docs link API documentation and Python/C# SDKs.
+  - url: https://www.simscale.com/technology/simulation-api/
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: SimScale describes API-driven geometry upload, simulation setup, execution, sweeps, and result access.
+  locality: remote
+  weight: medium
+  env_vars:
+  - name: SIMSCALE_API_KEY
+    label: SimScale API key
+    description: API key for a future MCP/API wrapper.
+    required: true
+    secret: true
+  dependencies:
+    system: []
+    python:
+    - simscale-sdk
+    node: []
+  verification_state: verified_api_wrapper_candidate
+  installability_tier: blocked
+  risk_level: high
+  deployment_mode: cloud-saas-wrapper-candidate
+  runtime_requirements:
+    cpu: standard CPU locally
+    gpu: not required locally
+    docker: 'yes'
+    notes: API wrapper should be container-friendly, but no public MCP server is verified.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: REST/SDK integration should be platform-neutral once wrapped.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: REST/SDK integration should be platform-neutral once wrapped.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: REST/SDK integration should be platform-neutral once wrapped; Python SDK support should be checked on GB10.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: REST/SDK integration should be platform-neutral once wrapped.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: REST/SDK integration should be platform-neutral once wrapped.
+  host_software_required: []
+  credentials_required:
+  - SimScale API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  - cloud_job_submission_approval
+  validation_result:
+    status: blocked
+    message: No public SimScale MCP server was found; keep as a high-priority API wrapper candidate.
+    environment: null
+    missing_dependencies:
+    - public MCP server
+- id: flexcompute-flow360-api-candidate
+  name: Flexcompute Flow360 API Candidate
+  vendor: Flexcompute
+  description: Flow360 is a GPU-native cloud CFD platform with Python API and web UI for case setup, meshing, solve, post-processing, and design exploration, but no public MCP server was found in the sweep.
+  domains:
+  - cfd
+  - cloud-cae
+  - hpc
+  tags:
+  - api-candidate
+  - flow360
+  - gpu-cfd
+  - no-public-mcp
+  transport: stdio
+  command:
+  - flow360-mcp-not-public
+  source_url: https://www.flexcompute.com/flow360/
+  repository_url: https://github.com/flexcompute/Flow360
+  package_url: https://pypi.org/project/flow360/
+  license: Flexcompute service terms
+  auth_model: api-key
+  install_method: unknown
+  maturity: watchlist
+  capability_summary:
+  - GPU-native cloud CFD setup, meshing, solving, and post-processing
+  - Python API for parameter sweeps, batch execution, and automation
+  - No verified public MCP server as of the latest sweep
+  source_records:
+  - url: https://github.com/flexcompute/Flow360
+    kind: repository
+    primary: true
+    observed_at: '2026-08-12'
+    notes: Official Python client repository documents pip install and FLOW360_APIKEY configuration.
+  - url: https://www.flexcompute.com/flow360/
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: Product page describes cloud-native GPU CFD, browser UI, and Python API.
+  - url: https://docs.flexcompute.com/projects/flow360/en/release-25.7/python/api/
+    kind: vendor_docs
+    primary: false
+    observed_at: '2026-08-12'
+    notes: API reference covers setup, entities, meshing, materials, solver configuration, outputs, and reports.
+  locality: remote
+  weight: medium
+  env_vars:
+  - name: FLOW360_APIKEY
+    label: Flow360 API key
+    description: API key for the Flow360 Python API and any future MCP wrapper.
+    required: true
+    secret: true
+  dependencies:
+    system: []
+    python:
+    - flow360
+    node: []
+  verification_state: verified_api_wrapper_candidate
+  installability_tier: blocked
+  risk_level: high
+  deployment_mode: cloud-saas-wrapper-candidate
+  runtime_requirements:
+    cpu: standard CPU locally
+    gpu: not required locally; cloud solver uses Flexcompute GPU infrastructure
+    docker: 'yes'
+    notes: API wrapper should be container-friendly, but no public MCP server is verified.
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Python API supports common desktop platforms; MCP wrapper not yet available.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Python API should run in Linux containers; MCP wrapper not yet available.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Python API has no obvious native-heavy local solver dependency; GB10 package install should be checked.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Python API should run locally; MCP wrapper not yet available.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Python API should run locally; MCP wrapper not yet available.
+  host_software_required: []
+  credentials_required:
+  - Flow360 API key
+  default_enabled: false
+  approval_gates:
+  - network_access_approval
+  - cloud_job_submission_approval
+  validation_result:
+    status: blocked
+    message: No public Flow360 MCP server was found; keep as a high-priority API wrapper candidate.
+    environment: null
+    missing_dependencies:
+    - public MCP server
 format_version: 1

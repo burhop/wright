@@ -14,3 +14,10 @@ src/wright_engineering/static/web/** -text -whitespace
 # The pinned Rivet 2 bundle is verified byte-for-byte. Monaco language data uses
 # significant trailing spaces inside generated JavaScript template literals.
 integrations/rivet/editor/dist/** -text -whitespace
+
+# Rivet patches and Wright's editor wrapper are also covered by the pinned
+# manifest. Force their canonical LF bytes on every platform so a Windows
+# checkout and the packaged wheel verify against the same recorded digests.
+integrations/rivet/editor/patches/** text eol=lf
+integrations/rivet/editor/wrapper/** text eol=lf
+integrations/rivet/runner/src/** text eol=lf

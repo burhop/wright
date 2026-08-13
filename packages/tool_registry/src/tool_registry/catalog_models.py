@@ -64,6 +64,31 @@ class DependencySpec(BaseModel):
     node: list[str] = Field(default_factory=list)
 
 
+class CatalogSourceRecord(BaseModel):
+    url: str
+    kind: Literal[
+        "repository",
+        "vendor_docs",
+        "package",
+        "container",
+        "release",
+        "directory",
+        "evidence",
+        "other",
+    ] = "repository"
+    primary: bool = True
+    observed_at: Optional[str] = None
+    notes: str = ""
+
+
+class RuntimeRequirements(BaseModel):
+    cpu: str = "standard CPU"
+    gpu: str = "not required"
+    memory: Optional[str] = None
+    docker: Literal["yes", "partial", "no", "unknown"] = "unknown"
+    notes: str = ""
+
+
 class PlatformSupportRecord(BaseModel):
     status: PlatformStatus = "unknown"
     tested: bool = False
@@ -139,6 +164,44 @@ class CatalogEntry(BaseModel):
     transport: Literal["stdio", "sse", "webmcp"]
     command: Union[list[str], str]
     source_url: Optional[str] = None
+    repository_url: Optional[str] = None
+    package_url: Optional[str] = None
+    container_url: Optional[str] = None
+    license: Optional[str] = None
+    auth_model: Literal[
+        "none",
+        "api-key",
+        "oauth",
+        "desktop-session",
+        "license-server",
+        "local-host",
+        "unknown",
+    ] = "unknown"
+    install_method: Literal[
+        "packaged-binary",
+        "uvx",
+        "pip",
+        "npm",
+        "source",
+        "docker",
+        "remote-http",
+        "desktop-extension",
+        "manual",
+        "unknown",
+    ] = "unknown"
+    maturity: Literal[
+        "official",
+        "reference",
+        "community",
+        "experimental",
+        "watchlist",
+        "deprecated",
+    ] = "community"
+    capability_summary: list[str] = Field(default_factory=list)
+    source_records: list[CatalogSourceRecord] = Field(default_factory=list)
+    runtime_requirements: RuntimeRequirements = Field(
+        default_factory=RuntimeRequirements
+    )
     image_url: Optional[str] = None
     locality: Literal["local", "remote"]
     weight: Literal["light", "medium", "heavy"]

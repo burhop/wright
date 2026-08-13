@@ -1,0 +1,77 @@
+name: MCP catalog validation
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - .github/workflows/mcp-catalog.yml
+      - docker/mcp-bundle*.yaml
+      - docker/mcp-bundle.schema.json
+      - docker/mcp/verify-bundle.py
+      - docs/mcp-catalog/**
+      - packages/tool_registry/src/tool_registry/catalog/**
+      - packages/tool_registry/src/tool_registry/canonical_catalog.py
+      - packages/tool_registry/src/tool_registry/catalog_bundle.py
+      - packages/tool_registry/src/tool_registry/catalog_models.py
+      - packages/tool_registry/src/tool_registry/catalog_platforms.py
+      - packages/tool_registry/tests/test_catalog_*.py
+      - tests/docker/test_mcp_bundle.py
+      - pyproject.toml
+      - uv.lock
+  push:
+    branches: [main, dev]
+    paths:
+      - .github/workflows/mcp-catalog.yml
+      - docker/mcp-bundle*.yaml
+      - docker/mcp-bundle.schema.json
+      - docker/mcp/verify-bundle.py
+      - docs/mcp-catalog/**
+      - packages/tool_registry/src/tool_registry/catalog/**
+      - packages/tool_registry/src/tool_registry/canonical_catalog.py
+      - packages/tool_registry/src/tool_registry/catalog_bundle.py
+      - packages/tool_registry/src/tool_registry/catalog_models.py
+      - packages/tool_registry/src/tool_registry/catalog_platforms.py
+      - packages/tool_registry/tests/test_catalog_*.py
+      - tests/docker/test_mcp_bundle.py
+      - pyproject.toml
+      - uv.lock
+  schedule:
+    - cron: "17 10 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          enable-cache: true
+          version: "0.9.26"
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --all-packages --all-groups
+
+      - name: Validate catalog and platform bundles
+        run: |
+          uv run pytest \
+            packages/tool_registry/tests/test_catalog_resource.py \
+            packages/tool_registry/tests/test_engineering_catalog.py \
+            packages/tool_registry/tests/test_catalog_platforms.py \
+            packages/tool_registry/tests/test_catalog_distribution.py \
+            tests/docker/test_mcp_bundle.py
+          uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.yaml
+          uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.linux-arm64.yaml
+          uv run python docker/mcp/verify-bundle.py docker/mcp-bundle.windows-amd64.yaml

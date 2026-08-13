@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from tool_registry.canonical_catalog import load_catalog_document
 from tool_registry.gateway_models import (
     GatewayError,
     GatewayResource,
@@ -23,9 +24,8 @@ def test_catalog_and_workspace_resources_are_bound_and_readable() -> None:
         "wright://catalog/engineering",
         "wright://workspace/w1",
     ]
-    assert (
-        len(json.loads(provider.read(session(), resources[0].uri).content)["servers"])
-        == 42
+    assert json.loads(provider.read(session(), resources[0].uri).content) == (
+        load_catalog_document()
     )
     assert json.loads(provider.read(session(), resources[1].uri).content) == {
         "session_id": "s1",

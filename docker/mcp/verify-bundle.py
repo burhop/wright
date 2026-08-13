@@ -46,6 +46,12 @@ class BundleValidationError(ValueError):
     """Raised when an MCP bundle cannot be safely redistributed."""
 
 
+def _ensure_local_tool_registry_import_path() -> None:
+    repository_root = Path(__file__).resolve().parents[2]
+    for package_src in sorted((repository_root / "packages").glob("*/src")):
+        sys.path.insert(0, str(package_src))
+
+
 def _load_yaml(path: Path) -> dict[str, Any]:
     try:
         payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -80,7 +86,11 @@ def _is_exact_git_ref(ref: str) -> bool:
     lowered = ref.lower()
     if lowered in FLOATING_GIT_REFS or lowered.startswith(("refs/heads/", "origin/")):
         return False
-    return bool(SHA_RE.fullmatch(ref) or lowered.startswith("refs/tags/") or lowered.startswith("v"))
+    return bool(
+        SHA_RE.fullmatch(ref)
+        or lowered.startswith("refs/tags/")
+        or lowered.startswith("v")
+    )
 
 
 def _is_exact_package_version(version: str) -> bool:
@@ -95,13 +105,19 @@ def _validate_source(item_id: str, source: dict[str, Any], field: str) -> None:
         ref = _require_text(source, "ref", f"{item_id}.{field}")
         _require_text(source, "url", f"{item_id}.{field}")
         if not _is_exact_git_ref(ref):
-            raise BundleValidationError(f"{item_id}.{field} uses floating git ref: {ref}")
+            raise BundleValidationError(
+                f"{item_id}.{field} uses floating git ref: {ref}"
+            )
     elif source_type == "configured_git":
         _require_text(source, "url_env", f"{item_id}.{field}")
         _require_text(source, "ref_env", f"{item_id}.{field}")
         _require_text(source, "source_reference", f"{item_id}.{field}")
         default_ref = source.get("default_ref")
-        if isinstance(default_ref, str) and default_ref.strip() and not _is_exact_git_ref(default_ref.strip()):
+        if (
+            isinstance(default_ref, str)
+            and default_ref.strip()
+            and not _is_exact_git_ref(default_ref.strip())
+        ):
             raise BundleValidationError(
                 f"{item_id}.{field} uses floating default git ref: {default_ref}"
             )
@@ -119,7 +135,9 @@ def _validate_source(item_id: str, source: dict[str, Any], field: str) -> None:
     elif source_type in {"external", "unresolved"}:
         return
     else:
-        raise BundleValidationError(f"{item_id}.{field} has unsupported source type: {source_type}")
+        raise BundleValidationError(
+            f"{item_id}.{field} has unsupported source type: {source_type}"
+        )
 
 
 def _license(source: dict[str, Any]) -> str | None:
@@ -144,12 +162,18 @@ def _validate_copyleft_runtime(
     profile_id: str,
     allowed_licenses: set[str],
 ) -> dict[str, Any]:
-    licenses = {license_name for source in sources if (license_name := _license(source))}
+    licenses = {
+        license_name for source in sources if (license_name := _license(source))
+    }
     if not licenses.intersection(allowed_licenses):
         allowed = ", ".join(sorted(allowed_licenses))
-        raise BundleValidationError(f"{item_id} {profile_id} requires one of: {allowed}")
+        raise BundleValidationError(
+            f"{item_id} {profile_id} requires one of: {allowed}"
+        )
     if profile.get("runtime_use_only") is not True:
-        raise BundleValidationError(f"{item_id}.compliance_profile.runtime_use_only must be true")
+        raise BundleValidationError(
+            f"{item_id}.compliance_profile.runtime_use_only must be true"
+        )
     if profile.get("modification_status") != "unmodified":
         raise BundleValidationError(
             f"{item_id}.compliance_profile.modification_status must be unmodified"
@@ -174,7 +198,9 @@ def _validate_internal_reviewed(
     item_id: str, profile: dict[str, Any], sources: list[dict[str, Any]]
 ) -> dict[str, Any]:
     if not any(source.get("type") == "configured_git" for source in sources):
-        raise BundleValidationError(f"{item_id} internal-reviewed-source requires configured_git")
+        raise BundleValidationError(
+            f"{item_id} internal-reviewed-source requires configured_git"
+        )
     for field in ("source_access", "redistribution_scope"):
         _require_text(profile, field, f"{item_id}.compliance_profile")
     return {
@@ -194,22 +220,32 @@ def _validate_compliance(
 ) -> dict[str, Any]:
     profile_id = _require_text(profile, "id", f"{item_id}.compliance_profile")
     if profile_id not in SUPPORTED_PROFILES:
-        raise BundleValidationError(f"{item_id} has unsupported compliance profile: {profile_id}")
+        raise BundleValidationError(
+            f"{item_id} has unsupported compliance profile: {profile_id}"
+        )
     if not local_enabled:
         if profile_id == "blocked":
             return {"profile_id": "blocked"}
         if profile_id == "remote-only":
             return {"profile_id": "remote-only"}
-        raise BundleValidationError(f"{item_id} non-local entries cannot use profile {profile_id}")
+        raise BundleValidationError(
+            f"{item_id} non-local entries cannot use profile {profile_id}"
+        )
     if profile_id == "permissive":
         return _validate_permissive(item_id, sources)
     if profile_id == "gpl-2.0-runtime-redistribution":
-        return _validate_copyleft_runtime(item_id, profile, sources, profile_id, GPL_2_LICENSES)
+        return _validate_copyleft_runtime(
+            item_id, profile, sources, profile_id, GPL_2_LICENSES
+        )
     if profile_id == "lgpl-runtime-redistribution":
-        return _validate_copyleft_runtime(item_id, profile, sources, profile_id, LGPL_LICENSES)
+        return _validate_copyleft_runtime(
+            item_id, profile, sources, profile_id, LGPL_LICENSES
+        )
     if profile_id == "internal-reviewed-source":
         return _validate_internal_reviewed(item_id, profile, sources)
-    raise BundleValidationError(f"{item_id} local_enabled cannot use profile {profile_id}")
+    raise BundleValidationError(
+        f"{item_id} local_enabled cannot use profile {profile_id}"
+    )
 
 
 def _availability_status(item_id: str, item: dict[str, Any]) -> tuple[str, bool]:
@@ -236,11 +272,17 @@ def _validate_application(item: dict[str, Any]) -> dict[str, Any]:
     status, local_enabled = _availability_status(app_id, item)
     source = _require_mapping(item.get("source"), f"{app_id}.source")
     _validate_source(app_id, source, "source")
-    profile = _require_mapping(item.get("compliance_profile"), f"{app_id}.compliance_profile")
-    compliance = _validate_compliance(app_id, profile, [source], local_enabled=local_enabled)
+    profile = _require_mapping(
+        item.get("compliance_profile"), f"{app_id}.compliance_profile"
+    )
+    compliance = _validate_compliance(
+        app_id, profile, [source], local_enabled=local_enabled
+    )
     _validate_install(app_id, item, local_enabled)
     if local_enabled and "health_probe" not in item:
-        raise BundleValidationError(f"{app_id}.health_probe is required for local_enabled")
+        raise BundleValidationError(
+            f"{app_id}.health_probe is required for local_enabled"
+        )
     return {
         "id": app_id,
         "display_name": item.get("display_name", app_id),
@@ -256,19 +298,31 @@ def _validate_server(item: dict[str, Any], application_ids: set[str]) -> dict[st
     application_id = item.get("application_id")
     if application_id is not None:
         if not isinstance(application_id, str) or not application_id.strip():
-            raise BundleValidationError(f"{server_id}.application_id must be null or a non-empty string")
+            raise BundleValidationError(
+                f"{server_id}.application_id must be null or a non-empty string"
+            )
         if application_id not in application_ids:
-            raise BundleValidationError(f"{server_id}.application_id references unknown application: {application_id}")
+            raise BundleValidationError(
+                f"{server_id}.application_id references unknown application: {application_id}"
+            )
     source = _require_mapping(item.get("mcp_source"), f"{server_id}.mcp_source")
     _validate_source(server_id, source, "mcp_source")
-    profile = _require_mapping(item.get("compliance_profile"), f"{server_id}.compliance_profile")
-    compliance = _validate_compliance(server_id, profile, [source], local_enabled=local_enabled)
+    profile = _require_mapping(
+        item.get("compliance_profile"), f"{server_id}.compliance_profile"
+    )
+    compliance = _validate_compliance(
+        server_id, profile, [source], local_enabled=local_enabled
+    )
     _validate_install(server_id, item, local_enabled)
     if local_enabled:
         if "launch" not in item:
-            raise BundleValidationError(f"{server_id}.launch is required for local_enabled")
+            raise BundleValidationError(
+                f"{server_id}.launch is required for local_enabled"
+            )
         if "health_probe" not in item:
-            raise BundleValidationError(f"{server_id}.health_probe is required for local_enabled")
+            raise BundleValidationError(
+                f"{server_id}.health_probe is required for local_enabled"
+            )
     return {
         "id": server_id,
         "display_name": item.get("display_name", server_id),
@@ -304,7 +358,28 @@ def validate_bundle(bundle: dict[str, Any]) -> dict[str, Any]:
     _ensure_unique(server_items, "mcp_server")
     validated_apps = [_validate_application(item) for item in app_items]
     application_ids = {item["id"] for item in validated_apps}
-    validated_servers = [_validate_server(item, application_ids) for item in server_items]
+    validated_servers = [
+        _validate_server(item, application_ids) for item in server_items
+    ]
+    if bundle.get("target_platform"):
+        try:
+            from tool_registry.catalog_bundle import (
+                validate_bundle_catalog_compatibility,
+            )
+        except ImportError as exc:
+            _ensure_local_tool_registry_import_path()
+            try:
+                from tool_registry.catalog_bundle import (
+                    validate_bundle_catalog_compatibility,
+                )
+            except ImportError:
+                raise BundleValidationError(
+                    "target_platform requires the Wright tool_registry package"
+                ) from exc
+        try:
+            validate_bundle_catalog_compatibility(bundle)
+        except ValueError as exc:
+            raise BundleValidationError(str(exc)) from exc
     return {
         "ok": True,
         "bundle_id": bundle_id,
@@ -318,7 +393,9 @@ def validate_bundle_file(path: str | Path) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a Wright MCP bundle manifest")
+    parser = argparse.ArgumentParser(
+        description="Validate a Wright MCP bundle manifest"
+    )
     parser.add_argument("bundle", type=Path)
     parser.add_argument("--json-output", type=Path)
     args = parser.parse_args(argv)

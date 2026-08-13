@@ -27,6 +27,56 @@
       "title": "DependencySpec",
       "type": "object"
     },
+    "CatalogSourceRecord": {
+      "properties": {
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "kind": {
+          "default": "repository",
+          "enum": [
+            "repository",
+            "vendor_docs",
+            "package",
+            "container",
+            "release",
+            "directory",
+            "evidence",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "primary": {
+          "default": true,
+          "title": "Primary",
+          "type": "boolean"
+        },
+        "observed_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed At"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CatalogSourceRecord",
+      "type": "object"
+    },
     "EnvVarDefinition": {
       "description": "Metadata about an environment variable an MCP server needs.",
       "properties": {
@@ -87,6 +137,50 @@
         }
       },
       "title": "PlatformSupportRecord",
+      "type": "object"
+    },
+    "RuntimeRequirements": {
+      "properties": {
+        "cpu": {
+          "default": "standard CPU",
+          "title": "Cpu",
+          "type": "string"
+        },
+        "gpu": {
+          "default": "not required",
+          "title": "Gpu",
+          "type": "string"
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory"
+        },
+        "docker": {
+          "default": "unknown",
+          "enum": [
+            "yes",
+            "partial",
+            "no",
+            "unknown"
+          ],
+          "title": "Docker",
+          "type": "string"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "title": "RuntimeRequirements",
       "type": "object"
     },
     "ValidationSummary": {
@@ -220,6 +314,115 @@
       ],
       "default": null,
       "title": "Source Url"
+    },
+    "repository_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Url"
+    },
+    "package_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Package Url"
+    },
+    "container_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Container Url"
+    },
+    "license": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "License"
+    },
+    "auth_model": {
+      "default": "unknown",
+      "enum": [
+        "none",
+        "api-key",
+        "oauth",
+        "desktop-session",
+        "license-server",
+        "local-host",
+        "unknown"
+      ],
+      "title": "Auth Model",
+      "type": "string"
+    },
+    "install_method": {
+      "default": "unknown",
+      "enum": [
+        "packaged-binary",
+        "uvx",
+        "pip",
+        "npm",
+        "source",
+        "docker",
+        "remote-http",
+        "desktop-extension",
+        "manual",
+        "unknown"
+      ],
+      "title": "Install Method",
+      "type": "string"
+    },
+    "maturity": {
+      "default": "community",
+      "enum": [
+        "official",
+        "reference",
+        "community",
+        "experimental",
+        "watchlist",
+        "deprecated"
+      ],
+      "title": "Maturity",
+      "type": "string"
+    },
+    "capability_summary": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Capability Summary",
+      "type": "array"
+    },
+    "source_records": {
+      "items": {
+        "$ref": "#/$defs/CatalogSourceRecord"
+      },
+      "title": "Source Records",
+      "type": "array"
+    },
+    "runtime_requirements": {
+      "$ref": "#/$defs/RuntimeRequirements"
     },
     "image_url": {
       "anyOf": [

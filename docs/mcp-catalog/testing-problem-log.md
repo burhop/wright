@@ -1643,3 +1643,123 @@ Result:
   `/api/gateway/tools` listed 108 tools: 22 Blender, 15 OpenSCAD, 69 Jarvis
   OnShape, and 2 Autodesk Product Help. Hermes logged a `tools/list_changed`
   refresh followed by `dynamically refreshed 108 tool(s)`.
+
+## 2026-08-12
+
+Problem:
+  NVIDIA Omniverse Kit/USD MCP setup on GB10 needed Git LFS before wheel build.
+  The initial clone of `NVIDIA-Omniverse/kit-usd-agents` contained LFS pointer
+  stubs for required FAISS/search data, and a full `git lfs pull` stalled after
+  downloading most objects.
+
+Solution:
+  Installed `git-lfs`, fetched only the USD Code MCP LFS subtree, and checked
+  out the missing USD Code RAG objects before running NVIDIA's build script.
+
+Result:
+  GB10 local host build preflight passed at commit
+  `c7ac8c6931b40bc48de84e8d808ed89d51d924da`. `./build-wheels.sh usd` produced
+  `usd_code_aiq-0.3.0-py3-none-any.whl` at 398798247 bytes and
+  `usd_code_mcp-1.0.0-py3-none-any.whl` at 10138 bytes. Full Docker/MCP startup
+  validation remains blocked on `NVIDIA_API_KEY` and clean-container execution.
+
+Problem:
+  `nvidia-elements-mcp` needed a GB10 local startup classification before bundle
+  decisions.
+
+Solution:
+  Installed and ran `@nvidia-elements/cli@2.1.10` through Wright's stdio runner,
+  then called a read-only tool.
+
+Result:
+  `npx -y @nvidia-elements/cli@2.1.10 mcp` initialized on GB10, `tools/list`
+  returned 18 tools, and `skills_list` returned design-system skill metadata.
+  Clean-container and gateway validation remain pending.
+
+Problem:
+  `nvidia-elements-mcp` still needed clean Wright ARM64 container validation
+  after the local host preflight.
+
+Solution:
+  Started a disposable `wright:standard-linux-arm64` container, installed
+  Node.js/npm as selected-server dependencies only inside that container, then
+  ran `npx -y @nvidia-elements/cli@2.1.10 mcp` with newline-delimited MCP
+  probes.
+
+Result:
+  Clean Wright ARM64 validation installed Node 20.19.2 and npm 9.2.0 inside the
+  disposable container. The MCP initialized as `io.github.NVIDIA/elements`
+  version `2.1.10`, listed 18 tools, and `skills_list` returned Elements
+  design-system skill metadata. Wright/Hermes gateway validation remains
+  pending.
+
+Problem:
+  `ansys-fluent-mcp` needed to distinguish package/platform viability from live
+  Ansys Fluent solver availability.
+
+Solution:
+  Installed the official package with `uvx --from ansys-fluent-mcp
+  ansys-fluent-mcp`, then ran protocol probes and the read-only
+  `session_status` tool without a Fluent session.
+
+Result:
+  GB10 local host initialized the MCP, listed 25 tools, and `session_status`
+  returned `connected:false`, `backend_kind:"pyfluent"`, and no MCP error. Live
+  solve validation remains dependent on licensed local or remote Fluent.
+
+Problem:
+  `ansys-fluent-mcp` still needed clean Wright ARM64 container validation after
+  the local host preflight.
+
+Solution:
+  Started a disposable `wright:standard-linux-arm64` container and ran
+  `uv tool run --from ansys-fluent-mcp ansys-fluent-mcp` with newline-delimited
+  MCP probes.
+
+Result:
+  Clean Wright ARM64 validation initialized `ansys-fluent-mcp` version `3.4.7`,
+  listed 25 tools, and `session_status` returned `connected:false`,
+  `backend_kind:"pyfluent"`, and no MCP error. Wright/Hermes gateway validation
+  and licensed Fluent live-session validation remain pending.
+
+Problem:
+  `ansys-mcp-server-community` failed before MCP startup on GB10.
+
+Solution:
+  Retried the package help command with Python 3.13 and Python 3.12 to separate
+  interpreter-version issues from upstream dependency/API issues.
+
+Result:
+  Both attempts failed with `ImportError: cannot import name
+  'InitializationCapabilities' from 'mcp.server.models'`. Created follow-up
+  `docs/mcp-catalog/followups/ansys-mcp-server-community.md`.
+
+Problem:
+  `comsol-multiphysics-mcp-suzysa` passed non-entrypoint tests but failed actual
+  MCP startup against the latest Python MCP SDK.
+
+Solution:
+  Ran upstream tests from the cloned project directory, then launched
+  `python -m comsol_agent_mcp.server` through Wright's stdio runner.
+
+Result:
+  GB10 local host tests passed 76 tests, but MCP startup failed before
+  initialization with `ModuleNotFoundError: No module named
+  'mcp.server.fastmcp'`. Created follow-up
+  `docs/mcp-catalog/followups/comsol-multiphysics-mcp-suzysa.md`.
+
+Problem:
+  `comsol-multiphysics-mcp-wjc9011` attempted install pulled a very large
+  `sentence-transformers`/PyTorch/CUDA stack and the repository includes many
+  COMSOL PDFs, `.mph` models, lock files, logs, and generated artifacts.
+
+Solution:
+  Stopped the local install/test probe before completing heavyweight downloads
+  and classified the entry as requiring a slim install path plus license/content
+  review before any image inclusion.
+
+Result:
+  Created follow-up
+  `docs/mcp-catalog/followups/comsol-multiphysics-mcp-wjc9011.md`. Keep this
+  source-only and blocked from Wright bundle inclusion until a reviewed slim
+  path exists.

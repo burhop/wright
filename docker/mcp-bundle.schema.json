@@ -8,6 +8,15 @@
     "schema_version": {"type": "integer", "const": 1},
     "bundle_id": {"type": "string", "minLength": 1},
     "base_image": {"type": "string"},
+    "target_platform": {"type": "string", "minLength": 1},
+    "catalog_policy": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "mode": {"type": "string", "enum": ["strict", "candidate", "host"]},
+        "require_docker": {"type": "boolean"}
+      }
+    },
     "default_license_policy": {"type": "object"},
     "generated_outputs": {"type": "object"},
     "applications": {
@@ -55,6 +64,7 @@
         ],
         "properties": {
           "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
+          "catalog_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"},
           "display_name": {"type": "string", "minLength": 1},
           "application_id": {
             "anyOf": [{"type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]*$"}, {"type": "null"}]

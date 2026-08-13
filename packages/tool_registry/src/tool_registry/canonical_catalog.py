@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from importlib.resources import files
 from typing import Any
+from urllib.request import urlopen
 
 import yaml
 from jsonschema import Draft202012Validator
@@ -47,18 +48,20 @@ class CatalogValidationError(RuntimeError):
     pass
 
 
-def load_catalog_document() -> dict[str, Any]:
-    catalog_text = files(CATALOG_PACKAGE).joinpath(CATALOG_RESOURCE).read_text("utf-8")
-    document = yaml.safe_load(catalog_text)
+def _schema() -> dict[str, Any]:
+    return json.loads(
+        files(CATALOG_PACKAGE).joinpath(SCHEMA_RESOURCE).read_text("utf-8")
+    )
+
+
+def _validate_catalog_document(document: Any) -> dict[str, Any]:
     if not isinstance(document, dict) or document.get("format_version") != 1:
         raise CatalogValidationError("Canonical catalog format_version must be 1")
     raw_servers = document.get("servers")
     if not isinstance(raw_servers, list):
         raise CatalogValidationError("Canonical catalog servers must be a list")
-    schema = json.loads(
-        files(CATALOG_PACKAGE).joinpath(SCHEMA_RESOURCE).read_text("utf-8")
-    )
-    validator = Draft202012Validator(schema)
+
+    validator = Draft202012Validator(_schema())
     entries: list[CatalogEntry] = []
     errors: list[str] = []
     for index, raw in enumerate(raw_servers):
@@ -83,10 +86,38 @@ def load_catalog_document() -> dict[str, Any]:
     }
 
 
+def load_catalog_document() -> dict[str, Any]:
+    catalog_text = files(CATALOG_PACKAGE).joinpath(CATALOG_RESOURCE).read_text("utf-8")
+    return load_catalog_document_from_text(catalog_text)
+
+
+def load_catalog_document_from_text(catalog_text: str) -> dict[str, Any]:
+    return _validate_catalog_document(yaml.safe_load(catalog_text))
+
+
+def load_catalog_document_from_url(
+    url: str, *, timeout_seconds: float = 10.0
+) -> dict[str, Any]:
+    with urlopen(url, timeout=timeout_seconds) as response:
+        raw = response.read()
+    return load_catalog_document_from_text(raw.decode("utf-8"))
+
+
 def load_canonical_entries() -> list[CatalogEntry]:
     return [
         CatalogEntry.model_validate(entry)
         for entry in load_catalog_document()["servers"]
+    ]
+
+
+def load_canonical_entries_from_url(
+    url: str, *, timeout_seconds: float = 10.0
+) -> list[CatalogEntry]:
+    return [
+        CatalogEntry.model_validate(entry)
+        for entry in load_catalog_document_from_url(
+            url, timeout_seconds=timeout_seconds
+        )["servers"]
     ]
 
 
