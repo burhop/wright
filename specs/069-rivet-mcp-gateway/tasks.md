@@ -193,16 +193,16 @@
 
 **Purpose**: Close performance, security, accessibility, compatibility, packaging, documentation, and authoritative integration gates.
 
-- [ ] T078 [P] Add deterministic 500-tool discovery, authority issuance, bridge overhead, progress projection, and cancellation latency measurements for NFR-002/NFR-003 in `packages/workspace_service/tests/test_rivet_mcp_performance.py`
-- [ ] T079 [P] Add cross-surface token/credential/header/environment/raw-child-path/arbitrary-URI/secret-like scans for workflow files, SQLite, structured logs, traces, events, API responses, runner output, and UI text in `tests/security/test_rivet_mcp_secret_boundary.py`
-- [ ] T080 [P] Add hostile local-client, token replay, origin/path/method/content-type, oversized payload, malformed stream, and concurrent revocation tests in `apps/api/tests/test_rivet_runner_bridge_security.py`
-- [ ] T081 [P] Add regression coverage for non-MCP workflows, agent-manager/chat gateway clients, BREP panel ownership, and schema-13 fixture upgrade in `tests/e2e/test_rivet_mcp_compatibility.py`
-- [ ] T082 [P] Add standalone wheel/sdist assertions for protocol-v2 runner artifacts, JSON contracts, and migration/repository modules in `tests/packaging/test_rivet_mcp_distribution.py`
-- [ ] T083 Complete the local FastAPI plus pinned Node runner plus two-real-stdio-fixture MCP system smoke in `tests/e2e/test_rivet_mcp_gateway.py`
-- [ ] T084 Complete wide/narrow keyboard-only binding, review, exact approval, execution, cancellation, residue, recovery, and serious/critical accessibility Playwright acceptance in `tests/ui-integration/rivet-mcp-gateway.spec.ts`
-- [ ] T085 Update operator, security-boundary, troubleshooting, optional-live, rollback, and no-direct-child documentation in `docs/rivet/mcp-gateway.md`, `docs/rivet/testing.md`, and `mkdocs.yml`
-- [ ] T086 Run all quickstart sections and record deterministic versus optional-live results and the deferred five-engineer study honestly in `specs/069-rivet-mcp-gateway/quickstart.md` and `docs/engineering-capability-program-progress.md`
-- [ ] T087 Run focused Python, Node, web, Playwright, packaging, docs, bundle-verifier, formatting, type, lint, security, performance, and `git diff --check` suites; remediate every in-scope failure in the owning files
+- [x] T078 [P] Add deterministic 500-tool discovery, authority issuance, bridge overhead, progress projection, and cancellation latency measurements for NFR-002/NFR-003 in `packages/workspace_service/tests/test_rivet_mcp_performance.py`
+- [x] T079 [P] Add cross-surface token/credential/header/environment/raw-child-path/arbitrary-URI/secret-like scans for workflow files, SQLite, structured logs, traces, events, API responses, runner output, and UI text in `tests/security/test_rivet_mcp_secret_boundary.py`
+- [x] T080 [P] Add hostile local-client, token replay, origin/path/method/content-type, oversized payload, malformed stream, and concurrent revocation tests in `apps/api/tests/test_rivet_runner_bridge_security.py`
+- [x] T081 [P] Add regression coverage for non-MCP workflows, agent-manager/chat gateway clients, BREP panel ownership, and schema-13 fixture upgrade in `tests/e2e/test_rivet_mcp_compatibility.py`
+- [x] T082 [P] Add standalone wheel/sdist assertions for protocol-v2 runner artifacts, JSON contracts, and migration/repository modules in `tests/packaging/test_rivet_mcp_distribution.py`
+- [x] T083 Complete the local FastAPI plus pinned Node runner plus two-real-stdio-fixture MCP system smoke in `tests/e2e/test_rivet_mcp_gateway.py`
+- [x] T084 Complete wide/narrow keyboard-only binding, review, exact approval, execution, cancellation, residue, recovery, and serious/critical accessibility Playwright acceptance in `tests/ui-integration/rivet-mcp-gateway.spec.ts`
+- [x] T085 Update operator, security-boundary, troubleshooting, optional-live, rollback, and no-direct-child documentation in `docs/rivet/mcp-gateway.md`, `docs/rivet/testing.md`, and `mkdocs.yml`
+- [x] T086 Run all quickstart sections and record deterministic versus optional-live results and the deferred five-engineer study honestly in `specs/069-rivet-mcp-gateway/quickstart.md` and `docs/engineering-capability-program-progress.md`
+- [x] T087 Run focused Python, Node, web, Playwright, packaging, docs, bundle-verifier, formatting, type, lint, security, performance, and `git diff --check` suites; remediate every in-scope failure in the owning files
 - [ ] T088 Fetch latest `origin/dev`, integrate it without losing catalog-aware bundle validation, and run `scripts/check-dev-merge.sh` on the exact final feature tree; record any host-limited gate exactly in `docs/engineering-capability-program-progress.md`
 - [ ] T089 Re-run the authoritative exact-tree gate after final documentation changes, push `069-rivet-mcp-gateway`, merge `--no-ff` to `dev`, push `dev`, and verify local/remote commit and feature/merged tree synchronization in `docs/engineering-capability-program-progress.md`
 

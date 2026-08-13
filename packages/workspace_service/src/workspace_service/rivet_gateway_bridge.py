@@ -19,7 +19,7 @@ from tool_registry.gateway_models import GatewayToolResult
 
 from .rivet_authority import RivetRunAuthorityService
 from .rivet_approvals import RivetApprovalError, RivetApprovalService
-from .rivet_evidence import sanitize_gateway_result
+from .rivet_evidence import redact_value, sanitize_gateway_result
 
 
 logger = structlog.get_logger(__name__)
@@ -181,7 +181,10 @@ class RivetGatewayBridge:
         if stale:
             raise PermissionError("Rivet MCP binding is stale: " + ", ".join(stale))
 
+        progress_redactions = 0
+
         async def project_progress(update: Mapping[str, Any]) -> None:
+            nonlocal progress_redactions
             if progress_callback is None:
                 return
             event = {
@@ -193,7 +196,9 @@ class RivetGatewayBridge:
                 "requestId": invocation.request_id,
                 "bindingDigest": binding.binding_digest,
             }
-            callback_result = progress_callback(event)
+            safe_event, redactions = redact_value(event)
+            progress_redactions += redactions
+            callback_result = progress_callback(dict(safe_event))
             if callback_result is not None:
                 await callback_result
 
@@ -283,6 +288,7 @@ class RivetGatewayBridge:
             sanitized, artifacts, redactions = sanitize_gateway_result(
                 result, workspace_id=authority.claims.workspace_id
             )
+            redactions += progress_redactions
             logger.info(
                 "rivet_gateway_call_finished",
                 run_id=invocation.run_id,

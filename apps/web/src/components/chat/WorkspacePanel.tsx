@@ -191,8 +191,6 @@ export function WorkspacePanel({
     return () => observer.disconnect();
   }, [observedContainer]);
 
-  const isThin = panelWidth < 768 && !surfacesEnabled;
-
   // Refresh sessions when workspace changes
   useEffect(() => {
     refreshSessions(_workspaceId);
@@ -367,6 +365,11 @@ export function WorkspacePanel({
   const [activeSidebar, setActiveSidebar] = useState<WorkspaceSidebarId>(
     savedLayout?.activeSidebar ?? "files",
   );
+  // Keep an already-open workflow review/run visible during window narrowing or
+  // browser zoom. Switching to the chat-only thin shell here would hide active
+  // approval and cancellation evidence mid-decision.
+  const isThin =
+    panelWidth < 768 && !surfacesEnabled && activeSidebar !== "workflows";
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
@@ -1658,6 +1661,9 @@ export function WorkspacePanel({
     );
   }
 
+  const workflowNarrowFocus =
+    surfaceLayout.mode === "narrow" && activeSidebar === "workflows";
+
   return (
     <WorkspaceLayout
       ref={attachContainerRef}
@@ -1702,10 +1708,15 @@ export function WorkspacePanel({
         style={{
           backgroundColor: "var(--color-surface)",
           borderRight: "1px solid var(--color-border)",
-          gridColumn: "2",
-          display: surfaceChromeHidden || isSidebarCollapsed ? "none" : "flex",
+          gridColumn: workflowNarrowFocus ? "1" : "2",
+          display:
+            (surfaceChromeHidden && !workflowNarrowFocus) || isSidebarCollapsed
+              ? "none"
+              : "flex",
           flexDirection: "column",
           overflow: "hidden",
+          zIndex: workflowNarrowFocus ? 5 : undefined,
+          minWidth: workflowNarrowFocus ? 0 : undefined,
         }}
       >
         {activeSidebar === "marketplace" && (

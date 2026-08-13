@@ -255,7 +255,19 @@ The documentation-complete exact tree was gated again before publication. The fe
 
 ### Next checkpoint
 
-Complete cross-cutting performance, security, compatibility, packaging, system-smoke, documentation, quickstart, and exact-tree merge-gate work (T078-T089).
+Run the full exact-tree dev gate, integrate current `origin/dev`, rerun the authoritative gate after final documentation, and merge/push loop 069 (T087-T089).
+
+### Implementation checkpoint 7 - cross-cutting acceptance and operator readiness
+
+- Added deterministic performance budgets for 500-tool discovery (under 500 ms), authority issuance (under 100 ms), governed bridge p95 (under 100 ms), first progress projection (under 250 ms), and cancellation delivery (under one second). All measurements passed on the development host.
+- Added cross-surface secret scans covering binding rejection, arguments, progress, results, run evidence, structured logs, events/traces, API/export-shaped documents, workflow files, SQLite, environment-name projection, runner output, and UI source. This exposed and fixed progress-field redaction; redacted progress now contributes to durable evidence accounting.
+- Hardened the private runner bridge with exact Host and no-Origin enforcement and hostile method/path/content-type, duplicate header, transfer-encoding, malformed/truncated body, oversized request, terminal replay, and concurrent revocation tests.
+- Proved compatibility for ordinary non-MCP workflows, independent agent-manager/chat Gateway clients, Wright-owned BREP panel behavior, and additive schema-13-to-14 upgrade with legacy run preservation.
+- The standalone wheel and sdist now include the pinned protocol-v2 Node manifest/bundle/source, capability-binding and Run Manifest JSON Schemas, and Rivet migration/repository modules. The clean build/distribution assertions passed.
+- Added a full system smoke that boots local FastAPI, runs the integrity-pinned Node artifact, and calls two actual MCP stdio subprocesses representing CAD and FEA through the private bridge and shared Gateway. Both child receipts and Wright-principal audits were recorded; no token entered outputs.
+- Expanded Chromium acceptance to five journeys, including keyboard-only exact approval, focus trap/restoration, cancellation residue/recovery, and workflow visibility at narrow width with 200% zoom. The responsive workspace now preserves an active workflow pane rather than switching it out mid-decision; serious/critical scoped accessibility findings were zero.
+- Published the Rivet MCP operator/security/troubleshooting/rollback guide, expanded deterministic versus optional-live testing instructions, added docs navigation, and recorded all quickstart outcomes. Optional proprietary live probes remain skipped by design, and the separate five-engineer usability study remains deferred rather than inferred from automation.
+- Broad acceptance passed: 110 Rivet-focused Python tests with one expected live skip; ten pinned Node runner tests; 293 web tests across 76 files; production TypeScript/Vite build; ESLint with zero errors and three pre-existing hook/chunk warnings; five Chromium journeys; three wheel/sdist checks; strict MkDocs build; all Linux x64, Linux ARM64, and Windows AMD64 catalog-aware bundle verifiers; Ruff lint/format, Prettier, and `git diff --check`.
 
 ## Program guardrails
 

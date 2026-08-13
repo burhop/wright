@@ -369,3 +369,184 @@ test("explains restart evidence and exact recovery review", async ({
   await page.setViewportSize({ width: 420, height: 800 });
   await expect(page.getByTestId("rivet-run-evidence")).toBeVisible();
 });
+
+test("uses keyboard-only exact approval and reports cancellation residue at narrow zoom", async ({
+  page,
+}) => {
+  await page.route("**/api/auth/session/status", (route) =>
+    route.fulfill({ json: { auth_required: false, authenticated: true } }),
+  );
+  await mockWorkspaceShell(page, []);
+  let runState = "running";
+  let approvalState = "pending";
+  let approvalRequest: Record<string, unknown> | null = null;
+  let cancelRequest: Record<string, unknown> | null = null;
+  const runId = "run-active";
+  const workflow = {
+    workflow_id: "workflow-active",
+    slug: "active-flow",
+    revision: 1,
+    etag: digest,
+    review_state: "approved",
+    reviewer: "local-user",
+    reviewed_at: 1,
+    workflow_digest: digest,
+    graph_id: "graph-a",
+    binding_set_id: "binding-set-a",
+    binding_set_digest: bindingSetDigest,
+    policy_snapshot_digest: "f".repeat(64),
+    review_digest: "9".repeat(64),
+    stale_reasons: [],
+  };
+  const currentRun = () => ({
+    run_id: runId,
+    workflow_id: "workflow-active",
+    revision: 1,
+    digest,
+    graph: "Main",
+    generation: 1,
+    state: runState,
+    reason: runState === "cancelled" ? "cancelled_by_user" : null,
+    outputs: null,
+    duration_ms: runState === "cancelled" ? 20 : null,
+    output_truncated: false,
+    manifest:
+      runState === "cancelled"
+        ? {
+            terminal_state: "cancelled",
+            reason_code: "cancelled_by_user",
+            manifest_digest: "7".repeat(64),
+            cancellation: {
+              child_acknowledged: false,
+              residue_state: "possible",
+              recovery_code: "RIVET_MCP_RESIDUE_POSSIBLE",
+            },
+          }
+        : null,
+  });
+  const approval = () => ({
+    approval_id: "approval-active",
+    approval_digest: "4".repeat(64),
+    run_id: runId,
+    node_id: "node-write",
+    binding_digest: "6".repeat(64),
+    server_id: "cad",
+    qualified_tool_name: "cad__write_part",
+    request_id: "request-write",
+    argument_digest: "3".repeat(64),
+    argument_summary: { operation: "write", part: "bracket" },
+    required_gates: ["engineering.write"],
+    state: approvalState,
+    created_at: "2026-08-13T00:00:00Z",
+    expires_at: "2099-01-01T00:00:00Z",
+  });
+  await page.route("**/api/workspace/workflow-templates", (route) =>
+    route.fulfill({ json: { templates: [] } }),
+  );
+  await page.route("**/api/workspace/workflows?session_id=*", (route) =>
+    route.fulfill({ json: { workflows: [workflow] } }),
+  );
+  await page.route("**/api/workspace/workflows/active-flow/runs", (route) =>
+    route.fulfill({ json: currentRun() }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/approvals?*`,
+    (route) => route.fulfill({ json: { approvals: [approval()] } }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/approvals/approval-active`,
+    async (route) => {
+      approvalRequest = route.request().postDataJSON() as Record<
+        string,
+        unknown
+      >;
+      approvalState = "consumed";
+      await route.fulfill({ json: approval() });
+    },
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/history?*`,
+    (route) =>
+      route.fulfill({
+        json: {
+          run_id: runId,
+          events: [{ sequence: 1, kind: "started", payload: {} }],
+        },
+      }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/evidence?*`,
+    (route) => route.fulfill({ status: 404, json: { detail: "pending" } }),
+  );
+  await page.route(
+    `**/api/workspace/workflows/runs/${runId}/cancel`,
+    async (route) => {
+      cancelRequest = route.request().postDataJSON() as Record<string, unknown>;
+      runState = "cancelled";
+      await route.fulfill({ json: currentRun() });
+    },
+  );
+  await page.route(`**/api/workspace/workflows/runs/${runId}?*`, (route) =>
+    route.fulfill({ json: currentRun() }),
+  );
+
+  await page.goto("/workspace/ws-1");
+  await page.getByTestId("activity-bar-workflows-btn").click();
+  await page.getByTestId("rivet-workflow-run-active-flow").focus();
+  await page.keyboard.press("Enter");
+
+  const dialog = page.getByRole("dialog", {
+    name: "Approve this exact MCP call?",
+  });
+  await expect(dialog).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: "Approve exact call" }),
+  ).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "Review pending call" }),
+  ).toBeFocused();
+  await page.keyboard.press("Enter");
+  await page.getByRole("button", { name: "Approve exact call" }).focus();
+  await page.keyboard.press("Enter");
+  await expect
+    .poll(() => approvalRequest)
+    .toMatchObject({
+      session_id: "session-1",
+      expected_digest: "4".repeat(64),
+      decision: "approved",
+      actor: "local-user",
+    });
+
+  await page.getByRole("button", { name: "Cancel run" }).focus();
+  await page.keyboard.press("Enter");
+  await expect
+    .poll(() => cancelRequest)
+    .toMatchObject({
+      session_id: "session-1",
+      generation: 1,
+    });
+  await page.getByText("Run evidence", { exact: true }).click();
+  const runPanel = page.getByTestId(`rivet-run-${runId}`);
+  await expect(runPanel.getByRole("alert")).toContainText(
+    "RIVET_MCP_RESIDUE_POSSIBLE",
+  );
+  await expect(page.locator("body")).not.toContainText("super-secret");
+  await page.setViewportSize({ width: 420, height: 800 });
+  await page.evaluate(() => {
+    document.documentElement.style.zoom = "2";
+  });
+
+  const accessibility = await new AxeBuilder({ page })
+    .include('[data-testid="rivet-workflows-tab"]')
+    .analyze();
+  expect(
+    accessibility.violations.filter((violation) =>
+      ["serious", "critical"].includes(violation.impact || ""),
+    ),
+  ).toEqual([]);
+  await expect(runPanel).toBeVisible();
+});

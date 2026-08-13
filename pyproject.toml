@@ -140,6 +140,8 @@ packages = [
 "integrations/rivet/runner/manifest.json" = "workspace_service/_rivet/runner/manifest.json"
 "integrations/rivet/runner/dist" = "workspace_service/_rivet/runner/dist"
 "integrations/rivet/runner/src" = "workspace_service/_rivet/runner/src"
+"specs/069-rivet-mcp-gateway/contracts/capability-binding.schema.json" = "workspace_service/_rivet/contracts/capability-binding.schema.json"
+"specs/069-rivet-mcp-gateway/contracts/run-manifest.schema.json" = "workspace_service/_rivet/contracts/run-manifest.schema.json"
 
 [tool.hatch.build.targets.sdist]
 # Rivet's generated runtime bundles are intentionally gitignored. Mark them as
@@ -148,6 +150,8 @@ packages = [
 artifacts = [
     "/integrations/rivet/editor/dist",
     "/integrations/rivet/runner/dist",
+    "/specs/069-rivet-mcp-gateway/contracts/capability-binding.schema.json",
+    "/specs/069-rivet-mcp-gateway/contracts/run-manifest.schema.json",
 ]
 include = [
     "/src/wright",
@@ -166,6 +170,8 @@ include = [
     "/integrations/rivet/runner/manifest.json",
     "/integrations/rivet/runner/dist",
     "/integrations/rivet/runner/src",
+    "/specs/069-rivet-mcp-gateway/contracts/capability-binding.schema.json",
+    "/specs/069-rivet-mcp-gateway/contracts/run-manifest.schema.json",
     "/README.md",
     "/LICENSE",
     "/pyproject.toml",

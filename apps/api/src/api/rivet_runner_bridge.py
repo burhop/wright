@@ -15,6 +15,7 @@ from typing import Any
 
 import structlog
 from data_vault import RivetMcpRepository
+from urllib.parse import urlsplit
 from workspace_service import (
     RivetApprovalError,
     RivetAuthorityError,
@@ -103,6 +104,17 @@ class RivetRunnerBridgeApplication:
                     "RIVET_MCP_BRIDGE_DENIED", "Loopback access is required", 401
                 )
             method, path, headers, payload = await self._read_request(reader)
+            expected_host = urlsplit(self._audience or "").netloc
+            if (
+                not expected_host
+                or headers.get("host") != expected_host
+                or "origin" in headers
+            ):
+                raise RivetRunnerBridgeError(
+                    "RIVET_MCP_BRIDGE_DENIED",
+                    "Bridge origin is unavailable",
+                    403,
+                )
             if method != "POST" or path not in {
                 f"{_BASE_PATH}/discover",
                 f"{_BASE_PATH}/calls",

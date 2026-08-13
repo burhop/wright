@@ -103,3 +103,19 @@ Expected:
 - Existing non-MCP Rivet workflows still review and run.
 - Historical bindings/manifests remain readable but no old token is reusable.
 - MCP graphs fail closed with an actionable feature-disabled/review-required state.
+
+## Recorded acceptance result (2026-08-13)
+
+| Section | Result | Deterministic evidence |
+| --- | --- | --- |
+| 1. Discovery | Pass | 500 namespaced tools discovered within the 500 ms budget; workspace/binding isolation tests passed |
+| 2. Exact review | Pass | Ambiguous collisions, explicit selection, stale identity, no-child review, keyboard, and accessibility checks passed |
+| 3. Governed execution | Pass | Local FastAPI plus the pinned protocol-v2 Node worker called two real MCP stdio subprocesses through Gateway |
+| 4. Denial boundary | Pass | Scope, binding, replay, host/origin, malformed request, approval denial, and zero-child-receipt checks passed |
+| 5. Cancellation | Pass | Revocation-first delivery completed within one second; late success and false cleanup claims were rejected |
+| 6. Specialized lifecycle | Pass | Deterministic BREP panel and host-bridge doubles preserved Wright ownership and stable recovery boundaries |
+| 7. UI and evidence | Pass | Five Chromium journeys covered review, success/export, denial, restart, exact approval, cancellation residue, keyboard focus, narrow 200% zoom, and serious/critical accessibility scans |
+| 8. Optional live | Not run by design | Requires explicit live authorization and an already installed/current validated application; no proprietary or paid dependency entered the gate |
+| 9. Rollback | Pass | Schema-13 upgrade, ordinary non-MCP workflow, chat/agent Gateway compatibility, historical evidence, and feature-off behavior are covered |
+
+The deterministic study cannot satisfy SC-009's separate observation of five engineers. That human usability study remains honestly deferred and must be reported separately; no automated result is being presented as a substitute.
