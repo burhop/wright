@@ -120,6 +120,7 @@ def _row_to_server(row: sqlite3.Row) -> McpServer:
         server_id=row["server_id"],
         name=row["name"],
         type=row["type"],
+        transport_variant=_row_value(row, "transport_variant") or row["type"],
         command=_parse_command(row["command"]),
         is_active=bool(row["is_active"]),
         is_installed=bool(_row_value(row, "is_installed", False)),
@@ -209,8 +210,8 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 verification_state, installability_tier, risk_level, deployment_mode,
                 platform_support, host_software_required, credentials_required,
                 default_enabled, approval_gates, validation_result, follow_up_url,
-                install_blocked_reason
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                install_blocked_reason, transport_variant
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 server.server_id,
@@ -243,6 +244,7 @@ def insert_server(db_path: str, server: McpServer) -> None:
                 _serialize_json(server.validation_result),
                 server.follow_up_url,
                 server.install_blocked_reason,
+                server.transport_variant or server.type,
             ),
         )
         conn.commit()
@@ -279,6 +281,7 @@ def update_server(
             "deployment_mode",
             "follow_up_url",
             "install_blocked_reason",
+            "transport_variant",
         ):
             set_clauses.append(f"{key} = ?")
             params.append(value)

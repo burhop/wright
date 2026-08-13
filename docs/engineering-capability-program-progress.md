@@ -60,6 +60,13 @@ Complete the shared catalog transport/evidence models, stable diagnostics, depen
 - Added strict domain records with digest/time invariants, external-license blocking, secret-like field rejection, and honest passed-evidence requirements.
 - Focused evidence: 17 migration/model/schema tests passed; Ruff check passed; formatting and `git diff --check` passed.
 
+### Implementation checkpoint 2
+
+- Added exact `streamable_http` versus legacy `sse` catalog metadata while preserving the existing network runner and legacy API type.
+- Added conservative evidence mapping that never infers official status, stable redacted diagnostic codes, deterministic fixture adapters/import documents, and explicit service dependency-injection seams.
+- Added shared typed web contracts for capability, snapshot, compatibility, import, plan, and diagnostics.
+- Focused evidence: 51 API/catalog/registry/model/migration tests passed; Python lint, TypeScript compile, Prettier, and `git diff --check` passed.
+
 ## Program guardrails
 
 - No paid usage, license acceptance, external production mutation, user-data deletion, physical actuation, `dev` to `main` merge, or release publication.

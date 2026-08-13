@@ -34,6 +34,29 @@ export type InstallabilityTier =
 export type RiskLevel =
   "read-only" | "low" | "medium" | "high" | "safety-critical";
 
+export type EvidenceClass =
+  | "official_production"
+  | "official_preview"
+  | "verified_community"
+  | "community_candidate"
+  | "user_reported_source_needed"
+  | "api_wrapper_candidate"
+  | "documentation_only"
+  | "blocked_validation"
+  | "excluded_or_stale";
+
+export type TransportVariant = "stdio" | "streamable_http" | "sse" | "webmcp";
+
+export type CompatibilityStatus =
+  "compatible" | "incompatible" | "uncertain" | "blocked";
+
+export interface CapabilityDiagnostic {
+  code: string;
+  message: string;
+  recovery: string;
+  path?: string;
+}
+
 export interface PlatformSupportRecord {
   status: "yes" | "likely" | "host-dependent" | "unknown" | "no";
   tested: boolean;
@@ -57,6 +80,7 @@ export interface McpServer {
   server_id: string;
   name: string;
   type: "stdio" | "sse" | "webmcp";
+  transport_variant?: TransportVariant;
   command?: string[] | string;
   is_active: boolean;
   is_installed: boolean;
@@ -83,6 +107,97 @@ export interface McpServer {
   validation_result: ValidationSummary;
   follow_up_url?: string;
   install_blocked_reason?: string;
+}
+
+export interface CapabilityView {
+  capability_id: string;
+  server_id?: string;
+  name: string;
+  vendor: string;
+  description: string;
+  domains: string[];
+  tags: string[];
+  evidence_class: EvidenceClass;
+  transport: TransportVariant;
+  compatibility: CompatibilityStatus;
+  compatibility_reasons: CapabilityDiagnostic[];
+  is_installed: boolean;
+  is_active: boolean;
+  is_custom: boolean;
+  credentials_configured: Record<string, boolean>;
+  enabled_workspaces: string[];
+  catalog: Record<string, unknown>;
+  allowed_actions: string[];
+}
+
+export interface CatalogSnapshotSummary {
+  snapshot_id: string;
+  channel: string;
+  sequence: number;
+  offline: boolean;
+  updated_at: string;
+}
+
+export interface CapabilityListResponse {
+  snapshot: CatalogSnapshotSummary;
+  capabilities: CapabilityView[];
+  next_cursor: string | null;
+  total: number;
+}
+
+export interface ImportedMcpDraft {
+  draft_id: string;
+  name: string;
+  source_format: "claude_mcp_servers" | "vscode_servers" | "plain_server";
+  transport: TransportVariant;
+  command?: string;
+  arguments: string[];
+  endpoint?: string;
+  environment_requirements: Array<{
+    name: string;
+    credential_required: boolean;
+    value_supplied: boolean;
+  }>;
+  header_requirements: Array<{
+    name: string;
+    credential_required: boolean;
+    value_supplied: boolean;
+  }>;
+  warnings: CapabilityDiagnostic[];
+  errors: CapabilityDiagnostic[];
+  redacted_preview: Record<string, unknown>;
+  draft_digest: string;
+}
+
+export interface ImportPreview {
+  preview_id: string;
+  detected_format:
+    "claude_mcp_servers" | "vscode_servers" | "plain_server" | "unknown";
+  drafts: ImportedMcpDraft[];
+  document_errors: CapabilityDiagnostic[];
+  created_at: string;
+  expires_at: string;
+  source_discarded: true;
+}
+
+export interface InstallPlan {
+  plan_id: string;
+  plan_version: 1;
+  state: string;
+  capability_id: string;
+  snapshot_id: string;
+  machine_observation_id: string;
+  backend_kind:
+    "local_package" | "remote_endpoint" | "host_bridge" | "local_command";
+  requirements: Record<string, unknown>;
+  effects: Array<Record<string, unknown>>;
+  steps: Array<Record<string, unknown>>;
+  validation_steps: Array<Record<string, unknown>>;
+  rollback_steps: Array<Record<string, unknown>>;
+  approval_gates: string[];
+  blocking_reasons: CapabilityDiagnostic[];
+  expires_at: string;
+  plan_digest: string;
 }
 
 export interface McpTool {

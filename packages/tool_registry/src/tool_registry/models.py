@@ -55,6 +55,9 @@ class McpServer(BaseModel):
     server_id: str
     name: str
     type: Literal["stdio", "sse", "webmcp"]
+    transport_variant: Literal["stdio", "streamable_http", "sse", "webmcp"] | None = (
+        None
+    )
     command: Optional[Union[List[str], str]] = None
     is_active: bool
     is_installed: bool = False
@@ -89,6 +92,9 @@ class McpServer(BaseModel):
 class McpServerCreate(BaseModel):
     name: str
     type: Literal["stdio", "sse", "webmcp"]
+    transport_variant: Literal["stdio", "streamable_http", "sse", "webmcp"] | None = (
+        None
+    )
     command: Optional[Union[List[str], str]] = None
     category: str = "utilities"
     image_url: Optional[str] = None
@@ -114,6 +120,9 @@ class McpServerCreate(BaseModel):
 
 class McpServerUpdate(BaseModel):
     is_active: Optional[bool] = None
+    transport_variant: Optional[
+        Literal["stdio", "streamable_http", "sse", "webmcp"]
+    ] = None
     status: Optional[Literal["active", "inactive", "error"]] = None
     error_message: Optional[str] = None
     env_vars: Optional[Union[list[EnvVarDefinition], dict[str, str]]] = None

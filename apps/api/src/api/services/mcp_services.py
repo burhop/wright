@@ -6,6 +6,7 @@ from api.services.wright_gateway_sync import sync_mcp_server_to_wright_gateway
 from workspace_service.adapters.runtime import get_workspace_enabled_tools
 from tool_registry import McpEngine
 from tool_registry import services as registry_services
+from tool_registry.capability_services import CapabilityServiceDependencies
 from tool_registry.services import (
     McpConflictError,
     McpInvalidOperationError,
@@ -26,9 +27,18 @@ def get_mcp_engine(request: Request) -> McpEngine:
 
 
 class McpApiService:
-    def __init__(self, engine: McpEngine, app_state) -> None:
+    def __init__(
+        self,
+        engine: McpEngine,
+        app_state,
+        capability_dependencies: CapabilityServiceDependencies | None = None,
+    ) -> None:
         self.engine = engine
         self.app_state = app_state
+        self.capability_dependencies = (
+            capability_dependencies
+            or CapabilityServiceDependencies.for_database(engine.db_path)
+        )
 
     @property
     def db_path(self) -> str:

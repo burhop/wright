@@ -26,8 +26,8 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 - [X] T001 Add an explicit bounded `cryptography` dependency for standalone signature verification in `packages/tool_registry/pyproject.toml` and synchronize `uv.lock`
 - [X] T002 [P] Copy the approved catalog envelope, import preview, and install plan JSON Schemas plus a versioned public-only trust-root resource with no default network channel into `packages/tool_registry/src/tool_registry/catalog/` and declare them as packaged resources in `packages/tool_registry/pyproject.toml`
 - [ ] T003 [P] Add deterministic Ed25519 test-key helpers and a prior 69-record snapshot without Onshape plus signed 70-record Onshape candidate, tampered, expired, and replayed fixtures in `packages/tool_registry/tests/fixtures/catalog_updates.py`
-- [ ] T004 [P] Add Claude, VS Code, plain-server, adversarial, and oversized import fixtures in `packages/tool_registry/tests/fixtures/mcp_imports.py`
-- [ ] T005 [P] Add deterministic fake local-package, remote-endpoint, and host-bridge adapter fixtures in `packages/tool_registry/tests/fixtures/onboarding_adapters.py`
+- [X] T004 [P] Add Claude, VS Code, plain-server, adversarial, and oversized import fixtures in `packages/tool_registry/tests/fixtures/mcp_imports.py`
+- [X] T005 [P] Add deterministic fake local-package, remote-endpoint, and host-bridge adapter fixtures in `packages/tool_registry/tests/fixtures/onboarding_adapters.py`
 
 ---
 
@@ -41,12 +41,12 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 - [X] T007 Implement additive migration 13 for snapshots, state, previews, activations, observations, plans, runs, validation evidence, missing reports, and `mcp_servers.transport_variant` in `packages/data_vault/src/data_vault/migrations.py`
 - [X] T008 [P] Write Pydantic model and JSON Schema conformance tests for snapshot, capability, import, observation, plan, run, evidence, and report records in `packages/tool_registry/tests/test_capability_models.py`
 - [X] T009 Implement evidence classes and immutable domain records with secret-rejecting validators in `packages/tool_registry/src/tool_registry/capability_models.py`
-- [ ] T010 Extend canonical catalog models/schema with `evidence_class`, exact `streamable_http` versus legacy `sse` catalog values, internal network-runner normalization, and conservative legacy mapping in `packages/tool_registry/src/tool_registry/catalog_models.py`, `packages/tool_registry/src/tool_registry/models.py`, and `packages/tool_registry/src/tool_registry/catalog/schema.json`
-- [ ] T011 [P] Add stable redacted catalog/import/plan/onboarding diagnostic codes and error types in `packages/tool_registry/src/tool_registry/capability_errors.py`
-- [ ] T012 Add repository/service construction seams for database path, clock, trust roots, detectors, and adapters in `packages/tool_registry/src/tool_registry/capability_services.py`
-- [ ] T013 Extend `McpApiService` dependency injection without adding route business logic in `apps/api/src/api/services/mcp_services.py`
-- [ ] T014 [P] Add shared TypeScript capability, snapshot, import, observation, plan, run, evidence, and report interfaces in `apps/web/src/services/mcp-service.ts`
-- [ ] T015 Run migration, model, schema-resource, Ruff, and formatting checks over `packages/data_vault` and `packages/tool_registry`
+- [X] T010 Extend canonical catalog models/schema with `evidence_class`, exact `streamable_http` versus legacy `sse` catalog values, internal network-runner normalization, and conservative legacy mapping in `packages/tool_registry/src/tool_registry/catalog_models.py`, `packages/tool_registry/src/tool_registry/models.py`, and `packages/tool_registry/src/tool_registry/catalog/schema.json`
+- [X] T011 [P] Add stable redacted catalog/import/plan/onboarding diagnostic codes and error types in `packages/tool_registry/src/tool_registry/capability_errors.py`
+- [X] T012 Add repository/service construction seams for database path, clock, trust roots, detectors, and adapters in `packages/tool_registry/src/tool_registry/capability_services.py`
+- [X] T013 Extend `McpApiService` dependency injection without adding route business logic in `apps/api/src/api/services/mcp_services.py`
+- [X] T014 [P] Add shared TypeScript capability, snapshot, import, observation, plan, run, evidence, and report interfaces in `apps/web/src/services/mcp-service.ts`
+- [X] T015 Run migration, model, schema-resource, Ruff, and formatting checks over `packages/data_vault` and `packages/tool_registry`
 
 **Checkpoint**: The database upgrades additively, all public records reject secret-bearing fields, schemas ship in the package, and fake adapters can be injected without side effects.
 

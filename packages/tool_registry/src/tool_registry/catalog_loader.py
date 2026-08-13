@@ -42,7 +42,8 @@ def catalog_entry_to_mcp_seed(entry: CatalogEntry) -> dict[str, Any]:
         {
             "server_id": entry.id,
             "name": entry.name,
-            "type": entry.transport,
+            "type": "sse" if entry.transport == "streamable_http" else entry.transport,
+            "transport_variant": entry.transport,
             "command": command,
             "category": entry.domains[0] if entry.domains else "utilities",
             "image_url": entry.image_url,
