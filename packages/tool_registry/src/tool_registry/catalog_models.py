@@ -89,6 +89,9 @@ class CatalogSourceRecord(BaseModel):
         "other",
     ] = "repository"
     primary: bool = True
+    authority: Literal["vendor", "publisher", "community", "directory", "unknown"] = (
+        "unknown"
+    )
     observed_at: Optional[str] = None
     notes: str = ""
 

@@ -1,6 +1,6 @@
 import structlog
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, status, Response
 from pydantic import BaseModel
 from tool_registry import (
     McpServer,
@@ -14,6 +14,13 @@ from api.services.mcp_services import (
     mcp_service_http_exception,
 )
 from tool_registry.services import McpServiceError
+from tool_registry.capability_models import (
+    CapabilityCompatibility,
+    CapabilityList,
+    CapabilityView,
+    MachineCompatibilityObservation,
+)
+from tool_registry.capability_views import CapabilityFilters
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -91,7 +98,83 @@ class MissingMcpReportRequest(BaseModel):
     category: str = "utilities"
 
 
+class CapabilityObservationResponse(BaseModel):
+    observation: MachineCompatibilityObservation
+    compatibility: CapabilityCompatibility
+
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
+
+
+@router.get("/capabilities", response_model=CapabilityList)
+@traced("mcp.capability.list")
+async def list_capabilities(
+    search: str | None = None,
+    domain: list[str] | None = Query(default=None),
+    platform: list[str] | None = Query(default=None),
+    evidence_class: list[str] | None = Query(default=None),
+    compatibility: list[str] | None = Query(default=None),
+    risk: list[str] | None = Query(default=None),
+    locality: list[str] | None = Query(default=None),
+    host: list[str] | None = Query(default=None),
+    validation: list[str] | None = Query(default=None),
+    installed: bool | None = None,
+    limit: int = Query(default=100, ge=1, le=200),
+    cursor: str | None = None,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.list_capabilities(
+            filters=CapabilityFilters(
+                search=search,
+                domains=frozenset(domain or []),
+                platforms=frozenset(platform or []),
+                evidence_classes=frozenset(evidence_class or []),
+                compatibility=frozenset(compatibility or []),
+                risks=frozenset(risk or []),
+                localities=frozenset(locality or []),
+                hosts=frozenset(host or []),
+                validation=frozenset(validation or []),
+                installed=installed,
+            ),
+            limit=limit,
+            cursor=cursor,
+        )
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
+    except Exception:
+        logger.exception("list_capabilities_failed")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to list capabilities.",
+        )
+
+
+@router.get("/capabilities/{capability_id}", response_model=CapabilityView)
+@traced("mcp.capability.detail")
+async def get_capability(
+    capability_id: str,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.get_capability(capability_id)
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
+
+
+@router.post(
+    "/capabilities/{capability_id}/observe",
+    response_model=CapabilityObservationResponse,
+)
+@traced("mcp.capability.observe")
+async def observe_capability(
+    capability_id: str,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.observe_capability(capability_id)
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
 
 
 @router.get("/servers", response_model=ServersListResponse)

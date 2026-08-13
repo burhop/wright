@@ -60,28 +60,28 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Tests for User Story 1
 
-- [ ] T016 [P] [US1] Write evidence taxonomy, official-source, legacy-mapping, alias, and Onshape-record tests in `packages/tool_registry/tests/test_catalog_evidence.py`
-- [ ] T017 [P] [US1] Write read-only machine observation and compatible/incompatible/uncertain/blocked reason tests in `packages/tool_registry/tests/test_machine_compatibility.py`
-- [ ] T018 [P] [US1] Write capability projection tests that merge catalog metadata with existing install/credential/workspace state without leaking values in `packages/tool_registry/tests/test_capability_views.py`
-- [ ] T019 [P] [US1] Write API contract/filter/pagination/alias/offline/error tests for capability discovery in `apps/api/tests/test_capability_library_api.py`
-- [ ] T020 [P] [US1] Write service/component state tests for search, filters, evidence badges, compatibility reasons, details, offline state, and empty state in `apps/web/src/components/tools/CapabilityLibrary.spec.tsx`
-- [ ] T021 [P] [US1] Write mocked offline discovery, keyboard, narrow-layout, and accessibility journey tests in `tests/ui-integration/capability-library.spec.ts`
+- [X] T016 [P] [US1] Write evidence taxonomy, official-source, legacy-mapping, alias, and Onshape-record tests in `packages/tool_registry/tests/test_catalog_evidence.py`
+- [X] T017 [P] [US1] Write read-only machine observation and compatible/incompatible/uncertain/blocked reason tests in `packages/tool_registry/tests/test_machine_compatibility.py`
+- [X] T018 [P] [US1] Write capability projection tests that merge catalog metadata with existing install/credential/workspace state without leaking values in `packages/tool_registry/tests/test_capability_views.py`
+- [X] T019 [P] [US1] Write API contract/filter/pagination/alias/offline/error tests for capability discovery in `apps/api/tests/test_capability_library_api.py`
+- [X] T020 [P] [US1] Write service/component state tests for search, filters, evidence badges, compatibility reasons, details, offline state, and empty state in `apps/web/src/components/tools/CapabilityLibrary.spec.tsx`
+- [X] T021 [P] [US1] Write mocked offline discovery, keyboard, narrow-layout, and accessibility journey tests in `tests/ui-integration/capability-library.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Add the distinct Onshape Labs FeatureScript MCP official-preview record to the final bundled recovery catalog with vendor evidence while preserving community identities in `packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml`
-- [ ] T023 [US1] Implement conservative evidence-class derivation and official-source validation in `packages/tool_registry/src/tool_registry/catalog_evidence.py`
-- [ ] T024 [US1] Implement allowlisted read-only runtime, executable, platform, architecture, container, and host observations with stable digests in `packages/tool_registry/src/tool_registry/compatibility.py`
-- [ ] T025 [US1] Implement reason-coded capability compatibility policy and recovery guidance in `packages/tool_registry/src/tool_registry/compatibility.py`
-- [ ] T026 [US1] Implement paginated/searchable `CapabilityView` projection while retaining uncataloged custom rows in `packages/tool_registry/src/tool_registry/capability_views.py`
-- [ ] T027 [US1] Add thin capability list/detail/observe routes and response models in `apps/api/src/api/routers/mcp.py`
-- [ ] T028 [US1] Implement capability discovery/detail/observation client methods in `apps/web/src/services/mcp-service.ts`
-- [ ] T029 [P] [US1] Create token-based evidence and compatibility badges in `apps/web/src/components/tools/CapabilityBadges.tsx`
-- [ ] T030 [P] [US1] Create keyboard-operable multi-dimension filters with URL-stable state in `apps/web/src/components/tools/CapabilityFilters.tsx`
-- [ ] T031 [P] [US1] Create comparison-friendly capability result cards/list in `apps/web/src/components/tools/CapabilityCard.tsx`
-- [ ] T032 [P] [US1] Create progressive-disclosure evidence, compatibility, requirement, validation, alternative, and user-state details in `apps/web/src/components/tools/CapabilityDetails.tsx`
-- [ ] T033 [US1] Refactor the existing registry page into the Capability Library information architecture in `apps/web/src/components/pages/ToolRegistryPage.tsx`
-- [ ] T034 [US1] Run focused catalog, capability view/API, component, and mocked Playwright tests for US1
+- [X] T022 [US1] Add the distinct Onshape Labs FeatureScript MCP official-preview record to the final bundled recovery catalog with vendor evidence while preserving community identities in `packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml`
+- [X] T023 [US1] Implement conservative evidence-class derivation and official-source validation in `packages/tool_registry/src/tool_registry/catalog_evidence.py`
+- [X] T024 [US1] Implement allowlisted read-only runtime, executable, platform, architecture, container, and host observations with stable digests in `packages/tool_registry/src/tool_registry/compatibility.py`
+- [X] T025 [US1] Implement reason-coded capability compatibility policy and recovery guidance in `packages/tool_registry/src/tool_registry/compatibility.py`
+- [X] T026 [US1] Implement paginated/searchable `CapabilityView` projection while retaining uncataloged custom rows in `packages/tool_registry/src/tool_registry/capability_views.py`
+- [X] T027 [US1] Add thin capability list/detail/observe routes and response models in `apps/api/src/api/routers/mcp.py`
+- [X] T028 [US1] Implement capability discovery/detail/observation client methods in `apps/web/src/services/mcp-service.ts`
+- [X] T029 [P] [US1] Create token-based evidence and compatibility badges in `apps/web/src/components/tools/CapabilityBadges.tsx`
+- [X] T030 [P] [US1] Create keyboard-operable multi-dimension filters with URL-stable state in `apps/web/src/components/tools/CapabilityFilters.tsx`
+- [X] T031 [P] [US1] Create comparison-friendly capability result cards/list in `apps/web/src/components/tools/CapabilityCard.tsx`
+- [X] T032 [P] [US1] Create progressive-disclosure evidence, compatibility, requirement, validation, alternative, and user-state details in `apps/web/src/components/tools/CapabilityDetails.tsx`
+- [X] T033 [US1] Refactor the existing registry page into the Capability Library information architecture in `apps/web/src/components/pages/ToolRegistryPage.tsx`
+- [X] T034 [US1] Run focused catalog, capability view/API, component, and mocked Playwright tests for US1
 
 **Checkpoint**: US1 works fully offline and makes evidence/compatibility honest without offering unsafe actions.
 

@@ -167,6 +167,78 @@ class MachineCompatibilityObservation(StrictModel):
         return self
 
 
+class CompatibilityReason(StrictModel):
+    code: str = Field(pattern=r"^[a-z0-9_]+$")
+    message: str
+    recovery: str
+    source: str
+
+
+class CapabilityCompatibility(StrictModel):
+    status: Literal["compatible", "incompatible", "uncertain", "blocked"]
+    platform_key: str
+    reasons: list[CompatibilityReason] = Field(default_factory=list)
+    observation_id: str | None = None
+    observed_at: datetime | None = None
+
+    @model_validator(mode="after")
+    def require_explanation(self) -> "CapabilityCompatibility":
+        if self.status != "compatible" and not self.reasons:
+            raise ValueError("non-compatible results require at least one reason")
+        return self
+
+
+class CapabilityUserState(StrictModel):
+    server_id: str | None = None
+    installed: bool = False
+    active: bool = False
+    process_status: str = "not_registered"
+    explicit_disabled: bool = False
+    installed_version: str | None = None
+    credentials_configured: dict[str, bool] = Field(default_factory=dict)
+    enabled_workspaces: list[dict[str, str]] = Field(default_factory=list)
+
+
+class CapabilityView(StrictModel):
+    capability_id: str
+    canonical_id: str
+    name: str
+    vendor: str
+    description: str
+    domains: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
+    aliases: list[str] = Field(default_factory=list)
+    capability_summary: list[str] = Field(default_factory=list)
+    evidence_class: EvidenceClass
+    transport: TransportVariant
+    locality: Literal["local", "remote"]
+    risk_level: str
+    installability_tier: str
+    compatibility: CapabilityCompatibility
+    source_records: list[dict[str, Any]] = Field(default_factory=list)
+    requirements: dict[str, Any] = Field(default_factory=dict)
+    validation_result: dict[str, Any] = Field(default_factory=dict)
+    user_state: CapabilityUserState = Field(default_factory=CapabilityUserState)
+    custom: bool = False
+    available_actions: list[str] = Field(default_factory=list)
+    alternatives: list[str] = Field(default_factory=list)
+
+
+class CapabilitySnapshotSummary(StrictModel):
+    snapshot_id: str
+    channel: str
+    sequence: int = Field(ge=1)
+    offline: bool
+    updated_at: datetime
+
+
+class CapabilityList(StrictModel):
+    snapshot: CapabilitySnapshotSummary
+    capabilities: list[CapabilityView]
+    next_cursor: str | None = None
+    total: int = Field(ge=0)
+
+
 class LicenseRequirement(StrictModel):
     state: Literal[
         "known", "unknown", "not_applicable", "external_acceptance_required"

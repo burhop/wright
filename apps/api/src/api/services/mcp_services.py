@@ -7,6 +7,20 @@ from workspace_service.adapters.runtime import get_workspace_enabled_tools
 from tool_registry import McpEngine
 from tool_registry import services as registry_services
 from tool_registry.capability_services import CapabilityServiceDependencies
+from tool_registry.capability_views import (
+    CapabilityCursorError,
+    CapabilityFilters,
+    build_capability_views,
+    find_capability,
+    load_workspace_membership,
+    paginate_capabilities,
+)
+from tool_registry.canonical_catalog import load_canonical_entries
+from tool_registry.compatibility import (
+    load_latest_machine_observation,
+    observe_machine,
+    save_machine_observation,
+)
 from tool_registry.services import (
     McpConflictError,
     McpInvalidOperationError,
@@ -46,6 +60,81 @@ class McpApiService:
 
     def list_servers(self):
         return registry_services.list_registered_servers(self.db_path)
+
+    def _capability_entries(self):
+        return load_canonical_entries()
+
+    def _machine_observation(self, entries, *, refresh: bool = False):
+        if not refresh:
+            existing = load_latest_machine_observation(
+                self.capability_dependencies.database_path,
+                now=self.capability_dependencies.clock(),
+            )
+            if existing is not None:
+                return existing
+        executables = {
+            dependency for entry in entries for dependency in entry.dependencies.system
+        }
+        return observe_machine(
+            clock=self.capability_dependencies.clock,
+            required_executables=executables,
+            host_detectors=self.capability_dependencies.machine_detectors,
+        )
+
+    def _capability_views(self, entries, observation):
+        return build_capability_views(
+            entries,
+            self.list_servers(),
+            observation,
+            workspace_membership=load_workspace_membership(self.db_path),
+        )
+
+    def list_capabilities(
+        self,
+        *,
+        filters: CapabilityFilters,
+        limit: int,
+        cursor: str | None,
+    ):
+        entries = self._capability_entries()
+        observation = self._machine_observation(entries)
+        views = self._capability_views(entries, observation)
+        try:
+            return paginate_capabilities(
+                entries,
+                views,
+                filters=filters,
+                limit=limit,
+                cursor=cursor,
+            )
+        except CapabilityCursorError as error:
+            raise McpInvalidOperationError(str(error)) from error
+
+    def get_capability(self, capability_id: str):
+        entries = self._capability_entries()
+        observation = self._machine_observation(entries)
+        view = find_capability(
+            self._capability_views(entries, observation), capability_id
+        )
+        if view is None:
+            raise McpNotFoundError(f"Capability '{capability_id}' not found.")
+        return view
+
+    def observe_capability(self, capability_id: str):
+        entries = self._capability_entries()
+        existing_views = self._capability_views(
+            entries, self._machine_observation(entries)
+        )
+        if find_capability(existing_views, capability_id) is None:
+            raise McpNotFoundError(f"Capability '{capability_id}' not found.")
+        observation = self._machine_observation(entries, refresh=True)
+        save_machine_observation(
+            self.capability_dependencies.database_path, observation
+        )
+        view = find_capability(
+            self._capability_views(entries, observation), capability_id
+        )
+        return {"observation": observation, "compatibility": view.compatibility}
 
     def register_server(self, body):
         return registry_services.register_server(self.db_path, body)

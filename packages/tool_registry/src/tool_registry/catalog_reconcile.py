@@ -150,9 +150,10 @@ def reconcile_engineering_catalog(database_path: str) -> int:
                      verification_state, installability_tier, risk_level,
                      deployment_mode, platform_support, host_software_required,
                      credentials_required, default_enabled, approval_gates,
-                     validation_result, follow_up_url, install_blocked_reason)
+                     validation_result, follow_up_url, install_blocked_reason,
+                     transport_variant)
                 VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?,
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 _entry_values(entry, now),
             )
             connection.execute(
@@ -164,7 +165,8 @@ def reconcile_engineering_catalog(database_path: str) -> int:
                     installability_tier = ?, risk_level = ?, deployment_mode = ?,
                     platform_support = ?, host_software_required = ?,
                     credentials_required = ?, default_enabled = ?, approval_gates = ?,
-                    validation_result = ?, follow_up_url = ?, install_blocked_reason = ?
+                    validation_result = ?, follow_up_url = ?, install_blocked_reason = ?,
+                    transport_variant = ?
                 WHERE server_id = ?""",
                 _update_values(entry),
             )
@@ -333,6 +335,7 @@ def _entry_values(entry: dict, now: int) -> tuple:
         json.dumps(entry["validation_result"]),
         entry.get("follow_up_url"),
         entry.get("install_blocked_reason"),
+        entry.get("transport_variant", entry["type"]),
     )
 
 
@@ -546,5 +549,6 @@ def _update_values(entry: dict) -> tuple:
         json.dumps(entry["validation_result"]),
         entry.get("follow_up_url"),
         entry.get("install_blocked_reason"),
+        entry.get("transport_variant", entry["type"]),
         entry["server_id"],
     )

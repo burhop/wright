@@ -48,10 +48,6 @@
 - Onshape published the official Onshape Labs FeatureScript MCP on 2026-08-11 with endpoint `https://fs-mcp.labs.onshape.app/mcp`.
 - Onshape remains external-live-validation deferred: Wright has not subscribed, accepted App Store terms, supplied credentials, contacted the endpoint, or claimed protocol/tool success.
 
-### Next checkpoint
-
-Complete the shared catalog transport/evidence models, stable diagnostics, dependency injection, and setup fixtures before the first offline discovery story.
-
 ### Implementation checkpoint 1
 
 - Added explicit standalone Ed25519 verification dependency and synchronized the lock file.
@@ -66,6 +62,20 @@ Complete the shared catalog transport/evidence models, stable diagnostics, depen
 - Added conservative evidence mapping that never infers official status, stable redacted diagnostic codes, deterministic fixture adapters/import documents, and explicit service dependency-injection seams.
 - Added shared typed web contracts for capability, snapshot, compatibility, import, plan, and diagnostics.
 - Focused evidence: 51 API/catalog/registry/model/migration tests passed; Python lint, TypeScript compile, Prettier, and `git diff --check` passed.
+
+### Implementation checkpoint 3 - offline discovery
+
+- Expanded the final bundled recovery catalog to 70 distinct entries with the vendor-grounded Onshape Labs FeatureScript MCP as an `official_preview`; the two community Onshape records retain their identities and evidence classes.
+- Official evidence claims now require an explicitly authoritative primary vendor/publisher record. Legacy metadata never maps to an official class.
+- Added bounded read-only machine observation and reason-coded compatible/incompatible/uncertain/blocked results. Observation does not contact a capability endpoint or run a catalog-supplied command.
+- Added the merged, searchable, paginated CapabilityView projection across catalog, registered/custom, installation, credential-boolean, and workspace membership state.
+- Added thin list/detail/observe APIs and a capability-first responsive UI with stable URL filters, evidence/compatibility badges, comparison cards, progressive details, alternatives, explicit offline provenance, keyboard operation, and accessible narrow layout.
+- Focused evidence: 228 package/API tests passed; all 267 web component/service tests passed; production web build passed; five mocked Capability Library Playwright journeys passed, including WCAG serious/critical scan. Ruff, Prettier, and `git diff --check` passed.
+- Live Onshape validation remains deliberately deferred: no endpoint contact, authentication, subscription, term acceptance, or paid use occurred.
+
+### Next checkpoint
+
+Implement signed catalog snapshot verification, exact update preview, transactional activation/restart recovery, and rollback while preserving all user-owned state.
 
 ## Program guardrails
 

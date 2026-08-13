@@ -5780,4 +5780,91 @@ servers:
     environment: null
     missing_dependencies:
     - public MCP server
+- id: onshape-labs-featurescript-mcp
+  name: Onshape Labs FeatureScript MCP
+  vendor: Onshape / PTC
+  description: Official-preview remote MCP from Onshape Labs for generating, testing, and refining FeatureScript from natural-language engineering intent.
+  domains:
+  - cad
+  - cloud-cad
+  tags:
+  - onshape
+  - featurescript
+  - official-preview
+  - cloud
+  transport: streamable_http
+  command: https://fs-mcp.labs.onshape.app/mcp
+  source_url: https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad
+  repository_url: null
+  package_url: null
+  container_url: null
+  license: Onshape App Store subscription and any applicable Onshape terms must be completed independently by the user.
+  auth_model: unknown
+  install_method: remote-http
+  maturity: official
+  evidence_class: official_preview
+  capability_summary:
+  - Generate FeatureScript from natural-language mechanical design requirements
+  - Test and refine FeatureScript for use in Onshape documents
+  - Remote preview service; not locally executed or validated by Wright
+  source_records:
+  - url: https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad
+    kind: vendor_docs
+    primary: true
+    authority: vendor
+    observed_at: '2026-08-12'
+    notes: Onshape's official announcement identifies the Labs preview, its MCP endpoint, and the App Store subscription prerequisite.
+  runtime_requirements:
+    cpu: standard CPU locally
+    gpu: not required locally
+    docker: 'yes'
+    notes: Wright connects to a remote Streamable HTTP endpoint; no local MCP package is installed.
+  locality: remote
+  weight: light
+  env_vars: []
+  launch_env: {}
+  dependencies:
+    system: []
+    python: []
+    node: []
+  aliases:
+  - onshape-featurescript-mcp-official
+  verification_state: verified_mcp
+  installability_tier: might_work
+  risk_level: medium
+  deployment_mode: remote-cloud-preview
+  platform_support:
+    windows_11_x64:
+      status: likely
+      tested: false
+      notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
+    linux_x64:
+      status: likely
+      tested: false
+      notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
+    linux_arm64:
+      status: likely
+      tested: false
+      notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
+    macos_x64:
+      status: likely
+      tested: false
+      notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
+    macos_arm64:
+      status: likely
+      tested: false
+      notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
+  host_software_required: []
+  credentials_required: []
+  default_enabled: false
+  approval_gates:
+  - external_license_acceptance
+  - network_access_approval
+  - cloud_data_approval
+  validation_result:
+    status: not_tested
+    message: Official preview existence is vendor-confirmed; Wright has not contacted the endpoint, authenticated, accepted terms, subscribed, or performed live validation.
+    environment: null
+    missing_dependencies: []
+    evidence_status: unverified
 format_version: 1

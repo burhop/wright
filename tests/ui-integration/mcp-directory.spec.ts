@@ -10,7 +10,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     // 1. Navigate to the tool registry page
     await page.goto("/tool-registry");
     await liveExpect(
-      page.getByRole("heading", { name: "Engineering Tool Registry" }),
+      page.getByRole("heading", { name: "Engineering Capability Library" }),
     ).toBeVisible();
 
     // 2. Check default seeded CalculiX card exists
@@ -19,7 +19,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     ).toBeVisible();
 
     // 3. Click custom registration button
-    await page.getByRole("button", { name: "+ Register Custom Tool" }).click();
+    await page.getByRole("button", { name: "Add custom MCP" }).click();
     await liveExpect(page.getByTestId("add-tool-modal-overlay")).toBeVisible();
 
     // 4. Fill form inputs

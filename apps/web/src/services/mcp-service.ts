@@ -55,6 +55,7 @@ export interface CapabilityDiagnostic {
   message: string;
   recovery: string;
   path?: string;
+  source?: string;
 }
 
 export interface PlatformSupportRecord {
@@ -111,23 +112,90 @@ export interface McpServer {
 
 export interface CapabilityView {
   capability_id: string;
-  server_id?: string;
+  canonical_id: string;
   name: string;
   vendor: string;
   description: string;
   domains: string[];
   tags: string[];
+  aliases: string[];
+  capability_summary: string[];
   evidence_class: EvidenceClass;
   transport: TransportVariant;
-  compatibility: CompatibilityStatus;
-  compatibility_reasons: CapabilityDiagnostic[];
-  is_installed: boolean;
-  is_active: boolean;
-  is_custom: boolean;
-  credentials_configured: Record<string, boolean>;
-  enabled_workspaces: string[];
-  catalog: Record<string, unknown>;
-  allowed_actions: string[];
+  locality: "local" | "remote";
+  risk_level: RiskLevel;
+  installability_tier: InstallabilityTier;
+  compatibility: CapabilityCompatibility;
+  source_records: Array<{
+    url: string;
+    kind: string;
+    primary: boolean;
+    authority: string;
+    observed_at?: string;
+    notes: string;
+  }>;
+  requirements: {
+    runtime?: Record<string, unknown>;
+    dependencies?: Record<string, string[]>;
+    host_software?: string[];
+    credentials?: string[];
+    license?: string | null;
+    approval_gates?: string[];
+  };
+  validation_result: ValidationSummary;
+  user_state: {
+    server_id?: string;
+    installed: boolean;
+    active: boolean;
+    process_status: string;
+    explicit_disabled: boolean;
+    installed_version?: string;
+    credentials_configured: Record<string, boolean>;
+    enabled_workspaces: Array<{ workspace_id: string; label: string }>;
+  };
+  custom: boolean;
+  available_actions: string[];
+  alternatives: string[];
+}
+
+export interface CapabilityCompatibility {
+  status: CompatibilityStatus;
+  platform_key: string;
+  reasons: CapabilityDiagnostic[];
+  observation_id?: string;
+  observed_at?: string;
+}
+
+export interface MachineCompatibilityObservation {
+  observation_id: string;
+  observed_at: string;
+  expires_at: string;
+  platform_key: string;
+  os_name: string;
+  os_version: string;
+  architecture: string;
+  distribution_mode: string;
+  runtimes: Record<string, Record<string, unknown>>;
+  package_managers: Record<string, Record<string, unknown>>;
+  container_runtime?: Record<string, unknown>;
+  network_policy: "offline" | "allowed" | "unknown";
+  host_observations: Record<string, Record<string, unknown>>;
+  digest: string;
+}
+
+export interface CapabilityQuery {
+  search?: string;
+  domain?: string[];
+  platform?: string[];
+  evidence_class?: EvidenceClass[];
+  compatibility?: CompatibilityStatus[];
+  risk?: RiskLevel[];
+  locality?: Array<"local" | "remote">;
+  host?: string[];
+  validation?: string[];
+  installed?: boolean;
+  limit?: number;
+  cursor?: string;
 }
 
 export interface CatalogSnapshotSummary {
@@ -280,6 +348,51 @@ export interface VersionCheckResult {
 const apiUrl = (path: string) => `${hostAdapter.getApiBaseUrl()}${path}`;
 
 export class McpService {
+  async getCapabilities(
+    query: CapabilityQuery = {},
+  ): Promise<CapabilityListResponse> {
+    const parameters = new URLSearchParams();
+    for (const [key, raw] of Object.entries(query)) {
+      if (raw === undefined || raw === "" || raw === null) continue;
+      const values = Array.isArray(raw) ? raw : [raw];
+      for (const value of values) parameters.append(key, String(value));
+    }
+    const suffix = parameters.size ? `?${parameters.toString()}` : "";
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/capabilities${suffix}`),
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch capabilities: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async getCapability(capabilityId: string): Promise<CapabilityView> {
+    const response = await hostAdapter.fetch(
+      apiUrl(`/api/mcp/capabilities/${encodeURIComponent(capabilityId)}`),
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch capability: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  async observeCapability(capabilityId: string): Promise<{
+    observation: MachineCompatibilityObservation;
+    compatibility: CapabilityCompatibility;
+  }> {
+    const response = await hostAdapter.fetch(
+      apiUrl(
+        `/api/mcp/capabilities/${encodeURIComponent(capabilityId)}/observe`,
+      ),
+      { method: "POST" },
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to observe capability: ${response.status}`);
+    }
+    return response.json();
+  }
+
   async getServers(): Promise<McpServer[]> {
     mcpLogger.info("Fetching MCP servers");
     const response = await hostAdapter.fetch(apiUrl("/api/mcp/servers"));

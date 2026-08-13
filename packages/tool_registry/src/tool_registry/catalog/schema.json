@@ -53,6 +53,18 @@
           "title": "Primary",
           "type": "boolean"
         },
+        "authority": {
+          "default": "unknown",
+          "enum": [
+            "vendor",
+            "publisher",
+            "community",
+            "directory",
+            "unknown"
+          ],
+          "title": "Authority",
+          "type": "string"
+        },
         "observed_at": {
           "anyOf": [
             {

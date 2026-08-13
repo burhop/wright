@@ -9,6 +9,7 @@ import yaml
 from jsonschema import Draft202012Validator
 
 from .catalog_loader import catalog_entry_to_mcp_seed
+from .catalog_evidence import CatalogEvidenceError, validate_catalog_evidence
 from .catalog_models import CatalogEntry
 from .mcp_catalog import tier_sort_key
 
@@ -168,6 +169,10 @@ def _validate_identity(entries: list[CatalogEntry]) -> None:
 
 def _validate_evidence(entries: list[CatalogEntry]) -> None:
     for entry in entries:
+        try:
+            validate_catalog_evidence(entry)
+        except CatalogEvidenceError as error:
+            raise CatalogValidationError(str(error)) from error
         validation = entry.validation_result
         if validation.status == "passed" and not validation.environment:
             raise CatalogValidationError(
