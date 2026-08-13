@@ -1,9 +1,9 @@
 {
   "files": [
     {
-      "path": "assets/index-BOlVXxkT.js",
-      "sha256": "ceb2a6b179ba5c722a02d7daa2595291f4bae1483a7083fc06bf1d78eb09b9d0",
-      "size": 1560480
+      "path": "assets/index-BLN6UGA6.js",
+      "sha256": "7e0b5fe8d76e4ca6b0a20c8267b4326e1db16db192f9b0b867c7e166bf62cb94",
+      "size": 1558739
     },
     {
       "path": "assets/index-DIbia6Zl.css",
@@ -11,8 +11,8 @@
       "size": 14292
     },
     {
-      "path": "assets/plotly.min-wLpv398o.js",
-      "sha256": "0fb3035ab0664693fb5259e95cdf2515b2663e28af9b7c3fe212828cf9651796",
+      "path": "assets/plotly.min-rjt35SvQ.js",
+      "sha256": "30240b236c1b06f764ae54f8b4b75171db16bc4a0e4ae9162828a1450f5c4e0e",
       "size": 4603563
     },
     {
@@ -27,7 +27,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "e8efe9f7b52efd2c482ed8685bc99770cd6759a0a7dff5ca98598a6c7e799137",
+      "sha256": "ce64f3dfe68a741ff1f549b9df3dcb87d78d6129b92952ddc9515246e7471e9a",
       "size": 917
     },
     {

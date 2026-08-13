@@ -2,6 +2,7 @@
   "distribution": "wright-engineering",
   "requirements": [
     "PyYAML>=6,<7",
+    "cryptography>=45,<50",
     "fastapi>=0.115,<1",
     "httpx-sse>=0.4,<1",
     "httpx>=0.28,<1",
@@ -18,6 +19,6 @@
     "uvicorn[standard]>=0.30,<1"
   ],
   "schema_version": 1,
-  "uv_lock_sha256": "0e8191f9dcfc166183b83678796e569bf07dcd1560bb601d15998506f3487808",
+  "uv_lock_sha256": "ceec8e30fc1da9ce2755cf94c70e791af0e2996a62afdc0b6177cc9f5c65dbf3",
   "version": "0.1.9"
 }
