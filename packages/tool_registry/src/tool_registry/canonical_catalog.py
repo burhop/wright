@@ -1,16 +1,22 @@
 from __future__ import annotations
 
 import json
+import ipaddress
+from dataclasses import dataclass
 from importlib.resources import files
 from typing import Any
-from urllib.request import urlopen
+from urllib.parse import urlsplit
 
+import httpx
 import yaml
 from jsonschema import Draft202012Validator
 
 from .catalog_loader import catalog_entry_to_mcp_seed
+from .catalog_evidence import CatalogEvidenceError, validate_catalog_evidence
 from .catalog_models import CatalogEntry
 from .mcp_catalog import tier_sort_key
+
+CATALOG_MAX_ENVELOPE_BYTES = 5 * 1024 * 1024
 
 CATALOG_PACKAGE = "tool_registry.catalog"
 CATALOG_RESOURCE = "engineering-catalog.yaml"
@@ -46,6 +52,21 @@ LEGACY_SERVER_IDS = {
 
 class CatalogValidationError(RuntimeError):
     pass
+
+
+class CatalogFetchError(RuntimeError):
+    def __init__(self, code: str, message: str) -> None:
+        self.code = code
+        super().__init__(message)
+
+
+@dataclass(frozen=True, slots=True)
+class ApprovedCatalogChannel:
+    name: str
+    url: str
+    timeout_seconds: float = 10.0
+    max_bytes: int = CATALOG_MAX_ENVELOPE_BYTES
+    allow_loopback_http: bool = False
 
 
 def _schema() -> dict[str, Any]:
@@ -95,12 +116,95 @@ def load_catalog_document_from_text(catalog_text: str) -> dict[str, Any]:
     return _validate_catalog_document(yaml.safe_load(catalog_text))
 
 
-def load_catalog_document_from_url(
-    url: str, *, timeout_seconds: float = 10.0
+def _is_loopback(host: str | None) -> bool:
+    if not host:
+        return False
+    if host.lower() == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def fetch_catalog_envelope(
+    channel: ApprovedCatalogChannel,
+    *,
+    transport: httpx.BaseTransport | None = None,
 ) -> dict[str, Any]:
-    with urlopen(url, timeout=timeout_seconds) as response:
-        raw = response.read()
-    return load_catalog_document_from_text(raw.decode("utf-8"))
+    """Fetch one administrator-approved URL with no redirects or ambient auth."""
+    parsed = urlsplit(channel.url)
+    allowed_scheme = parsed.scheme == "https" or (
+        parsed.scheme == "http"
+        and channel.allow_loopback_http
+        and _is_loopback(parsed.hostname)
+    )
+    if (
+        not allowed_scheme
+        or not parsed.hostname
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.fragment
+    ):
+        raise CatalogFetchError(
+            "catalog_channel_unsafe",
+            "Configured catalog channel URL is not permitted.",
+        )
+    try:
+        with httpx.Client(
+            follow_redirects=False,
+            trust_env=False,
+            timeout=channel.timeout_seconds,
+            transport=transport,
+            headers={
+                "Accept": "application/json",
+                "User-Agent": "Wright-Catalog-Updater/1",
+            },
+        ) as client:
+            with client.stream("GET", channel.url) as response:
+                if 300 <= response.status_code < 400:
+                    raise CatalogFetchError(
+                        "catalog_channel_redirect_rejected",
+                        "Configured catalog channel returned a redirect.",
+                    )
+                if response.status_code != 200:
+                    raise CatalogFetchError(
+                        "catalog_channel_unavailable",
+                        "Configured catalog channel could not be fetched.",
+                    )
+                length = response.headers.get("content-length")
+                if length and int(length) > channel.max_bytes:
+                    raise CatalogFetchError(
+                        "catalog_envelope_too_large",
+                        "Catalog update exceeds the configured size limit.",
+                    )
+                chunks: list[bytes] = []
+                total = 0
+                for chunk in response.iter_bytes():
+                    total += len(chunk)
+                    if total > channel.max_bytes:
+                        raise CatalogFetchError(
+                            "catalog_envelope_too_large",
+                            "Catalog update exceeds the configured size limit.",
+                        )
+                    chunks.append(chunk)
+    except CatalogFetchError:
+        raise
+    except (httpx.HTTPError, OSError, ValueError) as error:
+        raise CatalogFetchError(
+            "catalog_channel_unavailable",
+            "Configured catalog channel could not be fetched.",
+        ) from error
+    from .catalog_signing import parse_json_strict
+
+    return parse_json_strict(b"".join(chunks), max_bytes=channel.max_bytes)
+
+
+def load_catalog_document_from_url(*args, **kwargs) -> dict[str, Any]:
+    raise CatalogFetchError(
+        "catalog_direct_url_disabled",
+        "Direct catalog URL loading is disabled; use an approved signed channel.",
+    )
 
 
 def load_canonical_entries() -> list[CatalogEntry]:
@@ -113,17 +217,23 @@ def load_canonical_entries() -> list[CatalogEntry]:
 def load_canonical_entries_from_url(
     url: str, *, timeout_seconds: float = 10.0
 ) -> list[CatalogEntry]:
-    return [
-        CatalogEntry.model_validate(entry)
-        for entry in load_catalog_document_from_url(
-            url, timeout_seconds=timeout_seconds
-        )["servers"]
-    ]
+    raise CatalogFetchError(
+        "catalog_direct_url_disabled",
+        "Direct catalog URL loading is disabled; use an approved signed channel.",
+    )
 
 
 def load_engineering_catalog() -> list[dict[str, Any]]:
+    return engineering_catalog_from_document(load_catalog_document())
+
+
+def engineering_catalog_from_document(
+    document: dict[str, Any],
+) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
-    for entry in load_canonical_entries():
+    validated = _validate_catalog_document(document)
+    for raw_entry in validated["servers"]:
+        entry = CatalogEntry.model_validate(raw_entry)
         seed = catalog_entry_to_mcp_seed(entry)
         canonical = entry.id
         seed["server_id"] = LEGACY_SERVER_IDS.get(canonical, canonical)
@@ -168,6 +278,10 @@ def _validate_identity(entries: list[CatalogEntry]) -> None:
 
 def _validate_evidence(entries: list[CatalogEntry]) -> None:
     for entry in entries:
+        try:
+            validate_catalog_evidence(entry)
+        except CatalogEvidenceError as error:
+            raise CatalogValidationError(str(error)) from error
         validation = entry.validation_result
         if validation.status == "passed" and not validation.environment:
             raise CatalogValidationError(

@@ -1,89 +1,77 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ToolRegistryPage } from "../components/pages/ToolRegistryPage";
+import { mcpService } from "../services/mcp-service";
 import { useTools } from "../store/tools";
-import {
-  defaultMcpMetadata,
-  type McpServer,
-  type McpTool,
-} from "../services/mcp-service";
 
-// Mock the useTools hook
-vi.mock("../store/tools", () => ({
-  useTools: vi.fn(),
-  ToolsProvider: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
-
-// Mock useChat to control store states
-const mockUseChat = vi.fn();
-vi.mock("../store/sessions", () => ({
-  useChat: () => mockUseChat(),
-  ChatProvider: ({ children }: any) => <div>{children}</div>,
-}));
-
-// Mock workspace-service
-vi.mock("../services/workspace-service", () => ({
-  workspaceService: {
-    getAllWorkspaces: vi.fn().mockResolvedValue([]),
-    toggleWorkspaceTool: vi.fn().mockResolvedValue(true),
-  },
-}));
-
-// Mock logger hook
-vi.mock("../hooks/useLogger", () => ({
-  default: () => ({
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-  }),
-}));
-
-describe("ToolRegistryPage Visual Layout", () => {
-  const mockServers: McpServer[] = [
-    {
-      server_id: "server-1",
-      name: "CalculiX Simulation",
-      type: "stdio",
-      command: ["uv", "run", "calculix-mcp"],
-      is_active: false,
-      is_installed: false,
-      status: "inactive",
-      category: "simulation",
-      created_at: 1000,
-      updated_at: 1000,
-      description: "Finite element analysis solver.",
-      ...defaultMcpMetadata(),
+vi.mock("../store/tools", () => ({ useTools: vi.fn() }));
+vi.mock("../services/mcp-service", async (loadOriginal) => {
+  const original =
+    await loadOriginal<typeof import("../services/mcp-service")>();
+  return {
+    ...original,
+    mcpService: {
+      ...original.mcpService,
+      getCapabilities: vi.fn(),
+      getCatalogState: vi.fn(),
+      previewCatalogUpdate: vi.fn(),
+      activateCatalogUpdate: vi.fn(),
+      rollbackCatalog: vi.fn(),
+      reportMissingMcp: vi.fn(),
+      reportMissingCapability: vi.fn(),
     },
-  ];
+  };
+});
+vi.mock("../hooks/useLogger", () => ({
+  default: () => ({ info: vi.fn(), error: vi.fn(), warn: vi.fn() }),
+}));
 
-  const mockTools: McpTool[] = [];
-
+describe("ToolRegistryPage capability layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseChat.mockReturnValue({
-      state: {
-        activeSessionId: "session-1",
-      },
-    });
-    (useTools as any).mockReturnValue({
-      servers: mockServers,
-      tools: mockTools,
-      isLoading: false,
-      error: null,
+    (useTools as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       fetchServersAndTools: vi.fn(),
+    });
+    vi.mocked(mcpService.getCapabilities).mockResolvedValue({
+      snapshot: {
+        snapshot_id: "bundled",
+        channel: "bundled",
+        sequence: 1,
+        offline: true,
+        updated_at: "2026-08-12T00:00:00Z",
+      },
+      capabilities: [],
+      next_cursor: null,
+      total: 0,
+    });
+    vi.mocked(mcpService.getCatalogState).mockResolvedValue({
+      bundled_snapshot_id: "bundled",
+      active_snapshot_id: "bundled",
+      previous_snapshot_id: null,
+      active_sequence: 1,
+      active_channel: "bundled",
+      active_generation: 1,
+      updated_at: "2026-08-12T00:00:00Z",
+      updated_by: "wright-bootstrap",
+      configured_channels: [],
+      diagnostic: null,
+      history: [],
     });
   });
 
-  it("renders card panels with proper data-testid values", () => {
+  it("renders the Capability Library information architecture", async () => {
     render(<ToolRegistryPage />);
 
-    // Assert cards have data-testid for styling tests
-    const serverCard = screen.getByTestId("server-card-server-1");
-    expect(serverCard).toBeInTheDocument();
-
-    const title = screen.getByText("CalculiX Simulation");
-    expect(title).toBeInTheDocument();
+    expect(screen.getByTestId("page-tool-registry")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Engineering Capability Library" }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Capability filters")).toBeInTheDocument();
+    expect(screen.getByTestId("tool-registry-register-btn")).toHaveTextContent(
+      "Add capability",
+    );
+    expect(
+      await screen.findByTestId("capability-empty-state"),
+    ).toBeInTheDocument();
   });
 });

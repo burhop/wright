@@ -1,15 +1,24 @@
 # Dynamic Engineering MCP Catalog
 
 Wright's engineering MCP list is a statused registry, not a hard-coded Docker
-shopping list. The canonical source lives in GitHub at:
+shopping list. The bundled recovery source lives in the package at:
 
 `packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml`
 
-Consumers can load the packaged catalog with
-`tool_registry.canonical_catalog.load_canonical_entries()` or a GitHub-hosted
-copy with `load_canonical_entries_from_url(url)`. Use the raw file URL for the
-branch or release channel that the appliance should follow, then fall back to
-the packaged catalog if the network is unavailable.
+Consumers load the packaged catalog with
+`tool_registry.canonical_catalog.load_canonical_entries()`. Network refreshes
+use only an administrator-configured HTTPS channel and a Wright-pinned Ed25519
+public key. Wright verifies the canonical signed envelope, content digest,
+signer identity, expiry, increasing sequence, schema, identity rules, and
+evidence rules before it offers an exact diff. Direct arbitrary-URL catalog
+loading is disabled.
+
+Activation stores immutable candidate, active, and previous snapshots and
+reconciles catalog-owned metadata in one database transaction. It never
+installs, starts, authenticates, or enables an MCP. Rollback selects the prior
+verified snapshot while preserving custom entries, credential references,
+explicit disablement, install/process state, and workspace grants. The bundled
+catalog remains the final offline recovery root.
 
 ## Required Metadata
 
@@ -122,6 +131,51 @@ Primary-source ledger for the latest sweep:
 - Backflip AI product/downloads: https://www.backflip.ai/
 - SimScale API and SDK docs: https://www.simscale.com/docs/platform/api-and-sdk-documentation/
 - Flexcompute Flow360 Python API: https://github.com/flexcompute/Flow360
+
+## Onshape Labs FeatureScript MCP evidence
+
+The bundled catalog includes `onshape-labs-featurescript-mcp` as
+`official_preview`, separately from the two community Onshape MCPs. The
+classification is supported by Onshape's vendor-authored announcement:
+
+- https://www.onshape.com/en/blog/featurescript-mcp-server-enables-text-code-cad
+
+The announcement identifies the Onshape Labs FeatureScript MCP and the remote
+streamable-HTTP endpoint `https://fs-mcp.labs.onshape.app/mcp`. The catalog
+therefore records official publisher authority, but it does not claim
+production maturity or successful Wright validation. Use requires the user to
+complete any Onshape account, App Store subscription, license, and terms steps
+independently. Catalog discovery, update activation, import, and machine
+compatibility checks do not contact that endpoint.
+
+Current external-validation status is deferred. Wright has not subscribed,
+accepted terms, supplied credentials, initialized the remote server, listed
+its tools, or run FeatureScript. A future credentialed validation must record
+protocol evidence and a catalog-approved read-only probe through the Wright
+gateway before the catalog validation status can advance. The community
+`onshape-mcp-hedless` and `jarvis-onshape-mcp` records keep their independent
+identities, credential names, source evidence, and validation histories.
+
+### Signed update, rollback, import, and compatibility operations
+
+For an administrator-managed update:
+
+1. Configure an approved channel and matching public trust root in Wright's
+   deployment configuration.
+2. In **Capability Library**, choose **Check for updates** and review the signer,
+   expiry, sequence, exact added/removed/changed fields, provenance, and risk
+   counts.
+3. Activate only the reviewed preview. Restart and confirm the same active
+   snapshot id and user-owned state.
+4. Use **Roll back** if the new metadata is unsuitable. Rollback changes the
+   active catalog projection only.
+
+Claude `mcpServers`, VS Code `servers`/`inputs`, and plain single-server JSON
+can also be pasted into the add wizard. Import produces a redacted normalized
+preview and discards the source; it does not execute a command or register a
+server. Current-machine compatibility is a bounded local observation. Network
+access, executable launches, credentials, and host changes require later,
+explicit plan and validation steps.
 
 Recommended next validations:
 

@@ -10,6 +10,7 @@ from typing import Any
 import yaml
 
 from .engineering_catalog import ENGINEERING_CATALOG
+from .canonical_catalog import engineering_catalog_from_document
 from .wright_managed_servers import WRIGHT_MANAGED_SERVERS, WRIGHT_MANAGED_TOOLS
 
 
@@ -125,22 +126,66 @@ def reconcile_wright_managed_servers(database_path: str) -> int:
 
 def reconcile_engineering_catalog(database_path: str) -> int:
     """Reconcile Wright-owned catalog rows after schema readiness."""
-    catalog_ids = [entry["server_id"] for entry in ENGINEERING_CATALOG]
+    return _reconcile_catalog_seeds(database_path, ENGINEERING_CATALOG)
+
+
+def reconcile_engineering_catalog_document(
+    database_path: str,
+    document: dict[str, Any],
+    *,
+    connection: sqlite3.Connection | None = None,
+) -> int:
+    """Reconcile a validated snapshot inside an optional caller transaction."""
+    return _reconcile_catalog_seeds(
+        database_path,
+        engineering_catalog_from_document(document),
+        connection=connection,
+        reset_failed_installs=False,
+    )
+
+
+def reconcile_active_engineering_catalog(
+    database_path: str,
+) -> tuple[int, dict[str, Any] | None]:
+    """Reconcile the active verified snapshot, falling back safely to recovery.
+
+    Bootstrap only establishes state when none exists. It never replaces a
+    newer active pointer, so restart cannot silently downgrade signed metadata.
+    """
+
+    from .catalog_snapshots import bootstrap_bundled_snapshot, load_active_catalog
+
+    bootstrap_bundled_snapshot(database_path)
+    document, diagnostic = load_active_catalog(database_path)
+    return reconcile_engineering_catalog_document(database_path, document), diagnostic
+
+
+def _reconcile_catalog_seeds(
+    database_path: str,
+    entries: list[dict[str, Any]],
+    *,
+    connection: sqlite3.Connection | None = None,
+    reset_failed_installs: bool = True,
+) -> int:
+    catalog_ids = [entry["server_id"] for entry in entries]
     placeholders = ",".join("?" for _ in catalog_ids)
-    connection = sqlite3.connect(database_path)
+    owns_connection = connection is None
+    connection = connection or sqlite3.connect(database_path)
     try:
         connection.execute("PRAGMA foreign_keys = ON")
-        connection.execute("BEGIN IMMEDIATE")
-        connection.execute(
-            f"""UPDATE mcp_servers
-            SET is_installed = 0, is_active = 0, status = 'inactive',
-                error_message = NULL, installed_version = NULL
-            WHERE is_installed = 1 AND status = 'error'
-              AND server_id IN ({placeholders})""",
-            tuple(catalog_ids),
-        )
+        if owns_connection:
+            connection.execute("BEGIN IMMEDIATE")
+        if catalog_ids and reset_failed_installs:
+            connection.execute(
+                f"""UPDATE mcp_servers
+                SET is_installed = 0, is_active = 0, status = 'inactive',
+                    error_message = NULL, installed_version = NULL
+                WHERE is_installed = 1 AND status = 'error'
+                  AND server_id IN ({placeholders})""",
+                tuple(catalog_ids),
+            )
         now = int(time.time())
-        for entry in ENGINEERING_CATALOG:
+        for entry in entries:
             connection.execute(
                 """INSERT OR IGNORE INTO mcp_servers
                     (server_id, name, type, command, is_active, is_installed, status,
@@ -150,9 +195,10 @@ def reconcile_engineering_catalog(database_path: str) -> int:
                      verification_state, installability_tier, risk_level,
                      deployment_mode, platform_support, host_software_required,
                      credentials_required, default_enabled, approval_gates,
-                     validation_result, follow_up_url, install_blocked_reason)
+                     validation_result, follow_up_url, install_blocked_reason,
+                     transport_variant)
                 VALUES (?, ?, ?, ?, 0, 0, 'inactive', ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?,
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 _entry_values(entry, now),
             )
             connection.execute(
@@ -164,17 +210,21 @@ def reconcile_engineering_catalog(database_path: str) -> int:
                     installability_tier = ?, risk_level = ?, deployment_mode = ?,
                     platform_support = ?, host_software_required = ?,
                     credentials_required = ?, default_enabled = ?, approval_gates = ?,
-                    validation_result = ?, follow_up_url = ?, install_blocked_reason = ?
+                    validation_result = ?, follow_up_url = ?, install_blocked_reason = ?,
+                    transport_variant = ?
                 WHERE server_id = ?""",
                 _update_values(entry),
             )
-        connection.commit()
-        return len(ENGINEERING_CATALOG)
+        if owns_connection:
+            connection.commit()
+        return len(entries)
     except Exception:
-        connection.rollback()
+        if owns_connection:
+            connection.rollback()
         raise
     finally:
-        connection.close()
+        if owns_connection:
+            connection.close()
 
 
 def reconcile_installed_bundle(
@@ -333,6 +383,7 @@ def _entry_values(entry: dict, now: int) -> tuple:
         json.dumps(entry["validation_result"]),
         entry.get("follow_up_url"),
         entry.get("install_blocked_reason"),
+        entry.get("transport_variant", entry["type"]),
     )
 
 
@@ -546,5 +597,6 @@ def _update_values(entry: dict) -> tuple:
         json.dumps(entry["validation_result"]),
         entry.get("follow_up_url"),
         entry.get("install_blocked_reason"),
+        entry.get("transport_variant", entry["type"]),
         entry["server_id"],
     )

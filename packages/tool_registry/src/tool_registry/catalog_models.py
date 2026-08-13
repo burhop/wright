@@ -14,6 +14,18 @@ from .models import (
     VerificationState,
 )
 
+EvidenceClass = Literal[
+    "official_production",
+    "official_preview",
+    "verified_community",
+    "community_candidate",
+    "user_reported_source_needed",
+    "api_wrapper_candidate",
+    "documentation_only",
+    "blocked_validation",
+    "excluded_or_stale",
+]
+
 REQUIRED_PLATFORM_KEYS = (
     "windows_11_x64",
     "linux_x64",
@@ -77,6 +89,9 @@ class CatalogSourceRecord(BaseModel):
         "other",
     ] = "repository"
     primary: bool = True
+    authority: Literal["vendor", "publisher", "community", "directory", "unknown"] = (
+        "unknown"
+    )
     observed_at: Optional[str] = None
     notes: str = ""
 
@@ -161,7 +176,7 @@ class CatalogEntry(BaseModel):
     description: str
     domains: list[str]
     tags: list[str] = Field(default_factory=list)
-    transport: Literal["stdio", "sse", "webmcp"]
+    transport: Literal["stdio", "streamable_http", "sse", "webmcp"]
     command: Union[list[str], str]
     source_url: Optional[str] = None
     repository_url: Optional[str] = None
@@ -197,7 +212,10 @@ class CatalogEntry(BaseModel):
         "watchlist",
         "deprecated",
     ] = "community"
+    evidence_class: EvidenceClass | None = None
     capability_summary: list[str] = Field(default_factory=list)
+    data_touched: list[str] = Field(default_factory=list)
+    examples: list[str] = Field(default_factory=list)
     source_records: list[CatalogSourceRecord] = Field(default_factory=list)
     runtime_requirements: RuntimeRequirements = Field(
         default_factory=RuntimeRequirements
@@ -233,4 +251,24 @@ class CatalogEntry(BaseModel):
         if self.risk_level in {"medium", "high", "safety-critical"}:
             self.default_enabled = False
 
+        if self.evidence_class is None:
+            self.evidence_class = conservative_evidence_class(self)
+
         return self
+
+
+def conservative_evidence_class(entry: CatalogEntry) -> EvidenceClass:
+    """Map legacy evidence without ever inferring official status."""
+    if entry.verification_state == "excluded":
+        return "excluded_or_stale"
+    if entry.installability_tier in {"blocked", "non_working"}:
+        return "blocked_validation"
+    if entry.verification_state == "verified_docs_mcp":
+        return "documentation_only"
+    if entry.verification_state == "verified_api_wrapper_candidate":
+        return "api_wrapper_candidate"
+    if entry.verification_state in {"watchlist", "user_reported_url_needed"}:
+        return "user_reported_source_needed"
+    if entry.verification_state in {"verified_mcp", "community_mcp"}:
+        return "verified_community"
+    return "community_candidate"

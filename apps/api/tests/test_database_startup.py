@@ -58,8 +58,8 @@ async def test_lifespan_orders_migration_secret_catalog_before_runtimes(monkeypa
     )
     monkeypatch.setattr(
         catalog_reconcile,
-        "reconcile_engineering_catalog",
-        lambda path: events.append("catalog"),
+        "reconcile_active_engineering_catalog",
+        lambda path: events.append("catalog") or (0, None),
     )
     monkeypatch.setattr(
         catalog_reconcile,

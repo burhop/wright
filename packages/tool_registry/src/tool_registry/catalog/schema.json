@@ -53,6 +53,18 @@
           "title": "Primary",
           "type": "boolean"
         },
+        "authority": {
+          "default": "unknown",
+          "enum": [
+            "vendor",
+            "publisher",
+            "community",
+            "directory",
+            "unknown"
+          ],
+          "title": "Authority",
+          "type": "string"
+        },
         "observed_at": {
           "anyOf": [
             {
@@ -283,11 +295,27 @@
     "transport": {
       "enum": [
         "stdio",
+        "streamable_http",
         "sse",
         "webmcp"
       ],
       "title": "Transport",
       "type": "string"
+    },
+    "evidence_class": {
+      "enum": [
+        "official_production",
+        "official_preview",
+        "verified_community",
+        "community_candidate",
+        "user_reported_source_needed",
+        "api_wrapper_candidate",
+        "documentation_only",
+        "blocked_validation",
+        "excluded_or_stale"
+      ],
+      "type": ["string", "null"],
+      "default": null
     },
     "command": {
       "anyOf": [
@@ -412,6 +440,20 @@
         "type": "string"
       },
       "title": "Capability Summary",
+      "type": "array"
+    },
+    "data_touched": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Data Touched",
+      "type": "array"
+    },
+    "examples": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Examples",
       "type": "array"
     },
     "source_records": {

@@ -86,6 +86,7 @@ def test_workflow_review_migration_preserves_prior_workflow_metadata(tmp_path):
     assert result.applied == (
         {"version": 11, "name": "workspace_workflow_reviews"},
         {"version": 12, "name": "workspace_workflow_runs"},
+        {"version": 13, "name": "capability_library_onboarding"},
     )
     with sqlite3.connect(path) as connection:
         assert connection.execute(
@@ -125,6 +126,62 @@ def test_provider_neutral_mcp_columns_are_added_without_losing_rows(tmp_path):
         ).fetchone()
     assert server == ("Existing", None)
     assert tool == ("tool", None, None, None)
+
+
+def test_capability_library_migration_is_additive_and_complete(tmp_path):
+    path = tmp_path / "capability-library.db"
+    upgrade_database(path, migrations=MIGRATIONS[:12])
+    with sqlite3.connect(path) as connection:
+        connection.execute(
+            """INSERT INTO mcp_servers
+            (server_id, name, type, command, is_active, is_installed, status,
+             created_at, updated_at)
+            VALUES ('custom', 'Custom', 'stdio', '[\"custom\"]', 0, 1,
+                    'inactive', 1, 1)"""
+        )
+        connection.commit()
+
+    result = upgrade_database(path)
+
+    assert result.applied == ({"version": 13, "name": "capability_library_onboarding"},)
+    with sqlite3.connect(path) as connection:
+        tables = {
+            row[0]
+            for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        }
+        columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(mcp_servers)")
+        }
+        assert {
+            "catalog_snapshots",
+            "catalog_state",
+            "catalog_update_previews",
+            "catalog_activations",
+            "machine_compatibility_observations",
+            "mcp_install_plans",
+            "mcp_onboarding_runs",
+            "mcp_validation_evidence",
+            "missing_capability_reports",
+        }.issubset(tables)
+        assert "transport_variant" in columns
+        assert connection.execute(
+            "SELECT is_installed, is_active FROM mcp_servers WHERE server_id='custom'"
+        ).fetchone() == (1, 0)
+
+
+def test_capability_library_state_enforces_singleton_and_snapshot_references(tmp_path):
+    path = tmp_path / "capability-library-state.db"
+    upgrade_database(path)
+    with sqlite3.connect(path) as connection:
+        connection.execute("PRAGMA foreign_keys = ON")
+        with pytest.raises(sqlite3.IntegrityError):
+            connection.execute(
+                """INSERT INTO catalog_state
+                (state_id, active_snapshot_id, active_generation, updated_at,
+                 updated_by) VALUES (2, 'missing', 1, 1, 'test')"""
+            )
 
 
 def test_complete_unversioned_feature_043_shape_is_adopted(tmp_path):

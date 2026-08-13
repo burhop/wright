@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.invalid/schemas/catalog-snapshot-envelope-v1.json",
+  "title": "Wright Catalog Snapshot Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["signed", "signature"],
+  "properties": {
+    "signed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "envelope_version",
+        "channel",
+        "sequence",
+        "issued_at",
+        "expires_at",
+        "schema_version",
+        "key_id",
+        "payload_sha256",
+        "payload"
+      ],
+      "properties": {
+        "envelope_version": { "const": 1 },
+        "channel": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "issued_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "schema_version": { "const": 1 },
+        "key_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "payload": {
+          "type": "object",
+          "required": ["format_version", "servers"],
+          "properties": {
+            "format_version": { "const": 1 },
+            "servers": { "type": "array", "maxItems": 10000 }
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{86}$"
+    }
+  }
+}

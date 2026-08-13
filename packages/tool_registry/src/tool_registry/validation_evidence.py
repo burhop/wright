@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import re
+import json
+import sqlite3
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -8,10 +12,163 @@ from core.redaction import redact_mapping, redact_text
 
 from .mcp_validation import ValidationResult
 from .validation_plan import ValidationPlan
+from .capability_models import ValidationEvidence as CapabilityValidationEvidence
 
 SECRET_ASSIGNMENT_RE = re.compile(
     r"(?i)\b(api[_-]?(?:key|token)|secret|token|password|authorization)\b\s*[:=]\s*([^\s,;]+)"
 )
+VALIDATION_MAX_AGE = timedelta(hours=24)
+
+
+class ValidationEvidenceError(RuntimeError):
+    def __init__(self, code: str, message: str, *, http_status: int = 409) -> None:
+        super().__init__(message)
+        self.code = code
+        self.http_status = http_status
+        self.status_code = http_status
+
+
+def _connection(database_path: str | Path) -> sqlite3.Connection:
+    connection = sqlite3.connect(str(database_path))
+    connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA foreign_keys = ON")
+    return connection
+
+
+def save_capability_validation_evidence(
+    database_path: str | Path, evidence: CapabilityValidationEvidence
+) -> CapabilityValidationEvidence:
+    """Append evidence exactly once; validation history is never overwritten."""
+
+    payload = evidence.model_dump_json()
+    with _connection(database_path) as connection:
+        try:
+            connection.execute(
+                """INSERT INTO mcp_validation_evidence (
+                    evidence_id, capability_id, server_id, snapshot_id,
+                    observation_id, state, schema_digest, evidence_json,
+                    observed_at, trace_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    evidence.evidence_id,
+                    evidence.capability_id,
+                    evidence.server_id,
+                    evidence.snapshot_id,
+                    evidence.observation_id,
+                    evidence.state,
+                    evidence.schema_digest,
+                    payload,
+                    int(evidence.observed_at.timestamp()),
+                    evidence.trace_id,
+                ),
+            )
+        except sqlite3.IntegrityError as error:
+            raise ValidationEvidenceError(
+                "validation_evidence_conflict",
+                "Validation evidence is append-only and this identity already exists.",
+            ) from error
+    return evidence
+
+
+def _evidence_from_row(row: sqlite3.Row) -> CapabilityValidationEvidence:
+    return CapabilityValidationEvidence.model_validate(json.loads(row["evidence_json"]))
+
+
+def latest_capability_validation_evidence(
+    database_path: str | Path, server_id: str
+) -> CapabilityValidationEvidence | None:
+    with _connection(database_path) as connection:
+        row = connection.execute(
+            """SELECT evidence_json FROM mcp_validation_evidence
+               WHERE server_id=? ORDER BY observed_at DESC, evidence_id DESC LIMIT 1""",
+            (server_id,),
+        ).fetchone()
+    return _evidence_from_row(row) if row else None
+
+
+def list_capability_validation_evidence(
+    database_path: str | Path, server_id: str, *, limit: int = 20
+) -> list[CapabilityValidationEvidence]:
+    """Return a bounded newest-first projection of append-only local history."""
+    if limit < 1 or limit > 100:
+        raise ValueError("validation evidence history limit must be between 1 and 100")
+    with _connection(database_path) as connection:
+        rows = connection.execute(
+            """SELECT evidence_json FROM mcp_validation_evidence
+               WHERE server_id=? ORDER BY observed_at DESC, evidence_id DESC LIMIT ?""",
+            (server_id, limit),
+        ).fetchall()
+    return [_evidence_from_row(row) for row in rows]
+
+
+def validation_staleness_reasons(
+    evidence: CapabilityValidationEvidence,
+    *,
+    snapshot_id: str,
+    capability_digest: str,
+    observation_id: str,
+    server_revision: str,
+    credential_binding_digest: str,
+    schema_digest: str | None = None,
+    now: datetime | None = None,
+    maximum_age: timedelta = VALIDATION_MAX_AGE,
+) -> list[str]:
+    current_time = now or datetime.now(UTC)
+    reasons: list[str] = []
+    comparisons = (
+        (evidence.snapshot_id, snapshot_id, "validation_snapshot_changed"),
+        (
+            evidence.capability_digest,
+            capability_digest,
+            "validation_capability_changed",
+        ),
+        (
+            evidence.observation_id,
+            observation_id,
+            "validation_machine_observation_changed",
+        ),
+        (
+            evidence.server_revision,
+            server_revision,
+            "validation_server_revision_changed",
+        ),
+        (
+            evidence.credential_binding_digest,
+            credential_binding_digest,
+            "validation_credential_binding_changed",
+        ),
+    )
+    reasons.extend(code for before, after, code in comparisons if before != after)
+    if schema_digest is not None and evidence.schema_digest != schema_digest:
+        reasons.append("validation_schema_changed")
+    if current_time - evidence.observed_at > maximum_age:
+        reasons.append("validation_evidence_expired")
+    return reasons
+
+
+def require_current_passed_validation(
+    database_path: str | Path,
+    server_id: str,
+    **current: Any,
+) -> CapabilityValidationEvidence:
+    evidence = latest_capability_validation_evidence(database_path, server_id)
+    if evidence is None:
+        raise ValidationEvidenceError(
+            "validation_required",
+            "Run validation before enabling this capability for a workspace.",
+        )
+    if evidence.state != "passed":
+        raise ValidationEvidenceError(
+            "validation_not_passed",
+            "Only current, fully passed protocol evidence permits workspace enablement.",
+        )
+    reasons = validation_staleness_reasons(evidence, **current)
+    if reasons:
+        raise ValidationEvidenceError(
+            "validation_stale",
+            "Validation is stale; run it again before workspace enablement.",
+        )
+    return evidence
 
 
 class ValidationStepEvidence(BaseModel):

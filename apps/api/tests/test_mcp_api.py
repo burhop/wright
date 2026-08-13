@@ -374,7 +374,7 @@ def test_validate_server_reports_missing_host_dependency(client):
     assert "DefinitelyMissingCadHost" in data["diagnostics"]
 
 
-def test_report_missing_mcp_creates_blocked_seed(client):
+def test_report_missing_mcp_returns_compatibility_shape_without_server_seed(client):
     response = client.post(
         "/api/mcp/servers/report-missing",
         json={
@@ -386,7 +386,7 @@ def test_report_missing_mcp_creates_blocked_seed(client):
 
     assert response.status_code == 201
     server_id = response.json()["server_id"]
+    assert server_id.startswith("report-")
+    assert response.json()["status"] == "submitted"
     servers = client.get("/api/mcp/servers").json()["servers"]
-    created = next(server for server in servers if server["server_id"] == server_id)
-    assert created["verification_state"] == "user_reported_url_needed"
-    assert created["installability_tier"] == "blocked"
+    assert all(server["server_id"] != server_id for server in servers)
