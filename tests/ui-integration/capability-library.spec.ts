@@ -80,6 +80,21 @@ test.describe("Offline Capability Library", () => {
     await page.route("**/api/mcp/tools", async (route) =>
       route.fulfill({ json: { tools: [] } }),
     );
+    await page.route("**/api/mcp/missing-capability-reports", async (route) => {
+      const payload = route.request().postDataJSON();
+      await route.fulfill({
+        status: 201,
+        json: {
+          ...payload,
+          report_id: "report-browser-1",
+          reporter: "local-admin",
+          created_at: "2026-08-12T15:00:00Z",
+          updated_at: "2026-08-12T15:00:00Z",
+          state: "submitted",
+          matched_capability_id: null,
+        },
+      });
+    });
     await page.route("**/api/mcp/catalog/state", async (route) => {
       await route.fulfill({
         json: {
@@ -287,6 +302,51 @@ test.describe("Offline Capability Library", () => {
     await expect(page).toHaveURL(/evidence_class=official_preview/);
     await page.getByLabel("Search capabilities").fill("no result");
     await expect(page.getByTestId("capability-empty-state")).toBeVisible();
+  });
+
+  test("reports an empty-result need with structured context and no browser prompt", async ({
+    page,
+  }) => {
+    const dialogs: string[] = [];
+    const reports: Record<string, unknown>[] = [];
+    page.on("dialog", async (dialog) => {
+      dialogs.push(dialog.type());
+      await dialog.dismiss();
+    });
+    page.on("request", (request) => {
+      if (request.url().endsWith("/api/mcp/missing-capability-reports")) {
+        reports.push(request.postDataJSON());
+      }
+    });
+
+    await page.goto("/tool-registry");
+    await page.getByLabel("Engineering domain").selectOption("cfd");
+    await page.getByLabel("Search capabilities").fill("no result");
+    await expect(page.getByTestId("capability-empty-state")).toBeVisible();
+    await page
+      .getByRole("button", { name: "Report this missing capability" })
+      .click();
+    const form = page.getByRole("dialog", {
+      name: "Report a missing capability",
+    });
+    await expect(
+      form.getByTestId("missing-capability-search-context"),
+    ).toContainText("no result · domain: cfd");
+    await form.getByLabel("Capability or MCP name").fill("Requested CFD MCP");
+    await form
+      .getByLabel("What engineering task should it perform?")
+      .fill("Run a steady-state enclosure cooling study");
+    await form.getByRole("button", { name: "Submit review request" }).click();
+    await expect(form.getByRole("status")).toContainText("report-browser-1");
+    expect(reports).toHaveLength(1);
+    expect(reports[0]).toMatchObject({
+      domains: ["cfd"],
+      search_context: {
+        query: "no result",
+        filters: { domain: "cfd" },
+      },
+    });
+    expect(dialogs).toEqual([]);
   });
 
   test("works at a narrow engineering-laptop layout with no critical a11y defects", async ({

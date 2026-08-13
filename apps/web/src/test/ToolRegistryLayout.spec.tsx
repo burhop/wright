@@ -18,6 +18,7 @@ vi.mock("../services/mcp-service", async (loadOriginal) => {
       activateCatalogUpdate: vi.fn(),
       rollbackCatalog: vi.fn(),
       reportMissingMcp: vi.fn(),
+      reportMissingCapability: vi.fn(),
     },
   };
 });

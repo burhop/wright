@@ -3,6 +3,7 @@ import {
   mcpService,
   type CapabilityListResponse,
   type CapabilityView,
+  type MissingCapabilitySearchContext,
 } from "../../services/mcp-service";
 import { CapabilityCard } from "./CapabilityCard";
 import { CapabilityDetails } from "./CapabilityDetails";
@@ -14,8 +15,12 @@ import {
 
 export function CapabilityLibrary({
   refreshToken = 0,
+  onSearchContextChange,
+  onReportMissing,
 }: {
   refreshToken?: number;
+  onSearchContextChange?: (context: MissingCapabilitySearchContext) => void;
+  onReportMissing?: (context: MissingCapabilitySearchContext) => void;
 }) {
   const [filters, setFilters] = useState<CapabilityFilterState>(() =>
     readCapabilityFilters(),
@@ -40,6 +45,22 @@ export function CapabilityLibrary({
     }),
     [filters],
   );
+
+  const searchContext = useMemo<MissingCapabilitySearchContext>(
+    () => ({
+      query: filters.search,
+      filters: {
+        domain: filters.domain,
+        evidence_class: filters.evidenceClass,
+        compatibility: filters.compatibility,
+      },
+    }),
+    [filters],
+  );
+
+  useEffect(() => {
+    onSearchContextChange?.(searchContext);
+  }, [onSearchContextChange, searchContext]);
 
   useEffect(() => {
     let active = true;
@@ -128,6 +149,14 @@ export function CapabilityLibrary({
         <div data-testid="capability-empty-state">
           <h2>No capabilities match these filters</h2>
           <p>Clear one or more filters, or report a missing MCP candidate.</p>
+          {onReportMissing && (
+            <button
+              type="button"
+              onClick={() => onReportMissing(searchContext)}
+            >
+              Report this missing capability
+            </button>
+          )}
         </div>
       )}
       {!loading && !error && result && result.capabilities.length > 0 && (

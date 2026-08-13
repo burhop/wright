@@ -19,6 +19,7 @@ from tool_registry.capability_models import (
     CapabilityList,
     CapabilityView,
     MachineCompatibilityObservation,
+    MissingCapabilityReport,
 )
 from tool_registry.capability_views import CapabilityFilters
 from tool_registry.catalog_updates import CatalogUpdateError
@@ -26,6 +27,7 @@ from tool_registry.config_import import ConfigurationImportError
 from tool_registry.install_plans import InstallPlanError
 from tool_registry.onboarding import OnboardingError
 from tool_registry.validation_evidence import ValidationEvidenceError
+from tool_registry.missing_reports import MissingCapabilityReportError
 from api.security import require_admin
 
 logger = structlog.get_logger(__name__)
@@ -102,6 +104,18 @@ class MissingMcpReportRequest(BaseModel):
     source_url: Optional[str] = None
     notes: Optional[str] = None
     category: str = "utilities"
+
+
+class MissingCapabilityReportRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    vendor: str = Field(min_length=1, max_length=200)
+    source_url: Optional[str] = Field(default=None, max_length=2048)
+    domains: list[str] = Field(min_length=1, max_length=20)
+    expected_task: str = Field(min_length=1, max_length=2000)
+    platform: Optional[str] = Field(default=None, max_length=200)
+    host_application: Optional[str] = Field(default=None, max_length=200)
+    notes: Optional[str] = Field(default=None, max_length=4000)
+    search_context: dict = Field(default_factory=dict)
 
 
 class CapabilityObservationResponse(BaseModel):
@@ -614,6 +628,46 @@ async def enable_capability_for_workspace_endpoint(
 
 
 @router.post(
+    "/missing-capability-reports",
+    response_model=MissingCapabilityReport,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_engineer_or_admin)],
+)
+@traced("mcp.capability.report_missing")
+async def submit_missing_capability_report_endpoint(
+    body: MissingCapabilityReportRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    try:
+        return service.submit_missing_capability_report(
+            body,
+            reporter=_request_actor(request),
+            idempotency_key=request.headers.get("Idempotency-Key"),
+        )
+    except MissingCapabilityReportError as error:
+        raise HTTPException(
+            status_code=error.status_code,
+            detail={
+                "code": error.code,
+                "message": error.safe_message,
+                "recovery": "Review the report fields and submit again.",
+                "trace_id": _request_trace(request),
+            },
+        ) from error
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "code": "missing_capability_report_invalid",
+                "message": "The report contains an unsafe or invalid field.",
+                "recovery": "Remove credentials and review the structured fields.",
+                "trace_id": _request_trace(request),
+            },
+        ) from error
+
+
+@router.post(
     "/servers/report-missing",
     response_model=RegisterServerResponse,
     status_code=status.HTTP_201_CREATED,
@@ -624,13 +678,13 @@ async def report_missing_mcp(
     service: McpApiService = Depends(get_mcp_api_service),
 ):
     try:
-        server = service.report_missing_server(body)
+        report = service.report_missing_server(body)
     except McpServiceError as e:
         raise mcp_service_http_exception(e)
     return RegisterServerResponse(
-        server_id=server.server_id,
-        name=server.name,
-        status=server.status,
+        server_id=report.report_id,
+        name=report.name,
+        status=report.state,
     )
 
 

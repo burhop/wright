@@ -110,9 +110,17 @@
 - Added negative secret-boundary scans across snapshots, imports, plans, evidence, workspaces, workflows, database rows, and serialized logs.
 - Focused evidence: 27 validation/workspace/security/API tests passed; 12 onboarding/library component tests passed; production web build passed; all three mocked onboarding Playwright journeys passed. Prettier and `git diff --check` passed.
 
+### Implementation checkpoint 8 - missing-capability reports
+
+- Replaced prompt-based missing-MCP submission with a keyboard-accessible structured report dialog covering vendor, public source, engineering domain/task, platform, host application, notes, and the visible search/filter context.
+- Added a user-owned report repository with explicit submitted/exported/under-review/matched/closed transitions, deterministic retry idempotency, safe public-source URL normalization, bounded fields, and reviewed-capability-only matching.
+- New and compatibility APIs record reports outside catalog snapshots and `mcp_servers`; a report cannot become trusted, installable, active, or workspace-enabled through submission or refresh.
+- Added role enforcement and redacted validation failures. Credential-bearing URLs and secret-like context fields are rejected without persisting or echoing their values.
+- Focused evidence: 5 repository tests and 23 report/neighboring API tests passed; 8 report/library/layout component tests passed; production web build passed; all six mocked Capability Library Playwright journeys passed, including empty-result reporting with no browser prompts.
+
 ### Next checkpoint
 
-Replace prompt-based missing-capability requests with structured, reviewable user-owned reports that can never become trusted catalog entries implicitly.
+Complete packaging, bounded-performance, security, local system smoke, documentation, accessibility, quickstart, and authoritative merge-gate hardening for Loop 068.
 
 ## Program guardrails
 

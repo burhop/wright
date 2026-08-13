@@ -52,6 +52,7 @@ from tool_registry.onboarding import (
     cancel_onboarding_run,
     get_onboarding_run,
 )
+from tool_registry.missing_reports import submit_missing_capability_report
 from tool_registry.db import get_server
 from tool_registry.validation_evidence import (
     latest_capability_validation_evidence,
@@ -610,12 +611,37 @@ class McpApiService:
         return registry_services.validate_registered_server(self.db_path, server_id)
 
     def report_missing_server(self, body):
-        return registry_services.report_missing_server(
+        """Compatibility adapter that no longer creates an installable server row."""
+        return submit_missing_capability_report(
             self.db_path,
             name=body.name,
+            vendor="Unknown",
             source_url=body.source_url,
             notes=body.notes,
-            category=body.category,
+            domains=[body.category],
+            expected_task=body.notes or "Review this requested MCP capability.",
+            search_context={"legacy_endpoint": True},
+            reporter="legacy-local-user",
+            now=self.capability_dependencies.clock(),
+        )
+
+    def submit_missing_capability_report(
+        self, body, *, reporter: str, idempotency_key: str | None
+    ):
+        return submit_missing_capability_report(
+            self.db_path,
+            name=body.name,
+            vendor=body.vendor,
+            source_url=body.source_url,
+            domains=body.domains,
+            expected_task=body.expected_task,
+            platform=body.platform,
+            host_application=body.host_application,
+            notes=body.notes,
+            search_context=body.search_context,
+            reporter=reporter,
+            idempotency_key=idempotency_key,
+            now=self.capability_dependencies.clock(),
         )
 
     async def check_server_version(self, server_id: str):

@@ -408,3 +408,47 @@ class ValidationEvidence(StrictModel):
         ):
             raise ValueError(f"{self.state} evidence requires an explicit reason")
         return self
+
+
+class MissingCapabilityReport(StrictModel):
+    """User-owned discovery evidence, never trusted catalog metadata."""
+
+    report_id: str = Field(min_length=1, max_length=100)
+    name: str = Field(min_length=1, max_length=200)
+    vendor: str = Field(min_length=1, max_length=200)
+    source_url: str | None = Field(default=None, max_length=2048)
+    domains: list[str] = Field(min_length=1, max_length=20)
+    expected_task: str = Field(min_length=1, max_length=2000)
+    platform: str | None = Field(default=None, max_length=200)
+    host_application: str | None = Field(default=None, max_length=200)
+    notes: str | None = Field(default=None, max_length=4000)
+    search_context: dict[str, Any] = Field(default_factory=dict)
+    reporter: str = Field(min_length=1, max_length=200)
+    created_at: datetime
+    updated_at: datetime
+    state: Literal["submitted", "exported", "under_review", "matched", "closed"]
+    matched_capability_id: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_secret_fields(cls, values: Any) -> Any:
+        _reject_secret_keys(values)
+        if isinstance(values, dict):
+            _reject_secret_keys(values.get("search_context"))
+        return values
+
+    @model_validator(mode="after")
+    def validate_report(self) -> "MissingCapabilityReport":
+        if self.created_at.tzinfo is None or self.updated_at.tzinfo is None:
+            raise ValueError("timestamps must be timezone-aware")
+        if self.updated_at < self.created_at:
+            raise ValueError("updated_at cannot precede created_at")
+        normalized_domains = [domain.strip().lower() for domain in self.domains]
+        if any(not domain for domain in normalized_domains):
+            raise ValueError("domains cannot contain empty values")
+        self.domains = list(dict.fromkeys(normalized_domains))
+        if self.state == "matched" and not self.matched_capability_id:
+            raise ValueError("matched reports require a capability id")
+        if self.state != "matched" and self.matched_capability_id:
+            raise ValueError("only matched reports may identify a capability")
+        return self

@@ -220,19 +220,19 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Tests for User Story 5
 
-- [ ] T096 [P] [US5] Write missing-report validation, storage, idempotency, export, match, and non-promotion tests in `packages/tool_registry/tests/test_missing_capability_reports.py`
-- [ ] T097 [P] [US5] Write structured report role, validation, redaction, and no-server-row API tests in `apps/api/tests/test_missing_capability_report_api.py`
-- [ ] T098 [P] [US5] Write form validation, preserved search context, success, and failure component tests in `apps/web/src/components/tools/MissingCapabilityForm.spec.tsx`
-- [ ] T099 [P] [US5] Extend mocked Playwright with empty-result structured reporting and no prompt usage in `tests/ui-integration/capability-library.spec.ts`
+- [x] T096 [P] [US5] Write missing-report validation, storage, idempotency, export, match, and non-promotion tests in `packages/tool_registry/tests/test_missing_capability_reports.py`
+- [x] T097 [P] [US5] Write structured report role, validation, redaction, and no-server-row API tests in `apps/api/tests/test_missing_capability_report_api.py`
+- [x] T098 [P] [US5] Write form validation, preserved search context, success, and failure component tests in `apps/web/src/components/tools/MissingCapabilityForm.spec.tsx`
+- [x] T099 [P] [US5] Extend mocked Playwright with empty-result structured reporting and no prompt usage in `tests/ui-integration/capability-library.spec.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T100 [US5] Implement missing-capability report repository and explicit review-state transitions in `packages/tool_registry/src/tool_registry/missing_reports.py`
-- [ ] T101 [US5] Replace legacy report-to-server-row behavior with a thin structured report endpoint while keeping a compatibility response where needed in `apps/api/src/api/routers/mcp.py`
-- [ ] T102 [US5] Implement typed report client method and remove browser prompt handling in `apps/web/src/services/mcp-service.ts`
-- [ ] T103 [US5] Create accessible structured missing-capability form/drawer in `apps/web/src/components/tools/MissingCapabilityForm.tsx`
-- [ ] T104 [US5] Integrate report action with empty results and current search/filter context in `apps/web/src/components/pages/ToolRegistryPage.tsx`
-- [ ] T105 [US5] Run report repository/API/component/mocked Playwright tests for US5
+- [x] T100 [US5] Implement missing-capability report repository and explicit review-state transitions in `packages/tool_registry/src/tool_registry/missing_reports.py`
+- [x] T101 [US5] Replace legacy report-to-server-row behavior with a thin structured report endpoint while keeping a compatibility response where needed in `apps/api/src/api/routers/mcp.py`
+- [x] T102 [US5] Implement typed report client method and remove browser prompt handling in `apps/web/src/services/mcp-service.ts`
+- [x] T103 [US5] Create accessible structured missing-capability form/drawer in `apps/web/src/components/tools/MissingCapabilityForm.tsx`
+- [x] T104 [US5] Integrate report action with empty results and current search/filter context in `apps/web/src/components/pages/ToolRegistryPage.tsx`
+- [x] T105 [US5] Run report repository/API/component/mocked Playwright tests for US5
 
 **Checkpoint**: Missing needs become reviewable user-owned evidence, never an implicitly trusted or installable capability.
 

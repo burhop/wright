@@ -538,6 +538,32 @@ export interface MissingMcpReportPayload {
   notes?: string;
   category?: string;
 }
+
+export interface MissingCapabilitySearchContext {
+  query: string;
+  filters: Record<string, string>;
+}
+
+export interface MissingCapabilityReportPayload {
+  name: string;
+  vendor: string;
+  source_url?: string;
+  domains: string[];
+  expected_task: string;
+  platform?: string;
+  host_application?: string;
+  notes?: string;
+  search_context: MissingCapabilitySearchContext;
+}
+
+export interface MissingCapabilityReport extends MissingCapabilityReportPayload {
+  report_id: string;
+  reporter: string;
+  created_at: string;
+  updated_at: string;
+  state: "submitted" | "exported" | "under_review" | "matched" | "closed";
+  matched_capability_id?: string | null;
+}
 export interface VersionCheckResult {
   server_id: string;
   installed: string | null;
@@ -791,6 +817,33 @@ export class McpService {
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
       throw new Error(errData.detail || response.statusText);
+    }
+    return response.json();
+  }
+
+  async reportMissingCapability(
+    payload: MissingCapabilityReportPayload,
+    idempotencyKey: string,
+  ): Promise<MissingCapabilityReport> {
+    const response = await hostAdapter.fetch(
+      apiUrl("/api/mcp/missing-capability-reports"),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKey,
+        },
+        body: JSON.stringify(payload),
+      },
+    );
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      const detail = error.detail;
+      throw new Error(
+        (typeof detail === "object" && detail?.message) ||
+          (typeof detail === "string" && detail) ||
+          "The missing-capability report could not be saved.",
+      );
     }
     return response.json();
   }

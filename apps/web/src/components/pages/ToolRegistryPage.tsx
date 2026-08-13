@@ -1,32 +1,37 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useLogger from "../../hooks/useLogger";
-import { mcpService } from "../../services/mcp-service";
+import type { MissingCapabilitySearchContext } from "../../services/mcp-service";
 import { useTools } from "../../store/tools";
 import { CapabilityLibrary } from "../tools/CapabilityLibrary";
 import { CatalogUpdatePanel } from "../tools/CatalogUpdatePanel";
 import { OnboardingWizard } from "../tools/OnboardingWizard";
+import { MissingCapabilityForm } from "../tools/MissingCapabilityForm";
 
 export function ToolRegistryPage() {
   const logger = useLogger("ToolRegistryPage");
   const { fetchServersAndTools } = useTools();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
+  const [reportContext, setReportContext] =
+    useState<MissingCapabilitySearchContext>({
+      query: "",
+      filters: {},
+    });
 
   useEffect(() => {
     logger.info("Capability Library loaded");
   }, [logger]);
 
-  const handleReportMissing = async () => {
-    const name = window.prompt("MCP name");
-    if (!name?.trim()) return;
-    const sourceUrl = window.prompt("Source URL") || undefined;
-    await mcpService.reportMissingMcp({
-      name: name.trim(),
-      source_url: sourceUrl,
-      notes: "User-reported MCP candidate pending verification.",
-    });
-    await fetchServersAndTools();
-  };
+  const handleSearchContext = useCallback(
+    (context: MissingCapabilitySearchContext) => setReportContext(context),
+    [],
+  );
+
+  const openReport = useCallback((context: MissingCapabilitySearchContext) => {
+    setReportContext(context);
+    setIsReportOpen(true);
+  }, []);
 
   return (
     <div
@@ -66,7 +71,7 @@ export function ToolRegistryPage() {
         </button>
         <button
           type="button"
-          onClick={handleReportMissing}
+          onClick={() => setIsReportOpen(true)}
           data-testid="server-card-report-missing-mcp"
           style={{
             padding: "var(--space-sm) var(--space-lg)",
@@ -92,7 +97,11 @@ export function ToolRegistryPage() {
         <CatalogUpdatePanel
           onCatalogChanged={() => setRefreshToken((value) => value + 1)}
         />
-        <CapabilityLibrary refreshToken={refreshToken} />
+        <CapabilityLibrary
+          refreshToken={refreshToken}
+          onSearchContextChange={handleSearchContext}
+          onReportMissing={openReport}
+        />
       </main>
       <OnboardingWizard
         isOpen={isModalOpen}
@@ -101,6 +110,11 @@ export function ToolRegistryPage() {
           void fetchServersAndTools();
           setRefreshToken((value) => value + 1);
         }}
+      />
+      <MissingCapabilityForm
+        isOpen={isReportOpen}
+        searchContext={reportContext}
+        onClose={() => setIsReportOpen(false)}
       />
     </div>
   );
