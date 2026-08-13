@@ -189,7 +189,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 - [x] `speckit-clarify`: no critical ambiguity required a user question. Safest reversible defaults are explicit for run-bound authority, exact capability binding, stale-review invalidation, existing per-call approval policy, cancellation truthfulness, deterministic normal tests, optional live applications, and closed Gate E.
 - [x] `speckit-plan` and Gate B decision: native Rivet MCP nodes use an injected Wright provider over an exact-origin loopback bridge; opaque authority is memory-only and bound to one run/workspace/review/binding set; exact external bindings invalidate on workflow, graph, node, schema, server, validation, grant, or policy change; approval remains exact-call and Wright-owned; cancellation revokes authority and explicitly reaches the gateway child request; bounded Run Manifest evidence records truth without credentials.
 - [x] `speckit-checklist`: 42/42 security, authority, binding, approval, cancellation, lifecycle, evidence, UX, dependency, and recovery requirements-quality checks passed after adding explicit authority lifetime, performance, evidence-bound, and accessibility NFRs plus a deterministic performance outcome.
-- [ ] `speckit-tasks`
+- [x] `speckit-tasks`: 89 dependency-ordered tasks cover shared authority/persistence/runner foundations; all five user stories with tests-first checkpoints; deterministic two-child, cancellation, BREP/host lifecycle, evidence, performance, security, accessibility, packaging, exact-tree gate, and merge work. All tasks pass the required checkbox/ID/story/path format.
 - [ ] `speckit-analyze` and remediation
 - [ ] `speckit-implement`
 - [ ] Focused, integration, UI, packaging, and documentation verification
@@ -198,7 +198,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 
 ### Next checkpoint
 
-Derive the dependency-ordered task plan from the approved Gate B artifacts, then run the non-destructive cross-artifact analysis and remediate every material finding before implementation. Preserve the injected-provider and Wright-owned gateway boundary.
+Run the non-destructive Spec Kit cross-artifact analysis over the specification, plan, contracts, checklist, and 89-task graph. Remediate every material finding before implementation while preserving the injected-provider and Wright-owned gateway boundary.
 
 ## Program guardrails
 
