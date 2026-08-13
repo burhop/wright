@@ -215,3 +215,35 @@ def test_default_service_applies_reviewed_remote_plan_to_registry(tmp_path) -> N
     assert server is not None
     assert server.is_installed is True
     assert server.is_active is False
+
+
+def test_production_dependency_keeps_import_preview_for_followup_request(
+    tmp_path,
+) -> None:
+    database = tmp_path / "app-scoped-onboarding.db"
+    upgrade_database(database)
+    engine = McpEngine(str(database))
+    state = SimpleNamespace()
+    request = SimpleNamespace(app=SimpleNamespace(state=state))
+
+    preview_service = get_mcp_api_service(request, engine)
+    preview = preview_service.preview_import(
+        '{"name":"Local fixture","command":"python","args":["fixture.py"]}'
+    )
+    draft = preview["drafts"][0]
+    plan_service = get_mcp_api_service(request, engine)
+    plan = plan_service.create_install_plan(
+        capability_id=None,
+        import_preview_id=preview["preview_id"],
+        draft_id=draft["draft_id"],
+        draft_digest=draft["draft_digest"],
+        requested_scope="global_registered",
+        workspace_id=None,
+        independently_completed_license=False,
+        actor="administrator",
+    )
+
+    assert plan_service is preview_service
+    assert plan.backend_kind == "local_command"
+    assert plan.state == "blocked"
+    assert plan.blocking_reasons[0].code == "license_unknown"

@@ -793,7 +793,12 @@ class McpApiService:
 def get_mcp_api_service(
     request: Request, engine: McpEngine = Depends(get_mcp_engine)
 ) -> McpApiService:
-    return McpApiService(engine, request.app.state)
+    cached = getattr(request.app.state, "mcp_api_service", None)
+    if isinstance(cached, McpApiService) and cached.engine is engine:
+        return cached
+    service = McpApiService(engine, request.app.state)
+    request.app.state.mcp_api_service = service
+    return service
 
 
 def mcp_service_http_exception(error: McpServiceError) -> HTTPException:
