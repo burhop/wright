@@ -154,6 +154,8 @@ class WorkflowRunStartRequest(BaseModel):
     expected_generation: int | None = Field(default=None, ge=1)
     expected_revision: int = Field(ge=1)
     expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    expected_review_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    binding_set_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     graph: str | None = Field(default=None, max_length=256)
     inputs: Dict[str, Any] = Field(default_factory=dict)
     context: Dict[str, Any] = Field(default_factory=dict)
@@ -185,6 +187,9 @@ class WorkflowReviewRequest(BaseModel):
     session_id: str
     state: Literal["approved", "rejected"]
     reviewer: str = Field(min_length=1, max_length=200)
+    expected_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    graph: str | None = Field(default=None, max_length=256)
+    binding_set_digest: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class WorkflowReviewResponse(BaseModel):
@@ -195,6 +200,106 @@ class WorkflowReviewResponse(BaseModel):
     review_state: str | None = None
     reviewer: str | None = None
     reviewed_at: int | None = None
+    workflow_digest: str | None = None
+    graph_id: str | None = None
+    binding_set_id: str | None = None
+    binding_set_digest: str | None = None
+    policy_snapshot_digest: str | None = None
+    review_digest: str | None = None
+    stale_reasons: list[str] = Field(default_factory=list)
+
+
+class RivetMcpRequirementResponse(BaseModel):
+    graph_id: str
+    node_id: str
+    node_type: str
+    static_tool_name: str | None = None
+
+
+class RivetMcpCapabilityResponse(BaseModel):
+    qualified_tool_name: str
+    server_id: str
+    tool_name: str
+    title: str
+    description: str
+    server_revision: str
+    capability_digest: str
+    validation_evidence_id: str
+    workspace_grant_digest: str
+    input_schema: Dict[str, Any]
+    output_schema: Dict[str, Any] | None = None
+    schema_digest: str
+    annotations: Dict[str, Any]
+    required_approvals: list[str]
+    compatibility: str
+    binding_eligible: bool
+    blocking_reasons: list[str]
+
+
+class RivetMcpCapabilitiesResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+    graph_id: str
+    snapshot_digest: str
+    policy_snapshot_digest: str
+    requirements: list[RivetMcpRequirementResponse]
+    issues: list[dict]
+    capabilities: list[RivetMcpCapabilityResponse]
+    next_after: int | None = None
+
+
+class RivetMcpBindingSelectionRequest(BaseModel):
+    node_id: str = Field(min_length=1, max_length=256)
+    qualified_tool_name: str = Field(
+        min_length=3,
+        max_length=257,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}__[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+    )
+    units_policy: Dict[str, Any] = Field(default_factory=dict)
+    material_defaults: Dict[str, Any] = Field(default_factory=dict)
+
+
+class RivetMcpBindingPreviewRequest(BaseModel):
+    session_id: str
+    expected_revision: int = Field(ge=1)
+    expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    graph: str | None = Field(default=None, max_length=256)
+    selections: list[RivetMcpBindingSelectionRequest] = Field(
+        default_factory=list, max_length=1000
+    )
+
+
+class RivetMcpBindingResponse(BaseModel):
+    node_id: str
+    node_handle: str | None = None
+    selected_tool: str | None = None
+    binding_digest: str | None = None
+    server_id: str | None = None
+    server_revision: str | None = None
+    schema_digest: str | None = None
+    validation_evidence_id: str | None = None
+    workspace_grant_digest: str | None = None
+    risk: Dict[str, Any] | None = None
+    units_policy: Dict[str, Any] | None = None
+    material_defaults: Dict[str, Any] | None = None
+    blockers: list[str] = Field(default_factory=list)
+
+
+class RivetMcpBindingPreviewResponse(BaseModel):
+    workflow_id: str
+    slug: str
+    revision: int
+    etag: str
+    graph_id: str
+    snapshot_digest: str
+    policy_snapshot_digest: str
+    binding_set_id: str | None = None
+    binding_set_digest: str | None = None
+    expires_at: str
+    ready: bool
+    bindings: list[RivetMcpBindingResponse]
 
 
 class WorkflowOperationsListResponse(BaseModel):

@@ -130,6 +130,7 @@ export function WorkspaceActivityBar({
               data-testid={item.testId}
               onClick={() => {
                 if (item.id === "workflows" && onOpenRivetEditor) {
+                  onSelectSidebar(item.id);
                   onOpenRivetEditor();
                   return;
                 }

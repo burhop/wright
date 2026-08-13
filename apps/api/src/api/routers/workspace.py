@@ -106,6 +106,12 @@ from api.schemas.workspace import (
     WorkflowRunStartRequest,
     WorkflowReviewRequest,
     WorkflowReviewResponse,
+    RivetMcpCapabilitiesResponse,
+    RivetMcpCapabilityResponse,
+    RivetMcpRequirementResponse,
+    RivetMcpBindingPreviewRequest,
+    RivetMcpBindingPreviewResponse,
+    RivetMcpBindingResponse,
     WorkflowOperationsListResponse,
     WorkflowRunHistoryResponse,
     WorkflowEditorAvailabilityResponse,
@@ -239,14 +245,38 @@ def _editor_bootstrap_response(bootstrap) -> WorkflowEditorBootstrapResponse:
 
 
 def _review_response(record) -> WorkflowReviewResponse:
+    review = record.review
     return WorkflowReviewResponse(
         workflow_id=record.workflow_id,
         slug=record.slug,
         revision=record.revision,
         etag=record.digest,
-        review_state=record.review.state if record.review else None,
-        reviewer=record.review.reviewer if record.review else None,
-        reviewed_at=record.review.updated_at if record.review else None,
+        review_state=review.state if review else None,
+        reviewer=review.reviewer if review else None,
+        reviewed_at=review.updated_at if review else None,
+        workflow_digest=review.workflow_digest if review else None,
+        graph_id=review.graph_id if review else None,
+        binding_set_id=review.binding_set_id if review else None,
+        binding_set_digest=review.binding_set_digest if review else None,
+        policy_snapshot_digest=review.policy_snapshot_digest if review else None,
+        review_digest=review.review_digest if review else None,
+        stale_reasons=list(record.stale_reasons),
+    )
+
+
+def _mcp_error(error: WorkflowOperationsError) -> HTTPException:
+    conflict_codes = {
+        "RIVET_WORKFLOW_REVISION_CONFLICT",
+        "RIVET_REVIEW_STALE",
+        "RIVET_BINDING_EXTRA",
+    }
+    return HTTPException(
+        status_code=(
+            status.HTTP_409_CONFLICT
+            if error.code in conflict_codes
+            else status.HTTP_400_BAD_REQUEST
+        ),
+        detail={"code": error.code, "message": str(error)},
     )
 
 
@@ -681,6 +711,8 @@ async def start_workflow_run_endpoint(
             expected_generation=body.expected_generation,
             expected_revision=body.expected_revision,
             expected_digest=body.expected_digest,
+            expected_review_digest=body.expected_review_digest,
+            binding_set_digest=body.binding_set_digest,
             graph=body.graph,
             inputs=body.inputs,
             context=body.context,
@@ -784,12 +816,194 @@ async def review_workflow_endpoint(
                 slug=slug,
                 state=body.state,
                 reviewer=body.reviewer,
+                session_id=body.session_id,
+                expected_digest=body.expected_digest,
+                graph=body.graph,
+                binding_set_digest=body.binding_set_digest,
             )
         )
     except (WorkflowOperationsError, WorkflowPersistenceError) as error:
+        if isinstance(error, WorkflowOperationsError):
+            raise _mcp_error(error) from error
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)
         ) from error
+
+
+@router.get(
+    "/workflows/{slug}/mcp-capabilities",
+    response_model=RivetMcpCapabilitiesResponse,
+)
+@traced("workspace.workflows.mcp.capabilities")
+async def workflow_mcp_capabilities_endpoint(
+    slug: str,
+    session_id: str = Query(...),
+    graph: str | None = Query(default=None, max_length=256),
+    after: int = Query(default=0, ge=0),
+    limit: int = Query(default=100, ge=1, le=200),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace_id, workspace_dir = await _workflow_scope(session_id, engine, service)
+    try:
+        record = await service.workflow_operations.mcp_capabilities(
+            workspace_id=workspace_id,
+            session_id=session_id,
+            workspace_dir=workspace_dir,
+            slug=slug,
+            graph=graph,
+        )
+    except (WorkflowOperationsError, WorkflowPersistenceError) as error:
+        if isinstance(error, WorkflowOperationsError):
+            raise _mcp_error(error) from error
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+    page = record.snapshot.tools[after : after + limit]
+    next_after = (
+        after + len(page) if after + len(page) < len(record.snapshot.tools) else None
+    )
+    return RivetMcpCapabilitiesResponse(
+        workflow_id=record.workflow_id,
+        slug=record.slug,
+        revision=record.revision,
+        etag=record.digest,
+        graph_id=record.graph_id,
+        snapshot_digest=record.snapshot.snapshot_digest,
+        policy_snapshot_digest=record.snapshot.policy_snapshot_digest,
+        requirements=[
+            RivetMcpRequirementResponse(
+                graph_id=item.graph_id,
+                node_id=item.node_id,
+                node_type=item.node_type,
+                static_tool_name=item.static_tool_name,
+            )
+            for item in record.requirements
+        ],
+        issues=[
+            {
+                "code": item.code,
+                "message": item.message,
+                "graph_id": item.graph_id,
+                "node_id": item.node_id,
+            }
+            for item in record.issues
+        ],
+        capabilities=[
+            RivetMcpCapabilityResponse(
+                qualified_tool_name=item.qualified_tool_name,
+                server_id=item.server_id,
+                tool_name=item.tool_name,
+                title=item.title,
+                description=item.description,
+                server_revision=item.server_revision,
+                capability_digest=item.capability_digest,
+                validation_evidence_id=item.validation_evidence_id,
+                workspace_grant_digest=item.workspace_grant_digest,
+                input_schema=dict(item.input_schema),
+                output_schema=(
+                    dict(item.output_schema) if item.output_schema else None
+                ),
+                schema_digest=item.schema_digest,
+                annotations=dict(item.annotations),
+                required_approvals=list(item.required_approvals),
+                compatibility=item.compatibility,
+                binding_eligible=item.binding_eligible,
+                blocking_reasons=list(item.blocking_reasons),
+            )
+            for item in page
+        ],
+        next_after=next_after,
+    )
+
+
+@router.post(
+    "/workflows/{slug}/mcp-bindings/preview",
+    response_model=RivetMcpBindingPreviewResponse,
+)
+@traced("workspace.workflows.mcp.bindings.preview")
+async def workflow_mcp_binding_preview_endpoint(
+    slug: str,
+    body: RivetMcpBindingPreviewRequest,
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _operations_feature_enabled()
+    workspace_id, workspace_dir = await _workflow_scope(
+        body.session_id, engine, service
+    )
+    selections = {item.node_id: item.qualified_tool_name for item in body.selections}
+    if len(selections) != len(body.selections):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "code": "RIVET_MCP_DUPLICATE_NODE",
+                "message": "A binding node was selected more than once",
+            },
+        )
+    try:
+        preview = await service.workflow_operations.preview_mcp_bindings(
+            workspace_id=workspace_id,
+            session_id=body.session_id,
+            workspace_dir=workspace_dir,
+            slug=slug,
+            expected_revision=body.expected_revision,
+            expected_digest=body.expected_digest,
+            graph=body.graph,
+            selections=selections,
+            units_policy={item.node_id: item.units_policy for item in body.selections},
+            material_defaults={
+                item.node_id: item.material_defaults for item in body.selections
+            },
+        )
+    except (WorkflowOperationsError, WorkflowPersistenceError) as error:
+        if isinstance(error, WorkflowOperationsError):
+            raise _mcp_error(error) from error
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+    return RivetMcpBindingPreviewResponse(
+        workflow_id=preview.workflow_id,
+        slug=preview.slug,
+        revision=preview.revision,
+        etag=preview.digest,
+        graph_id=preview.graph_id,
+        snapshot_digest=preview.snapshot_digest,
+        policy_snapshot_digest=preview.policy_snapshot_digest,
+        binding_set_id=(
+            preview.binding_set.binding_set_id if preview.binding_set else None
+        ),
+        binding_set_digest=(
+            preview.binding_set.binding_set_digest if preview.binding_set else None
+        ),
+        expires_at=preview.expires_at.isoformat(),
+        ready=preview.binding_set is not None,
+        bindings=[
+            RivetMcpBindingResponse(
+                node_id=item.requirement.node_id,
+                node_handle=item.binding.node_handle if item.binding else None,
+                selected_tool=item.selected_tool,
+                binding_digest=item.binding.binding_digest if item.binding else None,
+                server_id=item.binding.server_id if item.binding else None,
+                server_revision=item.binding.server_revision if item.binding else None,
+                schema_digest=item.binding.schema_digest if item.binding else None,
+                validation_evidence_id=(
+                    item.binding.validation_evidence_id if item.binding else None
+                ),
+                workspace_grant_digest=(
+                    item.binding.workspace_grant_digest if item.binding else None
+                ),
+                risk=dict(item.binding.risk) if item.binding else None,
+                units_policy=dict(item.binding.units_policy) if item.binding else None,
+                material_defaults=(
+                    dict(item.binding.material_defaults) if item.binding else None
+                ),
+                blockers=list(item.blockers),
+            )
+            for item in preview.nodes
+        ],
+    )
 
 
 @router.get("/workflows", response_model=WorkflowOperationsListResponse)
@@ -808,6 +1022,7 @@ async def list_workflow_operations_endpoint(
     records = await service.workflow_operations.list(
         workspace_id=workspace["workspace_id"],
         workspace_dir=await service.resolve_workspace_dir(session_id, engine),
+        session_id=session_id,
     )
     return WorkflowOperationsListResponse(
         workflows=[_review_response(record) for record in records]
@@ -834,6 +1049,7 @@ async def workflow_operation_detail_endpoint(
                 workspace_id=workspace["workspace_id"],
                 workspace_dir=await service.resolve_workspace_dir(session_id, engine),
                 slug=slug,
+                session_id=session_id,
             )
         )
     except (WorkflowOperationsError, FileNotFoundError) as error:

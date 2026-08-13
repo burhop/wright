@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from functools import lru_cache
+from typing import Callable
 
 from workspace_service import (  # type: ignore[import-untyped]
     WorkspaceService,
@@ -32,7 +34,7 @@ from tool_registry.gateway_models import GatewaySessionContext
 from tool_registry.gateway_models import GatewayError, GatewayErrorCode
 from tool_registry.gateway_notifications import GatewayNotificationHub
 from tool_registry.gateway_resources import GatewayResourceProvider
-from tool_registry.gateway_service import GatewayService
+from tool_registry.gateway_service import GatewayService, SUPPORTED_PROTOCOL_VERSION
 from tool_registry.lifecycle_adapters import EngineMcpUiResourceReader
 from tool_registry.ui.resources import McpUiResourceStore
 from tool_registry.wright_managed_servers import RIVET_WORKFLOW_MUTATION_APPROVAL
@@ -391,6 +393,7 @@ class RivetMcpApplication:
     approvals: RivetApprovalService
     capabilities: RivetCapabilityService
     bridge: RivetGatewayBridge
+    gateway_session_id: Callable[[str, str], str]
 
 
 def build_rivet_mcp_application(
@@ -402,7 +405,32 @@ def build_rivet_mcp_application(
     repository = RivetMcpRepository(db_path)
     authorities = RivetRunAuthorityService()
     approvals = RivetApprovalService(repository=repository)
-    capabilities = RivetCapabilityService(gateway)
+    initialized_sessions: set[str] = set()
+
+    def gateway_session_id(session_id: str, workspace_id: str) -> str:
+        identity = hashlib.sha256(
+            f"{workspace_id}\0{session_id}".encode("utf-8")
+        ).hexdigest()[:32]
+        internal_session_id = f"rivet-{identity}"
+        if internal_session_id not in initialized_sessions:
+            gateway.open_session(
+                session_id=internal_session_id,
+                principal_id="wright-rivet-workflow",
+                workspace_id=workspace_id,
+                transport="legacy",
+                binding_session_id=session_id,
+            )
+            gateway.initialize_session(
+                internal_session_id,
+                protocol_version=SUPPORTED_PROTOCOL_VERSION,
+                client_name="wright-rivet-workflow",
+                client_version="2",
+                client_capabilities={},
+            )
+            initialized_sessions.add(internal_session_id)
+        return internal_session_id
+
+    capabilities = RivetCapabilityService(gateway, session_resolver=gateway_session_id)
     bridge = RivetGatewayBridge(
         gateway,
         authorities=authorities,
@@ -419,11 +447,18 @@ def build_rivet_mcp_application(
         approvals=approvals,
         approval_ttl_seconds=settings.approval_ttl_seconds,
     )
-    return RivetMcpApplication(
+    application = RivetMcpApplication(
         settings,
         repository,
         authorities,
         approvals,
         capabilities,
         bridge,
+        gateway_session_id,
     )
+    workspace_service().workflow_operations.configure_mcp(
+        capabilities=capabilities,
+        repository=repository,
+        settings=settings,
+    )
+    return application

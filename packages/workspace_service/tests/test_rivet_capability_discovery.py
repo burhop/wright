@@ -59,6 +59,7 @@ def test_discovery_is_namespaced_bounded_and_has_no_child_effect():
     assert snapshot.tools[0].schema_digest != snapshot.tools[1].schema_digest
     assert snapshot.tools[1].required_approvals == ("engineering.write",)
     assert len(snapshot.snapshot_digest) == 64
+    assert len(snapshot.policy_snapshot_digest) == 64
     assert not gateway.called
 
 
@@ -109,3 +110,45 @@ def test_binding_is_exact_stable_and_schema_change_is_stale():
     )
     changed = service.discover(session_id="session-1", workspace_id="workspace-1")
     assert service.stale_reasons(first, changed) == ("tool_schema_changed",)
+
+
+def test_unqualified_collision_remains_distinct_and_oversized_schema_is_blocked():
+    gateway = Gateway()
+    gateway.tools = (
+        *gateway.tools,
+        GatewayTool(
+            "gamma__huge",
+            "gamma",
+            "huge",
+            "Too large",
+            {"type": "object", "description": "x" * 70_000},
+            provenance={
+                "server_revision": "gamma-v1",
+                "validation_evidence_id": "gamma-evidence",
+            },
+        ),
+    )
+    service = RivetCapabilityService(gateway)
+    snapshot = service.discover(session_id="session-1", workspace_id="workspace-1")
+    inspect = [item for item in snapshot.tools if item.tool_name == "inspect"]
+    assert [item.qualified_tool_name for item in inspect] == [
+        "alpha__inspect",
+        "beta__inspect",
+    ]
+    huge = next(item for item in snapshot.tools if item.tool_name == "huge")
+    assert not huge.binding_eligible
+    assert huge.blocking_reasons == ("input_schema_too_large",)
+
+
+def test_session_resolver_confines_discovery_to_the_workspace_session():
+    gateway = Gateway()
+    service = RivetCapabilityService(
+        gateway,
+        session_resolver=lambda session_id, workspace_id: (
+            "session-1"
+            if (session_id, workspace_id) == ("public", "workspace-1")
+            else "denied"
+        ),
+    )
+    snapshot = service.discover(session_id="public", workspace_id="workspace-1")
+    assert snapshot.session_id == "session-1"

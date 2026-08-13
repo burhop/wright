@@ -207,9 +207,19 @@ The documentation-complete exact tree was gated again before publication. The fe
 - Rebuilt and integrity-pinned the 12.9 MiB Node worker at Rivet source revision `4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053`, package `2.1.9`, protocol `2`.
 - Focused evidence: 47 Python migration/model/authority/discovery/evidence/bridge/validation/runtime tests and eight Node runner contract tests passed; runner manifest integrity reported `available`; Ruff, Python formatting, Prettier, and `git diff --check` passed.
 
+### Implementation checkpoint 2 - exact capability binding and review
+
+- Added selected-graph MCP requirement extraction with duplicate-node, prompt-operation, dynamic-tool-name, project-child-configuration, and secret-bearing configuration rejection.
+- Discovery now opens a deterministic workspace-confined internal gateway session and projects only policy-visible namespaced tools. Each projection binds bounded schemas, server revision, validation evidence, workspace grant, capability, schema, approval, and policy identities without starting a child.
+- Added deterministic binding previews that keep unqualified collisions ambiguous, accept one explicit namespaced selection per tool-call node, bind engineering units/material assumptions, reject extra/missing/blocked selections, and persist an immutable set only when every node resolves exactly.
+- Added v2 review comparison and storage. Workflow, graph, node, schema, server revision, validation, workspace grant, policy, or workspace scope changes produce stable stale reasons and block Start before execution. Legacy non-MCP review remains supported.
+- Added typed discovery/preview/review APIs and TypeScript clients plus an accessible responsive Capabilities & Review step with native keyboard selection, risk/schema identity details, non-color blocker/stale text, live status, and explicit separation between workflow review and destructive-call approval.
+- The Workflows activity action now keeps the workflow-management sidebar visible while also opening Rivet, preserving editor behavior and making the new review step reachable.
+- Focused evidence: 84 Python capability/review/persistence/API/gateway regression tests passed; five web component tests passed; the production TypeScript/Vite build passed; one mocked Chromium authoring/review journey passed with zero child receipts and zero serious/critical accessibility findings. Ruff, Python formatting, Prettier, and `git diff --check` passed.
+
 ### Next checkpoint
 
-Implement User Story 1: preview only current workspace-enabled capabilities, resolve every MCP node to one exact binding, persist/review the immutable binding set, expose stale reasons, and add the binding/review API and accessible UI without invoking a child.
+Implement User Story 2: run the reviewed binding set through the separately owned loopback bridge and pinned worker, including two deterministic child MCPs, exact-call approval, progress, structured results, authorized artifacts, and terminal evidence.
 
 ## Program guardrails
 

@@ -58,24 +58,24 @@
 
 ### Tests for User Story 1
 
-- [ ] T019 [P] [US1] Add requirement extraction, direct-config rejection, MCP-prompt rejection, dynamic-tool rejection, duplicate-node, selected-graph, and exact binding validation tests in `packages/workspace_service/tests/test_rivet_capabilities.py`
-- [ ] T020 [P] [US1] Add discovery namespacing, eligibility, bounded schema, validation/grant identity, ambiguity, refresh, and zero-child-start tests in `packages/workspace_service/tests/test_rivet_capability_discovery.py`
-- [ ] T021 [P] [US1] Add review-v2 API contract tests for preview, exact digest approval, stale conflicts, cross-workspace denial, and legacy non-MCP compatibility in `apps/api/tests/test_rivet_mcp_review_api.py`
-- [ ] T022 [P] [US1] Add component tests for binding rows, ambiguity, risk/schema details, stale reasons, keyboard operation, narrow layout, and secret-free text in `apps/web/src/components/chat/RivetWorkflowCapabilities.spec.tsx`
-- [ ] T023 [P] [US1] Add mocked authoring/review journey and serious/critical accessibility scan in `tests/ui-integration/rivet-mcp-gateway.spec.ts`
+- [x] T019 [P] [US1] Add requirement extraction, direct-config rejection, MCP-prompt rejection, dynamic-tool rejection, duplicate-node, selected-graph, and exact binding validation tests in `packages/workspace_service/tests/test_rivet_capabilities.py`
+- [x] T020 [P] [US1] Add discovery namespacing, eligibility, bounded schema, validation/grant identity, ambiguity, refresh, and zero-child-start tests in `packages/workspace_service/tests/test_rivet_capability_discovery.py`
+- [x] T021 [P] [US1] Add review-v2 API contract tests for preview, exact digest approval, stale conflicts, cross-workspace denial, and legacy non-MCP compatibility in `apps/api/tests/test_rivet_mcp_review_api.py`
+- [x] T022 [P] [US1] Add component tests for binding rows, ambiguity, risk/schema details, stale reasons, keyboard operation, narrow layout, and secret-free text in `apps/web/src/components/chat/RivetWorkflowCapabilities.spec.tsx`
+- [x] T023 [P] [US1] Add mocked authoring/review journey and serious/critical accessibility scan in `tests/ui-integration/rivet-mcp-gateway.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T024 [P] [US1] Implement MCP-node extraction, selected-graph constraints, prohibited project-config detection, static tool-name enforcement, and binding requirements in `packages/workspace_service/src/workspace_service/rivet_validation.py`
-- [ ] T025 [US1] Implement workspace gateway discovery projection, canonical schema/grant/policy digests, exact resolution, ambiguity, binding-set creation, and stale comparison in `packages/workspace_service/src/workspace_service/rivet_capabilities.py`
-- [ ] T026 [US1] Extend review operations to preview/rebuild/compare/store exact binding sets and keep legacy non-MCP review behavior in `packages/workspace_service/src/workspace_service/workflow_operations.py`
-- [ ] T027 [P] [US1] Add typed capability, binding-preview, review-digest, stale-diff, and error schemas in `apps/api/src/api/schemas/workspace.py`
-- [ ] T028 [US1] Add thin authenticated discovery, binding-preview, and v2 review routes to `apps/api/src/api/routers/workspace.py`
-- [ ] T029 [P] [US1] Add capability/binding/review TypeScript contracts and service calls in `apps/web/src/services/workspace-service.ts`
-- [ ] T030 [US1] Implement accessible capability binding, exact-review summary, stale-diff, and recovery UI in `apps/web/src/components/chat/RivetWorkflowCapabilities.tsx`
-- [ ] T031 [US1] Integrate the capability/review step without changing non-MCP behavior in `apps/web/src/components/chat/RivetWorkflowsPanel.tsx`
-- [ ] T032 [US1] Add two-workspace API integration proof that discovery and reviews cannot cross grants and do not start fake children in `apps/api/tests/test_rivet_mcp_review_api.py`
-- [ ] T033 [US1] Run the US1 package/API/web/mocked-browser suite and record the independently testable MVP evidence in `docs/engineering-capability-program-progress.md`
+- [x] T024 [P] [US1] Implement MCP-node extraction, selected-graph constraints, prohibited project-config detection, static tool-name enforcement, and binding requirements in `packages/workspace_service/src/workspace_service/rivet_validation.py`
+- [x] T025 [US1] Implement workspace gateway discovery projection, canonical schema/grant/policy digests, exact resolution, ambiguity, binding-set creation, and stale comparison in `packages/workspace_service/src/workspace_service/rivet_capabilities.py`
+- [x] T026 [US1] Extend review operations to preview/rebuild/compare/store exact binding sets and keep legacy non-MCP review behavior in `packages/workspace_service/src/workspace_service/workflow_operations.py`
+- [x] T027 [P] [US1] Add typed capability, binding-preview, review-digest, stale-diff, and error schemas in `apps/api/src/api/schemas/workspace.py`
+- [x] T028 [US1] Add thin authenticated discovery, binding-preview, and v2 review routes to `apps/api/src/api/routers/workspace.py`
+- [x] T029 [P] [US1] Add capability/binding/review TypeScript contracts and service calls in `apps/web/src/services/workspace-service.ts`
+- [x] T030 [US1] Implement accessible capability binding, exact-review summary, stale-diff, and recovery UI in `apps/web/src/components/chat/RivetWorkflowCapabilities.tsx`
+- [x] T031 [US1] Integrate the capability/review step without changing non-MCP behavior in `apps/web/src/components/chat/RivetWorkflowsPanel.tsx`
+- [x] T032 [US1] Add two-workspace API integration proof that discovery and reviews cannot cross grants and do not start fake children in `apps/api/tests/test_rivet_mcp_review_api.py`
+- [x] T033 [US1] Run the US1 package/API/web/mocked-browser suite and record the independently testable MVP evidence in `docs/engineering-capability-program-progress.md`
 
 **Checkpoint**: Exact binding/review works without invocation; stale or ambiguous scope blocks Start; non-MCP workflows remain compatible.
 

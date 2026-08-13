@@ -154,6 +154,17 @@ class RivetMcpRepository:
             created_at=datetime.fromtimestamp(int(row["created_at"]), tz=UTC),
         )
 
+    def get_binding_set_by_digest(
+        self, binding_set_digest: str
+    ) -> WorkflowBindingSet | None:
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            row = connection.execute(
+                """SELECT binding_set_id FROM workspace_workflow_binding_sets
+                WHERE binding_set_digest=?""",
+                (binding_set_digest,),
+            ).fetchone()
+        return self.get_binding_set(str(row[0])) if row is not None else None
+
     def get_binding_by_digest(self, binding_digest: str) -> CapabilityBinding | None:
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
             row = connection.execute(

@@ -41,4 +41,24 @@ describe("WorkspaceActivityBar", () => {
     expect(onOpenBrepPanel).toHaveBeenCalledOnce();
     expect(onSelectSidebar).not.toHaveBeenCalled();
   });
+
+  it("opens the Rivet editor while keeping workflow review controls visible", async () => {
+    const user = userEvent.setup();
+    const onOpenRivetEditor = vi.fn();
+    const onSelectSidebar = vi.fn();
+    render(
+      <WorkspaceActivityBar
+        activeSidebar="files"
+        isSidebarCollapsed={false}
+        onBack={vi.fn()}
+        onSelectSidebar={onSelectSidebar}
+        onOpenRivetEditor={onOpenRivetEditor}
+        onOpenBrepPanel={vi.fn()}
+        workflowsEnabled
+      />,
+    );
+    await user.click(screen.getByTestId("activity-bar-workflows-btn"));
+    expect(onSelectSidebar).toHaveBeenCalledWith("workflows");
+    expect(onOpenRivetEditor).toHaveBeenCalledOnce();
+  });
 });

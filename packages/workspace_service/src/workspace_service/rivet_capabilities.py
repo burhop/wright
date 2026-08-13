@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Mapping, Protocol, Sequence
+from typing import Any, Callable, Mapping, Protocol, Sequence
 
-from core.rivet_mcp import CapabilityBinding, canonical_digest
+from core.rivet_mcp import CapabilityBinding, canonical_digest, canonical_json
 from tool_registry.gateway_models import GatewayTool
 
 from .rivet_validation import RivetMcpNodeRequirement
@@ -64,6 +64,7 @@ class RivetDiscoverySnapshot:
     session_id: str
     tools: tuple[RivetCapabilityProjection, ...]
     snapshot_digest: str
+    policy_snapshot_digest: str
 
 
 class RivetCapabilityService:
@@ -74,15 +75,26 @@ class RivetCapabilityService:
         "openWorldHint",
     }
 
-    def __init__(self, gateway: GatewayDiscoveryPort) -> None:
+    def __init__(
+        self,
+        gateway: GatewayDiscoveryPort,
+        *,
+        session_resolver: Callable[[str, str], str] | None = None,
+        maximum_schema_bytes: int = 64 * 1024,
+    ) -> None:
         self._gateway = gateway
+        self._session_resolver = session_resolver or (
+            lambda session_id, workspace_id: session_id
+        )
+        self._maximum_schema_bytes = maximum_schema_bytes
 
     def discover(self, *, session_id: str, workspace_id: str) -> RivetDiscoverySnapshot:
+        resolved_session_id = self._session_resolver(session_id, workspace_id)
         projections = tuple(
             sorted(
                 (
                     self._project(workspace_id, tool)
-                    for tool in self._gateway.list_tools(session_id)
+                    for tool in self._gateway.list_tools(resolved_session_id)
                 ),
                 key=lambda item: item.qualified_tool_name,
             )
@@ -93,20 +105,67 @@ class RivetCapabilityService:
                 "tools": [item.digest_material() for item in projections],
             }
         )
+        policy_snapshot_digest = canonical_digest(
+            {
+                "workspace_id": workspace_id,
+                "tools": [
+                    {
+                        "qualified_tool_name": item.qualified_tool_name,
+                        "annotations": item.annotations,
+                        "required_approvals": item.required_approvals,
+                        "compatibility": item.compatibility,
+                    }
+                    for item in projections
+                ],
+            }
+        )
         return RivetDiscoverySnapshot(
-            workspace_id, session_id, projections, snapshot_digest
+            workspace_id,
+            resolved_session_id,
+            projections,
+            snapshot_digest,
+            policy_snapshot_digest,
         )
 
     def _project(
         self, workspace_id: str, tool: GatewayTool
     ) -> RivetCapabilityProjection:
+        input_valid = isinstance(tool.input_schema, Mapping)
+        output_valid = tool.output_schema is None or isinstance(
+            tool.output_schema, Mapping
+        )
+        raw_input_schema = dict(tool.input_schema) if input_valid else {}
+        raw_output_schema = (
+            dict(tool.output_schema)
+            if tool.output_schema is not None and output_valid
+            else None
+        )
+        input_too_large = (
+            len(canonical_json(raw_input_schema).encode("utf-8"))
+            > self._maximum_schema_bytes
+        )
+        output_too_large = bool(
+            raw_output_schema
+            and len(canonical_json(raw_output_schema).encode("utf-8"))
+            > self._maximum_schema_bytes
+        )
+        input_schema = (
+            {
+                "type": "object",
+                "description": "Schema omitted because it exceeds Wright's review limit.",
+                "additionalProperties": False,
+            }
+            if input_too_large
+            else raw_input_schema
+        )
+        output_schema = None if output_too_large else raw_output_schema
         annotations = {
             key: tool.annotations[key]
             for key in sorted(self._SAFE_ANNOTATIONS)
             if key in tool.annotations and isinstance(tool.annotations[key], bool)
         }
         schema_digest = canonical_digest(
-            {"input": tool.input_schema, "output": tool.output_schema}
+            {"input": raw_input_schema, "output": raw_output_schema}
         )
         server_revision = str(
             tool.provenance.get("server_revision")
@@ -137,23 +196,29 @@ class RivetCapabilityService:
         blockers: list[str] = []
         if "__" not in tool.name:
             blockers.append("tool_namespace_invalid")
-        if not isinstance(tool.input_schema, Mapping):
+        if not input_valid:
             blockers.append("input_schema_invalid")
+        if not output_valid:
+            blockers.append("output_schema_invalid")
         if server_revision == "unknown":
             blockers.append("server_revision_unknown")
+        if input_too_large:
+            blockers.append("input_schema_too_large")
+        if output_too_large:
+            blockers.append("output_schema_too_large")
         return RivetCapabilityProjection(
             workspace_id=workspace_id,
             qualified_tool_name=tool.name,
             server_id=tool.server_id,
             tool_name=tool.tool_name,
-            title=tool.title or tool.name,
-            description=tool.description,
+            title=(tool.title or tool.name)[:256],
+            description=tool.description[:2048],
             server_revision=server_revision,
             capability_digest=capability_digest,
             validation_evidence_id=validation_evidence_id,
             workspace_grant_digest=workspace_grant_digest,
-            input_schema=dict(tool.input_schema),
-            output_schema=(dict(tool.output_schema) if tool.output_schema else None),
+            input_schema=input_schema,
+            output_schema=output_schema,
             schema_digest=schema_digest,
             annotations=annotations,
             required_approvals=tuple(sorted(tool.required_approvals)),

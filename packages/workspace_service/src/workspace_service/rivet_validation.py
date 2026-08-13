@@ -332,11 +332,22 @@ def extract_rivet_mcp_requirements(
             include_requirement = False
         else:
             include_requirement = True
+        seen_node_ids: set[str] = set()
         for serialized_node_id, node in _nodes(graph):
             node_type = _node_type(serialized_node_id, node)
             if node_type not in {"mcpDiscovery", "mcpToolCall", "mcpGetPrompt"}:
                 continue
             node_id = _node_id(serialized_node_id, node)
+            if node_id in seen_node_ids:
+                errors.append(
+                    _issue(
+                        "RIVET_MCP_DUPLICATE_NODE",
+                        "MCP node identities must be unique within a graph",
+                        graph_id=graph_id,
+                        node_id=node_id,
+                    )
+                )
+            seen_node_ids.add(node_id)
             node_data = node.get("data")
             node_data = node_data if isinstance(node_data, dict) else {}
             if node_type == "mcpGetPrompt" or (
@@ -360,6 +371,7 @@ def extract_rivet_mcp_requirements(
                     "environment",
                     "headers",
                     "authorization",
+                    "serverId",
                 )
             ):
                 errors.append(

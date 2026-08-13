@@ -85,7 +85,14 @@ class DatabaseGatewayCatalog:
                     "server_id": server.server_id,
                     "source_url": server.source_url,
                     "installed_version": server.installed_version,
+                    "server_revision": (
+                        server.installed_version or f"registry-{server.updated_at}"
+                    ),
                     "validation_status": server.validation_result.status,
+                    "validation_evidence_id": (
+                        f"gateway-validation:{server.server_id}:"
+                        f"{server.updated_at}:{server.validation_result.status}"
+                    ),
                 },
             )
             for tool in get_tools(self.db_path, server_id)

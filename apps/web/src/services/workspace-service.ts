@@ -22,6 +22,95 @@ export interface RivetWorkflowOperation {
   review_state: "approved" | "rejected" | null;
   reviewer: string | null;
   reviewed_at: number | null;
+  workflow_digest?: string | null;
+  graph_id?: string | null;
+  binding_set_id?: string | null;
+  binding_set_digest?: string | null;
+  policy_snapshot_digest?: string | null;
+  review_digest?: string | null;
+  stale_reasons?: string[];
+}
+
+export interface RivetMcpRequirement {
+  graph_id: string;
+  node_id: string;
+  node_type: "mcpDiscovery" | "mcpToolCall";
+  static_tool_name: string | null;
+}
+
+export interface RivetMcpCapability {
+  qualified_tool_name: string;
+  server_id: string;
+  tool_name: string;
+  title: string;
+  description: string;
+  server_revision: string;
+  capability_digest: string;
+  validation_evidence_id: string;
+  workspace_grant_digest: string;
+  input_schema: Record<string, unknown>;
+  output_schema: Record<string, unknown> | null;
+  schema_digest: string;
+  annotations: Record<string, boolean>;
+  required_approvals: string[];
+  compatibility: string;
+  binding_eligible: boolean;
+  blocking_reasons: string[];
+}
+
+export interface RivetMcpCapabilities {
+  workflow_id: string;
+  slug: string;
+  revision: number;
+  etag: string;
+  graph_id: string;
+  snapshot_digest: string;
+  policy_snapshot_digest: string;
+  requirements: RivetMcpRequirement[];
+  issues: Array<{
+    code: string;
+    message: string;
+    graph_id?: string | null;
+    node_id?: string | null;
+  }>;
+  capabilities: RivetMcpCapability[];
+  next_after: number | null;
+}
+
+export interface RivetMcpBindingSelection {
+  node_id: string;
+  qualified_tool_name: string;
+  units_policy?: Record<string, unknown>;
+  material_defaults?: Record<string, unknown>;
+}
+
+export interface RivetMcpBindingPreview {
+  workflow_id: string;
+  slug: string;
+  revision: number;
+  etag: string;
+  graph_id: string;
+  snapshot_digest: string;
+  policy_snapshot_digest: string;
+  binding_set_id: string | null;
+  binding_set_digest: string | null;
+  expires_at: string;
+  ready: boolean;
+  bindings: Array<{
+    node_id: string;
+    node_handle: string | null;
+    selected_tool: string | null;
+    binding_digest: string | null;
+    server_id: string | null;
+    server_revision: string | null;
+    schema_digest: string | null;
+    validation_evidence_id: string | null;
+    workspace_grant_digest: string | null;
+    risk: Record<string, unknown> | null;
+    units_policy: Record<string, unknown> | null;
+    material_defaults: Record<string, unknown> | null;
+    blockers: string[];
+  }>;
 }
 
 export interface RivetWorkflowTemplate {
@@ -53,6 +142,8 @@ export interface RivetWorkflowRunOptions {
   inputs?: Record<string, unknown>;
   context?: Record<string, unknown>;
   timeoutSeconds?: number;
+  expectedReviewDigest?: string;
+  bindingSetDigest?: string;
 }
 
 export interface RivetWorkflowDocument extends RivetWorkflowOperation {
@@ -350,16 +441,78 @@ export class WorkspaceService {
     slug: string,
     state: "approved" | "rejected",
     reviewer: string,
+    exact?: {
+      expectedDigest: string;
+      graph?: string;
+      bindingSetDigest: string;
+    },
   ): Promise<RivetWorkflowOperation> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/review`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, state, reviewer }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          state,
+          reviewer,
+          expected_digest: exact?.expectedDigest || null,
+          graph: exact?.graph || null,
+          binding_set_digest: exact?.bindingSetDigest || null,
+        }),
       },
     );
     if (!response.ok) throw new Error("Unable to record workflow review");
+    return response.json();
+  }
+
+  async getRivetMcpCapabilities(
+    sessionId: string,
+    slug: string,
+    graph?: string,
+  ): Promise<RivetMcpCapabilities> {
+    const query = new URLSearchParams({ session_id: sessionId, limit: "200" });
+    if (graph) query.set("graph", graph);
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/mcp-capabilities?${query.toString()}`,
+    );
+    if (!response.ok)
+      throw new Error("Workspace MCP capabilities are unavailable");
+    return response.json();
+  }
+
+  async previewRivetMcpBindings(
+    sessionId: string,
+    slug: string,
+    expectedRevision: number,
+    expectedDigest: string,
+    selections: RivetMcpBindingSelection[],
+    graph?: string,
+  ): Promise<RivetMcpBindingPreview> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/mcp-bindings/preview`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          expected_revision: expectedRevision,
+          expected_digest: expectedDigest,
+          graph: graph || null,
+          selections,
+        }),
+      },
+    );
+    if (!response.ok) {
+      let message = "Unable to preview exact MCP bindings";
+      try {
+        const failure = await response.json();
+        message = failure?.detail?.message || message;
+      } catch {
+        // Retain the safe fallback.
+      }
+      throw new Error(String(message));
+    }
     return response.json();
   }
 
@@ -377,6 +530,8 @@ export class WorkspaceService {
           session_id: sessionId,
           expected_revision: options.expectedRevision,
           expected_digest: options.expectedDigest,
+          expected_review_digest: options.expectedReviewDigest || null,
+          binding_set_digest: options.bindingSetDigest || null,
           graph: options.graph || null,
           inputs: options.inputs || {},
           context: options.context || {},

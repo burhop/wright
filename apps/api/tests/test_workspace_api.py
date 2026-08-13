@@ -794,6 +794,8 @@ async def test_rivet_run_api_forwards_exact_identity_graph_inputs_and_projects_o
             "expected_generation": None,
             "expected_revision": 3,
             "expected_digest": "a" * 64,
+            "expected_review_digest": None,
+            "binding_set_digest": None,
             "graph": "Passthrough",
             "inputs": {"input": "hello"},
             "context": {"mode": "test"},
