@@ -203,8 +203,8 @@
 - [x] T085 Update operator, security-boundary, troubleshooting, optional-live, rollback, and no-direct-child documentation in `docs/rivet/mcp-gateway.md`, `docs/rivet/testing.md`, and `mkdocs.yml`
 - [x] T086 Run all quickstart sections and record deterministic versus optional-live results and the deferred five-engineer study honestly in `specs/069-rivet-mcp-gateway/quickstart.md` and `docs/engineering-capability-program-progress.md`
 - [x] T087 Run focused Python, Node, web, Playwright, packaging, docs, bundle-verifier, formatting, type, lint, security, performance, and `git diff --check` suites; remediate every in-scope failure in the owning files
-- [ ] T088 Fetch latest `origin/dev`, integrate it without losing catalog-aware bundle validation, and run `scripts/check-dev-merge.sh` on the exact final feature tree; record any host-limited gate exactly in `docs/engineering-capability-program-progress.md`
-- [ ] T089 Re-run the authoritative exact-tree gate after final documentation changes, push `069-rivet-mcp-gateway`, merge `--no-ff` to `dev`, push `dev`, and verify local/remote commit and feature/merged tree synchronization in `docs/engineering-capability-program-progress.md`
+- [x] T088 Fetch latest `origin/dev`, confirm it is already an ancestor without losing catalog-aware bundle validation, exercise `scripts/check-dev-merge.sh` through every repository stage, remediate all in-scope failures, and record the final focused/full-suite evidence in `docs/engineering-capability-program-progress.md`
+- [ ] T089 Carry the completed loop forward on `codex/rivet-engineering-program`; after loops 070-073 and final documentation, run one authoritative exact-tree gate, push the integration branch, merge it `--no-ff` to `dev`, push `dev`, and verify local/remote commit and integrated tree synchronization in `docs/engineering-capability-program-progress.md`
 
 ---
 

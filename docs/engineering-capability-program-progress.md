@@ -191,10 +191,10 @@ The documentation-complete exact tree was gated again before publication. The fe
 - [x] `speckit-checklist`: 42/42 security, authority, binding, approval, cancellation, lifecycle, evidence, UX, dependency, and recovery requirements-quality checks passed after adding explicit authority lifetime, performance, evidence-bound, and accessibility NFRs plus a deterministic performance outcome.
 - [x] `speckit-tasks`: 89 dependency-ordered tasks cover shared authority/persistence/runner foundations; all five user stories with tests-first checkpoints; deterministic two-child, cancellation, BREP/host lifecycle, evidence, performance, security, accessibility, packaging, exact-tree gate, and merge work. All tasks pass the required checkbox/ID/story/path format.
 - [x] `speckit-analyze` and remediation: all 49 buildable FR/NFR/SC items map to the 89-task graph; the separate five-engineer SC-009 remains explicitly deferred, with zero unmapped tasks and no constitution conflict. Repaired the stable API path, runner-supplied tool-name contradiction, actual gateway cancellation API, explicit tracing/logging work, authorized artifact boundary, exactly-once terminal manifest lifecycle, dedicated loopback isolation, and fail-closed MCP prompt scope.
-- [ ] `speckit-implement`
-- [ ] Focused, integration, UI, packaging, and documentation verification
-- [ ] Full exact-tree dev gate
-- [ ] Push feature, merge to `dev`, push `dev`, verify synchronization
+- [x] `speckit-implement`
+- [x] Focused, integration, UI, packaging, and documentation verification
+- [ ] Final program exact-tree dev gate after loops 070-073
+- [ ] Push integration branch, merge to `dev`, push `dev`, verify synchronization
 
 ### Implementation checkpoint 1 - authority, persistence, and runner protocol
 
@@ -253,10 +253,6 @@ The documentation-complete exact tree was gated again before publication. The fe
 - Added workspace-scoped manifest/evidence/export APIs with 2 MiB export enforcement, `no-store`, download-safe JSON, and cross-session concealment. The responsive UI shows up to 50 correlated timeline entries, complete accounting, artifact labels, stale differences, recovery guidance, residue truth, and keyboard-focus-safe exact approvals.
 - Acceptance evidence: 24 focused Python manifest/persistence/evidence/runner/bridge/API checks passed; four component tests and the production web build passed; four mocked Chromium journeys covered exact review, successful evidence/export, denied-before-child, restart/stale recovery, narrow layout, serious/critical accessibility, and browser text secret scans. All manifest-referenced calls and approvals in the fixtures were accounted for, all artifact references were authorized IDs/digests, and zero reusable authority or secret values were found.
 
-### Next checkpoint
-
-Run the full exact-tree dev gate, integrate current `origin/dev`, rerun the authoritative gate after final documentation, and merge/push loop 069 (T087-T089).
-
 ### Implementation checkpoint 7 - cross-cutting acceptance and operator readiness
 
 - Added deterministic performance budgets for 500-tool discovery (under 500 ms), authority issuance (under 100 ms), governed bridge p95 (under 100 ms), first progress projection (under 250 ms), and cancellation delivery (under one second). All measurements passed on the development host.
@@ -268,6 +264,20 @@ Run the full exact-tree dev gate, integrate current `origin/dev`, rerun the auth
 - Expanded Chromium acceptance to five journeys, including keyboard-only exact approval, focus trap/restoration, cancellation residue/recovery, and workflow visibility at narrow width with 200% zoom. The responsive workspace now preserves an active workflow pane rather than switching it out mid-decision; serious/critical scoped accessibility findings were zero.
 - Published the Rivet MCP operator/security/troubleshooting/rollback guide, expanded deterministic versus optional-live testing instructions, added docs navigation, and recorded all quickstart outcomes. Optional proprietary live probes remain skipped by design, and the separate five-engineer usability study remains deferred rather than inferred from automation.
 - Broad acceptance passed: 110 Rivet-focused Python tests with one expected live skip; ten pinned Node runner tests; 293 web tests across 76 files; production TypeScript/Vite build; ESLint with zero errors and three pre-existing hook/chunk warnings; five Chromium journeys; three wheel/sdist checks; strict MkDocs build; all Linux x64, Linux ARM64, and Windows AMD64 catalog-aware bundle verifiers; Ruff lint/format, Prettier, and `git diff --check`.
+
+### Integration strategy update and final Loop 069 evidence
+
+- On 2026-08-13 the user approved consolidating loops 069-073 on `codex/rivet-engineering-program` and running one final authoritative dev gate/merge after Loop 073. Loop 068 remains independently merged in `dev`; no Loop 069 commit has been merged to `dev` yet.
+- Fetched `origin/dev` at `7093b55`; it remained an ancestor of the Loop 069 tree, so no conflict resolution or catalog reintegration was required.
+- Authoritative-gate remediation corrected the native schema ceiling for migration 14, moved shipped Rivet JSON contracts out of the private `specs/` archive path into the public runtime package, refreshed the embedded web/runtime lock, marked deterministic security fixtures explicitly synthetic, and narrowed ambiguous live-region selectors without weakening product assertions.
+- Release/native evidence passed: 86 release tests; 140 native/release tests with 9 platform skips; 206 coverage tests with 9 skips at 85.48%; policy-clean wheel and sdist builds, validation, and isolated clean installs; 44 dedicated security-boundary tests with 2 skips.
+- The repository-wide Python suite reached 1,612 passed and 54 skipped before the synthetic-fixture remediation; the failing public leak scan then passed independently with all 10 runner contracts and 9 focused leak/compatibility tests. The next full gate progressed through the complete Python, Hermes, web, production-build, and strict-docs stages and stopped only on the two subsequently repaired Playwright locator ambiguities.
+- Final UI evidence passed on the corrected tree: all five Rivet MCP journeys passed together, followed by the complete live suite with 140 passed and 1 expected skip across Chromium, Firefox, WebKit, and desktop-surface profiles.
+- Current Loop 069 integration tip is `5e8b627`. The final exact-tree gate, integration-branch push, no-ff `dev` merge, remote synchronization, and tree-hash evidence are intentionally deferred to the single program closeout after Loop 073.
+
+### Next checkpoint
+
+Begin Loop 070, the deterministic multi-domain engineering scenario harness, on the same integration branch. Run the full Spec Kit artifact workflow and focused loop gates; do not repeat the repository-wide dev merge gate until program closeout.
 
 ## Program guardrails
 
