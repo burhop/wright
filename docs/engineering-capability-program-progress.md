@@ -26,7 +26,7 @@
 - [x] `speckit-clarify`: no critical ambiguity; the program's safest reversible defaults cover scope, roles, trust, lifecycle, error, and recovery behavior.
 - [x] `speckit-plan`: research, plan, data model, API/schema/UI contracts, Gate A record, and quickstart drafted.
 - [x] `speckit-checklist`: 40 UX, security, compatibility, recovery, and testability requirements-quality checks pass.
-- [ ] `speckit-tasks`
+- [x] `speckit-tasks`: 119 dependency-ordered tasks with story checkpoints, test-first slices, traceability, hardening, and merge verification.
 - [ ] `speckit-analyze` and remediation
 - [ ] `speckit-implement`
 - [ ] Focused, integration, UI, packaging, docs, and full dev gate
@@ -50,7 +50,7 @@
 
 ### Next checkpoint
 
-Produce dependency-ordered tasks, run cross-artifact analysis, remediate all high/critical findings, and begin test-first implementation.
+Run cross-artifact analysis, remediate all high/critical findings, and begin test-first implementation.
 
 ## Program guardrails
 
