@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from tool_registry import McpEngine
 from tool_registry.capability_services import CapabilityServiceDependencies
 from tool_registry.catalog_reconcile import reconcile_engineering_catalog
+from tool_registry.catalog_reconcile import reconcile_wright_managed_servers
 
 from api.main import app
 from api.services.mcp_services import McpApiService, get_mcp_api_service
@@ -74,6 +75,24 @@ def test_offline_capability_list_filter_and_pagination(capability_client) -> Non
         second["capabilities"][0]["capability_id"]
         != (first["capabilities"][0]["capability_id"])
     )
+
+
+def test_fresh_start_managed_server_does_not_overclaim_legacy_validation(
+    capability_client,
+) -> None:
+    client, database_path = capability_client
+    reconcile_wright_managed_servers(str(database_path))
+
+    response = client.get("/api/mcp/capabilities", params={"limit": 200})
+
+    assert response.status_code == 200
+    managed = next(
+        capability
+        for capability in response.json()["capabilities"]
+        if capability["capability_id"] == "rivet-workflows"
+    )
+    assert managed["validation_result"]["status"] == "not_tested"
+    assert managed["validation_result"]["evidence_status"] == "unverified"
 
 
 def test_capability_detail_resolves_alias_without_leaking_secrets(

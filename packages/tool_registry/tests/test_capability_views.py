@@ -93,6 +93,22 @@ def test_projection_merges_alias_user_state_and_retains_custom_rows() -> None:
     assert custom.evidence_class == "user_reported_source_needed"
 
 
+def test_projection_downgrades_legacy_pass_without_current_evidence() -> None:
+    server = _server("legacy-passed", "Legacy passed MCP")
+    server.validation_result.status = "passed"
+    server.validation_result.message = "Legacy startup check passed"
+
+    view = find_capability(
+        build_capability_views([], [server], _observation()), "legacy-passed"
+    )
+
+    assert view is not None
+    assert view.validation_result["status"] == "not_tested"
+    assert view.validation_result["evidence_status"] == "unverified"
+    assert "no current Wright validation evidence" in view.validation_result["message"]
+    assert server.validation_result.status == "passed"
+
+
 def test_projection_search_filters_and_cursor_are_stable() -> None:
     entries = [_entry()]
     views = build_capability_views(entries, [], _observation())

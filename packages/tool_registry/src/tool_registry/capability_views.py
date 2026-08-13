@@ -230,6 +230,19 @@ def _custom_entry(server: McpServer, observation) -> CatalogEntry:
         )
         for key, value in server.platform_support.items()
     }
+    validation_result = server.validation_result.model_dump(mode="json")
+    if validation_result.get("status") == "passed":
+        validation_result = {
+            "status": "not_tested",
+            "message": (
+                "Legacy passed status has no current Wright validation evidence; "
+                "run validation to record environment-bound evidence."
+            ),
+            "environment": None,
+            "missing_dependencies": validation_result.get("missing_dependencies", []),
+            "validated_at": None,
+            "evidence_status": "unverified",
+        }
     return CatalogEntry(
         id=server.server_id,
         name=server.name,
@@ -252,7 +265,7 @@ def _custom_entry(server: McpServer, observation) -> CatalogEntry:
         credentials_required=server.credentials_required,
         default_enabled=server.default_enabled,
         approval_gates=server.approval_gates,
-        validation_result=server.validation_result.model_dump(),
+        validation_result=validation_result,
     )
 
 
