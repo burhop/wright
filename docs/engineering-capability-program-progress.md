@@ -217,9 +217,19 @@ The documentation-complete exact tree was gated again before publication. The fe
 - The Workflows activity action now keeps the workflow-management sidebar visible while also opening Rivet, preserving editor behavior and making the new review step reachable.
 - Focused evidence: 84 Python capability/review/persistence/API/gateway regression tests passed; five web component tests passed; the production TypeScript/Vite build passed; one mocked Chromium authoring/review journey passed with zero child receipts and zero serious/critical accessibility findings. Ruff, Python formatting, Prettier, and `git diff --check` passed.
 
+### Implementation checkpoint 3 - governed multi-MCP execution
+
+- Added a separately owned, lazily started `127.0.0.1` ephemeral-port bridge that is not mounted in the public API, exposes no CORS surface, accepts only its exact bearer audience and paths, bounds headers/bodies/events, and streams safe NDJSON.
+- Rivet discovery uses one reserved handle and returns only the reviewed workspace binding set. Calls submit no server/tool namespace; Wright resolves the node handle and binding digest, revalidates current Gateway state, and delegates through the existing `GatewayService` with client approval hints disabled.
+- The shared workflow runner now re-verifies binding identity, opens the private bridge, mints a 256-bit memory-only run authority, registers the token as a process secret, issues MCP capability only to MCP graphs, persists a credential-free manifest draft, terminalizes exactly once, and reconciles orphan drafts as interrupted without recreating authority.
+- Exact-call approvals bind the run, authority, node, binding, arguments, gates, child request, expiry, and actor. Changed arguments/digests are rejected, denials and expiry wake waiters, and approval is consumed once before the Gateway receives the call.
+- Added scoped approval APIs and a keyboard-accessible approval/timeline UI. The public response omits authority, internal Gateway session, runner token, raw child paths, and credentials; terminal responses can include the bounded Run Manifest.
+- A real pinned Node worker executed one graph containing colliding `inspect` tools from deterministic Alpha and Beta children. Both calls crossed the Gateway, Beta paused for an exact Wright approval, progress and structured results returned, two child receipts and Gateway audits were recorded, and the run token appeared in no output/evidence.
+- Focused evidence: nine Node worker contract tests passed; 92 Python persistence/authority/capability/bridge/approval/real-worker/API/workspace tests passed; seven capability/run/activity component tests passed; production TypeScript/Vite build passed.
+
 ### Next checkpoint
 
-Implement User Story 2: run the reviewed binding set through the separately owned loopback bridge and pinned worker, including two deterministic child MCPs, exact-call approval, progress, structured results, authorized artifacts, and terminal evidence.
+Implement User Story 3: cancel a slow governed child call, revoke its run authority before stopping the worker, distinguish acknowledged cancellation from possible residue, and make recovery evidence explicit.
 
 ## Program guardrails
 

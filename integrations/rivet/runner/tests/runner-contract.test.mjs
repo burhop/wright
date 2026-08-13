@@ -43,6 +43,43 @@ data:
   plugins: []
 `;
 
+const discoveryProject = `version: 4
+data:
+  attachedData: {}
+  graphs:
+    graph-1:
+      metadata:
+        id: graph-1
+        name: Main
+        description: ""
+      nodes:
+        '[discovery-node]:mcpDiscovery "Reviewed tools"':
+          data:
+            name: wright-rivet
+            version: 2.0.0
+            transportType: http
+            useNameInput: false
+            useVersionInput: false
+            useServerUrlInput: false
+            useServerIdInput: false
+            useToolsOutput: true
+            usePromptsOutput: false
+          outgoingConnections:
+            - tools->"Output" output-node/value
+          visualData: 0/0/280/null//
+        '[output-node]:graphOutput "Output"':
+          data:
+            id: output
+            dataType: object[]
+          visualData: 400/0/280/null//
+  metadata:
+    id: discovery-project
+    title: Reviewed discovery
+    description: ""
+    mainGraphId: graph-1
+  plugins: []
+`;
+
 function invoke(project, overrides = {}) {
   const directory = mkdtempSync(resolve(tmpdir(), "wright-rivet-runner-"));
   try {
@@ -221,6 +258,42 @@ test("protocol v2 injects the Wright provider and submits no tool namespace", as
       true,
     );
     assert.equal(events.at(-1).state, "succeeded");
+    assert.equal(result.stdout.includes(mcpGrant(bridge.baseUrl).token), false);
+  } finally {
+    await bridge.close();
+  }
+});
+
+test("protocol v2 discovers only through the reserved Wright handle", async () => {
+  const receipts = [];
+  const bridge = await loopbackBridge((request, response) => {
+    let body = "";
+    request.setEncoding("utf8").on("data", (chunk) => (body += chunk));
+    request.on("end", () => {
+      receipts.push({ url: request.url, body: JSON.parse(body) });
+      response.writeHead(200, { "Content-Type": "application/x-ndjson" });
+      response.end(
+        `${JSON.stringify({ type: "result", structuredContent: { tools: [{ name: "alpha__inspect", description: "Reviewed", inputSchema: { type: "object" } }] }, isError: false })}\n`,
+      );
+    });
+  });
+  try {
+    const result = await invokeAsync(discoveryProject, {
+      mcp: mcpGrant(bridge.baseUrl, { bindings: [] }),
+    });
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.equal(receipts.length, 1, result.stdout);
+    assert.deepEqual(receipts, [
+      {
+        url: "/internal/rivet-mcp/v1/discover",
+        body: {
+          authorityId: "authority-contract",
+          runId: "run-contract",
+          discoveryHandle: "wright-workspace",
+          requestId: receipts[0].body.requestId,
+        },
+      },
+    ]);
     assert.equal(result.stdout.includes(mcpGrant(bridge.baseUrl).token), false);
   } finally {
     await bridge.close();

@@ -246,6 +246,27 @@ class RivetMcpRepository:
             ).fetchone()
         return json.loads(row[0]) if row is not None and row[0] else None
 
+    def run_evidence_documents(
+        self, run_id: str
+    ) -> tuple[tuple[dict[str, Any], ...], tuple[dict[str, Any], ...]]:
+        """Return bounded, already-sanitized child and approval evidence for a run."""
+
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            child_rows = connection.execute(
+                """SELECT call_json FROM workspace_workflow_child_calls
+                WHERE run_id=? ORDER BY created_at, call_id LIMIT 2000""",
+                (run_id,),
+            ).fetchall()
+            approval_rows = connection.execute(
+                """SELECT approval_json FROM workspace_workflow_call_approvals
+                WHERE run_id=? ORDER BY created_at, approval_id LIMIT 2000""",
+                (run_id,),
+            ).fetchall()
+        return (
+            tuple(json.loads(row[0]) for row in child_rows),
+            tuple(json.loads(row[0]) for row in approval_rows),
+        )
+
     def orphaned_manifest_ids(self) -> tuple[str, ...]:
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
             rows = connection.execute(
@@ -253,6 +274,60 @@ class RivetMcpRepository:
                 WHERE state!='finalized' ORDER BY created_at"""
             ).fetchall()
         return tuple(str(row[0]) for row in rows)
+
+    def orphaned_manifest_drafts(self) -> tuple[tuple[str, dict[str, Any]], ...]:
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            rows = connection.execute(
+                """SELECT manifest_id, draft_json
+                FROM workspace_workflow_run_manifests
+                WHERE state!='finalized' ORDER BY created_at"""
+            ).fetchall()
+        return tuple((str(row[0]), json.loads(row[1])) for row in rows)
+
+    def finalize_orphaned_manifests(
+        self, *, reason_code: str = "runner_restarted"
+    ) -> int:
+        """Truthfully terminalize persisted drafts without recreating authority."""
+
+        finalized = 0
+        for manifest_id, document in self.orphaned_manifest_drafts():
+            draft = RunManifestDraft(
+                run_id=str(document["run_id"]),
+                generation=int(document["generation"]),
+                workspace_id=str(document["workspace_id"]),
+                session_id=str(document["session_id"]),
+                workflow_id=str(document["workflow_id"]),
+                workflow_revision=int(document["workflow_revision"]),
+                workflow_digest=str(document["workflow_digest"]),
+                graph_id=str(document["graph_id"]),
+                review_digest=str(document["review_digest"]),
+                binding_set_digest=str(document["binding_set_digest"]),
+                policy_snapshot_digest=str(document["policy_snapshot_digest"]),
+                authority_id=str(document["authority_id"]),
+                authority_digest=str(document["authority_digest"]),
+                started_at=_datetime(str(document["started_at"])),
+                trace_id=str(document["trace_id"]),
+                child_call_ids=list(document.get("child_call_ids") or ()),
+                approval_ids=list(document.get("approval_ids") or ()),
+                redaction_count=int(document.get("redaction_count") or 0),
+                event_truncated=bool(document.get("event_truncated")),
+                output_truncated=bool(document.get("output_truncated")),
+            )
+            manifest = draft.finalize(
+                terminal_state="failed",
+                completed_at=datetime.now(UTC),
+                reason_code=reason_code,
+            )
+            self.finalize_manifest(manifest_id, manifest)
+            with connect_state_db(self.db_path, ensure_parent=True) as connection:
+                connection.execute(
+                    """UPDATE workspace_workflow_runs
+                    SET state='failed', completed_at=?, reason_code=?
+                    WHERE run_id=? AND state IN ('queued', 'running', 'cancelling')""",
+                    (_epoch(manifest.completed_at), reason_code, draft.run_id),
+                )
+            finalized += 1
+        return finalized
 
     def append_child_call(self, record: RivetChildCallRecord) -> None:
         document = asdict(record)

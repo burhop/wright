@@ -3,10 +3,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import UTC, datetime
+import uuid
 from typing import Any, Awaitable, Callable, Mapping, Protocol
 
 import structlog
-from core.rivet_mcp import ApprovalState, CapabilityBinding, canonical_digest
+from core.rivet_mcp import (
+    ApprovalState,
+    CapabilityBinding,
+    RivetChildCallRecord,
+    canonical_digest,
+)
 from core.tracing import traced
 from tool_registry.gateway_models import GatewayToolResult
 
@@ -50,6 +57,7 @@ class RivetBridgeResult:
     binding: CapabilityBinding
     artifacts: tuple[Any, ...]
     redaction_count: int
+    call: RivetChildCallRecord | None = None
 
 
 class GatewayPort(Protocol):
@@ -76,6 +84,10 @@ CurrentBindingValidator = Callable[[CapabilityBinding, str, str], tuple[str, ...
 ProgressCallback = Callable[[Mapping[str, Any]], Awaitable[None] | None]
 
 
+class ChildCallRepository(Protocol):
+    def append_child_call(self, record: RivetChildCallRecord) -> None: ...
+
+
 class RivetGatewayBridge:
     """Resolve runner handles to reviewed bindings and delegate to GatewayService."""
 
@@ -88,6 +100,7 @@ class RivetGatewayBridge:
         resolve_binding: BindingResolver | None = None,
         validate_current: CurrentBindingValidator | None = None,
         approvals: RivetApprovalService | None = None,
+        repository: ChildCallRepository | None = None,
         approval_ttl_seconds: float = 300.0,
     ) -> None:
         self._gateway = gateway
@@ -98,6 +111,7 @@ class RivetGatewayBridge:
             lambda binding, session_id, workspace_id: ()
         )
         self._approvals = approvals
+        self._repository = repository
         self._approval_ttl_seconds = max(1.0, approval_ttl_seconds)
         self._active: dict[tuple[str, str], tuple[str, str]] = {}
 
@@ -162,6 +176,8 @@ class RivetGatewayBridge:
             if progress_callback is None:
                 return
             event = {
+                "type": str(update.get("type") or "progress"),
+                "phase": str(update.get("phase") or "child-progress"),
                 **dict(update),
                 "runId": invocation.run_id,
                 "nodeId": binding.node_id,
@@ -173,6 +189,11 @@ class RivetGatewayBridge:
                 await callback_result
 
         active_key = (invocation.authority_id, invocation.request_id)
+        call_id = str(uuid.uuid4())
+        trace_id = uuid.uuid4().hex
+        started_at = datetime.now(UTC)
+        child_received = False
+        call_record: RivetChildCallRecord | None = None
         self._active[active_key] = (
             authority.claims.session_id,
             invocation.request_id,
@@ -229,6 +250,7 @@ class RivetGatewayBridge:
                     argument_digest=canonical_digest(invocation.arguments),
                 )
                 workspace_approvals = set(required_gates)
+            child_received = True
             result = await self._gateway.call_tool(
                 authority.claims.session_id,
                 invocation.request_id,
@@ -251,7 +273,58 @@ class RivetGatewayBridge:
                 artifact_count=len(artifacts),
                 redaction_count=redactions,
             )
-            return RivetBridgeResult(sanitized, binding, artifacts, redactions)
+            call_record = RivetChildCallRecord(
+                call_id=call_id,
+                request_id=invocation.request_id,
+                run_id=invocation.run_id,
+                authority_id=invocation.authority_id,
+                node_id=binding.node_id,
+                binding_digest=binding.binding_digest,
+                qualified_tool_name=binding.qualified_tool_name,
+                server_revision=binding.server_revision,
+                schema_digest=binding.schema_digest,
+                validation_evidence_id=binding.validation_evidence_id,
+                argument_digest=canonical_digest(invocation.arguments),
+                trace_id=trace_id,
+                state="failed" if sanitized.is_error else "succeeded",
+                child_received=True,
+                started_at=started_at,
+                completed_at=datetime.now(UTC),
+                reason_code=(
+                    str(sanitized.error_code) if sanitized.error_code else None
+                ),
+                artifacts=tuple(artifacts),
+            )
+            if self._repository is not None:
+                self._repository.append_child_call(call_record)
+            return RivetBridgeResult(
+                sanitized, binding, artifacts, redactions, call_record
+            )
+        except Exception as error:
+            if self._repository is not None and call_record is None:
+                reason_code = str(getattr(error, "code", "RIVET_MCP_CALL_FAILED"))
+                self._repository.append_child_call(
+                    RivetChildCallRecord(
+                        call_id=call_id,
+                        request_id=invocation.request_id,
+                        run_id=invocation.run_id,
+                        authority_id=invocation.authority_id,
+                        node_id=binding.node_id,
+                        binding_digest=binding.binding_digest,
+                        qualified_tool_name=binding.qualified_tool_name,
+                        server_revision=binding.server_revision,
+                        schema_digest=binding.schema_digest,
+                        validation_evidence_id=binding.validation_evidence_id,
+                        argument_digest=canonical_digest(invocation.arguments),
+                        trace_id=trace_id,
+                        state="failed",
+                        child_received=child_received,
+                        started_at=started_at,
+                        completed_at=datetime.now(UTC),
+                        reason_code=reason_code[:128],
+                    )
+                )
+            raise
         finally:
             self._active.pop(active_key, None)
 

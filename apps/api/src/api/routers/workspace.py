@@ -104,6 +104,9 @@ from api.schemas.workspace import (
     WorkflowRunCancelRequest,
     WorkflowRunResponse,
     WorkflowRunStartRequest,
+    RivetCallApprovalDecisionRequest,
+    RivetCallApprovalListResponse,
+    RivetCallApprovalResponse,
     WorkflowReviewRequest,
     WorkflowReviewResponse,
     RivetMcpCapabilitiesResponse,
@@ -132,6 +135,7 @@ from workspace_service.workflows import (
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
 from workspace_service.workflow_operations import WorkflowOperationsError
+from workspace_service.rivet_approvals import RivetApprovalError
 from workspace_service.workflow_graph import WorkflowGraphError
 from workspace_service.workflow_catalog import WorkflowTemplateError
 from workspace_service.brep_panel import (
@@ -213,7 +217,7 @@ def _workflow_template_response(template) -> WorkflowTemplateResponse:
     )
 
 
-def _run_response(run, record=None) -> WorkflowRunResponse:
+def _run_response(run, record=None, manifest=None) -> WorkflowRunResponse:
     output = record.output_summary if record is not None else None
     return WorkflowRunResponse(
         run_id=run.run_id,
@@ -229,6 +233,30 @@ def _run_response(run, record=None) -> WorkflowRunResponse:
         outputs=output.get("outputs") if output else None,
         duration_ms=output.get("durationMs") if output else None,
         output_truncated=record.output_truncated if record is not None else False,
+        manifest=manifest,
+    )
+
+
+def _run_manifest(service, run_id: str):
+    getter = getattr(service.workflow_runner, "manifest", None)
+    return getter(run_id) if callable(getter) else None
+
+
+def _call_approval_response(approval) -> RivetCallApprovalResponse:
+    return RivetCallApprovalResponse(
+        approval_id=approval.approval_id,
+        run_id=approval.run_id,
+        node_id=approval.node_id,
+        qualified_tool_name=approval.qualified_tool_name,
+        binding_digest=approval.binding_digest,
+        argument_digest=approval.argument_digest,
+        argument_summary=dict(approval.argument_summary),
+        required_gates=list(approval.required_gates),
+        state=approval.state,
+        expires_at=approval.expires_at.isoformat(),
+        approval_digest=approval.approval_digest,
+        decided_by=approval.decided_by,
+        decision_reason=approval.decision_reason,
     )
 
 
@@ -718,7 +746,11 @@ async def start_workflow_run_endpoint(
             context=body.context,
             timeout_seconds=body.timeout_seconds,
         )
-        return _run_response(run, service.workflow_runner.result(run.run_id))
+        return _run_response(
+            run,
+            service.workflow_runner.result(run.run_id),
+            _run_manifest(service, run.run_id),
+        )
     except WorkflowRunnerUnavailable as error:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -756,10 +788,83 @@ async def workflow_run_status_endpoint(
         run = service.workflow_operations.run(
             workspace_id=workspace["workspace_id"], session_id=session_id, run_id=run_id
         )
-        return _run_response(run, service.workflow_runner.result(run.run_id))
+        return _run_response(
+            run,
+            service.workflow_runner.result(run.run_id),
+            _run_manifest(service, run_id),
+        )
     except (WorkflowRunnerError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
+        ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/approvals",
+    response_model=RivetCallApprovalListResponse,
+)
+@traced("workspace.workflows.runner.approvals")
+async def workflow_run_approvals_endpoint(
+    run_id: str,
+    session_id: str = Query(...),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        approvals = service.workflow_operations.call_approvals(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+        )
+        return RivetCallApprovalListResponse(
+            approvals=[_call_approval_response(item) for item in approvals]
+        )
+    except (WorkflowRunnerError, WorkflowOperationsError) as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+
+
+@router.post(
+    "/workflows/runs/{run_id}/approvals/{approval_id}",
+    response_model=RivetCallApprovalResponse,
+)
+@traced("workspace.workflows.runner.approval_decision")
+async def decide_workflow_run_approval_endpoint(
+    run_id: str,
+    approval_id: str,
+    body: RivetCallApprovalDecisionRequest,
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(body.session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        approval = service.workflow_operations.decide_call_approval(
+            workspace_id=workspace["workspace_id"],
+            session_id=body.session_id,
+            run_id=run_id,
+            approval_id=approval_id,
+            expected_digest=body.expected_digest,
+            actor=body.actor,
+            approved=body.decision == "approved",
+            reason=body.reason,
+        )
+        return _call_approval_response(approval)
+    except WorkflowOperationsError as error:
+        raise HTTPException(
+            status_code=404, detail="Call approval was not found"
+        ) from error
+    except RivetApprovalError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"code": error.code, "message": str(error)},
         ) from error
 
 
@@ -784,7 +889,11 @@ async def cancel_workflow_run_endpoint(
             run_id=run_id,
             generation=body.generation,
         )
-        return _run_response(run, service.workflow_runner.result(run.run_id))
+        return _run_response(
+            run,
+            service.workflow_runner.result(run.run_id),
+            _run_manifest(service, run_id),
+        )
     except (WorkflowRunnerError, WorkflowOperationsError) as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

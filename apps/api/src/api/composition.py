@@ -42,6 +42,7 @@ from tool_registry.wright_managed_servers import RIVET_WORKFLOW_MUTATION_APPROVA
 from api.config import DATABASE_PATH
 from api.brep_gateway import BrepPanelGatewayLifecycle
 from api.notifications import GatewayWorkspaceNotifier
+from api.rivet_runner_bridge import RivetRunnerBridgeApplication
 from workspace_service.brep_panel import (
     BrepPanelError,
     select_brep_application_server,
@@ -393,6 +394,7 @@ class RivetMcpApplication:
     approvals: RivetApprovalService
     capabilities: RivetCapabilityService
     bridge: RivetGatewayBridge
+    runner_bridge: RivetRunnerBridgeApplication
     gateway_session_id: Callable[[str, str], str]
 
 
@@ -445,7 +447,14 @@ def build_rivet_mcp_application(
             )
         ),
         approvals=approvals,
+        repository=repository,
         approval_ttl_seconds=settings.approval_ttl_seconds,
+    )
+    runner_bridge = RivetRunnerBridgeApplication(
+        bridge=bridge,
+        authorities=authorities,
+        repository=repository,
+        settings=settings,
     )
     application = RivetMcpApplication(
         settings,
@@ -454,11 +463,22 @@ def build_rivet_mcp_application(
         approvals,
         capabilities,
         bridge,
+        runner_bridge,
         gateway_session_id,
     )
-    workspace_service().workflow_operations.configure_mcp(
+    service = workspace_service()
+    service.workflow_operations.configure_mcp(
         capabilities=capabilities,
         repository=repository,
+        settings=settings,
+        approvals=approvals,
+    )
+    service.workflow_runner.configure_mcp(
+        repository=repository,
+        authorities=authorities,
+        approvals=approvals,
+        bridge=runner_bridge,
+        session_resolver=gateway_session_id,
         settings=settings,
     )
     return application

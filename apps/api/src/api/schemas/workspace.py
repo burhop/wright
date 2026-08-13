@@ -181,6 +181,35 @@ class WorkflowRunResponse(BaseModel):
     outputs: Dict[str, Any] | None = None
     duration_ms: int | None = None
     output_truncated: bool = False
+    manifest: Dict[str, Any] | None = None
+
+
+class RivetCallApprovalResponse(BaseModel):
+    approval_id: str
+    run_id: str
+    node_id: str
+    qualified_tool_name: str
+    binding_digest: str
+    argument_digest: str
+    argument_summary: Dict[str, Any]
+    required_gates: list[str]
+    state: str
+    expires_at: str
+    approval_digest: str
+    decided_by: str | None = None
+    decision_reason: str | None = None
+
+
+class RivetCallApprovalListResponse(BaseModel):
+    approvals: list[RivetCallApprovalResponse]
+
+
+class RivetCallApprovalDecisionRequest(BaseModel):
+    session_id: str
+    expected_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    decision: Literal["approved", "denied"]
+    actor: str = Field(min_length=1, max_length=200)
+    reason: str | None = Field(default=None, max_length=512)
 
 
 class WorkflowReviewRequest(BaseModel):

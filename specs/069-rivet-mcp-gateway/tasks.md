@@ -89,27 +89,27 @@
 
 ### Tests for User Story 2
 
-- [ ] T034 [P] [US2] Add injected-provider discovery/call/structured-result/progress/token-redaction, MCP-prompt denial, no-tool-namespace submission, and exact-origin tests in `integrations/rivet/runner/tests/runner-contract.test.mjs`
-- [ ] T035 [P] [US2] Add dedicated-loopback bridge authentication, bind isolation, audience, request/body/event limits, handle lookup, current-state revalidation, policy denial, trace/log correlation, and NDJSON result tests in `apps/api/tests/test_rivet_runner_bridge.py`
-- [ ] T036 [P] [US2] Add exact-call approval digest, expiry, changed-argument, one-shot consumption, deny, and no-client-hint tests in `packages/workspace_service/tests/test_rivet_call_approvals.py`
-- [ ] T037 [P] [US2] Add real Node plus two-fake-child gateway integration coverage with colliding names, progress, structured outputs, authorized gateway/vault artifact references, raw-path/URI rejection, audit, and ordered node attribution in `packages/workspace_service/tests/test_rivet_mcp_execution.py`
-- [ ] T038 [P] [US2] Add public run/approval API role, workspace, stale-start, response-redaction, and compatibility tests in `apps/api/tests/test_rivet_mcp_run_api.py`
-- [ ] T039 [P] [US2] Add approval-modal and executing-timeline component states with keyboard/focus/live-region coverage in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
+- [x] T034 [P] [US2] Add injected-provider discovery/call/structured-result/progress/token-redaction, MCP-prompt denial, no-tool-namespace submission, and exact-origin tests in `integrations/rivet/runner/tests/runner-contract.test.mjs`
+- [x] T035 [P] [US2] Add dedicated-loopback bridge authentication, bind isolation, audience, request/body/event limits, handle lookup, current-state revalidation, policy denial, trace/log correlation, and NDJSON result tests in `apps/api/tests/test_rivet_runner_bridge.py`
+- [x] T036 [P] [US2] Add exact-call approval digest, expiry, changed-argument, one-shot consumption, deny, and no-client-hint tests in `packages/workspace_service/tests/test_rivet_call_approvals.py`
+- [x] T037 [P] [US2] Add real Node plus two-fake-child gateway integration coverage with colliding names, progress, structured outputs, authorized gateway/vault artifact references, raw-path/URI rejection, audit, and ordered node attribution in `packages/workspace_service/tests/test_rivet_mcp_execution.py`
+- [x] T038 [P] [US2] Add public run/approval API role, workspace, stale-start, response-redaction, and compatibility tests in `apps/api/tests/test_rivet_mcp_run_api.py`
+- [x] T039 [P] [US2] Add approval-modal and executing-timeline component states with keyboard/focus/live-region coverage in `apps/web/src/components/chat/RivetWorkflowRun.spec.tsx`
 
 ### Implementation for User Story 2
 
-- [ ] T040 [US2] Complete the injected Rivet `MCPProvider`, in-memory node transform, reserved discovery handle, bound tool call, NDJSON parsing, and safe result mapping in `integrations/rivet/runner/src/wright-runner.ts`
-- [ ] T041 [US2] Rebuild and integrity-pin the protocol-v2 worker after provider completion in `integrations/rivet/runner/dist/wright-runner.mjs` and `integrations/rivet/runner/manifest.json`
-- [ ] T042 [P] [US2] Implement exact pending-call approval lifecycle and argument/gate digest validation in `packages/workspace_service/src/workspace_service/rivet_approvals.py`
-- [ ] T043 [US2] Implement bridge discovery/call streams that accept no caller tool namespace, resolve authoritative bindings, revalidate current state, delegate to `GatewayService` with `client_approval_hint=False`, accept only Wright-authorized gateway/vault artifacts, and emit structured logs/OpenTelemetry spans in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
-- [ ] T044 [US2] Implement the separately owned `127.0.0.1` ephemeral-port runner bridge application with exact bearer audience/path, no external mounting or CORS, bounded NDJSON, safe errors, active-call registration, and deterministic shutdown in `apps/api/src/api/rivet_runner_bridge.py`
-- [ ] T045 [US2] Extend `RivetRuntimeHost` protocol-v2 request creation, secret registration, exact MCP origin allowance, binding grant, and event validation in `packages/workspace_service/src/workspace_service/rivet_runtime_host.py`
-- [ ] T046 [US2] Extend `WorkspaceWorkflowRunner` start lifecycle to verify review/bindings, create an immutable-identity manifest draft, reconcile orphaned drafts as interrupted without recreating authority, mint current authority, grant MCP only when required, and terminalize/revoke safely in `packages/workspace_service/src/workspace_service/workflow_runner.py`
-- [ ] T047 [US2] Add exact-call approval list/decision and manifest-safe run response orchestration in `packages/workspace_service/src/workspace_service/workflow_operations.py`
-- [ ] T048 [P] [US2] Extend public approval/run schemas and safe artifact/manifest projections in `apps/api/src/api/schemas/workspace.py`
-- [ ] T049 [US2] Add thin authenticated pending-approval and decision routes while extending start/status/history in `apps/api/src/api/routers/workspace.py`
-- [ ] T050 [US2] Add approval and active-call service methods plus accessible approval modal/timeline integration in `apps/web/src/services/workspace-service.ts` and `apps/web/src/components/chat/RivetWorkflowRun.tsx`
-- [ ] T051 [US2] Run the real pinned runner/two-fake-child/API/web integration slice and record child receipts, gateway audits, approval scope, outputs, and exact provenance in `docs/engineering-capability-program-progress.md`
+- [x] T040 [US2] Complete the injected Rivet `MCPProvider`, in-memory node transform, reserved discovery handle, bound tool call, NDJSON parsing, and safe result mapping in `integrations/rivet/runner/src/wright-runner.ts`
+- [x] T041 [US2] Rebuild and integrity-pin the protocol-v2 worker after provider completion in `integrations/rivet/runner/dist/wright-runner.mjs` and `integrations/rivet/runner/manifest.json`
+- [x] T042 [P] [US2] Implement exact pending-call approval lifecycle and argument/gate digest validation in `packages/workspace_service/src/workspace_service/rivet_approvals.py`
+- [x] T043 [US2] Implement bridge discovery/call streams that accept no caller tool namespace, resolve authoritative bindings, revalidate current state, delegate to `GatewayService` with `client_approval_hint=False`, accept only Wright-authorized gateway/vault artifacts, and emit structured logs/OpenTelemetry spans in `packages/workspace_service/src/workspace_service/rivet_gateway_bridge.py`
+- [x] T044 [US2] Implement the separately owned `127.0.0.1` ephemeral-port runner bridge application with exact bearer audience/path, no external mounting or CORS, bounded NDJSON, safe errors, active-call registration, and deterministic shutdown in `apps/api/src/api/rivet_runner_bridge.py`
+- [x] T045 [US2] Extend `RivetRuntimeHost` protocol-v2 request creation, secret registration, exact MCP origin allowance, binding grant, and event validation in `packages/workspace_service/src/workspace_service/rivet_runtime_host.py`
+- [x] T046 [US2] Extend `WorkspaceWorkflowRunner` start lifecycle to verify review/bindings, create an immutable-identity manifest draft, reconcile orphaned drafts as interrupted without recreating authority, mint current authority, grant MCP only when required, and terminalize/revoke safely in `packages/workspace_service/src/workspace_service/workflow_runner.py`
+- [x] T047 [US2] Add exact-call approval list/decision and manifest-safe run response orchestration in `packages/workspace_service/src/workspace_service/workflow_operations.py`
+- [x] T048 [P] [US2] Extend public approval/run schemas and safe artifact/manifest projections in `apps/api/src/api/schemas/workspace.py`
+- [x] T049 [US2] Add thin authenticated pending-approval and decision routes while extending start/status/history in `apps/api/src/api/routers/workspace.py`
+- [x] T050 [US2] Add approval and active-call service methods plus accessible approval modal/timeline integration in `apps/web/src/services/workspace-service.ts` and `apps/web/src/components/chat/RivetWorkflowRun.tsx`
+- [x] T051 [US2] Run the real pinned runner/two-fake-child/API/web integration slice and record child receipts, gateway audits, approval scope, outputs, and exact provenance in `docs/engineering-capability-program-progress.md`
 
 **Checkpoint**: A reviewed graph calls two child MCPs only through Wright; exact approval works; unbound/disabled/cross-workspace/stale attempts have zero child receipt.
 

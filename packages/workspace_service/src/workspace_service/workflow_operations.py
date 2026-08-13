@@ -10,6 +10,7 @@ from dataclasses import dataclass, replace
 
 from core.rivet_mcp import (
     CapabilityBinding,
+    PendingRivetCallApproval,
     WorkflowBindingSet,
     canonical_digest,
 )
@@ -24,6 +25,7 @@ from .rivet_capabilities import (
     RivetCapabilityService,
     RivetDiscoverySnapshot,
 )
+from .rivet_approvals import RivetApprovalService
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_validation import (
     RivetMcpNodeRequirement,
@@ -121,6 +123,7 @@ class WorkspaceWorkflowOperations:
         self._settings = settings or WorkflowOperationsSettings.from_env()
         self._mcp_capabilities: RivetCapabilityService | None = None
         self._mcp_repository: RivetMcpRepository | None = None
+        self._mcp_approvals: RivetApprovalService | None = None
         self._mcp_settings = RivetMcpGatewaySettings()
 
     def configure_mcp(
@@ -129,10 +132,12 @@ class WorkspaceWorkflowOperations:
         capabilities: RivetCapabilityService,
         repository: RivetMcpRepository,
         settings: RivetMcpGatewaySettings,
+        approvals: RivetApprovalService | None = None,
     ) -> None:
         self._mcp_capabilities = capabilities
         self._mcp_repository = repository
         self._mcp_settings = settings
+        self._mcp_approvals = approvals
 
     def _mcp_enabled(self) -> tuple[RivetCapabilityService, RivetMcpRepository]:
         if (
@@ -337,22 +342,20 @@ class WorkspaceWorkflowOperations:
             )
         document = WorkspaceWorkflowStore(workspace_dir).read(slug)
         unscoped_requirements = extract_rivet_mcp_requirements(document.project)
-        has_mcp_tool = any(
-            item.node_type == "mcpToolCall" for item in unscoped_requirements.nodes
-        )
+        has_mcp_node = bool(unscoped_requirements.nodes)
         requirement_result = (
             extract_rivet_mcp_requirements(
                 document.project,
                 selected_graph=self._selected_graph(document, graph),
             )
-            if has_mcp_tool
+            if has_mcp_node
             else unscoped_requirements
         )
         tool_requirements = tuple(
             item for item in requirement_result.nodes if item.node_type == "mcpToolCall"
         )
         now = int(time.time())
-        if tool_requirements:
+        if requirement_result.nodes:
             if requirement_result.errors:
                 raise WorkflowOperationsError(
                     requirement_result.errors[0].code,
@@ -569,9 +572,7 @@ class WorkspaceWorkflowOperations:
             )
         review = self._reviews.get(workspace_id, document.workflow_id)
         requirements = extract_rivet_mcp_requirements(document.project)
-        has_mcp_tool = any(
-            item.node_type == "mcpToolCall" for item in requirements.nodes
-        )
+        has_mcp_node = bool(requirements.nodes)
         if (
             review is None
             or review.state != "approved"
@@ -581,7 +582,7 @@ class WorkspaceWorkflowOperations:
                 "RIVET_WORKFLOW_REVIEW_REQUIRED",
                 "The current workflow revision has not been approved",
             )
-        if has_mcp_tool:
+        if has_mcp_node:
             if (
                 review.workflow_digest != document.digest
                 or review.binding_set_digest != binding_set_digest
@@ -609,6 +610,8 @@ class WorkspaceWorkflowOperations:
             expected_generation=expected_generation,
             expected_revision=expected_revision,
             expected_digest=expected_digest,
+            expected_review_digest=expected_review_digest,
+            binding_set_digest=binding_set_digest,
             graph=graph,
             inputs=inputs,
             context=context,
@@ -653,3 +656,47 @@ class WorkspaceWorkflowOperations:
                 "RIVET_RUN_NOT_FOUND", "Workflow run was not found"
             )
         return await self._runner.cancel(run_id, generation=generation)
+
+    def call_approvals(
+        self, *, workspace_id: str, session_id: str, run_id: str
+    ) -> tuple[PendingRivetCallApproval, ...]:
+        self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
+        if self._mcp_approvals is None:
+            return ()
+        return self._mcp_approvals.list_for_run(run_id)
+
+    def decide_call_approval(
+        self,
+        *,
+        workspace_id: str,
+        session_id: str,
+        run_id: str,
+        approval_id: str,
+        expected_digest: str,
+        actor: str,
+        approved: bool,
+        reason: str | None = None,
+    ) -> PendingRivetCallApproval:
+        self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
+        if self._mcp_approvals is None:
+            raise WorkflowOperationsError(
+                "RIVET_CALL_APPROVAL_NOT_FOUND", "Call approval was not found"
+            )
+        approval = self._mcp_approvals.get(approval_id)
+        if approval.run_id != run_id:
+            raise WorkflowOperationsError(
+                "RIVET_CALL_APPROVAL_NOT_FOUND", "Call approval was not found"
+            )
+        return self._mcp_approvals.decide(
+            approval_id,
+            expected_digest=expected_digest,
+            actor=actor,
+            approved=approved,
+            reason=reason,
+        )
+
+    def run_manifest(
+        self, *, workspace_id: str, session_id: str, run_id: str
+    ) -> dict | None:
+        self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
+        return self._runner.manifest(run_id)

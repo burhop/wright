@@ -133,6 +133,24 @@ export interface RivetWorkflowRun {
   outputs: Record<string, unknown> | null;
   duration_ms: number | null;
   output_truncated: boolean;
+  manifest?: Record<string, unknown> | null;
+}
+
+export interface RivetCallApproval {
+  approval_id: string;
+  run_id: string;
+  node_id: string;
+  qualified_tool_name: string;
+  binding_digest: string;
+  argument_digest: string;
+  argument_summary: Record<string, unknown>;
+  required_gates: string[];
+  state:
+    "pending" | "approved" | "denied" | "expired" | "consumed" | "cancelled";
+  expires_at: string;
+  approval_digest: string;
+  decided_by: string | null;
+  decision_reason: string | null;
 }
 
 export interface RivetWorkflowRunOptions {
@@ -579,6 +597,43 @@ export class WorkspaceService {
     );
     if (!response.ok) throw new Error("Workflow history is unavailable");
     return (await response.json()).events || [];
+  }
+
+  async getRivetCallApprovals(
+    sessionId: string,
+    runId: string,
+  ): Promise<RivetCallApproval[]> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/approvals?session_id=${encodeURIComponent(sessionId)}`,
+    );
+    if (!response.ok) throw new Error("Call approvals are unavailable");
+    return (await response.json()).approvals || [];
+  }
+
+  async decideRivetCallApproval(
+    sessionId: string,
+    runId: string,
+    approval: RivetCallApproval,
+    decision: "approved" | "denied",
+    reason?: string,
+  ): Promise<RivetCallApproval> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/approvals/${encodeURIComponent(approval.approval_id)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          expected_digest: approval.approval_digest,
+          decision,
+          actor: "local-user",
+          reason: reason || null,
+        }),
+      },
+    );
+    if (!response.ok)
+      throw new Error("This exact call changed or is no longer pending");
+    return response.json();
   }
 
   async cancelRivetWorkflow(

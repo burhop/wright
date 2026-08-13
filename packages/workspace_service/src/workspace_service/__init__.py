@@ -47,10 +47,11 @@ from .rivet_approvals import RivetApprovalError, RivetApprovalService
 from .rivet_authority import (
     AuthorityClaims,
     IssuedAuthority,
+    RivetAuthorityError,
     RivetRunAuthorityService,
 )
 from .rivet_capabilities import RivetCapabilityService, RivetDiscoverySnapshot
-from .rivet_gateway_bridge import RivetGatewayBridge
+from .rivet_gateway_bridge import RivetBoundInvocation, RivetGatewayBridge
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_mcp import (
     RivetMcpBinding,
@@ -127,9 +128,11 @@ __all__ = [
     "RivetApprovalService",
     "AuthorityClaims",
     "IssuedAuthority",
+    "RivetAuthorityError",
     "RivetRunAuthorityService",
     "RivetCapabilityService",
     "RivetDiscoverySnapshot",
+    "RivetBoundInvocation",
     "RivetGatewayBridge",
     "RivetMcpGatewaySettings",
     "RivetMcpBinding",

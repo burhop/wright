@@ -29,7 +29,7 @@ from core.workflow_runs import RunnerAvailability
 from core.workflows import WorkflowDocument
 
 from .surfaces.process_supervisor import ProcessSupervisor, ProcessSupervisorError
-from .workflow_runner import RunnerAssetCatalog, RunnerSettings
+from .workflow_runner import RivetMcpRuntimeGrant, RunnerAssetCatalog, RunnerSettings
 
 
 ProgressCallback = Callable[[dict[str, Any]], Awaitable[None] | None]
@@ -314,6 +314,7 @@ class RivetRuntimeHost:
         inputs: Mapping[str, Any] | None = None,
         context: Mapping[str, Any] | None = None,
         requirements: tuple[str, ...] = (),
+        mcp_grant: RivetMcpRuntimeGrant | None = None,
         timeout_seconds: float | None = None,
         progress_callback: ProgressCallback | None = None,
         generation: int = 1,
@@ -431,6 +432,24 @@ class RivetRuntimeHost:
                         "token": ai_bridge.token,
                         "model": "wright-hermes",
                     }
+                if "mcp" in requirements:
+                    if mcp_grant is None:
+                        raise RivetRuntimeError(
+                            "RIVET_MCP_GRANT_REQUIRED",
+                            "A current reviewed MCP run grant is required.",
+                        )
+                    request["capabilities"].append("mcp")
+                    request["mcp"] = {
+                        "authorityId": mcp_grant.authority_id,
+                        "bridgeBaseUrl": mcp_grant.bridge_base_url,
+                        "token": mcp_grant.token,
+                        "expiresAt": mcp_grant.expires_at.isoformat().replace(
+                            "+00:00", "Z"
+                        ),
+                        "bindingSetDigest": mcp_grant.binding_set_digest,
+                        "discoveryHandle": mcp_grant.discovery_handle,
+                        "bindings": list(mcp_grant.bindings),
+                    }
                 encoded = json.dumps(
                     request, separators=(",", ":"), default=str
                 ).encode("utf-8")
@@ -442,7 +461,14 @@ class RivetRuntimeHost:
                     cwd=str(Path(workspace_dir).resolve()),
                     environment=self._environment(),
                     secret_environment_names=frozenset(),
-                    secret_values=(ai_bridge.token,) if ai_bridge else (),
+                    secret_values=tuple(
+                        value
+                        for value in (
+                            ai_bridge.token if ai_bridge else None,
+                            mcp_grant.token if mcp_grant else None,
+                        )
+                        if value
+                    ),
                     redaction_query_names=frozenset({"token", "api_key", "key"}),
                     limits={
                         "captured_log_bytes": self._settings.captured_log_bytes,
