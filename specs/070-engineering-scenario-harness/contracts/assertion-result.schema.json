@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-assertion-result-1.json",
+  "title": "Wright Engineering Assertion Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "assertion_id", "plugin", "plugin_version", "state", "category", "reason_code", "artifact_digests", "producer"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "assertion_id": {"type": "string", "maxLength": 100},
+    "plugin": {"type": "string", "maxLength": 80},
+    "plugin_version": {"type": "string", "maxLength": 20},
+    "state": {"enum": ["pass", "fail", "skip", "error"]},
+    "category": {"enum": ["contract", "unit", "geometry", "ecad", "convergence", "numeric", "topology", "additive", "cam_safety", "correlation", "environment", "cleanup", "internal"]},
+    "reason_code": {"type": "string", "pattern": "^[a-z0-9_]+$", "maxLength": 100},
+    "expected": {},
+    "observed": {},
+    "units": {"type": "object", "maxProperties": 20},
+    "artifact_digests": {"type": "array", "maxItems": 20, "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "producer": {"type": "object", "additionalProperties": false, "required": ["node_id", "capability"], "properties": {"node_id": {"type": "string", "maxLength": 160}, "capability": {"type": "string", "maxLength": 200}, "call_id": {"type": "string", "maxLength": 160}}},
+    "message": {"type": "string", "maxLength": 1000},
+    "recovery": {"type": "string", "maxLength": 1000}
+  },
+  "allOf": [{"if": {"properties": {"state": {"enum": ["fail", "error"]}}}, "then": {"required": ["message", "recovery"]}}]
+}

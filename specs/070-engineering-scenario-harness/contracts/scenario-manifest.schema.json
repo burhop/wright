@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/engineering-scenario-manifest-1.json",
+  "title": "Wright Engineering Scenario Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scenario_id", "revision", "title", "summary", "domains", "tier", "resource", "workflow", "capabilities", "artifacts", "assertions", "environment", "safety", "cleanup", "provenance"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "scenario_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 80},
+    "revision": {"type": "integer", "minimum": 1},
+    "title": {"type": "string", "minLength": 1, "maxLength": 120},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 500},
+    "domains": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"enum": ["cad", "ecad", "fea", "cfd", "python", "cam", "grasshopper", "additive", "slicing"]}},
+    "tier": {"enum": ["tier1", "tier2", "tier3"]},
+    "resource": {"type": "object", "additionalProperties": false, "required": ["class", "expected_duration_seconds"], "properties": {"class": {"enum": ["small", "medium", "large", "external"]}, "expected_duration_seconds": {"type": "integer", "minimum": 1, "maximum": 86400}, "memory_mib": {"type": "integer", "minimum": 1, "maximum": 1048576}}},
+    "workflow": {"type": "object", "additionalProperties": false, "required": ["resource", "graph_id", "revision"], "properties": {"resource": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+\\.rivet-project$", "maxLength": 240}, "graph_id": {"type": "string", "minLength": 1, "maxLength": 160}, "revision": {"type": "integer", "minimum": 1}}},
+    "capabilities": {"type": "array", "minItems": 2, "maxItems": 100, "items": {"$ref": "#/$defs/capability"}},
+    "inputs": {"type": "object", "maxProperties": 100},
+    "artifacts": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"$ref": "#/$defs/artifact"}},
+    "assertions": {"type": "array", "minItems": 1, "maxItems": 500, "items": {"$ref": "#/$defs/assertion"}},
+    "environment": {"type": "object", "additionalProperties": false, "required": ["network", "credentials", "proprietary_application", "gpu", "hardware", "large_download"], "properties": {"network": {"type": "boolean"}, "credentials": {"type": "boolean"}, "proprietary_application": {"type": "boolean"}, "gpu": {"type": "boolean"}, "hardware": {"type": "boolean"}, "large_download": {"type": "boolean"}, "platforms": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 40}}}},
+    "safety": {"type": "object", "additionalProperties": false, "required": ["physical_actuation", "static_outputs_only"], "properties": {"physical_actuation": {"const": false}, "static_outputs_only": {"type": "boolean"}, "notes": {"type": "string", "maxLength": 500}}},
+    "cleanup": {"type": "object", "additionalProperties": false, "required": ["timeout_seconds", "residue_policy"], "properties": {"timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 300}, "residue_policy": {"enum": ["fail", "report"]}}},
+    "provenance": {"type": "object", "additionalProperties": false, "required": ["owner", "fixture_origin", "license"], "properties": {"owner": {"type": "string", "maxLength": 120}, "fixture_origin": {"enum": ["wright-generated", "third-party"]}, "license": {"type": "string", "minLength": 1, "maxLength": 120}, "source_url": {"type": "string", "format": "uri", "maxLength": 500}, "redistribution": {"type": "string", "maxLength": 200}, "modifications": {"type": "string", "maxLength": 500}}}
+  },
+  "$defs": {
+    "capability": {"type": "object", "additionalProperties": false, "required": ["requirement_id", "node_id", "domain", "tool_name"], "properties": {"requirement_id": {"type": "string", "pattern": "^[a-z0-9_-]+$", "maxLength": 80}, "node_id": {"type": "string", "minLength": 1, "maxLength": 160}, "domain": {"type": "string", "maxLength": 40}, "tool_name": {"type": "string", "pattern": "^[A-Za-z0-9._-]+__[A-Za-z0-9._-]+$", "maxLength": 200}, "risk": {"enum": ["read", "compute", "write", "destructive"]}}},
+    "artifact": {"type": "object", "additionalProperties": false, "required": ["artifact_id", "producer_node_id", "domain", "kind", "schema_version"], "properties": {"artifact_id": {"type": "string", "pattern": "^[a-z0-9_-]+$", "maxLength": 80}, "producer_node_id": {"type": "string", "minLength": 1, "maxLength": 160}, "domain": {"type": "string", "maxLength": 40}, "kind": {"type": "string", "maxLength": 80}, "schema_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"}}},
+    "assertion": {"type": "object", "additionalProperties": false, "required": ["assertion_id", "plugin", "plugin_version", "artifact_ids", "rule", "severity"], "properties": {"assertion_id": {"type": "string", "pattern": "^[a-z0-9_-]+$", "maxLength": 100}, "plugin": {"type": "string", "maxLength": 80}, "plugin_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$"}, "artifact_ids": {"type": "array", "minItems": 1, "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "maxLength": 80}}, "rule": {"type": "object"}, "severity": {"enum": ["error", "warning"]}, "guidance": {"type": "string", "maxLength": 500}}}
+  }
+}
