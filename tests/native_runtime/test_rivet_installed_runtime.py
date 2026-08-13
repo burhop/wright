@@ -10,6 +10,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def test_hashed_rivet_source_inputs_keep_canonical_lf_bytes() -> None:
+    attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8").splitlines()
+
+    assert "integrations/rivet/editor/patches/** text eol=lf" in attributes
+    assert "integrations/rivet/editor/wrapper/** text eol=lf" in attributes
+    assert "integrations/rivet/runner/src/** text eol=lf" in attributes
+
+
 def test_installed_wheel_has_offline_rivet_editor_runner_bridge_and_mcp(
     tmp_path: Path,
 ) -> None:
