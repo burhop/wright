@@ -26,23 +26,23 @@
 
 **Purpose**: Shared trust and state infrastructure that blocks every user story.
 
-- [ ] T008 Write failing `BaseTool` conformance plus model/package/variant/artifact/task/license/resource/seeded-test-vector validation and canonical-digest tests in `packages/core/tests/test_base_tool.py` and `packages/model_registry/tests/test_models.py`.
-- [ ] T009 Implement Wright's abstract `BaseTool` contract in `packages/core/src/core/tools.py` plus immutable model-domain values, supported versions, canonical serialization, bounds, and stable failure categories in `packages/model_registry/src/model_registry/models.py`.
-- [ ] T010 Export the public domain contracts from `packages/model_registry/src/model_registry/__init__.py` without cyclic package imports.
-- [ ] T011 [P] Write failing path, format, source, redirect, license, access, platform, architecture, accelerator, resource, physical-actuation, and secret-boundary policy tests in `packages/model_registry/tests/test_policy.py`.
-- [ ] T012 Implement fail-closed package, artifact, source, license, compatibility, resource, physical-actuation, and redaction policy in `packages/model_registry/src/model_registry/policy.py`.
-- [ ] T013 Write failing migration-16 upgrade, rollback-on-failure, idempotency, contiguous-version, and legacy-state preservation tests in `packages/data_vault/tests/test_model_library_migration.py`.
-- [ ] T014 Add migration 16 tables/indexes for model snapshots, plans, operations, content objects, installations, tests, bindings, references, leases, and evidence in `packages/data_vault/src/data_vault/migrations.py`.
-- [ ] T015 Write failing repository tests for immutable identities, optimistic transitions, idempotency, terminal states, bounded JSON, workspace scope, references, and leases in `packages/data_vault/tests/test_model_repository.py`.
-- [ ] T016 Implement `ModelRepository` and transaction-safe state transitions in `packages/data_vault/src/data_vault/model_repository.py`.
-- [ ] T017 Export model repository values from `packages/data_vault/src/data_vault/__init__.py` and preserve existing import contracts.
-- [ ] T018 Write failing content-store tests for safe roots, staging, digest promotion, immutability, deduplication, concurrent writers, quarantine, missing content, atomic activation, and cleanup in `packages/data_vault/tests/test_model_artifact_store.py`.
-- [ ] T019 Implement Wright-root-confined staging, verified CAS, installation views, quarantine, leases, and atomic promotion in `packages/data_vault/src/data_vault/model_artifact_store.py`.
-- [ ] T020 Add crash/restart reconciliation tests at every content and database transition in `packages/data_vault/tests/test_model_artifact_recovery.py`.
-- [ ] T021 Implement database/filesystem reconciliation with truthful missing, quarantine, residue, and recovery projections in `packages/data_vault/src/data_vault/model_artifact_store.py`.
-- [ ] T022 [P] Add deterministic fixture package/upgrade/archive generation helpers that write only temporary test state in `packages/model_registry/tests/fixture_factory.py`.
-- [ ] T023 [P] Add shared injected clock, host-observation, disk/resource, secret-reference, and transport doubles in `packages/model_registry/tests/fakes.py`.
-- [ ] T024 Add cross-package secret/path/authority serialization scans plus structured-log and OpenTelemetry trace contract tests for model records, source/storage/database transitions, adapter/gateway calls, cancellations, cleanup, evidence, and exports in `tests/security/test_engineering_model_boundaries.py`.
+- [x] T008 Write failing `BaseTool` conformance plus model/package/variant/artifact/task/license/resource/seeded-test-vector validation and canonical-digest tests in `packages/core/tests/test_base_tool.py` and `packages/model_registry/tests/test_models.py`.
+- [x] T009 Implement Wright's abstract `BaseTool` contract in `packages/core/src/core/tools.py` plus immutable model-domain values, supported versions, canonical serialization, bounds, and stable failure categories in `packages/model_registry/src/model_registry/models.py`.
+- [x] T010 Export the public domain contracts from `packages/model_registry/src/model_registry/__init__.py` without cyclic package imports.
+- [x] T011 [P] Write failing path, format, source, redirect, license, access, platform, architecture, accelerator, resource, physical-actuation, and secret-boundary policy tests in `packages/model_registry/tests/test_policy.py`.
+- [x] T012 Implement fail-closed package, artifact, source, license, compatibility, resource, physical-actuation, and redaction policy in `packages/model_registry/src/model_registry/policy.py`.
+- [x] T013 Write failing migration-16 upgrade, rollback-on-failure, idempotency, contiguous-version, and legacy-state preservation tests in `packages/data_vault/tests/test_model_library_migration.py`.
+- [x] T014 Add migration 16 tables/indexes for model snapshots, plans, operations, content objects, installations, tests, bindings, references, leases, and evidence in `packages/data_vault/src/data_vault/migrations.py`.
+- [x] T015 Write failing repository tests for immutable identities, optimistic transitions, idempotency, terminal states, bounded JSON, workspace scope, references, and leases in `packages/data_vault/tests/test_model_repository.py`.
+- [x] T016 Implement `ModelRepository` and transaction-safe state transitions in `packages/data_vault/src/data_vault/model_repository.py`.
+- [x] T017 Export model repository values from `packages/data_vault/src/data_vault/__init__.py` and preserve existing import contracts.
+- [x] T018 Write failing content-store tests for safe roots, staging, digest promotion, immutability, deduplication, concurrent writers, quarantine, missing content, atomic activation, and cleanup in `packages/data_vault/tests/test_model_artifact_store.py`.
+- [x] T019 Implement Wright-root-confined staging, verified CAS, installation views, quarantine, leases, and atomic promotion in `packages/data_vault/src/data_vault/model_artifact_store.py`.
+- [x] T020 Add crash/restart reconciliation tests at every content and database transition in `packages/data_vault/tests/test_model_artifact_recovery.py`.
+- [x] T021 Implement database/filesystem reconciliation with truthful missing, quarantine, residue, and recovery projections in `packages/data_vault/src/data_vault/model_artifact_store.py`.
+- [x] T022 [P] Add deterministic fixture package/upgrade/archive generation helpers that write only temporary test state in `packages/model_registry/tests/fixture_factory.py`.
+- [x] T023 [P] Add shared injected clock, host-observation, disk/resource, secret-reference, and transport doubles in `packages/model_registry/tests/fakes.py`.
+- [x] T024 Add cross-package secret/path/authority serialization scans plus structured-log and OpenTelemetry trace contract tests for model records, source/storage/database transitions, adapter/gateway calls, cancellations, cleanup, evidence, and exports in `tests/security/test_engineering_model_boundaries.py`.
 
 **Checkpoint**: Contracts, policy, migration, repository, generated fixtures, and content store work offline and independently.
 

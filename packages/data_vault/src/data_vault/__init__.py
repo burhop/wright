@@ -2,6 +2,8 @@
 
 from .backup import create_backup, restore_backup
 from .migrations import MIGRATIONS, database_status, upgrade_database
+from .model_repository import ModelRepository as ModelRepository
+from .model_artifact_store import ModelArtifactStore as ModelArtifactStore
 from .models import (
     BackupResult,
     DatabaseLifecycleError,
@@ -69,6 +71,8 @@ __all__ = [
     "EngineeringScenarioRepository",
     "GatewayBindingError",
     "GatewayRepository",
+    "ModelArtifactStore",
+    "ModelRepository",
     "FileVault",
     "StoredVaultFile",
     "VaultPathError",

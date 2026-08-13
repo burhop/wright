@@ -903,6 +903,187 @@ MIGRATIONS: tuple[Migration, ...] = (
                 ON engineering_scenario_runs(scenario_id, scenario_revision, created_at DESC)"""),
         ),
     ),
+    Migration(
+        16,
+        "local_engineering_model_library",
+        (
+            sql("""CREATE TABLE IF NOT EXISTS model_catalog_snapshots (
+                snapshot_id TEXT PRIMARY KEY,
+                channel TEXT NOT NULL,
+                sequence INTEGER NOT NULL CHECK(sequence >= 0),
+                schema_version TEXT NOT NULL,
+                catalog_digest TEXT NOT NULL CHECK(length(catalog_digest) = 64),
+                source_kind TEXT NOT NULL CHECK(source_kind IN
+                    ('bundled', 'remote', 'offline_import')),
+                source_revision TEXT,
+                trust_state TEXT NOT NULL CHECK(trust_state IN
+                    ('bundled', 'verified', 'candidate', 'rejected')),
+                freshness TEXT NOT NULL CHECK(freshness IN
+                    ('bundled', 'cached', 'live', 'stale')),
+                metadata_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                activated_at INTEGER,
+                UNIQUE(channel, sequence),
+                UNIQUE(channel, catalog_digest)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_install_plans (
+                plan_id TEXT PRIMARY KEY,
+                principal_id TEXT NOT NULL,
+                plan_digest TEXT NOT NULL UNIQUE CHECK(length(plan_digest) = 64),
+                state TEXT NOT NULL CHECK(state IN
+                    ('preview', 'confirmable', 'blocked', 'confirmed',
+                     'expired', 'invalidated')),
+                plan_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                confirmed_at INTEGER,
+                CHECK(expires_at > created_at)
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_operations (
+                operation_id TEXT PRIMARY KEY,
+                plan_id TEXT NOT NULL,
+                plan_digest TEXT NOT NULL CHECK(length(plan_digest) = 64),
+                kind TEXT NOT NULL CHECK(kind IN
+                    ('acquire', 'import', 'verify', 'install', 'test', 'enable',
+                     'update', 'rollback', 'export', 'disable', 'uninstall',
+                     'purge', 'cleanup')),
+                state TEXT NOT NULL CHECK(state IN
+                    ('prepared', 'running', 'verifying', 'testing', 'activating',
+                     'cancelling', 'cleaning', 'blocked', 'succeeded', 'failed',
+                     'cancelled')),
+                phase TEXT NOT NULL,
+                progress_json TEXT NOT NULL,
+                result_json TEXT,
+                failure_json TEXT,
+                trace_id TEXT NOT NULL,
+                cleanup_state TEXT NOT NULL CHECK(cleanup_state IN
+                    ('not_needed', 'pending', 'clean', 'residue', 'unknown')),
+                cancellation_requested_at INTEGER,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                FOREIGN KEY (plan_id) REFERENCES model_install_plans(plan_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_content_objects (
+                content_digest TEXT PRIMARY KEY CHECK(length(content_digest) = 64),
+                size INTEGER NOT NULL CHECK(size >= 0),
+                state TEXT NOT NULL CHECK(state IN
+                    ('staging', 'verified', 'quarantined', 'missing')),
+                storage_key TEXT NOT NULL,
+                verification_json TEXT NOT NULL,
+                verified_at INTEGER,
+                updated_at INTEGER NOT NULL
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_installations (
+                installation_id TEXT PRIMARY KEY,
+                model_id TEXT NOT NULL,
+                package_revision INTEGER NOT NULL CHECK(package_revision >= 1),
+                variant_id TEXT NOT NULL,
+                manifest_digest TEXT NOT NULL CHECK(length(manifest_digest) = 64),
+                installation_digest TEXT NOT NULL UNIQUE
+                    CHECK(length(installation_digest) = 64),
+                state TEXT NOT NULL CHECK(state IN
+                    ('installed', 'testing', 'ready', 'unhealthy', 'disabled',
+                     'uninstalled', 'missing')),
+                runtime_adapter_id TEXT NOT NULL,
+                runtime_adapter_version TEXT NOT NULL,
+                active_revision INTEGER NOT NULL DEFAULT 0
+                    CHECK(active_revision IN (0, 1)),
+                predecessor_id TEXT,
+                standard_test_evidence_id TEXT,
+                installed_at INTEGER NOT NULL,
+                last_verified_at INTEGER,
+                UNIQUE(model_id, package_revision, variant_id, manifest_digest),
+                FOREIGN KEY (predecessor_id) REFERENCES model_installations(installation_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_installation_artifacts (
+                installation_id TEXT NOT NULL,
+                artifact_path TEXT NOT NULL,
+                content_digest TEXT NOT NULL CHECK(length(content_digest) = 64),
+                created_at INTEGER NOT NULL,
+                PRIMARY KEY (installation_id, artifact_path),
+                FOREIGN KEY (installation_id) REFERENCES model_installations(installation_id)
+                    ON DELETE RESTRICT,
+                FOREIGN KEY (content_digest) REFERENCES model_content_objects(content_digest)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_test_evidence (
+                evidence_id TEXT PRIMARY KEY,
+                installation_id TEXT NOT NULL,
+                vector_id TEXT NOT NULL,
+                material_digest TEXT NOT NULL CHECK(length(material_digest) = 64),
+                observation_digest TEXT NOT NULL CHECK(length(observation_digest) = 64),
+                state TEXT NOT NULL CHECK(state IN ('passed', 'failed', 'blocked', 'error')),
+                evidence_json TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                UNIQUE(installation_id, vector_id, material_digest, observation_digest),
+                FOREIGN KEY (installation_id) REFERENCES model_installations(installation_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_capability_bindings (
+                binding_id TEXT PRIMARY KEY,
+                workspace_id TEXT NOT NULL,
+                installation_id TEXT NOT NULL,
+                task_id TEXT NOT NULL,
+                tool_name TEXT NOT NULL,
+                binding_digest TEXT NOT NULL UNIQUE CHECK(length(binding_digest) = 64),
+                policy_snapshot_digest TEXT NOT NULL CHECK(length(policy_snapshot_digest) = 64),
+                state TEXT NOT NULL CHECK(state IN ('enabled', 'disabled', 'stale', 'blocked')),
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                UNIQUE(workspace_id, tool_name),
+                FOREIGN KEY (workspace_id) REFERENCES engineering_workspaces(workspace_id)
+                    ON DELETE RESTRICT,
+                FOREIGN KEY (installation_id) REFERENCES model_installations(installation_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_references (
+                reference_id TEXT PRIMARY KEY,
+                content_digest TEXT,
+                installation_id TEXT,
+                kind TEXT NOT NULL CHECK(kind IN
+                    ('package', 'active_revision', 'workspace', 'workflow', 'run',
+                     'export', 'operation', 'evidence')),
+                owner_id TEXT NOT NULL,
+                state TEXT NOT NULL CHECK(state IN ('active', 'detached', 'archived')),
+                access_scope TEXT,
+                created_at INTEGER NOT NULL,
+                detached_at INTEGER,
+                CHECK(content_digest IS NOT NULL OR installation_id IS NOT NULL),
+                FOREIGN KEY (content_digest) REFERENCES model_content_objects(content_digest)
+                    ON DELETE RESTRICT,
+                FOREIGN KEY (installation_id) REFERENCES model_installations(installation_id)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE TABLE IF NOT EXISTS model_leases (
+                lease_id TEXT PRIMARY KEY,
+                content_digest TEXT NOT NULL CHECK(length(content_digest) = 64),
+                owner_id TEXT NOT NULL,
+                state TEXT NOT NULL CHECK(state IN ('active', 'released', 'expired')),
+                expires_at INTEGER NOT NULL,
+                heartbeat_at INTEGER NOT NULL,
+                created_at INTEGER NOT NULL,
+                released_at INTEGER,
+                FOREIGN KEY (content_digest) REFERENCES model_content_objects(content_digest)
+                    ON DELETE RESTRICT
+            )"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_snapshots_channel_active
+                ON model_catalog_snapshots(channel, activated_at DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_plans_principal_state
+                ON model_install_plans(principal_id, state, expires_at)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_operations_state_time
+                ON model_operations(state, updated_at DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_installations_model_active
+                ON model_installations(model_id, active_revision, installed_at DESC)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_bindings_workspace_state
+                ON model_capability_bindings(workspace_id, state, tool_name)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_references_content_state
+                ON model_references(content_digest, state, kind)"""),
+            sql("""CREATE INDEX IF NOT EXISTS idx_model_leases_content_state_expiry
+                ON model_leases(content_digest, state, expires_at)"""),
+        ),
+    ),
 )
 
 

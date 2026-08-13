@@ -9,6 +9,9 @@ from .errors import WrightError as WrightError
 from .identifiers import AgentId as AgentId
 from .identifiers import SessionId as SessionId
 from .identifiers import WorkspaceId as WorkspaceId
+from .tools import BaseTool as BaseTool
+from .tools import ToolContext as ToolContext
+from .model_observability import ModelBoundaryObserver as ModelBoundaryObserver
 from .workflows import (
     WorkflowDocument as WorkflowDocument,
     WorkflowPersistenceError as WorkflowPersistenceError,

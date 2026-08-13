@@ -1,0 +1,567 @@
+"""SQLite persistence for engineering model lifecycle identity and evidence."""
+
+from __future__ import annotations
+
+import json
+from datetime import UTC, datetime
+from typing import Any, Mapping
+
+from core.model_observability import ModelBoundaryObserver
+from core.rivet_mcp import canonical_json, reject_secret_material
+
+from .state_store import connect_state_db
+
+_TERMINAL_OPERATION_STATES = {"blocked", "succeeded", "failed", "cancelled"}
+
+
+def _epoch(value: datetime) -> int:
+    return int(value.astimezone(UTC).timestamp() * 1000)
+
+
+def _bounded_json(value: Any, *, maximum: int = 64 * 1024) -> str:
+    reject_secret_material(value)
+    encoded = canonical_json(value)
+    if len(encoded.encode("utf-8")) > maximum:
+        label = "1 MiB" if maximum == 1024 * 1024 else "64 KiB"
+        raise ValueError(f"Model repository record exceeds the {label} limit")
+    return encoded
+
+
+def _decode_row(row: Mapping[str, Any] | None, *json_fields: str):
+    if row is None:
+        return None
+    result = dict(row)
+    for field in json_fields:
+        raw = result.pop(f"{field}_json", None)
+        result[field] = json.loads(raw) if raw is not None else None
+    return result
+
+
+class ModelRepository:
+    def __init__(
+        self, db_path: str, *, observer: ModelBoundaryObserver | None = None
+    ) -> None:
+        self.db_path = db_path
+        self.observer = observer or ModelBoundaryObserver()
+
+    def save_plan(
+        self,
+        *,
+        plan_id: str,
+        principal_id: str,
+        plan_digest: str,
+        state: str,
+        plan: Mapping[str, Any],
+        created_at: datetime,
+        expires_at: datetime,
+        trace_id: str = "no-active-span",
+    ) -> None:
+        document = _bounded_json(plan)
+        created = _epoch(created_at)
+        expires = _epoch(expires_at)
+        if expires <= created:
+            raise ValueError("Plan expiry must follow creation")
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT * FROM model_install_plans WHERE plan_id=?", (plan_id,)
+            ).fetchone()
+            if row is not None:
+                expected = (
+                    principal_id,
+                    plan_digest,
+                    state,
+                    document,
+                    created,
+                    expires,
+                )
+                actual = (
+                    row["principal_id"],
+                    row["plan_digest"],
+                    row["state"],
+                    row["plan_json"],
+                    row["created_at"],
+                    row["expires_at"],
+                )
+                if actual != expected:
+                    raise ValueError("Model plan identity is immutable")
+                return
+            connection.execute(
+                """INSERT INTO model_install_plans
+                (plan_id, principal_id, plan_digest, state, plan_json, created_at, expires_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    plan_id,
+                    principal_id,
+                    plan_digest,
+                    state,
+                    document,
+                    created,
+                    expires,
+                ),
+            )
+        self.observer.record(
+            "model.database.plan",
+            trace_id=trace_id,
+            attributes={
+                "plan_id": plan_id,
+                "plan_digest": plan_digest,
+                "plan_state": state,
+            },
+        )
+
+    def get_plan(self, plan_id: str) -> dict[str, Any] | None:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            row = connection.execute(
+                "SELECT * FROM model_install_plans WHERE plan_id=?", (plan_id,)
+            ).fetchone()
+        return _decode_row(row, "plan")
+
+    def transition_plan(
+        self,
+        plan_id: str,
+        *,
+        expected_state: str,
+        state: str,
+        trace_id: str = "no-active-span",
+    ) -> bool:
+        confirmed_at = None
+        if state == "confirmed":
+            confirmed_at = _epoch(datetime.now(UTC))
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_install_plans SET state=?, confirmed_at=COALESCE(?, confirmed_at)
+                WHERE plan_id=? AND state=?""",
+                (state, confirmed_at, plan_id, expected_state),
+            )
+            changed = cursor.rowcount == 1
+        if changed:
+            self.observer.record(
+                "model.database.plan",
+                trace_id=trace_id,
+                attributes={
+                    "plan_id": plan_id,
+                    "previous_state": expected_state,
+                    "plan_state": state,
+                },
+            )
+        return changed
+
+    def create_operation(
+        self,
+        *,
+        operation_id: str,
+        plan_id: str,
+        plan_digest: str,
+        kind: str,
+        trace_id: str,
+        created_at: datetime,
+    ) -> None:
+        at = _epoch(created_at)
+        progress = _bounded_json({})
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT * FROM model_operations WHERE operation_id=?", (operation_id,)
+            ).fetchone()
+            if row is not None:
+                if (
+                    row["plan_id"],
+                    row["plan_digest"],
+                    row["kind"],
+                    row["trace_id"],
+                ) != (plan_id, plan_digest, kind, trace_id):
+                    raise ValueError("Model operation identity is immutable")
+                return
+            connection.execute(
+                """INSERT INTO model_operations
+                (operation_id, plan_id, plan_digest, kind, state, phase,
+                 progress_json, trace_id, cleanup_state, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 'prepared', 'prepared', ?, ?, 'not_needed', ?, ?)""",
+                (operation_id, plan_id, plan_digest, kind, progress, trace_id, at, at),
+            )
+        self.observer.record(
+            "model.database.operation",
+            trace_id=trace_id,
+            attributes={
+                "operation_id": operation_id,
+                "plan_id": plan_id,
+                "plan_digest": plan_digest,
+                "operation_kind": kind,
+                "operation_state": "prepared",
+            },
+        )
+
+    def transition_operation(
+        self,
+        operation_id: str,
+        *,
+        expected_state: str,
+        state: str,
+        phase: str,
+        progress: Mapping[str, Any],
+        updated_at: datetime,
+        result: Mapping[str, Any] | None = None,
+        failure: Mapping[str, Any] | None = None,
+        cleanup_state: str = "not_needed",
+        cancellation_requested_at: datetime | None = None,
+        trace_id: str = "no-active-span",
+    ) -> bool:
+        if expected_state in _TERMINAL_OPERATION_STATES and state != expected_state:
+            raise ValueError("Terminal model operation is immutable")
+        progress_json = _bounded_json(progress)
+        result_json = _bounded_json(result) if result is not None else None
+        failure_json = _bounded_json(failure) if failure is not None else None
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_operations
+                SET state=?, phase=?, progress_json=?, result_json=?, failure_json=?,
+                    cleanup_state=?, cancellation_requested_at=?, updated_at=?
+                WHERE operation_id=? AND state=?""",
+                (
+                    state,
+                    phase,
+                    progress_json,
+                    result_json,
+                    failure_json,
+                    cleanup_state,
+                    _epoch(cancellation_requested_at)
+                    if cancellation_requested_at
+                    else None,
+                    _epoch(updated_at),
+                    operation_id,
+                    expected_state,
+                ),
+            )
+            changed = cursor.rowcount == 1
+        if changed:
+            event = (
+                "model.operation.cancel"
+                if state in {"cancelling", "cancelled"}
+                else "model.database.operation"
+            )
+            self.observer.record(
+                event,
+                trace_id=trace_id,
+                state="cancelled" if state == "cancelled" else "succeeded",
+                attributes={
+                    "operation_id": operation_id,
+                    "previous_state": expected_state,
+                    "operation_state": state,
+                    "phase": phase,
+                    "cleanup_state": cleanup_state,
+                },
+            )
+        return changed
+
+    def get_operation(self, operation_id: str) -> dict[str, Any] | None:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            row = connection.execute(
+                "SELECT * FROM model_operations WHERE operation_id=?", (operation_id,)
+            ).fetchone()
+        return _decode_row(row, "progress", "result", "failure")
+
+    def record_content_object(
+        self,
+        *,
+        content_digest: str,
+        size: int,
+        state: str,
+        storage_key: str,
+        verification: Mapping[str, Any],
+        observed_at: datetime,
+    ) -> None:
+        document = _bounded_json(verification)
+        at = _epoch(observed_at)
+        verified_at = at if state == "verified" else None
+        with connect_state_db(self.db_path) as connection:
+            row = connection.execute(
+                "SELECT size, storage_key FROM model_content_objects WHERE content_digest=?",
+                (content_digest,),
+            ).fetchone()
+            if row is not None and (row["size"], row["storage_key"]) != (
+                size,
+                storage_key,
+            ):
+                raise ValueError("Content object identity is immutable")
+            connection.execute(
+                """INSERT INTO model_content_objects
+                (content_digest, size, state, storage_key, verification_json,
+                 verified_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(content_digest) DO UPDATE SET
+                    state=excluded.state,
+                    verification_json=excluded.verification_json,
+                    verified_at=COALESCE(excluded.verified_at, model_content_objects.verified_at),
+                    updated_at=excluded.updated_at""",
+                (
+                    content_digest,
+                    size,
+                    state,
+                    storage_key,
+                    document,
+                    verified_at,
+                    at,
+                ),
+            )
+
+    def save_installation(
+        self,
+        *,
+        installation_id: str,
+        model_id: str,
+        package_revision: int,
+        variant_id: str,
+        manifest_digest: str,
+        installation_digest: str,
+        runtime_adapter_id: str,
+        runtime_adapter_version: str,
+        state: str,
+        active: bool,
+        installed_at: datetime,
+        predecessor_id: str | None = None,
+    ) -> None:
+        at = _epoch(installed_at)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT * FROM model_installations WHERE installation_id=?",
+                (installation_id,),
+            ).fetchone()
+            identity = (
+                model_id,
+                package_revision,
+                variant_id,
+                manifest_digest,
+                installation_digest,
+                runtime_adapter_id,
+                runtime_adapter_version,
+            )
+            if row is not None:
+                actual = tuple(
+                    row[key]
+                    for key in (
+                        "model_id",
+                        "package_revision",
+                        "variant_id",
+                        "manifest_digest",
+                        "installation_digest",
+                        "runtime_adapter_id",
+                        "runtime_adapter_version",
+                    )
+                )
+                if actual != identity:
+                    raise ValueError("Model installation identity is immutable")
+                return
+            if active:
+                connection.execute(
+                    "UPDATE model_installations SET active_revision=0 WHERE model_id=?",
+                    (model_id,),
+                )
+            connection.execute(
+                """INSERT INTO model_installations
+                (installation_id, model_id, package_revision, variant_id,
+                 manifest_digest, installation_digest, state, runtime_adapter_id,
+                 runtime_adapter_version, active_revision, predecessor_id, installed_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    installation_id,
+                    model_id,
+                    package_revision,
+                    variant_id,
+                    manifest_digest,
+                    installation_digest,
+                    state,
+                    runtime_adapter_id,
+                    runtime_adapter_version,
+                    int(active),
+                    predecessor_id,
+                    at,
+                ),
+            )
+
+    def bind_workspace(
+        self,
+        *,
+        binding_id: str,
+        workspace_id: str,
+        installation_id: str,
+        task_id: str,
+        tool_name: str,
+        binding_digest: str,
+        policy_snapshot_digest: str,
+        state: str,
+        created_at: datetime,
+    ) -> None:
+        at = _epoch(created_at)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute(
+                """INSERT INTO model_capability_bindings
+                (binding_id, workspace_id, installation_id, task_id, tool_name,
+                 binding_digest, policy_snapshot_digest, state, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    binding_id,
+                    workspace_id,
+                    installation_id,
+                    task_id,
+                    tool_name,
+                    binding_digest,
+                    policy_snapshot_digest,
+                    state,
+                    at,
+                    at,
+                ),
+            )
+
+    def list_bindings(self, workspace_id: str) -> tuple[dict[str, Any], ...]:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            rows = connection.execute(
+                """SELECT * FROM model_capability_bindings
+                WHERE workspace_id=? ORDER BY tool_name""",
+                (workspace_id,),
+            ).fetchall()
+        return tuple(dict(row) for row in rows)
+
+    def add_reference(
+        self,
+        *,
+        reference_id: str,
+        content_digest: str | None,
+        installation_id: str | None,
+        kind: str,
+        owner_id: str,
+        created_at: datetime,
+        access_scope: str | None = None,
+    ) -> None:
+        with connect_state_db(self.db_path) as connection:
+            connection.execute(
+                """INSERT INTO model_references
+                (reference_id, content_digest, installation_id, kind, owner_id,
+                 state, access_scope, created_at)
+                VALUES (?, ?, ?, ?, ?, 'active', ?, ?)""",
+                (
+                    reference_id,
+                    content_digest,
+                    installation_id,
+                    kind,
+                    owner_id,
+                    access_scope,
+                    _epoch(created_at),
+                ),
+            )
+
+    def detach_reference(self, reference_id: str, *, detached_at: datetime) -> bool:
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_references SET state='detached', detached_at=?
+                WHERE reference_id=? AND state='active'""",
+                (_epoch(detached_at), reference_id),
+            )
+            return cursor.rowcount == 1
+
+    def acquire_lease(
+        self,
+        *,
+        lease_id: str,
+        content_digest: str,
+        owner_id: str,
+        expires_at: datetime,
+        observed_at: datetime,
+    ) -> None:
+        at = _epoch(observed_at)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute(
+                """INSERT INTO model_leases
+                (lease_id, content_digest, owner_id, state, expires_at,
+                 heartbeat_at, created_at)
+                VALUES (?, ?, ?, 'active', ?, ?, ?)""",
+                (lease_id, content_digest, owner_id, _epoch(expires_at), at, at),
+            )
+
+    def release_lease(self, lease_id: str) -> bool:
+        at = _epoch(datetime.now(UTC))
+        with connect_state_db(self.db_path) as connection:
+            cursor = connection.execute(
+                """UPDATE model_leases SET state='released', released_at=?
+                WHERE lease_id=? AND state='active'""",
+                (at, lease_id),
+            )
+            return cursor.rowcount == 1
+
+    def content_hold_count(self, content_digest: str, *, at: datetime) -> int:
+        observed = _epoch(at)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute(
+                """UPDATE model_leases SET state='expired'
+                WHERE state='active' AND expires_at<=?""",
+                (observed,),
+            )
+            refs = connection.execute(
+                """SELECT COUNT(*) FROM model_references
+                WHERE content_digest=? AND state='active'""",
+                (content_digest,),
+            ).fetchone()[0]
+            leases = connection.execute(
+                """SELECT COUNT(*) FROM model_leases
+                WHERE content_digest=? AND state='active' AND expires_at>?""",
+                (content_digest, observed),
+            ).fetchone()[0]
+        return int(refs) + int(leases)
+
+    def record_test_evidence(
+        self,
+        *,
+        evidence_id: str,
+        installation_id: str,
+        vector_id: str,
+        material_digest: str,
+        observation_digest: str,
+        state: str,
+        evidence: Mapping[str, Any],
+        created_at: datetime,
+        trace_id: str = "no-active-span",
+    ) -> None:
+        document = _bounded_json(evidence, maximum=1024 * 1024)
+        with connect_state_db(self.db_path) as connection:
+            connection.execute(
+                """INSERT INTO model_test_evidence
+                (evidence_id, installation_id, vector_id, material_digest,
+                 observation_digest, state, evidence_json, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    evidence_id,
+                    installation_id,
+                    vector_id,
+                    material_digest,
+                    observation_digest,
+                    state,
+                    document,
+                    _epoch(created_at),
+                ),
+            )
+        self.observer.record(
+            "model.evidence.record",
+            trace_id=trace_id,
+            state="succeeded" if state == "passed" else "failed",
+            attributes={
+                "evidence_id": evidence_id,
+                "installation_id": installation_id,
+                "vector_id": vector_id,
+                "material_digest": material_digest,
+                "observation_digest": observation_digest,
+                "evidence_state": state,
+            },
+        )
+
+    def list_test_evidence(self, installation_id: str) -> tuple[dict[str, Any], ...]:
+        with connect_state_db(self.db_path, read_only=True, wal=False) as connection:
+            rows = connection.execute(
+                """SELECT * FROM model_test_evidence
+                WHERE installation_id=? ORDER BY created_at, evidence_id""",
+                (installation_id,),
+            ).fetchall()
+        return tuple(_decode_row(row, "evidence") for row in rows)
+
+
+__all__ = ["ModelRepository"]
