@@ -118,7 +118,9 @@ async def test_pid_reuse_or_executable_mismatch_does_not_terminate_job(
 
 
 @pytest.mark.skipif(os.name != "nt", reason="requires Windows Job Objects")
-async def test_listener_and_breakaway_evidence_are_reconciled(tmp_path, monkeypatch) -> None:
+async def test_listener_and_breakaway_evidence_are_reconciled(
+    tmp_path, monkeypatch
+) -> None:
     code = (
         "import socket,time; s=socket.socket(); s.bind(('127.0.0.1',0)); "
         "s.listen(); print(s.getsockname()[1], flush=True); time.sleep(60)"
@@ -126,8 +128,13 @@ async def test_listener_and_breakaway_evidence_are_reconciled(tmp_path, monkeypa
     process = await WindowsProcessAdapter(descendant_poll_seconds=0.01).launch(
         _request(tmp_path, code)
     )
-    await asyncio.sleep(0.2)
-    assert process._remaining_listeners()  # noqa: SLF001
+    listeners: tuple[str, ...] = ()
+    for _ in range(100):
+        listeners = process._remaining_listeners()  # noqa: SLF001
+        if listeners:
+            break
+        await asyncio.sleep(0.02)
+    assert listeners
     real_contains = process._job.contains  # noqa: SLF001
     monkeypatch.setattr(
         process._job,  # noqa: SLF001
