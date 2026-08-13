@@ -4,6 +4,7 @@ import { mcpService } from "../../services/mcp-service";
 import { useTools } from "../../store/tools";
 import { AddToolModal } from "../tools/AddToolModal";
 import { CapabilityLibrary } from "../tools/CapabilityLibrary";
+import { CatalogUpdatePanel } from "../tools/CatalogUpdatePanel";
 
 export function ToolRegistryPage() {
   const logger = useLogger("ToolRegistryPage");
@@ -81,8 +82,16 @@ export function ToolRegistryPage() {
         </button>
       </div>
       <main
-        style={{ padding: "var(--space-xl) var(--space-xxl) var(--space-xxl)" }}
+        style={{
+          padding: "var(--space-xl) var(--space-xxl) var(--space-xxl)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--space-xl)",
+        }}
       >
+        <CatalogUpdatePanel
+          onCatalogChanged={() => setRefreshToken((value) => value + 1)}
+        />
         <CapabilityLibrary refreshToken={refreshToken} />
       </main>
       <AddToolModal

@@ -105,8 +105,10 @@ class CatalogSnapshot(StrictModel):
     def validate_snapshot(self) -> "CatalogSnapshot":
         _require_digest(self.payload_sha256, "payload_sha256")
         _require_ordered_times(self.issued_at, self.expires_at, "expires_at")
-        if self.verification_state not in {"bundled", "rejected"} and (
-            not self.envelope_json or not self.signer_key_id or not self.signature
+        if (
+            self.channel != "bundled"
+            and self.verification_state not in {"bundled", "rejected"}
+            and (not self.envelope_json or not self.signer_key_id or not self.signature)
         ):
             raise ValueError(
                 "verified network snapshots require signed envelope metadata"

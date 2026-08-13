@@ -25,7 +25,7 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 - [X] T001 Add an explicit bounded `cryptography` dependency for standalone signature verification in `packages/tool_registry/pyproject.toml` and synchronize `uv.lock`
 - [X] T002 [P] Copy the approved catalog envelope, import preview, and install plan JSON Schemas plus a versioned public-only trust-root resource with no default network channel into `packages/tool_registry/src/tool_registry/catalog/` and declare them as packaged resources in `packages/tool_registry/pyproject.toml`
-- [ ] T003 [P] Add deterministic Ed25519 test-key helpers and a prior 69-record snapshot without Onshape plus signed 70-record Onshape candidate, tampered, expired, and replayed fixtures in `packages/tool_registry/tests/fixtures/catalog_updates.py`
+- [x] T003 [P] Add deterministic Ed25519 test-key helpers and a prior 69-record snapshot without Onshape plus signed 70-record Onshape candidate, tampered, expired, and replayed fixtures in `packages/tool_registry/tests/fixtures/catalog_updates.py`
 - [X] T004 [P] Add Claude, VS Code, plain-server, adversarial, and oversized import fixtures in `packages/tool_registry/tests/fixtures/mcp_imports.py`
 - [X] T005 [P] Add deterministic fake local-package, remote-endpoint, and host-bridge adapter fixtures in `packages/tool_registry/tests/fixtures/onboarding_adapters.py`
 
@@ -95,28 +95,28 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Tests for User Story 2
 
-- [ ] T035 [P] [US2] Write canonical-byte, key-id, signature, digest, issue/expiry, sequence, and envelope-schema tests in `packages/tool_registry/tests/test_catalog_signing.py`
-- [ ] T036 [P] [US2] Write snapshot repository bootstrap/candidate/active/previous/retention/recovery tests in `packages/tool_registry/tests/test_catalog_snapshots.py`
-- [ ] T037 [P] [US2] Write exact identity/field provenance diff and preview binding tests in `packages/tool_registry/tests/test_catalog_update_preview.py`
-- [ ] T038 [P] [US2] Write atomic prior-69-to-signed-Onshape-70 activation/reconciliation/restart/rollback tests with install/custom/disable/credential/workspace sentinels in `packages/tool_registry/tests/test_catalog_activation.py`
-- [ ] T039 [P] [US2] Write catalog state, preview, activation, stale-preview, RBAC, rollback, and redacted-error API tests in `apps/api/tests/test_catalog_update_api.py`
-- [ ] T040 [P] [US2] Write component tests for no-channel, checking, verified diff, failed verification, activating, history, rollback, and rollback-failed states in `apps/web/src/components/tools/CatalogUpdatePanel.spec.tsx`
-- [ ] T041 [P] [US2] Extend the mocked Playwright journey with activation/restart projection/rollback and zero install requests in `tests/ui-integration/capability-library.spec.ts`
+- [x] T035 [P] [US2] Write canonical-byte, key-id, signature, digest, issue/expiry, sequence, and envelope-schema tests in `packages/tool_registry/tests/test_catalog_signing.py`
+- [x] T036 [P] [US2] Write snapshot repository bootstrap/candidate/active/previous/retention/recovery tests in `packages/tool_registry/tests/test_catalog_snapshots.py`
+- [x] T037 [P] [US2] Write exact identity/field provenance diff and preview binding tests in `packages/tool_registry/tests/test_catalog_update_preview.py`
+- [x] T038 [P] [US2] Write atomic prior-69-to-signed-Onshape-70 activation/reconciliation/restart/rollback tests with install/custom/disable/credential/workspace sentinels in `packages/tool_registry/tests/test_catalog_activation.py`
+- [x] T039 [P] [US2] Write catalog state, preview, activation, stale-preview, RBAC, rollback, and redacted-error API tests in `apps/api/tests/test_catalog_update_api.py`
+- [x] T040 [P] [US2] Write component tests for no-channel, checking, verified diff, failed verification, activating, history, rollback, and rollback-failed states in `apps/web/src/components/tools/CatalogUpdatePanel.spec.tsx`
+- [x] T041 [P] [US2] Extend the mocked Playwright journey with activation/restart projection/rollback and zero install requests in `tests/ui-integration/capability-library.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T042 [US2] Implement canonical JSON, SHA-256 binding, Ed25519 verification, trust-window, sequence, expiry, and size validation in `packages/tool_registry/src/tool_registry/catalog_signing.py`
-- [ ] T043 [US2] Implement bundled bootstrap and immutable snapshot/state/retention repository operations in `packages/tool_registry/src/tool_registry/catalog_snapshots.py`
-- [ ] T044 [US2] Implement sorted identity/field/provenance diffs and actor/expiry-bound preview digests in `packages/tool_registry/src/tool_registry/catalog_updates.py`
-- [ ] T045 [US2] Refactor catalog reconciliation to accept a validated document and an existing transaction while preserving user-owned columns in `packages/tool_registry/src/tool_registry/catalog_reconcile.py`
-- [ ] T046 [US2] Implement transactional activate/rollback/recovery audit behavior in `packages/tool_registry/src/tool_registry/catalog_updates.py`
-- [ ] T047 [US2] Replace unsafe direct URL loading with bounded approved-channel fetching that rejects unsafe redirects/ambient credentials in `packages/tool_registry/src/tool_registry/canonical_catalog.py`
-- [ ] T048 [US2] Add thin catalog state/preview/activate/rollback API routes and administrator authorization dependencies in `apps/api/src/api/routers/mcp.py`
-- [ ] T049 [US2] Implement catalog update client methods and redacted typed errors in `apps/web/src/services/mcp-service.ts`
-- [ ] T050 [US2] Create administrator catalog state/history/diff/activation/rollback panel in `apps/web/src/components/tools/CatalogUpdatePanel.tsx`
-- [ ] T051 [US2] Integrate update status and offline recovery source into `apps/web/src/components/pages/ToolRegistryPage.tsx`
-- [ ] T052 [US2] Add structured trace events for fetch, verify, preview, activate, rollback, and recovery in `packages/tool_registry/src/tool_registry/catalog_updates.py`
-- [ ] T053 [US2] Run signature, adversarial snapshot, transaction, API, component, and mocked Playwright tests for US2
+- [x] T042 [US2] Implement canonical JSON, SHA-256 binding, Ed25519 verification, trust-window, sequence, expiry, and size validation in `packages/tool_registry/src/tool_registry/catalog_signing.py`
+- [x] T043 [US2] Implement bundled bootstrap and immutable snapshot/state/retention repository operations in `packages/tool_registry/src/tool_registry/catalog_snapshots.py`
+- [x] T044 [US2] Implement sorted identity/field/provenance diffs and actor/expiry-bound preview digests in `packages/tool_registry/src/tool_registry/catalog_updates.py`
+- [x] T045 [US2] Refactor catalog reconciliation to accept a validated document and an existing transaction while preserving user-owned columns in `packages/tool_registry/src/tool_registry/catalog_reconcile.py`
+- [x] T046 [US2] Implement transactional activate/rollback/recovery audit behavior in `packages/tool_registry/src/tool_registry/catalog_updates.py`
+- [x] T047 [US2] Replace unsafe direct URL loading with bounded approved-channel fetching that rejects unsafe redirects/ambient credentials in `packages/tool_registry/src/tool_registry/canonical_catalog.py`
+- [x] T048 [US2] Add thin catalog state/preview/activate/rollback API routes and administrator authorization dependencies in `apps/api/src/api/routers/mcp.py`
+- [x] T049 [US2] Implement catalog update client methods and redacted typed errors in `apps/web/src/services/mcp-service.ts`
+- [x] T050 [US2] Create administrator catalog state/history/diff/activation/rollback panel in `apps/web/src/components/tools/CatalogUpdatePanel.tsx`
+- [x] T051 [US2] Integrate update status and offline recovery source into `apps/web/src/components/pages/ToolRegistryPage.tsx`
+- [x] T052 [US2] Add structured trace events for fetch, verify, preview, activate, rollback, and recovery in `packages/tool_registry/src/tool_registry/catalog_updates.py`
+- [x] T053 [US2] Run signature, adversarial snapshot, transaction, API, component, and mocked Playwright tests for US2
 
 **Checkpoint**: A new official server can arrive as signed data and be rolled back, with no install/enable/credential/process side effect.
 

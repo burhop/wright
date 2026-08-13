@@ -215,13 +215,33 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
         500: ErrorCodes.INTERNAL_ERROR,
         502: ErrorCodes.AGENT_UNAVAILABLE,
     }
-    error_code = status_map.get(exc.status_code, ErrorCodes.INTERNAL_ERROR)
+    structured_detail = exc.detail if isinstance(exc.detail, dict) else None
+    error_code = (
+        str(structured_detail.get("code"))
+        if structured_detail and structured_detail.get("code")
+        else status_map.get(exc.status_code, ErrorCodes.INTERNAL_ERROR)
+    )
+    message = (
+        str(structured_detail.get("message"))
+        if structured_detail and structured_detail.get("message")
+        else str(exc.detail)
+    )
+    details = (
+        {
+            key: value
+            for key, value in structured_detail.items()
+            if key not in {"code", "message", "trace_id"}
+        }
+        if structured_detail
+        else None
+    )
     return JSONResponse(
         status_code=exc.status_code,
         content=ErrorResponse(
             error_code=error_code,
-            message=str(exc.detail),
+            message=message,
             trace_id=trace_id,
+            details=details or None,
         ).model_dump(),
         headers={"X-Trace-Id": trace_id},
     )

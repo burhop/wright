@@ -63,6 +63,7 @@ const capability = {
 
 test.describe("Offline Capability Library", () => {
   test.beforeEach(async ({ page }) => {
+    let catalogActivated = false;
     await page.route("**/api/auth/session/status", async (route) => {
       await route.fulfill({
         json: { auth_required: false, authenticated: true },
@@ -79,6 +80,97 @@ test.describe("Offline Capability Library", () => {
     await page.route("**/api/mcp/tools", async (route) =>
       route.fulfill({ json: { tools: [] } }),
     );
+    await page.route("**/api/mcp/catalog/state", async (route) => {
+      await route.fulfill({
+        json: {
+          bundled_snapshot_id: "bundled-70",
+          active_snapshot_id: catalogActivated ? "stable-71" : "bundled-70",
+          previous_snapshot_id: catalogActivated ? "bundled-70" : null,
+          active_sequence: catalogActivated ? 2 : 1,
+          active_channel: catalogActivated ? "stable" : "bundled",
+          active_generation: catalogActivated ? 2 : 1,
+          updated_at: "2026-08-12T00:00:00Z",
+          updated_by: "local-admin",
+          configured_channels: ["stable"],
+          diagnostic: null,
+          history: [
+            {
+              activation_id: catalogActivated ? "activate-1" : "bootstrap-1",
+              from_snapshot_id: catalogActivated ? "bundled-70" : null,
+              to_snapshot_id: catalogActivated ? "stable-71" : "bundled-70",
+              kind: catalogActivated ? "activate" : "bootstrap",
+              actor: "local-admin",
+              trace_id: "trace-catalog",
+              occurred_at: 1,
+              result: "succeeded",
+              reason_code: null,
+            },
+          ],
+        },
+      });
+    });
+    await page.route("**/api/mcp/catalog/updates/preview", async (route) => {
+      await route.fulfill({
+        json: {
+          preview_id: "preview-1",
+          active_snapshot_id: "bundled-70",
+          candidate_snapshot_id: "stable-71",
+          candidate: {
+            channel: "stable",
+            sequence: 2,
+            schema_version: 1,
+            payload_sha256: "a".repeat(64),
+            signer_key_id: "key-1",
+            expires_at: "2026-08-19T00:00:00Z",
+          },
+          diff: {
+            added: [{ id: "new-official-cad-mcp" }],
+            removed: [],
+            changed: [],
+            summary: {
+              added: 1,
+              removed: 0,
+              changed: 0,
+              total_before: 70,
+              total_after: 71,
+            },
+          },
+          risk_summary: {
+            new_executable_entries: 0,
+            new_remote_entries: 1,
+            high_or_safety_critical: 0,
+            note: "Catalog activation changes metadata only; it cannot install or enable.",
+          },
+          actor: "local-admin",
+          created_at: "2026-08-12T00:00:00Z",
+          expires_at: "2026-08-12T00:10:00Z",
+          state: "open",
+          preview_digest: "b".repeat(64),
+        },
+      });
+    });
+    await page.route("**/api/mcp/catalog/updates/*/activate", async (route) => {
+      catalogActivated = true;
+      await route.fulfill({
+        json: {
+          state: {},
+          reconciled: 71,
+          preserved_user_state: true,
+          preserved_counts: {},
+        },
+      });
+    });
+    await page.route("**/api/mcp/catalog/rollback", async (route) => {
+      catalogActivated = false;
+      await route.fulfill({
+        json: {
+          state: {},
+          reconciled: 70,
+          preserved_user_state: true,
+          preserved_counts: {},
+        },
+      });
+    });
     await page.route("**/api/mcp/capabilities**", async (route) => {
       const url = new URL(route.request().url());
       if (url.pathname.endsWith("/observe")) {
@@ -108,10 +200,10 @@ test.describe("Offline Capability Library", () => {
       await route.fulfill({
         json: {
           snapshot: {
-            snapshot_id: "bundled-70",
-            channel: "bundled",
-            sequence: 1,
-            offline: true,
+            snapshot_id: catalogActivated ? "stable-71" : "bundled-70",
+            channel: catalogActivated ? "stable" : "bundled",
+            sequence: catalogActivated ? 2 : 1,
+            offline: !catalogActivated,
             updated_at: "2026-08-12T00:00:00Z",
           },
           capabilities: search === "no result" ? [] : [capability],
@@ -160,6 +252,29 @@ test.describe("Offline Capability Library", () => {
       .getByRole("button", { name: "Check this machine again" })
       .click();
     await expect(dialog).toContainText("Network access was not confirmed");
+  });
+
+  test("activates and rolls back signed metadata without installing anything", async ({
+    page,
+  }) => {
+    const installRequests: string[] = [];
+    page.on("request", (request) => {
+      if (/\/api\/mcp\/servers\/[^/]+\/install/.test(request.url())) {
+        installRequests.push(request.url());
+      }
+    });
+    await page.goto("/tool-registry");
+    await page.getByRole("button", { name: "Check for updates" }).click();
+    await expect(page.getByText("Verified signed update")).toBeVisible();
+    await page.getByRole("button", { name: "Activate update" }).click();
+    await expect(page.getByTestId("catalog-active-source")).toContainText(
+      "stable",
+    );
+    await page.getByRole("button", { name: "Roll back" }).click();
+    await expect(page.getByTestId("catalog-active-source")).toContainText(
+      "bundled",
+    );
+    expect(installRequests).toEqual([]);
   });
 
   test("keeps URL-stable filters and renders an honest empty state", async ({

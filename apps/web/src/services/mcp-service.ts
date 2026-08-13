@@ -213,6 +213,102 @@ export interface CapabilityListResponse {
   total: number;
 }
 
+export interface CatalogActivationHistory {
+  activation_id: string;
+  from_snapshot_id: string | null;
+  to_snapshot_id: string;
+  kind: "bootstrap" | "activate" | "rollback" | "recovery";
+  actor: string;
+  trace_id: string;
+  occurred_at: number;
+  result: "succeeded" | "failed";
+  reason_code: string | null;
+}
+
+export interface CatalogStateResponse {
+  bundled_snapshot_id: string;
+  active_snapshot_id: string;
+  previous_snapshot_id: string | null;
+  active_sequence: number;
+  active_channel: string;
+  active_generation: number;
+  updated_at: string;
+  updated_by: string;
+  history: CatalogActivationHistory[];
+  configured_channels: string[];
+  diagnostic: CapabilityDiagnostic | null;
+}
+
+export interface CatalogUpdatePreview {
+  preview_id: string;
+  active_snapshot_id: string;
+  candidate_snapshot_id: string;
+  candidate: {
+    channel: string;
+    sequence: number;
+    schema_version: number;
+    payload_sha256: string;
+    signer_key_id: string;
+    expires_at: string;
+  };
+  diff: {
+    added: Array<{ id: string }>;
+    removed: Array<{ id: string }>;
+    changed: Array<{ id: string; fields: Array<{ field: string }> }>;
+    summary: {
+      added: number;
+      removed: number;
+      changed: number;
+      total_before: number;
+      total_after: number;
+    };
+  };
+  risk_summary: {
+    new_executable_entries: number;
+    new_remote_entries: number;
+    high_or_safety_critical: number;
+    note: string;
+  };
+  actor: string;
+  created_at: string;
+  expires_at: string;
+  state: string;
+  preview_digest: string;
+}
+
+export interface CatalogMutationResult {
+  state: CatalogStateResponse;
+  reconciled: number;
+  preserved_user_state: boolean;
+  preserved_counts: Record<string, number>;
+}
+
+interface ApiErrorBody {
+  error_code?: string;
+  message?: string;
+  trace_id?: string;
+  details?: { recovery?: string };
+}
+
+export class CapabilityApiError extends Error {
+  readonly errorCode: string;
+  readonly traceId?: string;
+  readonly recovery?: string;
+
+  constructor(
+    message: string,
+    errorCode: string,
+    traceId?: string,
+    recovery?: string,
+  ) {
+    super(message);
+    this.name = "CapabilityApiError";
+    this.errorCode = errorCode;
+    this.traceId = traceId;
+    this.recovery = recovery;
+  }
+}
+
 export interface ImportedMcpDraft {
   draft_id: string;
   name: string;
@@ -348,6 +444,66 @@ export interface VersionCheckResult {
 const apiUrl = (path: string) => `${hostAdapter.getApiBaseUrl()}${path}`;
 
 export class McpService {
+  private async catalogRequest<T>(
+    path: string,
+    init?: RequestInit,
+  ): Promise<T> {
+    const response = await hostAdapter.fetch(apiUrl(path), init);
+    if (!response.ok) {
+      const body = (await response.json().catch(() => ({}))) as ApiErrorBody;
+      throw new CapabilityApiError(
+        body.message || "The catalog operation failed.",
+        body.error_code || `HTTP_${response.status}`,
+        body.trace_id,
+        body.details?.recovery,
+      );
+    }
+    return response.json();
+  }
+
+  async getCatalogState(): Promise<CatalogStateResponse> {
+    return this.catalogRequest("/api/mcp/catalog/state");
+  }
+
+  async previewCatalogUpdate(
+    source:
+      { configured_channel: true } | { envelope: Record<string, unknown> },
+  ): Promise<CatalogUpdatePreview> {
+    return this.catalogRequest("/api/mcp/catalog/updates/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(source),
+    });
+  }
+
+  async activateCatalogUpdate(
+    previewId: string,
+    previewDigest: string,
+  ): Promise<CatalogMutationResult> {
+    return this.catalogRequest(
+      `/api/mcp/catalog/updates/${encodeURIComponent(previewId)}/activate`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preview_digest: previewDigest }),
+      },
+    );
+  }
+
+  async rollbackCatalog(
+    activeSnapshotId: string,
+    previousSnapshotId: string,
+  ): Promise<CatalogMutationResult> {
+    return this.catalogRequest("/api/mcp/catalog/rollback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        active_snapshot_id: activeSnapshotId,
+        previous_snapshot_id: previousSnapshotId,
+      }),
+    });
+  }
+
   async getCapabilities(
     query: CapabilityQuery = {},
   ): Promise<CapabilityListResponse> {

@@ -13,6 +13,10 @@ vi.mock("../services/mcp-service", async (loadOriginal) => {
     mcpService: {
       ...original.mcpService,
       getCapabilities: vi.fn(),
+      getCatalogState: vi.fn(),
+      previewCatalogUpdate: vi.fn(),
+      activateCatalogUpdate: vi.fn(),
+      rollbackCatalog: vi.fn(),
       reportMissingMcp: vi.fn(),
     },
   };
@@ -39,6 +43,19 @@ describe("ToolRegistryPage capability layout", () => {
       capabilities: [],
       next_cursor: null,
       total: 0,
+    });
+    vi.mocked(mcpService.getCatalogState).mockResolvedValue({
+      bundled_snapshot_id: "bundled",
+      active_snapshot_id: "bundled",
+      previous_snapshot_id: null,
+      active_sequence: 1,
+      active_channel: "bundled",
+      active_generation: 1,
+      updated_at: "2026-08-12T00:00:00Z",
+      updated_by: "wright-bootstrap",
+      configured_channels: [],
+      diagnostic: null,
+      history: [],
     });
   });
 

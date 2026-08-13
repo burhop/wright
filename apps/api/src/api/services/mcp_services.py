@@ -15,7 +15,22 @@ from tool_registry.capability_views import (
     load_workspace_membership,
     paginate_capabilities,
 )
-from tool_registry.canonical_catalog import load_canonical_entries
+from tool_registry.capability_models import CapabilitySnapshotSummary
+from tool_registry.canonical_catalog import CatalogFetchError, fetch_catalog_envelope
+from tool_registry.catalog_models import CatalogEntry
+from tool_registry.catalog_signing import CatalogTrustRoot
+from tool_registry.catalog_snapshots import (
+    bootstrap_bundled_snapshot,
+    get_catalog_state,
+    known_catalog_server_ids,
+    load_active_catalog,
+)
+from tool_registry.catalog_updates import (
+    CatalogUpdateError,
+    activate_catalog_update,
+    preview_catalog_update,
+    rollback_catalog,
+)
 from tool_registry.compatibility import (
     load_latest_machine_observation,
     observe_machine,
@@ -61,8 +76,23 @@ class McpApiService:
     def list_servers(self):
         return registry_services.list_registered_servers(self.db_path)
 
+    def _capability_context(self):
+        bootstrap_bundled_snapshot(self.db_path)
+        document, diagnostic = load_active_catalog(self.db_path)
+        state = get_catalog_state(self.db_path)
+        state["diagnostic"] = diagnostic
+        entries = [CatalogEntry.model_validate(entry) for entry in document["servers"]]
+        snapshot = CapabilitySnapshotSummary(
+            snapshot_id=state["active_snapshot_id"],
+            channel=state["active_channel"],
+            sequence=state["active_sequence"],
+            offline=state["active_channel"] == "bundled",
+            updated_at=state["updated_at"],
+        )
+        return entries, snapshot
+
     def _capability_entries(self):
-        return load_canonical_entries()
+        return self._capability_context()[0]
 
     def _machine_observation(self, entries, *, refresh: bool = False):
         if not refresh:
@@ -87,6 +117,7 @@ class McpApiService:
             self.list_servers(),
             observation,
             workspace_membership=load_workspace_membership(self.db_path),
+            known_catalog_ids=frozenset(known_catalog_server_ids(self.db_path)),
         )
 
     def list_capabilities(
@@ -96,7 +127,7 @@ class McpApiService:
         limit: int,
         cursor: str | None,
     ):
-        entries = self._capability_entries()
+        entries, snapshot = self._capability_context()
         observation = self._machine_observation(entries)
         views = self._capability_views(entries, observation)
         try:
@@ -106,6 +137,7 @@ class McpApiService:
                 filters=filters,
                 limit=limit,
                 cursor=cursor,
+                snapshot=snapshot,
             )
         except CapabilityCursorError as error:
             raise McpInvalidOperationError(str(error)) from error
@@ -135,6 +167,123 @@ class McpApiService:
             self._capability_views(entries, observation), capability_id
         )
         return {"observation": observation, "compatibility": view.compatibility}
+
+    def get_catalog_state(self):
+        bootstrap_bundled_snapshot(self.db_path)
+        state = get_catalog_state(self.db_path)
+        _, diagnostic = load_active_catalog(self.db_path)
+        state["diagnostic"] = diagnostic
+        state["configured_channels"] = sorted(
+            set(self.capability_dependencies.catalog_channels)
+            & set(self.capability_dependencies.trust_roots)
+        )
+        return state
+
+    def _trust_root(self, channel: str) -> CatalogTrustRoot:
+        configured = self.capability_dependencies.trust_roots.get(channel)
+        if isinstance(configured, CatalogTrustRoot):
+            return configured
+        if isinstance(configured, dict):
+            try:
+                return CatalogTrustRoot(
+                    channel=channel,
+                    key_id=str(configured["key_id"]),
+                    public_key=bytes(configured["public_key"]),
+                )
+            except (KeyError, TypeError, ValueError) as error:
+                raise McpInvalidOperationError(
+                    "Catalog trust root is not configured correctly."
+                ) from error
+        raise McpInvalidOperationError(
+            f"No catalog trust root is configured for channel '{channel}'."
+        )
+
+    def preview_catalog_update(
+        self,
+        *,
+        envelope: dict | None,
+        configured_channel: str | bool | None,
+        actor: str,
+        trace_id: str,
+    ):
+        if configured_channel is True:
+            available = sorted(
+                set(self.capability_dependencies.catalog_channels)
+                & set(self.capability_dependencies.trust_roots)
+            )
+            if len(available) != 1:
+                raise McpInvalidOperationError(
+                    "Exactly one configured catalog channel is required."
+                )
+            configured_channel = available[0]
+        if isinstance(configured_channel, str):
+            channel = self.capability_dependencies.catalog_channels.get(
+                configured_channel
+            )
+            if channel is None:
+                raise McpInvalidOperationError(
+                    f"Catalog channel '{configured_channel}' is not configured."
+                )
+            fetcher = (
+                self.capability_dependencies.catalog_fetcher or fetch_catalog_envelope
+            )
+            try:
+                envelope = fetcher(channel)
+            except CatalogFetchError as error:
+                raise CatalogUpdateError(
+                    error.code,
+                    str(error),
+                    "Keep the current catalog and verify the configured channel.",
+                    status_code=422,
+                ) from error
+            channel_name = configured_channel
+        else:
+            signed = envelope.get("signed") if isinstance(envelope, dict) else None
+            channel_name = signed.get("channel") if isinstance(signed, dict) else None
+        if not isinstance(envelope, dict) or not isinstance(channel_name, str):
+            raise McpInvalidOperationError("A signed catalog envelope is required.")
+        return preview_catalog_update(
+            self.db_path,
+            envelope,
+            trust_root=self._trust_root(channel_name),
+            actor=actor,
+            now=self.capability_dependencies.clock(),
+            trace_id=trace_id,
+        )
+
+    def activate_catalog_update(
+        self,
+        preview_id: str,
+        preview_digest: str,
+        *,
+        actor: str,
+        trace_id: str,
+    ):
+        return activate_catalog_update(
+            self.db_path,
+            preview_id,
+            preview_digest,
+            actor=actor,
+            now=self.capability_dependencies.clock(),
+            trace_id=trace_id,
+        )
+
+    def rollback_catalog(
+        self,
+        *,
+        active_snapshot_id: str,
+        previous_snapshot_id: str,
+        actor: str,
+        trace_id: str,
+    ):
+        return rollback_catalog(
+            self.db_path,
+            expected_active_snapshot_id=active_snapshot_id,
+            expected_previous_snapshot_id=previous_snapshot_id,
+            actor=actor,
+            now=self.capability_dependencies.clock(),
+            trace_id=trace_id,
+        )
 
     def register_server(self, body):
         return registry_services.register_server(self.db_path, body)

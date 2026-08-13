@@ -10,6 +10,7 @@ from typing import Any
 import yaml
 
 from .engineering_catalog import ENGINEERING_CATALOG
+from .canonical_catalog import engineering_catalog_from_document
 from .wright_managed_servers import WRIGHT_MANAGED_SERVERS, WRIGHT_MANAGED_TOOLS
 
 
@@ -125,22 +126,50 @@ def reconcile_wright_managed_servers(database_path: str) -> int:
 
 def reconcile_engineering_catalog(database_path: str) -> int:
     """Reconcile Wright-owned catalog rows after schema readiness."""
-    catalog_ids = [entry["server_id"] for entry in ENGINEERING_CATALOG]
+    return _reconcile_catalog_seeds(database_path, ENGINEERING_CATALOG)
+
+
+def reconcile_engineering_catalog_document(
+    database_path: str,
+    document: dict[str, Any],
+    *,
+    connection: sqlite3.Connection | None = None,
+) -> int:
+    """Reconcile a validated snapshot inside an optional caller transaction."""
+    return _reconcile_catalog_seeds(
+        database_path,
+        engineering_catalog_from_document(document),
+        connection=connection,
+        reset_failed_installs=False,
+    )
+
+
+def _reconcile_catalog_seeds(
+    database_path: str,
+    entries: list[dict[str, Any]],
+    *,
+    connection: sqlite3.Connection | None = None,
+    reset_failed_installs: bool = True,
+) -> int:
+    catalog_ids = [entry["server_id"] for entry in entries]
     placeholders = ",".join("?" for _ in catalog_ids)
-    connection = sqlite3.connect(database_path)
+    owns_connection = connection is None
+    connection = connection or sqlite3.connect(database_path)
     try:
         connection.execute("PRAGMA foreign_keys = ON")
-        connection.execute("BEGIN IMMEDIATE")
-        connection.execute(
-            f"""UPDATE mcp_servers
-            SET is_installed = 0, is_active = 0, status = 'inactive',
-                error_message = NULL, installed_version = NULL
-            WHERE is_installed = 1 AND status = 'error'
-              AND server_id IN ({placeholders})""",
-            tuple(catalog_ids),
-        )
+        if owns_connection:
+            connection.execute("BEGIN IMMEDIATE")
+        if catalog_ids and reset_failed_installs:
+            connection.execute(
+                f"""UPDATE mcp_servers
+                SET is_installed = 0, is_active = 0, status = 'inactive',
+                    error_message = NULL, installed_version = NULL
+                WHERE is_installed = 1 AND status = 'error'
+                  AND server_id IN ({placeholders})""",
+                tuple(catalog_ids),
+            )
         now = int(time.time())
-        for entry in ENGINEERING_CATALOG:
+        for entry in entries:
             connection.execute(
                 """INSERT OR IGNORE INTO mcp_servers
                     (server_id, name, type, command, is_active, is_installed, status,
@@ -170,13 +199,16 @@ def reconcile_engineering_catalog(database_path: str) -> int:
                 WHERE server_id = ?""",
                 _update_values(entry),
             )
-        connection.commit()
-        return len(ENGINEERING_CATALOG)
+        if owns_connection:
+            connection.commit()
+        return len(entries)
     except Exception:
-        connection.rollback()
+        if owns_connection:
+            connection.rollback()
         raise
     finally:
-        connection.close()
+        if owns_connection:
+            connection.close()
 
 
 def reconcile_installed_bundle(

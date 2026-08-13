@@ -191,7 +191,9 @@ def _catalog_view(
 
 def _custom_entry(server: McpServer, observation) -> CatalogEntry:
     support = {
-        key: PlatformSupportRecord.model_validate(value)
+        key: value
+        if isinstance(value, PlatformSupportRecord)
+        else PlatformSupportRecord.model_validate(value)
         for key, value in server.platform_support.items()
     }
     return CatalogEntry(
@@ -226,6 +228,7 @@ def build_capability_views(
     observation,
     *,
     workspace_membership: Mapping[str, list[dict[str, str]]] | None = None,
+    known_catalog_ids: frozenset[str] = frozenset(),
 ) -> list[CapabilityView]:
     membership = workspace_membership or {}
     indexed = _server_index(servers)
@@ -240,6 +243,12 @@ def build_capability_views(
 
     for server in servers:
         if server.server_id in consumed:
+            continue
+        if (
+            server.server_id in known_catalog_ids
+            and not server.is_installed
+            and not server.is_active
+        ):
             continue
         entry = _custom_entry(server, observation)
         view = _catalog_view(entry, server, observation, membership)
@@ -345,6 +354,7 @@ def paginate_capabilities(
     filters: CapabilityFilters | None = None,
     limit: int = 100,
     cursor: str | None = None,
+    snapshot: CapabilitySnapshotSummary | None = None,
 ) -> CapabilityList:
     selected = [
         view for view in views if _matches(view, filters or CapabilityFilters())
@@ -353,7 +363,7 @@ def paginate_capabilities(
     page = selected[offset : offset + limit]
     next_offset = offset + len(page)
     return CapabilityList(
-        snapshot=bundled_snapshot_summary(entries),
+        snapshot=snapshot or bundled_snapshot_summary(entries),
         capabilities=page,
         next_cursor=_encode_cursor(next_offset)
         if next_offset < len(selected)

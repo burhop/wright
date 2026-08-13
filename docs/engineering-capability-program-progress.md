@@ -73,9 +73,19 @@
 - Focused evidence: 228 package/API tests passed; all 267 web component/service tests passed; production web build passed; five mocked Capability Library Playwright journeys passed, including WCAG serious/critical scan. Ruff, Prettier, and `git diff --check` passed.
 - Live Onshape validation remains deliberately deferred: no endpoint contact, authentication, subscription, term acceptance, or paid use occurred.
 
+### Implementation checkpoint 4 - signed catalog updates
+
+- Added bounded canonical signed envelopes with Ed25519 verification, exact SHA-256 payload binding, key identity, issue/expiry windows, monotonic sequence enforcement, strict schemas, duplicate-key rejection, and a 5 MiB ceiling.
+- Added immutable bundled/candidate/active/previous snapshots, retention, safe packaged recovery, exact identity/field/provenance diffs, actor/expiry-bound previews, and atomic activation/rollback audit records.
+- Catalog reconciliation now accepts an already validated document and caller-owned transaction while preserving custom entries, install/process state, explicit disablement, credential references/booleans, workspace grants, and legacy identities.
+- Replaced arbitrary catalog URL loading with exact approved HTTPS channels, bounded reads and timeouts, no redirects, no ambient authentication, and explicit loopback-only test support.
+- Added administrator state/preview/activate/rollback APIs, standardized redacted error contracts, active-snapshot capability projection, and an accessible UI panel for no-channel, checking, verified diff, failure, activation, history, and rollback states.
+- Focused evidence: 20 signing/snapshot/diff/activation/fetch/API tests passed; 10 component/layout tests passed; production web build and TypeScript/lint/Prettier checks passed; five mocked Playwright journeys passed, including activation/restart projection/rollback and zero install requests.
+- The signed update flow changes reviewed metadata only. It does not install, enable, start, authenticate to, or contact any catalog capability.
+
 ### Next checkpoint
 
-Implement signed catalog snapshot verification, exact update preview, transactional activation/restart recovery, and rollback while preserving all user-owned state.
+Implement guided multi-source MCP import and exact digest-bound onboarding plans with no parsing or preflight effects.
 
 ## Program guardrails
 

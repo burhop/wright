@@ -8,6 +8,7 @@ from datetime import UTC, datetime, timedelta
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+from tool_registry.canonical_catalog import load_catalog_document
 
 
 TEST_PRIVATE_KEY = Ed25519PrivateKey.from_private_bytes(bytes(range(32)))
@@ -18,7 +19,13 @@ TEST_KEY_ID = hashlib.sha256(TEST_PUBLIC_KEY).hexdigest()
 
 
 def canonical_json(document: object) -> bytes:
-    return json.dumps(document, sort_keys=True, separators=(",", ":")).encode()
+    return json.dumps(
+        document,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
 
 
 def signed_catalog(
@@ -53,3 +60,20 @@ def tampered_catalog(envelope: dict) -> dict:
     result = deepcopy(envelope)
     result["signed"]["payload"]["servers"].append({"id": "tampered"})
     return result
+
+
+def candidate_70_catalog() -> dict:
+    """Return the final bundled 70-entry acceptance payload."""
+    return deepcopy(load_catalog_document())
+
+
+def prior_69_catalog() -> dict:
+    """Return the historical pre-Onshape-official snapshot used for update tests."""
+    payload = candidate_70_catalog()
+    payload["servers"] = [
+        server
+        for server in payload["servers"]
+        if server["id"] != "onshape-labs-featurescript-mcp"
+    ]
+    assert len(payload["servers"]) == 69
+    return payload

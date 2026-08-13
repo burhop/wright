@@ -1,7 +1,7 @@
 import structlog
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status, Response
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, Response
+from pydantic import BaseModel, model_validator
 from tool_registry import (
     McpServer,
     McpServerCreate,
@@ -21,6 +21,8 @@ from tool_registry.capability_models import (
     MachineCompatibilityObservation,
 )
 from tool_registry.capability_views import CapabilityFilters
+from tool_registry.catalog_updates import CatalogUpdateError
+from api.security import require_admin
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -103,7 +105,117 @@ class CapabilityObservationResponse(BaseModel):
     compatibility: CapabilityCompatibility
 
 
+class CatalogPreviewRequest(BaseModel):
+    envelope: dict | None = None
+    configured_channel: str | bool | None = None
+
+    @model_validator(mode="after")
+    def exactly_one_source(self):
+        selected = int(self.envelope is not None) + int(bool(self.configured_channel))
+        if selected != 1:
+            raise ValueError("Choose exactly one catalog update source")
+        return self
+
+
+class CatalogActivateRequest(BaseModel):
+    preview_digest: str
+
+
+class CatalogRollbackRequest(BaseModel):
+    active_snapshot_id: str
+    previous_snapshot_id: str
+
+
+def _request_actor(request: Request) -> str:
+    return str(getattr(request.state, "principal_id", "local-admin"))
+
+
+def _request_trace(request: Request) -> str:
+    return str(getattr(request.state, "trace_id", "catalog-api"))
+
+
+def _catalog_http_exception(error: CatalogUpdateError, trace_id: str) -> HTTPException:
+    return HTTPException(
+        status_code=error.status_code,
+        detail={
+            "code": error.code,
+            "message": str(error),
+            "recovery": error.recovery,
+            "trace_id": trace_id,
+        },
+    )
+
+
 # ── Route Handlers ───────────────────────────────────────────────────────────
+
+
+@router.get("/catalog/state", dependencies=[Depends(require_admin)])
+@traced("mcp.catalog.state")
+async def catalog_state(service: McpApiService = Depends(get_mcp_api_service)):
+    return service.get_catalog_state()
+
+
+@router.post("/catalog/updates/preview", dependencies=[Depends(require_admin)])
+@traced("mcp.catalog.preview")
+async def preview_catalog_update_endpoint(
+    body: CatalogPreviewRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    trace_id = _request_trace(request)
+    try:
+        return service.preview_catalog_update(
+            envelope=body.envelope,
+            configured_channel=body.configured_channel,
+            actor=_request_actor(request),
+            trace_id=trace_id,
+        )
+    except CatalogUpdateError as error:
+        raise _catalog_http_exception(error, trace_id)
+    except McpServiceError as error:
+        raise mcp_service_http_exception(error)
+
+
+@router.post(
+    "/catalog/updates/{preview_id}/activate",
+    dependencies=[Depends(require_admin)],
+)
+@traced("mcp.catalog.activate")
+async def activate_catalog_update_endpoint(
+    preview_id: str,
+    body: CatalogActivateRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    trace_id = _request_trace(request)
+    try:
+        return service.activate_catalog_update(
+            preview_id,
+            body.preview_digest,
+            actor=_request_actor(request),
+            trace_id=trace_id,
+        )
+    except CatalogUpdateError as error:
+        raise _catalog_http_exception(error, trace_id)
+
+
+@router.post("/catalog/rollback", dependencies=[Depends(require_admin)])
+@traced("mcp.catalog.rollback")
+async def rollback_catalog_endpoint(
+    body: CatalogRollbackRequest,
+    request: Request,
+    service: McpApiService = Depends(get_mcp_api_service),
+):
+    trace_id = _request_trace(request)
+    try:
+        return service.rollback_catalog(
+            active_snapshot_id=body.active_snapshot_id,
+            previous_snapshot_id=body.previous_snapshot_id,
+            actor=_request_actor(request),
+            trace_id=trace_id,
+        )
+    except CatalogUpdateError as error:
+        raise _catalog_http_exception(error, trace_id)
 
 
 @router.get("/capabilities", response_model=CapabilityList)
