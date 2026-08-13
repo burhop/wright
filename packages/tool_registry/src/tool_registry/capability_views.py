@@ -79,6 +79,22 @@ def _server_index(servers: Iterable[McpServer]) -> dict[str, McpServer]:
     return {server.server_id: server for server in servers}
 
 
+def _has_user_owned_state(
+    server: McpServer,
+    workspace_membership: Mapping[str, list[dict[str, str]]],
+) -> bool:
+    return bool(
+        server.is_installed
+        or server.is_active
+        or server.status != "inactive"
+        or server.error_message
+        or server.installed_version
+        or any((server.credentials_configured or {}).values())
+        or workspace_membership.get(server.server_id)
+        or workspace_membership.get(server.name)
+    )
+
+
 def load_workspace_membership(
     database_path: str | Path,
 ) -> dict[str, list[dict[str, str]]]:
@@ -193,7 +209,9 @@ def _custom_entry(server: McpServer, observation) -> CatalogEntry:
     support = {
         key: value
         if isinstance(value, PlatformSupportRecord)
-        else PlatformSupportRecord.model_validate(value)
+        else PlatformSupportRecord.model_validate(
+            value.model_dump() if hasattr(value, "model_dump") else value
+        )
         for key, value in server.platform_support.items()
     }
     return CatalogEntry(
@@ -244,10 +262,8 @@ def build_capability_views(
     for server in servers:
         if server.server_id in consumed:
             continue
-        if (
-            server.server_id in known_catalog_ids
-            and not server.is_installed
-            and not server.is_active
+        if server.server_id in known_catalog_ids and not _has_user_owned_state(
+            server, membership
         ):
             continue
         entry = _custom_entry(server, observation)

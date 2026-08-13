@@ -167,18 +167,18 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Tests for User Story 6
 
-- [ ] T075 [P] [US6] Build a version-12 legacy database fixture containing catalog/custom/install/disable/error/credential/workspace/tool sentinels in `packages/data_vault/tests/fixtures/capability_library_v12.py`
-- [ ] T076 [P] [US6] Write migration idempotency, backup, failure recovery, and downgrade-tolerance tests in `packages/data_vault/tests/test_capability_library_migration.py`
-- [ ] T077 [P] [US6] Write activate/restart/rollback exact-preservation and removed-catalog-entry tests in `packages/tool_registry/tests/test_catalog_user_state_preservation.py`
-- [ ] T078 [P] [US6] Write API compatibility tests for existing server/tool/credential/install/toggle endpoints after migration in `apps/api/tests/test_mcp_backward_compatibility.py`
+- [x] T075 [P] [US6] Build a version-12 legacy database fixture containing catalog/custom/install/disable/error/credential/workspace/tool sentinels in `packages/data_vault/tests/capability_library_v12.py`
+- [x] T076 [P] [US6] Write migration idempotency, backup, failure recovery, and downgrade-tolerance tests in `packages/data_vault/tests/test_capability_library_migration.py`
+- [x] T077 [P] [US6] Write activate/restart/rollback exact-preservation and removed-catalog-entry tests in `packages/tool_registry/tests/test_catalog_user_state_preservation.py`
+- [x] T078 [P] [US6] Write API compatibility tests for existing server/tool/credential/install/toggle endpoints after migration in `apps/api/tests/test_mcp_backward_compatibility.py`
 
 ### Implementation for User Story 6
 
-- [ ] T079 [US6] Add migration backup/diagnostic integration for new capability tables without transforming existing rows in `packages/data_vault/src/data_vault/migrations.py`
-- [ ] T080 [US6] Preserve legacy canonical aliases and unresolved/custom identities in active capability projection and reconciliation in `packages/tool_registry/src/tool_registry/capability_views.py`
-- [ ] T081 [US6] Preserve existing API models/endpoints and adapt legacy list responses from the active projection where safe in `apps/api/src/api/services/mcp_services.py`
-- [ ] T082 [US6] Add restart/bootstrap recovery behavior that never overwrites newer user state in `apps/api/src/api/main.py`
-- [ ] T083 [US6] Run legacy migration, exact preservation, API compatibility, and rollback tests for US6
+- [x] T079 [US6] Add migration backup/diagnostic integration for new capability tables without transforming existing rows in `packages/data_vault/src/data_vault/migrations.py`
+- [x] T080 [US6] Preserve legacy canonical aliases and unresolved/custom identities in active capability projection and reconciliation in `packages/tool_registry/src/tool_registry/capability_views.py`
+- [x] T081 [US6] Preserve existing API models/endpoints and adapt legacy list responses from the active projection where safe in `apps/api/src/api/services/mcp_services.py`
+- [x] T082 [US6] Add restart/bootstrap recovery behavior that never overwrites newer user state in `apps/api/src/api/main.py`
+- [x] T083 [US6] Run legacy migration, exact preservation, API compatibility, and rollback tests for US6
 
 **Checkpoint**: Existing users can adopt or revert catalog snapshots without losing or silently changing user-owned state.
 

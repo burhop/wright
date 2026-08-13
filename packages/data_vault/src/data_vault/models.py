@@ -55,11 +55,13 @@ class UpgradeResult:
     applied: tuple[dict[str, Any], ...]
     ready: bool
     backup_manifest: str | None = None
+    diagnostics: tuple[dict[str, Any], ...] = ()
     operation: str = "upgrade"
 
     def to_dict(self) -> dict[str, Any]:
         result = asdict(self)
         result["applied"] = list(self.applied)
+        result["diagnostics"] = list(self.diagnostics)
         return result
 
 

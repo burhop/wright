@@ -9,6 +9,7 @@ from typing import Any
 
 from .canonical_catalog import (
     CatalogValidationError,
+    LEGACY_SERVER_IDS,
     _validate_catalog_document,
     load_catalog_document,
 )
@@ -173,6 +174,12 @@ def known_catalog_server_ids(database_path: str | Path) -> set[str]:
             server_id = entry.get("server_id") or entry.get("id")
             if isinstance(server_id, str) and server_id:
                 identities.add(server_id)
+                identities.add(LEGACY_SERVER_IDS.get(server_id, server_id))
+            aliases = entry.get("aliases", [])
+            if isinstance(aliases, list):
+                identities.update(
+                    alias for alias in aliases if isinstance(alias, str) and alias
+                )
     return identities
 
 

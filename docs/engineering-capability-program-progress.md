@@ -92,9 +92,18 @@
 - Focused evidence: 22 parser/security/plan/adapter/API tests passed; 8 web component/layout tests passed; production web build, TypeScript, ESLint, Ruff, Prettier, and Python format checks passed; all three mocked onboarding Playwright journeys passed.
 - Default production adapters remain fail-closed until a reviewed capability-specific backend is configured. Tests use deterministic fakes and did not install software, contact vendors, accept licenses, or mutate proprietary hosts.
 
+### Implementation checkpoint 6 - legacy and user-state preservation
+
+- Added a realistic schema-12 database fixture with catalog, custom, installed-but-disabled, error, credential-definition, tool-disablement, and workspace-membership sentinels.
+- Migration 13 now reports redacted backup/preservation diagnostics while retaining the existing verified pre-upgrade backup, one-transaction rollback, idempotency, and old-column reader/writer compatibility.
+- Startup now reconciles the active verified snapshot rather than blindly reapplying packaged metadata. Bundled bootstrap initializes only absent state and cannot downgrade a newer active catalog pointer.
+- Active capability projection recognizes legacy IDs and aliases from every retained snapshot. Removed catalog rows remain visible whenever installation, process/error, credential, or workspace state belongs to the user; pristine rolled-back rows remain hidden without deletion.
+- Existing server, tool, credential, install, and toggle endpoints retain their established response models and persisted-row semantics after migration.
+- Focused evidence: all 76 data-vault tests passed with one platform skip; 14 catalog/projection preservation tests passed; 29 neighboring API/startup/catalog compatibility tests passed. Ruff and Python formatting checks passed.
+
 ### Next checkpoint
 
-Prove additive migration and catalog activation/restart/rollback preserve every legacy and user-owned MCP state class.
+Add honest MCP protocol validation evidence and explicit single-workspace enablement without granting invocation authority.
 
 ## Program guardrails
 

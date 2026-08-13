@@ -144,6 +144,22 @@ def reconcile_engineering_catalog_document(
     )
 
 
+def reconcile_active_engineering_catalog(
+    database_path: str,
+) -> tuple[int, dict[str, Any] | None]:
+    """Reconcile the active verified snapshot, falling back safely to recovery.
+
+    Bootstrap only establishes state when none exists. It never replaces a
+    newer active pointer, so restart cannot silently downgrade signed metadata.
+    """
+
+    from .catalog_snapshots import bootstrap_bundled_snapshot, load_active_catalog
+
+    bootstrap_bundled_snapshot(database_path)
+    document, diagnostic = load_active_catalog(database_path)
+    return reconcile_engineering_catalog_document(database_path, document), diagnostic
+
+
 def _reconcile_catalog_seeds(
     database_path: str,
     entries: list[dict[str, Any]],

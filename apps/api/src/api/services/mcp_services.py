@@ -90,6 +90,11 @@ class McpApiService:
         return self.engine.db_path
 
     def list_servers(self):
+        """Keep the legacy endpoint bound to persisted rows and response models.
+
+        Capability projection is additive; it must not rename, omit, or
+        synthesize records for clients of the established server endpoint.
+        """
         return registry_services.list_registered_servers(self.db_path)
 
     def _capability_context(self):

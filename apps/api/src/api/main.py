@@ -82,12 +82,18 @@ async def lifespan(app: FastAPI):
 
         migrate_plaintext_secrets(DATABASE_PATH)
         from tool_registry.catalog_reconcile import (
-            reconcile_engineering_catalog,
+            reconcile_active_engineering_catalog,
             reconcile_installed_bundle,
             reconcile_wright_managed_servers,
         )
 
-        reconcile_engineering_catalog(DATABASE_PATH)
+        _, catalog_diagnostic = reconcile_active_engineering_catalog(DATABASE_PATH)
+        if catalog_diagnostic:
+            logger.warning(
+                "catalog_recovery_active",
+                code=catalog_diagnostic["code"],
+                message=catalog_diagnostic["message"],
+            )
         reconcile_installed_bundle(DATABASE_PATH)
         reconcile_wright_managed_servers(DATABASE_PATH)
     except Exception as exc:

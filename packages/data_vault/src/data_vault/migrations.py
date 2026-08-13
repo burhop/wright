@@ -907,6 +907,7 @@ def upgrade_database(
         existed = path.exists()
         starting = database_status(path, migrations).current_version if existed else 0
         backup_manifest: str | None = None
+        diagnostics: list[dict[str, Any]] = []
         if existed and starting < len(migrations):
             from .backup import create_backup
 
@@ -917,6 +918,13 @@ def upgrade_database(
                 migrations=migrations,
             )
             backup_manifest = backup.manifest_path
+            diagnostics.append(
+                {
+                    "code": "pre_upgrade_backup_created",
+                    "from_version": starting,
+                    "to_version": len(migrations),
+                }
+            )
         applied: list[dict[str, Any]] = []
         try:
             with connect_state_db(path, ensure_parent=True) as connection:
@@ -953,6 +961,14 @@ def upgrade_database(
                     applied.append(
                         {"version": migration.version, "name": migration.name}
                     )
+                    if migration.name == "capability_library_onboarding":
+                        diagnostics.append(
+                            {
+                                "code": "capability_library_migration_applied",
+                                "version": migration.version,
+                                "preserved_existing_rows": True,
+                            }
+                        )
                 _integrity(connection)
         except DatabaseLifecycleError:
             raise
@@ -970,4 +986,5 @@ def upgrade_database(
             applied=tuple(applied),
             ready=True,
             backup_manifest=backup_manifest,
+            diagnostics=tuple(diagnostics),
         )
