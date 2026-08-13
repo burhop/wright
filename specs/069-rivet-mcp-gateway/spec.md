@@ -144,6 +144,14 @@ An engineer or administrator can inspect a bounded timeline that connects each R
 - **FR-033**: Existing agent-manager and chat clients MUST continue to use the same gateway policy and workspace boundaries; Rivet MUST not introduce a privileged parallel path.
 - **FR-034**: No workflow or test in this feature may start physical machinery, motion, heat, a spindle, a printer, a robot, or a PLC.
 
+### Non-Functional Requirements
+
+- **NFR-001**: A run authority MUST expire no later than the authorized run timeout plus the configured cancellation grace period, MUST be immediately revocable, and MUST contain at least 256 bits of unpredictable entropy. Its raw bearer value MUST never be persisted, logged, displayed, forwarded to a child MCP, or accepted by an audience other than the exact local Wright run bridge.
+- **NFR-002**: On a reference local development machine with cached gateway metadata, discovery of 500 workspace tools MUST complete in under 500 milliseconds, authority issuance MUST complete in under 100 milliseconds, and Wright bridge overhead excluding child execution MUST remain under 100 milliseconds at the 95th percentile.
+- **NFR-003**: Wright MUST project received child progress to the run within 250 milliseconds and MUST deliver an accepted cancellation request to the active gateway child call within one second in deterministic local tests.
+- **NFR-004**: Runner events MUST retain the existing 64 KiB per-event ceiling and terminal output MUST retain the existing 1 MiB ceiling unless a separately reviewed product limit replaces them; every smaller evidence field MUST have an authoritative configured ceiling and an explicit truncation or rejection outcome.
+- **NFR-005**: Binding, review, approval, progress, cancellation, residue, and recovery UI states MUST be keyboard operable, usable at 320 CSS pixels and 200% zoom, identify status with text in addition to color, manage dialog focus, and produce no serious or critical automated accessibility findings in the deterministic journey suite.
+
 ### Key Entities
 
 - **Capability Requirement**: A portable workflow need expressed independently of one provider where practical, including semantic and units constraints.
@@ -153,6 +161,8 @@ An engineer or administrator can inspect a bounded timeline that connects each R
 - **Gateway Call Record**: One mediated node invocation with arguments digest, approval decision, child request identity, progress, result or error, and timing.
 - **Run Manifest**: The durable reproducibility and diagnosis record for an exact workflow run; it records authority identity and expiry but never a reusable bearer value.
 - **Cancellation Record**: The ordered request, propagation, child acknowledgement, revocation, terminal state, cleanup, and residue evidence for a stopped run.
+- **Workspace-enabled capability**: A currently registered, installed or connected, validated, policy-visible server/tool explicitly enabled for the bound workspace; this state grants availability only and is not workflow review or invocation approval.
+- **Material review value**: Any workflow, graph, node, implementation, schema, validation, workspace-grant, policy, units/material, static tool identity, argument constraint, or default value that can change which MCP call occurs or its engineering/security meaning.
 
 ## Success Criteria *(mandatory)*
 
@@ -167,6 +177,7 @@ An engineer or administrator can inspect a bounded timeline that connects each R
 - **SC-007**: Existing non-MCP workflow, agent-manager, workspace, and gateway regression suites retain their prior pass rate.
 - **SC-008**: Normal validation completes without proprietary applications, paid accounts, credentials, external services, GPUs, hardware, or physical actuation.
 - **SC-009**: At least 90% of five representative engineers can identify the bound tool, approval state, active node, and failure boundary from the review/run UI without assistance; this human study may remain explicitly deferred while automated accessibility and journey evidence is completed.
+- **SC-010**: Deterministic local performance evidence satisfies every NFR-002 and NFR-003 threshold at the stated scale without contacting a real child service, and the result records the reference host and sample count.
 
 ## Assumptions
 

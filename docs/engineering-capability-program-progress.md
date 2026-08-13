@@ -188,7 +188,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 - [x] `speckit-specify`: five prioritized user journeys, 34 functional requirements, nine measurable outcomes, and a 16/16 specification-quality checklist completed in `f01b04b`.
 - [x] `speckit-clarify`: no critical ambiguity required a user question. Safest reversible defaults are explicit for run-bound authority, exact capability binding, stale-review invalidation, existing per-call approval policy, cancellation truthfulness, deterministic normal tests, optional live applications, and closed Gate E.
 - [x] `speckit-plan` and Gate B decision: native Rivet MCP nodes use an injected Wright provider over an exact-origin loopback bridge; opaque authority is memory-only and bound to one run/workspace/review/binding set; exact external bindings invalidate on workflow, graph, node, schema, server, validation, grant, or policy change; approval remains exact-call and Wright-owned; cancellation revokes authority and explicitly reaches the gateway child request; bounded Run Manifest evidence records truth without credentials.
-- [ ] `speckit-checklist`
+- [x] `speckit-checklist`: 42/42 security, authority, binding, approval, cancellation, lifecycle, evidence, UX, dependency, and recovery requirements-quality checks passed after adding explicit authority lifetime, performance, evidence-bound, and accessibility NFRs plus a deterministic performance outcome.
 - [ ] `speckit-tasks`
 - [ ] `speckit-analyze` and remediation
 - [ ] `speckit-implement`
@@ -198,7 +198,7 @@ The documentation-complete exact tree was gated again before publication. The fe
 
 ### Next checkpoint
 
-Generate the feature-specific requirements checklist, derive the dependency-ordered task plan from the approved Gate B artifacts, and run the non-destructive cross-artifact analysis. Remediate every material finding before implementation, preserving the injected-provider and Wright-owned gateway boundary.
+Derive the dependency-ordered task plan from the approved Gate B artifacts, then run the non-destructive cross-artifact analysis and remediate every material finding before implementation. Preserve the injected-provider and Wright-owned gateway boundary.
 
 ## Program guardrails
 
