@@ -282,19 +282,19 @@ describe("OnboardingWizard", () => {
       blocking_reasons: [
         {
           code: "host_software_missing",
-          message: "Solid Edge was not found.",
-          recovery: "Install or start Solid Edge, then check again.",
+          message: "Desktop CAD was not found.",
+          recovery: "Install or start Desktop CAD, then check again.",
         },
       ],
     });
     render(<OnboardingWizard isOpen onClose={vi.fn()} />);
     await user.selectOptions(screen.getByLabelText("Source"), "host");
-    await user.type(screen.getByLabelText("Capability ID"), "solid-edge-mcp");
+    await user.type(screen.getByLabelText("Capability ID"), "desktop-cad-mcp");
     await user.click(
       screen.getByRole("button", { name: "Create read-only plan" }),
     );
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Solid Edge was not found",
+      "Desktop CAD was not found",
     );
     expect(
       screen.getByRole("button", { name: "Continue to credentials" }),

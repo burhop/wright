@@ -273,7 +273,7 @@ export function MissingCapabilityForm({
                 maxLength={200}
                 value={hostApplication}
                 onChange={(event) => setHostApplication(event.target.value)}
-                placeholder="For example, Solid Edge"
+                placeholder="For example, desktop CAD"
               />
             </label>
             <label>

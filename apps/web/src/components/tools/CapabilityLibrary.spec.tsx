@@ -216,7 +216,7 @@ describe("CapabilityLibrary", () => {
       target: { value: "remote" },
     });
     fireEvent.change(screen.getByLabelText("Required host software"), {
-      target: { value: "Solid Edge" },
+      target: { value: "Desktop CAD" },
     });
     fireEvent.change(screen.getByLabelText("Validation state"), {
       target: { value: "not_tested" },
@@ -237,7 +237,7 @@ describe("CapabilityLibrary", () => {
           compatibility: ["uncertain"],
           risk: ["medium"],
           locality: ["remote"],
-          host: ["Solid Edge"],
+          host: ["Desktop CAD"],
           validation: ["not_tested"],
           installed: false,
         }),

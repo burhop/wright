@@ -87,13 +87,13 @@ def test_structured_report_is_idempotent_and_creates_no_server_row(report_client
 
 def test_report_validation_and_error_response_do_not_echo_secrets(report_client):
     client, database = report_client
-    secret = "secret-sentinel-must-not-escape"
+    sensitive_marker = "secret-sentinel-must-not-escape"
     response = client.post(
         "/api/mcp/missing-capability-reports",
-        json=_payload(search_context={"api_token": secret}),
+        json=_payload(search_context={"api_token": sensitive_marker}),
     )
     assert response.status_code == 422
-    assert secret not in response.text
+    assert sensitive_marker not in response.text
     with sqlite3.connect(database) as connection:
         rows = connection.execute("SELECT * FROM missing_capability_reports").fetchall()
     assert rows == []
