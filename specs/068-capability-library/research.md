@@ -120,7 +120,7 @@ Legacy `verification_state`, `maturity`, `installability_tier`, and `validation_
 - Visual Studio Code shape: top-level `servers` with optional top-level `inputs`.
 - Plain single-server object for vendor documentation and the UI's remote/local forms.
 
-Each server normalizes to name, transport, command or URL, literal argument list, non-secret environment metadata, credential requirements, headers-as-credential requirements, source format, warnings, and field-level errors. Import never executes, expands variables, evaluates shell syntax, contacts a URL, or persists pasted secret values.
+Each server normalizes to name, exact transport, command or URL, literal argument list, non-secret environment metadata, credential requirements, headers-as-credential requirements, source format, warnings, and field-level errors. `streamable_http` and legacy `sse` remain distinct in catalog, plan, and evidence records even though both use Wright's existing network runner internally. Import never executes, expands variables, evaluates shell syntax, contacts a URL, or persists pasted secret values.
 
 **Primary sources**:
 
@@ -144,7 +144,7 @@ Each server normalizes to name, transport, command or URL, literal argument list
 
 ## Decision 6: Exact Install Plans precede all effects
 
-**Decision**: Replace ad hoc “install” semantics with an immutable Install Plan derived from a capability revision plus a current-machine observation. The plan enumerates executable/endpoint, literal arguments, package/source pin, dependencies, network and storage effects, credentials, approvals, validation, rollback, and blockers. The approval digest covers all material fields.
+**Decision**: Replace ad hoc “install” semantics with an immutable Install Plan derived from a capability revision plus a current-machine observation. The plan enumerates executable/endpoint, literal arguments, package/source pin, dependencies, license/terms state, network and storage effects, credentials, approvals, validation, rollback, and blockers. `external_acceptance_required` remains blocked until the user records that they independently completed the external step; Wright never accepts terms. The approval digest covers all material fields.
 
 **Rationale**:
 

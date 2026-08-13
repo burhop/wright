@@ -24,8 +24,8 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 **Purpose**: Establish dependencies, packaged schemas, and deterministic fixture boundaries without changing product behavior.
 
 - [ ] T001 Add an explicit bounded `cryptography` dependency for standalone signature verification in `packages/tool_registry/pyproject.toml` and synchronize `uv.lock`
-- [ ] T002 [P] Copy the approved catalog envelope, import preview, and install plan JSON Schemas into `packages/tool_registry/src/tool_registry/catalog/` and declare them as packaged resources in `packages/tool_registry/pyproject.toml`
-- [ ] T003 [P] Add deterministic Ed25519 test-key helpers and signed/tampered/expired/replayed catalog fixtures in `packages/tool_registry/tests/fixtures/catalog_updates.py`
+- [ ] T002 [P] Copy the approved catalog envelope, import preview, and install plan JSON Schemas plus a versioned public-only trust-root resource with no default network channel into `packages/tool_registry/src/tool_registry/catalog/` and declare them as packaged resources in `packages/tool_registry/pyproject.toml`
+- [ ] T003 [P] Add deterministic Ed25519 test-key helpers and a prior 69-record snapshot without Onshape plus signed 70-record Onshape candidate, tampered, expired, and replayed fixtures in `packages/tool_registry/tests/fixtures/catalog_updates.py`
 - [ ] T004 [P] Add Claude, VS Code, plain-server, adversarial, and oversized import fixtures in `packages/tool_registry/tests/fixtures/mcp_imports.py`
 - [ ] T005 [P] Add deterministic fake local-package, remote-endpoint, and host-bridge adapter fixtures in `packages/tool_registry/tests/fixtures/onboarding_adapters.py`
 
@@ -38,10 +38,10 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 **Critical**: No user-story implementation starts until this phase passes focused tests.
 
 - [ ] T006 Write migration definition, upgrade, restart, compatibility, and failure-recovery tests for catalog/onboarding tables in `packages/data_vault/tests/test_migrations.py`
-- [ ] T007 Implement additive migration 13 for snapshots, state, previews, activations, observations, plans, runs, validation evidence, and missing reports in `packages/data_vault/src/data_vault/migrations.py`
+- [ ] T007 Implement additive migration 13 for snapshots, state, previews, activations, observations, plans, runs, validation evidence, missing reports, and `mcp_servers.transport_variant` in `packages/data_vault/src/data_vault/migrations.py`
 - [ ] T008 [P] Write Pydantic model and JSON Schema conformance tests for snapshot, capability, import, observation, plan, run, evidence, and report records in `packages/tool_registry/tests/test_capability_models.py`
 - [ ] T009 Implement evidence classes and immutable domain records with secret-rejecting validators in `packages/tool_registry/src/tool_registry/capability_models.py`
-- [ ] T010 Extend canonical catalog models/schema with `evidence_class`, Streamable HTTP transport normalization, and conservative legacy mapping in `packages/tool_registry/src/tool_registry/catalog_models.py` and `packages/tool_registry/src/tool_registry/catalog/schema.json`
+- [ ] T010 Extend canonical catalog models/schema with `evidence_class`, exact `streamable_http` versus legacy `sse` catalog values, internal network-runner normalization, and conservative legacy mapping in `packages/tool_registry/src/tool_registry/catalog_models.py`, `packages/tool_registry/src/tool_registry/models.py`, and `packages/tool_registry/src/tool_registry/catalog/schema.json`
 - [ ] T011 [P] Add stable redacted catalog/import/plan/onboarding diagnostic codes and error types in `packages/tool_registry/src/tool_registry/capability_errors.py`
 - [ ] T012 Add repository/service construction seams for database path, clock, trust roots, detectors, and adapters in `packages/tool_registry/src/tool_registry/capability_services.py`
 - [ ] T013 Extend `McpApiService` dependency injection without adding route business logic in `apps/api/src/api/services/mcp_services.py`
@@ -69,7 +69,7 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Add the distinct Onshape Labs FeatureScript MCP official-preview record and vendor evidence while preserving community identities in `packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml`
+- [ ] T022 [US1] Add the distinct Onshape Labs FeatureScript MCP official-preview record to the final bundled recovery catalog with vendor evidence while preserving community identities in `packages/tool_registry/src/tool_registry/catalog/engineering-catalog.yaml`
 - [ ] T023 [US1] Implement conservative evidence-class derivation and official-source validation in `packages/tool_registry/src/tool_registry/catalog_evidence.py`
 - [ ] T024 [US1] Implement allowlisted read-only runtime, executable, platform, architecture, container, and host observations with stable digests in `packages/tool_registry/src/tool_registry/compatibility.py`
 - [ ] T025 [US1] Implement reason-coded capability compatibility policy and recovery guidance in `packages/tool_registry/src/tool_registry/compatibility.py`
@@ -98,7 +98,7 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 - [ ] T035 [P] [US2] Write canonical-byte, key-id, signature, digest, issue/expiry, sequence, and envelope-schema tests in `packages/tool_registry/tests/test_catalog_signing.py`
 - [ ] T036 [P] [US2] Write snapshot repository bootstrap/candidate/active/previous/retention/recovery tests in `packages/tool_registry/tests/test_catalog_snapshots.py`
 - [ ] T037 [P] [US2] Write exact identity/field provenance diff and preview binding tests in `packages/tool_registry/tests/test_catalog_update_preview.py`
-- [ ] T038 [P] [US2] Write atomic activation/reconciliation/rollback tests with install/custom/disable/credential/workspace sentinels in `packages/tool_registry/tests/test_catalog_activation.py`
+- [ ] T038 [P] [US2] Write atomic prior-69-to-signed-Onshape-70 activation/reconciliation/restart/rollback tests with install/custom/disable/credential/workspace sentinels in `packages/tool_registry/tests/test_catalog_activation.py`
 - [ ] T039 [P] [US2] Write catalog state, preview, activation, stale-preview, RBAC, rollback, and redacted-error API tests in `apps/api/tests/test_catalog_update_api.py`
 - [ ] T040 [P] [US2] Write component tests for no-channel, checking, verified diff, failed verification, activating, history, rollback, and rollback-failed states in `apps/web/src/components/tools/CatalogUpdatePanel.spec.tsx`
 - [ ] T041 [P] [US2] Extend the mocked Playwright journey with activation/restart projection/rollback and zero install requests in `tests/ui-integration/capability-library.spec.ts`
@@ -132,7 +132,7 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 - [ ] T054 [P] [US3] Write Claude `mcpServers`, VS Code `servers`/`inputs`, and plain-server grammar tests in `packages/tool_registry/tests/test_config_import.py`
 - [ ] T055 [P] [US3] Write adversarial secret, header, shell, duplicate, mixed-validity, unknown-field, invalid-URL, oversized, and no-persistence tests in `packages/tool_registry/tests/test_config_import_security.py`
-- [ ] T056 [P] [US3] Write Install Plan completeness, canonical digest, expiry, blocker, material-change, and no-secret tests in `packages/tool_registry/tests/test_install_plans.py`
+- [ ] T056 [P] [US3] Write Install Plan completeness, canonical digest, expiry, license/terms state and no-Wright-acceptance blocker, material-change, and no-secret tests in `packages/tool_registry/tests/test_install_plans.py`
 - [ ] T057 [P] [US3] Write local-package, remote-endpoint, host-bridge, and advanced-local-command adapter contract/rollback/residue tests in `packages/tool_registry/tests/test_onboarding_adapters.py`
 - [ ] T058 [P] [US3] Write import preview, plan creation, approve/apply, stale/conflict, role, and redaction API tests in `apps/api/tests/test_mcp_onboarding_api.py`
 - [ ] T059 [P] [US3] Write wizard source/normalize/observe/review/credentials/apply/failure state component tests in `apps/web/src/components/tools/OnboardingWizard.spec.tsx`
@@ -142,7 +142,7 @@ description: "Dependency-ordered implementation tasks for Capability Library and
 
 - [ ] T061 [US3] Implement bounded JSON detection and normalized no-execution drafts with field diagnostics in `packages/tool_registry/src/tool_registry/config_import.py`
 - [ ] T062 [US3] Implement secret/header/environment redaction and credential-requirement extraction in `packages/tool_registry/src/tool_registry/config_import.py`
-- [ ] T063 [US3] Implement immutable exact Install Plan generation and digest/expiry/material-change validation in `packages/tool_registry/src/tool_registry/install_plans.py`
+- [ ] T063 [US3] Implement immutable exact Install Plan generation including license/terms state and independent-completion blocker plus digest/expiry/material-change validation in `packages/tool_registry/src/tool_registry/install_plans.py`
 - [ ] T064 [US3] Implement adapter protocols and effect/result/rollback contracts in `packages/tool_registry/src/tool_registry/onboarding.py`
 - [ ] T065 [P] [US3] Implement isolated local-package/local-command adapter using reviewed literal recipes only in `packages/tool_registry/src/tool_registry/installers/local.py`
 - [ ] T066 [P] [US3] Implement bounded remote HTTP/SSE registration and probe adapter in `packages/tool_registry/src/tool_registry/installers/remote.py`

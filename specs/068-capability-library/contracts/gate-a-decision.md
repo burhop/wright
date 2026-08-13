@@ -18,7 +18,7 @@
 1. **Evidence taxonomy**: adopt nine explicit classes from official production through excluded/stale. Do not infer official status. Preserve legacy fields and map conservatively.
 2. **Update trust**: use a pinned Ed25519 public key, canonical signed envelopes, SHA-256 payload binding, sequence and expiry enforcement, schema/identity/evidence validation, and an administrator preview. No signature bypass exists.
 3. **Activation/rollback**: persist immutable snapshots and active/previous pointers in SQLite; reconcile catalog-owned metadata and swap pointers in one transaction; always retain the bundled recovery snapshot.
-4. **Install Plan**: require an immutable digest-bound plan based on exact capability revision and current-machine observation before any local package, remote endpoint, host bridge, or advanced local command effect.
+4. **Install Plan**: require an immutable digest-bound plan based on exact capability revision and current-machine observation before any local package, remote endpoint, host bridge, or advanced local command effect. Record license/terms state and block external-acceptance-required plans until the user independently records completion; Wright never accepts terms.
 5. **UI**: rename the global page Capability Library and separate Discover -> Understand -> Add -> Review plan -> Validate -> Use in workspace. Invocation approval remains outside this loop.
 6. **Onshape**: list Onshape Labs FeatureScript MCP as official preview with subscription-required and not-live-validated limitations. Do not contact it or claim exact authentication/tool evidence.
 

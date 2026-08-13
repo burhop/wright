@@ -91,7 +91,7 @@ packages/tool_registry/src/tool_registry/
 |-- onboarding.py                 # adapter lifecycle orchestration
 |-- validation_evidence.py        # validation state transitions and persistence
 `-- catalog/
-    |-- engineering-catalog.yaml  # offline recovery snapshot, including Onshape Labs
+    |-- engineering-catalog.yaml  # final offline recovery snapshot, including Onshape Labs
     |-- schema.json
     `-- trust-root.json            # public verification metadata only
 
@@ -139,7 +139,7 @@ The completed decisions and primary sources are in [research.md](research.md). T
 ### Catalog lifecycle
 
 - On first use, validate and register the bundled recovery snapshot without replacing any user record.
-- An update arrives only from an administrator-configured channel or an explicitly uploaded envelope. Download bytes are size/time bounded and never interpreted as executable configuration.
+- An update arrives only from an administrator-configured channel or an explicitly uploaded envelope. Download bytes are size/time bounded and never interpreted as executable configuration. The deterministic acceptance sequence first activates a prior verified 69-record snapshot without Onshape and then applies a signed 70-record candidate containing Onshape; the final bundled recovery snapshot also contains the validated Onshape record for new offline installations.
 - Verify the envelope signature against the pinned public key, then verify expiry, sequence, payload digest, schema, canonical identities, aliases, and evidence invariants.
 - Persist a candidate and a stable diff. Activation uses `BEGIN IMMEDIATE` to set `previous_snapshot_id`, set the active snapshot, reconcile metadata, and write an audit record in one transaction.
 - Rollback performs the same transaction in reverse. The package-resource snapshot is always available as last-resort recovery.
@@ -154,8 +154,8 @@ The completed decisions and primary sources are in [research.md](research.md). T
 
 ### Guided onboarding
 
-- Import produces only normalized drafts and credential requirements. It does not store raw pasted input after preview, resolve environment variables, contact endpoints, or execute commands.
-- Preflight captures a machine observation and emits an immutable digest-bound Install Plan. Unknown compatibility is visible and blocks apply unless a policy-approved manual path exists.
+- Import produces only normalized drafts and credential requirements. It does not store raw pasted input after preview, resolve environment variables, contact endpoints, or execute commands. Exact `streamable_http` and legacy `sse` remain distinct catalog/plan values; both use the existing network runner internally, with an additive `transport_variant` field preserving the user's actual protocol choice.
+- Preflight captures a machine observation and emits an immutable digest-bound Install Plan. Unknown compatibility is visible and blocks apply unless a policy-approved manual path exists. The plan records known/unknown/not-applicable/external-acceptance-required license state and blocks the latter until the user independently records completion; Wright never accepts terms.
 - Applying a plan requires the same snapshot revision and machine-observation digest. Local package, remote connection, and host bridge adapters implement prepare/apply/validate/rollback/remove and return structured effects.
 - Deterministic adapters prove success, blocked, changed-plan, rollback, and cleanup behavior. Optional live tests use explicit environment gates.
 

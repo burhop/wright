@@ -200,6 +200,7 @@ Material fields covered by `plan_digest`:
 - backend kind
 - pinned source/package/container/endpoint and literal arguments
 - runtime, host, platform, credential, network, and storage requirements
+- license/terms state (`known`, `unknown`, `not_applicable`, or `external_acceptance_required`) plus an optional user-recorded independent-completion timestamp/reference; never an acceptance action by Wright
 - planned effects and exact ordered lifecycle steps
 - approval gates and blocking reasons
 - validation steps and rollback/remove steps
@@ -285,6 +286,7 @@ Migration 13 adds:
 - `mcp_onboarding_runs`
 - `mcp_validation_evidence`
 - `missing_capability_reports`
+- additive `mcp_servers.transport_variant` metadata so `streamable_http` and legacy `sse` remain distinguishable while both continue to use the existing network runner
 
 All tables are additive. Foreign keys use restrictive deletion for audit/snapshot records. Snapshot retention marks rows superseded but does not delete active, previous, referenced, or bundled rows. Existing `mcp_servers` and secret formats are unchanged.
 

@@ -52,10 +52,26 @@
     "source": { "type": "object" },
     "requirements": {
       "type": "object",
-      "required": ["platform", "runtimes", "credentials", "network", "storage", "host"],
+      "required": ["platform", "runtimes", "license", "credentials", "network", "storage", "host"],
       "properties": {
         "platform": { "type": "array", "items": { "type": "string" } },
         "runtimes": { "type": "array", "items": { "type": "string" } },
+        "license": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "reference", "independent_completion_required"],
+          "properties": {
+            "state": {
+              "enum": ["known", "unknown", "not_applicable", "external_acceptance_required"]
+            },
+            "reference": { "type": ["string", "null"] },
+            "independent_completion_required": { "type": "boolean" },
+            "independent_completion_recorded_at": {
+              "type": ["string", "null"],
+              "format": "date-time"
+            }
+          }
+        },
         "credentials": { "type": "array", "items": { "type": "string" } },
         "network": { "type": "array", "items": { "type": "string" } },
         "storage": { "type": "array", "items": { "type": "string" } },

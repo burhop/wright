@@ -69,13 +69,15 @@ Sections:
 
 - What Wright will add or connect
 - Exact pinned source, endpoint, command tokens, and transport
-- Network, storage, host, and credential requirements
+- Network, storage, host, credential, and license/terms requirements, including whether the user must independently complete external acceptance before Wright can apply the plan
 - Files/processes/configuration affected
 - Validation after setup
 - How rollback/remove works
 - Approval requirements and blockers
 
 The approval control repeats the capability name and is disabled for blocked/stale plans. A material recheck returns the user here with a changed-fields summary.
+
+Wright never presents an “Accept license” control. When external terms are required, the plan links to the authoritative source, remains blocked, and permits the user to record only that they independently completed the external step.
 
 ### Step 5: Credentials
 

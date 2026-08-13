@@ -27,7 +27,7 @@
 - [x] `speckit-plan`: research, plan, data model, API/schema/UI contracts, Gate A record, and quickstart drafted.
 - [x] `speckit-checklist`: 40 UX, security, compatibility, recovery, and testability requirements-quality checks pass.
 - [x] `speckit-tasks`: 119 dependency-ordered tasks with story checkpoints, test-first slices, traceability, hardening, and merge verification.
-- [ ] `speckit-analyze` and remediation
+- [x] `speckit-analyze` and remediation: initial two high/two medium findings repaired; rerun has 45/45 requirement coverage, zero critical/high findings, and no constitution conflict.
 - [ ] `speckit-implement`
 - [ ] Focused, integration, UI, packaging, docs, and full dev gate
 - [ ] Push feature, merge to `dev`, push `dev`, verify synchronization
@@ -50,7 +50,7 @@
 
 ### Next checkpoint
 
-Run cross-artifact analysis, remediate all high/critical findings, and begin test-first implementation.
+Begin test-first implementation with the storage/domain foundation and independently validate each user-story checkpoint.
 
 ## Program guardrails
 
