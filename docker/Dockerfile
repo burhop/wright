@@ -7,7 +7,7 @@
 # =============================================================================
 
 # Stage 1: Build the Vite frontend
-FROM node:26.5.1-slim@sha256:deae974a69e140f44f434ab29cb519fb5f8fe250fd364b8ca446bd0761acdc6a AS web-builder
+FROM node:26.7.0-slim@sha256:4ebb5ace66f15a24c14c492e01a8beeed4fddf970a856109f5126e703e5fe503 AS web-builder
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
@@ -16,7 +16,7 @@ COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.13.13-slim@sha256:aa938a849bcb82dce8f49480f056ab82bf5c1c3ebc294f0430f37b6820e7f286 AS hermes-base
+FROM python:3.14.7-slim@sha256:ce40764625a4ff50df3548277632e7f96c4e77fe75fa848aae9885476e7df5a4 AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
