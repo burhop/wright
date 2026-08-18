@@ -452,10 +452,7 @@ async def check_agent_health():
     if (
         sync_manager is not None
         and getattr(sync_manager, "active_agent", "") == "hermes"
-        and (
-            getattr(sync_manager, "gateway_refresh_in_progress", False)
-            or getattr(sync_manager, "gateway_refresh_pending", False)
-        )
+        and getattr(sync_manager, "gateway_refresh_in_progress", False)
     ):
         return HealthResponse(
             state="unknown",

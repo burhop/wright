@@ -136,6 +136,28 @@ def _paths_overlap(left: Path, right: Path) -> bool:
     }
 
 
+def workspace_path_overlaps_application(
+    local_path: str,
+    protected_roots: tuple[str, ...] | None = None,
+) -> bool:
+    if not str(local_path or "").strip():
+        return False
+    candidate = Path(local_path).expanduser().resolve(strict=False)
+    roots = (
+        default_protected_application_roots()
+        if protected_roots is None
+        else protected_roots
+    )
+    return any(
+        _paths_overlap(
+            candidate,
+            Path(root).expanduser().resolve(strict=False),
+        )
+        for root in roots
+        if str(root or "").strip()
+    )
+
+
 def _record_from_row(row: Mapping[str, Any]) -> WorkspaceRecord:
     return WorkspaceRecord(
         workspace_id=str(row["workspace_id"]),
@@ -404,21 +426,17 @@ class WorkspaceService:
         if not str(local_path or "").strip():
             raise WorkspaceInvalidRequestError("Workspace path cannot be empty.")
         candidate = Path(local_path).expanduser().resolve(strict=False)
-        for protected_value in self.protected_roots_provider():
-            if not str(protected_value or "").strip():
-                continue
-            protected = Path(protected_value).expanduser().resolve(strict=False)
-            if _paths_overlap(candidate, protected):
-                logger.error(
-                    "workspace_protected_path_rejected",
-                    workspace_path=str(candidate),
-                    protected_root=str(protected),
-                )
-                raise WorkspaceProtectedPathError(
-                    "Workspace access blocked because its path overlaps Wright "
-                    "application files. Create or select a dedicated engineering "
-                    f"workspace under {self.parent_dir_provider()} instead."
-                )
+        protected_roots = self.protected_roots_provider()
+        if workspace_path_overlaps_application(str(candidate), protected_roots):
+            logger.error(
+                "workspace_protected_path_rejected",
+                workspace_path=str(candidate),
+            )
+            raise WorkspaceProtectedPathError(
+                "Workspace access blocked because its path overlaps Wright "
+                "application files. Create or select a dedicated engineering "
+                f"workspace under {self.parent_dir_provider()} instead."
+            )
         return str(candidate)
 
     def workspace_path_is_safe(self, local_path: str) -> bool:

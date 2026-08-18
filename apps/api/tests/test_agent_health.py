@@ -55,7 +55,7 @@ async def test_agent_health_reports_unknown_during_workspace_gateway_refresh(
 
 
 @pytest.mark.asyncio
-async def test_agent_health_returns_to_connected_after_workspace_gateway_refresh(
+async def test_agent_health_stays_connected_while_gateway_refresh_is_pending(
     client, mock_agent_engine
 ):
     from api.main import app
@@ -84,14 +84,19 @@ async def test_agent_health_returns_to_connected_after_workspace_gateway_refresh
     sync_manager.gateway_refresh_pending = False
     connected = await client.get("/api/agent/health")
 
-    assert pending.json()["state"] == "unknown"
+    assert pending.json() == {
+        "state": "connected",
+        "latencyMs": 2.5,
+        "baseUrl": "http://127.0.0.1:8642",
+        "error": None,
+    }
     assert connected.json() == {
         "state": "connected",
         "latencyMs": 2.5,
         "baseUrl": "http://127.0.0.1:8642",
         "error": None,
     }
-    assert calls == 1
+    assert calls == 2
 
 
 @pytest.mark.asyncio

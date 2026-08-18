@@ -17,6 +17,7 @@ from .service import (
     SessionWorkspaceAuthorization,
     WorkspaceService,
     default_workspace_parent_dir,
+    workspace_path_overlaps_application,
 )
 from .composition import build_workspace_service
 from .agent_sync import AgentSyncManager as AgentSyncManager
@@ -115,6 +116,7 @@ __all__ = [
     "WorkspaceServiceError",
     "WorkspaceToolState",
     "default_workspace_parent_dir",
+    "workspace_path_overlaps_application",
     "build_workspace_service",
     "WorkflowDocument",
     "WorkflowPersistenceError",
