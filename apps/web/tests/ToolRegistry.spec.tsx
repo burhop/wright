@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ToolRegistryPage } from "../src/components/pages/ToolRegistryPage";
 import { mcpService } from "../src/services/mcp-service";
@@ -96,10 +102,10 @@ describe("ToolRegistryPage", () => {
     expect(await screen.findByText("CAD Extractor")).toBeInTheDocument();
     expect(
       screen.getByTestId("evidence-badge-verified_community"),
-    ).toHaveTextContent("Verified community");
+    ).toHaveTextContent("Community source reviewed");
     expect(
       screen.getByTestId("compatibility-badge-compatible"),
-    ).toHaveTextContent("Compatible");
+    ).toHaveTextContent(/Installed.*test needed/);
     expect(
       screen.getByTestId("capability-card-cad-extractor"),
     ).toHaveTextContent("Installed");
@@ -109,7 +115,7 @@ describe("ToolRegistryPage", () => {
     render(<ToolRegistryPage />);
     await screen.findByText("CAD Extractor");
 
-    fireEvent.change(screen.getByLabelText("Search capabilities"), {
+    fireEvent.change(screen.getByLabelText("Search MCP servers"), {
       target: { value: "geometry" },
     });
     fireEvent.change(screen.getByLabelText("Engineering domain"), {
@@ -125,9 +131,10 @@ describe("ToolRegistryPage", () => {
 
   it("opens progressive details without exposing a launch command", async () => {
     render(<ToolRegistryPage />);
+    const card = await screen.findByTestId("capability-card-cad-extractor");
     fireEvent.click(
-      await screen.findByRole("button", {
-        name: /view details for cad extractor/i,
+      within(card).getByRole("button", {
+        name: "View MCP server details for CAD Extractor",
       }),
     );
 

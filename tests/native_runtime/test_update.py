@@ -37,7 +37,47 @@ def test_update_stages_backs_up_activates_and_retains_predecessor(
 
 def test_update_to_current_version_is_idempotent(tmp_path: Path) -> None:
     runtime = lifecycle(tmp_path, migration_manager=FakeMigrations())
-    seed_runtime(runtime, version="0.1.5", runtime_id="current")
-    result = runtime.update(artifact=artifact(tmp_path, "0.1.5"))
+    candidate = artifact(tmp_path, "0.1.5")
+    seed_runtime(
+        runtime,
+        version="0.1.5",
+        runtime_id="current",
+        artifact_sha256=candidate.sha256,
+    )
+    result = runtime.update(artifact=candidate)
     assert result.ok
     assert result.code == "already_current"
+
+
+def test_update_activates_repaired_candidate_with_same_version_new_hash(
+    tmp_path: Path,
+) -> None:
+    runtime = lifecycle(tmp_path, migration_manager=FakeMigrations())
+    seed_runtime(runtime, version="0.1.5", runtime_id="current", running=True)
+    candidate = artifact(tmp_path, "0.1.5")
+
+    result = runtime.update(artifact=candidate)
+    manifest = runtime.store.load()
+
+    assert result.ok and result.code == "ok"
+    assert manifest.active_runtime_id != "current"
+    assert manifest.predecessor_runtime_id == "current"
+    assert manifest.runtimes[manifest.active_runtime_id].artifact_sha256 == (
+        candidate.sha256
+    )
+
+
+def test_second_update_replaces_predecessor_without_losing_retained_runtime(
+    tmp_path: Path,
+) -> None:
+    runtime = lifecycle(tmp_path, migration_manager=FakeMigrations())
+    seed_runtime(runtime, version="0.1.4", runtime_id="oldest", active=False)
+    seed_runtime(runtime, version="0.1.5", runtime_id="current", running=True)
+
+    result = runtime.update(artifact=artifact(tmp_path, "0.1.5"))
+    manifest = runtime.store.load()
+
+    assert result.ok and result.state is LifecycleState.HEALTHY
+    assert manifest.predecessor_runtime_id == "current"
+    assert manifest.runtimes["current"].status is RuntimeStatus.PREDECESSOR
+    assert manifest.runtimes["oldest"].status is RuntimeStatus.VERIFIED

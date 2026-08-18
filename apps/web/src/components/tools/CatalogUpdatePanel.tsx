@@ -130,7 +130,7 @@ export function CatalogUpdatePanel({
       >
         <div>
           <h2 id="catalog-update-title" style={{ margin: 0 }}>
-            Capability catalog
+            MCP server catalog
           </h2>
           {state && (
             <p data-testid="catalog-active-source" style={{ marginBottom: 0 }}>

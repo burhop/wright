@@ -80,7 +80,8 @@ async def handle_wright(
     command = arguments[0].lower()
     argument = arguments[1] if len(arguments) > 1 else None
     if command == "open":
-        return "Wright UI: http://127.0.0.1:8000/"
+        port = int(os.environ.get("WRIGHT_NATIVE_PORT", "8000"))
+        return f"Wright UI: http://wright.localhost:{port}/"
     if command in {"catalog", "info", "install"}:
         api = api_client or NativeApiClient()
         try:

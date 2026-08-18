@@ -2345,3 +2345,68 @@ Known notes:
 - Treat as source-only and blocked from bundle inclusion until then.
 
 Follow-up: `docs/mcp-catalog/followups/comsol-multiphysics-mcp-wjc9011.md`
+
+## Native Windows Allowlist Qualification (2026-08-13)
+
+The repeatable native-Windows runner is documented in
+`docs/mcp-catalog/windows-mcp-qualification.md`. It executes only the seven
+fixed identities in the recorded order and keeps all source, packages, builds,
+SQLite state, and generated geometry under the ignored
+`.local-run/windows-mcp-qualification` directory.
+
+### BREP MCP (`brep-mcp`)
+
+- Install only `brepjs-cad@0.103.0` with the recorded npm integrity and
+  `--ignore-scripts` into the disposable root.
+- MCP initialization and `tools/list` pass on native Windows; the server reports
+  version `0.103.0` and publishes 2 tools.
+- The source-controlled 1 mm cube probe fails in the upstream package because
+  its entry point passes a `data:` URL to Node's `fileURLToPath`, which requires
+  a `file:` URL. Do not patch the installed package during qualification.
+
+### SolidEdgeMCP (`solid-edge-mcp-burhop`)
+
+- Check out exactly `2aad5bd24df6ce1ac9578ad35c4da7ac241b5330`.
+- Restore only from `https://api.nuget.org/v3/index.json` into the disposable
+  package directory, then build only
+  `src/SolidEdgeMcpServer/SolidEdgeMcpServer.csproj`.
+- Launch with an allowed root inside the disposable directory and the upstream
+  `creation` tool mode. Call only `cad.get_status` with
+  `providerId: solid_edge`; never call connect, create, export, close, or other
+  document-affecting tools.
+- Install, startup, and tool listing pass. With no active Solid Edge document,
+  the status result omits `activeDocument` even though the published output
+  schema requires the nullable property, so an MCP client rejects the result.
+
+### Autodesk Platform Services (`aps-mcp-server-nodejs`)
+
+- Do not install. Autodesk archived the official repository on 2026-05-07.
+- Do not request APS credentials, Secure Service Account material, a PEM key,
+  or Autodesk Construction Cloud access for qualification.
+
+### Autodesk Product Help (`autodesk-product-help-mcp`)
+
+- Use only the public documented endpoint
+  `https://developer.api.autodesk.com/knowledge/public/v1/mcp`.
+- Initialization, 2-tool discovery, and the empty-argument
+  `get_available_products` call pass on native Windows.
+- Wright's production install planner blocks registration until applicable
+  Autodesk service terms are independently completed and recorded. The
+  qualification runner never accepts terms for the user.
+
+### Autodesk Fusion Desktop and Data
+
+- Fusion Desktop has no separate package: it is exposed by an already-running,
+  user-enabled Fusion session. Do not start, enable, configure, or contact
+  Fusion during qualification when a clean session was not independently
+  prepared.
+- Fusion Data requires Autodesk OAuth and can access cloud engineering data.
+  Stop before authentication or network contact when no exact credential-free
+  endpoint is documented.
+
+### Onshape Labs FeatureScript
+
+- Do not contact the preview endpoint while Onshape's official Labs page still
+  labels the MCP as **Coming Soon**.
+- Do not authenticate, accept subscription terms, submit FeatureScript, or bind
+  an Onshape document during this qualification.

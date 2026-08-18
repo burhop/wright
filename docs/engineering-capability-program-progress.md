@@ -496,6 +496,24 @@ Commit the verified Loop 071 closeout on the integration branch, then begin Loop
   branch, rerun the gate, push the integration branch, merge once into `dev`,
   push `dev`, and verify matching local/remote tree hashes.
 
+## Loop 074
+
+### Native Windows engineering MCP qualification
+
+- Added a hard-allowlisted, fixed-order Windows qualification harness for only BREP MCP, SolidEdgeMCP, Autodesk APS, Autodesk Product Help, Autodesk Fusion desktop, Autodesk Fusion Data, and Onshape Labs FeatureScript. Recipes pin downloadable identities, constrain network destinations and operations, require reviewed safety decisions, cap output and time, redact evidence, and clean only validated disposable roots.
+- Added current, digest-bound evidence and separate catalog/UI statuses for source, package or registration, startup, protocol, host or backend, Wright setup, Wright gateway, and cleanup. The UI says whether a result is current for this Windows setup without turning a partial or failed run into a compatibility claim.
+- BREP MCP 0.103.0 installed and started, negotiated MCP 2025-11-25, and listed 2 tools, but its approved disposable tool probe exposed an upstream data-URL entrypoint defect. SolidEdgeMCP built and started, negotiated MCP 2025-11-25, and listed 12 tools, but its read-only status result omits a schema-required nullable property when no document is open. Neither is described as fully working.
+- Autodesk Product Help's exact public endpoint started, listed 2 tools, and passed its read-only product-list probe. Wright's production onboarding planner correctly stopped because publisher terms were not recorded; no plan was approved or applied.
+- The archived APS server, unavailable clean Fusion desktop session, OAuth-gated Fusion Data service, and not-yet-generally-available Onshape Labs preview stopped at documented safety or availability boundaries. They were not installed or contacted.
+- No credential was requested or supplied, no publisher terms were accepted, no commercial application was installed or configured, no engineering document was opened or changed, and no non-allowlisted MCP was installed or contacted. The pre-existing Solid Edge process remained running unchanged.
+
+### Loop 074 unresolved risks
+
+- BREP and SolidEdgeMCP require upstream fixes before Wright setup and gateway qualification can continue.
+- Autodesk Product Help requires a user-owned publisher-terms decision before Wright may apply an onboarding plan and test the gateway route.
+- Autodesk Fusion desktop needs a user-preconfigured clean MCP-enabled session; Fusion Data needs an approved OAuth flow and exact endpoint; Onshape Labs must become available under independently completed publisher terms.
+- None of the seven currently qualifies for the unqualified statement `Installs on Windows with no problems`.
+
 ## Program guardrails
 
 - No paid usage, license acceptance, external production mutation, user-data deletion, physical actuation, `dev` to `main` merge, or release publication.

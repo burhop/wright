@@ -248,7 +248,7 @@ test.describe("Guided MCP onboarding", () => {
     );
   });
 
-  test("uses the keyboard for catalog review, credentials, and exact apply", async ({
+  test("uses the keyboard for custom MCP review and exact apply", async ({
     page,
   }) => {
     const installRequests: string[] = [];
@@ -257,20 +257,17 @@ test.describe("Guided MCP onboarding", () => {
         installRequests.push(request.url());
     });
     await page.goto("/tool-registry");
-    const add = page.getByRole("button", { name: "Add capability" });
+    const add = page.getByRole("button", { name: "Add custom MCP server" });
     await add.focus();
     await page.keyboard.press("Enter");
     await page
-      .getByLabel("Capability ID")
-      .fill("onshape-labs-featurescript-mcp");
-    await page.getByLabel(/independently completed/).check();
-    await page.getByRole("button", { name: "Create read-only plan" }).click();
+      .getByLabel("MCP configuration JSON")
+      .fill('{"name":"safe","command":"python","args":["server.py"]}');
+    await page.getByRole("button", { name: "Continue" }).click();
     await expect(page.getByText("Review exact plan")).toBeVisible();
-    await page.getByRole("button", { name: "Continue to credentials" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
     await expect(page.getByText("Credential boundary")).toBeVisible();
-    await page
-      .getByRole("button", { name: "Approve and apply exact plan" })
-      .click();
+    await page.getByRole("button", { name: "Install MCP server" }).click();
     await expect(page.getByText("Choose one workspace")).toBeVisible();
     await expect(page.getByLabel("Workspace")).toHaveValue("workspace-a");
     await page
@@ -288,7 +285,7 @@ test.describe("Guided MCP onboarding", () => {
   }) => {
     for (const source of ["import", "remote", "local", "host"] as const) {
       await page.goto("/tool-registry");
-      await page.getByRole("button", { name: "Add capability" }).click();
+      await page.getByRole("button", { name: "Add custom MCP server" }).click();
       await page.getByLabel("Source").selectOption(source);
       if (source === "import") {
         await page
@@ -304,9 +301,9 @@ test.describe("Guided MCP onboarding", () => {
         await page.getByLabel("Literal executable").fill("python");
         await page.getByLabel("Literal arguments").fill("server.py");
       } else {
-        await page.getByLabel("Capability ID").fill("solid-edge-mcp");
+        await page.getByLabel("MCP server ID").fill("solid-edge-mcp");
       }
-      await page.getByRole("button", { name: "Create read-only plan" }).click();
+      await page.getByRole("button", { name: "Continue" }).click();
       await expect(page.getByText("Review exact plan")).toBeVisible();
       await expect(page.locator("body")).not.toContainText(
         "secret-not-returned",
@@ -320,9 +317,8 @@ test.describe("Guided MCP onboarding", () => {
   }) => {
     const journeys = [
       {
-        source: "catalog",
-        capability: "nvidia-elements-mcp",
-        backend: "local_package",
+        source: "import",
+        backend: "local_command",
       },
       { source: "remote", backend: "remote_endpoint" },
       {
@@ -334,29 +330,32 @@ test.describe("Guided MCP onboarding", () => {
 
     for (const journey of journeys) {
       await page.goto("/tool-registry");
-      await page.getByRole("button", { name: "Add capability" }).click();
+      await page.getByRole("button", { name: "Add custom MCP server" }).click();
       await page.getByLabel("Source").selectOption(journey.source);
       if ("capability" in journey) {
-        await page.getByLabel("Capability ID").fill(journey.capability);
-        await page.getByLabel(/independently completed/).check();
+        await page.getByLabel("MCP server ID").fill(journey.capability);
+        await page.getByText("Publisher terms", { exact: true }).click();
+        await page.getByLabel(/completed any publisher terms/).check();
+      } else if (journey.source === "import") {
+        await page
+          .getByLabel("MCP configuration JSON")
+          .fill('{"name":"safe","command":"python","args":["server.py"]}');
       } else {
         await page
           .getByLabel("HTTPS MCP endpoint")
           .fill("https://example.invalid/mcp");
       }
 
-      await page.getByRole("button", { name: "Create read-only plan" }).click();
+      await page.getByRole("button", { name: "Continue" }).click();
       await expect(page.getByTestId("onboarding-plan-review")).toContainText(
         journey.backend,
       );
-      await page
-        .getByRole("button", { name: "Continue to credentials" })
-        .click();
-      await page
-        .getByRole("button", { name: "Approve and apply exact plan" })
-        .click();
+      await page.getByRole("button", { name: "Continue" }).click();
+      await page.getByRole("button", { name: "Install MCP server" }).click();
       await expect(page.getByText("Choose one workspace")).toBeVisible();
-      await expect(page.getByLabel("Workspace")).toHaveValue("workspace-a");
+      await expect(page.getByTestId("onboarding-workspace-select")).toHaveValue(
+        "workspace-a",
+      );
       await page
         .getByRole("button", { name: "Make available in this workspace" })
         .click();
@@ -383,13 +382,13 @@ test.describe("Guided MCP onboarding", () => {
       }),
     );
     await page.goto("/tool-registry");
-    await page.getByRole("button", { name: "Add capability" }).click();
-    await page.getByLabel("Capability ID").fill("fixture-mcp");
-    await page.getByRole("button", { name: "Create read-only plan" }).click();
-    await page.getByRole("button", { name: "Continue to credentials" }).click();
+    await page.getByRole("button", { name: "Add custom MCP server" }).click();
     await page
-      .getByRole("button", { name: "Approve and apply exact plan" })
-      .click();
+      .getByLabel("MCP configuration JSON")
+      .fill('{"name":"safe","command":"python","args":["server.py"]}');
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Install MCP server" }).click();
     await expect(page.getByRole("alert")).toContainText(
       "install_plan_invalidated",
     );
@@ -413,14 +412,14 @@ test.describe("Live local guided onboarding", () => {
       }
     });
     await page.goto("/tool-registry");
-    await page.getByRole("button", { name: "Add capability" }).click();
+    await page.getByRole("button", { name: "Add custom MCP server" }).click();
     const dialog = page.getByRole("dialog", {
-      name: "Add an engineering capability",
+      name: "Add custom MCP server",
     });
-    await expect(dialog.getByLabel("Source")).toHaveValue("catalog");
-    await expect(dialog.getByLabel("Capability ID")).toBeVisible();
+    await expect(dialog.getByLabel("Source")).toHaveValue("import");
+    await expect(dialog.getByLabel("MCP configuration JSON")).toBeVisible();
     await expect(dialog).toContainText(
-      "Nothing is installed, connected, or enabled during this step",
+      "This check is read-only. It does not install software, connect an account, or enable tools.",
     );
     await dialog.getByRole("button", { name: "Close onboarding" }).click();
     expect(effectRequests).toEqual([]);

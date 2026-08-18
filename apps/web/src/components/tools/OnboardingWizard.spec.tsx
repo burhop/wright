@@ -200,12 +200,15 @@ describe("OnboardingWizard", () => {
     });
   });
 
-  it("starts with all supported sources and makes no request", () => {
+  it("starts with custom MCP sources and makes no request", () => {
     render(<OnboardingWizard isOpen onClose={vi.fn()} />);
     expect(screen.getByRole("dialog")).toBeVisible();
     expect(
-      screen.getByRole("option", { name: "Capability Library" }),
+      screen.getByRole("heading", { name: "Add custom MCP server" }),
     ).toBeVisible();
+    expect(
+      screen.queryByRole("option", { name: "Capability Library" }),
+    ).not.toBeInTheDocument();
     expect(
       screen.getByRole("option", { name: "Paste MCP configuration" }),
     ).toBeVisible();
@@ -220,7 +223,7 @@ describe("OnboardingWizard", () => {
     ).toBeVisible();
     expect(
       screen.getByText(
-        "Nothing is installed, connected, or enabled during this step.",
+        "This check is read-only. It does not install software, connect an account, or enable tools.",
       ),
     ).toBeVisible();
     expect(mcpService.previewImport).not.toHaveBeenCalled();
@@ -236,14 +239,14 @@ describe("OnboardingWizard", () => {
       target: { value: '{"command":"python"}' },
     });
     await user.click(
-      screen.getByRole("button", { name: "Create read-only plan" }),
+      screen.getByRole("button", { name: "Review install plan" }),
     );
     expect(
       screen.getByText(/Normalizing the source and checking this machine/),
     ).toBeVisible();
     pending.resolve(preview);
 
-    expect(await screen.findByText("Review exact plan")).toBeVisible();
+    expect(await screen.findByText("Confirm this installation")).toBeVisible();
     expect(screen.getByTestId("onboarding-plan-review")).toHaveTextContent(
       "Register the reviewed literal command",
     );
@@ -254,6 +257,16 @@ describe("OnboardingWizard", () => {
         draft_digest: "a".repeat(64),
       }),
     );
+  });
+
+  it("uses the shared Wright form treatment for native controls", () => {
+    render(<OnboardingWizard isOpen onClose={vi.fn()} />);
+
+    const source = screen.getByLabelText("Source");
+    expect(source.closest("section")).toHaveClass("wright-form");
+    expect(
+      screen.getByRole("button", { name: "Review install plan" }),
+    ).toHaveClass("wright-form__primary");
   });
 
   it.each([
@@ -271,9 +284,9 @@ describe("OnboardingWizard", () => {
         value === "remote" ? "https://example.invalid/mcp" : "python",
       );
       await user.click(
-        screen.getByRole("button", { name: "Create read-only plan" }),
+        screen.getByRole("button", { name: "Review install plan" }),
       );
-      await screen.findByText("Review exact plan");
+      await screen.findByText("Confirm this installation");
       expect(mcpService.previewImport).toHaveBeenCalledOnce();
     },
   );
@@ -294,16 +307,17 @@ describe("OnboardingWizard", () => {
     });
     render(<OnboardingWizard isOpen onClose={vi.fn()} />);
     await user.selectOptions(screen.getByLabelText("Source"), "host");
-    await user.type(screen.getByLabelText("Capability ID"), "desktop-cad-mcp");
+    await user.type(screen.getByLabelText("MCP server ID"), "desktop-cad-mcp");
+    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
-      screen.getByRole("button", { name: "Create read-only plan" }),
+      screen.getByRole("button", { name: "Review install plan" }),
     );
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Desktop CAD was not found",
     );
     expect(
-      screen.getByRole("button", { name: "Continue to credentials" }),
-    ).toBeDisabled();
+      screen.getByRole("button", { name: "Return to requirements" }),
+    ).toBeVisible();
     expect(mcpService.previewImport).not.toHaveBeenCalled();
   });
 
@@ -313,14 +327,19 @@ describe("OnboardingWizard", () => {
     const completed = vi.fn();
     vi.mocked(mcpService.applyInstallPlan).mockReturnValue(pending.promise);
     render(
-      <OnboardingWizard isOpen onClose={vi.fn()} onCompleted={completed} />,
+      <OnboardingWizard
+        isOpen
+        initialCapabilityId="fixture"
+        onClose={vi.fn()}
+        onCompleted={completed}
+      />,
     );
-    await user.type(screen.getByLabelText("Capability ID"), "fixture");
+    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
-      screen.getByRole("button", { name: "Create read-only plan" }),
+      screen.getByRole("button", { name: "Review install plan" }),
     );
     await user.click(
-      await screen.findByRole("button", { name: "Continue to credentials" }),
+      await screen.findByRole("button", { name: "Continue to installation" }),
     );
     expect(screen.getByText(/secure credential flow/)).toHaveTextContent(
       "API_TOKEN",
@@ -329,7 +348,7 @@ describe("OnboardingWizard", () => {
       screen.getByTestId("credential-configuration-status"),
     ).toHaveTextContent("API_TOKEN: configured");
     await user.click(
-      screen.getByRole("button", { name: "Approve and apply exact plan" }),
+      screen.getByRole("button", { name: "Install MCP server" }),
     );
     expect(screen.getByText(/Applying the approved plan/)).toBeVisible();
     pending.resolve(run);
@@ -359,16 +378,22 @@ describe("OnboardingWizard", () => {
       read_only_probe: undefined,
       reason_codes: ["validation_tools_list_failed"],
     });
-    render(<OnboardingWizard isOpen onClose={vi.fn()} />);
-    await user.type(screen.getByLabelText("Capability ID"), "fixture");
+    render(
+      <OnboardingWizard
+        isOpen
+        initialCapabilityId="fixture"
+        onClose={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
-      screen.getByRole("button", { name: "Create read-only plan" }),
+      screen.getByRole("button", { name: "Review install plan" }),
     );
     await user.click(
-      await screen.findByRole("button", { name: "Continue to credentials" }),
+      await screen.findByRole("button", { name: "Continue to installation" }),
     );
     await user.click(
-      screen.getByRole("button", { name: "Approve and apply exact plan" }),
+      screen.getByRole("button", { name: "Install MCP server" }),
     );
 
     expect(await screen.findByText("Onboarding completed")).toBeVisible();
@@ -387,16 +412,22 @@ describe("OnboardingWizard", () => {
         "Create a fresh plan.",
       ),
     );
-    render(<OnboardingWizard isOpen onClose={vi.fn()} />);
-    await user.type(screen.getByLabelText("Capability ID"), "fixture");
+    render(
+      <OnboardingWizard
+        isOpen
+        initialCapabilityId="fixture"
+        onClose={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
-      screen.getByRole("button", { name: "Create read-only plan" }),
+      screen.getByRole("button", { name: "Review install plan" }),
     );
     await user.click(
-      await screen.findByRole("button", { name: "Continue to credentials" }),
+      await screen.findByRole("button", { name: "Continue to installation" }),
     );
     await user.click(
-      screen.getByRole("button", { name: "Approve and apply exact plan" }),
+      screen.getByRole("button", { name: "Install MCP server" }),
     );
 
     await waitFor(() =>
@@ -404,7 +435,7 @@ describe("OnboardingWizard", () => {
         "install_plan_invalidated",
       ),
     );
-    expect(screen.getByText("Review exact plan")).toBeVisible();
+    expect(screen.getByText("Confirm this installation")).toBeVisible();
   });
 
   it("traps keyboard focus, closes with Escape, and restores the trigger", async () => {
@@ -422,7 +453,7 @@ describe("OnboardingWizard", () => {
     expect(closeButton).toHaveFocus();
     await user.tab({ shift: true });
     expect(
-      screen.getByRole("button", { name: "Create read-only plan" }),
+      screen.getByRole("button", { name: "Review install plan" }),
     ).toHaveFocus();
     await user.tab();
     expect(closeButton).toHaveFocus();
@@ -431,4 +462,27 @@ describe("OnboardingWizard", () => {
     await waitFor(() => expect(trigger).toHaveFocus());
     trigger.remove();
   });
+});
+it("uses a simplified setup entry when a listed MCP server is selected", () => {
+  render(
+    <OnboardingWizard
+      isOpen
+      initialCapabilityId="fixture-mcp"
+      onClose={vi.fn()}
+    />,
+  );
+
+  expect(
+    screen.getByRole("heading", {
+      name: "Install MCP server",
+    }),
+  ).toBeVisible();
+  expect(screen.queryByLabelText("Source")).not.toBeInTheDocument();
+  expect(screen.getByTestId("onboarding-selected-server")).toHaveTextContent(
+    "fixture-mcp",
+  );
+  expect(
+    screen.getByRole("button", { name: "Review install plan" }),
+  ).toBeDisabled();
+  expect(screen.getByTestId("onboarding-terms-complete")).toBeVisible();
 });

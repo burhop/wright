@@ -40,7 +40,7 @@ def test_open_catalog_info_and_install_use_packaged_api_projection() -> None:
     catalog = asyncio.run(COMMANDS.handle_wright("catalog", api_client=api))
     info = asyncio.run(COMMANDS.handle_wright("info cad.demo", api_client=api))
     install = asyncio.run(COMMANDS.handle_wright("install cad.demo", api_client=api))
-    assert "http://127.0.0.1:8000/" in opened
+    assert "http://wright.localhost:8000/" in opened
     assert "cad.demo" in catalog
     assert "Demo CAD" in info
     assert "installed" in install.lower()

@@ -155,7 +155,7 @@ test.describe("UI Consistency and Theme Configuration", () => {
     // The legacy server-card fixtures are intentionally no longer rendered on
     // this capability-first route.
     const capabilityLibrary = page.getByRole("region", {
-      name: "Engineering Capability Library",
+      name: "Engineering MCP Server Library",
     });
     const calcCard = capabilityLibrary.getByRole("article").nth(0);
     const openscadCard = capabilityLibrary.getByRole("article").nth(1);

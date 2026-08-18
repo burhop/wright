@@ -390,7 +390,7 @@ servers:
     windows_11_x64:
       status: likely
       tested: false
-      notes: Node stdio server; requires Autodesk APS/ACC credentials
+      notes: Native Windows qualification stopped without installation because the official repository is archived and operation requires Autodesk APS/ACC credentials plus private-key material.
     linux_x64:
       status: 'yes'
       tested: true
@@ -426,6 +426,44 @@ servers:
     - SSA_ID
     - SSA_KEY_ID
     - SSA_KEY_PATH
+  windows_qualification:
+    observed_at: '2026-08-14T03:14:37.508822Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/aps-mcp-server-nodejs-windows-qualification.json
+    evidence_digest: eeab31b22d0a9185b942bfb379163691bc2462407ba2534827a9fe77102a30fb
+    current: true
+    stale_reasons: []
+    source:
+      result: obsolete_or_unavailable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    package_or_registration:
+      result: not_applicable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    startup:
+      result: not_applicable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    protocol:
+      result: not_applicable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    host_or_backend:
+      result: not_applicable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    wright_setup:
+      result: not_applicable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    gateway:
+      result: not_applicable
+      label: Official source archived
+      reason_code: official_repository_archived_and_credentials_required
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: no_executable_action
 - id: aps-mcp-server-petr
   name: Autodesk APS Community MCP
   vendor: petrbroz
@@ -2806,8 +2844,8 @@ servers:
   platform_support:
     windows_11_x64:
       status: 'yes'
-      tested: false
-      notes: official Autodesk remote MCP endpoint; Wright Streamable HTTP runner initialized and listed tools
+      tested: true
+      notes: Native Windows qualification initialized the exact public endpoint, negotiated MCP 2025-11-25, listed 2 tools, and passed get_available_products; Wright setup stopped before publisher terms were recorded.
     linux_x64:
       status: 'yes'
       tested: true
@@ -2837,6 +2875,44 @@ servers:
     missing_dependencies: []
   follow_up_url: null
   install_blocked_reason: null
+  windows_qualification:
+    observed_at: '2026-08-14T03:14:38.809589Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/autodesk-product-help-mcp-windows-qualification.json
+    evidence_digest: 683f1deed9e9b1a308ac78e2a978228020c5e146a1040650b2d13920d07f50b9
+    current: true
+    stale_reasons: []
+    source:
+      result: passed
+      label: Source reviewed
+      reason_code: reviewed_source_identity_loaded
+    package_or_registration:
+      result: not_applicable
+      label: No local package required
+      reason_code: no_local_package
+    startup:
+      result: passed
+      label: MCP server started
+      reason_code: mcp_initialized
+    protocol:
+      result: passed
+      label: MCP protocol passed
+      reason_code: mcp_tools_listed
+    host_or_backend:
+      result: passed
+      label: Approved probe passed
+      reason_code: safe_probe_passed
+    wright_setup:
+      result: partial
+      label: Publisher terms not recorded
+      reason_code: wright_external_license_incomplete
+    gateway:
+      result: not_tested
+      label: Not tested
+      reason_code: stage_not_run
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: isolated_root_removed
 - id: freecad-booleans-lucygoodchild
   name: FreeCAD Booleans
   vendor: github.com
@@ -3313,8 +3389,8 @@ servers:
   platform_support:
     windows_11_x64:
       status: 'yes'
-      tested: false
-      notes: Wright Windows MCP bundle declares a Node launch wrapper for brepjs-cad.
+      tested: true
+      notes: Native Windows qualification installed pinned brepjs-cad 0.103.0, initialized MCP, and listed 2 tools; the approved tool probe fails in the upstream entrypoint when a data URL is passed to fileURLToPath.
     linux_x64:
       status: 'yes'
       tested: true
@@ -3343,6 +3419,44 @@ servers:
     message: Catalog entry added from Wright bundle metadata; run clean-container MCP protocol and safe STEP export probes before marking passed.
     environment: null
     missing_dependencies: []
+  windows_qualification:
+    observed_at: '2026-08-14T03:13:43.976756Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/brep-mcp-windows-qualification.json
+    evidence_digest: a2856dee92fab6dd068ce5217bc6831b5ed7dc834f45e6e84d4223adc780f439
+    current: true
+    stale_reasons: []
+    source:
+      result: passed
+      label: Source reviewed
+      reason_code: reviewed_source_identity_loaded
+    package_or_registration:
+      result: passed
+      label: MCP package installed
+      reason_code: pinned_npm_package_installed
+    startup:
+      result: passed
+      label: MCP server started
+      reason_code: mcp_initialized
+    protocol:
+      result: passed
+      label: MCP protocol passed
+      reason_code: mcp_tools_listed
+    host_or_backend:
+      result: failed
+      label: Upstream tool startup bug
+      reason_code: safe_probe_upstream_entrypoint_defect
+    wright_setup:
+      result: not_tested
+      label: Not tested
+      reason_code: stage_not_run
+    gateway:
+      result: not_tested
+      label: Not tested
+      reason_code: stage_not_run
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: isolated_root_removed
 - id: solid-edge-mcp-burhop
   name: SolidEdgeMCP
   vendor: burhop
@@ -3404,8 +3518,8 @@ servers:
   platform_support:
     windows_11_x64:
       status: host-dependent
-      tested: false
-      notes: Requires licensed Solid Edge and COM/desktop automation access.
+      tested: true
+      notes: Native Windows qualification built pinned source, initialized MCP, and listed 12 tools without launching or changing Solid Edge; cad.get_status fails output validation when no active document is open because activeDocument is omitted despite being schema-required.
     linux_x64:
       status: 'no'
       tested: true
@@ -3436,6 +3550,44 @@ servers:
     environment: null
     missing_dependencies:
     - Solid Edge
+  windows_qualification:
+    observed_at: '2026-08-14T03:14:37.293030Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/solid-edge-mcp-burhop-windows-qualification.json
+    evidence_digest: b5c13d9acc67e697a52fef66d2f82f1e98bcf7d23a2b3f22f8b6429cf25676b8
+    current: true
+    stale_reasons: []
+    source:
+      result: passed
+      label: Source reviewed
+      reason_code: reviewed_source_identity_loaded
+    package_or_registration:
+      result: passed
+      label: MCP package installed
+      reason_code: reviewed_dotnet_source_built
+    startup:
+      result: passed
+      label: MCP server started
+      reason_code: mcp_initialized
+    protocol:
+      result: passed
+      label: MCP protocol passed
+      reason_code: mcp_tools_listed
+    host_or_backend:
+      result: failed
+      label: Status result violates MCP schema
+      reason_code: safe_probe_output_schema_mismatch
+    wright_setup:
+      result: not_tested
+      label: Not tested
+      reason_code: stage_not_run
+    gateway:
+      result: not_tested
+      label: Not tested
+      reason_code: stage_not_run
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: isolated_root_removed
 - id: matlab-mcp-server
   name: MATLAB MCP Server
   vendor: MathWorks
@@ -3677,7 +3829,7 @@ servers:
     windows_11_x64:
       status: host-dependent
       tested: false
-      notes: Requires Autodesk Fusion running locally with the MCP server enabled.
+      notes: Native Windows qualification found no preconfigured clean Fusion MCP session and did not launch, configure, or modify Autodesk Fusion.
     linux_x64:
       status: 'no'
       tested: false
@@ -3708,6 +3860,44 @@ servers:
     environment: null
     missing_dependencies:
     - Autodesk Fusion
+  windows_qualification:
+    observed_at: '2026-08-14T03:14:38.952365Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/autodesk-fusion-desktop-mcp-windows-qualification.json
+    evidence_digest: 73cd9e4576dca37dab772488d5528bef945178f636385c4d2af012226d95f47b
+    current: true
+    stale_reasons: []
+    source:
+      result: obsolete_or_unavailable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    package_or_registration:
+      result: not_applicable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    startup:
+      result: not_applicable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    protocol:
+      result: not_applicable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    host_or_backend:
+      result: not_applicable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    wright_setup:
+      result: not_applicable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    gateway:
+      result: not_applicable
+      label: Clean Fusion session unavailable
+      reason_code: no_preconfigured_clean_fusion_mcp_session
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: no_executable_action
 - id: autodesk-fusion-data-mcp
   name: Autodesk Fusion Data MCP
   vendor: Autodesk
@@ -3760,7 +3950,7 @@ servers:
     windows_11_x64:
       status: likely
       tested: false
-      notes: Remote endpoint works with MCP clients that support the built-in Autodesk auth flow.
+      notes: Native Windows qualification stopped before endpoint contact because an exact credential-free MCP endpoint was unavailable and Autodesk OAuth was outside the approved safety boundary.
     linux_x64:
       status: likely
       tested: false
@@ -3790,6 +3980,44 @@ servers:
     environment: null
     missing_dependencies:
     - Autodesk account
+  windows_qualification:
+    observed_at: '2026-08-14T03:14:39.083892Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/autodesk-fusion-data-mcp-windows-qualification.json
+    evidence_digest: 8e49e9b6ccb1f49fd170a00df895dc1928224dae1a0d43f5443baf7713bcfc66
+    current: true
+    stale_reasons: []
+    source:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    package_or_registration:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    startup:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    protocol:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    host_or_backend:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    wright_setup:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    gateway:
+      result: safety_blocked
+      label: OAuth safety boundary
+      reason_code: oauth_and_exact_credential_free_endpoint_unavailable
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: no_executable_action
 - id: openfoam-mcp-webworn
   name: OpenFOAM MCP Server
   vendor: webworn
@@ -5842,7 +6070,7 @@ servers:
     windows_11_x64:
       status: likely
       tested: false
-      notes: Remote protocol should be platform-neutral; Wright has not performed a live connection.
+      notes: Native Windows qualification did not contact the endpoint because the official Labs page still marks the MCP as coming soon and subscription or publisher terms were not completed.
     linux_x64:
       status: likely
       tested: false
@@ -5872,4 +6100,42 @@ servers:
     environment: null
     missing_dependencies: []
     evidence_status: unverified
+  windows_qualification:
+    observed_at: '2026-08-14T03:14:39.243338Z'
+    evidence_path: docs/mcp-catalog/evidence/windows-qualification-2026-08-13/onshape-labs-featurescript-mcp-windows-qualification.json
+    evidence_digest: d6eb1d9b7f8253321cf110b10f5aab75aff8847e3930c41eb6956220125af078
+    current: true
+    stale_reasons: []
+    source:
+      result: obsolete_or_unavailable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    package_or_registration:
+      result: not_applicable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    startup:
+      result: not_applicable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    protocol:
+      result: not_applicable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    host_or_backend:
+      result: not_applicable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    wright_setup:
+      result: not_applicable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    gateway:
+      result: not_applicable
+      label: Preview not generally available
+      reason_code: official_labs_page_still_marks_mcp_coming_soon
+    cleanup:
+      result: passed
+      label: Cleanup complete
+      reason_code: no_executable_action
 format_version: 1

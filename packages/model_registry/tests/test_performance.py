@@ -279,20 +279,26 @@ async def test_gateway_model_tool_overhead_stays_below_ten_percent() -> None:
     tool = provider.tools(session)[0]
     direct = []
     mediated = []
+    # Average small batches before calculating p95. A single Windows scheduler
+    # delay is otherwise larger than the sub-millisecond mediation budget and
+    # makes this benchmark report a gateway regression that is not repeatable.
+    batch_size = 8
     for index in range(12):
         started = time.perf_counter()
-        await application.invoke_model_capability(arguments={"x": 2})
-        direct.append(time.perf_counter() - started)
+        for _ in range(batch_size):
+            await application.invoke_model_capability(arguments={"x": 2})
+        direct.append((time.perf_counter() - started) / batch_size)
         started = time.perf_counter()
-        await provider.call(
-            session,
-            tool,
-            {"x": 2},
-            request_id=f"performance-{index}",
-            approval_context={},
-            progress_callback=None,
-        )
-        mediated.append(time.perf_counter() - started)
+        for iteration in range(batch_size):
+            await provider.call(
+                session,
+                tool,
+                {"x": 2},
+                request_id=f"performance-{index}-{iteration}",
+                approval_context={},
+                progress_callback=None,
+            )
+        mediated.append((time.perf_counter() - started) / batch_size)
     baseline = _p95(direct)
     overhead = _p95(mediated) - baseline
     assert overhead / baseline < 0.10

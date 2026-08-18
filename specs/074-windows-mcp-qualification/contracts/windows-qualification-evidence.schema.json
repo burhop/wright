@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/windows-qualification-evidence.schema.json",
+  "title": "Windows MCP Qualification Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "server_id",
+    "policy_version",
+    "recipe_digest",
+    "machine_digest",
+    "credential_binding_digest",
+    "observed_at",
+    "safety_preflight",
+    "stages",
+    "attempted_server_ids",
+    "non_allowlist_actions",
+    "terminal_classification"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "evidence_id": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "server_id": {
+      "enum": [
+        "brep-mcp",
+        "solid-edge-mcp-burhop",
+        "aps-mcp-server-nodejs",
+        "autodesk-product-help-mcp",
+        "autodesk-fusion-desktop-mcp",
+        "autodesk-fusion-data-mcp",
+        "onshape-labs-featurescript-mcp"
+      ]
+    },
+    "policy_version": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "recipe_digest": { "$ref": "#/$defs/digest" },
+    "source_revision": { "type": ["string", "null"], "maxLength": 256 },
+    "package_version": { "type": ["string", "null"], "maxLength": 100 },
+    "package_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+    "tool_schema_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+    "machine_digest": { "$ref": "#/$defs/digest" },
+    "credential_binding_digest": { "$ref": "#/$defs/digest" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "maximum_age_hours": { "type": "integer", "minimum": 1, "maximum": 8760 },
+    "stale_reasons": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": { "type": "string", "maxLength": 200 }
+    },
+    "safety_preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "reason_code", "reviewed_at", "material_concerns", "residual_risks"],
+      "properties": {
+        "decision": { "enum": ["approved", "safety_blocked", "obsolete_or_unavailable"] },
+        "reason_code": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "reviewed_at": { "type": "string", "format": "date-time" },
+        "material_concerns": { "type": "array", "maxItems": 64, "items": { "type": "string", "maxLength": 2000 } },
+        "residual_risks": { "type": "array", "maxItems": 64, "items": { "type": "string", "maxLength": 2000 } }
+      }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/stage" }
+    },
+    "server_identity": { "type": ["string", "null"], "maxLength": 200 },
+    "server_version": { "type": ["string", "null"], "maxLength": 100 },
+    "protocol_version": { "type": ["string", "null"], "maxLength": 100 },
+    "tool_count": { "type": ["integer", "null"], "minimum": 0, "maximum": 10000 },
+    "installed_items": { "type": "array", "maxItems": 256, "items": { "type": "string", "maxLength": 500 } },
+    "cleanup_events": { "type": "array", "maxItems": 256, "items": { "type": "string", "maxLength": 1000 } },
+    "attempted_server_ids": { "type": "array", "maxItems": 7, "uniqueItems": true, "items": { "type": "string", "maxLength": 128 } },
+    "non_allowlist_actions": { "type": "array", "maxItems": 0 },
+    "limitations": { "type": "array", "maxItems": 64, "items": { "type": "string", "maxLength": 2000 } },
+    "residual_risks": { "type": "array", "maxItems": 64, "items": { "type": "string", "maxLength": 2000 } },
+    "follow_ups": { "type": "array", "maxItems": 64, "items": { "type": "string", "maxLength": 2000 } },
+    "terminal_classification": { "$ref": "#/$defs/result" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "result": {
+      "enum": ["passed", "partial", "failed", "safety_blocked", "obsolete_or_unavailable", "not_applicable", "not_tested"]
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "result", "reason_code", "summary", "recovery", "artifact_digests", "network_destinations_contacted"],
+      "properties": {
+        "stage": {
+          "enum": [
+            "source_current",
+            "windows_install_passed",
+            "mcp_started",
+            "protocol_passed",
+            "safe_probe_passed",
+            "wright_install_passed",
+            "wright_gateway_passed",
+            "cleanup_passed"
+          ]
+        },
+        "result": { "$ref": "#/$defs/result" },
+        "reason_code": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "summary": { "type": "string", "maxLength": 4000 },
+        "recovery": { "type": "string", "maxLength": 4000 },
+        "started_at": { "type": ["string", "null"], "format": "date-time" },
+        "finished_at": { "type": ["string", "null"], "format": "date-time" },
+        "duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+        "operation_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+        "output_digest": { "oneOf": [{ "$ref": "#/$defs/digest" }, { "type": "null" }] },
+        "artifact_digests": { "type": "array", "maxItems": 64, "items": { "$ref": "#/$defs/digest" } },
+        "observations": { "type": "object", "maxProperties": 64 },
+        "missing_requirements": { "type": "array", "maxItems": 32, "items": { "type": "string", "maxLength": 200 } },
+        "network_destinations_contacted": { "type": "array", "maxItems": 32, "uniqueItems": true, "items": { "type": "string", "format": "uri", "maxLength": 2048 } }
+      }
+    }
+  }
+}

@@ -27,7 +27,7 @@ export function CapabilityCard({
         style={{ display: "flex", gap: "var(--space-xs)", flexWrap: "wrap" }}
       >
         <EvidenceBadge value={capability.evidence_class} />
-        <CompatibilityBadge value={capability.compatibility.status} />
+        <CompatibilityBadge capability={capability} />
       </div>
       <div>
         <h2 style={{ fontSize: "1.08rem", margin: 0 }}>{capability.name}</h2>
@@ -75,7 +75,7 @@ export function CapabilityCard({
           type="button"
           data-testid={`capability-details-open-${capability.capability_id}`}
           onClick={() => onOpen(capability)}
-          aria-label={`View details for ${capability.name}`}
+          aria-label={`View MCP server details for ${capability.name}`}
           style={{
             border: "1px solid var(--color-secondary)",
             borderRadius: "var(--radius-lg)",

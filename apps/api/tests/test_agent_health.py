@@ -55,6 +55,46 @@ async def test_agent_health_reports_unknown_during_workspace_gateway_refresh(
 
 
 @pytest.mark.asyncio
+async def test_agent_health_returns_to_connected_after_workspace_gateway_refresh(
+    client, mock_agent_engine
+):
+    from api.main import app
+
+    calls = 0
+
+    async def connected_health():
+        nonlocal calls
+        calls += 1
+        return {
+            "state": "connected",
+            "latencyMs": 2.5,
+            "baseUrl": "http://127.0.0.1:8642",
+        }
+
+    sync_manager = SimpleNamespace(
+        active_agent="hermes",
+        gateway_refresh_in_progress=False,
+        gateway_refresh_pending=True,
+    )
+    app.state.agent_sync_manager = sync_manager
+    mock_agent_engine.base_url = "http://127.0.0.1:8642"
+    mock_agent_engine.check_health = connected_health
+
+    pending = await client.get("/api/agent/health")
+    sync_manager.gateway_refresh_pending = False
+    connected = await client.get("/api/agent/health")
+
+    assert pending.json()["state"] == "unknown"
+    assert connected.json() == {
+        "state": "connected",
+        "latencyMs": 2.5,
+        "baseUrl": "http://127.0.0.1:8642",
+        "error": None,
+    }
+    assert calls == 1
+
+
+@pytest.mark.asyncio
 async def test_inference_health_uses_agent_llm_backend_check(client, mock_agent_engine):
     async def llm_backend_health():
         return {

@@ -67,10 +67,7 @@ describe("MissingCapabilityForm", () => {
         onClose={vi.fn()}
       />,
     );
-    await user.type(
-      screen.getByLabelText("Capability or MCP name"),
-      saved.name,
-    );
+    await user.type(screen.getByLabelText("MCP server name"), saved.name);
     await user.clear(screen.getByLabelText("Vendor or publisher"));
     await user.type(screen.getByLabelText("Vendor or publisher"), saved.vendor);
     await user.type(
@@ -93,7 +90,7 @@ describe("MissingCapabilityForm", () => {
     );
     expect(await screen.findByRole("status")).toHaveTextContent("report-1");
     expect(screen.getByRole("status")).toHaveTextContent(
-      "not an installable capability",
+      "not an installable MCP server",
     );
   });
 
@@ -109,10 +106,7 @@ describe("MissingCapabilityForm", () => {
         onClose={vi.fn()}
       />,
     );
-    await user.type(
-      screen.getByLabelText("Capability or MCP name"),
-      "Broken source",
-    );
+    await user.type(screen.getByLabelText("MCP server name"), "Broken source");
     await user.type(
       screen.getByLabelText("What engineering task should it perform?"),
       "Inspect a model",
@@ -123,7 +117,7 @@ describe("MissingCapabilityForm", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Review the source URL.",
     );
-    expect(screen.getByLabelText("Capability or MCP name")).toHaveValue(
+    expect(screen.getByLabelText("MCP server name")).toHaveValue(
       "Broken source",
     );
     expect(

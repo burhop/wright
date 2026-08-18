@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wright.local/schemas/windows-qualification-recipe.schema.json",
+  "title": "Windows MCP Qualification Recipe",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "recipe_id", "server_id", "publisher", "source", "license", "locality", "transport", "allowed_network_destinations", "credential_requirements", "host_requirements", "risk_findings", "operations", "cleanup"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "recipe_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"},
+    "server_id": {"$ref": "#/$defs/serverId"},
+    "publisher": {"type": "string", "minLength": 1, "maxLength": 200},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "url", "immutable_revision", "maintenance_expectation"],
+      "properties": {
+        "kind": {"enum": ["git", "npm", "vendor_docs", "built_in_host", "remote_endpoint"]},
+        "url": {"type": "string", "format": "uri", "maxLength": 2048},
+        "immutable_revision": {"type": ["string", "null"], "maxLength": 256},
+        "package_name": {"type": ["string", "null"], "maxLength": 200},
+        "package_version": {"type": ["string", "null"], "maxLength": 100},
+        "artifact_integrity": {"type": ["string", "null"], "maxLength": 512},
+        "maintenance_expectation": {"enum": ["active", "preview", "built_in", "archived", "missing", "unknown"]}
+      }
+    },
+    "license": {"type": "string", "minLength": 1, "maxLength": 500},
+    "locality": {"enum": ["local_package", "built_in_host", "remote"]},
+    "transport": {"enum": ["stdio", "streamable_http", "sse"]},
+    "allowed_network_destinations": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "format": "uri", "maxLength": 2048}},
+    "credential_requirements": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "maxLength": 200}},
+    "host_requirements": {"type": "array", "maxItems": 16, "uniqueItems": true, "items": {"type": "string", "maxLength": 200}},
+    "risk_findings": {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/risk"}},
+    "operations": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/operation"}},
+    "safe_probe": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/safeProbe"}]},
+    "expected_residue": {"type": "array", "maxItems": 128, "items": {"type": "string", "maxLength": 500}},
+    "cleanup": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/operation"}}
+  },
+  "$defs": {
+    "serverId": {"enum": ["brep-mcp", "solid-edge-mcp-burhop", "aps-mcp-server-nodejs", "autodesk-product-help-mcp", "autodesk-fusion-desktop-mcp", "autodesk-fusion-data-mcp", "onshape-labs-featurescript-mcp"]},
+    "stage": {"enum": ["source_current", "windows_install_passed", "mcp_started", "protocol_passed", "safe_probe_passed", "wright_install_passed", "wright_gateway_passed", "cleanup_passed"]},
+    "risk": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capability", "severity", "boundary", "rationale"],
+      "properties": {"capability": {"type": "string", "maxLength": 200}, "severity": {"enum": ["low", "medium", "high", "critical"]}, "boundary": {"type": "string", "maxLength": 1000}, "rationale": {"type": "string", "maxLength": 2000}}
+    },
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["operation_id", "stage", "kind", "timeout_seconds", "output_limit_bytes", "parameters"],
+      "properties": {
+        "operation_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"},
+        "stage": {"$ref": "#/$defs/stage"},
+        "kind": {"enum": ["source_metadata", "npm_local_install", "git_checkout", "dotnet_local_build", "stdio_mcp", "remote_mcp", "loopback_mcp", "wright_onboarding", "wright_gateway", "residue_snapshot", "stop_owned_processes", "remove_isolated_root"]},
+        "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 900},
+        "output_limit_bytes": {"type": "integer", "minimum": 1024, "maximum": 65536},
+        "parameters": {"type": "object", "maxProperties": 32}
+      }
+    },
+    "safeProbe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["tool_name", "arguments", "mode", "safety_rationale", "write_scope"],
+      "properties": {"tool_name": {"type": "string", "minLength": 1, "maxLength": 200}, "arguments": {"type": "object", "maxProperties": 32}, "mode": {"enum": ["read_only", "disposable_brep_geometry"]}, "safety_rationale": {"type": "string", "minLength": 1, "maxLength": 2000}, "write_scope": {"type": ["string", "null"], "maxLength": 500}}
+    }
+  }
+}
+

@@ -1,0 +1,193 @@
+{
+  "attempted_server_ids": [
+    "solid-edge-mcp-burhop"
+  ],
+  "cleanup_events": [
+    "owned_process_check_complete",
+    "removed_disposable_server_root"
+  ],
+  "credential_binding_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "evidence_id": "solid-edge-mcp-burhop-windows-20260814T031437Z",
+  "follow_ups": [],
+  "installed_items": [
+    "git:solid-edge-mcp-burhop@2aad5bd24df6ce1ac9578ad35c4da7ac241b5330",
+    "SolidEdgeMcpServer.exe"
+  ],
+  "limitations": [],
+  "machine_digest": "cff7b45ee81f951a43245697237f3223154d02f4f2175c7555131a7c6b8c0342",
+  "maximum_age_hours": 24,
+  "non_allowlist_actions": [],
+  "observed_at": "2026-08-14T03:14:37.293030Z",
+  "package_digest": null,
+  "package_version": null,
+  "policy_version": "windows-allowlist-v1",
+  "protocol_version": "2025-11-25",
+  "recipe_digest": "f7c9c8e9b3918c6216e5430aeb44f3158e1a8019c5783bef1b54c64c658feaee",
+  "residual_risks": [],
+  "safety_preflight": {
+    "decision": "approved",
+    "material_concerns": [
+      "The server exposes CAD mutation tools and attaches to a live commercial Solid Edge session",
+      "The repository does not grant redistribution beyond its Internal-Use-Only terms"
+    ],
+    "reason_code": "pinned_source_isolated_build_and_read_only_status_probe",
+    "residual_risks": [
+      "Only cad.get_status with providerId solid_edge may be called",
+      "The MCP process must not start, stop, configure, or mutate the user-owned Solid Edge process or its documents",
+      "Build network access is limited to the pinned GitHub source and the official NuGet v3 endpoint"
+    ],
+    "reviewed_at": "2026-08-13T22:52:43.105943-04:00"
+  },
+  "schema_version": "1.0",
+  "server_id": "solid-edge-mcp-burhop",
+  "server_identity": "SolidEdgeMcpServer",
+  "server_version": "1.0.0.0",
+  "source_revision": "2aad5bd24df6ce1ac9578ad35c4da7ac241b5330",
+  "stages": [
+    {
+      "artifact_digests": [],
+      "duration_ms": 0,
+      "finished_at": "2026-08-14T03:13:44.122803Z",
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "reviewed_source_identity_loaded",
+      "recovery": "",
+      "result": "passed",
+      "stage": "source_current",
+      "started_at": "2026-08-14T03:13:44.122803Z",
+      "summary": "The pinned source identity passed recipe validation."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": 18921,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "exit_code": 0,
+        "output_bytes": 882,
+        "output_truncated": false,
+        "timed_out": false
+      },
+      "operation_digest": null,
+      "output_digest": "5a2e25b72ba7952f7e75a8dabad2296848f204f15b44f0f5d3366c7f843b9bd8",
+      "reason_code": "reviewed_dotnet_source_built",
+      "recovery": "",
+      "result": "passed",
+      "stage": "windows_install_passed",
+      "started_at": null,
+      "summary": "The reviewed MCP source built in the disposable root."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "protocol_version": "2025-11-25",
+        "server_identity": "SolidEdgeMcpServer",
+        "server_version": "1.0.0.0",
+        "tool_count": 12,
+        "tool_schema_digest": "c51d1ec7ecb5963c381ade4298a3bd9918357d193a0a38f983fd31515d35074b"
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "mcp_initialized",
+      "recovery": "",
+      "result": "passed",
+      "stage": "mcp_started",
+      "started_at": null,
+      "summary": "The MCP server completed initialization."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "tool_count": 12
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "mcp_tools_listed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "protocol_passed",
+      "started_at": null,
+      "summary": "Initialization and tool discovery completed through MCP."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "safe_probe_output_schema_mismatch",
+      "recovery": "Upstream must emit the required nullable activeDocument property when Solid Edge has no active document.",
+      "result": "failed",
+      "stage": "safe_probe_passed",
+      "started_at": null,
+      "summary": "The approved status call returned structured content that violated the server's published output schema."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "stage_not_run",
+      "recovery": "Review prerequisites and rerun qualification.",
+      "result": "not_tested",
+      "stage": "wright_install_passed",
+      "started_at": null,
+      "summary": "This stage was not attempted."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "stage_not_run",
+      "recovery": "Review prerequisites and rerun qualification.",
+      "result": "not_tested",
+      "stage": "wright_gateway_passed",
+      "started_at": null,
+      "summary": "This stage was not attempted."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": 0,
+      "finished_at": "2026-08-14T03:14:35.230758Z",
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "isolated_root_removed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "cleanup_passed",
+      "started_at": "2026-08-14T03:14:35.230758Z",
+      "summary": "Disposable server root was removed."
+    }
+  ],
+  "stale_reasons": [],
+  "terminal_classification": "failed",
+  "tool_count": 12,
+  "tool_schema_digest": "c51d1ec7ecb5963c381ade4298a3bd9918357d193a0a38f983fd31515d35074b"
+}

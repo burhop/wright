@@ -107,6 +107,54 @@ const capability: CapabilityView = {
     reason_codes: [],
     limitation: "Read-only probe only; no tool-call approval was granted.",
   },
+  windows_qualification: {
+    observed_at: "2026-08-13T12:00:00Z",
+    evidence_path:
+      "docs/mcp-catalog/evidence/windows-qualification-2026-08-13/onshape-labs-featurescript-mcp-windows-qualification.json",
+    evidence_digest: "a".repeat(64),
+    current: true,
+    stale_reasons: [],
+    source: {
+      result: "passed",
+      label: "Publisher source verified",
+      reason_code: "source_verified",
+    },
+    package_or_registration: {
+      result: "partial",
+      label: "Registration not completed",
+      reason_code: "publisher_terms_required",
+    },
+    startup: {
+      result: "not_applicable",
+      label: "Remote service",
+      reason_code: "remote_service",
+    },
+    protocol: {
+      result: "not_tested",
+      label: "Protocol check not run",
+      reason_code: "terms_not_completed",
+    },
+    host_or_backend: {
+      result: "partial",
+      label: "Onshape account needed",
+      reason_code: "account_required",
+    },
+    wright_setup: {
+      result: "not_tested",
+      label: "Wright setup not run",
+      reason_code: "terms_not_completed",
+    },
+    gateway: {
+      result: "not_tested",
+      label: "Gateway check not run",
+      reason_code: "terms_not_completed",
+    },
+    cleanup: {
+      result: "passed",
+      label: "No local residue",
+      reason_code: "no_local_changes",
+    },
+  },
   custom: false,
   available_actions: ["view_details", "observe", "plan_onboarding"],
   alternatives: ["jarvis-onshape-mcp"],
@@ -160,12 +208,12 @@ describe("CapabilityLibrary", () => {
     );
     expect(
       screen.getByTestId("evidence-badge-official_preview"),
-    ).toHaveTextContent("Official preview");
+    ).toHaveTextContent("Publisher preview");
     expect(
       screen.getByTestId("compatibility-badge-uncertain"),
-    ).toHaveTextContent("Compatibility uncertain");
+    ).toHaveTextContent("Connection check needed");
     expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
-      "Review compatibility evidence",
+      "Review setup requirements",
     );
     expect(screen.getByTestId("capability-next-action")).toHaveTextContent(
       "Blocker origin: this machine",
@@ -174,8 +222,14 @@ describe("CapabilityLibrary", () => {
       "does not install",
     );
 
-    await user.click(screen.getByRole("button", { name: /view details/i }));
+    await user.click(
+      screen.getByRole("button", { name: /view MCP server details/i }),
+    );
     const dialog = screen.getByRole("dialog");
+    expect(screen.getByTestId("capability-details-backdrop")).toBeVisible();
+    expect(dialog).toHaveClass("capability-dialog");
+    expect(dialog.querySelector(".capability-dialog__content")).toBeTruthy();
+    expect(dialog.querySelector(".capability-dialog__footer")).toBeTruthy();
     expect(dialog).toHaveTextContent("Network access was not confirmed");
     expect(dialog).toHaveTextContent("App Store subscription");
     expect(dialog).toHaveTextContent("FeatureScript source");
@@ -186,6 +240,10 @@ describe("CapabilityLibrary", () => {
     expect(dialog).toHaveTextContent("Wright has not contacted the endpoint");
     expect(dialog).toHaveTextContent("jarvis-onshape-mcp");
     expect(dialog).toHaveTextContent("Local validation: passed");
+    expect(dialog).toHaveTextContent("Windows qualification");
+    expect(dialog).toHaveTextContent("Registration not completed");
+    expect(dialog).toHaveTextContent("Onshape account needed");
+    expect(dialog).toHaveTextContent("No local residue");
     expect(dialog).toHaveTextContent("Bracket workspace");
     expect(dialog).toHaveTextContent(
       "does not approve individual tool calls or destructive actions",
@@ -196,7 +254,7 @@ describe("CapabilityLibrary", () => {
     render(<CapabilityLibrary />);
     await screen.findByText(capability.name);
 
-    fireEvent.change(screen.getByLabelText("Search capabilities"), {
+    fireEvent.change(screen.getByLabelText("Search MCP servers"), {
       target: { value: "bracket" },
     });
     fireEvent.change(screen.getByLabelText("Engineering domain"), {
@@ -215,7 +273,7 @@ describe("CapabilityLibrary", () => {
     fireEvent.change(screen.getByLabelText("Evidence class"), {
       target: { value: "official_preview" },
     });
-    fireEvent.change(screen.getByLabelText("Compatibility"), {
+    fireEvent.change(screen.getByLabelText("Setup readiness"), {
       target: { value: "uncertain" },
     });
     fireEvent.change(screen.getByLabelText("Risk level"), {
@@ -260,12 +318,14 @@ describe("CapabilityLibrary", () => {
   it("supports keyboard detail opening and local observation", async () => {
     const user = userEvent.setup();
     render(<CapabilityLibrary />);
-    const button = await screen.findByRole("button", { name: /view details/i });
+    const button = await screen.findByRole("button", {
+      name: /view MCP server details/i,
+    });
     button.focus();
     await user.keyboard("{Enter}");
     expect(screen.getByTestId("capability-details-close")).toHaveFocus();
     await user.click(
-      screen.getByRole("button", { name: /check this machine again/i }),
+      screen.getByRole("button", { name: /check this computer/i }),
     );
     expect(mcpService.observeCapability).toHaveBeenCalledWith(
       "onshape-labs-featurescript-mcp",
@@ -273,6 +333,24 @@ describe("CapabilityLibrary", () => {
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(button).toHaveFocus();
+  });
+
+  it("closes capability details before handing off to setup", async () => {
+    const user = userEvent.setup();
+    const onPlanOnboarding = vi.fn();
+    render(<CapabilityLibrary onPlanOnboarding={onPlanOnboarding} />);
+
+    await user.click(
+      await screen.findByRole("button", { name: /view MCP server details/i }),
+    );
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "Install MCP server" }),
+    );
+
+    expect(onPlanOnboarding).toHaveBeenCalledWith(capability.capability_id);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("renders honest empty and unavailable states", async () => {
@@ -292,7 +370,7 @@ describe("CapabilityLibrary", () => {
     );
     render(<CapabilityLibrary />);
     expect(await screen.findByRole("alert")).toHaveTextContent(
-      "bundled Capability Library could not be loaded",
+      "bundled MCP Server Library could not be loaded",
     );
     expect(
       screen.getByRole("button", { name: "Try loading again" }),

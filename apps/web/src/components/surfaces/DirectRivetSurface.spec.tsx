@@ -95,6 +95,47 @@ describe("DirectRivetSurface", () => {
     return { frame, postMessage };
   };
 
+  it("shows a visible, actionable result after checking the graph", async () => {
+    const user = userEvent.setup();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+    mocks.lintRivetWorkflowGraph.mockResolvedValue({
+      ...workflow,
+      graph_id: "graph-1",
+      snapshot_digest: "snapshot-1",
+      policy_snapshot_digest: "policy-1",
+      requirements: [],
+      capabilities: [],
+      issues: [],
+      next_after: null,
+    });
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?wrightMinimal=1&workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+      />,
+    );
+    await waitFor(() =>
+      expect(mocks.readRivetWorkflow).toHaveBeenCalledWith(
+        "session-1",
+        "rivet",
+      ),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Check Rivet graph" }));
+
+    expect(mocks.lintRivetWorkflowGraph).toHaveBeenCalledWith(
+      "session-1",
+      "rivet",
+    );
+    expect(
+      await screen.findByTestId("direct-rivet-run-feedback"),
+    ).toHaveTextContent("Graph checked · no problems found.");
+  });
+
   it("opens and saves Rivet workflows through Wright workspace APIs", async () => {
     const user = userEvent.setup();
     const loaded = vi.fn();

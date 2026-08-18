@@ -4,6 +4,14 @@ import { hostAdapter } from "./host-adapter";
 // workspace reloads its isolated Rivet iframe instead of retaining old code.
 const RIVET_EDITOR_ARTIFACT_REVISION = "6b12fce1";
 
+export function workspaceRivetWorkflowSlug(filePath: string): string | null {
+  const normalized = filePath.trim().replace(/\\/g, "/").replace(/\/+/g, "/");
+  const match = normalized.match(
+    /^\/?workflows\/([a-z0-9][a-z0-9-]{0,62})\/workflow\.rivet-project$/,
+  );
+  return match?.[1] || null;
+}
+
 export function directRivetEditorUrl(
   environment: Record<string, unknown> = import.meta.env,
 ): string | null {

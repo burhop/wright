@@ -137,7 +137,7 @@ export function CapabilityFilters({
 
   return (
     <form
-      aria-label="Capability filters"
+      aria-label="MCP server filters"
       onSubmit={(event) => event.preventDefault()}
       style={{
         display: "grid",
@@ -146,9 +146,9 @@ export function CapabilityFilters({
       }}
     >
       <label>
-        <span className="sr-only">Search capabilities</span>
+        <span className="sr-only">Search MCP servers</span>
         <input
-          aria-label="Search capabilities"
+          aria-label="Search MCP servers"
           data-testid="capability-search"
           type="search"
           value={value.search}
@@ -190,7 +190,7 @@ export function CapabilityFilters({
           <option value="verified_api_wrapper_candidate">API candidate</option>
           <option value="watchlist">Watchlist</option>
           <option value="user_reported_url_needed">Source needed</option>
-          <option value="capability_alias">Capability alias</option>
+          <option value="capability_alias">Integration listing</option>
           <option value="ui_or_web_standard">UI or web standard</option>
           <option value="excluded">Excluded</option>
         </select>
@@ -254,9 +254,9 @@ export function CapabilityFilters({
         </select>
       </label>
       <label>
-        <span className="sr-only">Compatibility</span>
+        <span className="sr-only">Setup readiness</span>
         <select
-          aria-label="Compatibility"
+          aria-label="Setup readiness"
           data-testid="capability-filter-compatibility"
           value={value.compatibility}
           onChange={(event) =>
@@ -266,11 +266,11 @@ export function CapabilityFilters({
           }
           style={{ ...controlStyle, width: "100%" }}
         >
-          <option value="">All compatibility</option>
-          <option value="compatible">Compatible</option>
-          <option value="uncertain">Uncertain</option>
-          <option value="incompatible">Incompatible</option>
-          <option value="blocked">Blocked</option>
+          <option value="">All setup states</option>
+          <option value="compatible">Ready to set up</option>
+          <option value="uncertain">Check required</option>
+          <option value="incompatible">Requirements missing</option>
+          <option value="blocked">Setup blocked</option>
         </select>
       </label>
       <label>

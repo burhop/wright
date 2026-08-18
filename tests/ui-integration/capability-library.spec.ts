@@ -300,7 +300,7 @@ test.describe("Offline Capability Library", () => {
     await page.getByLabel("Evidence class").selectOption("official_preview");
     await expect(page).toHaveURL(/domain=cad/);
     await expect(page).toHaveURL(/evidence_class=official_preview/);
-    await page.getByLabel("Search capabilities").fill("no result");
+    await page.getByLabel("Search MCP servers").fill("no result");
     await expect(page.getByTestId("capability-empty-state")).toBeVisible();
   });
 
@@ -321,18 +321,18 @@ test.describe("Offline Capability Library", () => {
 
     await page.goto("/tool-registry");
     await page.getByLabel("Engineering domain").selectOption("cfd");
-    await page.getByLabel("Search capabilities").fill("no result");
+    await page.getByLabel("Search MCP servers").fill("no result");
     await expect(page.getByTestId("capability-empty-state")).toBeVisible();
     await page
       .getByRole("button", { name: "Report this missing capability" })
       .click();
     const form = page.getByRole("dialog", {
-      name: "Report a missing capability",
+      name: "Report a missing MCP server",
     });
     await expect(
       form.getByTestId("missing-capability-search-context"),
     ).toContainText("no result · domain: cfd");
-    await form.getByLabel("Capability or MCP name").fill("Requested CFD MCP");
+    await form.getByLabel("MCP server name").fill("Requested CFD MCP");
     await form
       .getByLabel("What engineering task should it perform?")
       .fill("Run a steady-state enclosure cooling study");
@@ -386,9 +386,9 @@ test.describe("Live local Capability Library", () => {
     await page.goto("/tool-registry");
     expect((await response).status()).toBe(200);
     await expect(
-      page.getByRole("heading", { name: "Engineering Capability Library" }),
+      page.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeVisible();
-    await expect(page.getByLabel("Capability filters")).toBeVisible();
+    await expect(page.getByLabel("MCP server filters")).toBeVisible();
     expect(vendorRequests).toEqual([]);
   });
 });

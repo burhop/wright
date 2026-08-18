@@ -40,10 +40,30 @@ export interface CapabilityOnboardingHandoff {
 
 function errorMessage(error: unknown): string {
   if (error instanceof CapabilityApiError) {
+    if (error.errorCode === "install_plan_source_invalid") {
+      return "Choose an MCP server before continuing.";
+    }
+    if (error.errorCode === "onboarding_adapter_missing") {
+      return "Wright could not start this installer. Return to requirements and create a fresh installation plan.";
+    }
     return `${error.message} (${error.errorCode})${error.recovery ? ` ${error.recovery}` : ""}`;
   }
   return "The onboarding step could not be completed.";
 }
+
+const setupSteps: Array<{ step: WizardStep; label: string }> = [
+  { step: "source", label: "Requirements" },
+  { step: "review", label: "Review" },
+  { step: "credentials", label: "Install" },
+  { step: "workspace", label: "Workspace" },
+];
+
+const backendLabels: Record<string, string> = {
+  host_bridge: "Engineering application bridge",
+  remote_endpoint: "Remote MCP connection",
+  local_package: "Local MCP package",
+  local_command: "Local MCP command",
+};
 
 export function OnboardingWizard({
   isOpen,
@@ -57,7 +77,9 @@ export function OnboardingWizard({
   initialCapabilityId?: string;
 }) {
   const [step, setStep] = useState<WizardStep>("source");
-  const [sourceKind, setSourceKind] = useState<SourceKind>("catalog");
+  const [sourceKind, setSourceKind] = useState<SourceKind>(
+    initialCapabilityId ? "catalog" : "import",
+  );
   const [capabilityId, setCapabilityId] = useState(initialCapabilityId);
   const [configuration, setConfiguration] = useState("");
   const [name, setName] = useState("Imported MCP");
@@ -88,6 +110,8 @@ export function OnboardingWizard({
   useEffect(() => {
     if (isOpen) {
       setCapabilityId(initialCapabilityId);
+      setSourceKind(initialCapabilityId ? "catalog" : "import");
+      setExternalCompleted(false);
       previousFocus.current = document.activeElement as HTMLElement | null;
       closeButton.current?.focus();
     }
@@ -107,6 +131,7 @@ export function OnboardingWizard({
     }
     return "";
   }, [argumentsText, command, configuration, endpoint, name, sourceKind]);
+  const catalogSelection = Boolean(initialCapabilityId);
 
   if (!isOpen) return null;
 
@@ -120,6 +145,7 @@ export function OnboardingWizard({
     setWorkspaces([]);
     setSelectedWorkspaceId("");
     setEnablement(null);
+    setExternalCompleted(false);
     setError(null);
     onClose();
     window.setTimeout(() => previousFocus.current?.focus(), 0);
@@ -259,44 +285,25 @@ export function OnboardingWizard({
   return (
     <div
       ref={dialog}
+      className="mcp-onboarding-backdrop"
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-wizard-title"
       onKeyDown={keepFocusInDialog}
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 1200,
-        background: "rgba(0, 0, 0, 0.66)",
-        display: "grid",
-        placeItems: "center",
-        padding: "var(--space-lg)",
-      }}
     >
-      <section
-        style={{
-          width: "min(760px, 100%)",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          background: "var(--color-neutral)",
-          border: "1px solid var(--color-border)",
-          borderRadius: "var(--radius-lg)",
-          padding: "var(--space-xl)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: "var(--space-lg)",
-          }}
-        >
+      <section className="wright-form mcp-onboarding">
+        <header className="mcp-onboarding__header">
           <div>
-            <h2 id="onboarding-wizard-title" style={{ margin: 0 }}>
-              Add an engineering capability
+            <div className="mcp-onboarding__eyebrow">MCP server setup</div>
+            <h2 id="onboarding-wizard-title">
+              {catalogSelection
+                ? "Install MCP server"
+                : "Add custom MCP server"}
             </h2>
-            <p style={{ color: "var(--color-text-muted)" }}>
-              Review an exact plan before Wright makes any change.
+            <p>
+              {catalogSelection
+                ? "Review what Wright will add before anything changes."
+                : "Add an MCP server that is not already in the library."}
             </p>
           </div>
           <button
@@ -305,317 +312,453 @@ export function OnboardingWizard({
             data-testid="onboarding-close"
             onClick={resetAndClose}
             aria-label="Close onboarding"
+            className="mcp-onboarding__close"
           >
-            Close
+            <span aria-hidden="true">×</span>
           </button>
-        </div>
+        </header>
 
-        <div role="status" aria-live="polite">
-          Step: {step}
-        </div>
-        {error && <div role="alert">{error}</div>}
-
-        {step === "source" && (
-          <div style={{ display: "grid", gap: "var(--space-md)" }}>
-            <p>Nothing is installed, connected, or enabled during this step.</p>
-            <label>
-              Source
-              <select
-                data-testid="onboarding-source-kind"
-                value={sourceKind}
-                onChange={(event) =>
-                  setSourceKind(event.target.value as SourceKind)
-                }
+        <nav className="mcp-onboarding__steps" aria-label="Setup progress">
+          {setupSteps.map((item, index) => {
+            const activeIndex = Math.max(
+              0,
+              setupSteps.findIndex((candidate) => candidate.step === step),
+            );
+            const isActive = item.step === step;
+            const isComplete = index < activeIndex;
+            return (
+              <div
+                key={item.step}
+                className={`mcp-onboarding__step${isActive ? " is-active" : ""}${isComplete ? " is-complete" : ""}`}
+                aria-current={isActive ? "step" : undefined}
               >
-                <option value="catalog">Capability Library</option>
-                <option value="import">Paste MCP configuration</option>
-                <option value="remote">Remote MCP endpoint</option>
-                <option value="local">Advanced local command</option>
-                <option value="host">Engineering host bridge</option>
-              </select>
-            </label>
-            {(sourceKind === "catalog" || sourceKind === "host") && (
-              <label>
-                Capability ID
-                <input
-                  data-testid="onboarding-capability-id"
-                  value={capabilityId}
-                  onChange={(event) => setCapabilityId(event.target.value)}
-                />
-              </label>
-            )}
-            {sourceKind === "import" && (
-              <label>
-                MCP configuration JSON
-                <textarea
-                  data-testid="onboarding-configuration"
-                  rows={9}
-                  value={configuration}
-                  onChange={(event) => setConfiguration(event.target.value)}
-                />
-              </label>
-            )}
-            {(sourceKind === "remote" || sourceKind === "local") && (
-              <label>
-                Display name
-                <input
-                  data-testid="onboarding-display-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                />
-              </label>
-            )}
-            {sourceKind === "remote" && (
-              <label>
-                HTTPS MCP endpoint
-                <input
-                  data-testid="onboarding-endpoint"
-                  value={endpoint}
-                  onChange={(event) => setEndpoint(event.target.value)}
-                />
-              </label>
-            )}
-            {sourceKind === "local" && (
-              <>
-                <label>
-                  Literal executable
-                  <input
-                    data-testid="onboarding-command"
-                    value={command}
-                    onChange={(event) => setCommand(event.target.value)}
-                  />
-                </label>
-                <label>
-                  Literal arguments
-                  <input
-                    data-testid="onboarding-arguments"
-                    value={argumentsText}
-                    onChange={(event) => setArgumentsText(event.target.value)}
-                  />
-                </label>
-              </>
-            )}
-            <label>
-              Availability
-              <select
-                data-testid="onboarding-scope"
-                value={scope}
-                onChange={(event) =>
-                  setScope(event.target.value as typeof scope)
-                }
-              >
-                <option value="global_registered">Register only</option>
-                <option value="workspace">One workspace</option>
-              </select>
-            </label>
-            {scope === "workspace" && (
-              <label>
-                Workspace ID
-                <input
-                  data-testid="onboarding-workspace-id"
-                  value={workspaceId}
-                  onChange={(event) => setWorkspaceId(event.target.value)}
-                />
-              </label>
-            )}
-            {(sourceKind === "catalog" || sourceKind === "host") && (
-              <label>
-                <input
-                  data-testid="onboarding-terms-complete"
-                  type="checkbox"
-                  checked={externalCompleted}
-                  onChange={(event) =>
-                    setExternalCompleted(event.target.checked)
-                  }
-                />{" "}
-                I independently completed any publisher terms shown in the
-                Capability Library
-              </label>
-            )}
-            <button
-              type="button"
-              data-testid="onboarding-create-plan"
-              onClick={buildPlan}
-            >
-              Create read-only plan
-            </button>
-          </div>
-        )}
-
-        {step === "normalizing" && (
-          <p role="status">
-            Normalizing the source and checking this machine without installing
-            or connecting…
-          </p>
-        )}
-
-        {step === "review" && plan && (
-          <div data-testid="onboarding-plan-review">
-            <h3>Review exact plan</h3>
-            <p>
-              Backend: <strong>{plan.backend_kind}</strong> · State:{" "}
-              <strong>{plan.state}</strong>
-            </p>
-            {preview && (
-              <p>Normalized {preview.drafts.length} imported MCP definition.</p>
-            )}
-            <h4>Planned effects</h4>
-            <ol>
-              {plan.effects.map((effect) => (
-                <li key={String(effect.step_id)}>
-                  {String(effect.description)}
-                </li>
-              ))}
-            </ol>
-            {plan.blocking_reasons.length > 0 && (
-              <div role="alert">
-                <h4>Plan is blocked</h4>
-                {plan.blocking_reasons.map((reason) => (
-                  <p key={reason.code}>
-                    {reason.message} {reason.recovery}
-                  </p>
-                ))}
+                <span>{isComplete ? "✓" : index + 1}</span>
+                {item.label}
               </div>
-            )}
-            <button
-              type="button"
-              data-testid="onboarding-review-back"
-              onClick={() => setStep("source")}
-            >
-              Back
-            </button>{" "}
-            <button
-              type="button"
-              data-testid="onboarding-review-continue"
-              disabled={plan.state !== "reviewable"}
-              onClick={continueToCredentials}
-            >
-              Continue to credentials
-            </button>
+            );
+          })}
+        </nav>
+        {error && (
+          <div role="alert" className="mcp-onboarding__alert">
+            {error}
           </div>
         )}
 
-        {step === "credentials" && plan && (
-          <div>
-            <h3>Credential boundary</h3>
-            {plan.requirements.credentials.length ? (
-              <>
-                <p>
-                  Required credential names:{" "}
-                  {plan.requirements.credentials.join(", ")}. Values are saved
-                  only through Wright&apos;s secure credential flow and are
-                  never included in this plan.
-                </p>
-                <ul data-testid="credential-configuration-status">
-                  {plan.requirements.credentials.map((credential) => (
-                    <li key={credential}>
-                      {credential}:{" "}
-                      {credentialStatus?.configured[credential]
-                        ? "configured"
-                        : "not configured"}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : (
-              <p>This plan does not declare credential values.</p>
-            )}
-            <button
-              type="button"
-              data-testid="onboarding-credentials-back"
-              onClick={() => setStep("review")}
-            >
-              Back to plan
-            </button>{" "}
-            <button
-              type="button"
-              data-testid="onboarding-apply-plan"
-              onClick={applyPlan}
-            >
-              Approve and apply exact plan
-            </button>
-          </div>
-        )}
-
-        {step === "applying" && (
-          <p role="status">
-            Applying the approved plan with rollback tracking…
-          </p>
-        )}
-
-        {step === "validating" && (
-          <p role="status">
-            Validating MCP initialize, initialized notification, tool discovery,
-            and any catalog-approved read-only probeâ€¦
-          </p>
-        )}
-
-        {step === "workspace" && validation?.state === "passed" && (
-          <div data-testid="workspace-selection">
-            <h3>Choose one workspace</h3>
-            <p>
-              Validation passed with {validation.tool_count ?? 0} discovered
-              tools. Available in a workspace does not mean approved to run
-              every tool.
-            </p>
-            <label>
-              Workspace
-              <select
-                data-testid="onboarding-workspace-select"
-                value={selectedWorkspaceId}
-                onChange={(event) => setSelectedWorkspaceId(event.target.value)}
-              >
-                {workspaces.map((workspace) => (
-                  <option
-                    key={workspace.workspace_id}
-                    value={workspace.workspace_id}
+        <div className="mcp-onboarding__body">
+          {step === "source" && (
+            <div style={{ display: "grid", gap: "var(--space-md)" }}>
+              {catalogSelection ? (
+                <div
+                  data-testid="onboarding-selected-server"
+                  style={{
+                    padding: "var(--space-md)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "var(--radius-lg)",
+                    background: "var(--color-surface-subtle)",
+                  }}
+                >
+                  <strong>Selected server</strong>
+                  <div style={{ marginTop: 4 }}>{capabilityId}</div>
+                </div>
+              ) : (
+                <>
+                  <p>
+                    This check is read-only. It does not install software,
+                    connect an account, or enable tools.
+                  </p>
+                  <label>
+                    Source
+                    <select
+                      data-testid="onboarding-source-kind"
+                      value={sourceKind}
+                      onChange={(event) =>
+                        setSourceKind(event.target.value as SourceKind)
+                      }
+                    >
+                      <option value="import">Paste MCP configuration</option>
+                      <option value="remote">Remote MCP endpoint</option>
+                      <option value="local">Advanced local command</option>
+                      <option value="host">Engineering host bridge</option>
+                    </select>
+                  </label>
+                </>
+              )}
+              {(sourceKind === "catalog" || sourceKind === "host") && (
+                <label
+                  style={{ display: catalogSelection ? "none" : undefined }}
+                >
+                  MCP server ID
+                  <input
+                    data-testid="onboarding-capability-id"
+                    value={capabilityId}
+                    onChange={(event) => setCapabilityId(event.target.value)}
+                    readOnly={catalogSelection}
+                  />
+                </label>
+              )}
+              {sourceKind === "import" && (
+                <label>
+                  MCP configuration JSON
+                  <textarea
+                    data-testid="onboarding-configuration"
+                    rows={9}
+                    value={configuration}
+                    onChange={(event) => setConfiguration(event.target.value)}
+                  />
+                </label>
+              )}
+              {(sourceKind === "remote" || sourceKind === "local") && (
+                <label>
+                  Display name
+                  <input
+                    data-testid="onboarding-display-name"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                  />
+                </label>
+              )}
+              {sourceKind === "remote" && (
+                <label>
+                  HTTPS MCP endpoint
+                  <input
+                    data-testid="onboarding-endpoint"
+                    value={endpoint}
+                    onChange={(event) => setEndpoint(event.target.value)}
+                  />
+                </label>
+              )}
+              {sourceKind === "local" && (
+                <>
+                  <label>
+                    Literal executable
+                    <input
+                      data-testid="onboarding-command"
+                      value={command}
+                      onChange={(event) => setCommand(event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Literal arguments
+                    <input
+                      data-testid="onboarding-arguments"
+                      value={argumentsText}
+                      onChange={(event) => setArgumentsText(event.target.value)}
+                    />
+                  </label>
+                </>
+              )}
+              <label>
+                Use in
+                <select
+                  data-testid="onboarding-scope"
+                  value={scope}
+                  onChange={(event) =>
+                    setScope(event.target.value as typeof scope)
+                  }
+                >
+                  <option value="global_registered">All workspaces</option>
+                  <option value="workspace">One workspace now</option>
+                </select>
+              </label>
+              {scope === "workspace" && (
+                <label>
+                  Workspace ID
+                  <input
+                    data-testid="onboarding-workspace-id"
+                    value={workspaceId}
+                    onChange={(event) => setWorkspaceId(event.target.value)}
+                  />
+                </label>
+              )}
+              {(sourceKind === "catalog" || sourceKind === "host") && (
+                <div
+                  style={{
+                    padding: "var(--space-md)",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "var(--radius-lg)",
+                    background: "var(--color-surface-subtle)",
+                  }}
+                >
+                  <strong>Publisher requirements</strong>
+                  <p style={{ margin: "var(--space-xs) 0 var(--space-sm)" }}>
+                    Some servers require a publisher subscription, license, or
+                    terms acceptance. Wright cannot complete those steps for
+                    you.
+                  </p>
+                  <label
+                    style={{ display: "block", marginTop: "var(--space-sm)" }}
                   >
-                    {workspace.workspace_name || workspace.workspace_id}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              type="button"
-              data-testid="onboarding-enable-workspace"
-              onClick={enableWorkspace}
-            >
-              Make available in this workspace
-            </button>
-          </div>
-        )}
+                    <input
+                      data-testid="onboarding-terms-complete"
+                      type="checkbox"
+                      checked={externalCompleted}
+                      onChange={(event) =>
+                        setExternalCompleted(event.target.checked)
+                      }
+                    />{" "}
+                    I reviewed and completed any publisher requirements shown
+                    for this server.
+                  </label>
+                </div>
+              )}
+              {(sourceKind === "catalog" || sourceKind === "host") &&
+              !externalCompleted ? (
+                <p style={{ color: "var(--color-warning)", margin: 0 }}>
+                  Confirm the publisher requirements above to review the install
+                  plan.
+                </p>
+              ) : null}
+              <button
+                type="button"
+                className="wright-form__primary"
+                data-testid="onboarding-create-plan"
+                onClick={buildPlan}
+                disabled={
+                  (sourceKind === "catalog" || sourceKind === "host") &&
+                  (!capabilityId.trim() || !externalCompleted)
+                }
+              >
+                Review install plan
+              </button>
+            </div>
+          )}
 
-        {step === "enabling" && (
-          <p role="status">
-            Enabling this capability for one workspace onlyâ€¦
-          </p>
-        )}
-
-        {step === "complete" && run && (
-          <div>
-            <h3>Onboarding {run.state}</h3>
-            <p>
-              Run {run.run_id} finished with rollback state{" "}
-              {run.rollback_state || "not needed"}.
+          {step === "normalizing" && (
+            <p role="status">
+              Normalizing the source and checking this machine without
+              installing or connecting…
             </p>
-            {validation && (
-              <p>
-                Validation: {validation.state}
-                {validation.read_only_probe
-                  ? ` â€” ${validation.read_only_probe.limitation}`
-                  : ""}
-              </p>
-            )}
-            {enablement && <p>{enablement.message}</p>}
-            <button
-              type="button"
-              data-testid="onboarding-done"
-              onClick={resetAndClose}
+          )}
+
+          {step === "review" && plan && (
+            <div
+              data-testid="onboarding-plan-review"
+              className="mcp-plan-review"
             >
-              Done
-            </button>
-          </div>
-        )}
+              <div className="mcp-plan-review__heading">
+                <div>
+                  <div className="mcp-onboarding__eyebrow">
+                    Ready for review
+                  </div>
+                  <h3>Confirm this installation</h3>
+                </div>
+                <span className={`mcp-plan-review__state ${plan.state}`}>
+                  {plan.state === "reviewable" ? "Ready" : "Needs attention"}
+                </span>
+              </div>
+              <p className="mcp-plan-review__intro">
+                {plan.state === "reviewable"
+                  ? "Nothing has been installed yet. Review the changes below, then continue when they look right."
+                  : "One requirement needs attention before installation can continue."}
+              </p>
+              {preview && (
+                <p>
+                  Normalized {preview.drafts.length} imported MCP definition.
+                </p>
+              )}
+              <div className="mcp-plan-review__summary">
+                <div>
+                  <span>Server</span>
+                  <strong>{capabilityId || "Custom MCP server"}</strong>
+                </div>
+                <div>
+                  <span>Connection</span>
+                  <strong>
+                    {backendLabels[plan.backend_kind] || "MCP server"}
+                  </strong>
+                </div>
+                <div>
+                  <span>Available in</span>
+                  <strong>
+                    {scope === "workspace"
+                      ? workspaceId || "Selected workspace"
+                      : "All workspaces"}
+                  </strong>
+                </div>
+              </div>
+              <h4>What Wright will do</h4>
+              <ol className="mcp-plan-review__effects">
+                {plan.effects.map((effect) => (
+                  <li key={String(effect.step_id)}>
+                    <span aria-hidden="true">✓</span>
+                    <div>{String(effect.description)}</div>
+                  </li>
+                ))}
+              </ol>
+              {plan.blocking_reasons.length > 0 && (
+                <div role="alert" className="mcp-plan-review__blocker">
+                  <h4>Why installation cannot continue yet</h4>
+                  {plan.blocking_reasons.map((reason) => (
+                    <div key={reason.code}>
+                      <p>
+                        <strong>Reason:</strong> {reason.message}
+                      </p>
+                      <p>
+                        <strong>What to do:</strong> {reason.recovery}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <footer className="mcp-onboarding__footer">
+                {plan.state !== "reviewable" ? (
+                  <button
+                    type="button"
+                    className="wright-form__primary"
+                    data-testid="onboarding-review-back"
+                    onClick={() => setStep("source")}
+                  >
+                    Return to requirements
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      data-testid="onboarding-review-back"
+                      onClick={() => setStep("source")}
+                    >
+                      Back to requirements
+                    </button>{" "}
+                    <button
+                      type="button"
+                      className="wright-form__primary"
+                      data-testid="onboarding-review-continue"
+                      onClick={continueToCredentials}
+                    >
+                      Continue to installation
+                    </button>
+                  </>
+                )}
+              </footer>
+            </div>
+          )}
+
+          {step === "credentials" && plan && (
+            <div>
+              <h3>Credential boundary</h3>
+              {plan.requirements.credentials.length ? (
+                <>
+                  <p>
+                    Required credential names:{" "}
+                    {plan.requirements.credentials.join(", ")}. Values are saved
+                    only through Wright&apos;s secure credential flow and are
+                    never included in this plan.
+                  </p>
+                  <ul data-testid="credential-configuration-status">
+                    {plan.requirements.credentials.map((credential) => (
+                      <li key={credential}>
+                        {credential}:{" "}
+                        {credentialStatus?.configured[credential]
+                          ? "configured"
+                          : "not configured"}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p>This plan does not declare credential values.</p>
+              )}
+              <button
+                type="button"
+                data-testid="onboarding-credentials-back"
+                onClick={() => setStep("review")}
+              >
+                Back to plan
+              </button>{" "}
+              <button
+                type="button"
+                className="wright-form__primary"
+                data-testid="onboarding-apply-plan"
+                onClick={applyPlan}
+              >
+                Install MCP server
+              </button>
+            </div>
+          )}
+
+          {step === "applying" && (
+            <p role="status">
+              Applying the approved plan with rollback tracking…
+            </p>
+          )}
+
+          {step === "validating" && (
+            <p role="status">
+              Validating MCP initialize, initialized notification, tool
+              discovery, and any catalog-approved read-only probeâ€¦
+            </p>
+          )}
+
+          {step === "workspace" && validation?.state === "passed" && (
+            <div data-testid="workspace-selection">
+              <h3>Choose one workspace</h3>
+              <p>
+                Validation passed with {validation.tool_count ?? 0} discovered
+                tools. Available in a workspace does not mean approved to run
+                every tool.
+              </p>
+              <label>
+                Workspace
+                <select
+                  data-testid="onboarding-workspace-select"
+                  value={selectedWorkspaceId}
+                  onChange={(event) =>
+                    setSelectedWorkspaceId(event.target.value)
+                  }
+                >
+                  {workspaces.map((workspace) => (
+                    <option
+                      key={workspace.workspace_id}
+                      value={workspace.workspace_id}
+                    >
+                      {workspace.workspace_name || workspace.workspace_id}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                className="wright-form__primary"
+                data-testid="onboarding-enable-workspace"
+                onClick={enableWorkspace}
+              >
+                Make available in this workspace
+              </button>
+            </div>
+          )}
+
+          {step === "enabling" && (
+            <p role="status">
+              Making this MCP server available in one workspace onlyâ€¦
+            </p>
+          )}
+
+          {step === "complete" && run && (
+            <div>
+              <h3>Onboarding {run.state}</h3>
+              <p>
+                Run {run.run_id} finished with rollback state{" "}
+                {run.rollback_state || "not needed"}.
+              </p>
+              {validation && (
+                <p>
+                  Validation: {validation.state}
+                  {validation.read_only_probe
+                    ? ` â€” ${validation.read_only_probe.limitation}`
+                    : ""}
+                </p>
+              )}
+              {enablement && <p>{enablement.message}</p>}
+              <button
+                type="button"
+                data-testid="onboarding-done"
+                onClick={resetAndClose}
+              >
+                Done
+              </button>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

@@ -1,0 +1,14 @@
+[
+  {
+    "item": "brepjs-cad@0.103.0",
+    "server_id": "brep-mcp"
+  },
+  {
+    "item": "git:solid-edge-mcp-burhop@2aad5bd24df6ce1ac9578ad35c4da7ac241b5330",
+    "server_id": "solid-edge-mcp-burhop"
+  },
+  {
+    "item": "SolidEdgeMcpServer.exe",
+    "server_id": "solid-edge-mcp-burhop"
+  }
+]

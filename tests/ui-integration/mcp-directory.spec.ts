@@ -10,7 +10,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     // 1. Navigate to the tool registry page
     await page.goto("/tool-registry");
     await liveExpect(
-      page.getByRole("heading", { name: "Engineering Capability Library" }),
+      page.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeVisible();
 
     // 2. Check default seeded CalculiX card exists
@@ -19,7 +19,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
     ).toBeVisible();
 
     // 3. Open the guided flow and choose an advanced local command.
-    await page.getByRole("button", { name: "Add capability" }).click();
+    await page.getByRole("button", { name: "Add custom MCP server" }).click();
     await liveExpect(page.getByRole("dialog")).toBeVisible();
     await page.getByLabel("Source").selectOption("local");
 
@@ -31,7 +31,7 @@ test.describe("MCP Tool Registry Directory E2E Flow @live", () => {
 
     // 5. Preflight is read-only and imported sources remain blocked until the
     // independent publisher/license review is complete.
-    await page.getByRole("button", { name: "Create read-only plan" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
     await liveExpect(page.getByText("Review exact plan")).toBeVisible();
     await liveExpect(page.getByText("Plan is blocked")).toBeVisible();
 

@@ -115,6 +115,7 @@ def seed_runtime(
     running: bool = False,
     data_schema_min: int = 0,
     data_schema_max: int = 9,
+    artifact_sha256: str = "a" * 64,
 ) -> RuntimeInstallation:
     environment = runtime.layout.runtime_path(runtime_id)
     executable = environment / "Scripts" / "python.exe"
@@ -125,7 +126,7 @@ def seed_runtime(
         version=version,
         distribution="wright-engineering",
         artifact_filename=f"wright_engineering-{version}-py3-none-any.whl",
-        artifact_sha256="a" * 64,
+        artifact_sha256=artifact_sha256,
         source_channel=SourceChannel.STABLE,
         environment_path=str(environment),
         python_version="3.12.11",

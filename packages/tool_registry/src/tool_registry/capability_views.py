@@ -215,6 +215,7 @@ def _catalog_view(
             },
         },
         validation_result=entry.validation_result.model_dump(mode="json"),
+        windows_qualification=entry.windows_qualification,
         user_state=user,
         custom=False,
         available_actions=_available_actions(entry, compatibility, user),

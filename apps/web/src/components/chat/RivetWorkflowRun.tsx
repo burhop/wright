@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   workspaceService,
@@ -83,7 +89,7 @@ export function RivetWorkflowRun({
     return () => window.clearInterval(timer);
   }, [refresh, run.state]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (selected) dialogRef.current?.focus();
   }, [selected]);
 

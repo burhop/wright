@@ -222,15 +222,9 @@ def _backend_steps(backend: str, target: str) -> tuple[list, list, list, list]:
     elif backend == "host_bridge":
         effects = [
             _step(
-                "effect-detect",
-                "detect_host",
-                "Read approved host-presence evidence.",
-                target=target,
-            ),
-            _step(
-                "effect-addon",
-                "verify_addon",
-                "Verify the approved host add-on; do not install the host.",
+                "effect-requirements",
+                "record_requirements",
+                "Record the required engineering application; do not install or start it.",
                 target=target,
             ),
             _step(
@@ -244,20 +238,14 @@ def _backend_steps(backend: str, target: str) -> tuple[list, list, list, list]:
         steps = [
             _step(
                 "prepare",
-                "detect_host",
-                "Detect the allowlisted proprietary host.",
+                "review_requirements",
+                "Review the engineering application and bridge requirements.",
                 target=target,
             ),
             _step(
                 "apply",
-                "verify_addon",
-                "Verify the allowlisted bridge add-on and handshake.",
-                target=target,
-            ),
-            _step(
                 "register",
-                "register",
-                "Register the bridge without enabling it.",
+                "Register the MCP server without starting the engineering application.",
                 target=target,
                 rollback_step_id="rollback-registration",
             ),
@@ -266,7 +254,7 @@ def _backend_steps(backend: str, target: str) -> tuple[list, list, list, list]:
             _step(
                 "rollback-registration",
                 "remove",
-                "Remove only Wright's bridge registration.",
+                "Remove only Wright's MCP server registration.",
                 target=target,
             )
         ]

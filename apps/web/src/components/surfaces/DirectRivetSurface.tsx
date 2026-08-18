@@ -657,20 +657,28 @@ export function DirectRivetSurface({
   const lintWorkflow = async () => {
     if (!document) return;
     setBusy(true);
+    setRunNotice({ tone: "info", message: "Checking the graph…" });
     try {
       const result = await workspaceService.lintRivetWorkflowGraph(
         sessionId,
         document.slug,
       );
-      setStatus(
-        result.issues.length
-          ? `${result.issues.length} graph issue(s) found.`
-          : "Graph lint passed.",
-      );
+      const message = result.issues.length
+        ? `${result.issues.length} graph issue${result.issues.length === 1 ? "" : "s"} found: ${result.issues
+            .slice(0, 2)
+            .map((issue) => issue.message)
+            .join("; ")}`
+        : "Graph checked · no problems found.";
+      setStatus(message);
+      setRunNotice({
+        tone: result.issues.length ? "error" : "success",
+        message,
+      });
     } catch (error) {
-      setStatus(
-        error instanceof Error ? error.message : "Unable to lint workflow.",
-      );
+      const message =
+        error instanceof Error ? error.message : "Unable to check the graph.";
+      setStatus(message);
+      setRunNotice({ tone: "error", message });
     } finally {
       setBusy(false);
     }
@@ -835,8 +843,8 @@ export function DirectRivetSurface({
         <button
           type="button"
           data-testid="direct-rivet-lint"
-          aria-label="Lint Rivet graph"
-          title="Lint Rivet graph"
+          aria-label="Check Rivet graph"
+          title="Check graph for problems"
           disabled={busy || !document}
           onClick={() => void lintWorkflow()}
           style={iconButtonStyle}

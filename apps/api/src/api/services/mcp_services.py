@@ -647,7 +647,12 @@ class McpApiService:
 
     def _onboarding_adapters(self, backend_kind: str) -> dict[str, object]:
         adapters: dict[str, object] = {}
-        if backend_kind in {"local_package", "local_command", "remote_endpoint"}:
+        if backend_kind in {
+            "local_package",
+            "local_command",
+            "remote_endpoint",
+            "host_bridge",
+        }:
             adapters[backend_kind] = RegistryOnboardingAdapter(
                 self.db_path, kind=backend_kind
             )

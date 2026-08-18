@@ -167,6 +167,7 @@ export interface CapabilityView {
     reason_codes: string[];
     limitation?: string;
   } | null;
+  windows_qualification?: WindowsQualificationSummary | null;
   user_state: {
     server_id?: string;
     installed: boolean;
@@ -180,6 +181,38 @@ export interface CapabilityView {
   custom: boolean;
   available_actions: string[];
   alternatives: string[];
+}
+
+export type WindowsQualificationResult =
+  | "passed"
+  | "partial"
+  | "failed"
+  | "safety_blocked"
+  | "obsolete_or_unavailable"
+  | "not_applicable"
+  | "not_tested";
+
+export interface WindowsQualificationStatus {
+  result: WindowsQualificationResult;
+  label: string;
+  reason_code: string;
+}
+
+export interface WindowsQualificationSummary {
+  observed_at: string;
+  evidence_path: string;
+  evidence_digest: string;
+  current: boolean;
+  stale_reasons: string[];
+  source: WindowsQualificationStatus;
+  package_or_registration: WindowsQualificationStatus;
+  startup: WindowsQualificationStatus;
+  protocol: WindowsQualificationStatus;
+  host_or_backend: WindowsQualificationStatus;
+  wright_setup: WindowsQualificationStatus;
+  gateway: WindowsQualificationStatus;
+  cleanup: WindowsQualificationStatus;
+  claim?: string | null;
 }
 
 export interface CapabilityCompatibility {

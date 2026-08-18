@@ -115,16 +115,16 @@ describe("ToolRegistryPage capability layout", () => {
     expect(await screen.findByTestId("capability-empty-state")).toBeVisible();
   });
 
-  it("renders the Capability Library information architecture", async () => {
+  it("renders the MCP Server Library information architecture", async () => {
     render(<ToolRegistryPage />);
 
     expect(screen.getByTestId("page-tool-registry")).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Engineering Capability Library" }),
+      screen.getByRole("heading", { name: "Engineering MCP Server Library" }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Capability filters")).toBeInTheDocument();
+    expect(screen.getByLabelText("MCP server filters")).toBeInTheDocument();
     expect(screen.getByTestId("tool-registry-register-btn")).toHaveTextContent(
-      "Add capability",
+      "Add custom MCP server",
     );
     expect(
       await screen.findByTestId("capability-empty-state"),

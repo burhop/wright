@@ -216,6 +216,48 @@ def test_manual_surface_manifest_is_verified_and_collision_safe(tmp_path):
         editor.manual_surface_manifest(str(workspace))
 
 
+def test_manual_surface_manifest_refreshes_installed_runtime_paths(tmp_path):
+    workspace = tmp_path / "workspace"
+    first_editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "runtime-a"),
+    )
+    first_manifest = first_editor.manual_surface_manifest(str(workspace))
+    assert first_manifest is not None
+
+    second_editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "runtime-b"),
+    )
+    second_manifest = second_editor.manual_surface_manifest(str(workspace))
+    assert second_manifest is not None
+    assert second_manifest["launch"]["argv"][1] != first_manifest["launch"]["argv"][1]  # type: ignore[index]
+    assert second_manifest["launch"]["argv"][3] != first_manifest["launch"]["argv"][3]  # type: ignore[index]
+
+    discovered = WorkspaceManifestStore(workspace).get("wright.rivet-editor")
+    assert discovered.manifest.launch.argv[1] == second_manifest["launch"]["argv"][1]  # type: ignore[union-attr,index]
+    assert discovered.manifest.launch.argv[3] == second_manifest["launch"]["argv"][3]  # type: ignore[union-attr,index]
+
+
+def test_manual_surface_manifest_rejects_non_runtime_managed_changes(tmp_path):
+    workspace = tmp_path / "workspace"
+    editor = WorkspaceWorkflowEditor(
+        workflows=None,  # type: ignore[arg-type]
+        settings=EditorSettings(enabled=True),
+        catalog=_hosted_catalog(tmp_path / "assets"),
+    )
+    editor.manual_surface_manifest(str(workspace))
+    generated = workspace / ".wright" / "apps" / "rivet-editor.surface.json"
+    changed = json.loads(generated.read_text(encoding="utf-8"))
+    changed["title"] = "Unexpected application"
+    generated.write_text(json.dumps(changed), encoding="utf-8")
+
+    with pytest.raises(WorkflowEditorError, match="conflicts"):
+        editor.manual_surface_manifest(str(workspace))
+
+
 def test_manual_surface_manifest_enables_local_ai_without_embedding_credentials(
     tmp_path,
 ):

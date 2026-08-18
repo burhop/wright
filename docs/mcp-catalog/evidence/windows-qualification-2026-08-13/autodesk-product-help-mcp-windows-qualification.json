@@ -1,0 +1,186 @@
+{
+  "attempted_server_ids": [
+    "autodesk-product-help-mcp"
+  ],
+  "cleanup_events": [
+    "owned_process_check_complete",
+    "removed_disposable_server_root"
+  ],
+  "credential_binding_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "evidence_id": "autodesk-product-help-mcp-windows-20260814T031438Z",
+  "follow_ups": [],
+  "installed_items": [],
+  "limitations": [],
+  "machine_digest": "cff7b45ee81f951a43245697237f3223154d02f4f2175c7555131a7c6b8c0342",
+  "maximum_age_hours": 24,
+  "non_allowlist_actions": [],
+  "observed_at": "2026-08-14T03:14:38.809589Z",
+  "package_digest": null,
+  "package_version": null,
+  "policy_version": "windows-allowlist-v1",
+  "protocol_version": "2025-11-25",
+  "recipe_digest": "8e45d059fc7f342f5f18915261abf55a0f02f05a8544c12b16524b4c13e2dcf1",
+  "residual_risks": [],
+  "safety_preflight": {
+    "decision": "approved",
+    "material_concerns": [
+      "Qualification contacts an Autodesk-hosted remote service and consumes remote content"
+    ],
+    "reason_code": "official_public_endpoint_and_read_only_product_listing",
+    "residual_risks": [
+      "Only the exact documented endpoint and get_available_products with empty arguments may be contacted"
+    ],
+    "reviewed_at": "2026-08-13T22:58:53.574629-04:00"
+  },
+  "schema_version": "1.0",
+  "server_id": "autodesk-product-help-mcp",
+  "server_identity": "autodesk-knowledge-public-v1-mcp-server",
+  "server_version": "3.0.2",
+  "source_revision": null,
+  "stages": [
+    {
+      "artifact_digests": [],
+      "duration_ms": 0,
+      "finished_at": "2026-08-14T03:14:37.718683Z",
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "reviewed_source_identity_loaded",
+      "recovery": "",
+      "result": "passed",
+      "stage": "source_current",
+      "started_at": "2026-08-14T03:14:37.718683Z",
+      "summary": "The pinned source identity passed recipe validation."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "no_local_package",
+      "recovery": "",
+      "result": "not_applicable",
+      "stage": "windows_install_passed",
+      "started_at": null,
+      "summary": "This MCP has no separate local Windows package to install."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "protocol_version": "2025-11-25",
+        "server_identity": "autodesk-knowledge-public-v1-mcp-server",
+        "server_version": "3.0.2",
+        "tool_count": 2,
+        "tool_schema_digest": "d1d6e03315bed4806b3895e9dc150c4f7214232f4ae1837c1b5f9442c04af4a6"
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "mcp_initialized",
+      "recovery": "",
+      "result": "passed",
+      "stage": "mcp_started",
+      "started_at": null,
+      "summary": "The MCP server completed initialization."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {
+        "tool_count": 2
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "mcp_tools_listed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "protocol_passed",
+      "started_at": null,
+      "summary": "Initialization and tool discovery completed through MCP."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "safe_probe_passed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "safe_probe_passed",
+      "started_at": null,
+      "summary": "The approved bounded tool call completed."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [
+        "publisher_terms"
+      ],
+      "network_destinations_contacted": [],
+      "observations": {
+        "backend": "remote_endpoint"
+      },
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "wright_external_license_incomplete",
+      "recovery": "Complete any applicable publisher terms outside Wright, record that independent completion, and create a fresh install plan.",
+      "result": "partial",
+      "stage": "wright_install_passed",
+      "started_at": null,
+      "summary": "Wright's production install planner blocked registration because Autodesk service terms have not been independently completed."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": null,
+      "finished_at": null,
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "stage_not_run",
+      "recovery": "Review prerequisites and rerun qualification.",
+      "result": "not_tested",
+      "stage": "wright_gateway_passed",
+      "started_at": null,
+      "summary": "This stage was not attempted."
+    },
+    {
+      "artifact_digests": [],
+      "duration_ms": 0,
+      "finished_at": "2026-08-14T03:14:38.775802Z",
+      "missing_requirements": [],
+      "network_destinations_contacted": [],
+      "observations": {},
+      "operation_digest": null,
+      "output_digest": null,
+      "reason_code": "isolated_root_removed",
+      "recovery": "",
+      "result": "passed",
+      "stage": "cleanup_passed",
+      "started_at": "2026-08-14T03:14:38.775802Z",
+      "summary": "Disposable server root was removed."
+    }
+  ],
+  "stale_reasons": [],
+  "terminal_classification": "partial",
+  "tool_count": 2,
+  "tool_schema_digest": "d1d6e03315bed4806b3895e9dc150c4f7214232f4ae1837c1b5f9442c04af4a6"
+}

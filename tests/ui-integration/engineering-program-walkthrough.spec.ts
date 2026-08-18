@@ -13,7 +13,7 @@ import {
   identities,
   mockJourney,
   type JourneyKind,
-} from "./engineering-program-journey.spec";
+} from "./engineering-program-journey";
 
 type StepState = "pass" | "blocked" | "pending";
 

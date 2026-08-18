@@ -208,6 +208,77 @@ async function mockRivetWorkflow(page: Page) {
 }
 
 test.describe("Rivet 2 retained canvas", () => {
+  test("opens a saved workflow file from the explorer in Rivet", async ({
+    page,
+  }) => {
+    await mockWorkspaceShell(page, []);
+    const state = await mockRivetWorkflow(page);
+    let genericContentRequests = 0;
+    await page.route("**/api/workspace/files?*", (route) =>
+      route.fulfill({
+        json: {
+          workspace: {
+            name: "apps",
+            path: "/",
+            type: "directory",
+            children: [
+              {
+                name: "workflows",
+                path: "/workflows",
+                type: "directory",
+                children: [
+                  {
+                    name: "rivet",
+                    path: "/workflows/rivet",
+                    type: "directory",
+                    children: [
+                      {
+                        name: "workflow.rivet-project",
+                        path: "/workflows/rivet/workflow.rivet-project",
+                        type: "file",
+                        size: 128,
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      }),
+    );
+    await page.route("**/api/workspace/files/content?*", (route) => {
+      genericContentRequests += 1;
+      return route.fulfill({ status: 422, json: { detail: "wrong viewer" } });
+    });
+
+    await page.goto("/workspace/ws-1");
+    const root = page.getByTestId("file-node-/");
+    await expect(root).toBeAttached();
+    if (!(await root.isVisible())) {
+      await page.getByTestId("activity-bar-explorer-btn").click();
+    }
+    await root.click();
+    await page.getByTestId("file-node-/workflows").click();
+    await page.getByTestId("file-node-/workflows/rivet").click();
+    await page
+      .getByTestId("file-node-/workflows/rivet/workflow.rivet-project")
+      .dblclick();
+
+    await expect(page.getByTestId("direct-rivet-status")).toContainText(
+      "Workflow opened",
+      { timeout: 5_000 },
+    );
+    await expect(page.getByTitle("Rivet graph canvas")).toBeVisible();
+    await expect(
+      page.getByTestId(
+        "editor-tab-/.wright/rivet-workflows/rivet/workflow.rivet-project",
+      ),
+    ).toContainText("rivet.rivet-project");
+    expect(genericContentRequests).toBe(0);
+    expect(state.startCount()).toBe(1);
+  });
+
   test("keeps Wright authoritative while exposing only graph-authoring UI", async ({
     page,
   }) => {

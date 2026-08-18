@@ -48,6 +48,7 @@ import {
   installF6HostRegionCycle,
 } from "../../services/surfaces/focus-manager";
 import { isBrepToolActivity } from "../../services/brep-panel-activity";
+import { workspaceRivetWorkflowSlug } from "../../services/rivet-editor";
 
 const DIRECT_RIVET_TAB_PREFIX = "/.wright/rivet-workflows";
 const DIRECT_BREP_TAB_PATH = "/.wright/apps/brep";
@@ -641,8 +642,14 @@ export function WorkspacePanel({
       const syncTabs = async () => {
         for (const tab of dedupeEditorTabs(savedLayout.openTabs)) {
           const tabPath = normalizeEditorTabPath(tab.path);
-          if (isDirectRivetTab(tabPath) || tab.type === "rivet") {
-            const slug = rivetSlugFromTabPath(tabPath) || "rivet";
+          const savedWorkflowSlug = workspaceRivetWorkflowSlug(tabPath);
+          if (
+            isDirectRivetTab(tabPath) ||
+            tab.type === "rivet" ||
+            savedWorkflowSlug
+          ) {
+            const slug =
+              rivetSlugFromTabPath(tabPath) || savedWorkflowSlug || "rivet";
             openTransientTab({
               name: `${slug}.rivet-project`,
               path: directRivetTabPath(slug),
@@ -687,7 +694,14 @@ export function WorkspacePanel({
           await openTab(file, "preview");
         }
         if (savedLayout.activeTabPath) {
-          setActiveTabPath(normalizeEditorTabPath(savedLayout.activeTabPath));
+          const savedWorkflowSlug = workspaceRivetWorkflowSlug(
+            savedLayout.activeTabPath,
+          );
+          setActiveTabPath(
+            savedWorkflowSlug
+              ? directRivetTabPath(savedWorkflowSlug)
+              : normalizeEditorTabPath(savedLayout.activeTabPath),
+          );
         }
       };
       syncTabs();
@@ -1043,6 +1057,26 @@ export function WorkspacePanel({
   // Click file in Tree → Open Tab
   const handleFileClick = async (path: string) => {
     if (!activeSessionId) return;
+
+    const savedWorkflowSlug = workspaceRivetWorkflowSlug(path);
+    if (savedWorkflowSlug && workspaceFileSessionId) {
+      const workflow = await workspaceService.readRivetWorkflow(
+        workspaceFileSessionId,
+        savedWorkflowSlug,
+      );
+      openTransientTab({
+        name: `${workflow.slug}.rivet-project`,
+        path: directRivetTabPath(workflow.slug),
+        type: "rivet",
+      });
+      if (surfaceLayout.mode === "narrow") {
+        surfaceLayoutDispatch({
+          type: "select_narrow_pane",
+          pane: "surface",
+        });
+      }
+      return;
+    }
 
     const ext = path.split(".").pop()?.toLowerCase() || "";
     const name = path.split("/").pop() || path;
