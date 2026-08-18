@@ -4,10 +4,7 @@ import type { MissingCapabilitySearchContext } from "../../services/mcp-service"
 import { useTools } from "../../store/tools";
 import { CapabilityLibrary } from "../tools/CapabilityLibrary";
 import { CatalogUpdatePanel } from "../tools/CatalogUpdatePanel";
-import {
-  OnboardingWizard,
-  type CapabilityOnboardingHandoff,
-} from "../tools/OnboardingWizard";
+import { OnboardingWizard } from "../tools/OnboardingWizard";
 import { MissingCapabilityForm } from "../tools/MissingCapabilityForm";
 
 export function ToolRegistryPage() {
@@ -17,26 +14,6 @@ export function ToolRegistryPage() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
   const [initialCapabilityId, setInitialCapabilityId] = useState("");
-  const [handoff, setHandoff] = useState<CapabilityOnboardingHandoff | null>(
-    () => {
-      try {
-        const value = window.localStorage.getItem(
-          "wright.capability-workspace-handoff.v1",
-        );
-        if (!value) return null;
-        const parsed = JSON.parse(
-          value,
-        ) as Partial<CapabilityOnboardingHandoff>;
-        return parsed.state === "workspace-enabled" &&
-          typeof parsed.capabilityId === "string" &&
-          typeof parsed.workspaceId === "string"
-          ? (parsed as CapabilityOnboardingHandoff)
-          : null;
-      } catch {
-        return null;
-      }
-    },
-  );
   const [reportContext, setReportContext] =
     useState<MissingCapabilitySearchContext>({
       query: "",
@@ -76,22 +53,6 @@ export function ToolRegistryPage() {
           gap: "var(--space-xl)",
         }}
       >
-        {handoff ? (
-          <section
-            aria-labelledby="capability-handoff-title"
-            data-testid="capability-handoff-restored"
-          >
-            <h2 id="capability-handoff-title">Workspace handoff restored</h2>
-            <p>
-              {handoff.capabilityId} remains available to workspace{" "}
-              {handoff.workspaceId}. No install, enable, or workflow action was
-              replayed after refresh.
-            </p>
-            <a href={`/workspace/${encodeURIComponent(handoff.workspaceId)}`}>
-              Open the workspace and prepare Rivet
-            </a>
-          </section>
-        ) : null}
         <CatalogUpdatePanel
           onCatalogChanged={() => setRefreshToken((value) => value + 1)}
         />
@@ -113,17 +74,7 @@ export function ToolRegistryPage() {
         isOpen={isModalOpen}
         initialCapabilityId={initialCapabilityId}
         onClose={() => setIsModalOpen(false)}
-        onCompleted={(completedHandoff) => {
-          try {
-            window.localStorage.setItem(
-              "wright.capability-workspace-handoff.v1",
-              JSON.stringify(completedHandoff),
-            );
-          } catch {
-            // Opaque or sandboxed documents can deny storage. The in-memory
-            // handoff still completes and no capability action is replayed.
-          }
-          setHandoff(completedHandoff);
+        onCompleted={() => {
           void fetchServersAndTools();
           setRefreshToken((value) => value + 1);
         }}
