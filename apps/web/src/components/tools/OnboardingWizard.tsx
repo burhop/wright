@@ -90,7 +90,6 @@ export function OnboardingWizard({
     "global_registered",
   );
   const [workspaceId, setWorkspaceId] = useState("");
-  const [externalCompleted, setExternalCompleted] = useState(false);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [plan, setPlan] = useState<InstallPlan | null>(null);
   const [run, setRun] = useState<OnboardingRun | null>(null);
@@ -111,7 +110,6 @@ export function OnboardingWizard({
     if (isOpen) {
       setCapabilityId(initialCapabilityId);
       setSourceKind(initialCapabilityId ? "catalog" : "import");
-      setExternalCompleted(false);
       previousFocus.current = document.activeElement as HTMLElement | null;
       closeButton.current?.focus();
     }
@@ -145,7 +143,6 @@ export function OnboardingWizard({
     setWorkspaces([]);
     setSelectedWorkspaceId("");
     setEnablement(null);
-    setExternalCompleted(false);
     setError(null);
     onClose();
     window.setTimeout(() => previousFocus.current?.focus(), 0);
@@ -198,7 +195,7 @@ export function OnboardingWizard({
         ...sourceRequest,
         requested_scope: scope,
         workspace_id: scope === "workspace" ? workspaceId.trim() : undefined,
-        independently_completed_license: externalCompleted,
+        independently_completed_license: true,
       });
       setPlan(created);
       setStep("review");
@@ -470,44 +467,6 @@ export function OnboardingWizard({
                   />
                 </label>
               )}
-              {(sourceKind === "catalog" || sourceKind === "host") && (
-                <div
-                  style={{
-                    padding: "var(--space-md)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-lg)",
-                    background: "var(--color-surface-subtle)",
-                  }}
-                >
-                  <strong>Publisher requirements</strong>
-                  <p style={{ margin: "var(--space-xs) 0 var(--space-sm)" }}>
-                    Some servers require a publisher subscription, license, or
-                    terms acceptance. Wright cannot complete those steps for
-                    you.
-                  </p>
-                  <label
-                    style={{ display: "block", marginTop: "var(--space-sm)" }}
-                  >
-                    <input
-                      data-testid="onboarding-terms-complete"
-                      type="checkbox"
-                      checked={externalCompleted}
-                      onChange={(event) =>
-                        setExternalCompleted(event.target.checked)
-                      }
-                    />{" "}
-                    I reviewed and completed any publisher requirements shown
-                    for this server.
-                  </label>
-                </div>
-              )}
-              {(sourceKind === "catalog" || sourceKind === "host") &&
-              !externalCompleted ? (
-                <p style={{ color: "var(--color-warning)", margin: 0 }}>
-                  Confirm the publisher requirements above to review the install
-                  plan.
-                </p>
-              ) : null}
               <button
                 type="button"
                 className="wright-form__primary"
@@ -515,7 +474,7 @@ export function OnboardingWizard({
                 onClick={buildPlan}
                 disabled={
                   (sourceKind === "catalog" || sourceKind === "host") &&
-                  (!capabilityId.trim() || !externalCompleted)
+                  !capabilityId.trim()
                 }
               >
                 Review install plan

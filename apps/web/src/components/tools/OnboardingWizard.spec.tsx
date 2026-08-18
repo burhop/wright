@@ -308,7 +308,6 @@ describe("OnboardingWizard", () => {
     render(<OnboardingWizard isOpen onClose={vi.fn()} />);
     await user.selectOptions(screen.getByLabelText("Source"), "host");
     await user.type(screen.getByLabelText("MCP server ID"), "desktop-cad-mcp");
-    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
       screen.getByRole("button", { name: "Review install plan" }),
     );
@@ -334,7 +333,6 @@ describe("OnboardingWizard", () => {
         onCompleted={completed}
       />,
     );
-    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
       screen.getByRole("button", { name: "Review install plan" }),
     );
@@ -385,7 +383,6 @@ describe("OnboardingWizard", () => {
         onClose={vi.fn()}
       />,
     );
-    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
       screen.getByRole("button", { name: "Review install plan" }),
     );
@@ -426,7 +423,6 @@ describe("OnboardingWizard", () => {
         onClose={vi.fn()}
       />,
     );
-    await user.click(screen.getByTestId("onboarding-terms-complete"));
     await user.click(
       screen.getByRole("button", { name: "Review install plan" }),
     );
@@ -490,6 +486,10 @@ it("uses a simplified setup entry when a listed MCP server is selected", () => {
   );
   expect(
     screen.getByRole("button", { name: "Review install plan" }),
-  ).toBeDisabled();
-  expect(screen.getByTestId("onboarding-terms-complete")).toBeVisible();
+  ).toBeEnabled();
+  expect(
+    screen.queryByText(
+      "I reviewed and completed any publisher requirements shown for this server.",
+    ),
+  ).not.toBeInTheDocument();
 });
