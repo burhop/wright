@@ -342,3 +342,26 @@ mcp_servers:
         - Wright
         - health
     docs_summary: Playwright MCP for browser-driven CAD and Wright UI automation.
+
+  - id: onshape-labs-featurescript-mcp
+    catalog_id: onshape-labs-featurescript-mcp
+    display_name: Onshape FeatureScript MCP
+    application_id: null
+    availability: remote_only
+    mcp_source:
+      type: external
+      url: https://fs-mcp.labs.onshape.app/mcp
+      ref: vendor-managed-preview
+      license: External Onshape account and publisher terms
+    compliance_profile:
+      id: remote-only
+    install: {}
+    launch: {}
+    remote:
+      transport: streamable_http
+      authentication: oauth
+      reason: Managed by Onshape Labs outside the Docker image; Wright connects to it after OAuth sign-in.
+    health_probe:
+      kind: unavailable
+      expected_status: remote_only
+    docs_summary: Onshape Labs FeatureScript MCP is a hosted preview connection; no local package or container is redistributed.

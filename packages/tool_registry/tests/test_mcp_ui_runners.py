@@ -12,7 +12,7 @@ from tool_registry.runners.protocol import (
     MCP_APP_MIME_TYPE,
     ChildProtocolState,
 )
-from tool_registry.runners.sse import SseRunner
+from tool_registry.runners.sse import _OAuthCallbackServer, SseRunner
 from tool_registry.runners.stdio import StdioRunner
 
 
@@ -86,6 +86,27 @@ async def test_child_resource_template_read_and_subscription_operations(
         ("resources/subscribe", {"uri": "ui://reference/app"}),
         ("resources/unsubscribe", {"uri": "ui://reference/app"}),
     ]
+
+
+@pytest.mark.asyncio
+async def test_oauth_callback_server_returns_code_and_state() -> None:
+    callback = _OAuthCallbackServer(timeout=5.0)
+    redirect_uri = await callback.start()
+    parsed = redirect_uri.split(":", 2)
+    port = int(parsed[2].split("/", 1)[0])
+
+    result_task = asyncio.create_task(callback.wait_for_callback())
+    _reader, writer = await asyncio.open_connection("127.0.0.1", port)
+    writer.write(
+        b"GET /oauth/callback?code=fixture-code&state=fixture-state HTTP/1.1\r\n"
+        b"Host: 127.0.0.1\r\n\r\n"
+    )
+    await writer.drain()
+
+    assert await result_task == ("fixture-code", "fixture-state")
+    writer.close()
+    await writer.wait_closed()
+    await callback.close()
 
 
 @pytest.mark.asyncio

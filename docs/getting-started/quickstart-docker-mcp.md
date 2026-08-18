@@ -20,6 +20,9 @@ builds, see [Docker image family](docker-image-family.md).
   redistributed in this Linux image, and the current SolidEdgeMCP server target
   is Windows/Solid Edge only.
 - Playwright plus Playwright MCP for driving Wright and browser-based CAD tools.
+- Onshape FeatureScript MCP as a remote-only catalog connection. The hosted
+  preview is not copied into the image; Wright connects to it with OAuth when
+  the vendor endpoint and account are available.
 
 ## Before You Start
 
@@ -159,13 +162,14 @@ WRIGHT_API_TOKEN=change-this-long-random-token \
 
 ## Included Tools
 
-| Tool | Included App | MCP Server | Good First Prompt |
-|---|---|---|---|
-| OpenSCAD | OpenSCAD | `openscad-mcp` | Create a 10 mm cube and export STL. |
-| FreeCAD | FreeCAD AppImage | `freecad-mcp` | Create a 10 mm by 8 mm by 6 mm box named `WrightBox`. |
-| BREP | `brep` CLI from `brepjs-cad` | `brep-mcp` | Create and verify a 40 mm by 20 mm by 10 mm BREP box and export STEP. |
-| Solid Edge | Windows host only | `solid-edge-mcp` in the Windows runtime | Create a 20 mm by 20 mm by 10 mm Solid Edge part under the workspace. |
-| Playwright | Playwright Chromium | `playwright-mcp` | Open Wright and confirm the health page responds. |
+| Tool                  | Included App                 | MCP Server                              | Good First Prompt                                                     |
+| --------------------- | ---------------------------- | --------------------------------------- | --------------------------------------------------------------------- |
+| OpenSCAD              | OpenSCAD                     | `openscad-mcp`                          | Create a 10 mm cube and export STL.                                   |
+| FreeCAD               | FreeCAD AppImage             | `freecad-mcp`                           | Create a 10 mm by 8 mm by 6 mm box named `WrightBox`.                 |
+| BREP                  | `brep` CLI from `brepjs-cad` | `brep-mcp`                              | Create and verify a 40 mm by 20 mm by 10 mm BREP box and export STEP. |
+| Solid Edge            | Windows host only            | `solid-edge-mcp` in the Windows runtime | Create a 20 mm by 20 mm by 10 mm Solid Edge part under the workspace. |
+| Playwright            | Playwright Chromium          | `playwright-mcp`                        | Open Wright and confirm the health page responds.                     |
+| Onshape FeatureScript | Hosted Onshape Labs preview  | `onshape-labs-featurescript-mcp`        | Connect after completing Onshape OAuth and publisher access.          |
 
 The Linux images launch the pinned `brepjs-cad` MCP through
 `/opt/wright/mcp/bin/brep-mcp-wrapped`. That wrapper leaves the installed

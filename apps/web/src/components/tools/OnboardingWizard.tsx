@@ -685,7 +685,7 @@ export function OnboardingWizard({
           {step === "validating" && (
             <p role="status">
               Validating MCP initialize, initialized notification, tool
-              discovery, and any catalog-approved read-only probeâ€¦
+              discovery, and any catalog-approved read-only probe…
             </p>
           )}
 
@@ -729,22 +729,34 @@ export function OnboardingWizard({
 
           {step === "enabling" && (
             <p role="status">
-              Making this MCP server available in one workspace onlyâ€¦
+              Making this MCP server available in one workspace only…
             </p>
           )}
 
           {step === "complete" && run && (
             <div>
-              <h3>Onboarding {run.state}</h3>
+              <h3>
+                {validation && validation.state !== "passed"
+                  ? "Installation completed; validation failed"
+                  : `Onboarding ${run.state}`}
+              </h3>
               <p>
                 Run {run.run_id} finished with rollback state{" "}
                 {run.rollback_state || "not needed"}.
               </p>
+              {validation && validation.state !== "passed" && (
+                <p role="alert">
+                  Wright registered the MCP server, but could not complete the
+                  protocol validation. It was not enabled in a workspace. Review
+                  the validation result and retry after the server is available
+                  and authenticated.
+                </p>
+              )}
               {validation && (
                 <p>
                   Validation: {validation.state}
                   {validation.read_only_probe
-                    ? ` â€” ${validation.read_only_probe.limitation}`
+                    ? ` — ${validation.read_only_probe.limitation}`
                     : ""}
                 </p>
               )}

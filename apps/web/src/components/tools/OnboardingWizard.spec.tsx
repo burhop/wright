@@ -396,7 +396,14 @@ describe("OnboardingWizard", () => {
       screen.getByRole("button", { name: "Install MCP server" }),
     );
 
-    expect(await screen.findByText("Onboarding completed")).toBeVisible();
+    expect(
+      await screen.findByRole("heading", {
+        name: "Installation completed; validation failed",
+      }),
+    ).toBeVisible();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "registered the MCP server",
+    );
     expect(screen.getByText("Validation: failed")).toBeVisible();
     expect(screen.queryByTestId("workspace-selection")).not.toBeInTheDocument();
     expect(mcpService.enableCapabilityForWorkspace).not.toHaveBeenCalled();

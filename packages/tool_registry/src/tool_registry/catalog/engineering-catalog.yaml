@@ -6027,7 +6027,7 @@ servers:
   package_url: null
   container_url: null
   license: Onshape App Store subscription and any applicable Onshape terms must be completed independently by the user.
-  auth_model: unknown
+  auth_model: oauth
   install_method: remote-http
   maturity: official
   evidence_class: official_preview
