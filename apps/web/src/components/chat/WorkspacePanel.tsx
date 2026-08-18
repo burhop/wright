@@ -1415,6 +1415,12 @@ export function WorkspacePanel({
   );
   const activeDirectBrep = isDirectBrepTab(activeTabPath);
 
+  useEffect(() => {
+    if (activeDirectRivet || activeDirectBrep) {
+      setIsSidebarCollapsed(true);
+    }
+  }, [activeDirectBrep, activeDirectRivet]);
+
   if (isThin) {
     return (
       <div
