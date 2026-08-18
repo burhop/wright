@@ -2371,7 +2371,7 @@ async def toggle_workspace_tool_endpoint(
 ):
     try:
         await service.resolve_workspace_dir(body.session_id, engine)
-        service.set_workspace_tool_enabled(
+        state = service.set_workspace_tool_enabled(
             body.session_id, body.server_id, body.is_enabled
         )
     except WorkspaceServiceError as error:
@@ -2381,7 +2381,7 @@ async def toggle_workspace_tool_endpoint(
         success=True,
         session_id=body.session_id,
         server_id=body.server_id,
-        is_enabled=body.is_enabled,
+        is_enabled=body.server_id in state.enabled_tools,
     )
 
 
@@ -2582,7 +2582,7 @@ async def toggle_workspace_tool_by_id_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     try:
-        service.set_workspace_tool_enabled_by_workspace(
+        state = service.set_workspace_tool_enabled_by_workspace(
             workspace_id, body.server_id, body.is_enabled
         )
     except WorkspaceServiceError as error:
@@ -2591,7 +2591,7 @@ async def toggle_workspace_tool_by_id_endpoint(
         success=True,
         workspace_id=workspace_id,
         server_id=body.server_id,
-        is_enabled=body.is_enabled,
+        is_enabled=body.server_id in state.enabled_tools,
     )
 
 

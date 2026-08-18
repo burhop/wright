@@ -185,11 +185,28 @@ async def test_chat_stream_registry_queues_turns_for_same_session(workspace_setu
 
     registry = ChatStreamRegistry()
     engine = SlowAgentEngine(workspace_setup)
-    first_request = AgentChatRequest(session_id="test-session", message="first")
+    first_request = AgentChatRequest(
+        session_id="test-session", message="first", trace_id="stream-first"
+    )
     second_request = AgentChatRequest(session_id="test-session", message="second")
 
     first_job = await registry.start(first_request, engine)
     await asyncio.wait_for(engine.first_turn_started.wait(), timeout=1)
+    first_status = await first_job.status()
+    assert first_status == {
+        "active": True,
+        "session_id": "test-session",
+        "stream_id": "stream-first",
+        "message": "first",
+        "started_at": first_job.started_at_ms,
+        "event_count": 1,
+    }
+    assert first_job.started_at_ms > 0
+    detached_stream = first_job.stream_from(0)
+    first_event = await anext(detached_stream)
+    assert first_event[0] == "progress"
+    await detached_stream.aclose()
+    assert first_job.is_running is True
 
     second_task = asyncio.create_task(registry.start(second_request, engine))
     await asyncio.sleep(0)
@@ -198,6 +215,7 @@ async def test_chat_stream_registry_queues_turns_for_same_session(workspace_setu
     engine.release_first_turn.set()
     first_events = [event async for event in first_job.stream_from(0)]
     assert ("token", {"text": "first"}) in first_events
+    assert (await first_job.status())["active"] is False
 
     second_job = await asyncio.wait_for(second_task, timeout=1)
     second_events = [event async for event in second_job.stream_from(0)]
@@ -682,6 +700,22 @@ def test_workspace_tools_endpoints(client):
     tools = response_get.json()["enabled_tools"]
     assert "OpenSCAD Geometry" not in tools
 
+    # Rivet is part of Wright itself and cannot be disabled per workspace.
+    response_rivet = client.post(
+        "/api/workspace/tools/toggle",
+        json={
+            "session_id": "test-session",
+            "server_id": "rivet-workflows",
+            "is_enabled": False,
+        },
+    )
+    assert response_rivet.status_code == 200
+    assert response_rivet.json()["is_enabled"] is True
+    response_get = client.get(
+        "/api/workspace/tools", params={"session_id": "test-session"}
+    )
+    assert "rivet-workflows" in response_get.json()["enabled_tools"]
+
 
 def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
     client, tmp_path, monkeypatch
@@ -709,8 +743,7 @@ def test_workspace_tools_read_does_not_materialize_unbound_hermes_session(
 
     response = client.get("/api/workspace/tools", params={"session_id": session_id})
 
-    assert response.status_code == 200
-    assert "enabled_tools" in response.json()
+    assert response.status_code == 404
     assert not fallback_path.exists()
 
     conn = sqlite3.connect(DATABASE_PATH)
@@ -1198,7 +1231,10 @@ def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
     response_status = client.get(f"/api/workspace/by-id/{workspace_id}/mcp-status")
     assert response_status.status_code == 200
     running = response_status.json()["running_mcps"]
-    assert {item["name"] for item in running} == {"Workspace Scoped Onshape MCP"}
+    assert {item["name"] for item in running} == {
+        "Workspace Scoped Onshape MCP",
+        "Rivet Workflows",
+    }
 
 
 def test_workspace_activate_session_fallback(client):
@@ -1699,7 +1735,12 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
                 "name": "Inactive Test MCP",
                 "status": "active",
                 "error_message": None,
-            }
+            },
+            {
+                "name": "Rivet Workflows",
+                "status": "active",
+                "error_message": None,
+            },
         ]
     finally:
         conn = sqlite3.connect(DATABASE_PATH)
@@ -1970,9 +2011,21 @@ def test_agent_chat_stream_can_be_reattached_after_completion(client):
         params={"session_id": "test-session"},
     )
     assert response_attach.status_code == 200
+    assert "event: stream_start" in response_attach.text
+    assert '"resumed": true' in response_attach.text
     assert "event: token" in response_attach.text
     assert "hello" in response_attach.text
     assert "event: stream_end" in response_attach.text
+
+    response_status = client.get(
+        "/api/agent/chat/stream/status",
+        params={"session_id": "test-session"},
+    )
+    assert response_status.status_code == 200
+    assert response_status.json() == {
+        "active": False,
+        "session_id": "test-session",
+    }
 
 
 def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):

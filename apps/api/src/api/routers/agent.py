@@ -139,12 +139,19 @@ class ChatStreamJob:
         self._condition = asyncio.Condition()
         self._task: asyncio.Task | None = None
         self._started_at = 0.0
+        self.started_at_ms = 0
         self._heartbeat_seconds = heartbeat_seconds
         self._progress = GenericProgressProjector()
 
     def start(self) -> None:
         if self._task is None:
+            self._started_at = time.monotonic()
+            self.started_at_ms = int(time.time() * 1000)
             self._task = asyncio.create_task(self._run())
+
+    @property
+    def stream_id(self) -> str:
+        return self.request.trace_id or self.session_id
 
     @property
     def is_running(self) -> bool:
@@ -176,7 +183,6 @@ class ChatStreamJob:
 
     async def _run(self) -> None:
         saw_stream_end = False
-        self._started_at = time.monotonic()
         await self._append(
             "progress",
             self._progress.start(),
@@ -249,6 +255,17 @@ class ChatStreamJob:
         async with self._condition:
             self._condition.notify_all()
         return True
+
+    async def status(self) -> dict:
+        async with self._condition:
+            return {
+                "active": self.is_running,
+                "session_id": self.session_id,
+                "stream_id": self.stream_id,
+                "message": self.request.message,
+                "started_at": self.started_at_ms,
+                "event_count": len(self.events),
+            }
 
 
 class ChatStreamRegistry:
@@ -969,7 +986,7 @@ async def chat(
     job = await registry.start(chat_request, engine)
 
     async def sse_generator() -> AsyncIterator[str]:
-        yield f"event: stream_start\ndata: {json.dumps({'stream_id': trace_id, 'session_id': body.session_id})}\n\n"
+        yield f"event: stream_start\ndata: {json.dumps({'stream_id': job.stream_id, 'session_id': body.session_id, 'started_at': job.started_at_ms})}\n\n"
         try:
             async for event_type, event_data in job.stream_from(0):
                 log.info("chat_stream_yield_event", type=event_type)
@@ -1101,6 +1118,23 @@ async def set_active_agent_endpoint(
     return ActiveAgentResponse(agent=provider.name)
 
 
+@router.get("/chat/stream/status")
+@traced("agent.chat.stream.status")
+async def get_chat_stream_status(
+    request: Request,
+    session_id: str = Query(...),
+):
+    """Report whether a session has a live turn that a browser can resume."""
+    registry = get_chat_stream_registry(request)
+    job = await registry.get(session_id)
+    if not job:
+        return {"active": False, "session_id": session_id}
+    status_payload = await job.status()
+    if not status_payload["active"]:
+        return {"active": False, "session_id": session_id}
+    return status_payload
+
+
 @router.get("/chat/stream")
 @traced("agent.chat.stream.attach")
 async def attach_chat_stream(
@@ -1118,6 +1152,7 @@ async def attach_chat_stream(
         )
 
     async def sse_generator() -> AsyncIterator[str]:
+        yield f"event: stream_start\ndata: {json.dumps({'stream_id': job.stream_id, 'session_id': session_id, 'started_at': job.started_at_ms, 'resumed': True})}\n\n"
         async for event_type, event_data in job.stream_from(after):
             yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
 

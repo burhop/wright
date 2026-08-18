@@ -510,7 +510,9 @@ export function WorkspacePanel({
   const [mcpError, setMcpError] = useState<string | null>(null);
   const prefetchedMcpWorkspaceRef = useRef<string | null>(null);
 
-  const installedServers = mcpServers.filter((s) => s.is_installed);
+  const installedServers = mcpServers.filter(
+    (server) => server.is_installed && server.server_id !== "rivet-workflows",
+  );
 
   // File tree expanded directories — persisted so the tree stays open across refresh
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(
@@ -1315,7 +1317,8 @@ export function WorkspacePanel({
     try {
       const serverRequest = fetch(getApiUrl("/api/mcp/servers/installed")).then(
         async (response) => {
-          if (!response.ok) throw new Error("Installed MCP list is unavailable");
+          if (!response.ok)
+            throw new Error("Installed MCP list is unavailable");
           const data = await response.json();
           return (data.servers || []) as CompactMcpServer[];
         },
@@ -1398,9 +1401,7 @@ export function WorkspacePanel({
       });
       const workflowRequest = slug
         ? workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
-        : workspaceService.ensureDefaultRivetWorkflow(
-            workspaceFileSessionId,
-          );
+        : workspaceService.ensureDefaultRivetWorkflow(workspaceFileSessionId);
       void workflowRequest
         .then((workflow) => {
           updateTabPath(

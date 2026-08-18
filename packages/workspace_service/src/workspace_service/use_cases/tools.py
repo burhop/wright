@@ -11,6 +11,19 @@ from data_vault import WorkspaceRepository
 
 from ..models import WorkspaceToolState
 
+RIVET_WORKFLOWS_SERVER_ID = "rivet-workflows"
+RIVET_WORKFLOWS_SERVER_NAME = "Rivet Workflows"
+
+
+def _with_builtin_tools(tools: list[str] | None) -> list[str]:
+    enabled = [
+        tool
+        for tool in (tools or [])
+        if tool not in {RIVET_WORKFLOWS_SERVER_ID, RIVET_WORKFLOWS_SERVER_NAME}
+    ]
+    enabled.append(RIVET_WORKFLOWS_SERVER_ID)
+    return enabled
+
 
 class WorkspaceToolUseCases:
     def __init__(
@@ -29,6 +42,7 @@ class WorkspaceToolUseCases:
         enabled = self.repository.enabled_tools(workspace_id)
         if enabled is None:
             enabled = self.installed_names()
+        enabled = _with_builtin_tools(enabled)
         workspace = self.repository.get_by_id(workspace_id)
         session_id = (
             str(workspace.get("session_id") or workspace_id)
@@ -42,6 +56,11 @@ class WorkspaceToolUseCases:
     ) -> WorkspaceToolState:
         state = self.list_by_workspace(workspace_id)
         current = list(state.enabled_tools)
+        if server_id == RIVET_WORKFLOWS_SERVER_ID:
+            self.repository.set_enabled_tools(workspace_id, current)
+            return WorkspaceToolState(
+                session_id=state.session_id, enabled_tools=current
+            )
         if is_enabled and server_id not in current:
             current.append(server_id)
         elif not is_enabled and server_id in current:
@@ -53,7 +72,9 @@ class WorkspaceToolUseCases:
         enabled = self.default_for_session(session_id)
         return WorkspaceToolState(
             session_id=session_id,
-            enabled_tools=enabled if enabled is not None else self.installed_names(),
+            enabled_tools=_with_builtin_tools(
+                enabled if enabled is not None else self.installed_names()
+            ),
         )
 
     def set_by_session(
@@ -61,6 +82,11 @@ class WorkspaceToolUseCases:
     ) -> WorkspaceToolState:
         state = self.list_by_session(session_id)
         current = list(state.enabled_tools)
+        if server_id == RIVET_WORKFLOWS_SERVER_ID:
+            workspace = self.repository.get_by_session(session_id)
+            if workspace:
+                self.repository.set_enabled_tools(workspace["workspace_id"], current)
+            return WorkspaceToolState(session_id=session_id, enabled_tools=current)
         if is_enabled and server_id not in current:
             current.append(server_id)
         elif not is_enabled and server_id in current:

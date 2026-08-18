@@ -248,6 +248,51 @@ describe("WorkspacePanel session selection", () => {
     vi.unstubAllGlobals();
   });
 
+  it("keeps built-in Rivet out of the workspace MCP selector", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          servers: [
+            {
+              server_id: "rivet-workflows",
+              name: "Rivet Workflows",
+              type: "stdio",
+              is_active: true,
+              is_installed: true,
+            },
+            {
+              server_id: "solid-edge-mcp",
+              name: "Solid Edge MCP",
+              type: "stdio",
+              is_active: true,
+              is_installed: true,
+            },
+          ],
+        }),
+      }),
+    );
+
+    render(
+      <MemoryRouter>
+        <ViewerPanelProvider>
+          <WorkspacePanel workspaceId="workspace-1" sessionId="new-session" />
+        </ViewerPanelProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByTestId("activity-bar-mcp-btn"));
+    expect(
+      await screen.findByTestId("mcp-server-item-solid edge mcp"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("mcp-server-item-rivet workflows"),
+    ).not.toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
+
   it("opens a Rivet tab immediately while its workflow is prepared", async () => {
     mockEnsureDefaultRivetWorkflow.mockReturnValue(new Promise(() => {}));
 
@@ -290,7 +335,9 @@ describe("WorkspacePanel session selection", () => {
         "focus",
       ),
     );
-    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "none" });
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+      display: "none",
+    });
     expect(
       screen.getByRole("button", { name: "Restore workspace layout" }),
     ).toBeInTheDocument();
@@ -305,7 +352,9 @@ describe("WorkspacePanel session selection", () => {
         "normal",
       ),
     );
-    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({ display: "flex" });
+    expect(screen.getByTestId("agent-sidebar")).toHaveStyle({
+      display: "flex",
+    });
   });
 
   it("does not show another session's busy stream on the selected session", async () => {

@@ -28,6 +28,18 @@ UUID_SESSION_PATTERN = re.compile(
 )
 HERMES_NATIVE_SESSION_PATTERN = re.compile(r"^\d{8}_\d{6}_[0-9a-f]+$", re.IGNORECASE)
 GENERIC_SESSION_PATTERN = re.compile(r"^session(?:[-_]?.*)?$", re.IGNORECASE)
+RIVET_WORKFLOWS_SERVER_ID = "rivet-workflows"
+RIVET_WORKFLOWS_SERVER_NAME = "Rivet Workflows"
+
+
+def _with_builtin_workspace_tools(tools: list[str]) -> list[str]:
+    enabled = [
+        tool
+        for tool in tools
+        if tool not in {RIVET_WORKFLOWS_SERVER_ID, RIVET_WORKFLOWS_SERVER_NAME}
+    ]
+    enabled.append(RIVET_WORKFLOWS_SERVER_ID)
+    return enabled
 
 
 class _ClosingConnection(sqlite3.Connection):
@@ -504,7 +516,9 @@ def get_workspace_enabled_tools_by_workspace(
         row = cursor.fetchone()
         if row and row["enabled_tools"] is not None:
             try:
-                return json.loads(row["enabled_tools"])
+                enabled_tools = json.loads(row["enabled_tools"])
+                if isinstance(enabled_tools, list):
+                    return _with_builtin_workspace_tools(enabled_tools)
             except Exception:
                 pass
     return None
@@ -557,7 +571,7 @@ def get_workspace_enabled_tools(db_path: str, session_id: str) -> Optional[list[
         if not requires_creds:
             enabled.append(s.name)
 
-    return enabled
+    return _with_builtin_workspace_tools(enabled)
 
 
 def update_workspace_enabled_tools_by_workspace(

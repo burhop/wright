@@ -28,31 +28,41 @@ export function AuthGate({ children }: AuthGateProps) {
     }
 
     let active = true;
+    let retryTimer: number | undefined;
     const bootstrap = async () => {
       const discoveredToken =
         consumeAccessTokenFromLocation() || readStoredAccessToken();
+      let status;
       try {
-        const status = await fetchSessionStatus();
+        status = await fetchSessionStatus();
+      } catch {
         if (!active) return;
-        if (!status.auth_required || status.authenticated) {
-          setState("authenticated");
-          return;
-        }
-        if (discoveredToken) {
+        setState("checking");
+        retryTimer = window.setTimeout(() => void bootstrap(), 1000);
+        return;
+      }
+      if (!active) return;
+      if (!status.auth_required || status.authenticated) {
+        setState("authenticated");
+        return;
+      }
+      if (discoveredToken) {
+        try {
           await createBrowserSession(discoveredToken);
           if (!active) return;
           setState("authenticated");
           return;
+        } catch {
+          clearStoredAccessToken();
         }
-        setState("needs-token");
-      } catch {
-        if (active) setState(discoveredToken ? "authenticated" : "needs-token");
       }
+      setState("needs-token");
     };
 
     void bootstrap();
     return () => {
       active = false;
+      if (retryTimer !== undefined) window.clearTimeout(retryTimer);
     };
   }, []);
 
@@ -76,6 +86,26 @@ export function AuthGate({ children }: AuthGateProps) {
 
   if (state === "authenticated") {
     return <>{children}</>;
+  }
+
+  if (state === "checking") {
+    return (
+      <div
+        role="status"
+        style={{
+          position: "fixed",
+          inset: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--color-background)",
+          color: "var(--color-secondary)",
+          fontFamily: "var(--font-ui)",
+        }}
+      >
+        Connecting to Wright…
+      </div>
+    );
   }
 
   return (
