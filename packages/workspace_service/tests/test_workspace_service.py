@@ -10,6 +10,7 @@ from agent_adapters import AgentSessionInfo
 from workspace_service import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
+    WorkspaceProtectedPathError,
     WorkspaceService,
     default_workspace_parent_dir,
 )
@@ -166,6 +167,69 @@ def test_authorize_session_workspace_accepts_registered_existing_path(
     assert authorized.path == str(workspace.resolve())
     assert authorized.workspace_id == "workspace-1"
     assert authorized.created is False
+
+
+def test_authorize_session_workspace_rejects_registered_application_source(
+    tmp_path, db_path
+):
+    application_root = tmp_path / "wright-application"
+    application_root.mkdir()
+    service = WorkspaceService(
+        db_path,
+        parent_dir_provider=lambda: str(tmp_path / "managed"),
+        protected_roots_provider=lambda: (str(application_root),),
+    )
+    service.repository.create(
+        "workspace-1",
+        "session-1",
+        str(application_root),
+        workspace_name="Unsafe Legacy Workspace",
+    )
+
+    with pytest.raises(WorkspaceProtectedPathError, match="access blocked"):
+        service.authorize_session_workspace(str(application_root))
+
+
+@pytest.mark.asyncio
+async def test_activate_workspace_rejects_legacy_path_containing_application_source(
+    tmp_path, db_path
+):
+    application_root = tmp_path / "installation" / "wright"
+    application_root.mkdir(parents=True)
+    unsafe_parent = application_root.parent
+    service = WorkspaceService(
+        db_path,
+        parent_dir_provider=lambda: str(tmp_path / "managed"),
+        protected_roots_provider=lambda: (str(application_root),),
+    )
+    service.repository.create(
+        "workspace-1",
+        "session-1",
+        str(unsafe_parent),
+        workspace_name="Unsafe Parent Workspace",
+    )
+
+    with pytest.raises(WorkspaceProtectedPathError, match="application files"):
+        await service.activate_workspace("session-1", FakeEngine())
+
+
+def test_workspace_tool_access_rejects_legacy_application_workspace(tmp_path, db_path):
+    application_root = tmp_path / "wright-application"
+    application_root.mkdir()
+    service = WorkspaceService(
+        db_path,
+        parent_dir_provider=lambda: str(tmp_path / "managed"),
+        protected_roots_provider=lambda: (str(application_root),),
+    )
+    service.repository.create(
+        "workspace-1",
+        "session-1",
+        str(application_root),
+        workspace_name="Unsafe Legacy Workspace",
+    )
+
+    with pytest.raises(WorkspaceProtectedPathError, match="access blocked"):
+        service.list_workspace_tools_by_workspace("workspace-1")
 
 
 def test_authorize_session_workspace_rejects_unregistered_path_without_creating(

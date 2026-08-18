@@ -76,12 +76,22 @@ function isDirectBrepTab(path: string | null): boolean {
 
 function isVisibleBrepServer(server: {
   name?: string;
-  source_url?: string;
+  source_url?: string | null;
 }): boolean {
   return (
     server.name?.trim().toLowerCase() === "brep mcp" &&
     server.source_url?.toLowerCase().includes("brep-mcp") === true
   );
+}
+
+interface CompactMcpServer {
+  server_id: string;
+  name: string;
+  type: string;
+  is_active: boolean;
+  is_installed: boolean;
+  description?: string | null;
+  source_url?: string | null;
 }
 
 function findFileInTree(
@@ -380,6 +390,7 @@ export function WorkspacePanel({
   const [isAgentCollapsed, setIsAgentCollapsed] = useState<boolean>(
     savedLayout?.isAgentCollapsed ?? false,
   );
+  const agentCollapsedBeforeFocusRef = useRef(isAgentCollapsed);
   const {
     openTabs,
     activeTabPath,
@@ -429,6 +440,35 @@ export function WorkspacePanel({
     (surfaceLayout.mode === "focus" || surfaceLayout.mode === "narrow");
   const surfaceFocusManager = useMemo(() => new SurfaceFocusManager(), []);
 
+  const enterSurfaceFocus = () => {
+    surfaceFocusManager.rememberInitiator(
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null,
+    );
+    agentCollapsedBeforeFocusRef.current = isAgentCollapsed;
+    setIsAgentCollapsed(true);
+    surfaceLayoutDispatch({
+      type: "enter_focus",
+      containerWidth: panelWidth,
+    });
+  };
+
+  const exitSurfaceFocus = () => {
+    surfaceLayoutDispatch({
+      type: "exit_focus",
+      containerWidth: normalSurfacePaneWidth,
+    });
+    setIsAgentCollapsed(agentCollapsedBeforeFocusRef.current);
+    queueMicrotask(() =>
+      surfaceFocusManager.restoreInitiator(
+        containerRef.current?.querySelector<HTMLElement>(
+          '[data-focus-region="tabs"] [role="tab"][aria-selected="true"]',
+        ) ?? null,
+      ),
+    );
+  };
+
   useEffect(() => {
     surfaceLayoutDispatch({
       type: "resize_container",
@@ -464,9 +504,11 @@ export function WorkspacePanel({
     useState<number>(10);
 
   // Compact MCP tools state
-  const [mcpServers, setMcpServers] = useState<any[]>([]);
+  const [mcpServers, setMcpServers] = useState<CompactMcpServer[]>([]);
   const [enabledTools, setEnabledTools] = useState<string[]>([]);
   const [mcpLoading, setMcpLoading] = useState(false);
+  const [mcpError, setMcpError] = useState<string | null>(null);
+  const prefetchedMcpWorkspaceRef = useRef<string | null>(null);
 
   const installedServers = mcpServers.filter((s) => s.is_installed);
 
@@ -1269,29 +1311,50 @@ export function WorkspacePanel({
   const fetchMcpData = useCallback(async () => {
     if (!_workspaceId && !activeSessionId) return;
     setMcpLoading(true);
+    setMcpError(null);
     try {
-      const serversRes = await fetch(getApiUrl("/api/mcp/servers"));
-      if (serversRes.ok) {
-        const data = await serversRes.json();
-        setMcpServers(data.servers || []);
+      const serverRequest = fetch(getApiUrl("/api/mcp/servers/installed")).then(
+        async (response) => {
+          if (!response.ok) throw new Error("Installed MCP list is unavailable");
+          const data = await response.json();
+          return (data.servers || []) as CompactMcpServer[];
+        },
+      );
+      const enabledRequest = _workspaceId
+        ? workspaceService.getWorkspaceToolsById(_workspaceId)
+        : workspaceService.getWorkspaceTools(activeSessionId!);
+      const [serversResult, enabledResult] = await Promise.allSettled([
+        serverRequest,
+        enabledRequest,
+      ]);
+      const failures: unknown[] = [];
+      if (serversResult.status === "fulfilled") {
+        setMcpServers(serversResult.value);
+      } else {
+        failures.push(serversResult.reason);
       }
-
-      const enabledList = _workspaceId
-        ? await workspaceService.getWorkspaceToolsById(_workspaceId)
-        : await workspaceService.getWorkspaceTools(activeSessionId!);
-      setEnabledTools(enabledList || []);
-    } catch (err) {
-      console.error("Failed to load compact MCP list", err);
+      if (enabledResult.status === "fulfilled") {
+        setEnabledTools(enabledResult.value || []);
+      } else {
+        failures.push(enabledResult.reason);
+      }
+      if (failures.length > 0) {
+        failures.forEach((failure) =>
+          console.error("Failed to load compact MCP list", failure),
+        );
+        setMcpError("Workspace tools could not be fully loaded.");
+      }
     } finally {
       setMcpLoading(false);
     }
   }, [_workspaceId, activeSessionId]);
 
   useEffect(() => {
-    if (activeSidebar === "marketplace") {
-      fetchMcpData();
-    }
-  }, [activeSidebar, fetchMcpData]);
+    const key = _workspaceId || activeSessionId;
+    if (!key || prefetchedMcpWorkspaceRef.current === key) return;
+    prefetchedMcpWorkspaceRef.current = key;
+    void fetchMcpData();
+  }, [_workspaceId, activeSessionId, fetchMcpData]);
 
   const handleToggleMcpTool = async (
     serverId: string,
@@ -1323,19 +1386,32 @@ export function WorkspacePanel({
   };
 
   const openRivetWorkflowTab = useCallback(
-    async (slug?: string) => {
+    (slug?: string) => {
       if (!workspaceFileSessionId) return;
       setIsSidebarCollapsed(true);
-      const workflow = slug
-        ? await workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
-        : await workspaceService.ensureDefaultRivetWorkflow(
-            workspaceFileSessionId,
-          );
+      const initialSlug = slug || "rivet";
+      const initialPath = directRivetTabPath(initialSlug);
       openTransientTab({
-        name: `${workflow.slug}.rivet-project`,
-        path: directRivetTabPath(workflow.slug),
+        name: `${initialSlug}.rivet-project`,
+        path: initialPath,
         type: "rivet",
       });
+      const workflowRequest = slug
+        ? workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
+        : workspaceService.ensureDefaultRivetWorkflow(
+            workspaceFileSessionId,
+          );
+      void workflowRequest
+        .then((workflow) => {
+          updateTabPath(
+            initialPath,
+            directRivetTabPath(workflow.slug),
+            `${workflow.slug}.rivet-project`,
+          );
+        })
+        .catch((error) => {
+          console.error("Rivet workflow preparation failed", error);
+        });
       if (surfaceLayout.mode === "narrow") {
         surfaceLayoutDispatch({
           type: "select_narrow_pane",
@@ -1347,6 +1423,7 @@ export function WorkspacePanel({
       openTransientTab,
       surfaceLayout.mode,
       surfaceLayoutDispatch,
+      updateTabPath,
       workspaceFileSessionId,
     ],
   );
@@ -1650,8 +1727,10 @@ export function WorkspacePanel({
               <ChatTranscript
                 session={activeSession}
                 isStreaming={isActiveSessionStreaming}
+                streamStartedAt={activeSessionStreamState?.startedAt ?? null}
                 streamedText={activeSessionStreamedText}
                 activeTool={activeSessionTool}
+                streamActivity={activeSessionStreamActivity}
                 onOpenFile={handleFileClick}
                 activeSessionId={activeSessionId || undefined}
                 workspacePath={workspacePath || undefined}
@@ -1692,7 +1771,7 @@ export function WorkspacePanel({
       paneContainerWidth={surfacePaneContainerWidth}
       leftSidebarWidth={leftSidebarWidth}
       leftSidebarCollapsed={isSidebarCollapsed}
-      chatCollapsed={isAgentCollapsed && surfaceLayout.wideMode !== "focus"}
+      chatCollapsed={isAgentCollapsed}
       legacyChatWidth={rightSidebarWidth}
       adaptive={surfacesEnabled}
       resizing={isLeftDragging || isRightDragging}
@@ -1753,7 +1832,22 @@ export function WorkspacePanel({
             <div
               style={{ flex: 1, overflowY: "auto", padding: "var(--space-md)" }}
             >
-              {mcpLoading ? (
+              {mcpError && (
+                <div
+                  role="alert"
+                  style={{
+                    color: "var(--color-warning, #f59e0b)",
+                    fontSize: "0.72rem",
+                    marginBottom: "var(--space-sm)",
+                  }}
+                >
+                  {mcpError}{" "}
+                  <button type="button" onClick={() => void fetchMcpData()}>
+                    Retry
+                  </button>
+                </div>
+              )}
+              {mcpLoading && installedServers.length === 0 ? (
                 <div
                   style={{
                     color: "var(--color-secondary)",
@@ -2608,31 +2702,8 @@ export function WorkspacePanel({
             workspaceId={_workspaceId}
             sessionId={workspaceFileSessionId}
             focusMode={surfaceLayout.wideMode === "focus"}
-            onEnterFocus={() => {
-              surfaceFocusManager.rememberInitiator(
-                document.activeElement instanceof HTMLElement
-                  ? document.activeElement
-                  : null,
-              );
-              setIsAgentCollapsed(false);
-              surfaceLayoutDispatch({
-                type: "enter_focus",
-                containerWidth: panelWidth,
-              });
-            }}
-            onExitFocus={() => {
-              surfaceLayoutDispatch({
-                type: "exit_focus",
-                containerWidth: normalSurfacePaneWidth,
-              });
-              queueMicrotask(() =>
-                surfaceFocusManager.restoreInitiator(
-                  containerRef.current?.querySelector<HTMLElement>(
-                    '[data-focus-region="tabs"] [role="tab"][aria-selected="true"]',
-                  ) ?? null,
-                ),
-              );
-            }}
+            onEnterFocus={enterSurfaceFocus}
+            onExitFocus={exitSurfaceFocus}
           />
         )}
         {openTabs.length > 0 && (
@@ -2663,21 +2734,9 @@ export function WorkspacePanel({
                 }
                 onClick={() => {
                   if (surfaceLayout.wideMode === "focus") {
-                    surfaceLayoutDispatch({
-                      type: "exit_focus",
-                      containerWidth: normalSurfacePaneWidth,
-                    });
+                    exitSurfaceFocus();
                   } else {
-                    surfaceFocusManager.rememberInitiator(
-                      document.activeElement instanceof HTMLElement
-                        ? document.activeElement
-                        : null,
-                    );
-                    setIsAgentCollapsed(false);
-                    surfaceLayoutDispatch({
-                      type: "enter_focus",
-                      containerWidth: panelWidth,
-                    });
+                    enterSurfaceFocus();
                   }
                 }}
                 style={{
@@ -3069,8 +3128,7 @@ export function WorkspacePanel({
 
       {/* Right Sidebar Resize Handle */}
       {(!surfacesEnabled || surfaceLayout.mode !== "narrow") &&
-        (!isAgentCollapsed ||
-          (surfacesEnabled && surfaceLayout.wideMode === "focus")) &&
+        !isAgentCollapsed &&
         (surfacesEnabled ? (
           <PaneSeparator
             valueBasisPoints={resolvedSurfaceLayout.chatBasisPoints}
@@ -3122,8 +3180,7 @@ export function WorkspacePanel({
               ? surfaceLayout.narrowPane === "chat"
                 ? "flex"
                 : "none"
-              : isAgentCollapsed &&
-                  (!surfacesEnabled || surfaceLayout.wideMode !== "focus")
+              : isAgentCollapsed
                 ? "none"
                 : "flex",
           flexDirection: "column",
@@ -3345,6 +3402,7 @@ export function WorkspacePanel({
             <ChatTranscript
               session={activeSession}
               isStreaming={isActiveSessionStreaming}
+              streamStartedAt={activeSessionStreamState?.startedAt ?? null}
               streamedText={activeSessionStreamedText}
               activeTool={activeSessionTool}
               streamActivity={activeSessionStreamActivity}

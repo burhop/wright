@@ -337,9 +337,9 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
           ),
         ),
       );
-      if (activeTabPath === normalizedOldPath) {
-        activateTabPath(normalizedNewPath);
-      }
+      setActiveTabPath((currentPath) =>
+        currentPath === normalizedOldPath ? normalizedNewPath : currentPath,
+      );
       setDocuments((prev) => {
         const next = new Map(prev);
         const doc = next.get(normalizedOldPath);
@@ -383,7 +383,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
         return next;
       });
     },
-    [activeTabPath, activateTabPath],
+    [],
   );
 
   const updateTabLastModified = useCallback(

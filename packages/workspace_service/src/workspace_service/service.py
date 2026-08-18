@@ -42,6 +42,7 @@ from .errors import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
     WorkspaceNotFoundError,
+    WorkspaceProtectedPathError,
 )
 from .executor import BoundedExecutor
 from .models import (
@@ -107,6 +108,34 @@ def default_workspace_parent_dir(env: Mapping[str, str] | None = None) -> str:
     return os.path.join(home_dir, "wright")
 
 
+def default_protected_application_roots() -> tuple[str, ...]:
+    """Return Wright source/install roots that must never become workspaces."""
+
+    module_dir = Path(__file__).resolve().parent
+    roots = {module_dir}
+    for candidate in module_dir.parents:
+        if (
+            (candidate / "pyproject.toml").is_file()
+            and (candidate / "apps" / "api").is_dir()
+            and (candidate / "packages" / "workspace_service").is_dir()
+        ):
+            roots.add(candidate)
+            break
+    return tuple(str(root) for root in roots)
+
+
+def _paths_overlap(left: Path, right: Path) -> bool:
+    try:
+        common = os.path.commonpath((str(left), str(right)))
+    except ValueError:
+        return False
+    common_identity = os.path.normcase(os.path.normpath(common))
+    return common_identity in {
+        os.path.normcase(os.path.normpath(str(left))),
+        os.path.normcase(os.path.normpath(str(right))),
+    }
+
+
 def _record_from_row(row: Mapping[str, Any]) -> WorkspaceRecord:
     return WorkspaceRecord(
         workspace_id=str(row["workspace_id"]),
@@ -158,6 +187,9 @@ class WorkspaceService:
         db_path: str,
         *,
         parent_dir_provider: Callable[[], str] = default_workspace_parent_dir,
+        protected_roots_provider: Callable[
+            [], tuple[str, ...]
+        ] = default_protected_application_roots,
         materializers: Mapping[str, AgentContextMaterializer] | None = None,
         executor: BoundedExecutor | None = None,
         repository: WorkspaceRepository | None = None,
@@ -165,6 +197,7 @@ class WorkspaceService:
     ) -> None:
         self.db_path = db_path
         self.parent_dir_provider = parent_dir_provider
+        self.protected_roots_provider = protected_roots_provider
         self.executor = executor or BoundedExecutor()
         self.repository = repository or WorkspaceRepository(
             db_path, secrets=create_default_secret_provider()
@@ -241,6 +274,7 @@ class WorkspaceService:
     async def resolve_workspace_dir(self, session_id: str, engine) -> str:
         workspace = self.repository.get_by_session(session_id)
         if workspace:
+            self.ensure_workspace_path_safe(workspace["local_path"])
             try:
                 actual_workspace_path = await engine.get_session_workspace(session_id)
             except Exception:
@@ -316,6 +350,7 @@ class WorkspaceService:
                 raise WorkspaceInvalidRequestError(
                     "Session workspace aliases are not permitted."
                 )
+            self.ensure_workspace_path_safe(str(canonical))
             return SessionWorkspaceAuthorization(
                 path=str(canonical),
                 workspace_id=str(workspace["workspace_id"]),
@@ -348,6 +383,7 @@ class WorkspaceService:
             raise WorkspaceInvalidRequestError(
                 "Workspace path must remain inside the configured Wright workspace root."
             )
+        self.ensure_workspace_path_safe(str(managed))
         if requested_path is not None:
             requested_identity = requested_path.rstrip("/\\")
             managed_identity = str(managed).rstrip("/\\")
@@ -361,6 +397,50 @@ class WorkspaceService:
         if create:
             managed.mkdir(parents=True, exist_ok=True)
         return str(managed)
+
+    def ensure_workspace_path_safe(self, local_path: str) -> str:
+        """Reject workspaces that overlap Wright's own source or install files."""
+
+        if not str(local_path or "").strip():
+            raise WorkspaceInvalidRequestError("Workspace path cannot be empty.")
+        candidate = Path(local_path).expanduser().resolve(strict=False)
+        for protected_value in self.protected_roots_provider():
+            if not str(protected_value or "").strip():
+                continue
+            protected = Path(protected_value).expanduser().resolve(strict=False)
+            if _paths_overlap(candidate, protected):
+                logger.error(
+                    "workspace_protected_path_rejected",
+                    workspace_path=str(candidate),
+                    protected_root=str(protected),
+                )
+                raise WorkspaceProtectedPathError(
+                    "Workspace access blocked because its path overlaps Wright "
+                    "application files. Create or select a dedicated engineering "
+                    f"workspace under {self.parent_dir_provider()} instead."
+                )
+        return str(candidate)
+
+    def workspace_path_is_safe(self, local_path: str) -> bool:
+        try:
+            self.ensure_workspace_path_safe(local_path)
+        except WorkspaceProtectedPathError:
+            return False
+        return True
+
+    def require_safe_workspace(self, workspace_id: str) -> Mapping[str, Any]:
+        workspace = self.repository.get_by_id(workspace_id)
+        if not workspace:
+            raise WorkspaceNotFoundError("Workspace not found")
+        self.ensure_workspace_path_safe(workspace["local_path"])
+        return workspace
+
+    def require_safe_session_workspace(self, session_id: str) -> Mapping[str, Any]:
+        workspace = self.repository.get_by_session(session_id)
+        if not workspace:
+            raise WorkspaceNotFoundError("Workspace not found")
+        self.ensure_workspace_path_safe(workspace["local_path"])
+        return workspace
 
     def _workspace_file(self, workspace_path: str, requested_path: str) -> Path:
         normalized = requested_path.replace("\\", "/")
@@ -437,6 +517,7 @@ class WorkspaceService:
         workspace_path = local_path or (workspace["local_path"] if workspace else None)
         if not workspace_path:
             workspace_path = await self.resolve_workspace_dir(session_id, engine)
+        self.ensure_workspace_path_safe(workspace_path)
 
         active_session_id = await self._verify_agent_session(
             session_id,
@@ -510,6 +591,7 @@ class WorkspaceService:
         workspace = self.repository.get_by_id(workspace_id)
         if not workspace:
             raise WorkspaceNotFoundError("Workspace not found")
+        self.ensure_workspace_path_safe(workspace["local_path"])
 
         local_records = {
             row["session_id"]: row
@@ -573,6 +655,7 @@ class WorkspaceService:
         workspace = self.repository.get_by_id(workspace_id)
         if not workspace:
             raise WorkspaceNotFoundError("Workspace not found")
+        self.ensure_workspace_path_safe(workspace["local_path"])
         session_info = await engine.create_session(workspace["local_path"])
         existing_titles = [
             row.get("title") for row in self.repository.list_sessions(workspace_id)
@@ -609,6 +692,7 @@ class WorkspaceService:
         workspace = self.repository.get_by_id(workspace_id)
         if not workspace:
             raise WorkspaceNotFoundError("Workspace not found")
+        self.ensure_workspace_path_safe(workspace["local_path"])
 
         owner = self.repository.get_by_session(session_id)
         if owner and owner["workspace_id"] != workspace_id:
@@ -657,21 +741,25 @@ class WorkspaceService:
     def list_workspace_tools_by_workspace(
         self, workspace_id: str
     ) -> WorkspaceToolState:
+        self.require_safe_workspace(workspace_id)
         return self.tools.list_by_workspace(workspace_id)
 
     def set_workspace_tool_enabled_by_workspace(
         self, workspace_id: str, server_id: str, is_enabled: bool
     ) -> WorkspaceToolState:
+        self.require_safe_workspace(workspace_id)
         state = self.tools.set_by_workspace(workspace_id, server_id, is_enabled)
         self.notifier.publish("workspace.tools.changed", workspace_id=workspace_id)
         return state
 
     def list_workspace_tools(self, session_id: str) -> WorkspaceToolState:
+        self.require_safe_session_workspace(session_id)
         return self.tools.list_by_session(session_id)
 
     def set_workspace_tool_enabled(
         self, session_id: str, server_id: str, is_enabled: bool
     ) -> WorkspaceToolState:
+        self.require_safe_session_workspace(session_id)
         state = self.tools.set_by_session(session_id, server_id, is_enabled)
         workspace = self.repository.get_by_session(session_id)
         self.notifier.publish(

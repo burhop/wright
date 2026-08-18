@@ -33,6 +33,7 @@ from workspace_service import (
     WorkspaceConflictError,
     WorkspaceInvalidRequestError,
     WorkspaceNotFoundError,
+    WorkspaceProtectedPathError,
     WorkspaceService,
     WorkspaceServiceError,
     default_workspace_parent_dir,
@@ -1923,6 +1924,11 @@ def _active_agent_id(request: Request | None = None) -> str:
 def _workspace_service_http_exception(error: WorkspaceServiceError) -> HTTPException:
     if isinstance(error, WorkspaceNotFoundError):
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))
+    if isinstance(error, WorkspaceProtectedPathError):
+        return HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"code": error.detail.code, "message": str(error)},
+        )
     if isinstance(error, (WorkspaceConflictError, WorkspaceInvalidRequestError)):
         return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
     return HTTPException(
@@ -1936,7 +1942,10 @@ async def get_workspace_dir(
     service: WorkspaceService = Depends(get_workspace_service),
 ) -> str:
     """Retrieve the workspace path for the given session ID, with fallback."""
-    return await service.resolve_workspace_dir(session_id, engine)
+    try:
+        return await service.resolve_workspace_dir(session_id, engine)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
 
 
 # ── File Operations ──────────────────────────────────────────────────────
@@ -2343,7 +2352,10 @@ async def get_workspace_tools_endpoint(
     session_id: str = Query(...),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    state = service.list_workspace_tools(session_id)
+    try:
+        state = service.list_workspace_tools(session_id)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     return WorkspaceToolsGetResponse(
         session_id=state.session_id, enabled_tools=state.enabled_tools
     )
@@ -2357,8 +2369,13 @@ async def toggle_workspace_tool_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    await service.resolve_workspace_dir(body.session_id, engine)
-    service.set_workspace_tool_enabled(body.session_id, body.server_id, body.is_enabled)
+    try:
+        await service.resolve_workspace_dir(body.session_id, engine)
+        service.set_workspace_tool_enabled(
+            body.session_id, body.server_id, body.is_enabled
+        )
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
 
     return WorkspaceToolToggleResponse(
         success=True,
@@ -2456,11 +2473,10 @@ async def create_workspace_endpoint(
 async def get_workspace_by_id_endpoint(
     workspace_id: str, service: WorkspaceService = Depends(get_workspace_service)
 ):
-    ws = service.lifecycle.get_by_id(workspace_id)
-    if not ws:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
-        )
+    try:
+        ws = service.require_safe_workspace(workspace_id)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     return serialize_workspace(ws)
 
 
@@ -2472,9 +2488,12 @@ async def list_workspace_sessions_endpoint(
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    records = await service.list_workspace_sessions(
-        workspace_id, engine, agent_id=_active_agent_id(request)
-    )
+    try:
+        records = await service.list_workspace_sessions(
+            workspace_id, engine, agent_id=_active_agent_id(request)
+        )
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     return WorkspaceSessionsResponse(
         workspace_id=workspace_id,
         sessions=[
@@ -2543,7 +2562,10 @@ async def select_workspace_session_endpoint(
 async def get_workspace_tools_by_id_endpoint(
     workspace_id: str, service: WorkspaceService = Depends(get_workspace_service)
 ):
-    state = service.list_workspace_tools_by_workspace(workspace_id)
+    try:
+        state = service.list_workspace_tools_by_workspace(workspace_id)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     return WorkspaceToolsByIdResponse(
         workspace_id=workspace_id, enabled_tools=state.enabled_tools
     )
@@ -2559,9 +2581,12 @@ async def toggle_workspace_tool_by_id_endpoint(
     body: WorkspaceToolToggleByIdRequest,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    service.set_workspace_tool_enabled_by_workspace(
-        workspace_id, body.server_id, body.is_enabled
-    )
+    try:
+        service.set_workspace_tool_enabled_by_workspace(
+            workspace_id, body.server_id, body.is_enabled
+        )
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     return WorkspaceToolToggleByIdResponse(
         success=True,
         workspace_id=workspace_id,
@@ -2579,11 +2604,10 @@ async def get_workspace_mcp_status_by_id_endpoint(
     request: Request,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspace = service.lifecycle.get_by_id(workspace_id)
-    if not workspace:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found"
-        )
+    try:
+        workspace = service.require_safe_workspace(workspace_id)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     return await _workspace_mcp_status_response(
         workspace=workspace, service=service, request=request
     )
@@ -2596,6 +2620,10 @@ async def save_workspace_context_endpoint(
     body: ContextSaveRequest,
     service: WorkspaceService = Depends(get_workspace_service),
 ):
+    try:
+        service.require_safe_workspace(workspace_id)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     service.context.save(workspace_id, body.context_data)
     return {"success": True}
 
@@ -2605,6 +2633,10 @@ async def save_workspace_context_endpoint(
 async def load_workspace_context_endpoint(
     workspace_id: str, service: WorkspaceService = Depends(get_workspace_service)
 ):
+    try:
+        service.require_safe_workspace(workspace_id)
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     ctx = service.context.load(workspace_id)
     if not ctx:
         raise HTTPException(
@@ -2618,7 +2650,11 @@ async def load_workspace_context_endpoint(
 async def list_recent_workspaces_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspaces = service.lifecycle.list_recent(limit=5)
+    workspaces = [
+        workspace
+        for workspace in service.lifecycle.list_recent(limit=50)
+        if service.workspace_path_is_safe(workspace["local_path"])
+    ][:5]
     return WorkspaceListResponse(
         workspaces=[serialize_workspace(w) for w in workspaces]
     )
@@ -2629,7 +2665,11 @@ async def list_recent_workspaces_endpoint(
 async def list_all_workspaces_endpoint(
     service: WorkspaceService = Depends(get_workspace_service),
 ):
-    workspaces = service.lifecycle.list_all()
+    workspaces = [
+        workspace
+        for workspace in service.lifecycle.list_all()
+        if service.workspace_path_is_safe(workspace["local_path"])
+    ]
     return WorkspaceListResponse(
         workspaces=[serialize_workspace(w) for w in workspaces]
     )
@@ -2652,12 +2692,15 @@ async def activate_workspace_endpoint(
     else:
         local_path = workspace["local_path"]
 
-    activation = await service.activate_workspace(
-        session_id,
-        engine,
-        local_path=local_path,
-        agent_id=_active_agent_id(request),
-    )
+    try:
+        activation = await service.activate_workspace(
+            session_id,
+            engine,
+            local_path=local_path,
+            agent_id=_active_agent_id(request),
+        )
+    except WorkspaceServiceError as error:
+        raise _workspace_service_http_exception(error)
     session_id = activation.session_id
     local_path = activation.workspace_path
 

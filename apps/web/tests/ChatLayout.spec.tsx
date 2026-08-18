@@ -152,10 +152,12 @@ describe("ChatLayout", () => {
         streamStates: {
           session1: {
             isStreaming: true,
+            startedAt: Date.now(),
             activeTool: null,
             streamActivity: [],
             streamedText: "",
             activeStreamId: "stream-1",
+            rivetMutationVersion: 0,
           },
         },
       },

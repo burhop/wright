@@ -1878,10 +1878,15 @@ export class WorkspaceService {
       },
     );
     if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
       workspaceLogger.error("Failed to activate workspace", {
         status: response.status,
       });
-      throw new Error(`Failed to activate workspace: ${response.statusText}`);
+      throw new Error(
+        error.detail ||
+          error.message ||
+          `Failed to activate workspace: ${response.statusText}`,
+      );
     }
     const data = await response.json();
     return data.success;
@@ -1924,10 +1929,15 @@ export class WorkspaceService {
       `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}`,
     );
     if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
       workspaceLogger.error("Failed to fetch workspace", {
         status: response.status,
       });
-      throw new Error(`Failed to fetch workspace: ${response.statusText}`);
+      throw new Error(
+        error.detail ||
+          error.message ||
+          `Failed to fetch workspace: ${response.statusText}`,
+      );
     }
     return response.json();
   }

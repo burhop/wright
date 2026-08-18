@@ -13,6 +13,7 @@ import type { AgentUiContext } from "../services/agent-service";
 
 export interface ChatStreamState {
   isStreaming: boolean;
+  startedAt: number | null;
   activeTool: { name: string; preview: string; percentage?: number } | null;
   streamActivity: StreamActivityEntry[];
   streamedText: string;
@@ -96,6 +97,7 @@ const initialState: ChatState = {
 function emptyStreamState(): ChatStreamState {
   return {
     isStreaming: false,
+    startedAt: null,
     activeTool: null,
     streamActivity: [],
     streamedText: "",
@@ -452,6 +454,9 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         (streamState) => ({
           ...streamState,
           isStreaming: true,
+          startedAt: streamState.isStreaming
+            ? streamState.startedAt
+            : Date.now(),
           streamedText: action.streamId ? streamState.streamedText : "",
           streamActivity: action.streamId ? streamState.streamActivity : [],
           activeStreamId: action.streamId || null,
@@ -565,6 +570,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
         (streamState) => ({
           ...streamState,
           isStreaming: false,
+          startedAt: null,
           activeTool: null,
           streamedText: "",
           streamActivity: [],

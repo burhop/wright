@@ -38,7 +38,9 @@ export function WorkspacePage() {
         });
       } catch (err) {
         logger.error("Failed to load workspace", { workspaceId, err });
-        setError("Workspace not found");
+        setError(
+          err instanceof Error ? err.message : "Unable to open this workspace.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -69,6 +71,7 @@ export function WorkspacePage() {
   }
 
   if (error || !workspace) {
+    const blocked = error?.toLowerCase().includes("access blocked") ?? false;
     return (
       <div
         data-testid="page-workspace-error"
@@ -82,7 +85,7 @@ export function WorkspacePage() {
           color: "var(--color-secondary)",
         }}
       >
-        <div style={{ fontSize: "3rem" }}>🔍</div>
+        <div style={{ fontSize: "3rem" }}>{blocked ? "🛡️" : "🔍"}</div>
         <h2
           style={{
             fontFamily: "var(--font-ui)",
@@ -91,7 +94,7 @@ export function WorkspacePage() {
             color: "var(--color-primary)",
           }}
         >
-          Workspace Not Found
+          {blocked ? "Workspace Blocked" : "Workspace Not Found"}
         </h2>
         <p
           style={{
@@ -101,8 +104,8 @@ export function WorkspacePage() {
             lineHeight: 1.6,
           }}
         >
-          The workspace you&apos;re looking for doesn&apos;t exist or may have
-          been removed.
+          {error ||
+            "The workspace you're looking for doesn't exist or may have been removed."}
         </p>
         <button
           onClick={() => navigate("/")}

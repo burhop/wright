@@ -3,6 +3,7 @@ from .errors import (
     WorkspaceExecutionError,
     WorkspaceInvalidRequestError,
     WorkspaceNotFoundError,
+    WorkspaceProtectedPathError,
     WorkspaceServiceError,
 )
 from .models import (
@@ -106,6 +107,7 @@ __all__ = [
     "WorkspaceExecutionError",
     "WorkspaceInvalidRequestError",
     "WorkspaceNotFoundError",
+    "WorkspaceProtectedPathError",
     "WorkspaceRecord",
     "WorkspaceManager",
     "WorkspaceService",
