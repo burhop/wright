@@ -1889,7 +1889,7 @@ servers:
   headless_ok: 'yes'
 - id: autocad-mcp
   name: AutoCAD MCP
-  vendor: hvkshetry
+  vendor: puran-water
   description: AutoCAD/LT automation bridge with a Linux-safe ezdxf backend for headless DXF generation plus a Windows AutoCAD File IPC backend for desktop automation.
   domains:
   - drafting
@@ -1904,11 +1904,22 @@ servers:
   - uv
   - run
   - --with
-  - git+https://github.com/hvkshetry/autocad-mcp.git
+  - git+https://github.com/puran-water/autocad-mcp.git
   - python
   - -m
   - autocad_mcp
-  source_url: https://github.com/hvkshetry/autocad-mcp
+  source_url: https://github.com/puran-water/autocad-mcp
+  repository_url: https://github.com/puran-water/autocad-mcp
+  license: MIT
+  auth_model: none
+  install_method: source
+  source_records:
+  - url: https://github.com/puran-water/autocad-mcp
+    kind: repository
+    primary: true
+    authority: community
+    observed_at: '2026-08-18'
+    notes: Upstream README and LICENSE declare MIT; the ezdxf backend is headless and does not require AutoCAD, while File IPC requires a licensed AutoCAD LT 2024+ host.
   locality: local
   weight: medium
   env_vars:
@@ -1920,7 +1931,7 @@ servers:
   dependencies:
     system: []
     python:
-    - git+https://github.com/hvkshetry/autocad-mcp.git
+    - git+https://github.com/puran-water/autocad-mcp.git
     node: []
   aliases:
   - autocad-mcp-hvkshetry

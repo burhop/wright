@@ -106,6 +106,53 @@ def test_local_remote_host_and_command_plans_are_complete(plan_database) -> None
     assert "advanced_local_command_approval" in imported.approval_gates
 
 
+def test_autocad_mcp_license_metadata_allows_review(plan_database) -> None:
+    database, snapshot, current_observation = plan_database
+    entry = next(
+        item for item in load_canonical_entries() if item.id == "autocad-mcp"
+    )
+
+    plan = create_install_plan(
+        database,
+        snapshot_id=snapshot.snapshot_id,
+        observation=current_observation,
+        entry=entry,
+        actor="engineer",
+        requested_scope="global_registered",
+        now=NOW,
+    )
+
+    assert plan.state == "reviewable"
+    assert plan.requirements.license.state == "known"
+    assert plan.requirements.license.reference == "MIT"
+    assert plan.blocking_reasons == []
+
+
+def test_catalog_license_review_can_clear_missing_metadata(plan_database) -> None:
+    database, snapshot, current_observation = plan_database
+    entry = next(
+        item
+        for item in load_canonical_entries()
+        if item.id == "autocad-mcp"
+    ).model_copy(update={"license": None})
+
+    plan = create_install_plan(
+        database,
+        snapshot_id=snapshot.snapshot_id,
+        observation=current_observation,
+        entry=entry,
+        actor="engineer",
+        requested_scope="global_registered",
+        independently_completed_license=True,
+        now=NOW,
+    )
+
+    assert plan.state == "reviewable"
+    assert plan.requirements.license.state == "unknown"
+    assert plan.requirements.license.independent_completion_recorded_at == NOW
+    assert plan.blocking_reasons == []
+
+
 def test_external_terms_require_independent_completion_and_never_accept_in_wright(
     plan_database,
 ) -> None:

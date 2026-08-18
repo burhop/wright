@@ -68,13 +68,23 @@ def _license_requirement(
             )
         ]
     if not entry.license:
-        return LicenseRequirement(state="unknown"), [
-            _reason(
-                "license_unknown",
-                "The catalog does not identify a license.",
-                "Verify the source and license before applying.",
-            )
-        ]
+        requirement = LicenseRequirement(
+            state="unknown",
+            independent_completion_required=True,
+            independent_completion_recorded_at=now if independently_completed else None,
+        )
+        blockers = (
+            []
+            if independently_completed
+            else [
+                _reason(
+                    "license_unknown",
+                    "The catalog does not identify a license.",
+                    "Verify the source and license, then record that review before applying.",
+                )
+            ]
+        )
+        return requirement, blockers
     external = any(
         marker in entry.license.casefold()
         for marker in ("terms", "subscription", "app store", "independently")
