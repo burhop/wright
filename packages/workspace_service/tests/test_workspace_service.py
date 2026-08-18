@@ -368,6 +368,11 @@ async def test_resolve_workspace_uses_persisted_binding_when_agent_disagrees(
         workspace=str(tmp_path / "agent-controlled-path"),
     )
 
+    async def unexpected_agent_lookup(_session_id: str) -> str | None:
+        raise AssertionError("persisted workspace binding queried the agent")
+
+    engine.get_session_workspace = unexpected_agent_lookup
+
     resolved = await service.resolve_workspace_dir(record.session_id, engine)
 
     assert resolved == record.local_path
@@ -375,6 +380,54 @@ async def test_resolve_workspace_uses_persisted_binding_when_agent_disagrees(
         service.repository.get_by_session(record.session_id)["local_path"]
         == record.local_path
     )
+
+
+@pytest.mark.asyncio
+async def test_bound_workspace_activation_can_skip_agent_session_verification(
+    tmp_path, db_path
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Active Workspace", str(tmp_path / "active-workspace"), engine
+    )
+
+    async def unexpected_session_list():
+        raise AssertionError("workspace refresh queried agent sessions")
+
+    engine.list_sessions = unexpected_session_list
+
+    activation = await service.activate_workspace(
+        record.session_id,
+        engine,
+        verify_agent_session=False,
+    )
+
+    assert activation.session_id == record.session_id
+
+
+@pytest.mark.asyncio
+async def test_workspace_session_list_can_use_local_records_without_agent_refresh(
+    tmp_path, db_path
+):
+    service = WorkspaceService(db_path, parent_dir_provider=lambda: str(tmp_path))
+    engine = FakeEngine()
+    record = await service.create_workspace(
+        "Session Workspace", str(tmp_path / "session-workspace"), engine
+    )
+
+    async def unexpected_session_list():
+        raise AssertionError("local workspace session list queried the agent")
+
+    engine.list_sessions = unexpected_session_list
+
+    sessions = await service.list_workspace_sessions(
+        record.workspace_id,
+        engine,
+        refresh_agent=False,
+    )
+
+    assert [session.session_id for session in sessions] == [record.session_id]
 
 
 @pytest.mark.asyncio

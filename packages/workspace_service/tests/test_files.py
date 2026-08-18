@@ -36,6 +36,21 @@ def test_workspace_manager_allows_file_workspace_when_git_is_unavailable(
     assert not (workspace / ".git").exists()
 
 
+def test_workspace_manager_does_not_repeat_repository_bootstrap(
+    tmp_path, monkeypatch
+):
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    WorkspaceManager(str(workspace))
+
+    def unexpected_subprocess(*_args, **_kwargs):
+        raise AssertionError("workspace bootstrap subprocess repeated")
+
+    monkeypatch.setattr(subprocess, "run", unexpected_subprocess)
+
+    WorkspaceManager(str(workspace))
+
+
 @pytest.mark.asyncio
 async def test_file_use_cases_preserve_tree_text_binary_and_mutations(tmp_path):
     db_path = str(tmp_path / "unused.db")

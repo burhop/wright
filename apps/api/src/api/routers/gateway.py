@@ -151,7 +151,13 @@ async def call_gateway_tool(
     service = _bound_service(request, session_id, workspace_id)
     try:
         result = await service.call_tool(
-            session_id, str(uuid.uuid4()), body.name, body.arguments
+            session_id,
+            str(uuid.uuid4()),
+            body.name,
+            body.arguments,
+            workspace_approvals=service.workspace_approvals_for_model_call(
+                session_id, body.name
+            ),
         )
     except GatewayError as exc:
         logger.warning(

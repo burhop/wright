@@ -483,6 +483,21 @@ const getApiBase = () => {
 export const API_BASE = getApiBase();
 
 export class WorkspaceService {
+  private workspaceActivationRequests = new Map<string, Promise<boolean>>();
+  private workspaceRequests = new Map<string, Promise<WorkspaceInfo>>();
+  private workspaceFileRequests = new Map<string, Promise<WorkspaceNode>>();
+  private workspaceMcpStatusRequests = new Map<
+    string,
+    Promise<{
+      status: string;
+      message: string;
+      running_mcps?: Array<{
+        name: string;
+        status: string;
+        error_message?: string | null;
+      }>;
+    }>
+  >();
   async openBrepPanel(sessionId: string): Promise<BrepPanelSession> {
     const response = await hostAdapter.fetch(
       `${API_BASE}/api/workspace/brep/panel`,
@@ -1138,19 +1153,30 @@ export class WorkspaceService {
       }
     }
 
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/files?session_id=${sessionId}`,
-    );
-    if (!response.ok) {
-      workspaceLogger.error("Failed to fetch workspace files", {
-        status: response.status,
-      });
-      throw new Error(
-        `Failed to fetch workspace files: ${response.statusText}`,
+    const existing = this.workspaceFileRequests.get(sessionId);
+    if (existing) return existing;
+
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/files?session_id=${encodeURIComponent(sessionId)}`,
       );
+      if (!response.ok) {
+        workspaceLogger.error("Failed to fetch workspace files", {
+          status: response.status,
+        });
+        throw new Error(
+          `Failed to fetch workspace files: ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      return data.workspace as WorkspaceNode;
+    })();
+    this.workspaceFileRequests.set(sessionId, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceFileRequests.delete(sessionId);
     }
-    const data = await response.json();
-    return data.workspace;
   }
 
   private async buildWorkspaceTree(dirPath: string): Promise<WorkspaceNode> {
@@ -1866,30 +1892,40 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(sessionId: string): Promise<boolean> {
+    const existing = this.workspaceActivationRequests.get(sessionId);
+    if (existing) return existing;
     workspaceLogger.info("Activating workspace", { sessionId });
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/activate`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/activate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ session_id: sessionId }),
         },
-        body: JSON.stringify({ session_id: sessionId }),
-      },
-    );
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      workspaceLogger.error("Failed to activate workspace", {
-        status: response.status,
-      });
-      throw new Error(
-        error.detail ||
-          error.message ||
-          `Failed to activate workspace: ${response.statusText}`,
       );
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        workspaceLogger.error("Failed to activate workspace", {
+          status: response.status,
+        });
+        throw new Error(
+          error.detail ||
+            error.message ||
+            `Failed to activate workspace: ${response.statusText}`,
+        );
+      }
+      const data = await response.json();
+      return Boolean(data.success);
+    })();
+    this.workspaceActivationRequests.set(sessionId, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceActivationRequests.delete(sessionId);
     }
-    const data = await response.json();
-    return data.success;
   }
 
   async createWorkspace(
@@ -1924,22 +1960,32 @@ export class WorkspaceService {
   }
 
   async getWorkspace(workspaceId: string): Promise<WorkspaceInfo> {
+    const existing = this.workspaceRequests.get(workspaceId);
+    if (existing) return existing;
     workspaceLogger.info("Fetching workspace by ID", { workspaceId });
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}`,
-    );
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      workspaceLogger.error("Failed to fetch workspace", {
-        status: response.status,
-      });
-      throw new Error(
-        error.detail ||
-          error.message ||
-          `Failed to fetch workspace: ${response.statusText}`,
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}`,
       );
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        workspaceLogger.error("Failed to fetch workspace", {
+          status: response.status,
+        });
+        throw new Error(
+          error.detail ||
+            error.message ||
+            `Failed to fetch workspace: ${response.statusText}`,
+        );
+      }
+      return (await response.json()) as WorkspaceInfo;
+    })();
+    this.workspaceRequests.set(workspaceId, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceRequests.delete(workspaceId);
     }
-    return response.json();
   }
 
   async getWorkspaceSessions(workspaceId: string): Promise<
@@ -2096,15 +2142,26 @@ export class WorkspaceService {
       error_message?: string | null;
     }[];
   }> {
-    const response = await hostAdapter.fetch(
-      `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/mcp-status`,
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Failed to get workspace MCP status: ${response.statusText}`,
+    const requestKey = `workspace:${workspaceId}`;
+    const existing = this.workspaceMcpStatusRequests.get(requestKey);
+    if (existing) return existing;
+    const request = (async () => {
+      const response = await hostAdapter.fetch(
+        `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/mcp-status`,
       );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to get workspace MCP status: ${response.statusText}`,
+        );
+      }
+      return response.json();
+    })();
+    this.workspaceMcpStatusRequests.set(requestKey, request);
+    try {
+      return await request;
+    } finally {
+      this.workspaceMcpStatusRequests.delete(requestKey);
     }
-    return response.json();
   }
 
   async runFile(

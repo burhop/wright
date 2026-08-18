@@ -11,6 +11,7 @@ from api.config import DATABASE_PATH, McpTransportSettings
 from api.database.migrate import run_migrations
 from api.logging_config import configure_logging
 from core.logging import get_logger
+from data_vault import install_default_secret_provider
 from tool_registry import McpEngine
 from tool_registry.catalog_reconcile import (
     reconcile_engineering_catalog,
@@ -41,6 +42,10 @@ def _arguments() -> argparse.Namespace:
 
 
 async def _serve(values: argparse.Namespace) -> None:
+    # The API process installs this composition dependency at import time, but
+    # Hermes launches the stdio gateway as its own process. OAuth-backed remote
+    # MCP servers need the same provider here to load and refresh their tokens.
+    install_default_secret_provider()
     run_migrations()
     reconcile_engineering_catalog(DATABASE_PATH)
     reconcile_wright_managed_servers(DATABASE_PATH)

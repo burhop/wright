@@ -57,6 +57,8 @@ def _seed(tmp_path):
             is_active=False,
             is_installed=True,
             status="inactive",
+            risk_level="high",
+            approval_gates=["workspace_write_approval"],
             created_at=1000,
             updated_at=1000,
         ),
@@ -146,6 +148,7 @@ def test_legacy_call_delegates_to_gateway_service(
     assert response.json()["structuredContent"] == {"ok": True}
     assert captured["start"][1] == workspace_path
     assert captured["call"][3].workspace_id == workspace_id
+    assert captured["call"][3].workspace_approvals == {"workspace_write_approval"}
 
 
 def test_legacy_call_does_not_expose_gateway_exception_details(

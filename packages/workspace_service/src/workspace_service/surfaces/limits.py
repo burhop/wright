@@ -55,9 +55,7 @@ class EffectiveSurfaceLimits:
         self.clock = clock
         self._request_windows: dict[str, deque[datetime]] = defaultdict(deque)
         self._message_windows: dict[str, deque[datetime]] = defaultdict(deque)
-        self._stream_windows: dict[str, deque[tuple[datetime, int]]] = defaultdict(
-            deque
-        )
+        self._stream_buckets: dict[str, tuple[datetime, float]] = {}
         self._log_windows: dict[str, deque[tuple[datetime, int]]] = defaultdict(deque)
 
     def __getattr__(self, name: str) -> int | float:
@@ -211,19 +209,23 @@ class EffectiveSurfaceLimits:
                 "SURFACE_LIMIT_STREAM_INVALID", "Surface stream size is invalid"
             )
         now = self.clock()
-        window = self._stream_windows[key]
-        cutoff = now - timedelta(seconds=1)
-        while window and window[0][0] <= cutoff:
-            window.popleft()
         if amount > self.stream_burst_bytes:
             self._raise(
                 "SURFACE_LIMIT_STREAM_BURST", "Surface stream burst limit exceeded"
             )
-        if sum(item[1] for item in window) + amount > self.stream_bytes_per_second:
+        previous_at, previous_tokens = self._stream_buckets.get(
+            key, (now, float(self.stream_burst_bytes))
+        )
+        elapsed = max(0.0, (now - previous_at).total_seconds())
+        available = min(
+            float(self.stream_burst_bytes),
+            previous_tokens + elapsed * float(self.stream_bytes_per_second),
+        )
+        if amount > available:
             self._raise(
                 "SURFACE_LIMIT_STREAM_RATE", "Surface stream rate limit exceeded"
             )
-        window.append((now, amount))
+        self._stream_buckets[key] = (now, available - amount)
 
     def admit_log_bytes(self, key: str, amount: int) -> None:
         if amount < 0:

@@ -346,6 +346,14 @@ async def ensure_workspace_mcp_servers_active(
     if not api_mcp_autostart_enabled():
         return
 
+    # Hermes calls workspace tools through its bound Wright gateway process.
+    # Starting the same servers in the API process creates two lifecycle owners;
+    # OAuth callbacks then compete for one loopback port and can invalidate each
+    # other's saved login. Other agent adapters retain the legacy API preflight.
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    if getattr(sync_manager, "active_agent", "") == "hermes":
+        return
+
     mcp_engine = getattr(request.app.state, "mcp_engine", None)
     if not mcp_engine:
         return

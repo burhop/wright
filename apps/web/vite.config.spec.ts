@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  extractSurfaceSessionCookie,
   rewriteSurfaceSetCookies,
   rewriteSurfaceText,
   surfaceProxyHeaders,
@@ -39,6 +40,31 @@ describe("surface development proxy rewriting", () => {
     expect(headers["content-length"]).toBe("512");
   });
 
+  it("injects only the server-held Wright preview cookie", () => {
+    const headers = surfaceProxyHeaders(
+      {
+        cookie: "app_session=value; wright_surface=stale-browser-value",
+      },
+      "s-editor.localhost:8000",
+      "wright_surface=server-held-value",
+    );
+
+    expect(headers.cookie).toBe(
+      "app_session=value; wright_surface=server-held-value",
+    );
+  });
+
+  it("extracts the internal preview credential without forwarding it", () => {
+    const upstream = [
+      "wright_surface=secret; HttpOnly; Path=/; SameSite=strict",
+      "rivet_session=value; Path=/editor; SameSite=Lax",
+    ];
+
+    expect(extractSurfaceSessionCookie(upstream)).toBe(
+      "wright_surface=secret",
+    );
+  });
+
   it("isolates preview cookies by tunneled surface authority", () => {
     const authority = encodeURIComponent("s-editor.localhost:8000");
     const cookies = rewriteSurfaceSetCookies(
@@ -50,8 +76,6 @@ describe("surface development proxy rewriting", () => {
     );
 
     expect(cookies).toEqual([
-      `wright_surface=secret; HttpOnly; Path=/__wright-surface/${authority}/; SameSite=strict`,
-      "wright_surface=; Max-Age=0; Path=/",
       `rivet_session=value; Path=/__wright-surface/${authority}/editor; SameSite=Lax`,
     ]);
   });

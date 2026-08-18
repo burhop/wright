@@ -2392,11 +2392,7 @@ async def _workspace_mcp_status_response(
     request: Request | None = None,
 ) -> WorkspaceMcpStatusResponse:
     workspace_id = workspace["workspace_id"]
-    mcp_engine = (
-        getattr(request.app.state, "mcp_engine", None)
-        if request and api_mcp_autostart_enabled()
-        else None
-    )
+    mcp_engine = _api_owned_mcp_engine(request)
     result = await service.tools.status(
         workspace,
         mcp_engine=mcp_engine,
@@ -2408,6 +2404,17 @@ async def _workspace_mcp_status_response(
         message=result["message"],
         running_mcps=[RunningMcpInfo(**item) for item in result["running_mcps"]],
     )
+
+
+def _api_owned_mcp_engine(request: Request | None):
+    """Return the API lifecycle only when the active agent does not own one."""
+
+    if request is None or not api_mcp_autostart_enabled():
+        return None
+    sync_manager = getattr(request.app.state, "agent_sync_manager", None)
+    if getattr(sync_manager, "active_agent", "") == "hermes":
+        return None
+    return getattr(request.app.state, "mcp_engine", None)
 
 
 @router.get("/mcp-status", response_model=WorkspaceMcpStatusResponse)
@@ -2485,12 +2492,16 @@ async def get_workspace_by_id_endpoint(
 async def list_workspace_sessions_endpoint(
     workspace_id: str,
     request: Request,
+    refresh: bool = Query(default=True),
     engine: BaseAgentEngine = Depends(get_agent_engine),
     service: WorkspaceService = Depends(get_workspace_service),
 ):
     try:
         records = await service.list_workspace_sessions(
-            workspace_id, engine, agent_id=_active_agent_id(request)
+            workspace_id,
+            engine,
+            agent_id=_active_agent_id(request),
+            refresh_agent=refresh,
         )
     except WorkspaceServiceError as error:
         raise _workspace_service_http_exception(error)
@@ -2698,6 +2709,7 @@ async def activate_workspace_endpoint(
             engine,
             local_path=local_path,
             agent_id=_active_agent_id(request),
+            verify_agent_session=False,
         )
     except WorkspaceServiceError as error:
         raise _workspace_service_http_exception(error)
@@ -2707,11 +2719,7 @@ async def activate_workspace_endpoint(
     try:
         await service.reconcile_runtime(
             session_id,
-            mcp_engine=(
-                getattr(request.app.state, "mcp_engine", None)
-                if api_mcp_autostart_enabled()
-                else None
-            ),
+            mcp_engine=_api_owned_mcp_engine(request),
             sync_manager=getattr(request.app.state, "agent_sync_manager", None),
         )
     except Exception as e:
@@ -2755,11 +2763,7 @@ async def update_workspace_session_endpoint(
         try:
             await service.reconcile_runtime(
                 session_id,
-                mcp_engine=(
-                    getattr(request.app.state, "mcp_engine", None)
-                    if api_mcp_autostart_enabled()
-                    else None
-                ),
+                mcp_engine=_api_owned_mcp_engine(request),
                 sync_manager=getattr(request.app.state, "agent_sync_manager", None),
             )
         except Exception as e:

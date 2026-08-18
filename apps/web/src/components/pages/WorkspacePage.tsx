@@ -29,12 +29,10 @@ export function WorkspacePage() {
         const ws = await workspaceService.getWorkspace(workspaceId);
         // Activate the workspace session to ensure it is registered on the backend
         await workspaceService.activateWorkspace(ws.session_id);
-        // Re-load the workspace in case activation updated the session_id in the DB
-        const activeWs = await workspaceService.getWorkspace(workspaceId);
-        setWorkspace(activeWs);
+        setWorkspace(ws);
         logger.info("Workspace loaded and activated", {
           workspaceId,
-          path: activeWs.local_path,
+          path: ws.local_path,
         });
       } catch (err) {
         logger.error("Failed to load workspace", { workspaceId, err });
@@ -149,6 +147,7 @@ export function WorkspacePage() {
         <WorkspacePanel
           workspaceId={workspace.workspace_id}
           sessionId={workspace.session_id}
+          workspace={workspace}
           onSessionChange={handleSessionChange}
         />
       </div>

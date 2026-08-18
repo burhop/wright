@@ -113,6 +113,7 @@ function findFileInTree(
 interface WorkspacePanelProps {
   workspaceId?: string;
   sessionId?: string;
+  workspace?: WorkspaceInfo;
   onSessionChange?: (sessionId: string) => void;
 }
 
@@ -147,6 +148,7 @@ function getSessionOptionLabels(
 export function WorkspacePanel({
   workspaceId: _workspaceId,
   sessionId: propSessionId,
+  workspace: initialWorkspace,
   onSessionChange,
 }: WorkspacePanelProps) {
   const {
@@ -171,9 +173,11 @@ export function WorkspacePanel({
     setObservedContainer(node);
   }, []);
   const [workspaceInfo, setWorkspaceInfo] = useState<WorkspaceInfo | null>(
-    null,
+    initialWorkspace ?? null,
   );
-  const [workspacePath, setWorkspacePath] = useState<string>("");
+  const [workspacePath, setWorkspacePath] = useState<string>(
+    initialWorkspace?.local_path ?? "",
+  );
   const [workspaceRoot, setWorkspaceRoot] = useState<WorkspaceNode | null>(
     null,
   );
@@ -209,6 +213,11 @@ export function WorkspacePanel({
   // Fetch workspace details when workspace changes
   useEffect(() => {
     if (!_workspaceId) return;
+    if (initialWorkspace?.workspace_id === _workspaceId) {
+      setWorkspaceInfo(initialWorkspace);
+      setWorkspacePath(initialWorkspace.local_path || "");
+      return;
+    }
     let isMounted = true;
     const fetchWorkspaceInfo = async () => {
       try {
@@ -227,7 +236,7 @@ export function WorkspacePanel({
     return () => {
       isMounted = false;
     };
-  }, [_workspaceId]);
+  }, [_workspaceId, initialWorkspace]);
 
   // Sync the route workspace session into global chat state on mount or when it changes.
   useEffect(() => {
@@ -938,8 +947,11 @@ export function WorkspacePanel({
     }
 
     let isMounted = true;
+    let refreshInFlight = false;
 
     const fetchWorkspace = async (isInitial = false) => {
+      if (refreshInFlight) return;
+      refreshInFlight = true;
       if (isInitial) setLoading(true);
       try {
         const tree = await workspaceService.getWorkspaceFiles(
@@ -988,6 +1000,7 @@ export function WorkspacePanel({
         console.error("Error fetching workspace files:", err);
         setError("Failed to fetch workspace files");
       } finally {
+        refreshInFlight = false;
         if (isMounted && isInitial) setLoading(false);
       }
     };
@@ -996,7 +1009,7 @@ export function WorkspacePanel({
 
     const intervalId = setInterval(() => {
       fetchWorkspace(false);
-    }, 2000);
+    }, 5000);
 
     return () => {
       isMounted = false;

@@ -112,6 +112,25 @@ async def test_oauth_callback_server_returns_code_and_state() -> None:
 
 
 @pytest.mark.asyncio
+async def test_oauth_callback_server_ignores_browser_asset_requests() -> None:
+    callback = _OAuthCallbackServer(timeout=5.0)
+    redirect_uri = await callback.start()
+    port = int(redirect_uri.split(":", 2)[2].split("/", 1)[0])
+
+    reader, writer = await asyncio.open_connection("127.0.0.1", port)
+    writer.write(b"GET /favicon.ico HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n")
+    await writer.drain()
+
+    response = await reader.read()
+    assert b"400 Bad Request" in response
+    assert callback.future is not None
+    assert not callback.future.done()
+    writer.close()
+    await writer.wait_closed()
+    await callback.close()
+
+
+@pytest.mark.asyncio
 async def test_child_notifications_are_delivered_without_becoming_authority() -> None:
     protocol = ChildProtocolState(ui_enabled=True)
     received: list[tuple[str, dict[str, Any]]] = []

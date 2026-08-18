@@ -110,6 +110,7 @@ class _OAuthCallbackServer:
     ) -> None:
         result: tuple[str, str | None] | None = None
         error: Exception | None = None
+        notify_waiter = True
         try:
             request = await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), timeout=10.0)
             request_line = request.splitlines()[0].decode("ascii", errors="replace")
@@ -118,6 +119,10 @@ class _OAuthCallbackServer:
                 raise ValueError("Invalid OAuth callback request")
             target = urlsplit(parts[1])
             if target.path != "/oauth/callback":
+                # Browsers commonly request /favicon.ico after the successful
+                # callback page. That unrelated request must not poison the next
+                # authorization wait or leave an unobserved Future exception.
+                notify_waiter = False
                 raise ValueError("Invalid OAuth callback path")
             query = parse_qs(target.query, keep_blank_values=True)
             state = query.get("state", [None])[0]
@@ -131,7 +136,7 @@ class _OAuthCallbackServer:
         except Exception as caught:
             error = caught
 
-        if self.future is not None and not self.future.done():
+        if notify_waiter and self.future is not None and not self.future.done():
             if error is not None:
                 self.future.set_exception(error)
             elif result is not None:

@@ -44,6 +44,7 @@ class _Lifecycle:
     def __init__(self) -> None:
         self.starts: list[tuple[str, str, dict]] = []
         self.calls: list[tuple[str, str, dict]] = []
+        self.call_approvals: list[dict] = []
 
     async def ensure_started(self, server_id, *, workspace_path, approval_context):
         self.starts.append((server_id, workspace_path, dict(approval_context)))
@@ -57,7 +58,7 @@ class _Lifecycle:
         approval_context,
         progress_callback=None,
     ):
-        del approval_context
+        self.call_approvals.append(dict(approval_context))
         self.calls.append((server_id, tool_name, dict(arguments)))
         if progress_callback is not None:
             await progress_callback(
@@ -89,6 +90,8 @@ def _other_server() -> tuple[McpServer, McpTool]:
             is_active=True,
             is_installed=True,
             status="active",
+            risk_level="high",
+            approval_gates=["workspace_write_approval"],
             created_at=now,
             updated_at=now,
         ),
@@ -146,6 +149,9 @@ async def test_gateway_discovers_bound_rivet_tools_lazily_with_policy_and_progre
 
     assert len([name for name in tools if name.startswith("rivet-workflows__")]) == 6
     assert "other__ping" in tools
+    assert tools["other__ping"].required_approvals == frozenset(
+        {"workspace_write_approval"}
+    )
     assert lifecycle.starts == []
     assert tools["rivet-workflows__list_templates"].required_approvals == frozenset()
     assert tools["rivet-workflows__create_workflow"].required_approvals == frozenset(
@@ -202,6 +208,37 @@ async def test_gateway_discovers_bound_rivet_tools_lazily_with_policy_and_progre
         == set()
     )
     assert [tool.name for tool in service.list_tools("session-1")] == ["other__ping"]
+
+
+@pytest.mark.asyncio
+async def test_enabled_catalog_server_grants_declared_approvals_to_model_call(
+    tmp_path,
+) -> None:
+    service, lifecycle, workspaces = _service(tmp_path)
+
+    trusted_approvals = service.workspace_approvals_for_model_call(
+        "session-1", "other__ping"
+    )
+    assert trusted_approvals == {"workspace_write_approval"}
+
+    result = await service.call_tool(
+        "session-1",
+        "request-other",
+        "other__ping",
+        {},
+        workspace_approvals=trusted_approvals,
+    )
+
+    assert not result.is_error
+    assert lifecycle.call_approvals[-1]["workspace_approvals"] == [
+        "workspace_write_approval"
+    ]
+
+    workspaces.enabled = {"rivet-workflows"}
+    assert (
+        service.workspace_approvals_for_model_call("session-1", "other__ping")
+        == set()
+    )
 
 
 @pytest.mark.asyncio

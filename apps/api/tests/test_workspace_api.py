@@ -1130,6 +1130,35 @@ def test_workspace_sessions_endpoint_uses_current_agent_title(client):
     assert titles["test-session"] == "Test Session"
 
 
+def test_workspace_sessions_endpoint_can_use_local_records_without_agent_refresh(
+    client,
+):
+    client.get("/api/workspace/files", params={"session_id": "test-session"})
+    response = client.get(
+        "/api/workspace/config", params={"session_id": "test-session"}
+    )
+    workspace_id = response.json()["workspace_id"]
+    engine = client.app.state.agent_engine
+    original_list_sessions = engine.list_sessions
+
+    async def unexpected_list_sessions():
+        raise AssertionError("local session projection queried the agent")
+
+    engine.list_sessions = unexpected_list_sessions
+    try:
+        response_sessions = client.get(
+            f"/api/workspace/by-id/{workspace_id}/sessions",
+            params={"refresh": "false"},
+        )
+    finally:
+        engine.list_sessions = original_list_sessions
+
+    assert response_sessions.status_code == 200
+    assert "test-session" in {
+        session["session_id"] for session in response_sessions.json()["sessions"]
+    }
+
+
 def test_title_command_persists_workspace_session_title_when_agent_title_is_untitled(
     client,
 ):
@@ -1237,7 +1266,9 @@ def test_workspace_mcp_status_by_workspace_uses_workspace_tools(client):
     }
 
 
-def test_workspace_activate_session_fallback(client):
+def test_workspace_activate_preserves_persisted_session_without_remote_verification(
+    client,
+):
     from api.config import DATABASE_PATH
     from workspace_service.adapters.runtime import create_workspace
     import tempfile
@@ -1254,33 +1285,23 @@ def test_workspace_activate_session_fallback(client):
             workspace_name="Fallback Test",
         )
 
-        # Override mock engine's list_sessions to return an active session matching temp_dir
+        # Browser refresh must not replace a persisted session while Hermes may
+        # still be working under that identity.
         original_list_sessions = app.state.agent_engine.list_sessions
 
         async def mock_list_sessions():
-            return [
-                AgentSessionInfo(
-                    session_id="matching-active-session",
-                    title="Active Session",
-                    created_at=1000,
-                    updated_at=1000,
-                    message_count=0,
-                    workspace=temp_dir,
-                )
-            ]
+            raise AssertionError("activation should not query Hermes sessions")
 
         app.state.agent_engine.list_sessions = mock_list_sessions
 
         try:
-            # Activate workspace using the missing session ID
             response = client.post(
                 "/api/workspace/activate", json={"session_id": missing_session_id}
             )
             assert response.status_code == 200
             data = response.json()
             assert data["success"] is True
-            # It should have successfully fallen back to the active matching-active-session
-            assert data["session_id"] == "matching-active-session"
+            assert data["session_id"] == missing_session_id
             assert data["workspace_path"] == temp_dir
         finally:
             app.state.agent_engine.list_sessions = original_list_sessions
@@ -1722,6 +1743,8 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
     finally:
         conn.close()
 
+    previous_agent = client.app.state.agent_sync_manager.active_agent
+    client.app.state.agent_sync_manager.active_agent = "test-agent"
     try:
         response = client.get(
             "/api/workspace/mcp-status", params={"session_id": "test-session"}
@@ -1743,6 +1766,7 @@ def test_workspace_mcp_status_errors_when_expected_server_inactive(
             },
         ]
     finally:
+        client.app.state.agent_sync_manager.active_agent = previous_agent
         conn = sqlite3.connect(DATABASE_PATH)
         try:
             conn.execute(
@@ -1975,10 +1999,15 @@ def test_agent_chat_starts_enabled_workspace_mcp_servers(client, monkeypatch):
 
     monkeypatch.setattr(client.app.state.mcp_engine, "start_server", fake_start_server)
 
-    response = client.post(
-        "/api/agent/chat",
-        json={"session_id": "test-session", "message": "hello"},
-    )
+    previous_agent = client.app.state.agent_sync_manager.active_agent
+    client.app.state.agent_sync_manager.active_agent = "test-agent"
+    try:
+        response = client.post(
+            "/api/agent/chat",
+            json={"session_id": "test-session", "message": "hello"},
+        )
+    finally:
+        client.app.state.agent_sync_manager.active_agent = previous_agent
 
     assert response.status_code == 200
     assert started == [(server_id, client.app.state.agent_engine.workspace_path)]
@@ -2071,10 +2100,15 @@ def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
 
     monkeypatch.setattr(client.app.state.mcp_engine, "start_server", fake_start_server)
 
-    response = client.post(
-        "/api/agent/chat",
-        json={"session_id": "test-session", "message": "hello"},
-    )
+    previous_agent = client.app.state.agent_sync_manager.active_agent
+    client.app.state.agent_sync_manager.active_agent = "test-agent"
+    try:
+        response = client.post(
+            "/api/agent/chat",
+            json={"session_id": "test-session", "message": "hello"},
+        )
+    finally:
+        client.app.state.agent_sync_manager.active_agent = previous_agent
 
     assert response.status_code == 503
     assert "Failed to start workspace MCP server(s)" in response.text
@@ -2090,6 +2124,28 @@ def test_agent_chat_reports_mcp_start_failure(client, monkeypatch):
         conn.commit()
     finally:
         conn.close()
+
+
+@pytest.mark.asyncio
+async def test_hermes_gateway_is_the_only_workspace_mcp_lifecycle_owner() -> None:
+    from types import SimpleNamespace
+
+    from api.routers.agent import ensure_workspace_mcp_servers_active
+
+    class UnexpectedEngine:
+        async def start_server(self, *_args, **_kwargs):
+            raise AssertionError("API process attempted to start a Hermes MCP server")
+
+    request = SimpleNamespace(
+        app=SimpleNamespace(
+            state=SimpleNamespace(
+                agent_sync_manager=SimpleNamespace(active_agent="hermes"),
+                mcp_engine=UnexpectedEngine(),
+            )
+        )
+    )
+
+    await ensure_workspace_mcp_servers_active(request, "session-1")
 
 
 @pytest.mark.asyncio

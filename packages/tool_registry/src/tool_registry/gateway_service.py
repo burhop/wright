@@ -338,21 +338,24 @@ class GatewayService:
     def workspace_approvals_for_model_call(
         self, session_id: str, name: str
     ) -> set[str]:
-        """Project a narrow operator grant for enabled Wright-managed tools.
+        """Project the operator grant represented by workspace enablement.
 
-        Enabling the workspace-confined Rivet server authorizes only its own
-        revision-checked workflow mutations. Generic workspace and machine
-        approvals are never inferred from server enablement.
+        Model-visible tools from installed catalog servers have already been
+        filtered to the servers enabled for this workspace. Their declared
+        call gates therefore travel with the model call instead of prompting
+        for a second, unavailable approval. Wright management tools remain
+        narrowly scoped to the built-in Rivet mutation grant.
         """
 
         session = self._session(session_id)
         tool = next(
             (item for item in self.list_tools(session_id) if item.name == name), None
         )
-        if (
-            tool is None
-            or RIVET_WORKFLOW_MUTATION_APPROVAL not in tool.required_approvals
-        ):
+        if tool is None:
+            return set()
+        if tool.server_id != "wright":
+            return set(tool.required_approvals)
+        if RIVET_WORKFLOW_MUTATION_APPROVAL not in tool.required_approvals:
             return set()
         is_rivet_tool = tool.server_id == RIVET_WORKFLOWS_SERVER_ID or (
             tool.server_id == "wright" and tool.name.startswith("wright__rivet_")

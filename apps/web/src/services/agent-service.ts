@@ -206,6 +206,11 @@ export class HermesAgentService {
     string,
     { abortController: AbortController; abort: () => void }
   >();
+  private activeAgentRequest: Promise<string> | null = null;
+  private modelOptionsRequest: Promise<HermesModelOptionsResponse> | null = null;
+  private modelOptionsCache: HermesModelOptionsResponse | null = null;
+  private commandsRequest: Promise<AgentCommand[]> | null = null;
+  private commandsCache: AgentCommand[] | null = null;
 
   async checkHealth(): Promise<ServiceHealthResult> {
     try {
@@ -256,7 +261,7 @@ export class HermesAgentService {
 
   async listSessions(workspaceId?: string): Promise<ChatSessionCompact[]> {
     const url = workspaceId
-      ? `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions`
+      ? `${API_BASE}/api/workspace/by-id/${encodeURIComponent(workspaceId)}/sessions?refresh=false`
       : `${API_BASE}/api/agent/sessions`;
     const response = await fetch(url);
     if (!response.ok) {
@@ -578,12 +583,20 @@ export class HermesAgentService {
   }
 
   async getActiveAgent(): Promise<string> {
-    const response = await fetch(`${API_BASE}/api/agent/active`);
-    if (!response.ok) {
-      throw new Error(`Failed to get active agent: ${response.statusText}`);
+    if (this.activeAgentRequest) return this.activeAgentRequest;
+    this.activeAgentRequest = (async () => {
+      const response = await fetch(`${API_BASE}/api/agent/active`);
+      if (!response.ok) {
+        throw new Error(`Failed to get active agent: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.agent;
+    })();
+    try {
+      return await this.activeAgentRequest;
+    } finally {
+      this.activeAgentRequest = null;
     }
-    const data = await response.json();
-    return data.agent;
   }
 
   async setActiveAgent(
@@ -608,13 +621,25 @@ export class HermesAgentService {
   }
 
   async listHermesModels(refresh = false): Promise<HermesModelOptionsResponse> {
-    const response = await fetch(
-      `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to list Hermes models: ${response.statusText}`);
+    if (!refresh && this.modelOptionsCache) return this.modelOptionsCache;
+    if (!refresh && this.modelOptionsRequest) return this.modelOptionsRequest;
+    const request = (async () => {
+      const response = await fetch(
+        `${API_BASE}/api/agent/models${refresh ? "?refresh=true" : ""}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to list Hermes models: ${response.statusText}`);
+      }
+      const options = (await response.json()) as HermesModelOptionsResponse;
+      this.modelOptionsCache = options;
+      return options;
+    })();
+    if (!refresh) this.modelOptionsRequest = request;
+    try {
+      return await request;
+    } finally {
+      if (!refresh) this.modelOptionsRequest = null;
     }
-    return response.json();
   }
 
   async setHermesModel(
@@ -639,6 +664,7 @@ export class HermesAgentService {
         data.detail || `Failed to set Hermes model: ${response.statusText}`,
       );
     }
+    this.modelOptionsCache = null;
     return response.json();
   }
 
@@ -705,16 +731,26 @@ export class HermesAgentService {
   }
 
   async getCommands(): Promise<AgentCommand[]> {
+    if (this.commandsCache) return this.commandsCache;
+    if (this.commandsRequest) return this.commandsRequest;
     agentLogger.info("Fetching commands");
-    const response = await fetch(`${API_BASE}/api/agent/commands`);
-    if (!response.ok) {
-      agentLogger.error("Failed to fetch commands", {
-        statusText: response.statusText,
-      });
-      throw new Error(`Failed to fetch commands: ${response.statusText}`);
+    this.commandsRequest = (async () => {
+      const response = await fetch(`${API_BASE}/api/agent/commands`);
+      if (!response.ok) {
+        agentLogger.error("Failed to fetch commands", {
+          statusText: response.statusText,
+        });
+        throw new Error(`Failed to fetch commands: ${response.statusText}`);
+      }
+      const data = await response.json();
+      this.commandsCache = data.commands;
+      return data.commands;
+    })();
+    try {
+      return await this.commandsRequest;
+    } finally {
+      this.commandsRequest = null;
     }
-    const data = await response.json();
-    return data.commands;
   }
 
   async uploadFile(file: File): Promise<VaultFile> {

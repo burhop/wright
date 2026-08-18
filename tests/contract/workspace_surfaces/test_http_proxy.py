@@ -260,3 +260,26 @@ async def test_trace_is_denied_and_cancellation_closes_upstream_stream() -> None
         await iterator.__anext__()
         await response.aclose()
         await proxy.aclose()
+
+
+async def test_long_stream_rechecks_revocation_without_checking_every_chunk() -> None:
+    async with _upstream() as (port, _observations):
+        route_checks = 0
+
+        def authority_valid() -> bool:
+            nonlocal route_checks
+            route_checks += 1
+            return route_checks < 3
+
+        proxy = SurfaceHttpProxy()
+        response = await proxy.forward(
+            ProxyHttpRequest.get("/slow", presentation_id="p-1"),
+            pin=_pin(port),
+            limits=_limits(),
+            authority_valid=authority_valid,
+        )
+        with pytest.raises(HttpProxyError) as raised:
+            await _read(response)
+        assert raised.value.code == "SURFACE_PRESENTATION_REVOKED"
+        assert route_checks == 3
+        await proxy.aclose()

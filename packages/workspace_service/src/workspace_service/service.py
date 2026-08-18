@@ -297,20 +297,10 @@ class WorkspaceService:
         workspace = self.repository.get_by_session(session_id)
         if workspace:
             self.ensure_workspace_path_safe(workspace["local_path"])
-            try:
-                actual_workspace_path = await engine.get_session_workspace(session_id)
-            except Exception:
-                actual_workspace_path = None
-            if (
-                actual_workspace_path
-                and actual_workspace_path != workspace["local_path"]
-            ):
-                logger.warning(
-                    "workspace_agent_path_mismatch_ignored",
-                    session_id=session_id,
-                    persisted_path=workspace["local_path"],
-                    agent_path=actual_workspace_path,
-                )
+            # The persisted, safety-checked binding is authoritative. Looking up
+            # the agent's workspace on every file poll adds a remote Hermes call
+            # to otherwise local reads and can stall the whole workspace UI.
+            # Agent-reported paths are intentionally not used to rebind here.
             return workspace["local_path"]
 
         try:
@@ -530,6 +520,7 @@ class WorkspaceService:
         local_path: str | None = None,
         agent_id: str = "hermes",
         allow_fallback: bool = True,
+        verify_agent_session: bool = True,
     ) -> WorkspaceActivation:
         workspace = self.repository.get_by_session(session_id)
         workspace_path = local_path or (workspace["local_path"] if workspace else None)
@@ -537,12 +528,17 @@ class WorkspaceService:
             workspace_path = await self.resolve_workspace_dir(session_id, engine)
         self.ensure_workspace_path_safe(workspace_path)
 
-        active_session_id = await self._verify_agent_session(
-            session_id,
-            workspace_path,
-            engine,
-            allow_fallback=allow_fallback,
-        )
+        # Opening an already-bound workspace must not wait on or replace the
+        # agent session. A browser refresh can happen while that session is
+        # still executing. Explicit reconciliation callers retain verification.
+        active_session_id = session_id
+        if verify_agent_session:
+            active_session_id = await self._verify_agent_session(
+                session_id,
+                workspace_path,
+                engine,
+                allow_fallback=allow_fallback,
+            )
         if workspace:
             self.repository.update_session(workspace["workspace_id"], active_session_id)
         else:
@@ -604,7 +600,12 @@ class WorkspaceService:
         return workspace["workspace_id"]
 
     async def list_workspace_sessions(
-        self, workspace_id: str, engine, *, agent_id: str = "hermes"
+        self,
+        workspace_id: str,
+        engine,
+        *,
+        agent_id: str = "hermes",
+        refresh_agent: bool = True,
     ) -> list[WorkspaceSessionRecord]:
         workspace = self.repository.get_by_id(workspace_id)
         if not workspace:
@@ -615,15 +616,16 @@ class WorkspaceService:
             row["session_id"]: row
             for row in self.repository.list_sessions(workspace_id)
         }
-        try:
-            agent_sessions = await engine.list_sessions()
-        except Exception as exc:
-            logger.warning(
-                "workspace_session_agent_list_failed",
-                workspace_id=workspace_id,
-                error=redact_text(exc),
-            )
-            agent_sessions = []
+        agent_sessions = []
+        if refresh_agent or not local_records:
+            try:
+                agent_sessions = await engine.list_sessions()
+            except Exception as exc:
+                logger.warning(
+                    "workspace_session_agent_list_failed",
+                    workspace_id=workspace_id,
+                    error=redact_text(exc),
+                )
 
         by_id: dict[str, WorkspaceSessionRecord] = {}
         for session in agent_sessions:

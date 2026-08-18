@@ -18,6 +18,9 @@ from api.surface_proxy_security import (
 from workspace_service.surfaces.limits import EffectiveSurfaceLimits, SurfaceLimitError
 from workspace_service.surfaces.target_policy import ResolvedTargetPin
 
+_STREAM_ROUTE_RECHECK_SECONDS = 0.25
+_STREAM_ACTIVITY_SECONDS = 1.0
+
 
 class HttpProxyError(RuntimeError):
     def __init__(self, code: str, message: str, *, status_code: int = 502) -> None:
@@ -397,11 +400,16 @@ class SurfaceHttpProxy:
             tracker = _DecodedTracker(response.headers.get("content-encoding"))
             encoded = 0
             source = response.aiter_raw().__aiter__()
+            last_route_check = started
+            last_activity = started
             while True:
-                self._require_current_route(
-                    authority_valid=authority_valid, target_valid=target_valid
-                )
-                if self._monotonic() - started > float(
+                now = self._monotonic()
+                if now - last_route_check >= _STREAM_ROUTE_RECHECK_SECONDS:
+                    self._require_current_route(
+                        authority_valid=authority_valid, target_valid=target_valid
+                    )
+                    last_route_check = now
+                if now - started > float(
                     limits.live_connection_lifetime_seconds
                 ):
                     raise HttpProxyError(
@@ -433,8 +441,15 @@ class SurfaceHttpProxy:
                     limits.admit_stream_bytes(rate_key, len(chunk))
                 except SurfaceLimitError as error:
                     raise self._translate_limit(error) from error
-                activity()
+                now = self._monotonic()
+                if now - last_activity >= _STREAM_ACTIVITY_SECONDS:
+                    activity()
+                    last_activity = now
                 yield chunk
+            self._require_current_route(
+                authority_valid=authority_valid, target_valid=target_valid
+            )
+            activity()
             decoded = tracker.finish()
             try:
                 limits.validate_response(encoded_bytes=encoded, decoded_bytes=decoded)

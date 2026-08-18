@@ -755,7 +755,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshSessions();
+    // Workspace pages immediately request their scoped, locally persisted
+    // sessions. Avoid a duplicate global Hermes request during startup.
+    if (!window.location.pathname.startsWith("/workspace/")) {
+      void refreshSessions();
+    }
   }, [refreshSessions]);
 
   useEffect(() => {
