@@ -34,7 +34,6 @@ import { MaximizeIcon, MinimizeIcon, SearchIcon } from "../common/Icons";
 import type { EditorTab } from "../../store/viewer";
 import { workspaceSurfacesEnabled } from "../../services/surfaces/feature-flags";
 import { rivetWorkflowsTabEnabled } from "../../services/surfaces/feature-flags";
-import { RivetWorkflowsPanel } from "./RivetWorkflowsPanel";
 import { ManagedRivetSurface } from "../surfaces/ManagedRivetSurface";
 import { DirectBrepSurface } from "../surfaces/DirectBrepSurface";
 import { SurfaceWorkspace } from "../surfaces/SurfaceWorkspace";
@@ -364,13 +363,17 @@ export function WorkspacePanel({
 
   // Layout states — initialised from localStorage when available
   const [activeSidebar, setActiveSidebar] = useState<WorkspaceSidebarId>(
-    savedLayout?.activeSidebar ?? "files",
+    savedLayout?.activeSidebar === "marketplace" ||
+      savedLayout?.activeSidebar === "files" ||
+      savedLayout?.activeSidebar === "git" ||
+      savedLayout?.activeSidebar === "settings" ||
+      savedLayout?.activeSidebar === "docs"
+      ? savedLayout.activeSidebar
+      : "files",
   );
-  // Keep an already-open workflow review/run visible during window narrowing or
-  // browser zoom. Switching to the chat-only thin shell here would hide active
-  // approval and cancellation evidence mid-decision.
-  const isThin =
-    panelWidth < 768 && !surfacesEnabled && activeSidebar !== "workflows";
+  // Switch to the chat-only thin shell when the legacy workspace has no room
+  // for the full editor layout.
+  const isThin = panelWidth < 768 && !surfacesEnabled;
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(
     savedLayout?.isSidebarCollapsed ?? false,
   );
@@ -1322,6 +1325,7 @@ export function WorkspacePanel({
   const openRivetWorkflowTab = useCallback(
     async (slug?: string) => {
       if (!workspaceFileSessionId) return;
+      setIsSidebarCollapsed(true);
       const workflow = slug
         ? await workspaceService.readRivetWorkflow(workspaceFileSessionId, slug)
         : await workspaceService.ensureDefaultRivetWorkflow(
@@ -1347,31 +1351,9 @@ export function WorkspacePanel({
     ],
   );
 
-  const createRivetWorkflowTab = useCallback(async () => {
-    if (!workspaceFileSessionId) return;
-    const workflow = await workspaceService.createBlankRivetWorkflow(
-      workspaceFileSessionId,
-    );
-    openTransientTab({
-      name: `${workflow.slug}.rivet-project`,
-      path: directRivetTabPath(workflow.slug),
-      type: "rivet",
-    });
-    if (surfaceLayout.mode === "narrow") {
-      surfaceLayoutDispatch({
-        type: "select_narrow_pane",
-        pane: "surface",
-      });
-    }
-  }, [
-    openTransientTab,
-    surfaceLayout.mode,
-    surfaceLayoutDispatch,
-    workspaceFileSessionId,
-  ]);
-
   const openBrepPanelTab = useCallback(() => {
     if (!workspaceFileSessionId) return;
+    setIsSidebarCollapsed(true);
     openTransientTab({
       name: "BREP",
       path: DIRECT_BREP_TAB_PATH,
@@ -1695,9 +1677,6 @@ export function WorkspacePanel({
     );
   }
 
-  const workflowNarrowFocus =
-    surfaceLayout.mode === "narrow" && activeSidebar === "workflows";
-
   return (
     <WorkspaceLayout
       ref={attachContainerRef}
@@ -1742,15 +1721,10 @@ export function WorkspacePanel({
         style={{
           backgroundColor: "var(--color-surface)",
           borderRight: "1px solid var(--color-border)",
-          gridColumn: workflowNarrowFocus ? "1" : "2",
-          display:
-            (surfaceChromeHidden && !workflowNarrowFocus) || isSidebarCollapsed
-              ? "none"
-              : "flex",
+          gridColumn: "2",
+          display: surfaceChromeHidden || isSidebarCollapsed ? "none" : "flex",
           flexDirection: "column",
           overflow: "hidden",
-          zIndex: workflowNarrowFocus ? 5 : undefined,
-          minWidth: workflowNarrowFocus ? 0 : undefined,
         }}
       >
         {activeSidebar === "marketplace" && (
@@ -1925,15 +1899,6 @@ export function WorkspacePanel({
             </div>
           </div>
         )}
-        {activeSidebar === "workflows" && workflowsTabEnabled && (
-          <RivetWorkflowsPanel
-            sessionId={workspaceFileSessionId}
-            workspaceId={_workspaceId ?? null}
-            onOpenEditor={(slug) => openRivetWorkflowTab(slug)}
-            onCreateWorkflow={() => createRivetWorkflowTab()}
-          />
-        )}
-
         {activeSidebar === "files" && (
           <div
             style={{ display: "flex", flexDirection: "column", height: "100%" }}
