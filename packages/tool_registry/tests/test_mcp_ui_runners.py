@@ -96,7 +96,7 @@ async def test_oauth_callback_server_returns_code_and_state() -> None:
     port = int(parsed[2].split("/", 1)[0])
 
     result_task = asyncio.create_task(callback.wait_for_callback())
-    _reader, writer = await asyncio.open_connection("127.0.0.1", port)
+    reader, writer = await asyncio.open_connection("127.0.0.1", port)
     writer.write(
         b"GET /oauth/callback?code=fixture-code&state=fixture-state HTTP/1.1\r\n"
         b"Host: 127.0.0.1\r\n\r\n"
@@ -104,6 +104,8 @@ async def test_oauth_callback_server_returns_code_and_state() -> None:
     await writer.drain()
 
     assert await result_task == ("fixture-code", "fixture-state")
+    response = await reader.read()
+    assert b"Wright MCP sign-in complete" in response
     writer.close()
     await writer.wait_closed()
     await callback.close()

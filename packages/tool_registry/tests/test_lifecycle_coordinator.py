@@ -33,6 +33,27 @@ class FakeRunner:
         return self.running
 
 
+class SlowStartupRunner(FakeRunner):
+    startup_timeout = 0.05
+
+
+@pytest.mark.asyncio
+async def test_runner_startup_timeout_can_exceed_operation_timeout() -> None:
+    runner = SlowStartupRunner("oauth")
+
+    async def start() -> None:
+        await asyncio.sleep(0.02)
+        runner.running = True
+
+    runner.start = start  # type: ignore[method-assign]
+    coordinator = McpLifecycleCoordinator(lambda *_: runner, operation_timeout=0.01)
+
+    await coordinator.start("remote")
+
+    assert runner.is_running()
+    await coordinator.shutdown()
+
+
 @pytest.mark.asyncio
 async def test_concurrent_starts_leave_one_current_generation() -> None:
     runners: list[FakeRunner] = []

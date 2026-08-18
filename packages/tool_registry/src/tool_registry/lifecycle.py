@@ -129,7 +129,11 @@ class McpLifecycleCoordinator:
             )
             runner = await candidate if isinstance(candidate, Awaitable) else candidate
             try:
-                await asyncio.wait_for(runner.start(), self._operation_timeout)
+                startup_timeout = (
+                    getattr(runner, "startup_timeout", None)
+                    or self._operation_timeout
+                )
+                await asyncio.wait_for(runner.start(), startup_timeout)
                 tools = await asyncio.wait_for(
                     runner.list_tools(), self._operation_timeout
                 )

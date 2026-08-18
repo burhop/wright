@@ -376,8 +376,9 @@ class McpApiService:
                 server_id,
                 set(context["server"].approval_gates),
             )
+        validation = None
         try:
-            return await run_capability_validation(
+            validation = await run_capability_validation(
                 self.db_path,
                 capability_id=canonical_id,
                 server_id=server_id,
@@ -393,8 +394,17 @@ class McpApiService:
                 clock=self.capability_dependencies.clock,
                 trace_id=trace_id,
             )
+            return validation
         finally:
-            if managed_client and not was_active:
+            # A successful onboarding validation is also the explicit user
+            # approval to keep the authenticated MCP available. Failed or
+            # interrupted validation must still tear down a newly started
+            # runner so an unqualified server cannot remain active.
+            if (
+                managed_client
+                and not was_active
+                and (validation is None or validation.state != "passed")
+            ):
                 await self.engine.stop_server(server_id)
 
     def enable_capability_for_workspace(self, identity: str, workspace_id: str):

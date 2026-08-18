@@ -9,6 +9,10 @@ ProgressCallback = Callable[[Mapping[str, Any]], Awaitable[None] | None]
 class BaseRunner(ABC):
     """Abstract base class for all Model Context Protocol (MCP) server runners (stdio, sse)."""
 
+    # Interactive runners may need longer than the normal MCP operation
+    # deadline to complete a browser-based login before they can initialize.
+    startup_timeout: float | None = None
+
     @abstractmethod
     async def start(self) -> None:
         """Start the MCP server or connection."""

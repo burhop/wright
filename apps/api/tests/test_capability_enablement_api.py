@@ -229,4 +229,4 @@ async def test_default_service_validates_through_engine_lifecycle(
 
     assert evidence.state == "passed"
     assert evidence.tool_count == 0
-    assert get_server(str(database), "default-validation-mcp").is_active is False
+    assert get_server(str(database), "default-validation-mcp").is_active is True

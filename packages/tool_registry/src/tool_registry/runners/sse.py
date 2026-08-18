@@ -20,6 +20,7 @@ from .protocol import ChildProtocolState, NotificationHandler
 from ..secrets import read_secrets, write_secrets
 
 logger = logging.getLogger(__name__)
+_OAUTH_CALLBACK_TIMEOUT = 300.0
 
 
 class _WrightOAuthTokenStorage:
@@ -69,7 +70,7 @@ class _WrightOAuthTokenStorage:
 class _OAuthCallbackServer:
     """Small loopback receiver for an interactive OAuth authorization code."""
 
-    def __init__(self, *, timeout: float = 300.0) -> None:
+    def __init__(self, *, timeout: float = _OAUTH_CALLBACK_TIMEOUT) -> None:
         self.timeout = timeout
         self.server: asyncio.AbstractServer | None = None
         self.future: asyncio.Future[tuple[str, str | None]] | None = None
@@ -137,13 +138,51 @@ class _OAuthCallbackServer:
                 self.future.set_result(result)
 
         body = (
-            "Wright received the authorization response. You can return to Wright."
+            """<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <title>Wright MCP sign-in</title>
+    <style>
+      :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+             background: #080d18; color: #edf2ff; }
+      main { width: min(34rem, calc(100% - 3rem)); padding: 2rem;
+             border: 1px solid #1e769d; border-radius: 1rem;
+             background: #0d1422; box-shadow: 0 1rem 3rem #0008; }
+      h1 { margin: 0 0 .75rem; font-size: 1.5rem; }
+      p { margin: .5rem 0; color: #aeb8ca; line-height: 1.5; }
+      .success { color: #34d399; }
+      .failure { color: #fbbf24; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="success">Wright MCP sign-in complete</h1>
+      <p>Your account response was received securely by Wright.</p>
+      <p>You can close this tab and return to Wright.</p>
+    </main>
+  </body>
+</html>"""
             if error is None
-            else "Wright could not complete MCP authorization. Return to Wright for details."
+            else """<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wright MCP sign-in</title></head>
+  <body style="font-family:system-ui,sans-serif;background:#080d18;color:#edf2ff;padding:3rem">
+    <h1 style="color:#fbbf24">Wright could not complete MCP sign-in</h1>
+    <p>Return to Wright for the connection details, then try again.</p>
+  </body>
+</html>"""
         )
+        status_line = "HTTP/1.1 200 OK" if error is None else "HTTP/1.1 400 Bad Request"
         response = (
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain; charset=utf-8\r\n"
+            f"{status_line}\r\n"
+            "Content-Type: text/html; charset=utf-8\r\n"
+            "Cache-Control: no-store\r\n"
+            "X-Content-Type-Options: nosniff\r\n"
             f"Content-Length: {len(body.encode('utf-8'))}\r\n"
             "Connection: close\r\n\r\n"
             f"{body}"
@@ -178,6 +217,9 @@ class SseRunner(BaseRunner):
         self.sse_url = sse_url
         self.server_id = server_id or "remote-" + hashlib.sha256(sse_url.encode()).hexdigest()[:32]
         self.oauth_enabled = oauth_enabled
+        self.startup_timeout = (
+            _OAUTH_CALLBACK_TIMEOUT + 30.0 if oauth_enabled else None
+        )
         self.client: Optional[httpx.AsyncClient] = None
         self._oauth_callback: _OAuthCallbackServer | None = None
         self._oauth_provider: OAuthClientProvider | None = None
