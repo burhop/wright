@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -60,7 +60,7 @@ describe("DirectRivetSurface", () => {
   ) => {
     const event = new MessageEvent("message", { data, origin });
     Object.defineProperty(event, "source", { value: frame.contentWindow });
-    window.dispatchEvent(event);
+    act(() => window.dispatchEvent(event));
   };
 
   const connectBridge = (
@@ -436,6 +436,63 @@ describe("DirectRivetSurface", () => {
     expect(screen.getByTestId("direct-rivet-status")).toHaveTextContent(
       "Rivet preview authorization expired. Reconnecting",
     );
+  });
+
+  it("renews a cross-origin preview when its verified frame reports lost authority", async () => {
+    const unavailable = vi.fn();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+        onEditorUnavailable={unavailable}
+      />,
+    );
+    await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
+    const frame = screen.getByTitle("Rivet graph canvas") as HTMLIFrameElement;
+
+    dispatchFrameMessage(frame, {
+      type: "wright-surface:authorization-failed",
+      reason: "SURFACE_PREVIEW_UNAUTHORIZED",
+    });
+
+    expect(unavailable).toHaveBeenCalledWith("SURFACE_PREVIEW_UNAUTHORIZED");
+    expect(screen.getByTestId("direct-rivet-status")).toHaveTextContent(
+      "Rivet preview authorization expired. Reconnecting",
+    );
+  });
+
+  it("ignores preview authorization messages from another origin", async () => {
+    const unavailable = vi.fn();
+    mocks.listRivetWorkflowOperations.mockResolvedValue([workflow]);
+    mocks.readRivetWorkflow.mockResolvedValue(document);
+
+    render(
+      <DirectRivetSurface
+        url="http://127.0.0.1:9180/?workflow=rivet"
+        sessionId="session-1"
+        initialSlug="rivet"
+        onOpenInBrowser={vi.fn()}
+        onEditorUnavailable={unavailable}
+      />,
+    );
+    await waitFor(() => expect(mocks.readRivetWorkflow).toHaveBeenCalled());
+    const frame = screen.getByTitle("Rivet graph canvas") as HTMLIFrameElement;
+
+    dispatchFrameMessage(
+      frame,
+      {
+        type: "wright-surface:authorization-failed",
+        reason: "SURFACE_PREVIEW_UNAUTHORIZED",
+      },
+      "http://malicious.invalid",
+    );
+
+    expect(unavailable).not.toHaveBeenCalled();
   });
 
   it("shows Hermes AI availability and saves an AI-applied canvas revision", async () => {

@@ -259,7 +259,14 @@ export function DirectRivetSurface({
         return;
       }
       const message = event.data || {};
-      if (message.type === "wright-rivet:ready") {
+      if (
+        message.type === "wright-surface:authorization-failed" &&
+        typeof message.reason === "string" &&
+        /^SURFACE_PREVIEW_(?:UNAUTHORIZED|GONE)$/.test(message.reason)
+      ) {
+        setStatus("Rivet preview authorization expired. Reconnecting...");
+        onEditorUnavailableRef.current?.(message.reason);
+      } else if (message.type === "wright-rivet:ready") {
         readyRef.current = true;
         setEditorReady(true);
         setStatus("Rivet 2 graph canvas is ready.");
@@ -286,6 +293,15 @@ export function DirectRivetSurface({
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, [targetOrigin]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      if (readyRef.current) return;
+      setStatus("Rivet graph canvas did not finish connecting. Reconnecting...");
+      onEditorUnavailableRef.current?.("RIVET_PREVIEW_READY_TIMEOUT");
+    }, 20_000);
+    return () => window.clearTimeout(timeout);
+  }, [frameUrl]);
 
   useEffect(() => {
     if (!editorReady || !document) return;
