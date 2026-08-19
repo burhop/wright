@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import time
 
+import pytest
+
 from data_vault import upgrade_database
 
 from tool_registry.db import insert_server, insert_tools
-from tool_registry.gateway_adapters import DatabaseGatewayCatalog
+from tool_registry.gateway_adapters import (
+    DatabaseGatewayCatalog,
+    EngineGatewayLifecycle,
+)
 from tool_registry.models import McpServer, McpTool
 
 
@@ -57,3 +62,71 @@ def test_database_gateway_catalog_projects_only_policy_required_approvals(
     assert high_risk_tool.required_approvals == frozenset(
         {"wright-mcp-appliance-bundle"}
     )
+
+
+class _Lifecycle:
+    def __init__(self) -> None:
+        self.runner = None
+
+    def runner_for(self, server_id: str):
+        return self.runner
+
+
+class _Engine:
+    def __init__(self, *, starts_successfully: bool = True) -> None:
+        self.lifecycle = _Lifecycle()
+        self.starts: list[tuple[str, str, object]] = []
+        self.starts_successfully = starts_successfully
+
+    async def start_server(
+        self,
+        server_id: str,
+        workspace_path: str,
+        *,
+        approval_context,
+    ) -> None:
+        self.starts.append((server_id, workspace_path, approval_context))
+        if self.starts_successfully:
+            self.lifecycle.runner = object()
+
+
+@pytest.mark.asyncio
+async def test_engine_gateway_notifies_after_lazy_tool_discovery() -> None:
+    engine = _Engine()
+    changed: list[str] = []
+    lifecycle = EngineGatewayLifecycle(
+        engine,  # type: ignore[arg-type]
+        tools_changed=changed.append,
+    )
+
+    await lifecycle.ensure_started(
+        "remote-server",
+        workspace_path="D:\\workspace",
+        approval_context={"workspace_approvals": ["network_access_approval"]},
+    )
+    await lifecycle.ensure_started(
+        "remote-server",
+        workspace_path="D:\\workspace",
+        approval_context={"workspace_approvals": ["network_access_approval"]},
+    )
+
+    assert len(engine.starts) == 1
+    assert changed == ["remote-server"]
+
+
+@pytest.mark.asyncio
+async def test_engine_gateway_does_not_notify_after_failed_discovery() -> None:
+    engine = _Engine(starts_successfully=False)
+    changed: list[str] = []
+    lifecycle = EngineGatewayLifecycle(
+        engine,  # type: ignore[arg-type]
+        tools_changed=changed.append,
+    )
+
+    await lifecycle.ensure_started(
+        "remote-server",
+        workspace_path="D:\\workspace",
+        approval_context={},
+    )
+
+    assert changed == []

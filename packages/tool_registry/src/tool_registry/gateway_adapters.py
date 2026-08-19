@@ -109,9 +109,11 @@ class EngineGatewayLifecycle:
         engine: McpEngine,
         *,
         projection_resolver: Callable[[str], Mapping[str, Any]] | None = None,
+        tools_changed: Callable[[str], None] | None = None,
     ) -> None:
         self.engine = engine
         self._projection_resolver = projection_resolver
+        self._tools_changed = tools_changed
 
     def lifecycle_projection(self, server_id: str) -> Mapping[str, Any]:
         if self._projection_resolver is None:
@@ -131,6 +133,11 @@ class EngineGatewayLifecycle:
             await self.engine.start_server(
                 server_id, workspace_path, approval_context=context
             )
+            if (
+                self.engine.lifecycle.runner_for(server_id) is not None
+                and self._tools_changed is not None
+            ):
+                self._tools_changed(server_id)
 
     async def call_tool(
         self,

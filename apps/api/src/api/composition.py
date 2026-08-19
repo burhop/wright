@@ -431,7 +431,18 @@ def build_api_gateway_service(
             "recovery_action": "inspect_host_application" if host_required else None,
         }
 
-    lifecycle = EngineGatewayLifecycle(engine, projection_resolver=lifecycle_projection)
+    gateway: GatewayService | None = None
+
+    def publish_discovered_tools(_server_id: str) -> None:
+        if gateway is not None:
+            gateway.publish_list_changes(tools=True, resources=False)
+
+    engine_lifecycle = EngineGatewayLifecycle(
+        engine,
+        projection_resolver=lifecycle_projection,
+        tools_changed=publish_discovered_tools,
+    )
+    lifecycle = engine_lifecycle
     if proxy_brep_via_api:
         try:
             brep_server = select_brep_application_server(catalog.servers())
