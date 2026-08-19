@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import subprocess
 import sys
 import tomllib
@@ -55,6 +57,16 @@ def test_built_wheel_contains_public_helper_contracts_and_renderer_assets(
     assert len(wheels) == 1
     with zipfile.ZipFile(wheels[0]) as archive:
         names = set(archive.namelist())
+        editor_manifest = json.loads(
+            archive.read("workspace_service/_rivet/editor/manifest.json")
+        )
+
+        for category in ("patches", "wrapper"):
+            for entry in editor_manifest[category]:
+                content = archive.read(
+                    f"workspace_service/_rivet/editor/{entry['path']}"
+                )
+                assert hashlib.sha256(content).hexdigest() == entry["sha256"]
 
     required = {
         "wright/__init__.py",

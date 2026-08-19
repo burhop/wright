@@ -15,7 +15,7 @@
     },
     {
       "path": "patches/rivet2-graph-builder-recovery.patch",
-      "sha256": "06432436c1f42341f16e0d395b8d4867569f7d2ac9cdb242e6f228d1c1bd8de6"
+      "sha256": "c09d35c3a292da5c38d62ffe1b4cc29b99cad484bcf37410ab41475b05e84c11"
     },
     {
       "path": "patches/rivet2-legacy-node-catalog.patch",

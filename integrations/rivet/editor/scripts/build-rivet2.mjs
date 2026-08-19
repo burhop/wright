@@ -50,6 +50,14 @@ function sha256File(path) {
   return sha256(readFileSync(path));
 }
 
+function canonicalizePinnedTextInput(path) {
+  const content = readFileSync(path, 'utf8');
+  const canonical = content.replace(/\r\n?/g, '\n');
+  if (canonical !== content) {
+    writeFileWithRetry(path, canonical);
+  }
+}
+
 function writeFileWithRetry(path, content) {
   let lastError;
   for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -74,6 +82,13 @@ function walkFiles(directory) {
       return entry.isDirectory() ? walkFiles(path) : [path];
     })
     .sort((left, right) => left.localeCompare(right));
+}
+
+for (const path of [
+  ...patchPaths,
+  ...wrappers.map((name) => resolve(editorRoot, 'wrapper', name)),
+]) {
+  canonicalizePinnedTextInput(path);
 }
 
 if (!existsSync(resolve(checkout, '.git'))) {
