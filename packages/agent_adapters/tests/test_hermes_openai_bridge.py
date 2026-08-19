@@ -225,6 +225,109 @@ async def test_tool_request_repairs_one_schema_mismatch():
 
 
 @pytest.mark.asyncio
+async def test_tool_translation_compacts_old_history_and_preserves_current_results():
+    messages = [
+        {"role": "system", "content": "Use the graph editing tools safely."},
+        {
+            "role": "user",
+            "content": "Create three numeric inputs and connect them to the Onshape tool.",
+        },
+    ]
+    for index in range(35):
+        call_id = f"call-{index}"
+        messages.extend(
+            [
+                {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": call_id,
+                            "type": "function",
+                            "function": {
+                                "name": "create_graph",
+                                "arguments": '{"title":"old"}',
+                            },
+                        }
+                    ],
+                },
+                {
+                    "role": "tool",
+                    "tool_call_id": call_id,
+                    "content": f"stale-result-{index}:" + ("x" * 2_000),
+                },
+            ]
+        )
+    messages.extend(
+        [
+            {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [
+                    {
+                        "id": "call-current",
+                        "type": "function",
+                        "function": {
+                            "name": "create_graph",
+                            "arguments": '{"title":"current"}',
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call-current",
+                "content": "CURRENT_RESULT node IDs width length height and onshape-call",
+            },
+        ]
+    )
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        upstream = json.loads(request.content)
+        prompt = upstream["messages"][-1]["content"]
+        assert len(prompt.encode("utf-8")) <= 60_000
+        assert "three numeric inputs" in prompt
+        assert "CURRENT_RESULT node IDs width length height and onshape-call" in prompt
+        assert "stale-result-0" not in prompt
+        json.loads(prompt.split("\n", 1)[1])
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "content": (
+                                '{"kind":"tool_call","name":"create_graph",'
+                                '"arguments":{"title":"connected"}}'
+                            )
+                        }
+                    }
+                ]
+            },
+        )
+
+    result = await _bridge(handler).complete(
+        _request(messages=messages, tools=[_tool()], tool_choice="required")
+    )
+
+    call = result["choices"][0]["message"]["tool_calls"][0]
+    assert call["function"]["arguments"] == '{"title":"connected"}'
+
+
+def test_translation_message_compaction_keeps_bounded_head_and_tail():
+    content = "HEAD:" + ("x" * 20_000) + ":TAIL"
+
+    compacted = HermesOpenAICompatibilityBridge._compact_translation_message(
+        {"role": "tool", "content": content}
+    )
+
+    assert compacted["content"].startswith("HEAD:")
+    assert compacted["content"].endswith(":TAIL")
+    assert "Wright omitted older bounded content" in compacted["content"]
+    assert len(compacted["content"].encode("utf-8")) <= 12_000
+
+
+@pytest.mark.asyncio
 async def test_tool_choice_none_bypasses_translation():
     async def handler(request: httpx.Request) -> httpx.Response:
         upstream = json.loads(request.content)
