@@ -305,6 +305,32 @@ class HermesOpenAICompatibilityBridge:
             ]
         return {"model": "hermes", "messages": messages, "stream": stream}
 
+    def _translation_repair_payload(
+        self,
+        request: _ValidatedRequest,
+        upstream: Mapping[str, Any],
+        error: HermesBridgeError,
+    ) -> dict[str, Any]:
+        payload = self._upstream_payload(request, translate=True, stream=False)
+        try:
+            previous = self._content(upstream)[:8192]
+        except HermesBridgeError:
+            previous = ""
+        payload["messages"] = [
+            *payload["messages"],
+            {"role": "assistant", "content": previous},
+            {
+                "role": "user",
+                "content": (
+                    f"The previous decision was rejected: {error}. "
+                    "Return one corrected JSON object only. Use an allowed tool name, "
+                    "copy the exact argument property names from its schema, and include "
+                    "every required property."
+                ),
+            },
+        ]
+        return payload
+
     def _map_http_error(self, response: httpx.Response) -> HermesBridgeError:
         if response.status_code in {401, 403}:
             return HermesBridgeError(
@@ -507,9 +533,21 @@ class HermesOpenAICompatibilityBridge:
             correlation,
         )
         upstream_completed = time.perf_counter()
-        result = (
-            self._translate_decision(upstream, request) if translate else dict(upstream)
-        )
+        repair_attempted = False
+        if translate:
+            try:
+                result = self._translate_decision(upstream, request)
+            except HermesBridgeError as error:
+                if error.code != "translation_invalid":
+                    raise
+                repair_attempted = True
+                upstream = await self._post_json(
+                    self._translation_repair_payload(request, upstream, error),
+                    correlation,
+                )
+                result = self._translate_decision(upstream, request)
+        else:
+            result = dict(upstream)
         translated = time.perf_counter()
         result["model"] = _MODEL_ALIAS
         if len(_compact(result).encode("utf-8")) > self.settings.maximum_output_bytes:
@@ -523,6 +561,7 @@ class HermesOpenAICompatibilityBridge:
             request_id=correlation,
             tool_count=len(request.tools),
             translated=translate,
+            repair_attempted=repair_attempted,
             validation_ms=round((validated - started) * 1000, 3),
             upstream_ms=round((upstream_completed - upstream_started) * 1000, 3),
             translation_ms=round((translated - upstream_completed) * 1000, 3),
@@ -573,7 +612,16 @@ class HermesOpenAICompatibilityBridge:
                 self._upstream_payload(request, translate=True, stream=False),
                 correlation,
             )
-            result = self._translate_decision(upstream, request)
+            try:
+                result = self._translate_decision(upstream, request)
+            except HermesBridgeError as error:
+                if error.code != "translation_invalid":
+                    raise
+                upstream = await self._post_json(
+                    self._translation_repair_payload(request, upstream, error),
+                    correlation,
+                )
+                result = self._translate_decision(upstream, request)
             for chunk in self._sse_translation(result):
                 yield chunk
             return

@@ -98,6 +98,9 @@ const expectedChangedPaths = new Set([
   'packages/app/src/features/graphBuilder/legacyDraftRunner.ts',
   'packages/app/src/hooks/aiGraphBuilderHelpers.test.ts',
   'packages/app/src/hooks/aiGraphBuilderHelpers.ts',
+  'packages/app/src/hooks/legacyGraphBuilderLogging.test.ts',
+  'packages/app/src/hooks/legacyGraphBuilderLogging.ts',
+  'packages/app/src/hooks/useAiGraphBuilder.ts',
   'packages/app/src/providers/HostCallbacksContext.tsx',
   'packages/app/src/providers/HostUiConfigContext.tsx',
 ]);

@@ -169,6 +169,62 @@ async def test_tool_request_translates_and_validates_one_call():
 
 
 @pytest.mark.asyncio
+async def test_tool_request_repairs_one_schema_mismatch():
+    attempts = 0
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal attempts
+        attempts += 1
+        upstream = json.loads(request.content)
+        if attempts == 1:
+            return httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {
+                            "message": {
+                                "role": "assistant",
+                                "content": (
+                                    '{"kind":"tool_call","name":"create_graph",'
+                                    '"arguments":{"authoringChoiceId":"Greeting"}}'
+                                ),
+                            }
+                        }
+                    ]
+                },
+            )
+        assert "previous decision was rejected" in upstream["messages"][-1]["content"]
+        assert "exact argument property names" in upstream["messages"][-1]["content"]
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {
+                        "message": {
+                            "role": "assistant",
+                            "content": (
+                                '{"kind":"tool_call","name":"create_graph",'
+                                '"arguments":{"title":"Greeting"}}'
+                            ),
+                        }
+                    }
+                ]
+            },
+        )
+
+    result = await _bridge(handler).complete(
+        _request(tools=[_tool()], tool_choice="required", parallel_tool_calls=False)
+    )
+
+    assert attempts == 2
+    call = result["choices"][0]["message"]["tool_calls"][0]
+    assert call["function"] == {
+        "name": "create_graph",
+        "arguments": '{"title":"Greeting"}',
+    }
+
+
+@pytest.mark.asyncio
 async def test_tool_choice_none_bypasses_translation():
     async def handler(request: httpx.Request) -> httpx.Response:
         upstream = json.loads(request.content)

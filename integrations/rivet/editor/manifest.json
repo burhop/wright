@@ -15,11 +15,11 @@
     },
     {
       "path": "patches/rivet2-graph-builder-recovery.patch",
-      "sha256": "562f21d5ec44de47dd1a98156cfd8389c12ef289376765cf3f8cb31d9891a656"
+      "sha256": "06432436c1f42341f16e0d395b8d4867569f7d2ac9cdb242e6f228d1c1bd8de6"
     },
     {
       "path": "patches/rivet2-legacy-node-catalog.patch",
-      "sha256": "dde6277f2a3a9025ee1ab17fae3166938cb19855f9cd049762afe6365f434f52"
+      "sha256": "e57f5d19745a6ff89b94871fbc3a23bb8f7c49c27281b798354beb49c37b2907"
     }
   ],
   "wrapper": [
@@ -41,8 +41,8 @@
     }
   ],
   "entrypoint": "dist/index.html",
-  "sha256": "a24375248c3b230b4e988f2d4708b6ccac8d188473714c0dd6eb593201d6a003",
-  "tree_sha256": "6b12fce1f3e3b45df93d1fc308e941d854322abb9056d6649198cab86d771375",
+  "sha256": "e2ac15d7add6973d9d174884aeda44da51fe0a076e3410f0b765789f7a3152f8",
+  "tree_sha256": "631272faf7d6880f929ff98aafbf5fcb3f6d5b60567a9f08d55234a65f853ae4",
   "files": [
     {
       "path": "dist/assets/_rivet-cspell-words-browser-DvCv-XVQ.js",
@@ -235,9 +235,9 @@
       "sha256": "36225dad8c8cd08bd3c6b6559af0b2298da1a085f1607b0b15131415346d7fe3"
     },
     {
-      "path": "dist/assets/CodeEditor-Cpc2N-S2.js",
+      "path": "dist/assets/CodeEditor-3peyopit.js",
       "bytes": 21505,
-      "sha256": "ba0f843ed325ada48f8d8ecb194c4c00828a95b9607ca9f454c98e843be82b08"
+      "sha256": "f320ff8f2b22906b5a9999d33676e4345ed0dbfc70691a00ee1e1f48cfed627e"
     },
     {
       "path": "dist/assets/codeEditorModelCache-0CJKNP2F.js",
@@ -575,9 +575,9 @@
       "sha256": "79e87b570727ce7480015f4ffc1a138637894f07236e18e1ed4da30bfac66499"
     },
     {
-      "path": "dist/assets/index-DIH_pcGS.js",
-      "bytes": 3467521,
-      "sha256": "fafbd00e7b4842ab02b073e3515b4a84711d5485f471b5db30879131165ae656"
+      "path": "dist/assets/index-DP_wohYo.js",
+      "bytes": 3468381,
+      "sha256": "5546843ce351f8753bdae630010eb0aaa70acb69a6562482e3246519dd70d770"
     },
     {
       "path": "dist/assets/index-HS6HcUVZ.js",
@@ -800,9 +800,9 @@
       "sha256": "1465ff33654eaba792d8f8f196286214c194aaaf6234f59d865a8901a93b38ee"
     },
     {
-      "path": "dist/assets/ProjectComparisonDiffEditor-CJ4LW6BG.js",
+      "path": "dist/assets/ProjectComparisonDiffEditor-C3f89CkO.js",
       "bytes": 3996,
-      "sha256": "c8ec4c8748a52ddc5bc9062759d9aa971ba8dc35291a7ea28683581f81d3fa3e"
+      "sha256": "5ff5d2059d2fd4e71ab1c231b20bdf8628857908277400a248d1d2437643723b"
     },
     {
       "path": "dist/assets/prompt_node-Cn8HseuB.png",
@@ -1132,7 +1132,7 @@
     {
       "path": "dist/index.html",
       "bytes": 2272,
-      "sha256": "a24375248c3b230b4e988f2d4708b6ccac8d188473714c0dd6eb593201d6a003"
+      "sha256": "e2ac15d7add6973d9d174884aeda44da51fe0a076e3410f0b765789f7a3152f8"
     },
     {
       "path": "dist/manifest.json",

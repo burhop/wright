@@ -137,3 +137,108 @@ index 066f2ac8..a017e6c2 100644
          }
        },
      ]),
+diff --git a/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts b/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts
+index a45f9f2a..8c37e1ca 100644
+--- a/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts
++++ b/packages/app/src/hooks/legacyGraphBuilderLogging.test.ts
+@@ -4,6 +4,7 @@ import type { ChatV2CallFinishedEvent } from '@valerypopoff/rivet2-core';
+ import {
+   assertLegacyGraphBuilderFinished,
+   formatLegacyGraphBuilderAccounting,
++  formatLegacyGraphBuilderFailure,
+   LegacyGraphBuilderAccounting,
+   summarizeLegacyGraphBuilderArguments,
+   summarizeLegacyGraphBuilderResult,
+@@ -61,6 +62,19 @@ test('legacy Graph Builder requires its explicit terminal event', () => {
+   assert.throws(() => assertLegacyGraphBuilderFinished(false), /before reporting a completed result/);
+ });
+
++test('legacy Graph Builder reports bounded failure categories without raw provider details', () => {
++  const schemaFailure = formatLegacyGraphBuilderFailure(
++    new Error('translation_invalid arguments did not match schema secret-token'),
++  );
++  const timeoutFailure = formatLegacyGraphBuilderFailure(new Error('request timed out at https://private.example'));
++  const unknownFailure = formatLegacyGraphBuilderFailure(new Error('private provider detail secret-token'));
++
++  assert.equal(schemaFailure, 'The AI returned a graph command that did not match the required format.');
++  assert.equal(timeoutFailure, 'The AI request timed out before the graph draft was complete.');
++  assert.equal(unknownFailure, 'The Graph Builder request failed before the graph draft was complete.');
++  assert.doesNotMatch(`${schemaFailure} ${timeoutFailure} ${unknownFailure}`, /secret-token|private\.example/);
++});
++
+ test('legacy Graph Builder accounting aggregates physical attempts without retaining event contents', () => {
+   const accounting = new LegacyGraphBuilderAccounting();
+   accounting.record(accountingEvent());
+diff --git a/packages/app/src/hooks/legacyGraphBuilderLogging.ts b/packages/app/src/hooks/legacyGraphBuilderLogging.ts
+index bacd7d96..b0ed325a 100644
+--- a/packages/app/src/hooks/legacyGraphBuilderLogging.ts
++++ b/packages/app/src/hooks/legacyGraphBuilderLogging.ts
+@@ -60,6 +60,32 @@ export function assertLegacyGraphBuilderFinished(receivedFinalEvent: boolean): v
+   }
+ }
+
++/**
++ * Turns provider and transport failures into a small user-facing reason without
++ * copying response bodies, prompts, URLs, credentials, or other raw details
++ * into the in-editor activity transcript.
++ */
++export function formatLegacyGraphBuilderFailure(error: unknown): string {
++  const message = error instanceof Error ? error.message.toLowerCase() : '';
++  if (
++    message.includes('translation_invalid') ||
++    message.includes('tool-decision') ||
++    (message.includes('argument') && message.includes('schema'))
++  ) {
++    return 'The AI returned a graph command that did not match the required format.';
++  }
++  if (message.includes('timeout') || message.includes('timed out')) {
++    return 'The AI request timed out before the graph draft was complete.';
++  }
++  if (message.includes('401') || message.includes('403') || message.includes('unauthorized')) {
++    return 'Rivet AI authorization expired while the graph draft was running.';
++  }
++  if (message.includes('502')) {
++    return 'The AI bridge rejected the last graph command after retrying it.';
++  }
++  return 'The Graph Builder request failed before the graph draft was complete.';
++}
++
+ type LegacyGraphBuilderAccountingSummary = Readonly<{
+   physicalAttempts: number;
+   successfulAttempts: number;
+diff --git a/packages/app/src/hooks/useAiGraphBuilder.ts b/packages/app/src/hooks/useAiGraphBuilder.ts
+index a512cb9f..ae326a23 100644
+--- a/packages/app/src/hooks/useAiGraphBuilder.ts
++++ b/packages/app/src/hooks/useAiGraphBuilder.ts
+@@ -24,7 +24,11 @@ import { settingsState } from '../state/settings.js';
+ import { handleError } from '../utils/errorHandling.js';
+ import type { ResolvedAiAssistModelSettings } from '../utils/aiAssistModelSettings.js';
+ import { fillMissingSettingsFromEnvironmentVariables } from '../utils/tauri.js';
+-import { formatLegacyGraphBuilderAccounting, LegacyGraphBuilderAccounting } from './legacyGraphBuilderLogging.js';
++import {
++  formatLegacyGraphBuilderAccounting,
++  formatLegacyGraphBuilderFailure,
++  LegacyGraphBuilderAccounting,
++} from './legacyGraphBuilderLogging.js';
+ import { useCenterViewOnGraph } from './useCenterViewOnGraph.js';
+ import { useDependsOnPlugins } from './useDependsOnPlugins.js';
+
+@@ -340,7 +344,8 @@ export function useLegacyAiGraphBuilder({ onFeedback }: { onFeedback: (feedback:
+             state: canceledState(sessionId),
+           });
+         } else {
+-          logWithTime('FAILED Graph Builder request failed. See the error notification for details.');
++          const failure = formatLegacyGraphBuilderFailure(error);
++          logWithTime(`FAILED ${failure}`);
+           handleError(error, 'AI graph builder failed', {
+             metadata: {
+               model: initialContext.assistModel.displayName,
+@@ -353,7 +358,7 @@ export function useLegacyAiGraphBuilder({ onFeedback }: { onFeedback: (feedback:
+             state: failedState(
+               sessionId,
+               'legacy-policy-failed',
+-              'The legacy Graph Builder could not prepare a safe draft.',
++              failure,
+             ),
+           });
+         }

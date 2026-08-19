@@ -1,5 +1,5 @@
 import { r as t, u as w, e as u, j as C, c as F } from "./vendor-CRPgzvoS.js";
-import { t as I, r as S } from "./index-DIH_pcGS.js";
+import { t as I, r as S } from "./index-DP_wohYo.js";
 const v = 20, M = 56, z = 720, O = F`
   height: min(58vh, var(--project-compare-monaco-diff-height));
   min-height: ${M}px;
