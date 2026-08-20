@@ -244,7 +244,7 @@ test.describe("Offline Capability Library", () => {
     );
     await expect(
       page.getByTestId("evidence-badge-official_preview"),
-    ).toContainText("Official preview");
+    ).toContainText("Publisher preview");
     await expect(page.getByTestId("capability-primary-reason")).toContainText(
       "Network access was not confirmed",
     );

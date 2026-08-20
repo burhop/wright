@@ -10,7 +10,7 @@ class HermesDependencyReconciliationError(ValueError):
 
 EXPECTED_CONFLICTS = {
     "The package `hermes-agent` requires `cryptography==46.0.7`, "
-    "but `49.0.0` is installed",
+    "but `50.0.0` is installed",
     "The package `hermes-agent` requires `pillow==12.2.0`, but `12.3.0` is installed",
 }
 

@@ -29,7 +29,7 @@ engineering-models = [
     "numpy>=1.26,<3",
 ]
 runtime = [
-    "cryptography>=45,<50",
+    "cryptography>=45,<51",
     "fastapi>=0.115,<1",
     "uvicorn[standard]>=0.30,<1",
     "python-jose[cryptography]>=3.3,<4",

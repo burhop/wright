@@ -7,38 +7,85 @@
 # =============================================================================
 
 # Stage 1: Build the Vite frontend
-FROM node:26.5.1-slim@sha256:deae974a69e140f44f434ab29cb519fb5f8fe250fd364b8ca446bd0761acdc6a AS web-builder
+FROM node:26-slim@sha256:4ebb5ace66f15a24c14c492e01a8beeed4fddf970a856109f5126e703e5fe503 AS web-builder
 WORKDIR /workspace
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
 RUN npm ci
+# npm 12.0.2 still bundles fixed upstream dependencies at vulnerable versions.
+# Replace only those two nested packages in a temporary clean project so the
+# global npm CLI remains functional without inheriting a vulnerable bundle.
+RUN npm install --global npm@12.0.2
+RUN set -eux; \
+    mkdir -p /tmp/npm-security-overrides; \
+    cd /tmp/npm-security-overrides; \
+    npm init -y >/dev/null; \
+    npm install --omit=dev brace-expansion@5.0.9 ip-address@10.3.1 >/dev/null; \
+    rm -rf /usr/local/lib/node_modules/npm/node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/ip-address; \
+    cp -a node_modules/brace-expansion /usr/local/lib/node_modules/npm/node_modules/brace-expansion; \
+    cp -a node_modules/ip-address /usr/local/lib/node_modules/npm/node_modules/ip-address; \
+    rm -rf /tmp/npm-security-overrides
 COPY apps/web/ apps/web/
 RUN npm run build --workspace=apps/web
 
 # Stage 2: Clean Hermes runtime base built from public sources.
-FROM python:3.13.13-slim@sha256:aa938a849bcb82dce8f49480f056ab82bf5c1c3ebc294f0430f37b6820e7f286 AS hermes-base
+FROM python:3.13-slim@sha256:ffb752e139c0a19692a43af8d8523b274222dd68eebad5d583b45c2201c6e30a AS hermes-base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV HERMES_HOME=/home/agent/.hermes
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    bsdutils \
     ca-certificates \
     curl \
     git \
+    libblkid1 \
+    liblastlog2-2 \
+    libmount1 \
+    libsmartcols1 \
+    libuuid1 \
+    login \
+    mount \
+    util-linux \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.26@sha256:9a23023be68b2ed09750ae636228e903a54a05ea56ed03a934d00fe9fbeded4b /uv /usr/local/bin/uv
 
+RUN uv pip install --system "msgpack==1.2.1" "setuptools==84.0.0" && \
+    rm -rf /root/.cache/uv
+
+# pip 26.2.1 vendors vulnerable msgpack and a deprecated setuptools
+# pkg_resources compatibility module. The supported pip CLI does not use that
+# module, so replace msgpack, remove it, and update its inventory together.
+RUN set -eux; \
+    pip_vendor=/usr/local/lib/python3.13/site-packages/pip/_vendor; \
+    mkdir -p /tmp/pip-security-overrides; \
+    uv pip install --target /tmp/pip-security-overrides "msgpack==1.2.1"; \
+    rm -rf "${pip_vendor}/msgpack" "${pip_vendor}/pkg_resources"; \
+    cp -a /tmp/pip-security-overrides/msgpack "${pip_vendor}/msgpack"; \
+    sed -i \
+      -e "s/msgpack==1.1.2/msgpack==1.2.1/" \
+      -e "s/setuptools==70.3.0/setuptools==78.1.1/" \
+      "${pip_vendor}/vendor.txt"; \
+    sed -i \
+      -e "s/msgpack@1.1.2/msgpack@1.2.1/g" \
+      -e "s/setuptools@70.3.0/setuptools@78.1.1/g" \
+      "${pip_vendor}/bom.cdx.json"; \
+    rm -rf /tmp/pip-security-overrides /root/.cache/uv
+
 RUN uv venv /opt/hermes/.venv --python /usr/local/bin/python3.13 && \
     uv pip install --python /opt/hermes/.venv/bin/python \
-        hermes-agent==0.19.0 aiohttp==3.13.3 && \
+        hermes-agent==0.19.0 aiohttp==3.14.3 && \
     mkdir -p /opt/hermes/bin && \
     ln -s /opt/hermes/.venv/bin/hermes /opt/hermes/bin/hermes && \
     rm -rf /root/.cache/uv
 
 # Stage 3: Production runtime image
-FROM hermes-base
+FROM debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258
+
+COPY --from=hermes-base /usr/local /usr/local
+COPY --from=hermes-base /opt/hermes /opt/hermes
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH=/opt/hermes/bin:/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -63,11 +110,19 @@ ENV WRIGHT_SURFACES_LIVE_APPS_ENABLED=1
 # and uv come from the Hermes base image. The Rivet runtime uses the same
 # pinned Node.js distribution as the frontend build stage.
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    bsdutils \
     bzip2 \
     ca-certificates \
     curl \
+    libblkid1 \
+    liblastlog2-2 \
+    libmount1 \
+    libsmartcols1 \
+    libuuid1 \
     libatomic1 \
     libssl3t64 \
+    login \
+    mount \
     openssl \
     openssl-provider-legacy \
     vim \
@@ -76,6 +131,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     gnupg \
     supervisor \
+    util-linux \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=web-builder /usr/local/bin/node /usr/local/bin/node
@@ -111,7 +167,7 @@ RUN set -eux; \
 # conflicts through scripts/reconcile_hermes_pip_check.py. Trivy remains
 # independently blocking for all non-exempt fixable High/Critical findings.
 RUN uv pip install --python /opt/hermes/.venv/bin/python \
-        "cryptography==49.0.0" \
+        "cryptography==50.0.0" \
         "pillow==12.3.0" \
         "pyasn1==0.6.4" \
         "python-multipart==0.0.32" \
