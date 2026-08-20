@@ -404,15 +404,13 @@ export async function verifyProjectDigest(
   return project.toString("utf8");
 }
 
-function projectNodeTypes(project: Project): Set<string> {
+function projectNodeTypes(
+  project: Project,
+  graphSelector?: string,
+): Set<string> {
   const types = new Set<string>();
-  for (const graph of Object.values(project.graphs ?? {})) {
-    const nodes = Array.isArray(graph.nodes)
-      ? graph.nodes
-      : Object.values(graph.nodes ?? {});
-    for (const node of nodes) {
-      if (node && typeof node.type === "string") types.add(node.type);
-    }
+  for (const node of graphNodes(project, graphSelector)) {
+    if (node && typeof node.type === "string") types.add(node.type);
   }
   return types;
 }
@@ -423,7 +421,7 @@ function enforceCapabilities(
 ): void {
   const granted = new Set(request.capabilities ?? []);
   if (request.ai) granted.add("ai");
-  const nodeTypes = projectNodeTypes(project);
+  const nodeTypes = projectNodeTypes(project, request.graph);
   for (const [capability, protectedTypes] of Object.entries(
     CAPABILITY_NODE_TYPES,
   )) {
@@ -935,7 +933,8 @@ async function execute(request: WrightRunnerRequest): Promise<void> {
         ...nodeLabel(event),
       }),
     onNodeError: (event) => {
-      const eventError = stableRunnerError(event.error) ??
+      const eventError =
+        stableRunnerError(event.error) ??
         (event.error instanceof Error
           ? event.error
           : new Error(String(event.error)));

@@ -273,10 +273,10 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     await expect(rootFolder).toBeVisible();
     await rootFolder.click();
 
-    // Find and click the stl file in explorer tree
+    // Files open in an editor tab on double-click; one click only selects them.
     const stlFile = page.locator('[data-testid="file-node-/cube.stl"]');
     await expect(stlFile).toBeVisible();
-    await stlFile.click();
+    await stlFile.dblclick();
 
     // Verify tab created and active
     const stlTab = page.locator('[data-testid="editor-tab-/cube.stl"]');
@@ -298,10 +298,10 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     await expect(rootFolder).toBeVisible();
     await rootFolder.click();
 
-    // Find and click the python file in explorer tree
+    // Files open in an editor tab on double-click; one click only selects them.
     const pyFile = page.locator('[data-testid="file-node-/script.py"]');
     await expect(pyFile).toBeVisible();
-    await pyFile.click();
+    await pyFile.dblclick();
 
     // Verify tab created and active
     const pyTab = page.locator('[data-testid="editor-tab-/script.py"]');
@@ -352,10 +352,10 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     await expect(rootFolder).toBeVisible();
     await rootFolder.click();
 
-    // Find and click the pdf file in explorer tree
+    // Files open in an editor tab on double-click; one click only selects them.
     const pdfFile = page.locator('[data-testid="file-node-/document.pdf"]');
     await expect(pdfFile).toBeVisible();
-    await pdfFile.click();
+    await pdfFile.dblclick();
 
     // Verify tab created and active
     const pdfTab = page.locator('[data-testid="editor-tab-/document.pdf"]');
@@ -376,10 +376,10 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     await expect(rootFolder).toBeVisible();
     await rootFolder.click();
 
-    // Find and click the image file in explorer tree
+    // Files open in an editor tab on double-click; one click only selects them.
     const imgFile = page.locator('[data-testid="file-node-/image.png"]');
     await expect(imgFile).toBeVisible();
-    await imgFile.click();
+    await imgFile.dblclick();
 
     // Verify tab created and active
     const imgTab = page.locator('[data-testid="editor-tab-/image.png"]');
@@ -403,10 +403,10 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     await expect(rootFolder).toBeVisible();
     await rootFolder.click();
 
-    // Find and click the html file in explorer tree
+    // Files open in an editor tab on double-click; one click only selects them.
     const htmlFile = page.locator('[data-testid="file-node-/sandbox.html"]');
     await expect(htmlFile).toBeVisible();
-    await htmlFile.click();
+    await htmlFile.dblclick();
 
     // Verify tab created and active
     const htmlTab = page.locator('[data-testid="editor-tab-/sandbox.html"]');
@@ -449,10 +449,10 @@ test.describe("Pluggable Viewer Panel Lifecycle E2E", () => {
     await expect(rootFolder).toBeVisible();
     await rootFolder.click();
 
-    // Click error python script
+    // Open the error script using the same double-click interaction as the explorer.
     const pyFile = page.locator('[data-testid="file-node-/error_script.py"]');
     await expect(pyFile).toBeVisible();
-    await pyFile.click();
+    await pyFile.dblclick();
 
     // Verify textarea is loaded
     const textarea = page.locator('[data-testid="viewer-container"] textarea');

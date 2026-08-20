@@ -282600,20 +282600,17 @@ async function verifyProjectDigest(request2) {
   }
   return project.toString("utf8");
 }
-function projectNodeTypes(project) {
+function projectNodeTypes(project, graphSelector) {
   const types7 = /* @__PURE__ */ new Set();
-  for (const graph of Object.values(project.graphs ?? {})) {
-    const nodes = Array.isArray(graph.nodes) ? graph.nodes : Object.values(graph.nodes ?? {});
-    for (const node2 of nodes) {
-      if (node2 && typeof node2.type === "string") types7.add(node2.type);
-    }
+  for (const node2 of graphNodes(project, graphSelector)) {
+    if (node2 && typeof node2.type === "string") types7.add(node2.type);
   }
   return types7;
 }
 function enforceCapabilities(project, request2) {
   const granted = new Set(request2.capabilities ?? []);
   if (request2.ai) granted.add("ai");
-  const nodeTypes = projectNodeTypes(project);
+  const nodeTypes = projectNodeTypes(project, request2.graph);
   for (const [capability, protectedTypes] of Object.entries(
     CAPABILITY_NODE_TYPES
   )) {

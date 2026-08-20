@@ -43,6 +43,21 @@ data:
   plugins: []
 `;
 
+const inactiveChatProject = passthroughProject.replace(
+  "  metadata:\n    id: project-1",
+  `  graph-ai:
+      metadata:
+        id: graph-ai
+        name: AI helper
+        description: ""
+      nodes:
+        '[chat-node]:chat "Chat"':
+          data:
+            model: gpt-4o-mini
+          visualData: 0/0/200/null//
+  metadata:
+    id: project-1`,
+);
 const discoveryProject = `version: 4
 data:
   attachedData: {}
@@ -227,6 +242,13 @@ test("executes a deterministic graph and emits one terminal result", () => {
   assert.equal(lines.at(-1).outputs.output.value, "hello");
 });
 
+test("checks capabilities only for the selected graph", () => {
+  const result = invoke(inactiveChatProject);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const terminal = result.stdout.trim().split(/\r?\n/).map(JSON.parse).at(-1);
+  assert.equal(terminal.state, "succeeded");
+  assert.equal(terminal.outputs.output.value, "hello");
+});
 test("fails closed when the project digest changes", () => {
   const result = invoke(passthroughProject, { expectedDigest: "0".repeat(64) });
   assert.notEqual(result.status, 0);
@@ -331,10 +353,7 @@ test("MCP node diagnostics stay off the JSONL protocol channel", async () => {
     const events = result.stdout.trim().split(/\r?\n/).map(JSON.parse);
     assert.equal(events.at(-1).type, "result");
     assert.equal(events.at(-1).state, "failed");
-    assert.equal(
-      events.at(-1).error.code,
-      "RIVET_MCP_PANEL_UNAVAILABLE",
-    );
+    assert.equal(events.at(-1).error.code, "RIVET_MCP_PANEL_UNAVAILABLE");
     assert.match(result.stderr, /Wright MCP call failed/);
     assert.match(events.at(-1).error.message, /Wright MCP call failed/);
   } finally {

@@ -12,11 +12,17 @@ def test_production_dockerfile_uses_pinned_architecture_inputs() -> None:
     for line in from_lines:
         if line != "FROM hermes-base":
             assert "@sha256:" in line, line
-    assert "node:26.5.1-slim@sha256:" in dockerfile
-    assert "python:3.13.13-slim@sha256:" in dockerfile
+    assert re.search(
+        r"FROM node:26(?:\.\d+(?:\.\d+)?)?-slim@sha256:[0-9a-f]{64} AS web-builder",
+        dockerfile,
+    )
+    assert re.search(
+        r"FROM python:3\.13(?:\.\d+)?-slim@sha256:[0-9a-f]{64} AS hermes-base",
+        dockerfile,
+    )
     assert "uv:0.9.26@sha256:" in dockerfile
-    assert "micromamba_arch=\"linux-64\"" in dockerfile
-    assert "micromamba_arch=\"linux-aarch64\"" in dockerfile
+    assert 'micromamba_arch="linux-64"' in dockerfile
+    assert 'micromamba_arch="linux-aarch64"' in dockerfile
     assert re.search(r"ARG MICROMAMBA_AMD64_SHA256=[0-9a-f]{64}", dockerfile)
     assert re.search(r"ARG MICROMAMBA_ARM64_SHA256=[0-9a-f]{64}", dockerfile)
     assert "sha256sum --check --strict" in dockerfile
