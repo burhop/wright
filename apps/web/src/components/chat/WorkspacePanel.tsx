@@ -3061,8 +3061,8 @@ export function WorkspacePanel({
                   lineHeight: "1.4",
                 }}
               >
-                Double-click any file in the left sidebar explorer to open a
-                viewer or code editor tab.
+                Click any file in the left sidebar explorer to open a viewer or
+                code editor tab.
               </div>
             </div>
           ) : null}
