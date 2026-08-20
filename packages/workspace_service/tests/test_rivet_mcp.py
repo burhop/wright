@@ -135,7 +135,9 @@ async def test_approved_real_run_returns_outputs_and_official_sdk_progress(
             )
 
             assert not result.isError
-            assert result.structuredContent["state"] == "succeeded"
+            assert result.structuredContent["state"] == "succeeded", (
+                result.structuredContent
+            )
             assert (
                 result.structuredContent["outputs"]["output"]["value"]
                 == "hello through MCP"

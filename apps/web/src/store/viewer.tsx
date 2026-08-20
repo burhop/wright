@@ -52,7 +52,11 @@ export const dedupeEditorTabs = (tabs: EditorTab[]): EditorTab[] => {
 interface ViewerPanelContextType {
   openTabs: EditorTab[];
   activeTabPath: string | null;
-  openTab: (file: FileDescriptor, mode?: ViewerMode) => Promise<void>;
+  openTab: (
+    file: FileDescriptor,
+    mode?: ViewerMode,
+    sessionId?: string,
+  ) => Promise<void>;
   openTransientTab: (tab: EditorTab) => void;
   closeTab: (path: string) => void;
   setActiveTabPath: (path: string | null) => void;
@@ -157,7 +161,11 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const openTab = useCallback(
-    async (file: FileDescriptor, mode: ViewerMode = "preview") => {
+    async (
+      file: FileDescriptor,
+      mode: ViewerMode = "preview",
+      sessionId?: string,
+    ) => {
       const normalizedUri = normalizeEditorTabPath(file.uri);
       const normalizedFile: FileDescriptor = {
         ...file,
@@ -182,7 +190,7 @@ export const ViewerPanelProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const provider = contrib.providerFactory();
       const doc = await provider.openDocument(normalizedFile, {
-        sessionId: chatState.activeSessionId || undefined,
+        sessionId: sessionId || chatState.activeSessionId || undefined,
       });
 
       // Save document and provider refs

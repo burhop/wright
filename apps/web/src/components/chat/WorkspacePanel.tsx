@@ -747,7 +747,7 @@ export function WorkspacePanel({
             size: fileNode?.size || undefined,
             metadata: { last_modified: fileNode?.last_modified },
           };
-          await openTab(file, "preview");
+          await openTab(file, "preview", workspaceFileSessionId || undefined);
         }
         if (savedLayout.activeTabPath) {
           const savedWorkflowSlug = workspaceRivetWorkflowSlug(
@@ -1164,7 +1164,16 @@ export function WorkspacePanel({
       metadata: { last_modified: fileNode?.last_modified },
     };
 
-    await openTab(file, "preview");
+    try {
+      await openTab(file, "preview", workspaceFileSessionId || undefined);
+    } catch (err: unknown) {
+      console.error("Failed to open workspace file:", err);
+      setError(
+        err instanceof Error
+          ? `Could not open ${name}: ${err.message}`
+          : `Could not open ${name}.`,
+      );
+    }
   };
 
   // File tree operations
