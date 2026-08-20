@@ -10,6 +10,8 @@ from data_vault import WorkflowRunRepository, upgrade_database
 from workspace_service.rivet_evidence import (
     build_run_evidence,
     compare_run_manifest,
+    project_output_summary,
+    project_result_value,
     run_material_projection,
     run_observation_projection,
 )
@@ -19,6 +21,42 @@ from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[3]
+
+
+def test_result_projection_redacts_bounds_and_preserves_success() -> None:
+    projected = project_result_value(
+        {
+            "message": "created",
+            "authorization": "Bearer must-not-export",
+            "nested": {"api_key": "must-not-export", "value": "x" * 9000},
+        },
+        name="result",
+        origin="final_output",
+        maximum_bytes=1024,
+    )
+
+    assert projected["complete"] is False
+    assert projected["truncation_reason"] == "size_limit"
+    assert projected["digest"]
+    assert projected["original_bytes"] > projected["retained_bytes"]
+    assert projected["redaction_count"] == 2
+    assert "must-not-export" not in json.dumps(projected)
+
+
+def test_output_summary_retains_named_null_and_structured_results() -> None:
+    summary, truncated = project_output_summary(
+        {"empty": None, "dimensions": {"width": 10, "height": 20}},
+        duration_ms=42,
+    )
+
+    assert truncated is False
+    assert summary["durationMs"] == 42
+    assert [item["name"] for item in summary["results"]] == [
+        "dimensions",
+        "empty",
+    ]
+    assert summary["outputs"]["empty"] is None
+    assert summary["results"][1]["kind"] == "null"
 
 
 def _manifest() -> dict:

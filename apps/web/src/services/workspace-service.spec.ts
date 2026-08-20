@@ -308,3 +308,34 @@ describe("support diagnostic workspace client", () => {
     ).rejects.toThrow("Local state changed. Create a fresh preview.");
   });
 });
+
+describe("Rivet run inspection workspace client", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    mocks.fetch.mockReset();
+  });
+
+  it("requests an incremental inspection with no-store semantics", async () => {
+    const inspection = { schema_version: 1, run: { run_id: "run/1" } };
+    mocks.fetch.mockResolvedValue(response(inspection));
+    await expect(
+      workspaceService.getRivetRunInspection("session 1", "run/1", 7),
+    ).resolves.toEqual(inspection);
+    expect(mocks.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/workflows/runs/run%2F1/inspection?session_id=session%201&after_sequence=7"),
+      { cache: "no-store" },
+    );
+  });
+
+  it("bounds recent-run limits and preserves the existing read-only route", async () => {
+    const recent = { workflow_id: "workflow-1", current_revision: 2, runs: [] };
+    mocks.fetch.mockResolvedValue(response(recent));
+    await expect(
+      workspaceService.getRecentRivetRuns("session 1", "my workflow", 500),
+    ).resolves.toEqual(recent);
+    expect(mocks.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/workflows/my%20workflow/runs?session_id=session%201&limit=50"),
+      { cache: "no-store" },
+    );
+  });
+});

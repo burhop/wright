@@ -136,6 +136,110 @@ export interface RivetWorkflowRun {
   manifest?: Record<string, unknown> | null;
 }
 
+export interface RivetRunSummary {
+  run_id: string;
+  workspace_id: string;
+  session_id: string;
+  workflow_id: string;
+  revision: number;
+  digest: string;
+  graph: string;
+  generation: number;
+  state: string;
+  started_at: string | null;
+  completed_at: string | null;
+  duration_ms: number | null;
+  reason_code: string | null;
+  trace_id: string | null;
+  latest_sequence: number;
+  has_outputs: boolean;
+  has_diagnostic: boolean;
+  output_truncated: boolean;
+  output_redaction_count: number;
+}
+
+export interface RivetRunResultItem {
+  result_id: string;
+  name: string;
+  origin: string;
+  kind: "null" | "boolean" | "number" | "text" | "structured" | "list" | "link" | "artifact" | string;
+  value: unknown;
+  preview: string;
+  complete: boolean;
+  truncation_reason: string | null;
+  original_bytes: number;
+  retained_bytes: number;
+  digest: string;
+  redaction_count: number;
+  artifact: Record<string, unknown> | null;
+}
+
+export interface RivetRunStep {
+  step_id: string;
+  sequence: number;
+  node_id: string | null;
+  label: string;
+  kind: string;
+  qualified_tool_name: string | null;
+  request_id: string | null;
+  trace_id: string | null;
+  state: string;
+  started_at: string | null;
+  completed_at: string | null;
+  duration_ms: number | null;
+  reason_code: string | null;
+  result: RivetRunResultItem | null;
+  artifacts: Array<Record<string, unknown>>;
+  redaction_count: number;
+  complete: boolean;
+}
+
+export interface RivetRunInspection {
+  schema_version: 1;
+  run: RivetRunSummary;
+  progress: {
+    phase: string;
+    current_step_id: string | null;
+    completed_steps: number;
+    total_steps: number;
+    last_sequence: number;
+    updated_at: string | null;
+  };
+  events: Array<{
+    sequence: number;
+    kind: string;
+    occurred_at: string | null;
+    payload: Record<string, unknown>;
+  }>;
+  steps: RivetRunStep[];
+  final_outputs: RivetRunResultItem[];
+  diagnostic: {
+    code: string;
+    summary: string;
+    recovery_action: string;
+    failed_step_id: string | null;
+    failed_node_id: string | null;
+    qualified_tool_name: string | null;
+    trace_id: string | null;
+    full_rerun_available: boolean;
+    partial_retry_available: false;
+    residue_possible: boolean;
+  } | null;
+  completeness: {
+    outputs_complete: boolean;
+    steps_complete: boolean;
+    events_complete: boolean;
+    evidence_available: boolean;
+    reasons: string[];
+  };
+}
+
+export interface RivetRecentRuns {
+  workflow_id: string;
+  current_revision: number;
+  runs: RivetRunSummary[];
+}
+
 export interface RivetRunEvidence {
   schema_version: 1;
   run_id: string;
@@ -803,6 +907,32 @@ export class WorkspaceService {
       `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}?session_id=${encodeURIComponent(sessionId)}`,
     );
     if (!response.ok) throw new Error("Workflow run status is unavailable");
+    return response.json();
+  }
+
+  async getRivetRunInspection(
+    sessionId: string,
+    runId: string,
+    afterSequence = 0,
+  ): Promise<RivetRunInspection> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/runs/${encodeURIComponent(runId)}/inspection?session_id=${encodeURIComponent(sessionId)}&after_sequence=${Math.max(0, afterSequence)}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Workflow run inspection is unavailable");
+    return response.json();
+  }
+
+  async getRecentRivetRuns(
+    sessionId: string,
+    slug: string,
+    limit = 20,
+  ): Promise<RivetRecentRuns> {
+    const response = await hostAdapter.fetch(
+      `${API_BASE}/api/workspace/workflows/${encodeURIComponent(slug)}/runs?session_id=${encodeURIComponent(sessionId)}&limit=${Math.max(1, Math.min(50, limit))}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error("Recent workflow runs are unavailable");
     return response.json();
   }
 

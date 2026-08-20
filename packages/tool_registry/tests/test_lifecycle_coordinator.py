@@ -55,7 +55,9 @@ async def test_runner_startup_timeout_can_exceed_operation_timeout() -> None:
 
 
 @pytest.mark.asyncio
-async def test_concurrent_starts_leave_one_current_generation() -> None:
+async def test_concurrent_starts_are_idempotent_and_leave_one_current_generation() -> (
+    None
+):
     runners: list[FakeRunner] = []
 
     def factory(
@@ -70,11 +72,11 @@ async def test_concurrent_starts_leave_one_current_generation() -> None:
         *(coordinator.start("cad", workspace_path="/w") for _ in range(20))
     )
 
-    assert generations == list(range(1, 21))
-    assert coordinator.generation_for("cad") == 20
+    assert generations == [1] * 20
+    assert coordinator.generation_for("cad") == 1
     assert coordinator.live_runner_count() == 1
     assert sum(runner.is_running() for runner in runners) == 1
-    assert runners[-1].is_running()
+    assert runners[0].is_running()
 
     await coordinator.shutdown()
     assert coordinator.live_runner_count() == 0
@@ -106,6 +108,29 @@ async def test_restart_invalidates_in_flight_tool_result() -> None:
 
     with pytest.raises(asyncio.CancelledError):
         await call
+
+
+@pytest.mark.asyncio
+async def test_routine_start_observation_does_not_cancel_delayed_tool_call() -> None:
+    gate = asyncio.Event()
+    runner = FakeRunner("remote")
+
+    async def delayed_call(tool_name: str, arguments: dict) -> dict:
+        await gate.wait()
+        return {"ok": True, **arguments}
+
+    runner.call_tool = delayed_call  # type: ignore[method-assign]
+    coordinator = McpLifecycleCoordinator(lambda *_: runner, operation_timeout=1.0)
+    assert await coordinator.start("remote") == 1
+    call = asyncio.create_task(
+        coordinator.call_tool("remote", "search", {"topic": "featurescript"})
+    )
+    await asyncio.sleep(0)
+
+    assert await coordinator.start("remote") == 1
+    gate.set()
+    assert await call == {"ok": True, "topic": "featurescript"}
+    assert runner.stop_count == 0
 
 
 @pytest.mark.asyncio

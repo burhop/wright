@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import time
 from dataclasses import dataclass, replace
 from typing import Any
 
@@ -32,6 +34,7 @@ class WorkflowRunRecord:
     reason_code: str | None
     output_summary: dict[str, Any] | None
     output_truncated: bool
+    trace_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,8 +98,8 @@ class WorkflowRunRepository:
                 """INSERT INTO workspace_workflow_runs
                 (run_id, workspace_id, session_id, workflow_id, revision, digest,
                  graph, state, generation, started_at, completed_at, reason_code,
-                 output_json, output_truncated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                 output_json, output_truncated, trace_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     record.run_id,
                     record.workspace_id,
@@ -112,16 +115,12 @@ class WorkflowRunRepository:
                     record.reason_code,
                     output_json,
                     int(record.output_truncated),
+                    record.trace_id,
                 ),
             )
 
-    def get(self, run_id: str) -> WorkflowRunRecord | None:
-        with connect_state_db(self.db_path, ensure_parent=True) as connection:
-            row = connection.execute(
-                "SELECT * FROM workspace_workflow_runs WHERE run_id=?", (run_id,)
-            ).fetchone()
-        if row is None:
-            return None
+    @staticmethod
+    def _record(row) -> WorkflowRunRecord:
         return WorkflowRunRecord(
             run_id=str(row["run_id"]),
             workspace_id=str(row["workspace_id"]),
@@ -139,7 +138,17 @@ class WorkflowRunRepository:
                 json.loads(row["output_json"]) if row["output_json"] else None
             ),
             output_truncated=bool(row["output_truncated"]),
+            trace_id=row["trace_id"],
         )
+
+    def get(self, run_id: str) -> WorkflowRunRecord | None:
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            row = connection.execute(
+                "SELECT * FROM workspace_workflow_runs WHERE run_id=?", (run_id,)
+            ).fetchone()
+        if row is None:
+            return None
+        return self._record(row)
 
     def transition(
         self,
@@ -163,23 +172,44 @@ class WorkflowRunRepository:
         updated = replace(
             current,
             state=state,
+            started_at=(
+                current.started_at
+                if current.started_at is not None or state != "running"
+                else int(time.time())
+            ),
             completed_at=completed_at,
             reason_code=reason_code,
             output_summary=output_summary,
             output_truncated=output_truncated,
         )
-        output_json = self._bounded_json(
-            updated.output_summary,
-            limit=self.maximum_output_bytes,
-            label="output",
-        )
+        try:
+            output_json = self._bounded_json(
+                updated.output_summary,
+                limit=self.maximum_output_bytes,
+                label="output",
+            )
+        except ValueError:
+            encoded = self._json(updated.output_summary) or "{}"
+            output_json = self._json(
+                {
+                    "complete": False,
+                    "truncation_reason": "repository_limit",
+                    "original_bytes": len(encoded.encode("utf-8")),
+                    "digest": hashlib.sha256(encoded.encode("utf-8")).hexdigest(),
+                }
+            )
+            output_truncated = True
+            updated = replace(
+                updated, output_summary=json.loads(output_json), output_truncated=True
+            )
         with connect_state_db(self.db_path, ensure_parent=True) as connection:
             connection.execute(
                 """UPDATE workspace_workflow_runs SET
-                    state=?, completed_at=?, reason_code=?, output_json=?,
+                    state=?, started_at=?, completed_at=?, reason_code=?, output_json=?,
                     output_truncated=? WHERE run_id=?""",
                 (
                     state,
+                    updated.started_at,
                     completed_at,
                     reason_code,
                     output_json,
@@ -188,6 +218,33 @@ class WorkflowRunRepository:
                 ),
             )
         return updated
+
+    def latest_sequence(self, run_id: str) -> int:
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            value = connection.execute(
+                "SELECT MAX(sequence) FROM workspace_workflow_run_events WHERE run_id=?",
+                (run_id,),
+            ).fetchone()[0]
+        return int(value or 0)
+
+    def recent(
+        self,
+        *,
+        workspace_id: str,
+        session_id: str,
+        workflow_id: str,
+        limit: int = 20,
+    ) -> tuple[WorkflowRunRecord, ...]:
+        bounded = max(1, min(int(limit), 50))
+        with connect_state_db(self.db_path, ensure_parent=True) as connection:
+            rows = connection.execute(
+                """SELECT * FROM workspace_workflow_runs
+                WHERE workspace_id=? AND session_id=? AND workflow_id=?
+                ORDER BY COALESCE(started_at, completed_at, 0) DESC, run_id DESC
+                LIMIT ?""",
+                (workspace_id, session_id, workflow_id, bounded),
+            ).fetchall()
+        return tuple(self._record(row) for row in rows)
 
     def append_event(self, event: WorkflowRunEventRecord) -> None:
         if event.sequence < 1 or not event.kind:

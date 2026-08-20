@@ -6,7 +6,12 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
-from core.rivet_mcp import ArtifactReference, RunManifestDraft, canonical_digest
+from core.rivet_mcp import (
+    ArtifactReference,
+    RivetChildCallRecord,
+    RunManifestDraft,
+    canonical_digest,
+)
 from data_vault import RivetMcpRepository, upgrade_database
 from jsonschema import Draft202012Validator, FormatChecker
 
@@ -128,3 +133,68 @@ def test_manifest_caps_evidence_and_restart_terminalizes_orphan(tmp_path) -> Non
     assert document["event_truncated"] is True
     assert len(document["child_call_ids"]) == 1000
     assert len(document["approval_ids"]) == 1000
+
+
+def test_child_call_documents_preserve_optional_safe_result_and_read_old_records(
+    tmp_path,
+) -> None:
+    repository = _repository(tmp_path)
+    started = datetime(2026, 8, 20, tzinfo=UTC)
+    repository.append_child_call(
+        RivetChildCallRecord(
+            call_id="call-new",
+            request_id="request-new",
+            run_id="run-1",
+            authority_id="authority-1",
+            node_id="node-1",
+            binding_digest="b" * 64,
+            qualified_tool_name="cad__inspect",
+            server_revision="fixture-v1",
+            schema_digest="c" * 64,
+            validation_evidence_id="validation-1",
+            argument_digest="d" * 64,
+            trace_id="trace-child",
+            state="succeeded",
+            child_received=True,
+            started_at=started,
+            completed_at=started + timedelta(seconds=1),
+            result={"kind": "structured", "value": {"token": "[REDACTED]"}},
+            result_complete=True,
+            redaction_count=1,
+        )
+    )
+    old_document = {
+        "call_id": "call-old",
+        "request_id": "request-old",
+        "run_id": "run-1",
+        "node_id": "node-old",
+        "binding_digest": "e" * 64,
+        "state": "succeeded",
+        "child_received": True,
+    }
+    with sqlite3.connect(repository.db_path) as connection:
+        connection.execute(
+            """INSERT INTO workspace_workflow_child_calls
+            (call_id, run_id, request_id, node_id, binding_digest, state,
+             child_received, call_json, created_at, completed_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                "call-old",
+                "run-1",
+                "request-old",
+                "node-old",
+                "e" * 64,
+                "succeeded",
+                1,
+                json.dumps(old_document),
+                1,
+                2,
+            ),
+        )
+    children, _approvals = repository.run_evidence_documents("run-1")
+    by_id = {item["call_id"]: item for item in children}
+    assert by_id["call-new"]["result"]["value"]["token"] == "[REDACTED]"
+    assert by_id["call-new"]["result_complete"] is True
+    assert by_id["call-new"]["redaction_count"] == 1
+    assert "result" not in by_id["call-old"]
+    assert "result_complete" not in by_id["call-old"]

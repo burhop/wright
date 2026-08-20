@@ -270,8 +270,8 @@ async def test_bound_bridge_projects_orphan_transport_cancellation() -> None:
             ),
         )
 
-    assert captured.value.code == "RIVET_MCP_CALL_CANCELLED"
-    assert repository.records[0].reason_code == "RIVET_MCP_CALL_CANCELLED"
+    assert captured.value.code == "RIVET_MCP_TRANSPORT_CANCELLED"
+    assert repository.records[0].reason_code == "RIVET_MCP_TRANSPORT_CANCELLED"
     assert repository.records[0].child_received is True
 
 

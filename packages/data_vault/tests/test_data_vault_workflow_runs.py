@@ -13,22 +13,31 @@ from data_vault import (
 )
 
 
-def _run(state: str = "queued") -> WorkflowRunRecord:
+def _run(
+    state: str = "queued",
+    *,
+    run_id: str = "run-1",
+    workspace_id: str = "workspace-1",
+    session_id: str = "session-1",
+    workflow_id: str = "workflow-1",
+    started_at: int | None = 100,
+) -> WorkflowRunRecord:
     return WorkflowRunRecord(
-        run_id="run-1",
-        workspace_id="workspace-1",
-        session_id="session-1",
-        workflow_id="workflow-1",
+        run_id=run_id,
+        workspace_id=workspace_id,
+        session_id=session_id,
+        workflow_id=workflow_id,
         revision=3,
         digest="a" * 64,
         graph="Main",
         state=state,
         generation=1,
-        started_at=100,
+        started_at=started_at,
         completed_at=None,
         reason_code=None,
         output_summary=None,
         output_truncated=False,
+        trace_id=f"trace-{run_id}",
     )
 
 
@@ -89,4 +98,36 @@ def test_run_events_are_sequenced_and_bounded(tmp_path):
         )
     assert repository.events("run-1") == (
         WorkflowRunEventRecord("run-1", 1, 101, "queued", {"message": "ready"}),
+    )
+
+
+def test_running_timestamp_trace_cursor_and_scoped_recent_order(tmp_path, monkeypatch):
+    database = tmp_path / "state.db"
+    repository = _prepare(database)
+    monkeypatch.setattr("data_vault.workflow_runs.time.time", lambda: 150)
+    repository.create(_run(run_id="run-1", started_at=None))
+    repository.transition("run-1", "running")
+    repository.append_event(WorkflowRunEventRecord("run-1", 1, 151, "started", {}))
+    repository.create(_run(run_id="run-2", started_at=200))
+
+    restored = repository.get("run-1")
+    assert restored is not None
+    assert restored.started_at == 150
+    assert restored.trace_id == "trace-run-1"
+    assert repository.latest_sequence("run-1") == 1
+    assert [
+        item.run_id
+        for item in repository.recent(
+            workspace_id="workspace-1",
+            session_id="session-1",
+            workflow_id="workflow-1",
+        )
+    ] == ["run-2", "run-1"]
+    assert (
+        repository.recent(
+            workspace_id="other",
+            session_id="session-1",
+            workflow_id="workflow-1",
+        )
+        == ()
     )

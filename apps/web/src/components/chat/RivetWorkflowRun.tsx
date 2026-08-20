@@ -9,9 +9,11 @@ import {
 import {
   workspaceService,
   type RivetCallApproval,
+  type RivetRunInspection,
   type RivetRunEvidence,
   type RivetWorkflowRun,
 } from "../../services/workspace-service";
+import { RivetRunInspector } from "../workflows/RivetRunInspector";
 
 type RunEvent = {
   sequence: number;
@@ -35,6 +37,7 @@ export function RivetWorkflowRun({
   const [approvals, setApprovals] = useState<RivetCallApproval[]>([]);
   const [events, setEvents] = useState<RunEvent[]>([]);
   const [evidence, setEvidence] = useState<RivetRunEvidence | null>(null);
+  const [inspection, setInspection] = useState<RivetRunInspection | null>(null);
   const [selected, setSelected] = useState<RivetCallApproval | null>(null);
   const [message, setMessage] = useState("Run evidence is current.");
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -48,7 +51,7 @@ export function RivetWorkflowRun({
 
   const refresh = useCallback(async () => {
     try {
-      const [current, currentApprovals, history, durableEvidence] =
+      const [current, currentApprovals, history, durableEvidence, currentInspection] =
         await Promise.all([
           workspaceService.getRivetWorkflowRun(sessionId, run.run_id),
           workspaceService.getRivetCallApprovals(sessionId, run.run_id),
@@ -56,11 +59,15 @@ export function RivetWorkflowRun({
           workspaceService
             .getRivetRunEvidence(sessionId, run.run_id)
             .catch(() => null),
+          workspaceService
+            .getRivetRunInspection(sessionId, run.run_id)
+            .catch(() => null),
         ]);
       onRunUpdateRef.current(current);
       setApprovals(currentApprovals);
       setEvents(history);
       setEvidence(durableEvidence);
+      setInspection(currentInspection);
       const pending = currentApprovals.find((item) => item.state === "pending");
       if (
         pending &&
@@ -170,6 +177,16 @@ export function RivetWorkflowRun({
           Cancel run
         </button>
       )}
+      <RivetRunInspector
+        inspection={inspection}
+        recentRuns={inspection ? [inspection.run] : []}
+        currentRevision={run.revision}
+        elapsedMs={inspection?.run.duration_ms || run.duration_ms || 0}
+        onSelectRun={() => undefined}
+        onExportEvidence={() => {
+          void workspaceService.exportRivetRunEvidence(sessionId, run.run_id);
+        }}
+      />
       {manifest && (
         <details data-testid="rivet-run-evidence">
           <summary>Run evidence</summary>
@@ -178,7 +195,7 @@ export function RivetWorkflowRun({
             manifest{" "}
             {String(manifest.manifest_digest || "unavailable").slice(0, 12)}
           </small>
-          {Boolean(manifest.reason_code) && (
+          {!inspection?.diagnostic && Boolean(manifest.reason_code) && (
             <p>Failure boundary: {String(manifest.reason_code)}.</p>
           )}
           {residuePossible && (

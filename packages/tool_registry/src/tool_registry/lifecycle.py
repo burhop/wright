@@ -116,6 +116,16 @@ class McpLifecycleCoordinator:
         slot = await self._slot(server_id)
         async with slot.lock:
             self._ensure_open()
+            # Starting is an idempotent desire, not an implicit restart. Status
+            # refreshes and gateway observation may race with a long remote MCP
+            # call; replacing a healthy runner here used to cancel that call by
+            # changing its generation. Explicit replacement remains `restart()`.
+            if (
+                slot.desired_state is DesiredState.RUNNING
+                and slot.runner is not None
+                and slot.runner.is_running()
+            ):
+                return slot.generation
             generation = slot.generation + 1
             slot.generation = generation
             slot.desired_state = DesiredState.RUNNING

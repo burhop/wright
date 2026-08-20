@@ -27,6 +27,7 @@ const patchPaths = [
   resolve(editorRoot, 'patches', 'rivet2-atomic-workflow-plan.patch'),
   resolve(editorRoot, 'patches', 'rivet2-composition-adapters.patch'),
   resolve(editorRoot, 'patches', 'rivet2-mcp-structured-content.patch'),
+  resolve(editorRoot, 'patches', 'rivet2-run-state-overlay.patch'),
 ];
 const wrappers = ['App.tsx', 'WrightAiRuntime.ts', 'WrightEditorBridge.tsx', 'index.html'];
 const output = resolve(editorRoot, 'dist');
@@ -119,8 +120,12 @@ const expectedChangedPaths = new Set([
   'packages/app/src/hooks/legacyGraphBuilderLogging.test.ts',
   'packages/app/src/hooks/legacyGraphBuilderLogging.ts',
   'packages/app/src/hooks/useAiGraphBuilder.ts',
+  'packages/app/src/hooks/useRivetWorkspaceHost.ts',
+  'packages/app/src/hooks/workspaceHost/types.ts',
   'packages/app/src/providers/HostCallbacksContext.tsx',
   'packages/app/src/providers/HostUiConfigContext.tsx',
+  'packages/app/src/components/VisualNode.tsx',
+  'packages/app/src/state/graphBuilder.ts',
   'packages/core/src/integrations/mcp/MCPProvider.ts',
   'packages/core/src/model/nodes/MCPToolCallNode.ts',
   'packages/core/test/integrations/mcp/MCPBase.test.ts',

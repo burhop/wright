@@ -511,6 +511,8 @@ class RivetChildCallRecord:
     reason_code: str | None = None
     artifacts: tuple[ArtifactReference, ...] = ()
     redaction_count: int = 0
+    result: Mapping[str, Any] | None = None
+    result_complete: bool | None = None
 
 
 @dataclass(frozen=True, slots=True)

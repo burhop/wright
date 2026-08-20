@@ -26,6 +26,7 @@ from .rivet_capabilities import (
     RivetDiscoverySnapshot,
 )
 from .rivet_evidence import build_run_evidence
+from .workflow_inspection import build_run_summary, build_workflow_inspection
 from .rivet_approvals import RivetApprovalService
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_validation import (
@@ -717,6 +718,56 @@ class WorkspaceWorkflowOperations:
                 "RIVET_RUN_NOT_FOUND", "Workflow run was not found"
             )
         return run
+
+    def inspection(
+        self,
+        *,
+        workspace_id: str,
+        session_id: str,
+        run_id: str,
+        after_sequence: int = 0,
+    ) -> dict:
+        self.run(workspace_id=workspace_id, session_id=session_id, run_id=run_id)
+        record = self._runner.result(run_id)
+        if record is None:
+            raise WorkflowOperationsError(
+                "RIVET_RUN_INSPECTION_UNAVAILABLE", "Run inspection is unavailable"
+            )
+        child_calls: tuple[dict, ...] = ()
+        if self._mcp_repository is not None:
+            child_calls, _ = self._mcp_repository.run_evidence_documents(run_id)
+        return build_workflow_inspection(
+            record=record,
+            events=self._runner.events(run_id),
+            incremental_events=self._runner.events(
+                run_id, after_sequence=after_sequence
+            ),
+            child_calls=child_calls,
+            manifest=self._runner.manifest(run_id),
+        )
+
+    def recent_runs(
+        self,
+        *,
+        workspace_id: str,
+        session_id: str,
+        workflow_id: str,
+        limit: int = 20,
+    ) -> tuple[dict, ...]:
+        self._enabled()
+        records = self._runner.recent_records(
+            workspace_id=workspace_id,
+            session_id=session_id,
+            workflow_id=workflow_id,
+            limit=limit,
+        )
+        return tuple(
+            build_run_summary(
+                record,
+                latest_sequence=self._runner.latest_sequence(record.run_id),
+            )
+            for record in records
+        )
 
     async def cancel(
         self, *, workspace_id: str, session_id: str, run_id: str, generation: int

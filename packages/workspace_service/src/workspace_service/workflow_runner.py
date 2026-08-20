@@ -42,6 +42,7 @@ from .rivet_approvals import RivetApprovalService
 from .rivet_authority import AuthorityClaims, RivetRunAuthorityService
 from .rivet_settings import RivetMcpGatewaySettings
 from .rivet_validation import validate_rivet_project
+from .rivet_evidence import project_output_summary
 from .workflows import WorkspaceWorkflowStore
 
 if TYPE_CHECKING:
@@ -752,6 +753,7 @@ class WorkspaceWorkflowRunner:
                         reason_code=None,
                         output_summary=None,
                         output_truncated=False,
+                        trace_id=uuid.uuid4().hex,
                     )
                 )
             mcp_grant: RivetMcpRuntimeGrant | None = None
@@ -901,10 +903,11 @@ class WorkspaceWorkflowRunner:
                 reason=reason,
             )
             self._runs[run.run_id] = updated
-            output = {
-                "outputs": result.outputs or {},
-                "durationMs": result.duration_ms,
-            }
+            output, output_truncated = project_output_summary(
+                result.outputs or {},
+                duration_ms=result.duration_ms,
+                maximum_bytes=self._settings.captured_output_bytes,
+            )
             if self._run_repository is not None:
                 self._run_repository.transition(
                     run.run_id,
@@ -912,6 +915,7 @@ class WorkspaceWorkflowRunner:
                     completed_at=int(time.time()),
                     reason_code=reason,
                     output_summary=output,
+                    output_truncated=output_truncated,
                 )
             self._append_event(
                 run.run_id,
@@ -1046,6 +1050,28 @@ class WorkspaceWorkflowRunner:
     def result(self, run_id: str) -> WorkflowRunRecord | None:
         self.get(run_id)
         return self._run_repository.get(run_id) if self._run_repository else None
+
+    def recent_records(
+        self,
+        *,
+        workspace_id: str,
+        session_id: str,
+        workflow_id: str,
+        limit: int = 20,
+    ) -> tuple[WorkflowRunRecord, ...]:
+        if self._run_repository is None:
+            return ()
+        return self._run_repository.recent(
+            workspace_id=workspace_id,
+            session_id=session_id,
+            workflow_id=workflow_id,
+            limit=limit,
+        )
+
+    def latest_sequence(self, run_id: str) -> int:
+        if self._run_repository is not None:
+            return self._run_repository.latest_sequence(run_id)
+        return self._next_sequence.get(run_id, 0)
 
     async def cancel(self, run_id: str, *, generation: int) -> WorkflowRun:
         run = self.get(run_id)

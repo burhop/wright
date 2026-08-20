@@ -106,6 +106,8 @@ from api.schemas.workspace import (
     WorkflowRunCancelRequest,
     WorkflowRunResponse,
     WorkflowRunStartRequest,
+    RivetRunInspectionResponse,
+    RivetRecentRunsResponse,
     RivetCallApprovalDecisionRequest,
     RivetCallApprovalListResponse,
     RivetCallApprovalResponse,
@@ -145,6 +147,7 @@ from api.schemas.workspace import (
 from workspace_service.workflows import (
     WorkflowPersistenceError,
     WorkflowRevisionConflict,
+    WorkspaceWorkflowStore,
 )
 from core.workflow_runs import WorkflowRunnerError, WorkflowRunnerUnavailable
 from core.workflow_editor import WorkflowEditorError
@@ -1220,6 +1223,43 @@ async def start_workflow_run_endpoint(
         ) from error
 
 
+@router.get(
+    "/workflows/{slug}/runs",
+    response_model=RivetRecentRunsResponse,
+)
+@traced("workspace.workflows.runner.recent")
+async def recent_workflow_runs_endpoint(
+    slug: str,
+    response: Response,
+    session_id: str = Query(...),
+    limit: int = Query(default=20, ge=1, le=50),
+    engine: BaseAgentEngine = Depends(get_agent_engine),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        workspace_dir = await service.resolve_workspace_dir(session_id, engine)
+        document = WorkspaceWorkflowStore(workspace_dir).read(slug)
+        runs = service.workflow_operations.recent_runs(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            workflow_id=document.workflow_id,
+            limit=limit,
+        )
+    except (FileNotFoundError, WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise HTTPException(status_code=404, detail="Workflow was not found") from error
+    response.headers["Cache-Control"] = "no-store"
+    return RivetRecentRunsResponse(
+        workflow_id=document.workflow_id,
+        current_revision=document.revision,
+        runs=list(runs),
+    )
+
+
 @router.get("/workflows/runs/{run_id}", response_model=WorkflowRunResponse)
 @traced("workspace.workflows.runner.status")
 async def workflow_run_status_endpoint(
@@ -1247,6 +1287,38 @@ async def workflow_run_status_endpoint(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=str(error)
         ) from error
+
+
+@router.get(
+    "/workflows/runs/{run_id}/inspection",
+    response_model=RivetRunInspectionResponse,
+)
+@traced("workspace.workflows.runner.inspection")
+async def workflow_run_inspection_endpoint(
+    run_id: str,
+    response: Response,
+    session_id: str = Query(...),
+    after_sequence: int = Query(default=0, ge=0),
+    service: WorkspaceService = Depends(get_workspace_service),
+):
+    _runner_feature_enabled()
+    _operations_feature_enabled()
+    workspace = service.lifecycle.get_by_session(session_id)
+    if not workspace:
+        raise HTTPException(status_code=404, detail="Workspace not found")
+    try:
+        inspection = service.workflow_operations.inspection(
+            workspace_id=workspace["workspace_id"],
+            session_id=session_id,
+            run_id=run_id,
+            after_sequence=after_sequence,
+        )
+    except (WorkflowOperationsError, WorkflowRunnerError) as error:
+        raise HTTPException(
+            status_code=404, detail="Workflow run was not found"
+        ) from error
+    response.headers["Cache-Control"] = "no-store"
+    return RivetRunInspectionResponse.model_validate(inspection)
 
 
 @router.get(

@@ -184,6 +184,111 @@ class WorkflowRunResponse(BaseModel):
     manifest: Dict[str, Any] | None = None
 
 
+class RivetRunSummaryResponse(BaseModel):
+    run_id: str
+    workspace_id: str
+    session_id: str
+    workflow_id: str
+    revision: int
+    digest: str
+    graph: str
+    generation: int
+    state: str
+    started_at: str | None = None
+    completed_at: str | None = None
+    duration_ms: int | None = None
+    reason_code: str | None = None
+    trace_id: str | None = None
+    latest_sequence: int = 0
+    has_outputs: bool = False
+    has_diagnostic: bool = False
+    output_truncated: bool = False
+    output_redaction_count: int = 0
+
+
+class RivetRunProgressResponse(BaseModel):
+    phase: str
+    current_step_id: str | None = None
+    completed_steps: int = 0
+    total_steps: int = 0
+    last_sequence: int = 0
+    updated_at: str | None = None
+
+
+class RivetRunResultResponse(BaseModel):
+    result_id: str
+    name: str
+    origin: str
+    kind: str
+    value: Any = None
+    preview: str
+    complete: bool
+    truncation_reason: str | None = None
+    original_bytes: int
+    retained_bytes: int
+    digest: str
+    redaction_count: int = 0
+    artifact: Dict[str, Any] | None = None
+
+
+class RivetRunStepResponse(BaseModel):
+    step_id: str
+    sequence: int
+    node_id: str | None = None
+    label: str
+    kind: str
+    qualified_tool_name: str | None = None
+    request_id: str | None = None
+    trace_id: str | None = None
+    state: str
+    started_at: str | None = None
+    completed_at: str | None = None
+    duration_ms: int | None = None
+    reason_code: str | None = None
+    result: Dict[str, Any] | None = None
+    artifacts: List[Dict[str, Any]] = Field(default_factory=list)
+    redaction_count: int = 0
+    complete: bool = True
+
+
+class RivetRunDiagnosticResponse(BaseModel):
+    code: str
+    summary: str
+    recovery_action: str
+    failed_step_id: str | None = None
+    failed_node_id: str | None = None
+    qualified_tool_name: str | None = None
+    trace_id: str | None = None
+    full_rerun_available: bool
+    partial_retry_available: bool = False
+    residue_possible: bool = False
+
+
+class RivetRunCompletenessResponse(BaseModel):
+    outputs_complete: bool
+    steps_complete: bool
+    events_complete: bool
+    evidence_available: bool
+    reasons: List[str] = Field(default_factory=list)
+
+
+class RivetRunInspectionResponse(BaseModel):
+    schema_version: Literal[1]
+    run: RivetRunSummaryResponse
+    progress: RivetRunProgressResponse
+    events: List[Dict[str, Any]] = Field(default_factory=list)
+    steps: List[RivetRunStepResponse] = Field(default_factory=list)
+    final_outputs: List[RivetRunResultResponse] = Field(default_factory=list)
+    diagnostic: RivetRunDiagnosticResponse | None = None
+    completeness: RivetRunCompletenessResponse
+
+
+class RivetRecentRunsResponse(BaseModel):
+    workflow_id: str
+    current_revision: int
+    runs: List[RivetRunSummaryResponse] = Field(default_factory=list)
+
+
 class RivetCallApprovalResponse(BaseModel):
     approval_id: str
     run_id: str

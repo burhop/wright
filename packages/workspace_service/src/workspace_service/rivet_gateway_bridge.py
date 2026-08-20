@@ -20,7 +20,11 @@ from tool_registry.gateway_models import GatewayToolResult
 
 from .rivet_authority import RivetRunAuthorityService
 from .rivet_approvals import RivetApprovalError, RivetApprovalService
-from .rivet_evidence import redact_value, sanitize_gateway_result
+from .rivet_evidence import (
+    project_result_value,
+    redact_value,
+    sanitize_gateway_result,
+)
 
 
 logger = structlog.get_logger(__name__)
@@ -308,6 +312,17 @@ class RivetGatewayBridge:
             sanitized, artifacts, redactions = sanitize_gateway_result(
                 result, workspace_id=authority.claims.workspace_id
             )
+            retained_result = project_result_value(
+                {
+                    "content": list(sanitized.content),
+                    "structured_content": sanitized.structured_content,
+                    "meta": sanitized.meta,
+                    "is_error": sanitized.is_error,
+                    "error_code": sanitized.error_code,
+                },
+                name=binding.qualified_tool_name,
+                origin="step_output",
+            )
             redactions += progress_redactions
             logger.info(
                 "rivet_gateway_call_finished",
@@ -341,6 +356,8 @@ class RivetGatewayBridge:
                 ),
                 artifacts=tuple(artifacts),
                 redaction_count=redactions,
+                result=retained_result,
+                result_complete=bool(retained_result["complete"]),
             )
             if self._repository is not None:
                 self._repository.append_child_call(call_record)
@@ -353,9 +370,17 @@ class RivetGatewayBridge:
                 task = asyncio.current_task()
                 if task is not None and task.cancelling():
                     raise
-                error = RivetGatewayBridgeError(
-                    "RIVET_MCP_CALL_CANCELLED", "retry_after_server_restart"
-                )
+                message = str(error).lower()
+                if "generation" in message or "superseded" in message:
+                    code = "RIVET_MCP_GENERATION_REPLACED"
+                    recovery = "refresh_tool_connections_and_rerun"
+                elif "transport" in message or "connection" in message:
+                    code = "RIVET_MCP_TRANSPORT_CANCELLED"
+                    recovery = "reconnect_server_and_rerun"
+                else:
+                    code = "RIVET_MCP_CALL_CANCELLED"
+                    recovery = "rerun_saved_revision"
+                error = RivetGatewayBridgeError(code, recovery)
             assert isinstance(error, Exception)
             projected_error: Exception = error
             lifecycle_kind = str(getattr(error, "lifecycle_kind", ""))

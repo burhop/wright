@@ -73,6 +73,33 @@ def test_bridge_contract_is_native_typed_and_origin_scoped() -> None:
     assert "indexedDB" not in bridge
 
 
+def test_bridge_contract_supports_bounded_run_state_and_canvas_focus() -> None:
+    bridge = (EDITOR_ROOT / "wrapper" / "WrightEditorBridge.tsx").read_text(
+        encoding="utf-8"
+    )
+    patch = (EDITOR_ROOT / "patches" / "rivet2-run-state-overlay.patch").read_text(
+        encoding="utf-8"
+    )
+
+    for message_type in (
+        "wright-rivet:set-run-state",
+        "wright-rivet:run-state-set",
+        "wright-rivet:clear-run-state",
+        "wright-rivet:run-state-cleared",
+        "wright-rivet:focus-node",
+        "wright-rivet:node-focused",
+        "wright-rivet:focus-canvas",
+        "wright-rivet:canvas-focused",
+    ):
+        assert message_type in bridge
+    assert "protocolVersion: 3" in bridge
+    assert "steps.length > 500" in bridge
+    assert "nodeId.length > 200" in bridge
+    assert "setWrightRunState" in patch
+    assert "wright-run-state" in patch
+    assert "aria-label" in patch
+
+
 def test_canvas_patch_mounts_only_graph_authoring_surfaces() -> None:
     patch = (EDITOR_ROOT / "patches" / "rivet2-canvas-only.patch").read_text(
         encoding="utf-8"

@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import json
 import re
+import hashlib
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
 from typing import Any
-from urllib.parse import unquote
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 from core.rivet_mcp import ArtifactReference, canonical_digest
 from tool_registry.gateway_models import GatewayToolResult
@@ -23,6 +24,118 @@ class RivetEvidenceError(ValueError):
     def __init__(self, code: str, message: str) -> None:
         super().__init__(message)
         self.code = code
+
+
+def _encoded(value: Any) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), default=str).encode(
+        "utf-8"
+    )
+
+
+def _result_kind(value: Any) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, (int, float)):
+        return "number"
+    if isinstance(value, str):
+        return "link" if value.startswith(("https://", "http://")) else "text"
+    if isinstance(value, Mapping):
+        return "structured"
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return "list"
+    return "text"
+
+
+def _safe_link(value: str) -> str:
+    """Retain a useful web location without carrying query credentials."""
+
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return value
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return value
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+
+
+def project_result_value(
+    value: Any,
+    *,
+    name: str,
+    origin: str,
+    maximum_bytes: int = 64 * 1024,
+    artifact: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Return one deterministic, redacted, bounded result for storage and UI use."""
+
+    safe, redactions = redact_value(value, maximum_text=max(4096, maximum_bytes * 4))
+    kind = "artifact" if artifact is not None else _result_kind(safe)
+    if kind == "link" and isinstance(safe, str):
+        safe = _safe_link(safe)
+    encoded = _encoded(safe)
+    digest = hashlib.sha256(encoded).hexdigest()
+    if isinstance(safe, str):
+        preview = safe[:4096] + ("…" if len(safe) > 4096 else "")
+    else:
+        rendered = json.dumps(safe, sort_keys=True, default=str)
+        preview = rendered[:4096] + ("…" if len(rendered) > 4096 else "")
+    complete = len(encoded) <= maximum_bytes
+    retained_value = safe if complete else None
+    retained_bytes = len(encoded) if complete else len(preview.encode("utf-8"))
+    return {
+        "result_id": f"{origin}:{name}",
+        "name": name,
+        "origin": origin,
+        "kind": kind,
+        "value": retained_value,
+        "preview": preview,
+        "complete": complete,
+        "truncation_reason": None if complete else "size_limit",
+        "original_bytes": len(encoded),
+        "retained_bytes": retained_bytes,
+        "digest": digest,
+        "redaction_count": redactions,
+        "artifact": dict(artifact) if artifact is not None else None,
+    }
+
+
+def project_output_summary(
+    outputs: Mapping[str, Any],
+    *,
+    duration_ms: int | float | None,
+    maximum_bytes: int = 1024 * 1024,
+) -> tuple[dict[str, Any], bool]:
+    """Project final outputs without allowing oversized success to become failure."""
+
+    results = [
+        project_result_value(
+            value,
+            name=str(name),
+            origin="final_output",
+            maximum_bytes=min(64 * 1024, maximum_bytes),
+        )
+        for name, value in sorted(outputs.items(), key=lambda item: str(item[0]))[:256]
+    ]
+    truncated = len(outputs) > len(results) or any(
+        not item["complete"] for item in results
+    )
+    summary: dict[str, Any] = {
+        "outputs": {
+            item["name"]: item["value"] if item["complete"] else None
+            for item in results
+        },
+        "results": results,
+        "durationMs": duration_ms,
+    }
+    while len(_encoded(summary)) > maximum_bytes and results:
+        item = results.pop()
+        summary["outputs"].pop(item["name"], None)
+        truncated = True
+    if len(outputs) > len(results):
+        summary["omittedOutputCount"] = len(outputs) - len(results)
+    return summary, truncated
 
 
 def redact_value(value: Any, *, maximum_text: int = 4096) -> tuple[Any, int]:

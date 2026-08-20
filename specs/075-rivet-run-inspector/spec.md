@@ -40,6 +40,7 @@ As a workflow author, I can identify the failed node or MCP tool, see a plain-la
 2. **Given** a failed run with diagnostic evidence, **When** the user expands technical details, **Then** the interface shows the error code, run identity, trace identity when available, and relevant evidence without exposing secrets.
 3. **Given** successful upstream steps followed by a failed step, **When** the run is inspected, **Then** the successful steps remain visible and distinguishable from the failed and unstarted steps.
 4. **Given** a run for which partial retry cannot be proven safe, **When** recovery actions are shown, **Then** the interface offers a full rerun and does not imply that an unsafe partial retry is available.
+5. **Given** a healthy remote MCP call is in progress, **When** routine workspace health polling or lifecycle observation occurs, **Then** the call continues unless the user cancels it, its configured timeout expires, or its server generation is explicitly replaced; if it is cancelled, the retained diagnostic identifies which of those boundaries caused the cancellation.
 
 ---
 
@@ -56,6 +57,7 @@ As a workflow author, I can correlate inspector steps with nodes on the workflow
 1. **Given** a running multi-node workflow, **When** execution advances, **Then** affected canvas nodes reflect their current execution states without relying on color alone.
 2. **Given** an inspector step associated with a current canvas node, **When** the user selects the step, **Then** the matching node is brought into view and highlighted.
 3. **Given** a historical run whose node was edited or removed, **When** the user selects that historical step, **Then** the inspector explains that the original node is no longer present instead of highlighting an unrelated node.
+4. **Given** the workflow is already open in the editor, **When** the user activates the visible focus-workflow action, **Then** the current workflow canvas receives focus; passive status announcements remain non-interactive and are not presented as controls.
 
 ---
 
@@ -86,6 +88,8 @@ As a workflow author, I can refresh or reopen the workspace without losing an ac
 - Historical evidence is missing, expired, or no longer accessible.
 - The workspace is narrow, the active surface is maximized, or the user navigates only by keyboard.
 - A user cancels a run while a child operation is in progress.
+- A remote MCP operation is cancelled by its caller, by an explicit server-generation replacement, or by its transport while the workspace remains healthy.
+- The workflow is already loaded and a user needs an explicit way to return focus to its canvas.
 
 ## Requirements *(mandatory)*
 
@@ -112,6 +116,8 @@ As a workflow author, I can refresh or reopen the workspace without losing an ac
 - **FR-019**: Run status, inspector controls, execution steps, outputs, and recovery actions MUST be keyboard operable and understandable with assistive technology.
 - **FR-020**: The feature MUST preserve existing workflow Run, Run Options, Cancel, save-before-run, and lint behavior while improving their status and result presentation.
 - **FR-021**: Automated UI coverage MUST include default, running, succeeded, failed, cancelled, refreshed, historical, empty-output, large-output, and redacted-output states.
+- **FR-022**: A healthy in-flight MCP call MUST NOT be cancelled by routine status polling or observation; cancellation evidence MUST distinguish user cancellation, configured timeout, explicit server-generation replacement, and transport cancellation when the source is known.
+- **FR-023**: The editor surface MUST provide a visible keyboard-operable action to focus the currently open workflow, while accessibility status announcements MUST remain passive and non-interactive.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -133,6 +139,7 @@ As a workflow author, I can refresh or reopen the workspace without losing an ac
 - **SC-006**: All run states, inspector actions, execution-step navigation, and result actions pass the project's keyboard and accessible-name checks.
 - **SC-007**: The run identity shown in the workspace, recent history, and diagnostic evidence is consistent for every tested execution.
 - **SC-008**: Automated redaction tests confirm that configured secrets and credentials never appear in visible outputs, copied text, exported results, diagnostic summaries, or captured screens.
+- **SC-009**: A deterministic delayed-remote-MCP regression test completes successfully while routine status polling occurs, and each simulated cancellation boundary produces a distinct retained diagnostic.
 
 ## Assumptions
 

@@ -30,7 +30,28 @@ type WrightRequest =
   | {
       type: 'wright-rivet:get-project';
       requestId?: string;
+    }
+  | {
+      type: 'wright-rivet:set-run-state';
+      requestId?: string;
+      runId?: string;
+      steps?: Array<{ nodeId?: string | null; state?: string; label?: string }>;
+    }
+  | {
+      type: 'wright-rivet:clear-run-state';
+      requestId?: string;
+    }
+  | {
+      type: 'wright-rivet:focus-node';
+      requestId?: string;
+      nodeId?: string;
+    }
+  | {
+      type: 'wright-rivet:focus-canvas';
+      requestId?: string;
     };
+
+const RUN_STATES = new Set(['queued', 'running', 'cancelling', 'cancelled', 'succeeded', 'failed']);
 
 type ActiveProject = {
   project: Omit<Project, 'data'>;
@@ -170,11 +191,54 @@ export function WrightEditorBridge() {
         } catch (error) {
           respondWithError(message.requestId, 'PROJECT_SERIALIZE_FAILED', error);
         }
+        return;
+      }
+
+      if (message.type === 'wright-rivet:set-run-state') {
+        if (!Array.isArray(message.steps) || message.steps.length > 500) {
+          respondWithError(message.requestId, 'INVALID_RUN_STATE', new Error('Run state must contain at most 500 steps.'));
+          return;
+        }
+        const steps = message.steps
+          .filter(
+            (step): step is { nodeId: string; state: string; label?: string } =>
+              !!step &&
+              typeof step.nodeId === 'string' &&
+              step.nodeId.length > 0 &&
+              step.nodeId.length <= 200 &&
+              typeof step.state === 'string' &&
+              RUN_STATES.has(step.state),
+          )
+          .map((step) => ({ nodeId: step.nodeId, state: step.state, label: step.label?.slice(0, 200) }));
+        workspaceHost.setWrightRunState(steps);
+        postToWright({ type: 'wright-rivet:run-state-set', requestId: message.requestId, count: steps.length });
+        return;
+      }
+
+      if (message.type === 'wright-rivet:clear-run-state') {
+        workspaceHost.clearWrightRunState();
+        postToWright({ type: 'wright-rivet:run-state-cleared', requestId: message.requestId });
+        return;
+      }
+
+      if (message.type === 'wright-rivet:focus-node') {
+        if (typeof message.nodeId !== 'string' || !message.nodeId || message.nodeId.length > 200) {
+          respondWithError(message.requestId, 'INVALID_NODE_ID', new Error('Node identity is invalid.'));
+          return;
+        }
+        const found = workspaceHost.focusWrightNode(message.nodeId);
+        postToWright({ type: 'wright-rivet:node-focused', requestId: message.requestId, nodeId: message.nodeId, found });
+        return;
+      }
+
+      if (message.type === 'wright-rivet:focus-canvas') {
+        workspaceHost.focusWrightCanvas();
+        postToWright({ type: 'wright-rivet:canvas-focused', requestId: message.requestId });
       }
     };
 
     window.addEventListener('message', handleMessage);
-    postToWright({ type: 'wright-rivet:ready', protocolVersion: 2 });
+    postToWright({ type: 'wright-rivet:ready', protocolVersion: 3 });
     return () => window.removeEventListener('message', handleMessage);
   }, [expectedParentOrigin, postToWright, workspaceHost]);
 

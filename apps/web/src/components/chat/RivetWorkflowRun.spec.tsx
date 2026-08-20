@@ -19,6 +19,7 @@ vi.mock("../../services/workspace-service", async (loadOriginal) => {
       getRivetCallApprovals: vi.fn(),
       getRivetWorkflowHistory: vi.fn(),
       getRivetRunEvidence: vi.fn(),
+      getRivetRunInspection: vi.fn(),
       exportRivetRunEvidence: vi.fn(),
       decideRivetCallApproval: vi.fn(),
     },
@@ -72,6 +73,9 @@ describe("RivetWorkflowRun", () => {
     ]);
     vi.mocked(workspaceService.getRivetRunEvidence).mockRejectedValue(
       new Error("Evidence is not terminal yet"),
+    );
+    vi.mocked(workspaceService.getRivetRunInspection).mockRejectedValue(
+      new Error("Inspection is not available yet"),
     );
     vi.mocked(workspaceService.exportRivetRunEvidence).mockResolvedValue();
     vi.mocked(workspaceService.decideRivetCallApproval).mockResolvedValue({

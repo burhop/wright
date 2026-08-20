@@ -58,3 +58,12 @@ node integrations/rivet/editor/scripts/build-rivet2.mjs
 - Run `scripts/check-dev-merge.sh` before any merge to `dev`, or document the exact local host limitation for a gate that cannot run.
 - Do not merge, push, publish, or release as part of implementation unless separately authorized.
 
+## Verification record — 2026-08-20
+
+- Backend, persistence, lifecycle, API, local E2E, and pinned-editor artifact gate: 53 passed.
+- Frontend component/client/hook gate: 33 passed across five focused files.
+- Mocked browser journey: 12 passed across Chromium, Firefox, WebKit, and the desktop-surface profile.
+- Pinned Rivet editor: rebuilt from revision `4f4a165a03f8da89c3d1cce2cb1a8c6eb6aa2053`; 228 generated files passed all six integrity checks.
+- Web production build passed. ESLint passed with three pre-existing hook warnings outside Run Inspector files.
+- `git diff --check` and Ruff lint passed. All feature Python files were formatted with the repository Ruff configuration.
+- `scripts/check-dev-merge.sh` was attempted from PowerShell with `SKIP_PLAYWRIGHT=1` because the actively running local Wright UI occupies ports 5173/8000. The script entered WSL, passed `git diff --check`, then stopped at its first Python gate because `uv` is installed in Windows but is not on the WSL `PATH` (`scripts/check-dev-merge.sh: line 23: uv: command not found`). The equivalent focused Python, frontend, browser, build, and artifact gates above were run directly in Windows.
