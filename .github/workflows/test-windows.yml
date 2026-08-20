@@ -41,7 +41,19 @@ jobs:
       - name: Run pytest
         run: |
           uv run python -m pytest -q tests/native_runtime
-          uv run python -m pytest
+          $pythonSuites = @(
+            'apps/api/tests',
+            'packages/agent_adapters/tests',
+            'packages/core/tests',
+            'packages/data_vault/tests',
+            'packages/model_registry/tests',
+            'packages/tool_registry/tests',
+            'packages/workspace_service/tests',
+            'tests'
+          )
+          foreach ($suite in $pythonSuites) {
+            uv run --extra runtime --extra engineering-models python -m pytest -q $suite
+          }
 
   frontend-tests:
     name: Frontend Tests (Windows)
